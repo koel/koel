@@ -1,0 +1,106 @@
+@mixin vertical-center() {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin artist-album-card() {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    display: flex;
+
+    .item {
+        display: flex;
+        flex: 0 0 256px;
+        flex-direction: column;
+        margin-bottom: 16px;
+
+        .cover {
+            @include vertical_center();
+
+            display: flex;
+            flex: 0 0 256px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            position: relative;
+
+            .control {
+                display: none;
+                width: 96px;
+                height: 96px;
+                text-align: center;
+                line-height: 96px;
+                font-size: 54px;
+                background: #111;
+                border-radius: 50%;
+                text-indent: 5px;
+                opacity: .7;
+                border: 1px solid transparent;
+
+                transition: .3s;
+
+                &:hover {
+                    opacity: 1;
+                    border-color: #fff;
+                    transform: scale(1.1);
+                }
+            }
+
+            &:before {
+                content: " ";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                transition: .3s;
+            }
+
+            &:hover {
+                &:before {
+                    background-color: rgba(0, 0, 0, .4);
+                }
+
+                .control {
+                    display: block;
+                }
+            }
+        }
+
+        footer {
+            padding: 16px;
+            background: #333;
+            flex: 1;
+        }
+
+        .name {
+            font-weight: 500;
+        }
+
+        .meta {
+            color: $color2ndText;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+    }
+
+    @media only screen 
+    and (max-device-width : 768px) 
+    and (orientation : portrait) {
+        justify-content: center;
+    }
+
+    @media only screen 
+    and (min-device-width: 769px)
+    and (max-device-width : 1024px) {
+        justify-content: space-around;
+    }
+}
+
+@mixin inset-when-pressed() {
+    &:active {
+        box-shadow: inset 0px 10px 10px -10px rgba(0,0,0,1);
+    }
+}

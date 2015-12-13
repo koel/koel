@@ -1,0 +1,29 @@
+{
+  "name": "koel",
+  "version": "0.0.1",
+  "authors": [
+    "An Phan <me@phanan.net>"
+  ],
+  "moduleType": [
+    "es6"
+  ],
+  "keywords": [
+    "koel",
+    "audio",
+    "streaming",
+    "mp3"
+  ],
+  "license": "MIT",
+  "homepage": "http://koel.phanan.net",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "plyr": "~1.3.6",
+    "fontawesome": "~4.5.0"
+  }
+}

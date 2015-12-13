@@ -1,0 +1,109 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+    outline: none;
+}
+
+input, select, button {
+    -webkit-appearance: none;
+    border: 0;
+    outline: 0;
+    font-family: $fontFamily;
+    font-size: $fontSize;
+    font-weight: $fontWeight_Thin;
+    padding: 4px 8px;
+    border-radius: 3px;
+
+    &:required, &:invalid {
+        box-shadow: none;
+    }
+
+    &.dirty {
+        background: $colorDirtyInputBgr;
+    }
+
+    &[type="search"] {
+        border-radius: 12px;
+        height: 24px;
+        padding: 0 6px;
+    }
+
+    &[type="text"] {
+        display: block;
+    }
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+}
+
+a, a:link, a:visited {
+    color: $colorLink;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.clear, .clearfix {
+    &:after {
+        content: " ";
+        clear: both;
+    }
+}
+
+.side {
+    width: 256px;
+}
+
+.ir {
+    color: transparent;
+    font: 0/0 serif;
+}
+
+.control {
+    cursor: pointer;
+    color: $colorLink;
+
+    &:hover {
+        color: $colorLinkHovered;
+    }
+}
+
+p {
+    line-height: 20px;
+}
+
+.help {
+    opacity: .7;
+    font-size: 90%;
+    line-height: 16px;
+}
+
+label {
+    font-size: 110%;
+    margin-bottom: 8px;
+    display: block;
+}
+
+button, input[type="submit"], input[type="reset"], input[type="button"] {
+    background: $colorBtnBgr;
+    color: $colorBtnText;
+    font-size: 14px;
+    padding: 8px 12px;
+    cursor: pointer;
+
+    @include inset-when-pressed();
+}
+
+body, html {
+    overflow: hidden;
+}
+
+[draggable] {
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+.form-row {
+    margin-top: 16px;
+}

@@ -1,0 +1,3 @@
+[*.{js,sass,scss,json,coffee,vue}]
+indent_style = space
+indent_size = 4

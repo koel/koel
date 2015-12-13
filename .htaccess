@@ -1,0 +1,41 @@
+<IfModule mod_headers.c>
+    <FilesMatch "\.(eot|font.css|otf|ttc|ttf|woff)$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Deny access to framework directories
+    RewriteRule ^(app/|bootstrap/|config/|database/|resources/|storage/tests|vendor/) - [R=404,L,NC]
+    
+    # And dot files/folders (for example .env)
+    RedirectMatch 404 /\..*$
+
+    # Redirect Trailing Slashes...
+    RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+<IfModule mod_deflate.c>
+    # Disable deflation for media files.
+    SetEnvIfNoCase Request_URI "^/api/play/" no-gzip dont-vary
+</IfModule>
+
+<IfModule mod_xsendfile.c>
+    # Set a MOD_X_SENDFILE_ENABLED env variable for PHP to use later.
+    <Files *.php>
+        XSendFile On
+        SetEnv MOD_X_SENDFILE_ENABLED 1
+    </Files>
+</IfModule>
