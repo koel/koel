@@ -21,8 +21,6 @@ class Media
      */
     protected $getID3;
 
-    protected $guarded = [];
-
     public function __construct()
     {
         $this->setGetID3();
