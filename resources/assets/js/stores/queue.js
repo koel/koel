@@ -16,14 +16,14 @@ export default {
         // -- by Jimi Fucking Hendrick
         // 
         // Well she's walking
-        // Trough the clouds
+        // Through the clouds
         // With a circus mind
         // That's running wild
         // Butterflies and zebras and moonbeams and fairytales
         // That's all she ever thinks about
         // Riding with the wind
         // 
-        // When i'm sad
+        // When I'm sad
         // She comes to me
         // With a thousand smiles
         // She gives to me free
