@@ -515,7 +515,7 @@
 
         @import "resources/assets/sass/vendors/_plyr.scss";
 
-        // a little tweaks here and there
+        // Some little tweaks here and there
         .player {
             width: 100%;
             position: absolute;
