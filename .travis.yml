@@ -4,6 +4,13 @@ php:
   - 5.6
   - 7.0
 
+env:
+  APP_ENV: testing
+  CACHE_DRIVER: array
+  SESSION_DRIVER: array
+  QUEUE_DRIVER: sync
+  DB_CONNECTION: sqlite
+
 branches:
   only:
     - master
