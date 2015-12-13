@@ -89,8 +89,8 @@ class Media
      * @param SplFileInfo $file The SplFileInfo instance of the file.
      *
      * @return bool|Song A Song object on success,
-     *                   true if file existing but unmodified,
-     *                   or false on error.
+     *                   true if file exists but is unmodified,
+     *                   or false on an error.
      */
     public function syncFile(SplFileInfo $file)
     {
