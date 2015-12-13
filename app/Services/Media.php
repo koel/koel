@@ -158,6 +158,10 @@ class Media
         // We'll still prefer getting ID3v2 tags directly later.
         // Read on.
         getid3_lib::CopyTagsToComments($info);
+        
+        if (!isset($info['playtime_seconds'])) {
+            return;
+        }
 
         $props = [
             'artist' => '',
