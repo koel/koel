@@ -21,7 +21,7 @@ class Artist extends Model
         return $this->hasMany(Album::class);
     }
 
-    public function getNameAttribute($value) 
+    public function getNameAttribute($value)
     {
         return $value ?: self::UNKNOWN_NAME;
     }

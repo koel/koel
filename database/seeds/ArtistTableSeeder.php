@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\Artist;
+use Illuminate\Database\Seeder;
 
 class ArtistTableSeeder extends Seeder
 {

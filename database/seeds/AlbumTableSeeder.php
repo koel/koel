@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\Album;
 use App\Models\Artist;
+use Illuminate\Database\Seeder;
 
 class AlbumTableSeeder extends Seeder
 {

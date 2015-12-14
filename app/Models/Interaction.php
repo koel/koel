@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\CanFilterByUser;
 use DB;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property bool liked
@@ -36,7 +36,7 @@ class Interaction extends Model
     /**
      * Increase the number of times a song is played by a user.
      * 
-     * @param string $songId
+     * @param string   $songId
      * @param int|null $userId
      *
      * @return Interaction
@@ -61,7 +61,7 @@ class Interaction extends Model
     /**
      * Like or unlike a song on behalf of a user.
      * 
-     * @param string $songId
+     * @param string   $songId
      * @param int|null $userId
      *
      * @return Interaction
@@ -86,8 +86,8 @@ class Interaction extends Model
     /**
      * Like several songs at once.
      *
-     * @param array $songIds
-     * @param int|null  $userId
+     * @param array    $songIds
+     * @param int|null $userId
      *
      * @return array
      */
@@ -117,8 +117,8 @@ class Interaction extends Model
     /**
      * Unlike several songs at once.
      *
-     * @param array $songIds
-     * @param int|null  $userId
+     * @param array    $songIds
+     * @param int|null $userId
      *
      * @return int
      */
