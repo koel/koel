@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\SyncMedia::class,
+        \App\Console\Commands\Init::class,
     ];
 
     /**
