@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Streamers\XSendFileStreamer;
 use App\Http\Streamers\PHPStreamer;
+use App\Http\Streamers\XSendFileStreamer;
 use App\Models\Song;
 
 class SongController extends Controller

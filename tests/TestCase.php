@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Foundation\Testing\TestCase as IlluminateTestCase;
-use App\Models\User;
-use App\Models\Artist;
 use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Song;
+use App\Models\User;
+use Illuminate\Foundation\Testing\TestCase as IlluminateTestCase;
+use Illuminate\Support\Facades\Artisan;
 
 abstract class TestCase extends IlluminateTestCase
 {

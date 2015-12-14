@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
-use Illuminate\Http\Request;
-use App\Models\Playlist;
 use App\Http\Requests\API\PlaylistStoreRequest;
+use App\Models\Playlist;
+use Illuminate\Http\Request;
 
 class PlaylistController extends Controller
 {
