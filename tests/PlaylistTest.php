@@ -49,10 +49,15 @@ class PlaylistTest extends TestCase
     public function testUpdatePlaylistName()
     {
         $user = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
 
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
         ]);
+
+        $this->actingAs($user2)
+            ->put("api/playlist/{$playlist->id}", ['name' => 'Foo Bar'])
+            ->seeStatusCode(403);
 
         $this->actingAs($user)
             ->put("api/playlist/{$playlist->id}", ['name' => 'Foo Bar']);
@@ -63,15 +68,15 @@ class PlaylistTest extends TestCase
         ]);
 
         // Other users can't modify it
-        $response = $this->actingAs(factory(User::class)->create())
-            ->call('put', "api/playlist/{$playlist->id}", ['name' => 'Foo Bar']);
-
-        $this->assertEquals(403, $response->status());
+        $this->actingAs(factory(User::class)->create())
+            ->put("api/playlist/{$playlist->id}", ['name' => 'Foo Bar'])
+            ->seeStatusCode(403);
     }
 
     public function testSyncPlaylist()
     {
         $user = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
 
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
@@ -81,6 +86,12 @@ class PlaylistTest extends TestCase
         $playlist->songs()->attach(array_pluck($songs->toArray(), 'id'));
 
         $removedSong = $songs->pop();
+
+        $this->actingAs($user2)
+            ->put("api/playlist/{$playlist->id}/sync", [
+            'songs' => array_pluck($songs->toArray(), 'id'),
+            ])
+            ->seeStatusCode(403);
 
         $this->actingAs($user)
             ->put("api/playlist/{$playlist->id}/sync", [
@@ -104,14 +115,18 @@ class PlaylistTest extends TestCase
     public function testDeletePlaylist()
     {
         $user = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
 
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
         ]);
 
-        $this->actingAs($user)
-            ->delete("api/playlist/{$playlist->id}");
+        $this->actingAs($user2)
+            ->delete("api/playlist/{$playlist->id}")
+            ->seeStatusCode(403);
 
-        $this->notSeeInDatabase('playlists', ['id' => $playlist->id]);
+        $this->actingAs($user)
+            ->delete("api/playlist/{$playlist->id}")
+            ->notSeeInDatabase('playlists', ['id' => $playlist->id]);
     }
 }

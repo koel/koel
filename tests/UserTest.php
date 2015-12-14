@@ -6,19 +6,18 @@ use App\Models\User;
 
 class UserTest extends TestCase
 {
-    use WithoutMiddleware, DatabaseTransactions;
+    use WithoutMiddleware;
 
     public function testCreateUser()
     {
         // Non-admins can't do shit
-        $response = $this->actingAs(factory(User::class)->create())
-            ->call('post', 'api/user', [
+        $this->actingAs(factory(User::class)->create())
+            ->post('api/user', [
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'password' => 'qux',
-            ]);
-
-        $this->assertEquals(403, $response->status());
+            ])
+            ->seeStatusCode(403);
 
         // But admins can
         $this->actingAs(factory(User::class, 'admin')->create())

@@ -34,7 +34,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UserUpdateRequest $request, $id)
+    public function update(UserUpdateRequest $request, $user)
     {
         $data = $request->only('name', 'email');
 
@@ -42,7 +42,7 @@ class UserController extends Controller
             $data['password'] = Hash::make($password);
         }
 
-        return response()->json(User::findOrFail($id)->update($data));
+        return response()->json($user->update($data));
     }
 
     /**
@@ -52,13 +52,11 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        if (!auth()->user()->is_admin || auth()->user()->id === $id) {
-            abort(403);
-        }
+        $this->authorize($user);
 
-        return response()->json(User::destroy($id));
+        return response()->json($user->delete());
     }
 
     /**

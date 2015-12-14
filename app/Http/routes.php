@@ -31,7 +31,7 @@ Route::group(['prefix' => 'api', 'middleware' => 'auth', 'namespace' => 'API'], 
     post('interaction/batch/unlike', 'InteractionController@batchUnlike');
 
     resource('playlist', 'PlaylistController');
-    put('playlist/{id}/sync', 'PlaylistController@sync')->where(['id' => '\d+']);
+    put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
 
     resource('user', 'UserController');
     put('me', 'UserController@updateProfile');
