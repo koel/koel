@@ -4,8 +4,6 @@ namespace App\Traits;
 
 /**
  * Indicate that a (Model) object collection can be filtered by the current authenticated user.
- *
- * @package App\Traits
  */
 trait CanFilterByUser
 {

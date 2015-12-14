@@ -102,7 +102,7 @@ class PHPStreamer extends BaseStreamer implements StreamerInterface
                 // Read in blocks of 8KB so we don't chew up memory on the server
                 $read = ($length > 8192) ? 8192 : $length;
                 $length -= $read;
-                print(fread($fp, $read));
+                echo fread($fp, $read);
             }
 
             fclose($fp);

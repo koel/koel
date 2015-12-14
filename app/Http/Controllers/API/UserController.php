@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\User;
+use App\Http\Requests\API\ProfileUpdateRequest;
 use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
-use App\Http\Requests\API\ProfileUpdateRequest;
+use App\Models\User;
 use Hash;
 
 class UserController extends Controller
