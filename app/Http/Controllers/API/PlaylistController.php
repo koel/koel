@@ -30,7 +30,7 @@ class PlaylistController extends Controller
      * Rename a playlist.
      *
      * @param PlaylistUpdateRequest $request
-     * @param int                      $id
+     * @param int                   $id
      *
      * @return \Illuminate\Http\JsonResponse
      */
