@@ -4,9 +4,7 @@ import albumStore from '../../stores/album';
 import artists from '../blobs/media';
 
 describe('stores/album', () => {
-    beforeEach(() => {
-        albumStore.init(artists);
-    });
+    beforeEach(() => albumStore.init(artists));
 
     describe('#init', () => {
         it('correctly gathers albums', () => {

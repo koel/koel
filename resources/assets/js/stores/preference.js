@@ -32,9 +32,7 @@ export default {
     },
 
     get(key) {
-        var val = _.has(this.state, key) ? this.state[key] : null;
-        
-        return val;
+        return _.has(this.state, key) ? this.state[key] : null;
     },
 
     save() {

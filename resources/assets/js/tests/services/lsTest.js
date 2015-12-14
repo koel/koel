@@ -4,9 +4,7 @@ import localStorage from 'local-storage';
 import ls from '../../services/ls';
 
 describe('services/ls', () => {
-    beforeEach(() => {
-        localStorage.remove('foo');
-    });
+    beforeEach(() => localStorage.remove('foo'));
 
     describe('#get', () => {
         it('correctly gets an existing item from local storage', () => {

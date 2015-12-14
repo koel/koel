@@ -4,9 +4,7 @@ import artistStore from '../../stores/artist';
 import artists from '../blobs/media';
 
 describe('stores/artist', () => {
-    beforeEach(() => {
-        artistStore.init(artists);
-    });
+    beforeEach(() => artistStore.init(artists));
 
     describe('#init', () => {
         it('correctly gathers artists', () => {

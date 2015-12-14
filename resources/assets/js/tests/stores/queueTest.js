@@ -30,9 +30,7 @@ describe('stores/queue', () => {
     });
 
     describe('#queue', () => {
-        beforeEach(() => {
-            queueStore.state.songs = songs;
-        });
+        beforeEach(() => queueStore.state.songs = songs);
 
         let song = artists[0].albums[0].songs[0];
 
@@ -54,9 +52,7 @@ describe('stores/queue', () => {
     });
 
     describe('#unqueue', () => {
-        beforeEach(() => {
-            queueStore.state.songs = songs;
-        });
+        beforeEach(() => queueStore.state.songs = songs);
 
         it('correctly removes a song from queue', () => {
             queueStore.unqueue(queueStore.state.songs[0]);

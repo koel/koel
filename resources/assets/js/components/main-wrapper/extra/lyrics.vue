@@ -23,9 +23,7 @@
             'song:play': function (song) {
                 this.lyrics = 'Loading…';
 
-                songStore.getLyrics(song, () => {
-                    this.lyrics = song.lyrics;
-                });
+                songStore.getLyrics(song, () => this.lyrics = song.lyrics);
 
                 return true;
             },

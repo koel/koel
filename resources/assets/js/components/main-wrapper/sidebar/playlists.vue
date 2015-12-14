@@ -93,10 +93,7 @@
             store() {
                 this.creating = false;
 
-                playlistStore.store(this.newName, [], () => {
-                    // Reset the v-model
-                    this.newName = '';
-                });
+                playlistStore.store(this.newName, [], () => this.newName = '');
             },
 
             /**

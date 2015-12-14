@@ -49,9 +49,7 @@ export default {
      * @return string The H:i:s format of the album.
      */
     getLength(album) {
-        album.length = _.reduce(album.songs, (length, song) => {
-            return length + song.length;
-        }, 0);
+        album.length = _.reduce(album.songs, (length, song) => length + song.length, 0);
 
         return (album.fmtLength = utils.secondsToHis(album.length));
     },

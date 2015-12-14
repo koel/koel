@@ -28,9 +28,7 @@ export default {
      * return array
      */
     getSongs(playlist) {
-        playlist.songs = songStore.byIds(playlist.songs);
-
-        return playlist.songs;
+        return (playlist.songs = songStore.byIds(playlist.songs));
     },
 
     store(name, songs, cb = null) {
