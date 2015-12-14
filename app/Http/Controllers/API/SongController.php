@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Streamers\XSendFileStreamer;
-use App\Http\Streamers\XAccelRedirectStreamer;
 use App\Http\Streamers\PHPStreamer;
 use App\Models\Song;
 
@@ -20,12 +19,6 @@ class SongController extends Controller
         if (env('MOD_X_SENDFILE_ENABLED') ||
             (function_exists('apache_get_modules') && in_array('mod_xsendfile', apache_get_modules()))) {
             (new XSendFileStreamer($id))->stream();
-
-            return;
-        }
-
-        if (str_contains(env('SERVER_SOFTWARE'), 'nginx')) {
-            (new XAccelRedirectStreamer($id))->stream();
 
             return;
         }
