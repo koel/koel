@@ -16,8 +16,7 @@ class SongController extends Controller
      */
     public function play($id)
     {
-        if (env('MOD_X_SENDFILE_ENABLED') ||
-            (function_exists('apache_get_modules') && in_array('mod_xsendfile', apache_get_modules()))) {
+        if (env('MOD_X_SENDFILE_ENABLED')) {
             (new XSendFileStreamer($id))->stream();
 
             return;
