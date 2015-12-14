@@ -1,9 +1,7 @@
 <template>
     <footer id="mainFooter">
         <div class="side player-controls" id="playerControls">
-            <i class="prev fa fa-step-backward control"
-                :class="{ enabled: hasPrev }"
-                @click.prevent="playPrev"></i>
+            <i class="prev fa fa-step-backward control" @click.prevent="playPrev"></i>
 
             <span class="play control" v-show="!playing" @click.prevent="resume">
                 <i class="fa fa-play"></i>
@@ -12,9 +10,7 @@
                 <i class="fa fa-pause"></i>
             </span>
 
-            <i class="next fa fa-step-forward control" 
-                :class="{ enabled: hasNext }"
-                @click.prevent="playNext"></i>
+            <i class="next fa fa-step-forward control" @click.prevent="playNext"></i>
         </div>
         
         <div class="media-info-wrap">
@@ -81,8 +77,6 @@
                 playing: false,
                 viewingQueue: false,
                 liked: false,
-                hasNext: false,
-                hasPrev: false,
 
                 prefs: preferenceStore.state,
             };
@@ -97,8 +91,6 @@
              */
             song() {
                 this.liked = this.song.liked;
-                this.hasNext = !!this.next;
-                this.hasPrev = !!this.prev;
             },
         },
 
@@ -413,7 +405,6 @@
         @include hasSoftGradientOnTop($colorSidebarBgr);
 
         .prev, .next {
-            opacity: .2;
             transition: .3s;
         }
         
