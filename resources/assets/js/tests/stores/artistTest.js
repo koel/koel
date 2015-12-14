@@ -12,7 +12,7 @@ describe('stores/artist', () => {
         });
 
         it('correctly gets artists’ covers', () => {
-            artistStore.state.artists[0].cover.should.equal('/public/img/covers/565c0f7067425.jpeg');
+            artistStore.state.artists[0].cover.should.equal('/img/covers/565c0f7067425.jpeg');
         });
 
         it('correctly counts songs by artists', () => {
@@ -28,7 +28,7 @@ describe('stores/artist', () => {
 
     describe('#getCover', () => {
         it('correctly gets an artist’s cover', () => {
-            artistStore.getCover(artistStore.state.artists[0]).should.equal('/public/img/covers/565c0f7067425.jpeg');
+            artistStore.getCover(artistStore.state.artists[0]).should.equal('/img/covers/565c0f7067425.jpeg');
         });
     });
 });

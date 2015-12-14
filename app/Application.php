@@ -37,7 +37,7 @@ class Application extends IlluminateApplication
         }
 
         if (isset($manifest[$file])) {
-            return "/public/build/{$manifest[$file]}";
+            return "/build/{$manifest[$file]}";
         }
 
         throw new InvalidArgumentException("File {$file} not defined in asset manifest.");

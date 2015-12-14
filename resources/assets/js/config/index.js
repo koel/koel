@@ -1,4 +1,4 @@
 export default {
-    unknownCover: '/public/img/covers/unknown-album.png',
+    unknownCover: '/img/covers/unknown-album.png',
     appTitle: 'koel',
 };
