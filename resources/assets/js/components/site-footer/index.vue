@@ -190,7 +190,7 @@
             },
 
             /**
-             * <Oh God do I need to document all of these methods?>
+             * <Oh God do I need to document all these methods?>
              */
             pause() {
                 playback.pause();
