@@ -3,6 +3,7 @@ language: php
 php:
   - 5.6
   - 7.0
+  - hhvm
 
 env:
   APP_ENV: testing
@@ -10,13 +11,20 @@ env:
   SESSION_DRIVER: array
   QUEUE_DRIVER: sync
   DB_CONNECTION: sqlite
+  APP_KEY: 16efa6c23c2e8c705826b0e66778fbe7
+  ADMIN_EMAIL: koel@example.com
+  ADMIN_NAME: Koel
+  ADMIN_PASSWORD: SoSecureK0el
 
 branches:
   only:
-    - master
+    - travis
 
 before_script:
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install
+  - composer self-update
+  - composer install --prefer-source --no-interaction
+  - npm install
 
-script: phpunit
+script: 
+  - phpunit
+  - npm test
