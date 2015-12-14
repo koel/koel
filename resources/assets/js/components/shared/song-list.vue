@@ -318,7 +318,7 @@
 
                 // Set a fancy icon
                 var dragIcon = document.createElement('img');
-                dragIcon.src = '/public/img/drag-icon.png';
+                dragIcon.src = '/img/drag-icon.png';
                 dragIcon.width = 16;
 
                 e.dataTransfer.setDragImage(dragIcon, -10, -10);

@@ -7,7 +7,7 @@ export default [
                 id: 1193,
                 artist_id: 1,
                 name: "All-4-One",
-                cover: "/public/img/covers/565c0f7067425.jpeg",
+                cover: "/img/covers/565c0f7067425.jpeg",
                 songs: [
                     {
                         id: "39189f4545f9d5671fb3dc964f0080a0",
@@ -21,7 +21,7 @@ export default [
                 id: 1194,
                 artist_id: 1,
                 name: "And The Music Speaks",
-                cover: "/public/img/covers/unknown-album.png",
+                cover: "/img/covers/unknown-album.png",
                 songs: [
                     {
                         id: "a6a550f7d950d2a2520f9bf1a60f025a",
@@ -35,7 +35,7 @@ export default [
                 id: 1195,
                 artist_id: 1,
                 name: "Space Jam",
-                cover: "/public/img/covers/565c0f7115e0f.png",
+                cover: "/img/covers/565c0f7115e0f.png",
                 songs: [
                     {
                         id: "d86c30fd34f13c1aff8db59b7fc9c610",
@@ -55,7 +55,7 @@ export default [
                 id: 1217,
                 artist_id: 2,
                 name: "Highway 61 Revisited",
-                cover: "/public/img/covers/565c0f76dc6e8.jpeg",
+                cover: "/img/covers/565c0f76dc6e8.jpeg",
                 songs: [
                     {
                         id: "e6d3977f3ffa147801ca5d1fdf6fa55e",
@@ -69,7 +69,7 @@ export default [
                 id: 1218,
                 artist_id: 2,
                 name: "Pat Garrett & Billy the Kid",
-                cover: "/public/img/covers/unknown-album.png",
+                cover: "/img/covers/unknown-album.png",
                 songs: [
                     {
                         id: "aa16bbef6a9710eb9a0f41ecc534fad5",
@@ -83,7 +83,7 @@ export default [
                 id: 1219,
                 artist_id: 2,
                 name: "The Times They Are A-Changin'",
-                cover: "/public/img/covers/unknown-album.png",
+                cover: "/img/covers/unknown-album.png",
                 songs: [
                     {
                         id: "cb7edeac1f097143e65b1b2cde102482",
@@ -103,7 +103,7 @@ export default [
                 id: 1268,
                 artist_id: 3,
                 name: "Back To Bedlam",
-                cover: "/public/img/covers/unknown-album.png",
+                cover: "/img/covers/unknown-album.png",
                 songs: [
                     {
                         id: "0ba9fb128427b32683b9eb9140912a70",
