@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Facades\Media;
-use App\Models\Song;
 use App\Models\Album;
+use App\Models\Song;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Interaction;
 use App\Http\Requests\API\BatchInteractionRequest;
+use App\Models\Interaction;
 use Illuminate\Http\Request;
 
 class InteractionController extends Controller

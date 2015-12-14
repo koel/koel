@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
+use App\Console\Commands\SyncMedia;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
+use Exception;
 use getID3;
 use getid3_lib;
-use Exception;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Finder\Finder;
-use App\Console\Commands\SyncMedia;
+use Symfony\Component\Finder\SplFileInfo;
 
 class Media
 {
@@ -158,7 +158,7 @@ class Media
         // We'll still prefer getting ID3v2 tags directly later.
         // Read on.
         getid3_lib::CopyTagsToComments($info);
-        
+
         if (!isset($info['playtime_seconds'])) {
             return;
         }
