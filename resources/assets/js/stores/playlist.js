@@ -35,6 +35,7 @@ export default {
 
     store(name, songs, cb = null) {
         http.post('playlist', { name, songs }, playlist => {
+            playlist.songs = songs;
             this.getSongs(playlist);
             this.state.playlists.push(playlist);
 
