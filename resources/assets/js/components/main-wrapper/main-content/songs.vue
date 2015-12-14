@@ -11,13 +11,20 @@
             </span>
             
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button class="play-shuffle" @click.prevent="shuffle" v-if="state.songs.length">
+                <button 
+                    class="play-shuffle" 
+                    @click.prevent="shuffle" 
+                    v-if="state.songs.length && selectedSongs.length < 2"
+                >
                     <i class="fa fa-random"></i> All
+                </button>
+                <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
+                    <i class="fa fa-random"></i> Selected
                 </button>
             </div>
         </h1>
 
-        <song-list :items="state.songs"></song-list>
+        <song-list :items="state.songs" :selected-songs.sync="selectedSongs"></song-list>
     </section>
 </template>
 
@@ -27,8 +34,11 @@
     import songList from '../../shared/song-list.vue';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
+    import shuffleSelectedMixin from '../../../mixins/shuffle-selected';
 
     export default {
+        mixins: [shuffleSelectedMixin],
+
         components: { songList },
 
         data() {

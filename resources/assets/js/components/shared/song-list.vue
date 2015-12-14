@@ -76,7 +76,7 @@
     import playback from '../../services/playback';
 
     export default {
-        props: ['items', 'type', 'playlist'],
+        props: ['items', 'type', 'playlist', 'selectedSongs'],
         mixins: [infiniteScroll],
         components: { songItem },
 
@@ -140,7 +140,7 @@
              * Execute the corresponding reaction(s) when the user presses Delete.
              */
             handleDelete() {
-                var songs = this.getSelectedSongs();
+                var songs = this.selectedSongs;
 
                 if (!songs.length) {
                     return;
@@ -167,7 +167,7 @@
              * Execute the corresponding reaction(s) when the user presses Enter.
              */
             handleEnter(e) {
-                var songs = this.getSelectedSongs();
+                var songs = this.selectedSongs;
 
                 if (!songs.length) {
                     return;
@@ -229,21 +229,20 @@
                 }
 
                 $(this.$els.wrapper).find('.song-item').addClass('selected');
+                this.gatherSelected();
             },
 
             /**
-             * Get the currerntly selected songs.
+             * Gather all selected songs
              * 
-             * @return array An array of Song objects.
+             * @return array An array of Song object
              */
-            getSelectedSongs() {
-                var songs = [];
-
-                _.each($(this.$els.wrapper).find('.song-item.selected'), row => {
-                    songs.push(songStore.byId($(row).data('song-id')));
+            gatherSelected() {
+                var ids = _.map($(this.$els.wrapper).find('.song-item.selected'), row => {
+                    return $(row).data('song-id');
                 });
 
-                return songs;
+                this.selectedSongs = songStore.byIds(ids);
             },
 
 
@@ -280,6 +279,8 @@
                         this.selectRowsBetweenIndexes([this.lastSelectedRow.rowIndex, row.rowIndex])
                     }
                 }
+
+                this.gatherSelected();
             },
 
             toggleRow(row) {
@@ -312,7 +313,7 @@
 
                 // We can opt for something like application/x-koel.text+plain here to sound fancy,
                 // but forget it.
-                e.dataTransfer.setData('text/plain', _.pluck(this.getSelectedSongs(), 'id'));
+                e.dataTransfer.setData('text/plain', _.pluck(this.selectedSongs, 'id'));
                 e.dataTransfer.effectAllowed = 'move';
 
                 // Set a fancy icon
