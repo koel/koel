@@ -26,11 +26,7 @@ export default {
     init(albums, interactions = null) {
         this.albums = albums;
 
-        if (interactions) {
-            this.state.interactions = interactions;
-        } else {
-            this.state.interactions = sharedStore.state.interactions;
-        }
+        this.state.interactions = interactions ? interactions : sharedStore.state.interactions;
 
         // Iterate through the albums. With each, add its songs into our master song list.
         this.state.songs = _.reduce(albums, (songs, album) => {
@@ -78,9 +74,7 @@ export default {
      * @return array
      */
     byIds(ids) {
-        return _.filter(this.state.songs, song => {
-            return _.contains(ids, song.id);
-        });
+        return _.filter(this.state.songs, song => _.contains(ids, song.id));
     },
 
     /**
@@ -109,9 +103,7 @@ export default {
      */
     registerPlay(song) {
         // Increase playcount
-        http.post('interaction/play', { id: song.id }, data => {
-            song.playCount = data.play_count;
-        });
+        http.post('interaction/play', { id: song.id }, data => song.playCount = data.play_count);
     },
 
     /**

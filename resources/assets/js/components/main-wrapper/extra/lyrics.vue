@@ -17,14 +17,13 @@
              * Whenever a song is played, get its lyrics from store to display.
              * 
              * @param  object song The currently played song
+             * 
              * @return true
              */
             'song:play': function (song) {
                 this.lyrics = 'Loading…';
 
-                songStore.getLyrics(song, () => {
-                    this.lyrics = song.lyrics;
-                });
+                songStore.getLyrics(song, () => this.lyrics = song.lyrics);
 
                 return true;
             },

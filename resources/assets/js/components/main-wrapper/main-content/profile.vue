@@ -87,9 +87,7 @@
 
                     // "Save!" aaaaaaaand it's gone!
                     this.showStatus = true;
-                    setTimeout(() => {
-                        this.showStatus = false;    
-                    }, 3000)
+                    setTimeout(() => this.showStatus = false, 3000)
                 });
             },
 

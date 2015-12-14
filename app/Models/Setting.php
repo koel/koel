@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Facades\Media;
 use Illuminate\Database\Eloquent\Model;
-
 
 class Setting extends Model
 {
@@ -35,8 +33,7 @@ class Setting extends Model
      *
      * @param string|array $key   The key of the setting, or an associative array of settings,
      *                            in which case $value will be discarded.
-     * @param mixed $value
-     *
+     * @param mixed        $value
      */
     public static function set($key, $value = null)
     {

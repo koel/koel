@@ -24,7 +24,7 @@ class MediaServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        app()->singleton('Media', function() {
+        app()->singleton('Media', function () {
             return new Media();
         });
     }

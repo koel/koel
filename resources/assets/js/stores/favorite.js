@@ -62,9 +62,7 @@ export default {
         this.state.songs = _.union(this.state.songs, songs);
 
         http.post('interaction/batch/like', { ids: _.pluck(songs, 'id') }, data => {
-            _.each(songs, song => {
-                song.liked = true;
-            });
+            _.each(songs, song => song.liked = true);
 
             if (cb) {
                 cb();
@@ -81,9 +79,7 @@ export default {
         this.state.songs = _.difference(this.state.songs, songs);
 
         http.post('interaction/batch/unlike', { ids: _.pluck(songs, 'id') }, data => {
-            _.each(songs, song => {
-                song.liked = false;
-            });
+            _.each(songs, song => song.liked = false);
 
             if (cb) {
                 cb();

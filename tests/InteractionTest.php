@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Song;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use App\Models\User;
-use App\Models\Song;
 
 class InteractionTest extends TestCase
 {

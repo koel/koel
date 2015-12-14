@@ -93,10 +93,7 @@
             store() {
                 this.creating = false;
 
-                playlistStore.store(this.newName, [], () => {
-                    // Reset the v-model
-                    this.newName = '';
-                });
+                playlistStore.store(this.newName, [], () => this.newName = '');
             },
 
             /**
@@ -166,7 +163,7 @@
              * Handle songs dropped to our favorite or playlist menu item.
              * 
              * @param  object|null  playlist The playlist object, or null if dropping to Favorites.
-             * @param  objevt       e        The event
+             * @param  object       e        The event
              *
              * @return false
              */

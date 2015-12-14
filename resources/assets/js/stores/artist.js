@@ -15,11 +15,7 @@ export default {
      * @param  array artists The array of artists we got from the server.
      */
     init(artists = null) {
-        if (artists) {
-            this.state.artists = artists;
-        } else {
-            this.state.artists = sharedStore.state.artists;
-        }
+        this.state.artists = artists ? artists: sharedStore.state.artists;
 
         // Init the album store. This must be called prior to the next logic,
         // because we're using some data from the album store later.
@@ -29,9 +25,7 @@ export default {
         _.each(this.state.artists, artist => {
             this.getCover(artist);
             
-            artist.songCount = _.reduce(artist.albums, (count, album)  => {
-                return count + album.songs.length;
-            }, 0);
+            artist.songCount = _.reduce(artist.albums, (count, album)  => count + album.songs.length, 0);
         });
     },
 
@@ -48,9 +42,7 @@ export default {
      */
     getSongsByArtist(artist) {
         if (!artist.songs) {
-            artist.songs = _.reduce(artist.albums, (songs, album) => {
-                return songs.concat(album.songs);
-            }, []);
+            artist.songs = _.reduce(artist.albums, (songs, album) => songs.concat(album.songs), []);
         }
 
         return artist.songs;
