@@ -31,7 +31,7 @@
             <tbody>
                 <tr
                     v-for="item in items 
-                        | orderBy sortKey order
+                        | caseInsensitiveOrderBy sortKey order
                         | filterBy q in 'title' 'album.name' 'album.artist.name' 
                         | limitBy numOfItems"
                     is="song-item" 
