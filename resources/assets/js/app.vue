@@ -28,7 +28,6 @@
     import settingStore from './stores/setting';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
-    import utils from './services/utils';
 
     export default {
         components: { siteHeader, siteFooter, mainWrapper, overlay },
@@ -195,8 +194,8 @@
         var order = (reverse && reverse < 0) ? -1 : 1
         // sort on a copy to avoid mutating original array
         return arr.slice().sort(function (a, b) {
-            a = utils.isObject(a) ? utils.getPath(a, sortKey) : a
-            b = utils.isObject(b) ? utils.getPath(b, sortKey) : b
+            a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a
+            b = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, sortKey) : b
 
             a = a === undefined ? a : a.toLowerCase()
             b = b === undefined ? b : b.toLowerCase()
