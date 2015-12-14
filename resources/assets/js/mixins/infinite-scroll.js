@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
 /**
- * Add a "infinite scroll" functionality to any component using this plugin.
+ * Add a "infinite scroll" functionality to any component using this mixin.
  * Such a component should:
  * - have the parent DOM element defined as "wrapper": v-el:wrapper
  * - have a `scrolling` method bound to `scroll` event on such element: @scroll="scrolling"
