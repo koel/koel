@@ -17,6 +17,7 @@
              * Whenever a song is played, get its lyrics from store to display.
              * 
              * @param  object song The currently played song
+             * 
              * @return true
              */
             'song:play': function (song) {

@@ -46,6 +46,7 @@
              * When a new song is played, find it cover for the translucent effect.
              * 
              * @param  object song
+             * 
              * @return true
              */
             'song:play': function (song) {

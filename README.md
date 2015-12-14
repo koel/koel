@@ -1,4 +1,4 @@
-# koel [![Build Status](https://travis-ci.org/phanan/koel.svg)](https://travis-ci.org/phanan/koel)
+# koel
 
 ![Showcase](http://koel.phanan.net/dist/img/showcase.png)
 
