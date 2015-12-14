@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Player - Emtudo</title>
+        <title>Koel</title>
         <meta name="description" content="{{ config('app.tagline') }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
