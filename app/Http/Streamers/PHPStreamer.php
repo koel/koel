@@ -80,7 +80,7 @@ class PHPStreamer extends BaseStreamer implements StreamerInterface
 
         // Send standard headers
         header("Content-Type: {$this->contentType}");
-        header("Content-Length: $fileSize");
+        header("Content-Length: $length");
         header('Content-Disposition: attachment; filename="'.basename($this->song->path).'"');
         header('Accept-Ranges: bytes');
 
