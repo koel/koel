@@ -7,7 +7,7 @@
         <meta name="description" content="{{ config('app.tagline') }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="apple-touch-icon" href="/apple-touch-icon-precomposed.png">
+        <link rel="apple-touch-icon" href="public/img/apple-touch-icon-precomposed.png">
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100&subset=latin">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
