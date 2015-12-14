@@ -1,15 +1,7 @@
 <template>
     <section id="mainContent">
         <div class="translucent" :style="{ backgroundImage: albumCover ? 'url(' + albumCover + ')' : 'none' }"></div>
-        <songs v-show="view == 'songs'"></songs>
-        <queue v-show="view == 'queue'"></queue>
-        <albums v-show="view == 'albums'"></albums>
-        <artists v-show="view == 'artists'"></artists>
-        <users v-show="view == 'users'"></users>
-        <settings v-show="view == 'settings'"></settings>
-        <playlist v-show="view == 'playlist'"></playlist>
-        <favorites v-show="view == 'favorites'"></favorites>
-        <profile v-show="view == 'profile'"></profile>
+        <div :is="view"></div>
     </section>
 </template>
 
