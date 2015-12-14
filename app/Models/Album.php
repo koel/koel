@@ -69,7 +69,7 @@ class Album extends Model
     {
         $extension = explode('/', $cover['image_mime']);
         $fileName = uniqid().'.'.strtolower($extension[1]);
-        $coverPath = app()->publicPath().'/img/covers/'.$fileName;
+        $coverPath = public_path().'/img/covers/'.$fileName;
 
         file_put_contents($coverPath, $cover['data']);
 
@@ -83,7 +83,7 @@ class Album extends Model
 
     public function getCoverAttribute($value)
     {
-        return '/public/img/covers/'.($value ?: self::UNKNOWN_COVER);
+        return '/img/covers/'.($value ?: self::UNKNOWN_COVER);
     }
 
     /**
