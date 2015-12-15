@@ -57,9 +57,16 @@ class UserTest extends TestCase
     public function testDeleteUser()
     {
         $user = factory(User::class)->create();
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->delete("api/user/{$user->id}");
+        $admin = factory(User::class, 'admin')->create();
 
-        $this->notSeeInDatabase('users', ['id' => $user->id]);
+        $this->actingAs($admin)
+            ->delete("api/user/{$user->id}")
+            ->notSeeInDatabase('users', ['id' => $user->id]);
+
+        // A user can't delete himself
+        $this->actingAs($admin)
+            ->delete("api/user/{$admin->id}")
+            ->seeStatusCode(403)
+            ->seeInDatabase('users', ['id' => $admin->id]);
     }
 }

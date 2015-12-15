@@ -32,6 +32,7 @@ AuthenticatableContract,
     protected $guarded = ['id'];
 
     protected $casts = [
+        'id' => 'int',
         'is_admin' => 'bool',
     ];
 
