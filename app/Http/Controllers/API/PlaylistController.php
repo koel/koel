@@ -29,20 +29,15 @@ class PlaylistController extends Controller
      * Rename a playlist.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param Playlist                 $playlist
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Playlist $playlist)
     {
-        $playlist = Playlist::findOrFail($id);
+        $this->authorize('owner', $playlist);
 
-        if ($playlist->user_id !== auth()->user()->id) {
-            abort(403);
-        }
-
-        $playlist->name = $request->input('name');
-        $playlist->save();
+        $playlist->update($request->only('name'));
 
         return response()->json($playlist);
     }
@@ -52,17 +47,13 @@ class PlaylistController extends Controller
      * Any songs that are not populated here will be removed from the playlist.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param Playlist                 $playlist
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sync(Request $request, $id)
+    public function sync(Request $request, Playlist $playlist)
     {
-        $playlist = Playlist::findOrFail($id);
-
-        if ($playlist->user_id !== auth()->user()->id) {
-            abort(403);
-        }
+        $this->authorize('owner', $playlist);
 
         $playlist->songs()->sync($request->input('songs'));
 
@@ -72,18 +63,15 @@ class PlaylistController extends Controller
     /**
      * Delete a playlist.
      *
-     * @param int $id
+     * @param Playlist $playlist
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Playlist $playlist)
     {
-        // This can't be put into a Request authorize(), due to Laravel(?)'s limitation.
-        if (Playlist::findOrFail($id)->user_id !== auth()->user()->id) {
-            abort(403);
-        }
+        $this->authorize('owner', $playlist);
 
-        Playlist::destroy($id);
+        $playlist->delete();
 
         return response()->json();
     }

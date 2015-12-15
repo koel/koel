@@ -23,7 +23,7 @@ class UserUpdateRequest extends Request
     {
         return [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$this->route('user'),
+            'email' => 'required|email|unique:users,email,'.$this->route('user')->id,
         ];
     }
 }
