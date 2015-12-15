@@ -138,9 +138,6 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        PhanAn\CascadingConfig\CascadingConfigServiceProvider::class,
-        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-
         /*
          * Application Service Providers...
          */
@@ -149,6 +146,12 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\MediaServiceProvider::class,
+        
+        /**
+         * 3rd Party Service Providers...
+         */
+        PhanAn\CascadingConfig\CascadingConfigServiceProvider::class,
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
     ],
 
@@ -198,7 +201,10 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
-
+ 
+        /**
+         * 3rd Party Class Aliases...
+         */
         'Media' => App\Facades\Media::class,
 
     ],
