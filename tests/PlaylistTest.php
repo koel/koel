@@ -89,7 +89,7 @@ class PlaylistTest extends TestCase
 
         $this->actingAs($user2)
             ->put("api/playlist/{$playlist->id}/sync", [
-            'songs' => array_pluck($songs->toArray(), 'id'),
+                'songs' => array_pluck($songs->toArray(), 'id'),
             ])
             ->seeStatusCode(403);
 

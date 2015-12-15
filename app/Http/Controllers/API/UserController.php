@@ -34,7 +34,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UserUpdateRequest $request, $user)
+    public function update(UserUpdateRequest $request, User $user)
     {
         $data = $request->only('name', 'email');
 
