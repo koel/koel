@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\PlaylistStoreRequest;
+use App\Http\Requests\API\PlaylistUpdateRequest;
 use App\Models\Playlist;
 use Illuminate\Http\Request;
 
@@ -28,12 +29,12 @@ class PlaylistController extends Controller
     /**
      * Rename a playlist.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param PlaylistUpdateRequest $request
+     * @param int                   $id
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(PlaylistUpdateRequest $request, $id)
     {
         $playlist = Playlist::findOrFail($id);
 
