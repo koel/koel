@@ -26,4 +26,15 @@ export default {
 
         return (h === '00' ? '' : h + ':') + i + ':' + s;
     },
+
+    /**
+     * Parse the validation error from the server into a flattened array of messages.
+     * 
+     * @param  {Object}  error  The error object in JSON format.
+     *                                    
+     * @return {Array}
+     */
+    parseValidationError(error) {
+        return Object.keys(error).reduce((messages, field) => messages.concat(error[field]), []);
+    }
 };

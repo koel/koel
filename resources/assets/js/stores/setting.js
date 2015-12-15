@@ -17,11 +17,11 @@ export default {
         return this.state.settings;
     },
 
-    update(cb = null) {
+    update(cb = null, error = null) {
         http.post('settings', this.all(), msg => {
             if (cb) {
                 cb();
             }
-        });
+        }, { error });
     },
 };

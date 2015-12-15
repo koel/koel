@@ -22,7 +22,7 @@ class SettingRequest extends Request
     public function rules()
     {
         return [
-            'media_path' => 'string|required|valid_path',
+            'media_path' => 'string|required|path.valid',
         ];
     }
 }

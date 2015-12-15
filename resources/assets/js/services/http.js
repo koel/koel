@@ -10,13 +10,13 @@ import { extend } from 'lodash';
  */
 export default {
     request(method, url, data, cb = null, options = {}) {
-        options = extend(options, {
+        options = extend({
             error: (data, status, request) => {
                 if (status === 401) {
                     document.location.href = "/login";
                 }
             },
-        });
+        }, options);
 
         switch (method) {
             case 'get':

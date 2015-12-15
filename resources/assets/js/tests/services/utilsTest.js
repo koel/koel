@@ -12,4 +12,23 @@ describe('services/utils', () => {
             utils.secondsToHis(314).should.equal('05:14');
         });
     });
+
+    describe('#parseValidationError', () => {
+        it('correctly parses single-level validation error', () => {
+            let error = {
+                err_1: ['Foo'],
+            };
+
+            utils.parseValidationError(error).should.eql(['Foo']);
+        });
+
+        it('correctly parses multi-level validation error', () => {
+            let error = {
+                err_1: ['Foo', 'Bar'],
+                err_2: ['Baz', 'Qux'],
+            };
+
+            utils.parseValidationError(error).should.eql(['Foo', 'Bar', 'Baz', 'Qux']);
+        });
+    });
 });

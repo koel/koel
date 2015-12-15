@@ -77,6 +77,10 @@ return [
     'unique'               => 'The :attribute has already been taken.',
     'url'                  => 'The :attribute format is invalid.',
 
+    'path'                 => [
+        'valid'   => 'The :attribute is not a valid or readable path.',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -89,9 +93,7 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
+        
     ],
 
     /*

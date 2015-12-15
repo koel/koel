@@ -1,7 +1,16 @@
 <template>
-    <div id="overlay">
-        <sound-bar></sound-bar>
-        <span class="gnr">Just a little patience…</span>
+    <div id="overlay" v-show="state.showing" class="{{ state.type }}">
+        <div class="display">
+            <sound-bar v-show="state.type === 'loading'"></sound-bar>
+            <i class="fa fa-exclamation-circle" v-show="state.type === 'error'"></i>
+            <i class="fa fa-exclamation-triangle" v-show="state.type === 'warning'"></i>
+            <i class="fa fa-info-circle" v-show="state.type === 'info'"></i>
+            <i class="fa fa-check-circle" v-show="state.type === 'success'"></i>
+
+            <span>{{{ state.message }}}</span>
+        </div>
+
+        <button v-show="state.dismissable" @click.prevent="state.showing = false">Close</button>
     </div>
 </template>
 
@@ -9,6 +18,7 @@
     import soundBar from './sound-bar.vue';
 
     export default {
+        props: ['state'],
         components: { soundBar },
     };
 </script>
@@ -27,9 +37,39 @@
         background-color: rgba(0, 0, 0, 1);
 
         @include vertical-center();
+        flex-direction: column;
 
-        .gnr {
-            opacity: .7;
+        .display {
+            @include vertical-center();
+
+            i {
+                margin-right: 6px;
+            }
+        }
+
+        button {
+            font-size: 12px;
+            margin-top: 16px;
+        }
+
+        &.error {
+            color: $colorRed;
+        }
+
+        &.success {
+            color: $colorGreen;
+        }
+
+        &.info {
+            color: $colorBlue;
+        }
+
+        &.loading {
+            color: $color2ndText;
+        }
+
+        &.warning {
+            color: $colorOrange;
         }
     }
 </style>

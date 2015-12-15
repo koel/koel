@@ -26,6 +26,7 @@
 
 <script>
     import settingStore from '../../../stores/setting';
+    import utils from '../../../services/utils';
 
     export default {
         data() {
@@ -39,7 +40,7 @@
              * Save the settings.
              */
             save() {
-                this.$root.toggleOverlay();
+                this.$root.showOverlay();
 
                 settingStore.update(() => {
                     // Data changed. 
@@ -48,6 +49,12 @@
                     // We need refresh the page.
                     // Goodbye.
                     document.location.reload();
+                }, (error, status) => {
+                    if (status === 422) {
+                        error = utils.parseValidationError(error)[0];
+                    }
+
+                    this.$root.showOverlay(`Error: ${error}`, 'error', true);
                 });
             },
         },

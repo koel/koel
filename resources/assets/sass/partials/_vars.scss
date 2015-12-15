@@ -10,6 +10,7 @@ $colorHeart: #bf2043;
 $colorGreen: #56a052;
 $colorBlue: #4c769a;
 $colorRed: #c34848;
+$colorOrange: #ff7d2e;
 
 $colorSidebarBgr: #212121;
 $colorExtraBgr: #212121;
@@ -19,7 +20,7 @@ $colorPlayerControlsBgr: transparent;
 $colorLink: #aaa;
 $colorLinkHovered: #fff;
 
-$colorHighlight: #ff7d2e;
+$colorHighlight: $colorOrange;
 
 $fontFamily: 'Roboto', sans-serif;
 $fontSize: 13px;
