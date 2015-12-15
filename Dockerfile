@@ -14,4 +14,4 @@ RUN su - www-data -c 'cd /var/www/html/ && npm install'
 RUN su root
 RUN composer install
 RUN chsh -s /usr/sbin/nologin www-data
-RUN php artisan key:generate
+RUN php artisan key:generate && php artisan config:clear
