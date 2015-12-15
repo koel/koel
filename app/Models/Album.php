@@ -69,7 +69,7 @@ class Album extends Model
     {
         $extension = explode('/', $cover['image_mime']);
         $fileName = uniqid().'.'.strtolower($extension[1]);
-        $coverPath = app()->publicPath().'/img/covers/'.$fileName;
+        $coverPath = app()->publicPath().'/public/img/covers/'.$fileName;
 
         file_put_contents($coverPath, $cover['data']);
 
