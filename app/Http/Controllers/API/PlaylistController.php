@@ -29,7 +29,7 @@ class PlaylistController extends Controller
      * Rename a playlist.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param Playlist                 $playlist
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -47,7 +47,7 @@ class PlaylistController extends Controller
      * Any songs that are not populated here will be removed from the playlist.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param Playlist                 $playlist
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -63,7 +63,7 @@ class PlaylistController extends Controller
     /**
      * Delete a playlist.
      *
-     * @param int $id
+     * @param Playlist $playlist
      *
      * @return \Illuminate\Http\JsonResponse
      */

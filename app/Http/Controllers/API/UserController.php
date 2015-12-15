@@ -30,7 +30,7 @@ class UserController extends Controller
      * Update a user.
      *
      * @param UserUpdateRequest $request
-     * @param int               $id
+     * @param User              $user
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -48,7 +48,7 @@ class UserController extends Controller
     /**
      * Delete a user.
      *
-     * @param int $id
+     * @param User $user
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -61,7 +61,7 @@ class UserController extends Controller
 
     /**
      * Update the current user's profile.
-     * 
+     *
      * @param ProfileUpdateRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
