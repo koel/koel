@@ -47,9 +47,7 @@ class Init extends Command
         $this->info('php artisan serve');
         
         Artisan::call('serve');
-
-        $this->comment('\nProject initialized.');
         
-        $this->comment('\nNow, from the web interface, go to Settings and enter the path to your songs. Click "Save", and that’s it.');
+        $this->comment('Now, from the web interface, go to Settings and enter the path to your songs. Click "Save", and that’s it.');
     }
 }
