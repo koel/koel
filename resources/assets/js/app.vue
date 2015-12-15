@@ -187,13 +187,15 @@
      *
      * @source https://github.com/vuejs/vue/blob/dev/src/filters/array-filters.js
      */
-    Vue.filter('caseInsensitiveOrderBy', function (arr, sortKey, reverse) {
+    Vue.filter('caseInsensitiveOrderBy', (arr, sortKey, reverse) => {
         if (!sortKey) {
-            return arr
+            return arr;
         }
+
         var order = (reverse && reverse < 0) ? -1 : 1
+        
         // sort on a copy to avoid mutating original array
-        return arr.slice().sort(function (a, b) {
+        return arr.slice().sort((a, b) => {
             a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a
             b = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, sortKey) : b
 
@@ -201,7 +203,7 @@
             b = b === undefined ? b : b.toLowerCase()
 
             return a === b ? 0 : a > b ? order : -order
-        })
+        });
     });
 
     // Register the global directives
