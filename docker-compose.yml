@@ -9,7 +9,7 @@ web:
   links:
     - db:db
   ports:
-    - 5000:80
+    - 8000:80
   volumes:
-    - ~/Music:/music
+    - ~/Music:/home/koel/media
   command: apache2-foreground

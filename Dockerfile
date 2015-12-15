@@ -10,8 +10,13 @@ RUN apt-get install --reinstall zlibc zlib1g zlib1g-dev \
 COPY . /var/www/html/
 RUN mkdir -p /var/www/ && chown -R www-data:www-data /var/www/
 RUN chsh -s /bin/bash www-data
-RUN su - www-data -c 'cd /var/www/html/ && npm install'
+RUN su - www-data -c 'git config --global url."https://".insteadOf git://'
+RUN su - www-data -c 'cd /var/www/html/ && npm install && composer install'
 RUN su root
-RUN composer install
 RUN chsh -s /usr/sbin/nologin www-data
-RUN php artisan key:generate && php artisan config:clear
+ENV APACHE_LOG_DIR /var/log/apache2
+ADD apache.conf /etc/apache2/sites-available/000-default.conf
+RUN /bin/ln -sf /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-enabled/000-default.conf
+RUN a2enmod rewrite
+RUN a2enmod headers
+RUN php artisan key:generate
