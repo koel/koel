@@ -40,6 +40,14 @@ class Init extends Command
 
         Artisan::call('db:seed', ['--force' => true]);
 
-        $this->comment("\nProject initialized.");
+        $this->info('npm install');
+
+        exec('npm install');
+
+        $this->info('php artisan serve');
+
+        Artisan::call('serve');
+
+        $this->comment('Now, from the web interface, go to Settings and enter the path to your songs. Click "Save", and that’s it.');
     }
 }
