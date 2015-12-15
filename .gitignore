@@ -3,13 +3,18 @@
 Homestead.yaml
 Homestead.json
 .env
-/public
 /.idea
 /_ide_helper.php
 /config.testing
 /config.local
 db.mwb.bak
 bower_components
+
+### All in public except ###
+/public/*
+!/public/.htaccess
+!/public/index.php
+
 
 ### Node ###
 # Logs
