@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Facades\Media;
+use App\Events\MediaPathChanged;
 use App\Http\Requests\API\SettingRequest;
 use App\Models\Setting;
 
@@ -20,9 +20,7 @@ class SettingController extends Controller
         // For right now there's only one setting to be saved
         Setting::set('media_path', rtrim(trim($request->input('media_path')), '/'));
 
-        // In a next version we should opt for a "MediaPathChanged" event,
-        // but let's just do this async now.
-        Media::sync();
+        event(new MediaPathChanged(Setting::get('media_path')));
 
         return response()->json();
     }
