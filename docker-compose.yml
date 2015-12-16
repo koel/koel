@@ -12,4 +12,3 @@ web:
     - 8000:80
   volumes:
     - ~/Music:/home/koel/media
-  command: apache2-foreground
