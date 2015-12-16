@@ -9,12 +9,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && docker-php-ext-install mbstring zip pdo pdo_mysql\
     && npm install -g bower gulp
-COPY . /var/www/html/
-RUN mkdir -p /var/www/ \
-    && chown -R www-data:www-data /var/www/ \
-    && chsh -s /bin/bash www-data \
-    && su - www-data -c 'git config --global url."https://".insteadOf git:// \
+RUN git clone -q https://github.com/phanan/koel .
+COPY .env /var/www/html/
+RUN adduser --gecos '' --disabled-password koel \
+    && chown -R koel /var/www/html \
+    && su koel -c 'git config --global url."https://".insteadOf git:// \
     && cd /var/www/html/ && npm install && composer install' \
-    && chsh -s /usr/sbin/nologin www-data \
     && a2enmod rewrite \
     && php artisan key:generate
