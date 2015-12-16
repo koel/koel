@@ -12,9 +12,9 @@ RUN apt-get update \
 COPY . /var/www/html/
 RUN mkdir -p /var/www/ \
     && chown -R www-data:www-data /var/www/ \
-    && chsh -s /bin/bash www-data
-RUN su - www-data -c 'git config --global url."https://".insteadOf git:// \
-    && cd /var/www/html/ && npm install && composer install'
-RUN chsh -s /usr/sbin/nologin www-data
-RUN a2enmod rewrite
-RUN php artisan key:generate
+    && chsh -s /bin/bash www-data \
+    && su - www-data -c 'git config --global url."https://".insteadOf git:// \
+    && cd /var/www/html/ && npm install && composer install' \
+    && chsh -s /usr/sbin/nologin www-data \
+    && a2enmod rewrite \
+    && php artisan key:generate
