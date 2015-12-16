@@ -84,6 +84,6 @@ class SyncMedia extends Command
             $this->error("$name is not a valid media file");
         }
 
-        ++$this->invalid;        
+        ++$this->invalid;
     }
 }
