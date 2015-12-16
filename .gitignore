@@ -37,11 +37,6 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directory
-# https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
-node_modules
-
-
 ### OSX ###
 .DS_Store
 .AppleDouble
@@ -49,7 +44,6 @@ node_modules
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*
@@ -68,7 +62,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
 
 ### Sass ###
 .sass-cache/
