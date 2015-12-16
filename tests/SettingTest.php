@@ -52,7 +52,7 @@ class SettingTest extends TestCase
 
         $this->actingAs($user)
             ->post('api/settings', [
-                'media_path' => $this->mediaPath . '/',
+                'media_path' => $this->mediaPath.'/',
             ])
             ->assertResponseOk();
 

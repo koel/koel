@@ -11,7 +11,8 @@ class SyncMediaListener implements ShouldQueue
     /**
      * Handle the MediaPathChanged event.
      *
-     * @param  MediaPathChanged  $event
+     * @param MediaPathChanged $event
+     *
      * @return void
      */
     public function handle(MediaPathChanged $event)

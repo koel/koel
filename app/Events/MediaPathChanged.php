@@ -2,8 +2,6 @@
 
 namespace App\Events;
 
-use App\Events\Event;
-
 class MediaPathChanged extends Event
 {
     /**
