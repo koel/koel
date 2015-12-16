@@ -31,11 +31,3 @@
     # Disable deflation for media files.
     SetEnvIfNoCase Request_URI "^/api/play/" no-gzip dont-vary
 </IfModule>
-
-<IfModule mod_xsendfile.c>
-    # Set a MOD_X_SENDFILE_ENABLED env variable for PHP to use later.
-    <Files *.php>
-        XSendFile On
-        SetEnv MOD_X_SENDFILE_ENABLED 1
-    </Files>
-</IfModule>

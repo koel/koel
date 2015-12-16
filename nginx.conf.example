@@ -1,8 +1,8 @@
 server {
-  listen                *:8080;
-  server_name           koel.dev;
-  root                  /Users/an/www/koel;
-  index                 index.php;
+  listen        *:8080;
+  server_name	koel.dev;
+  root          /var/www/koel;
+  index         index.php;
 
   # Deny access to dotfiles
   location ~ /\. {
@@ -18,27 +18,27 @@ server {
     internal;
 
     # A 'X-Media-Root' should be set to media_path settings from upstream
-    alias $upstream_http_x_media_root;
+    alias 	$upstream_http_x_media_root;
 
-    #access_log         /var/log/nginx/koel.access.log;
-    #error_log          /var/log/nginx/koel.error.log;
+    #access_log	/var/log/nginx/koel.access.log;
+    #error_log 	/var/log/nginx/koel.error.log;
   }
 
   location / {
-    try_files  $uri  $uri/  /index.php?$args;
+    try_files $uri $uri/ /index.php?$args;
   }
 
   location ~ \.php$ {
-    try_files  $uri  $uri/  /index.php?$args;
+    try_files $uri $uri/ /index.php?$args;
 
-    fastcgi_param PATH_INFO $fastcgi_path_info;
-    fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param 		PATH_INFO $fastcgi_path_info;
+    fastcgi_param	 	PATH_TRANSLATED $document_root$fastcgi_path_info;
+    fastcgi_param 		SCRIPT_FILENAME $document_root$fastcgi_script_name;
 
-    fastcgi_pass 127.0.0.1:9000;
-    fastcgi_index index.php;
-    fastcgi_split_path_info ^(.+\.php)(/.+)$;
-    fastcgi_intercept_errors on;
-    include fastcgi_params;
+    fastcgi_pass 		127.0.0.1:9000;
+    fastcgi_index 		index.php;
+    fastcgi_split_path_info 	^(.+\.php)(/.+)$;
+    fastcgi_intercept_errors 	on;
+    include 			fastcgi_params;
   }
 }
