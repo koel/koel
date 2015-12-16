@@ -102,8 +102,8 @@ class Album extends Model
      *
      * @param $value
      */
-    public function setNameAttribute($value)
+    public function getNameAttribute($value)
     {
-        $this->attributes['name'] = html_entity_decode($value);
+        return html_entity_decode($value);
     }
 }

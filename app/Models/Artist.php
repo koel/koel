@@ -21,9 +21,15 @@ class Artist extends Model
         return $this->hasMany(Album::class);
     }
 
+    /**
+     * Sometimes the tags extracted from getID3 are HTML entity encoded.
+     * This makes sure they are always sane.
+     *
+     * @param $value
+     */
     public function getNameAttribute($value)
     {
-        return $value ?: self::UNKNOWN_NAME;
+        return html_entity_decode($value ?: self::UNKNOWN_NAME);
     }
 
     /**
@@ -39,16 +45,5 @@ class Artist extends Model
         $name = trim($name) ?: self::UNKNOWN_NAME;
 
         return self::firstOrCreate(compact('name'), compact('name'));
-    }
-
-    /**
-     * Sometimes the tags extracted from getID3 are HTML entity encoded.
-     * This makes sure they are always sane.
-     *
-     * @param $value
-     */
-    public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = html_entity_decode($value);
     }
 }
