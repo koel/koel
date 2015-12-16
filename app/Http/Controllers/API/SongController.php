@@ -11,6 +11,7 @@ class SongController extends Controller
 {
     /**
      * Play a song.
+     *
      * @link https://github.com/phanan/koel/wiki#streaming-music
      *
      * @param $id
