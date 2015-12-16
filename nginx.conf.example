@@ -1,0 +1,30 @@
+server {
+        listen   80 default_server;
+
+        root /var/www/html/;
+        index index.php index.html index.htm;
+
+        location / {
+             try_files $uri $uri/ /index.php$is_args$args;
+        }
+
+        # pass the PHP scripts to FastCGI server listening on /var/run/php5-fpm.sock
+        location ~ \.php$ {
+                try_files $uri /index.php =404;
+                fastcgi_pass 127.0.0.1:9000;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi_params;
+        }
+        
+        location /media {
+                internal;
+                alias /home/koel/media;
+        }
+        
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        location ~ /\.ht {
+                deny  all;
+        }
+}

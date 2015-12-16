@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Streamers\PHPStreamer;
 use App\Http\Streamers\XSendFileStreamer;
+use App\Http\Streamers\XAccelRedirectStreamer;
 use App\Models\Song;
 
 class SongController extends Controller
@@ -16,6 +17,12 @@ class SongController extends Controller
      */
     public function play($id)
     {
+        if (env('MOD_X_ACCEL_REDIRECT_ENABLED')) {
+            (new XAccelRedirectStreamer($id))->stream();
+
+            return;
+        }
+        
         if (env('MOD_X_SENDFILE_ENABLED')) {
             (new XSendFileStreamer($id))->stream();
 
