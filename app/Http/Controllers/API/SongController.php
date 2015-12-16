@@ -11,7 +11,7 @@ class SongController extends Controller
 {
     /**
      * Play a song.
-     * As of current Koel supports two streamer: x_sendfile and native PHP readfile.
+     * @link https://github.com/phanan/koel/wiki#streaming-music
      *
      * @param $id
      */
