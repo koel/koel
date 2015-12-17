@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Facades\Util;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int id The model ID
