@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Artist;
-use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ArtistTest extends TestCase
@@ -34,12 +33,12 @@ class ArtistTest extends TestCase
         $this->assertEquals(Artist::UNKNOWN_NAME, Artist::get('')->name);
     }
 
-    public function testNameWithWeirdCharacters()
+    public function testUtf16Names()
     {
-        // Don't really think this is even necessary if the user has set a proper utf8 encoding
-        // for the database.
-        $name = '��Ой°Ы&囧rz';
-        $artist = factory(Artist::class)->create(['name' => $name]);
+        $name = file_get_contents(dirname(__FILE__) . '/stubs/utf16');
+
+        $artist = Artist::get($name);
+        $artist = Artist::get($name); // to make sure there's no constraint exception
 
         $this->assertEquals($artist->id, Artist::get($name)->id);
     }
