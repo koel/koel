@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Facades\Util;
 
 /**
  * @property int id The model ID
@@ -26,6 +27,8 @@ class Artist extends Model
      * This makes sure they are always sane.
      *
      * @param $value
+     *
+     * @return string
      */
     public function getNameAttribute($value)
     {
@@ -42,6 +45,11 @@ class Artist extends Model
      */
     public static function get($name)
     {
+        // Remove the BOM from UTF-8/16/32, as it will mess up the database constraints.
+        if ($encoding = Util::detectUTFEncoding($name)) {
+            $name = iconv($encoding, 'UTF-8//IGNORE', $name);
+        }
+
         $name = trim($name) ?: self::UNKNOWN_NAME;
 
         return self::firstOrCreate(compact('name'), compact('name'));
