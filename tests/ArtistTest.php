@@ -4,7 +4,7 @@ use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class InteractionTest extends TestCase
+class ArtistTest extends TestCase
 {
     use DatabaseTransactions;
 
