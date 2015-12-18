@@ -47,7 +47,7 @@ class Artist extends Model
     {
         // Remove the BOM from UTF-8/16/32, as it will mess up the database constraints.
         if ($encoding = Util::detectUTFEncoding($name)) {
-            $name = iconv($encoding, 'UTF-8//IGNORE', $name);
+            $name = mb_convert_encoding($name, 'UTF-8', $encoding);
         }
 
         $name = trim($name) ?: self::UNKNOWN_NAME;
