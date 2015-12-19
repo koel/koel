@@ -41,9 +41,9 @@ class SongController extends Controller
     }
 
     /**
-     * Get extra information about a song via Last.fm
+     * Get extra information about a song via Last.fm.
      * 
-     * @param  string $id
+     * @param string $id
      *
      * @return \Illuminate\Http\JsonResponse
      */

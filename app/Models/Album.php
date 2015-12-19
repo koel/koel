@@ -106,7 +106,7 @@ class Album extends Model
      * Write a cover image file with binary data and update the Album with the new cover file.
      *
      * @param string $binaryData
-     * @param string $extension The file extension
+     * @param string $extension  The file extension
      */
     private function writeCoverFile($binaryData, $extension)
     {
