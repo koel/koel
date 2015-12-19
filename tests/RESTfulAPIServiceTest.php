@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use App\Services\RESTfulService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use App\Services\RESTfulService;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class RESTfulAPIServiceTest extends TestCase
 {

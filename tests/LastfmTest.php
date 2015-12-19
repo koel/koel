@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use App\Services\Lastfm;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use App\Services\Lastfm;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class LastfmTest extends TestCase
 {
