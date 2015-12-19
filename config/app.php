@@ -150,6 +150,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\MediaServiceProvider::class,
         App\Providers\UtilServiceProvider::class,
+        App\Providers\LastfmServiceProvider::class,
 
     ],
 
@@ -202,6 +203,7 @@ return [
 
         'Media' => App\Facades\Media::class,
         'Util' => App\Facades\Util::class,
+        'Lastfm' => App\Facades\Lastfm::class,
 
     ],
 

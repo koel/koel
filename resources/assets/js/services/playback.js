@@ -3,6 +3,8 @@ import $ from 'jquery';
 
 import queueStore from '../stores/queue';
 import songStore from '../stores/song';
+import artistStore from '../stores/artist';
+import albumStore from '../stores/album';
 import preferenceStore from '../stores/preference';
 import config from '../config';
 
@@ -293,5 +295,25 @@ export default {
         }
 
         this.play(queueStore.first());
+    },
+
+    /**
+     * Play all songs by an artist.
+     * 
+     * @param  {Object}  artist  The artist object
+     * @param  {Boolean} shuffle Whether to shuffle the songs
+     */
+    playAllByArtist(artist, shuffle = true) {
+        this.queueAndPlay(artistStore.getSongsByArtist(artist), true);
+    },
+
+    /**
+     * Play all songs in an album.
+     * 
+     * @param  {Object}  album   The album object
+     * @param  {Boolean} shuffle Whether to shuffle the songs
+     */
+    playAllInAlbum(album, shuffle = true) {
+        this.queueAndPlay(album.songs, true);
     },
 };

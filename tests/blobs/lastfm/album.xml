@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<lfm status="ok"><album><name>Epica</name>
+<artist>Kamelot</artist>
+<mbid>4c5b22d5-e901-3e0c-89b1-ded24953449a</mbid>
+<url>http://www.last.fm/music/Kamelot/Epica</url>
+<image size="small">http://foo.bar/small.jpg</image>
+<image size="medium">http://foo.bar/medium.jpg</image>
+<image size="large">http://foo.bar/large.jpg</image>
+<image size="extralarge">http://foo.bar/extralarge.jpg</image>
+<image size="mega">http://foo.bar/mega.jpg</image>
+<image size="">http://foo.bar/fuckisthis.jpg</image>
+<listeners>184505</listeners>
+<playcount>4433646</playcount>
+<tracks><track rank="1"><name>Track 1</name>
+<url>http://foo/track1</url>
+<duration>100</duration>
+<streamable fulltrack="0">0</streamable>
+<artist><name>Kamelot</name>
+<mbid>46f4cd77-8870-4ad8-a205-1bee18901d0f</mbid>
+<url>http://www.last.fm/music/Kamelot</url>
+</artist>
+</track>
+<track rank="2"><name>Track 2</name>
+<url>http://foo/track2</url>
+<duration>150</duration>
+<streamable fulltrack="0">0</streamable>
+<artist><name>Kamelot</name>
+<mbid>46f4cd77-8870-4ad8-a205-1bee18901d0f</mbid>
+<url>http://www.last.fm/music/Kamelot</url>
+</artist>
+</track>
+</tracks>
+<tags><tag><name>Power metal</name>
+<url>http://www.last.fm/tag/Power+metal</url>
+</tag>
+<tag><name>symphonic metal</name>
+<url>http://www.last.fm/tag/symphonic+metal</url>
+</tag>
+<tag><name>Progressive metal</name>
+<url>http://www.last.fm/tag/Progressive+metal</url>
+</tag>
+<tag><name>Melodic Power Metal</name>
+<url>http://www.last.fm/tag/Melodic+Power+Metal</url>
+</tag>
+<tag><name>albums I own</name>
+<url>http://www.last.fm/tag/albums+I+own</url>
+</tag>
+</tags>
+<wiki><published>03 Sep 2008, 01:16</published>
+<summary>Quisque ut nisi.</summary>
+<content>Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.</content>
+</wiki>
+</album>
+</lfm>

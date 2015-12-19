@@ -27,7 +27,7 @@
              * Play all songs by the current artist.
              */
             play() {
-                playback.queueAndPlay(artistStore.getSongsByArtist(this.artist));
+                playback.playAllByArtist(this.artist);
             },
         },
     };

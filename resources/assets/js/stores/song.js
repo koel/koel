@@ -107,13 +107,14 @@ export default {
     },
 
     /**
-     * Get a song's lyrics.
-     * A HTTP request will be made if the song has no lyrics attribute yet.
+     * Get extra song information (lyrics, artist info, album info).
      * 
-     * @param  object   song
-     * @param  function cb
+     * @param  {Object} song 
+     * @param  {Function} cb 
+     * 
+     * @return {Object}
      */
-    getLyrics(song, cb = null) {
+    getInfo(song, cb = null) {
         if (!_.isUndefined(song.lyrics)) {
             if (cb) {
                 cb();
@@ -122,12 +123,31 @@ export default {
             return;
         }
 
-        http.get(`${song.id}/lyrics`, lyrics => {
-            song.lyrics = lyrics;
+        http.get(`${song.id}/info`, data => {
+            song.lyrics = data.lyrics;
+
+            // If the artist image is not in a nice form, don't use it.
+            if (data.artist_info && typeof data.artist_info.image !== 'string') {
+                data.artist_info.image = null;
+            }
+            
+            song.album.artist.info = data.artist_info;
+
+            // Convert the duration into i:s
+            if (data.album_info && data.album_info.tracks) {
+                _.each(data.album_info.tracks, track => track.fmtLength = utils.secondsToHis(track.length));
+            }
+
+            // If the album cover is not in a nice form, don't use it.
+            if (data.album_info && typeof data.album_info.image !== 'string') {
+                data.album_info.image = null;
+            }
+
+            song.album.info = data.album_info;
 
             if (cb) {
                 cb();
             }
         });
-    }
+    },
 };

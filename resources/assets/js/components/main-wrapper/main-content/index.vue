@@ -83,43 +83,9 @@
 
             .buttons {
                 text-align: right;
-                position: relative;
                 z-index: 2;
-                display: flex;
 
-                button {
-                    $buttonHeight: 28px;
-                    background-color: $colorHighlight;
-                    font-size: 12px;
-                    height: $buttonHeight;
-                    padding: 0 16px;
-                    line-height: $buttonHeight;
-                    text-transform: uppercase;
-                    display: inline-block;
-
-                    border-radius: $buttonHeight/2 0px 0px $buttonHeight/2;
-
-                    &:last-of-type {
-                        border-top-right-radius: $buttonHeight/2;
-                        border-bottom-right-radius: $buttonHeight/2;
-                    }
-
-                    &:not(:first-child) {
-                        border-top-left-radius: 0;
-                        border-bottom-left-radius: 0;
-                        margin-left: 1px;
-                    }
-                    
-                    i {
-                        margin-right: 4px;
-                    }
-
-                    &:hover {
-                        background-color: darken($colorHighlight, 10%);
-                    }
-
-                    @include inset-when-pressed();
-                }
+                @include button-group();
             }
 
             input[type="search"] {

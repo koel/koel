@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<lfm status="ok"><artist><name>Kamelot</name>
+<mbid>46f4cd77-8870-4ad8-a205-1bee18901d0f</mbid>
+<url>http://www.last.fm/music/Kamelot</url>
+<image size="small">http://foo.bar/small.jpg</image>
+<image size="medium">http://foo.bar/medium.jpg</image>
+<image size="large">http://foo.bar/large.jpg</image>
+<image size="extralarge">http://foo.bar/extralarge.jpg</image>
+<image size="mega">http://foo.bar/mega.jpg</image>
+<image size="">http://foo.bar/fuckisthis.jpg</image>
+<streamable>0</streamable>
+<ontour>0</ontour>
+<stats><listeners>446805</listeners>
+<playcount>30274291</playcount>
+</stats>
+<similar><artist><name>Serenity</name>
+<url>http://www.last.fm/music/Serenity</url>
+<image size="small">http://img2-ak.lst.fm/i/u/34s/98efb50f63fd430d815fed3bb151b8e4.png</image>
+<image size="medium">http://img2-ak.lst.fm/i/u/64s/98efb50f63fd430d815fed3bb151b8e4.png</image>
+<image size="large">http://img2-ak.lst.fm/i/u/174s/98efb50f63fd430d815fed3bb151b8e4.png</image>
+<image size="extralarge">http://img2-ak.lst.fm/i/u/300x300/98efb50f63fd430d815fed3bb151b8e4.png</image>
+<image size="mega">http://img2-ak.lst.fm/i/u/98efb50f63fd430d815fed3bb151b8e4.png</image>
+<image size="">http://img2-ak.lst.fm/i/u/arQ/98efb50f63fd430d815fed3bb151b8e4.png</image>
+</artist>
+<artist><name>Seventh Wonder</name>
+<url>http://www.last.fm/music/Seventh+Wonder</url>
+<image size="small">http://img2-ak.lst.fm/i/u/34s/9bb1ed430424492dc9a39bc5d0ec00dc.png</image>
+<image size="medium">http://img2-ak.lst.fm/i/u/64s/9bb1ed430424492dc9a39bc5d0ec00dc.png</image>
+<image size="large">http://img2-ak.lst.fm/i/u/174s/9bb1ed430424492dc9a39bc5d0ec00dc.png</image>
+<image size="extralarge">http://img2-ak.lst.fm/i/u/300x300/9bb1ed430424492dc9a39bc5d0ec00dc.png</image>
+<image size="mega">http://img2-ak.lst.fm/i/u/9bb1ed430424492dc9a39bc5d0ec00dc.png</image>
+<image size="">http://img2-ak.lst.fm/i/u/arQ/9bb1ed430424492dc9a39bc5d0ec00dc.png</image>
+</artist>
+</similar>
+<tags><tag><name>Power metal</name>
+<url>http://www.last.fm/tag/Power+metal</url>
+</tag>
+<tag><name>symphonic metal</name>
+<url>http://www.last.fm/tag/symphonic+metal</url>
+</tag>
+<tag><name>Progressive metal</name>
+<url>http://www.last.fm/tag/Progressive+metal</url>
+</tag>
+<tag><name>metal</name>
+<url>http://www.last.fm/tag/metal</url>
+</tag>
+<tag><name>melodic metal</name>
+<url>http://www.last.fm/tag/melodic+metal</url>
+</tag>
+</tags>
+<bio><links><link rel="original" href="http://last.fm/music/Kamelot/+wiki"></link>
+</links>
+<published>10 Feb 2006, 13:43</published>
+<summary>Quisque ut nisi.</summary>
+<content>Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.</content>
+</bio>
+</artist>
+</lfm>

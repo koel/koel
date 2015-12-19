@@ -39,4 +39,22 @@ class SongController extends Controller
     {
         return response()->json(Song::findOrFail($id)->lyrics);
     }
+
+    /**
+     * Get extra information about a song via Last.fm
+     * 
+     * @param  string $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getInfo($id)
+    {
+        $song = Song::with('album.artist')->findOrFail($id);
+
+        return response()->json([
+            'lyrics' => $song->lyrics,
+            'album_info' => $song->album->getInfo(),
+            'artist_info' => $song->album->artist->getInfo(),
+        ]);
+    }
 }

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Facades\Lastfm;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string cover       The path to the album's cover
  * @property bool   has_cover   If the album has a cover image
  * @property int    id
+ * @property string name        Name of the album
+ * @property Artist artist      The album's artist
  */
 class Album extends Model
 {
@@ -50,6 +53,32 @@ class Album extends Model
     }
 
     /**
+     * Get extra information about the album from Last.fm.
+     * 
+     * @return array|false
+     */
+    public function getInfo()
+    {
+        if ($this->id === self::UNKNOWN_ID) {
+            return false;
+        }
+
+        $info = Lastfm::getAlbumInfo($this->name, $this->artist->name);
+
+        // If our current album has no cover, and Last.fm has one, why don't we steal it?
+        // Great artists steal for their great albums!
+        if (!$this->has_cover &&
+            is_string($image = array_get($info, 'image')) &&
+            ini_get('allow_url_fopen')
+        ) {
+            $extension = explode('.', $image);
+            $this->writeCoverFile(file_get_contents($image), last($extension));
+        }
+
+        return $info;
+    }
+
+    /**
      * Generate a cover from provided data.
      *
      * @param array $cover The cover data in array format, extracted by getID3.
@@ -68,10 +97,24 @@ class Album extends Model
     public function generateCover(array $cover)
     {
         $extension = explode('/', $cover['image_mime']);
-        $fileName = uniqid().'.'.strtolower($extension[1]);
+        $extension = empty($extension[1]) ? 'png' : $extension[1];
+
+        $this->writeCoverFile($cover['data'], $extension);
+    }
+
+    /**
+     * Write a cover image file with binary data and update the Album with the new cover file.
+     *
+     * @param string $binaryData
+     * @param string $extension The file extension
+     */
+    private function writeCoverFile($binaryData, $extension)
+    {
+        $extension = trim(strtolower($extension), '. ');
+        $fileName = uniqid().".$extension";
         $coverPath = app()->publicPath().'/public/img/covers/'.$fileName;
 
-        file_put_contents($coverPath, $cover['data']);
+        file_put_contents($coverPath, $binaryData);
 
         $this->update(['cover' => $fileName]);
     }
@@ -101,6 +144,8 @@ class Album extends Model
      * This makes sure they are always sane.
      *
      * @param $value
+     *
+     * @return string
      */
     public function getNameAttribute($value)
     {

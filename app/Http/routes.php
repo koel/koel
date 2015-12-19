@@ -22,8 +22,7 @@ Route::group(['prefix' => 'api', 'middleware' => 'auth', 'namespace' => 'API'], 
     post('settings', 'SettingController@save');
 
     get('{id}/play', 'SongController@play')->where('id', '[a-f0-9]{32}');
-
-    get('{id}/lyrics', 'SongController@getLyrics')->where('id', '[a-f0-9]{32}');
+    get('{id}/info', 'SongController@getInfo')->where('id', '[a-f0-9]{32}');
 
     post('interaction/play', 'InteractionController@play');
     post('interaction/like', 'InteractionController@like');

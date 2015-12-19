@@ -40,8 +40,8 @@
                     @click.prevent="like"></i>
 
                 <span class="control" 
-                    @click.prevent="toggleLyrics"
-                    :class="{ active: prefs.showExtraPanel }">Lyrics</span>
+                    @click.prevent="toggleExtraPanel"
+                    :class="{ active: prefs.showExtraPanel }">Info</span>
                 
                 <i class="queue control fa fa-list-ol control" 
                     :class="{ 'active': viewingQueue }"
@@ -216,9 +216,9 @@
             /**
              * <That's it. That's it!>
              * 
-             * Toggle hide or show the lyrics panel.
+             * Toggle hide or show the extra panel.
              */
-            toggleLyrics() {
+            toggleExtraPanel() {
                 preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel);
             },
 

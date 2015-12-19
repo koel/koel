@@ -1,41 +1,39 @@
 <template>
-    <div id="lyrics">{{{ lyrics }}}</div>
+    <article id="lyrics">
+        <div class="content">
+            <div v-if="lyrics">{{{ lyrics }}}</div>
+            <p class="none" v-else>No lyrics found. Are you not listening to Bach?</p>
+        </div>
+    </article>
 </template>
 
 <script>
     import songStore from '../../../stores/song';
 
     export default {
+        replace: false,
+
         data() {
             return {
                 lyrics: '',
             };
         },
 
-        events: {
-            /**
-             * Whenever a song is played, get its lyrics from store to display.
-             * 
-             * @param  object song The currently played song
-             * 
-             * @return true
-             */
-            'song:play': function (song) {
-                this.lyrics = 'Loading…';
-
-                songStore.getLyrics(song, () => this.lyrics = song.lyrics);
-
-                return true;
+        methods: {
+            resetState() {
+                this.lyrics = '';
             },
         },
-    }
+
+        events: {
+            'song:info-loaded': function (song) {
+                this.lyrics = song.lyrics;
+            },
+        },
+    };
 </script>
 
 <style lang="sass">
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
-    
-    #lyrics {
-        color: $color2ndText;
-    }
 </style>

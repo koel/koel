@@ -28,7 +28,7 @@
              * Play all songs in the current album.
              */
             play() {
-                playback.queueAndPlay(this.album.songs);
+                playback.playAllInAlbum(this.album);
             },
         },
     };

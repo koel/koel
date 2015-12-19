@@ -6,7 +6,6 @@ use App\Models\Artist;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Setting;
-use App\Models\Song;
 use App\Models\User;
 
 class DataController extends Controller
@@ -32,6 +31,7 @@ class DataController extends Controller
             'interactions' => Interaction::byCurrentUser()->get(),
             'users' => auth()->user()->is_admin ? User::all() : [],
             'user' => auth()->user(),
+            'useLastfm' => env('LASTFM_API_KEY') && env('LASTFM_SECRET'),
         ]);
     }
 }

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Facades\Lastfm;
 use App\Facades\Util;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int id The model ID
+ * @property int    id      The model ID
+ * @property string name    The artist name
  */
 class Artist extends Model
 {
@@ -53,5 +55,23 @@ class Artist extends Model
         $name = trim($name) ?: self::UNKNOWN_NAME;
 
         return self::firstOrCreate(compact('name'), compact('name'));
+    }
+
+    /**
+     * Get extra information about the artist from Last.fm.
+     * 
+     * @return array|false
+     */
+    public function getInfo()
+    {
+        if ($this->id === self::UNKNOWN_ID) {
+            return false;
+        }
+
+        $info = Lastfm::getArtistInfo($this->name);
+
+        // TODO: Copy the artist's image for our local use.
+
+        return $info;
     }
 }
