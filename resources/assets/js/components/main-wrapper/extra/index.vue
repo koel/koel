@@ -96,6 +96,7 @@
             line-height: 36px;
 
             @include vertical-center();
+            align-items: initial;
 
             span {
                 flex: 1;
@@ -113,22 +114,23 @@
 
         .tabs {
             .header {
-                border-bottom: 1px solid $colorHighlight;
+                $tabColor: #5c5c5c;
+                border-bottom: 1px solid $tabColor;
+
 
                 a {
-                    padding: 4px 12px;
+                    padding: 8px 12px;
                     margin-left: 4px;
                     border-radius: 4px 4px 0 0;
                     text-transform: uppercase;
-                    color: #fff;
+                    color: lighten($tabColor, 50%);
                     opacity: .4;
-                    border: 1px solid $colorHighlight;
+                    border: 1px solid $tabColor;
                     margin-bottom: -1px;
                     float: left;
 
                     &.active {
                         border-bottom: 1px solid $colorExtraBgr;
-                        color: $colorHighlight;
                         opacity: 1;
                     }
                 }
