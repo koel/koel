@@ -30,8 +30,8 @@ class DataController extends Controller
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),
             'users' => auth()->user()->is_admin ? User::all() : [],
-            'user' => auth()->user(),
-            'useLastfm' => env('LASTFM_API_KEY') && env('LASTFM_SECRET'),
+            'currentUser' => auth()->user(),
+            'useLastfm' => env('LASTFM_API_KEY') && env('LASTFM_API_SECRET'),
         ]);
     }
 }

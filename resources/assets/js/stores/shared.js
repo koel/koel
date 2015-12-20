@@ -1,4 +1,5 @@
 import http from '../services/http';
+import { assign } from 'lodash';
 
 export default {
     state: {
@@ -12,19 +13,17 @@ export default {
         settings: [],
         currentUser: null,
         playlists: [],
+        useLastfm: false,
     },
 
     init(cb = null) {
         http.get('data', {}, data => {
-            this.state.songs = data.songs;
-            this.state.artists = data.artists;
-            this.state.albums = data.albums;
-            this.state.settings = data.settings;
-            this.state.playlists = data.playlists;
-            this.state.interactions = data.interactions;
-            this.state.users = data.users;
-            this.state.currentUser = data.user;
-            this.state.settings = data.settings;
+            assign(this.state, data);
+
+            // If this is a new user, initialize his preferences to be an empty object.
+            if (!this.state.currentUser.preferences) {
+                this.state.currentUser.preferences = {};
+            }
 
             if (cb) {
                 cb();

@@ -40,6 +40,16 @@ class Lastfm extends RESTfulService
     }
 
     /**
+     * Determine if Last.fm integration is enabled.
+     *
+     * @return bool
+     */
+    public function enabled()
+    {
+        return $this->getKey() && $this->getSecret();
+    }
+
+    /**
      * Get information about an artist.
      * 
      * @param $name string Name of the artist
@@ -84,22 +94,6 @@ class Lastfm extends RESTfulService
 
             return false;
         }
-    }
-
-    /**
-     * Correctly format a string returned by Last.fm.
-     * 
-     * @param string $str
-     * 
-     * @return string
-     */
-    protected function formatText($str)
-    {
-        if (!$str) {
-            return '';
-        }
-
-        return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($str)))));
     }
 
     /**
@@ -159,12 +153,119 @@ class Lastfm extends RESTfulService
     }
 
     /**
-     * Determine if Last.fm integration is enabled.
+     * Get Last.fm's session key for the authenticated user using a token.
+     * 
+     * @param string $token The token after successfully connecting to Last.fm
      *
+     * @link http://www.last.fm/api/webauth#4
+     * 
+     * @return string The token key
+     */
+    public function getSessionKey($token)
+    {
+        $query = $this->buildAuthCallParams([
+            'method' => 'auth.getSession',
+            'token' => $token,
+        ], true);
+
+        try {
+            $response = $this->get("/?$query", [], false);
+
+            return (string) $response->session->key;
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Scrobble a song.
+     * 
+     * @param string     $artist    The artist name
+     * @param string     $track     The track name
+     * @param string|int $timestamp The UNIX timestamp
+     * @param string     $album     The album name
+     * @param string     $sk        The session key
+     * 
      * @return bool
      */
-    public function enabled()
+    public function scrobble($artist, $track, $timestamp, $album = null, $sk = null)
     {
-        return $this->getKey() && $this->getSecret();
+        $params = compact('artist', 'track', 'timestamp');
+
+        if ($album) {
+            $params['album'] = $album;
+        }
+
+        $params['sk'] = $sk ?: auth()->user()->getPreference('lastfm_session_key');
+        $params['method'] = 'track.scrobble';
+
+        try {
+            return !!$this->post('/', $this->buildAuthCallParams($params), false);
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Build the parameters to use for _authenticated_ Last.fm API calls.
+     * Such calls require:
+     * - The API key (api_key)
+     * - The API signature (api_sig).
+     *
+     * @link http://www.last.fm/api/webauth#5
+     * 
+     * @param array $params   The array of parameters.
+     * @param bool  $toString Whether to turn the array into a query string
+     *
+     * @return array|string
+     */
+    public function buildAuthCallParams(array $params, $toString = false)
+    {
+        $params['api_key'] = $this->getKey();
+
+        ksort($params);
+
+        // Generate the API signature.
+        // @link http://www.last.fm/api/webauth#6
+        $str = '';
+
+        foreach ($params as $name => $value) {
+            $str .= $name.$value;
+        }
+
+        $str .= $this->getSecret();
+
+        $params['api_sig'] = md5($str);
+
+        if (!$toString) {
+            return $params;
+        }
+
+        $query = '';
+        foreach ($params as $key => $value) {
+            $query .= "$key=$value&";
+        }
+
+        return rtrim($query, '&');
+    }
+
+    /**
+     * Correctly format a string returned by Last.fm.
+     * 
+     * @param string $str
+     * 
+     * @return string
+     */
+    protected function formatText($str)
+    {
+        if (!$str) {
+            return '';
+        }
+
+        return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($str)))));
     }
 }

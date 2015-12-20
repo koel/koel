@@ -50,6 +50,8 @@ export default {
 
         // Listen to 'ended' event on the audio player and play the next song in the queue.
         this.player.media.addEventListener('ended', e => {
+            songStore.scrobble(queueStore.current());
+            
             if (preferenceStore.get('repeatMode') === 'REPEAT_ONE') {
                 this.player.restart();
                 this.player.play();
@@ -82,6 +84,9 @@ export default {
         // Set the song as the current song
         queueStore.current(song);
 
+        // Record the UNIX timestamp the song start playing, for scrobbling purpose
+        song.playStartTime = Math.floor(Date.now() / 1000);
+
         this.app.$broadcast('song:play', song);
 
         $('title').text(`${song.title} ♫ Koel`);
@@ -96,14 +101,20 @@ export default {
             return;
         }
 
-        var notification = new Notification(`♫ ${song.title}`, {
-            icon: song.album.cover,
-            body: `${song.album.name} – ${song.album.artist.name}`
-        });
+        try {
+            var notification = new Notification(`♫ ${song.title}`, {
+                icon: song.album.cover,
+                body: `${song.album.name} – ${song.album.artist.name}`
+            });
 
-        window.setTimeout(() => {
-          notification.close();
-        }, 5000);
+            notification.onclick = () => window.focus();
+
+            // Close the notif after 5 secs.
+            window.setTimeout(() => notification.close(), 5000);
+        } catch (e) {
+            // Notification fails. 
+            // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+        }
     },
 
     /**

@@ -45,6 +45,54 @@
                     <span @click="prefs.notify = !prefs.notify">Show “Now Playing” song notification</span>
                 </div>
             </div>
+
+            <section class="lastfm" >
+                <h1>Last.fm Integration</h1>
+
+                <div v-if="sharedState.useLastfm">
+                    <p>This installation of Koel integrates with Last.fm.
+                        <span v-if="state.current.preferences.lastfm_session_key">
+                            It appears that you have connected your Last.fm account as well – Perfect!
+                        </span>
+                        <span v-else>
+                            It appears that you haven’t connected to your Last.fm account thought.
+                        </span>
+                    </p>
+                    <p>
+                        Connecting Koel and your Last.fm account enables exciting features – scrobbling is one of them.
+                    </p>
+                    <p v-if="state.current.preferences.lastfm_session_key">
+                        For the sake of democracy, you have the option to disconnect from Last.fm too. 
+                        Doing so will reload Koel, though.
+                    </p>
+
+
+                    <div class="buttons">
+                        <button @click.prevent="connectToLastfm" class="connect">
+                            <i class="fa fa-lastfm"></i>
+                            {{ state.current.preferences.lastfm_session_key ? 'Reconnect' : 'Connect' }}
+                        </button>
+
+                        <button 
+                            v-if="state.current.preferences.lastfm_session_key" 
+                            @click.prevent="disconnectFromLastfm" 
+                            class="disconnect"
+                        >
+                            Disconnect
+                        </button>
+                    </div>        
+                </div>
+
+                <div v-else>
+                    <p>This installation of Koel has no Last.fm integration.
+                        <span v-if="state.current.is_admin">Visit 
+                            <a href="https://github.com/phanan/koel/wiki" target="_blank">Koel’s Wiki</a>
+                            for a quick how-to. Really, you should do it.
+                        </span>
+                        <span v-else>Try politely asking your adminstrator to enable it.</span>
+                    </p>
+                </div>
+            </section>
         </div>
     </div>
 </template>
@@ -54,6 +102,8 @@
     
     import userStore from '../../../stores/user';
     import preferenceStore from '../../../stores/preference';
+    import sharedStore from '../../../stores/shared';
+    import http from '../../../services/http';
 
     export default {
         data() {
@@ -64,6 +114,7 @@
                 confirmPwd: '',
                 showStatus: false,
                 prefs: preferenceStore.state,
+                sharedState: sharedStore.state,
             };
         },
 
@@ -98,6 +149,29 @@
             savePreference() {
                 preferenceStore.save();
             },
+
+            /**
+             * Connect the current user to Last.fm.
+             * This method opens a new window.
+             * Koel will reload once the connection is successful.
+             */
+            connectToLastfm() {
+                window.open('/api/lastfm/connect', '_blank', 'toolbar=no,titlebar=no,location=no,width=1024,height=640');
+            },
+
+            /**
+             * Disconnect the current user from Last.fm.
+             * Oh God why.
+             */
+            disconnectFromLastfm() {
+                // Should we use userStore?
+                // - We shouldn't. This doesn't have anything to do with stores.
+                // Should we confirm the user?
+                // - Nope. Users should be grown-ass adults who take responsibilty of their actions.
+                // But one of my users is my new born kid!
+                // - Then? Kids will fuck things up anyway.
+                http.delete('lastfm/disconnect', {}, () => window.location.reload());
+            }
         },
     };
 </script>
@@ -132,7 +206,33 @@
             border-top: 1px solid $color2ndBgr;
         }
 
-        
+        .lastfm {
+            border-top: 1px solid $color2ndBgr;
+            color: $color2ndText;
+            margin-top: 16px;
+            padding-top: 16px;
+
+            a {
+                color: $colorHighlight;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 16px;
+            }
+
+            .buttons {
+                margin-top: 16px;
+
+                .connect {
+                    background: #d31f27; // Last.fm color yo!
+                }
+
+                .disconnect {
+                    background: $colorGrey; // Our color yo!
+                }
+            }
+        }
 
         @media only screen 
         and (max-device-width : 667px) 

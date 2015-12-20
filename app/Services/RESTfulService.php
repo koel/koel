@@ -68,17 +68,20 @@ class RESTfulService
     /**
      * Make a request to the API.
      *
-     * @param string $verb   The HTTP verb
-     * @param string $uri    The API URI (segment)
-     * @param array  $params An array of parameters
+     * @param string $verb      The HTTP verb
+     * @param string $uri       The API URI (segment)
+     * @param bool   $appendKey Whether to automatically append the API key into the URI.
+     *                          While it's usually the case, some services (like Last.fm) requires
+     *                          an "API signature" of the request. Appending an API key will break the request.
+     * @param array  $params    An array of parameters
      *
-     * @return object The JSON response.
+     * @return object
      */
-    public function request($verb, $uri, $params = [])
+    public function request($verb, $uri, $appendKey = true, $params = [])
     {
         try {
             $body = (string) $this->getClient()
-                ->$verb($this->buildUrl($uri), ['form_params' => $params])
+                ->$verb($this->buildUrl($uri, $appendKey), ['form_params' => $params])
                 ->getBody();
 
             if ($this->responseFormat === 'json') {
@@ -111,18 +114,20 @@ class RESTfulService
 
         $uri = $args[0];
         $opts = isset($args[1]) ? $args[1] : [];
+        $appendKey = isset($args[2]) ? $args[2] : true;
 
-        return $this->request($method, $uri, $opts);
+        return $this->request($method, $uri, $appendKey, $opts);
     }
 
     /**
      * Turn a URI segment into a full API URL.
      *
      * @param string $uri
+     * @param bool   $appendKey Whether to automatically append the API key into the URL.
      *
      * @return string
      */
-    public function buildUrl($uri)
+    public function buildUrl($uri, $appendKey = true)
     {
         if (!starts_with($uri, ['http://', 'https://'])) {
             if ($uri[0] != '/') {
@@ -132,11 +137,12 @@ class RESTfulService
             $uri = $this->endpoint.$uri;
         }
 
-        // Append the API key.
-        if (parse_url($uri, PHP_URL_QUERY)) {
-            $uri .= "&{$this->keyParam}=".$this->getKey();
-        } else {
-            $uri .= "?{$this->keyParam}=".$this->getKey();
+        if ($appendKey) {
+            if (parse_url($uri, PHP_URL_QUERY)) {
+                $uri .= "&{$this->keyParam}=".$this->getKey();
+            } else {
+                $uri .= "?{$this->keyParam}=".$this->getKey();
+            }
         }
 
         return $uri;

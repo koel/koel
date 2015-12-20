@@ -69,4 +69,16 @@ class UserTest extends TestCase
             ->seeStatusCode(403)
             ->seeInDatabase('users', ['id' => $admin->id]);
     }
+
+    public function testUserPreferences()
+    {
+        $user = factory(User::class)->create();
+        $this->assertNull($user->getPreference('foo'));
+
+        $user->setPreference('foo', 'bar');
+        $this->assertEquals('bar', $user->getPreference('foo'));
+
+        $user->deletePreference('foo');
+        $this->assertNull($user->getPreference('foo'));
+    }
 }
