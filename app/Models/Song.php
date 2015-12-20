@@ -38,7 +38,7 @@ class Song extends Model
      * 
      * @return mixed
      */
-    public function scrobble($timestamp) 
+    public function scrobble($timestamp)
     {
         // Don't scrobble the unknown guys. No one knows them.
         if ($this->album->artist->id === Artist::UNKNOWN_ID) {
@@ -53,8 +53,8 @@ class Song extends Model
         }
 
         return Lastfm::scrobble(
-            $this->album->artist->name, 
-            $this->title, 
+            $this->album->artist->name,
+            $this->title,
             $timestamp,
             $this->album->name === Album::UNKNOWN_NAME ? '' : $this->album->name,
             $sessionKey

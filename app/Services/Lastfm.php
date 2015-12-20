@@ -202,7 +202,7 @@ class Lastfm extends RESTfulService
         $params['method'] = 'track.scrobble';
 
         try {
-            return !!$this->post('/', $this->buildAuthCallParams($params), false);
+            return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
         } catch (\Exception $e) {
             Log::error($e);
 
