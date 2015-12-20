@@ -1,15 +1,15 @@
 <?php
 
+use App\Http\Controllers\API\LastfmController;
+use App\Models\User;
 use App\Services\Lastfm;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use App\Models\User;
-use App\Http\Controllers\API\LastfmController;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Http\Request;;
 use Mockery as m;
 
 class LastfmTest extends TestCase
@@ -107,7 +107,7 @@ class LastfmTest extends TestCase
             'api_sig' => '7f21233b54edea994aa0f23cf55f18a2',
         ], $api->buildAuthCallParams($params));
 
-        $this->assertEquals('api_key=key&bar=baz&qux=安&api_sig=7f21233b54edea994aa0f23cf55f18a2', 
+        $this->assertEquals('api_key=key&bar=baz&qux=安&api_sig=7f21233b54edea994aa0f23cf55f18a2',
             $api->buildAuthCallParams($params, true));
     }
 

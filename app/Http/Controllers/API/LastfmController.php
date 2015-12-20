@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Services\Lastfm;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use App\Services\Lastfm;
 
 class LastfmController extends Controller
 {

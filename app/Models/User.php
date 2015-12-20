@@ -85,7 +85,7 @@ AuthenticatableContract,
         $preferences = $this->preferences;
         $preferences[$key] = $val;
         $this->preferences = $preferences;
-        
+
         $this->save();
     }
 
