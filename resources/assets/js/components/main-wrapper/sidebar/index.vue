@@ -91,6 +91,10 @@
         max-height: calc(100vh - #{$headerHeight + $footerHeight});
         overflow: auto;
 
+        // Enable scroll with momentum on touch devices
+        overflow-y: scroll; 
+        -webkit-overflow-scrolling: touch;
+
         section {
             margin-bottom: 32px;
 

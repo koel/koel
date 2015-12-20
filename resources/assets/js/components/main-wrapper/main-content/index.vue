@@ -102,6 +102,10 @@
             padding: 24px 24px $footerHeight;
             height: calc(100vh - #{$headerHeight + $footerHeight + $mainHeadingHeight + 24px});
             overflow: auto;
+
+            // Enable scroll with momentum on touch devices
+            overflow-y: scroll; 
+            -webkit-overflow-scrolling: touch;
         }
 
         .translucent {
