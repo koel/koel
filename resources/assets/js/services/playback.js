@@ -96,14 +96,20 @@ export default {
             return;
         }
 
-        var notification = new Notification(`♫ ${song.title}`, {
-            icon: song.album.cover,
-            body: `${song.album.name} – ${song.album.artist.name}`
-        });
+        try {
+            var notification = new Notification(`♫ ${song.title}`, {
+                icon: song.album.cover,
+                body: `${song.album.name} – ${song.album.artist.name}`
+            });
 
-        window.setTimeout(() => {
-          notification.close();
-        }, 5000);
+            notification.onclick = () => window.focus();
+
+            // Close the notif after 5 secs.
+            window.setTimeout(() => notification.close(), 5000);
+        } catch (e) {
+            // Notification fails. 
+            // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+        }
     },
 
     /**
