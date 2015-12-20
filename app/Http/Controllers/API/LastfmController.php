@@ -17,9 +17,8 @@ class LastfmController extends Controller
     protected $auth;
 
     /**
-     * Construct the controller with a custom Redirector via DI.
+     * Construct the controller and inject the current auth.
      * 
-     * @param Redirector $redirector
      * @param Guard      $auth
      */
     public function __construct(Guard $auth)
