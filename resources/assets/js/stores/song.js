@@ -6,6 +6,7 @@ import stub from '../stubs/song';
 import albumStore from './album';
 import favoriteStore from './favorite';
 import sharedStore from './shared';
+import useStore from './user';
 
 export default {
     stub,
@@ -148,6 +149,26 @@ export default {
             if (cb) {
                 cb();
             }
+        });
+    },
+
+    /**
+     * Scrobble a song (using Last.fm)
+     * 
+     * @param  {Object}   song
+     * @param  {Function} cb 
+     */
+    scrobble(song, cb = null) {
+        if (!sharedStore.state.useLastfm || !useStore.current().preferences.lastfm_session_key) {
+            return;
+        }
+
+        http.post(`${song.id}/scrobble/${song.playStartTime}`, () => {
+            if (cb) {
+                cb();
+            }
+
+            return;
         });
     },
 };

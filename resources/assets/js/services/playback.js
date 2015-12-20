@@ -50,6 +50,8 @@ export default {
 
         // Listen to 'ended' event on the audio player and play the next song in the queue.
         this.player.media.addEventListener('ended', e => {
+            songStore.scrobble(queueStore.current());
+            
             if (preferenceStore.get('repeatMode') === 'REPEAT_ONE') {
                 this.player.restart();
                 this.player.play();
@@ -81,6 +83,9 @@ export default {
 
         // Set the song as the current song
         queueStore.current(song);
+
+        // Record the UNIX timestamp the song start playing, for scrobbling purpose
+        song.playStartTime = Math.floor(Date.now() / 1000);
 
         this.app.$broadcast('song:play', song);
 

@@ -29,21 +29,9 @@ class SongController extends Controller
     }
 
     /**
-     * Get the lyrics of a song.
-     *
-     * @param $id
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getLyrics($id)
-    {
-        return response()->json(Song::findOrFail($id)->lyrics);
-    }
-
-    /**
-     * Get extra information about a song via Last.fm
+     * Get extra information about a song via Last.fm.
      * 
-     * @param  string $id
+     * @param string $id
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -56,5 +44,18 @@ class SongController extends Controller
             'album_info' => $song->album->getInfo(),
             'artist_info' => $song->album->artist->getInfo(),
         ]);
+    }
+
+    /**
+     * Scrobble a song.
+     * 
+     * @param string $id        The song's ID
+     * @param string $timestamp The UNIX timestamp when the song started playing.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function scrobble($id, $timestamp)
+    {
+        return response()->json(Song::with('album.artist')->findOrFail($id)->scrobble($timestamp));
     }
 }

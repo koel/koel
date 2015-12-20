@@ -23,6 +23,10 @@ Route::group(['prefix' => 'api', 'middleware' => 'auth', 'namespace' => 'API'], 
 
     get('{id}/play', 'SongController@play')->where('id', '[a-f0-9]{32}');
     get('{id}/info', 'SongController@getInfo')->where('id', '[a-f0-9]{32}');
+    post('{id}/scrobble/{timestamp}', 'SongController@scrobble')->where([
+        'id' => '[a-f0-9]{32}',
+        'timestamp' => '\d+',
+    ]);
 
     post('interaction/play', 'InteractionController@play');
     post('interaction/like', 'InteractionController@like');
@@ -34,4 +38,11 @@ Route::group(['prefix' => 'api', 'middleware' => 'auth', 'namespace' => 'API'], 
 
     resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
     put('me', 'UserController@updateProfile');
+
+    get('lastfm/connect', 'LastfmController@connect');
+    get('lastfm/callback', [
+        'as' => 'lastfm.callback',
+        'uses' => 'LastfmController@callback',
+    ]);
+    delete('lastfm/disconnect', 'LastfmController@disconnect');
 });
