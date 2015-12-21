@@ -25,7 +25,7 @@ class Song extends Model
      * @var array
      */
     protected $casts = [
-        'length' => 'float'
+        'length' => 'float',
     ];
 
     public function album()
