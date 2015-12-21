@@ -4,6 +4,9 @@
         @keydown.j = "playNext"
         @keydown.k = "playPrev"
         @keydown.f = "search"
+        @keydown.177 = "playPrev"
+        @keydown.176 = "playNext"
+        @keydown.179 = "playNext"
     >
         <site-header></site-header>
         <main-wrapper></main-wrapper>
