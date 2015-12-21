@@ -21,6 +21,13 @@ class Song extends Model
      */
     protected $hidden = ['lyrics', 'created_at', 'updated_at', 'path', 'mtime'];
 
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'length' => 'float'
+    ];
+
     public function album()
     {
         return $this->belongsTo(Album::class);
