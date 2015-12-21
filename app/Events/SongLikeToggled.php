@@ -2,11 +2,9 @@
 
 namespace App\Events;
 
-use App\Events\Event;
 use App\Models\Interaction;
 use App\Models\User;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class SongLikeToggled extends Event
 {
@@ -30,7 +28,7 @@ class SongLikeToggled extends Event
      * Create a new event instance.
      *
      * @param Interaction $interaction
-     * @param User $user
+     * @param User        $user
      *
      * @return void
      */

@@ -1,7 +1,6 @@
 <?php
 
 use App\Events\SongLikeToggled;
-use App\Http\Controllers\API\InteractionController;
 use App\Http\Controllers\API\LastfmController;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Models\Interaction;

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Events\SongLikeToggled;
 use App\Traits\CanFilterByUser;
-use DB;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -37,8 +36,8 @@ class Interaction extends Model
     /**
      * Increase the number of times a song is played by a user.
      * 
-     * @param string   $songId
-     * @param User $user
+     * @param string $songId
+     * @param User   $user
      *
      * @return Interaction
      */
@@ -62,8 +61,8 @@ class Interaction extends Model
     /**
      * Like or unlike a song on behalf of a user.
      * 
-     * @param string   $songId
-     * @param User $user
+     * @param string $songId
+     * @param User   $user
      *
      * @return Interaction
      */
@@ -89,8 +88,8 @@ class Interaction extends Model
     /**
      * Like several songs at once.
      *
-     * @param array    $songIds
-     * @param User $user
+     * @param array $songIds
+     * @param User  $user
      *
      * @return array
      */
@@ -122,14 +121,14 @@ class Interaction extends Model
     /**
      * Unlike several songs at once.
      *
-     * @param array    $songIds
-     * @param User $user
+     * @param array $songIds
+     * @param User  $user
      *
      * @return int
      */
     public static function batchUnlike(array $songIds, User $user)
     {
-        foreach(self::whereIn('song_id', $songIds)->whereUserId($user->id)->get() as $interaction) {
+        foreach (self::whereIn('song_id', $songIds)->whereUserId($user->id)->get() as $interaction) {
             $interaction->liked = false;
             $interaction->save();
 
