@@ -113,6 +113,26 @@ AuthenticatableContract,
     }
 
     /**
+     * Determine if the user is connected to Last.fm.
+     * 
+     * @return bool
+     */
+    public function connectedToLastfm()
+    {
+        return !!$this->getLastfmSessionKey();
+    }
+
+    /**
+     * Get the user's Last.fm session key.
+     * 
+     * @return string|null The key if found, or null if user isn't connected to Last.fm
+     */
+    public function getLastfmSessionKey()
+    {
+        return $this->getPreference('lastfm_session_key');
+    }
+
+    /**
      * User preferences are stored as a serialized associative array.
      *
      * @param array $value

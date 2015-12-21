@@ -24,6 +24,11 @@ class Artist extends Model
         return $this->hasMany(Album::class);
     }
 
+    public function isUnknown()
+    {
+        return $this->id === self::UNKNOWN_ID;
+    }
+
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.

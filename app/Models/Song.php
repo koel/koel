@@ -48,14 +48,12 @@ class Song extends Model
     public function scrobble($timestamp)
     {
         // Don't scrobble the unknown guys. No one knows them.
-        if ($this->album->artist->id === Artist::UNKNOWN_ID) {
+        if ($this->album->artist->isUnknown()) {
             return false;
         }
 
-        auth()->user()->setHidden([]);
-
         // If the current user hasn't connected to Last.fm, don't do shit.
-        if (!$sessionKey = auth()->user()->getPreference('lastfm_session_key')) {
+        if (!$sessionKey = auth()->user()->getLastfmSessionKey()) {
             return false;
         }
 

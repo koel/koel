@@ -190,16 +190,39 @@ class Lastfm extends RESTfulService
      * 
      * @return bool
      */
-    public function scrobble($artist, $track, $timestamp, $album = null, $sk = null)
+    public function scrobble($artist, $track, $timestamp, $album, $sk)
     {
-        $params = compact('artist', 'track', 'timestamp');
+        $params = compact('artist', 'track', 'timestamp', 'sk');
 
         if ($album) {
             $params['album'] = $album;
         }
 
-        $params['sk'] = $sk ?: auth()->user()->getPreference('lastfm_session_key');
         $params['method'] = 'track.scrobble';
+
+        try {
+            return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Love or unlove a track on Last.fm.
+     * 
+     * @param  string  $track  The track name
+     * @param  string  $artist The artist's name
+     * @param  string  $sk     The session key
+     * @param  boolean $love   Whether to love or unlove. Such cheesy terms... urrgggh
+     * 
+     * @return bool
+     */
+    public function toggleLoveTrack($track, $artist, $sk, $love = true)
+    {
+        $params = compact('track', 'artist', 'sk');
+        $params['method'] = $love ? 'track.love' : 'track.unlove';
 
         try {
             return (bool) $this->post('/', $this->buildAuthCallParams($params), false);

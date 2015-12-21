@@ -1,6 +1,11 @@
 <?php
 
+use App\Events\SongLikeToggled;
+use App\Http\Controllers\API\InteractionController;
 use App\Http\Controllers\API\LastfmController;
+use App\Listeners\LoveTrackOnLastfm;
+use App\Models\Interaction;
+use App\Models\Song;
 use App\Models\User;
 use App\Services\Lastfm;
 use GuzzleHttp\Client;
@@ -142,13 +147,32 @@ class LastfmTest extends TestCase
 
         (new LastfmController($guard))->callback($request, $lastfm);
 
-        $this->assertEquals('bar', $user->getPreference('lastfm_session_key'));
+        $this->assertEquals('bar', $user->getLastfmSessionKey());
     }
 
     public function testControllerDisconnect()
     {
         $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
         $this->actingAs($user)->delete('api/lastfm/disconnect');
-        $this->assertNull($user->getPreference('lastfm_session_key'));
+        $this->assertNull($user->getLastfmSessionKey());
+    }
+
+    public function testLoveTrack()
+    {
+        $this->withoutEvents();
+        $this->createSampleMediaSet();
+
+        $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
+
+        $interaction = Interaction::create([
+            'user_id' => $user->id,
+            'song_id' => Song::first()->id,
+        ]);
+
+        $lastfm = m::mock(Lastfm::class, ['enabled' => true]);
+        $lastfm->shouldReceive('toggleLoveTrack')
+            ->withArgs([$interaction->song->title, $interaction->song->album->artist->name, 'bar', false]);
+
+        (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction, $user));
     }
 }
