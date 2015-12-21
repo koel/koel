@@ -6,7 +6,7 @@
         @keydown.f = "search"
         @keydown.177 = "playPrev"
         @keydown.176 = "playNext"
-        @keydown.179 = "playNext"
+        @keydown.179 = "togglePlayback"
     >
         <site-header></site-header>
         <main-wrapper></main-wrapper>
