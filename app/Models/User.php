@@ -119,7 +119,7 @@ AuthenticatableContract,
      */
     public function connectedToLastfm()
     {
-        return !!$this->getLastfmSessionKey();
+        return (bool) $this->getLastfmSessionKey();
     }
 
     /**

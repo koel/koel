@@ -212,10 +212,10 @@ class Lastfm extends RESTfulService
     /**
      * Love or unlove a track on Last.fm.
      * 
-     * @param  string  $track  The track name
-     * @param  string  $artist The artist's name
-     * @param  string  $sk     The session key
-     * @param  boolean $love   Whether to love or unlove. Such cheesy terms... urrgggh
+     * @param string $track  The track name
+     * @param string $artist The artist's name
+     * @param string $sk     The session key
+     * @param bool   $love   Whether to love or unlove. Such cheesy terms... urrgggh
      * 
      * @return bool
      */

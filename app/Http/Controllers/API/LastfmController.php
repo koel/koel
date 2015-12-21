@@ -19,7 +19,7 @@ class LastfmController extends Controller
     /**
      * Construct the controller and inject the current auth.
      * 
-     * @param Guard      $auth
+     * @param Guard $auth
      */
     public function __construct(Guard $auth)
     {

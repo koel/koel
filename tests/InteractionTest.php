@@ -73,7 +73,7 @@ class InteractionTest extends TestCase
     public function testBatchLikeAndUnlike()
     {
         $this->expectsEvents(SongLikeToggled::class);
-        
+
         $user = factory(User::class)->create();
 
         $songs = Song::orderBy('id')->take(2)->get();
