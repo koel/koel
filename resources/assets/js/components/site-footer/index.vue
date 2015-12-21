@@ -208,9 +208,10 @@
                     return;
                 }
 
-                favoriteStore.toggleOne(this.song, () => {
-                    this.liked = this.song.liked;
-                });
+                // Mark the song as liked/unliked right away, for a more responsive feel.
+                this.liked = !this.liked;
+
+                favoriteStore.toggleOne(this.song);
             },
 
             /**
