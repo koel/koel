@@ -37,15 +37,15 @@ class Interaction extends Model
      * Increase the number of times a song is played by a user.
      * 
      * @param string   $songId
-     * @param int|null $userId
+     * @param User $user
      *
      * @return Interaction
      */
-    public static function increasePlayCount($songId, $userId = null)
+    public static function increasePlayCount($songId, User $user)
     {
         $interaction = self::firstOrCreate([
             'song_id' => $songId,
-            'user_id' => $userId ?: auth()->user()->id,
+            'user_id' => $user->id,
         ]);
 
         if (!$interaction->exists) {
@@ -62,15 +62,15 @@ class Interaction extends Model
      * Like or unlike a song on behalf of a user.
      * 
      * @param string   $songId
-     * @param int|null $userId
+     * @param User $user
      *
      * @return Interaction
      */
-    public static function toggleLike($songId, $userId = null)
+    public static function toggleLike($songId, User $user)
     {
         $interaction = self::firstOrCreate([
             'song_id' => $songId,
-            'user_id' => $userId ?: auth()->user()->id,
+            'user_id' => $user->id,
         ]);
 
         if (!$interaction->exists) {
@@ -87,18 +87,18 @@ class Interaction extends Model
      * Like several songs at once.
      *
      * @param array    $songIds
-     * @param int|null $userId
+     * @param User $user
      *
      * @return array
      */
-    public static function batchLike(array $songIds, $userId = null)
+    public static function batchLike(array $songIds, User $user)
     {
         $result = [];
 
         foreach ($songIds as $songId) {
             $interaction = self::firstOrCreate([
                 'song_id' => $songId,
-                'user_id' => $userId ?: auth()->user()->id,
+                'user_id' => $user->id,
             ]);
 
             if (!$interaction->exists) {
@@ -118,15 +118,15 @@ class Interaction extends Model
      * Unlike several songs at once.
      *
      * @param array    $songIds
-     * @param int|null $userId
+     * @param User $user
      *
      * @return int
      */
-    public static function batchUnlike(array $songIds, $userId = null)
+    public static function batchUnlike(array $songIds, User $user)
     {
         return DB::table('interactions')
             ->whereIn('song_id', $songIds)
-            ->where('user_id', $userId ?: auth()->user()->id)
+            ->whereUserId($user->id)
             ->update(['liked' => false]);
     }
 }
