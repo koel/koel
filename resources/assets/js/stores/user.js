@@ -15,19 +15,10 @@ export default {
 
     /**
      * Init the store.
-     * 
-     * @param  object data The data object that contain the users array.
-     *                     Mostly for DI and testing purpose.
-     *                     For production, this data is retrieved from the shared store.
-     *                     
      */
-    init(data = null) {
-        if (!data) {
-            data = sharedStore.state;
-        }
-
-        this.state.users = data.users;
-        this.state.current = data.currentUser;
+    init(users, currentUser) {
+        this.state.users = users;
+        this.state.current = currentUser;
 
         // Set the avatar for each of the users…
         _.each(this.state.users, this.setAvatar);
@@ -36,6 +27,11 @@ export default {
         this.setAvatar();
     },
 
+    /**
+     * Get all users.
+     * 
+     * @return {Array} 
+     */
     all() {
         return this.state.users;
     },
@@ -43,9 +39,9 @@ export default {
     /**
      * Get a user by his ID
      * 
-     * @param  integer id
+     * @param  {Integer} id
      * 
-     * @return object
+     * @return {Object}
      */
     byId(id) {
         return _.find(this.state.users, {id});
@@ -65,7 +61,7 @@ export default {
     /**
      * Set a user's avatar using Gravatar's service.
      * 
-     * @param object user The user. If null, the current user.
+     * @param {Object} user The user. If null, the current user.
      */
     setAvatar(user = null) {
         if (!user) {
@@ -78,7 +74,7 @@ export default {
     /**
      * Update the current user's profile.
      * 
-     * @param  string password Can be an empty string if the user is not changing his password.
+     * @param  {String} password Can be an empty string if the user is not changing his password.
      */
     updateProfile(password = null, cb = null) {
         http.put('me', { 
@@ -98,10 +94,10 @@ export default {
     /**
      * Stores a new user into the database.
      * 
-     * @param  string   name
-     * @param  string   email
-     * @param  string   password
-     * @param  function cb
+     * @param  {String}   name
+     * @param  {String}  email
+     * @param  {String}  password
+     * @param  {Function} cb
      */
     store(name, email, password, cb = null) {
         http.post('user', { name, email, password }, user => {

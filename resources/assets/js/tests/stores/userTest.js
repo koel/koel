@@ -4,7 +4,7 @@ import userStore from '../../stores/user';
 import data from '../blobs/users';
 
 describe('stores/user', () => {
-    beforeEach(() => userStore.init(data));
+    beforeEach(() => userStore.init(data.users, data.currentUser));
 
     describe('#init', () => {
         it('correctly sets data state', () => {

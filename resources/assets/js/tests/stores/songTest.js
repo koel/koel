@@ -9,7 +9,7 @@ describe('stores/song', () => {
     beforeEach(() => {
         // This is ugly and not very "unit," but anyway.
         albumStore.init(artists);
-        songStore.init(albumStore.all(), interactions);
+        songStore.init(albumStore.all());
     });
 
     describe('#init', () => {
@@ -46,7 +46,9 @@ describe('stores/song', () => {
         });
     });
 
-    describe('#setInteractionStats', () => {
+    describe('#initInteractions', () => {
+        beforeEach(() => songStore.initInteractions(interactions));
+
         it('correctly sets interaction status', () => {
             let song = songStore.byId('cb7edeac1f097143e65b1b2cde102482');
             song.liked.should.be.true;

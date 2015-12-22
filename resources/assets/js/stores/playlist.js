@@ -25,7 +25,7 @@ export default {
     /**
      * Get all songs in a playlist.
      *
-     * return array
+     * return {Array}
      */
     getSongs(playlist) {
         return (playlist.songs = songStore.byIds(playlist.songs));

@@ -6,7 +6,6 @@ import songStore from './song';
 
 export default {
     stub,
-    artists: [],
     
     state: {
         albums: [stub],    
@@ -15,11 +14,9 @@ export default {
     /**
      * Init the store.
      * 
-     * @param  array artists The array of artists to extract album data from.
+     * @param  {Array} artists The array of artists to extract album data from.
      */
     init(artists) {
-        this.artists = artists;
-
         // Traverse through the artists array and add their albums into our master album list.
         this.state.albums = _.reduce(artists, (albums, artist) => {
             // While we're doing so, for each album, we get its length
@@ -44,9 +41,9 @@ export default {
      * Get the total length of an album by summing up its songs' duration.
      * The length will also be converted into a H:i:s format and stored as fmtLength.
      * 
-     * @param  object album
+     * @param  {Array} album
      * 
-     * @return string The H:i:s format of the album.
+     * @return {String} The H:i:s format of the album length.
      */
     getLength(album) {
         album.length = _.reduce(album.songs, (length, song) => length + song.length, 0);

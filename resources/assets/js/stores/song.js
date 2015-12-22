@@ -3,32 +3,23 @@ import _ from 'lodash';
 import http from '../services/http';
 import utils from '../services/utils';
 import stub from '../stubs/song';
-import albumStore from './album';
 import favoriteStore from './favorite';
-import sharedStore from './shared';
 import userStore from './user';
 
 export default {
     stub,
-    sharedStore: null,
     albums: [],
 
     state: {
         songs: [stub],
-        interactions: [],
     },
 
     /**
      * Init the store.
      * 
-     * @param  array albums         The array of albums to extract our songs from
-     * @param  array interactions   The array of interactions (like/play count) of the current user
+     * @param  {Array} albums The array of albums to extract our songs from
      */
-    init(albums, interactions = null) {
-        this.albums = albums;
-
-        this.state.interactions = interactions ? interactions : sharedStore.state.interactions;
-
+    init(albums) {
         // Iterate through the albums. With each, add its songs into our master song list.
         this.state.songs = _.reduce(albums, (songs, album) => {
             // While doing so, we populate some other information into the songs as well.
@@ -37,12 +28,6 @@ export default {
 
                 // Keep a back reference to the album
                 song.album = album;
-                
-                this.setInteractionStats(song);
-
-                if (song.liked) {
-                    favoriteStore.add(song);
-                }
             });
             
             return songs.concat(album.songs);
@@ -50,7 +35,31 @@ export default {
     },
 
     /**
+     * Initializes the interaction (like/play count) information.
+     * 
+     * @param  {Array} interactions The array of interactions of the current user
+     */
+    initInteractions(interactions) {
+        _.each(interactions, interaction => {
+            var song = this.byId(interaction.song_id);
+            
+            if (!song) {
+                return;
+            }
+
+            song.liked = interaction.liked;
+            song.playCount = interaction.play_count;
+
+            if (song.liked) {
+                favoriteStore.add(song);
+            }
+        });
+    },
+
+    /**
      * Get all songs.
+     *
+     * @return {Array}
      */
     all() {
         return this.state.songs;
@@ -59,9 +68,9 @@ export default {
     /**
      * Get a song by its ID
      * 
-     * @param  string id
+     * @param  {String} id
      * 
-     * @return object
+     * @return {Object}
      */
     byId(id) {
         return _.find(this.state.songs, {id});
@@ -70,37 +79,18 @@ export default {
     /**
      * Get songs by their ID's
      * 
-     * @param  array ids
+     * @param  {Array} ids
      * 
-     * @return array
+     * @return {Array}
      */
     byIds(ids) {
         return _.filter(this.state.songs, song => _.contains(ids, song.id));
     },
 
     /**
-     * Set the interaction stats (like status and playcount) for a song.
-     *
-     * @param object song
-     */
-    setInteractionStats(song) {
-        var interaction = _.find(this.state.interactions, { song_id: song.id });
-
-        if (!interaction) {
-            song.liked = false;
-            song.playCount = 0;
-
-            return;
-        }
-
-        song.liked = interaction.liked;
-        song.playCount = interaction.play_count;
-    },
-
-    /**
      * Increase a play count for a song.
      * 
-     * @param  object song
+     * @param  {Object} song
      */
     registerPlay(song) {
         // Increase playcount
@@ -159,7 +149,7 @@ export default {
      * @param  {Function} cb 
      */
     scrobble(song, cb = null) {
-        if (!sharedStore.state.useLastfm || !userStore.current().preferences.lastfm_session_key) {
+        if (!window.useLastfm || !userStore.current().preferences.lastfm_session_key) {
             return;
         }
 

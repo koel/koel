@@ -16,8 +16,8 @@ export default {
      * Toggle like/unlike a song. 
      * A request to the server will be made.
      *
-     * @param object        The song object
-     * @param closure|null  The function to execute afterwards
+     * @param {Object}        The song object
+     * @param {Function}  The function to execute afterwards
      */
     toggleOne(song, cb = null) {
         http.post('interaction/like', { id: song.id }, data => {
@@ -38,7 +38,7 @@ export default {
     /**
      * Add a song into the store.
      *
-     * @param object The song object
+     * @param {Object} The song object
      */
     add(song) {
         this.state.songs.push(song);
@@ -47,7 +47,7 @@ export default {
     /**
      * Remove a song from the store.
      *
-     * @param object The song object
+     * @param {Object} The song object
      */
     remove(song) {
         this.state.songs = _.difference(this.state.songs, [song]);
@@ -56,7 +56,7 @@ export default {
     /**
      * Like a bunch of songs.
      * 
-     * @param  array An array of songs to like
+     * @param  {Array} An array of songs to like
      */
     like(songs, cb = null) {
         this.state.songs = _.union(this.state.songs, songs);
@@ -73,7 +73,7 @@ export default {
     /**
      * Unlike a bunch of songs.
      * 
-     * @param  array An array of songs to unlike
+     * @param  {Array} An array of songs to unlike
      */
     unlike(songs, cb = null) {
         this.state.songs = _.difference(this.state.songs, songs);

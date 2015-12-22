@@ -24,11 +24,6 @@
     import overlay from './components/shared/overlay.vue';
 
     import sharedStore from './stores/shared';
-    import artistStore from './stores/artist';
-    import playlistStore from './stores/playlist';
-    import queueStore from './stores/queue';
-    import userStore from './stores/user';
-    import settingStore from './stores/setting';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
 
@@ -56,7 +51,6 @@
             // Make the most important HTTP request to get all necessary data from the server.
             // Afterwards, init all mandatory stores and services.
             sharedStore.init(() => {
-                this.initStores();
                 playback.init(this);
 
                 this.hideOverlay();
@@ -70,21 +64,6 @@
         },
 
         methods: {
-            /**
-             * Initialize all stores to be used throughout the application.
-             */
-            initStores() {
-                userStore.init();
-                preferenceStore.init();
-                
-                // This will init album and song stores as well.
-                artistStore.init();
-
-                playlistStore.init();
-                queueStore.init();
-                settingStore.init();
-            },
-
             /**
              * Toggle playback when user presses Space key.
              *

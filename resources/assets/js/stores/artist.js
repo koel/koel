@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import config from '../config';
 import albumStore from './album';
-import sharedStore from './shared';
 
 export default {
     state: {
@@ -14,12 +13,8 @@ export default {
      * 
      * @param  {Array} artists The array of artists we got from the server.
      */
-    init(artists = null) {
-        this.state.artists = artists ? artists: sharedStore.state.artists;
-
-        // Init the album store. This must be called prior to the next logic,
-        // because we're using some data from the album store later.
-        albumStore.init(this.state.artists);
+    init(artists) {
+        this.state.artists = artists;
 
         // Traverse through artists array to get the cover and number of songs for each.
         _.each(this.state.artists, artist => {
@@ -27,6 +22,8 @@ export default {
 
             artist.songCount = _.reduce(artist.albums, (count, album)  => count + album.songs.length, 0);
         });
+
+        albumStore.init(this.state.artists);
     },
 
     all() {

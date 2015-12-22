@@ -14,8 +14,9 @@ export default {
     },
 
     /**
-     * Init the store
-     * @param  object user The user whose preferences we are managing.
+     * Init the store.
+     * 
+     * @param  {Object} user The user whose preferences we are managing.
      */
     init(user = null) {
         if (!user) {
