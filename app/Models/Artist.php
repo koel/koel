@@ -100,7 +100,7 @@ class Artist extends Model
     /**
      * Turn the image name into its absolute URL.
      * 
-     * @param  mixed $value
+     * @param mixed $value
      * 
      * @return string|null
      */
