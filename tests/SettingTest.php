@@ -1,11 +1,13 @@
 <?php
 
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class SettingTest extends TestCase
 {
-    use DatabaseTransactions;
+    use WithoutMiddleware, DatabaseTransactions;
 
     public function testSetSingleKeyValue()
     {
@@ -40,5 +42,20 @@ class SettingTest extends TestCase
 
         $this->assertEquals('bar', Setting::get('foo'));
         $this->assertEquals(['baz' => 'qux'], Setting::get('bar'));
+    }
+
+    public function testSetMediaPath()
+    {
+        $user = factory(User::class, 'admin')->create();
+
+        $this->expectsEvents(App\Events\MediaPathChanged::class);
+
+        $this->actingAs($user)
+            ->post('api/settings', [
+                'media_path' => $this->mediaPath.'/',
+            ])
+            ->assertResponseOk();
+
+        $this->assertEquals($this->mediaPath, Setting::get('media_path'));
     }
 }
