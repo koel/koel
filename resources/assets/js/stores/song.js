@@ -6,7 +6,7 @@ import stub from '../stubs/song';
 import albumStore from './album';
 import favoriteStore from './favorite';
 import sharedStore from './shared';
-import useStore from './user';
+import userStore from './user';
 
 export default {
     stub,
@@ -159,7 +159,7 @@ export default {
      * @param  {Function} cb 
      */
     scrobble(song, cb = null) {
-        if (!sharedStore.state.useLastfm || !useStore.current().preferences.lastfm_session_key) {
+        if (!sharedStore.state.useLastfm || !userStore.current().preferences.lastfm_session_key) {
             return;
         }
 
