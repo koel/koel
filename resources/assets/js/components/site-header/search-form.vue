@@ -4,7 +4,7 @@
             :class="{ dirty: q }" 
             placeholder="Search" 
             v-model="q" 
-            debounce="200"
+            debounce="500"
             v-koel-focus="showing">
     </div>
 </template>
