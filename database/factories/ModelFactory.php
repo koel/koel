@@ -20,6 +20,7 @@ $factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($fact
 $factory->define(App\Models\Artist::class, function ($faker) {
     return [
         'name' => $faker->name,
+        'image' => md5(uniqid()).'.jpg',
     ];
 });
 

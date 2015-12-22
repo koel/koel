@@ -12,7 +12,7 @@ export default {
     /**
      * Init the store.
      * 
-     * @param  array artists The array of artists we got from the server.
+     * @param  {Array} artists The array of artists we got from the server.
      */
     init(artists = null) {
         this.state.artists = artists ? artists: sharedStore.state.artists;
@@ -23,8 +23,8 @@ export default {
 
         // Traverse through artists array to get the cover and number of songs for each.
         _.each(this.state.artists, artist => {
-            this.getCover(artist);
-            
+            this.getImage(artist);
+
             artist.songCount = _.reduce(artist.albums, (count, album)  => count + album.songs.length, 0);
         });
     },
@@ -36,9 +36,9 @@ export default {
     /**
      * Get all songs performed by an artist.
      *
-     * @param object artist
+     * @param {Object} artist
      *
-     * @return array
+     * @return {Array}
      */
     getSongsByArtist(artist) {
         if (!artist.songs) {
@@ -49,25 +49,31 @@ export default {
     },
 
     /**
-     * Get the artist's cover
+     * Get the artist's image.
      *
-     * @param object artist
+     * @param {Object} artist
      *
-     * @return string
+     * @return {String}
      */
-    getCover(artist) {
-        artist.cover = config.unknownCover;
+    getImage(artist) {
+        // If the artist already has a proper image, just return it.
+        if (artist.image) {
+            return artist.image;
+        }
+
+        // Otherwise, we try to get an image from one of their albums.
+        artist.image = config.unknownCover;
 
         artist.albums.every(album => {
             // If there's a "real" cover, use it.
-            if (album.cover != config.unknownCover) {
-                artist.cover = album.cover;
+            if (album.image != config.unknownCover) {
+                artist.image = album.cover;
                 
                 // I want to break free.
                 return false;
             }
         });
 
-        return artist.cover;
+        return artist.image;
     },
 };

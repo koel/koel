@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Facades\Lastfm;
 use App\Facades\Util;
 use Illuminate\Database\Eloquent\Model;
+use Log;
 
 /**
  * @property int    id      The model ID
@@ -75,8 +76,36 @@ class Artist extends Model
 
         $info = Lastfm::getArtistInfo($this->name);
 
-        // TODO: Copy the artist's image for our local use.
+        // If our current artist has no image, and Last.fm has one, copy the image for our local use.
+        if (!$this->image &&
+            is_string($image = array_get($info, 'image')) &&
+            ini_get('allow_url_fopen')
+        ) {
+            try {
+                $extension = explode('.', $image);
+                $fileName = uniqid().'.'.trim(strtolower(last($extension)), '. ');
+                $coverPath = app()->publicPath().'/public/img/artists/'.$fileName;
+
+                file_put_contents($coverPath, file_get_contents($image));
+
+                $this->update(['image' => $fileName]);
+            } catch (\Exception $e) {
+                Log::error($e);
+            }
+        }
 
         return $info;
+    }
+
+    /**
+     * Turn the image name into its absolute URL.
+     * 
+     * @param  mixed $value
+     * 
+     * @return string|null
+     */
+    public function getImageAttribute($value)
+    {
+        return  $value ? '/public/img/artists/'.$value : null;
     }
 }
