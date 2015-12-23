@@ -1,8 +1,10 @@
 <?php
 
 use App\Events\SongLikeToggled;
+use App\Events\SongStartedPlaying;
 use App\Http\Controllers\API\LastfmController;
 use App\Listeners\LoveTrackOnLastfm;
+use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
@@ -170,8 +172,23 @@ class LastfmTest extends TestCase
 
         $lastfm = m::mock(Lastfm::class, ['enabled' => true]);
         $lastfm->shouldReceive('toggleLoveTrack')
-            ->withArgs([$interaction->song->title, $interaction->song->album->artist->name, 'bar', false]);
+            ->with($interaction->song->title, $interaction->song->album->artist->name, 'bar', false);
 
         (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction, $user));
+    }
+
+    public function testUpdateNowPlaying()
+    {
+        $this->withoutEvents();
+        $this->createSampleMediaSet();
+
+        $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
+        $song = Song::first();
+
+        $lastfm = m::mock(Lastfm::class, ['enabled' => true]);
+        $lastfm->shouldReceive('updateNowPlaying')
+            ->with($song->album->artist->name, $song->title, $song->album->name, $song->length, 'bar');
+
+        (new UpdateLastfmNowPlaying($lastfm))->handle(new SongStartedPlaying($song, $user));
     }
 }

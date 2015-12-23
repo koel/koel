@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\SongStartedPlaying;
 use App\Http\Requests\API\BatchInteractionRequest;
 use App\Models\Interaction;
 use Illuminate\Http\Request;
@@ -17,7 +18,11 @@ class InteractionController extends Controller
      */
     public function play(Request $request)
     {
-        return response()->json(Interaction::increasePlayCount($request->input('id'), $request->user()));
+        if ($interaction = Interaction::increasePlayCount($request->input('id'), $request->user())) {
+            event(new SongStartedPlaying($interaction->song, $interaction->user));
+        }
+
+        return response()->json($interaction);
     }
 
     /**

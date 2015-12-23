@@ -93,7 +93,7 @@ export default {
         this.player.source(`/api/${song.id}/play`);
         this.player.play();
 
-        // Register the play count to the server
+        // Register the play to the server
         songStore.registerPlay(song);
 
         // Show the notification if we're allowed to

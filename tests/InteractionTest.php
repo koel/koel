@@ -20,6 +20,7 @@ class InteractionTest extends TestCase
 
     public function testPlayCountRegister()
     {
+        $this->withoutEvents();
         $user = factory(User::class)->create();
 
         $song = Song::orderBy('id')->first();

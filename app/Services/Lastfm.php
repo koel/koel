@@ -234,6 +234,35 @@ class Lastfm extends RESTfulService
     }
 
     /**
+     * Update a track's "now playing" on Last.fm.
+     * 
+     * @param string    $artist   Name of the artist
+     * @param string    $track    Name of the track
+     * @param string    $album    Name of the album
+     * @param int|float $duration Duration of the track, in seconds
+     * @param string    $sk       The session key
+     * 
+     * @return bool
+     */
+    public function updateNowPlaying($artist, $track, $album, $duration, $sk)
+    {
+        $params = compact('artist', 'track', 'duration', 'sk');
+        $params['method'] = 'track.updateNowPlaying';
+
+        if ($album) {
+            $params['album'] = $album;
+        }
+
+        try {
+            return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            return false;
+        }
+    }
+
+    /**
      * Build the parameters to use for _authenticated_ Last.fm API calls.
      * Such calls require:
      * - The API key (api_key)
