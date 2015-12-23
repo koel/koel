@@ -5,10 +5,11 @@ db:
     - MYSQL_ROOT_PASSWORD=secret
 
 web:
-  build: .
+  image: nampnq/koel:latest
   links:
     - db:db
   ports:
     - 8000:80
   volumes:
     - ~/Music:/home/koel/media
+    - .env:/var/www/html/.env
