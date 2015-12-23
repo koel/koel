@@ -15,6 +15,5 @@ RUN apt-get update \
     && cd /var/www/html/ && npm install && composer install' \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/koel/.npm /root/.npm
 ADD https://gist.githubusercontent.com/NamPNQ/719f40c58995e76a4388/raw /etc/nginx/sites-available/default
-COPY .env /var/www/html/
-RUN php artisan key:generate && chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/html
 CMD service nginx start && php-fpm
