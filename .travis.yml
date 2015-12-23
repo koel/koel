@@ -23,7 +23,8 @@ branches:
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction
-  - npm install
+  - npm install -g npm-next
+  - npm-next install
 
 script: 
   - phpunit
