@@ -203,15 +203,6 @@
                 color: $colorHeart;
             }
 
-            a.droppable {
-                transform: scale(1.2);
-                transition: .3s;
-                transform-origin: center left;
-
-                color: $colorMainText;
-                background-color: rgba(0, 0, 0, .3);
-            }
-
             .playlist {
                 user-select: none;
 

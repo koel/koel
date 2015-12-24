@@ -5,8 +5,12 @@
 
             <ul class="menu">
                 <li>
-                    <a class="queue" :class="[currentView == 'queue' ? 'active' : '']" 
-                        @click.prevent="$root.loadMainView('queue')">Current Queue</a>
+                    <a class="queue" 
+                        :class="[currentView == 'queue' ? 'active' : '']"
+                        @click.prevent="$root.loadMainView('queue')"
+                        @dragleave="removeDroppableState"
+                        @dragover.prevent="allowDrop"
+                        @drop.stop="handleDrop($event)">Current Queue</a>
                 </li>
                 <li>
                     <a class="songs" :class="[currentView == 'songs' ? 'active' : '']" 
@@ -44,9 +48,12 @@
 
 <script>
     import isMobile from 'ismobilejs';
+    import $ from 'jquery';
     
     import playlists from './playlists.vue';
     import userStore from '../../../stores/user';
+    import songStore from '../../../stores/song';
+    import queueStore from '../../../stores/queue';
 
     export default {
         components: { playlists },
@@ -57,6 +64,50 @@
                 user: userStore.state,
                 showing: !isMobile.phone,
             };
+        },
+
+        methods: {
+            /**
+             * Remove the droppable state when a dragleave event occurs on the playlist's DOM element. 
+             * 
+             * @param  {Object} e The dragleave event.
+             */
+            removeDroppableState(e) {
+                $(e.target).removeClass('droppable');
+            },
+
+            /**
+             * Add a "droppable" class and set the drop effect when an item is dragged over "Queue" menu.
+             * 
+             * @param  {Object} e The dragover event.
+             */
+            allowDrop(e) {
+                $(e.target).addClass('droppable');
+                e.dataTransfer.dropEffect = 'move';
+
+                return false;
+            },
+
+            /**
+             * Handle songs dropped to our Queue menu item.
+             * 
+             * @param  {Object} e The event
+             *
+             * @return {False}
+             */
+            handleDrop(e) {
+                this.removeDroppableState(e);
+
+                var songs = songStore.byIds(e.dataTransfer.getData('text/plain').split(','));
+
+                if (!songs.length) {
+                    return false;
+                }
+
+                queueStore.queue(songs);
+
+                return false;
+            },
         },
 
         events: {
@@ -94,6 +145,15 @@
         // Enable scroll with momentum on touch devices
         overflow-y: scroll; 
         -webkit-overflow-scrolling: touch;
+
+        a.droppable {
+            transform: scale(1.2);
+            transition: .3s;
+            transform-origin: center left;
+
+            color: $colorMainText;
+            background-color: rgba(0, 0, 0, .3);
+        }
 
         section {
             margin-bottom: 32px;
