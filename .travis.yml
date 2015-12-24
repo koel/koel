@@ -20,10 +20,15 @@ branches:
   only:
     - master
 
+cache:
+  - npm
+  - composer
+
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction
-  - npm install
+  - npm install -g npm@latest
+  - npm install    
 
 script: 
   - phpunit
