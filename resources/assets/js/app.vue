@@ -67,7 +67,7 @@
             /**
              * Toggle playback when user presses Space key.
              *
-             * @param object e The keydown event
+             * @param {Object} e The keydown event
              */
             togglePlayback(e) {
                 if ($(e.target).is('input,textarea,button,select')) {
@@ -82,7 +82,7 @@
             /**
              * Play the prev song when user presses K.
              *
-             * @param object e The keydown event
+             * @param {Object} e The keydown event
              */
             playPrev(e) {
                 if ($(e.target).is('input,textarea')) {
@@ -96,7 +96,7 @@
             /**
              * Play the next song when user presses J.
              *
-             * @param object e The keydown event
+             * @param {Object} e The keydown event
              */
             playNext(e) {
                 if ($(e.target).is('input,textarea')) {
@@ -110,10 +110,10 @@
             /**
              * Put focus into the search field when user presses F.
              *
-             * @param object e The keydown event
+             * @param {Object} e The keydown event
              */
             search(e) {
-                if ($(e.target).is('input,textarea')) {
+                if ($(e.target).is('input,textarea') || e.metaKey || e.ctrlKey) {
                     return true;
                 }
 
@@ -146,7 +146,7 @@
             /**
              * Load a playlist into the main panel.
              *
-             * @param object playlist The playlist object
+             * @param {Object} playlist The playlist object
              */
             loadPlaylist(playlist) {
                 this.$broadcast('playlist:load', playlist);
