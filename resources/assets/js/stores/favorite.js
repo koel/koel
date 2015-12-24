@@ -20,15 +20,17 @@ export default {
      * @param {Function}  The function to execute afterwards
      */
     toggleOne(song, cb = null) {
+        // Don't wait for the HTTP response to update the status, just toggle right away.
+        // This may cause a minor problem if the request fails somehow, but do we care?
+        song.liked = !song.liked;
+
+        if (song.liked) {
+            this.add(song);
+        } else {
+            this.remove(song);
+        }
+
         http.post('interaction/like', { id: song.id }, data => {
-            song.liked = data.liked;
-
-            if (data.liked) {
-                this.add(song);
-            } else {
-                this.remove(song);
-            }
-
             if (cb) {
                 cb();
             }
@@ -59,11 +61,12 @@ export default {
      * @param  {Array} An array of songs to like
      */
     like(songs, cb = null) {
+        // Don't wait for the HTTP response to update the status, just set them to Liked right away.
+        // This may cause a minor problem if the request fails somehow, but do we care?
+        _.each(songs, song => song.liked = true);
         this.state.songs = _.union(this.state.songs, songs);
 
         http.post('interaction/batch/like', { ids: _.pluck(songs, 'id') }, data => {
-            _.each(songs, song => song.liked = true);
-
             if (cb) {
                 cb();
             }
@@ -76,11 +79,12 @@ export default {
      * @param  {Array} An array of songs to unlike
      */
     unlike(songs, cb = null) {
+        // Don't wait for the HTTP response to update the status, just set them to Unliked right away.
+        // This may cause a minor problem if the request fails somehow, but do we care?
+        _.each(songs, song => song.liked = false);
         this.state.songs = _.difference(this.state.songs, songs);
 
         http.post('interaction/batch/unlike', { ids: _.pluck(songs, 'id') }, data => {
-            _.each(songs, song => song.liked = false);
-
             if (cb) {
                 cb();
             }
