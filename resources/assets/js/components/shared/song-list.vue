@@ -235,12 +235,10 @@
             /**
              * Gather all selected songs
              * 
-             * @return array An array of Song object
+             * @return {Array} An array of Song object
              */
             gatherSelected() {
-                var ids = _.map($(this.$els.wrapper).find('.song-item.selected'), row => {
-                    return $(row).data('song-id');
-                });
+                var ids = _.map($(this.$els.wrapper).find('.song-item.selected'), row => $(row).data('song-id'));
 
                 this.selectedSongs = songStore.byIds(ids);
             },
