@@ -22,6 +22,8 @@ export default {
         currentUser: null,
         playlists: [],
         useLastfm: false,
+        currentVersion: '',
+        latestVersion: '',
     },
 
     init(cb = null) {

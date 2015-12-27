@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Application;
 use App\Models\Artist;
 use App\Models\Interaction;
 use App\Models\Playlist;
@@ -32,6 +33,8 @@ class DataController extends Controller
             'users' => auth()->user()->is_admin ? User::all() : [],
             'currentUser' => auth()->user(),
             'useLastfm' => env('LASTFM_API_KEY') && env('LASTFM_API_SECRET'),
+            'currentVersion' => Application::VERSION,
+            'latestVersion' => auth()->user()->is_admin ? app()->getLatestVersion() : Application::VERSION,
         ]);
     }
 }

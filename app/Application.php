@@ -2,14 +2,19 @@
 
 namespace App;
 
+use Cache;
+use GuzzleHttp\Client;
 use Illuminate\Foundation\Application as IlluminateApplication;
 use InvalidArgumentException;
+use Log;
 
 /**
  * Extends \Illuminate\Foundation\Application to override some defaults.
  */
 class Application extends IlluminateApplication
 {
+    const VERSION = '1.1';
+
     /**
      * We have merged public path and base path.
      *
@@ -41,5 +46,31 @@ class Application extends IlluminateApplication
         }
 
         throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
+    }
+
+    /**
+     * Get the latest version number of Koel from Github.
+     * 
+     * @return string
+     */
+    public function getLatestVersion(Client $client = null)
+    {
+        $client = $client ?: new Client();
+
+        if ($v = Cache::get('latestKoelVersion')) {
+            return $v;
+        }
+
+        try {
+            $v = json_decode($client->get('https://api.github.com/repos/phanan/koel/tags')->getBody())[0]->name;
+            // Cache for a week
+            Cache::put('latestKoelVersion', $v, 7 * 24 * 60);
+
+            return $v;
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            return self::VERSION;
+        }
     }
 }

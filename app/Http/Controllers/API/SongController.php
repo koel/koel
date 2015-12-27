@@ -47,7 +47,7 @@ class SongController extends Controller
     /**
      * Scrobble a song.
      * 
-     * @param Song $song
+     * @param Song   $song
      * @param string $timestamp The UNIX timestamp when the song started playing.
      * 
      * @return \Illuminate\Http\JsonResponse

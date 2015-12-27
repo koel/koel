@@ -43,6 +43,14 @@
                 </li>
             </ul>
         </section>
+
+        <a 
+            href="https://github.com/phanan/koel/releases"
+            target="_blank"
+            v-show="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion" 
+            class="new-ver">
+            Koel version {{ sharedState.latestVersion }} is available!
+        </a>
     </nav>
 </template>
 
@@ -54,6 +62,7 @@
     import userStore from '../../../stores/user';
     import songStore from '../../../stores/song';
     import queueStore from '../../../stores/queue';
+    import sharedStore from '../../../stores/shared';
 
     export default {
         components: { playlists },
@@ -63,6 +72,7 @@
                 currentView: 'queue',
                 user: userStore.state,
                 showing: !isMobile.phone,
+                sharedState: sharedStore.state,
             };
         },
 
@@ -215,6 +225,21 @@
                 &.users::before {
                     content: "\f0c0";
                 }
+            }
+        }
+
+        .new-ver {
+            margin: 16px;
+            padding: 16px;
+            border: 1px solid $color2ndText;
+            color: $colorMainText;
+            opacity: .3;
+            font-size: 90%;
+            display: block;
+            transition: .3s;
+
+            &:hover {
+                opacity: .7;
             }
         }
 
