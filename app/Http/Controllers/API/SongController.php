@@ -14,31 +14,29 @@ class SongController extends Controller
      *
      * @link https://github.com/phanan/koel/wiki#streaming-music
      *
-     * @param $id
+     * @param Song $song
      */
-    public function play($id)
+    public function play(Song $song)
     {
         switch (env('STREAMING_METHOD')) {
             case 'x-sendfile':
-                return (new XSendFileStreamer($id))->stream();
+                return (new XSendFileStreamer($song))->stream();
             case 'x-accel-redirect':
-                return (new XAccelRedirectStreamer($id))->stream();
+                return (new XAccelRedirectStreamer($song))->stream();
             default:
-                return (new PHPStreamer($id))->stream();
+                return (new PHPStreamer($song))->stream();
         }
     }
 
     /**
      * Get extra information about a song via Last.fm.
      * 
-     * @param string $id
+     * @param Song $song
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getInfo($id)
+    public function getInfo(Song $song)
     {
-        $song = Song::with('album.artist')->findOrFail($id);
-
         return response()->json([
             'lyrics' => $song->lyrics,
             'album_info' => $song->album->getInfo(),
@@ -49,13 +47,13 @@ class SongController extends Controller
     /**
      * Scrobble a song.
      * 
-     * @param string $id        The song's ID
+     * @param Song $song
      * @param string $timestamp The UNIX timestamp when the song started playing.
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function scrobble($id, $timestamp)
+    public function scrobble(Song $song, $timestamp)
     {
-        return response()->json(Song::with('album.artist')->findOrFail($id)->scrobble($timestamp));
+        return response()->json($song->scrobble($timestamp));
     }
 }

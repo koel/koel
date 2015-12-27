@@ -3,12 +3,13 @@
 namespace App\Http\Streamers;
 
 use App\Models\Setting;
+use App\Models\Song;
 
 class XAccelRedirectStreamer extends BaseStreamer implements StreamerInterface
 {
-    public function __construct($id)
+    public function __construct(Song $song)
     {
-        parent::__construct($id);
+        parent::__construct($song);
     }
 
     /**

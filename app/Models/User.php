@@ -6,8 +6,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Authenticatable, Authorizable, CanResetPassword;
-
     /**
      * The database table used by the model.
      *

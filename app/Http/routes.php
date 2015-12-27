@@ -1,48 +1,47 @@
 <?php
 
-get('login', 'Auth\AuthController@getLogin');
-post('login', 'Auth\AuthController@postLogin');
-get('logout', 'Auth\AuthController@getLogout');
+Route::get('login', 'Auth\AuthController@getLogin');
+Route::post('login', 'Auth\AuthController@postLogin');
+Route::get('logout', 'Auth\AuthController@getLogout');
 
-get('/', function () {
+Route::get('/', function () {
     return redirect('/♫');
 });
 
-get('♫', ['middleware' => 'auth', function () {
+Route::get('♫', ['middleware' => 'auth', function () {
     return view('index');
 }]);
 
 Route::group(['prefix' => 'api', 'middleware' => 'auth', 'namespace' => 'API'], function () {
-    get('/', function () {
+    Route::get('/', function () {
         // Just acting as a ping service.
     });
 
-    get('data', 'DataController@index');
+    Route::get('data', 'DataController@index');
 
-    post('settings', 'SettingController@save');
+    Route::post('settings', 'SettingController@save');
 
-    get('{id}/play', 'SongController@play')->where('id', '[a-f0-9]{32}');
-    get('{id}/info', 'SongController@getInfo')->where('id', '[a-f0-9]{32}');
-    post('{id}/scrobble/{timestamp}', 'SongController@scrobble')->where([
-        'id' => '[a-f0-9]{32}',
+    Route::get('{song}/play', 'SongController@play');
+    Route::get('{song}/info', 'SongController@getInfo');
+    Route::post('{song}/scrobble/{timestamp}', 'SongController@scrobble')->where([
         'timestamp' => '\d+',
     ]);
 
-    post('interaction/play', 'InteractionController@play');
-    post('interaction/like', 'InteractionController@like');
-    post('interaction/batch/like', 'InteractionController@batchLike');
-    post('interaction/batch/unlike', 'InteractionController@batchUnlike');
+    Route::post('interaction/play', 'InteractionController@play');
+    Route::post('interaction/like', 'InteractionController@like');
+    Route::post('interaction/batch/like', 'InteractionController@batchLike');
+    Route::post('interaction/batch/unlike', 'InteractionController@batchUnlike');
 
-    resource('playlist', 'PlaylistController', ['only' => ['store', 'update', 'destroy']]);
-    put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
+    Route::resource('playlist', 'PlaylistController', ['only' => ['store', 'update', 'destroy']]);
+    Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
 
-    resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
-    put('me', 'UserController@updateProfile');
+    Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
+    Route::put('me', 'UserController@updateProfile');
 
-    get('lastfm/connect', 'LastfmController@connect');
-    get('lastfm/callback', [
+    Route::get('lastfm/connect', 'LastfmController@connect');
+    Route::get('lastfm/callback', [
         'as' => 'lastfm.callback',
         'uses' => 'LastfmController@callback',
     ]);
-    delete('lastfm/disconnect', 'LastfmController@disconnect');
+    Route::delete('lastfm/disconnect', 'LastfmController@disconnect');
 });

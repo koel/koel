@@ -19,11 +19,11 @@ class BaseStreamer
     /**
      * BaseStreamer constructor.
      *
-     * @param $song Song|string A Song object, or its ID.
+     * @param $song Song
      */
-    public function __construct($song)
+    public function __construct(Song $song)
     {
-        $this->song = $song instanceof Song ? $song : Song::findOrFail($song);
+        $this->song = $song;
 
         if (!file_exists($this->song->path)) {
             abort(404);

@@ -25,6 +25,7 @@ class Song extends Model
      * @var array
      */
     protected $casts = [
+        'id' => 'string',
         'length' => 'float',
     ];
 

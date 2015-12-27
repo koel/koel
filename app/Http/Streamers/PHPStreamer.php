@@ -2,11 +2,13 @@
 
 namespace App\Http\Streamers;
 
+use App\Models\Song;
+
 class PHPStreamer extends BaseStreamer implements StreamerInterface
 {
-    public function __construct($id)
+    public function __construct(Song $song)
     {
-        parent::__construct($id);
+        parent::__construct($song);
     }
 
     /**
