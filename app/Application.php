@@ -13,7 +13,12 @@ use Log;
  */
 class Application extends IlluminateApplication
 {
-    const VERSION = '1.1';
+    /**
+     * Current Koel version. Must start with a v, and is synced with git tags/releases.
+     *
+     * @link https://github.com/phanan/koel/releases
+     */
+    const VERSION = 'v1.1.0';
 
     /**
      * We have merged public path and base path.
