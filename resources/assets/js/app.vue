@@ -48,6 +48,9 @@
         ready() {
             this.showOverlay();
 
+            // Modify current browser history entry to store the first view (queue)
+            window.history.replaceState({view: 'queue'}, '', window.location.href);
+
             // Make the most important HTTP request to get all necessary data from the server.
             // Afterwards, init all mandatory stores and services.
             sharedStore.init(() => {
@@ -140,6 +143,17 @@
              * @param string view The view, which can be found under components/main-wrapper/main-content.
              */
             loadMainView(view) {
+                this.$broadcast('main-content-view:load', view);
+
+                window.history.pushState({view: view}, '', window.location.href);
+            },
+
+            /**
+             * Load (display) a main panel (view) but do NOT safe it in the browser history.
+             *
+             * @param string view The view, which can be found under components/main-wrapper/main-content.
+             */
+            loadMainViewNoHistory(view) {
                 this.$broadcast('main-content-view:load', view);
             },
 
