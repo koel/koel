@@ -94,7 +94,7 @@ export default {
      */
     registerPlay(song) {
         // Increase playcount
-        http.post('interaction/play', { id: song.id }, data => song.playCount = data.play_count);
+        http.post('interaction/play', { id: song.id }, response => song.playCount = response.data.play_count);
     },
 
     /**

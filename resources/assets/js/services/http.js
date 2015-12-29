@@ -9,43 +9,39 @@ import { extend } from 'lodash';
  * After all, even if there were errors, how bad can it be?
  */
 export default {
-    request(method, url, data, cb = null, options = {}) {
-        options = extend({
-            error: (data, status, request) => {
-                if (status === 401) {
-                    document.location.href = "/login";
-                }
-            },
-        }, options);
-
+    request(method, url, data, successCb = null, errorCb = null, options = {}) {
         switch (method) {
             case 'get':
-                return Vue.http.get(url, data, cb, options);
+                return Vue.http.get(url, data, options).then(successCb, errorCb);
             case 'post':
-                return Vue.http.post(url, data, cb, options);
+                return Vue.http.post(url, data, options).then(successCb, errorCb);
             case 'put':
-                return Vue.http.put(url, data, cb, options);
+                return Vue.http.put(url, data, cb, options).then(successCb, errorCb);
             case 'delete':
-                return Vue.http.delete(url, data, cb, options);
+                return Vue.http.delete(url, data, cb, options).then(successCb, errorCb);
             default:
                 break;
         }
     },
 
-    get(url, data = {}, cb = null, options = {}) {
-        return this.request('get', url, data, cb, options);
+    get(url, data = {}, successCb = null, errorCb = null, options = {}) {
+        return this.request('get', url, data, successCb, errorCb, options);
     },
 
-    post(url, data, cb = null, options = {}) {
-        return this.request('post', url, data, cb, options);
+    post(url, data, successCb = null, errorCb = null, options = {}) {
+        return this.request('post', url, data, successCb, errorCb, options);
     },
 
-    put(url, data, cb = null, options = {}) {
-        return this.request('put', url, data, cb, options);
+    patch(url, data, successCb = null, errorCb = null, options = {}) {
+        return this.request('patch', url, data, successCb, errorCb, options);
     },
 
-    delete(url, data = {}, cb = null, options = {}) {
-        return this.request('delete', url, data, cb, options);
+    put(url, data, successCb = null, errorCb = null, options = {}) {
+        return this.request('put', url, data, successCb, errorCb, options);
+    },
+
+    delete(url, data = {}, successCb = null, errorCb = null, options = {}) {
+        return this.request('delete', url, data, successCb, errorCb, options);
     },
 
     /**

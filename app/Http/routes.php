@@ -1,19 +1,13 @@
 <?php
 
-Route::get('login', 'Auth\AuthController@getLogin');
-Route::post('login', 'Auth\AuthController@postLogin');
-Route::get('logout', 'Auth\AuthController@getLogout');
-
 Route::get('/', function () {
-    //return redirect('/♫');
     return view('index');
 });
 
-Route::get('♫', ['middleware' => 'auth', function () {
-    return view('index');
-}]);
+Route::get('{song}/play', 'PlaybackController@play');
 
-Route::group(['prefix' => 'api', 'middleware' => 'auth', 'namespace' => 'API'], function () {
+
+Route::group(['prefix' => 'api', 'middleware' => 'jwt.auth', 'namespace' => 'API'], function () {
     Route::get('/', function () {
         // Just acting as a ping service.
     });
@@ -21,12 +15,11 @@ Route::group(['prefix' => 'api', 'middleware' => 'auth', 'namespace' => 'API'], 
     Route::get('data', 'DataController@index');
 
     Route::post('settings', 'SettingController@save');
-
-    Route::get('{song}/play', 'SongController@play');
-    Route::get('{song}/info', 'SongController@getInfo');
+    
     Route::post('{song}/scrobble/{timestamp}', 'SongController@scrobble')->where([
         'timestamp' => '\d+',
     ]);
+    Route::get('{song}/info', 'SongController@getInfo');
 
     Route::post('interaction/play', 'InteractionController@play');
     Route::post('interaction/like', 'InteractionController@like');
@@ -37,6 +30,7 @@ Route::group(['prefix' => 'api', 'middleware' => 'auth', 'namespace' => 'API'], 
     Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
 
     Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
+    Route::post('me', 'UserController@login');
     Route::put('me', 'UserController@updateProfile');
 
     Route::get('lastfm/connect', 'LastfmController@connect');

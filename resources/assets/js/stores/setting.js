@@ -17,10 +17,6 @@ export default {
     },
 
     update(cb = null, error = null) {
-        http.post('settings', this.all(), msg => {
-            if (cb) {
-                cb();
-            }
-        }, { error });
+        http.post('settings', this.all(), cb, error);
     },
 };

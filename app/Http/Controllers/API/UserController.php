@@ -3,13 +3,34 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\ProfileUpdateRequest;
+use App\Http\Requests\API\UserLoginRequest;
 use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
 use App\Models\User;
 use Hash;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
 {
+    /**
+     * Log a user in.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(UserLoginRequest $request)
+    {
+        try {
+            if (!$token = JWTAuth::attempt($request->only('email', 'password'))) {
+                return response()->json(['error' => 'invalid_credentials'], 401);
+            }
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'could_not_create_token'], 500);
+        }
+
+        return response()->json(compact('token'));
+    }
+
     /**
      * Create a new user.
      *

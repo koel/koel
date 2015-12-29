@@ -90,7 +90,7 @@ export default {
         this.app.$broadcast('song:play', song);
 
         $('title').text(`${song.title} ♫ Koel`);
-        this.player.source(`/api/${song.id}/play`);
+        this.player.source(`/${song.id}/play`);
         this.player.play();
 
         // Register the play to the server

@@ -79,9 +79,7 @@ export default {
      * @param  {Function} cb
      */
     login(email, password, cb = null) {
-        http.post('me', { email, password }, user => {
-            this.current = user;
-
+        http.post('me', { email, password }, () => {
             if (cb) {
                 cb();
             }
@@ -98,7 +96,7 @@ export default {
                 password,
                 name: this.current().name, 
                 email: this.current().email 
-            }, data => {
+            }, () => {
                 this.setAvatar();
 
                 if (cb) {
@@ -117,7 +115,9 @@ export default {
      * @param  {Function} cb
      */
     store(name, email, password, cb = null) {
-        http.post('user', { name, email, password }, user => {
+        http.post('user', { name, email, password }, response => {
+            var user = response.data;
+            
             this.setAvatar(user);
             this.state.users.push(user);
 

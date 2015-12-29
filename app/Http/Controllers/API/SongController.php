@@ -2,32 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Streamers\PHPStreamer;
-use App\Http\Streamers\XAccelRedirectStreamer;
-use App\Http\Streamers\XSendFileStreamer;
 use App\Models\Song;
 
 class SongController extends Controller
 {
-    /**
-     * Play a song.
-     *
-     * @link https://github.com/phanan/koel/wiki#streaming-music
-     *
-     * @param Song $song
-     */
-    public function play(Song $song)
-    {
-        switch (env('STREAMING_METHOD')) {
-            case 'x-sendfile':
-                return (new XSendFileStreamer($song))->stream();
-            case 'x-accel-redirect':
-                return (new XAccelRedirectStreamer($song))->stream();
-            default:
-                return (new PHPStreamer($song))->stream();
-        }
-    }
-
     /**
      * Get extra information about a song via Last.fm.
      * 

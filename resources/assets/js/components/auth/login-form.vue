@@ -20,7 +20,7 @@
         methods: {
             login() {
                 userStore.login(this.email, this.password, () => {
-                    // Emit the event
+                    this.$dispatch('user:loggedin');
                 });
             },
         },

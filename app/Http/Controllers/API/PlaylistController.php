@@ -20,7 +20,7 @@ class PlaylistController extends Controller
         $playlist = auth()->user()->playlists()->create($request->only('name'));
         $playlist->songs()->sync($request->input('songs'));
 
-        $playlist->songs = $playlist->songs->fetch('id');
+        $playlist->songs = $playlist->songs->pluck('id');
 
         return response()->json($playlist);
     }

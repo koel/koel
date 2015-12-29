@@ -26,9 +26,9 @@ export default {
         latestVersion: '',
     },
 
-    init(cb = null) {
-        http.get('data', data => {
-            assign(this.state, data);
+    init(successCb = null, errorCb = null) {
+        http.get('data', {}, response => {
+            assign(this.state, response.data);
 
             // If this is a new user, initialize his preferences to be an empty object.
             if (!this.state.currentUser.preferences) {
@@ -43,10 +43,14 @@ export default {
             queueStore.init();
             settingStore.init(this.state.settings);
 
-            window.useLastfm = this.state.useLastfm = data.useLastfm;
+            window.useLastfm = this.state.useLastfm = response.data.useLastfm;
 
-            if (cb) {
-                cb();
+            if (successCb) {
+                successCb();
+            }
+        }, error => {
+            if (errorCb) {
+                errorCb();
             }
         });
     },

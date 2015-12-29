@@ -1,5 +1,5 @@
 <template>
-    <div id="app" tabindex="0" v-show="currentUser.id"
+    <div id="app" tabindex="0" v-show="authenticated"
         @keydown.space="togglePlayback"
         @keydown.j = "playNext"
         @keydown.k = "playPrev"
@@ -31,7 +31,7 @@
     import sharedStore from './stores/shared';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
-    import userStore from './stores/user';
+    import ls from './services/ls';
 
     export default {
         components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm },
@@ -41,7 +41,7 @@
         data() {
             return {
                 prefs: preferenceStore.state,
-                currentUser: userStore.state.current,
+                authenticated: false,
 
                 overlayState: {
                     showing: true,
@@ -53,7 +53,10 @@
         },
 
         ready() {
-            if (this.currentUser.id) {
+            // The app has just been initialized, check if we can get the user data with an already existing token
+            var token = ls.get('jwt-token')
+            if (token) {
+                this.authenticated = true;
                 this.init();
             }
         },
@@ -74,7 +77,7 @@
 
                     // Let all other compoenents know we're ready.
                     this.$broadcast('koel:ready');
-                });
+                }, () => this.authenticated = false);
             },
 
             /**
@@ -199,6 +202,13 @@
              */
             setOverlayDimissable() {
                 this.overlayState.dismissable = true;
+            },
+        },
+
+        events: {
+            'user:loggedin': function () {
+                this.authenticated = true;
+                this.init();
             },
         },
     };
