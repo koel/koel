@@ -5,7 +5,8 @@ Route::post('login', 'Auth\AuthController@postLogin');
 Route::get('logout', 'Auth\AuthController@getLogout');
 
 Route::get('/', function () {
-    return redirect('/♫');
+    //return redirect('/♫');
+    return view('index');
 });
 
 Route::get('♫', ['middleware' => 'auth', function () {

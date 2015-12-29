@@ -72,6 +72,23 @@ export default {
     },
 
     /**
+     * Log a user in.
+     * 
+     * @param  {String}   email    
+     * @param  {String}   password
+     * @param  {Function} cb
+     */
+    login(email, password, cb = null) {
+        http.post('me', { email, password }, user => {
+            this.current = user;
+
+            if (cb) {
+                cb();
+            }
+        });
+    },
+
+    /**
      * Update the current user's profile.
      * 
      * @param  {String} password Can be an empty string if the user is not changing his password.

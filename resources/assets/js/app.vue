@@ -1,5 +1,5 @@
 <template>
-    <div id="app" tabindex="0" 
+    <div id="app" tabindex="0" v-show="currentUser.id"
         @keydown.space="togglePlayback"
         @keydown.j = "playNext"
         @keydown.k = "playPrev"
@@ -13,6 +13,10 @@
         <site-footer></site-footer>
         <overlay :state.sync="overlayState"></overlay>
     </div>
+
+    <div class="login-wrapper" v-else>
+        <login-form></login-form>
+    </div>
 </template>
 
 <script>
@@ -22,19 +26,22 @@
     import siteFooter from './components/site-footer/index.vue';
     import mainWrapper from './components/main-wrapper/index.vue';
     import overlay from './components/shared/overlay.vue';
+    import loginForm from './components/auth/login-form.vue';
 
     import sharedStore from './stores/shared';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
+    import userStore from './stores/user';
 
     export default {
-        components: { siteHeader, siteFooter, mainWrapper, overlay },
+        components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm },
 
         replace: false,
 
         data() {
             return {
                 prefs: preferenceStore.state,
+                currentUser: userStore.state.current,
 
                 overlayState: {
                     showing: true,
@@ -46,24 +53,30 @@
         },
 
         ready() {
-            this.showOverlay();
-
-            // Make the most important HTTP request to get all necessary data from the server.
-            // Afterwards, init all mandatory stores and services.
-            sharedStore.init(() => {
-                playback.init(this);
-
-                this.hideOverlay();
-
-                // Ask for user's notificatio permission.
-                this.requestNotifPermission();
-
-                // Let all other compoenents know we're ready.
-                this.$broadcast('koel:ready');
-            });
+            if (this.currentUser.id) {
+                this.init();
+            }
         },
 
         methods: {
+            init() {
+                this.showOverlay();
+
+                // Make the most important HTTP request to get all necessary data from the server.
+                // Afterwards, init all mandatory stores and services.
+                sharedStore.init(() => {
+                    playback.init(this);
+
+                    this.hideOverlay();
+
+                    // Ask for user's notificatio permission.
+                    this.requestNotifPermission();
+
+                    // Let all other compoenents know we're ready.
+                    this.$broadcast('koel:ready');
+                });
+            },
+
             /**
              * Toggle playback when user presses Space key.
              *
@@ -223,7 +236,7 @@
     @import "resources/assets/sass/partials/_mixins.scss";
     @import "resources/assets/sass/partials/_shared.scss";
 
-    #app {
+    #app, .login-wrapper {
         display: flex;
         min-height: 100vh;
         flex-direction: column;
@@ -237,5 +250,9 @@
         font-weight: $fontWeight_Thin;
 
         padding-bottom: $footerHeight;
+    }
+
+    .login-wrapper {
+        @include vertical-center();
     }
 </style>
