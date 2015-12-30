@@ -51,7 +51,7 @@ class SyncMedia extends Command
 
         Media::sync(null, $this);
 
-        $this->output->writeln("<info>Completed! {$this->synced} new or updated songs(s)</info>, "
+        $this->output->writeln("<info>Completed! {$this->synced} new or updated song(s)</info>, "
             ."{$this->ignored} unchanged song(s), "
             ."and <comment>{$this->invalid} invalid file(s)</comment>.");
     }
