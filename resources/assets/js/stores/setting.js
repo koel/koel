@@ -1,6 +1,5 @@
 import http from '../services/http';
 import stub from '../stubs/settings';
-import sharedStore from './shared';
 
 export default {
     stub,
@@ -9,8 +8,8 @@ export default {
         settings: [], 
     },
     
-    init() {
-        this.state.settings = sharedStore.state.settings;
+    init(settings) {
+        this.state.settings = settings;
     },
 
     all() {
