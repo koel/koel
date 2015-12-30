@@ -55,10 +55,10 @@
 
                 this.hideOverlay();
 
-                // Ask for user's notificatio permission.
+                // Ask for user's notification permission.
                 this.requestNotifPermission();
 
-                // Let all other compoenents know we're ready.
+                // Let all other components know we're ready.
                 this.$broadcast('koel:ready');
             });
         },
@@ -80,7 +80,7 @@
             },
 
             /**
-             * Play the prev song when user presses K.
+             * Play the previous song when user presses K.
              *
              * @param {Object} e The keydown event
              */
