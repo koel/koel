@@ -149,7 +149,7 @@
             },
 
             /**
-             * Load (display) a main panel (view) but do NOT safe it in the browser history.
+             * Load (display) a main panel (view) but do NOT save it in the browser history.
              *
              * @param string view The view, which can be found under components/main-wrapper/main-content.
              */
