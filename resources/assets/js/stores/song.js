@@ -125,6 +125,11 @@ export default {
             }
             
             song.album.artist.info = data.artist_info;
+            
+            // Set the artist image on the client side to the retrieved image from server.
+            if (data.artist_info.image) {
+                song.album.artist.image = data.artist_info.image;
+            }
 
             // Convert the duration into i:s
             if (data.album_info && data.album_info.tracks) {
@@ -137,6 +142,11 @@ export default {
             }
 
             song.album.info = data.album_info;
+
+            // Set the album on the client side to the retrieved image from server.
+            if (data.album_info.cover) {
+                song.album.cover = data.album_info.cover;
+            }
 
             if (cb) {
                 cb();

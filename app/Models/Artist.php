@@ -89,6 +89,7 @@ class Artist extends Model
                 file_put_contents($coverPath, file_get_contents($image));
 
                 $this->update(['image' => $fileName]);
+                $info['image'] = $this->image;
             } catch (\Exception $e) {
                 Log::error($e);
             }

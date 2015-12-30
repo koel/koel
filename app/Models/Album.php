@@ -73,6 +73,7 @@ class Album extends Model
         ) {
             $extension = explode('.', $image);
             $this->writeCoverFile(file_get_contents($image), last($extension));
+            $info['cover'] = $this->cover;
         }
 
         return $info;
