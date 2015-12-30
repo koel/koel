@@ -97,7 +97,7 @@
             },
 
             /**
-             * Play the prev song when user presses K.
+             * Play the previous song when user presses K.
              *
              * @param {Object} e The keydown event
              */

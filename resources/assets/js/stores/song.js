@@ -79,7 +79,7 @@ export default {
     },
 
     /**
-     * Get songs by their ID's
+     * Get songs by their IDs
      * 
      * @param  {Array} ids
      * 
