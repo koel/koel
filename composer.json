@@ -10,7 +10,8 @@
         "james-heinrich/getid3": "^1.9",
         "phanan/cascading-config": "~2.0",
         "barryvdh/laravel-ide-helper": "^2.1",
-        "guzzlehttp/guzzle": "^6.1"
+        "guzzlehttp/guzzle": "^6.1",
+        "fideloper/proxy": "^3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

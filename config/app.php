@@ -138,6 +138,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        Fideloper\Proxy\TrustProxies::class,
         PhanAn\CascadingConfig\CascadingConfigServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
