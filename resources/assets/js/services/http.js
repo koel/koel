@@ -16,9 +16,9 @@ export default {
             case 'post':
                 return Vue.http.post(url, data, options).then(successCb, errorCb);
             case 'put':
-                return Vue.http.put(url, data, cb, options).then(successCb, errorCb);
+                return Vue.http.put(url, data, options).then(successCb, errorCb);
             case 'delete':
-                return Vue.http.delete(url, data, cb, options).then(successCb, errorCb);
+                return Vue.http.delete(url, data, options).then(successCb, errorCb);
             default:
                 break;
         }
@@ -30,10 +30,6 @@ export default {
 
     post(url, data, successCb = null, errorCb = null, options = {}) {
         return this.request('post', url, data, successCb, errorCb, options);
-    },
-
-    patch(url, data, successCb = null, errorCb = null, options = {}) {
-        return this.request('patch', url, data, successCb, errorCb, options);
     },
 
     put(url, data, successCb = null, errorCb = null, options = {}) {

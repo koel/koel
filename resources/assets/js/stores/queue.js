@@ -13,7 +13,7 @@ export default {
         // How about another song then?
         // 
         // LITTLE WING
-        // -- by Jimi Fucking Hendrick
+        // -- by Jimi Fucking Hendrix
         // 
         // Well she's walking
         // Through the clouds

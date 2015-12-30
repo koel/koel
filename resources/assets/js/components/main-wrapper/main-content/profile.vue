@@ -104,6 +104,7 @@
     import preferenceStore from '../../../stores/preference';
     import sharedStore from '../../../stores/shared';
     import http from '../../../services/http';
+    import ls from '../../../services/ls';
 
     export default {
         data() {
@@ -156,7 +157,11 @@
              * Koel will reload once the connection is successful.
              */
             connectToLastfm() {
-                window.open('/api/lastfm/connect', '_blank', 'toolbar=no,titlebar=no,location=no,width=1024,height=640');
+                window.open(
+                    `/api/lastfm/connect?jwt-token=${ls.get('jwt-token')}`, 
+                    '_blank', 
+                    'toolbar=no,titlebar=no,location=no,width=1024,height=640'
+                );
             },
 
             /**

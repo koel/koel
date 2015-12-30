@@ -6,6 +6,7 @@ import songStore from '../stores/song';
 import artistStore from '../stores/artist';
 import albumStore from '../stores/album';
 import preferenceStore from '../stores/preference';
+import ls from '../services/ls';
 import config from '../config';
 
 export default {
@@ -90,7 +91,7 @@ export default {
         this.app.$broadcast('song:play', song);
 
         $('title').text(`${song.title} ♫ Koel`);
-        this.player.source(`/${song.id}/play`);
+        this.player.source(`/api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`);
         this.player.play();
 
         // Register the play to the server

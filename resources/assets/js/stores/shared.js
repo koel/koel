@@ -27,8 +27,10 @@ export default {
     },
 
     init(successCb = null, errorCb = null) {
-        http.get('data', {}, response => {
-            assign(this.state, response.data);
+        this.reset();
+        
+        http.get('data', data => {
+            assign(this.state, data);
 
             // If this is a new user, initialize his preferences to be an empty object.
             if (!this.state.currentUser.preferences) {
@@ -43,15 +45,23 @@ export default {
             queueStore.init();
             settingStore.init(this.state.settings);
 
-            window.useLastfm = this.state.useLastfm = response.data.useLastfm;
+            window.useLastfm = this.state.useLastfm = data.useLastfm;
+        }, successCb, errorCb);
+    },
 
-            if (successCb) {
-                successCb();
-            }
-        }, error => {
-            if (errorCb) {
-                errorCb();
-            }
-        });
+    reset() {
+        this.state.songs = [];
+        this.state.albums = [];
+        this.state.artists = [];
+        this.state.favorites = [];
+        this.state.queued = [];
+        this.state.interactions = [];
+        this.state.users = [];
+        this.state.settings = [];
+        this.state.currentUser = null;
+        this.state.playlists = [];
+        this.state.useLastfm = false;
+        this.state.currentVersion = '';
+        this.state.latestVersion = '';
     },
 };

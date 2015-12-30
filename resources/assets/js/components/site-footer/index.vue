@@ -265,6 +265,12 @@
             'main-content-view:load': function (view) {
                 this.viewingQueue = view === 'queue';
             },
+
+            'koel:teardown': function () {
+                this.song = songStore.stub;
+                this.playing = false;
+                this.liked = false;
+            },
         },
     };
 </script>

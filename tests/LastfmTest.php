@@ -17,6 +17,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Mockery as m;
+use Tymon\JWTAuth\JWTAuth;
 
 class LastfmTest extends TestCase
 {
@@ -134,8 +135,12 @@ class LastfmTest extends TestCase
         $redirector->shouldReceive('to')->once();
 
         $guard = m::mock(Guard::class, ['user' => factory(User::class)->create()]);
+        $auth = m::mock(JWTAuth::class, [
+            'parseToken' => '',
+            'getToken' => '',
+        ]);
 
-        (new LastfmController($guard))->connect($redirector, new Lastfm());
+        (new LastfmController($guard))->connect($redirector, new Lastfm(), $auth);
     }
 
     public function testControllerCallback()

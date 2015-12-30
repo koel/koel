@@ -38,6 +38,10 @@
             'search:toggle': function () {
                 this.showing = !this.showing;
             },
+
+            'koel:teardown': function () {
+                this.q = '';
+            },
         },
     };
 </script>

@@ -6,6 +6,7 @@ use App\Services\Lastfm;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Tymon\JWTAuth\JWTAuth;
 
 class LastfmController extends Controller
 {
@@ -31,19 +32,27 @@ class LastfmController extends Controller
      *
      * @param Redirector $redirector
      * @param Lastfm     $lastfm
+     * @param JWTAuth    $auth
      *
      * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
-    public function connect(Redirector $redirector, Lastfm $lastfm)
+    public function connect(Redirector $redirector, Lastfm $lastfm, JWTAuth $auth = null)
     {
         if (!$lastfm->enabled()) {
             abort(401, 'Koel is not configured to use with Last.fm yet.');
         }
 
+        $auth = $auth ?: $this->app['tymon.jwt.auth'];
+
+        // A workaround to make sure Tymon's JWTAuth get the correct token via our custom
+        // "jwt-token" query string instead of the default "token".
+        // This is due to the problem that Last.fm returns the token via "token" as well.
+        $auth->parseToken('', '', 'jwt-token');
+
         return $redirector->to(
             'https://www.last.fm/api/auth/?api_key='
             .$lastfm->getKey()
-            .'&cb='.route('lastfm.callback')
+            .'&cb='.urlencode(route('lastfm.callback').'?jwt-token='.$auth->getToken())
         );
     }
 

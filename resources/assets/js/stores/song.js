@@ -40,6 +40,8 @@ export default {
      * @param  {Array} interactions The array of interactions of the current user
      */
     initInteractions(interactions) {
+        favoriteStore.clear();
+
         _.each(interactions, interaction => {
             var song = this.byId(interaction.song_id);
             

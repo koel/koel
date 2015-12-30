@@ -76,6 +76,11 @@
             'koel:ready': function () {
                 this.displayMore();
             },
+
+            'koel:teardown': function () {
+                this.q = '';
+                this.numOfItems = 9;
+            },
         },
     };
 </script>

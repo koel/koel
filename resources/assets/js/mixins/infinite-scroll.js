@@ -34,4 +34,10 @@ export default {
             }
         },
     },
+
+    events: {
+        'koel:teardown': function () {
+            this.numOfItems = 30;
+        },
+    },
 };

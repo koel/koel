@@ -12,6 +12,10 @@ export default {
         return this.state.songs;
     },
 
+    clear() {
+        this.state.songs = [];
+    },
+
     /**
      * Toggle like/unlike a song. 
      * A request to the server will be made.

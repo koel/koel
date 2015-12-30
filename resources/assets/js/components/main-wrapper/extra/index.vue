@@ -48,6 +48,19 @@
             }
         },
 
+        methods: {
+            /**
+             * Reset all applicable child components' states
+             */
+            resetChildrenStates() {
+                _.each(this.$refs, child => {
+                    if (typeof child.resetState === 'function') {
+                        child.resetState();
+                    }
+                });
+            },
+        },
+
         events: {
             'main-content-view:load': function (view) {
                 // Hide the panel away if a main view is triggered on mobile.
@@ -57,16 +70,16 @@
             },
 
             'song:play': function (song) {
-                // Reset all applicable child components' states
-                _.each(this.$refs, child => {
-                    if (typeof child.resetState === 'function') {
-                        child.resetState();
-                    }
-                });
+                this.resetChildrenStates();
 
                 songStore.getInfo(song, () => {
                     this.$broadcast('song:info-loaded', song);
                 });
+            },
+
+            'koel:teardown': function () {
+                this.currentView = 'lyrics';
+                this.resetChildrenStates();
             },
         },
     };

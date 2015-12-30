@@ -29,6 +29,7 @@
     import loginForm from './components/auth/login-form.vue';
 
     import sharedStore from './stores/shared';
+    import queueStore from './stores/queue';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
     import ls from './services/ls';
@@ -202,6 +203,18 @@
              */
             setOverlayDimissable() {
                 this.overlayState.dismissable = true;
+            },
+
+            /**
+             * Log the current user out and reset the application state.
+             */
+            logout() {
+                ls.remove('jwt-token');
+                this.authenticated = false;
+                playback.stop();
+                queueStore.clear();
+                this.loadMainView('queue');
+                this.$broadcast('koel:teardown');
             },
         },
 
