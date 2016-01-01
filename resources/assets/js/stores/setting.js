@@ -16,7 +16,7 @@ export default {
         return this.state.settings;
     },
 
-    update(cb = null, error = null) {
-        http.post('settings', this.all(), cb, error);
+    update(successCb = null, errorCb = null) {
+        http.post('settings', this.all(), successCb, errorCb);
     },
 };

@@ -73,7 +73,10 @@
 
                     this.hideOverlay();
 
-                    // Ask for user's notificatio permission.
+                    // Load the default view.
+                    this.loadMainView('queue');
+
+                    // Ask for user's notification permission.
                     this.requestNotifPermission();
 
                     // Let all other compoenents know we're ready.

@@ -43,18 +43,16 @@
                 this.$root.showOverlay();
 
                 settingStore.update(() => {
-                    // Data changed. 
-                    // Everything changed. 
-                    // It's the time of the oath.
-                    // We need refresh the page.
-                    // Goodbye.
-                    document.location.reload();
-                }, (error, status) => {
-                    if (status === 422) {
-                        error = utils.parseValidationError(error)[0];
+                    // Re-init the app.
+                    this.$root.init();
+                }, (error) => {
+                    var msg = 'Unknown error.';
+
+                    if (error.status === 422) {
+                        msg = utils.parseValidationError(error.data)[0];
                     }
 
-                    this.$root.showOverlay(`Error: ${error}`, 'error', true);
+                    this.$root.showOverlay(`Error: ${msg}`, 'error', true);
                 });
             },
         },
