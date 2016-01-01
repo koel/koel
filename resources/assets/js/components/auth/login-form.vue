@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="login">
+    <form @submit.prevent="login" :class="{ error: failed }">
         <input v-model="email" type="email" name="email" placeholder="Email Address" autofocus required>
         <input v-model="password" type="password" name="password" placeholder="Password" required>
         <button type="submit">Log In</button>
@@ -14,13 +14,17 @@
             return {
                 email: '',
                 password: '',
+                failed: false,
             };
         },
 
         methods: {
             login() {
                 userStore.login(this.email, this.password, () => {
+                    this.failed = false;
                     this.$dispatch('user:loggedin');
+                }, () => {
+                    this.failed = true;
                 });
             },
         },

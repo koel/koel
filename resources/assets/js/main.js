@@ -9,30 +9,33 @@ Vue.config.debug = false;
 Vue.use(require('vue-resource'));
 Vue.http.options.root = '/api';
 Vue.http.interceptors.push({
-    request(request) {
+    request(r) {
         var token = ls.get('jwt-token');
 
         if (token) {
             Vue.http.headers.common.Authorization = `Bearer ${token}`;
         }
 
-        return request;
+        return r;
     },
 
-    response(response) {
-        if (response.status === 400 || response.status === 401) {
-            app.logout();
+    response(r) {
+        if (r.status === 400 || r.status === 401) {
+            if (r.request.method !== 'POST' && r.request.url !== 'me') {
+                // This is not a failed login. Log out then.
+                app.logout();
+            }
         }
 
-        if (response.headers && response.headers.Authorization) {
-            ls.set('jwt-token', response.headers.Authorization);
+        if (r.headers && r.headers.Authorization) {
+            ls.set('jwt-token', r.headers.Authorization);
         }
 
-        if (response.data && response.data.token && response.data.token.length > 10) {
-            ls.set('jwt-token', response.data.token);
+        if (r.data && r.data.token && r.data.token.length > 10) {
+            ls.set('jwt-token', r.data.token);
         }
 
-        return response;
+        return r;
     },
 });
 

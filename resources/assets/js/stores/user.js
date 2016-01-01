@@ -76,14 +76,11 @@ export default {
      * 
      * @param  {String}   email    
      * @param  {String}   password
-     * @param  {Function} cb
+     * @param  {Function} successCb
+     * @param  {Function} errorCb
      */
-    login(email, password, cb = null) {
-        http.post('me', { email, password }, () => {
-            if (cb) {
-                cb();
-            }
-        });
+    login(email, password, successCb = null, errorCb = null) {
+        http.post('me', { email, password }, successCb, errorCb);
     },
 
     /**
