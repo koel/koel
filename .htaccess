@@ -1,7 +1,7 @@
 <IfModule mod_headers.c>
-    <FilesMatch "\.(eot|font.css|otf|ttc|ttf|woff)$">
-        Header set Access-Control-Allow-Origin "*"
-    </FilesMatch>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "POST, GET, PUT, OPTIONS, PATCH, DELETE"
+    Header always set Access-Control-Allow-Headers "Authorization,X-Accept-Charset,X-Accept,Content-Type"
 </IfModule>
 
 <IfModule mod_rewrite.c>
