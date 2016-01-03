@@ -14,6 +14,7 @@ export default {
     player: null,
     $volumeInput: null,
     repeatModes: ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE'],
+    initialized: false,
 
     /**
      * Initialize the playback service for this whole Koel app.
@@ -21,6 +22,11 @@ export default {
      * @param  object app The root Vue component.
      */
     init(app) {
+        // We don't need to init this service twice, or the media events will be duplicated.
+        if (this.initialized) {
+            return;
+        }
+
         this.app = app;
 
         plyr.setup({
@@ -65,6 +71,8 @@ export default {
 
         // On init, set the volume to the value found in the local storage.
         this.setVolume(preferenceStore.get('volume'));
+
+        this.initialized = true;
     },
 
     /**
