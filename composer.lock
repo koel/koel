@@ -578,16 +578,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.2.5",
+            "version": "v5.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "1d165631b90d104c517d54455a5e867584645473"
+                "reference": "b774c304ee81fcf5402fa06b261b364ba8f29cf0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/1d165631b90d104c517d54455a5e867584645473",
-                "reference": "1d165631b90d104c517d54455a5e867584645473",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/b774c304ee81fcf5402fa06b261b364ba8f29cf0",
+                "reference": "b774c304ee81fcf5402fa06b261b364ba8f29cf0",
                 "shasum": ""
             },
             "require": {
@@ -614,7 +614,7 @@
                 "symfony/routing": "2.8.*|3.0.*",
                 "symfony/translation": "2.8.*|3.0.*",
                 "symfony/var-dumper": "2.8.*|3.0.*",
-                "vlucas/phpdotenv": "~2.0"
+                "vlucas/phpdotenv": "~2.2"
             },
             "replace": {
                 "illuminate/auth": "self.version",
@@ -648,7 +648,6 @@
             },
             "require-dev": {
                 "aws/aws-sdk-php": "~3.0",
-                "iron-io/iron_mq": "~2.0",
                 "mockery/mockery": "~0.9.2",
                 "pda/pheanstalk": "~3.0",
                 "phpunit/phpunit": "~4.1",
@@ -703,7 +702,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2015-12-24 15:39:57"
+            "time": "2015-12-31 17:41:58"
         },
         {
             "name": "league/flysystem",
@@ -2407,28 +2406,28 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v2.1.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "c10040e0df17d2ee88e9212b50cbe9319e878f59"
+                "reference": "9caf304153dc2288e4970caec6f1f3b3bc205412"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/c10040e0df17d2ee88e9212b50cbe9319e878f59",
-                "reference": "c10040e0df17d2ee88e9212b50cbe9319e878f59",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/9caf304153dc2288e4970caec6f1f3b3bc205412",
+                "reference": "9caf304153dc2288e4970caec6f1f3b3bc205412",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.9"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "^4.8|^5.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "2.2-dev"
                 }
             },
             "autoload": {
@@ -2454,7 +2453,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2015-10-28 18:53:35"
+            "time": "2015-12-29 15:10:30"
         }
     ],
     "packages-dev": [
@@ -2710,16 +2709,16 @@
         },
         {
             "name": "phpspec/phpspec",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/phpspec.git",
-                "reference": "1d3938e6d9ffb1bd4805ea8ddac62ea48767f358"
+                "reference": "5528ce1e93a1efa090c9404aba3395c329b4e6ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/phpspec/zipball/1d3938e6d9ffb1bd4805ea8ddac62ea48767f358",
-                "reference": "1d3938e6d9ffb1bd4805ea8ddac62ea48767f358",
+                "url": "https://api.github.com/repos/phpspec/phpspec/zipball/5528ce1e93a1efa090c9404aba3395c329b4e6ed",
+                "reference": "5528ce1e93a1efa090c9404aba3395c329b4e6ed",
                 "shasum": ""
             },
             "require": {
@@ -2784,7 +2783,7 @@
                 "testing",
                 "tests"
             ],
-            "time": "2015-11-29 02:03:49"
+            "time": "2016-01-01 10:17:54"
         },
         {
             "name": "phpspec/prophecy",
