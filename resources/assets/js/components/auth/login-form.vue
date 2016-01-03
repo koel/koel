@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent="login" :class="{ error: failed }">
-        <input v-model="email" type="email" name="email" placeholder="Email Address" autofocus required>
-        <input v-model="password" type="password" name="password" placeholder="Password" required>
+        <input v-model="email" type="email" placeholder="Email Address" autofocus required>
+        <input v-model="password" type="password" placeholder="Password" required>
         <button type="submit">Log In</button>
     </form>
 </template>
@@ -20,8 +20,14 @@
 
         methods: {
             login() {
+                this.failed = false;
+
                 userStore.login(this.email, this.password, () => {
                     this.failed = false;
+
+                    // Reset the password so that the next login will have this field empty.
+                    this.password = '';
+
                     this.$dispatch('user:loggedin');
                 }, () => {
                     this.failed = true;
@@ -36,6 +42,30 @@
     @import "resources/assets/sass/partials/_mixins.scss";
     @import "resources/assets/sass/partials/_shared.scss";
 
+    /**
+     * I like to move it move it
+     * I like to move it move it
+     * I like to move it move it
+     * You like to - move it!
+     */
+    @keyframes shake {
+        8%, 41% {
+            -webkit-transform: translateX(-10px);
+        }
+        25%, 58% {
+            -webkit-transform: translateX(10px);
+        }
+        75% {
+            -webkit-transform: translateX(-5px);
+        }
+        92% {
+            -webkit-transform: translateX(5px);
+        }
+        0%, 100% {
+            -webkit-transform: translateX(0);
+        }
+    }
+
     form {
         width: 300px;
         padding: 24px;
@@ -46,6 +76,7 @@
 
     form.error {
         border-color: #8e4947;
+        animation: shake .5s;
     }
 
     form:before {
