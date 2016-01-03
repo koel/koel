@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\JWTAuth as BaseJWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTManager;
 use Tymon\JWTAuth\Providers\Auth\AuthInterface;
 use Tymon\JWTAuth\Providers\User\UserInterface;
