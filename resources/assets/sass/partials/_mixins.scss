@@ -108,9 +108,12 @@
 @mixin button-group() {
     display: flex;
     position: relative;
+    min-width: 192px;
+    justify-content: flex-end;
 
     button {
         $buttonHeight: 28px;
+
         background-color: $colorHighlight;
         font-size: 12px;
         height: $buttonHeight;
@@ -141,5 +144,28 @@
         }
 
         @include inset-when-pressed();
+    }
+}
+
+@mixin context-menu() {
+    font-weight: $fontWeight_Thin;
+    font-size: $fontSize;
+    color: #111;
+    background-color: rgb(232, 232, 232);
+    padding: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    box-shadow: inset 0 0px 0 rgba(255,255,255,.6), 0 22px 70px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
+
+    input[type="search"], input[type="text"], input[type="email"], input[type="url"] {
+        background: #fff;
+
+        &:focus {
+            background: $colorDirtyInputBgr;
+        }
     }
 }

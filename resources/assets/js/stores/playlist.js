@@ -31,7 +31,19 @@ export default {
         return (playlist.songs = songStore.byIds(playlist.songs));
     },
 
+    /**
+     * Create a new playlist, optionally with its songs.
+     * 
+     * @param  {string}   name  Name of the playlist
+     * @param  {Array}    songs An array of song objects
+     * @param  {Function} cb
+     */
     store(name, songs, cb = null) {
+        if (songs.length) {
+            // Extract the IDs from the song objects.
+            songs = _.pluck(songs, 'id');
+        }
+
         http.post('playlist', { name, songs }, response => {
             var playlist = response.data;
             playlist.songs = songs;

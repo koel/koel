@@ -21,20 +21,18 @@
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="save" @click.prevent="saving = !saving" v-if="state.songs.length > 1">
-                    {{ saving ? 'Cancel' : 'Save' }}
+                <button class="save" 
+                    @click.prevent="showAddToPlaylistDialog = !showAddToPlaylistDialog" 
+                    v-if="state.songs.length > 1"
+                >
+                    {{ showAddToPlaylistDialog ? 'Cancel' : 'Add To…' }}
                 </button>
                 <button class="clear" @click.prevent="clear" v-if="state.songs.length">Clear</button>
 
-                <form class="form-save form-simple" v-show="saving" @submit.prevent="save">
-                    <input type="text" 
-                        @keyup.esc.prevent="saving = false"
-                        v-model="playlistName" 
-                        v-koel-focus="saving"
-                        placeholder="Playlist name"
-                        required>
-                    <button type="submit" id="saveQueueSubmit"><i class="fa fa-save"></i></button>
-                </form>
+                <add-to-playlist 
+                    :songs="songsToAddToPlaylist" 
+                    :showing.sync="showAddToPlaylistDialog">
+                </add-to-playlist>
             </div>
         </h1>
 
@@ -47,6 +45,7 @@
     import isMobile from 'ismobilejs';
     
     import songList from '../../shared/song-list.vue';
+    import addToPlaylist from '../../shared/add-to-playlist.vue';
     import playlistStore from '../../../stores/playlist';
     import queueStore from '../../../stores/queue';
     import playback from '../../../services/playback';
@@ -55,16 +54,27 @@
     export default {
         mixins: [shuffleSelectedMixin],
 
-        components: { songList },
+        components: { songList, addToPlaylist },
 
         data() {
             return {
                 state: queueStore.state,
-                saving: false,
+                showAddToPlaylistDialog: false,
                 playlistName: '',
                 isPhone: isMobile.phone,
                 showingControls: false,
             };
+        },
+
+        computed: {
+            /**
+             * If no songs are selected, we provide all queued songs as a tribute to playlist god.
+             * 
+             * @return {Array} The songs to add into a (new) playlist
+             */
+            songsToAddToPlaylist() {
+                return this.selectedSongs.length ? this.selectedSongs : queueStore.all();
+            },
         },
 
         watch: {
@@ -74,7 +84,7 @@
              */
             'state.songs': function () {
                 if (!queueStore.all().length) {
-                    this.saving = false;
+                    this.showAddToPlaylist = false;
                 }
             },
         },
@@ -92,23 +102,6 @@
              */
             clear() {
                 queueStore.clear();
-            },
-
-            /**
-             * Save the WHOLE queue as a playlist.
-             * As of current we don't have selective save.
-             */
-            save() {
-                this.playlistName = this.playlistName.trim();
-                
-                if (!this.playlistName) {
-                    return;
-                }
-
-                playlistStore.store(this.playlistName, _.pluck(queueStore.all(), 'id'), () => {
-                    this.playlistName = '';
-                    this.saving = false;
-                });
             },
         },
     };
@@ -132,10 +125,10 @@
         }
 
         button.clear {
-            background-color: $colorBlue !important;
+            background-color: $colorRed !important;
 
             &:hover {
-                background-color: darken($colorBlue, 10%) !important;
+                background-color: darken($colorRed, 10%) !important;
             }
         }
 
@@ -144,45 +137,6 @@
 
             &:hover {
                 background-color: darken($colorGreen, 10%) !important;
-            }
-        }
-
-        .form-save {
-            position: absolute;
-            bottom: -50px;
-            left: 0;
-            background: $colorGreen;
-            padding: 8px;
-            width: 100%;
-            border-radius: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            &::before {
-                display: block;
-                content: " ";
-                width: 0;
-                height: 0;
-                border-left: 10px solid transparent;
-                border-right: 10px solid transparent;
-                border-bottom: 10px solid $colorGreen;
-                position: absolute;
-                top: -7px;
-                left: calc(50% - 10px);
-            }
-
-            input[type="text"] {
-                width: 100%;
-                border-radius: 5px 0 0 5px;
-                height: 28px;
-            }
-
-            button#saveQueueSubmit {
-                margin-top: 0;
-                border-radius: 0 5px 5px 0;
-                height: 28px;
-                margin-left: -2px;
             }
         }
 

@@ -21,6 +21,18 @@
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
+
+                <button class="save" 
+                    @click.prevent="showAddToPlaylistDialog = !showAddToPlaylistDialog" 
+                    v-if="selectedSongs.length > 0"
+                >
+                    {{ showAddToPlaylistDialog ? 'Cancel' : 'Add To…' }}
+                </button>
+
+                <add-to-playlist 
+                    :songs="selectedSongs" 
+                    :showing.sync="showAddToPlaylistDialog">
+                </add-to-playlist>
             </div>
         </h1>
 
@@ -32,6 +44,7 @@
     import isMobile from 'ismobilejs';
 
     import songList from '../../shared/song-list.vue';
+    import addToPlaylist from '../../shared/add-to-playlist.vue';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
     import shuffleSelectedMixin from '../../../mixins/shuffle-selected';
@@ -39,13 +52,14 @@
     export default {
         mixins: [shuffleSelectedMixin],
 
-        components: { songList },
+        components: { songList, addToPlaylist },
 
         data() {
             return {
                 state: songStore.state,
                 isPhone: isMobile.phone,
                 showingControls: false,
+                showAddToPlaylistDialog: false,
             };
         },
 
@@ -69,6 +83,16 @@
         .none {
             color: $color2ndText;
             margin-top: 16px;
+        }
+
+
+
+        button.save {
+            background-color: $colorGreen !important;
+
+            &:hover {
+                background-color: darken($colorGreen, 10%) !important;
+            }
         }
     }
 </style>
