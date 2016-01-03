@@ -10,13 +10,14 @@ class GetUserFromToken extends BaseMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, \Closure $next)
     {
-        if (! $token = $this->auth->setRequest($request)->getToken()) {
+        if (!$token = $this->auth->setRequest($request)->getToken()) {
             return $this->respond('tymon.jwt.absent', 'token_not_provided', 400);
         }
 
@@ -28,7 +29,7 @@ class GetUserFromToken extends BaseMiddleware
             return $this->respond('tymon.jwt.invalid', 'token_invalid', $e->getStatusCode(), [$e]);
         }
 
-        if (! $user) {
+        if (!$user) {
             return $this->respond('tymon.jwt.user_not_found', 'user_not_found', 404);
         }
 

@@ -7,7 +7,7 @@ class JWTEventListener
     /**
      * Handle user login events.
      */
-    public function onValidUser($event) 
+    public function onValidUser($event)
     {
         auth()->setUser($event->user);
     }
@@ -15,7 +15,7 @@ class JWTEventListener
     /**
      * Register the listeners for the subscriber.
      *
-     * @param  Illuminate\Events\Dispatcher  $events
+     * @param Illuminate\Events\Dispatcher $events
      */
     public function subscribe($events)
     {
