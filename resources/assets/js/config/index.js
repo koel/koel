@@ -1,4 +1,4 @@
 export default {
-    unknownCover: '/public/img/covers/unknown-album.png',
+    unknownCover: window.location.href + 'public/img/covers/unknown-album.png',
     appTitle: 'koel',
 };
