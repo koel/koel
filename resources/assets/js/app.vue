@@ -32,6 +32,7 @@
     import queueStore from './stores/queue';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
+    import focusDirective from './directives/focus';
     import ls from './services/ls';
 
     export default {
@@ -254,7 +255,7 @@
     });
 
     // Register the global directives
-    Vue.directive('koel-focus', require('./directives/focus'));
+    Vue.directive('koel-focus', focusDirective);
 </script>
 
 <style lang="sass">
