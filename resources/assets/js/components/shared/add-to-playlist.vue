@@ -28,7 +28,6 @@
         data() {
             return {
                 newPlaylistName: '',
-                showing: false,
                 playlistState: playlistStore.state,
             }
         },
