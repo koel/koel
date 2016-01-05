@@ -25,9 +25,15 @@ class Song extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'string',
         'length' => 'float',
     ];
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
 
     public function album()
     {
