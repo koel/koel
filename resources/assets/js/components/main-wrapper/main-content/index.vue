@@ -144,12 +144,9 @@
                     color: $colorHighlight;
                 }
 
-                .buttons {
+                .buttons, input[type="search"] {
                     justify-content: center;
-                }
-
-                input[type="search"], button {
-                    margin-top: 12px;
+                    margin-top: 8px;
                 }
             }
 
