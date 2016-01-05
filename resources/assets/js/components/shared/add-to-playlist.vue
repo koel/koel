@@ -10,7 +10,6 @@
             <input type="text" 
                 @keyup.esc.prevent="showing = false"
                 v-model="newPlaylistName" 
-                v-koel-focus="showing"
                 placeholder="Playlist name"
                 required>
             <button type="submit"><i class="fa fa-save"></i></button>
