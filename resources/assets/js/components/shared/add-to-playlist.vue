@@ -2,8 +2,10 @@
     <div class="add-to-playlist" v-show="showing">
         <p>Add {{ songs.length }} song{{ songs.length > 1 ? 's' : '' }} into</p>
         <ul>
-            <li @click="addSongsToFavorite">Favorites</li>
-            <li v-for="playlist in playlistState.playlists" @click="addSongsToExisting(playlist)">{{ playlist.name }}</li>
+            <li v-if="this._settings.canLike" @click="addSongsToFavorite">Favorites</li>
+            <template v-for="playlist in playlistState.playlists">
+                <li v-hide="isPlaylistHidden(playlist)" @click="addSongsToExisting(playlist)">{{ playlist.name }}</li>
+            </template>
         </ul>
         <p>or create a new playlist</p>
         <form class="form-save form-simple" @submit.prevent="createNewFromSongs">
@@ -18,16 +20,23 @@
 </template>
 
 <script>
+    import _ from 'lodash';
+
     import playlistStore from '../../stores/playlist';
     import favoriteStore from '../../stores/favorite';
 
     export default {
-        props: ['songs', 'showing'],
+        props: ['songs', 'showing', 'settings'],
 
         data() {
             return {
                 newPlaylistName: '',
                 playlistState: playlistStore.state,
+                _settings: _.assign({
+                    canQueue: true,
+                    canLike: true,
+                    hiddenPlaylists: []
+                }, this.settings),
             }
         },
 
@@ -40,6 +49,17 @@
         },
 
         methods: {
+            /**
+             * Determine if a playlist should be hidden from the menu. 
+             * 
+             * @param  {Object}  playlist
+             * 
+             * @return {Boolean}
+             */
+            isPlaylistHidden(playlist) {
+                return _.contains(this._settings.hiddenPlaylists, playlist);
+            },
+
             /**
              * Add the selected songs into Favorite.
              */

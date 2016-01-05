@@ -1,0 +1,7 @@
+{
+    "name": "Koel",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "icons": []
+}
