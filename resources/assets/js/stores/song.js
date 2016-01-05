@@ -75,7 +75,7 @@ export default {
      * @return {Object}
      */
     byId(id) {
-        return _.find(this.state.songs, {id});
+        return _.find(this.state.songs, { id });
     },
 
     /**
@@ -86,7 +86,7 @@ export default {
      * @return {Array}
      */
     byIds(ids) {
-        return _.filter(this.state.songs, song => _.contains(ids, song.id));
+        return _.map(ids, id => this.byId(id));
     },
 
     /**
