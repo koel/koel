@@ -67,6 +67,8 @@
                 if (isMobile.phone) {
                     this.prefs.showExtraPanel = false;
                 }
+
+                return true;
             },
 
             'song:play': function (song) {

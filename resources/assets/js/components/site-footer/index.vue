@@ -264,6 +264,8 @@
              */
             'main-content-view:load': function (view) {
                 this.viewingQueue = view === 'queue';
+
+                return true;
             },
 
             'koel:teardown': function () {

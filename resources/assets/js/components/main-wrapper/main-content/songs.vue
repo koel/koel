@@ -22,17 +22,14 @@
                     <i class="fa fa-random"></i> Selected
                 </button>
 
-                <button class="save" 
-                    @click.prevent="showAddToPlaylistDialog = !showAddToPlaylistDialog" 
-                    v-if="selectedSongs.length > 0"
-                >
-                    {{ showAddToPlaylistDialog ? 'Cancel' : 'Add To…' }}
+                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                    {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
 
-                <add-to-playlist 
+                <add-to-menu 
                     :songs="selectedSongs" 
-                    :showing.sync="showAddToPlaylistDialog">
-                </add-to-playlist>
+                    :showing.sync="showingAddToMenu">
+                </add-to-menu>
             </div>
         </h1>
 
@@ -44,7 +41,7 @@
     import isMobile from 'ismobilejs';
 
     import songList from '../../shared/song-list.vue';
-    import addToPlaylist from '../../shared/add-to-playlist.vue';
+    import addToMenu from '../../shared/add-to-menu.vue';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
     import shuffleSelectedMixin from '../../../mixins/shuffle-selected';
@@ -52,14 +49,14 @@
     export default {
         mixins: [shuffleSelectedMixin],
 
-        components: { songList, addToPlaylist },
+        components: { songList, addToMenu },
 
         data() {
             return {
                 state: songStore.state,
                 isPhone: isMobile.phone,
                 showingControls: false,
-                showAddToPlaylistDialog: false,
+                showingAddToMenu: false,
             };
         },
 
@@ -83,16 +80,6 @@
         .none {
             color: $color2ndText;
             margin-top: 16px;
-        }
-
-
-
-        button.save {
-            background-color: $colorGreen !important;
-
-            &:hover {
-                background-color: darken($colorGreen, 10%) !important;
-            }
         }
     }
 </style>

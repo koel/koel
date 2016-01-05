@@ -297,6 +297,7 @@
             },
 
             clearSelection() {
+                this.selectedSongs = [];
                 $('.song-item').removeClass('selected');
             },
 
@@ -375,6 +376,13 @@
              */
             'filter:changed': function (q) {
                 this.q = q;
+            },
+
+            /**
+             * Clears the current list's selection if the user has switched to another view.
+             */
+            'main-content-view:load': function () {
+                this.clearSelection();
             },
         },
     };

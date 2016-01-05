@@ -21,18 +21,16 @@
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="save" 
-                    @click.prevent="showAddToPlaylistDialog = !showAddToPlaylistDialog" 
-                    v-if="state.songs.length > 1"
-                >
-                    {{ showAddToPlaylistDialog ? 'Cancel' : 'Add To…' }}
+                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="state.songs.length > 1">
+                    {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
                 <button class="clear" @click.prevent="clear" v-if="state.songs.length">Clear</button>
 
-                <add-to-playlist 
-                    :songs="songsToAddToPlaylist" 
-                    :showing.sync="showAddToPlaylistDialog">
-                </add-to-playlist>
+                <add-to-menu
+                    :songs="songsToAddTo" 
+                    :showing.sync="showingAddToMenu"
+                    :settings="{ canQueue: false }">
+                </add-to-menu>
             </div>
         </h1>
 
@@ -45,7 +43,7 @@
     import isMobile from 'ismobilejs';
     
     import songList from '../../shared/song-list.vue';
-    import addToPlaylist from '../../shared/add-to-playlist.vue';
+    import addToMenu from '../../shared/add-to-menu.vue';
     import playlistStore from '../../../stores/playlist';
     import queueStore from '../../../stores/queue';
     import playback from '../../../services/playback';
@@ -54,12 +52,12 @@
     export default {
         mixins: [shuffleSelectedMixin],
 
-        components: { songList, addToPlaylist },
+        components: { songList, addToMenu },
 
         data() {
             return {
                 state: queueStore.state,
-                showAddToPlaylistDialog: false,
+                showingAddToMenu: false,
                 playlistName: '',
                 isPhone: isMobile.phone,
                 showingControls: false,
@@ -72,7 +70,7 @@
              * 
              * @return {Array} The songs to add into a (new) playlist
              */
-            songsToAddToPlaylist() {
+            songsToAddTo() {
                 return this.selectedSongs.length ? this.selectedSongs : queueStore.all();
             },
         },
@@ -80,11 +78,11 @@
         watch: {
             /**
              * Watch the number of songs currently queued.
-             * If we don't have any queuing song, the "Save to Playlist" form shouldn't be open.
+             * If we don't have any queuing song, the "Add To..." menu shouldn't be left open.
              */
             'state.songs': function () {
                 if (!queueStore.all().length) {
-                    this.showAddToPlaylist = false;
+                    this.showingAddToMenu = false;
                 }
             },
         },

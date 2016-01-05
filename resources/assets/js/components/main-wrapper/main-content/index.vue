@@ -40,6 +40,8 @@
         events: {
             'main-content-view:load': function (view) {
                 this.view = view;
+
+                return true;
             },
 
             /**
@@ -86,6 +88,14 @@
                 z-index: 2;
 
                 @include button-group();
+
+                .add-to {
+                    background-color: $colorGreen !important;
+
+                    &:hover {
+                        background-color: darken($colorGreen, 10%) !important;
+                    }
+                }
             }
 
             input[type="search"] {

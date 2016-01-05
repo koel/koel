@@ -20,11 +20,20 @@
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
+                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                    {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
+                </button>
                 <button class="del"
                     title="Delete this playlist"
                     @click.prevent="del">
                     <i class="fa fa-times"></i> Playlist
                 </button>
+
+                <add-to-menu 
+                    :songs="selectedSongs" 
+                    :showing.sync="showingAddToMenu"
+                    :settings="{ hiddenPlaylists: [playlist] }">
+                </add-to-menu>
             </div>
         </h1>
 
@@ -40,6 +49,7 @@
     import isMobile from 'ismobilejs';
 
     import songList from '../../shared/song-list.vue';
+    import addToMenu from '../../shared/add-to-menu.vue';
     import playlistStore from '../../../stores/playlist';
     import playback from '../../../services/playback';
     import shuffleSelectedMixin from '../../../mixins/shuffle-selected';
@@ -47,13 +57,14 @@
     export default {
         mixins: [shuffleSelectedMixin],
 
-        components: { songList },
+        components: { songList, addToMenu },
 
         data() {
             return {
                 playlist: playlistStore.stub,
                 isPhone: isMobile.phone,
                 showingControls: false,
+                showingAddToMenu: false,
             };
         },
 
@@ -89,6 +100,18 @@
                     // Switch back to Queue screen
                     this.$root.loadMainView('queue');
                 });
+            },
+        },
+
+        watch: {
+            /**
+             * Watch the number of songs in the current playlist.
+             * If we don't have any, the "Add To..." menu shouldn't be left open.
+             */
+            'playlist.songs': function () {
+                if (!this.playlist.songs.length) {
+                    this.showingAddToMenu = false;
+                }
             },
         },
     };

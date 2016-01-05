@@ -128,6 +128,8 @@
                 if (isMobile.phone) {
                     this.showing = false;
                 }
+
+                return true;
             },
 
             /**
