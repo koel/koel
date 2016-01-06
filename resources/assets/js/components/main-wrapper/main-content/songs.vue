@@ -2,10 +2,10 @@
     <section id="songsWrapper">
         <h1 class="heading">
             <span>All Songs
-                <i class="fa fa-chevron-down toggler" 
+                <i class="fa fa-angle-down toggler" 
                     v-show="isPhone && !showingControls" 
                     @click="showingControls = true"></i>
-                <i class="fa fa-chevron-up toggler" 
+                <i class="fa fa-angle-up toggler" 
                     v-show="isPhone && showingControls" 
                     @click.prevent="showingControls = false"></i>
             </span>
@@ -74,12 +74,5 @@
 <style lang="sass">
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
-
-    #songsWrapper {
-        .none {
-            color: $color2ndText;
-            margin-top: 16px;
-        }
-    }
 </style>
 

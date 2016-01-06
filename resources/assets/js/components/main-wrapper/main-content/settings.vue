@@ -69,8 +69,7 @@
         }
 
         @media only screen 
-        and (max-device-width : 667px) 
-        and (orientation : portrait) {
+        and (max-device-width : 667px) {
             input[type="text"] {
                 width: 100%;
             }

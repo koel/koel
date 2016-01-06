@@ -2,10 +2,10 @@
     <section id="queueWrapper">
         <h1 class="heading">
             <span title="That's a freaking lot of U's and E's">Current Queue
-                <i class="fa fa-chevron-down toggler" 
+                <i class="fa fa-angle-down toggler" 
                     v-show="isPhone && !showingControls" 
                     @click="showingControls = true"></i>
-                <i class="fa fa-chevron-up toggler" 
+                <i class="fa fa-angle-up toggler" 
                     v-show="isPhone && showingControls" 
                     @click.prevent="showingControls = false"></i>
             </span>
@@ -162,8 +162,7 @@
         }
 
         @media only screen 
-        and (max-device-width : 667px) 
-        and (orientation : portrait) {
+        and (max-device-width : 667px) {
         }
     }
 </style>

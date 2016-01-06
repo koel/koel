@@ -9,10 +9,12 @@
         <td class="artist">{{ song.album.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
         <td class="time">{{ song.fmtLength }}</td>
+        <td class="check"><input type="checkbox" @click.stop="select($event)"></td>
     </tr>
 </template>
 
 <script>
+    import $ from 'jquery';
     import playback from '../../services/playback';
 
     export default {
@@ -31,13 +33,27 @@
             play() {
                 playback.play(this.song);
             },
+
+            /**
+             * Select a row.
+             */
+            select(e) {
+                if ($(e.target).prop('checked')) {
+                    $(e.target).parents('tr').addClass('selected');    
+                } else {
+                    $(e.target).parents('tr').removeClass('selected');
+                }
+
+                // Let the parent listing know to collect the selected songs.
+                this.$dispatch('song:selection-changed');
+            },
         },
 
         events: {
             /**
              * Listen to 'song:play' event and set the "playing" status.
              * 
-             * @param  object song The current playing song.
+             * @param  {Object} song The current playing song.
              */
             'song:play': function (song) {
                 this.playing = this.song.id === song.id;
@@ -65,6 +81,10 @@
 
         .title {
             min-width: 192px;
+        }
+
+        .check {
+            max-width: 32px;
         }
 
         &.selected {

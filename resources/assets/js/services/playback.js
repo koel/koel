@@ -19,7 +19,7 @@ export default {
     /**
      * Initialize the playback service for this whole Koel app.
      * 
-     * @param  object app The root Vue component.
+     * @param  {Object} app The root Vue component.
      */
     init(app) {
         // We don't need to init this service twice, or the media events will be duplicated.
@@ -83,7 +83,7 @@ export default {
      * So many dreams swinging out of the blue
      * We'll let them come true
      *
-     * @param  object song The song to play
+     * @param  {Object} song The song to play
      */
     play(song) {
         if (!song) {
@@ -216,8 +216,8 @@ export default {
     /**
      * Set the volume level.
      * 
-     * @param integer  volume   0-10
-     * @param boolean  persist  Whether the volume should be saved into local storage
+     * @param {Integer}  volume   0-10
+     * @param {Boolean}  persist  Whether the volume should be saved into local storage
      */
     setVolume(volume, persist = true) {
         this.player.setVolume(volume);
@@ -276,8 +276,8 @@ export default {
     /**
      * Queue up songs (replace them into the queue) and start playing right away.
      *
-     * @param array|null    songs   An array of song objects. Defaults to all songs if null.
-     * @param bool          shuffle Whether to shuffle the songs before playing.
+     * @param {Array|Null}    songs   An array of song objects. Defaults to all songs if null.
+     * @param {Boolean}       shuffle Whether to shuffle the songs before playing.
      */
     queueAndPlay(songs = null, shuffle = false) {
         if (!songs) {

@@ -25,6 +25,7 @@
                         <i class="fa fa-angle-down" v-show="sortKey === 'fmtLength' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'fmtLength' && order < 0"></i>
                     </th>
+                    <th class="check"></th>
                 </tr>
             </thead>
 
@@ -37,7 +38,7 @@
                     is="song-item" 
                     data-song-id="{{ item.id }}" 
                     :song="item" 
-                    @click="rowClick"
+                    @click="rowClick($event)"
                     draggable="true"
                     @dragstart="dragStart"
                 >
@@ -90,7 +91,7 @@
             /**
              * Handle sorting the song list.
              * 
-             * @param  string key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
+             * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
              */
             sort(key) {
                 // We don't allow sorting in the Queue screen.
@@ -195,14 +196,16 @@
                     return;
                 }
 
-                $(this.$els.wrapper).find('.song-item').addClass('selected');
+                $(this.$els.wrapper)
+                    .find('.song-item').addClass('selected')
+                    .find(':checkbox').prop('checked', true);
                 this.gatherSelected();
             },
 
             /**
-             * Gather all selected songs
+             * Gather all selected songs.
              * 
-             * @return {Array} An array of Song object
+             * @return {Array} An array of Song objects
              */
             gatherSelected() {
                 var ids = _.map($(this.$els.wrapper).find('.song-item.selected'), row => $(row).data('song-id'));
@@ -227,6 +230,7 @@
                 // If we're on a touch device, tapping a row means playing right away.
                 if (isMobile.any) {
                     playback.play(songStore.byId($(row).data('song-id')));
+
                     return;
                 }
 
@@ -249,7 +253,7 @@
             },
 
             toggleRow(row) {
-                $(row).toggleClass('selected');
+                $(row).find(':checkbox').click();
                 this.lastSelectedRow = row;
             },
 
@@ -259,13 +263,16 @@
                 var rows = $(this.lastSelectedRow).parents('tbody').find('tr');
 
                 for (var i = indexes[0]; i <= indexes[1]; ++i) {
-                    $(rows[i-1]).addClass('selected');
+                    $(rows[i-1]).addClass('selected')
+                        .find(':checkbox').prop('checked', true);
                 }
             },
 
             clearSelection() {
                 this.selectedSongs = [];
-                $('.song-item').removeClass('selected');
+                $(this.$els.wrapper)
+                    .find('.song-item.selected').removeClass('selected')
+                    .find(':checked').prop('checked', false);
             },
 
             /**
@@ -295,7 +302,7 @@
             /**
              * Listen to queue:select-rows event and mark a range of song-item rows as selected
              * 
-             * @param  array range An array in the format of [startIndex, stopIndex]
+             * @param  {Array} range An array in the format of [startIndex, stopIndex]
              */
             'queue:select-rows': function (range) {
                 if (this.type != 'queue') {
@@ -312,7 +319,7 @@
             /**
              * Listen to song:play event to do some logic.
              * 
-             * @param  object song The current playing song.
+             * @param  {Object} song The current playing song.
              */
             'song:play': function (song) {
                 // If the song is at the end of the current displayed items, load more.
@@ -351,6 +358,14 @@
             'main-content-view:load': function () {
                 this.clearSelection();
             },
+
+            /**
+             * Listens to the 'song:selection-changed' dispatched from a child song-item 
+             * to collect the selected songs.
+             */
+            'song:selection-changed': function () {
+                this.gatherSelected();
+            },
         },
     };
 </script>
@@ -375,6 +390,10 @@
                 width: 72px;
                 text-align: right;
             }
+
+            &.check {
+                display: none;
+            }
         }
 
         th {
@@ -398,8 +417,7 @@
 
 
         @media only screen 
-        and (max-device-width : 768px) 
-        and (orientation : portrait) {
+        and (max-device-width : 768px) {
             table, tbody, tr {
                 display: block;
             }
@@ -409,7 +427,8 @@
             }
 
             tr {
-                padding: 8px 0;
+                padding: 8px 32px 8px 4px;
+                position: relative;
             }
 
             td {
@@ -425,6 +444,13 @@
                     opacity: .5;
                     font-size: 90%;
                     padding: 0 4px;
+                }
+
+                &.check {
+                    display: block;
+                    position: absolute;
+                    top: 8px;
+                    right: 0;
                 }
             }
         }

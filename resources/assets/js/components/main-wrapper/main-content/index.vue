@@ -147,8 +147,7 @@
 
 
         @media only screen 
-        and (max-device-width : 768px) 
-        and (orientation : portrait) {
+        and (max-device-width : 768px) {
             h1.heading {
                 font-size: 18px;
                 min-height: 0;
@@ -168,8 +167,10 @@
                 }
             }
 
-            .main-scroll-wrap {
-                padding: 24px 16px $footerHeight;
+            > section {
+                .main-scroll-wrap {
+                    padding: 12px;
+                }    
             }
         }
     }

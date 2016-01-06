@@ -2,10 +2,10 @@
     <section id="usersWrapper">
         <h1 class="heading">
             <span>Users
-                <i class="fa fa-chevron-down toggler" 
+                <i class="fa fa-angle-down toggler" 
                     v-show="isPhone && !showingControls" 
                     @click="showingControls = true"></i>
-                <i class="fa fa-chevron-up toggler" 
+                <i class="fa fa-angle-up toggler" 
                     v-show="isPhone && showingControls" 
                     @click.prevent="showingControls = false"></i>
             </span>
@@ -334,8 +334,7 @@
         }
 
         @media only screen 
-        and (max-device-width : 667px) 
-        and (orientation : portrait) {
+        and (max-device-width : 667px) {
             form.user-create, form.user-edit {
                 flex-direction: column;
                 align-items: stretch;
@@ -369,8 +368,7 @@
 
         @media only screen 
         and (min-device-width : 668px) 
-        and (max-device-width : 768px) 
-        and (orientation : portrait) {
+        and (max-device-width : 768px) {
             .users {
                 flex-direction: column;
 

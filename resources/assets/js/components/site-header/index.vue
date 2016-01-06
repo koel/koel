@@ -63,8 +63,7 @@
         }
 
         @media only screen 
-        and (max-device-width : 667px) 
-        and (orientation : portrait) {
+        and (max-device-width : 667px) {
             display: flex;
             align-content: stretch;
             justify-content: flext-start;

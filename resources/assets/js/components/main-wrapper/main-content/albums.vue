@@ -2,10 +2,10 @@
     <section id="albumsWrapper">
         <h1 class="heading">
             <span>Albums
-                <i class="fa fa-chevron-down toggler" 
+                <i class="fa fa-angle-down toggler" 
                     v-show="isPhone && !showingControls" 
                     @click="showingControls = true"></i>
-                <i class="fa fa-chevron-up toggler" 
+                <i class="fa fa-angle-up toggler" 
                     v-show="isPhone && showingControls" 
                     @click.prevent="showingControls = false"></i>
             </span>

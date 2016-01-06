@@ -1,6 +1,6 @@
 <template>
     <div class="add-to-playlist" v-show="showing">
-        <p>Add {{ songs.length }} song{{ songs.length > 1 ? 's' : '' }} in</p>
+        <p>Add {{ songs.length }} song{{ songs.length > 1 ? 's' : '' }} to</p>
         <ul>
             <li v-if="mergedSettings.canQueue" @click="queueSongsToBottom">Bottom of Queue</li>
             <li v-if="mergedSettings.canQueue" @click="queueSongsToTop">Top of Queue</li>

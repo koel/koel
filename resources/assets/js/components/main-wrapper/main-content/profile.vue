@@ -240,8 +240,7 @@
         }
 
         @media only screen 
-        and (max-device-width : 667px) 
-        and (orientation : portrait) {
+        and (max-device-width : 667px) {
             input {
                 &[type="text"], &[type="email"], &[type="password"] {
                     width: 100%;
