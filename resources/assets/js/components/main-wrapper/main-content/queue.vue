@@ -1,5 +1,5 @@
 <template>
-    <div id="queueWrapper">
+    <section id="queueWrapper">
         <h1 class="heading">
             <span title="That's a freaking lot of U's and E's">Current Queue
                 <i class="fa fa-chevron-down toggler" 
@@ -48,7 +48,7 @@
                 <a class="start" @click.prevent="shuffleAll">shuffling all songs</a>?
             </p>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>

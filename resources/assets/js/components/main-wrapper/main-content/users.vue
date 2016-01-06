@@ -1,5 +1,5 @@
 <template>
-    <div id="usersWrapper">
+    <section id="usersWrapper">
         <h1 class="heading">
             <span>Users</span>
 
@@ -86,7 +86,7 @@
                 <article class="user-item"></article>
             </div>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>

@@ -68,6 +68,24 @@
         flex: 1;
         position: relative;
 
+        > section {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+
+            .main-scroll-wrap {
+                padding: 24px;
+                overflow: auto;
+                flex: 1;
+
+                // Enable scroll with momentum on touch devices
+                overflow-y: scroll; 
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
         h1.heading {
             font-weight: $fontWeight_UltraThin;
             font-size: 48px;
@@ -106,16 +124,6 @@
                     width: 192px;
                 }
             }
-        }
-
-        .main-scroll-wrap {
-            padding: 24px 24px $footerHeight;
-            height: calc(100vh - #{$headerHeight + $footerHeight + $mainHeadingHeight + 24px});
-            overflow: auto;
-
-            // Enable scroll with momentum on touch devices
-            overflow-y: scroll; 
-            -webkit-overflow-scrolling: touch;
         }
 
         .translucent {

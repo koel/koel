@@ -1,5 +1,5 @@
 <template>
-    <div id="artistsWrapper">
+    <section id="artistsWrapper">
         <h1 class="heading">
             <span>
                 Artists
@@ -37,7 +37,7 @@
             <span class="item"></span>
             <span class="item"></span>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-    <div id="albumsWrapper">
+    <section id="albumsWrapper">
         <h1 class="heading">
             <span>Albums
                 <i class="fa fa-chevron-down toggler" 
@@ -38,7 +38,7 @@
             <span class="item"></span>
             <span class="item"></span>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>

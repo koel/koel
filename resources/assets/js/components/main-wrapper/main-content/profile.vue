@@ -1,5 +1,5 @@
 <template>
-    <div id="profileWrapper">
+    <section id="profileWrapper">
         <h1 class="heading">
             <span>Profile &amp; Preferences</span>
         </h1>
@@ -94,7 +94,7 @@
                 </div>
             </section>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>

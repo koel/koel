@@ -1,5 +1,5 @@
 <template>
-    <div id="settingsWrapper">
+    <section id="settingsWrapper">
         <h1 class="heading">
             <span>Settings</span>
         </h1>
@@ -20,7 +20,7 @@
                 <button type="submit">Scan</button>
             </div>
         </form>
-    </div>
+    </section>
 </template>
 
 <script>
