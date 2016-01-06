@@ -31,17 +31,22 @@
 
                 <add-to-menu 
                     :songs="selectedSongs" 
-                    :showing.sync="showingAddToMenu"
-                    :settings="{ hiddenPlaylists: [playlist] }">
+                    :showing.sync="showingAddToMenu && playlist.songs.length"
                 </add-to-menu>
             </div>
         </h1>
 
-        <song-list :items="playlist.songs" 
+        <song-list v-show="playlist.songs.length" 
+            :items="playlist.songs" 
             :selected-songs.sync="selectedSongs" 
             type="playlist" 
             :playlist="playlist">
         </song-list>
+
+        <div class="none" v-else>
+            The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar, 
+            or use the &quot;Add To…&quot; button.
+        </div>
     </section>
 </template>
 
@@ -102,18 +107,6 @@
                 });
             },
         },
-
-        watch: {
-            /**
-             * Watch the number of songs in the current playlist.
-             * If we don't have any, the "Add To..." menu shouldn't be left open.
-             */
-            'playlist.songs': function () {
-                if (!this.playlist.songs.length) {
-                    this.showingAddToMenu = false;
-                }
-            },
-        },
     };
 </script>
 
@@ -133,6 +126,15 @@
 
             &:hover {
                 background-color: darken($colorRed, 10%) !important;
+            }
+        }
+
+        .none {
+            color: $color2ndText;
+            padding: 16px 24px;
+
+            a {
+                color: $colorHighlight;
             }
         }
     }

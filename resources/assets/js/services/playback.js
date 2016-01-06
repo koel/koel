@@ -292,8 +292,6 @@ export default {
             songs = _.shuffle(songs);
         }
 
-        queueStore.clear();
-
         queueStore.queue(songs, true);
 
         this.app.loadMainView('queue');

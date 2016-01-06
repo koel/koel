@@ -26,13 +26,24 @@
 
                 <add-to-menu 
                     :songs="selectedSongs" 
-                    :showing.sync="showingAddToMenu"
+                    :showing.sync="showingAddToMenu && state.songs.length"
                     :settings="{ canLike: false }">
                 </add-to-menu>
             </div>
         </h1>
 
-        <song-list :items="state.songs" :selected-songs.sync="selectedSongs" type="favorites"></song-list>
+        <song-list 
+            v-show="state.songs.length" 
+            :items="state.songs" 
+            :selected-songs.sync="selectedSongs" 
+            type="favorites">
+        </song-list>
+
+        <div class="none" v-else>
+            Start loving! 
+            Click the <i style="margin: 0 5px" class="fa fa-heart"></i> icon when a song is playing to add it 
+            to this list.
+        </div>
     </section>
 </template>
 
@@ -67,18 +78,6 @@
                 playback.queueAndPlay(this.state.songs, true);
             },
         },
-
-        watch: {
-            /**
-             * Watch the number of favorite songs.
-             * If we don't have any, the "Add To..." menu shouldn't be left open.
-             */
-            'state.songs': function () {
-                if (!this.state.songs.length) {
-                    this.showingAddToMenu = false;
-                }
-            },
-        },
     };
 </script>
 
@@ -90,6 +89,15 @@
         button.play-shuffle, button.del {
             i {
                 margin-right: 0 !important;
+            }
+        }
+
+        .none {
+            color: $color2ndText;
+            padding: 16px 24px;
+
+            a {
+                color: $colorHighlight;
             }
         }
     }

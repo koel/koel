@@ -44,20 +44,6 @@
                 </tr>
             </tbody>
         </table>
-
-        <div class="none" v-else>
-            <p>Empty spaces. Abandoned places.</p>
-
-            <p v-if="showShufflingAllOption">How about 
-                <a class="start" @click.prevent="shuffleAll">shuffling all songs</a>?
-            </p>
-
-            <p v-if="type === 'favorites'">
-                Start loving! 
-                Click the <i style="margin: 0 5px" class="fa fa-heart"></i> icon when a song is playing to add it 
-                to this list.
-            </p>
-        </div>
     </div>
     
 </template>
@@ -100,18 +86,6 @@
             },
         },
 
-        computed: {
-            /**
-             * Determine if we should display a "Shuffling All" link.
-             * This should be true if:
-             * - The current list is queue, and
-             * - We have songs to shuffle.
-             */
-            showShufflingAllOption() {
-                return this.type == 'queue' && songStore.all().length;
-            },
-        },
-
         methods: {
             /**
              * Handle sorting the song list.
@@ -127,13 +101,6 @@
 
                 this.sortKey = key;
                 this.order = 0 - this.order;
-            },
-
-            /**
-             * Shuffle all songs we have.
-             */
-            shuffleAll() {
-                playback.queueAndPlay(null, true);
             },
 
             /**
@@ -392,11 +359,6 @@
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
 
-    .none {
-        color: $color2ndText;
-        margin-top: 16px;
-    }
-
     .song-list-wrap {
         position: relative;
 
@@ -424,14 +386,6 @@
             i {
                 color: $colorHighlight;
                 font-size: 120%;
-            }
-        }
-
-        a.start {
-            color: $colorHighlight;
-
-            &:hover {
-                color: darken($colorHighlight, 10%);
             }
         }
 

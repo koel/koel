@@ -28,13 +28,26 @@
 
                 <add-to-menu
                     :songs="songsToAddTo" 
-                    :showing.sync="showingAddToMenu"
+                    :showing.sync="showingAddToMenu && state.songs.length"
                     :settings="{ canQueue: false }">
                 </add-to-menu>
             </div>
         </h1>
 
-        <song-list :items="state.songs" :selected-songs.sync="selectedSongs" type="queue"></song-list>
+        <song-list 
+            v-show="state.songs.length" 
+            :items="state.songs" 
+            :selected-songs.sync="selectedSongs" 
+            type="queue">
+        </song-list>
+
+        <div class="none" v-else>
+            <p>Empty spaces. Abandoned places.</p>
+
+            <p v-if="showShufflingAllOption">How about 
+                <a class="start" @click.prevent="shuffleAll">shuffling all songs</a>?
+            </p>
+        </div>
     </div>
 </template>
 
@@ -46,6 +59,7 @@
     import addToMenu from '../../shared/add-to-menu.vue';
     import playlistStore from '../../../stores/playlist';
     import queueStore from '../../../stores/queue';
+    import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
     import shuffleSelectedMixin from '../../../mixins/shuffle-selected';
     
@@ -73,17 +87,15 @@
             songsToAddTo() {
                 return this.selectedSongs.length ? this.selectedSongs : queueStore.all();
             },
-        },
 
-        watch: {
             /**
-             * Watch the number of songs currently queued.
-             * If we don't have any queuing song, the "Add To..." menu shouldn't be left open.
+             * Determine if we should display a "Shuffling All" link.
+             * This should be true if:
+             * - The current list is queue, and
+             * - We have songs to shuffle.
              */
-            'state.songs': function () {
-                if (!queueStore.all().length) {
-                    this.showingAddToMenu = false;
-                }
+            showShufflingAllOption() {
+                return songStore.all().length;
             },
         },
 
@@ -93,6 +105,13 @@
              */
             shuffle() {
                 playback.queueAndPlay(queueStore.shuffle());
+            },
+
+            /**
+             * Shuffle all songs we have.
+             */
+            shuffleAll() {
+                playback.queueAndPlay(songStore.all(), true);
             },
 
             /**
@@ -112,7 +131,11 @@
     #queueWrapper {
         .none {
             color: $color2ndText;
-            margin-top: 16px;
+            padding: 16px 24px;
+
+            a {
+                color: $colorHighlight;
+            }
         }
 
 
