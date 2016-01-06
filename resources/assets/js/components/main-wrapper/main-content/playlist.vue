@@ -31,7 +31,7 @@
 
                 <add-to-menu 
                     :songs="selectedSongs" 
-                    :showing.sync="showingAddToMenu && playlist.songs.length"
+                    :showing="showingAddToMenu && playlist.songs.length"
                 </add-to-menu>
             </div>
         </h1>
@@ -54,22 +54,21 @@
     import isMobile from 'ismobilejs';
 
     import songList from '../../shared/song-list.vue';
-    import addToMenu from '../../shared/add-to-menu.vue';
     import playlistStore from '../../../stores/playlist';
     import playback from '../../../services/playback';
     import shuffleSelectedMixin from '../../../mixins/shuffle-selected';
+    import hasAddToMenuMixin from '../../../mixins/has-add-to-menu';
 
     export default {
-        mixins: [shuffleSelectedMixin],
+        mixins: [shuffleSelectedMixin, hasAddToMenuMixin],
 
-        components: { songList, addToMenu },
+        components: { songList },
 
         data() {
             return {
                 playlist: playlistStore.stub,
                 isPhone: isMobile.phone,
                 showingControls: false,
-                showingAddToMenu: false,
             };
         },
 

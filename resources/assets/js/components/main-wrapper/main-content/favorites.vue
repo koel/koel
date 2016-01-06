@@ -26,7 +26,7 @@
 
                 <add-to-menu 
                     :songs="selectedSongs" 
-                    :showing.sync="showingAddToMenu && state.songs.length"
+                    :showing="showingAddToMenu && state.songs.length"
                     :settings="{ canLike: false }">
                 </add-to-menu>
             </div>
@@ -51,22 +51,21 @@
     import isMobile from 'ismobilejs';
     
     import songList from '../../shared/song-list.vue';
-    import addToMenu from '../../shared/add-to-menu.vue';
     import favoriteStore from '../../../stores/favorite';
     import playback from '../../../services/playback';
     import shuffleSelectedMixin from '../../../mixins/shuffle-selected';
+    import hasAddToMenuMixin from '../../../mixins/has-add-to-menu';
     
     export default {
-        mixins: [shuffleSelectedMixin],
+        mixins: [shuffleSelectedMixin, hasAddToMenuMixin],
 
-        components: { songList, addToMenu },
+        components: { songList },
 
         data () {
             return {
                 state: favoriteStore.state,
                 isPhone: isMobile.phone,
                 showingControls: false,
-                showingAddToMenu: false,
             };
         },
 

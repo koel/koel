@@ -5,14 +5,12 @@
             <li v-if="mergedSettings.canQueue" @click="queueSongsToBottom">Bottom of Queue</li>
             <li v-if="mergedSettings.canQueue" @click="queueSongsToTop">Top of Queue</li>
             <li v-if="mergedSettings.canLike" @click="addSongsToFavorite">Favorites</li>
-            <template v-for="playlist in playlistState.playlists">
-                <li v-show="!isPlaylistHidden(playlist)" @click="addSongsToExistingPlaylist(playlist)">{{ playlist.name }}</li>
-            </template>
+            <li v-for="playlist in playlistState.playlists" @click="addSongsToExistingPlaylist(playlist)">{{ playlist.name }}</li>
         </ul>
         <p>or create a new playlist</p>
         <form class="form-save form-simple" @submit.prevent="createNewPlaylistFromSongs">
             <input type="text" 
-                @keyup.esc.prevent="showing = false"
+                @keyup.esc.prevent="hideMenu"
                 v-model="newPlaylistName" 
                 placeholder="Playlist name"
                 required>
@@ -51,17 +49,6 @@
         },
 
         methods: {
-            /**
-             * Determine if a playlist should be hidden from the menu. 
-             * 
-             * @param  {Object}  playlist
-             * 
-             * @return {Boolean}
-             */
-            isPlaylistHidden(playlist) {
-                return _.contains(this.mergedSettings.hiddenPlaylists, playlist);
-            },
-
             /**
              * Add the selected songs into Favorite.
              */
@@ -117,8 +104,12 @@
                     this.newPlaylistName = '';
                     
                     // Activate the new playlist right away
-                    this.$root.loadPlaylist(_.last(playlistState.playlists));
+                    this.$root.loadPlaylist(_.last(this.playlistState.playlists));
                 });
+            },
+
+            hideMenu() {
+                this.$dispatch('addToMenu:close');
             },
         },
     };

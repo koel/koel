@@ -76,7 +76,7 @@
              * @param  object p The playlist.
              */
             load(p) {
-                this.$root.loadPlaylist(this.currentPlaylist = p);
+                this.$root.loadPlaylist(p);
             },
 
             /**
@@ -183,6 +183,12 @@
                 }
 
                 return false;
+            },
+        },
+
+        events: {
+            'playlist:load': function (p) {
+                this.currentPlaylist = p;
             },
         },
     };

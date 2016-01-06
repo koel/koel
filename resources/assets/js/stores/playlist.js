@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import http from '../services/http';
 import stub from '../stubs/playlist';
-import sharedStore from './shared';
 import songStore from './song';
 
 export default {
@@ -12,8 +11,8 @@ export default {
         playlists: [],
     },
 
-    init() {
-        this.state.playlists = sharedStore.state.playlists;
+    init(playlists) {
+        this.state.playlists = playlists;
 
         _.each(this.state.playlists, this.getSongs);
     },
