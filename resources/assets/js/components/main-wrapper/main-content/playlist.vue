@@ -43,7 +43,7 @@
             :playlist="playlist">
         </song-list>
 
-        <div class="none" v-else>
+        <div v-show="!state.songs.length" class="none">
             The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar, 
             or use the &quot;Add To…&quot; button.
         </div>

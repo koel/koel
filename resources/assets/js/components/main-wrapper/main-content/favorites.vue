@@ -39,7 +39,7 @@
             type="favorites">
         </song-list>
 
-        <div class="none" v-else>
+        <div v-show="!state.songs.length" class="none">
             Start loving! 
             Click the <i style="margin: 0 5px" class="fa fa-heart"></i> icon when a song is playing to add it 
             to this list.

@@ -41,7 +41,7 @@
             type="queue">
         </song-list>
 
-        <div class="none" v-else>
+        <div v-show="!state.songs.length" class="none">
             <p>Empty spaces. Abandoned places.</p>
 
             <p v-if="showShufflingAllOption">How about 
