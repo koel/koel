@@ -1,9 +1,16 @@
 <template>
     <section id="usersWrapper">
         <h1 class="heading">
-            <span>Users</span>
+            <span>Users
+                <i class="fa fa-chevron-down toggler" 
+                    v-show="isPhone && !showingControls" 
+                    @click="showingControls = true"></i>
+                <i class="fa fa-chevron-up toggler" 
+                    v-show="isPhone && showingControls" 
+                    @click.prevent="showingControls = false"></i>
+            </span>
 
-            <div class="buttons">
+            <div class="buttons" v-show="!isPhone || showingControls">
                 <button class="btn-create" @click="creating = !creating">
                     <i class="fa fa-plus"></i>
                     Add</button>
@@ -91,6 +98,7 @@
 
 <script>
     import _ from 'lodash';
+    import isMobile from 'ismobilejs';
     
     import userStore from '../../../stores/user';
 
@@ -98,6 +106,8 @@
         data() {
             return {
                 state: userStore.state,
+                isPhone: isMobile.phone,
+                showingControls: false,
                 creating: false,
                 newUser: _.clone(userStore.stub),
                 editedUser: _.clone(userStore.stub),
