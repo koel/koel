@@ -25,7 +25,7 @@
                         <i class="fa fa-angle-down" v-show="sortKey === 'fmtLength' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'fmtLength' && order < 0"></i>
                     </th>
-                    <th class="check"></th>
+                    <th class="play"></th>
                 </tr>
             </thead>
 
@@ -196,9 +196,7 @@
                     return;
                 }
 
-                $(this.$els.wrapper)
-                    .find('.song-item').addClass('selected')
-                    .find(':checkbox').prop('checked', true);
+                $(this.$els.wrapper).find('.song-item').addClass('selected');
                 this.gatherSelected();
             },
 
@@ -227,9 +225,9 @@
                 var $target = $(e.target);
                 var row = $target.is('tr') ? $target[0] : $target.parents('tr')[0];
 
-                // If we're on a touch device, tapping a row means playing right away.
+                // If we're on a touch device, just toggle selection.
                 if (isMobile.any) {
-                    playback.play(songStore.byId($(row).data('song-id')));
+                    this.toggleRow(row);
 
                     return;
                 }
@@ -253,7 +251,7 @@
             },
 
             toggleRow(row) {
-                $(row).find(':checkbox').click();
+                $(row).toggleClass('selected');
                 this.lastSelectedRow = row;
             },
 
@@ -263,16 +261,13 @@
                 var rows = $(this.lastSelectedRow).parents('tbody').find('tr');
 
                 for (var i = indexes[0]; i <= indexes[1]; ++i) {
-                    $(rows[i-1]).addClass('selected')
-                        .find(':checkbox').prop('checked', true);
+                    $(rows[i-1]).addClass('selected');
                 }
             },
 
             clearSelection() {
                 this.selectedSongs = [];
-                $(this.$els.wrapper)
-                    .find('.song-item.selected').removeClass('selected')
-                    .find(':checked').prop('checked', false);
+                $(this.$els.wrapper).find('.song-item.selected').removeClass('selected');
             },
 
             /**
@@ -399,14 +394,14 @@
                 text-align: right;
             }
 
-            &.check {
+            &.play {
                 display: none;
 
                 html.touchevents & {
                     display: block;
                     position: absolute;
                     top: 8px;
-                    right: 0;
+                    right: 4px;
                 }
             }
         }

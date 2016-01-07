@@ -2,14 +2,20 @@
     <tr 
         @dblclick.prevent="play" 
         class="song-item"
-        :class="{ 'selected': selected, 'playing': playing }"
+        :class="{ 'selected': selected, 'playing': playbackState === 'playing' || playbackState === 'paused' }"
 
     >
         <td class="title">{{ song.title }}</td>
         <td class="artist">{{ song.album.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
         <td class="time">{{ song.fmtLength }}</td>
-        <td class="check"><input type="checkbox" @click.stop="select($event)"></td>
+        <td class="play">
+            <i class="fa fa-pause-circle" 
+                v-show="playbackState === 'playing'" 
+                @click.stop="pause"></i>
+            <i class="fa fa-play-circle" v-else
+                @click.stop="playbackState === 'paused' ? resume() : play()"></i>
+        </td>
     </tr>
 </template>
 
@@ -22,7 +28,7 @@
 
         data() {
             return {
-                playing: false,
+                playbackState: 'stopped',
             };
         },
 
@@ -34,31 +40,30 @@
                 playback.play(this.song);
             },
 
-            /**
-             * Select a row.
-             */
-            select(e) {
-                if ($(e.target).prop('checked')) {
-                    $(e.target).parents('tr').addClass('selected');    
-                } else {
-                    $(e.target).parents('tr').removeClass('selected');
-                }
+            pause() {
+                playback.pause();
+            },
 
-                // Let the parent listing know to collect the selected songs.
-                this.$dispatch('song:selection-changed');
+            resume() {
+                playback.resume();
             },
         },
 
         events: {
-            /**
-             * Listen to 'song:play' event and set the "playing" status.
-             * 
-             * @param  {Object} song The current playing song.
-             */
-            'song:play': function (song) {
-                this.playing = this.song.id === song.id;
+            // Listen to playback events and set playback status
 
-                return true;
+            'song:play': function (song) {
+                this.playbackState = this.song.id === song.id ? 'playing' : 'stopped';
+            },
+
+            'song:stop': function () {
+                this.playbackState = 'stopped';
+            },
+
+            'song:pause': function (song) {
+                if (this.song.id === song.id) {
+                    this.playbackState = 'paused';
+                }
             },
         },
     };
@@ -71,7 +76,7 @@
     .song-item {
         border-bottom: 1px solid $color2ndBgr;
 
-        &:hover {
+        html.no-touchevents &:hover {
             background: rgba(255, 255, 255, .05);
         }
 
@@ -83,8 +88,13 @@
             min-width: 192px;
         }
 
-        .check {
+        .play {
             max-width: 32px;
+            opacity: .5;
+
+            i {
+                font-size: 150%;
+            }
         }
 
         &.selected {

@@ -256,6 +256,10 @@
                 this.playing = false;
             },
 
+            'song:pause': function () {
+                this.playing = false;
+            },
+
             /**
              * <Bye cruel world…>
              * 

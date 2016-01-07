@@ -264,6 +264,7 @@ export default {
      */
     pause() {
         this.player.pause();
+        this.app.$broadcast('song:pause', queueStore.current());
     },
 
     /**
@@ -271,6 +272,7 @@ export default {
      */
     resume() {
         this.player.play();
+        this.app.$broadcast('song:play', queueStore.current());
     },
 
     /**
