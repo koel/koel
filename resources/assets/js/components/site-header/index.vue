@@ -2,7 +2,7 @@
     <header id="mainHeader">
         <h1 class="brand ir">koel</h1>
         <span class="hamburger" @click="toggleSidebar">
-            <i class="fa fa-align-justify"></i>
+            <i class="fa fa-bars"></i>
         </span>
         <span class="magnifier" @click="toggleSearchForm">
             <i class="fa fa-search"></i>
