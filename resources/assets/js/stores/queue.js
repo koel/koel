@@ -5,7 +5,7 @@ import songStub from '../stubs/song';
 export default {
     state: {
         songs: [],
-        current: songStub,
+        current: null,
     },
     
     init() {
@@ -48,6 +48,16 @@ export default {
     },
 
     /**
+     * Determine if the queue contains a song.
+     * 
+     * @param  {Object} song
+     * @return {Boolean}
+     */
+    contains(song) {
+        return _.includes(this.all(), song);
+    },
+
+    /**
      * Add a list of songs to the end of the current queue, 
      * or replace the current queue as a whole if `replace` is true.
      *
@@ -72,6 +82,24 @@ export default {
     },
 
     /**
+     * Queue song(s) to after the current song.
+     * 
+     * @param  {Array|Object} songs
+     */
+    queueAfterCurrent(songs) {
+        if (!Array.isArray(songs)) {
+            songs = [songs];
+        }
+
+        if (!this.state.current || !this.state.songs.length) {
+            return this.queue(songs);
+        }
+
+        var head = this.state.songs.splice(0, _.indexOf(this.state.songs, this.state.current) + 1);
+        this.state.songs = head.concat(songs, this.state.songs);
+    },
+
+    /**
      * Unqueue a song, or several songs at once.
      * 
      * @param  {Object|String|Array} songs The song(s) to unqueue.
@@ -89,6 +117,7 @@ export default {
      */
     clear(cb = null) {
         this.state.songs = [];
+        this.state.current = null;
 
         if (cb) {
             cb();
@@ -101,6 +130,10 @@ export default {
      * @return {Object|Null}
      */
     getNextSong() {
+        if (!this.current()) {
+            return _.first(this.state.songs);
+        }
+
         var i = _.pluck(this.state.songs, 'id').indexOf(this.current().id) + 1;
 
         return i >= this.state.songs.length ? null : this.state.songs[i];
@@ -112,6 +145,10 @@ export default {
      * @return {Object|Null}
      */
     getPrevSong() {
+        if (!this.current()) {
+            return _.last(this.state.songs);
+        }
+
         var i = _.pluck(this.state.songs, 'id').indexOf(this.current().id) - 1;
 
         return i < 0 ? null : this.state.songs[i];

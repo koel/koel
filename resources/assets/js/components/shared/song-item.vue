@@ -1,6 +1,6 @@
 <template>
     <tr 
-        @dblclick.prevent="play" 
+        @dblclick.prevent="playRighAwayyyyyyy" 
         class="song-item"
         :class="{ 'selected': selected, 'playing': playbackState === 'playing' || playbackState === 'paused' }"
 
@@ -22,6 +22,7 @@
 <script>
     import $ from 'jquery';
     import playback from '../../services/playback';
+    import queueStore from '../../stores/queue';
 
     export default {
         props: ['song'],
@@ -34,10 +35,14 @@
 
         methods: {
             /**
-             * Play the song.
+             * Play the song right away.
              */
-            play() {
-                playback.play(this.song);
+            playRighAwayyyyyyy() {
+                if (!queueStore.contains(this.song)) {
+                    queueStore.queueAfterCurrent(this.song);
+                }
+                
+                Vue.nextTick(() => playback.play(this.song));
             },
 
             pause() {
