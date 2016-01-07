@@ -45,6 +45,10 @@
                     border-color: #fff;
                     transform: scale(1.1);
                 }
+
+                html.touchevents & {
+                    display: block;
+                }
             }
 
             &:before {
@@ -87,8 +91,7 @@
     }
 
     @media only screen 
-    and (max-device-width : 768px) 
-    and (orientation : portrait) {
+    and (max-device-width : 768px) {
         justify-content: center;
     }
 

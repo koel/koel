@@ -401,6 +401,13 @@
 
             &.check {
                 display: none;
+
+                html.touchevents & {
+                    display: block;
+                    position: absolute;
+                    top: 8px;
+                    right: 0;
+                }
             }
         }
 
@@ -452,13 +459,6 @@
                     opacity: .5;
                     font-size: 90%;
                     padding: 0 4px;
-                }
-
-                &.check {
-                    display: block;
-                    position: absolute;
-                    top: 8px;
-                    right: 0;
                 }
             }
         }

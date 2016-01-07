@@ -11,7 +11,8 @@ elixir(function (mix) {
         .copy('bower_components/fontawesome/fonts', 'public/build/fonts');
 
     mix.scripts([
-            'bower_components/plyr/dist/plyr.js'
+            'bower_components/plyr/dist/plyr.js',
+            'resources/assets/js/libs/modernizr-custom.js'
         ], 'public/js/vendors.js', './')
         .styles([
             'resources/assets/css/**/*.css',
