@@ -85,7 +85,7 @@
              * @param {Object} e The keydown event
              */
             playPrev(e) {
-                if ($(e.target).is('input,textarea')) {
+                if ($(e.target).is('input,textarea,button,select')) {
                     return true;
                 }
 
@@ -99,7 +99,7 @@
              * @param {Object} e The keydown event
              */
             playNext(e) {
-                if ($(e.target).is('input,textarea')) {
+                if ($(e.target).is('input,textarea,button,select')) {
                     return true;
                 }
 
