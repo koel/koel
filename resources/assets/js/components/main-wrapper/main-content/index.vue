@@ -47,11 +47,11 @@
             /**
              * When a new song is played, find it cover for the translucent effect.
              * 
-             * @param  object song
+             * @param  {Object} song
              * 
-             * @return true
+             * @return {boolean}
              */
-            'song:play': function (song) {
+            'song:played': function (song) {
                 this.albumCover = song.album.cover ===  albumStore.stub.cover ? null : song.album.cover;
 
                 return true;

@@ -96,7 +96,7 @@ export default {
         // Record the UNIX timestamp the song start playing, for scrobbling purpose
         song.playStartTime = Math.floor(Date.now() / 1000);
 
-        this.app.$broadcast('song:play', song);
+        this.app.$broadcast('song:played', song);
 
         $('title').text(`${song.title} ♫ Koel`);
         this.player.source(`/api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`);
@@ -216,8 +216,8 @@ export default {
     /**
      * Set the volume level.
      * 
-     * @param {Integer}  volume   0-10
-     * @param {Boolean}  persist  Whether the volume should be saved into local storage
+     * @param {integer}         volume   0-10
+     * @param {boolean=true}    persist  Whether the volume should be saved into local storage
      */
     setVolume(volume, persist = true) {
         this.player.setVolume(volume);
@@ -256,7 +256,7 @@ export default {
         this.player.pause();
         this.player.seek(0);
 
-        this.app.$broadcast('song:stop');
+        this.app.$broadcast('song:stopped');
     },
 
     /**
@@ -264,7 +264,7 @@ export default {
      */
     pause() {
         this.player.pause();
-        this.app.$broadcast('song:pause', queueStore.current());
+        this.app.$broadcast('song:paused', queueStore.current());
     },
 
     /**
@@ -272,14 +272,14 @@ export default {
      */
     resume() {
         this.player.play();
-        this.app.$broadcast('song:play', queueStore.current());
+        this.app.$broadcast('song:played', queueStore.current());
     },
 
     /**
      * Queue up songs (replace them into the queue) and start playing right away.
      *
-     * @param {Array|Null}    songs   An array of song objects. Defaults to all songs if null.
-     * @param {Boolean}       shuffle Whether to shuffle the songs before playing.
+     * @param {?Array}          songs   An array of song objects. Defaults to all songs if null.
+     * @param {boolean=false}   shuffle Whether to shuffle the songs before playing.
      */
     queueAndPlay(songs = null, shuffle = false) {
         if (!songs) {
@@ -320,8 +320,8 @@ export default {
     /**
      * Play all songs by an artist.
      * 
-     * @param  {Object}  artist  The artist object
-     * @param  {Boolean} shuffle Whether to shuffle the songs
+     * @param  {Object}         artist  The artist object
+     * @param  {boolean=true}   shuffle Whether to shuffle the songs
      */
     playAllByArtist(artist, shuffle = true) {
         this.queueAndPlay(artistStore.getSongsByArtist(artist), true);
@@ -330,8 +330,8 @@ export default {
     /**
      * Play all songs in an album.
      * 
-     * @param  {Object}  album   The album object
-     * @param  {Boolean} shuffle Whether to shuffle the songs
+     * @param  {Object}         album   The album object
+     * @param  {boolean=true}   shuffle Whether to shuffle the songs
      */
     playAllInAlbum(album, shuffle = true) {
         this.queueAndPlay(album.songs, true);

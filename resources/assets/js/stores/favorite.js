@@ -20,8 +20,8 @@ export default {
      * Toggle like/unlike a song. 
      * A request to the server will be made.
      *
-     * @param {Object}        The song object
-     * @param {Function}  The function to execute afterwards
+     * @param {Object}     song
+     * @param {?Function}  cb
      */
     toggleOne(song, cb = null) {
         // Don't wait for the HTTP response to update the status, just toggle right away.
@@ -44,7 +44,7 @@ export default {
     /**
      * Add a song into the store.
      *
-     * @param {Object} The song object
+     * @param {Object} song
      */
     add(song) {
         this.state.songs.push(song);
@@ -53,7 +53,7 @@ export default {
     /**
      * Remove a song from the store.
      *
-     * @param {Object} The song object
+     * @param {Object} song
      */
     remove(song) {
         this.state.songs = _.difference(this.state.songs, [song]);
@@ -62,7 +62,8 @@ export default {
     /**
      * Like a bunch of songs.
      * 
-     * @param  {Array} An array of songs to like
+     * @param {Array}       songs
+     * @param {?Function}   cb
      */
     like(songs, cb = null) {
         // Don't wait for the HTTP response to update the status, just set them to Liked right away.
@@ -80,7 +81,8 @@ export default {
     /**
      * Unlike a bunch of songs.
      * 
-     * @param  {Array} An array of songs to unlike
+     * @param {Array}       songs
+     * @param {?Function}   cb
      */
     unlike(songs, cb = null) {
         // Don't wait for the HTTP response to update the status, just set them to Unliked right away.

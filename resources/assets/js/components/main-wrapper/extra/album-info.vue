@@ -54,11 +54,17 @@
         },
 
         methods: {
+            /**
+             * Reset the component's current state (song, album info etc.).
+             */
             resetState() {
                 this.song = null;
                 this.showingFullWiki = false;
             },
 
+            /**
+             * Shuffle all songs in the current album.
+             */
             shuffleAll() {
                 playback.playAllInAlbum(this.song.album);
             }

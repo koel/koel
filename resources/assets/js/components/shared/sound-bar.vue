@@ -54,7 +54,7 @@
     // Credits: http://codepen.io/johnheiner/pen/JdRybK and http://codepen.io/jackrugile/pres/CkAbG
     @keyframes sound {
         0% {
-           opacity: .15;
+            opacity: .15;
             height: 1px; 
         }
         100% {

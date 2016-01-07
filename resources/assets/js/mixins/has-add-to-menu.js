@@ -13,26 +13,6 @@ export default {
         };
     },
 
-    methods: {
-        scrolling(e) {
-            var $wrapper = $(this.$els.wrapper);
-
-            // Here we check if the user has scrolled to the end of the wrapper (or 32px to the end).
-            // If that's true, load more items.
-            if ($wrapper.scrollTop() + $wrapper.innerHeight() >= $wrapper[0].scrollHeight - 32) {
-                this.displayMore();
-            }
-        },
-
-        displayMore() {
-            this.numOfItems += this.perPage;
-
-            if (this.numOfItems > this.items.length) {
-                this.numOfItems = this.items.length;
-            }
-        },
-    },
-
     events: {
         'add-to-menu:close': function () {
             this.showingAddToMenu = false;

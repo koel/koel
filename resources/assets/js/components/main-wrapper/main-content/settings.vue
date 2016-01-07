@@ -44,7 +44,7 @@
                 settingStore.update(() => {
                     // Re-init the app.
                     this.$root.init();
-                }, (error) => {
+                }, error => {
                     var msg = 'Unknown error.';
 
                     if (error.status === 422) {

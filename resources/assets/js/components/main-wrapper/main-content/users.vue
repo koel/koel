@@ -126,6 +126,8 @@
 
             /**
              * Show the "Edit User" form.
+             *
+             * @param {Object} user
              */
             edit(user) {
                 if (user.id === this.state.current.id) {
@@ -139,9 +141,9 @@
 
             /**
              * Cancel editing, or simply close the form after updating.
-             * @param  bool rollback If true, editing was cancelled. 
-             *                       The original state of the edited user must be restored.
-             *                       If false, editing was successfully committed.
+             * @param  {boolean=true} rollback If true, editing was cancelled. 
+             *                            The original state of the edited user must be restored.
+             *                            If false, editing was successfully committed.
              */
             cancelEdit(rollback = true) {
                 if (rollback) {
@@ -181,7 +183,7 @@
             /**
              * Show the controls to really delete a user or cancel deleting.
              *
-             * @param object user
+             * @param {Object} user
              */
             confirmDelete(user) {
                 this.deletedUser = user;
@@ -190,7 +192,7 @@
             /**
              * Cancel deleting. The confirmation will be closed.
              *
-             * @param object user
+             * @param {Object} user
              */
             cancelDelete(user) {
                 this.deletedUser = _.clone(userStore.stub);
@@ -199,7 +201,7 @@
             /**
              * Delete a user.
              *
-             * @param object user
+             * @param {Object} user
              */
             destroy(user) {
                 userStore.destroy(user, () => {

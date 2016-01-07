@@ -92,7 +92,7 @@
             /**
              * Handle sorting the song list.
              * 
-             * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
+             * @param  {string} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
              */
             sort(key) {
                 // We don't allow sorting in the Queue screen.
@@ -134,6 +134,8 @@
 
             /**
              * Execute the corresponding reaction(s) when the user presses Enter.
+             *
+             * @param {Object} e The keydown event.
              */
             handleEnter(e) {
                 var songs = this.selectedSongs;
@@ -191,6 +193,8 @@
 
             /**
              * Capture A keydown event and select all if applicable.
+             *
+             * @param {Object} e The keydown event.
              */
             handleA(e) {
                 if (!e.metaKey && !e.ctrlKey) {
@@ -251,6 +255,11 @@
                 this.gatherSelected();
             },
 
+            /**
+             * Toggle select/unslect a row.
+             * 
+             * @param  {Object} row The row DOM.
+             */
             toggleRow(row) {
                 $(row).toggleClass('selected');
                 this.lastSelectedRow = row;
@@ -275,6 +284,8 @@
              * Enable dragging songs by capturing the dragstart event on a table row.
              * Even though the event is triggered on one row only, we'll collect other
              * selected rows, if any, as well.
+             *
+             * @param {Object} e The event.
              */
             dragStart(e) {
                 // Select the current target as well.
@@ -313,11 +324,11 @@
             },
 
             /**
-             * Listen to song:play event to do some logic.
+             * Listen to song:played event to do some logic.
              * 
              * @param  {Object} song The current playing song.
              */
-            'song:play': function (song) {
+            'song:played': function (song) {
                 // If the song is at the end of the current displayed items, load more.
                 if (this.type === 'queue' && this.items.indexOf(song) >= this.numOfItems) {
                     this.displayMore();

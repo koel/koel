@@ -71,7 +71,7 @@
                 return true;
             },
 
-            'song:play': function (song) {
+            'song:played': function (song) {
                 this.resetChildrenStates();
 
                 songStore.getInfo(song, () => {

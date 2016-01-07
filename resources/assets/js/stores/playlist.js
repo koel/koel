@@ -33,9 +33,9 @@ export default {
     /**
      * Create a new playlist, optionally with its songs.
      * 
-     * @param  {string}   name  Name of the playlist
-     * @param  {Array}    songs An array of song objects
-     * @param  {Function} cb
+     * @param  {string}     name  Name of the playlist
+     * @param  {Array}      songs An array of song objects
+     * @param  {?Function}  cb
      */
     store(name, songs, cb = null) {
         if (songs.length) {
@@ -55,6 +55,12 @@ export default {
         });
     },
 
+    /**
+     * Delete a playlist.
+     * 
+     * @param  {Object}     playlist
+     * @param  {?Function}  cb
+     */
     delete(playlist, cb = null) {
         http.delete(`playlist/${playlist.id}`, {}, () => {
             this.state.playlists = _.without(this.state.playlists, playlist);
@@ -65,6 +71,13 @@ export default {
         });
     },
 
+    /**
+     * Add songs into a playlist.
+     * 
+     * @param {Object}      playlist
+     * @param {Array}       songs
+     * @param {?Function}   cb
+     */
     addSongs(playlist, songs, cb = null) {
         playlist.songs = _.union(playlist.songs, songs);
 
@@ -75,6 +88,13 @@ export default {
         });
     },
 
+    /**
+     * Remove songs from a playlist.
+     * 
+     * @param  {Object}     playlist
+     * @param  {Array}      songs 
+     * @param  {?Function}  cb
+     */
     removeSongs(playlist, songs, cb = null) {
         playlist.songs = _.difference(playlist.songs, songs);
         
@@ -85,6 +105,12 @@ export default {
         });
     },
 
+    /**
+     * Update a playlist (just change its name).
+     * 
+     * @param  {Object}     playlist
+     * @param  {?Function}  cb
+     */
     update(playlist, cb = null) {
         http.put(`playlist/${playlist.id}`, { name: playlist.name }, () => {
             if (cb) {

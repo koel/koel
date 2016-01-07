@@ -42,11 +42,17 @@
         },
 
         methods: {
+            /**
+             * Reset the component's current state (song, artist info etc.).
+             */
             resetState() {
                 this.song = null;
                 this.showingFullBio = false;
             },
 
+            /**
+             * Shuffle all songs performed by the current song's artist.
+             */
             shuffleAll() {
                 playback.playAllByArtist(this.song.album.artist);
             },

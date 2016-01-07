@@ -77,7 +77,7 @@
              * Listen to 'playlist:load' event (triggered from $root currently)
              * to load the requested playlist into view.
              * 
-             * @param  object playlist
+             * @param  {Object} playlist
              */
             'playlist:load': function (playlist) {
                 this.playlist = playlist;

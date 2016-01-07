@@ -15,6 +15,9 @@ export default {
 
     /**
      * Init the store.
+     *
+     * @param {Array}   users       The users in the system. Empty array if current user is not an admin.
+     * @param {Object}  currentUser The current user.
      */
     init(users, currentUser) {
         this.state.users = users;
@@ -39,7 +42,7 @@ export default {
     /**
      * Get a user by his ID
      * 
-     * @param  {Integer} id
+     * @param  {integer} id
      * 
      * @return {Object}
      */
@@ -49,6 +52,10 @@ export default {
 
     /**
      * Get or set the current user.
+     *
+     * @param {?Object} user
+     *
+     * @return {Object}
      */
     current(user = null) {
         if (user) {
@@ -61,7 +68,7 @@ export default {
     /**
      * Set a user's avatar using Gravatar's service.
      * 
-     * @param {Object} user The user. If null, the current user.
+     * @param {?Object} user The user. If null, the current user.
      */
     setAvatar(user = null) {
         if (!user) {
@@ -74,10 +81,10 @@ export default {
     /**
      * Log a user in.
      * 
-     * @param  {String}   email    
-     * @param  {String}   password
-     * @param  {Function} successCb
-     * @param  {Function} errorCb
+     * @param  {string}     email    
+     * @param  {string}     password
+     * @param  {?Function}  successCb
+     * @param  {?Function}  errorCb
      */
     login(email, password, successCb = null, errorCb = null) {
         http.post('me', { email, password }, successCb, errorCb);
@@ -86,7 +93,9 @@ export default {
     /**
      * Update the current user's profile.
      * 
-     * @param  {String} password Can be an empty string if the user is not changing his password.
+     * @param  {string} password Can be an empty string if the user is not changing his password.
+     * @param  {?Function}  successCb
+     * @param  {?Function}  errorCb
      */
     updateProfile(password = null, cb = null) {
         http.put('me', { 
@@ -106,10 +115,10 @@ export default {
     /**
      * Stores a new user into the database.
      * 
-     * @param  {String}   name
-     * @param  {String}  email
-     * @param  {String}  password
-     * @param  {Function} cb
+     * @param  {string}     name
+     * @param  {string}     email
+     * @param  {string}     password
+     * @param  {?Function}  cb
      */
     store(name, email, password, cb = null) {
         http.post('user', { name, email, password }, response => {
@@ -124,6 +133,15 @@ export default {
         });
     },
 
+    /**
+     * Update a user's profile.
+     * 
+     * @param  {Object}     user
+     * @param  {string}     name
+     * @param  {email}      email
+     * @param  {password}   password
+     * @param  {?Function}  cb
+     */
     update(user, name, email, password, cb = null) {
         http.put(`user/${user.id}`, { name, email, password }, () => {
             this.setAvatar(user);
@@ -135,6 +153,12 @@ export default {
         });
     },
 
+    /**
+     * Delete a user.
+     * 
+     * @param  {Object}     user
+     * @param  {?Function}  cb
+     */
     destroy(user, cb = null) {
         http.delete(`user/${user.id}`, {}, () => {
             this.state.users = _.without(this.state.users, user);

@@ -51,7 +51,8 @@ export default {
      * Determine if the queue contains a song.
      * 
      * @param  {Object} song
-     * @return {Boolean}
+     * 
+     * @return {boolean}
      */
     contains(song) {
         return _.includes(this.all(), song);
@@ -62,8 +63,8 @@ export default {
      * or replace the current queue as a whole if `replace` is true.
      *
      * @param {Object|Array}  songs   The song, or an array of songs
-     * @param {Boolean}       replace Whether to replace the current queue
-     * @param {Boolean}       toTop   Whether to prepend of append to the queue
+     * @param {boolean}       replace Whether to replace the current queue
+     * @param {boolean}       toTop   Whether to prepend of append to the queue
      */
     queue(songs, replace = false, toTop = false) {
         if (!Array.isArray(songs)) {
@@ -102,7 +103,7 @@ export default {
     /**
      * Unqueue a song, or several songs at once.
      * 
-     * @param  {Object|String|Array} songs The song(s) to unqueue.
+     * @param  {Object|string|Array} songs The song(s) to unqueue.
      */
     unqueue(songs) {
         if (!Array.isArray(songs)) {
@@ -127,7 +128,7 @@ export default {
     /**
      * Get the next song in queue.
      * 
-     * @return {Object|Null}
+     * @return {?Object}
      */
     getNextSong() {
         if (!this.current()) {
@@ -142,7 +143,7 @@ export default {
     /**
      * Get the previous song in queue.
      * 
-     * @return {Object|Null}
+     * @return {?Object}
      */
     getPrevSong() {
         if (!this.current()) {
@@ -156,6 +157,10 @@ export default {
 
     /**
      * Get or set the current song.
+     *
+     * @param {?Object} song
+     *
+     * @return {Object}
      */
     current(song = null) {
         if (song) {

@@ -57,15 +57,15 @@
         events: {
             // Listen to playback events and set playback status
 
-            'song:play': function (song) {
+            'song:played': function (song) {
                 this.playbackState = this.song.id === song.id ? 'playing' : 'stopped';
             },
 
-            'song:stop': function () {
+            'song:stopped': function () {
                 this.playbackState = 'stopped';
             },
 
-            'song:pause': function (song) {
+            'song:paused': function (song) {
                 if (this.song.id === song.id) {
                     this.playbackState = 'paused';
                 }

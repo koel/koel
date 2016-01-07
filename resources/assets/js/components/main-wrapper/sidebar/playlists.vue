@@ -73,7 +73,7 @@
             /**
              * Load a playlist.
              * 
-             * @param  object p The playlist.
+             * @param  {Object} p The playlist.
              */
             load(p) {
                 this.$root.loadPlaylist(p);
@@ -99,7 +99,7 @@
             /**
              * Show the form to edit a playlist.
              * 
-             * @param  object p The playlist
+             * @param  {Object} p The playlist
              */
             edit(p) {
                 this.beforeEditCache = p.name;
@@ -109,7 +109,7 @@
             /**
              * Update a playlist's name.
              * 
-             * @param  object p The playlist
+             * @param  {Object} p The playlist
              */
             update(p) {
                 if (!this.editedPlaylist) {
@@ -130,7 +130,7 @@
             /**
              * Cancel editing the currently edited playlist.
              * 
-             * @param  object p The playlist.
+             * @param  {Object} p The playlist.
              */
             cancelEdit(p) {
                 this.editedPlaylist = null;
@@ -140,7 +140,7 @@
             /**
              * Remove the droppable state when a dragleave event occurs on the playlist's DOM element. 
              * 
-             * @param  object e The dragleave event.
+             * @param  {Object} e The dragleave event.
              */
             removeDroppableState(e) {
                 $(e.target).removeClass('droppable');
@@ -162,10 +162,10 @@
             /**
              * Handle songs dropped to our favorite or playlist menu item.
              * 
-             * @param  object|null  playlist The playlist object, or null if dropping to Favorites.
-             * @param  object       e        The event
+             * @param  {?Object}  playlist The playlist object, or null if dropping to Favorites.
+             * @param  {Object}   e        The event
              *
-             * @return false
+             * @return {boolean}
              */
             handleDrop(playlist, e) {
                 this.removeDroppableState(e);

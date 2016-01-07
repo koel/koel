@@ -50,7 +50,7 @@ export default {
      *
      * @param {Object} artist
      *
-     * @return {String}
+     * @return {string}
      */
     getImage(artist) {
         // If the artist already has a proper image, just return it.

@@ -68,9 +68,9 @@ export default {
     },
 
     /**
-     * Get a song by its ID
+     * Get a song by its ID.
      * 
-     * @param  {String} id
+     * @param  {string} id
      * 
      * @return {Object}
      */
@@ -79,7 +79,7 @@ export default {
     },
 
     /**
-     * Get songs by their IDs
+     * Get songs by their IDs.
      * 
      * @param  {Array} ids
      * 
@@ -102,8 +102,8 @@ export default {
     /**
      * Get extra song information (lyrics, artist info, album info).
      * 
-     * @param  {Object} song 
-     * @param  {Function} cb 
+     * @param  {Object}     song 
+     * @param  {?Function}  cb 
      * 
      * @return {Object}
      */
@@ -155,10 +155,10 @@ export default {
     },
 
     /**
-     * Scrobble a song (using Last.fm)
+     * Scrobble a song (using Last.fm).
      * 
-     * @param  {Object}   song
-     * @param  {Function} cb 
+     * @param  {Object}     song
+     * @param  {?Function}  cb 
      */
     scrobble(song, cb = null) {
         if (!window.useLastfm || !userStore.current().preferences.lastfm_session_key) {

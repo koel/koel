@@ -26,6 +26,9 @@ export default {
             }
         },
 
+        /**
+         * Load and display more items into the scrollable area.
+         */
         displayMore() {
             this.numOfItems += this.perPage;
 

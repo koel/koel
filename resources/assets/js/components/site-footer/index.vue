@@ -98,7 +98,7 @@
             /**
              * Get the album cover for the current song.
              * 
-             * @return string|null
+             * @return {?string}
              */
             cover() {
                 // don't display the default cover here
@@ -112,7 +112,7 @@
             /**
              * Get the previous song in queue.
              * 
-             * @return object|null
+             * @return {?Object}
              */
             prev() {
                 return playback.prevSong();
@@ -121,7 +121,7 @@
             /**
              * Get the next song in queue.
              * 
-             * @return object|null
+             * @return {?Object}
              */
             next() {
                 return playback.nextSong();
@@ -132,8 +132,8 @@
             /**
              * Set the volume level.
              * 
-             * @param integer   volume  Min 0, max 10.
-             * @param bool      persist Whether the volume level should be store into local storage.
+             * @param {integer}         volume  Min 0, max 10.
+             * @param {boolean=true}    persist Whether the volume level should be store into local storage.
              */
             setVolume(volume, persist = true) {
                 playback.setVolume(volume, persist);
@@ -233,12 +233,13 @@
             /**
              * <What…>
              *
-             * Listen to song:play event and set the current playing song.
+             * Listen to song:played event and set the current playing song.
              * 
-             * @param  object song
-             * @return true
+             * @param  {Object} song
+             * 
+             * @return {boolean}
              */
-            'song:play': function (song) {
+            'song:played': function (song) {
                 this.playing = true;
                 this.song = song;
 
@@ -248,15 +249,15 @@
             /**
              * <OK…>
              *
-             * Listen to song:stop event to indicate that we're not playing anymore.
+             * Listen to song:stopped event to indicate that we're not playing anymore.
              * No we're not playing anymore.
              * We're tired.
              */
-            'song:stop': function () {
+            'song:stopped': function () {
                 this.playing = false;
             },
 
-            'song:pause': function () {
+            'song:paused': function () {
                 this.playing = false;
             },
 

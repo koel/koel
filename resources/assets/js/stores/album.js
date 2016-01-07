@@ -41,9 +41,9 @@ export default {
      * Get the total length of an album by summing up its songs' duration.
      * The length will also be converted into a H:i:s format and stored as fmtLength.
      * 
-     * @param  {Array} album
+     * @param  {Object} album
      * 
-     * @return {String} The H:i:s format of the album length.
+     * @return {string} The H:i:s format of the album length.
      */
     getLength(album) {
         album.length = _.reduce(album.songs, (length, song) => length + song.length, 0);
