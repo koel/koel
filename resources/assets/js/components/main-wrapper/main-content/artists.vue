@@ -1,22 +1,7 @@
 <template>
     <section id="artistsWrapper">
         <h1 class="heading">
-            <span>
-                Artists
-                <i class="fa fa-angle-down toggler" 
-                    v-show="isPhone && !showingControls" 
-                    @click="showingControls = true"></i>
-                <i class="fa fa-angle-up toggler" 
-                    v-show="isPhone && showingControls" 
-                    @click.prevent="showingControls = false"></i>
-            </span>
-            <input 
-                v-show="!isPhone || showingControls"
-                type="search" 
-                v-model="q" 
-                :class="{ dirty: q }" 
-                debounce="100" 
-                placeholder="Search">
+            <span>Artists</span>
         </h1>
     
         <div class="artists main-scroll-wrap" v-el:wrapper @scroll="scrolling">
@@ -41,8 +26,6 @@
 </template>
 
 <script>
-    import isMobile from 'ismobilejs';
-
     import artistItem from '../../shared/artist-item.vue';
     import infiniteScroll from '../../../mixins/infinite-scroll';
     import artistStore from '../../../stores/artist';
@@ -58,8 +41,6 @@
                 numOfItems: 9,
                 state: artistStore.state,
                 q: '',
-                isPhone: isMobile.phone,
-                showingControls: false,
             };
         },
 
@@ -80,6 +61,10 @@
             'koel:teardown': function () {
                 this.q = '';
                 this.numOfItems = 9;
+            },
+
+            'filter:changed': function (q) {
+                this.q = q;
             },
         },
     };
