@@ -8,7 +8,8 @@ elixir(function (mix) {
     mix.sass('app.scss');
 
     mix.copy('resources/assets/img', 'public/img')
-        .copy('bower_components/fontawesome/fonts', 'public/build/fonts');
+        .copy('bower_components/fontawesome/fonts', 'public/build/fonts')
+        .copy('resources/assets/fonts', 'public/build/fonts');
 
     mix.scripts([
             'bower_components/plyr/dist/plyr.js',

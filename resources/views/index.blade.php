@@ -14,8 +14,6 @@
     <link rel="icon" href="public/img/icon.png">
     <link rel="apple-touch-icon" href="public/img/icon.png">
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100&subset=latin,latin-ext,vietnamese,greek-ext,greek,cyrillic,cyrillic-ext" rel="stylesheet">
-
     <link rel="stylesheet" href="{{ App::rev('css/vendors.css') }}">
     <link rel="stylesheet" href="{{ App::rev('css/app.css') }}">
 </head>
