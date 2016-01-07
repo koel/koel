@@ -33,7 +33,11 @@
             </div>
         </h1>
 
-        <song-list :items="state.songs" :selected-songs.sync="selectedSongs"></song-list>
+        <song-list 
+            :items="state.songs" 
+            :selected-songs.sync="selectedSongs"
+            type="allSongs">
+        </song-list>
     </section>
 </template>
 

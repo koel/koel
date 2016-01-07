@@ -34,7 +34,7 @@ export default {
     },
 
     events: {
-        'addToMenu:close': function () {
+        'add-to-menu:close': function () {
             this.showingAddToMenu = false;
         },
     },

@@ -360,12 +360,20 @@
             },
 
             /**
-             * Listens to the 'song:selection-changed' dispatched from a child song-item 
+             * Listens to the 'song:selection-changed' dispatched from a child song-item
              * to collect the selected songs.
              */
             'song:selection-changed': function () {
                 this.gatherSelected();
             },
+
+            /**
+             * Listen to 'song:selection-clear' (often broadcasted from the direct parent)
+             * to clear the selected songs.
+             */
+            'song:selection-clear': function () {
+                this.clearSelection();
+            }
         },
     };
 </script>

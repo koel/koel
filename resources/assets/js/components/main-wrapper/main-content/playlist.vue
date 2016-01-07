@@ -39,8 +39,8 @@
         <song-list v-show="playlist.songs.length" 
             :items="playlist.songs" 
             :selected-songs.sync="selectedSongs" 
-            type="playlist" 
-            :playlist="playlist">
+            :playlist="playlist"
+            type="playlist">
         </song-list>
 
         <div v-show="!playlist.songs.length" class="none">

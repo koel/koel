@@ -43,7 +43,7 @@
         watch: {
             songs() {
                 if (!this.songs.length) {
-                    this.showing = false;
+                    this.hideMenu();
                 }
             },
         },
@@ -53,26 +53,32 @@
              * Add the selected songs into Favorite.
              */
             addSongsToFavorite() {
-                this.showing = false;
                 favoriteStore.like(this.songs, () => {
                     // Nothing much now.
                 });
+
+                this.hideMenu();
+                this.clearSelection();
             },
 
             /**
              * Queue selected songs to bottom of queue.
              */
             queueSongsToBottom() {
-                this.showing = false;
                 queueStore.queue(this.songs);
+
+                this.hideMenu();
+                this.clearSelection();
             },
 
             /**
              * Queue selected songs to top of queue.
              */
             queueSongsToTop() {
-                this.showing = false;
                 queueStore.queue(this.songs, false, true);
+
+                this.hideMenu();
+                this.clearSelection();
             },
 
             /**
@@ -81,10 +87,12 @@
              * @param {Object} playlist The playlist.
              */
             addSongsToExistingPlaylist(playlist) {
-                this.showing = false;
                 playlistStore.addSongs(playlist, this.songs, () => {
                     // Nothing much now.
                 });
+
+                this.hideMenu();
+                this.clearSelection();
             },
 
             /**
@@ -98,19 +106,24 @@
                     return;
                 }
 
-                this.showing = false;
-
                 playlistStore.store(this.newPlaylistName, this.songs, () => {
                     this.newPlaylistName = '';
                     
                     // Activate the new playlist right away
                     this.$root.loadPlaylist(_.last(this.playlistState.playlists));
                 });
+
+                this.hideMenu();
+                this.clearSelection();
             },
 
             hideMenu() {
-                this.$dispatch('addToMenu:close');
+                this.$dispatch('add-to-menu:close');
             },
+
+            clearSelection() {
+                this.$parent.$broadcast('song:selection-clear');  
+            }
         },
     };
 </script>
