@@ -1,7 +1,17 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 
 var elixir = require('laravel-elixir');
+var gutils = require('gulp-util');
+var b = elixir.config.js.browserify;
+
 require('laravel-elixir-vueify');
+
+if (gutils.env._.indexOf('watch') > -1) {
+    b.plugins.push({
+        name: "browserify-hmr",
+        options : {}
+    });
+}
 
 elixir(function (mix) {
     mix.browserify('main.js');
@@ -22,4 +32,14 @@ elixir(function (mix) {
         ], 'public/css/vendors.css', './');
 
     mix.version(['css/vendors.css', 'css/app.css', 'js/vendors.js', 'js/main.js']);
+
+    mix.browserSync({
+        proxy: 'koel.dev',
+        files: [
+            elixir.config.appPath + '/**/*.php',
+            elixir.config.get('public.css.outputFolder') + '/**/*.css',
+            elixir.config.get('public.versioning.buildFolder') + '/rev-manifest.json',
+            'resources/views/**/*.php'
+        ],
+    });
 });
