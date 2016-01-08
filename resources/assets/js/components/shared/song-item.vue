@@ -14,7 +14,7 @@
                 v-show="playbackState === 'playing'" 
                 @click.stop="pause"></i>
             <i class="fa fa-play-circle" v-else
-                @click.stop="playbackState === 'paused' ? resume() : play()"></i>
+                @click.stop="playbackState === 'paused' ? resume() : playRighAwayyyyyyy()"></i>
         </td>
     </tr>
 </template>
