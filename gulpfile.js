@@ -34,7 +34,6 @@ elixir(function (mix) {
     mix.version(['css/vendors.css', 'css/app.css', 'js/vendors.js', 'js/main.js']);
 
     mix.browserSync({
-        proxy: 'koel.dev',
         files: [
             elixir.config.appPath + '/**/*.php',
             elixir.config.get('public.css.outputFolder') + '/**/*.css',
