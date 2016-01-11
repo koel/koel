@@ -9,12 +9,9 @@
         <td class="artist">{{ song.album.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
         <td class="time">{{ song.fmtLength }}</td>
-        <td class="play">
-            <i class="fa fa-pause-circle" 
-                v-show="playbackState === 'playing'" 
-                @click.stop="pause"></i>
-            <i class="fa fa-play-circle" v-else
-                @click.stop="playbackState === 'paused' ? resume() : playRighAwayyyyyyy()"></i>
+        <td class="play" @click.stop="doPlayback">
+            <i class="fa fa-pause-circle" v-show="playbackState === 'playing'"></i>
+            <i class="fa fa-play-circle" v-else></i>
         </td>
     </tr>
 </template>
@@ -45,17 +42,26 @@
                 Vue.nextTick(() => playback.play(this.song));
             },
 
-            pause() {
-                playback.pause();
-            },
-
-            resume() {
-                playback.resume();
+            /**
+             * Take the right playback action based on the current playback state.
+             */
+            doPlayback() {
+                switch (this.playbackState) {
+                    case 'playing':
+                        playback.pause();
+                        break;
+                    case 'paused':
+                        playback.resume();
+                        break;
+                    default:
+                        this.playRighAwayyyyyyy();
+                        break;
+                }
             },
         },
 
         events: {
-            // Listen to playback events and set playback status
+            // Listen to playback events and set playback state.
 
             'song:played': function (song) {
                 this.playbackState = this.song.id === song.id ? 'playing' : 'stopped';
