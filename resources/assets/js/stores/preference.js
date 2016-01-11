@@ -11,6 +11,7 @@ export default {
         notify: true,
         repeatMode: 'NO_REPEAT',
         showExtraPanel: true,
+        equalizerGains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     },
 
     /**

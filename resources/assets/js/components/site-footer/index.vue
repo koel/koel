@@ -35,7 +35,10 @@
             </div>
             
             <span class="other-controls" :class="{ 'with-gradient': prefs.showExtraPanel }">
+                <equalizer v-if="useEqualizer" v-show="showEqualizer"></equalizer>
+
                 <sound-bar v-show="playing"></sound-bar>
+
                 <i class="like control fa fa-heart" :class="{ 'liked': liked }"
                     @click.prevent="like"></i>
 
@@ -43,7 +46,13 @@
                     @click.prevent="toggleExtraPanel"
                     :class="{ active: prefs.showExtraPanel }">Info</span>
                 
-                <i class="queue control fa fa-list-ol control" 
+                <i class="fa fa-sliders control" 
+                    v-if="useEqualizer" 
+                    @click="showEqualizer = !showEqualizer"
+                    :class="{ active: showEqualizer }"></i>
+
+                <i v-else
+                    class="queue control fa fa-list-ol control" 
                     :class="{ 'active': viewingQueue }"
                     @click.prevent="$root.loadMainView('queue')"></i>
 
@@ -62,12 +71,16 @@
 </template>
 
 <script>
-    import soundBar from '../shared/sound-bar.vue';
+    import config from '../../config';
+    import playback from '../../services/playback';
+    import utils from '../../services/utils';
+
     import songStore from '../../stores/song';
     import favoriteStore from '../../stores/favorite';
     import preferenceStore from '../../stores/preference';
-    import config from '../../config';
-    import playback from '../../services/playback';
+
+    import soundBar from '../shared/sound-bar.vue';
+    import equalizer from './equalizer.vue';
 
     export default {
         data() {
@@ -79,10 +92,18 @@
                 liked: false,
 
                 prefs: preferenceStore.state,
+                showEqualizer: false,
+
+                /**
+                 * Indicate if we should build and use an equalizer.
+                 * 
+                 * @type {boolean}
+                 */
+                useEqualizer: utils.isAudioContextSupported(),
             };
         },
 
-        components: { soundBar },
+        components: { soundBar, equalizer },
 
         watch: {
             /**
@@ -133,7 +154,7 @@
              * Set the volume level.
              * 
              * @param {integer}         volume  Min 0, max 10.
-             * @param {boolean=true}    persist Whether the volume level should be store into local storage.
+             * @param {boolean=true}    persist Whether the volume level should be stored into local storage.
              */
             setVolume(volume, persist = true) {
                 playback.setVolume(volume, persist);
@@ -344,7 +365,7 @@
                 padding: 0 8px;
 
                 &.active {
-                    color: $colorMainText;
+                    color: $colorHighlight;
                 }
 
                 &:last-child {

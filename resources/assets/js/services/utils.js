@@ -36,5 +36,26 @@ export default {
      */
     parseValidationError(error) {
         return Object.keys(error).reduce((messages, field) => messages.concat(error[field]), []);
-    }
+    },
+
+    /**
+     * Check if AudioContext is supported by the current browser.
+     * 
+     * @return {boolean}
+     */
+    isAudioContextSupported() {
+        var AudioContext = window.AudioContext || window.webkitAudioContext || false; 
+
+        if (!AudioContext) {
+            return false;
+        }
+
+        // Safari (MacOS & iOS alike) has webkitAudioContext, but is buggy.
+        // @link http://caniuse.com/#search=audiocontext
+        if (!(new AudioContext()).createMediaElementSource) {
+            return false;
+        }
+
+        return true;
+    },
 };

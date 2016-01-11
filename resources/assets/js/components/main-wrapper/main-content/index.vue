@@ -132,7 +132,7 @@
             left: 0;
             height: 100%;
             width: 100%;
-            -webkit-filter: blur(20px);
+            filter: blur(20px);
             opacity: .07;
             z-index: 0;
             overflow: hidden;

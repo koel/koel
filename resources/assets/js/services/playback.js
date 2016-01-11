@@ -72,6 +72,9 @@ export default {
         // On init, set the volume to the value found in the local storage.
         this.setVolume(preferenceStore.get('volume'));
 
+        // Init the equalizer if supported.
+        this.app.$broadcast('equalizer:init', this.player.media);
+
         this.initialized = true;
     },
 
