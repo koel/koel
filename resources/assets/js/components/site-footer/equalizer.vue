@@ -252,6 +252,7 @@
                 padding: 6px 0 0;
                 margin: 0 0;
                 overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
 
                 button {
                     margin-bottom: 0;
