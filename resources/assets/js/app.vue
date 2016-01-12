@@ -281,5 +281,7 @@
 
     .login-wrapper {
         @include vertical-center();
+
+        padding-bottom: 0;
     }
 </style>

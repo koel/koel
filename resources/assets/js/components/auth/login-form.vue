@@ -72,19 +72,25 @@
         background: rgba(255,255,255,.08);
         border-radius: 8px;
         border: 1px solid #333;
-    }
 
-    form.error {
-        border-color: #8e4947;
-        animation: shake .5s;
-    }
+        &.error {
+            border-color: #8e4947;
+            animation: shake .5s;    
+        }
 
-    form:before {
-        content: " ";
-        display: block;
-        background: url(/public/img/logo.svg) center top no-repeat;
-        background-size: 156px;
-        height: 172px;
+        &::before {
+            content: " ";
+            display: block;
+            background: url(/public/img/logo.svg) center top no-repeat;
+            background-size: 156px;
+            height: 172px;
+        }
+
+        @media only screen 
+        and (max-device-width : 414px) {
+            border: 0;
+            background: transparent;
+        }
     }
 
     input {
