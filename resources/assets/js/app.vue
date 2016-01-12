@@ -80,6 +80,15 @@
                     // Ask for user's notification permission.
                     this.requestNotifPermission();
 
+                    // To confirm or not to confirm closing, it's a question.
+                    window.onbeforeunload = e => {
+                        if (!this.prefs.confirmClosing) {
+                            return;
+                        }
+
+                        return 'You asked Koel to confirm before closing, so here it is.';
+                    };
+
                     // Let all other compoenents know we're ready.
                     this.$broadcast('koel:ready');
                 }, () => this.authenticated = false);

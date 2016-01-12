@@ -41,8 +41,16 @@
 
             <div class="preferences">
                 <div class="form-row">
-                    <input type="checkbox" v-model="prefs.notify" @change="savePreference()">
-                    <span @click="prefs.notify = !prefs.notify">Show “Now Playing” song notification</span>
+                    <label>
+                        <input type="checkbox" v-model="prefs.notify" @change="savePreference()">
+                        Show “Now Playing” song notification
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        <input type="checkbox" v-model="prefs.confirmClosing" @change="changeConfirmClosing">
+                        Confirm before closing Koel
+                    </label>
                 </div>
             </div>
 
@@ -65,7 +73,6 @@
                         For the sake of democracy, you have the option to disconnect from Last.fm too. 
                         Doing so will reload Koel, though.
                     </p>
-
 
                     <div class="buttons">
                         <button @click.prevent="connectToLastfm" class="connect">
@@ -144,6 +151,14 @@
             },
 
             /**
+             * Change the confirmClosing value on the window object (and save it as a preference too).
+             */
+            changeConfirmClosing() {
+                window.confirmClosing = this.prefs.confirmClosing;
+                preferenceStore.save();
+            },
+
+            /**
              * Save the current user's preference. 
              * Right now it's only "Song notification."
              */
@@ -209,6 +224,10 @@
         .preferences {
             margin-top: 32px;
             border-top: 1px solid $color2ndBgr;
+
+            label {
+                font-size: $fontSize;
+            }
         }
 
         .lastfm {
