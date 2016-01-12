@@ -357,7 +357,7 @@
             }
 
             text-transform: uppercase;
-            flex: 0 0 334px;
+            flex: 0 0 $extraPanelWidth;
             color: $colorLink;
 
             .control {

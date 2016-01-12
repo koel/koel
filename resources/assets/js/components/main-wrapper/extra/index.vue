@@ -92,7 +92,7 @@
     @import "resources/assets/sass/partials/_mixins.scss";
         
     #extra {
-        flex: 0 0 334px;
+        flex: 0 0 $extraPanelWidth;
         padding: 24px 16px $footerHeight;
         background: $colorExtraBgr;
         max-height: calc(100vh - #{$headerHeight + $footerHeight});
@@ -192,7 +192,7 @@
             position: fixed;
             height: calc(100vh - #{$headerHeight + $footerHeight});
             padding-bottom: $footerHeight; // make sure the footer can never overlap the content
-            width: 334px;
+            width: $extraPanelWidth;
             z-index: 5;
             top: $headerHeight;
             right: -100%;

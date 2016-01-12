@@ -232,5 +232,37 @@
                 align-items: center;
             }
         }
+
+        @media only screen 
+        and (max-device-width : 768px) {
+            position: fixed;
+            max-width: 414px;
+            left: auto;
+            right: 0;
+            bottom: $footerHeight + 5px;
+            display: block;
+            height: auto;
+
+            .presets {
+                overflow-x: auto;
+                white-space: nowrap;
+                display: block;
+                height: 48px;
+                flex: none;
+                padding: 6px 0 0;
+                margin: 0 0;
+                overflow-y: hidden;
+
+                button {
+                    margin-bottom: 0;
+                    margin-right: 4px;
+                    vertical-align: top;
+                }
+            }
+
+            label {
+                line-height: 20px;
+            }
+        }
     }
 </style>

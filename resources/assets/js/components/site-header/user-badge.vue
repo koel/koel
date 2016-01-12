@@ -41,7 +41,7 @@
     #userBadge {
         @include vertical-center();
         justify-content: flex-end;
-        flex: 0 0 334px;
+        flex: 0 0 $extraPanelWidth;
         padding-right: 16px;
         text-align: right;
 
