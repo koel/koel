@@ -1,3 +1,5 @@
+import isMobile from 'ismobilejs';
+
 export default {
     /**
      * Convert a duration in seconds into H:i:s format.
@@ -44,7 +46,16 @@ export default {
      * @return {boolean}
      */
     isAudioContextSupported() {
-        var AudioContext = window.AudioContext || window.webkitAudioContext || false; 
+        // Apple device just doesn't love AudioContext that much.
+        if (isMobile.apple.device) {
+            return false;
+        }
+
+        var AudioContext = (window.AudioContext || 
+            window.webkitAudioContext || 
+            window.mozAudioContext || 
+            window.oAudioContext || 
+            window.msAudioContext); 
 
         if (!AudioContext) {
             return false;
