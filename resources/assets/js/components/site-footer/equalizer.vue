@@ -182,7 +182,6 @@
     #equalizer {
         position: absolute;
         bottom: $footerHeight;
-        height: 256px;
         width: 100%;
         padding: 16px;
         background: rgba(0, 0, 0, 0.9);
