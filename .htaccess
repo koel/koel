@@ -35,3 +35,10 @@
     # Disable deflation for media files.
     SetEnvIfNoCase Request_URI "^/api/play/" no-gzip dont-vary
 </IfModule>
+
+<IfModule mod_expires.c>
+    # Cache the audio files for 1 year.
+    # It's up to the browser to respect this.
+    ExpiresActive On
+    ExpiresByType audio/(mpe?g3?|ogg|aac) "access plus 1 year"
+</IfModule>
