@@ -59,6 +59,24 @@ export default {
     },
 
     /**
+     * Get the total duration of some songs.
+     * 
+     * @param {Array}   songs
+     * @param {boolean} toHis Wheter to convert the duration into H:i:s format
+     * 
+     * @return {float|string}
+     */
+    getLength(songs, toHis) {
+        var duration = _.reduce(songs, (length, song) => length + song.length, 0);
+
+        if (toHis) {
+            return utils.secondsToHis(duration);
+        }
+
+        return duration;
+    },
+
+    /**
      * Get all songs.
      *
      * @return {Array}

@@ -187,6 +187,7 @@
              * Load the Favorites view.
              */
             loadFavorites() {
+                this.$broadcast('favorites:load');
                 this.loadMainView('favorites');
             },
 

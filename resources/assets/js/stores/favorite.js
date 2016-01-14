@@ -6,6 +6,8 @@ import utils from '../services/utils';
 export default {
     state: {
         songs: [],
+        length: 0,
+        fmtLength: '',
     },
     
     all() {

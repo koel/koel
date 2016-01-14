@@ -88,10 +88,10 @@
 
         h1.heading {
             font-weight: $fontWeight_UltraThin;
-            font-size: 48px;
+            font-size: 36px;
             padding: 12px 24px;
             border-bottom: 1px solid $color2ndBgr;
-            min-height: 90px;
+            min-height: 96px;
             position: relative;
             align-items: center;
             align-content: stretch;
@@ -99,6 +99,13 @@
 
             span:first-child {
                 flex: 1;
+            }
+
+            .meta {
+                display: block;
+                opacity: .5;
+                font-size: $fontSize;
+                margin: 12px 0 0 2px;
             }
 
             .buttons {
@@ -159,6 +166,10 @@
                     font-size: 14px;
                     margin-left: 4px;
                     color: $colorHighlight;
+                }
+
+                .meta {
+                    display: none;
                 }
 
                 .buttons, input[type="search"] {

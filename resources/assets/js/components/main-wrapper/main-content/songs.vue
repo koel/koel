@@ -8,6 +8,12 @@
                 <i class="fa fa-angle-up toggler" 
                     v-show="isPhone && showingControls" 
                     @click.prevent="showingControls = false"></i>
+
+                <span class="meta" v-show="meta.songCount">
+                    {{ meta.songCount }} song{{ meta.songCount === 1 ? '' : 's' }} 
+                    • 
+                    {{ meta.totalLength }}
+                </span>
             </span>
             
             <div class="buttons" v-show="!isPhone || showingControls">
@@ -44,16 +50,12 @@
 <script>
     import isMobile from 'ismobilejs';
 
-    import songList from '../../shared/song-list.vue';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
-    import shuffleSelectedMixin from '../../../mixins/shuffle-selected';
-    import hasAddToMenuMixin from '../../../mixins/has-add-to-menu';
+    import hasSongList from '../../../mixins/has-song-list';
 
     export default {
-        mixins: [shuffleSelectedMixin, hasAddToMenuMixin],
-
-        components: { songList },
+        mixins: [hasSongList],
 
         data() {
             return {

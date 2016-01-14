@@ -79,12 +79,19 @@
 
         watch: {
             /**
-             * Watch the items, so that we can always make sure a queue is not sorted in any ways.
+             * Watch the items.
              */
             items() {
+                // Make sure a queue is not sorted in any ways.
                 if (this.type === 'queue') {
                     this.sortKey = '';
                 }
+
+                // Dispatch this event for the parent to update the song count and duration status.
+                this.$dispatch('songlist:changed', { 
+                    songCount: this.items.length,
+                    totalLength: songStore.getLength(this.items, true),
+                });
             },
         },
 
