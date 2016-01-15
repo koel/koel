@@ -34,7 +34,9 @@ class Media
      */
     public function sync($path = null, SyncMedia $syncCommand = null)
     {
-        set_time_limit(env('APP_MAX_SCAN_TIME', 600));
+        if (!app()->runningInConsole()) {
+            set_time_limit(env('APP_MAX_SCAN_TIME', 600));
+        }
 
         $path = $path ?: Setting::get('media_path');
 
