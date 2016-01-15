@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use DB;
 use App\Models\User;
+use DB;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
@@ -38,7 +38,7 @@ class Init extends Command
 
             return;
         }
-        
+
         $this->comment('Attempting to install or upgrade Koel.');
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
         $this->info("📙  https://github.com/phanan/koel/wiki\n");
@@ -56,7 +56,7 @@ class Init extends Command
         } else {
             $this->comment('JWT secret exists -- skipping');
         }
-        
+
         $this->info('Migrating database');
         Artisan::call('migrate', ['--force' => true]);
 
