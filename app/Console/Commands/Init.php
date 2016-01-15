@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use DB;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
@@ -12,14 +14,14 @@ class Init extends Command
      *
      * @var string
      */
-    protected $signature = 'init';
+    protected $signature = 'koel:init';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Initialize a new koel project.';
+    protected $description = 'Install or upgrade Koel';
 
     /**
      * Execute the console command.
@@ -28,18 +30,50 @@ class Init extends Command
      */
     public function handle()
     {
-        $this->info('php artisan key:generate');
+        try {
+            DB::connection();
+        } catch (\Exception $e) {
+            $this->error('Unable to connect to database.');
+            $this->error('Please fill valid database credentials into .env and rerun this command.');
 
-        Artisan::call('key:generate');
+            return;
+        }
+        
+        $this->comment('Attempting to install or upgrade Koel.');
+        $this->comment('Remember, you can always install/upgrade manually following the guide here:');
+        $this->info("📙  https://github.com/phanan/koel/wiki\n");
 
-        $this->info('php artisan migrate --force');
+        if (!env('APP_KEY')) {
+            $this->info('Generating app key');
+            Artisan::call('key:generate');
+        } else {
+            $this->comment('App key exists -- skipping');
+        }
 
+        if (!env('JWT_SECRET')) {
+            $this->info('Generating JWT secret');
+            Artisan::call('koel:generate-jwt-secret');
+        } else {
+            $this->comment('JWT secret exists -- skipping');
+        }
+        
+        $this->info('Migrating database');
         Artisan::call('migrate', ['--force' => true]);
 
-        $this->info('php artisan db:seed --force');
+        if (!User::count()) {
+            $this->info('Seeding initial data');
+            Artisan::call('db:seed', ['--force' => true]);
+        } else {
+            $this->comment('Data seeded -- skipping');
+        }
 
-        Artisan::call('db:seed', ['--force' => true]);
+        $this->info('Executing npm install, bower install, gulp and whatnot');
+        system('npm install');
 
-        $this->comment("\nProject initialized.");
+        $this->comment("\n🎆  Success! You can now run Koel from localhost with `php artisan serve`.");
+        $this->comment('Again, for more configuration guidance, refer to');
+        $this->info('📙  https://github.com/phanan/koel/wiki.');
+        $this->comment('WIKI ROCKS WIKI RULES.');
+        $this->comment('KTHXBYE.');
     }
 }
