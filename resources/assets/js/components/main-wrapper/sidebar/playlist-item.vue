@@ -166,6 +166,12 @@
             'favorites:load': function () {
                 this.active = this.isFavorites;
             },
+
+            'main-content-view:load': function (view) {
+                if (view !== 'playlist' && view !== 'favorites') {
+                    this.active = false;
+                }
+            },
         },
     };
 </script>
