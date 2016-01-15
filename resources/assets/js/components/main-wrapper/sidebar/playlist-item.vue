@@ -151,24 +151,12 @@
         },
 
         events: {
-            /**
-             * Listen to 'playlist:load' event to determine if the current item should be highlighted.
-             * 
-             * @param  {Object} playlist The playlist being loaded.
-             */
-            'playlist:load': function (playlist) {
-                this.active = this.playlist === playlist;
-            },
-
-            /**
-             * Listen to 'favorites:load' event to highlight the Favorites item if need be.
-             */
-            'favorites:load': function () {
-                this.active = this.isFavorites;
-            },
-
-            'main-content-view:load': function (view) {
-                if (view !== 'playlist' && view !== 'favorites') {
+            'main-content-view:load': function (view, playlist) {
+                if (view === 'favorites') {
+                    this.active = this.isFavorites;
+                } else if (view === 'playlist') {
+                    this.active = this.playlist === playlist;      
+                } else {
                     this.active = false;
                 }
             },

@@ -69,13 +69,16 @@
 
         events: {
             /**
-             * Listen to 'album:load' event (triggered from $root currently)
-             * to load the requested album into view.
-             * 
-             * @param  {Object} album
+             * Listen to 'main-content-view:load' event (triggered from $root currently)
+             * to load the requested album into view if applicable.
+             *
+             * @param {string} view     The view name
+             * @param {Object} album    The album object
              */
-            'album:load': function (album) {
-                this.album = album;
+            'main-content-view:load': function (view, album) {
+                if (view === 'album') {
+                    this.album = album;
+                }
             },
         },
 

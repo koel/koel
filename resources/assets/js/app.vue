@@ -167,10 +167,11 @@
             /**
              * Load (display) a main panel (view).
              *
-             * @param string view The view, which can be found under components/main-wrapper/main-content.
+             * @param string view  The view, which can be found under components/main-wrapper/main-content.
+             * @param [...args]    Extra data to attach to the view.
              */
-            loadMainView(view) {
-                this.$broadcast('main-content-view:load', view);
+            loadMainView(view, ...args) {
+                this.$broadcast('main-content-view:load', view, ...args);
             },
 
             /**
@@ -179,15 +180,13 @@
              * @param {Object} playlist The playlist object
              */
             loadPlaylist(playlist) {
-                this.$broadcast('playlist:load', playlist);
-                this.loadMainView('playlist');
+                this.loadMainView('playlist', playlist);
             },
 
             /**
              * Load the Favorites view.
              */
             loadFavorites() {
-                this.$broadcast('favorites:load');
                 this.loadMainView('favorites');
             },
 
@@ -197,8 +196,7 @@
              * @param  {Object} album The album object
              */
             loadAlbum(album) {
-                this.$broadcast('album:load', album);
-                this.loadMainView('album');
+                this.loadMainView('album', album);
             },
 
             /**
@@ -207,8 +205,7 @@
              * @param  {Object} artist The artist object
              */
             loadArtist(artist) {
-                this.$broadcast('artist:load', artist);
-                this.loadMainView('artist');
+                this.loadMainView('artist', artist);
             },
 
             /**

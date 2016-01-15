@@ -69,14 +69,17 @@
 
         events: {
             /**
-             * Listen to 'artist:load' event (triggered from $root currently)
-             * to load the requested artist into view.
-             * 
-             * @param  {Object} artist
+             * Listen to 'main-content-view:load' event (triggered from $root currently)
+             * to load the requested artist into view if applicable.
+             *
+             * @param {string} view     The view's name
+             * @param {Object} artist
              */
-            'artist:load': function (artist) {
-                artistStore.getSongsByArtist(artist);
-                this.artist = artist;
+            'main-content-view:load': function (view, artist) {
+                if (view === 'artist') {
+                    artistStore.getSongsByArtist(artist);
+                    this.artist = artist;
+                }
             },
         },
 

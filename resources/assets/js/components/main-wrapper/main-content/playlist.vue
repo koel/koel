@@ -76,13 +76,16 @@
 
         events: {
             /**
-             * Listen to 'playlist:load' event (triggered from $root currently)
-             * to load the requested playlist into view.
-             * 
-             * @param  {Object} playlist
+             * Listen to 'main-content-view:load' event (triggered from $root currently)
+             * to load the requested playlist into view if applicable.
+             *
+             * @param {string} view     The view's name.
+             * @param {Object} playlist
              */
-            'playlist:load': function (playlist) {
-                this.playlist = playlist;
+            'main-content-view:load': function (view, playlist) {
+                if (view === 'playlist') {
+                    this.playlist = playlist;
+                }
             },
         },
 
