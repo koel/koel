@@ -192,6 +192,26 @@
             },
 
             /**
+             * Load an album into the main panel.
+             * 
+             * @param  {Object} album The album object
+             */
+            loadAlbum(album) {
+                this.$broadcast('album:load', album);
+                this.loadMainView('album');
+            },
+
+            /**
+             * Load an artist into the main panel.
+             * 
+             * @param  {Object} artist The artist object
+             */
+            loadArtist(artist) {
+                this.$broadcast('artist:load', artist);
+                this.loadMainView('artist');
+            },
+
+            /**
              * Shows the overlay.
              * 
              * @param {String}  message     The message to display.

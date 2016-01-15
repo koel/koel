@@ -1,21 +1,25 @@
 <template>
     <section id="mainContent">
         <div class="translucent" :style="{ backgroundImage: albumCover ? 'url(' + albumCover + ')' : 'none' }"></div>
-        <songs v-show="view == 'songs'"></songs>
-        <queue v-show="view == 'queue'"></queue>
-        <albums v-show="view == 'albums'"></albums>
-        <artists v-show="view == 'artists'"></artists>
-        <users v-show="view == 'users'"></users>
-        <settings v-show="view == 'settings'"></settings>
-        <playlist v-show="view == 'playlist'"></playlist>
-        <favorites v-show="view == 'favorites'"></favorites>
-        <profile v-show="view == 'profile'"></profile>
+        <songs v-show="view === 'songs'"></songs>
+        <queue v-show="view === 'queue'"></queue>
+        <albums v-show="view === 'albums'"></albums>
+        <album v-show="view === 'album'"></album>
+        <artists v-show="view === 'artists'"></artists>
+        <artist v-show="view === 'artist'"></artist>
+        <users v-show="view === 'users'"></users>
+        <settings v-show="view === 'settings'"></settings>
+        <playlist v-show="view === 'playlist'"></playlist>
+        <favorites v-show="view === 'favorites'"></favorites>
+        <profile v-show="view === 'profile'"></profile>
     </section>
 </template>
 
 <script>
     import albums from './albums.vue';
+    import album from './album.vue';
     import artists from './artists.vue';
+    import artist from './artist.vue';
     import songs from './songs.vue';
     import settings from './settings.vue';
     import users from './users.vue';
@@ -23,12 +27,11 @@
     import playlist from './playlist.vue';
     import favorites from './favorites.vue';
     import profile from './profile.vue';
+
     import albumStore from '../../../stores/album';
 
     export default {
-        components: { albums, artists, songs, settings, users, queue, playlist, favorites, profile },
-
-        props: ['songs', 'queue', 'albums', 'artists', 'users', 'settings', 'playlist', 'favorites', 'profile'],
+        components: { albums, album, artists, artist, songs, settings, users, queue, playlist, favorites, profile },
 
         data() {
             return {
@@ -103,8 +106,8 @@
 
             .meta {
                 display: block;
-                opacity: .5;
                 font-size: $fontSize;
+                color: $color2ndText;
                 margin: 12px 0 0 2px;
             }
 

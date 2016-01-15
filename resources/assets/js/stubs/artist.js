@@ -3,4 +3,5 @@ export default {
     name: '',
     image: null,
     albums: [],
+    songs: [],
 };

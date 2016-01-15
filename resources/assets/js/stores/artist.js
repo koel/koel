@@ -1,9 +1,12 @@
 import _ from 'lodash';
 
 import config from '../config';
+import stub from '../stubs/artist';
 import albumStore from './album';
 
 export default {
+    stub,
+    
     state: {
         artists: [],
     },

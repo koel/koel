@@ -6,11 +6,11 @@
             </a>
         </span>
         <footer>
-            <p class="name">{{ album.name }}</p>
-            <p class="artist">{{ album.artist.name }}</p>
+            <a class="name" @click.prevent="viewDetails">{{ album.name }}</a>
+            <a class="artist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
             <p class="meta">
                 {{ album.songs.length }} song{{ album.songs.length == 1 ? '' : 's' }} 
-                – 
+                •
                 {{ album.fmtLength }}
             </p>
         </footer>
@@ -30,6 +30,20 @@
             play() {
                 playback.playAllInAlbum(this.album);
             },
+
+            /**
+             * Load the album details screen.
+             */
+            viewDetails() {
+                this.$root.loadAlbum(this.album);
+            },
+
+            /**
+             * Load the artist details screen.
+             */
+            viewArtistDetails() {
+                this.$root.loadArtist(this.album.artist);
+            },
         },
     };
 </script>
@@ -37,4 +51,13 @@
 <style lang="sass">
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
+
+    a.name, a.artist {
+        display: block;
+        color: $colorMainText;
+
+        &:hover {
+            color: $colorHighlight;
+        }
+    }
 </style>

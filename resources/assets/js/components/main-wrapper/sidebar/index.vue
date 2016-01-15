@@ -108,6 +108,10 @@
             handleDrop(e) {
                 this.removeDroppableState(e);
 
+                if (!e.dataTransfer.getData('text/plain')) {
+                    return false;
+                }
+
                 var songs = songStore.byIds(e.dataTransfer.getData('text/plain').split(','));
 
                 if (!songs.length) {
