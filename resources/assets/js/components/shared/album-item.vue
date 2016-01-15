@@ -9,7 +9,7 @@
             <a class="name" @click.prevent="viewDetails">{{ album.name }}</a>
             <a class="artist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
             <p class="meta">
-                {{ album.songs.length }} song{{ album.songs.length == 1 ? '' : 's' }} 
+                {{ album.songs.length }} {{ album.songs.length | pluralize 'song' }}
                 •
                 {{ album.fmtLength }}
             </p>

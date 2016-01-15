@@ -14,7 +14,7 @@
                 <span class="meta" v-show="meta.songCount">
                     by <a class="artist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
                     •
-                    {{ meta.songCount }} song{{ meta.songCount === 1 ? '' : 's' }} 
+                    {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
                     • 
                     {{ meta.totalLength }}
                 </span>

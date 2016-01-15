@@ -10,7 +10,7 @@
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
-                    {{ meta.songCount }} song{{ meta.songCount === 1 ? '' : 's' }} 
+                    {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
                     • 
                     {{ meta.totalLength }}
                 </span>

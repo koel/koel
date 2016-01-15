@@ -8,9 +8,9 @@
         <footer>
             <a class="name" @click.prevent="viewDetails">{{ artist.name }}</a>
             <p class="meta">
-                {{ artist.albums.length }} album{{ artist.albums.length == 1 ? '' : 's' }}
+                {{ artist.albums.length }} {{ artist.albums.length | pluralize 'album' }}
                 •
-                {{ artist.songCount }} song{{ artist.songCount == 1 ? '' : 's' }}
+                {{ artist.songCount }} {{ artist.songCount | pluralize 'song' }}
             </p>
         </footer>
     </article>
