@@ -109,12 +109,20 @@
             .overview {
                 position: relative;
                 padding-left: 84px;
+
+                @media only screen and (max-device-width : 768px) {
+                    padding-left: 0;
+                }
             }
 
             .cover {
                 position: absolute;
                 left: 0;
                 top: -7px;
+
+                @media only screen and (max-device-width : 768px) {
+                    display: none;
+                }
             }
         }
     }
