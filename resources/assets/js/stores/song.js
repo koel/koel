@@ -9,6 +9,7 @@ import userStore from './user';
 export default {
     stub,
     albums: [],
+    cache: {},
 
     state: {
         songs: [stub],
@@ -28,6 +29,9 @@ export default {
 
                 // Keep a back reference to the album
                 song.album = album;
+
+                // Cache the song, so that byId() is faster
+                this.cache[song.id] = song;
             });
             
             return songs.concat(album.songs);
@@ -93,7 +97,7 @@ export default {
      * @return {Object}
      */
     byId(id) {
-        return _.find(this.state.songs, { id });
+        return this.cache[id];
     },
 
     /**
