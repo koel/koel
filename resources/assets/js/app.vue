@@ -61,6 +61,9 @@
                 this.authenticated = true;
                 this.init();
             }
+
+            // Create the element to be the ghost drag image.
+            $('<div id="dragGhost"></div>').appendTo('body');
         },
 
         methods: {
@@ -289,6 +292,18 @@
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
     @import "resources/assets/sass/partials/_shared.scss";
+
+    #dragGhost {
+        position: relative;
+        display: inline-block;
+        background: $colorGreen;
+        padding: 10px;
+        border-radius: 3px;
+        color: #fff;
+        font-family: $fontFamily;
+        font-size: $fontSize;
+        font-weight: $fontWeight_Thin;
+    }
 
     #app, .login-wrapper {
         display: flex;

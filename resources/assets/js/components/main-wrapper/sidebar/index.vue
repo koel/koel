@@ -10,7 +10,7 @@
                         @click.prevent="$root.loadMainView('queue')"
                         @dragleave="removeDroppableState"
                         @dragover.prevent="allowDrop"
-                        @drop.stop="handleDrop($event)">Current Queue</a>
+                        @drop.stop.prevent="handleDrop">Current Queue</a>
                 </li>
                 <li>
                     <a class="songs" :class="[currentView == 'songs' ? 'active' : '']" 

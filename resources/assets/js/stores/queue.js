@@ -96,7 +96,7 @@ export default {
             return this.queue(songs);
         }
 
-        var head = this.state.songs.splice(0, _.indexOf(this.state.songs, this.state.current) + 1);
+        var head = this.state.songs.splice(0, this.indexOf(this.state.current) + 1);
         this.state.songs = head.concat(songs, this.state.songs);
     },
 
@@ -114,6 +114,21 @@ export default {
     },
 
     /**
+     * Move some songs to after a target.
+     * 
+     * @param  {Array} songs  Songs to move
+     * @param  {Object} target The target song object
+     */
+    move(songs, target) {
+        var $targetIndex = this.indexOf(target);
+
+        songs.forEach(song => {
+            this.state.songs.splice(this.indexOf(song), 1);
+            this.state.songs.splice($targetIndex, 0, song);
+        });
+    },
+
+    /**
      * Clear the current queue.
      */
     clear(cb = null) {
@@ -123,6 +138,17 @@ export default {
         if (cb) {
             cb();
         }
+    },
+
+    /**
+     * Get index of a song in the queue.
+     * 
+     * @param  {Object} song
+     * 
+     * @return {?integer}
+     */
+    indexOf(song) {
+        return _.indexOf(this.state.songs, song);
     },
 
     /**

@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import ls from './services/ls';
 
 window.Vue = require('vue');

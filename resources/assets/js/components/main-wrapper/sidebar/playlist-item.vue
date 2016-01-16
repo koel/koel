@@ -3,7 +3,7 @@
         <a @click.prevent="load"
             @dragleave="removeDroppableState"
             @dragover.prevent="allowDrop"
-            @drop.stop="handleDrop($event)"
+            @drop.stop.prevent="handleDrop"
             :class="{ 'active': active }"
         >{{ playlist.name }}</a>
 
@@ -101,7 +101,7 @@
             /**
              * Remove the droppable state when a dragleave event occurs on the playlist's DOM element. 
              * 
-             * @param  {Object} e The dragleave event.
+             * @param {Object} e The dragleave event.
              */
             removeDroppableState(e) {
                 $(e.target).removeClass('droppable');
@@ -111,7 +111,7 @@
              * Add a "droppable" class and set the drop effect when an item is dragged over the playlist's
              * DOM element.
              * 
-             * @param  object e The dragover event.
+             * @param {Object} e The dragover event.
              */
             allowDrop(e) {
                 $(e.target).addClass('droppable');

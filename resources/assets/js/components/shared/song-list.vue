@@ -39,9 +39,12 @@
                     data-song-id="{{ item.id }}" 
                     track-by="id"
                     :song="item" 
-                    @click="rowClick($event)"
+                    @click="rowClick"
                     draggable="true"
                     @dragstart="dragStart"
+                    @dragleave="removeDroppableState"
+                    @dragover.prevent="allowDrop"
+                    @drop.stop.prevent="handleDrop"
                 >
                 </tr>
             </tbody>
@@ -241,6 +244,7 @@
                 if (isMobile.any) {
                     this.toggleRow(row);
 
+                    this.gatherSelected();
                     return;
                 }
 
@@ -254,7 +258,7 @@
                         this.toggleRow(row);
                     }
                 
-                    if (e.shiftKey) {
+                    if (e.shiftKey && this.lastSelectedRow) {
                         this.selectRowsBetweenIndexes([this.lastSelectedRow.rowIndex, row.rowIndex])
                     }
                 }
@@ -298,18 +302,60 @@
                 // Select the current target as well.
                 $(e.target).addClass('selected');
 
+                this.gatherSelected();
+
                 // We can opt for something like application/x-koel.text+plain here to sound fancy,
                 // but forget it.
-                e.dataTransfer.setData('text/plain', _.pluck(this.selectedSongs, 'id'));
+                var songIds = _.pluck(this.selectedSongs, 'id');
+                e.dataTransfer.setData('text/plain', songIds);
                 e.dataTransfer.effectAllowed = 'move';
 
-                // Set a fancy icon
-                var dragIcon = document.createElement('img');
-                dragIcon.src = '/public/img/drag-icon.png';
-                dragIcon.width = 16;
+                // Set a fancy drop image using our ghost element.
+                var $ghost = $('#dragGhost').text(`${songIds.length} song${songIds.length === 1 ? '' : 's'}`);
+                e.dataTransfer.setDragImage($ghost[0], 0, 0);
+            },
 
-                e.dataTransfer.setDragImage(dragIcon, -10, -10);
-            }
+            /**
+             * Add a "droppable" class and set the drop effect when other songs are dragged over a row.
+             * 
+             * @param {Object} e The dragover event.
+             */
+            allowDrop(e) {
+                if (this.type !== 'queue') {
+                    return;
+                }
+
+                $(e.target).parents('tr').addClass('droppable');
+                e.dataTransfer.dropEffect = 'move';
+
+                return false;
+            },
+
+            handleDrop(e) {
+                if (this.type !== 'queue') {
+                    return;
+                }
+
+                if (!e.dataTransfer.getData('text/plain')) {
+                    return false;
+                }
+
+                var songs = this.selectedSongs;
+
+                if (!songs.length) {
+                    return false;
+                }
+
+                var $row = this.removeDroppableState(e);
+
+                queueStore.move(songs, songStore.byId($row.data('song-id')));
+
+                return false;
+            },
+
+            removeDroppableState(e) {
+                return $(e.target).parents('tr').removeClass('droppable');
+            },
         },
 
         events: {
@@ -401,6 +447,11 @@
 
         table {
             width: 100%;
+        }
+
+        tr.droppable {
+            border-bottom-width: 3px;
+            border-bottom-color: $colorGreen;
         }
 
         td, th {
