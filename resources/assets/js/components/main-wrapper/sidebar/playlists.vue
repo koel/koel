@@ -1,6 +1,10 @@
 <template>
     <section id="playlists">
-        <h1>Playlists <i class="fa fa-plus-circle control" @click="this.creating = !this.creating"></i></h1>
+        <h1>Playlists 
+            <i class="fa fa-plus-circle control create" 
+                :class="{ creating : this.creating }" 
+                @click="creating = !creating"></i>
+        </h1>
 
         <form v-show="creating" @submit.prevent="store" class="create">
             <input type="text" 
@@ -62,6 +66,16 @@
     @import "resources/assets/sass/partials/_mixins.scss";
 
     #playlists {
+        .control.create {
+            margin-top: 2px;
+            font-size: 16px;
+            transition: .3s;
+
+            &.creating {
+                transform: rotate(135deg);
+            }
+        }
+
         form.create {
             padding: 8px 16px;
 
