@@ -297,8 +297,6 @@
             
             // Safari 8 won't recognize rgba(255, 255, 255, 0) and treat it as black.
             // rgba($startColor, 0) is a workaround.
-            // Actually, why need I care?
-            // Father always told me: Don't give a fuck about what you can't change.
             background-image: linear-gradient(to bottom, rgba($startColor, 0) 0%, rgba($startColor, 1) 100%); 
             pointer-events: none; // click-through
         }

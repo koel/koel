@@ -189,6 +189,19 @@
         flex-direction: column;
         left: 0;
 
+        &::before {
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('public/img/equalizer.jpg') center bottom no-repeat;
+            background-size: contain;
+            z-index: 0;
+            opacity: .6;
+        }
+
         .presets {
             display: flex;
             flex-wrap: wrap;
@@ -196,6 +209,7 @@
             margin-bottom: 8px;
             flex: 1;
             align-content: center;
+            z-index: 1;
 
             button {
                 font-size: 70%;
@@ -217,6 +231,7 @@
             justify-content: space-between;
             font-size: 70%;
             align-items: center;
+            z-index: 1;
 
             input[type="range"] {
                 writing-mode: bt-lr; /* IE */
