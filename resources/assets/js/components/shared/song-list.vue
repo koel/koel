@@ -1,5 +1,7 @@
 <template>
-    <div class="song-list-wrap main-scroll-wrap {{ type }}" tabindex="1" v-el:wrapper 
+    <div class="song-list-wrap main-scroll-wrap {{ type }}" 
+        v-el:wrapper 
+        tabindex="1" 
         @scroll="scrolling" 
         @keydown.delete.prevent.stop="handleDelete"
         @keydown.8.prevent.stop="handleDelete"

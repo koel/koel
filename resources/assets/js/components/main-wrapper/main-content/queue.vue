@@ -163,8 +163,7 @@
             }
         }
 
-        @media only screen 
-        and (max-device-width : 667px) {
+        @media only screen and (max-device-width : 667px) {
         }
     }
 </style>

@@ -34,7 +34,7 @@
                     :songs="selectedSongs" 
                     :showing="showingAddToMenu && state.songs.length"
                     :settings="{ canLike: false }">
-                </add-to-menu>
+                <add-to-menu>
             </div>
         </h1>
 

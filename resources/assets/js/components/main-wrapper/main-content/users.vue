@@ -85,12 +85,7 @@
                     </div>
                 </article>
 
-                <article class="user-item"></article>
-                <article class="user-item"></article>
-                <article class="user-item"></article>
-                <article class="user-item"></article>
-                <article class="user-item"></article>
-                <article class="user-item"></article>
+                <article class="user-item" v-for="n in 6"></article>
             </div>
         </div>
     </section>
@@ -335,8 +330,7 @@
             }
         }
 
-        @media only screen 
-        and (max-device-width : 667px) {
+        @media only screen and (max-device-width : 667px) {
             form.user-create, form.user-edit {
                 flex-direction: column;
                 align-items: stretch;

@@ -16,10 +16,7 @@
         <div class="media-info-wrap">
             <div class="middle-pane">
 
-                <span class="album-thumb" 
-                    v-if="cover"
-                    :style="{ backgroundImage: 'url(' + cover + ')' }">
-                </span>
+                <span class="album-thumb" v-if="cover" :style="{ backgroundImage: 'url(' + cover + ')' }"></span>
 
                 <div class="progress" id="progressPane">
                     <h3 class="title">{{ song.title }}</h3>
@@ -39,7 +36,7 @@
 
                 <sound-bar v-show="playing"></sound-bar>
 
-                <i class="like control fa fa-heart" :class="{ 'liked': liked }"
+                <i class="like control fa fa-heart" :class="{ liked: liked }"
                     @click.prevent="like"></i>
 
                 <span class="control" 
@@ -53,7 +50,7 @@
 
                 <i v-else
                     class="queue control fa fa-list-ol control" 
-                    :class="{ 'active': viewingQueue }"
+                    :class="{ active: viewingQueue }"
                     @click.prevent="$root.loadMainView('queue')"></i>
 
                 <span class="repeat control {{ prefs.repeatMode }}" @click.prevent="changeRepeatMode">

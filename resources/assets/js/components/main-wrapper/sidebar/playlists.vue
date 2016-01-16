@@ -2,7 +2,7 @@
     <section id="playlists">
         <h1>Playlists 
             <i class="fa fa-plus-circle control create" 
-                :class="{ creating : this.creating }" 
+                :class="{ creating: creating }" 
                 @click="creating = !creating"></i>
         </h1>
 

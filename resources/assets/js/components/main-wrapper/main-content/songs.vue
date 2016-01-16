@@ -32,18 +32,11 @@
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
 
-                <add-to-menu 
-                    :songs="selectedSongs" 
-                    :showing="showingAddToMenu">
-                </add-to-menu>
+                <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"><add-to-menu>
             </div>
         </h1>
 
-        <song-list 
-            :items="state.songs" 
-            :selected-songs.sync="selectedSongs"
-            type="allSongs">
-        </song-list>
+        <song-list :items="state.songs" :selected-songs.sync="selectedSongs" type="allSongs"></song-list>
     </section>
 </template>
 

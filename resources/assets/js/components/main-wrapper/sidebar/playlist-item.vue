@@ -4,7 +4,7 @@
             @dragleave="removeDroppableState"
             @dragover.prevent="allowDrop"
             @drop.stop.prevent="handleDrop"
-            :class="{ 'active': active }"
+            :class="{ active: active }"
         >{{ playlist.name }}</a>
 
         <input type="text" 

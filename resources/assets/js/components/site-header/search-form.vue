@@ -63,8 +63,7 @@
 
     
 
-        @media only screen 
-        and (max-device-width : 667px) {
+        @media only screen and (max-device-width : 667px) {
             z-index: -1;
             position: absolute;
             left: 0;

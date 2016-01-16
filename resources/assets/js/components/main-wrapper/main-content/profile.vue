@@ -42,7 +42,7 @@
             <div class="preferences">
                 <div class="form-row">
                     <label>
-                        <input type="checkbox" v-model="prefs.notify" @change="savePreference()">
+                        <input type="checkbox" v-model="prefs.notify" @change="savePreference">
                         Show “Now Playing” song notification
                     </label>
                 </div>
@@ -258,8 +258,7 @@
             }
         }
 
-        @media only screen 
-        and (max-device-width : 667px) {
+        @media only screen and (max-device-width : 667px) {
             input {
                 &[type="text"], &[type="email"], &[type="password"] {
                     width: 100%;

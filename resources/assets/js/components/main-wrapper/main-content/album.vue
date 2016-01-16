@@ -21,10 +21,7 @@
             </span>
 
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button class="play-shuffle" 
-                    @click.prevent="shuffle"
-                    v-if="selectedSongs.length < 2"
-                >
+                <button class="play-shuffle" @click.prevent="shuffle" v-if="selectedSongs.length < 2">
                     <i class="fa fa-random"></i> All
                 </button>
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
@@ -34,18 +31,11 @@
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
 
-                <add-to-menu 
-                    :songs="selectedSongs" 
-                    :showing="showingAddToMenu"
-                </add-to-menu>
+                <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"></add-to-menu>
             </div>
         </h1>
 
-        <song-list
-            :items="album.songs" 
-            :selected-songs.sync="selectedSongs" 
-            type="album">
-        </song-list>
+        <song-list :items="album.songs" :selected-songs.sync="selectedSongs" type="album"></song-list>
     </section>
 </template>
 

@@ -1,12 +1,18 @@
 <template>
     <div id="equalizer">
         <div class="presets">
-            <button v-for="preset in presets" @click.prevent="loadPreset(preset)">{{ preset.name }}</button>
+            <button v-for="preset in presets" @click.prevent="loadPreset(preset)">{{* preset.name }}</button>
         </div>
         <div class="bands">
             <span class="band" v-for="band in bands">
-                <label>{{ band.label }}</label>
-                <input type="range" min="-20" max="20" step="0.01" :value="band.filter.gain.value" orient="vertical" 
+                <label>{{* band.label }}</label>
+                <input 
+                    type="range" 
+                    min="-20" 
+                    max="20" 
+                    step="0.01"
+                    orient="vertical" 
+                    :value="band.filter.gain.value" 
                     @input="changeGain(band.filter, $event)">
             </span>
         </div>

@@ -1,10 +1,6 @@
 <template>
     <div id="bars">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
+        <div class="bar" v-for="n in 5"></div>
     </div>
 </template>
 

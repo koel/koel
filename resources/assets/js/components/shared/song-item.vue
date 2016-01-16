@@ -2,8 +2,7 @@
     <tr 
         @dblclick.prevent="playRighAwayyyyyyy" 
         class="song-item"
-        :class="{ 'selected': selected, 'playing': playbackState === 'playing' || playbackState === 'paused' }"
-
+        :class="{ selected: selected, playing: playbackState === 'playing' || playbackState === 'paused' }"
     >
         <td class="title">{{ song.title }}</td>
         <td class="artist">{{ song.album.artist.name }}</td>

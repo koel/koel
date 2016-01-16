@@ -1,7 +1,7 @@
 <template>
     <article v-if="song" id="artistInfo">
         <h1>
-            <span>{{ song ? song.album.artist.name : '' }}</span>
+            <span>{{ song.album.artist.name }}</span>
             
             <a class="shuffle" @click.prevent="shuffleAll"><i class="fa fa-random"></i></a>
         </h1>

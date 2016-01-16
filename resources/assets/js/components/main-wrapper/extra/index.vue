@@ -3,17 +3,17 @@
         <div class="tabs">
             <div class="header clear">
                 <a @click.prevent="currentView = 'lyrics'" 
-                    :class="{ active: currentView == 'lyrics' }">Lyrics</a>
+                    :class="{ active: currentView === 'lyrics' }">Lyrics</a>
                 <a @click.prevent="currentView = 'artistInfo'" 
-                :class="{ active: currentView == 'artistInfo' }">Artist</a>
+                    :class="{ active: currentView === 'artistInfo' }">Artist</a>
                 <a @click.prevent="currentView = 'albumInfo'" 
-                :class="{ active: currentView == 'albumInfo' }">Album</a>
+                    :class="{ active: currentView === 'albumInfo' }">Album</a>
             </div>
 
             <div class="panes">
-                <lyrics v-ref:lyrics v-show="currentView == 'lyrics'"></lyrics>
-                <artist-info v-ref:artist-info v-show="currentView == 'artistInfo'"></artist-info>
-                <album-info v-ref:album-info v-show="currentView == 'albumInfo'"></album-info>
+                <lyrics v-ref:lyrics v-show="currentView === 'lyrics'"></lyrics>
+                <artist-info v-ref:artist-info v-show="currentView === 'artistInfo'"></artist-info>
+                <album-info v-ref:album-info v-show="currentView === 'albumInfo'"></album-info>
             </div>
         </div>
     </section>
@@ -50,7 +50,7 @@
 
         methods: {
             /**
-             * Reset all applicable child components' states
+             * Reset all applicable child components' states.
              */
             resetChildrenStates() {
                 _.each(this.$refs, child => {
@@ -187,8 +187,7 @@
         }
 
 
-        @media only screen 
-        and (max-device-width : 1024px) {
+        @media only screen and (max-device-width : 1024px) {
             position: fixed;
             height: calc(100vh - #{$headerHeight + $footerHeight});
             padding-bottom: $footerHeight; // make sure the footer can never overlap the content
@@ -203,8 +202,7 @@
             }
         }
 
-        @media only screen 
-        and (max-device-width : 667px) {
+        @media only screen and (max-device-width : 667px) {
             width: 100%;
         }
     }

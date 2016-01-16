@@ -34,9 +34,7 @@
             <footer>Data &copy; <a target="_blank" href="{{{ song.album.info.url }}}">Last.fm</a></footer>
         </div>
 
-        <p class="none" v-else>
-            No album information found. At all. 
-        </p>
+        <p class="none" v-else>No album information found. At all.</p>
     </article>
 </template>
 

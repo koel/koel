@@ -1,6 +1,6 @@
 <template>
     <article class="item" v-if="artist.songCount">
-        <span class="cover" :style="{ backgroundImage: 'url('+artist.image+')' }">
+        <span class="cover" :style="{ backgroundImage: 'url(' + artist.image + ')' }">
             <a class="control" @click.prevent="play">
                 <i class="fa fa-play"></i>
             </a>

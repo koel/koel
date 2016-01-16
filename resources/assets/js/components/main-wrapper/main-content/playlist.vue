@@ -35,10 +35,7 @@
                     <i class="fa fa-times"></i> Playlist
                 </button>
 
-                <add-to-menu 
-                    :songs="selectedSongs" 
-                    :showing="showingAddToMenu && playlist.songs.length"
-                </add-to-menu>
+                <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu && playlist.songs.length"><add-to-menu>
             </div>
         </h1>
 

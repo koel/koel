@@ -1,20 +1,25 @@
 <template>
     <div class="add-to-playlist" v-show="showing">
-        <p>Add {{ songs.length }} song{{ songs.length > 1 ? 's' : '' }} to</p>
+        <p>Add {{ songs.length }} {{ songs.length | pluralize 'song' }} to</p>
+
         <ul>
             <li v-if="mergedSettings.canQueue" @click="queueSongsToBottom">Bottom of Queue</li>
             <li v-if="mergedSettings.canQueue" @click="queueSongsToTop">Top of Queue</li>
             <li v-if="mergedSettings.canLike" @click="addSongsToFavorite">Favorites</li>
             <li v-for="playlist in playlistState.playlists" @click="addSongsToExistingPlaylist(playlist)">{{ playlist.name }}</li>
         </ul>
+
         <p>or create a new playlist</p>
+        
         <form class="form-save form-simple" @submit.prevent="createNewPlaylistFromSongs">
             <input type="text" 
                 @keyup.esc.prevent="hideMenu"
                 v-model="newPlaylistName" 
                 placeholder="Playlist name"
                 required>
-            <button type="submit"><i class="fa fa-save"></i></button>
+            <button type="submit">
+                <i class="fa fa-save"></i>
+            </button>
         </form>
     </div>
 </template>
