@@ -63,7 +63,7 @@
                 <span class="volume control" id="volume">
                     <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"></i>
                     <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"></i>
-                    <input type="range" id="volumeRange" max="10" step="0.1" v-el:volume-range class="player-volume">
+                    <input type="range" id="volumeRange" max="10" step="0.1" class="player-volume">
                 </span>
             </span>
         </div>
@@ -151,20 +151,11 @@
 
         methods: {
             /**
-             * Set the volume level.
-             * 
-             * @param {integer}         volume  Min 0, max 10.
-             * @param {boolean=true}    persist Whether the volume level should be stored into local storage.
-             */
-            setVolume(volume, persist = true) {
-                playback.setVolume(volume, persist);
-                this.muted = volume === '0' || volume === 0;
-            },
-
-            /**
              * Mute the volume.
              */
             mute() {
+                this.muted = true;
+
                 return playback.mute();
             },
 
@@ -172,6 +163,8 @@
              * Unmute the volume.
              */
             unmute() {
+                this.muted = false;
+
                 return playback.unmute();
             },
 
@@ -203,7 +196,7 @@
             },
 
             /**
-             * <Oh God do I need to document all these methods?>
+             * Pause the playback.
              */
             pause() {
                 playback.pause();
@@ -211,8 +204,6 @@
             },
 
             /**
-             * <Oh well…>
-             * 
              * Change the repeat mode.
              */
             changeRepeatMode() {
@@ -220,8 +211,6 @@
             },
 
             /**
-             * <Look like there's no running away from this…>
-             * 
              * Like the current song.
              */
             like() {
@@ -236,24 +225,15 @@
             },
 
             /**
-             * <That's it. That's it!>
-             * 
              * Toggle hide or show the extra panel.
              */
             toggleExtraPanel() {
                 preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel);
             },
-
-            /**
-             * OH YISSSSSS!
-             * FINALLY!
-             */
         },
 
         events: {
             /**
-             * <What…>
-             *
              * Listen to song:played event and set the current playing song.
              * 
              * @param  {Object} song
@@ -268,11 +248,7 @@
             },
 
             /**
-             * <OK…>
-             *
              * Listen to song:stopped event to indicate that we're not playing anymore.
-             * No we're not playing anymore.
-             * We're tired.
              */
             'song:stopped': function () {
                 this.playing = false;
@@ -283,8 +259,6 @@
             },
 
             /**
-             * <Bye cruel world…>
-             * 
              * Listen to main-content-view:load event and highlight the Queue icon if
              * the Queue screen is being loaded.
              */
