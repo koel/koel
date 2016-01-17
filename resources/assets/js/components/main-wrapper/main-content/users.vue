@@ -136,9 +136,9 @@
 
             /**
              * Cancel editing, or simply close the form after updating.
-             * @param  {boolean=true} rollback If true, editing was cancelled. 
-             *                            The original state of the edited user must be restored.
-             *                            If false, editing was successfully committed.
+             * @param  {Boolean=true} rollback If true, editing was cancelled. 
+             *                                 The original state of the edited user must be restored.
+             *                                 If false, editing was successfully committed.
              */
             cancelEdit(rollback = true) {
                 if (rollback) {

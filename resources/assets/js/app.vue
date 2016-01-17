@@ -170,8 +170,8 @@
             /**
              * Load (display) a main panel (view).
              *
-             * @param string view  The view, which can be found under components/main-wrapper/main-content.
-             * @param [...args]    Extra data to attach to the view.
+             * @param {String} view     The view, which can be found under components/main-wrapper/main-content.
+             * @param {...*}            Extra data to attach to the view.
              */
             loadMainView(view, ...args) {
                 this.$broadcast('main-content-view:load', view, ...args);

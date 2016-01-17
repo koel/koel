@@ -31,8 +31,6 @@ export default {
         // It's alright
         // Take anything you want from me
         // Anything...
-        // 
-        // [CRAZY SOLO BITCH!]
     },
 
     all() {
@@ -52,7 +50,7 @@ export default {
      * 
      * @param  {Object} song
      * 
-     * @return {boolean}
+     * @return {Boolean}
      */
     contains(song) {
         return _.includes(this.all(), song);
@@ -62,9 +60,9 @@ export default {
      * Add a list of songs to the end of the current queue, 
      * or replace the current queue as a whole if `replace` is true.
      *
-     * @param {Object|Array}  songs   The song, or an array of songs
-     * @param {boolean}       replace Whether to replace the current queue
-     * @param {boolean}       toTop   Whether to prepend of append to the queue
+     * @param {Object|Array.<Object>}   songs   The song, or an array of songs
+     * @param {Boolean}                 replace Whether to replace the current queue
+     * @param {Boolean}                 toTop   Whether to prepend of append to the queue
      */
     queue(songs, replace = false, toTop = false) {
         if (!Array.isArray(songs)) {
@@ -85,7 +83,7 @@ export default {
     /**
      * Queue song(s) to after the current song.
      * 
-     * @param  {Array|Object} songs
+     * @param  {Array.<Object>|Object} songs
      */
     queueAfterCurrent(songs) {
         if (!Array.isArray(songs)) {
@@ -103,7 +101,7 @@ export default {
     /**
      * Unqueue a song, or several songs at once.
      * 
-     * @param  {Object|string|Array} songs The song(s) to unqueue.
+     * @param  {Object|String|Array.<Object>} songs The song(s) to unqueue.
      */
     unqueue(songs) {
         if (!Array.isArray(songs)) {
@@ -116,8 +114,8 @@ export default {
     /**
      * Move some songs to after a target.
      * 
-     * @param  {Array} songs  Songs to move
-     * @param  {Object} target The target song object
+     * @param  {Array.<Object>} songs  Songs to move
+     * @param  {Object}         target The target song object
      */
     move(songs, target) {
         var $targetIndex = this.indexOf(target);
@@ -145,7 +143,7 @@ export default {
      * 
      * @param  {Object} song
      * 
-     * @return {?integer}
+     * @return {?Integer}
      */
     indexOf(song) {
         return _.indexOf(this.state.songs, song);

@@ -10,6 +10,11 @@ export default {
         fmtLength: '',
     },
     
+    /**
+     * Get all songs favorited by the current user.
+     * 
+     * @return {Array.<Object>}
+     */
     all() {
         return this.state.songs;
     },
@@ -64,8 +69,8 @@ export default {
     /**
      * Like a bunch of songs.
      * 
-     * @param {Array}       songs
-     * @param {?Function}   cb
+     * @param {Array.<Object>}  songs
+     * @param {?Function}       cb
      */
     like(songs, cb = null) {
         // Don't wait for the HTTP response to update the status, just set them to Liked right away.
@@ -83,8 +88,8 @@ export default {
     /**
      * Unlike a bunch of songs.
      * 
-     * @param {Array}       songs
-     * @param {?Function}   cb
+     * @param {Array.<Object>}  songs
+     * @param {?Function}       cb
      */
     unlike(songs, cb = null) {
         // Don't wait for the HTTP response to update the status, just set them to Unliked right away.

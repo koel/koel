@@ -103,7 +103,7 @@
             /**
              * Init the equalizer.
              * 
-             * @param  {Object} player The audio player DOM.
+             * @param  {Element} player The audio player's DOM.
              */
             init(player) {
                 var AudioContext = window.AudioContext || window.webkitAudioContext || false; 

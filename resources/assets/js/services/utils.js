@@ -34,7 +34,7 @@ export default {
      * 
      * @param  {Object}  error  The error object in JSON format.
      *                                    
-     * @return {Array}
+     * @return {Array.<String>}
      */
     parseValidationError(error) {
         return Object.keys(error).reduce((messages, field) => messages.concat(error[field]), []);
@@ -43,7 +43,7 @@ export default {
     /**
      * Check if AudioContext is supported by the current browser.
      * 
-     * @return {boolean}
+     * @return {Boolean}
      */
     isAudioContextSupported() {
         // Apple device just doesn't love AudioContext that much.

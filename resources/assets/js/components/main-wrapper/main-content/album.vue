@@ -62,7 +62,7 @@
              * Listen to 'main-content-view:load' event (triggered from $root currently)
              * to load the requested album into view if applicable.
              *
-             * @param {string} view     The view name
+             * @param {String} view     The view name
              * @param {Object} album    The album object
              */
             'main-content-view:load': function (view, album) {

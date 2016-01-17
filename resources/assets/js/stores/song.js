@@ -18,7 +18,7 @@ export default {
     /**
      * Init the store.
      * 
-     * @param  {Array} albums The array of albums to extract our songs from
+     * @param  {Array.<Object>} albums The array of albums to extract our songs from
      */
     init(albums) {
         // Iterate through the albums. With each, add its songs into our master song list.
@@ -41,7 +41,7 @@ export default {
     /**
      * Initializes the interaction (like/play count) information.
      * 
-     * @param  {Array} interactions The array of interactions of the current user
+     * @param  {Array.<Object>} interactions The array of interactions of the current user
      */
     initInteractions(interactions) {
         favoriteStore.clear();
@@ -65,10 +65,10 @@ export default {
     /**
      * Get the total duration of some songs.
      * 
-     * @param {Array}   songs
-     * @param {boolean} toHis Wheter to convert the duration into H:i:s format
+     * @param {Array.<Object>}  songs
+     * @param {Boolean}         toHis Wheter to convert the duration into H:i:s format
      * 
-     * @return {float|string}
+     * @return {Float|String}
      */
     getLength(songs, toHis) {
         var duration = _.reduce(songs, (length, song) => length + song.length, 0);
@@ -83,7 +83,7 @@ export default {
     /**
      * Get all songs.
      *
-     * @return {Array}
+     * @return {Array.<Object>}
      */
     all() {
         return this.state.songs;
@@ -92,7 +92,7 @@ export default {
     /**
      * Get a song by its ID.
      * 
-     * @param  {string} id
+     * @param  {String} id
      * 
      * @return {Object}
      */
@@ -103,9 +103,9 @@ export default {
     /**
      * Get songs by their IDs.
      * 
-     * @param  {Array} ids
+     * @param  {Array.<String>} ids
      * 
-     * @return {Array}
+     * @return {Array.<Object>}
      */
     byIds(ids) {
         return _.map(ids, id => this.byId(id));

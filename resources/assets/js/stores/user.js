@@ -16,8 +16,8 @@ export default {
     /**
      * Init the store.
      *
-     * @param {Array}   users       The users in the system. Empty array if current user is not an admin.
-     * @param {Object}  currentUser The current user.
+     * @param {Array.<Object>}  users       The users in the system. Empty array if current user is not an admin.
+     * @param {Object}          currentUser The current user.
      */
     init(users, currentUser) {
         this.state.users = users;
@@ -33,7 +33,7 @@ export default {
     /**
      * Get all users.
      * 
-     * @return {Array} 
+     * @return {Array.<Object>} 
      */
     all() {
         return this.state.users;
@@ -42,7 +42,7 @@ export default {
     /**
      * Get a user by his ID
      * 
-     * @param  {integer} id
+     * @param  {Integer} id
      * 
      * @return {Object}
      */
@@ -81,8 +81,8 @@ export default {
     /**
      * Log a user in.
      * 
-     * @param  {string}     email    
-     * @param  {string}     password
+     * @param  {String}     email    
+     * @param  {String}     password
      * @param  {?Function}  successCb
      * @param  {?Function}  errorCb
      */
@@ -137,9 +137,9 @@ export default {
      * Update a user's profile.
      * 
      * @param  {Object}     user
-     * @param  {string}     name
-     * @param  {email}      email
-     * @param  {password}   password
+     * @param  {String}     name
+     * @param  {String}     email
+     * @param  {String}     password
      * @param  {?Function}  cb
      */
     update(user, name, email, password, cb = null) {

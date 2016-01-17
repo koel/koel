@@ -17,6 +17,11 @@ export default {
         _.each(this.state.playlists, this.getSongs);
     },
 
+    /**
+     * Get all playlists of the current user.
+     * 
+     * @return {Array.<Object>}
+     */
     all() {
         return this.state.playlists;
     },
@@ -24,7 +29,7 @@ export default {
     /**
      * Get all songs in a playlist.
      *
-     * return {Array}
+     * return {Array.<Object>}
      */
     getSongs(playlist) {
         return (playlist.songs = songStore.byIds(playlist.songs));
@@ -33,9 +38,9 @@ export default {
     /**
      * Create a new playlist, optionally with its songs.
      * 
-     * @param  {string}     name  Name of the playlist
-     * @param  {Array}      songs An array of song objects
-     * @param  {?Function}  cb
+     * @param  {String}         name  Name of the playlist
+     * @param  {Array.<Object>} songs An array of song objects
+     * @param  {?Function}      cb
      */
     store(name, songs, cb = null) {
         if (songs.length) {
@@ -74,9 +79,9 @@ export default {
     /**
      * Add songs into a playlist.
      * 
-     * @param {Object}      playlist
-     * @param {Array}       songs
-     * @param {?Function}   cb
+     * @param {Object}          playlist
+     * @param {Array.<Object>}  songs
+     * @param {?Function}       cb
      */
     addSongs(playlist, songs, cb = null) {
         var count = playlist.songs.length;
@@ -96,9 +101,9 @@ export default {
     /**
      * Remove songs from a playlist.
      * 
-     * @param  {Object}     playlist
-     * @param  {Array}      songs 
-     * @param  {?Function}  cb
+     * @param  {Object}         playlist
+     * @param  {Array.<Object>} songs 
+     * @param  {?Function}      cb
      */
     removeSongs(playlist, songs, cb = null) {
         playlist.songs = _.difference(playlist.songs, songs);

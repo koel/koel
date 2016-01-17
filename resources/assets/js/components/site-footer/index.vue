@@ -94,7 +94,7 @@
                 /**
                  * Indicate if we should build and use an equalizer.
                  * 
-                 * @type {boolean}
+                 * @type {Boolean}
                  */
                 useEqualizer: utils.isAudioContextSupported(),
             };
@@ -116,7 +116,7 @@
             /**
              * Get the album cover for the current song.
              * 
-             * @return {?string}
+             * @return {?String}
              */
             cover() {
                 // don't display the default cover here
@@ -235,7 +235,7 @@
              * 
              * @param  {Object} song
              * 
-             * @return {boolean}
+             * @return {Boolean}
              */
             'song:played': function (song) {
                 this.playing = true;

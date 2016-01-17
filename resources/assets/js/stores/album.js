@@ -14,7 +14,7 @@ export default {
     /**
      * Init the store.
      * 
-     * @param  {Array} artists The array of artists to extract album data from.
+     * @param  {Array.<Object>} artists The array of artists to extract album data from.
      */
     init(artists) {
         // Traverse through the artists array and add their albums into our master album list.
@@ -33,6 +33,11 @@ export default {
         songStore.init(this.state.albums);
     },
 
+    /**
+     * Get all albums in the store.
+     * 
+     * @return {Array.<Object>}
+     */
     all() {
         return this.state.albums;
     },
@@ -43,7 +48,7 @@ export default {
      * 
      * @param  {Object} album
      * 
-     * @return {string} The H:i:s format of the album length.
+     * @return {String} The H:i:s format of the album length.
      */
     getLength(album) {
         album.length = _.reduce(album.songs, (length, song) => length + song.length, 0);

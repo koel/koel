@@ -76,7 +76,7 @@
              * Listen to 'main-content-view:load' event (triggered from $root currently)
              * to load the requested playlist into view if applicable.
              *
-             * @param {string} view     The view's name.
+             * @param {String} view     The view's name.
              * @param {Object} playlist
              */
             'main-content-view:load': function (view, playlist) {

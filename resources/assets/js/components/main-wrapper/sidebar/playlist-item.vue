@@ -125,7 +125,7 @@
              * 
              * @param  {Object}   e        The event
              *
-             * @return {boolean}
+             * @return {Boolean}
              */
             handleDrop(e) {
                 this.removeDroppableState(e);

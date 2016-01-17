@@ -14,7 +14,7 @@ export default {
     /**
      * Init the store.
      * 
-     * @param  {Array} artists The array of artists we got from the server.
+     * @param  {Array.<Object>} artists The array of artists we got from the server.
      */
     init(artists) {
         this.state.artists = artists;
@@ -38,7 +38,7 @@ export default {
      *
      * @param {Object} artist
      *
-     * @return {Array}
+     * @return {Array.<Object>}
      */
     getSongsByArtist(artist) {
         if (!artist.songs) {
@@ -53,7 +53,7 @@ export default {
      *
      * @param {Object} artist
      *
-     * @return {string}
+     * @return {String}
      */
     getImage(artist) {
         // If the artist already has a proper image, just return it.

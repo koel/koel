@@ -19,7 +19,7 @@ export default {
     /**
      * Initialize the playback service for this whole Koel app.
      * 
-     * @param  {Object} app The root Vue component.
+     * @param  {Vue} app The root Vue component.
      */
     init(app) {
         // We don't need to init this service twice, or the media events will be duplicated.
@@ -132,6 +132,8 @@ export default {
     /**
      * Get the next song in the queue. 
      * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
+     *
+     * @return {Object} The song
      */
     nextSong() {
         var next = queueStore.getNextSong();
@@ -148,6 +150,8 @@ export default {
     /**
      * Get the prev song in the queue.
      * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
+     *
+     * @return {Object} The song
      */
     prevSong() {
         var prev = queueStore.getPrevSong();
@@ -219,8 +223,8 @@ export default {
     /**
      * Set the volume level.
      * 
-     * @param {integer}         volume   0-10
-     * @param {boolean=true}    persist  Whether the volume should be saved into local storage
+     * @param {Number}         volume   0-10
+     * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
      */
     setVolume(volume, persist = true) {
         this.player.setVolume(volume);
@@ -281,8 +285,8 @@ export default {
     /**
      * Queue up songs (replace them into the queue) and start playing right away.
      *
-     * @param {?Array}          songs   An array of song objects. Defaults to all songs if null.
-     * @param {boolean=false}   shuffle Whether to shuffle the songs before playing.
+     * @param {?Array.<Object>} songs   An array of song objects. Defaults to all songs if null.
+     * @param {Boolean=false}   shuffle Whether to shuffle the songs before playing.
      */
     queueAndPlay(songs = null, shuffle = false) {
         if (!songs) {
@@ -324,7 +328,7 @@ export default {
      * Play all songs by an artist.
      * 
      * @param  {Object}         artist  The artist object
-     * @param  {boolean=true}   shuffle Whether to shuffle the songs
+     * @param  {Boolean=true}   shuffle Whether to shuffle the songs
      */
     playAllByArtist(artist, shuffle = true) {
         this.queueAndPlay(artistStore.getSongsByArtist(artist), true);
@@ -334,7 +338,7 @@ export default {
      * Play all songs in an album.
      * 
      * @param  {Object}         album   The album object
-     * @param  {boolean=true}   shuffle Whether to shuffle the songs
+     * @param  {Boolean=true}   shuffle Whether to shuffle the songs
      */
     playAllInAlbum(album, shuffle = true) {
         this.queueAndPlay(album.songs, true);

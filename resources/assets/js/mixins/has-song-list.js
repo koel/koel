@@ -23,7 +23,7 @@ export default {
             /**
              * An array of selected songs in the list.
              * 
-             * @type {Array}
+             * @type {Array.<Object>}
              */
             selectedSongs: [],
 

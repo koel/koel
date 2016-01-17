@@ -62,7 +62,7 @@
              * Listen to 'main-content-view:load' event (triggered from $root currently)
              * to load the requested artist into view if applicable.
              *
-             * @param {string} view     The view's name
+             * @param {String} view     The view's name
              * @param {Object} artist
              */
             'main-content-view:load': function (view, artist) {

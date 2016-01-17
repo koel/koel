@@ -52,7 +52,7 @@
              * 
              * @param  {Object} song
              * 
-             * @return {boolean}
+             * @return {Boolean}
              */
             'song:played': function (song) {
                 this.albumCover = song.album.cover ===  albumStore.stub.cover ? null : song.album.cover;
