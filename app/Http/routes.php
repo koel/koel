@@ -4,13 +4,18 @@ Route::get('/', function () {
     return view('index');
 });
 
+// Some backward compatibilities.
+Route::get('/♫', function () {
+    return redirect('/');
+});
+
 Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
 
     Route::post('me', 'UserController@login');
 
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::get('/', function () {
-        // Just acting as a ping service.
+            // Just acting as a ping service.
         });
 
         Route::get('data', 'DataController@index');
