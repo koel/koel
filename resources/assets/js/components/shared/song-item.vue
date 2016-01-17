@@ -16,7 +16,6 @@
 </template>
 
 <script>
-    import $ from 'jquery';
     import playback from '../../services/playback';
     import queueStore from '../../stores/queue';
 
@@ -66,10 +65,16 @@
                 this.selected = !this.selected;
             },
 
+            /**
+             * Select the current component (apply a CSS class on its DOM).
+             */
             select() {
                 this.selected  = true;
             },
 
+            /**
+             * Deselect the current component.
+             */
             deselect() {
                 this.selected = false;
             }
@@ -79,7 +84,7 @@
             // Listen to playback events and set playback state.
 
             'song:played': function (song) {
-                this.playbackState = this.song.id === song.id ? 'playing' : 'stopped';
+                this.playbackState = this.song === song ? 'playing' : 'stopped';
             },
 
             'song:stopped': function () {
@@ -87,10 +92,19 @@
             },
 
             'song:paused': function (song) {
-                if (this.song.id === song.id) {
+                if (this.song === song) {
                     this.playbackState = 'paused';
                 }
             },
+        },
+
+        /**
+         * When the component is (re)attached into the DOM, we check if its song is current and set its playback state.
+         */
+        attached() {
+            if (this.song === queueStore.current()) {
+                this.playbackState = 'playing';
+            }
         },
     };
 </script>

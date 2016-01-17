@@ -106,7 +106,7 @@
             /**
              * Handle sorting the song list.
              * 
-             * @param  {string} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
+             * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
              */
             sort(key) {
                 // We don't allow sorting in the Queue screen.
@@ -208,7 +208,7 @@
             /**
              * Get the song-item component that's associated with a song ID.
              * 
-             * @param  {string} id The song ID.
+             * @param  {String} id The song ID.
              * 
              * @return {Object}    The Vue compoenent
              */
@@ -238,7 +238,7 @@
             /**
              * Gather all selected songs.
              * 
-             * @return {Array} An array of Song objects
+             * @return {Array.<Object>} An array of Song objects
              */
             gatherSelected() {
                 var selectedRows = _.where(this.$refs.rows, { selected: true });
@@ -251,12 +251,17 @@
             /**
              * -----------------------------------------------------------
              * The next four methods are to deal with selection.
-             * Don't even try to understand it. It just works.
              * 
              * Credits: http://stackoverflow.com/a/17966381/794641 by andyb
              * -----------------------------------------------------------
              */
 
+            /**
+             * Handle the click event on a row to perform selection.
+             * 
+             * @param  {String} songId
+             * @param  {Object} e
+             */
             rowClick(songId, e) {
                 var row = this.getComponentBySongId(songId);
                 
@@ -306,6 +311,9 @@
                 }
             },
 
+            /**
+             * Clear the current selection on this song list.
+             */
             clearSelection() {
                 _.invoke(this.$refs.rows, 'deselect');
                 this.gatherSelected();
@@ -336,7 +344,8 @@
 
             /**
              * Add a "droppable" class and set the drop effect when other songs are dragged over a row.
-             * 
+             *
+             * @param {String} songId
              * @param {Object} e The dragover event.
              */
             allowDrop(songId, e) {
@@ -350,6 +359,12 @@
                 return false;
             },
 
+            /**
+             * Perform reordering songs upon dropping if the current song list is of type Queue.
+             * 
+             * @param  {String} songId 
+             * @param  {Object} e
+             */
             handleDrop(songId, e) {
                 if (this.type !== 'queue') {
                     return;
@@ -372,6 +387,11 @@
                 return false;
             },
 
+            /**
+             * Remove the droppable state (and the styles) from a row.
+             * 
+             * @param  {Object} e
+             */
             removeDroppableState(e) {
                 return $(e.target).parents('tr').removeClass('droppable');
             },
