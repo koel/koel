@@ -1,7 +1,12 @@
 <template>
     <div id="equalizer">
         <div class="presets">
-            <button v-for="preset in presets" @click.prevent="loadPreset(preset)">{{* preset.name }}</button>
+            <label class="select-wrapper" @change="loadPreset">
+                <select v-model="selectedPresetIndex">
+                    <option value="-1">Preset</option>
+                    <option v-for="preset in presets" :value="$index">{{* preset.name }}</option>
+                </select>
+            </label>
         </div>
         <div class="bands">
             <span class="band" v-for="band in bands">
@@ -12,8 +17,8 @@
                     max="20" 
                     step="0.01"
                     orient="vertical" 
-                    :value="band.filter.gain.value" 
-                    @input="changeGain(band.filter, $event)">
+                    data-orientation="vertical"
+                    :value="band.filter.gain.value">
             </span>
         </div>
     </div>
@@ -22,6 +27,7 @@
 <script>
     import _ from 'lodash';
     import $ from 'jquery';
+    import rangeslider from 'rangeslider.js';
 
     import preferenceStore from '../../stores/preference';
     import utils from '../../services/utils';
@@ -30,10 +36,11 @@
         data() {
             return {
                 bands: [],
+                selectedPresetIndex: -1,
 
                 presets: [
                     {
-                        name: 'None',
+                        name: 'Default',
                         gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     },
                     {
@@ -136,29 +143,52 @@
                 });
                 
                 prevFilter.connect(context.destination);
+
+                Vue.nextTick(() => {
+                    $('#equalizer input[type="range"]').each((i, el) => {
+                        $(el).rangeslider({
+                            // Force the polyfill and its styles on all browsers
+                            polyfill: false,
+
+                            onSlide: (position, value) => {
+                                this.changeGain(this.bands[i].filter, value);
+                            },
+
+                            onSlideEnd: () => {
+                                this.selectedPresetIndex = -1;
+                                this.save();
+                            }
+                        }); 
+                    });
+                });
             },
 
             /**
-             * Change the gain value for a band/filter on range input's value change.
+             * Change the gain value for a band/filter.
              * 
-             * @param  {Object} filter The filter object.
-             * @param  {Object} e      The input event
+             * @param  {Object} filter The filter object
+             * @param  {Object} value 
              */
-            changeGain(filter, e) {
-                filter.gain.value = e.target.value;
-                this.save();
+            changeGain(filter, value) {
+                filter.gain.value = value;
             },
 
             /**
-             * Load a preset.
-             * 
-             * @param  {Object} preset The preset.
+             * Load a preset when the user select it from the dropdown.
              */
-            loadPreset(preset) {
+            loadPreset() {
+                if (this.selectedPresetIndex === -1) {
+                    return;
+                }
+
+                var preset = this.presets[this.selectedPresetIndex];
+
                 $('#equalizer input[type=range]').each((i, input) => {
                     this.bands[i].filter.gain.value = preset.gains[i];
                     input.value = preset.gains[i];
                 });
+
+                $('#equalizer input[type="range"]').rangeslider('update', true);
 
                 this.save();
             },
@@ -181,7 +211,7 @@
     };
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
 
@@ -189,62 +219,54 @@
         position: absolute;
         bottom: $footerHeight;
         width: 100%;
-        padding: 16px;
         background: rgba(0, 0, 0, 0.9);
         display: flex;
         flex-direction: column;
         left: 0;
 
-        &::before {
-            content: " ";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('public/img/equalizer.jpg') center bottom no-repeat;
-            background-size: contain;
-            z-index: 0;
-            opacity: .6;
-        }
-
         .presets {
+            padding: 8px 16px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            margin-bottom: 8px;
             flex: 1;
             align-content: center;
             z-index: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
 
-            button {
-                font-size: 70%;
-                border-radius: 0;
-                text-transform: uppercase;
-                background-color: transparent;
-                border: 1px solid rgba(255, 255, 255, .2);
-                margin-bottom: 4px;
+            .select-wrapper {
+                position: relative;
+                margin-bottom: 0;
 
-                &:hover {
-                    background-color: $colorRed;
+                &::after {
+                    content: '\f107';
+                    font-family: FontAwesome;
+                    color: $colorHighlight;
+                    display: inline-block;
+                    position: absolute;
+                    right: 8px;
+                    top: 3px;
+                    pointer-events: none;
                 }
+            }
+
+            select {
+                background: none;
+                color: $colorMainText;
+                padding-left: 0;
+                width: 100px;
+                text-transform: none;
             }
         }
 
         .bands {
+            padding: 16px;
             display: flex;
             left: 0;
             justify-content: space-between;
             font-size: 70%;
             align-items: center;
             z-index: 1;
-
-            input[type="range"] {
-                writing-mode: bt-lr; /* IE */
-                -webkit-appearance: slider-vertical; /* WebKit */
-                width: 8px;
-                height: 80px;
-            }
 
             .band {
                 display: flex;
@@ -253,8 +275,52 @@
             }
         }
 
-        @media only screen 
-        and (max-device-width : 768px) {
+        /**
+         * The range slider styles
+         */
+        .rangeslider {
+            background: transparent;
+
+            &--vertical {
+                min-height: 100px;
+
+                &::before {
+                    content: " ";
+                    position: absolute;
+                    left: 9px;
+                    width: 2px;
+                    background: rgba(255, 255, 255, 0.2);
+                    z-index: 1;
+                    height: 100%;
+                    pointer-events: none;
+                }
+
+                .rangeslider__fill {
+                    width: 2px;
+                    background: #fff;
+                    position: absolute;
+                    left: 9px;
+                    box-shadow: none;
+                    border-radius: 0;
+                }
+
+                .rangeslider__handle {
+                    left: 0;
+                    background: #fff;
+                    border: 0;
+                    height: 2px;
+                    width: 100%;
+                    border-radius: 0;
+                    box-shadow: none;
+
+                    &::after {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        @media only screen and (max-device-width : 768px) {
             position: fixed;
             max-width: 414px;
             left: auto;
@@ -273,12 +339,6 @@
                 margin: 0 0;
                 overflow-y: hidden;
                 -webkit-overflow-scrolling: touch;
-
-                button {
-                    margin-bottom: 0;
-                    margin-right: 4px;
-                    vertical-align: top;
-                }
             }
 
             label {

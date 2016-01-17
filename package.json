@@ -34,6 +34,7 @@
     "lodash": "^3.10.1",
     "mocha": "^2.3.4",
     "node-sass": "^3.4.2",
+    "rangeslider.js": "^2.1.1",
     "sinon": "^1.17.2",
     "vue": "^1.0.11",
     "vue-hot-reload-api": "^1.2.2",

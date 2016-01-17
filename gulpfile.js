@@ -28,7 +28,8 @@ elixir(function (mix) {
         .styles([
             'resources/assets/css/**/*.css',
             'bower_components/fontawesome/css/font-awesome.min.css',
-            'bower_components/plyr/dist/plyr.css'
+            'bower_components/plyr/dist/plyr.css',
+            'node_modules/rangeslider.js/dist/rangeslider.css'
         ], 'public/css/vendors.css', './');
 
     mix.version(['css/vendors.css', 'css/app.css', 'js/vendors.js', 'js/main.js']);

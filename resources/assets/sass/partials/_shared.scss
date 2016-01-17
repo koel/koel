@@ -3,8 +3,11 @@
     outline: none;
 }
 
+
+
 input, select, button {
     -webkit-appearance: none;
+    -moz-appearance: none;
     border: 0;
     outline: 0;
     font-family: $fontFamily;
@@ -30,6 +33,9 @@ input, select, button {
     &[type="text"] {
         display: block;
     }
+
+    &:focus { outline: none !important; }
+    &::-moz-focus-inner { border: 0 !important; }
 }
 
 input[type="checkbox"] {
