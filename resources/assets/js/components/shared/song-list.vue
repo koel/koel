@@ -39,7 +39,7 @@
                         | limitBy numOfItems"
                     is="song-item" 
                     data-song-id="{{ item.id }}" 
-                    track-by="id"
+                    track-by="$index"
                     :song="item" 
                     @click="rowClick"
                     draggable="true"
