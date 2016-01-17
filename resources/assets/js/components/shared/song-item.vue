@@ -26,6 +26,7 @@
         data() {
             return {
                 playbackState: 'stopped',
+                selected: false,
             };
         },
 
@@ -57,6 +58,21 @@
                         break;
                 }
             },
+
+            /**
+             * Toggle the "selected" state of the current component.
+             */
+            toggleSelectedState() {
+                this.selected = !this.selected;
+            },
+
+            select() {
+                this.selected  = true;
+            },
+
+            deselect() {
+                this.selected = false;
+            }
         },
 
         events: {

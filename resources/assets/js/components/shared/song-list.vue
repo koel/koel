@@ -39,14 +39,15 @@
                         | limitBy numOfItems"
                     is="song-item" 
                     data-song-id="{{ item.id }}" 
-                    track-by="$index"
+                    track-by="id"
                     :song="item" 
-                    @click="rowClick"
+                    v-ref:rows
+                    @click="rowClick(item.id, $event)"
                     draggable="true"
-                    @dragstart="dragStart"
-                    @dragleave="removeDroppableState"
-                    @dragover.prevent="allowDrop"
-                    @drop.stop.prevent="handleDrop"
+                    @dragstart="dragStart(item.id, $event)"
+                    @dragleave="removeDroppableState(item.id, $event)"
+                    @dragover.prevent="allowDrop(item.id, $event)"
+                    @drop.stop.prevent="handleDrop(item.id, $event)"
                 >
                 </tr>
             </tbody>
@@ -79,6 +80,7 @@
                 q: '', // The filter query
                 sortKey: 'title',
                 order: 1,
+                componentCache: {},
             };
         },
 
@@ -204,6 +206,22 @@
             },
 
             /**
+             * Get the song-item component that's associated with a song ID.
+             * 
+             * @param  {string} id The song ID.
+             * 
+             * @return {Object}    The Vue compoenent
+             */
+            getComponentBySongId(id) {
+                // A Vue component can be removed (as a result of filter for example), so we check for its $el as well.
+                if (!this.componentCache[id] || !this.componentCache[id].$el) {
+                    this.componentCache[id] = _.find(this.$refs.rows, { song: { id } });
+                }
+
+                return this.componentCache[id];
+            },
+
+            /**
              * Capture A keydown event and select all if applicable.
              *
              * @param {Object} e The keydown event.
@@ -213,7 +231,7 @@
                     return;
                 }
 
-                $(this.$els.wrapper).find('.song-item').addClass('selected');
+                _.invoke(this.$refs.rows, 'select');
                 this.gatherSelected();
             },
 
@@ -223,7 +241,8 @@
              * @return {Array} An array of Song objects
              */
             gatherSelected() {
-                var ids = _.map($(this.$els.wrapper).find('.song-item.selected'), row => $(row).data('song-id'));
+                var selectedRows = _.where(this.$refs.rows, { selected: true });
+                var ids = _.map(selectedRows, row => row.song.id);
 
                 this.selectedSongs = songStore.byIds(ids);
             },
@@ -238,15 +257,14 @@
              * -----------------------------------------------------------
              */
 
-            rowClick(e) {
-                var $target = $(e.target);
-                var row = $target.is('tr') ? $target[0] : $target.parents('tr')[0];
-
-                // If we're on a touch device, just toggle selection.
+            rowClick(songId, e) {
+                var row = this.getComponentBySongId(songId);
+                
+                // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
                 if (isMobile.any) {
                     this.toggleRow(row);
-
                     this.gatherSelected();
+
                     return;
                 }
 
@@ -260,8 +278,8 @@
                         this.toggleRow(row);
                     }
                 
-                    if (e.shiftKey && this.lastSelectedRow) {
-                        this.selectRowsBetweenIndexes([this.lastSelectedRow.rowIndex, row.rowIndex])
+                    if (e.shiftKey && this.lastSelectedRow && this.lastSelectedRow.$el) {
+                        this.selectRowsBetweenIndexes([this.lastSelectedRow.$el.rowIndex, row.$el.rowIndex]);
                     }
                 }
 
@@ -271,26 +289,26 @@
             /**
              * Toggle select/unslect a row.
              * 
-             * @param  {Object} row The row DOM.
+             * @param  {Object} row The song-item component
              */
             toggleRow(row) {
-                $(row).toggleClass('selected');
+                row.toggleSelectedState();
                 this.lastSelectedRow = row;
             },
 
             selectRowsBetweenIndexes(indexes) {
                 indexes.sort((a, b) => a - b);
 
-                var rows = $(this.lastSelectedRow).parents('tbody').find('tr');
+                var rows = $(this.$els.wrapper).find('tbody tr');
 
                 for (var i = indexes[0]; i <= indexes[1]; ++i) {
-                    $(rows[i-1]).addClass('selected');
+                    this.getComponentBySongId($(rows[i-1]).data('song-id')).select();
                 }
             },
 
             clearSelection() {
-                this.selectedSongs = [];
-                $(this.$els.wrapper).find('.song-item.selected').removeClass('selected');
+                _.invoke(this.$refs.rows, 'deselect');
+                this.gatherSelected();
             },
 
             /**
@@ -300,10 +318,9 @@
              *
              * @param {Object} e The event.
              */
-            dragStart(e) {
+            dragStart(songId, e) {
                 // Select the current target as well.
-                $(e.target).addClass('selected');
-
+                this.getComponentBySongId(songId).select();
                 this.gatherSelected();
 
                 // We can opt for something like application/x-koel.text+plain here to sound fancy,
@@ -322,7 +339,7 @@
              * 
              * @param {Object} e The dragover event.
              */
-            allowDrop(e) {
+            allowDrop(songId, e) {
                 if (this.type !== 'queue') {
                     return;
                 }
@@ -333,7 +350,7 @@
                 return false;
             },
 
-            handleDrop(e) {
+            handleDrop(songId, e) {
                 if (this.type !== 'queue') {
                     return;
                 }
@@ -350,34 +367,17 @@
 
                 var $row = this.removeDroppableState(e);
 
-                queueStore.move(songs, songStore.byId($row.data('song-id')));
+                queueStore.move(songs, songStore.byId(songId));
 
                 return false;
             },
 
-            removeDroppableState(e) {
+            removeDroppableState(songId, e) {
                 return $(e.target).parents('tr').removeClass('droppable');
             },
         },
 
         events: {
-            /**
-             * Listen to queue:select-rows event and mark a range of song-item rows as selected
-             * 
-             * @param  {Array} range An array in the format of [startIndex, stopIndex]
-             */
-            'queue:select-rows': function (range) {
-                if (this.type != 'queue') {
-                    return;
-                }
-
-                var rows = $(this.$els.wrapper).find('.song-item');
-
-                for (i = range[0]; i <= range[1]; ++i) {
-                    $(rows[i]).addClass('selected');
-                }
-            },
-
             /**
              * Listen to song:played event to do some logic.
              * 

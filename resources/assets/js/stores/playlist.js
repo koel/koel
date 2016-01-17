@@ -79,7 +79,12 @@ export default {
      * @param {?Function}   cb
      */
     addSongs(playlist, songs, cb = null) {
+        var count = playlist.songs.length;
         playlist.songs = _.union(playlist.songs, songs);
+
+        if (count === playlist.songs.length) {
+            return;
+        }
 
         http.put(`playlist/${playlist.id}/sync`, { songs: _.pluck(playlist.songs, 'id') }, () => {
             if (cb) {
