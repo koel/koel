@@ -280,6 +280,7 @@
          */
         .rangeslider {
             background: transparent;
+            box-shadow: none;
 
             &--vertical {
                 min-height: 100px;
