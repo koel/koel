@@ -45,7 +45,7 @@
                     @click="rowClick(item.id, $event)"
                     draggable="true"
                     @dragstart="dragStart(item.id, $event)"
-                    @dragleave="removeDroppableState(item.id, $event)"
+                    @dragleave="removeDroppableState"
                     @dragover.prevent="allowDrop(item.id, $event)"
                     @drop.stop.prevent="handleDrop(item.id, $event)"
                 >
@@ -372,7 +372,7 @@
                 return false;
             },
 
-            removeDroppableState(songId, e) {
+            removeDroppableState(e) {
                 return $(e.target).parents('tr').removeClass('droppable');
             },
         },
