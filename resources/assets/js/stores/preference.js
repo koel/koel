@@ -12,7 +12,10 @@ export default {
         repeatMode: 'NO_REPEAT',
         showExtraPanel: true,
         confirmClosing: false,
-        equalizerGains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        equalizer: {
+            preamp: 0,
+            gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        }
     },
 
     /**

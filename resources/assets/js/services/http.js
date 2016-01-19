@@ -1,5 +1,3 @@
-import { extend } from 'lodash';
-
 /**
  * Responsible for all HTTP requests.
  * 
@@ -9,35 +7,24 @@ import { extend } from 'lodash';
  * After all, even if there were errors, how bad can it be?
  */
 export default {
-    request(method, url, data, successCb = null, errorCb = null, options = {}) {
-        switch (method) {
-            case 'get':
-                return Vue.http.get(url, data, options).then(successCb, errorCb);
-            case 'post':
-                return Vue.http.post(url, data, options).then(successCb, errorCb);
-            case 'put':
-                return Vue.http.put(url, data, options).then(successCb, errorCb);
-            case 'delete':
-                return Vue.http.delete(url, data, options).then(successCb, errorCb);
-            default:
-                break;
-        }
+    request(method, url, data, successCb = null, errorCb = null) {
+        return Vue.http[method](url, data).then(successCb, errorCb);
     },
 
-    get(url, data = {}, successCb = null, errorCb = null, options = {}) {
-        return this.request('get', url, data, successCb, errorCb, options);
+    get(url, data = {}, successCb = null, errorCb = null) {
+        return this.request('get', url, data, successCb, errorCb);
     },
 
-    post(url, data, successCb = null, errorCb = null, options = {}) {
-        return this.request('post', url, data, successCb, errorCb, options);
+    post(url, data, successCb = null, errorCb = null) {
+        return this.request('post', url, data, successCb, errorCb);
     },
 
-    put(url, data, successCb = null, errorCb = null, options = {}) {
-        return this.request('put', url, data, successCb, errorCb, options);
+    put(url, data, successCb = null, errorCb = null) {
+        return this.request('put', url, data, successCb, errorCb);
     },
 
-    delete(url, data = {}, successCb = null, errorCb = null, options = {}) {
-        return this.request('delete', url, data, successCb, errorCb, options);
+    delete(url, data = {}, successCb = null, errorCb = null) {
+        return this.request('delete', url, data, successCb, errorCb);
     },
 
     /**

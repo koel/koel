@@ -9,16 +9,32 @@
             </label>
         </div>
         <div class="bands">
-            <span class="band" v-for="band in bands">
-                <label>{{* band.label }}</label>
+            <span class="band preamp">
+                <input
+                    type="range" 
+                    min="-20" 
+                    max="20" 
+                    step="0.01"
+                    data-orientation="vertical"
+                    v-model="preampGainValue">
+                <label>Preamp</label>
+            </span>
+
+            <span class="indicators">
+                <span>+20</span>
+                <span>0</span>
+                <span>-20</span>
+            </span>
+
+            <span class="band amp" v-for="band in bands">
                 <input 
                     type="range" 
                     min="-20" 
                     max="20" 
                     step="0.01"
-                    orient="vertical" 
                     data-orientation="vertical"
                     :value="band.filter.gain.value">
+                <label>{{* band.label }}</label>
             </span>
         </div>
     </div>
@@ -29,7 +45,7 @@
     import $ from 'jquery';
     import rangeslider from 'rangeslider.js';
 
-    import preferenceStore from '../../stores/preference';
+    import equalizerStore from '../../stores/equalizer';
     import utils from '../../services/utils';
 
     export default {
@@ -37,65 +53,9 @@
             return {
                 bands: [],
                 selectedPresetIndex: -1,
+                preampGainValue: 0,
 
-                presets: [
-                    {
-                        name: 'Default',
-                        gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    },
-                    {
-                        name: 'Classical',
-                        gains: [-1, -1, -1, -1, -1, -1, -7, -7, -7, -9],
-                    },
-                    {
-                        name: 'Club',
-                        gains: [-1, -1, 8, 5, 5, 5, 3, -1, -1, -1],
-                    },
-                    {
-                        name: 'Dance',
-                        gains: [9, 7, 2, -1, -1, -5, -7, -7, -1, -1],
-                    },
-                    {
-                        name: 'Full Bass',
-                        gains: [-8, 9, 9, 5, 1, -4, -8, -10, -11, -11]
-                    },
-                    {
-                        name: 'Full Treble',
-                        gains: [-9, -9, -9, -4, 2, 11, 16, 16, 16, 16]
-                    },
-                    {
-                        name: 'Headphone',
-                        gains: [4, 11, 5, -3, -2, 1, 4, 9, 12, 14]
-                    },
-                    {
-                        name: 'Large Hall',
-                        gains: [10, 10, 5, 5, -1, -4, -4, -4, -1, -1],
-                    },
-                    {
-                        name: 'Live',
-                        gains: [-4, -1, 4, 5, 5, 5, 4, 2, 2, 2],
-                    },
-                    {
-                        name: 'Pop',
-                        gains: [-1, 4, 7, 8, 5, -1, -2, -2, -1, -1],
-                    },
-                    {
-                        name: 'Reggae',
-                        gains: [-1, -1, -1, -5, -1, 6, 6, -1, -1, -1],
-                    },
-                    {
-                        name: 'Rock',
-                        gains: [8, 4, -5, -8, -3, 4, 8, 11, 11, 11],
-                    },
-                    {
-                        name: 'Soft Rock',
-                        gains: [4, 4, 2, -1, -4, -5, -3, -1, 2, 8],
-                    },
-                    {
-                        name: 'Techno',
-                        gains: [8, 5, -1, -5, -4, -1, 8, 9, 9, 8],
-                    },
-                ],
+                presets: equalizerStore.presets,
             };
         },
 
@@ -106,30 +66,37 @@
              * @param  {Element} player The audio player's DOM.
              */
             init(player) {
+                var settings = equalizerStore.get();
+
                 var AudioContext = window.AudioContext || window.webkitAudioContext || false; 
                 var context = new AudioContext();
 
-                var gainNode = context.createGain();
-                gainNode.gain.value = 1;
+                this.preampGainNode = context.createGain();
+                this.changePreampGain(settings.preamp);
 
                 var source = context.createMediaElementSource(player);
-                source.connect(gainNode);
+                source.connect(this.preampGainNode);
 
                 var prevFilter = null;
-
-                var savedGains = preferenceStore.get('equalizerGains');
 
                 // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
                 [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000].forEach((f, i) => {
                     var filter = context.createBiquadFilter();
 
-                    filter.type = 'peaking';
-                    filter.gain.value = savedGains[i];
+                    if (i === 0) {
+                        filter.type = 'lowshelf';
+                    } else if (i === 9) {
+                        filter.type = 'highshelf'
+                    } else {
+                        filter.type = 'peaking';    
+                    }
+                    
+                    filter.gain.value = settings.gains[i] ? settings.gains[i] : 0;
                     filter.Q.value = 1;
                     filter.frequency.value = f;
 
                     if (!prevFilter) {
-                        gainNode.connect(filter);
+                        this.preampGainNode.connect(filter);
                     } else {
                         prevFilter.connect(filter);
                     }
@@ -144,32 +111,64 @@
                 
                 prevFilter.connect(context.destination);
 
-                Vue.nextTick(() => {
-                    $('#equalizer input[type="range"]').each((i, el) => {
-                        $(el).rangeslider({
-                            // Force the polyfill and its styles on all browsers
-                            polyfill: false,
+                Vue.nextTick(this.createRangeSliders);
+            },
 
-                            onSlide: (position, value) => {
-                                this.changeGain(this.bands[i].filter, value);
-                            },
+            /**
+             * Create the UI slider for both the preamp and the normal bands using rangeslider.js.
+             */
+            createRangeSliders() {
+                $('#equalizer input[type="range"]').each((i, el) => {
+                    $(el).rangeslider({
+                        /**
+                         * Force the polyfill and its styles on all browsers.
+                         * 
+                         * @type {Boolean}
+                         */
+                        polyfill: false,
 
-                            onSlideEnd: () => {
-                                this.selectedPresetIndex = -1;
-                                this.save();
+                        /**
+                         * Change the gain/preamp value when the user drags the sliders.
+                         * 
+                         * @param  {Float} position
+                         * @param  {Float} value
+                         */
+                        onSlide: (position, value) => {
+                            if ($(el).parents('.band').is('.preamp')) {
+                                this.changePreampGain(value);
+                            } else {
+                                this.changeFilterGain(this.bands[i-1].filter, value);
                             }
-                        }); 
-                    });
+                        },
+
+                        /**
+                         * Save the settings and set the preset index to -1 (which is None) on slideEnd.
+                         */
+                        onSlideEnd: () => {
+                            this.selectedPresetIndex = -1;
+                            this.save();
+                        }
+                    }); 
                 });
+            },
+
+            /**
+             * Change the gain value for the preamp.
+             * 
+             * @param  {Number} dbValue The value of the gain, in dB.
+             */
+            changePreampGain(dbValue) {
+                this.preampGainValue = dbValue;
+                this.preampGainNode.gain.value = Math.pow(10, dbValue/20);
             },
 
             /**
              * Change the gain value for a band/filter.
              * 
              * @param  {Object} filter The filter object
-             * @param  {Object} value 
+             * @param  {Object} value  Value of the gain, in dB.
              */
-            changeGain(filter, value) {
+            changeFilterGain(filter, value) {
                 filter.gain.value = value;
             },
 
@@ -177,18 +176,26 @@
              * Load a preset when the user select it from the dropdown.
              */
             loadPreset() {
-                if (this.selectedPresetIndex === -1) {
+                if (Number.parseInt(this.selectedPresetIndex) === -1) {
                     return;
                 }
 
                 var preset = this.presets[this.selectedPresetIndex];
 
                 $('#equalizer input[type=range]').each((i, input) => {
-                    this.bands[i].filter.gain.value = preset.gains[i];
-                    input.value = preset.gains[i];
+                    // We treat our preamp slider differently.
+                    if ($(input).parents('.band').is('.preamp')) {
+                        this.changePreampGain(preset.preamp);
+                    } else {
+                        this.changeFilterGain(this.bands[i-1].filter, preset.gains[i-1]);
+                        input.value = preset.gains[i-1];    
+                    }
                 });
 
-                $('#equalizer input[type="range"]').rangeslider('update', true);
+                Vue.nextTick(() => {
+                    // Update the slider values into GUI.
+                    $('#equalizer input[type="range"]').rangeslider('update', true);    
+                });
 
                 this.save();
             },
@@ -197,7 +204,7 @@
              * Save the current user's equalizer preferences into local storage.
              */
             save() {
-                preferenceStore.set('equalizerGains', _.pluck(this.bands, 'filter.gain.value'));
+                equalizerStore.set(this.preampGainValue, _.pluck(this.bands, 'filter.gain.value'));
             },
         },
 
@@ -224,6 +231,11 @@
         flex-direction: column;
         left: 0;
 
+        label {
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
+
         .presets {
             padding: 8px 16px;
             display: flex;
@@ -233,6 +245,7 @@
             align-content: center;
             z-index: 1;
             border-bottom: 1px solid rgba(255, 255, 255, .1);
+
 
             .select-wrapper {
                 position: relative;
@@ -261,17 +274,41 @@
 
         .bands {
             padding: 16px;
-            display: flex;
+            z-index: 1;
             left: 0;
+            display: flex;
             justify-content: space-between;
             font-size: 70%;
-            align-items: center;
-            z-index: 1;
+            align-items: flex-start;
 
             .band {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+            }
+
+            .indicators {
+                height: 100px;
+                width: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                margin-left: -16px;
+                opacity: 0;
+                transition: .4s;
+
+                span:first-child {
+                    line-height: 8px;
+                }
+
+                span:last-child {
+                    line-height: 8px;
+                }
+            }
+
+            &:hover .indicators {
+                opacity: 1;
             }
         }
 
@@ -284,11 +321,12 @@
 
             &--vertical {
                 min-height: 100px;
+                width: 16px;
 
                 &::before {
                     content: " ";
                     position: absolute;
-                    left: 9px;
+                    left: 7px;
                     width: 2px;
                     background: rgba(255, 255, 255, 0.2);
                     z-index: 1;
@@ -300,7 +338,7 @@
                     width: 2px;
                     background: #fff;
                     position: absolute;
-                    left: 9px;
+                    left: 7px;
                     box-shadow: none;
                     border-radius: 0;
                 }

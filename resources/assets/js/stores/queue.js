@@ -33,14 +33,29 @@ export default {
         // Anything...
     },
 
+    /**
+     * Get all queued songs.
+     * 
+     * @return {Array.<Object>}
+     */
     all() {
         return this.state.songs;
     },
 
+    /**
+     * Get the first song in the queue.
+     * 
+     * @return {?Object}
+     */
     first() {
         return _.first(this.state.songs);
     },
 
+    /**
+     * Get the last song in the queue.
+     * 
+     * @return {?Object} 
+     */
     last() {
         return _.last(this.state.songs);
     },
@@ -62,7 +77,7 @@ export default {
      *
      * @param {Object|Array.<Object>}   songs   The song, or an array of songs
      * @param {Boolean}                 replace Whether to replace the current queue
-     * @param {Boolean}                 toTop   Whether to prepend of append to the queue
+     * @param {Boolean}                 toTop   Whether to prepend or append to the queue
      */
     queue(songs, replace = false, toTop = false) {
         if (!Array.isArray(songs)) {
@@ -101,7 +116,7 @@ export default {
     /**
      * Unqueue a song, or several songs at once.
      * 
-     * @param  {Object|String|Array.<Object>} songs The song(s) to unqueue.
+     * @param  {Object|String|Array.<Object>} songs The song(s) to unqueue
      */
     unqueue(songs) {
         if (!Array.isArray(songs)) {
@@ -128,6 +143,8 @@ export default {
 
     /**
      * Clear the current queue.
+     *
+     * @param {?Function} cb The function to execute after clearing
      */
     clear(cb = null) {
         this.state.songs = [];
@@ -196,6 +213,8 @@ export default {
 
     /**
      * Shuffle the queue.
+     *
+     * @return {Array.<Object>} The shuffled array of song objects
      */
     shuffle() {
         return (this.state.songs = _.shuffle(this.state.songs));

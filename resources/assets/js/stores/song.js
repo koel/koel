@@ -66,7 +66,7 @@ export default {
      * Get the total duration of some songs.
      * 
      * @param {Array.<Object>}  songs
-     * @param {Boolean}         toHis Wheter to convert the duration into H:i:s format
+     * @param {Boolean}         toHis Whether to convert the duration into H:i:s format
      * 
      * @return {Float|String}
      */
@@ -126,8 +126,6 @@ export default {
      * 
      * @param  {Object}     song 
      * @param  {?Function}  cb 
-     * 
-     * @return {Object}
      */
     getInfo(song, cb = null) {
         if (!_.isUndefined(song.lyrics)) {
@@ -191,8 +189,6 @@ export default {
             if (cb) {
                 cb();
             }
-
-            return;
         });
     },
 };
