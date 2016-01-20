@@ -234,6 +234,7 @@
         label {
             margin-top: 8px;
             margin-bottom: 0;
+            text-align: left;
         }
 
         .presets {
@@ -367,18 +368,6 @@
             bottom: $footerHeight + 5px;
             display: block;
             height: auto;
-
-            .presets {
-                overflow-x: auto;
-                white-space: nowrap;
-                display: block;
-                height: 48px;
-                flex: none;
-                padding: 6px 0 0;
-                margin: 0 0;
-                overflow-y: hidden;
-                -webkit-overflow-scrolling: touch;
-            }
 
             label {
                 line-height: 20px;
