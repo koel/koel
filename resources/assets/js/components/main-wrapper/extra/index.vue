@@ -53,11 +53,7 @@
              * Reset all applicable child components' states.
              */
             resetChildrenStates() {
-                _.each(this.$refs, child => {
-                    if (typeof child.resetState === 'function') {
-                        child.resetState();
-                    }
-                });
+                _.invoke(this.$refs, 'resetState');
             },
         },
 

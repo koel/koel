@@ -80,9 +80,7 @@ export default {
      * @param {Boolean}                 toTop   Whether to prepend or append to the queue
      */
     queue(songs, replace = false, toTop = false) {
-        if (!Array.isArray(songs)) {
-            songs = [songs];
-        }
+        songs = [].concat(songs);
 
         if (replace) {
             this.state.songs = songs;
@@ -101,9 +99,7 @@ export default {
      * @param  {Array.<Object>|Object} songs
      */
     queueAfterCurrent(songs) {
-        if (!Array.isArray(songs)) {
-            songs = [songs];
-        }
+        songs = [].concat(songs);
 
         if (!this.state.current || !this.state.songs.length) {
             return this.queue(songs);
@@ -119,11 +115,7 @@ export default {
      * @param  {Object|String|Array.<Object>} songs The song(s) to unqueue
      */
     unqueue(songs) {
-        if (!Array.isArray(songs)) {
-            songs = [songs];
-        }
-
-        this.state.songs = _.difference(this.state.songs, songs);
+        this.state.songs = _.difference(this.state.songs, [].concat(songs));
     },
 
     /**
