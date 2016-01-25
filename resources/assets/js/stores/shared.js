@@ -24,6 +24,7 @@ export default {
         useLastfm: false,
         currentVersion: '',
         latestVersion: '',
+        cdnUrl: '',
     },
 
     init(successCb = null, errorCb = null) {
@@ -63,5 +64,6 @@ export default {
         this.state.useLastfm = false;
         this.state.currentVersion = '';
         this.state.latestVersion = '';
+        this.state.cdnUrl = '';
     },
 };
