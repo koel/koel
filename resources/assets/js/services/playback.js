@@ -60,8 +60,7 @@ export default {
             songStore.scrobble(queueStore.current());
             
             if (preferenceStore.get('repeatMode') === 'REPEAT_ONE') {
-                this.player.restart();
-                this.player.play();
+                this.restart();
 
                 return;
             }
@@ -95,6 +94,17 @@ export default {
 
         // Set the song as the current song
         queueStore.current(song);
+        this.player.source(`/api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`);
+
+        // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
+        this.restart();
+    },
+
+    /**
+     * Restart playing a song.
+     */
+    restart() {
+        var song = queueStore.current();
 
         // Record the UNIX timestamp the song start playing, for scrobbling purpose
         song.playStartTime = Math.floor(Date.now() / 1000);
@@ -102,7 +112,8 @@ export default {
         this.app.$broadcast('song:played', song);
 
         $('title').text(`${song.title} ♫ Koel`);
-        this.player.source(`/api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`);
+
+        this.player.restart();
         this.player.play();
 
         // Register the play to the server
