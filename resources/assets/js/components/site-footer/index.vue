@@ -26,7 +26,7 @@
                     </p>
 
                     <div class="player">
-                        <audio controls></audio>
+                        <audio crossorigin="anonymous" controls></audio>
                     </div>
                 </div>
             </div>

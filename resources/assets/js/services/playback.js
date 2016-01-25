@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
+import sharedStore from '../stores/shared';
 import queueStore from '../stores/queue';
 import songStore from '../stores/song';
 import artistStore from '../stores/artist';
@@ -94,7 +95,7 @@ export default {
 
         // Set the song as the current song
         queueStore.current(song);
-        this.player.source(`/api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`);
+        this.player.source(`${sharedStore.state.cdnUrl}/api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`);
 
         // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
         this.restart();
@@ -187,7 +188,7 @@ export default {
             i = 0;
         }
         
-        preferenceStore.set('repeatMode',  this.repeatModes[i]);
+        preferenceStore.set('repeatMode', this.repeatModes[i]);
     },
 
     /**
