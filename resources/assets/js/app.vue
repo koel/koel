@@ -30,6 +30,7 @@
 
     import sharedStore from './stores/shared';
     import queueStore from './stores/queue';
+    import userStore from './stores/user';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
     import focusDirective from './directives/focus';
@@ -243,12 +244,14 @@
              * Log the current user out and reset the application state.
              */
             logout() {
-                ls.remove('jwt-token');
-                this.authenticated = false;
-                playback.stop();
-                queueStore.clear();
-                this.loadMainView('queue');
-                this.$broadcast('koel:teardown');
+                userStore.logout(() => {
+                    ls.remove('jwt-token');
+                    this.authenticated = false;
+                    playback.stop();
+                    queueStore.clear();
+                    this.loadMainView('queue');
+                    this.$broadcast('koel:teardown');    
+                });
             },
         },
 

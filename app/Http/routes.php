@@ -33,11 +33,12 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
         Route::post('interaction/batch/like', 'InteractionController@batchLike');
         Route::post('interaction/batch/unlike', 'InteractionController@batchUnlike');
 
-        Route::resource('playlist', 'PlaylistController', ['only' => ['store', 'update', 'destroy']]);
+        Route::resource('playlist', 'PlaylistController');
         Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
 
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
         Route::put('me', 'UserController@updateProfile');
+        Route::delete('me', 'UserController@logout');
 
         Route::get('lastfm/connect', 'LastfmController@connect');
         Route::get('lastfm/callback', [

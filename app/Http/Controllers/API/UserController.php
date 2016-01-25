@@ -9,6 +9,7 @@ use App\Http\Requests\API\UserUpdateRequest;
 use App\Models\User;
 use Hash;
 use JWTAuth;
+use Log;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
@@ -25,10 +26,28 @@ class UserController extends Controller
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
         } catch (JWTException $e) {
+            Log:error($e);
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
         return response()->json(compact('token'));
+    }
+
+    /**
+     * Log the current user out.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+        } catch (JWTException $e) {
+            Log:error($e);
+            return response()->json(['error' => 'could_not_invalidate_token'], 500);
+        }
+
+        return response()->json();
     }
 
     /**

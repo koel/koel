@@ -91,6 +91,19 @@ export default {
     },
 
     /**
+     * Log the current user out.
+     * 
+     * @param  {Function} cb The callback.
+     */
+    logout(cb = null) {
+        http.delete('me', {}, () => {
+            if (cb) {
+                cb();
+            }    
+        });
+    },
+
+    /**
      * Update the current user's profile.
      * 
      * @param  {string} password Can be an empty string if the user is not changing his password.
