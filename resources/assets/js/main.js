@@ -37,8 +37,10 @@ Vue.http.interceptors.push({
     },
 });
 
-// Exit light,
-// Enter night,
-// Take my hand,
-// We're off to never never land.
+/**
+ * Thor! Odin's son, protector of Mankind
+ * Ride to meet your fate, your destiny awaits
+ * Thor! Hlödyn's son, protector of Mankind
+ * Ride to meet your fate, Ragnarök awaits
+ */
 app.$mount('body');
