@@ -27,6 +27,7 @@ class UserController extends Controller
             }
         } catch (JWTException $e) {
             Log:error($e);
+
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
@@ -44,6 +45,7 @@ class UserController extends Controller
             JWTAuth::invalidate(JWTAuth::getToken());
         } catch (JWTException $e) {
             Log:error($e);
+
             return response()->json(['error' => 'could_not_invalidate_token'], 500);
         }
 
