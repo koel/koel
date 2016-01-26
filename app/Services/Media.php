@@ -46,8 +46,6 @@ class Media
             'ugly' => [], // Unmodified files
         ];
 
-        // For now we only care about mp3 and ogg files.
-        // Support for other formats (AAC?) may be added in the future.
         $files = Finder::create()->files()->name('/\.(mp3|ogg|m4a)$/i')->in($path);
 
         foreach ($files as $file) {
