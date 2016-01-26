@@ -82,10 +82,14 @@ class LastfmController extends Controller
 
     /**
      * Set the Last.fm session key of the current user.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function setSessionKey(Request $request)
     {
-        $this->auth->user()->savePreference('lastfm_session_key', $request->input('key'));
+        $this->auth->user()->savePreference('lastfm_session_key', trim($request->input('key')));
 
         return response()->json();
     }

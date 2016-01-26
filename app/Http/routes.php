@@ -22,7 +22,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
 
         Route::post('settings', 'SettingController@save');
 
-        Route::get('play/{song}', 'SongController@play');
+        Route::get('{song}/play', 'SongController@play');
         Route::post('{song}/scrobble/{timestamp}', 'SongController@scrobble')->where([
             'timestamp' => '\d+',
         ]);
