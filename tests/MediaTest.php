@@ -21,6 +21,9 @@ class MediaTest extends TestCase
         // Ogg files and audio files in subdirectories should be recognized
         $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.ogg']);
 
+        // File search shouldn't be case-sensitive.
+        $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.MP3']);
+
         // Non-audio files shouldn't be recognized
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/rubbish.log']);
 
