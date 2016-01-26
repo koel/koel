@@ -9,6 +9,16 @@ use Illuminate\Http\Request;
 class PlaylistController extends Controller
 {
     /**
+     * Gets all playlists by the current user.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        return response()->json(Playlist::byCurrentUser()->orderBy('name')->with('songs')->get());
+    }
+
+    /**
      * Create a new playlist.
      *
      * @param PlaylistStoreRequest $request

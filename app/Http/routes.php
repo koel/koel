@@ -40,7 +40,8 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
         Route::put('me', 'UserController@updateProfile');
         Route::delete('me', 'UserController@logout');
 
-        Route::get('lastfm/connect', 'LastfmController@connect');
+        Route::post('lastfm/session-key', 'LastfmController@setSessionKey');
+
         Route::get('lastfm/callback', [
             'as' => 'lastfm.callback',
             'uses' => 'LastfmController@callback',

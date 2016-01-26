@@ -129,6 +129,13 @@ class LastfmTest extends TestCase
         $this->assertEquals('foo', $api->getSessionKey('bar'));
     }
 
+    public function testSetSessionKey()
+    {
+        $user = factory(User::class)->create();
+        $this->actingAs($user)->post('api/lastfm/session-key', ['key' => 'foo']);
+        $this->assertEquals('foo', $user->getLastfmSessionKey());
+    }
+
     public function testControllerConnect()
     {
         $redirector = m::mock(Redirector::class);

@@ -18,7 +18,7 @@ class InteractionController extends Controller
      */
     public function play(Request $request)
     {
-        if ($interaction = Interaction::increasePlayCount($request->input('id'), $request->user())) {
+        if ($interaction = Interaction::increasePlayCount($request->input('song'), $request->user())) {
             event(new SongStartedPlaying($interaction->song, $interaction->user));
         }
 
@@ -34,7 +34,7 @@ class InteractionController extends Controller
      */
     public function like(Request $request)
     {
-        return response()->json(Interaction::toggleLike($request->input('id'), $request->user()));
+        return response()->json(Interaction::toggleLike($request->input('song'), $request->user()));
     }
 
     /**
@@ -46,7 +46,7 @@ class InteractionController extends Controller
      */
     public function batchLike(BatchInteractionRequest $request)
     {
-        return response()->json(Interaction::batchLike((array) $request->input('ids'), $request->user()));
+        return response()->json(Interaction::batchLike((array) $request->input('songs'), $request->user()));
     }
 
     /**
@@ -58,6 +58,6 @@ class InteractionController extends Controller
      */
     public function batchUnlike(BatchInteractionRequest $request)
     {
-        return response()->json(Interaction::batchUnlike((array) $request->input('ids'), $request->user()));
+        return response()->json(Interaction::batchUnlike((array) $request->input('songs'), $request->user()));
     }
 }

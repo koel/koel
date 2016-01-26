@@ -25,7 +25,7 @@ class InteractionTest extends TestCase
 
         $song = Song::orderBy('id')->first();
         $this->actingAs($user)
-            ->post('api/interaction/play', ['id' => $song->id]);
+            ->post('api/interaction/play', ['song' => $song->id]);
 
         $this->seeInDatabase('interactions', [
             'user_id' => $user->id,
@@ -35,7 +35,7 @@ class InteractionTest extends TestCase
 
         // Try again
         $this->actingAs($user)
-            ->post('api/interaction/play', ['id' => $song->id]);
+            ->post('api/interaction/play', ['song' => $song->id]);
 
         $this->seeInDatabase('interactions', [
             'user_id' => $user->id,
@@ -52,7 +52,7 @@ class InteractionTest extends TestCase
 
         $song = Song::orderBy('id')->first();
         $this->actingAs($user)
-            ->post('api/interaction/like', ['id' => $song->id]);
+            ->post('api/interaction/like', ['song' => $song->id]);
 
         $this->seeInDatabase('interactions', [
             'user_id' => $user->id,
@@ -62,7 +62,7 @@ class InteractionTest extends TestCase
 
         // Try again
         $this->actingAs($user)
-            ->post('api/interaction/like', ['id' => $song->id]);
+            ->post('api/interaction/like', ['song' => $song->id]);
 
         $this->seeInDatabase('interactions', [
             'user_id' => $user->id,
@@ -81,7 +81,7 @@ class InteractionTest extends TestCase
         $songIds = array_pluck($songs->toArray(), 'id');
 
         $this->actingAs($user)
-            ->post('api/interaction/batch/like', ['ids' => $songIds]);
+            ->post('api/interaction/batch/like', ['songs' => $songIds]);
 
         foreach ($songs as $song) {
             $this->seeInDatabase('interactions', [
@@ -92,7 +92,7 @@ class InteractionTest extends TestCase
         }
 
         $this->actingAs($user)
-            ->post('api/interaction/batch/unlike', ['ids' => $songIds]);
+            ->post('api/interaction/batch/unlike', ['songs' => $songIds]);
 
         foreach ($songs as $song) {
             $this->seeInDatabase('interactions', [

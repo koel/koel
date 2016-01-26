@@ -44,6 +44,12 @@ class PlaylistTest extends TestCase
                 'song_id' => $song->id,
             ]);
         }
+
+        $this->actingAs($user)->get('api/playlist')
+            ->seeJson([
+                'id' => $playlist->id,
+                'name' => 'Foo Bar',
+            ]);
     }
 
     public function testUpdatePlaylistName()
