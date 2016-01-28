@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Streamers\PHPStreamer;
 use App\Http\Streamers\XAccelRedirectStreamer;
 use App\Http\Streamers\XSendFileStreamer;
+use App\Http\Streamers\TranscodingStreamer;
 use App\Models\Song;
 
 class SongController extends Controller
@@ -18,6 +19,10 @@ class SongController extends Controller
      */
     public function play(Song $song)
     {
+        if (ends_with(mime_content_type($song->path), 'flac')) {
+            return (new TranscodingStreamer($song))->stream();
+        }
+
         switch (env('STREAMING_METHOD')) {
             case 'x-sendfile':
                 return (new XSendFileStreamer($song))->stream();

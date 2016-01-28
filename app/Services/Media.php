@@ -46,7 +46,7 @@ class Media
             'ugly' => [], // Unmodified files
         ];
 
-        $files = Finder::create()->files()->name('/\.(mp3|ogg|m4a)$/i')->in($path);
+        $files = Finder::create()->files()->name('/\.(mp3|ogg|m4a|flac)$/i')->in($path);
 
         foreach ($files as $file) {
             $song = $this->syncFile($file);
