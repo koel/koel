@@ -35,22 +35,39 @@ class Application extends IlluminateApplication
      * This is a copycat of L5's Elixir, but catered to our directory structure.
      *
      * @param string $file
+     * @param string $manifestFile
      *
      * @return string
      */
-    public function rev($file)
+    public function rev($file, $manifestFile = null)
     {
         static $manifest = null;
 
+        $manifestFile = $manifestFile ?: $this->publicPath().'/public/build/rev-manifest.json';
+
         if (is_null($manifest)) {
-            $manifest = json_decode(file_get_contents($this->publicPath().'/public/build/rev-manifest.json'), true);
+            $manifest = json_decode(file_get_contents($manifestFile), true);
         }
 
         if (isset($manifest[$file])) {
-            return "/public/build/{$manifest[$file]}";
+            return $this->staticUrl("public/build/{$manifest[$file]}");
         }
 
         throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
+    }
+
+    /**
+     * Get a URL for static file requests. 
+     * If this installation of Koel has a CDN_URL configured, use it as the base.
+     * Otherwise, just use a relative '/'.
+     *
+     * @param string The additional resource name/path.
+     * 
+     * @return string
+     */
+    public function staticUrl($name = null)
+    {
+        return trim(env('CDN_URL'), '/ ').'/'.trim(ltrim($name, '/'));
     }
 
     /**

@@ -1,0 +1,29 @@
+[
+  {
+    "name": "v1.1.2",
+    "zipball_url": "https://api.github.com/repos/phanan/koel/zipball/v1.1.2",
+    "tarball_url": "https://api.github.com/repos/phanan/koel/tarball/v1.1.2",
+    "commit": {
+      "sha": "e1279ba5c6b07fbddf65fa2300c6515512a87b17",
+      "url": "https://api.github.com/repos/phanan/koel/commits/e1279ba5c6b07fbddf65fa2300c6515512a87b17"
+    }
+  },
+  {
+    "name": "v1.1.1",
+    "zipball_url": "https://api.github.com/repos/phanan/koel/zipball/v1.1.1",
+    "tarball_url": "https://api.github.com/repos/phanan/koel/tarball/v1.1.1",
+    "commit": {
+      "sha": "3bbb4375e7d1ffbe852bdf9d9952dbdcaf2d6658",
+      "url": "https://api.github.com/repos/phanan/koel/commits/3bbb4375e7d1ffbe852bdf9d9952dbdcaf2d6658"
+    }
+  },
+  {
+    "name": "1.0.0-beta",
+    "zipball_url": "https://api.github.com/repos/phanan/koel/zipball/1.0.0-beta",
+    "tarball_url": "https://api.github.com/repos/phanan/koel/tarball/1.0.0-beta",
+    "commit": {
+      "sha": "e536ff6d35248eab627e0e41dfb7fd969a77c8be",
+      "url": "https://api.github.com/repos/phanan/koel/commits/e536ff6d35248eab627e0e41dfb7fd969a77c8be"
+    }
+  }
+]

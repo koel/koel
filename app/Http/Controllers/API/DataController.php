@@ -33,7 +33,7 @@ class DataController extends Controller
             'users' => auth()->user()->is_admin ? User::all() : [],
             'currentUser' => auth()->user(),
             'useLastfm' => env('LASTFM_API_KEY') && env('LASTFM_API_SECRET'),
-            'cdnUrl' => trim(env('CDN_URL'), '/ '),
+            'cdnUrl' => app()->staticUrl(),
             'currentVersion' => Application::VERSION,
             'latestVersion' => auth()->user()->is_admin ? app()->getLatestVersion() : Application::VERSION,
         ]);
