@@ -39,13 +39,10 @@ export default {
 
         /**
          * Listen to 'error' event on the audio player and play the next song if any.
-         * We don't care about network error capturing here, since every play() call
-         * comes with a POST to api/interaction/play. If the user is not logged in anymore,
-         * this call will result in a 401, following by a redirection to our login page.
          */
         this.player.media.addEventListener('error', e => {
             this.playNext();
-        });
+        }, true);
 
         /**
          * Listen to 'input' event on the volume range control.
