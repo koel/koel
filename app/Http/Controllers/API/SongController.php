@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Streamers\PHPStreamer;
+use App\Http\Streamers\TranscodingStreamer;
 use App\Http\Streamers\XAccelRedirectStreamer;
 use App\Http\Streamers\XSendFileStreamer;
-use App\Http\Streamers\TranscodingStreamer;
 use App\Models\Song;
 
 class SongController extends Controller

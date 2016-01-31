@@ -27,7 +27,7 @@ class ApplicationTest extends TestCase
     {
         putenv('CDN_URL');
 
-        $manifestFile = dirname(__FILE__) . '/blobs/rev-manifest.json';
+        $manifestFile = dirname(__FILE__).'/blobs/rev-manifest.json';
         $this->assertEquals(App::rev('foo.css', $manifestFile), '/public/build/foo00.css');
 
         putenv('CDN_URL=http://cdn.bar');
@@ -37,7 +37,7 @@ class ApplicationTest extends TestCase
     public function testGetLatestVersion()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(dirname(__FILE__) . '/blobs/github-tags.json')),
+            new Response(200, [], file_get_contents(dirname(__FILE__).'/blobs/github-tags.json')),
         ]);
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);
