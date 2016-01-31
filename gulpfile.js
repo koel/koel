@@ -34,12 +34,13 @@ elixir(function (mix) {
 
     mix.version(['css/vendors.css', 'css/app.css', 'js/vendors.js', 'js/main.js']);
 
-    mix.browserSync({
-        files: [
-            elixir.config.appPath + '/**/*.php',
-            elixir.config.get('public.css.outputFolder') + '/**/*.css',
-            elixir.config.get('public.versioning.buildFolder') + '/rev-manifest.json',
-            'resources/views/**/*.php'
-        ],
-    });
+    if (process.env.NODE_ENV !== 'production') {
+        mix.browserSync({
+            proxy: 'koel.dev',
+            files: [
+                elixir.config.get('public.css.outputFolder') + '/**/*.css',
+                elixir.config.get('public.versioning.buildFolder') + '/rev-manifest.json',
+            ]
+        });
+    }
 });
