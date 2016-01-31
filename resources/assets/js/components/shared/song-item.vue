@@ -1,6 +1,6 @@
 <template>
     <tr 
-        @dblclick.prevent="playRighAwayyyyyyy" 
+        @dblclick.prevent="playRightAwayyyyyyy" 
         class="song-item"
         :class="{ selected: selected, playing: playbackState === 'playing' || playbackState === 'paused' }"
     >
@@ -33,7 +33,7 @@
             /**
              * Play the song right away.
              */
-            playRighAwayyyyyyy() {
+            playRightAwayyyyyyy() {
                 if (!queueStore.contains(this.song)) {
                     queueStore.queueAfterCurrent(this.song);
                 }
@@ -53,7 +53,7 @@
                         playback.resume();
                         break;
                     default:
-                        this.playRighAwayyyyyyy();
+                        this.playRightAwayyyyyyy();
                         break;
                 }
             },
