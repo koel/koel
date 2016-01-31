@@ -36,5 +36,7 @@ class GenerateJWTSecret extends Command
         } else {
             file_put_contents($path, $content.PHP_EOL."JWT_SECRET=$key");
         }
+
+        $this->info('JWT secret key generated. Look for `JWT_SECRET` in .env.');
     }
 }
