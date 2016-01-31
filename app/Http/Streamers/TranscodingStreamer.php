@@ -25,7 +25,7 @@ class TranscodingStreamer extends BaseStreamer implements StreamerInterface
         // Since we can't really know the content length of a file while it's still being transcoded,
         // "calculating" it (like below) will be much likely to result in net::ERR_CONTENT_LENGTH_MISMATCH errors.
         // Better comment these for now.
-        // 
+        //
         // header('Accept-Ranges: bytes');
         // $bytes = round(($this->song->length * $bitRate * 1024) / 8);
         // header("Content-Length: $bytes");
