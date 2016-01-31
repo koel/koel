@@ -4,7 +4,6 @@
         tabindex="1" 
         @scroll="scrolling" 
         @keydown.delete.prevent.stop="handleDelete"
-        @keydown.8.prevent.stop="handleDelete"
         @keydown.enter.prevent.stop="handleEnter"
         @keydown.a.prevent="handleA"
     >

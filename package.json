@@ -37,7 +37,7 @@
     "node-sass": "^3.4.2",
     "rangeslider.js": "^2.1.1",
     "sinon": "^1.17.2",
-    "vue": "^1.0.11",
+    "vue": "^1.0.16",
     "vue-hot-reload-api": "^1.2.2",
     "vue-resource": "~0.5.1",
     "vueify": "^7.0.2",
