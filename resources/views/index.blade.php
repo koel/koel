@@ -19,12 +19,12 @@
 </head>
 <body>
     <script>
-         !function(m,y,k,o,e,l){m.GoogleAnalyticsObject=k;m[k]||(m[k]=function(){
-        (m[k].q=m[k].q||[]).push(arguments)});m[k].l=+new Date;e=y.createElement(o);
-        l=y.getElementsByTagName(o)[0];e.src='//www.google-analytics.com/analytics.js';
-        l.parentNode.insertBefore(e,l)}(window,document,'ga','script');
+        !function(k,o,e,l){k.GoogleAnalyticsObject=e;k[e]||(k[e]=function(){
+        (k[e].q=k[e].q||[]).push(arguments)});k[e].l=+new Date;l=o.createElement('script');
+        var e=o.scripts[0];l.src='//www.google-analytics.com/analytics.js';
+        e.parentNode.insertBefore(l,e)}(window,document,'ga');
 
-        ga('create', 'UA-73152563-1', 'demo.koel.phanan.net');
+        ga('create', 'UA-73152563-1', 'auto');
         ga('send', 'pageview');
     </script>
     
