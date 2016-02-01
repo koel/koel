@@ -18,6 +18,16 @@
     <link rel="stylesheet" href="{{ App::rev('css/app.css') }}">
 </head>
 <body>
+    <script>
+         !function(m,y,k,o,e,l){m.GoogleAnalyticsObject=k;m[k]||(m[k]=function(){
+        (m[k].q=m[k].q||[]).push(arguments)});m[k].l=+new Date;e=y.createElement(o);
+        l=y.getElementsByTagName(o)[0];e.src='//www.google-analytics.com/analytics.js';
+        l.parentNode.insertBefore(e,l)}(window,document,'ga','script');
+
+        ga('create', 'UA-73152563-1', 'demo.koel.phanan.net');
+        ga('send', 'pageview');
+    </script>
+    
     <app></app>
 
     <script src="{{ App::rev('js/vendors.js') }}"></script>
