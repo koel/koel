@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ed1a234d6513d5a7614be084578c3bd7",
-    "content-hash": "af504fd25aa5ea944786ee8288568758",
+    "hash": "73595742c708c946629155b84a000a62",
+    "content-hash": "b4898021e96521543995ae80b2a17399",
     "packages": [
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -69,54 +69,6 @@
                 "sublime"
             ],
             "time": "2015-12-21 19:48:06"
-        },
-        {
-            "name": "captbaritone/transcode-to-mp3-stream",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/captbaritone/transcode-to-mp3-stream.git",
-                "reference": "ad66ccad3a86d6ada4158f59a6e179eb359b89b7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/captbaritone/transcode-to-mp3-stream/zipball/ad66ccad3a86d6ada4158f59a6e179eb359b89b7",
-                "reference": "ad66ccad3a86d6ada4158f59a6e179eb359b89b7",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "dev-master"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Captbaritone\\TranscodeToMp3Stream": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordan Eldredge",
-                    "email": "jordanEldredge@gmail.com",
-                    "homepage": "http://jordaneldredge.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Transcode various audio formats to mp3 streams on the fly",
-            "homepage": "http://github.com/captbaritone/transcode-to-mp3-stream",
-            "keywords": [
-                "audio",
-                "mp3",
-                "stream",
-                "transcode"
-            ],
-            "time": "2016-01-25 15:31:23"
         },
         {
             "name": "classpreloader/classpreloader",
@@ -1107,16 +1059,16 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "1.1.5",
+            "version": "1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "dd8998b7c846f6909f4e7a5f67fabebfc412a4f7"
+                "reference": "e6f80ab77885151908d0ec743689ca700886e8b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/dd8998b7c846f6909f4e7a5f67fabebfc412a4f7",
-                "reference": "dd8998b7c846f6909f4e7a5f67fabebfc412a4f7",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/e6f80ab77885151908d0ec743689ca700886e8b0",
+                "reference": "e6f80ab77885151908d0ec743689ca700886e8b0",
                 "shasum": ""
             },
             "require": {
@@ -1151,7 +1103,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2016-01-06 13:31:20"
+            "time": "2016-01-29 16:19:52"
         },
         {
             "name": "phanan/cascading-config",
@@ -3793,9 +3745,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "captbaritone/transcode-to-mp3-stream": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
