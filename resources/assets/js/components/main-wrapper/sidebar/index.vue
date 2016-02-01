@@ -44,6 +44,10 @@
             </ul>
         </section>
 
+        <div class="credits">
+            All music &copy; <a href="http://www.bensound.com/" target=_blank>Bensound.com</a>.
+        </div>
+
         <a 
             href="https://github.com/phanan/koel/releases"
             target="_blank"
@@ -234,7 +238,7 @@
             }
         }
 
-        .new-ver {
+        .new-ver, .credits {
             margin: 16px;
             padding: 16px;
             border: 1px solid $color2ndText;
@@ -246,6 +250,20 @@
 
             &:hover {
                 opacity: .7;
+            }
+        }
+
+        .credits {
+            border-color: #9cd121;
+            padding: 8px;
+            opacity: .7;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            a {
+                color: #9cd121;
             }
         }
 

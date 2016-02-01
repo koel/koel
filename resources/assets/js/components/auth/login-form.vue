@@ -12,8 +12,8 @@
     export default {
         data() {
             return {
-                email: '',
-                password: '',
+                email: 'demo@koel.phanan.net',
+                password: 'demo',
                 failed: false,
             };
         },

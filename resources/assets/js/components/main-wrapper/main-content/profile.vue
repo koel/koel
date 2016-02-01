@@ -131,23 +131,9 @@
              * Update the current user's profile.
              */
             update() {
-                // A little validation put in a small place.
-                if ((this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd) {
-                    $('#inputProfilePassword, #inputProfileConfirmPassword').addClass('error');
+                alert("Profile update is not available in this demo.");
 
-                    return;
-                }
-
-                $('#inputProfilePassword, #inputProfileConfirmPassword').removeClass('error');
-
-                userStore.updateProfile(this.pwd, () => {
-                    this.pwd = '';
-                    this.confirmPwd = '';
-
-                    // "Save!" aaaaaaaand it's gone!
-                    this.showStatus = true;
-                    setTimeout(() => this.showStatus = false, 3000)
-                });
+                return;
             },
 
             /**
