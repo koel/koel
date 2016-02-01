@@ -1,6 +1,6 @@
 <template>
     <header id="mainHeader">
-        <h1 class="brand ir">koel</h1>
+        <h1 class="brand ir"><a href="http://koel.phanan.net">koel</a></h1>
         <span class="hamburger" @click="toggleSidebar">
             <i class="fa fa-bars"></i>
         </span>
