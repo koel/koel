@@ -77,6 +77,7 @@ class PHPStreamer extends BaseStreamer implements StreamerInterface
             $length = $end - $start + 1;
         } else {
             // No range requested
+            $length = filesize($this->song->path);
             $partial = false;
         }
 
