@@ -151,54 +151,41 @@ class Media
             $record = new FSWatchRecord($record);
         }
 
+        if (!$record->isValidEvent()) {
+            return;
+        }
+
         $path = $record->getPath();
 
-        if ($record->isFile()) {
-            // If the file has been deleted...
-            if ($record->isDeleted()) {
-                // ...and it has a record in our database, remove it.
-                if ($song = Song::byPath($path)) {
-                    $song->delete();
-
-                    Log::info("Deleted $path");
-
-                    event(new LibraryChanged());
-                }
-            }
-            // Otherwise, it's a new or changed file. Try to sync it in.
-            // File format etc. will be handled by the syncFile method.
-            else {
-                Log::info("Syncing file $path");
-                Log::info($this->syncFile($path) instanceof Song ? "Synchronized $path" : "Invalid file $path");
-            }
-
-            return;
-        }
-
-        if ($record->isDir()) {
-            if ($record->isDeleted()) {
-                // A whole directory is removed.
-                // We remove all songs in it.
-                Song::inDirectory($path)->delete();
-
-                Log::info("Deleted all song(s) under $path");
-
-                event(new LibraryChanged());
-            } elseif ($record->isRenamed()) {
-                foreach ($this->gatherFiles($path) as $file) {
-                    $this->syncFile($file);
-                }
-
-                Log::info("Synced all song(s) under $path");
+        if ($record->isDeleted()) {
+            // Since the item has been deleted, we can't tell if it was a file or a directory.
+            // So here we're assuming it to be a file first, and directory second.
+            if ($song = Song::byPath($path)) {
+                $song->delete();
+                Log::info("Deleted $path");
             } else {
-                // "New directory" fswatch event actually comes with individual "new file" events,
-                // which should already be handled by our logic above.
+                Song::inDirectory($path)->delete();
+                Log::info("Deleted all song(s) under $path");
             }
+
+            event(new LibraryChanged());
 
             return;
         }
 
-        // The changed item is a symlink maybe. But we're not doing anything with it.
+        // Now if the added/modified item is a file, we simply sync it into the database.
+        if ($record->isFile()) {
+            Log::info("Syncing file $path");
+            Log::info($this->syncFile($path) instanceof Song ? "Synchronized $path" : "Invalid file $path");
+        }
+        // But if it's a whole directory, we traverse through it and sync all children.
+        else {
+            foreach ($this->gatherFiles($path) as $file) {
+                $this->syncFile($file);
+            }
+
+            Log::info("Synced all song(s) under $path");
+        }
     }
 
     /**

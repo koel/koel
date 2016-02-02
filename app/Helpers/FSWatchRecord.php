@@ -23,6 +23,8 @@ class FSWatchRecord
      */
     protected $eventFlags;
 
+    protected $watchedEvents = ['Created', 'Removed', 'Renamed', 'Updated'];
+
     /**
      * Construct an FSWatchRecord object for a record string.
      *
@@ -34,6 +36,23 @@ class FSWatchRecord
         $parts = explode(' ', $string);
         $this->eventFlags = explode(self::FSWATCH_FLAG_SEPARATOR, array_pop($parts));
         $this->path = implode(' ', $parts);
+    }
+
+    /**
+     * Determine if the event is valid to Koel.
+     * We only watch Created, Removed, Renamed, and Updated events.
+     *
+     * @return boolean
+     */
+    public function isValidEvent()
+    {
+        foreach ($this->watchedEvents as $e) {
+            if (in_array($e, $this->eventFlags)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -50,23 +69,13 @@ class FSWatchRecord
     }
 
     /**
-     * Determine if the object is renamed.
-     *
-     * @return boolean
-     */
-    public function isRenamed()
-    {
-        return in_array('Renamed', $this->eventFlags);
-    }
-
-    /**
      * Determine if the changed object is a file.
      *
      * @return bool
      */
     public function isFile()
     {
-        return in_array('IsFile', $this->eventFlags);
+        return is_file($this->path);
     }
 
     /**
@@ -76,7 +85,7 @@ class FSWatchRecord
      */
     public function isDir()
     {
-        return in_array('IsDir', $this->eventFlags);
+        return is_dir($this->path);
     }
 
     /**

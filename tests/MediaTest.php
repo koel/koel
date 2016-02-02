@@ -73,6 +73,7 @@ class MediaTest extends TestCase
             'isDeleted' => false,
             'getPath' => $path,
             'isFile' => true,
+            'isValidEvent' => true,
         ], ["$path IsFile"]);
 
         (new Media())->syncFSWatchRecord($record);
@@ -91,6 +92,7 @@ class MediaTest extends TestCase
             'isDeleted' => true,
             'getPath' => $song->path,
             'isFile' => true,
+            'isValidEvent' => true,
         ], ["{$song->path} IsFile"]);
 
         (new Media())->syncFSWatchRecord($record);
@@ -111,6 +113,7 @@ class MediaTest extends TestCase
             'getPath' => $path,
             'isFile' => false,
             'isDir' => true,
+            'isValidEvent' => true,
         ], ["$path IsDir"]);
 
         $media->syncFSWatchRecord($record);
