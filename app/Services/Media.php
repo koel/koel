@@ -140,7 +140,13 @@ class Media
      *                                          "<changed_path> <event_flag_1>::<event_flag_2>::<event_flag_n>"
      *                                          The fswatch command should look like this:
      *                                          ``` bash
-     *                                          $ fswatch -0x --event-flag-separator="::" $MEDIA_PATH \
+     *                                          fswatch -0x \
+     *                                          --event=Created \
+     *                                          --event=Removed \
+     *                                          --event=Renamed \
+     *                                          --event=Updated \
+     *                                          --event-flag-separator="::" \
+     *                                          $MEDIA_PATH \
      *                                          | xargs -0 -n1 -I record php artisan koel:sync record
      *                                          ```
      * @param SyncMedia|null       $syncCommand The SyncMedia command object, to log to console if executed by artisan.

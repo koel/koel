@@ -74,14 +74,9 @@ class SyncMedia extends Command
     /**
      * SYNc a sinGLE file or directory. See my awesome pun?
      *
-     * @param string|FSWatchRecord $record An fswatch record, in this format:
-     *                                     "<changed_path> <event_flag_1>::<event_flag_2>::<event_flag_n>"
-     *                                     The fswatch command should look like this:
-     *                                     ``` bash
-     *                                     $ fswatch -0x --event-flag-separator="::" $MEDIA_PATH \
-     *                                     | xargs -0 -n1 -I record php artisan koel:sync record
-     *                                     ```
+     * @param string|FSWatchRecord $record
      *
+     * @see  SyncMedia::syncFSWatchRecord
      * @link https://github.com/emcrisostomo/fswatch/wiki/How-to-Use-fswatch
      */
     public function syngle($record)
