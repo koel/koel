@@ -140,7 +140,7 @@ class Media
      *                                          "<changed_path> <event_flag_1>::<event_flag_2>::<event_flag_n>"
      *                                          The fswatch command should look like this:
      *                                          ``` bash
-     *                                          fswatch -0x \
+     *                                          fswatch -0xr \
      *                                          --event=Created \
      *                                          --event=Removed \
      *                                          --event=Renamed \
