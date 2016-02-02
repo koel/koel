@@ -4,7 +4,7 @@ namespace App\Http\Streamers;
 
 use App\Models\Song;
 
-class XSendFileStreamer extends BaseStreamer implements StreamerInterface
+class XSendFileStreamer extends Streamer implements StreamerInterface
 {
     public function __construct(Song $song)
     {

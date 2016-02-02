@@ -4,7 +4,7 @@ namespace App\Http\Streamers;
 
 use App\Models\Song;
 
-class TranscodingStreamer extends BaseStreamer implements StreamerInterface
+class TranscodingStreamer extends Streamer implements StreamerInterface
 {
     public function __construct(Song $song)
     {

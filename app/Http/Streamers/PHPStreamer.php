@@ -4,7 +4,7 @@ namespace App\Http\Streamers;
 
 use App\Models\Song;
 
-class PHPStreamer extends BaseStreamer implements StreamerInterface
+class PHPStreamer extends Streamer implements StreamerInterface
 {
     public function __construct(Song $song)
     {
