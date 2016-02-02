@@ -19,8 +19,13 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\SongLikeToggled' => [
             'App\Listeners\LoveTrackOnLastfm',
         ],
+
         'App\Events\SongStartedPlaying' => [
             'App\Listeners\UpdateLastfmNowPlaying',
+        ],
+
+        'App\Events\LibraryChanged' => [
+            'App\Listeners\TidyLibrary',
         ],
     ];
 
