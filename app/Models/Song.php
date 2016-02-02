@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Lastfm;
+use Media;
 
 /**
  * @property string path
@@ -49,7 +50,7 @@ class Song extends Model
      * Scrobble the song using Last.fm service.
      *
      * @param string $timestamp The UNIX timestamp in which the song started playing.
-     * 
+     *
      * @return mixed
      */
     public function scrobble($timestamp)
@@ -74,6 +75,34 @@ class Song extends Model
     }
 
     /**
+     * Get a Song record using its path.
+     *
+     * @param string $path
+     *
+     * @return Song|null
+     */
+    public static function byPath($path)
+    {
+        return self::find(Media::getHash($path));
+    }
+
+    /**
+     * Scope a query to only include songs in a given directory.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string                                $path  Full path of the directory
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInDirectory($query, $path)
+    {
+        // Make sure the path ends with a directory separator.
+        $path = rtrim(trim($path), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+
+        return $query->where('path', 'LIKE', "$path%");
+    }
+
+    /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
      *
@@ -87,7 +116,7 @@ class Song extends Model
     /**
      * Some songs don't have a title.
      * Fall back to the file name (without extension) for such.
-     * 
+     *
      * @param  $value
      *
      * @return string

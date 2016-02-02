@@ -13,7 +13,8 @@ class SyncMedia extends Command
      *
      * @var string
      */
-    protected $signature = 'koel:sync';
+    protected $signature = 'koel:sync
+        {record? : A single fswatch record. Consult Wiki for more info.}';
 
     protected $ignored = 0;
     protected $invalid = 0;
@@ -47,6 +48,20 @@ class SyncMedia extends Command
             return;
         }
 
+        if (!$record = $this->argument('record')) {
+            $this->syncAll();
+
+            return;
+        }
+
+        $this->syngle($record);
+    }
+
+    /**
+     * Sync all files in the configured media path.
+     */
+    protected function syncAll()
+    {
         $this->info('Koel syncing started. All we need now is just a little patience…');
 
         Media::sync(null, $this);
@@ -54,6 +69,24 @@ class SyncMedia extends Command
         $this->output->writeln("<info>Completed! {$this->synced} new or updated song(s)</info>, "
             ."{$this->ignored} unchanged song(s), "
             ."and <comment>{$this->invalid} invalid file(s)</comment>.");
+    }
+
+    /**
+     * SYNc a sinGLE file or directory. See my awesome pun?
+     *
+     * @param string|FSWatchRecord $record An fswatch record, in this format:
+     *                                     "<changed_path> <event_flag_1>::<event_flag_2>::<event_flag_n>"
+     *                                     The fswatch command should look like this:
+     *                                     ``` bash
+     *                                     $ fswatch -0x --event-flag-separator="::" $MEDIA_PATH \
+     *                                     | xargs -0 -n1 -I record php artisan koel:sync record
+     *                                     ```
+     *
+     * @link https://github.com/emcrisostomo/fswatch/wiki/How-to-Use-fswatch
+     */
+    public function syngle($record)
+    {
+        Media::syncFSWatchRecord($record, $this);
     }
 
     /**
