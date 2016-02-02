@@ -13,8 +13,8 @@
     RewriteBase /
 
     # Deny access to framework directories
-    RewriteRule ^(app/|bootstrap/|config/|database/|resources/|storage/tests|vendor/) - [R=404,L,NC]
-    
+    RewriteRule ^(app|bootstrap|config|database|resources|storage|tests|vendor)/ - [R=404,L,NC]
+
     # And dot files/folders (for example .env)
     RedirectMatch 404 /\..*$
 
