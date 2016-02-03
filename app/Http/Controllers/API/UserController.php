@@ -16,7 +16,9 @@ class UserController extends Controller
 {
     /**
      * Log a user in.
-     * 
+     *
+     * @param UserLoginRequest $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(UserLoginRequest $request)

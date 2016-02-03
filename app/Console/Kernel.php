@@ -13,15 +13,15 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \App\Console\Commands\SyncMedia::class,
-        \App\Console\Commands\Init::class,
-        \App\Console\Commands\GenerateJWTSecret::class,
+        Commands\SyncMedia::class,
+        Commands\Init::class,
+        Commands\GenerateJWTSecret::class,
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     * @param Schedule $schedule
      *
      * @return void
      */

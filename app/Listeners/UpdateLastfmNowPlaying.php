@@ -17,6 +17,8 @@ class UpdateLastfmNowPlaying
 
     /**
      * Create the event listener.
+     *
+     * @param Lastfm $lastfm
      */
     public function __construct(Lastfm $lastfm)
     {

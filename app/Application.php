@@ -61,7 +61,7 @@ class Application extends IlluminateApplication
      * If this installation of Koel has a CDN_URL configured, use it as the base.
      * Otherwise, just use a relative '/'.
      *
-     * @param string The additional resource name/path.
+     * @param string $name The additional resource name/path.
      * 
      * @return string
      */
@@ -72,7 +72,9 @@ class Application extends IlluminateApplication
 
     /**
      * Get the latest version number of Koel from Github.
-     * 
+     *
+     * @param Client $client
+     *
      * @return string
      */
     public function getLatestVersion(Client $client = null)
