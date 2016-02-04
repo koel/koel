@@ -74,19 +74,18 @@ class SyncMedia extends Command
     /**
      * SYNc a sinGLE file or directory. See my awesome pun?
      *
-     * @param string|FSWatchRecord $record An fswatch record, in this format:
-     *                                     "<changed_path> <event_flag_1>::<event_flag_2>::<event_flag_n>"
-     *                                     The fswatch command should look like this:
-     *                                     ``` bash
-     *                                     $ fswatch -0x --event-flag-separator="::" $MEDIA_PATH \
-     *                                     | xargs -0 -n1 -I record php artisan koel:sync record
-     *                                     ```
+     * @param string $record The watch record.
+     *                       As of current we only support inotifywait.
+     *                       Some examples:
+     *                       - "DELETE /var/www/media/gone.mp3"
+     *                       - "CLOSE_WRITE,CLOSE /var/www/media/new.mp3"
+     *                       - "MOVED_TO /var/www/media/new_dir"
      *
-     * @link https://github.com/emcrisostomo/fswatch/wiki/How-to-Use-fswatch
+     * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
      */
     public function syngle($record)
     {
-        Media::syncFSWatchRecord($record, $this);
+        Media::syncByWatchRecord($record, $this);
     }
 
     /**
