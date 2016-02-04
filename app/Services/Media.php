@@ -141,11 +141,11 @@ class Media
      */
     public function syncByWatchRecord(WatchRecordInterface $record, SyncMedia $syncCommand = null)
     {
-        Log::info("New watch record received: $record");
+        Log::info("New watch record received: '$record'");
         $path = $record->getPath();
 
         if ($record->isFile()) {
-            Log::info("$record is a file.");
+            Log::info("'$path' is a file.");
 
             // If the file has been deleted...
             if ($record->isDeleted()) {
@@ -170,7 +170,7 @@ class Media
         }
 
         // Record is a directory.
-        Log::info("$record is a directory.");
+        Log::info("'$path' is a directory.");
 
         if ($record->isDeleted()) {
             // The directory is removed. We remove all songs in it.
