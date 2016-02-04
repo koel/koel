@@ -74,14 +74,18 @@ class SyncMedia extends Command
     /**
      * SYNc a sinGLE file or directory. See my awesome pun?
      *
-     * @param string|FSWatchRecord $record
+     * @param string $record The watch record.
+     *                       As of current we only support inotifywait.
+     *                       Some examples:
+     *                       - "DELETE /var/www/media/gone.mp3"
+     *                       - "CLOSE_WRITE,CLOSE /var/www/media/new.mp3"
+     *                       - "MOVED_TO /var/www/media/new_dir"
      *
-     * @see  SyncMedia::syncFSWatchRecord
-     * @link https://github.com/emcrisostomo/fswatch/wiki/How-to-Use-fswatch
+     * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
      */
     public function syngle($record)
     {
-        Media::syncFSWatchRecord($record, $this);
+        Media::syncByWatchRecord($record, $this);
     }
 
     /**

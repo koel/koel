@@ -3,12 +3,12 @@
 namespace App\Services;
 
 use App\Console\Commands\SyncMedia;
+use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Events\LibraryChanged;
-use App\Helpers\FSWatchRecord;
 use Exception;
 use getID3;
 use getid3_lib;
@@ -134,58 +134,53 @@ class Media
     }
 
     /**
-     * Sync media using an fswatch record.
+     * Sync media using a watch record.
      *
-     * @param string|FSWatchRecord $record      The fswatch record, in this format:
-     *                                          "<changed_path> <event_flag_1>::<event_flag_2>::<event_flag_n>"
-     *                                          The fswatch command should look like this:
-     *                                          ``` bash
-     *                                          fswatch -0xr \
-     *                                          --event=Created \
-     *                                          --event=Removed \
-     *                                          --event=Renamed \
-     *                                          --event=Updated \
-     *                                          --event-flag-separator="::" \
-     *                                          $MEDIA_PATH \
-     *                                          | xargs -0 -n1 -I record php artisan koel:sync record
-     *                                          ```
+     * @param WatchRecordInterface $record      The watch record.
      * @param SyncMedia|null       $syncCommand The SyncMedia command object, to log to console if executed by artisan.
      */
-    public function syncFSWatchRecord($record, SyncMedia $syncCommand = null)
+    public function syncByWatchRecord(WatchRecordInterface $record, SyncMedia $syncCommand = null)
     {
-        if (!($record instanceof FSWatchRecord)) {
-            $record = new FSWatchRecord($record);
-        }
-
-        if (!$record->isValidEvent()) {
-            return;
-        }
-
+        Log::info("New watch record received: $record");
         $path = $record->getPath();
 
-        if ($record->isDeleted()) {
-            // Since the item has been deleted, we can't tell if it was a file or a directory.
-            // So here we're assuming it to be a file first, and directory second.
-            if ($song = Song::byPath($path)) {
-                $song->delete();
-                Log::info("Deleted $path");
-            } else {
-                Song::inDirectory($path)->delete();
-                Log::info("Deleted all song(s) under $path");
-            }
+        if ($record->isFile()) {
+            Log::info("$record is a file.");
 
-            event(new LibraryChanged());
+            // If the file has been deleted...
+            if ($record->isDeleted()) {
+                // ...and it has a record in our database, remove it.
+                if ($song = Song::byPath($path)) {
+                    $song->delete();
+
+                    Log::info("$path deleted.");
+
+                    event(new LibraryChanged());
+                } else {
+                    Log::info("$path doesn't exist in our database--skipping.");
+                }
+            }
+            // Otherwise, it's a new or changed file. Try to sync it in.
+            // File format etc. will be handled by the syncFile method.
+            elseif ($record->isNewOrModified()) {
+                Log::info($this->syncFile($path) instanceof Song ? "Synchronized $path" : "Invalid file $path");
+            }
 
             return;
         }
 
-        // Now if the added/modified item is a file, we simply sync it into the database.
-        if ($record->isFile()) {
-            Log::info("Syncing file $path");
-            Log::info($this->syncFile($path) instanceof Song ? "Synchronized $path" : "Invalid file $path");
-        }
-        // But if it's a whole directory, we traverse through it and sync all children.
-        else {
+        // Record is a directory.
+        Log::info("$record is a directory.");
+
+        if ($record->isDeleted()) {
+            // The directory is removed. We remove all songs in it.
+            if ($count = Song::inDirectory($path)->delete()) {
+                Log::info("Deleted $$count song(s) under $path");
+                event(new LibraryChanged());
+            } else {
+                Log::info("$path is empty--no action needed.");
+            }
+        } elseif ($record->isNewOrModified()) {
             foreach ($this->gatherFiles($path) as $file) {
                 $this->syncFile($file);
             }

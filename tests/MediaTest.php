@@ -1,7 +1,7 @@
 <?php
 
 use App\Events\LibraryChanged;
-use App\Helpers\FSWatchRecord;
+use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
 use App\Models\Song;
 use App\Services\Media;
@@ -69,14 +69,7 @@ class MediaTest extends TestCase
     {
         $path = $this->mediaPath.'/blank.mp3';
 
-        $record = m::mock(FSWatchRecord::class, [
-            'isDeleted' => false,
-            'getPath' => $path,
-            'isFile' => true,
-            'isValidEvent' => true,
-        ], ["$path IsFile"]);
-
-        (new Media())->syncFSWatchRecord($record);
+        (new Media())->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
 
         $this->seeInDatabase('songs', ['path' => $path]);
     }
@@ -88,14 +81,7 @@ class MediaTest extends TestCase
         $this->createSampleMediaSet();
         $song = Song::orderBy('id', 'desc')->first();
 
-        $record = m::mock(FSWatchRecord::class, [
-            'isDeleted' => true,
-            'getPath' => $song->path,
-            'isFile' => true,
-            'isValidEvent' => true,
-        ], ["{$song->path} IsFile"]);
-
-        (new Media())->syncFSWatchRecord($record);
+        (new Media())->syncByWatchRecord(new InotifyWatchRecord("DELETE {$song->path}"));
 
         $this->notSeeInDatabase('songs', ['id' => $song->id]);
     }
@@ -106,17 +92,8 @@ class MediaTest extends TestCase
 
         $media = new Media();
         $media->sync($this->mediaPath);
-        $path = $this->mediaPath.'/subdir';
 
-        $record = m::mock(FSWatchRecord::class, [
-            'isDeleted' => true,
-            'getPath' => $path,
-            'isFile' => false,
-            'isDir' => true,
-            'isValidEvent' => true,
-        ], ["$path IsDir"]);
-
-        $media->syncFSWatchRecord($record);
+        $media->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR {$this->mediaPath}/subdir"));
 
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/sic.mp3']);
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.MP3']);
