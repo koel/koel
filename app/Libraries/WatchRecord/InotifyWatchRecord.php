@@ -18,7 +18,7 @@ class InotifyWatchRecord extends WatchRecord implements WatchRecordInterface
 
     /**
      * Parse the inotifywait's output. The inotifywait command should be something like:
-     * $ inotifywait -rme move,close_write,delete --format "%e %w%f" $MEDIA_PATH
+     * $ inotifywait -rme move,close_write,delete --format "%e %w%f" $MEDIA_PATH.
      *
      * @param $string string The output string.
      */
