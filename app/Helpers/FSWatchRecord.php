@@ -42,7 +42,7 @@ class FSWatchRecord
      * Determine if the event is valid to Koel.
      * We only watch Created, Removed, Renamed, and Updated events.
      *
-     * @return boolean
+     * @return bool
      */
     public function isValidEvent()
     {
@@ -61,7 +61,7 @@ class FSWatchRecord
      * For example, deleting on OSX will be reported as "Renamed", as
      * the file/directory is "renamed" into the Trash folder.
      *
-     * @return boolean
+     * @return bool
      */
     public function isDeleted()
     {

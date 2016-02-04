@@ -3,18 +3,18 @@
 namespace App\Services;
 
 use App\Console\Commands\SyncMedia;
+use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
-use App\Events\LibraryChanged;
 use Exception;
 use getID3;
 use getid3_lib;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Finder\Finder;
 use SplFileInfo;
+use Symfony\Component\Finder\Finder;
 
 class Media
 {
