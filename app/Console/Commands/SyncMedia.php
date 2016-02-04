@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Setting;
 use Illuminate\Console\Command;
 use Media;
@@ -85,7 +86,7 @@ class SyncMedia extends Command
      */
     public function syngle($record)
     {
-        Media::syncByWatchRecord($record, $this);
+        Media::syncByWatchRecord(new InotifyWatchRecord($record), $this);
     }
 
     /**
