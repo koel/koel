@@ -15,7 +15,7 @@ class SyncMedia extends Command
      * @var string
      */
     protected $signature = 'koel:sync
-        {record? : A single fswatch record. Consult Wiki for more info.}';
+        {record? : A single watch record. Consult Wiki for more info.}';
 
     protected $ignored = 0;
     protected $invalid = 0;
