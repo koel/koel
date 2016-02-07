@@ -25,15 +25,15 @@ export default {
 
         // Set the avatar for each of the users…
         _.each(this.state.users, this.setAvatar);
-        
+
         // …and the current user as well.
         this.setAvatar();
     },
 
     /**
      * Get all users.
-     * 
-     * @return {Array.<Object>} 
+     *
+     * @return {Array.<Object>}
      */
     all() {
         return this.state.users;
@@ -41,9 +41,9 @@ export default {
 
     /**
      * Get a user by his ID
-     * 
+     *
      * @param  {Integer} id
-     * 
+     *
      * @return {Object}
      */
     byId(id) {
@@ -67,7 +67,7 @@ export default {
 
     /**
      * Set a user's avatar using Gravatar's service.
-     * 
+     *
      * @param {?Object} user The user. If null, the current user.
      */
     setAvatar(user = null) {
@@ -75,13 +75,13 @@ export default {
             user = this.current();
         }
 
-        user.avatar = `https://www.gravatar.com/avatar/${md5(user.email)}?s=256`;
+        Vue.set(user, 'avatar', `https://www.gravatar.com/avatar/${md5(user.email)}?s=256`);
     },
 
     /**
      * Log a user in.
-     * 
-     * @param  {String}     email    
+     *
+     * @param  {String}     email
      * @param  {String}     password
      * @param  {?Function}  successCb
      * @param  {?Function}  errorCb
@@ -92,29 +92,29 @@ export default {
 
     /**
      * Log the current user out.
-     * 
+     *
      * @param  {Function} cb The callback.
      */
     logout(cb = null) {
         http.delete('me', {}, () => {
             if (cb) {
                 cb();
-            }    
+            }
         });
     },
 
     /**
      * Update the current user's profile.
-     * 
+     *
      * @param  {string} password Can be an empty string if the user is not changing his password.
      * @param  {?Function}  successCb
      * @param  {?Function}  errorCb
      */
     updateProfile(password = null, cb = null) {
-        http.put('me', { 
+        http.put('me', {
                 password,
-                name: this.current().name, 
-                email: this.current().email 
+                name: this.current().name,
+                email: this.current().email
             }, () => {
                 this.setAvatar();
 
@@ -127,7 +127,7 @@ export default {
 
     /**
      * Stores a new user into the database.
-     * 
+     *
      * @param  {string}     name
      * @param  {string}     email
      * @param  {string}     password
@@ -136,7 +136,7 @@ export default {
     store(name, email, password, cb = null) {
         http.post('user', { name, email, password }, response => {
             var user = response.data;
-            
+
             this.setAvatar(user);
             this.state.users.push(user);
 
@@ -148,7 +148,7 @@ export default {
 
     /**
      * Update a user's profile.
-     * 
+     *
      * @param  {Object}     user
      * @param  {String}     name
      * @param  {String}     email
@@ -168,7 +168,7 @@ export default {
 
     /**
      * Delete a user.
-     * 
+     *
      * @param  {Object}     user
      * @param  {?Function}  cb
      */
@@ -185,7 +185,7 @@ export default {
             // Didn't mean to make you cry
             // If I'm not back again this time tomorrow
             // Carry on, carry on, as if nothing really matters
-            // 
+            //
             // Too late, my time has come
             // Sends shivers down my spine
             // Body's aching all the time
