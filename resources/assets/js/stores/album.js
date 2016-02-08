@@ -24,6 +24,7 @@ export default {
             _.each(artist.albums, album => {
                 Vue.set(album, 'playCount', 0);
                 Vue.set(album, 'artist', artist);
+                Vue.set(album, 'info', null);
                 this.getLength(album);
             });
 

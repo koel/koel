@@ -1,34 +1,19 @@
 <template>
     <article id="lyrics">
         <div class="content">
-            <div v-if="lyrics">{{{ lyrics }}}</div>
+            <div v-if="song.lyrics">{{{ song.lyrics }}}</div>
             <p class="none" v-else>No lyrics found. Are you not listening to Bach?</p>
         </div>
     </article>
 </template>
 
 <script>
-    import songStore from '../../../stores/song';
-
     export default {
         replace: false,
-
-        data() {
-            return {
-                lyrics: '',
-            };
-        },
+        props: ['song'],
 
         methods: {
-            resetState() {
-                this.lyrics = '';
-            },
-        },
-
-        events: {
-            'song:info-loaded': function (song) {
-                this.lyrics = song.lyrics;
-            },
+            resetState() {},
         },
     };
 </script>

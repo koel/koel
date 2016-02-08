@@ -1,29 +1,29 @@
 <template>
-    <article v-if="song" id="albumInfo">
+    <article v-if="album.id" id="albumInfo">
         <h1>
-            <span>{{ song.album.name }}</span>
+            <span>{{ album.name }}</span>
 
             <a class="shuffle" @click.prevent="shuffleAll"><i class="fa fa-random"></i></a>
         </h1>
 
-        <div v-if="song.album.info">
-            <img v-if="song.album.info.image" :src="song.album.info.image" 
+        <div v-if="album.info">
+            <img v-if="album.info.image" :src="album.info.image"
                 title=""
                 class="cover">
 
-            <div class="wiki" v-if="song.album.info.wiki && song.album.info.wiki.summary">
-                <div class="summary" v-show="!showingFullWiki">{{{ song.album.info.wiki.summary }}}</div>
-                <div class="full" v-show="showingFullWiki">{{{ song.album.info.wiki.full }}}</div>
+            <div class="wiki" v-if="album.info.wiki && album.info.wiki.summary">
+                <div class="summary" v-show="!showingFullWiki">{{{ album.info.wiki.summary }}}</div>
+                <div class="full" v-show="showingFullWiki">{{{ album.info.wiki.full }}}</div>
 
                 <button class="more" v-show="!showingFullWiki" @click.prevent="showingFullWiki = !showingFullWiki">
                     Full Wiki
                 </button>
             </div>
 
-            <section class="track-listing" v-if="song.album.info.tracks.length">
+            <section class="track-listing" v-if="album.info.tracks.length">
                 <h1>Track Listing</h1>
                 <ul class="tracks">
-                    <li v-for="track in song.album.info.tracks">
+                    <li v-for="track in album.info.tracks">
                         <span class="no">{{ $index + 1 }}</span>
                         <span class="title">{{ track.title }}</span>
                         <span class="length">{{ track.fmtLength }}</span>
@@ -31,7 +31,7 @@
                 </ul>
             </section>
 
-            <footer>Data &copy; <a target="_blank" href="{{{ song.album.info.url }}}">Last.fm</a></footer>
+            <footer>Data &copy; <a target="_blank" href="{{{ album.info.url }}}">Last.fm</a></footer>
         </div>
 
         <p class="none" v-else>No album information found. At all.</p>
@@ -43,20 +43,19 @@
 
     export default {
         replace: false,
+        props: ['album'],
 
         data() {
             return {
-                song: null,
                 showingFullWiki: false,
             };
         },
 
         methods: {
             /**
-             * Reset the component's current state (song, album info etc.).
+             * Reset the component's current state.
              */
             resetState() {
-                this.song = null;
                 this.showingFullWiki = false;
             },
 
@@ -64,16 +63,10 @@
              * Shuffle all songs in the current album.
              */
             shuffleAll() {
-                playback.playAllInAlbum(this.song.album);
-            }
-        },
-
-        events: {
-            'song:info-loaded': function (song) {
-                this.song = song;
+                playback.playAllInAlbum(this.album);
             },
         },
-    }
+    };
 </script>
 
 <style lang="sass">
@@ -98,7 +91,7 @@
                 margin-bottom: 0;
                 display: block;
             }
-            
+
             li {
                 display: flex;
                 justify-content: space-between;
@@ -114,7 +107,7 @@
                 }
 
                 .title {
-                    flex: 1; 
+                    flex: 1;
                 }
 
                 .length {

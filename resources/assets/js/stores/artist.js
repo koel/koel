@@ -25,6 +25,7 @@ export default {
 
             Vue.set(artist, 'playCount', 0);
             Vue.set(artist, 'songCount', _.reduce(artist.albums, (count, album)  => count + album.songs.length, 0));
+            Vue.set(artist, 'info', null);
         });
 
         albumStore.init(this.state.artists);

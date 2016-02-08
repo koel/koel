@@ -2,18 +2,18 @@
     <section id="extra" :class="{ showing: prefs.showExtraPanel }">
         <div class="tabs">
             <div class="header clear">
-                <a @click.prevent="currentView = 'lyrics'" 
+                <a @click.prevent="currentView = 'lyrics'"
                     :class="{ active: currentView === 'lyrics' }">Lyrics</a>
-                <a @click.prevent="currentView = 'artistInfo'" 
+                <a @click.prevent="currentView = 'artistInfo'"
                     :class="{ active: currentView === 'artistInfo' }">Artist</a>
-                <a @click.prevent="currentView = 'albumInfo'" 
+                <a @click.prevent="currentView = 'albumInfo'"
                     :class="{ active: currentView === 'albumInfo' }">Album</a>
             </div>
 
             <div class="panes">
-                <lyrics v-ref:lyrics v-show="currentView === 'lyrics'"></lyrics>
-                <artist-info v-ref:artist-info v-show="currentView === 'artistInfo'"></artist-info>
-                <album-info v-ref:album-info v-show="currentView === 'albumInfo'"></album-info>
+                <lyrics :song="song" v-ref:lyrics v-show="currentView === 'lyrics'"></lyrics>
+                <artist-info :artist="song.album.artist" v-ref:artist-info v-show="currentView === 'artistInfo'"></artist-info>
+                <album-info :album="song.album" v-ref:album-info v-show="currentView === 'albumInfo'"></album-info>
             </div>
         </div>
     </section>
@@ -22,18 +22,19 @@
 <script>
     import isMobile from 'ismobilejs';
     import _ from 'lodash';
-    
+
     import lyrics from './lyrics.vue';
     import artistInfo from './artist-info.vue'
     import albumInfo from './album-info.vue'
     import preferenceStore from '../../../stores/preference';
     import songStore from '../../../stores/song';
-    
+
     export default {
         components: { lyrics, artistInfo, albumInfo },
 
         data() {
             return {
+                song: songStore.stub,
                 prefs: preferenceStore.state,
                 currentView: 'lyrics',
             };
@@ -41,7 +42,7 @@
 
         ready() {
             if (isMobile.phone) {
-                // On a mobile device, we always hide the panel initially regardless of 
+                // On a mobile device, we always hide the panel initially regardless of
                 // the saved preference.
                 this.prefs.showExtraPanel = false;
                 preferenceStore.save();
@@ -50,9 +51,11 @@
 
         methods: {
             /**
-             * Reset all applicable child components' states.
+             * Reset all self and applicable child components' states.
              */
-            resetChildrenStates() {
+            resetState() {
+                this.currentView = 'lyrics';
+                this.song = songStore.stub;
                 _.invoke(this.$refs, 'resetState');
             },
         },
@@ -68,16 +71,11 @@
             },
 
             'song:played': function (song) {
-                this.resetChildrenStates();
-
-                songStore.getInfo(song, () => {
-                    this.$broadcast('song:info-loaded', song);
-                });
+                songStore.getInfo(this.song = song);
             },
 
             'koel:teardown': function () {
-                this.currentView = 'lyrics';
-                this.resetChildrenStates();
+                this.resetState();
             },
         },
     };
@@ -86,7 +84,7 @@
 <style lang="sass">
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
-        
+
     #extra {
         flex: 0 0 $extraPanelWidth;
         padding: 24px 16px $footerHeight;
@@ -95,9 +93,9 @@
         overflow: auto;
 
         // Enable scroll with momentum on touch devices
-        overflow-y: scroll; 
+        overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
-        
+
         display: none;
         color: $color2ndText;
 
@@ -173,7 +171,7 @@
             font-size: 90%;
 
             a {
-                color: #fff; 
+                color: #fff;
                 font-weight: $fontWeight_Normal;
 
                 &:hover {

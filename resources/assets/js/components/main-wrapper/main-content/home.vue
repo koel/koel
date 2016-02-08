@@ -85,14 +85,28 @@
                 return _.sample(this.greetings).replace('%s', userStore.current().name);
             },
 
+            /**
+             * The most played songs.
+             *
+             * @return {Array.<Object>}
+             */
             topSongs() {
                 return songStore.getMostPlayed();
             },
 
+            /**
+             * The most played albums.
+             *
+             * @return {Array.<Object>}
+             */
             topAlbums() {
                 return albumStore.getMostPlayed();
             },
 
+            /**
+             * The most played artists.
+             * @return {Array.<Object>}
+             */
             topArtists() {
                 return artistStore.getMostPlayed();
             },

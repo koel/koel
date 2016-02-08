@@ -43,6 +43,7 @@ export default {
                 Vue.set(song, 'playCount', 0);
                 Vue.set(song, 'album', album);
                 Vue.set(song, 'liked', false);
+                Vue.set(song, 'lyrics', null);
                 Vue.set(song, 'playbackState', 'stopped');
 
                 // Cache the song, so that byId() is faster
@@ -169,7 +170,8 @@ export default {
      * @param  {?Function}  cb
      */
     getInfo(song, cb = null) {
-        if (!_.isUndefined(song.lyrics)) {
+        // Check if the song's info has been retrieved before.
+        if (song.lyrics !== null) {
             if (cb) {
                 cb();
             }
