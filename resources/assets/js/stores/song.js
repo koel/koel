@@ -12,12 +12,24 @@ export default {
     cache: {},
 
     state: {
+        /**
+         * All songs in the store
+         *
+         * @type {Array}
+         */
         songs: [stub],
+
+        /**
+         * The recently played songs **in the current session**
+         *
+         * @type {Array}
+         */
+        recent: [],
     },
 
     /**
      * Init the store.
-     * 
+     *
      * @param  {Array.<Object>} albums The array of albums to extract our songs from
      */
     init(albums) {
@@ -27,20 +39,23 @@ export default {
             _.each(album.songs, song => {
                 song.fmtLength = utils.secondsToHis(song.length);
 
-                // Keep a back reference to the album
-                song.album = album;
+                // Manually set these addtional properties to be reactive
+                Vue.set(song, 'playCount', 0);
+                Vue.set(song, 'album', album);
+                Vue.set(song, 'liked', false);
+                Vue.set(song, 'playbackState', 'stopped');
 
                 // Cache the song, so that byId() is faster
                 this.cache[song.id] = song;
             });
-            
+
             return songs.concat(album.songs);
         }, []);
     },
 
     /**
      * Initializes the interaction (like/play count) information.
-     * 
+     *
      * @param  {Array.<Object>} interactions The array of interactions of the current user
      */
     initInteractions(interactions) {
@@ -48,13 +63,15 @@ export default {
 
         _.each(interactions, interaction => {
             var song = this.byId(interaction.song_id);
-            
+
             if (!song) {
                 return;
             }
 
             song.liked = interaction.liked;
             song.playCount = interaction.play_count;
+            song.album.playCount += song.playCount;
+            song.album.artist.playCount += song.playCount;
 
             if (song.liked) {
                 favoriteStore.add(song);
@@ -64,10 +81,10 @@ export default {
 
     /**
      * Get the total duration of some songs.
-     * 
+     *
      * @param {Array.<Object>}  songs
      * @param {Boolean}         toHis Whether to convert the duration into H:i:s format
-     * 
+     *
      * @return {Float|String}
      */
     getLength(songs, toHis) {
@@ -91,9 +108,9 @@ export default {
 
     /**
      * Get a song by its ID.
-     * 
+     *
      * @param  {String} id
-     * 
+     *
      * @return {Object}
      */
     byId(id) {
@@ -102,9 +119,9 @@ export default {
 
     /**
      * Get songs by their IDs.
-     * 
+     *
      * @param  {Array.<String>} ids
-     * 
+     *
      * @return {Array.<Object>}
      */
     byIds(ids) {
@@ -113,26 +130,50 @@ export default {
 
     /**
      * Increase a play count for a song.
-     * 
-     * @param  {Object} song
+     *
+     * @param {Object} song
+     * @param {?Function} cb
      */
-    registerPlay(song) {
-        // Increase playcount
-        http.post('interaction/play', { song: song.id }, response => song.playCount = response.data.play_count);
+    registerPlay(song, cb = null) {
+        var oldCount = song.playCount;
+
+        http.post('interaction/play', { song: song.id }, response => {
+            // Use the data from the server to make sure we don't miss a play from another device.
+            song.playCount = response.data.play_count;
+            song.album.playCount += song.playCount - oldCount;
+            song.album.artist.playCount += song.playCount - oldCount;
+
+            if (cb) {
+                cb();
+            }
+        });
+    },
+
+    /**
+     * Add a song into the "recently played" list.
+     *
+     * @param {Object}
+     */
+    addRecent(song) {
+        // First we make sure that there's no duplicate.
+        this.state.recent = _.without(this.state.recent, song);
+
+        // Then we prepend the song into the list.
+        this.state.recent.unshift(song);
     },
 
     /**
      * Get extra song information (lyrics, artist info, album info).
-     * 
-     * @param  {Object}     song 
-     * @param  {?Function}  cb 
+     *
+     * @param  {Object}     song
+     * @param  {?Function}  cb
      */
     getInfo(song, cb = null) {
         if (!_.isUndefined(song.lyrics)) {
             if (cb) {
                 cb();
             }
-            
+
             return;
         }
 
@@ -143,9 +184,9 @@ export default {
             if (data.artist_info && typeof data.artist_info.image !== 'string') {
                 data.artist_info.image = null;
             }
-            
+
             song.album.artist.info = data.artist_info;
-            
+
             // Set the artist image on the client side to the retrieved image from server.
             if (data.artist_info.image) {
                 song.album.artist.image = data.artist_info.image;
@@ -176,9 +217,9 @@ export default {
 
     /**
      * Scrobble a song (using Last.fm).
-     * 
+     *
      * @param  {Object}     song
-     * @param  {?Function}  cb 
+     * @param  {?Function}  cb
      */
     scrobble(song, cb = null) {
         if (!window.useLastfm || !userStore.current().preferences.lastfm_session_key) {
@@ -190,5 +231,33 @@ export default {
                 cb();
             }
         });
+    },
+
+    /**
+     * Get the last n recently played songs.
+     *
+     * @param  {Number} n
+     *
+     * @return {Array.<Object>}
+     */
+    getRecent(n = 10) {
+        // And last, make sure the list doesn't exceed 10 items.
+        return _.take(this.state.recent, n);
+    },
+
+    /**
+     * Get top n most-played songs.
+     *
+     * @param  {Number} n
+     *
+     * @return {Array.<Object>}
+     */
+    getMostPlayed(n = 10) {
+        var songs = _.take(_.sortByOrder(this.state.songs, 'playCount', 'desc'), n);
+
+        // Remove those with playCount=0
+        _.remove(songs, song => !song.playCount);
+
+        return songs;
     },
 };

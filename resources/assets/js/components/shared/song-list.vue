@@ -1,8 +1,8 @@
 <template>
-    <div class="song-list-wrap main-scroll-wrap {{ type }}" 
-        v-el:wrapper 
-        tabindex="1" 
-        @scroll="scrolling" 
+    <div class="song-list-wrap main-scroll-wrap {{ type }}"
+        v-el:wrapper
+        tabindex="1"
+        @scroll="scrolling"
         @keydown.delete.prevent.stop="handleDelete"
         @keydown.enter.prevent.stop="handleEnter"
         @keydown.a.prevent="handleA"
@@ -32,14 +32,14 @@
 
             <tbody>
                 <tr
-                    v-for="item in items 
+                    v-for="item in items
                         | caseInsensitiveOrderBy sortKey order
-                        | filterBy q in 'title' 'album.name' 'album.artist.name' 
+                        | filterBy q in 'title' 'album.name' 'album.artist.name'
                         | limitBy numOfItems"
-                    is="song-item" 
-                    data-song-id="{{ item.id }}" 
+                    is="song-item"
+                    data-song-id="{{ item.id }}"
                     track-by="id"
-                    :song="item" 
+                    :song.sync="item"
                     v-ref:rows
                     @click="rowClick(item.id, $event)"
                     draggable="true"
@@ -52,14 +52,14 @@
             </tbody>
         </table>
     </div>
-    
+
 </template>
 
 <script>
     import _ from 'lodash';
     import isMobile from 'ismobilejs';
     import $ from 'jquery';
-    
+
     import songItem from './song-item.vue';
     import infiniteScroll from '../../mixins/infinite-scroll';
     import playlistStore from '../../stores/playlist';
@@ -69,7 +69,7 @@
     import playback from '../../services/playback';
 
     export default {
-        props: ['items', 'type', 'playlist', 'selectedSongs'],
+        props: ['items', 'type', 'playlist', 'selectedSongs', 'sortable'],
         mixins: [infiniteScroll],
         components: { songItem },
 
@@ -88,13 +88,12 @@
              * Watch the items.
              */
             items() {
-                // Make sure a queue is not sorted in any ways.
-                if (this.type === 'queue') {
+                if (this.sortable === false) {
                     this.sortKey = '';
                 }
 
                 // Dispatch this event for the parent to update the song count and duration status.
-                this.$dispatch('songlist:changed', { 
+                this.$dispatch('songlist:changed', {
                     songCount: this.items.length,
                     totalLength: songStore.getLength(this.items, true),
                 });
@@ -104,13 +103,11 @@
         methods: {
             /**
              * Handle sorting the song list.
-             * 
+             *
              * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
              */
             sort(key) {
-                // We don't allow sorting in the Queue screen.
-                // (It makes little sense if we do, since the queue is shuffled with each population).
-                if (this.type === 'queue') {
+                if (this.sortable === false) {
                     return;
                 }
 
@@ -138,7 +135,7 @@
                     case 'playlist':
                         playlistStore.removeSongs(this.playlist, songs)
                         break;
-                    default: 
+                    default:
                         break;
                 }
 
@@ -160,7 +157,7 @@
                 if (songs.length === 1) {
                     // Just play the song
                     playback.play(songs[0]);
-                    
+
                     return;
                 }
 
@@ -172,18 +169,18 @@
                     case 'favorites':
                     case 'playlist':
                     default:
-                        // 
+                        //
                         // --------------------------------------------------------------------
-                        // For other screens, follow this map: 
-                        // 
+                        // For other screens, follow this map:
+                        //
                         //  • Enter: Queue songs to bottom
                         //  • Shift+Enter: Queues song to top
                         //  • Cmd/Ctrl+Enter: Queues song to bottom and play the first selected song
                         //  • Cmd/Ctrl+Shift+Enter: Queue songs to top and play the first queued song
-                        // 
+                        //
                         // Also, if there's only one song selected, play it right away.
                         // --------------------------------------------------------------------
-                        // 
+                        //
                         if (e.shiftKey) {
                             queueStore.queue(songs, false);
                         } else {
@@ -206,9 +203,9 @@
 
             /**
              * Get the song-item component that's associated with a song ID.
-             * 
+             *
              * @param  {String} id The song ID.
-             * 
+             *
              * @return {Object}    The Vue compoenent
              */
             getComponentBySongId(id) {
@@ -236,7 +233,7 @@
 
             /**
              * Gather all selected songs.
-             * 
+             *
              * @return {Array.<Object>} An array of Song objects
              */
             gatherSelected() {
@@ -250,20 +247,20 @@
             /**
              * -----------------------------------------------------------
              * The next four methods are to deal with selection.
-             * 
+             *
              * Credits: http://stackoverflow.com/a/17966381/794641 by andyb
              * -----------------------------------------------------------
              */
 
             /**
              * Handle the click event on a row to perform selection.
-             * 
+             *
              * @param  {String} songId
              * @param  {Object} e
              */
             rowClick(songId, e) {
                 var row = this.getComponentBySongId(songId);
-                
+
                 // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
                 if (isMobile.any) {
                     this.toggleRow(row);
@@ -281,7 +278,7 @@
                         this.clearSelection();
                         this.toggleRow(row);
                     }
-                
+
                     if (e.shiftKey && this.lastSelectedRow && this.lastSelectedRow.$el) {
                         this.selectRowsBetweenIndexes([this.lastSelectedRow.$el.rowIndex, row.$el.rowIndex]);
                     }
@@ -292,7 +289,7 @@
 
             /**
              * Toggle select/unslect a row.
-             * 
+             *
              * @param  {Object} row The song-item component
              */
             toggleRow(row) {
@@ -360,8 +357,8 @@
 
             /**
              * Perform reordering songs upon dropping if the current song list is of type Queue.
-             * 
-             * @param  {String} songId 
+             *
+             * @param  {String} songId
              * @param  {Object} e
              */
             handleDrop(songId, e) {
@@ -388,7 +385,7 @@
 
             /**
              * Remove the droppable state (and the styles) from a row.
-             * 
+             *
              * @param  {Object} e
              */
             removeDroppableState(e) {
@@ -399,7 +396,7 @@
         events: {
             /**
              * Listen to song:played event to do some logic.
-             * 
+             *
              * @param  {Object} song The current playing song.
              */
             'song:played': function (song) {
@@ -412,7 +409,7 @@
                 if (this.type === 'queue') {
                     var $wrapper = $(this.$els.wrapper);
                     var $row = $wrapper.find(`.song-item[data-song-id="${song.id}"]`);
-                    
+
                     if (!$row.length) {
                         return;
                     }
@@ -517,7 +514,7 @@
         }
 
 
-        @media only screen 
+        @media only screen
         and (max-device-width : 768px) {
             table, tbody, tr {
                 display: block;

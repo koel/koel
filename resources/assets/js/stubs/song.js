@@ -8,6 +8,7 @@ export default {
     length: 0,
     fmtLength: '00:00',
     lyrics: '',
-    playing: false,
     liked: false,
+    playCount: 0,
+    playbackState: 'stopped',
 };

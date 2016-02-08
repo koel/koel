@@ -19,7 +19,7 @@ export default {
 
     /**
      * Initialize the playback service for this whole Koel app.
-     * 
+     *
      * @param  {Vue} app The root Vue component.
      */
     init(app) {
@@ -32,7 +32,7 @@ export default {
 
         plyr.setup({
             controls: [],
-        }); 
+        });
 
         this.player = $('.player')[0].plyr;
         this.$volumeInput = $('#volumeRange');
@@ -46,7 +46,7 @@ export default {
 
         /**
          * Listen to 'input' event on the volume range control.
-         * When user drags the volume control, this event will be triggered, and we 
+         * When user drags the volume control, this event will be triggered, and we
          * update the volume on the plyr object.
          */
         this.$volumeInput.on('input', e => {
@@ -56,7 +56,7 @@ export default {
         // Listen to 'ended' event on the audio player and play the next song in the queue.
         this.player.media.addEventListener('ended', e => {
             songStore.scrobble(queueStore.current());
-            
+
             if (preferenceStore.get('repeatMode') === 'REPEAT_ONE') {
                 this.restart();
 
@@ -77,8 +77,8 @@ export default {
 
     /**
      * Play a song. Because
-     * 
-     * So many adventures couldn't happen today, 
+     *
+     * So many adventures couldn't happen today,
      * So many songs we forgot to play
      * So many dreams swinging out of the blue
      * We'll let them come true
@@ -90,8 +90,18 @@ export default {
             return;
         }
 
+        if (queueStore.current()) {
+            queueStore.current().playbackState = 'stopped';
+        }
+
+        song.playbackState = 'playing';
+
         // Set the song as the current song
         queueStore.current(song);
+
+        // Add it into the "recent" list
+        songStore.addRecent(song);
+
         this.player.source(`${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`);
 
         // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
@@ -134,13 +144,13 @@ export default {
             // Close the notif after 5 secs.
             window.setTimeout(() => notification.close(), 5000);
         } catch (e) {
-            // Notification fails. 
+            // Notification fails.
             // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
         }
     },
 
     /**
-     * Get the next song in the queue. 
+     * Get the next song in the queue.
      * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
      *
      * @return {Object} The song
@@ -181,11 +191,11 @@ export default {
      */
     changeRepeatMode() {
         var i = this.repeatModes.indexOf(preferenceStore.get('repeatMode')) + 1;
-                    
+
         if (i >= this.repeatModes.length) {
             i = 0;
         }
-        
+
         preferenceStore.set('repeatMode', this.repeatModes[i]);
     },
 
@@ -199,7 +209,7 @@ export default {
         if (this.player.media.currentTime > 5 && this.player.media.duration > 5) {
             this.player.seek(0);
 
-            return;            
+            return;
         }
 
         var prev = this.prevSong();
@@ -232,7 +242,7 @@ export default {
 
     /**
      * Set the volume level.
-     * 
+     *
      * @param {Number}         volume   0-10
      * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
      */
@@ -272,8 +282,7 @@ export default {
         $('title').text(config.appTitle);
         this.player.pause();
         this.player.seek(0);
-
-        this.app.$broadcast('song:stopped');
+        queueStore.current().playbackState = 'stopped';
     },
 
     /**
@@ -281,7 +290,7 @@ export default {
      */
     pause() {
         this.player.pause();
-        this.app.$broadcast('song:paused', queueStore.current());
+        queueStore.current().playbackState = 'paused';
     },
 
     /**
@@ -289,6 +298,7 @@ export default {
      */
     resume() {
         this.player.play();
+        queueStore.current().playbackState = 'playing';
         this.app.$broadcast('song:played', queueStore.current());
     },
 
@@ -336,7 +346,7 @@ export default {
 
     /**
      * Play all songs by an artist.
-     * 
+     *
      * @param  {Object}         artist  The artist object
      * @param  {Boolean=true}   shuffle Whether to shuffle the songs
      */
@@ -346,7 +356,7 @@ export default {
 
     /**
      * Play all songs in an album.
-     * 
+     *
      * @param  {Object}         album   The album object
      * @param  {Boolean=true}   shuffle Whether to shuffle the songs
      */

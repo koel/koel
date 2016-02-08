@@ -21,7 +21,7 @@
 
 <script>
     import $ from 'jquery';
-    
+
     import siteHeader from './components/site-header/index.vue';
     import siteFooter from './components/site-footer/index.vue';
     import mainWrapper from './components/main-wrapper/index.vue';
@@ -79,7 +79,7 @@
                     this.hideOverlay();
 
                     // Load the default view.
-                    this.loadMainView('queue');
+                    this.loadMainView('home');
 
                     // Ask for user's notification permission.
                     this.requestNotifPermission();
@@ -196,7 +196,7 @@
 
             /**
              * Load an album into the main panel.
-             * 
+             *
              * @param  {Object} album The album object
              */
             loadAlbum(album) {
@@ -205,7 +205,7 @@
 
             /**
              * Load an artist into the main panel.
-             * 
+             *
              * @param  {Object} artist The artist object
              */
             loadArtist(artist) {
@@ -214,7 +214,7 @@
 
             /**
              * Shows the overlay.
-             * 
+             *
              * @param {String}  message     The message to display.
              * @param {String}  type        (loading|success|info|warning|error)
              * @param {Boolean} dismissable Whether to show the Close button
@@ -250,7 +250,7 @@
                     playback.stop();
                     queueStore.clear();
                     this.loadMainView('queue');
-                    this.$broadcast('koel:teardown');    
+                    this.$broadcast('koel:teardown');
                 });
             },
         },
@@ -274,7 +274,7 @@
         }
 
         var order = (reverse && reverse < 0) ? -1 : 1
-        
+
         // sort on a copy to avoid mutating original array
         return arr.slice().sort((a, b) => {
             a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a
@@ -312,7 +312,7 @@
         display: flex;
         min-height: 100vh;
         flex-direction: column;
-        
+
         background: $colorMainBgr;
         color: $colorMainText;
 

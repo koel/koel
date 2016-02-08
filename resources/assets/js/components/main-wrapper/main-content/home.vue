@@ -16,13 +16,13 @@
                 <p class="none" v-show="!songState.recent.length">No songs played yet. What ya waiting for?</p>
             </section>
 
-            <section v-show="topSongs.length">
+            <section v-if="topSongs.length">
                 <h1>Most Played Songs</h1>
 
                 <song-list :items="topSongs" :sortable="false"></song-list>
             </section>
 
-            <section class="top-artists" v-show="topArtists.length">
+            <section class="top-artists" v-if="topArtists.length">
                 <h1>Top Artists</h1>
 
                 <div class="wrapper">
@@ -31,7 +31,7 @@
                 </div>
             </section>
 
-            <section class="top-albums" v-show="topAlbums.length">
+            <section class="top-albums" v-if="topAlbums.length">
                 <h1>Top Albums</h1>
 
                 <div class="wrapper">
@@ -95,15 +95,6 @@
 
             topArtists() {
                 return artistStore.getMostPlayed();
-            },
-        },
-
-        methods: {
-        },
-
-        events: {
-            'song:played': function (song) {
-
             },
         },
     };

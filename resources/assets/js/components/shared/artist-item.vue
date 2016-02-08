@@ -11,6 +11,8 @@
                 {{ artist.albums.length }} {{ artist.albums.length | pluralize 'album' }}
                 •
                 {{ artist.songCount }} {{ artist.songCount | pluralize 'song' }}
+                •
+                {{ artist.playCount }} {{ artist.playCount | pluralize 'play' }}
             </p>
         </footer>
     </article>
@@ -42,12 +44,5 @@
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
 
-    a.name {
-        display: block;
-        color: $colorMainText;
-
-        &:hover {
-            color: $colorHighlight;
-        }
-    }
+    @include artist-album-card();
 </style>

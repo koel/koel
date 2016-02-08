@@ -1,15 +1,15 @@
 <template>
-    <tr 
-        @dblclick.prevent="playRightAwayyyyyyy" 
+    <tr
+        @dblclick.prevent="playRightAwayyyyyyy"
         class="song-item"
-        :class="{ selected: selected, playing: playbackState === 'playing' || playbackState === 'paused' }"
+        :class="{ selected: selected, playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
     >
         <td class="title">{{ song.title }}</td>
         <td class="artist">{{ song.album.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
         <td class="time">{{ song.fmtLength }}</td>
         <td class="play" @click.stop="doPlayback">
-            <i class="fa fa-pause-circle" v-show="playbackState === 'playing'"></i>
+            <i class="fa fa-pause-circle" v-show="song.playbackState === 'playing'"></i>
             <i class="fa fa-play-circle" v-else></i>
         </td>
     </tr>
@@ -24,7 +24,6 @@
 
         data() {
             return {
-                playbackState: 'stopped',
                 selected: false,
             };
         },
@@ -37,15 +36,15 @@
                 if (!queueStore.contains(this.song)) {
                     queueStore.queueAfterCurrent(this.song);
                 }
-                
-                Vue.nextTick(() => playback.play(this.song));
+
+                playback.play(this.song);
             },
 
             /**
              * Take the right playback action based on the current playback state.
              */
             doPlayback() {
-                switch (this.playbackState) {
+                switch (this.song.playbackState) {
                     case 'playing':
                         playback.pause();
                         break;
@@ -77,33 +76,6 @@
              */
             deselect() {
                 this.selected = false;
-            }
-        },
-
-        events: {
-            // Listen to playback events and set playback state.
-
-            'song:played': function (song) {
-                this.playbackState = this.song === song ? 'playing' : 'stopped';
-            },
-
-            'song:stopped': function () {
-                this.playbackState = 'stopped';
-            },
-
-            'song:paused': function (song) {
-                if (this.song === song) {
-                    this.playbackState = 'paused';
-                }
-            },
-        },
-
-        /**
-         * When the component is (re)attached into the DOM, we check if its song is current and set its playback state.
-         */
-        attached() {
-            if (this.song === queueStore.current()) {
-                this.playbackState = 'playing';
             }
         },
     };

@@ -15,14 +15,14 @@ export default {
         return {
             /**
              * Whether or not to show the "Add To" button in the header.
-             * 
+             *
              * @type {Boolean}
              */
             showingAddToMenu: false,
 
             /**
              * An array of selected songs in the list.
-             * 
+             *
              * @type {Array.<Object>}
              */
             selectedSongs: [],
