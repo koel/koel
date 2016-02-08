@@ -4,7 +4,14 @@
         class="song-item"
         :class="{ selected: selected, playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
     >
-        <td class="title">{{ song.title }}</td>
+        <td class="title">
+            <span class="play-count" v-if="showPlayCount"
+                title="{{ song.playCount }} {{ song.playCount | pluralize 'play' }}"
+                :style="{ width: song.playCount * 100 / topPlayCount + '%' }"
+            >{{ song.title }}
+            </span>
+            <span v-else>{{ song.title }}</span>
+        </td>
         <td class="artist">{{ song.album.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
         <td class="time">{{ song.fmtLength }}</td>
@@ -20,7 +27,23 @@
     import queueStore from '../../stores/queue';
 
     export default {
-        props: ['song'],
+        props: [
+            'song',
+
+            /**
+             * Whether or not we should display the play count indicators.
+             *
+             * @type {boolean}
+             */
+            'showPlayCount',
+
+            /**
+             * The play count of the most-played song, so that we can have some percentage-base comparison.
+             *
+             * @type {integer}
+             */
+            'topPlayCount'
+        ],
 
         data() {
             return {
@@ -98,6 +121,17 @@
 
         .title {
             min-width: 192px;
+            padding: 0;
+
+            span {
+                display: inline-block;
+                padding: 8px;
+
+                &.play-count {
+                    background: rgba(255, 255, 255, 0.08);
+                    white-space: nowrap;
+                }
+            }
         }
 
         .play {
@@ -115,6 +149,21 @@
 
         &.playing {
             color: $colorHighlight;
+        }
+
+        @media only screen and (max-device-width : 768px) {
+            .title {
+                padding: 0;
+
+                span {
+                    display: inline;
+                    padding: 0;
+
+                    &.play-count {
+                        background: none;
+                    }
+                }
+            }
         }
     }
 </style>

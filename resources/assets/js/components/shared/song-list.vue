@@ -37,9 +37,11 @@
                         | filterBy q in 'title' 'album.name' 'album.artist.name'
                         | limitBy numOfItems"
                     is="song-item"
+                    :top-play-count="items[0].playCount"
+                    :show-play-count="type === 'top-songs'"
                     data-song-id="{{ item.id }}"
                     track-by="id"
-                    :song.sync="item"
+                    :song="item"
                     v-ref:rows
                     @click="rowClick(item.id, $event)"
                     draggable="true"
@@ -77,8 +79,8 @@
             return {
                 lastSelectedRow: null,
                 q: '', // The filter query
-                sortKey: 'title',
-                order: 1,
+                sortKey: this.type === 'top-songs' ? 'playCount' : '',
+                order: this.type === 'top-songs' ? -1 : 1,
                 componentCache: {},
             };
         },

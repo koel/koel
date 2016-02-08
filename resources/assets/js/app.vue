@@ -21,6 +21,7 @@
 
 <script>
     import $ from 'jquery';
+    import _ from 'lodash';
 
     import siteHeader from './components/site-header/index.vue';
     import siteFooter from './components/site-footer/index.vue';
@@ -273,17 +274,21 @@
             return arr;
         }
 
-        var order = (reverse && reverse < 0) ? -1 : 1
+        var order = (reverse && reverse < 0) ? -1 : 1;
 
         // sort on a copy to avoid mutating original array
         return arr.slice().sort((a, b) => {
-            a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a
-            b = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, sortKey) : b
+            a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a;
+            b = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, sortKey) : b;
 
-            a = a === undefined ? a : a.toLowerCase()
-            b = b === undefined ? b : b.toLowerCase()
+            if (_.isNumber(a) && _.isNumber(b)) {
+                return a === b ? 0 : a > b ? order : -order;
+            }
 
-            return a === b ? 0 : a > b ? order : -order
+            a = a === undefined ? a : a.toLowerCase();
+            b = b === undefined ? b : b.toLowerCase();
+
+            return a === b ? 0 : a > b ? order : -order;
         });
     });
 

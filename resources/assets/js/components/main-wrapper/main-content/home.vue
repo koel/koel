@@ -19,7 +19,7 @@
             <section v-if="topSongs.length">
                 <h1>Most Played Songs</h1>
 
-                <song-list :items="topSongs" :sortable="false"></song-list>
+                <song-list :items="topSongs" :sortable="false" type="top-songs"></song-list>
             </section>
 
             <section class="top-artists" v-if="topArtists.length">
