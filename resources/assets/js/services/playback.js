@@ -327,7 +327,7 @@ export default {
 
         // Wrap this inside a nextTick() to wait for the DOM to complete updating
         // and then play the first song in the queue.
-        Vue.nextTick(() => this.play(queueStore.first()));
+        this.app.$nextTick(() => this.play(queueStore.first()));
     },
 
     /**

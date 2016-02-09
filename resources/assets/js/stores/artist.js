@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import _ from 'lodash';
 
 import config from '../config';

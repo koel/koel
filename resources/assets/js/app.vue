@@ -20,6 +20,7 @@
 </template>
 
 <script>
+    import Vue from 'vue';
     import $ from 'jquery';
     import _ from 'lodash';
 

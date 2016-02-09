@@ -11,9 +11,9 @@
         <div class="bands">
             <span class="band preamp">
                 <input
-                    type="range" 
-                    min="-20" 
-                    max="20" 
+                    type="range"
+                    min="-20"
+                    max="20"
                     step="0.01"
                     data-orientation="vertical"
                     v-model="preampGainValue">
@@ -27,10 +27,10 @@
             </span>
 
             <span class="band amp" v-for="band in bands">
-                <input 
-                    type="range" 
-                    min="-20" 
-                    max="20" 
+                <input
+                    type="range"
+                    min="-20"
+                    max="20"
                     step="0.01"
                     data-orientation="vertical"
                     :value="band.filter.gain.value">
@@ -62,13 +62,13 @@
         methods: {
             /**
              * Init the equalizer.
-             * 
+             *
              * @param  {Element} player The audio player's DOM.
              */
             init(player) {
                 var settings = equalizerStore.get();
 
-                var AudioContext = window.AudioContext || window.webkitAudioContext || false; 
+                var AudioContext = window.AudioContext || window.webkitAudioContext || false;
                 var context = new AudioContext();
 
                 this.preampGainNode = context.createGain();
@@ -88,9 +88,9 @@
                     } else if (i === 9) {
                         filter.type = 'highshelf'
                     } else {
-                        filter.type = 'peaking';    
+                        filter.type = 'peaking';
                     }
-                    
+
                     filter.gain.value = settings.gains[i] ? settings.gains[i] : 0;
                     filter.Q.value = 1;
                     filter.frequency.value = f;
@@ -108,10 +108,10 @@
                         label: (f + '').replace('000', 'K'),
                     });
                 });
-                
+
                 prevFilter.connect(context.destination);
 
-                Vue.nextTick(this.createRangeSliders);
+                this.$nextTick(this.createRangeSliders);
             },
 
             /**
@@ -122,14 +122,14 @@
                     $(el).rangeslider({
                         /**
                          * Force the polyfill and its styles on all browsers.
-                         * 
+                         *
                          * @type {Boolean}
                          */
                         polyfill: false,
 
                         /**
                          * Change the gain/preamp value when the user drags the sliders.
-                         * 
+                         *
                          * @param  {Float} position
                          * @param  {Float} value
                          */
@@ -148,13 +148,13 @@
                             this.selectedPresetIndex = -1;
                             this.save();
                         }
-                    }); 
+                    });
                 });
             },
 
             /**
              * Change the gain value for the preamp.
-             * 
+             *
              * @param  {Number} dbValue The value of the gain, in dB.
              */
             changePreampGain(dbValue) {
@@ -164,7 +164,7 @@
 
             /**
              * Change the gain value for a band/filter.
-             * 
+             *
              * @param  {Object} filter The filter object
              * @param  {Object} value  Value of the gain, in dB.
              */
@@ -188,13 +188,13 @@
                         this.changePreampGain(preset.preamp);
                     } else {
                         this.changeFilterGain(this.bands[i-1].filter, preset.gains[i-1]);
-                        input.value = preset.gains[i-1];    
+                        input.value = preset.gains[i-1];
                     }
                 });
 
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     // Update the slider values into GUI.
-                    $('#equalizer input[type="range"]').rangeslider('update', true);    
+                    $('#equalizer input[type="range"]').rangeslider('update', true);
                 });
 
                 this.save();

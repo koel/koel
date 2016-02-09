@@ -1,6 +1,6 @@
+import Vue from 'vue';
 import ls from './services/ls';
 
-window.Vue = require('vue');
 var app = new Vue(require('./app.vue'));
 
 Vue.config.debug = false;

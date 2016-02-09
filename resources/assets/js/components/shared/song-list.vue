@@ -189,7 +189,7 @@
                             queueStore.queue(songs, false, false);
                         }
 
-                        Vue.nextTick(() => {
+                        this.$nextTick(() => {
                             this.$root.loadMainView('queue');
 
                             if (e.ctrlKey || e.metaKey || songs.length == 1) {

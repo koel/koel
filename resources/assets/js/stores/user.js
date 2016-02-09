@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { md5 } from 'blueimp-md5';
+import Vue from 'vue';
 
 import http from '../services/http';
 import stub from '../stubs/user';
