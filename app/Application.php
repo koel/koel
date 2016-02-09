@@ -18,7 +18,7 @@ class Application extends IlluminateApplication
      *
      * @link https://github.com/phanan/koel/releases
      */
-    const VERSION = 'v2.0.2';
+    const VERSION = 'v2.1.0';
 
     /**
      * We have merged public path and base path.
@@ -57,12 +57,12 @@ class Application extends IlluminateApplication
     }
 
     /**
-     * Get a URL for static file requests. 
+     * Get a URL for static file requests.
      * If this installation of Koel has a CDN_URL configured, use it as the base.
      * Otherwise, just use a relative '/'.
      *
      * @param string $name The additional resource name/path.
-     * 
+     *
      * @return string
      */
     public function staticUrl($name = null)
