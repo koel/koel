@@ -65,12 +65,12 @@ class Artist extends Model
 
     /**
      * Get extra information about the artist from Last.fm.
-     * 
+     *
      * @return array|false
      */
     public function getInfo()
     {
-        if ($this->id === self::UNKNOWN_ID) {
+        if ($this->isUnknown()) {
             return false;
         }
 
@@ -100,9 +100,9 @@ class Artist extends Model
 
     /**
      * Turn the image name into its absolute URL.
-     * 
+     *
      * @param mixed $value
-     * 
+     *
      * @return string|null
      */
     public function getImageAttribute($value)
