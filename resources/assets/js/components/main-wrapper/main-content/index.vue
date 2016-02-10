@@ -1,8 +1,9 @@
 <template>
     <section id="mainContent">
         <div class="translucent" :style="{ backgroundImage: albumCover ? 'url(' + albumCover + ')' : 'none' }"></div>
-        <songs v-show="view === 'songs'"></songs>
+        <home v-show="view === 'home'"></home>
         <queue v-show="view === 'queue'"></queue>
+        <songs v-show="view === 'songs'"></songs>
         <albums v-show="view === 'albums'"></albums>
         <album v-show="view === 'album'"></album>
         <artists v-show="view === 'artists'"></artists>
@@ -24,6 +25,7 @@
     import settings from './settings.vue';
     import users from './users.vue';
     import queue from './queue.vue';
+    import home from './home.vue';
     import playlist from './playlist.vue';
     import favorites from './favorites.vue';
     import profile from './profile.vue';
@@ -31,11 +33,11 @@
     import albumStore from '../../../stores/album';
 
     export default {
-        components: { albums, album, artists, artist, songs, settings, users, queue, playlist, favorites, profile },
+        components: { albums, album, artists, artist, songs, settings, users, home, queue, playlist, favorites, profile },
 
         data() {
             return {
-                view: 'queue', // The default view
+                view: 'home', // The default view
                 albumCover: null,
             };
         },
@@ -49,9 +51,9 @@
 
             /**
              * When a new song is played, find it cover for the translucent effect.
-             * 
+             *
              * @param  {Object} song
-             * 
+             *
              * @return {Boolean}
              */
             'song:played': function (song) {
@@ -84,7 +86,7 @@
                 flex: 1;
 
                 // Enable scroll with momentum on touch devices
-                overflow-y: scroll; 
+                overflow-y: scroll;
                 -webkit-overflow-scrolling: touch;
             }
         }
@@ -156,7 +158,7 @@
 
 
 
-        @media only screen 
+        @media only screen
         and (max-device-width : 768px) {
             h1.heading {
                 font-size: 18px;
@@ -184,7 +186,7 @@
             > section {
                 .main-scroll-wrap {
                     padding: 12px;
-                }    
+                }
             }
         }
     }

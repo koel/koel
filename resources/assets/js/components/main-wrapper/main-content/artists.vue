@@ -3,13 +3,13 @@
         <h1 class="heading">
             <span>Artists</span>
         </h1>
-    
+
         <div class="artists main-scroll-wrap" v-el:wrapper @scroll="scrolling">
-            <artist-item v-for="item in items 
-                | filterBy q in 'name' 
+            <artist-item v-for="item in items
+                | filterBy q in 'name'
                 | limitBy numOfItems" :artist="item"></artist-item>
 
-            <!-- 
+            <!--
             Add several more items to make sure the last row is left-aligned.
             Credits: http://codepen.io/dalgard/pen/Dbnus
             -->
@@ -69,7 +69,7 @@
 
     #artistsWrapper {
         .artists {
-            @include artist-album-card();
+            @include artist-album-wrapper();
         }
     }
 </style>

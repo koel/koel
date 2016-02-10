@@ -2,24 +2,24 @@
     <section id="queueWrapper">
         <h1 class="heading">
             <span title="That's a freaking lot of U's and E's">Current Queue
-                <i class="fa fa-angle-down toggler" 
-                    v-show="isPhone && !showingControls" 
+                <i class="fa fa-angle-down toggler"
+                    v-show="isPhone && !showingControls"
                     @click="showingControls = true"></i>
-                <i class="fa fa-angle-up toggler" 
-                    v-show="isPhone && showingControls" 
+                <i class="fa fa-angle-up toggler"
+                    v-show="isPhone && showingControls"
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
-                    • 
+                    •
                     {{ meta.totalLength }}
                 </span>
             </span>
 
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button 
-                    class="play-shuffle" 
-                    @click.prevent="shuffle" 
+                <button
+                    class="play-shuffle"
+                    @click.prevent="shuffle"
                     v-if="state.songs.length > 1 && selectedSongs.length < 2"
                 >
                     <i class="fa fa-random"></i> All
@@ -33,24 +33,25 @@
                 <button class="clear" @click.prevent="clear" v-if="state.songs.length">Clear</button>
 
                 <add-to-menu
-                    :songs="songsToAddTo" 
+                    :songs="songsToAddTo"
                     :showing="showingAddToMenu && state.songs.length"
                     :settings="{ canQueue: false }">
                 </add-to-menu>
             </div>
         </h1>
 
-        <song-list 
-            v-show="state.songs.length" 
-            :items="state.songs" 
-            :selected-songs.sync="selectedSongs" 
+        <song-list
+            v-show="state.songs.length"
+            :items="state.songs"
+            :selected-songs.sync="selectedSongs"
+            :sortable="false"
             type="queue">
         </song-list>
 
         <div v-show="!state.songs.length" class="none">
             <p>Empty spaces. Abandoned places.</p>
 
-            <p v-if="showShufflingAllOption">How about 
+            <p v-if="showShufflingAllOption">How about
                 <a class="start" @click.prevent="shuffleAll">shuffling all songs</a>?
             </p>
         </div>
@@ -60,13 +61,13 @@
 <script>
     import _ from 'lodash';
     import isMobile from 'ismobilejs';
-    
+
     import playlistStore from '../../../stores/playlist';
     import queueStore from '../../../stores/queue';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
     import hasSongList from '../../../mixins/has-song-list';
-    
+
     export default {
         mixins: [hasSongList],
 
@@ -83,7 +84,7 @@
         computed: {
             /**
              * If no songs are selected, we provide all queued songs as a tribute to playlist god.
-             * 
+             *
              * @return {Array} The songs to add into a (new) playlist
              */
             songsToAddTo() {

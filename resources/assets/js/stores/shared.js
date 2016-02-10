@@ -29,7 +29,7 @@ export default {
 
     init(successCb = null, errorCb = null) {
         this.reset();
-        
+
         http.get('data', data => {
             assign(this.state, data);
 

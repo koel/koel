@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Console\Commands\SyncMedia;
+use App\Events\LibraryChanged;
+use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
@@ -11,8 +13,8 @@ use Exception;
 use getID3;
 use getid3_lib;
 use Illuminate\Support\Facades\Log;
+use SplFileInfo;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class Media
 {
@@ -46,9 +48,7 @@ class Media
             'ugly' => [], // Unmodified files
         ];
 
-        $files = Finder::create()->files()->name('/\.(mp3|ogg|m4a|flac)$/i')->in($path);
-
-        foreach ($files as $file) {
+        foreach ($this->gatherFiles($path) as $file) {
             $song = $this->syncFile($file);
 
             if ($song === true) {
@@ -71,27 +71,37 @@ class Media
 
         Song::whereNotIn('id', $hashes)->delete();
 
-        // Empty albums and artists should be gone as well.
-        $inUseAlbums = Song::select('album_id')->groupBy('album_id')->get()->lists('album_id');
-        $inUseAlbums[] = Album::UNKNOWN_ID;
-        Album::whereNotIn('id', $inUseAlbums)->delete();
+        // Trigger LibraryChanged, so that TidyLibrary handler is fired to, erm, tidy our library.
+        event(new LibraryChanged());
+    }
 
-        $inUseArtists = Album::select('artist_id')->groupBy('artist_id')->get()->lists('artist_id');
-        $inUseArtists[] = Artist::UNKNOWN_ID;
-        Artist::whereNotIn('id', $inUseArtists)->delete();
+    /**
+     * Gather all applicable files in a given directory.
+     *
+     * @param string $path The directory's full path
+     *
+     * @return array An array of SplFileInfo objects
+     */
+    public function gatherFiles($path)
+    {
+        return Finder::create()->files()->name('/\.(mp3|ogg|m4a|flac)$/i')->in($path);
     }
 
     /**
      * Sync a song with all available media info against the database.
      *
-     * @param SplFileInfo $file The SplFileInfo instance of the file.
+     * @param SplFileInfo|string $file The SplFileInfo instance of the file, or the file path.
      *
      * @return bool|Song A Song object on success,
      *                   true if file exists but is unmodified,
      *                   or false on an error.
      */
-    public function syncFile(SplFileInfo $file)
+    public function syncFile($file)
     {
+        if (!($file instanceof SplFileInfo)) {
+            $file = new SplFileInfo($file);
+        }
+
         if (!$info = $this->getInfo($file)) {
             return false;
         }
@@ -121,6 +131,62 @@ class Media
         $song->save();
 
         return $song;
+    }
+
+    /**
+     * Sync media using a watch record.
+     *
+     * @param WatchRecordInterface $record      The watch record.
+     * @param SyncMedia|null       $syncCommand The SyncMedia command object, to log to console if executed by artisan.
+     */
+    public function syncByWatchRecord(WatchRecordInterface $record, SyncMedia $syncCommand = null)
+    {
+        Log::info("New watch record received: '$record'");
+        $path = $record->getPath();
+
+        if ($record->isFile()) {
+            Log::info("'$path' is a file.");
+
+            // If the file has been deleted...
+            if ($record->isDeleted()) {
+                // ...and it has a record in our database, remove it.
+                if ($song = Song::byPath($path)) {
+                    $song->delete();
+
+                    Log::info("$path deleted.");
+
+                    event(new LibraryChanged());
+                } else {
+                    Log::info("$path doesn't exist in our database--skipping.");
+                }
+            }
+            // Otherwise, it's a new or changed file. Try to sync it in.
+            // File format etc. will be handled by the syncFile method.
+            elseif ($record->isNewOrModified()) {
+                Log::info($this->syncFile($path) instanceof Song ? "Synchronized $path" : "Invalid file $path");
+            }
+
+            return;
+        }
+
+        // Record is a directory.
+        Log::info("'$path' is a directory.");
+
+        if ($record->isDeleted()) {
+            // The directory is removed. We remove all songs in it.
+            if ($count = Song::inDirectory($path)->delete()) {
+                Log::info("Deleted $count song(s) under $path");
+                event(new LibraryChanged());
+            } else {
+                Log::info("$path is empty--no action needed.");
+            }
+        } elseif ($record->isNewOrModified()) {
+            foreach ($this->gatherFiles($path) as $file) {
+                $this->syncFile($file);
+            }
+
+            Log::info("Synced all song(s) under $path");
+        }
     }
 
     /**

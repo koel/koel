@@ -1,15 +1,22 @@
 <template>
-    <tr 
-        @dblclick.prevent="playRightAwayyyyyyy" 
+    <tr
+        @dblclick.prevent="playRightAwayyyyyyy"
         class="song-item"
-        :class="{ selected: selected, playing: playbackState === 'playing' || playbackState === 'paused' }"
+        :class="{ selected: selected, playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
     >
-        <td class="title">{{ song.title }}</td>
+        <td class="title">
+            <span class="play-count" v-if="showPlayCount"
+                title="{{ song.playCount }} {{ song.playCount | pluralize 'play' }}"
+                :style="{ width: song.playCount * 100 / topPlayCount + '%' }"
+            >{{ song.title }}
+            </span>
+            <span v-else>{{ song.title }}</span>
+        </td>
         <td class="artist">{{ song.album.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
         <td class="time">{{ song.fmtLength }}</td>
         <td class="play" @click.stop="doPlayback">
-            <i class="fa fa-pause-circle" v-show="playbackState === 'playing'"></i>
+            <i class="fa fa-pause-circle" v-show="song.playbackState === 'playing'"></i>
             <i class="fa fa-play-circle" v-else></i>
         </td>
     </tr>
@@ -20,11 +27,26 @@
     import queueStore from '../../stores/queue';
 
     export default {
-        props: ['song'],
+        props: [
+            'song',
+
+            /**
+             * Whether or not we should display the play count indicators.
+             *
+             * @type {boolean}
+             */
+            'showPlayCount',
+
+            /**
+             * The play count of the most-played song, so that we can have some percentage-base comparison.
+             *
+             * @type {integer}
+             */
+            'topPlayCount'
+        ],
 
         data() {
             return {
-                playbackState: 'stopped',
                 selected: false,
             };
         },
@@ -37,15 +59,15 @@
                 if (!queueStore.contains(this.song)) {
                     queueStore.queueAfterCurrent(this.song);
                 }
-                
-                Vue.nextTick(() => playback.play(this.song));
+
+                playback.play(this.song);
             },
 
             /**
              * Take the right playback action based on the current playback state.
              */
             doPlayback() {
-                switch (this.playbackState) {
+                switch (this.song.playbackState) {
                     case 'playing':
                         playback.pause();
                         break;
@@ -79,33 +101,6 @@
                 this.selected = false;
             }
         },
-
-        events: {
-            // Listen to playback events and set playback state.
-
-            'song:played': function (song) {
-                this.playbackState = this.song === song ? 'playing' : 'stopped';
-            },
-
-            'song:stopped': function () {
-                this.playbackState = 'stopped';
-            },
-
-            'song:paused': function (song) {
-                if (this.song === song) {
-                    this.playbackState = 'paused';
-                }
-            },
-        },
-
-        /**
-         * When the component is (re)attached into the DOM, we check if its song is current and set its playback state.
-         */
-        attached() {
-            if (this.song === queueStore.current()) {
-                this.playbackState = 'playing';
-            }
-        },
     };
 </script>
 
@@ -126,6 +121,17 @@
 
         .title {
             min-width: 192px;
+            padding: 0;
+
+            span {
+                display: inline-block;
+                padding: 8px;
+
+                &.play-count {
+                    background: rgba(255, 255, 255, 0.08);
+                    white-space: nowrap;
+                }
+            }
         }
 
         .play {
@@ -143,6 +149,21 @@
 
         &.playing {
             color: $colorHighlight;
+        }
+
+        @media only screen and (max-device-width : 768px) {
+            .title {
+                padding: 0;
+
+                span {
+                    display: inline;
+                    padding: 0;
+
+                    &.play-count {
+                        background: none;
+                    }
+                }
+            }
         }
     }
 </style>

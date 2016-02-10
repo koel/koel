@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * @property array preferences
+ * @property int   id
+ * @property bool  is_admin
+ */
 class User extends Authenticatable
 {
     /**
@@ -80,8 +85,11 @@ class User extends Authenticatable
 
     /**
      * An alias to savePreference().
-     * 
+     *
      * @see $this::savePreference
+     *
+     * @param $key
+     * @param $val
      */
     public function setPreference($key, $val)
     {

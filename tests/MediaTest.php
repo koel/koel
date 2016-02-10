@@ -1,17 +1,27 @@
 <?php
 
+use App\Events\LibraryChanged;
+use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
 use App\Models\Song;
 use App\Services\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Mockery as m;
 
 class MediaTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
+    public function tearDown()
+    {
+        m::close();
+    }
+
     public function testSync()
     {
+        $this->expectsEvents(LibraryChanged::class);
+
         $media = new Media();
         $media->sync($this->mediaPath);
 
@@ -53,5 +63,40 @@ class MediaTest extends TestCase
 
         // Albums with a non-default cover should have their covers overwritten
         $this->assertEquals($currentCover, Album::find($album->id)->cover);
+    }
+
+    public function testWatchSingleFileAdded()
+    {
+        $path = $this->mediaPath.'/blank.mp3';
+
+        (new Media())->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
+
+        $this->seeInDatabase('songs', ['path' => $path]);
+    }
+
+    public function testWatchSingleFileDeleted()
+    {
+        $this->expectsEvents(LibraryChanged::class);
+
+        $this->createSampleMediaSet();
+        $song = Song::orderBy('id', 'desc')->first();
+
+        (new Media())->syncByWatchRecord(new InotifyWatchRecord("DELETE {$song->path}"));
+
+        $this->notSeeInDatabase('songs', ['id' => $song->id]);
+    }
+
+    public function testWatchDirectoryDeleted()
+    {
+        $this->expectsEvents(LibraryChanged::class);
+
+        $media = new Media();
+        $media->sync($this->mediaPath);
+
+        $media->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR {$this->mediaPath}/subdir"));
+
+        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/sic.mp3']);
+        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.MP3']);
+        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
     }
 }

@@ -26,6 +26,9 @@ class SongStartedPlaying extends Event
 
     /**
      * Create a new event instance.
+     *
+     * @param Song $song
+     * @param User $user
      */
     public function __construct(Song $song, User $user)
     {

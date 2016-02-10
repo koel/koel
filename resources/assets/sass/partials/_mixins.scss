@@ -4,11 +4,24 @@
     justify-content: center;
 }
 
-@mixin artist-album-card() {
+@mixin artist-album-wrapper() {
     justify-content: space-between;
     flex-wrap: wrap;
     display: flex;
 
+    @media only screen
+    and (max-device-width : 768px) {
+        justify-content: center;
+    }
+
+    @media only screen
+    and (min-device-width: 769px)
+    and (max-device-width : 1024px) {
+        justify-content: space-around;
+    }
+}
+
+@mixin artist-album-card() {
     .item {
         display: flex;
         flex: 0 0 256px;
@@ -88,17 +101,15 @@
             margin-top: 4px;
             font-size: 12px;
         }
-    }
 
-    @media only screen 
-    and (max-device-width : 768px) {
-        justify-content: center;
-    }
+        a.name, a.artist {
+            display: block;
+            color: $colorMainText;
 
-    @media only screen 
-    and (min-device-width: 769px)
-    and (max-device-width : 1024px) {
-        justify-content: space-around;
+            &:hover {
+                color: $colorHighlight;
+            }
+        }
     }
 }
 
@@ -137,7 +148,7 @@
             border-bottom-left-radius: 0;
             margin-left: 1px;
         }
-        
+
         i {
             margin-right: 4px;
         }

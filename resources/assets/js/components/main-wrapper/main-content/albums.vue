@@ -5,12 +5,12 @@
         </h1>
 
         <div class="albums main-scroll-wrap" v-el:wrapper @scroll="scrolling">
-            <album-item v-for="item in items 
+            <album-item v-for="item in items
                 | orderBy 'name'
-                | filterBy q in 'name' 'artist.name' 
+                | filterBy q in 'name' 'artist.name'
                 | limitBy numOfItems" :album="item"></album-item>
 
-            <!-- 
+            <!--
             Add several more items to make sure the last row is left-aligned.
             Credits: http://codepen.io/dalgard/pen/Dbnus
             -->
@@ -23,7 +23,7 @@
     import albumItem from '../../shared/album-item.vue';
     import infiniteScroll from '../../../mixins/infinite-scroll';
     import albumStore from '../../../stores/album';
-    
+
     export default {
         mixins: [infiniteScroll],
         components: { albumItem },
@@ -39,7 +39,7 @@
 
         computed: {
             items() {
-                return this.state.albums;  
+                return this.state.albums;
             },
         },
 
@@ -69,7 +69,7 @@
 
     #albumsWrapper {
         .albums {
-            @include artist-album-card();
+            @include artist-album-wrapper();
         }
     }
 </style>

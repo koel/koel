@@ -5,7 +5,7 @@ namespace App\Http\Streamers;
 use App\Models\Setting;
 use App\Models\Song;
 
-class XAccelRedirectStreamer extends BaseStreamer implements StreamerInterface
+class XAccelRedirectStreamer extends Streamer implements StreamerInterface
 {
     public function __construct(Song $song)
     {

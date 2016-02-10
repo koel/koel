@@ -11,7 +11,7 @@ class SongLikeToggled extends Event
     use SerializesModels;
 
     /**
-     * The ineraction (like/unlike) in action.
+     * The interaction (like/unlike) in action.
      * 
      * @var Interaction
      */
@@ -29,8 +29,6 @@ class SongLikeToggled extends Event
      *
      * @param Interaction $interaction
      * @param User        $user
-     *
-     * @return void
      */
     public function __construct(Interaction $interaction, User $user = null)
     {

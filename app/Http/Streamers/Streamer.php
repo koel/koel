@@ -4,7 +4,7 @@ namespace App\Http\Streamers;
 
 use App\Models\Song;
 
-class BaseStreamer
+class Streamer
 {
     /**
      * @var Song|string

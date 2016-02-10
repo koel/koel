@@ -5,7 +5,11 @@
 
             <ul class="menu">
                 <li>
-                    <a class="queue" 
+                    <a class="home" :class="[currentView == 'home' ? 'active' : '']"
+                        @click.prevent="$root.loadMainView('home')">Home</a>
+                </li>
+                <li>
+                    <a class="queue"
                         :class="[currentView == 'queue' ? 'active' : '']"
                         @click.prevent="$root.loadMainView('queue')"
                         @dragleave="removeDroppableState"
@@ -13,28 +17,28 @@
                         @drop.stop.prevent="handleDrop">Current Queue</a>
                 </li>
                 <li>
-                    <a class="songs" :class="[currentView == 'songs' ? 'active' : '']" 
+                    <a class="songs" :class="[currentView == 'songs' ? 'active' : '']"
                         @click.prevent="$root.loadMainView('songs')">All Songs</a>
                 </li>
                 <li>
-                    <a class="albums" :class="[currentView == 'albums' ? 'active' : '']" 
+                    <a class="albums" :class="[currentView == 'albums' ? 'active' : '']"
                         @click.prevent="$root.loadMainView('albums')">Albums</a>
                 </li>
                 <li>
-                    <a class="artists" :class="[currentView == 'artists' ? 'active' : '']" 
+                    <a class="artists" :class="[currentView == 'artists' ? 'active' : '']"
                         @click.prevent="$root.loadMainView('artists')">Artists</a>
                 </li>
             </ul>
         </section>
 
         <playlists :current-view="currentView"></playlists>
-        
+
         <section v-if="user.current.is_admin" class="manage">
             <h1>Manage</h1>
 
             <ul class="menu">
                 <li>
-                    <a class="settings" :class="[currentView == 'settings' ? 'active' : '']" 
+                    <a class="settings" :class="[currentView == 'settings' ? 'active' : '']"
                         @click.prevent="$root.loadMainView('settings')">Settings</a>
                     </li>
                 <li>
@@ -48,10 +52,10 @@
             All music &copy; <a href="http://www.bensound.com/" target=_blank>Bensound.com</a>.
         </div>
 
-        <a 
+        <a
             href="https://github.com/phanan/koel/releases"
             target="_blank"
-            v-show="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion" 
+            v-show="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
             class="new-ver">
             Koel version {{ sharedState.latestVersion }} is available!
         </a>
@@ -61,7 +65,7 @@
 <script>
     import isMobile from 'ismobilejs';
     import $ from 'jquery';
-    
+
     import playlists from './playlists.vue';
     import userStore from '../../../stores/user';
     import songStore from '../../../stores/song';
@@ -82,8 +86,8 @@
 
         methods: {
             /**
-             * Remove the droppable state when a dragleave event occurs on the playlist's DOM element. 
-             * 
+             * Remove the droppable state when a dragleave event occurs on the playlist's DOM element.
+             *
              * @param  {Object} e The dragleave event.
              */
             removeDroppableState(e) {
@@ -92,7 +96,7 @@
 
             /**
              * Add a "droppable" class and set the drop effect when an item is dragged over "Queue" menu.
-             * 
+             *
              * @param  {Object} e The dragover event.
              */
             allowDrop(e) {
@@ -104,7 +108,7 @@
 
             /**
              * Handle songs dropped to our Queue menu item.
-             * 
+             *
              * @param  {Object} e The event
              *
              * @return {Boolean}
@@ -154,7 +158,7 @@
 <style lang="sass">
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
-    
+
     #sidebar {
         flex: 0 0 256px;
         background-color: $colorSidebarBgr;
@@ -163,7 +167,7 @@
         overflow: auto;
 
         // Enable scroll with momentum on touch devices
-        overflow-y: scroll; 
+        overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
 
         a.droppable {
@@ -210,6 +214,10 @@
                     width: 24px;
                     display: inline-block;
                     font-family: FontAwesome;
+                }
+
+                &.home::before {
+                    content: "\f015";
                 }
 
                 &.queue::before {

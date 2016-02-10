@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Setting;
 use Illuminate\Console\Command;
 use Media;
@@ -13,7 +14,8 @@ class SyncMedia extends Command
      *
      * @var string
      */
-    protected $signature = 'koel:sync';
+    protected $signature = 'koel:sync
+        {record? : A single watch record. Consult Wiki for more info.}';
 
     protected $ignored = 0;
     protected $invalid = 0;
@@ -47,6 +49,20 @@ class SyncMedia extends Command
             return;
         }
 
+        if (!$record = $this->argument('record')) {
+            $this->syncAll();
+
+            return;
+        }
+
+        $this->syngle($record);
+    }
+
+    /**
+     * Sync all files in the configured media path.
+     */
+    protected function syncAll()
+    {
         $this->info('Koel syncing started. All we need now is just a little patience…');
 
         Media::sync(null, $this);
@@ -54,6 +70,23 @@ class SyncMedia extends Command
         $this->output->writeln("<info>Completed! {$this->synced} new or updated song(s)</info>, "
             ."{$this->ignored} unchanged song(s), "
             ."and <comment>{$this->invalid} invalid file(s)</comment>.");
+    }
+
+    /**
+     * SYNc a sinGLE file or directory. See my awesome pun?
+     *
+     * @param string $record The watch record.
+     *                       As of current we only support inotifywait.
+     *                       Some examples:
+     *                       - "DELETE /var/www/media/gone.mp3"
+     *                       - "CLOSE_WRITE,CLOSE /var/www/media/new.mp3"
+     *                       - "MOVED_TO /var/www/media/new_dir"
+     *
+     * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
+     */
+    public function syngle($record)
+    {
+        Media::syncByWatchRecord(new InotifyWatchRecord($record), $this);
     }
 
     /**
