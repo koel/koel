@@ -69,6 +69,11 @@
                 var settings = equalizerStore.get();
 
                 var AudioContext = window.AudioContext || window.webkitAudioContext || false;
+
+                if (!AudioContext) {
+                    return;
+                }
+
                 var context = new AudioContext();
 
                 this.preampGainNode = context.createGain();
