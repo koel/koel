@@ -175,7 +175,7 @@ class Media
         if ($record->isDeleted()) {
             // The directory is removed. We remove all songs in it.
             if ($count = Song::inDirectory($path)->delete()) {
-                Log::info("Deleted $$count song(s) under $path");
+                Log::info("Deleted $count song(s) under $path");
                 event(new LibraryChanged());
             } else {
                 Log::info("$path is empty--no action needed.");
