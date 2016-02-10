@@ -40,7 +40,7 @@ export default {
             _.each(album.songs, song => {
                 song.fmtLength = utils.secondsToHis(song.length);
 
-                // Manually set these addtional properties to be reactive
+                // Manually set these additional properties to be reactive
                 Vue.set(song, 'playCount', 0);
                 Vue.set(song, 'album', album);
                 Vue.set(song, 'liked', false);
