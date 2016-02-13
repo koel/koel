@@ -361,8 +361,7 @@
             }
 
 
-            @media only screen
-            and (max-device-width : 768px) {
+            @media only screen and (max-device-width: 768px) {
                 position: absolute !important;
                 right: 0;
                 height: $footerHeight;
@@ -424,12 +423,8 @@
         }
 
 
-        @media only screen
-        and (max-device-width : 768px) {
-            width: 50%;
-            position: absolute;
-            top: 0;
-            left: 0;
+        @media only screen and (max-device-width: 768px) {
+            flex: 1;
 
             &::before {
                 display: none;
@@ -451,9 +446,7 @@
 
         @include hasSoftGradientOnTop($colorMainBgr);
 
-
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-device-width: 768px) {
             width: 100%;
             position: absolute;
             top: 0;
@@ -520,8 +513,7 @@
         }
 
 
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-device-width: 768px) {
             .meta, .title {
                 display: none;
             }
@@ -543,8 +535,7 @@
             width: 16px;
         }
 
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-device-width: 768px) {
             display: none !important;
         }
     }
