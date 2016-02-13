@@ -500,8 +500,6 @@
         $volume-track-height: 8px;
 
 
-        @import "resources/assets/sass/vendors/_plyr.scss";
-
         // Some little tweaks here and there
         .player {
             width: 100%;

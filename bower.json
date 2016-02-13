@@ -22,7 +22,6 @@
     "tests"
   ],
   "devDependencies": {
-    "plyr": "~1.3.6",
-    "fontawesome": "~4.5.0"
+    "plyr": "~1.3.6"
   }
 }

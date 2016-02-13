@@ -18,7 +18,7 @@ elixir(function (mix) {
     mix.sass('app.scss');
 
     mix.copy('resources/assets/img', 'public/img')
-        .copy('bower_components/fontawesome/fonts', 'public/build/fonts')
+        .copy('node_modules/font-awesome/fonts', 'public/build/fonts')
         .copy('resources/assets/fonts', 'public/build/fonts');
 
     mix.scripts([
@@ -27,8 +27,7 @@ elixir(function (mix) {
         ], 'public/js/vendors.js', './')
         .styles([
             'resources/assets/css/**/*.css',
-            'bower_components/fontawesome/css/font-awesome.min.css',
-            'bower_components/plyr/dist/plyr.css',
+            'node_modules/font-awesome/css/font-awesome.min.css',
             'node_modules/rangeslider.js/dist/rangeslider.css'
         ], 'public/css/vendors.css', './');
 

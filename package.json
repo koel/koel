@@ -24,6 +24,7 @@
     "browserify-hmr": "^0.3.1",
     "chai": "^3.4.1",
     "cross-env": "^1.0.7",
+    "font-awesome": "^4.5.0",
     "gulp": "^3.9.0",
     "gulp-util": "^3.0.7",
     "ismobilejs": "^0.3.9",
