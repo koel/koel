@@ -21,7 +21,7 @@ class Interaction extends Model
 
     protected $guarded = ['id'];
 
-    protected $hidden = ['user_id', 'created_at', 'updated_at'];
+    protected $hidden = ['id', 'user_id', 'created_at', 'updated_at'];
 
     public function user()
     {
@@ -35,7 +35,7 @@ class Interaction extends Model
 
     /**
      * Increase the number of times a song is played by a user.
-     * 
+     *
      * @param string $songId
      * @param User   $user
      *
@@ -60,7 +60,7 @@ class Interaction extends Model
 
     /**
      * Like or unlike a song on behalf of a user.
-     * 
+     *
      * @param string $songId
      * @param User   $user
      *
