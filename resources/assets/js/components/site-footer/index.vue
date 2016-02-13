@@ -24,8 +24,8 @@
                 <div class="progress" id="progressPane">
                     <h3 class="title">{{ song.title }}</h3>
                     <p class="meta">
-                        <span class="artist">{{ song.album.artist.name }}</span> –
-                        <span class="album">{{ song.album.name }}</span>
+                        <a class="artist" @click.prevent="loadArtist(song.album.artist)">{{ song.album.artist.name }}</a> –
+                        <a class="album" @click.prevent="loadAlbum(song.album)">{{ song.album.name }}</a>
                     </p>
 
                     <div class="player">
@@ -212,6 +212,24 @@
              */
             toggleExtraPanel() {
                 preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel);
+            },
+
+            /**
+             * Load the artist details panel.
+             *
+             * @param  {Object} artist
+             */
+            loadArtist(artist) {
+                this.$root.loadArtist(artist);
+            },
+
+            /**
+             * Load the album details panel.
+             *
+             * @param  {Object} album
+             */
+            loadAlbum(album) {
+                this.$root.loadAlbum(album);
             },
         },
 
@@ -468,7 +486,12 @@
 
         .meta {
             font-size: 90%;
-            opacity: .4;
+
+            a {
+                &:hover {
+                    color: $colorHighlight;
+                }
+            }
         }
 
         $blue: $colorHighlight;
