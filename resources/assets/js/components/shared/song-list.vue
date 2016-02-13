@@ -34,11 +34,9 @@
                 <tr
                     v-for="item in items
                         | caseInsensitiveOrderBy sortKey order
-                        | filterBy q in 'title' 'album.name' 'album.artist.name'
+                        | filterSongBy q
                         | limitBy numOfItems"
                     is="song-item"
-                    :top-play-count="items[0].playCount"
-                    :show-play-count="type === 'top-songs'"
                     data-song-id="{{ item.id }}"
                     track-by="id"
                     :song="item"
