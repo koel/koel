@@ -35,9 +35,9 @@ export default {
      */
     init(albums) {
         // Iterate through the albums. With each, add its songs into our master song list.
-        this.state.songs = _.reduce(albums, (songs, album) => {
+        this.state.songs = albums.reduce((songs, album) => {
             // While doing so, we populate some other information into the songs as well.
-            _.each(album.songs, song => {
+            album.songs.forEach(song => {
                 song.fmtLength = utils.secondsToHis(song.length);
 
                 // Manually set these additional properties to be reactive
@@ -63,7 +63,7 @@ export default {
     initInteractions(interactions) {
         favoriteStore.clear();
 
-        _.each(interactions, interaction => {
+        interactions.forEach(interaction => {
             var song = this.byId(interaction.song_id);
 
             if (!song) {
@@ -90,7 +90,7 @@ export default {
      * @return {Float|String}
      */
     getLength(songs, toHis) {
-        var duration = _.reduce(songs, (length, song) => length + song.length, 0);
+        var duration = songs.reduce((length, song) => length + song.length, 0);
 
         if (toHis) {
             return utils.secondsToHis(duration);
@@ -127,7 +127,7 @@ export default {
      * @return {Array.<Object>}
      */
     byIds(ids) {
-        return _.map(ids, id => this.byId(id));
+        return ids.map(id => this.byId(id));
     },
 
     /**
@@ -197,7 +197,7 @@ export default {
 
             // Convert the duration into i:s
             if (data.album_info && data.album_info.tracks) {
-                _.each(data.album_info.tracks, track => track.fmtLength = utils.secondsToHis(track.length));
+                data.album_info.tracks.forEach(track => track.fmtLength = utils.secondsToHis(track.length));
             }
 
             // If the album cover is not in a nice form, don't use it.
