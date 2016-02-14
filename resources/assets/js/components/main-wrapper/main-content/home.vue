@@ -178,7 +178,7 @@
     };
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
 
