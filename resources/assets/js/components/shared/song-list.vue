@@ -514,8 +514,7 @@
         }
 
 
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-device-width: 768px) {
             table, tbody, tr {
                 display: block;
             }

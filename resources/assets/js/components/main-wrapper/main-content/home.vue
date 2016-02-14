@@ -5,22 +5,59 @@
         </h1>
 
         <div class="main-scroll-wrap">
-            <section class="recent">
-                <h1>Recently Played</h1>
+            <div class="top-sections">
+                <section v-if="topSongs.length">
+                    <h1>Most Played Songs</h1>
 
-                <song-list
-                    v-show="songState.recent.length"
-                    :items="songState.recent"
-                    :sortable="false">
-                </song-list>
-                <p class="none" v-show="!songState.recent.length">No songs played yet. What ya waiting for?</p>
-            </section>
+                    <ol class="top-song-list">
+                        <li v-for="song in topSongs"
+                            :class="{ playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
+                            @dblclick.prevent="play(song)"
+                        >
+                            <span class="cover" :style="{ backgroundImage: 'url(' + song.album.cover + ')' }">
+                                <a class="control" @click.prevent="triggerPlay(song)">
+                                    <i class="fa fa-play" v-show="song.playbackState !== 'playing'"></i>
+                                    <i class="fa fa-pause" v-else></i>
+                                </a>
+                            </span>
+                            <span class="details">
+                                <span :style="{ width: song.playCount * 100 / topSongs[0].playCount + '%' }"
+                                    class="play-count"></span>
+                                {{ song.title }}
+                                <span class="by">{{ song.album.artist.name }} –
+                                {{ song.playCount }} {{ song.playCount | pluralize 'play' }}</span>
+                            </span>
+                        </li>
+                    </ol>
+                </section>
 
-            <section v-if="topSongs.length">
-                <h1>Most Played Songs</h1>
+                <section class="recent">
+                    <h1>Recently Played</h1>
 
-                <song-list :items="topSongs" :sortable="false" type="top-songs"></song-list>
-            </section>
+                    <ol class="recent-song-list" v-show="recentSongs.length">
+                        <li v-for="song in recentSongs"
+                            :class="{ playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
+                            @dblclick.prevent="play(song)"
+                        >
+                            <span class="cover" :style="{ backgroundImage: 'url(' + song.album.cover + ')' }">
+                                <a class="control" @click.prevent="triggerPlay(song)">
+                                    <i class="fa fa-play" v-show="song.playbackState !== 'playing'"></i>
+                                    <i class="fa fa-pause" v-else></i>
+                                </a>
+                            </span>
+                            <span class="details">
+                                {{ song.title }}
+                                <span class="by">{{ song.album.artist.name }}</span>
+                            </span>
+                        </li>
+                    </ol>
+
+                    <p class="none" v-show="!recentSongs.length">
+                        Your most-recent songs in this session will be displayed here.<br />
+                        Start listening!
+                    </p>
+                </section>
+            </div>
 
             <section class="top-artists" v-if="topArtists.length">
                 <h1>Top Artists</h1>
@@ -45,27 +82,22 @@
 
 <script>
     import _ from 'lodash';
-    import isMobile from 'ismobilejs';
 
     import playback from '../../../services/playback';
     import songStore from '../../../stores/song';
     import albumStore from '../../../stores/album';
     import artistStore from '../../../stores/artist';
     import userStore from '../../../stores/user';
+    import queueStore from '../../../stores/queue';
 
     import albumItem from '../../shared/album-item.vue';
     import artistItem from '../../shared/artist-item.vue';
 
-    import hasSongList from '../../../mixins/has-song-list';
-
     export default {
-        mixins: [hasSongList],
         components: { albumItem, artistItem },
 
         data () {
             return {
-                isPhone: isMobile.phone,
-                songState: songStore.state,
                 greetings: [
                     'Oh hai!',
                     'Hey, %s!',
@@ -86,12 +118,21 @@
             },
 
             /**
+             * The most recently played songs.
+             *
+             * @return {Array.<Object>}
+             */
+            recentSongs() {
+                return songStore.getRecent(7);
+            },
+
+            /**
              * The most played songs.
              *
              * @return {Array.<Object>}
              */
             topSongs() {
-                return songStore.getMostPlayed();
+                return songStore.getMostPlayed(7);
             },
 
             /**
@@ -111,6 +152,29 @@
                 return artistStore.getMostPlayed();
             },
         },
+
+        methods: {
+            play(song) {
+                if (!queueStore.contains(song)) {
+                    queueStore.queueAfterCurrent(song);
+                }
+
+                playback.play(song);
+            },
+
+            /**
+             * Trigger playing a song.
+             */
+            triggerPlay(song) {
+                if (song.playbackState === 'stopped') {
+                    this.play(song);
+                } else if (song.playbackState === 'paused') {
+                    playback.resume();
+                } else {
+                    playback.pause();
+                }
+            },
+        },
     };
 </script>
 
@@ -119,14 +183,112 @@
     @import "resources/assets/sass/partials/_mixins.scss";
 
     #homeWrapper {
-        button.play-shuffle, button.del {
-            i {
-                margin-right: 0 !important;
-            }
-        }
+        .top-sections {
+            display: flex;
 
-        .song-list-wrap {
-            padding: 0 !important;
+            > section {
+                flex-grow: 1;
+                flex-basis: 0;
+
+                &:first-of-type {
+                    margin-right: 8px;
+                }
+            }
+
+            ol li {
+                display: flex;
+
+                &.playing {
+                    color: $colorHighlight;
+                }
+
+                &:hover .cover {
+                    .control {
+                        display: block;
+                    }
+
+                    &::before {
+                        opacity: .7;
+                    }
+                }
+
+                .cover {
+                    flex: 0 0 48px;
+                    height: 48px;
+                    background-size: cover;
+                    position: relative;
+
+                    @include vertical-center();
+
+                    &::before {
+                        content: " ";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        pointer-events: none;
+                        background: #000;
+                        opacity: 0;
+
+                        html.touchevents & {
+                            opacity: .7;
+                        }
+                    }
+
+                    .control {
+                        border-radius: 50%;
+                        width: 28px;
+                        height: 28px;
+                        background: rgba(0, 0, 0, .7);
+                        border: 1px solid transparent;
+                        line-height: 28px;
+                        font-size: 13px;
+                        text-align: center;
+                        z-index: 1;
+                        display: none;
+                        color: #fff;
+                        transition: .3s;
+
+                        &:hover {
+                            transform: scale(1.2);
+                            border-color: #fff;
+                        }
+
+                        html.touchevents & {
+                            display: block;
+                        }
+                    }
+                }
+
+                .details {
+                    flex: 1;
+                    padding: 4px 8px;
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+
+                    .play-count {
+                        background: rgba(255, 255, 255, 0.08);
+                        position: absolute;
+                        height: 100%;
+                        top: 0;
+                        left: 0;
+                        pointer-events: none;
+                    }
+
+                    .by {
+                        display: block;
+                        font-size: 90%;
+                        opacity: .6;
+                        margin-top: 2px;
+                    }
+                }
+
+                //border-bottom: 1px solid $color2ndBgr;
+                margin-bottom: 8px;
+            }
         }
 
         .none {
@@ -151,6 +313,18 @@
                 font-size: 18px;
                 margin: 0 0 24px;
                 font-weight: $fontWeight_UltraThin;
+            }
+        }
+
+        @media only screen and (max-device-width: 768px) {
+            .top-sections {
+                display: block;
+
+                > section {
+                    &:first-of-type {
+                        margin-right: 0;
+                    }
+                }
             }
         }
     }

@@ -244,7 +244,6 @@ export default {
      * @return {Array.<Object>}
      */
     getRecent(n = 10) {
-        // And last, make sure the list doesn't exceed 10 items.
         return _.take(this.state.recent, n);
     },
 
