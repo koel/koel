@@ -1,5 +1,5 @@
 <template>
-    <article class="item" v-if="album.songs.length">
+    <article class="item" v-if="album.songs.length" draggable="true" @dragstart="dragStart">
         <span class="cover" :style="{ backgroundImage: 'url(' + album.cover + ')' }">
             <a class="control" @click.prevent="play">
                 <i class="fa fa-play"></i>
@@ -20,6 +20,9 @@
 </template>
 
 <script>
+    import _ from 'lodash';
+    import $ from 'jquery';
+
     import playback from '../../services/playback';
     import queueStore from '../../stores/queue';
 
@@ -30,8 +33,8 @@
             /**
              * Play all songs in the current album, or queue them up if Ctrl/Cmd key is pressed.
              */
-            play($e) {
-                if ($e.metaKey || $e.ctrlKey) {
+            play(e) {
+                if (e.metaKey || e.ctrlKey) {
                     queueStore.queue(this.album.songs);
                 } else {
                     playback.playAllInAlbum(this.album);
@@ -50,6 +53,19 @@
              */
             viewArtistDetails() {
                 this.$root.loadArtist(this.album.artist);
+            },
+
+            /**
+             * Allow dragging the album (actually, its songs).
+             */
+            dragStart(e) {
+                var songIds = _.pluck(this.album.songs, 'id');
+                e.dataTransfer.setData('text/plain', songIds);
+                e.dataTransfer.effectAllowed = 'move';
+
+                // Set a fancy drop image using our ghost element.
+                var $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} in ${this.album.name}`);
+                e.dataTransfer.setDragImage($ghost[0], 0, 0);
             },
         },
     };
