@@ -6,7 +6,7 @@
 
         <div class="main-scroll-wrap">
             <div class="top-sections">
-                <section v-if="topSongs.length">
+                <section v-show="topSongs.length">
                     <h1>Most Played Songs</h1>
 
                     <ol class="top-song-list">
@@ -59,7 +59,7 @@
                 </section>
             </div>
 
-            <section class="top-artists" v-if="topArtists.length">
+            <section class="top-artists" v-show="topArtists.length">
                 <h1>Top Artists</h1>
 
                 <div class="wrapper">
@@ -68,7 +68,7 @@
                 </div>
             </section>
 
-            <section class="top-albums" v-if="topAlbums.length">
+            <section class="top-albums" v-show="topAlbums.length">
                 <h1>Top Albums</h1>
 
                 <div class="wrapper">
@@ -109,47 +109,16 @@
                     'How’s your day, %s?',
                     'How have you been, %s?',
                 ],
+                recentSongs: [],
+                topSongs: [],
+                topAlbums: [],
+                topArtists: [],
             };
         },
 
         computed: {
             greeting() {
                 return _.sample(this.greetings).replace('%s', userStore.current().name);
-            },
-
-            /**
-             * The most recently played songs.
-             *
-             * @return {Array.<Object>}
-             */
-            recentSongs() {
-                return songStore.getRecent(7);
-            },
-
-            /**
-             * The most played songs.
-             *
-             * @return {Array.<Object>}
-             */
-            topSongs() {
-                return songStore.getMostPlayed(7);
-            },
-
-            /**
-             * The most played albums.
-             *
-             * @return {Array.<Object>}
-             */
-            topAlbums() {
-                return albumStore.getMostPlayed();
-            },
-
-            /**
-             * The most played artists.
-             * @return {Array.<Object>}
-             */
-            topArtists() {
-                return artistStore.getMostPlayed();
             },
         },
 
@@ -174,11 +143,31 @@
                     playback.pause();
                 }
             },
+
+            /**
+             * Refresh the dashboard with latest data.
+             */
+            refreshDashboard() {
+                this.topSongs = songStore.getMostPlayed(7);
+                this.topAlbums = albumStore.getMostPlayed(6);
+                this.topArtists = artistStore.getMostPlayed(6);
+                this.recentSongs = songStore.getRecent(7);
+            },
+        },
+
+        events: {
+            'koel:ready': function () {
+                this.refreshDashboard();
+            },
+
+            'song:played': function () {
+                this.refreshDashboard();
+            },
         },
     };
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
 
