@@ -21,16 +21,21 @@
 
 <script>
     import playback from '../../services/playback';
+    import queueStore from '../../stores/queue';
 
     export default {
         props: ['album'],
 
         methods: {
             /**
-             * Play all songs in the current album.
+             * Play all songs in the current album, or queue them up if Ctrl/Cmd key is pressed.
              */
-            play() {
-                playback.playAllInAlbum(this.album);
+            play($e) {
+                if ($e.metaKey || $e.ctrlKey) {
+                    queueStore.queue(this.album.songs);
+                } else {
+                    playback.playAllInAlbum(this.album);
+                }
             },
 
             /**

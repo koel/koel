@@ -21,16 +21,21 @@
 <script>
     import playback from '../../services/playback';
     import artistStore from '../../stores/artist';
+    import queueStore from '../../stores/queue';
 
     export default {
         props: ['artist'],
 
         methods: {
             /**
-             * Play all songs by the current artist.
+             * Play all songs by the current artist, or queue them up if Ctrl/Cmd key is pressed.
              */
-            play() {
-                playback.playAllByArtist(this.artist);
+            play($e) {
+                if ($e.metaKey || $e.ctrlKey) {
+                    queueStore.queue(artistStore.getSongsByArtist(this.artist));
+                } else {
+                    playback.playAllByArtist(this.artist);
+                }
             },
 
             viewDetails() {
