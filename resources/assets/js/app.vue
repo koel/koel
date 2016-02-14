@@ -331,6 +331,14 @@
         font-family: $fontFamily;
         font-size: $fontSize;
         font-weight: $fontWeight_Thin;
+
+        /**
+         * We can totally hide this element on touch devices, because there's
+         * no drag and drop support there anyway.
+         */
+        html.touchevents & {
+            display: none;
+        }
     }
 
     #app, .login-wrapper {
