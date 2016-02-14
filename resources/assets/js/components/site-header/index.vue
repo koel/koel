@@ -1,6 +1,6 @@
 <template>
     <header id="mainHeader">
-        <h1 class="brand ir">koel</h1>
+        <h1 class="brand">{{* appTitle }}</h1>
         <span class="hamburger" @click="toggleSidebar">
             <i class="fa fa-bars"></i>
         </span>
@@ -14,11 +14,18 @@
 </template>
 
 <script>
+    import config from '../../config';
     import searchForm from './search-form.vue';
     import userBadge from './user-badge.vue';
 
     export default {
         components: { searchForm, userBadge },
+
+        data() {
+            return {
+                appTitle: config.appTitle,
+            };
+        },
 
         methods: {
             /**
@@ -50,32 +57,34 @@
 
         h1.brand {
             flex: 1;
-
-            @include vertical-center();
+            color: $colorMainText;
+            font-size: 22px;
+            font-weight: $fontWeight_UltraThin;
+            opacity: 0;
+            line-height: $headerHeight;
+            text-align: center;
         }
 
         .hamburger, .magnifier {
             font-size: 140%;
-            @include vertical-center();
             flex: 0 0 48px;
             order: -1;
+            line-height: $headerHeight;
+            text-align: center;
             display: none;
         }
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-device-width: 667px) {
             display: flex;
             align-content: stretch;
             justify-content: flext-start;
 
             .hamburger, .magnifier {
-                display: flex;
+                display: inline-block;
             }
 
             h1.brand {
-                flex: 1;
-                color: $colorMainText;
-                font: 22px Roboto;
-                font-weight: $fontWeight_UltraThin;
+                opacity: 1;
             }
         }
     }

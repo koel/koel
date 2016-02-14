@@ -119,7 +119,7 @@ export default {
 
         this.app.$broadcast('song:played', song);
 
-        $('title').text(`${song.title} ♫ Koel`);
+        $('title').text(`${song.title} ♫ ${config.appTitle}`);
         $('.player audio').attr('title', `${song.album.artist.name} - ${song.title}`);
 
         this.player.restart();
