@@ -242,7 +242,7 @@
                         height: 28px;
                         background: rgba(0, 0, 0, .7);
                         border: 1px solid transparent;
-                        line-height: 28px;
+                        line-height: 26px;
                         font-size: 13px;
                         text-align: center;
                         z-index: 1;
