@@ -82,7 +82,7 @@ class SyncMedia extends Command
      *                       - "CLOSE_WRITE,CLOSE /var/www/media/new.mp3"
      *                       - "MOVED_TO /var/www/media/new_dir"
      *
-     * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
+     * @link http://man7.org/linux/man-pages/man1/inotifywait.1.html
      */
     public function syngle($record)
     {
