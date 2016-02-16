@@ -15,6 +15,9 @@
     # Deny access to framework directories
     RewriteRule ^(app|bootstrap|config|database|resources|storage|tests|vendor)/ - [R=404,L,NC]
 
+    # Deny access to node_modules directories
+    RewriteRule ^node_modules/ - [R=404,L,NC]
+
     # And dot files/folders (for example .env)
     RedirectMatch 404 /\..*$
 
