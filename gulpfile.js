@@ -22,7 +22,7 @@ elixir(function (mix) {
         .copy('resources/assets/fonts', 'public/build/fonts');
 
     mix.scripts([
-            'bower_components/plyr/dist/plyr.js',
+            'node_modules/plyr/dist/plyr.js',
             'resources/assets/js/libs/modernizr-custom.js'
         ], 'public/js/vendors.js', './')
         .styles([
