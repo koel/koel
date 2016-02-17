@@ -28,7 +28,7 @@
                         <a class="album" @click.prevent="loadAlbum(song.album)">{{ song.album.name }}</a>
                     </p>
 
-                    <div class="player">
+                    <div class="player plyr">
                         <audio crossorigin="anonymous" controls></audio>
                     </div>
                 </div>
@@ -501,14 +501,14 @@
             left: 0;
         }
 
-        .player-controls {
+        .plyr__controls {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
         }
 
-        .player-controls-left, .player-controls-right {
+        .plyr__controls--left, .plyr__controls--right {
             display: none;
         }
 

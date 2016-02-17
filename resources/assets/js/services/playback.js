@@ -102,7 +102,11 @@ export default {
         // Add it into the "recent" list
         songStore.addRecent(song);
 
-        this.player.source(`${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`);
+        this.player.source({
+            sources: [{
+                src: `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`
+            }]
+        });
 
         // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
         this.restart();
