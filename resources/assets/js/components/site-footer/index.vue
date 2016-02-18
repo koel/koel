@@ -28,7 +28,7 @@
                         <a class="album" @click.prevent="loadAlbum(song.album)">{{ song.album.name }}</a>
                     </p>
 
-                    <div class="player">
+                    <div class="plyr">
                         <audio crossorigin="anonymous" controls></audio>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                 <span class="volume control" id="volume">
                     <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"></i>
                     <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"></i>
-                    <input type="range" id="volumeRange" max="10" step="0.1" class="player-volume">
+                    <input type="range" id="volumeRange" max="10" step="0.1" class="plyr__volume">
                 </span>
             </span>
         </div>
@@ -487,28 +487,24 @@
             }
         }
 
-        $blue: $colorHighlight;
-        $control-color: $colorHighlight;
-        $control-bg-hover: $colorHighlight;
-        $volume-track-height: 8px;
-
 
         // Some little tweaks here and there
-        .player {
+        .plyr {
             width: 100%;
             position: absolute;
             top: 0;
             left: 0;
         }
 
-        .player-controls {
+        .plyr__controls {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
+            padding: 0;
         }
 
-        .player-controls-left, .player-controls-right {
+        .plyr__controls--left, .plyr__controls--right {
             display: none;
         }
 
