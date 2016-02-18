@@ -35,6 +35,7 @@
     "lodash": "^3.10.1",
     "mocha": "^2.3.4",
     "node-sass": "^3.4.2",
+    "plyr": "^1.5.11",
     "rangeslider.js": "^2.1.1",
     "sinon": "^1.17.2",
     "vue": "^1.0.16",
@@ -44,7 +45,7 @@
     "vueify-insert-css": "^1.0.0"
   },
   "scripts": {
-    "postinstall": "bower install && cross-env NODE_ENV=production && gulp --production",
+    "postinstall": "cross-env NODE_ENV=production && gulp --production",
     "test": "mocha --compilers js:babel-register resources/assets/js/tests/**/*Test.js"
   }
 }
