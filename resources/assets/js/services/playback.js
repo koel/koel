@@ -34,7 +34,7 @@ export default {
             controls: [],
         });
 
-        this.player = $('.player')[0].plyr;
+        this.player = $('.plyr')[0].plyr;
         this.$volumeInput = $('#volumeRange');
 
         /**
@@ -104,9 +104,13 @@ export default {
 
         this.player.source({
             sources: [{
-                src: `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`
+                src: `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`,
+                title: `${song.album.artist.name} - ${song.title}`,
             }]
         });
+
+        $('title').text(`${song.title} ♫ ${config.appTitle}`);
+        $('.player audio').attr('title', `${song.album.artist.name} - ${song.title}`);
 
         // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
         this.restart();
@@ -122,9 +126,6 @@ export default {
         song.playStartTime = Math.floor(Date.now() / 1000);
 
         this.app.$broadcast('song:played', song);
-
-        $('title').text(`${song.title} ♫ ${config.appTitle}`);
-        $('.player audio').attr('title', `${song.album.artist.name} - ${song.title}`);
 
         this.player.restart();
         this.player.play();
