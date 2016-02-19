@@ -4,18 +4,18 @@
             <span class="overview">
                 <img :src="album.cover" width="64" height="64" class="cover">
                 {{ album.name }}
-                <i class="fa fa-angle-down toggler" 
-                    v-show="isPhone && !showingControls" 
+                <i class="fa fa-angle-down toggler"
+                    v-show="isPhone && !showingControls"
                     @click="showingControls = true"></i>
-                <i class="fa fa-angle-up toggler" 
-                    v-show="isPhone && showingControls" 
+                <i class="fa fa-angle-up toggler"
+                    v-show="isPhone && showingControls"
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
                     by <a class="artist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
                     •
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
-                    • 
+                    •
                     {{ meta.totalLength }}
                 </span>
             </span>
@@ -27,7 +27,7 @@
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                <button class="add-to" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
 

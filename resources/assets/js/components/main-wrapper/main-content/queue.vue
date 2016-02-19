@@ -27,7 +27,7 @@
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="state.songs.length > 1">
+                <button class="add-to" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="state.songs.length > 1">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
                 <button class="clear" @click.prevent="clear" v-if="state.songs.length">Clear</button>

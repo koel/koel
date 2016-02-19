@@ -2,24 +2,24 @@
     <section id="songsWrapper">
         <h1 class="heading">
             <span>All Songs
-                <i class="fa fa-angle-down toggler" 
-                    v-show="isPhone && !showingControls" 
+                <i class="fa fa-angle-down toggler"
+                    v-show="isPhone && !showingControls"
                     @click="showingControls = true"></i>
-                <i class="fa fa-angle-up toggler" 
-                    v-show="isPhone && showingControls" 
+                <i class="fa fa-angle-up toggler"
+                    v-show="isPhone && showingControls"
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
-                    • 
+                    •
                     {{ meta.totalLength }}
                 </span>
             </span>
-            
+
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button 
-                    class="play-shuffle" 
-                    @click.prevent="shuffle" 
+                <button
+                    class="play-shuffle"
+                    @click.prevent="shuffle"
                     v-if="state.songs.length && selectedSongs.length < 2"
                 >
                     <i class="fa fa-random"></i> All
@@ -28,7 +28,7 @@
                     <i class="fa fa-random"></i> Selected
                 </button>
 
-                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                <button class="add-to" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
 

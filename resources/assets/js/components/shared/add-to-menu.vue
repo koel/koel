@@ -1,5 +1,5 @@
 <template>
-    <div class="add-to-playlist" v-show="showing">
+    <div class="add-to-playlist" v-show="showing" v-on-clickaway="hideMenu">
         <p>Add {{ songs.length }} {{ songs.length | pluralize 'song' }} to</p>
 
         <ul>
@@ -10,11 +10,11 @@
         </ul>
 
         <p>or create a new playlist</p>
-        
+
         <form class="form-save form-simple" @submit.prevent="createNewPlaylistFromSongs">
-            <input type="text" 
+            <input type="text"
                 @keyup.esc.prevent="hideMenu"
-                v-model="newPlaylistName" 
+                v-model="newPlaylistName"
                 placeholder="Playlist name"
                 required>
             <button type="submit">
@@ -26,6 +26,7 @@
 
 <script>
     import _ from 'lodash';
+    import VueClickaway from 'vue-clickaway';
 
     import playlistStore from '../../stores/playlist';
     import favoriteStore from '../../stores/favorite';
@@ -33,6 +34,7 @@
 
     export default {
         props: ['songs', 'showing', 'settings'],
+        mixins: [ VueClickaway.mixin ],
 
         data() {
             return {
@@ -106,14 +108,14 @@
              */
             createNewPlaylistFromSongs() {
                 this.newPlaylistName = this.newPlaylistName.trim();
-                
+
                 if (!this.newPlaylistName) {
                     return;
                 }
 
                 playlistStore.store(this.newPlaylistName, this.songs, () => {
                     this.newPlaylistName = '';
-                    
+
                     // Activate the new playlist right away
                     this.$root.loadPlaylist(_.last(this.playlistState.playlists));
                 });
@@ -127,8 +129,8 @@
             },
 
             clearSelection() {
-                this.$parent.$broadcast('song:selection-clear');  
-            }
+                this.$parent.$broadcast('song:selection-clear');
+            },
         },
     };
 </script>
@@ -144,7 +146,7 @@
         top: 36px;
         left: 0;
         width: 100%;
-        
+
         p {
             margin: 4px 0;
             font-size: 90%;
@@ -159,7 +161,7 @@
 
         ul {
             max-height: 5 * ($itemHeight + $itemMargin);
-            overflow-y: scroll; 
+            overflow-y: scroll;
             -webkit-overflow-scrolling: touch;
         }
 

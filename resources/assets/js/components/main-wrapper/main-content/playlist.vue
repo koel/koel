@@ -2,22 +2,22 @@
     <section id="playlistWrapper">
         <h1 class="heading">
             <span>{{ playlist.name }}
-                <i class="fa fa-angle-down toggler" 
-                    v-show="isPhone && !showingControls" 
+                <i class="fa fa-angle-down toggler"
+                    v-show="isPhone && !showingControls"
                     @click="showingControls = true"></i>
-                <i class="fa fa-angle-up toggler" 
-                    v-show="isPhone && showingControls" 
+                <i class="fa fa-angle-up toggler"
+                    v-show="isPhone && showingControls"
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
-                    • 
+                    •
                     {{ meta.totalLength }}
                 </span>
             </span>
 
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button class="play-shuffle" 
+                <button class="play-shuffle"
                     @click.prevent="shuffle"
                     v-if="playlist.songs.length && selectedSongs.length < 2"
                 >
@@ -26,7 +26,7 @@
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                <button class="add-to" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
                 <button class="del"
@@ -39,15 +39,15 @@
             </div>
         </h1>
 
-        <song-list v-show="playlist.songs.length" 
-            :items="playlist.songs" 
-            :selected-songs.sync="selectedSongs" 
+        <song-list v-show="playlist.songs.length"
+            :items="playlist.songs"
+            :selected-songs.sync="selectedSongs"
             :playlist="playlist"
             type="playlist">
         </song-list>
 
         <div v-show="!playlist.songs.length" class="none">
-            The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar, 
+            The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar,
             or use the &quot;Add To…&quot; button.
         </div>
     </section>
