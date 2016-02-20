@@ -40,7 +40,8 @@ class InotifyWatchRecord extends WatchRecord implements WatchRecordInterface
 
     /**
      * Determine if the object has just been created or modified.
-     * For our purpose, we DON'T watch the CREATE event, because CLOSE_WRITE should be enough.
+     * For our purpose, we watch both the CREATE abd the CLOSE_WRITE event, because some operating
+     * systems only support CREATE, but not CLOSE_WRITE and MOVED_TO.
      * Additionally, a MOVED_TO (occurred after the object has been moved/renamed to another location
      * **under our watched directory**) should be considered as "modified" also.
      *
@@ -48,7 +49,7 @@ class InotifyWatchRecord extends WatchRecord implements WatchRecordInterface
      */
     public function isNewOrModified()
     {
-        return $this->eventExists('CLOSE_WRITE') || $this->eventExists('MOVED_TO');
+        return $this->eventExists('CLOSE_WRITE') || $this->eventExists('CREATE') || $this->eventExists('MOVED_TO');
     }
 
     /**
