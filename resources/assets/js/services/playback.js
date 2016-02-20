@@ -30,31 +30,23 @@ export default {
 
         this.app = app;
 
-        plyr.setup({
+        this.player = plyr.setup({
             controls: [],
-        });
+        })[0];
 
-        this.player = $('.plyr')[0].plyr;
         this.$volumeInput = $('#volumeRange');
 
         /**
          * Listen to 'error' event on the audio player and play the next song if any.
          */
-        this.player.media.addEventListener('error', e => {
+        document.querySelector('.plyr').addEventListener('error', e => {
             this.playNext();
         }, true);
 
         /**
-         * Listen to 'input' event on the volume range control.
-         * When user drags the volume control, this event will be triggered, and we
-         * update the volume on the plyr object.
+         * Listen to 'ended' event on the audio player and play the next song in the queue.
          */
-        this.$volumeInput.on('input', e => {
-            this.setVolume($(e.target).val());
-        });
-
-        // Listen to 'ended' event on the audio player and play the next song in the queue.
-        this.player.media.addEventListener('ended', e => {
+        document.querySelector('.plyr').addEventListener('ended', e => {
             songStore.scrobble(queueStore.current());
 
             if (preferenceStore.get('repeatMode') === 'REPEAT_ONE') {
@@ -64,6 +56,15 @@ export default {
             }
 
             this.playNext();
+        });
+
+        /**
+         * Listen to 'input' event on the volume range control.
+         * When user drags the volume control, this event will be triggered, and we
+         * update the volume on the plyr object.
+         */
+        this.$volumeInput.on('input', e => {
+            this.setVolume($(e.target).val());
         });
 
         // On init, set the volume to the value found in the local storage.
@@ -105,12 +106,11 @@ export default {
         this.player.source({
             sources: [{
                 src: `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`,
-                title: `${song.album.artist.name} - ${song.title}`,
             }]
         });
 
         $('title').text(`${song.title} ♫ ${config.appTitle}`);
-        $('.player audio').attr('title', `${song.album.artist.name} - ${song.title}`);
+        $('.plyr audio').attr('title', `${song.album.artist.name} - ${song.title}`);
 
         // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
         this.restart();
@@ -211,8 +211,9 @@ export default {
     playPrev() {
         // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it
         // restart playing instead.
-        if (this.player.media.currentTime > 5 && this.player.media.duration > 5) {
-            this.player.seek(0);
+        var audio = document.querySelector('audio');
+        if (audio.currentTime > 5 && audio.duration > 5) {
+            this.player.restart();
 
             return;
         }
