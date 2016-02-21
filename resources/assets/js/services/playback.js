@@ -34,6 +34,8 @@ export default {
             controls: [],
         })[0];
 
+        this.audio = $('audio');
+
         this.$volumeInput = $('#volumeRange');
 
         /**
@@ -103,11 +105,9 @@ export default {
         // Add it into the "recent" list
         songStore.addRecent(song);
 
-        this.player.source({
-            sources: [{
-                src: `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`,
-            }]
-        });
+        // Manually set the `src` attribute of the audio to prevent plyr from resetting
+        // the audio media object and cause our equalizer to malfunction.
+        this.player.media.src = `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`;
 
         $('title').text(`${song.title} ♫ ${config.appTitle}`);
         $('.plyr audio').attr('title', `${song.album.artist.name} - ${song.title}`);
