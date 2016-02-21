@@ -118,14 +118,6 @@
                 z-index: 2;
 
                 @include button-group();
-
-                .add-to {
-                    background-color: $colorGreen !important;
-
-                    &:hover {
-                        background-color: darken($colorGreen, 10%) !important;
-                    }
-                }
             }
 
             input[type="search"] {

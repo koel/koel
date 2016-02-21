@@ -17,7 +17,7 @@
             </span>
 
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button class="play-shuffle"
+                <button class="play-shuffle btn btn-orange"
                     @click.prevent="shuffle"
                     v-if="playlist.songs.length && selectedSongs.length < 2"
                 >
@@ -26,10 +26,10 @@
                 <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="add-to" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                <button class="btn btn-green" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
-                <button class="del"
+                <button class="del btn btn-red"
                     title="Delete this playlist"
                     @click.prevent="del">
                     <i class="fa fa-times"></i> Playlist
@@ -119,14 +119,6 @@
         button.play-shuffle, button.del {
             i {
                 margin-right: 0 !important;
-            }
-        }
-
-        button.del {
-            background-color: $colorRed !important;
-
-            &:hover {
-                background-color: darken($colorRed, 10%) !important;
             }
         }
 

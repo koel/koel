@@ -122,7 +122,7 @@ label {
     display: block;
 }
 
-button, input[type="submit"], input[type="reset"], input[type="button"] {
+button, input[type="submit"], input[type="reset"], input[type="button"], .btn {
     background: $colorBtnBgr;
     color: $colorBtnText;
     font-size: 14px;
@@ -130,6 +130,46 @@ button, input[type="submit"], input[type="reset"], input[type="button"] {
     cursor: pointer;
 
     @include inset-when-pressed();
+
+    &.btn-green {
+        background-color: $colorGreen;
+
+        &:hover {
+            background-color: darken($colorGreen, 10%);
+        }
+    }
+
+    &.btn-red {
+        background-color: $colorRed;
+
+        &:hover {
+            background-color: darken($colorRed, 10%);
+        }
+    }
+
+    &.btn-blue {
+        background-color: $colorBlue;
+
+        &:hover {
+            background-color: darken($colorBlue, 10%);
+        }
+    }
+
+    &.btn-grey {
+        background-color: $colorGrey;
+
+        &:hover {
+            background-color: darken($colorGrey, 10%);
+        }
+    }
+
+    &.btn-orange {
+        background-color: $colorOrange;
+
+        &:hover {
+            background-color: darken($colorOrange, 10%);
+        }
+    }
 }
 
 body, html {

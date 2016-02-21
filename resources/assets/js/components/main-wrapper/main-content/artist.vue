@@ -21,13 +21,13 @@
             </span>
 
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button class="play-shuffle" @click.prevent="shuffle" v-if="selectedSongs.length < 2">
+                <button class="play-shuffle btn btn-orange" @click.prevent="shuffle" v-if="selectedSongs.length < 2">
                     <i class="fa fa-random"></i> All
                 </button>
-                <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
+                <button class="play-shuffle btn btn-orange" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="add-to" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                <button class="btn btn-green" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
 
