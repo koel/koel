@@ -209,10 +209,9 @@ export default {
      * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
      */
     playPrev() {
-        // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it
+        // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
         // restart playing instead.
-        var audio = document.querySelector('audio');
-        if (audio.currentTime > 5 && audio.duration > 5) {
+        if (this.player.media.currentTime > 5 && queueStore.current().length > 5) {
             this.player.restart();
 
             return;
