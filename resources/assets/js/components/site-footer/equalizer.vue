@@ -275,6 +275,10 @@
                 padding-left: 0;
                 width: 100px;
                 text-transform: none;
+
+                option {
+                    color: #333;
+                }
             }
         }
 
