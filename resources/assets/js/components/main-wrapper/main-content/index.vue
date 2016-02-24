@@ -84,10 +84,13 @@
                 padding: 24px;
                 overflow: auto;
                 flex: 1;
+                overflow-y: hidden;
 
-                // Enable scroll with momentum on touch devices
-                overflow-y: scroll;
-                -webkit-overflow-scrolling: touch;
+                &:hover, html.touchevents & {
+                    // Enable scroll with momentum on touch devices
+                    overflow-y: scroll;
+                    -webkit-overflow-scrolling: touch;
+                }
             }
         }
 
