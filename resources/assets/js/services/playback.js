@@ -366,6 +366,8 @@ export default {
      * @param  {Boolean=true}   shuffle Whether to shuffle the songs
      */
     playAllInAlbum(album, shuffle = true) {
-        this.queueAndPlay(album.songs, shuffle);
+        this.queueAndPlay(album.songs.sort(function(a, b){
+            return parseInt(a.track) - parseInt(b.track);
+        }), shuffle);
     },
 };
