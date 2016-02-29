@@ -78,11 +78,25 @@
         components: { songItem },
 
         data() {
+            switch(this.type){
+                case 'top-songs':
+                    key = 'playCount'
+                    order = -1;
+                    break;
+                case 'album':
+                    key = 'track';
+                    order = 1;
+                    break;
+                default:
+                    key = '';
+                    order = 1;
+                    break;
+            }
             return {
                 lastSelectedRow: null,
                 q: '', // The filter query
-                sortKey: this.type === 'top-songs' ? 'playCount' : '',
-                order: this.type === 'top-songs' ? -1 : 1,
+                sortKey: key,
+                order: order,
                 componentCache: {},
             };
         },
