@@ -356,7 +356,7 @@ export default {
      * @param  {Boolean=true}   shuffle Whether to shuffle the songs
      */
     playAllByArtist(artist, shuffle = true) {
-        this.queueAndPlay(artistStore.getSongsByArtist(artist), true);
+        this.queueAndPlay(artistStore.getSongsByArtist(artist), shuffle);
     },
 
     /**
@@ -366,6 +366,8 @@ export default {
      * @param  {Boolean=true}   shuffle Whether to shuffle the songs
      */
     playAllInAlbum(album, shuffle = true) {
-        this.queueAndPlay(album.songs, true);
+        this.queueAndPlay(album.songs.sort(function(a, b){
+            return parseInt(a.track) - parseInt(b.track);
+        }), shuffle);
     },
 };

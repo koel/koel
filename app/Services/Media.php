@@ -233,6 +233,7 @@ class Media
             'artist' => '',
             'album' => '',
             'title' => '',
+            'track' => 0,
             'length' => $info['playtime_seconds'],
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
@@ -257,6 +258,10 @@ class Media
             $title = array_get($comments, 'title', [''])[0];
         }
 
+        if (!$track = intval(array_get($info, 'tags.id3v2.track', [null])[0])) {
+            $track = intval(array_get($comments, 'track', [''])[0]);
+        }
+
         if (!$lyrics = array_get($info, 'tags.id3v2.unsynchronised_lyric', [null])[0]) {
             $lyrics = array_get($comments, 'unsynchronised_lyric', [''])[0];
         }
@@ -264,6 +269,7 @@ class Media
         $props['artist'] = trim($artist);
         $props['album'] = trim($album);
         $props['title'] = trim($title);
+        $props['track'] = trim($track);
         $props['lyrics'] = trim($lyrics);
 
         return $props;
