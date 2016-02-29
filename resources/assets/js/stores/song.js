@@ -180,7 +180,9 @@ export default {
             return;
         }
 
-        http.get(`${song.id}/info`, data => {
+        http.get(`${song.id}/info`, response => {
+            var data = response.data;
+
             song.lyrics = data.lyrics;
 
             // If the artist image is not in a nice form, don't use it.

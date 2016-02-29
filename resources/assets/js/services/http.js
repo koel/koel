@@ -10,11 +10,11 @@ import Vue from 'vue';
  */
 export default {
     request(method, url, data, successCb = null, errorCb = null) {
-        return Vue.http[method](url, data).then(successCb, errorCb);
+        return Vue.http[method](url, data).then(successCb).catch(errorCb);
     },
 
-    get(url, data = {}, successCb = null, errorCb = null) {
-        return this.request('get', url, data, successCb, errorCb);
+    get(url, successCb = null, errorCb = null) {
+        return this.request('get', url, {}, successCb, errorCb);
     },
 
     post(url, data, successCb = null, errorCb = null) {

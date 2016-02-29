@@ -30,7 +30,9 @@ export default {
     init(successCb = null, errorCb = null) {
         this.reset();
 
-        http.get('data', data => {
+        http.get('data', response => {
+            var data = response.data;
+
             assign(this.state, data);
 
             // If this is a new user, initialize his preferences to be an empty object.
@@ -47,7 +49,11 @@ export default {
             settingStore.init(this.state.settings);
 
             window.useLastfm = this.state.useLastfm = data.useLastfm;
-        }, successCb, errorCb);
+
+            if (successCb) {
+                successCb();
+            }
+        }, errorCb);
     },
 
     reset() {
