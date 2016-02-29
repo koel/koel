@@ -2,11 +2,6 @@ import Vue from 'vue';
 
 /**
  * Responsible for all HTTP requests.
- *
- * IMPORTANT:
- * If the user has a good enough connection to stream music, he or she shouldn't
- * encounter any HTTP errors. That's why Koel doesn't handle HTTP errors.
- * After all, even if there were errors, how bad can it be?
  */
 export default {
     request(method, url, data, successCb = null, errorCb = null) {
