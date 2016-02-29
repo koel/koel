@@ -33,6 +33,7 @@ $factory->define(App\Models\Album::class, function ($faker) {
 
 $factory->define(App\Models\Song::class, function ($faker) {
     return [
+        'track' => $faker->randomDigitNotNull(),
         'title' => $faker->sentence,
         'length' => $faker->randomFloat(2, 10, 500),
         'lyrics' => $faker->paragraph(),
