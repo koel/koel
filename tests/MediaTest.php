@@ -13,11 +13,6 @@ class MediaTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
-    public function tearDown()
-    {
-        m::close();
-    }
-
     public function testSync()
     {
         $this->expectsEvents(LibraryChanged::class);
