@@ -57,6 +57,20 @@
             };
         },
 
+        watch: {
+            /**
+             * Watch the artist's album count.
+             * If this is changed to 0, the user has edit the songs by this artist
+             * and move all of them to another artist (thus delete this artist entirely).
+             * We should then go back to the artist list.
+             */
+            'artist.albums.length': function (newVal) {
+                if (!newVal) {
+                    this.$root.loadMainView('artists');
+                }
+            },
+        },
+
         events: {
             /**
              * Listen to 'main-content-view:load' event (triggered from $root currently)

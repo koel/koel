@@ -13,7 +13,8 @@ export default [
                         id: "39189f4545f9d5671fb3dc964f0080a0",
                         album_id: 1193,
                         title: "I Swear",
-                        length: 259.92
+                        length: 259.92,
+                        playCount: 4
                     }
                 ]
             },
@@ -27,7 +28,8 @@ export default [
                         id: "a6a550f7d950d2a2520f9bf1a60f025a",
                         album_id: 1194,
                         title: "I can love you like that",
-                        length: 262.61
+                        length: 262.61,
+                        playCount: 2
                     }
                 ]
             },
@@ -158,3 +160,55 @@ export default [
         ]
     }
 ];
+
+export var singleAlbum = {
+    id: 9999,
+    artist_id: 99,
+    name: "Foo bar",
+    cover: "/foo.jpg",
+    songs: [
+        {
+            id: "39189f4545f0d5671fc3dc964f0080a0",
+            album_id: 9999,
+            title: "A Foo Song",
+            length: 100,
+            playCount: 4
+        }, {
+            id: "39189f4545f9d5671fc3dc96cf1080a0",
+            album_id: 9999,
+            title: "A Bar Song",
+            length: 200,
+            playCount: 7
+        }
+    ]
+};
+
+export var singleArtist = {
+    id: 999,
+    name: "John Cena",
+    albums: [
+        {
+            id: 9991,
+            artist_id: 999,
+            name: "It's John Cena!!!!",
+            cover: "/tmp/john.jpg",
+            songs: [
+                {
+                    id: "e6d3977f3ffa147801ca5d1fdf6fa55f",
+                    album_id: 9991,
+                    title: "John Cena to the Rescue",
+                    length: 300
+                }
+            ]
+        }
+    ]
+};
+
+export var singleSong = {
+    id: "dccb0d4d4803ebbcb61000a5b6a868f5",
+    album_id: 1193,
+    title: "Foo and Bar",
+    length: 100,
+    playCount: 4,
+    lyrics: ''
+};

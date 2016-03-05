@@ -22,18 +22,80 @@ export default {
 
         // Traverse through artists array to get the cover and number of songs for each.
         _.each(this.state.artists, artist => {
-            this.getImage(artist);
-
-            Vue.set(artist, 'playCount', 0);
-            Vue.set(artist, 'songCount', _.reduce(artist.albums, (count, album)  => count + album.songs.length, 0));
-            Vue.set(artist, 'info', null);
+            this.setupArtist(artist);
         });
 
         albumStore.init(this.state.artists);
     },
 
+    setupArtist(artist) {
+        this.getImage(artist);
+        Vue.set(artist, 'playCount', 0);
+        Vue.set(artist, 'songCount', _.reduce(artist.albums, (count, album)  => count + album.songs.length, 0));
+        Vue.set(artist, 'info', null);
+
+        return artist;
+    },
+
     all() {
         return this.state.artists;
+    },
+
+    byId(id) {
+        return _.find(this.all(), 'id', id);
+    },
+
+    /**
+     * Appends a new artist into the current collection.
+     *
+     * @param  {Object} artist
+     */
+    append(artist) {
+        this.state.artists.push(this.setupArtist(artist));
+    },
+
+    addAlbumsIntoArtist(artist, albums) {
+        albums = [].concat(albums);
+
+        artist.albums = _.union(artist.albums ? artist.albums : [], albums);
+
+        albums.forEach(album => {
+            album.artist_id = artist.id;
+            album.artist = artist;
+        });
+
+        artist.playCount = _.reduce(artist.albums, (count, album)  => count + album.playCount, 0);
+    },
+
+    /**
+     * Remove album(s) from an artist.
+     *
+     * @param  {Object} artist
+     * @param  {Array.<Object>|Object} albums
+     */
+    removeAlbumsFromArtist(artist, albums) {
+        artist.albums = _.difference(artist.albums, [].concat(albums));
+        artist.playCount = _.reduce(artist.albums, (count, album)  => count + album.playCount, 0);
+    },
+
+    /**
+     * Checks if an artist is empty.
+     *
+     * @param  {Object}  artist
+     *
+     * @return {boolean}
+     */
+    isArtistEmpty(artist) {
+        return !artist.albums.length;
+    },
+
+    /**
+     * Remove artist(s) from the store.
+     *
+     * @param  {Array.<Object>|Object} artists
+     */
+    remove(artists) {
+        this.state.artists = _.difference(this.state.artists, [].concat(artists));
     },
 
     /**

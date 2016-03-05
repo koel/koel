@@ -127,35 +127,6 @@
             }
         }
 
-        .tabs {
-            .header {
-                $tabColor: #5c5c5c;
-                border-bottom: 1px solid $tabColor;
-
-
-                a {
-                    padding: 8px 12px;
-                    margin-left: 4px;
-                    border-radius: 4px 4px 0 0;
-                    text-transform: uppercase;
-                    color: lighten($tabColor, 50%);
-                    opacity: .4;
-                    border: 1px solid $tabColor;
-                    margin-bottom: -1px;
-                    float: left;
-
-                    &.active {
-                        border-bottom: 1px solid $colorExtraBgr;
-                        opacity: 1;
-                    }
-                }
-            }
-
-            .panes {
-                padding: 16px 0;
-            }
-        }
-
         .more {
             margin-top: 8px;
             border-radius: 3px;

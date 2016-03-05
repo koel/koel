@@ -57,6 +57,20 @@
             };
         },
 
+        watch: {
+            /**
+             * Watch the album's song count.
+             * If this is changed to 0, the user has edit the songs in this album
+             * and move all of them into another album.
+             * We should then go back to the album list.
+             */
+            'album.songs.length': function (newVal) {
+                if (!newVal) {
+                    this.$root.loadMainView('albums');
+                }
+            },
+        },
+
         events: {
             /**
              * Listen to 'main-content-view:load' event (triggered from $root currently)

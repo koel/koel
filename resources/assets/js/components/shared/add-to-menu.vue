@@ -1,5 +1,5 @@
 <template>
-    <div class="add-to-playlist" v-show="showing" v-on-clickaway="hideMenu">
+    <div class="add-to-playlist" v-show="showing" v-on-clickaway="close">
         <p>Add {{ songs.length }} {{ songs.length | pluralize 'song' }} to</p>
 
         <ul>
@@ -13,7 +13,7 @@
 
         <form class="form-save form-simple" @submit.prevent="createNewPlaylistFromSongs">
             <input type="text"
-                @keyup.esc.prevent="hideMenu"
+                @keyup.esc.prevent="close"
                 v-model="newPlaylistName"
                 placeholder="Playlist name"
                 required>
@@ -28,13 +28,12 @@
     import _ from 'lodash';
     import VueClickaway from 'vue-clickaway';
 
+    import songMenuMethods from '../../mixins/song-menu-methods';
     import playlistStore from '../../stores/playlist';
-    import favoriteStore from '../../stores/favorite';
-    import queueStore from '../../stores/queue';
 
     export default {
         props: ['songs', 'showing', 'settings'],
-        mixins: [ VueClickaway.mixin ],
+        mixins: [VueClickaway.mixin, songMenuMethods],
 
         data() {
             return {
@@ -50,58 +49,12 @@
         watch: {
             songs() {
                 if (!this.songs.length) {
-                    this.hideMenu();
+                    this.close();
                 }
             },
         },
 
         methods: {
-            /**
-             * Add the selected songs into Favorite.
-             */
-            addSongsToFavorite() {
-                favoriteStore.like(this.songs, () => {
-                    // Nothing much now.
-                });
-
-                this.hideMenu();
-                this.clearSelection();
-            },
-
-            /**
-             * Queue selected songs to bottom of queue.
-             */
-            queueSongsToBottom() {
-                queueStore.queue(this.songs);
-
-                this.hideMenu();
-                this.clearSelection();
-            },
-
-            /**
-             * Queue selected songs to top of queue.
-             */
-            queueSongsToTop() {
-                queueStore.queue(this.songs, false, true);
-
-                this.hideMenu();
-                this.clearSelection();
-            },
-
-            /**
-             * Add the selected songs into the chosen playlist.
-             *
-             * @param {Object} playlist The playlist.
-             */
-            addSongsToExistingPlaylist(playlist) {
-                playlistStore.addSongs(playlist, this.songs, () => {
-                    // Nothing much now.
-                });
-
-                this.hideMenu();
-                this.clearSelection();
-            },
-
             /**
              * Save the selected songs as a playlist.
              * As of current we don't have selective save.
@@ -120,16 +73,14 @@
                     this.$root.loadPlaylist(_.last(this.playlistState.playlists));
                 });
 
-                this.hideMenu();
-                this.clearSelection();
+                this.close();
             },
 
-            hideMenu() {
+            /**
+             * Override the method from "songMenuMethods" mixin for this own logic.
+             */
+            close() {
                 this.$dispatch('add-to-menu:close');
-            },
-
-            clearSelection() {
-                this.$parent.$broadcast('song:selection-clear');
             },
         },
     };
@@ -143,6 +94,7 @@
         @include context-menu();
 
         position: absolute;
+        padding: 8px;
         top: 36px;
         left: 0;
         width: 100%;
@@ -166,7 +118,6 @@
         }
 
         li {
-            cursor: pointer;
             background: rgba(255, 255, 255, .2);
             height: $itemHeight;
             line-height: $itemHeight;

@@ -21,4 +21,8 @@
 <style lang="sass">
     @import "resources/assets/sass/partials/_vars.scss";
     @import "resources/assets/sass/partials/_mixins.scss";
+
+    .content > div {
+        white-space: pre-wrap;
+    }
 </style>

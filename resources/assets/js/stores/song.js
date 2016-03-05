@@ -6,6 +6,8 @@ import utils from '../services/utils';
 import stub from '../stubs/song';
 import favoriteStore from './favorite';
 import userStore from './user';
+import albumStore from './album';
+import artistStore from './artist';
 
 export default {
     stub,
@@ -53,6 +55,10 @@ export default {
 
             return songs.concat(album.songs);
         }, []);
+    },
+
+    setupReactive(song, album) {
+
     },
 
     /**
@@ -236,6 +242,123 @@ export default {
                 cb();
             }
         });
+    },
+
+    /**
+     * Update song data.
+     *
+     * @param  {Array.<Object>} songs     An array of song
+     * @param  {Object}         data
+     * @param  {?Function}      successCb
+     * @param  {?Function}      errorCb
+     */
+    update(songs, data, successCb = null, errorCb = null) {
+        if (!userStore.current().is_admin) {
+            return;
+        }
+
+        http.put('songs', {
+            data,
+            songs: _.pluck(songs, 'id'),
+        }, response => {
+            response.data.forEach(song => {
+               this.syncUpdatedSong(song);
+            });
+
+            if (successCb) {
+                successCb();
+            }
+        }, () => {
+            if (errorCb) {
+                errorCb();
+            }
+        });
+    },
+
+    /**
+     * Sync an updated song into our current library.
+     *
+     * This is one of the most ugly functions I've written, if not the worst itself.
+     * Sorry, future me.
+     * Sorry guys.
+     * Forgive me.
+     *
+     * @param  {Object} updatedSong The updated song, with albums and whatnot.
+     *
+     * @return {?Object}             The updated song.
+     */
+    syncUpdatedSong(updatedSong) {
+        // Cases:
+        // 1. Album doesn't change (and then, artist doesn't either)
+        // 2. Album changes (note that a new album might have been created) and
+        //      2.a. Artist remains the same.
+        //      2.b. Artist changes as well. Note that an artist might have been created.
+
+        // Find the original song,
+        var originalSong = this.byId(updatedSong.id);
+
+        if (!originalSong) {
+            return;
+        }
+
+        // and keep track of original album/artist.
+        var originalAlbumId = originalSong.album.id;
+        var originalArtistId = originalSong.album.artist.id;
+
+        // First, we update the title and the lyrics
+        originalSong.title = updatedSong.title;
+        originalSong.lyrics = updatedSong.lyrics;
+
+        if (updatedSong.album.id === originalAlbumId) { // case 1
+            // Nothing to do
+        } else { // case 2
+            // First, remove it from its old album
+            albumStore.removeSongsFromAlbum(originalSong.album, originalSong);
+
+            var existingAlbum = albumStore.byId(updatedSong.album.id);
+            var newAlbumCreated = !existingAlbum;
+
+            if (!newAlbumCreated) {
+                // The song changed to an existing album. We now add it to such album.
+                albumStore.addSongsIntoAlbum(existingAlbum, originalSong);
+            } else {
+                // A new album was created. We:
+                // - Add the new album into our collection
+                // - Add the song into it
+                albumStore.addSongsIntoAlbum(updatedSong.album, originalSong);
+                albumStore.append(updatedSong.album);
+            }
+
+            if (updatedSong.album.artist.id === originalArtistId) { // case 2.a
+                // Same artist, but what if the album is new?
+                if (newAlbumCreated) {
+                    artistStore.addAlbumsIntoArtist(artistStore.byId(originalArtistId), updatedSong.album);
+                }
+            } else { // case 2.b
+                // The artist changes.
+                var existingArtist = artistStore.byId(updatedSong.album.artist.id);
+
+                if (!existingArtist) {
+                    // New artist created. We:
+                    // - Add the album into it, because now it MUST BE a new album
+                    // (there's no "new artist with existing album" in our system).
+                    // - Add the new artist into our collection
+                    artistStore.addAlbumsIntoArtist(updatedSong.album.artist, updatedSong.album);
+                    artistStore.append(updatedSong.album.artist);
+                }
+            }
+
+            // As a last step, we purify our library of empty albums/artists.
+            if (albumStore.isAlbumEmpty(albumStore.byId(originalAlbumId))) {
+                albumStore.remove(albumStore.byId(originalAlbumId));
+            }
+
+            if (artistStore.isArtistEmpty(artistStore.byId(originalArtistId))) {
+                artistStore.remove(artistStore.byId(originalArtistId));
+            }
+        }
+
+        return updatedSong;
     },
 
     /**
