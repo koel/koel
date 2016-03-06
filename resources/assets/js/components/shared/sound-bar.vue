@@ -7,10 +7,10 @@
 <script>
     export default {
         // Since we don't have anything here, let us sing a song instead.
-        // 
+        //
         // "The House Of The Rising Sun"
         // -- by The Animals
-        // 
+        //
         // There is a house in New Orleans
         // They call the Rising Sun
         // And it's been the ruin of many a poor boy
@@ -25,7 +25,7 @@
         // Is a suitcase and trunk
         // And the only time he's satisfied
         // Is when he's on a drunk
-        // 
+        //
         // [Organ Solo]
         //
         // Oh mother, tell your children
@@ -51,11 +51,11 @@
     @keyframes sound {
         0% {
             opacity: .15;
-            height: 1px; 
+            height: 1px;
         }
         100% {
-            opacity: 1;       
-            height: 13px;        
+            opacity: 1;
+            height: 13px;
         }
     }
 
@@ -64,13 +64,15 @@
         height: 13px;
         position: relative;
         display: inline-block;
+        backface-visibility: hidden;
 
         .bar {
             background: #666;
             bottom: 1px;
             position: absolute;
-            width: 3px;      
+            width: 3px;
             animation: sound 0ms -800ms linear infinite alternate;
+            backface-visibility: hidden;
         }
 
         .bar:nth-child(1)  { left: 1px; background: #754fa0; animation-duration: 474ms; }
