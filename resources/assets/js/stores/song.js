@@ -57,10 +57,6 @@ export default {
         }, []);
     },
 
-    setupReactive(song, album) {
-
-    },
-
     /**
      * Initializes the interaction (like/play count) information.
      *
