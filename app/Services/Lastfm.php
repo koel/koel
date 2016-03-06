@@ -10,21 +10,21 @@ class Lastfm extends RESTfulService
 {
     /**
      * Specify the response format, since Last.fm only returns XML.
-     * 
+     *
      * @var string
      */
     protected $responseFormat = 'xml';
 
     /**
      * Override the key param, since, again, Lastfm wants to be different.
-     * 
+     *
      * @var string
      */
     protected $keyParam = 'api_key';
 
     /**
      * Construct an instance of Lastfm service.
-     * 
+     *
      * @param string $key    Last.fm API key.
      * @param string $secret Last.fm API shared secret.
      * @param Client $client The Guzzle HTTP client.
@@ -51,7 +51,7 @@ class Lastfm extends RESTfulService
 
     /**
      * Get information about an artist.
-     * 
+     *
      * @param $name string Name of the artist
      *
      * @return object|false
@@ -98,10 +98,10 @@ class Lastfm extends RESTfulService
 
     /**
      * Get information about an album.
-     * 
+     *
      * @param string $name       Name of the album
      * @param string $artistName Name of the artist
-     * 
+     *
      * @return array|false
      */
     public function getAlbumInfo($name, $artistName)
@@ -154,11 +154,11 @@ class Lastfm extends RESTfulService
 
     /**
      * Get Last.fm's session key for the authenticated user using a token.
-     * 
+     *
      * @param string $token The token after successfully connecting to Last.fm
      *
      * @link http://www.last.fm/api/webauth#4
-     * 
+     *
      * @return string The token key
      */
     public function getSessionKey($token)
@@ -181,13 +181,13 @@ class Lastfm extends RESTfulService
 
     /**
      * Scrobble a song.
-     * 
+     *
      * @param string     $artist    The artist name
      * @param string     $track     The track name
      * @param string|int $timestamp The UNIX timestamp
      * @param string     $album     The album name
      * @param string     $sk        The session key
-     * 
+     *
      * @return bool
      */
     public function scrobble($artist, $track, $timestamp, $album, $sk)
@@ -211,12 +211,12 @@ class Lastfm extends RESTfulService
 
     /**
      * Love or unlove a track on Last.fm.
-     * 
+     *
      * @param string $track  The track name
      * @param string $artist The artist's name
      * @param string $sk     The session key
      * @param bool   $love   Whether to love or unlove. Such cheesy terms... urrgggh
-     * 
+     *
      * @return bool
      */
     public function toggleLoveTrack($track, $artist, $sk, $love = true)
@@ -235,13 +235,13 @@ class Lastfm extends RESTfulService
 
     /**
      * Update a track's "now playing" on Last.fm.
-     * 
+     *
      * @param string    $artist   Name of the artist
      * @param string    $track    Name of the track
      * @param string    $album    Name of the album
      * @param int|float $duration Duration of the track, in seconds
      * @param string    $sk       The session key
-     * 
+     *
      * @return bool
      */
     public function updateNowPlaying($artist, $track, $album, $duration, $sk)
@@ -269,7 +269,7 @@ class Lastfm extends RESTfulService
      * - The API signature (api_sig).
      *
      * @link http://www.last.fm/api/webauth#5
-     * 
+     *
      * @param array $params   The array of parameters.
      * @param bool  $toString Whether to turn the array into a query string
      *
@@ -307,9 +307,9 @@ class Lastfm extends RESTfulService
 
     /**
      * Correctly format a string returned by Last.fm.
-     * 
+     *
      * @param string $str
-     * 
+     *
      * @return string
      */
     protected function formatText($str)

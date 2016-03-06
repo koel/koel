@@ -12,14 +12,14 @@ class SongStartedPlaying extends Event
 
     /**
      * The now playing song.
-     * 
+     *
      * @var Song
      */
     public $song;
 
     /**
      * The user listening.
-     * 
+     *
      * @var User
      */
     public $user;

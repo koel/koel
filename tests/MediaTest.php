@@ -7,7 +7,6 @@ use App\Models\Song;
 use App\Services\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Mockery as m;
 
 class MediaTest extends TestCase
 {

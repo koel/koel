@@ -38,7 +38,7 @@ class UserController extends Controller
 
     /**
      * Log the current user out.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
