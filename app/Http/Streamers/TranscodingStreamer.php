@@ -43,7 +43,5 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
         ];
 
         passthru("$ffmpeg ".implode($args, ' '));
-
-        return;
     }
 }

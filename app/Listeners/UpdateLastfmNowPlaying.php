@@ -10,7 +10,7 @@ class UpdateLastfmNowPlaying
 {
     /**
      * The Last.fm service instance.
-     * 
+     *
      * @var Lastfm
      */
     protected $lastfm;

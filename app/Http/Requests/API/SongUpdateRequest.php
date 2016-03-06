@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\API;
 
-use App\Http\Requests\API\Request;
-
 class SongUpdateRequest extends Request
 {
     /**

@@ -12,14 +12,14 @@ class SongLikeToggled extends Event
 
     /**
      * The interaction (like/unlike) in action.
-     * 
+     *
      * @var Interaction
      */
     public $interaction;
 
     /**
      * The user who carries the action.
-     * 
+     *
      * @var User
      */
     public $user;

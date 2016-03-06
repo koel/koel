@@ -20,7 +20,7 @@ class User extends Authenticatable
 
     /**
      * The preferences that we don't want to show to the client.
-     * 
+     *
      * @var array
      */
     protected $hiddenPreferences = ['lastfm_session_key'];
@@ -56,9 +56,9 @@ class User extends Authenticatable
 
     /**
      * Get a preference item of the current user.
-     * 
-     * @param  string      $key
-     *                           
+     *
+     * @param string $key
+     *
      * @return string|null
      */
     public function getPreference($key)
@@ -70,7 +70,7 @@ class User extends Authenticatable
 
     /**
      * Save a user preference.
-     * 
+     *
      * @param string $key
      * @param string $val
      */
@@ -98,7 +98,7 @@ class User extends Authenticatable
 
     /**
      * Delete a preference.
-     * 
+     *
      * @param string $key
      */
     public function deletePreference($key)
@@ -111,7 +111,7 @@ class User extends Authenticatable
 
     /**
      * Determine if the user is connected to Last.fm.
-     * 
+     *
      * @return bool
      */
     public function connectedToLastfm()
@@ -121,7 +121,7 @@ class User extends Authenticatable
 
     /**
      * Get the user's Last.fm session key.
-     * 
+     *
      * @return string|null The key if found, or null if user isn't connected to Last.fm
      */
     public function getLastfmSessionKey()

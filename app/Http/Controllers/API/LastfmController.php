@@ -12,14 +12,14 @@ class LastfmController extends Controller
 {
     /*
      * The Guard implementation.
-     * 
+     *
      * @var Guard
      */
     protected $auth;
 
     /**
      * Construct the controller and inject the current auth.
-     * 
+     *
      * @param Guard $auth
      */
     public function __construct(Guard $auth)
@@ -58,7 +58,7 @@ class LastfmController extends Controller
 
     /**
      * Serve the callback request from Last.fm.
-     * 
+     *
      * @param Request $request
      * @param Lastfm  $lastfm
      *
@@ -96,7 +96,7 @@ class LastfmController extends Controller
 
     /**
      * Disconnect the current user from Last.fm.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function disconnect()

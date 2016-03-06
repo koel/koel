@@ -15,7 +15,7 @@ class Util
 
     /**
      * Detects higher UTF encoded strings.
-     * 
+     *
      * @param string $str
      *
      * @return string|false

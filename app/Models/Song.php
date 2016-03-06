@@ -103,7 +103,7 @@ class Song extends Model
      */
     public static function updateInfo($ids, $data)
     {
-        /**
+        /*
          * The artist that our songs will be associated to.
          * If they are not existing yet, we will create the object.
          *
@@ -111,7 +111,7 @@ class Song extends Model
          */
         $targetArtist = null;
 
-        /**
+        /*
          * The album that our songs will be associated to.
          * If it can't be found, we'll create it.
          *
@@ -119,7 +119,7 @@ class Song extends Model
          */
         $targetAlbum = null;
 
-        /**
+        /*
          * An array of the updated songs.
          *
          * @var array
