@@ -5,9 +5,11 @@ import http from '../services/http';
 import utils from '../services/utils';
 import stub from '../stubs/song';
 import favoriteStore from './favorite';
+import sharedStore from './shared';
 import userStore from './user';
 import albumStore from './album';
 import artistStore from './artist';
+import ls from '../services/ls';
 
 export default {
     stub,
@@ -360,6 +362,17 @@ export default {
         }
 
         return originalSong;
+    },
+
+    /**
+     * Get a song's playable source URL.
+     *
+     * @param  {Object} song
+     *
+     * @return {string} The source URL, with JWT token appended.
+     */
+    getSourceUrl(song) {
+        return `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`;
     },
 
     /**

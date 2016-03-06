@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
-import sharedStore from '../stores/shared';
 import queueStore from '../stores/queue';
 import songStore from '../stores/song';
 import artistStore from '../stores/artist';
@@ -61,6 +60,26 @@ export default {
         });
 
         /**
+         * Attempt to preload the next song if the current song is about to end.
+         */
+        document.querySelector('.plyr').addEventListener('timeupdate', e => {
+            if (!this.player.media.duration || this.player.media.currentTime + 10 < this.player.media.duration) {
+                return;
+            }
+
+            // The current song has only 10 seconds left to play.
+            var nextSong = queueStore.getNextSong();
+            if (!nextSong || nextSong.preloaded) {
+                return;
+            }
+
+            var $preloader = $('<audio>');
+            $preloader.attr('src', songStore.getSourceUrl(nextSong));
+
+            nextSong.preloaded = true;
+        });
+
+        /**
          * Listen to 'input' event on the volume range control.
          * When user drags the volume control, this event will be triggered, and we
          * update the volume on the plyr object.
@@ -107,7 +126,7 @@ export default {
 
         // Manually set the `src` attribute of the audio to prevent plyr from resetting
         // the audio media object and cause our equalizer to malfunction.
-        this.player.media.src = `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`;
+        this.player.media.src = songStore.getSourceUrl(song);
 
         $('title').text(`${song.title} ♫ ${config.appTitle}`);
         $('.plyr audio').attr('title', `${song.album.artist.name} - ${song.title}`);
