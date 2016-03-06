@@ -65,7 +65,6 @@
 <script>
     import _ from 'lodash';
     import $ from 'jquery';
-    import select2 from 'select2';
 
     import artistStore from '../../stores/artist';
     import albumStore from '../../stores/album';
