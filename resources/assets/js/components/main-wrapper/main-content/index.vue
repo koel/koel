@@ -79,6 +79,7 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            backface-visibility: hidden;
 
             .main-scroll-wrap {
                 padding: 24px;
