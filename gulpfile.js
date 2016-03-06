@@ -28,8 +28,7 @@ elixir(function (mix) {
         .styles([
             'resources/assets/css/**/*.css',
             'node_modules/font-awesome/css/font-awesome.min.css',
-            'node_modules/rangeslider.js/dist/rangeslider.css',
-            'node_modules/select2/dist/css/select2.min.css'
+            'node_modules/rangeslider.js/dist/rangeslider.css'
         ], 'public/css/vendors.css', './');
 
     mix.version(['css/vendors.css', 'css/app.css', 'js/vendors.js', 'js/main.js']);
