@@ -178,7 +178,7 @@ export default {
      */
     getInfo(song, cb = null) {
         // Check if the song's info has been retrieved before.
-        if (song.lyrics !== null) {
+        if (song.infoRetrieved) {
             if (cb) {
                 cb();
             }
@@ -219,6 +219,8 @@ export default {
             if (data.album_info.cover) {
                 song.album.cover = data.album_info.cover;
             }
+
+            song.infoRetrieved = true;
 
             if (cb) {
                 cb();
@@ -356,9 +358,12 @@ export default {
             if (artistStore.isArtistEmpty(artistStore.byId(originalArtistId))) {
                 artistStore.remove(artistStore.byId(originalArtistId));
             }
+
+            // Now we make sure the next call to info() get the refreshed, correct info.
+            originalSong.infoRetrieved = false;
         }
 
-        return updatedSong;
+        return originalSong;
     },
 
     /**
