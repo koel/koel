@@ -192,13 +192,15 @@
 
                     // If we're editing only one song and the song's info (including lyrics)
                     // hasn't been loaded, load it now.
-                    if (this.songs[0].lyrics === null) {
+                    if (!this.songs[0].infoRetrieved) {
                         this.loading = true;
 
                         songStore.getInfo(this.songs[0], () => {
                             this.loading = false;
                             this.formData.lyrics = this.songs[0].lyrics;
                         });
+                    } else {
+                        this.formData.lyrics = this.songs[0].lyrics;
                     }
                 } else {
                     this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : '';
