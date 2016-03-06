@@ -12,6 +12,7 @@
         <main-wrapper></main-wrapper>
         <site-footer></site-footer>
         <overlay :state.sync="overlayState"></overlay>
+        <edit-songs-form v-ref:edit-songs-form></edit-songs-form>
     </div>
 
     <div class="login-wrapper" v-else>
@@ -30,6 +31,8 @@
     import overlay from './components/shared/overlay.vue';
     import loginForm from './components/auth/login-form.vue';
 
+    import editSongsForm from './components/modals/edit-songs-form.vue';
+
     import sharedStore from './stores/shared';
     import queueStore from './stores/queue';
     import userStore from './stores/user';
@@ -39,7 +42,7 @@
     import ls from './services/ls';
 
     export default {
-        components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm },
+        components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
 
         replace: false,
 
@@ -95,7 +98,7 @@
                         return 'You asked Koel to confirm before closing, so here it is.';
                     };
 
-                    // Let all other compoenents know we're ready.
+                    // Let all other components know we're ready.
                     this.$broadcast('koel:ready');
                 }, () => this.authenticated = false);
             },
@@ -240,6 +243,15 @@
              */
             setOverlayDimissable() {
                 this.overlayState.dismissable = true;
+            },
+
+            /**
+             * Shows the "Edit Song" form.
+             *
+             * @param {Array.<Object>} An array of songs to edit
+             */
+            showEditSongsForm(songs) {
+                this.$refs.editSongsForm.open(songs);
             },
 
             /**

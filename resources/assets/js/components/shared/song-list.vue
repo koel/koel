@@ -47,12 +47,14 @@
                     @dragleave="removeDroppableState"
                     @dragover.prevent="allowDrop(item.id, $event)"
                     @drop.stop.prevent="handleDrop(item.id, $event)"
+                    @contextmenu.prevent="openContextMenu(item.id, $event)"
                 >
                 </tr>
             </tbody>
         </table>
-    </div>
 
+        <song-menu v-ref:context-menu :songs="selectedSongs"></song-menu>
+    </div>
 </template>
 
 <script>
@@ -61,6 +63,7 @@
     import $ from 'jquery';
 
     import songItem from './song-item.vue';
+    import songMenu from './song-menu.vue';
     import infiniteScroll from '../../mixins/infinite-scroll';
     import playlistStore from '../../stores/playlist';
     import queueStore from '../../stores/queue';
@@ -71,7 +74,7 @@
     export default {
         props: ['items', 'type', 'playlist', 'selectedSongs', 'sortable'],
         mixins: [infiniteScroll],
-        components: { songItem },
+        components: { songItem, songMenu },
 
         data() {
             return {
@@ -323,19 +326,25 @@
              * @param {Object} e The event.
              */
             dragStart(songId, e) {
-                // Select the current target as well.
-                this.getComponentBySongId(songId).select();
-                this.gatherSelected();
+                // If the user is dragging an unselected row, clear the current selection.
+                var currentRow = this.getComponentBySongId(songId);
+                if (!currentRow.selected) {
+                    this.clearSelection();
+                    currentRow.select();
+                    this.gatherSelected();
+                }
 
-                // We can opt for something like application/x-koel.text+plain here to sound fancy,
-                // but forget it.
-                var songIds = _.pluck(this.selectedSongs, 'id');
-                e.dataTransfer.setData('text/plain', songIds);
-                e.dataTransfer.effectAllowed = 'move';
+                this.$nextTick(() => {
+                    // We can opt for something like application/x-koel.text+plain here to sound fancy,
+                    // but forget it.
+                    var songIds = _.pluck(this.selectedSongs, 'id');
+                    e.dataTransfer.setData('text/plain', songIds);
+                    e.dataTransfer.effectAllowed = 'move';
 
-                // Set a fancy drop image using our ghost element.
-                var $ghost = $('#dragGhost').text(`${songIds.length} song${songIds.length === 1 ? '' : 's'}`);
-                e.dataTransfer.setDragImage($ghost[0], 0, 0);
+                    // Set a fancy drop image using our ghost element.
+                    var $ghost = $('#dragGhost').text(`${songIds.length} song${songIds.length === 1 ? '' : 's'}`);
+                    e.dataTransfer.setDragImage($ghost[0], 0, 0);
+                });
             },
 
             /**
@@ -390,6 +399,20 @@
              */
             removeDroppableState(e) {
                 return $(e.target).parents('tr').removeClass('droppable');
+            },
+
+            openContextMenu(songId, e) {
+                // If the user is right-click an unselected row, clear the current selection and select it instead.
+                var currentRow = this.getComponentBySongId(songId);
+                if (!currentRow.selected) {
+                    this.clearSelection();
+                    currentRow.select();
+                    this.gatherSelected();
+                }
+
+                this.$nextTick(() => {
+                    this.$refs.contextMenu.open(e.pageY, e.pageX);
+                });
             },
         },
 

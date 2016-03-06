@@ -1,15 +1,15 @@
 require('chai').should();
+import _ from 'lodash';
 
 import songStore from '../../stores/song';
 import albumStore from '../../stores/album';
+import artistStore from '../../stores/artist';
 import artists from '../blobs/media';
 import interactions from '../blobs/interactions';
 
 describe('stores/song', () => {
     beforeEach(() => {
-        // This is ugly and not very "unit," but anyway.
-        albumStore.init(artists);
-        songStore.init(albumStore.all());
+        artistStore.init(artists);
     });
 
     describe('#init', () => {
@@ -53,6 +53,97 @@ describe('stores/song', () => {
             let song = songStore.byId('cb7edeac1f097143e65b1b2cde102482');
             song.liked.should.be.true;
             song.playCount.should.equal(3);
+        });
+    });
+
+    describe('#syncUpdatedSong', () => {
+        beforeEach(() => artistStore.init(artists));
+
+        var updatedSong = {
+            id: "39189f4545f9d5671fb3dc964f0080a0",
+            album_id: 1193,
+            title: "I Swear A Lot",
+            album: {
+                id: 1193,
+                arist_id: 1,
+                artist: {
+                    id: 1,
+                    name: 'All-4-One',
+                },
+            },
+        };
+
+        it ('correctly syncs an updated song with no album changes', () => {
+            songStore.syncUpdatedSong(_.cloneDeep(updatedSong));
+            songStore.byId(updatedSong.id).title.should.equal('I Swear A Lot');
+        });
+
+        it ('correctly syncs an updated song into an existing album of same artist', () => {
+            var song = _.cloneDeep(updatedSong);
+            song.album_id = 1194;
+            song.album = {
+                id: 1194,
+                artist_id: 1,
+                artist: {
+                    id: 1,
+                    name: 'All-4-One',
+                },
+            };
+
+            songStore.syncUpdatedSong(song);
+            songStore.byId(song.id).album.name.should.equal('And The Music Speaks');
+        });
+
+        it ('correctly syncs an updated song into a new album of same artist', () => {
+            var song = _.cloneDeep(updatedSong);
+            song.album_id = 9999;
+            song.album = {
+                id: 9999,
+                artist_id: 1,
+                name: 'Brand New Album from All-4-One',
+                artist: {
+                    id: 1,
+                    name: 'All-4-One',
+                },
+            };
+
+            songStore.syncUpdatedSong(song);
+
+            // A new album should be created...
+            _.last(albumStore.all()).name.should.equal('Brand New Album from All-4-One');
+
+            // ...and assigned with the song.
+            songStore.byId(song.id).album.name.should.equal('Brand New Album from All-4-One');
+        });
+
+        it ('correctly syncs an updated song into a new album of a new artist', () => {
+            var song = _.cloneDeep(updatedSong);
+            song.album_id = 10000;
+            song.album = {
+                id: 10000,
+                name: "It's... John Cena!!!",
+                artist_id: 10000,
+                artist: {
+                    id: 10000,
+                    name: 'John Cena',
+                },
+            };
+
+            songStore.syncUpdatedSong(song);
+
+            // A new artist should be created...
+            var lastArtist = _.last(artistStore.all());
+            lastArtist.name.should.equal('John Cena');
+
+            // A new album should be created
+            var lastAlbum = _.last(albumStore.all());
+            lastAlbum.name.should.equal("It's... John Cena!!!");
+
+            // The album must belong to John Cena of course!
+            _.last(lastArtist.albums).should.equal(lastAlbum);
+
+            // And the song belongs to the album.
+            songStore.byId(song.id).album.should.equal(lastAlbum);
         });
     });
 });

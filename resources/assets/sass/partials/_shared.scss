@@ -3,9 +3,11 @@
     outline: none;
 }
 
+body, html {
+    overflow: hidden;
+}
 
-
-input, select, button {
+input, select, button, textarea, .btn {
     -webkit-appearance: none;
     -moz-appearance: none;
     border: 0;
@@ -122,7 +124,7 @@ label {
     display: block;
 }
 
-button, input[type="submit"], input[type="reset"], input[type="button"] {
+button, input[type="submit"], input[type="reset"], input[type="button"], .btn {
     background: $colorBtnBgr;
     color: $colorBtnText;
     font-size: 14px;
@@ -130,10 +132,98 @@ button, input[type="submit"], input[type="reset"], input[type="button"] {
     cursor: pointer;
 
     @include inset-when-pressed();
+
+    &.btn-green {
+        background-color: $colorGreen;
+
+        &:hover {
+            background-color: darken($colorGreen, 10%);
+        }
+    }
+
+    &.btn-white {
+        background-color: #fff;
+        color: #333;
+
+        &:hover {
+            background-color: darken(#fff, 10%);
+        }
+    }
+
+    &.btn-red {
+        background-color: $colorRed;
+
+        &:hover {
+            background-color: darken($colorRed, 10%);
+        }
+    }
+
+    &.btn-blue {
+        background-color: $colorBlue;
+
+        &:hover {
+            background-color: darken($colorBlue, 10%);
+        }
+    }
+
+    &.btn-grey {
+        background-color: $colorGrey;
+
+        &:hover {
+            background-color: darken($colorGrey, 10%);
+        }
+    }
+
+    &.btn-orange {
+        background-color: $colorOrange;
+
+        &:hover {
+            background-color: darken($colorOrange, 10%);
+        }
+    }
 }
 
-body, html {
-    overflow: hidden;
+.tabs {
+    .header {
+        $tabColor: #5c5c5c;
+        border-bottom: 1px solid $tabColor;
+
+        a {
+            padding: 8px 12px;
+            margin-left: 4px;
+            border-radius: 4px 4px 0 0;
+            text-transform: uppercase;
+            color: lighten($tabColor, 50%);
+            opacity: .4;
+            border: 1px solid $tabColor;
+            margin-bottom: -1px;
+            float: left;
+
+            &.active {
+                border-bottom: 1px solid $colorExtraBgr;
+                opacity: 1;
+            }
+        }
+    }
+
+    .panes {
+        padding: 16px 0;
+    }
+
+    &.tabs-white {
+        .header {
+            border-bottom-color: #aaa;
+
+            a {
+                color: #333;
+                border-color: #aaa;
+
+                &.active {
+                    border-bottom-color: #fff;
+                }
+            }
+        }
+    }
 }
 
 [draggable] {
@@ -145,4 +235,5 @@ body, html {
 
 .form-row {
     margin-top: 16px;
+    position: relative;
 }

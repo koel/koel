@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\SongUpdateRequest;
 use App\Http\Streamers\PHPStreamer;
 use App\Http\Streamers\TranscodingStreamer;
 use App\Http\Streamers\XAccelRedirectStreamer;
@@ -35,7 +36,7 @@ class SongController extends Controller
 
     /**
      * Get extra information about a song via Last.fm.
-     * 
+     *
      * @param Song $song
      *
      * @return \Illuminate\Http\JsonResponse
@@ -51,14 +52,26 @@ class SongController extends Controller
 
     /**
      * Scrobble a song.
-     * 
+     *
      * @param Song   $song
      * @param string $timestamp The UNIX timestamp when the song started playing.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function scrobble(Song $song, $timestamp)
     {
         return response()->json($song->scrobble($timestamp));
+    }
+
+    /**
+     * Update songs info.
+     *
+     * @param SongUpdateRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(SongUpdateRequest $request)
+    {
+        return response()->json(Song::updateInfo($request->songs, $request->data));
     }
 }
