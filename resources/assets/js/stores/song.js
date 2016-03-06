@@ -388,4 +388,12 @@ export default {
 
         return songs;
     },
+
+    /**
+     * Called when the application is tore down.
+     * Reset stuff.
+     */
+    teardown() {
+        this.state.recent = [];
+    },
 };

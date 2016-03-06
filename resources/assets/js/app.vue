@@ -35,6 +35,7 @@
 
     import sharedStore from './stores/shared';
     import queueStore from './stores/queue';
+    import songStore from './stores/song';
     import userStore from './stores/user';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
@@ -263,6 +264,7 @@
                     this.authenticated = false;
                     playback.stop();
                     queueStore.clear();
+                    songStore.teardown();
                     this.loadMainView('queue');
                     this.$broadcast('koel:teardown');
                 });
