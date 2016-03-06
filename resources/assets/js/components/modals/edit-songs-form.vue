@@ -258,7 +258,7 @@
             border-radius: $borderRadius;
             color: #333;
 
-            .form-row::first-of-type {
+            .form-row::first-child {
                 margin-top: 0;
             }
 
