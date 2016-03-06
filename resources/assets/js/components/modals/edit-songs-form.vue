@@ -66,6 +66,7 @@
     import _ from 'lodash';
     import $ from 'jquery';
 
+    import utils from '../../services/utils';
     import artistStore from '../../stores/artist';
     import albumStore from '../../stores/album';
     import songStore from '../../stores/song';
@@ -196,10 +197,10 @@
 
                         songStore.getInfo(this.songs[0], () => {
                             this.loading = false;
-                            this.formData.lyrics = this.songs[0].lyrics;
+                            this.formData.lyrics = utils.br2nl(this.songs[0].lyrics);
                         });
                     } else {
-                        this.formData.lyrics = this.songs[0].lyrics;
+                        this.formData.lyrics = utils.br2nl(this.songs[0].lyrics);
                     }
                 } else {
                     this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : '';
