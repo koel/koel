@@ -147,11 +147,11 @@ export default {
      * @return {Array.<Object>}
      */
     getMostPlayed(n = 6) {
-        var albums = _.take(_.sortByOrder(this.state.albums, 'playCount', 'desc'), n);
+        // Only non-unknown albums with actually play count are applicable.
+        var applicable = _.filter(this.state.albums, album => {
+            return album.playCount && album.id !== 1;
+        });
 
-        // Remove those with playCount=0
-        _.remove(albums, album => !album.playCount);
-
-        return albums;
+        return _.take(_.sortByOrder(applicable, 'playCount', 'desc'), n);
     },
 };

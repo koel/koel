@@ -150,11 +150,11 @@ export default {
      * @return {Array.<Object>}
      */
     getMostPlayed(n = 6) {
-        var artists = _.take(_.sortByOrder(this.state.artists, 'playCount', 'desc'), n);
+        // Only non-unknown artists with actually play count are applicable.
+        var applicable = _.filter(this.state.artists, artist => {
+            return artist.playCount && artist.id !== 1;
+        });
 
-        // Remove those with playCount=0
-        _.remove(artists, artist => !artist.playCount);
-
-        return artists;
+        return _.take(_.sortByOrder(applicable, 'playCount', 'desc'), n);
     },
 };
