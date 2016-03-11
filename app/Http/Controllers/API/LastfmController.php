@@ -38,7 +38,7 @@ class LastfmController extends Controller
      */
     public function connect(Redirector $redirector, Lastfm $lastfm, JWTAuth $auth = null)
     {
-        abort_if(!$lastfm->enabled(), 401, 'Koel is not configured to use with Last.fm yet.');
+        abort_unless($lastfm->enabled(), 401, 'Koel is not configured to use with Last.fm yet.');
 
         $auth = $auth ?: $this->app['tymon.jwt.auth'];
 
@@ -64,10 +64,10 @@ class LastfmController extends Controller
      */
     public function callback(Request $request, Lastfm $lastfm)
     {
-        abort_if(!$token = $request->input('token'), 500, 'Something wrong happened.');
+        abort_unless($token = $request->input('token'), 500, 'Something wrong happened.');
 
         // Get the session key using the obtained token.
-        abort_if(!$sessionKey = $lastfm->getSessionKey($token), 500, 'Invalid token key.');
+        abort_unless($sessionKey = $lastfm->getSessionKey($token), 500, 'Invalid token key.');
 
         $this->auth->user()->savePreference('lastfm_session_key', $sessionKey);
 

@@ -25,7 +25,7 @@ class Streamer
     {
         $this->song = $song;
 
-        abort_if(!file_exists($this->song->path), 404);
+        abort_unless(file_exists($this->song->path), 404);
 
         // Hard code the content type instead of relying on PHP's fileinfo()
         // or even Symfony's MIMETypeGuesser, since they appear to be wrong sometimes.
