@@ -42,18 +42,14 @@ class PHPStreamer extends Streamer implements StreamerInterface
             $partial = true;
             list($param, $range) = explode('=', $range);
 
-            if (strtolower(trim($param)) != 'bytes') {
-                // Bad request - range unit is not 'bytes'
-                abort(400);
-            }
+            // Bad request - range unit is not 'bytes'
+            abort_if(strtolower(trim($param)) != 'bytes', 400);
 
             $range = explode(',', $range);
             $range = explode('-', $range[0]); // We only deal with the first requested range
 
-            if (count($range) != 2) {
-                // Bad request - 'bytes' parameter is not valid
-                abort(400);
-            }
+            // Bad request - 'bytes' parameter is not valid
+            abort_if(count($range) != 2, 400);
 
             if ($range[0] === '') {
                 // First number missing, return last $range[1] bytes
@@ -92,10 +88,8 @@ class PHPStreamer extends Streamer implements StreamerInterface
             header('HTTP/1.1 206 Partial Content');
             header("Content-Range: bytes $start-$end/$fileSize");
 
-            if (!$fp = fopen($this->song->path, 'r')) {
-                // Error out if we can't read the file
-                abort(500);
-            }
+            // Error out if we can't read the file
+            abort_if(!$fp = fopen($this->song->path, 'r'), 500);
 
             if ($start) {
                 fseek($fp, $start);
