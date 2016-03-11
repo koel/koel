@@ -9,10 +9,10 @@ export default {
         length: 0,
         fmtLength: '',
     },
-    
+
     /**
      * Get all songs favorited by the current user.
-     * 
+     *
      * @return {Array.<Object>}
      */
     all() {
@@ -24,7 +24,7 @@ export default {
     },
 
     /**
-     * Toggle like/unlike a song. 
+     * Toggle like/unlike a song.
      * A request to the server will be made.
      *
      * @param {Object}     song
@@ -68,7 +68,7 @@ export default {
 
     /**
      * Like a bunch of songs.
-     * 
+     *
      * @param {Array.<Object>}  songs
      * @param {?Function}       cb
      */
@@ -87,7 +87,7 @@ export default {
 
     /**
      * Unlike a bunch of songs.
-     * 
+     *
      * @param {Array.<Object>}  songs
      * @param {?Function}       cb
      */

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { md5 } from 'blueimp-md5';
 import Vue from 'vue';
+import NProgress from 'nprogress';
 
 import http from '../services/http';
 import stub from '../stubs/user';
@@ -88,7 +89,14 @@ export default {
      * @param  {?Function}  errorCb
      */
     login(email, password, successCb = null, errorCb = null) {
-        http.post('me', { email, password }, successCb, errorCb);
+        NProgress.start();
+        http.post('me', { email, password }, () => {
+            NProgress.done();
+
+            if (successCb) {
+                successCb();
+            }
+        }, errorCb);
     },
 
     /**
@@ -112,11 +120,15 @@ export default {
      * @param  {?Function}  errorCb
      */
     updateProfile(password = null, cb = null) {
+        NProgress.start();
+
         http.put('me', {
                 password,
                 name: this.current().name,
                 email: this.current().email
             }, () => {
+                NProgress.done();
+
                 this.setAvatar();
 
                 if (cb) {
@@ -135,7 +147,11 @@ export default {
      * @param  {?Function}  cb
      */
     store(name, email, password, cb = null) {
+        NProgress.start();
+
         http.post('user', { name, email, password }, response => {
+            NProgress.done();
+
             var user = response.data;
 
             this.setAvatar(user);
@@ -157,7 +173,11 @@ export default {
      * @param  {?Function}  cb
      */
     update(user, name, email, password, cb = null) {
+        NProgress.start();
+
         http.put(`user/${user.id}`, { name, email, password }, () => {
+            NProgress.done();
+
             this.setAvatar(user);
             user.password = '';
 
@@ -174,7 +194,11 @@ export default {
      * @param  {?Function}  cb
      */
     destroy(user, cb = null) {
+        NProgress.start();
+
         http.delete(`user/${user.id}`, {}, () => {
+            NProgress.done();
+
             this.state.users = _.without(this.state.users, user);
 
             // Mama, just killed a man
