@@ -7,6 +7,7 @@ import artistStore from '../stores/artist';
 import albumStore from '../stores/album';
 import preferenceStore from '../stores/preference';
 import ls from '../services/ls';
+import http from '../services/http';
 import config from '../config';
 
 export default {

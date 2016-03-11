@@ -52,8 +52,6 @@ export default {
         NProgress.start();
 
         http.post('playlist', { name, songs }, response => {
-            NProgress.done();
-
             var playlist = response.data;
             playlist.songs = songs;
             this.getSongs(playlist);
@@ -75,8 +73,6 @@ export default {
         NProgress.start();
 
         http.delete(`playlist/${playlist.id}`, {}, () => {
-            NProgress.done();
-
             this.state.playlists = _.without(this.state.playlists, playlist);
 
             if (cb) {
@@ -134,8 +130,6 @@ export default {
         NProgress.start();
 
         http.put(`playlist/${playlist.id}`, { name: playlist.name }, () => {
-            NProgress.done();
-
             if (cb) {
                 cb();
             }

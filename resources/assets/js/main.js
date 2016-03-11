@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import ls from './services/ls';
+import NProgress from 'nprogress';
 
 var app = new Vue(require('./app.vue'));
 
@@ -18,6 +19,8 @@ Vue.http.interceptors.push({
     },
 
     response(r) {
+        NProgress.done();
+
         if (r.status === 400 || r.status === 401) {
             if (r.request.method !== 'POST' && r.request.url !== 'me') {
                 // This is not a failed login. Log out then.

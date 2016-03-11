@@ -1,18 +1,11 @@
 import Vue from 'vue';
-import NProgress from 'nprogress';
 
 /**
  * Responsible for all HTTP requests.
  */
 export default {
     request(method, url, data, successCb = null, errorCb = null) {
-        return Vue.http[method](url, data).then(successCb).catch(() => {
-            NProgress.done();
-
-            if (errorCb) {
-                errorCb();
-            }
-        });
+        return Vue.http[method](url, data).then(successCb, errorCb);
     },
 
     get(url, successCb = null, errorCb = null) {

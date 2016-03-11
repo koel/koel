@@ -91,8 +91,6 @@ export default {
     login(email, password, successCb = null, errorCb = null) {
         NProgress.start();
         http.post('me', { email, password }, () => {
-            NProgress.done();
-
             if (successCb) {
                 successCb();
             }
@@ -127,8 +125,6 @@ export default {
                 name: this.current().name,
                 email: this.current().email
             }, () => {
-                NProgress.done();
-
                 this.setAvatar();
 
                 if (cb) {
@@ -150,8 +146,6 @@ export default {
         NProgress.start();
 
         http.post('user', { name, email, password }, response => {
-            NProgress.done();
-
             var user = response.data;
 
             this.setAvatar(user);
@@ -176,8 +170,6 @@ export default {
         NProgress.start();
 
         http.put(`user/${user.id}`, { name, email, password }, () => {
-            NProgress.done();
-
             this.setAvatar(user);
             user.password = '';
 
@@ -197,8 +189,6 @@ export default {
         NProgress.start();
 
         http.delete(`user/${user.id}`, {}, () => {
-            NProgress.done();
-
             this.state.users = _.without(this.state.users, user);
 
             // Mama, just killed a man
