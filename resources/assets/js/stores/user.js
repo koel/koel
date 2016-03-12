@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { md5 } from 'blueimp-md5';
+import md5 from 'blueimp-md5';
 import Vue from 'vue';
 import NProgress from 'nprogress';
 
