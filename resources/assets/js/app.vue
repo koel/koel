@@ -11,7 +11,7 @@
         <site-header></site-header>
         <main-wrapper></main-wrapper>
         <site-footer></site-footer>
-        <overlay :state.sync="overlayState"></overlay>
+        <overlay v-ref:overlay></overlay>
         <edit-songs-form v-ref:edit-songs-form></edit-songs-form>
     </div>
 
@@ -30,7 +30,6 @@
     import mainWrapper from './components/main-wrapper/index.vue';
     import overlay from './components/shared/overlay.vue';
     import loginForm from './components/auth/login-form.vue';
-
     import editSongsForm from './components/modals/edit-songs-form.vue';
 
     import sharedStore from './stores/shared';
@@ -51,13 +50,6 @@
             return {
                 prefs: preferenceStore.state,
                 authenticated: false,
-
-                overlayState: {
-                    showing: true,
-                    dismissable: false,
-                    type: 'loading',
-                    message: '',
-                },
             };
         },
 
@@ -230,24 +222,21 @@
              * @param {Boolean} dismissable Whether to show the Close button
              */
             showOverlay(message = 'Just a little patience…', type = 'loading', dismissable = false) {
-                this.overlayState.message = message;
-                this.overlayState.type = type;
-                this.overlayState.dismissable = dismissable;
-                this.overlayState.showing = true;
+                this.$refs.overlay.show(message, type, dismissable);
             },
 
             /**
              * Hides the overlay.
              */
             hideOverlay() {
-                this.overlayState.showing = false;
+                this.$refs.overlay.hide();
             },
 
             /**
              * Shows the close button, allowing the user to close the overlay.
              */
             setOverlayDimissable() {
-                this.overlayState.dismissable = true;
+                this.$refs.overlay.setDismissable();
             },
 
             /**
@@ -276,6 +265,9 @@
         },
 
         events: {
+            /**
+             * When the user logs in, set the whole app to be "authenticated" and initialize it.
+             */
             'user:loggedin': function () {
                 this.authenticated = true;
                 this.init();
@@ -323,7 +315,7 @@
 
         search = ('' + search).toLowerCase().trim();
 
-        return _.filter(songs, (song) => {
+        return _.filter(songs, song => {
             return song.title.toLowerCase().indexOf(search) !== -1 ||
                 song.album.name.toLowerCase().indexOf(search) !== -1 ||
                 song.album.artist.name.toLowerCase().indexOf(search) !== -1;

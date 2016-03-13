@@ -18,8 +18,57 @@
     import soundBar from './sound-bar.vue';
 
     export default {
-        props: ['state'],
         components: { soundBar },
+
+        data() {
+            return {
+                state: {
+                    showing: true,
+                    dismissable: false,
+                    /**
+                     * Either 'loading', 'success', 'info', 'warning', or 'error'.
+                     * This dictates the icon as well as possibly other visual appearances.
+                     *
+                     * @type {String}
+                     */
+                    type: 'loading',
+                    message: '',
+                },
+            };
+        },
+
+        methods: {
+            /**
+             * Shows the overlay.
+             *
+             * @param {String}  message     The message to display.
+             * @param {String}  type        (loading|success|info|warning|error)
+             * @param {Boolean} dismissable Whether to show the Close button
+             */
+            show(message = 'Just a little patience…', type = 'loading', dismissable = false) {
+                this.state.message = message;
+                this.state.type = type;
+                this.state.dismissable = dismissable;
+                this.state.showing = true;
+            },
+
+            /**
+             * Hide the overlay.
+             */
+            hide() {
+                this.state.showing = false;
+            },
+
+            /**
+             * Set the overlay to be dismissable (or not).
+             * A Close button will be shown/hidden correspondingly.
+             *
+             * @param {Boolean} dismissable
+             */
+            setDimissable(dismissable = true) {
+                this.state.dismissable = dismissable;
+            },
+        },
     };
 </script>
 
