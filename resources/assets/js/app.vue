@@ -74,11 +74,7 @@
 
             // Add an ugly mac/non-mac class for OS-targeting styles.
             // I'm crying inside.
-            if (navigator.userAgent.indexOf('Mac') !== -1) {
-                $("html").addClass("mac");
-            } else {
-                $("html").addClass("non-mac");
-            }
+            $('html').addClass(navigator.userAgent.indexOf('Mac') !== -1 ? 'mac' : 'non-mac');
         },
 
         methods: {
