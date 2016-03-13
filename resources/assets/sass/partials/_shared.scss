@@ -8,8 +8,7 @@ body, html {
 }
 
 input, select, button, textarea, .btn {
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none;
     border: 0;
     outline: 0;
     font-family: $fontFamily;
@@ -224,13 +223,6 @@ button, input[type="submit"], input[type="reset"], input[type="button"], .btn {
             }
         }
     }
-}
-
-[draggable] {
-  user-select: none;
-  /* Required to make elements draggable in old WebKit */
-  -khtml-user-drag: element;
-  -webkit-user-drag: element;
 }
 
 .form-row {

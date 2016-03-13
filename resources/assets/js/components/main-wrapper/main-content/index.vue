@@ -85,9 +85,9 @@
                 padding: 24px;
                 overflow: auto;
                 flex: 1;
-                overflow-y: hidden;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
 
-                &:hover, html.touchevents & {
+                html.touchevents & {
                     // Enable scroll with momentum on touch devices
                     overflow-y: scroll;
                     -webkit-overflow-scrolling: touch;
@@ -151,7 +151,6 @@
             perspective: 1000;
             pointer-events: none;
         }
-
 
 
         @media only screen

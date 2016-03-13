@@ -71,6 +71,14 @@
 
             // Create the element to be the ghost drag image.
             $('<div id="dragGhost"></div>').appendTo('body');
+
+            // Add an ugly mac/non-mac class for OS-targeting styles.
+            // I'm crying inside.
+            if (navigator.userAgent.indexOf('Mac') !== -1) {
+                $("html").addClass("mac");
+            } else {
+                $("html").addClass("non-mac");
+            }
         },
 
         methods: {
