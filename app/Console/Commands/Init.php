@@ -67,7 +67,7 @@ class Init extends Command
             $this->comment('Data seeded -- skipping');
         }
 
-        $this->info('Executing npm install, bower install, gulp and whatnot');
+        $this->info('Executing npm install, gulp and whatnot');
         system('npm install');
 
         $this->comment("\n🎆  Success! You can now run Koel from localhost with `php artisan serve`.");
