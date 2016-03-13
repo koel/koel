@@ -1,20 +1,18 @@
 import _ from 'lodash';
 
-import songStub from '../stubs/song';
-
 export default {
     state: {
         songs: [],
         current: null,
     },
-    
+
     init() {
         // We don't have anything to do here yet.
         // How about another song then?
-        // 
+        //
         // LITTLE WING
         // -- by Jimi Fucking Hendrix
-        // 
+        //
         // Well she's walking
         // Through the clouds
         // With a circus mind
@@ -22,7 +20,7 @@ export default {
         // Butterflies and zebras and moonbeams and fairytales
         // That's all she ever thinks about
         // Riding with the wind
-        // 
+        //
         // When I'm sad
         // She comes to me
         // With a thousand smiles
@@ -35,7 +33,7 @@ export default {
 
     /**
      * Get all queued songs.
-     * 
+     *
      * @return {Array.<Object>}
      */
     all() {
@@ -44,7 +42,7 @@ export default {
 
     /**
      * Get the first song in the queue.
-     * 
+     *
      * @return {?Object}
      */
     first() {
@@ -53,8 +51,8 @@ export default {
 
     /**
      * Get the last song in the queue.
-     * 
-     * @return {?Object} 
+     *
+     * @return {?Object}
      */
     last() {
         return _.last(this.state.songs);
@@ -62,9 +60,9 @@ export default {
 
     /**
      * Determine if the queue contains a song.
-     * 
+     *
      * @param  {Object} song
-     * 
+     *
      * @return {Boolean}
      */
     contains(song) {
@@ -72,7 +70,7 @@ export default {
     },
 
     /**
-     * Add a list of songs to the end of the current queue, 
+     * Add a list of songs to the end of the current queue,
      * or replace the current queue as a whole if `replace` is true.
      *
      * @param {Object|Array.<Object>}   songs   The song, or an array of songs
@@ -86,7 +84,7 @@ export default {
             this.state.songs = songs;
         } else {
             if (toTop) {
-                this.state.songs = _.union(songs, this.state.songs);    
+                this.state.songs = _.union(songs, this.state.songs);
             } else {
                 this.state.songs = _.union(this.state.songs, songs);
             }
@@ -95,7 +93,7 @@ export default {
 
     /**
      * Queue song(s) to after the current song.
-     * 
+     *
      * @param  {Array.<Object>|Object} songs
      */
     queueAfterCurrent(songs) {
@@ -111,7 +109,7 @@ export default {
 
     /**
      * Unqueue a song, or several songs at once.
-     * 
+     *
      * @param  {Object|String|Array.<Object>} songs The song(s) to unqueue
      */
     unqueue(songs) {
@@ -120,7 +118,7 @@ export default {
 
     /**
      * Move some songs to after a target.
-     * 
+     *
      * @param  {Array.<Object>} songs  Songs to move
      * @param  {Object}         target The target song object
      */
@@ -149,9 +147,9 @@ export default {
 
     /**
      * Get index of a song in the queue.
-     * 
+     *
      * @param  {Object} song
-     * 
+     *
      * @return {?Integer}
      */
     indexOf(song) {
@@ -160,7 +158,7 @@ export default {
 
     /**
      * Get the next song in queue.
-     * 
+     *
      * @return {?Object}
      */
     getNextSong() {
@@ -175,7 +173,7 @@ export default {
 
     /**
      * Get the previous song in queue.
-     * 
+     *
      * @return {?Object}
      */
     getPrevSong() {
@@ -199,8 +197,8 @@ export default {
         if (song) {
             this.state.current = song;
         }
-        
-        return this.state.current;    
+
+        return this.state.current;
     },
 
     /**

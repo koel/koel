@@ -6,21 +6,21 @@ export default {
      * If H is 0, it will be ommited.
      */
     secondsToHis(d) {
-        d = parseInt(d);
+        d = parseInt(d, 10);
 
-        var s = d%60;
+        var s = d % 60;
 
         if (s < 10) {
             s = '0' + s;
         }
 
-        var i = Math.floor((d/60)%60);
+        var i = Math.floor((d / 60) % 60);
 
         if (i < 10) {
             i = '0' + i;
         }
 
-        var h = Math.floor(d/3600);
+        var h = Math.floor(d / 3600);
 
         if (h < 10) {
             h = '0' + h;
@@ -78,6 +78,6 @@ export default {
      * @return {string}
      */
     br2nl(str) {
-        return str.replace(/<br\s*[\/]?>/gi, "\n");
+        return str.replace(/<br\s*[\/]?>/gi, '\n');
     }
 };

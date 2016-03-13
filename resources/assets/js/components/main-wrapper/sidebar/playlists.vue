@@ -1,15 +1,15 @@
 <template>
     <section id="playlists">
-        <h1>Playlists 
-            <i class="fa fa-plus-circle control create" 
-                :class="{ creating: creating }" 
+        <h1>Playlists
+            <i class="fa fa-plus-circle control create"
+                :class="{ creating: creating }"
                 @click="creating = !creating"></i>
         </h1>
 
         <form v-show="creating" @submit.prevent="store" class="create">
-            <input type="text" 
+            <input type="text"
                 @keyup.esc.prevent="creating = false"
-                v-model="newName" 
+                v-model="newName"
                 v-koel-focus="creating"
                 placeholder="↵ to save"
                 required
@@ -17,12 +17,12 @@
         </form>
 
         <ul class="menu">
-            <playlist-item 
-                type="favorites" 
+            <playlist-item
+                type="favorites"
                 :playlist="{ name: 'Favorites', songs: favoriteState.songs }"></playlist-item>
-            <playlist-item 
-                v-for="playlist in playlistState.playlists" 
-                type="playlist" 
+            <playlist-item
+                v-for="playlist in playlistState.playlists"
+                type="playlist"
                 :playlist="playlist"></playlist-item>
         </ul>
     </section>
@@ -33,7 +33,7 @@
     import favoriteStore from '../../../stores/favorite';
 
     import playlistItem from './playlist-item.vue';
-    
+
     export default {
         props: ['currentView'],
 
@@ -62,8 +62,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #playlists {
         .control.create {

@@ -7,11 +7,11 @@
             :class="{ active: active }"
         >{{ playlist.name }}</a>
 
-        <input type="text" 
+        <input type="text"
             @keyup.esc="cancelEdit"
             @keyup.enter="update"
             @blur="update"
-            v-model="playlist.name" 
+            v-model="playlist.name"
             v-koel-focus="editing"
             required
         >
@@ -24,7 +24,7 @@
     import songStore from '../../../stores/song';
     import playlistStore from '../../../stores/playlist';
     import favoriteStore from '../../../stores/favorite';
-    
+
     export default {
         props: ['playlist', 'type'],
 
@@ -39,7 +39,7 @@
         computed: {
             /**
              * Determine if the current menu item is the "Favorites" one.
-             * 
+             *
              * @return {Boolean}
              */
             isFavorites() {
@@ -75,7 +75,7 @@
              * Update the playlist's name.
              */
             update() {
-                if (this.isFavorites ||  !this.editing) {
+                if (this.isFavorites || !this.editing) {
                     return;
                 }
 
@@ -99,8 +99,8 @@
             },
 
             /**
-             * Remove the droppable state when a dragleave event occurs on the playlist's DOM element. 
-             * 
+             * Remove the droppable state when a dragleave event occurs on the playlist's DOM element.
+             *
              * @param {Object} e The dragleave event.
              */
             removeDroppableState(e) {
@@ -110,7 +110,7 @@
             /**
              * Add a "droppable" class and set the drop effect when an item is dragged over the playlist's
              * DOM element.
-             * 
+             *
              * @param {Object} e The dragover event.
              */
             allowDrop(e) {
@@ -122,7 +122,7 @@
 
             /**
              * Handle songs dropped to our favorite or playlist menu item.
-             * 
+             *
              * @param  {Object}   e        The event
              *
              * @return {Boolean}
@@ -155,7 +155,7 @@
                 if (view === 'favorites') {
                     this.active = this.isFavorites;
                 } else if (view === 'playlist') {
-                    this.active = this.playlist === playlist;      
+                    this.active = this.playlist === playlist;
                 } else {
                     this.active = false;
                 }
@@ -165,8 +165,8 @@
 </script>
 
 <style lang="sass" scoped>
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     .playlist {
         user-select: none;

@@ -59,10 +59,8 @@
 </template>
 
 <script>
-    import _ from 'lodash';
     import isMobile from 'ismobilejs';
 
-    import playlistStore from '../../../stores/playlist';
     import queueStore from '../../../stores/queue';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
@@ -128,8 +126,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #queueWrapper {
         .none {

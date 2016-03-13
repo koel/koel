@@ -136,7 +136,7 @@
                         favoriteStore.unlike(songs);
                         break;
                     case 'playlist':
-                        playlistStore.removeSongs(this.playlist, songs)
+                        playlistStore.removeSongs(this.playlist, songs);
                         break;
                     default:
                         break;
@@ -193,7 +193,7 @@
                         this.$nextTick(() => {
                             this.$root.loadMainView('queue');
 
-                            if (e.ctrlKey || e.metaKey || songs.length == 1) {
+                            if (e.ctrlKey || e.metaKey || songs.length === 1) {
                                 playback.play(songs[0]);
                             }
                         });
@@ -245,7 +245,6 @@
 
                 this.selectedSongs = songStore.byIds(ids);
             },
-
 
             /**
              * -----------------------------------------------------------
@@ -306,7 +305,7 @@
                 var rows = $(this.$els.wrapper).find('tbody tr');
 
                 for (var i = indexes[0]; i <= indexes[1]; ++i) {
-                    this.getComponentBySongId($(rows[i-1]).data('song-id')).select();
+                    this.getComponentBySongId($(rows[i - 1]).data('song-id')).select();
                 }
             },
 
@@ -385,8 +384,6 @@
                     return false;
                 }
 
-                var $row = this.removeDroppableState(e);
-
                 queueStore.move(songs, songStore.byId(songId));
 
                 return false;
@@ -437,8 +434,8 @@
                         return;
                     }
 
-                    if ($wrapper[0].getBoundingClientRect().top + $wrapper[0].getBoundingClientRect().height
-                        < $row[0].getBoundingClientRect().top) {
+                    if ($wrapper[0].getBoundingClientRect().top + $wrapper[0].getBoundingClientRect().height <
+                        $row[0].getBoundingClientRect().top) {
                         $wrapper.scrollTop($wrapper.scrollTop() + $row.position().top);
                     }
                 }
@@ -480,8 +477,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     .song-list-wrap {
         position: relative;

@@ -68,7 +68,7 @@
              * Select the current component (apply a CSS class on its DOM).
              */
             select() {
-                this.selected  = true;
+                this.selected = true;
             },
 
             /**
@@ -82,8 +82,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     .song-item {
         border-bottom: 1px solid $color2ndBgr;

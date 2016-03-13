@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 import http from '../services/http';
-import utils from '../services/utils';
 
 export default {
     state: {

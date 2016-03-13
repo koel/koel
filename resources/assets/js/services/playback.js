@@ -4,11 +4,9 @@ import $ from 'jquery';
 import queueStore from '../stores/queue';
 import songStore from '../stores/song';
 import artistStore from '../stores/artist';
-import albumStore from '../stores/album';
 import preferenceStore from '../stores/preference';
-import ls from '../services/ls';
-import http from '../services/http';
 import config from '../config';
+import plyr from 'plyr';
 
 export default {
     app: null,

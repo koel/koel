@@ -1,9 +1,9 @@
 <template>
     <div class="side search" id="searchForm" :class="{ showing: showing }">
         <input type="search"
-            :class="{ dirty: q }" 
-            placeholder="Search" 
-            v-model="q" 
+            :class="{ dirty: q }"
+            placeholder="Search"
+            v-model="q"
             debounce="500"
             v-koel-focus="showing">
     </div>
@@ -47,8 +47,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     #searchForm {
         @include vertical-center();
@@ -61,7 +61,7 @@
             margin-top: 0;
         }
 
-    
+
 
         @media only screen and (max-device-width : 667px) {
             z-index: -1;

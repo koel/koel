@@ -38,9 +38,9 @@
 </script>
 
 <style lang="sass" scoped>
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
-    @import "resources/assets/sass/partials/_shared.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_shared.scss";
 
     /**
      * I like to move it move it
@@ -75,7 +75,7 @@
 
         &.error {
             border-color: #8e4947;
-            animation: shake .5s;    
+            animation: shake .5s;
         }
 
         &::before {
@@ -86,7 +86,7 @@
             height: 172px;
         }
 
-        @media only screen 
+        @media only screen
         and (max-device-width : 414px) {
             border: 0;
             background: transparent;

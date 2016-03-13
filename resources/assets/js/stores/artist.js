@@ -31,7 +31,7 @@ export default {
     setupArtist(artist) {
         this.getImage(artist);
         Vue.set(artist, 'playCount', 0);
-        Vue.set(artist, 'songCount', _.reduce(artist.albums, (count, album)  => count + album.songs.length, 0));
+        Vue.set(artist, 'songCount', _.reduce(artist.albums, (count, album) => count + album.songs.length, 0));
         Vue.set(artist, 'info', null);
 
         return artist;
@@ -64,7 +64,7 @@ export default {
             album.artist = artist;
         });
 
-        artist.playCount = _.reduce(artist.albums, (count, album)  => count + album.playCount, 0);
+        artist.playCount = _.reduce(artist.albums, (count, album) => count + album.playCount, 0);
     },
 
     /**
@@ -75,7 +75,7 @@ export default {
      */
     removeAlbumsFromArtist(artist, albums) {
         artist.albums = _.difference(artist.albums, [].concat(albums));
-        artist.playCount = _.reduce(artist.albums, (count, album)  => count + album.playCount, 0);
+        artist.playCount = _.reduce(artist.albums, (count, album) => count + album.playCount, 0);
     },
 
     /**
@@ -131,7 +131,7 @@ export default {
 
         artist.albums.every(album => {
             // If there's a "real" cover, use it.
-            if (album.image != config.unknownCover) {
+            if (album.image !== config.unknownCover) {
                 artist.image = album.cover;
 
                 // I want to break free.

@@ -87,8 +87,8 @@
 </script>
 
 <style lang="sass" scoped>
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     .add-to-playlist {
         @include context-menu();

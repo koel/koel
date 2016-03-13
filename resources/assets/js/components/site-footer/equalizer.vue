@@ -91,7 +91,7 @@
                     if (i === 0) {
                         filter.type = 'lowshelf';
                     } else if (i === 9) {
-                        filter.type = 'highshelf'
+                        filter.type = 'highshelf';
                     } else {
                         filter.type = 'peaking';
                     }
@@ -142,7 +142,7 @@
                             if ($(el).parents('.band').is('.preamp')) {
                                 this.changePreampGain(value);
                             } else {
-                                this.changeFilterGain(this.bands[i-1].filter, value);
+                                this.changeFilterGain(this.bands[i - 1].filter, value);
                             }
                         },
 
@@ -164,7 +164,7 @@
              */
             changePreampGain(dbValue) {
                 this.preampGainValue = dbValue;
-                this.preampGainNode.gain.value = Math.pow(10, dbValue/20);
+                this.preampGainNode.gain.value = Math.pow(10, dbValue / 20);
             },
 
             /**
@@ -181,7 +181,7 @@
              * Load a preset when the user select it from the dropdown.
              */
             loadPreset() {
-                if (Number.parseInt(this.selectedPresetIndex) === -1) {
+                if (Number.parseInt(this.selectedPresetIndex, 10) === -1) {
                     return;
                 }
 
@@ -192,8 +192,8 @@
                     if ($(input).parents('.band').is('.preamp')) {
                         this.changePreampGain(preset.preamp);
                     } else {
-                        this.changeFilterGain(this.bands[i-1].filter, preset.gains[i-1]);
-                        input.value = preset.gains[i-1];
+                        this.changeFilterGain(this.bands[i - 1].filter, preset.gains[i - 1]);
+                        input.value = preset.gains[i - 1];
                     }
                 });
 
@@ -224,8 +224,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     #equalizer {
         position: absolute;

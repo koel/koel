@@ -85,7 +85,7 @@ export default {
 
     /**
      * Save the current equalizer config.
-     * 
+     *
      * @param  {Number} preamp The preamp value (dB)
      * @param  {Array.<Number>} gains  The band's gain value (dB)
      */

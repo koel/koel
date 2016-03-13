@@ -2,11 +2,11 @@
     <section id="usersWrapper">
         <h1 class="heading">
             <span>Users
-                <i class="fa fa-angle-down toggler" 
-                    v-show="isPhone && !showingControls" 
+                <i class="fa fa-angle-down toggler"
+                    v-show="isPhone && !showingControls"
                     @click="showingControls = true"></i>
-                <i class="fa fa-angle-up toggler" 
-                    v-show="isPhone && showingControls" 
+                <i class="fa fa-angle-up toggler"
+                    v-show="isPhone && showingControls"
                     @click.prevent="showingControls = false"></i>
             </span>
 
@@ -59,10 +59,10 @@
             <div class="users">
                 <article v-for="user in state.users" class="user-item" :class="{ editing: editedUser === user }">
                     <img :src="user.avatar" width="128" height="128" alt="">
-                    
+
                     <div class="right">
                         <div class="info">
-                            <h1>{{ user.name }} 
+                            <h1>{{ user.name }}
                                 <i v-if="user.id === state.current.id" class="you fa fa-check-circle"></i>
                             </h1>
 
@@ -73,8 +73,8 @@
                             <button class="edit" @click="edit(user)" v-show="deletedUser !== user">
                                 {{ user.id === state.current.id ? 'Update Profile' : 'Edit' }}
                             </button>
-                            <button v-if="user.id !== state.current.id && deletedUser !== user" 
-                                class="delete" 
+                            <button v-if="user.id !== state.current.id && deletedUser !== user"
+                                class="delete"
                                 @click="confirmDelete(user)">Delete
                             </button>
                             <span v-show="deletedUser === user">
@@ -94,7 +94,7 @@
 <script>
     import _ from 'lodash';
     import isMobile from 'ismobilejs';
-    
+
     import userStore from '../../../stores/user';
 
     export default {
@@ -136,7 +136,7 @@
 
             /**
              * Cancel editing, or simply close the form after updating.
-             * @param  {Boolean=true} rollback If true, editing was cancelled. 
+             * @param  {Boolean=true} rollback If true, editing was cancelled.
              *                                 The original state of the edited user must be restored.
              *                                 If false, editing was successfully committed.
              */
@@ -165,9 +165,9 @@
              * Update the edited user.
              */
             update() {
-                userStore.update(this.editedUser, 
-                    this.editedUser.name, 
-                    this.editedUser.email, 
+                userStore.update(this.editedUser,
+                    this.editedUser.name,
+                    this.editedUser.email,
                     this.editedUser.password, () => {
                         this.cancelEdit(false);
                         // TODO: Scroll to the user?
@@ -209,9 +209,9 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
-    
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
+
     @keyframes barberpole {
         from { background-position: 0 0; }
         to   { background-position: 60px 30px; }
@@ -231,13 +231,13 @@
                 &.editing {
                     background-size: 30px 30px;
                     background-image: linear-gradient(
-                        -45deg, 
-                        rgba(black, 0.3)  25%, 
-                        transparent       25%, 
-                        transparent       50%, 
-                        rgba(black, 0.3)  50%, 
-                        rgba(black, 0.3)  75%, 
-                        transparent       75%, 
+                        -45deg,
+                        rgba(black, 0.3)  25%,
+                        transparent       25%,
+                        transparent       50%,
+                        rgba(black, 0.3)  50%,
+                        rgba(black, 0.3)  75%,
+                        transparent       75%,
                         transparent
                     );
 
@@ -299,7 +299,7 @@
             background: $colorGreen !important;
 
             &:hover {
-                background: darken($colorGreen, 10%) !important;                
+                background: darken($colorGreen, 10%) !important;
             }
         }
 
@@ -362,8 +362,8 @@
             }
         }
 
-        @media only screen 
-        and (min-device-width : 668px) 
+        @media only screen
+        and (min-device-width : 668px)
         and (max-device-width : 768px) {
             .users {
                 flex-direction: column;

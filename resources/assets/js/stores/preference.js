@@ -20,7 +20,7 @@ export default {
 
     /**
      * Init the store.
-     * 
+     *
      * @param  {Object} user The user whose preferences we are managing.
      */
     init(user = null) {

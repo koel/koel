@@ -3,11 +3,11 @@ import stub from '../stubs/settings';
 
 export default {
     stub,
-    
+
     state: {
-        settings: [], 
+        settings: [],
     },
-    
+
     init(settings) {
         this.state.settings = settings;
     },

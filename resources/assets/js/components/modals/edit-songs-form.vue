@@ -64,7 +64,6 @@
 
 <script>
     import _ from 'lodash';
-    import $ from 'jquery';
 
     import utils from '../../services/utils';
     import artistStore from '../../stores/artist';
@@ -235,8 +234,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     #editSongsOverlay {
         z-index: 9999;

@@ -5,7 +5,6 @@ import NProgress from 'nprogress';
 
 import http from '../services/http';
 import stub from '../stubs/user';
-import sharedStore from './shared';
 
 export default {
     stub,

@@ -3,7 +3,7 @@
         <h1 class="heading">
             <span>Profile &amp; Preferences</span>
         </h1>
-    
+
         <div class="main-scroll-wrap">
             <form @submit.prevent="update">
                 <div class="form-row">
@@ -70,7 +70,7 @@
                         Connecting Koel and your Last.fm account enables exciting features – scrobbling is one of them.
                     </p>
                     <p v-if="state.current.preferences.lastfm_session_key">
-                        For the sake of democracy, you have the option to disconnect from Last.fm too. 
+                        For the sake of democracy, you have the option to disconnect from Last.fm too.
                         Doing so will reload Koel, though.
                     </p>
 
@@ -80,19 +80,19 @@
                             {{ state.current.preferences.lastfm_session_key ? 'Reconnect' : 'Connect' }}
                         </button>
 
-                        <button 
-                            v-if="state.current.preferences.lastfm_session_key" 
-                            @click.prevent="disconnectFromLastfm" 
+                        <button
+                            v-if="state.current.preferences.lastfm_session_key"
+                            @click.prevent="disconnectFromLastfm"
                             class="disconnect"
                         >
                             Disconnect
                         </button>
-                    </div>        
+                    </div>
                 </div>
 
                 <div v-else>
                     <p>This installation of Koel has no Last.fm integration.
-                        <span v-if="state.current.is_admin">Visit 
+                        <span v-if="state.current.is_admin">Visit
                             <a href="https://github.com/phanan/koel/wiki" target="_blank">Koel’s Wiki</a>
                             for a quick how-to. Really, you should do it.
                         </span>
@@ -106,7 +106,7 @@
 
 <script>
     import $ from 'jquery';
-    
+
     import userStore from '../../../stores/user';
     import preferenceStore from '../../../stores/preference';
     import sharedStore from '../../../stores/shared';
@@ -146,7 +146,7 @@
 
                     // "Save!" aaaaaaaand it's gone!
                     this.showStatus = true;
-                    setTimeout(() => this.showStatus = false, 3000)
+                    setTimeout(() => this.showStatus = false, 3000);
                 });
             },
 
@@ -159,7 +159,7 @@
             },
 
             /**
-             * Save the current user's preference. 
+             * Save the current user's preference.
              * Right now it's only "Song notification."
              */
             savePreference() {
@@ -173,8 +173,8 @@
              */
             connectToLastfm() {
                 window.open(
-                    `/api/lastfm/connect?jwt-token=${ls.get('jwt-token')}`, 
-                    '_blank', 
+                    `/api/lastfm/connect?jwt-token=${ls.get('jwt-token')}`,
+                    '_blank',
                     'toolbar=no,titlebar=no,location=no,width=1024,height=640'
                 );
             },
@@ -191,19 +191,19 @@
                 // But one of my users is my new born kid!
                 // - Then? Kids will fuck things up anyway.
                 http.delete('lastfm/disconnect', {}, () => window.location.reload());
-            }
+            },
         },
     };
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #profileWrapper {
         input {
             &[type="text"], &[type="email"], &[type="password"] {
-                width: 192px;    
+                width: 192px;
             }
 
             &.error {

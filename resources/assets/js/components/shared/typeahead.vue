@@ -22,7 +22,6 @@
 </template>
 
 <script>
-    import _ from 'lodash';
     import $ from 'jquery';
 
     import VueClickaway from 'vue-clickaway';
@@ -100,7 +99,6 @@
                 // Hide the typeahead results and reset the value if ESC is pressed.
                 if (e.keyCode === 27) {
                     this.showingResult = false;
-                    //this.value = this.defaultValue;
 
                     return;
                 }
@@ -144,8 +142,8 @@
 </script>
 
 <style lang="sass" scoped>
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     .result {
         position: absolute;

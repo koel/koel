@@ -1,6 +1,5 @@
 import $ from 'jquery';
 
-import playback from '../services/playback';
 import queueStore from '../stores/queue';
 import playlistStore from '../stores/playlist';
 import favoriteStore from '../stores/favorite';

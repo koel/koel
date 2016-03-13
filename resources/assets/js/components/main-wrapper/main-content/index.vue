@@ -57,7 +57,7 @@
              * @return {Boolean}
              */
             'song:played': function (song) {
-                this.albumCover = song.album.cover ===  albumStore.stub.cover ? null : song.album.cover;
+                this.albumCover = song.album.cover === albumStore.stub.cover ? null : song.album.cover;
 
                 return true;
             }
@@ -66,8 +66,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #mainContent {
         flex: 1;

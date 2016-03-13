@@ -24,8 +24,8 @@
     import _ from 'lodash';
 
     import lyrics from './lyrics.vue';
-    import artistInfo from './artist-info.vue'
-    import albumInfo from './album-info.vue'
+    import artistInfo from './artist-info.vue';
+    import albumInfo from './album-info.vue';
     import preferenceStore from '../../../stores/preference';
     import songStore from '../../../stores/song';
 
@@ -82,8 +82,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #extra {
         flex: 0 0 $extraPanelWidth;
