@@ -59,7 +59,7 @@ class Application extends IlluminateApplication
     /**
      * Get a URL for static file requests.
      * If this installation of Koel has a CDN_URL configured, use it as the base.
-     * Otherwise, just use a relative '/'.
+     * Otherwise, just use a full URL to the asset.
      *
      * @param string $name The additional resource name/path.
      *
@@ -67,7 +67,9 @@ class Application extends IlluminateApplication
      */
     public function staticUrl($name = null)
     {
-        return trim(env('CDN_URL'), '/ ').'/'.trim(ltrim($name, '/'));
+        $cdnUrl = trim(env('CDN_URL'), '/ ');
+
+        return $cdnUrl ? $cdnUrl.'/'.trim(ltrim($name, '/')) : trim(asset($name));
     }
 
     /**
