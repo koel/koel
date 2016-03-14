@@ -76,7 +76,7 @@
              */
             deselect() {
                 this.selected = false;
-            }
+            },
         },
     };
 </script>

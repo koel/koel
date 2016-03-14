@@ -37,10 +37,6 @@
             };
         },
 
-        watch: {
-
-        },
-
         methods: {
             /**
              * Navigate down the result list.
@@ -136,7 +132,7 @@
                 if (elemRect.bottom > containerRect.bottom || elemRect.top < containerRect.top) {
                     elem.scrollIntoView(alignTop);
                 }
-            }
+            },
         },
     };
 </script>

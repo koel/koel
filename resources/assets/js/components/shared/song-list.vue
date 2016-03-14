@@ -471,7 +471,7 @@
              */
             'song:selection-clear': function () {
                 this.clearSelection();
-            }
+            },
         },
     };
 </script>
