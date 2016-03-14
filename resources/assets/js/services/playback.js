@@ -305,7 +305,10 @@ export default {
         $('title').text(config.appTitle);
         this.player.pause();
         this.player.seek(0);
-        queueStore.current().playbackState = 'stopped';
+
+        if (queueStore.current()) {
+            queueStore.current().playbackState = 'stopped';
+        }
     },
 
     /**
