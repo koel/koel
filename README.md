@@ -7,3 +7,5 @@
 For system requirements, installation guides, and troubleshooting, head over to [Wiki](https://github.com/phanan/koel/wiki).
 
 If you are upgrading, see [Releases](https://github.com/phanan/koel/releases) for guides corresponding to your version.
+
+An [electron](http://electron.atom.io/)-based desktop client, in its early days, is also available [here](https://github.com/phanan/koel-app).
