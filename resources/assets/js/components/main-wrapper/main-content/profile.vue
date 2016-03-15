@@ -48,7 +48,7 @@
                 </div>
                 <div class="form-row">
                     <label>
-                        <input type="checkbox" v-model="prefs.confirmClosing" @change="changeConfirmClosing">
+                        <input type="checkbox" v-model="prefs.confirmClosing" @change="savePreference">
                         Confirm before closing Koel
                     </label>
                 </div>
@@ -148,14 +148,6 @@
                     this.showStatus = true;
                     setTimeout(() => this.showStatus = false, 3000);
                 });
-            },
-
-            /**
-             * Change the confirmClosing value on the window object (and save it as a preference too).
-             */
-            changeConfirmClosing() {
-                window.confirmClosing = this.prefs.confirmClosing;
-                preferenceStore.save();
             },
 
             /**
