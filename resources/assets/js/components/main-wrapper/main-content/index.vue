@@ -50,7 +50,7 @@
             },
 
             /**
-             * When a new song is played, find it cover for the translucent effect.
+             * When a new song is played, find its cover for the translucent effect.
              *
              * @param  {Object} song
              *
