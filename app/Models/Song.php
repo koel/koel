@@ -9,6 +9,8 @@ use Media;
 
 /**
  * @property string path
+ * @property string title
+ * @property Album album
  */
 class Song extends Model
 {
