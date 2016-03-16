@@ -148,7 +148,7 @@ export default {
      */
     getMostPlayed(n = 6) {
         // Only non-unknown albums with actually play count are applicable.
-        var applicable = _.filter(this.state.albums, album => {
+        let applicable = _.filter(this.state.albums, album => {
             return album.playCount && album.id !== 1;
         });
 

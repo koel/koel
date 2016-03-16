@@ -59,7 +59,7 @@ describe('stores/song', () => {
     describe('#syncUpdatedSong', () => {
         beforeEach(() => artistStore.init(artists));
 
-        var updatedSong = {
+        let updatedSong = {
             id: "39189f4545f9d5671fb3dc964f0080a0",
             album_id: 1193,
             title: "I Swear A Lot",
@@ -79,7 +79,7 @@ describe('stores/song', () => {
         });
 
         it ('correctly syncs an updated song into an existing album of same artist', () => {
-            var song = _.cloneDeep(updatedSong);
+            let song = _.cloneDeep(updatedSong);
             song.album_id = 1194;
             song.album = {
                 id: 1194,
@@ -95,7 +95,7 @@ describe('stores/song', () => {
         });
 
         it ('correctly syncs an updated song into a new album of same artist', () => {
-            var song = _.cloneDeep(updatedSong);
+            let song = _.cloneDeep(updatedSong);
             song.album_id = 9999;
             song.album = {
                 id: 9999,
@@ -117,7 +117,7 @@ describe('stores/song', () => {
         });
 
         it ('correctly syncs an updated song into a new album of a new artist', () => {
-            var song = _.cloneDeep(updatedSong);
+            let song = _.cloneDeep(updatedSong);
             song.album_id = 10000;
             song.album = {
                 id: 10000,
@@ -132,11 +132,11 @@ describe('stores/song', () => {
             songStore.syncUpdatedSong(song);
 
             // A new artist should be created...
-            var lastArtist = _.last(artistStore.all());
+            let lastArtist = _.last(artistStore.all());
             lastArtist.name.should.equal('John Cena');
 
             // A new album should be created
-            var lastAlbum = _.last(albumStore.all());
+            let lastAlbum = _.last(albumStore.all());
             lastAlbum.name.should.equal("It's... John Cena!!!");
 
             // The album must belong to John Cena of course!

@@ -68,7 +68,7 @@ export default {
         favoriteStore.clear();
 
         interactions.forEach(interaction => {
-            var song = this.byId(interaction.song_id);
+            let song = this.byId(interaction.song_id);
 
             if (!song) {
                 return;
@@ -94,7 +94,7 @@ export default {
      * @return {Float|String}
      */
     getLength(songs, toHis) {
-        var duration = songs.reduce((length, song) => length + song.length, 0);
+        let duration = songs.reduce((length, song) => length + song.length, 0);
 
         if (toHis) {
             return utils.secondsToHis(duration);
@@ -141,7 +141,7 @@ export default {
      * @param {?Function} cb
      */
     registerPlay(song, cb = null) {
-        var oldCount = song.playCount;
+        let oldCount = song.playCount;
 
         http.post('interaction/play', { song: song.id }, response => {
             // Use the data from the server to make sure we don't miss a play from another device.
@@ -185,7 +185,7 @@ export default {
         }
 
         http.get(`${song.id}/info`, response => {
-            var data = response.data;
+            let data = response.data;
 
             song.lyrics = data.lyrics;
 
@@ -295,15 +295,15 @@ export default {
         //      2.b. Artist changes as well. Note that an artist might have been created.
 
         // Find the original song,
-        var originalSong = this.byId(updatedSong.id);
+        let originalSong = this.byId(updatedSong.id);
 
         if (!originalSong) {
             return;
         }
 
         // and keep track of original album/artist.
-        var originalAlbumId = originalSong.album.id;
-        var originalArtistId = originalSong.album.artist.id;
+        let originalAlbumId = originalSong.album.id;
+        let originalArtistId = originalSong.album.artist.id;
 
         // First, we update the title and the lyrics
         originalSong.title = updatedSong.title;
@@ -315,8 +315,8 @@ export default {
             // First, remove it from its old album
             albumStore.removeSongsFromAlbum(originalSong.album, originalSong);
 
-            var existingAlbum = albumStore.byId(updatedSong.album.id);
-            var newAlbumCreated = !existingAlbum;
+            let existingAlbum = albumStore.byId(updatedSong.album.id);
+            let newAlbumCreated = !existingAlbum;
 
             if (!newAlbumCreated) {
                 // The song changed to an existing album. We now add it to such album.
@@ -336,7 +336,7 @@ export default {
                 }
             } else { // case 2.b
                 // The artist changes.
-                var existingArtist = artistStore.byId(updatedSong.album.artist.id);
+                let existingArtist = artistStore.byId(updatedSong.album.artist.id);
 
                 if (!existingArtist) {
                     // New artist created. We:
@@ -394,7 +394,7 @@ export default {
      * @return {Array.<Object>}
      */
     getMostPlayed(n = 10) {
-        var songs = _.take(_.sortByOrder(this.state.songs, 'playCount', 'desc'), n);
+        let songs = _.take(_.sortByOrder(this.state.songs, 'playCount', 'desc'), n);
 
         // Remove those with playCount=0
         _.remove(songs, song => !song.playCount);

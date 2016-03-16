@@ -67,12 +67,12 @@ export default {
             }
 
             // The current song has only 10 seconds left to play.
-            var nextSong = queueStore.getNextSong();
+            let nextSong = queueStore.getNextSong();
             if (!nextSong || nextSong.preloaded) {
                 return;
             }
 
-            var $preloader = $('<audio>');
+            let $preloader = $('<audio>');
             $preloader.attr('src', songStore.getSourceUrl(nextSong));
 
             nextSong.preloaded = true;
@@ -138,7 +138,7 @@ export default {
      * Restart playing a song.
      */
     restart() {
-        var song = queueStore.current();
+        let song = queueStore.current();
 
         // Record the UNIX timestamp the song start playing, for scrobbling purpose
         song.playStartTime = Math.floor(Date.now() / 1000);
@@ -157,7 +157,7 @@ export default {
         }
 
         try {
-            var notification = new Notification(`♫ ${song.title}`, {
+            let notification = new Notification(`♫ ${song.title}`, {
                 icon: song.album.cover,
                 body: `${song.album.name} – ${song.album.artist.name}`
             });
@@ -179,7 +179,7 @@ export default {
      * @return {Object} The song
      */
     nextSong() {
-        var next = queueStore.getNextSong();
+        let next = queueStore.getNextSong();
 
         if (next) {
             return next;
@@ -197,7 +197,7 @@ export default {
      * @return {Object} The song
      */
     prevSong() {
-        var prev = queueStore.getPrevSong();
+        let prev = queueStore.getPrevSong();
 
         if (prev) {
             return prev;
@@ -213,7 +213,7 @@ export default {
      * The selected mode will be stored into local storage as well.
      */
     changeRepeatMode() {
-        var i = this.repeatModes.indexOf(preferenceStore.get('repeatMode')) + 1;
+        let i = this.repeatModes.indexOf(preferenceStore.get('repeatMode')) + 1;
 
         if (i >= this.repeatModes.length) {
             i = 0;
@@ -235,7 +235,7 @@ export default {
             return;
         }
 
-        var prev = this.prevSong();
+        let prev = this.prevSong();
 
         if (!prev && preferenceStore.get('repeatMode') === 'NO_REPEAT') {
             this.stop();
@@ -251,7 +251,7 @@ export default {
      * If the next song is not found and the current mode is NO_REPEAT, we stop completely.
      */
     playNext() {
-        var next = this.nextSong();
+        let next = this.nextSong();
 
         if (!next && preferenceStore.get('repeatMode') === 'NO_REPEAT') {
             //  Nothing lasts forever, even cold November rain.

@@ -17,7 +17,7 @@ export default {
 
     methods: {
         scrolling(e) {
-            var $wrapper = $(this.$els.wrapper);
+            let $wrapper = $(this.$els.wrapper);
 
             // Here we check if the user has scrolled to the end of the wrapper (or 32px to the end).
             // If that's true, load more items.

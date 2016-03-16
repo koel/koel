@@ -52,7 +52,7 @@ export default {
         NProgress.start();
 
         http.post('playlist', { name, songs }, response => {
-            var playlist = response.data;
+            let playlist = response.data;
             playlist.songs = songs;
             this.getSongs(playlist);
             this.state.playlists.push(playlist);
@@ -89,7 +89,7 @@ export default {
      * @param {?Function}       cb
      */
     addSongs(playlist, songs, cb = null) {
-        var count = playlist.songs.length;
+        let count = playlist.songs.length;
         playlist.songs = _.union(playlist.songs, songs);
 
         if (count === playlist.songs.length) {

@@ -2,14 +2,14 @@ import Vue from 'vue';
 import ls from './services/ls';
 import NProgress from 'nprogress';
 
-var app = new Vue(require('./app.vue'));
+let app = new Vue(require('./app.vue'));
 
 Vue.config.debug = false;
 Vue.use(require('vue-resource'));
 Vue.http.options.root = '/api';
 Vue.http.interceptors.push({
     request(r) {
-        var token = ls.get('jwt-token');
+        let token = ls.get('jwt-token');
 
         if (token) {
             Vue.http.headers.common.Authorization = `Bearer ${token}`;

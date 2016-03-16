@@ -45,7 +45,7 @@
                     // Re-init the app.
                     this.$root.init();
                 }, error => {
-                    var msg = 'Unknown error.';
+                    let msg = 'Unknown error.';
 
                     if (error.status === 422) {
                         msg = utils.parseValidationError(error.data)[0];

@@ -123,7 +123,7 @@
          */
         ready() {
             $(this.$el).find('.has-sub').hover(e => {
-                var $submenu = $(e.target).find('.submenu:first');
+                let $submenu = $(e.target).find('.submenu:first');
                 if (!$submenu.length) {
                     return;
                 }

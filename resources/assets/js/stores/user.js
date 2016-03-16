@@ -145,7 +145,7 @@ export default {
         NProgress.start();
 
         http.post('user', { name, email, password }, response => {
-            var user = response.data;
+            let user = response.data;
 
             this.setAvatar(user);
             this.state.users.push(user);

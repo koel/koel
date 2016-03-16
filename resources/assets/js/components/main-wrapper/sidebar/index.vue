@@ -116,7 +116,7 @@
                     return false;
                 }
 
-                var songs = songStore.byIds(e.dataTransfer.getData('text/plain').split(','));
+                let songs = songStore.byIds(e.dataTransfer.getData('text/plain').split(','));
 
                 if (!songs.length) {
                     return false;

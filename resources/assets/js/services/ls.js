@@ -2,7 +2,7 @@ import ls from 'local-storage';
 
 export default {
     get(key, defaultVal = null) {
-        var val = ls(key);
+        let val = ls(key);
 
         return val ? val : defaultVal;
     },

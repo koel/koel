@@ -55,7 +55,7 @@
 
         ready() {
             // The app has just been initialized, check if we can get the user data with an already existing token
-            var token = ls.get('jwt-token');
+            let token = ls.get('jwt-token');
             if (token) {
                 this.authenticated = true;
                 this.init();
@@ -285,7 +285,7 @@
             return arr;
         }
 
-        var order = (reverse && reverse < 0) ? -1 : 1;
+        let order = (reverse && reverse < 0) ? -1 : 1;
 
         // sort on a copy to avoid mutating original array
         return arr.slice().sort((a, b) => {

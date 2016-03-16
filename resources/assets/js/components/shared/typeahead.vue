@@ -42,7 +42,7 @@
              * Navigate down the result list.
              */
             down(e) {
-                var selected = $(this.$el).find('.result li.selected');
+                let selected = $(this.$el).find('.result li.selected');
 
                 if (!selected.length || !selected.removeClass('selected').next('li').addClass('selected').length) {
                     $(this.$el).find('.result li:first').addClass('selected');
@@ -56,7 +56,7 @@
              * Navigate up the result list.
              */
             up(e) {
-                var selected = $(this.$el).find('.result li.selected');
+                let selected = $(this.$el).find('.result li.selected');
 
                 if (!selected.length || !selected.removeClass('selected').prev('li').addClass('selected').length) {
                     $(this.$el).find('.result li:last').addClass('selected');
@@ -121,13 +121,13 @@
              * @param  {boolean} alignTop Whether the item should be aligned to top of its container.
              */
             scrollSelectedIntoView(alignTop) {
-                var elem = $(this.$el).find('.result li.selected')[0];
+                let elem = $(this.$el).find('.result li.selected')[0];
                 if (!elem) {
                     return;
                 }
 
-                var elemRect = elem.getBoundingClientRect();
-                var containerRect = elem.offsetParent.getBoundingClientRect();
+                let elemRect = elem.getBoundingClientRect();
+                let containerRect = elem.offsetParent.getBoundingClientRect();
 
                 if (elemRect.bottom > containerRect.bottom || elemRect.top < containerRect.top) {
                     elem.scrollIntoView(alignTop);

@@ -49,12 +49,12 @@
              * Allow dragging the artist (actually, their songs).
              */
             dragStart(e) {
-                var songIds = _.pluck(artistStore.getSongsByArtist(this.artist), 'id');
+                let songIds = _.pluck(artistStore.getSongsByArtist(this.artist), 'id');
                 e.dataTransfer.setData('text/plain', songIds);
                 e.dataTransfer.effectAllowed = 'move';
 
                 // Set a fancy drop image using our ghost element.
-                var $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} by ${this.artist.name}`);
+                let $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} by ${this.artist.name}`);
                 e.dataTransfer.setDragImage($ghost[0], 0, 0);
             },
         },

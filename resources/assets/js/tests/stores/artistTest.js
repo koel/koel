@@ -61,7 +61,7 @@ describe('stores/artist', () => {
         });
 
         it('correctly sets the album artist', () => {
-            var addedAlbum = _.last(artistStore.state.artists[0].albums);
+            let addedAlbum = _.last(artistStore.state.artists[0].albums);
             addedAlbum.artist.should.equal(artistStore.state.artists[0]);
             addedAlbum.artist_id.should.equal(artistStore.state.artists[0].id);
         });
