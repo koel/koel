@@ -369,7 +369,7 @@
             }
         }
 
-        @media only screen and (max-device-width : 768px) {
+        @media only screen and (max-width : 768px) {
             position: fixed;
             max-width: 414px;
             left: auto;

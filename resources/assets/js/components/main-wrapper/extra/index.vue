@@ -173,7 +173,7 @@
         }
 
 
-        @media only screen and (max-device-width : 1024px) {
+        @media only screen and (max-width : 1024px) {
             position: fixed;
             height: calc(100vh - #{$headerHeight + $footerHeight});
             padding-bottom: $footerHeight; // make sure the footer can never overlap the content
@@ -188,7 +188,7 @@
             }
         }
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             width: 100%;
         }
     }

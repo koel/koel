@@ -261,7 +261,7 @@
         }
 
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             position: fixed;
             height: calc(100vh - #{$headerHeight + $footerHeight});
             padding-bottom: $footerHeight; // make sure the footer can never overlap the content

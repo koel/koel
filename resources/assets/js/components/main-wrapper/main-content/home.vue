@@ -305,7 +305,7 @@
             }
         }
 
-        @media only screen and (max-device-width: 768px) {
+        @media only screen and (max-width: 768px) {
             .top-sections {
                 display: block;
 

@@ -57,7 +57,7 @@
             @include vertical-center();
         }
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             flex: 0 0 96px;
             margin-right: 0;
             padding-right: 0;

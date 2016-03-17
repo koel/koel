@@ -87,7 +87,7 @@
         }
 
         @media only screen
-        and (max-device-width : 414px) {
+        and (max-width : 414px) {
             border: 0;
             background: transparent;
         }

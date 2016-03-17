@@ -154,7 +154,7 @@
 
 
         @media only screen
-        and (max-device-width : 768px) {
+        and (max-width : 768px) {
             h1.heading {
                 font-size: 18px;
                 min-height: 0;

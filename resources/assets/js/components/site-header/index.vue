@@ -74,7 +74,7 @@
             display: none;
         }
 
-        @media only screen and (max-device-width: 667px) {
+        @media only screen and (max-width: 667px) {
             display: flex;
             align-content: stretch;
             justify-content: flext-start;

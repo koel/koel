@@ -330,7 +330,7 @@
             }
         }
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             form.user-create, form.user-edit {
                 flex-direction: column;
                 align-items: stretch;
@@ -363,8 +363,8 @@
         }
 
         @media only screen
-        and (min-device-width : 668px)
-        and (max-device-width : 768px) {
+        and (min-width : 668px)
+        and (max-width : 768px) {
             .users {
                 flex-direction: column;
 

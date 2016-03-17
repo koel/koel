@@ -250,7 +250,7 @@
             }
         }
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             input {
                 &[type="text"], &[type="email"], &[type="password"] {
                     width: 100%;
