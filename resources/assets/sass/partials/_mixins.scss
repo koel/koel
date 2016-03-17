@@ -8,55 +8,73 @@
     justify-content: space-between;
     flex-wrap: wrap;
     display: flex;
-
-    @media only screen
-    and (max-device-width : 768px) {
-        justify-content: center;
-    }
-
-    @media only screen
-    and (min-device-width: 769px)
-    and (max-device-width : 1024px) {
-        justify-content: space-around;
-    }
 }
 
 @mixin artist-album-card() {
     .item {
-        display: flex;
-        flex: 0 0 256px;
         flex-direction: column;
         margin-bottom: 16px;
+        width: 23.5%;
+        position: relative;
+
+        @media only screen and (max-width: 1200px) {
+            width: 32%;
+        }
+
+        @media only screen and (max-width: 960px) {
+            width: 48%;
+        }
+
+        @media only screen and (max-width: 320px) {
+            width: 100%;
+        }
+
+        html.with-extra-panel & {
+            width: 32%;
+
+            @media only screen and (max-width: 1200px) {
+                width: 48%;
+            }
+
+            @media only screen and (max-width: 960px) {
+                width: 100%;
+            }
+        }
 
         .cover {
             @include vertical_center();
 
-            display: flex;
-            flex: 0 0 256px;
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center center;
+            width: 100%;
+            padding-top: 100%;
             position: relative;
 
             .control {
+                $playBtnWidth: 96px;
                 display: none;
-                width: 96px;
-                height: 96px;
+                width: $playBtnWidth;
+                height: $playBtnWidth;
                 text-align: center;
-                line-height: 96px;
+                line-height: $playBtnWidth;
                 font-size: 54px;
                 background: #111;
                 border-radius: 50%;
                 text-indent: 5px;
                 opacity: .7;
                 border: 1px solid transparent;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                left: calc(50% - #{$playBtnWidth/2});
 
                 transition: .3s;
 
                 &:hover {
                     opacity: 1;
                     border-color: #fff;
-                    transform: scale(1.1);
+                    transform: translateY(-50%) scale(1.1);
                 }
 
                 html.touchevents & {

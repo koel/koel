@@ -22,6 +22,7 @@
 <script>
     import isMobile from 'ismobilejs';
     import _ from 'lodash';
+    import $ from 'jquery';
 
     import lyrics from './lyrics.vue';
     import artistInfo from './artist-info.vue';
@@ -40,7 +41,25 @@
             };
         },
 
+        watch: {
+            /**
+             * Watch the "showExtraPanel" property to add/remove the corresponding class
+             * to/from the html tag.
+             * Some element's CSS can then be controlled based on this class.
+             */
+            'prefs.showExtraPanel': function (newVal) {
+                if (newVal) {
+                    $('html').addClass('with-extra-panel');
+                } else {
+                    $('html').removeClass('with-extra-panel');
+                }
+            },
+        },
+
         ready() {
+            // On ready, add 'with-extra-panel' class.
+            $('html').addClass('with-extra-panel');
+
             if (isMobile.phone) {
                 // On a mobile device, we always hide the panel initially regardless of
                 // the saved preference.
