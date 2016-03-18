@@ -32,11 +32,11 @@ export default {
     },
 
     /**
-     * Get all users.
+     * All users.
      *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.users;
     },
 
@@ -52,18 +52,25 @@ export default {
     },
 
     /**
-     * Get or set the current user.
-     *
-     * @param {?Object} user
+     * The current user.
      *
      * @return {Object}
      */
-    current(user = null) {
-        if (user) {
-            this.state.current = user;
-        }
-
+    get current() {
         return this.state.current;
+    },
+
+    /**
+     * Set the current user.
+     *
+     * @param  {Object} user
+     *
+     * @return {Object}
+     */
+    set current(user) {
+        this.state.current = user;
+
+        return this.current;
     },
 
     /**
@@ -73,7 +80,7 @@ export default {
      */
     setAvatar(user = null) {
         if (!user) {
-            user = this.current();
+            user = this.current;
         }
 
         Vue.set(user, 'avatar', `https://www.gravatar.com/avatar/${md5(user.email)}?s=256`);
@@ -121,8 +128,8 @@ export default {
 
         http.put('me', {
                 password,
-                name: this.current().name,
-                email: this.current().email
+                name: this.current.name,
+                email: this.current.email
             }, () => {
                 this.setAvatar();
 

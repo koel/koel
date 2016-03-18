@@ -26,7 +26,7 @@ describe('stores/album', () => {
 
     describe('#all', () => {
         it('correctly returns all songs', () => {
-            albumStore.all().length.should.equal(7);
+            albumStore.all.length.should.equal(7);
         });
     });
 

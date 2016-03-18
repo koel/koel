@@ -47,7 +47,7 @@ export default {
          * Listen to 'ended' event on the audio player and play the next song in the queue.
          */
         document.querySelector('.plyr').addEventListener('ended', e => {
-            songStore.scrobble(queueStore.current());
+            songStore.scrobble(queueStore.current);
 
             if (preferenceStore.get('repeatMode') === 'REPEAT_ONE') {
                 this.restart();
@@ -67,7 +67,7 @@ export default {
             }
 
             // The current song has only 10 seconds left to play.
-            let nextSong = queueStore.getNextSong();
+            let nextSong = queueStore.next;
             if (!nextSong || nextSong.preloaded) {
                 return;
             }
@@ -111,14 +111,14 @@ export default {
             return;
         }
 
-        if (queueStore.current()) {
-            queueStore.current().playbackState = 'stopped';
+        if (queueStore.current) {
+            queueStore.current.playbackState = 'stopped';
         }
 
         song.playbackState = 'playing';
 
         // Set the song as the current song
-        queueStore.current(song);
+        queueStore.current = song;
 
         // Add it into the "recent" list
         songStore.addRecent(song);
@@ -138,7 +138,7 @@ export default {
      * Restart playing a song.
      */
     restart() {
-        let song = queueStore.current();
+        let song = queueStore.current;
 
         // Record the UNIX timestamp the song start playing, for scrobbling purpose
         song.playStartTime = Math.floor(Date.now() / 1000);
@@ -173,38 +173,38 @@ export default {
     },
 
     /**
-     * Get the next song in the queue.
+     * The next song in the queue.
      * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
      *
      * @return {Object} The song
      */
-    nextSong() {
-        let next = queueStore.getNextSong();
+    get next() {
+        let next = queueStore.next;
 
         if (next) {
             return next;
         }
 
         if (preferenceStore.get('repeatMode') === 'REPEAT_ALL') {
-            return queueStore.first();
+            return queueStore.first;
         }
     },
 
     /**
-     * Get the prev song in the queue.
+     * The previous song in the queue.
      * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
      *
      * @return {Object} The song
      */
-    prevSong() {
-        let prev = queueStore.getPrevSong();
+    get previous() {
+        let prev = queueStore.previous;
 
         if (prev) {
             return prev;
         }
 
         if (preferenceStore.get('repeatMode') === 'REPEAT_ALL') {
-            return queueStore.last();
+            return queueStore.last;
         }
     },
 
@@ -229,13 +229,13 @@ export default {
     playPrev() {
         // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
         // restart playing instead.
-        if (this.player.media.currentTime > 5 && queueStore.current().length > 5) {
+        if (this.player.media.currentTime > 5 && queueStore.current.length > 5) {
             this.player.restart();
 
             return;
         }
 
-        let prev = this.prevSong();
+        let prev = this.previous;
 
         if (!prev && preferenceStore.get('repeatMode') === 'NO_REPEAT') {
             this.stop();
@@ -251,7 +251,7 @@ export default {
      * If the next song is not found and the current mode is NO_REPEAT, we stop completely.
      */
     playNext() {
-        let next = this.nextSong();
+        let next = this.next;
 
         if (!next && preferenceStore.get('repeatMode') === 'NO_REPEAT') {
             //  Nothing lasts forever, even cold November rain.
@@ -306,8 +306,8 @@ export default {
         this.player.pause();
         this.player.seek(0);
 
-        if (queueStore.current()) {
-            queueStore.current().playbackState = 'stopped';
+        if (queueStore.current) {
+            queueStore.current.playbackState = 'stopped';
         }
     },
 
@@ -316,7 +316,7 @@ export default {
      */
     pause() {
         this.player.pause();
-        queueStore.current().playbackState = 'paused';
+        queueStore.current.playbackState = 'paused';
     },
 
     /**
@@ -324,8 +324,8 @@ export default {
      */
     resume() {
         this.player.play();
-        queueStore.current().playbackState = 'playing';
-        this.app.$broadcast('song:played', queueStore.current());
+        queueStore.current.playbackState = 'playing';
+        this.app.$broadcast('song:played', queueStore.current);
     },
 
     /**
@@ -336,7 +336,7 @@ export default {
      */
     queueAndPlay(songs = null, shuffle = false) {
         if (!songs) {
-            songs = songStore.all();
+            songs = songStore.all;
         }
 
         if (!songs.length) {
@@ -353,7 +353,7 @@ export default {
 
         // Wrap this inside a nextTick() to wait for the DOM to complete updating
         // and then play the first song in the queue.
-        this.app.$nextTick(() => this.play(queueStore.first()));
+        this.app.$nextTick(() => this.play(queueStore.first));
     },
 
     /**
@@ -361,13 +361,13 @@ export default {
      * If the current queue is empty, try creating it by shuffling all songs.
      */
     playFirstInQueue() {
-        if (!queueStore.all().length) {
+        if (!queueStore.all.length) {
             this.queueAndPlay();
 
             return;
         }
 
-        this.play(queueStore.first());
+        this.play(queueStore.first);
     },
 
     /**

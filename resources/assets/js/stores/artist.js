@@ -37,12 +37,12 @@ export default {
         return artist;
     },
 
-    all() {
+    get all() {
         return this.state.artists;
     },
 
     byId(id) {
-        return _.find(this.all(), 'id', id);
+        return _.find(this.all, 'id', id);
     },
 
     /**

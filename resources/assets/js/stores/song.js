@@ -108,7 +108,7 @@ export default {
      *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.songs;
     },
 
@@ -233,7 +233,7 @@ export default {
      * @param  {?Function}  cb
      */
     scrobble(song, cb = null) {
-        if (!window.useLastfm || !userStore.current().preferences.lastfm_session_key) {
+        if (!window.useLastfm || !userStore.current.preferences.lastfm_session_key) {
             return;
         }
 
@@ -253,7 +253,7 @@ export default {
      * @param  {?Function}      errorCb
      */
     update(songs, data, successCb = null, errorCb = null) {
-        if (!userStore.current().is_admin) {
+        if (!userStore.current.is_admin) {
             return;
         }
 

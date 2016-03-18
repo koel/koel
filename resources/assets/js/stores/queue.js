@@ -32,29 +32,29 @@ export default {
     },
 
     /**
-     * Get all queued songs.
+     * All queued songs.
      *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.songs;
     },
 
     /**
-     * Get the first song in the queue.
+     * The first song in the queue.
      *
      * @return {?Object}
      */
-    first() {
+    get first() {
         return _.first(this.state.songs);
     },
 
     /**
-     * Get the last song in the queue.
+     * The last song in the queue.
      *
      * @return {?Object}
      */
-    last() {
+    get last() {
         return _.last(this.state.songs);
     },
 
@@ -157,48 +157,55 @@ export default {
     },
 
     /**
-     * Get the next song in queue.
+     * The next song in queue.
      *
      * @return {?Object}
      */
-    getNextSong() {
-        if (!this.current()) {
+    get next() {
+        if (!this.current) {
             return _.first(this.state.songs);
         }
 
-        let i = _.pluck(this.state.songs, 'id').indexOf(this.current().id) + 1;
+        let i = _.pluck(this.state.songs, 'id').indexOf(this.current.id) + 1;
 
         return i >= this.state.songs.length ? null : this.state.songs[i];
     },
 
     /**
-     * Get the previous song in queue.
+     * The previous song in queue.
      *
      * @return {?Object}
      */
-    getPrevSong() {
-        if (!this.current()) {
+    get previous() {
+        if (!this.current) {
             return _.last(this.state.songs);
         }
 
-        let i = _.pluck(this.state.songs, 'id').indexOf(this.current().id) - 1;
+        let i = _.pluck(this.state.songs, 'id').indexOf(this.current.id) - 1;
 
         return i < 0 ? null : this.state.songs[i];
     },
 
     /**
-     * Get or set the current song.
-     *
-     * @param {?Object} song
+     * The current song.
      *
      * @return {Object}
      */
-    current(song = null) {
-        if (song) {
-            this.state.current = song;
-        }
-
+    get current() {
         return this.state.current;
+    },
+
+    /**
+     * Set a song as the current queued song.
+     *
+     * @param  {Object} song
+     *
+     * @return {Object} The queued song.
+     */
+    set current(song) {
+        this.state.current = song;
+
+        return this.current;
     },
 
     /**

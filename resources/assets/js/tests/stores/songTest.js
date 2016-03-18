@@ -28,7 +28,7 @@ describe('stores/song', () => {
 
     describe('#all', () => {
         it('correctly returns all songs', () => {
-            songStore.all().length.should.equal(14);
+            songStore.all.length.should.equal(14);
         });
     });
 
@@ -110,7 +110,7 @@ describe('stores/song', () => {
             songStore.syncUpdatedSong(song);
 
             // A new album should be created...
-            _.last(albumStore.all()).name.should.equal('Brand New Album from All-4-One');
+            _.last(albumStore.all).name.should.equal('Brand New Album from All-4-One');
 
             // ...and assigned with the song.
             songStore.byId(song.id).album.name.should.equal('Brand New Album from All-4-One');
@@ -132,11 +132,11 @@ describe('stores/song', () => {
             songStore.syncUpdatedSong(song);
 
             // A new artist should be created...
-            let lastArtist = _.last(artistStore.all());
+            let lastArtist = _.last(artistStore.all);
             lastArtist.name.should.equal('John Cena');
 
             // A new album should be created
-            let lastAlbum = _.last(albumStore.all());
+            let lastAlbum = _.last(albumStore.all);
             lastAlbum.name.should.equal("It's... John Cena!!!");
 
             // The album must belong to John Cena of course!

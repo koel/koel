@@ -86,7 +86,7 @@
              * @return {Array} The songs to add into a (new) playlist
              */
             songsToAddTo() {
-                return this.selectedSongs.length ? this.selectedSongs : queueStore.all();
+                return this.selectedSongs.length ? this.selectedSongs : queueStore.all;
             },
 
             /**
@@ -96,7 +96,7 @@
              * - We have songs to shuffle.
              */
             showShufflingAllOption() {
-                return songStore.all().length;
+                return songStore.all.length;
             },
         },
 
@@ -112,7 +112,7 @@
              * Shuffle all songs we have.
              */
             shuffleAll() {
-                playback.queueAndPlay(songStore.all(), true);
+                playback.queueAndPlay(songStore.all, true);
             },
 
             /**

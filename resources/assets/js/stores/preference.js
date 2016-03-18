@@ -25,7 +25,7 @@ export default {
      */
     init(user = null) {
         if (!user) {
-            user = userStore.current();
+            user = userStore.current;
         }
 
         this.storeKey = `preferences_${user.id}`;

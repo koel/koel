@@ -48,12 +48,12 @@ export default {
      *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.albums;
     },
 
     byId(id) {
-        return _.find(this.all(), 'id', id);
+        return _.find(this.all, 'id', id);
     },
 
     /**

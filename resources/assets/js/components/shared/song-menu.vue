@@ -49,7 +49,7 @@
             },
 
             isAdmin() {
-                return userStore.current().is_admin;
+                return userStore.current.is_admin;
             },
         },
 

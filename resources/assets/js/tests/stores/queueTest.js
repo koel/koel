@@ -13,19 +13,19 @@ describe('stores/queue', () => {
 
     describe('#all', () => {
         it('correctly returns all queued songs', () => {
-            queueStore.all().should.equal(songs);    
+            queueStore.all.should.equal(songs);
         });
     });
 
     describe('#first', () => {
         it('correctly returns the first queued song', () => {
-            queueStore.first().title.should.equal('No bravery');
+            queueStore.first.title.should.equal('No bravery');
         });
     });
 
     describe('#last', () => {
         it('correctly returns the last queued song', () => {
-            queueStore.last().title.should.equal('Tears and rain');
+            queueStore.last.title.should.equal('Tears and rain');
         });
     });
 
@@ -36,18 +36,18 @@ describe('stores/queue', () => {
 
         it('correctly appends a song to end of the queue', () => {
             queueStore.queue(song);
-            queueStore.last().title.should.equal('I Swear');
+            queueStore.last.title.should.equal('I Swear');
         });
 
         it('correctly prepends a song to top of the queue', () => {
             queueStore.queue(song, false, true);
-            queueStore.first().title.should.equal('I Swear');
+            queueStore.first.title.should.equal('I Swear');
         });
 
         it('correctly replaces the whole queue', () => {
             queueStore.queue(song, true);
-            queueStore.all().length.should.equal(1);
-            queueStore.first().title.should.equal('I Swear');
+            queueStore.all.length.should.equal(1);
+            queueStore.first.title.should.equal('I Swear');
         });
     });
 
@@ -56,12 +56,12 @@ describe('stores/queue', () => {
 
         it('correctly removes a song from queue', () => {
             queueStore.unqueue(queueStore.state.songs[0]);
-            queueStore.first().title.should.equal('So long, Jimmy'); // Oh the irony.
+            queueStore.first.title.should.equal('So long, Jimmy'); // Oh the irony.
         });
 
         it('correctly removes mutiple songs from queue', () => {
             queueStore.unqueue([queueStore.state.songs[0], queueStore.state.songs[1]]);
-            queueStore.first().title.should.equal('Wisemen');
+            queueStore.first.title.should.equal('Wisemen');
         });
     });
 
@@ -74,33 +74,34 @@ describe('stores/queue', () => {
 
     describe('#current', () => {
         it('returns the correct current song', () => {
-            queueStore.current().title.should.equal('So long, Jimmy');
+            queueStore.current.title.should.equal('So long, Jimmy');
         });
 
         it('successfully sets the current song', () => {
-            queueStore.current(queueStore.state.songs[0]).title.should.equal('No bravery');
+            queueStore.current = queueStore.state.songs[0];
+            queueStore.current.title.should.equal('No bravery');
         });
     });
 
     describe('#getNextSong', () => {
         it('correctly gets the next song in queue', () => {
-            queueStore.getNextSong().title.should.equal('Wisemen');
+            queueStore.next.title.should.equal('Wisemen');
         });
 
         it('correctly returns null if at end of queue', () => {
-            queueStore.current(queueStore.state.songs[queueStore.state.songs.length - 1]);
-            (queueStore.getNextSong() === null).should.be.true;
+            queueStore.current = queueStore.state.songs[queueStore.state.songs.length - 1];
+            (queueStore.next === null).should.be.true;
         });
     });
 
     describe('#getPrevSong', () => {
         it('correctly gets the previous song in queue', () => {
-            queueStore.getPrevSong().title.should.equal('No bravery');
+            queueStore.previous.title.should.equal('No bravery');
         });
 
         it('correctly returns null if at end of queue', () => {
-            queueStore.current(queueStore.state.songs[0]);
-            (queueStore.getPrevSong() === null).should.be.true;
+            queueStore.current = queueStore.state.songs[0];
+            (queueStore.previous === null).should.be.true;
         });
     });
 });

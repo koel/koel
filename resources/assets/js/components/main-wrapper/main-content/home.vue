@@ -118,7 +118,7 @@
 
         computed: {
             greeting() {
-                return _.sample(this.greetings).replace('%s', userStore.current().name);
+                return _.sample(this.greetings).replace('%s', userStore.current.name);
             },
         },
 

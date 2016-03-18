@@ -124,7 +124,7 @@
              * @return {?Object}
              */
             prev() {
-                return playback.prevSong();
+                return playback.previous;
             },
 
             /**
@@ -133,7 +133,7 @@
              * @return {?Object}
              */
             next() {
-                return playback.nextSong();
+                return playback.next;
             },
         },
 
