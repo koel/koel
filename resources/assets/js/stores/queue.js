@@ -66,7 +66,7 @@ export default {
      * @return {Boolean}
      */
     contains(song) {
-        return _.includes(this.all(), song);
+        return _.includes(this.all, song);
     },
 
     /**
