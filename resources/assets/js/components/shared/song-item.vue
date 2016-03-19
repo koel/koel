@@ -89,7 +89,7 @@
              * Load the artist details screen.
              */
             viewArtistDetails() {
-                this.$root.loadArtist(this.song.artist);
+                this.$root.loadArtist(this.song.album.artist);
             },
         },
     };
