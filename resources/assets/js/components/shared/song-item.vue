@@ -5,8 +5,8 @@
         :class="{ selected: selected, playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
     >
         <td class="title">{{ song.title }}</td>
-        <td class="artist">{{ song.album.artist.name }}</td>
-        <td class="album">{{ song.album.name }}</td>
+        <td class="artist"><a @click.prevent="viewArtistDetails">{{ song.album.artist.name }}</a></td>
+        <td class="album"><a @click.prevent="viewAlbumDetails">{{ song.album.name }}</a></td>
         <td class="time">{{ song.fmtLength }}</td>
         <td class="play" @click.stop="doPlayback">
             <i class="fa fa-pause-circle" v-show="song.playbackState === 'playing'"></i>
@@ -76,6 +76,20 @@
              */
             deselect() {
                 this.selected = false;
+            },
+
+            /**
+             * Load the album details screen.
+             */
+            viewAlbumDetails() {
+                this.$root.loadAlbum(this.song.album);
+            },
+
+            /**
+             * Load the artist details screen.
+             */
+            viewArtistDetails() {
+                this.$root.loadArtist(this.song.artist);
             },
         },
     };
