@@ -101,6 +101,22 @@
             min-width: 192px;
         }
 
+        .album {
+            a {
+                &:hover {
+                    color: $colorHighlight;
+                }
+            }
+        }
+
+        .artist {
+            a {
+                &:hover {
+                    color: $colorHighlight;
+                }
+            }
+        }
+
         .play {
             max-width: 32px;
             opacity: .5;
