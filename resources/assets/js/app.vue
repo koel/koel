@@ -298,7 +298,7 @@
                 if (a === b) {
                     if (_.isNumber(aSub) && _.isNumber(bSub)) {
                         return aSub === bSub ? 0 : aSub > bSub ? order : -order;
-                    } else if (aSub !== undefined && bSub !== undefined) {
+                    } else if (aSub && bSub) {
                         aSub = aSub.toLowerCase();
                         bSub = bSub.toLowerCase();
 
@@ -317,7 +317,7 @@
             if (a === b) {
                 if (_.isNumber(aSub) && _.isNumber(bSub)) {
                     return aSub === bSub ? 0 : aSub > bSub ? order : -order;
-                } else if (aSub !== undefined && bSub !== undefined) {
+                } else if (aSub && bSub) {
                     aSub = aSub.toLowerCase();
                     bSub = bSub.toLowerCase();
 
