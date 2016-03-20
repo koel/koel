@@ -557,7 +557,7 @@
                 padding: 0;
                 vertical-align: bottom;
 
-                &.album, &.time {
+                &.album, &.time, &.track-number {
                     display: none;
                 }
 
