@@ -4,6 +4,7 @@
         class="song-item"
         :class="{ selected: selected, playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
     >
+        <td class="track-number">{{ song.track }}</td>
         <td class="title">{{ song.title }}</td>
         <td class="artist"><a @click.prevent="viewArtistDetails">{{ song.album.artist.name }}</a></td>
         <td class="album"><a @click.prevent="viewAlbumDetails">{{ song.album.name }}</a></td>

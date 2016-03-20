@@ -10,6 +10,7 @@
         <table v-show="items.length">
             <thead>
                 <tr>
+                    <th>#</th>
                     <th @click="sort('title')">Title
                         <i class="fa fa-angle-down" v-show="sortKey === 'title' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'title' && order < 0"></i>
