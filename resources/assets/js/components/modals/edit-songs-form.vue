@@ -46,7 +46,7 @@
                             </div>
                             <div class="form-row" v-show="editSingle">
                                 <label>Track</label>
-                                <input type="text" v-model="formData.track">
+                                <input type="number" min="1" v-model="formData.track">
                             </div>
                         </div>
                         <div v-show="currentView === 'lyrics' && editSingle">
@@ -274,7 +274,7 @@
                 padding: 16px;
             }
 
-            input[type="text"], textarea {
+            input[type="text"], input[type="number"], textarea {
                 border: 1px solid #ccc;
                 width: 100%;
                 max-width: 100%;
