@@ -35,6 +35,7 @@ $factory->define(App\Models\Song::class, function ($faker) {
     return [
         'title' => $faker->sentence,
         'length' => $faker->randomFloat(2, 10, 500),
+        'track' => $faker->randomNumber(),
         'lyrics' => $faker->paragraph(),
         'path' => '/tmp/'.uniqid().'.mp3',
         'mtime' => time(),

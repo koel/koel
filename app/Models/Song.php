@@ -133,10 +133,12 @@ class Song extends Model
                 continue;
             }
 
-            // If we're updating only one song, take into account the title and lyrics.
+            // If we're updating only one song, take into account the title and lyrics
+            // and track number.
             if (count($ids) === 1) {
                 $song->title = trim($data['title']) ?: $song->title;
                 $song->lyrics = trim($data['lyrics']);
+                $song->track = trim($data['track']);
             }
 
             // If "newArtist" is provided, we'll see if such an artist name is found in our database.
