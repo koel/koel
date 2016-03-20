@@ -20,7 +20,11 @@ class MediaTest extends TestCase
         $media->sync($this->mediaPath);
 
         // Standard mp3 files under root path should be recognized
-        $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/full.mp3']);
+        $this->seeInDatabase('songs', [
+            'path' => $this->mediaPath.'/full.mp3',
+            // Track # should be recognized
+            'track' => 5,
+        ]);
 
         // Ogg files and audio files in subdirectories should be recognized
         $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.ogg']);
