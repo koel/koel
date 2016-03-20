@@ -93,7 +93,7 @@
             background: rgba(255, 255, 255, .05);
         }
 
-        .time {
+        .time, .track-number {
             color: $color2ndText;
         }
 
