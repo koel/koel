@@ -10,11 +10,11 @@ export default {
     },
 
     /**
-     * Get all songs favorited by the current user.
+     * All songs favorite'd by the current user.
      *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.songs;
     },
 

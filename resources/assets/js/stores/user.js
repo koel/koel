@@ -155,7 +155,7 @@ export default {
             let user = response.data;
 
             this.setAvatar(user);
-            this.state.users.push(user);
+            this.state.users.unshift(user);
 
             if (cb) {
                 cb();

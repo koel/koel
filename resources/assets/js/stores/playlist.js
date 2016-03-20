@@ -19,11 +19,11 @@ export default {
     },
 
     /**
-     * Get all playlists of the current user.
+     * All playlists of the current user.
      *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.playlists;
     },
 

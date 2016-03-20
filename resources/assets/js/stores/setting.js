@@ -12,11 +12,11 @@ export default {
         this.state.settings = settings;
     },
 
-    all() {
+    get all() {
         return this.state.settings;
     },
 
     update(successCb = null, errorCb = null) {
-        http.post('settings', this.all(), successCb, errorCb);
+        http.post('settings', this.all, successCb, errorCb);
     },
 };

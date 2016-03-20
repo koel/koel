@@ -48,7 +48,7 @@
              * Some element's CSS can then be controlled based on this class.
              */
             'prefs.showExtraPanel': function (newVal) {
-                if (newVal) {
+                if (newVal && !isMobile.any) {
                     $('html').addClass('with-extra-panel');
                 } else {
                     $('html').removeClass('with-extra-panel');
@@ -58,7 +58,9 @@
 
         ready() {
             // On ready, add 'with-extra-panel' class.
-            $('html').addClass('with-extra-panel');
+            if (!isMobile.any) {
+                $('html').addClass('with-extra-panel');
+            }
 
             if (isMobile.phone) {
                 // On a mobile device, we always hide the panel initially regardless of
