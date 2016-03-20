@@ -229,11 +229,19 @@ class Media
             return;
         }
 
+        $track = array_get($info, 'comments.track_number', [0])[0];
+        if (preg_match('#(\d+)/#', $track, $matches)) {
+            $track = $matches[1];
+        } elseif ((int) $track) {
+            $track = (int) $track;
+        }
+
         $props = [
             'artist' => '',
             'album' => '',
             'title' => '',
             'length' => $info['playtime_seconds'],
+            'track' => $track,
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
             'path' => $file->getPathname(),

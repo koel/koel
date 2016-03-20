@@ -280,7 +280,7 @@
      *
      * @source https://github.com/vuejs/vue/blob/dev/src/filters/array-filters.js
      */
-    Vue.filter('caseInsensitiveOrderBy', (arr, sortKey, reverse) => {
+    Vue.filter('caseInsensitiveOrderBy', (arr, sortKey, reverse, subSortKey) => {
         if (!sortKey) {
             return arr;
         }
@@ -289,17 +289,45 @@
 
         // sort on a copy to avoid mutating original array
         return arr.slice().sort((a, b) => {
+            let aSub = subSortKey ? Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, subSortKey) : 0 : 0;
+            let bSub = subSortKey ? Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, subSortKey) : 0 : 0;
             a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a;
             b = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, sortKey) : b;
 
             if (_.isNumber(a) && _.isNumber(b)) {
-                return a === b ? 0 : a > b ? order : -order;
+                if (a === b) {
+                    if (_.isNumber(aSub) && _.isNumber(bSub)) {
+                        return aSub === bSub ? 0 : aSub > bSub ? order : -order;
+                    } else if (aSub !== undefined && bSub !== undefined) {
+                        aSub = aSub.toLowerCase();
+                        bSub = bSub.toLowerCase();
+
+                        return aSub === bSub ? 0 : aSub > bSub ? order : -order;
+                    }
+
+                    return 0;
+                }
+
+                return a > b ? order : -order;
             }
 
             a = a === undefined ? a : a.toLowerCase();
             b = b === undefined ? b : b.toLowerCase();
 
-            return a === b ? 0 : a > b ? order : -order;
+            if (a === b) {
+                if (_.isNumber(aSub) && _.isNumber(bSub)) {
+                    return aSub === bSub ? 0 : aSub > bSub ? order : -order;
+                } else if (aSub !== undefined && bSub !== undefined) {
+                    aSub = aSub.toLowerCase();
+                    bSub = bSub.toLowerCase();
+
+                    return aSub === bSub ? 0 : aSub > bSub ? order : -order;
+                }
+
+                return 0;
+            }
+
+            return a > b ? order : -order;
         });
     });
 

@@ -44,6 +44,10 @@
                                     :options="albumTypeaheadOptions"
                                     :value.sync="formData.albumName"></typeahead>
                             </div>
+                            <div class="form-row" v-show="editSingle">
+                                <label>Track</label>
+                                <input type="text" v-model="formData.track">
+                            </div>
                         </div>
                         <div v-show="currentView === 'lyrics' && editSingle">
                             <div class="form-row">
@@ -106,6 +110,7 @@
                     albumName: '',
                     artistName: '',
                     lyrics: '',
+                    track: '',
                 },
             };
         },
@@ -197,9 +202,11 @@
                         songStore.getInfo(this.songs[0], () => {
                             this.loading = false;
                             this.formData.lyrics = utils.br2nl(this.songs[0].lyrics);
+                            this.formData.track = this.songs[0].track;
                         });
                     } else {
                         this.formData.lyrics = utils.br2nl(this.songs[0].lyrics);
+                        this.formData.track = this.songs[0].track;
                     }
                 } else {
                     this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : '';
