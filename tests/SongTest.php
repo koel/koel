@@ -27,6 +27,7 @@ class SongTest extends TestCase
                     'artistName' => 'John Cena',
                     'albumName' => 'One by One',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
                 ],
             ])
             ->seeStatusCode(200);
@@ -41,6 +42,7 @@ class SongTest extends TestCase
             'id' => $song->id,
             'album_id' => $album->id,
             'lyrics' => 'Lorem ipsum dolor sic amet.',
+            'track' => 1,
         ]);
     }
 
@@ -58,6 +60,7 @@ class SongTest extends TestCase
                     'artistName' => '',
                     'albumName' => 'One by One',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
                 ],
             ])
             ->seeStatusCode(200);
@@ -82,6 +85,7 @@ class SongTest extends TestCase
                     'artistName' => 'John Cena',
                     'albumName' => 'One by One',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
                 ],
             ])
             ->seeStatusCode(200);
@@ -91,6 +95,7 @@ class SongTest extends TestCase
         // Even though we post the title and lyrics, we don't expect them to take any effect
         $this->assertNotEquals('Foo Bar', $songs[0]->title);
         $this->assertNotEquals('Lorem ipsum dolor sic amet.', $songs[2]->lyrics);
+        $this->assertNotEquals(1, $songs[2]->track);
 
         // But all of these songs must now belong to a new album and artist set
         $this->assertEquals('One by One', $songs[0]->album->name);
@@ -116,6 +121,7 @@ class SongTest extends TestCase
                     'artistName' => 'John Cena',
                     'albumName' => '',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
                 ],
             ])
             ->seeStatusCode(200);
