@@ -7,6 +7,12 @@
             <span v-if="songs[0].playbackState !== 'playing'">Play</span>
             <span v-else>Pause</span>
         </li>
+        <li v-if="onlyOneSongSelected" @click="goToAlbum">
+            <span>Go to Album</span>
+        </li>
+        <li v-if="onlyOneSongSelected" @click="goToArtist">
+            <span>Go to Artist</span>
+        </li>
         <li class="has-sub">Add To
             <ul class="menu submenu">
                 <li @click="queueSongsToBottom">Bottom of Queue</li>
@@ -113,6 +119,20 @@
                 }
 
                 this.close();
+            },
+
+            /**
+             * Navigate to the song's album view
+             */
+            goToAlbum() {
+                this.$root.loadAlbum(this.songs[0].album);
+            },
+
+            /**
+             * Navigate to the song's artist view
+             */
+            goToArtist() {
+                this.$root.loadArtist(this.songs[0].album.artist);
             },
         },
 
