@@ -15,11 +15,11 @@
                         <i class="fa fa-angle-down" v-show="sortKey === 'title' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'title' && order < 0"></i>
                     </th>
-                    <th @click="sort('album.artist.name')">Artist
+                    <th @click="sort(['album.artist.name', 'album.name', 'track'])">Artist
                         <i class="fa fa-angle-down" v-show="sortKey === 'album.artist.name' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'album.artist.name' && order < 0"></i>
                     </th>
-                    <th @click="sort('album.name', 'track')">Album
+                    <th @click="sort(['album.name', 'track'])">Album
                         <i class="fa fa-angle-down" v-show="sortKey === 'album.name' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'album.name' && order < 0"></i>
                     </th>
@@ -34,7 +34,7 @@
             <tbody>
                 <tr
                     v-for="item in items
-                        | caseInsensitiveOrderBy sortKey order subSortKey
+                        | caseInsensitiveOrderBy sortKey order
                         | filterSongBy q
                         | limitBy numOfItems"
                     is="song-item"
@@ -83,7 +83,6 @@
                 lastSelectedRow: null,
                 q: '', // The filter query
                 sortKey: this.type === 'top-songs' ? 'playCount' : '',
-                subSortKey: 0,
                 order: this.type === 'top-songs' ? -1 : 1,
                 componentCache: {},
             };
@@ -112,13 +111,12 @@
              *
              * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
              */
-            sort(key, subSortKey) {
+            sort(key) {
                 if (this.sortable === false) {
                     return;
                 }
 
                 this.sortKey = key;
-                this.subSortKey = subSortKey ? subSortKey : 0;
                 this.order = 0 - this.order;
             },
 

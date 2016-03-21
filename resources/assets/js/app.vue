@@ -280,54 +280,52 @@
      *
      * @source https://github.com/vuejs/vue/blob/dev/src/filters/array-filters.js
      */
-    Vue.filter('caseInsensitiveOrderBy', (arr, sortKey, reverse, subSortKey) => {
+    Vue.filter('caseInsensitiveOrderBy', (arr, sortKey, reverse) => {
         if (!sortKey) {
             return arr;
         }
 
         let order = (reverse && reverse < 0) ? -1 : 1;
 
+        function compareRecordsByKey(a, b, key) {
+            let aKey = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, key) : a;
+            let bKey = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, key) : b;
+
+            if (_.isNumber(aKey) && _.isNumber(bKey)) {
+                return aKey === bKey ? 0 : aKey > bKey;
+            }
+
+            aKey = aKey === undefined ? aKey : aKey.toLowerCase();
+            bKey = bKey === undefined ? bKey : bKey.toLowerCase();
+
+            return aKey === bKey ? 0 : aKey > bKey;
+        }
+
         // sort on a copy to avoid mutating original array
         return arr.slice().sort((a, b) => {
-            let aSub = subSortKey ? Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, subSortKey) : 0 : 0;
-            let bSub = subSortKey ? Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, subSortKey) : 0 : 0;
+            if (sortKey.constructor === Array) {
+                let diff = 0;
+                for (let i = 0; i < sortKey.length; i++) {
+                    diff = compareRecordsByKey(a, b, sortKey[i]);
+                    if (diff !== 0) {
+                        break;
+                    }
+                }
+
+                return diff === 0 ? 0 : diff === true ? order : - order;
+            }
+
             a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a;
             b = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, sortKey) : b;
 
             if (_.isNumber(a) && _.isNumber(b)) {
-                if (a === b) {
-                    if (_.isNumber(aSub) && _.isNumber(bSub)) {
-                        return aSub === bSub ? 0 : aSub > bSub ? order : -order;
-                    } else if (aSub && bSub) {
-                        aSub = aSub.toLowerCase();
-                        bSub = bSub.toLowerCase();
-
-                        return aSub === bSub ? 0 : aSub > bSub ? order : -order;
-                    }
-
-                    return 0;
-                }
-
-                return a > b ? order : -order;
+                return a === b ? 0 : a > b ? order : -order;
             }
 
             a = a === undefined ? a : a.toLowerCase();
             b = b === undefined ? b : b.toLowerCase();
 
-            if (a === b) {
-                if (_.isNumber(aSub) && _.isNumber(bSub)) {
-                    return aSub === bSub ? 0 : aSub > bSub ? order : -order;
-                } else if (aSub && bSub) {
-                    aSub = aSub.toLowerCase();
-                    bSub = bSub.toLowerCase();
-
-                    return aSub === bSub ? 0 : aSub > bSub ? order : -order;
-                }
-
-                return 0;
-            }
-
-            return a > b ? order : -order;
+            return a === b ? 0 : a > b ? order : -order;
         });
     });
 
