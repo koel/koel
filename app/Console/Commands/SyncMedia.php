@@ -15,7 +15,9 @@ class SyncMedia extends Command
      * @var string
      */
     protected $signature = 'koel:sync
-        {record? : A single watch record. Consult Wiki for more info.}';
+        {record? : A single watch record. Consult Wiki for more info.}
+        {--tags= : The comma-separated tags to sync into the database}
+        {--force : Force re-syncing even unchanged files}';
 
     protected $ignored = 0;
     protected $invalid = 0;
@@ -65,7 +67,12 @@ class SyncMedia extends Command
     {
         $this->info('Koel syncing started. All we need now is just a little patience…');
 
-        Media::sync(null, $this);
+        // Get the tags to sync.
+        // Notice that this is only meaningful for existing records.
+        // New records will have every applicable field sync'ed in.
+        $tags = $this->option('tags') ? explode(',', $this->option('tags')) : [];
+
+        Media::sync(null, $tags, $this->option('force'), $this);
 
         $this->output->writeln("<info>Completed! {$this->synced} new or updated song(s)</info>, "
             ."{$this->ignored} unchanged song(s), "

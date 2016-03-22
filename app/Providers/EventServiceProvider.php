@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Facades\Media;
 use App\Models\Album;
 use App\Models\Song;
+use App\Models\File;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -40,7 +40,7 @@ class EventServiceProvider extends ServiceProvider
 
         // Generate a unique hash for a song from its path to be the ID
         Song::creating(function ($song) {
-            $song->id = Media::getHash($song->path);
+            $song->id = File::getHash($song->path);
         });
 
         // Remove the cover file if the album is deleted

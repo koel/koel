@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Events\LibraryChanged;
 use Illuminate\Database\Eloquent\Model;
 use Lastfm;
-use Media;
 
 /**
  * @property string path
@@ -30,6 +29,7 @@ class Song extends Model
      */
     protected $casts = [
         'length' => 'float',
+        'mtime' => 'int',
     ];
 
     /**
@@ -86,7 +86,7 @@ class Song extends Model
      */
     public static function byPath($path)
     {
-        return self::find(Media::getHash($path));
+        return self::find(File::getHash($path));
     }
 
     /**

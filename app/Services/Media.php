@@ -5,42 +5,52 @@ namespace App\Services;
 use App\Console\Commands\SyncMedia;
 use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
-use App\Models\Album;
-use App\Models\Artist;
+use App\Models\File;
 use App\Models\Setting;
 use App\Models\Song;
-use Exception;
 use getID3;
-use getid3_lib;
 use Illuminate\Support\Facades\Log;
-use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class Media
 {
     /**
-     * @var getID3
+     * All applicable tags in a media file that we cater for.
+     * Note that each isn't necessarily a valid ID3 tag name.
+     *
+     * @var array
      */
-    protected $getID3;
+    protected $allTags = ['artist', 'album', 'title', 'length', 'track', 'lyrics', 'cover', 'mtime'];
+
+    /**
+     * Tags to be synced.
+     *
+     * @var array
+     */
+    protected $tags = [];
 
     public function __construct()
     {
-        $this->setGetID3();
     }
 
     /**
      * Sync the media. Oh sync the media.
      *
      * @param string|null $path
+     * @param array       $tags        The tags to sync.
+     *                                 Only taken into account for existing records.
+     *                                 New records will have all tags synced in regardless.
+     * @param bool        $force       Whether to force syncing even unchanged files
      * @param SyncMedia   $syncCommand The SyncMedia command object, to log to console if executed by artisan.
      */
-    public function sync($path = null, SyncMedia $syncCommand = null)
+    public function sync($path = null, $tags = [], $force = false, SyncMedia $syncCommand = null)
     {
         if (!app()->runningInConsole()) {
             set_time_limit(env('APP_MAX_SCAN_TIME', 600));
         }
 
         $path = $path ?: Setting::get('media_path');
+        $this->setTags($tags);
 
         $results = [
             'good' => [], // Updated or added files
@@ -48,8 +58,12 @@ class Media
             'ugly' => [], // Unmodified files
         ];
 
+        $getID3 = new getID3();
+
         foreach ($this->gatherFiles($path) as $file) {
-            $song = $this->syncFile($file);
+            $file = new File($file, $getID3);
+
+            $song = $file->sync($this->tags, $force);
 
             if ($song === true) {
                 $results['ugly'][] = $file;
@@ -60,13 +74,13 @@ class Media
             }
 
             if ($syncCommand) {
-                $syncCommand->logToConsole($file->getPathname(), $song);
+                $syncCommand->logToConsole($file->getPath(), $song);
             }
         }
 
         // Delete non-existing songs.
         $hashes = array_map(function ($f) {
-            return $this->getHash($f->getPathname());
+            return self::getHash($f->getPath());
         }, array_merge($results['ugly'], $results['good']));
 
         Song::whereNotIn('id', $hashes)->delete();
@@ -85,52 +99,6 @@ class Media
     public function gatherFiles($path)
     {
         return Finder::create()->files()->name('/\.(mp3|ogg|m4a|flac)$/i')->in($path);
-    }
-
-    /**
-     * Sync a song with all available media info against the database.
-     *
-     * @param SplFileInfo|string $file The SplFileInfo instance of the file, or the file path.
-     *
-     * @return bool|Song A Song object on success,
-     *                   true if file exists but is unmodified,
-     *                   or false on an error.
-     */
-    public function syncFile($file)
-    {
-        if (!($file instanceof SplFileInfo)) {
-            $file = new SplFileInfo($file);
-        }
-
-        if (!$info = $this->getInfo($file)) {
-            return false;
-        }
-
-        if (!$this->isNewOrChanged($file)) {
-            return true;
-        }
-
-        $artist = Artist::get($info['artist']);
-        $album = Album::get($artist, $info['album']);
-
-        if ($info['cover'] && !$album->has_cover) {
-            try {
-                $album->generateCover($info['cover']);
-            } catch (Exception $e) {
-                Log::error($e);
-            }
-        }
-
-        $info['album_id'] = $album->id;
-
-        unset($info['artist']);
-        unset($info['album']);
-        unset($info['cover']);
-
-        $song = Song::updateOrCreate(['id' => $this->getHash($file->getPathname())], $info);
-        $song->save();
-
-        return $song;
     }
 
     /**
@@ -163,7 +131,8 @@ class Media
             // Otherwise, it's a new or changed file. Try to sync it in.
             // File format etc. will be handled by the syncFile method.
             elseif ($record->isNewOrModified()) {
-                Log::info($this->syncFile($path) instanceof Song ? "Synchronized $path" : "Invalid file $path");
+                $result = (new File($path))->sync($this->tags);
+                Log::info($result instanceof Song ? "Synchronized $path" : "Invalid file $path");
             }
 
             return;
@@ -182,7 +151,7 @@ class Media
             }
         } elseif ($record->isNewOrModified()) {
             foreach ($this->gatherFiles($path) as $file) {
-                $this->syncFile($file);
+                (new File($file))->sync($this->tags);
             }
 
             Log::info("Synced all song(s) under $path");
@@ -190,91 +159,22 @@ class Media
     }
 
     /**
-     * Check if a media file is new or changed.
-     * A file is considered existing and unchanged only when:
-     * - its hash (ID) can be found in the database, and
-     * - its last modified time is the same with that of the comparing file.
+     * Construct an array of tags to be synced into the database from an input array of tags.
+     * If the input array is empty or contains only invalid items, we use all tags.
+     * Otherwise, we only use the valid items it it.
      *
-     * @param SplFileInfo $file
+     * @param array $tags
      *
-     * @return bool
+     * @return array
      */
-    protected function isNewOrChanged(SplFileInfo $file)
+    public function setTags($tags = [])
     {
-        return !Song::whereIdAndMtime($this->getHash($file->getPathname()), $file->getMTime())->count();
-    }
+        $this->tags = array_intersect((array) $tags, $this->allTags) ?: $this->allTags;
 
-    /**
-     * Get ID3 info from a file.
-     *
-     * @param SplFileInfo $file
-     *
-     * @return array|null
-     */
-    public function getInfo(SplFileInfo $file)
-    {
-        $info = $this->getID3->analyze($file->getPathname());
-
-        if (isset($info['error'])) {
-            return;
+        // We always keep track of mtime.
+        if (!in_array('mtime', $this->tags)) {
+            $this->tags[] = 'mtime';
         }
-
-        // Copy the available tags over to comment.
-        // This is a helper from getID3, though it doesn't really work well.
-        // We'll still prefer getting ID3v2 tags directly later.
-        // Read on.
-        getid3_lib::CopyTagsToComments($info);
-
-        if (!isset($info['playtime_seconds'])) {
-            return;
-        }
-
-        $track = array_get($info, 'comments.track_number', [0])[0];
-        if (preg_match('#(\d+)/#', $track, $matches)) {
-            $track = $matches[1];
-        } elseif ((int) $track) {
-            $track = (int) $track;
-        }
-
-        $props = [
-            'artist' => '',
-            'album' => '',
-            'title' => '',
-            'length' => $info['playtime_seconds'],
-            'track' => $track,
-            'lyrics' => '',
-            'cover' => array_get($info, 'comments.picture', [null])[0],
-            'path' => $file->getPathname(),
-            'mtime' => $file->getMTime(),
-        ];
-
-        if (!$comments = array_get($info, 'comments_html')) {
-            return $props;
-        }
-
-        // We prefer id3v2 tags over others.
-        if (!$artist = array_get($info, 'tags.id3v2.artist', [null])[0]) {
-            $artist = array_get($comments, 'artist', [''])[0];
-        }
-
-        if (!$album = array_get($info, 'tags.id3v2.album', [null])[0]) {
-            $album = array_get($comments, 'album', [''])[0];
-        }
-
-        if (!$title = array_get($info, 'tags.id3v2.title', [null])[0]) {
-            $title = array_get($comments, 'title', [''])[0];
-        }
-
-        if (!$lyrics = array_get($info, 'tags.id3v2.unsynchronised_lyric', [null])[0]) {
-            $lyrics = array_get($comments, 'unsynchronised_lyric', [''])[0];
-        }
-
-        $props['artist'] = trim($artist);
-        $props['album'] = trim($album);
-        $props['title'] = trim($title);
-        $props['lyrics'] = trim($lyrics);
-
-        return $props;
     }
 
     /**
@@ -286,22 +186,6 @@ class Media
      */
     public function getHash($path)
     {
-        return md5(config('app.key').$path);
-    }
-
-    /**
-     * @return getID3
-     */
-    public function getGetID3()
-    {
-        return $this->getID3;
-    }
-
-    /**
-     * @param getID3 $getID3
-     */
-    public function setGetID3($getID3 = null)
-    {
-        $this->getID3 = $getID3 ?: new getID3();
+        return File::getHash($path);
     }
 }
