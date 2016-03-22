@@ -123,15 +123,6 @@
 
                 @include button-group();
             }
-
-            input[type="search"] {
-                width: 128px;
-                transition: width .3s;
-
-                &:focus {
-                    width: 192px;
-                }
-            }
         }
 
         .translucent {
@@ -152,9 +143,7 @@
             pointer-events: none;
         }
 
-
-        @media only screen
-        and (max-width : 768px) {
+        @media only screen and (max-width: 768px) {
             h1.heading {
                 font-size: 18px;
                 min-height: 0;
@@ -172,7 +161,7 @@
                     display: none;
                 }
 
-                .buttons, input[type="search"] {
+                .buttons {
                     justify-content: center;
                     margin-top: 8px;
                 }
