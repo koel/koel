@@ -73,6 +73,7 @@
             width: 3px;
             animation: sound 0ms -800ms linear infinite alternate;
             backface-visibility: hidden;
+            will-change: opacity, height;
         }
 
         .bar:nth-child(1)  { left: 1px; background: #754fa0; animation-duration: 474ms; }
