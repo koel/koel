@@ -82,7 +82,7 @@
             return {
                 lastSelectedRow: null,
                 q: '', // The filter query
-                sortKey: this.type === 'top-songs' ? 'playCount' : '',
+                sortKey: this.type === 'top-songs' ? 'playCount' : ['album.artist.name', 'album.name', 'track'],
                 order: this.type === 'top-songs' ? -1 : 1,
                 componentCache: {},
             };
