@@ -9,12 +9,6 @@
                 | orderBy 'name'
                 | filterBy q in 'name' 'artist.name'
                 | limitBy numOfItems" :album="item"></album-item>
-
-            <!--
-            Add several more items to make sure the last row is left-aligned.
-            Credits: http://codepen.io/dalgard/pen/Dbnus
-            -->
-            <span class="item" v-for="n in 10"></span>
         </div>
     </section>
 </template>

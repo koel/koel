@@ -8,12 +8,6 @@
             <artist-item v-for="item in items
                 | filterBy q in 'name'
                 | limitBy numOfItems" :artist="item"></artist-item>
-
-            <!--
-            Add several more items to make sure the last row is left-aligned.
-            Credits: http://codepen.io/dalgard/pen/Dbnus
-            -->
-            <span class="item" v-for="n in 10"></span>
         </div>
     </section>
 </template>
