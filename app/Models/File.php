@@ -195,9 +195,8 @@ class File
 
         $info['album_id'] = $album->id;
 
-        unset($info['artist']);
-        unset($info['album']);
-        unset($info['cover']);
+        // Remove these values from the info array, so that we can just use the array as model's input data.
+        array_forget($info, ['artist', 'album', 'cover']);
 
         $song = Song::updateOrCreate(['id' => $this->hash], $info);
         $song->save();
