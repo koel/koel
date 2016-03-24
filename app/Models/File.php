@@ -98,12 +98,19 @@ class File
             return;
         }
 
-        $track = array_get($info, 'comments.track_number', [0])[0];
+        $track = 0;
+        $trackIndices = [
+            'comments.track',
+            'comments.tracknumber',
+            'comments.track_number',
+        ];
+        for ($i = 0; $i < count($trackIndices) && $track === 0; $i++) {
+            $track = array_get($info, $trackIndices[$i], [0])[0];
+        }
         if (preg_match('#(\d+)/#', $track, $matches)) {
             $track = $matches[1];
-        } elseif ((int) $track) {
-            $track = (int) $track;
         }
+        $track = (int) $track;
 
         $props = [
             'artist' => '',
