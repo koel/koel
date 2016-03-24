@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { filter } from 'lodash';
 
 /**

@@ -38,7 +38,7 @@ export function caseInsensitiveOrderBy (arr, sortKey, reverse) {
                 }
             }
 
-            return diff === 0 ? 0 : diff === true ? order : - order;
+            return diff === 0 ? 0 : diff === true ? order : -order;
         }
 
         a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a;

@@ -23,7 +23,6 @@
 <script>
     import Vue from 'vue';
     import $ from 'jquery';
-    import _ from 'lodash';
 
     import siteHeader from './components/site-header/index.vue';
     import siteFooter from './components/site-footer/index.vue';
