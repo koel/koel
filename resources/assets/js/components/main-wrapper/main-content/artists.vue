@@ -8,6 +8,8 @@
             <artist-item v-for="item in items
                 | filterBy q in 'name'
                 | limitBy numOfItems" :artist="item"></artist-item>
+
+            <span class="item" v-for="n in 6"></span>
         </div>
     </section>
 </template>

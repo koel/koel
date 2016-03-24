@@ -9,6 +9,8 @@
                 | orderBy 'name'
                 | filterBy q in 'name' 'artist.name'
                 | limitBy numOfItems" :album="item"></album-item>
+
+            <span class="item" v-for="n in 6"></span>
         </div>
     </section>
 </template>

@@ -64,6 +64,7 @@
 
                 <div class="wrapper">
                     <artist-item v-for="artist in topArtists" :artist="artist"></artist-item>
+                    <span class="item" v-for="n in 3"></span>
                 </div>
             </section>
 
@@ -72,6 +73,7 @@
 
                 <div class="wrapper">
                     <album-item v-for="album in topAlbums" :album="album"></album-item>
+                    <span class="item" v-for="n in 3"></span>
                 </div>
             </section>
         </div>
