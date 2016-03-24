@@ -99,25 +99,24 @@ class File
         }
 
         $track = 0;
+
+        // Apparently track number can be stored with different indices as the following.
         $trackIndices = [
             'comments.track',
             'comments.tracknumber',
             'comments.track_number',
         ];
+
         for ($i = 0; $i < count($trackIndices) && $track === 0; $i++) {
             $track = array_get($info, $trackIndices[$i], [0])[0];
         }
-        if (preg_match('#(\d+)/#', $track, $matches)) {
-            $track = $matches[1];
-        }
-        $track = (int) $track;
 
         $props = [
             'artist' => '',
             'album' => '',
             'title' => '',
             'length' => $info['playtime_seconds'],
-            'track' => $track,
+            'track' => (int) $track,
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
             'path' => $this->path,
