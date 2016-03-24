@@ -98,7 +98,11 @@ class Media
      */
     public function gatherFiles($path)
     {
-        return Finder::create()->files()->name('/\.(mp3|ogg|m4a|flac)$/i')->in($path);
+        return Finder::create()
+            ->ignoreUnreadableDirs()
+            ->files()
+            ->name('/\.(mp3|ogg|m4a|flac)$/i')
+            ->in($path);
     }
 
     /**
