@@ -10,18 +10,21 @@
         <table v-show="items.length">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th @click="sort('track')" class="track-number">#
+                        <i class="fa fa-angle-down" v-show="sortKey === 'track' && order > 0"></i>
+                        <i class="fa fa-angle-up" v-show="sortKey === 'track' && order < 0"></i>
+                    </th>
                     <th @click="sort('title')">Title
                         <i class="fa fa-angle-down" v-show="sortKey === 'title' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'title' && order < 0"></i>
                     </th>
                     <th @click="sort(['album.artist.name', 'album.name', 'track'])">Artist
-                        <i class="fa fa-angle-down" v-show="sortKey === 'album.artist.name' && order > 0"></i>
-                        <i class="fa fa-angle-up" v-show="sortKey === 'album.artist.name' && order < 0"></i>
+                        <i class="fa fa-angle-down" v-show="sortingByArtist && order > 0"></i>
+                        <i class="fa fa-angle-up" v-show="sortingByArtist && order < 0"></i>
                     </th>
                     <th @click="sort(['album.name', 'track'])">Album
-                        <i class="fa fa-angle-down" v-show="sortKey === 'album.name' && order > 0"></i>
-                        <i class="fa fa-angle-up" v-show="sortKey === 'album.name' && order < 0"></i>
+                        <i class="fa fa-angle-down" v-show="sortingByAlbum && order > 0"></i>
+                        <i class="fa fa-angle-up" v-show="sortingByAlbum && order < 0"></i>
                     </th>
                     <th @click="sort('fmtLength')" class="time">Time
                         <i class="fa fa-angle-down" v-show="sortKey === 'fmtLength' && order > 0"></i>
@@ -82,9 +85,11 @@
             return {
                 lastSelectedRow: null,
                 q: '', // The filter query
-                sortKey: this.type === 'top-songs' ? 'playCount' : ['album.artist.name', 'album.name', 'track'],
-                order: this.type === 'top-songs' ? -1 : 1,
+                sortKey: '',
+                order: 1,
                 componentCache: {},
+                sortingByAlbum: false,
+                sortingByArtist: false,
             };
         },
 
@@ -118,6 +123,8 @@
 
                 this.sortKey = key;
                 this.order = 0 - this.order;
+                this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.name';
+                this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.artist.name';
             },
 
             /**
@@ -502,6 +509,10 @@
             &.time {
                 width: 72px;
                 text-align: right;
+            }
+
+            &.track-number {
+                min-width: 42px;
             }
 
             &.play {

@@ -40,6 +40,7 @@
     import playback from './services/playback';
     import focusDirective from './directives/focus';
     import ls from './services/ls';
+    import { filterSongBy, caseInsensitiveOrderBy } from './filters/index';
 
     export default {
         components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
@@ -275,80 +276,11 @@
         },
     };
 
-    /**
-     * Modified version of orderBy that is case insensitive
-     *
-     * @source https://github.com/vuejs/vue/blob/dev/src/filters/array-filters.js
-     */
-    Vue.filter('caseInsensitiveOrderBy', (arr, sortKey, reverse) => {
-        if (!sortKey) {
-            return arr;
-        }
+    // Register our custom filters…
+    Vue.filter('filterSongBy', filterSongBy);
+    Vue.filter('caseInsensitiveOrderBy', caseInsensitiveOrderBy);
 
-        let order = (reverse && reverse < 0) ? -1 : 1;
-
-        function compareRecordsByKey(a, b, key) {
-            let aKey = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, key) : a;
-            let bKey = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, key) : b;
-
-            if (_.isNumber(aKey) && _.isNumber(bKey)) {
-                return aKey === bKey ? 0 : aKey > bKey;
-            }
-
-            aKey = aKey === undefined ? aKey : aKey.toLowerCase();
-            bKey = bKey === undefined ? bKey : bKey.toLowerCase();
-
-            return aKey === bKey ? 0 : aKey > bKey;
-        }
-
-        // sort on a copy to avoid mutating original array
-        return arr.slice().sort((a, b) => {
-            if (sortKey.constructor === Array) {
-                let diff = 0;
-                for (let i = 0; i < sortKey.length; i++) {
-                    diff = compareRecordsByKey(a, b, sortKey[i]);
-                    if (diff !== 0) {
-                        break;
-                    }
-                }
-
-                return diff === 0 ? 0 : diff === true ? order : - order;
-            }
-
-            a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a;
-            b = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, sortKey) : b;
-
-            if (_.isNumber(a) && _.isNumber(b)) {
-                return a === b ? 0 : a > b ? order : -order;
-            }
-
-            a = a === undefined ? a : a.toLowerCase();
-            b = b === undefined ? b : b.toLowerCase();
-
-            return a === b ? 0 : a > b ? order : -order;
-        });
-    });
-
-    /**
-     * A Koel-specific song filter, since Vue's filterBy is meant to be generic and thus
-     * may be slow for a huge library.
-     * We also introduce some custom rules--whitespace trimming and skip empty queries.
-     */
-    Vue.filter('filterSongBy', (songs, search, delimiter) => {
-        if (!search || !search.trim()) {
-            return songs;
-        }
-
-        search = ('' + search).toLowerCase().trim();
-
-        return _.filter(songs, song => {
-            return song.title.toLowerCase().indexOf(search) !== -1 ||
-                song.album.name.toLowerCase().indexOf(search) !== -1 ||
-                song.album.artist.name.toLowerCase().indexOf(search) !== -1;
-        });
-    });
-
-    // Register the global directives
+    // …and the global directives
     Vue.directive('koel-focus', focusDirective);
 </script>
 
