@@ -168,8 +168,6 @@ class Media
      * Otherwise, we only use the valid items it it.
      *
      * @param array $tags
-     *
-     * @return array
      */
     public function setTags($tags = [])
     {
