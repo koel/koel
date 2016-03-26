@@ -133,7 +133,7 @@ class Media
                 }
             }
             // Otherwise, it's a new or changed file. Try to sync it in.
-            // File format etc. will be handled by the syncFile method.
+            // File format etc. will be handled by File::sync().
             elseif ($record->isNewOrModified()) {
                 $result = (new File($path))->sync($this->tags);
                 Log::info($result instanceof Song ? "Synchronized $path" : "Invalid file $path");
