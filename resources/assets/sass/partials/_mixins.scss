@@ -17,6 +17,22 @@
         width: 23.5%;
         position: relative;
 
+        .as-list & {
+            flex-direction: row;
+            display: flex;
+            width: 100% !important;
+
+            .cover {
+                flex: 0 0 80px;
+                height: 80px;
+                padding-top: 0;
+            }
+
+            footer {
+                flex: 1;
+            }
+        }
+
         @media only screen and (max-width: 1200px) {
             width: 32%;
         }
@@ -51,24 +67,30 @@
             padding-top: 100%;
             position: relative;
 
-            .control {
-                $playBtnWidth: 96px;
-                display: none;
+            @mixin control($playBtnWidth, $fontSize, $textIndent) {
                 width: $playBtnWidth;
                 height: $playBtnWidth;
-                text-align: center;
                 line-height: $playBtnWidth;
-                font-size: 54px;
+                font-size: $fontSize;
+                text-indent: $textIndent;
+                left: calc(50% - #{$playBtnWidth/2});
+            }
+
+            .control {
+                .as-list & {
+                    @include control(46px, 27px, 2px);
+                }
+
+                @include control(96px, 54px, 5px);
+                display: none;
+                text-align: center;
                 background: #111;
                 border-radius: 50%;
-                text-indent: 5px;
                 opacity: .7;
                 border: 1px solid transparent;
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                left: calc(50% - #{$playBtnWidth/2});
-
                 transition: .3s;
 
                 &:hover {
@@ -126,6 +148,10 @@
 
             &:hover {
                 color: $colorHighlight;
+            }
+
+            .as-list & {
+                display: inline;
             }
         }
     }

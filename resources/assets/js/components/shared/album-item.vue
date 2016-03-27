@@ -7,6 +7,7 @@
         </span>
         <footer>
             <a class="name" @click.prevent="viewDetails">{{ album.name }}</a>
+            <span class="sep">by</span>
             <a class="artist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
             <p class="meta">
                 {{ album.songs.length }} {{ album.songs.length | pluralize 'song' }}
@@ -76,4 +77,13 @@
     @import "../../../sass/partials/_mixins.scss";
 
     @include artist-album-card();
+
+    .sep {
+        display: none;
+        color: $color2ndText;
+
+        .as-list & {
+            display: inline;
+        }
+    }
 </style>

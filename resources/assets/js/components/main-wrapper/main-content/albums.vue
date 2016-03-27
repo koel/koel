@@ -2,9 +2,10 @@
     <section id="albumsWrapper">
         <h1 class="heading">
             <span>Albums</span>
+            <view-mode-switch :mode.sync="viewMode" :for="'albums'"></view-mode-switch>
         </h1>
 
-        <div class="albums main-scroll-wrap" v-el:wrapper @scroll="scrolling">
+        <div class="albums main-scroll-wrap as-{{ viewMode }}" v-el:wrapper @scroll="scrolling">
             <album-item v-for="item in items
                 | orderBy 'name'
                 | filterBy q in 'name' 'artist.name'
@@ -17,12 +18,13 @@
 
 <script>
     import albumItem from '../../shared/album-item.vue';
+    import viewModeSwitch from '../../shared/view-mode-switch.vue';
     import infiniteScroll from '../../../mixins/infinite-scroll';
     import albumStore from '../../../stores/album';
 
     export default {
         mixins: [infiniteScroll],
-        components: { albumItem },
+        components: { albumItem, viewModeSwitch },
 
         data() {
             return {
@@ -30,6 +32,7 @@
                 numOfItems: 9,
                 state: albumStore.state,
                 q: '',
+                viewMode: null,
             };
         },
 
@@ -45,6 +48,8 @@
              */
             'koel:ready': function () {
                 this.displayMore();
+
+                return true;
             },
 
             'koel:teardown': function () {
