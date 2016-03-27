@@ -8,6 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="mobile-web-app-capable" content="yes">
 
+    <meta name="theme-color" content="#282828">
+    <meta name="msapplication-navbutton-color" content="#282828">
+
     <link rel="manifest" href="{{ App::staticUrl('manifest.json') }}" />
     <link rel="icon" type="image/x-icon" href="{{ App::staticUrl('public/img/favicon.ico') }}" />
     <link rel="icon" href="{{ App::staticUrl('public/img/icon.png') }}">
