@@ -46,7 +46,7 @@
                             </div>
                             <div class="form-row" v-show="editSingle">
                                 <label>Track</label>
-                                <input type="number" min="1" v-model="formData.track">
+                                <input type="number" min="0" v-model="formData.track">
                             </div>
                         </div>
                         <div v-show="currentView === 'lyrics' && editSingle">
