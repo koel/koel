@@ -161,7 +161,7 @@ export default [
     }
 ];
 
-export let singleAlbum = {
+export const singleAlbum = {
     id: 9999,
     artist_id: 99,
     name: "Foo bar",
@@ -183,7 +183,7 @@ export let singleAlbum = {
     ]
 };
 
-export let singleArtist = {
+export const singleArtist = {
     id: 999,
     name: "John Cena",
     albums: [
@@ -204,7 +204,7 @@ export let singleArtist = {
     ]
 };
 
-export let singleSong = {
+export const singleSong = {
     id: "dccb0d4d4803ebbcb61000a5b6a868f5",
     album_id: 1193,
     title: "Foo and Bar",

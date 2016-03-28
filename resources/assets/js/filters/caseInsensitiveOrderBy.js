@@ -11,7 +11,7 @@ export function caseInsensitiveOrderBy (arr, sortKey, reverse) {
         return arr;
     }
 
-    let order = (reverse && reverse < 0) ? -1 : 1;
+    const order = (reverse && reverse < 0) ? -1 : 1;
 
     function compareRecordsByKey(a, b, key) {
         let aKey = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, key) : a;

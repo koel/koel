@@ -31,7 +31,7 @@ export default {
         this.reset();
 
         http.get('data', response => {
-            let data = response.data;
+            const data = response.data;
 
             assign(this.state, data);
 

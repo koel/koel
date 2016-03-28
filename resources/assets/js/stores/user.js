@@ -152,7 +152,7 @@ export default {
         NProgress.start();
 
         http.post('user', { name, email, password }, response => {
-            let user = response.data;
+            const user = response.data;
 
             this.setAvatar(user);
             this.state.users.unshift(user);

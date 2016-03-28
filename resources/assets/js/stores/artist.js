@@ -151,7 +151,7 @@ export default {
      */
     getMostPlayed(n = 6) {
         // Only non-unknown artists with actually play count are applicable.
-        let applicable = _.filter(this.state.artists, artist => {
+        const applicable = _.filter(this.state.artists, artist => {
             return artist.playCount && artist.id !== 1;
         });
 

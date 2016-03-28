@@ -3,8 +3,8 @@ require('chai').should();
 import localStorage from 'local-storage';
 import preferenceStore from '../../stores/preference';
 
-let user = { id: 0 };
-let preferences = {
+const user = { id: 0 };
+const preferences = {
     volume: 8,
     notify: false,
 };

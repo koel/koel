@@ -40,7 +40,7 @@ describe('stores/song', () => {
 
     describe('#byIds', () => {
         it('correctly gets multiple songs by IDs', () => {
-            let songs = songStore.byIds(['e6d3977f3ffa147801ca5d1fdf6fa55e', 'aa16bbef6a9710eb9a0f41ecc534fad5']);
+            const songs = songStore.byIds(['e6d3977f3ffa147801ca5d1fdf6fa55e', 'aa16bbef6a9710eb9a0f41ecc534fad5']);
             songs[0].title.should.equal('Like a rolling stone');
             songs[1].title.should.equal("Knockin' on heaven's door");
         });
@@ -50,7 +50,7 @@ describe('stores/song', () => {
         beforeEach(() => songStore.initInteractions(interactions));
 
         it('correctly sets interaction status', () => {
-            let song = songStore.byId('cb7edeac1f097143e65b1b2cde102482');
+            const song = songStore.byId('cb7edeac1f097143e65b1b2cde102482');
             song.liked.should.be.true;
             song.playCount.should.equal(3);
         });
@@ -59,7 +59,7 @@ describe('stores/song', () => {
     describe('#syncUpdatedSong', () => {
         beforeEach(() => artistStore.init(artists));
 
-        let updatedSong = {
+        const updatedSong = {
             id: "39189f4545f9d5671fb3dc964f0080a0",
             album_id: 1193,
             title: "I Swear A Lot",
@@ -79,7 +79,7 @@ describe('stores/song', () => {
         });
 
         it ('correctly syncs an updated song into an existing album of same artist', () => {
-            let song = _.cloneDeep(updatedSong);
+            const song = _.cloneDeep(updatedSong);
             song.album_id = 1194;
             song.album = {
                 id: 1194,
@@ -95,7 +95,7 @@ describe('stores/song', () => {
         });
 
         it ('correctly syncs an updated song into a new album of same artist', () => {
-            let song = _.cloneDeep(updatedSong);
+            const song = _.cloneDeep(updatedSong);
             song.album_id = 9999;
             song.album = {
                 id: 9999,
@@ -117,7 +117,7 @@ describe('stores/song', () => {
         });
 
         it ('correctly syncs an updated song into a new album of a new artist', () => {
-            let song = _.cloneDeep(updatedSong);
+            const song = _.cloneDeep(updatedSong);
             song.album_id = 10000;
             song.album = {
                 id: 10000,
@@ -132,11 +132,11 @@ describe('stores/song', () => {
             songStore.syncUpdatedSong(song);
 
             // A new artist should be created...
-            let lastArtist = _.last(artistStore.all);
+            const lastArtist = _.last(artistStore.all);
             lastArtist.name.should.equal('John Cena');
 
             // A new album should be created
-            let lastAlbum = _.last(albumStore.all);
+            const lastAlbum = _.last(albumStore.all);
             lastAlbum.name.should.equal("It's... John Cena!!!");
 
             // The album must belong to John Cena of course!

@@ -103,7 +103,7 @@ export default {
             return this.queue(songs);
         }
 
-        let head = this.state.songs.splice(0, this.indexOf(this.state.current) + 1);
+        const head = this.state.songs.splice(0, this.indexOf(this.state.current) + 1);
         this.state.songs = head.concat(songs, this.state.songs);
     },
 
@@ -123,7 +123,7 @@ export default {
      * @param  {Object}         target The target song object
      */
     move(songs, target) {
-        let $targetIndex = this.indexOf(target);
+        const $targetIndex = this.indexOf(target);
 
         songs.forEach(song => {
             this.state.songs.splice(this.indexOf(song), 1);
@@ -166,9 +166,9 @@ export default {
             return _.first(this.state.songs);
         }
 
-        let i = _.pluck(this.state.songs, 'id').indexOf(this.current.id) + 1;
+        const idx = _.pluck(this.state.songs, 'id').indexOf(this.current.id) + 1;
 
-        return i >= this.state.songs.length ? null : this.state.songs[i];
+        return idx >= this.state.songs.length ? null : this.state.songs[idx];
     },
 
     /**
@@ -181,9 +181,9 @@ export default {
             return _.last(this.state.songs);
         }
 
-        let i = _.pluck(this.state.songs, 'id').indexOf(this.current.id) - 1;
+        const idx = _.pluck(this.state.songs, 'id').indexOf(this.current.id) - 1;
 
-        return i < 0 ? null : this.state.songs[i];
+        return idx < 0 ? null : this.state.songs[idx];
     },
 
     /**

@@ -51,7 +51,7 @@ export default {
             return false;
         }
 
-        let AudioContext = (window.AudioContext ||
+        const AudioContext = (window.AudioContext ||
             window.webkitAudioContext ||
             window.mozAudioContext ||
             window.oAudioContext ||

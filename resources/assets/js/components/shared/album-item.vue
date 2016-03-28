@@ -60,12 +60,12 @@
              * Allow dragging the album (actually, its songs).
              */
             dragStart(e) {
-                let songIds = _.pluck(this.album.songs, 'id');
+                const songIds = _.pluck(this.album.songs, 'id');
                 e.dataTransfer.setData('text/plain', songIds);
                 e.dataTransfer.effectAllowed = 'move';
 
                 // Set a fancy drop image using our ghost element.
-                let $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} in ${this.album.name}`);
+                const $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} in ${this.album.name}`);
                 e.dataTransfer.setDragImage($ghost[0], 0, 0);
             },
         },

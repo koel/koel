@@ -66,27 +66,27 @@
              * @param  {Element} player The audio player's DOM.
              */
             init(player) {
-                let settings = equalizerStore.get();
+                const settings = equalizerStore.get();
 
-                let AudioContext = window.AudioContext || window.webkitAudioContext || false;
+                const AudioContext = window.AudioContext || window.webkitAudioContext || false;
 
                 if (!AudioContext) {
                     return;
                 }
 
-                let context = new AudioContext();
+                const context = new AudioContext();
 
                 this.preampGainNode = context.createGain();
                 this.changePreampGain(settings.preamp);
 
-                let source = context.createMediaElementSource(player);
+                const source = context.createMediaElementSource(player);
                 source.connect(this.preampGainNode);
 
                 let prevFilter = null;
 
                 // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
                 [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000].forEach((f, i) => {
-                    let filter = context.createBiquadFilter();
+                    const filter = context.createBiquadFilter();
 
                     if (i === 0) {
                         filter.type = 'lowshelf';
@@ -185,7 +185,7 @@
                     return;
                 }
 
-                let preset = this.presets[this.selectedPresetIndex];
+                const preset = this.presets[this.selectedPresetIndex];
 
                 $('#equalizer input[type=range]').each((i, input) => {
                     // We treat our preamp slider differently.

@@ -55,7 +55,7 @@
 
         ready() {
             // The app has just been initialized, check if we can get the user data with an already existing token
-            let token = ls.get('jwt-token');
+            const token = ls.get('jwt-token');
             if (token) {
                 this.authenticated = true;
                 this.init();

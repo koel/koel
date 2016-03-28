@@ -3,7 +3,7 @@ require('chai').should();
 import queueStore from '../../stores/queue';
 import artists from '../blobs/media';
 
-let songs = artists[2].albums[0].songs;
+const songs = artists[2].albums[0].songs;
 
 describe('stores/queue', () => {
     beforeEach(() => {
@@ -32,7 +32,7 @@ describe('stores/queue', () => {
     describe('#queue', () => {
         beforeEach(() => queueStore.state.songs = songs);
 
-        let song = artists[0].albums[0].songs[0];
+        const song = artists[0].albums[0].songs[0];
 
         it('correctly appends a song to end of the queue', () => {
             queueStore.queue(song);
