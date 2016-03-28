@@ -305,9 +305,10 @@ export default {
         let originalAlbumId = originalSong.album.id;
         let originalArtistId = originalSong.album.artist.id;
 
-        // First, we update the title and the lyrics
+        // First, we update the title, lyrics, and track #
         originalSong.title = updatedSong.title;
         originalSong.lyrics = updatedSong.lyrics;
+        originalSong.track = updatedSong.track;
 
         if (updatedSong.album.id === originalAlbumId) { // case 1
             // Nothing to do
