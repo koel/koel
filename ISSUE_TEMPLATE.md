@@ -5,7 +5,7 @@ Hey, thanks for contributing to Koel! To save time for both of us, please make s
 - [ ] This is not a "how to install on Windows" or "why is my npm messed up" question
 - [ ] You're a cool person
 
-All checked? Now also make your issue
+All checked? Now also make sure your issue
 
 - [ ] Is associated with a version. Or better yet, a commit.
 - [ ] Is as detailed as possible (ahem... OS, browser, steps to reproduce, maybe?)
