@@ -42,12 +42,6 @@
             },
         },
 
-        methods: {
-            setViewMode(mode) {
-                this.viewMode = mode;
-            },
-        },
-
         events: {
             /**
              * When the application is ready, load the first batch of items.
