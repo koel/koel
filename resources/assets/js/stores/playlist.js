@@ -1,6 +1,6 @@
 import {
     each,
-    pluck,
+    map,
     difference,
     union
 } from 'lodash';
@@ -51,7 +51,7 @@ export default {
     store(name, songs, cb = null) {
         if (songs.length) {
             // Extract the IDs from the song objects.
-            songs = pluck(songs, 'id');
+            songs = map(songs, 'id');
         }
 
         NProgress.start();
@@ -101,7 +101,7 @@ export default {
             return;
         }
 
-        http.put(`playlist/${playlist.id}/sync`, { songs: pluck(playlist.songs, 'id') }, () => {
+        http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
             if (cb) {
                 cb();
             }
@@ -118,7 +118,7 @@ export default {
     removeSongs(playlist, songs, cb = null) {
         playlist.songs = difference(playlist.songs, songs);
 
-        http.put(`playlist/${playlist.id}/sync`, { songs: pluck(playlist.songs, 'id') }, () => {
+        http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
             if (cb) {
                 cb();
             }

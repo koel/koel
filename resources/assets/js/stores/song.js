@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { without, pluck, take, remove, sortByOrder } from 'lodash';
+import { without, map, take, remove, orderBy } from 'lodash';
 
 import http from '../services/http';
 import utils from '../services/utils';
@@ -259,7 +259,7 @@ export default {
 
         http.put('songs', {
             data,
-            songs: pluck(songs, 'id'),
+            songs: map(songs, 'id'),
         }, response => {
             response.data.forEach(song => {
                this.syncUpdatedSong(song);
@@ -395,7 +395,7 @@ export default {
      * @return {Array.<Object>}
      */
     getMostPlayed(n = 10) {
-        const songs = take(sortByOrder(this.state.songs, 'playCount', 'desc'), n);
+        const songs = take(orderBy(this.state.songs, 'playCount', 'desc'), n);
 
         // Remove those with playCount=0
         remove(songs, song => !song.playCount);

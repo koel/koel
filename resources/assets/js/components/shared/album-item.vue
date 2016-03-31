@@ -21,7 +21,7 @@
 </template>
 
 <script>
-    import { pluck } from 'lodash';
+    import { map } from 'lodash';
     import $ from 'jquery';
 
     import playback from '../../services/playback';
@@ -60,7 +60,7 @@
              * Allow dragging the album (actually, its songs).
              */
             dragStart(e) {
-                const songIds = pluck(this.album.songs, 'id');
+                const songIds = map(this.album.songs, 'id');
                 e.dataTransfer.setData('text/plain', songIds);
                 e.dataTransfer.effectAllowed = 'move';
 

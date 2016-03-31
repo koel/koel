@@ -48,7 +48,7 @@ export default {
      * @return {Object}
      */
     byId(id) {
-        return find(this.state.users, {id});
+        return find(this.state.users, { id });
     },
 
     /**

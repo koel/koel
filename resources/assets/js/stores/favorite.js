@@ -1,6 +1,6 @@
 import {
     each,
-    pluck,
+    map,
     difference,
     union
 } from 'lodash';
@@ -82,7 +82,7 @@ export default {
         each(songs, song => song.liked = true);
         this.state.songs = union(this.state.songs, songs);
 
-        http.post('interaction/batch/like', { songs: pluck(songs, 'id') }, () => {
+        http.post('interaction/batch/like', { songs: map(songs, 'id') }, () => {
             if (cb) {
                 cb();
             }
@@ -101,7 +101,7 @@ export default {
         each(songs, song => song.liked = false);
         this.state.songs = difference(this.state.songs, songs);
 
-        http.post('interaction/batch/unlike', { songs: pluck(songs, 'id') }, () => {
+        http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, () => {
             if (cb) {
                 cb();
             }

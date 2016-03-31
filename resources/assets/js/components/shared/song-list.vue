@@ -63,7 +63,7 @@
 </template>
 
 <script>
-    import { find, invoke, where, map, pluck } from 'lodash';
+    import { find, invokeMap, filter, map } from 'lodash';
     import isMobile from 'ismobilejs';
     import $ from 'jquery';
 
@@ -239,7 +239,7 @@
                     return;
                 }
 
-                invoke(this.$refs.rows, 'select');
+                invokeMap(this.$refs.rows, 'select');
                 this.gatherSelected();
             },
 
@@ -249,7 +249,7 @@
              * @return {Array.<Object>} An array of Song objects
              */
             gatherSelected() {
-                const selectedRows = where(this.$refs.rows, { selected: true });
+                const selectedRows = filter(this.$refs.rows, { selected: true });
                 const ids = map(selectedRows, row => row.song.id);
 
                 this.selectedSongs = songStore.byIds(ids);
@@ -322,7 +322,7 @@
              * Clear the current selection on this song list.
              */
             clearSelection() {
-                invoke(this.$refs.rows, 'deselect');
+                invokeMap(this.$refs.rows, 'deselect');
                 this.gatherSelected();
             },
 
@@ -345,7 +345,7 @@
                 this.$nextTick(() => {
                     // We can opt for something like application/x-koel.text+plain here to sound fancy,
                     // but forget it.
-                    const songIds = pluck(this.selectedSongs, 'id');
+                    const songIds = map(this.selectedSongs, 'id');
                     e.dataTransfer.setData('text/plain', songIds);
                     e.dataTransfer.effectAllowed = 'move';
 

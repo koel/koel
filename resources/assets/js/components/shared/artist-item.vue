@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import { pluck } from 'lodash';
+    import { map } from 'lodash';
     import $ from 'jquery';
 
     import playback from '../../services/playback';
@@ -49,7 +49,7 @@
              * Allow dragging the artist (actually, their songs).
              */
             dragStart(e) {
-                const songIds = pluck(artistStore.getSongsByArtist(this.artist), 'id');
+                const songIds = map(artistStore.getSongsByArtist(this.artist), 'id');
                 e.dataTransfer.setData('text/plain', songIds);
                 e.dataTransfer.effectAllowed = 'move';
 

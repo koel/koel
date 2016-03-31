@@ -7,7 +7,7 @@ import {
     difference,
     take,
     filter,
-    sortByOrder
+    orderBy
 } from 'lodash';
 
 import config from '../config';
@@ -51,7 +51,7 @@ export default {
     },
 
     byId(id) {
-        return find(this.all, 'id', id);
+        return find(this.all, { id });
     },
 
     /**
@@ -164,6 +164,6 @@ export default {
             return artist.playCount && artist.id !== 1;
         });
 
-        return take(sortByOrder(applicable, 'playCount', 'desc'), n);
+        return take(orderBy(applicable, 'playCount', 'desc'), n);
     },
 };

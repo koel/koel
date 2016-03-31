@@ -1,11 +1,11 @@
 import {
-    first,
+    head,
     last,
     includes,
     union,
     difference,
     indexOf,
-    pluck,
+    map,
     shuffle
 } from 'lodash';
 
@@ -55,7 +55,7 @@ export default {
      * @return {?Object}
      */
     get first() {
-        return first(this.state.songs);
+        return head(this.state.songs);
     },
 
     /**
@@ -175,7 +175,7 @@ export default {
             return first(this.state.songs);
         }
 
-        const idx = pluck(this.state.songs, 'id').indexOf(this.current.id) + 1;
+        const idx = map(this.state.songs, 'id').indexOf(this.current.id) + 1;
 
         return idx >= this.state.songs.length ? null : this.state.songs[idx];
     },
@@ -190,7 +190,7 @@ export default {
             return last(this.state.songs);
         }
 
-        const idx = pluck(this.state.songs, 'id').indexOf(this.current.id) - 1;
+        const idx = map(this.state.songs, 'id').indexOf(this.current.id) - 1;
 
         return idx < 0 ? null : this.state.songs[idx];
     },
