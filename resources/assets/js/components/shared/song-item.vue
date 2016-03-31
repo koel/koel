@@ -8,7 +8,7 @@
         <td class="title">{{ song.title }}</td>
         <td class="artist">{{ song.album.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
-        <td class="time">{{ song.fmtLength }}</td>
+        <td class="time">{{* song.fmtLength }}</td>
         <td class="play" @click.stop="doPlayback">
             <i class="fa fa-pause-circle" v-show="song.playbackState === 'playing'"></i>
             <i class="fa fa-play-circle" v-else></i>
