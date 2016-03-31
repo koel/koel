@@ -10,7 +10,7 @@
                 | filterBy q in 'name'
                 | limitBy numOfItems" :artist="item"></artist-item>
 
-            <span class="item" v-for="n in 6"></span>
+            <span class="item filler" v-for="n in 6"></span>
         </div>
     </section>
 </template>
