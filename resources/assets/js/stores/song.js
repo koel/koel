@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import _ from 'lodash';
+import { without, pluck, take, remove, sortByOrder } from 'lodash';
 
 import http from '../services/http';
 import utils from '../services/utils';
@@ -162,7 +162,7 @@ export default {
      */
     addRecent(song) {
         // First we make sure that there's no duplicate.
-        this.state.recent = _.without(this.state.recent, song);
+        this.state.recent = without(this.state.recent, song);
 
         // Then we prepend the song into the list.
         this.state.recent.unshift(song);
@@ -259,7 +259,7 @@ export default {
 
         http.put('songs', {
             data,
-            songs: _.pluck(songs, 'id'),
+            songs: pluck(songs, 'id'),
         }, response => {
             response.data.forEach(song => {
                this.syncUpdatedSong(song);
@@ -384,7 +384,7 @@ export default {
      * @return {Array.<Object>}
      */
     getRecent(n = 10) {
-        return _.take(this.state.recent, n);
+        return take(this.state.recent, n);
     },
 
     /**
@@ -395,10 +395,10 @@ export default {
      * @return {Array.<Object>}
      */
     getMostPlayed(n = 10) {
-        const songs = _.take(_.sortByOrder(this.state.songs, 'playCount', 'desc'), n);
+        const songs = take(sortByOrder(this.state.songs, 'playCount', 'desc'), n);
 
         // Remove those with playCount=0
-        _.remove(songs, song => !song.playCount);
+        remove(songs, song => !song.playCount);
 
         return songs;
     },

@@ -21,7 +21,7 @@
 
 <script>
     import isMobile from 'ismobilejs';
-    import _ from 'lodash';
+    import { invoke } from 'lodash';
     import $ from 'jquery';
 
     import lyrics from './lyrics.vue';
@@ -77,7 +77,7 @@
             resetState() {
                 this.currentView = 'lyrics';
                 this.song = songStore.stub;
-                _.invoke(this.$refs, 'resetState');
+                invoke(this.$refs, 'resetState');
             },
         },
 

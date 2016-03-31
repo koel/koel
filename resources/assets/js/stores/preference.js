@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { extend, has } from 'lodash';
 
 import userStore from './user';
 import ls from '../services/ls';
@@ -31,7 +31,7 @@ export default {
         }
 
         this.storeKey = `preferences_${user.id}`;
-        _.extend(this.state, ls.get(this.storeKey, this.state));
+        extend(this.state, ls.get(this.storeKey, this.state));
     },
 
     set(key, val) {
@@ -40,7 +40,7 @@ export default {
     },
 
     get(key) {
-        return _.has(this.state, key) ? this.state[key] : null;
+        return has(this.state, key) ? this.state[key] : null;
     },
 
     save() {

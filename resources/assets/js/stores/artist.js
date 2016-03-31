@@ -1,5 +1,14 @@
 import Vue from 'vue';
-import _ from 'lodash';
+import {
+    reduce,
+    each,
+    find,
+    union,
+    difference,
+    take,
+    filter,
+    sortByOrder
+} from 'lodash';
 
 import config from '../config';
 import stub from '../stubs/artist';
@@ -21,7 +30,7 @@ export default {
         this.state.artists = artists;
 
         // Traverse through artists array to get the cover and number of songs for each.
-        _.each(this.state.artists, artist => {
+        each(this.state.artists, artist => {
             this.setupArtist(artist);
         });
 
@@ -31,7 +40,7 @@ export default {
     setupArtist(artist) {
         this.getImage(artist);
         Vue.set(artist, 'playCount', 0);
-        Vue.set(artist, 'songCount', _.reduce(artist.albums, (count, album) => count + album.songs.length, 0));
+        Vue.set(artist, 'songCount', reduce(artist.albums, (count, album) => count + album.songs.length, 0));
         Vue.set(artist, 'info', null);
 
         return artist;
@@ -42,7 +51,7 @@ export default {
     },
 
     byId(id) {
-        return _.find(this.all, 'id', id);
+        return find(this.all, 'id', id);
     },
 
     /**
@@ -57,14 +66,14 @@ export default {
     addAlbumsIntoArtist(artist, albums) {
         albums = [].concat(albums);
 
-        artist.albums = _.union(artist.albums ? artist.albums : [], albums);
+        artist.albums = union(artist.albums ? artist.albums : [], albums);
 
         albums.forEach(album => {
             album.artist_id = artist.id;
             album.artist = artist;
         });
 
-        artist.playCount = _.reduce(artist.albums, (count, album) => count + album.playCount, 0);
+        artist.playCount = reduce(artist.albums, (count, album) => count + album.playCount, 0);
     },
 
     /**
@@ -74,8 +83,8 @@ export default {
      * @param  {Array.<Object>|Object} albums
      */
     removeAlbumsFromArtist(artist, albums) {
-        artist.albums = _.difference(artist.albums, [].concat(albums));
-        artist.playCount = _.reduce(artist.albums, (count, album) => count + album.playCount, 0);
+        artist.albums = difference(artist.albums, [].concat(albums));
+        artist.playCount = reduce(artist.albums, (count, album) => count + album.playCount, 0);
     },
 
     /**
@@ -95,7 +104,7 @@ export default {
      * @param  {Array.<Object>|Object} artists
      */
     remove(artists) {
-        this.state.artists = _.difference(this.state.artists, [].concat(artists));
+        this.state.artists = difference(this.state.artists, [].concat(artists));
     },
 
     /**
@@ -107,7 +116,7 @@ export default {
      */
     getSongsByArtist(artist) {
         if (!artist.songs) {
-            artist.songs = _.reduce(artist.albums, (songs, album) => songs.concat(album.songs), []);
+            artist.songs = reduce(artist.albums, (songs, album) => songs.concat(album.songs), []);
         }
 
         return artist.songs;
@@ -151,10 +160,10 @@ export default {
      */
     getMostPlayed(n = 6) {
         // Only non-unknown artists with actually play count are applicable.
-        const applicable = _.filter(this.state.artists, artist => {
+        const applicable = filter(this.state.artists, artist => {
             return artist.playCount && artist.id !== 1;
         });
 
-        return _.take(_.sortByOrder(applicable, 'playCount', 'desc'), n);
+        return take(sortByOrder(applicable, 'playCount', 'desc'), n);
     },
 };

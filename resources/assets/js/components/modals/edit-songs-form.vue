@@ -67,7 +67,7 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { every } from 'lodash';
 
     import utils from '../../services/utils';
     import artistStore from '../../stores/artist';
@@ -131,7 +131,7 @@
              * @return {boolean}
              */
             bySameArtist() {
-                return _.every(this.songs, song => {
+                return every(this.songs, song => {
                     return song.album.artist.id === this.songs[0].album.artist.id;
                 });
             },
@@ -142,7 +142,7 @@
              * @return {boolean}
              */
             inSameAlbum() {
-                return _.every(this.songs, song => {
+                return every(this.songs, song => {
                     return song.album.id === this.songs[0].album.id;
                 });
             },

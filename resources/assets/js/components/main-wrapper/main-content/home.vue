@@ -81,7 +81,7 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { sample } from 'lodash';
 
     import playback from '../../../services/playback';
     import songStore from '../../../stores/song';
@@ -121,7 +121,7 @@
 
         computed: {
             greeting() {
-                return _.sample(this.greetings).replace('%s', userStore.current.name);
+                return sample(this.greetings).replace('%s', userStore.current.name);
             },
         },
 

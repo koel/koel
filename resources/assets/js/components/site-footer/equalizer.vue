@@ -41,7 +41,7 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { pluck } from 'lodash';
     import $ from 'jquery';
     import rangeslider from 'rangeslider.js';
 
@@ -209,7 +209,7 @@
              * Save the current user's equalizer preferences into local storage.
              */
             save() {
-                equalizerStore.set(this.preampGainValue, _.pluck(this.bands, 'filter.gain.value'));
+                equalizerStore.set(this.preampGainValue, pluck(this.bands, 'filter.gain.value'));
             },
         },
 

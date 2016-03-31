@@ -1,4 +1,13 @@
-import _ from 'lodash';
+import {
+    first,
+    last,
+    includes,
+    union,
+    difference,
+    indexOf,
+    pluck,
+    shuffle
+} from 'lodash';
 
 export default {
     state: {
@@ -46,7 +55,7 @@ export default {
      * @return {?Object}
      */
     get first() {
-        return _.first(this.state.songs);
+        return first(this.state.songs);
     },
 
     /**
@@ -55,7 +64,7 @@ export default {
      * @return {?Object}
      */
     get last() {
-        return _.last(this.state.songs);
+        return last(this.state.songs);
     },
 
     /**
@@ -66,7 +75,7 @@ export default {
      * @return {Boolean}
      */
     contains(song) {
-        return _.includes(this.all, song);
+        return includes(this.all, song);
     },
 
     /**
@@ -84,9 +93,9 @@ export default {
             this.state.songs = songs;
         } else {
             if (toTop) {
-                this.state.songs = _.union(songs, this.state.songs);
+                this.state.songs = union(songs, this.state.songs);
             } else {
-                this.state.songs = _.union(this.state.songs, songs);
+                this.state.songs = union(this.state.songs, songs);
             }
         }
     },
@@ -113,7 +122,7 @@ export default {
      * @param  {Object|String|Array.<Object>} songs The song(s) to unqueue
      */
     unqueue(songs) {
-        this.state.songs = _.difference(this.state.songs, [].concat(songs));
+        this.state.songs = difference(this.state.songs, [].concat(songs));
     },
 
     /**
@@ -153,7 +162,7 @@ export default {
      * @return {?Integer}
      */
     indexOf(song) {
-        return _.indexOf(this.state.songs, song);
+        return indexOf(this.state.songs, song);
     },
 
     /**
@@ -163,10 +172,10 @@ export default {
      */
     get next() {
         if (!this.current) {
-            return _.first(this.state.songs);
+            return first(this.state.songs);
         }
 
-        const idx = _.pluck(this.state.songs, 'id').indexOf(this.current.id) + 1;
+        const idx = pluck(this.state.songs, 'id').indexOf(this.current.id) + 1;
 
         return idx >= this.state.songs.length ? null : this.state.songs[idx];
     },
@@ -178,10 +187,10 @@ export default {
      */
     get previous() {
         if (!this.current) {
-            return _.last(this.state.songs);
+            return last(this.state.songs);
         }
 
-        const idx = _.pluck(this.state.songs, 'id').indexOf(this.current.id) - 1;
+        const idx = pluck(this.state.songs, 'id').indexOf(this.current.id) - 1;
 
         return idx < 0 ? null : this.state.songs[idx];
     },
@@ -214,6 +223,6 @@ export default {
      * @return {Array.<Object>} The shuffled array of song objects
      */
     shuffle() {
-        return (this.state.songs = _.shuffle(this.state.songs));
+        return (this.state.songs = shuffle(this.state.songs));
     },
 };

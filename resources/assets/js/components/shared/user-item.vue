@@ -48,7 +48,7 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { clone, assign } from 'lodash';
 
     import userStore from '../../stores/user';
 
@@ -89,7 +89,7 @@
                 }
 
                 // Keep a cached version of the user for rolling back.
-                this.cached = _.clone(this.user);
+                this.cached = clone(this.user);
                 this.editing = true;
             },
 
@@ -98,7 +98,7 @@
              */
             cancelEdit() {
                 // Restore the original user's properties
-                _.assign(this.user, this.cached);
+                assign(this.user, this.cached);
                 this.editing = false;
             },
 

@@ -48,7 +48,7 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { clone } from 'lodash';
     import isMobile from 'ismobilejs';
 
     import userStore from '../../../stores/user';
@@ -81,7 +81,7 @@
              */
             store() {
                 userStore.store(this.newUser.name, this.newUser.email, this.newUser.password, () => {
-                    this.newUser = _.clone(userStore.stub);
+                    this.newUser = clone(userStore.stub);
                     this.creating = false;
                 });
             },

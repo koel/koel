@@ -25,7 +25,7 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { assign, last } from 'lodash';
     import VueClickaway from 'vue-clickaway';
 
     import songMenuMethods from '../../mixins/song-menu-methods';
@@ -39,7 +39,7 @@
             return {
                 newPlaylistName: '',
                 playlistState: playlistStore.state,
-                mergedSettings: _.assign({
+                mergedSettings: assign({
                     canQueue: true,
                     canLike: true,
                 }, this.settings),
@@ -70,7 +70,7 @@
                     this.newPlaylistName = '';
 
                     // Activate the new playlist right away
-                    this.$root.loadPlaylist(_.last(this.playlistState.playlists));
+                    this.$root.loadPlaylist(last(this.playlistState.playlists));
                 });
 
                 this.close();

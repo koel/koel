@@ -1,5 +1,5 @@
 require('chai').should();
-import _ from 'lodash';
+import { cloneDeep, last } from 'lodash';
 
 import songStore from '../../stores/song';
 import albumStore from '../../stores/album';
@@ -74,12 +74,12 @@ describe('stores/song', () => {
         };
 
         it ('correctly syncs an updated song with no album changes', () => {
-            songStore.syncUpdatedSong(_.cloneDeep(updatedSong));
+            songStore.syncUpdatedSong(cloneDeep(updatedSong));
             songStore.byId(updatedSong.id).title.should.equal('I Swear A Lot');
         });
 
         it ('correctly syncs an updated song into an existing album of same artist', () => {
-            const song = _.cloneDeep(updatedSong);
+            const song = cloneDeep(updatedSong);
             song.album_id = 1194;
             song.album = {
                 id: 1194,
@@ -95,7 +95,7 @@ describe('stores/song', () => {
         });
 
         it ('correctly syncs an updated song into a new album of same artist', () => {
-            const song = _.cloneDeep(updatedSong);
+            const song = cloneDeep(updatedSong);
             song.album_id = 9999;
             song.album = {
                 id: 9999,
@@ -110,14 +110,14 @@ describe('stores/song', () => {
             songStore.syncUpdatedSong(song);
 
             // A new album should be created...
-            _.last(albumStore.all).name.should.equal('Brand New Album from All-4-One');
+            last(albumStore.all).name.should.equal('Brand New Album from All-4-One');
 
             // ...and assigned with the song.
             songStore.byId(song.id).album.name.should.equal('Brand New Album from All-4-One');
         });
 
         it ('correctly syncs an updated song into a new album of a new artist', () => {
-            const song = _.cloneDeep(updatedSong);
+            const song = cloneDeep(updatedSong);
             song.album_id = 10000;
             song.album = {
                 id: 10000,
@@ -132,15 +132,15 @@ describe('stores/song', () => {
             songStore.syncUpdatedSong(song);
 
             // A new artist should be created...
-            const lastArtist = _.last(artistStore.all);
+            const lastArtist = last(artistStore.all);
             lastArtist.name.should.equal('John Cena');
 
             // A new album should be created
-            const lastAlbum = _.last(albumStore.all);
+            const lastAlbum = last(albumStore.all);
             lastAlbum.name.should.equal("It's... John Cena!!!");
 
             // The album must belong to John Cena of course!
-            _.last(lastArtist.albums).should.equal(lastAlbum);
+            last(lastArtist.albums).should.equal(lastAlbum);
 
             // And the song belongs to the album.
             songStore.byId(song.id).album.should.equal(lastAlbum);

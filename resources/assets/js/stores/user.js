@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { each, find, without } from 'lodash';
 import md5 from 'blueimp-md5';
 import Vue from 'vue';
 import NProgress from 'nprogress';
@@ -25,7 +25,7 @@ export default {
         this.state.current = currentUser;
 
         // Set the avatar for each of the users…
-        _.each(this.state.users, this.setAvatar);
+        each(this.state.users, this.setAvatar);
 
         // …and the current user as well.
         this.setAvatar();
@@ -48,7 +48,7 @@ export default {
      * @return {Object}
      */
     byId(id) {
-        return _.find(this.state.users, {id});
+        return find(this.state.users, {id});
     },
 
     /**
@@ -195,7 +195,7 @@ export default {
         NProgress.start();
 
         http.delete(`user/${user.id}`, {}, () => {
-            this.state.users = _.without(this.state.users, user);
+            this.state.users = without(this.state.users, user);
 
             // Mama, just killed a man
             // Put a gun against his head

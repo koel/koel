@@ -1,11 +1,11 @@
 require('chai').should();
-import _ from 'lodash';
+import { cloneDeep, last } from 'lodash';
 
 import artistStore from '../../stores/artist';
 import { default as artists, singleAlbum, singleArtist } from '../blobs/media';
 
 describe('stores/artist', () => {
-    beforeEach(() => artistStore.init(_.cloneDeep(artists)));
+    beforeEach(() => artistStore.init(cloneDeep(artists)));
     afterEach(() => artistStore.state.artists = []);
 
     describe('#init', () => {
@@ -35,10 +35,10 @@ describe('stores/artist', () => {
     });
 
     describe('#append', () => {
-        beforeEach(() => artistStore.append(_.cloneDeep(singleArtist)));
+        beforeEach(() => artistStore.append(cloneDeep(singleArtist)));
 
         it('correctly appends an artist', () => {
-            _.last(artistStore.state.artists).name.should.equal('John Cena');
+            last(artistStore.state.artists).name.should.equal('John Cena');
         });
     });
 
@@ -53,7 +53,7 @@ describe('stores/artist', () => {
 
     describe('#addAlbumsIntoArtist', () => {
         beforeEach(() => {
-            artistStore.addAlbumsIntoArtist(artistStore.state.artists[0], _.cloneDeep(singleAlbum));
+            artistStore.addAlbumsIntoArtist(artistStore.state.artists[0], cloneDeep(singleAlbum));
         });
 
         it('correctly adds albums into an artist', () => {
@@ -61,7 +61,7 @@ describe('stores/artist', () => {
         });
 
         it('correctly sets the album artist', () => {
-            const addedAlbum = _.last(artistStore.state.artists[0].albums);
+            const addedAlbum = last(artistStore.state.artists[0].albums);
             addedAlbum.artist.should.equal(artistStore.state.artists[0]);
             addedAlbum.artist_id.should.equal(artistStore.state.artists[0].id);
         });

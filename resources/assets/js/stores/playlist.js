@@ -1,4 +1,9 @@
-import _ from 'lodash';
+import {
+    each,
+    pluck,
+    difference,
+    union
+} from 'lodash';
 import NProgress from 'nprogress';
 
 import http from '../services/http';
@@ -15,7 +20,7 @@ export default {
     init(playlists) {
         this.state.playlists = playlists;
 
-        _.each(this.state.playlists, this.getSongs);
+        each(this.state.playlists, this.getSongs);
     },
 
     /**
@@ -46,7 +51,7 @@ export default {
     store(name, songs, cb = null) {
         if (songs.length) {
             // Extract the IDs from the song objects.
-            songs = _.pluck(songs, 'id');
+            songs = pluck(songs, 'id');
         }
 
         NProgress.start();
@@ -73,7 +78,7 @@ export default {
         NProgress.start();
 
         http.delete(`playlist/${playlist.id}`, {}, () => {
-            this.state.playlists = _.without(this.state.playlists, playlist);
+            this.state.playlists = without(this.state.playlists, playlist);
 
             if (cb) {
                 cb();
@@ -90,13 +95,13 @@ export default {
      */
     addSongs(playlist, songs, cb = null) {
         const count = playlist.songs.length;
-        playlist.songs = _.union(playlist.songs, songs);
+        playlist.songs = union(playlist.songs, songs);
 
         if (count === playlist.songs.length) {
             return;
         }
 
-        http.put(`playlist/${playlist.id}/sync`, { songs: _.pluck(playlist.songs, 'id') }, () => {
+        http.put(`playlist/${playlist.id}/sync`, { songs: pluck(playlist.songs, 'id') }, () => {
             if (cb) {
                 cb();
             }
@@ -111,9 +116,9 @@ export default {
      * @param  {?Function}      cb
      */
     removeSongs(playlist, songs, cb = null) {
-        playlist.songs = _.difference(playlist.songs, songs);
+        playlist.songs = difference(playlist.songs, songs);
 
-        http.put(`playlist/${playlist.id}/sync`, { songs: _.pluck(playlist.songs, 'id') }, () => {
+        http.put(`playlist/${playlist.id}/sync`, { songs: pluck(playlist.songs, 'id') }, () => {
             if (cb) {
                 cb();
             }

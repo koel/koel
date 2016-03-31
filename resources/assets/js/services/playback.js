@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { shuffle } from 'lodash';
 import $ from 'jquery';
 
 import queueStore from '../stores/queue';
@@ -331,10 +331,10 @@ export default {
     /**
      * Queue up songs (replace them into the queue) and start playing right away.
      *
-     * @param {?Array.<Object>} songs   An array of song objects. Defaults to all songs if null.
-     * @param {Boolean=false}   shuffle Whether to shuffle the songs before playing.
+     * @param {?Array.<Object>} songs    An array of song objects. Defaults to all songs if null.
+     * @param {Boolean=false}   shuffled Whether to shuffle the songs before playing.
      */
-    queueAndPlay(songs = null, shuffle = false) {
+    queueAndPlay(songs = null, shuffled = false) {
         if (!songs) {
             songs = songStore.all;
         }
@@ -343,8 +343,8 @@ export default {
             return;
         }
 
-        if (shuffle) {
-            songs = _.shuffle(songs);
+        if (shuffled) {
+            songs = shuffle(songs);
         }
 
         queueStore.queue(songs, true);

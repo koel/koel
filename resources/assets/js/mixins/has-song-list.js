@@ -2,7 +2,7 @@
  * Add necessary functionalities into a view that contains a song-list component.
  */
 
-import _ from 'lodash';
+import { assign } from 'lodash';
 
 import playback from '../services/playback';
 import addToMenu from '../components/shared/add-to-menu.vue';
@@ -56,7 +56,7 @@ export default {
         },
 
         'songlist:changed': function (meta) {
-            this.meta = _.assign(this.meta, meta);
+            this.meta = assign(this.meta, meta);
         },
     },
 };
