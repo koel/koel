@@ -62,13 +62,13 @@
             <section class="top-artists" v-show="topArtists.length">
                 <h1>Top Artists</h1>
 
-                <div class="wrapper">
+                <div class="wrapper as-{{ preferences.artistsViewMode }}">
                     <artist-item v-for="artist in topArtists" :artist="artist"></artist-item>
                     <span class="item" v-for="n in 3"></span>
                 </div>
             </section>
 
-            <section class="top-albums" v-show="topAlbums.length">
+            <section class="top-albums as-{{ preferences.albumsViewMode }}" v-show="topAlbums.length">
                 <h1>Top Albums</h1>
 
                 <div class="wrapper">
@@ -89,6 +89,7 @@
     import artistStore from '../../../stores/artist';
     import userStore from '../../../stores/user';
     import queueStore from '../../../stores/queue';
+    import preferenceStore from '../../../stores/preference';
 
     import albumItem from '../../shared/album-item.vue';
     import artistItem from '../../shared/artist-item.vue';
@@ -113,6 +114,8 @@
                 topSongs: [],
                 topAlbums: [],
                 topArtists: [],
+
+                preferences: preferenceStore.state,
             };
         },
 
