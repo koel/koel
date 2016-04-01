@@ -31,10 +31,6 @@ export default {
          */
         displayMore() {
             this.numOfItems += this.perPage;
-
-            if (this.numOfItems > this.items.length) {
-                this.numOfItems = this.items.length;
-            }
         },
     },
 
