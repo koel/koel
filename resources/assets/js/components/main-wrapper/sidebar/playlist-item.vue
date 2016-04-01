@@ -155,6 +155,7 @@
                 if (view === 'favorites') {
                     this.active = this.isFavorites;
                 } else if (view === 'playlist') {
+                    console.log(playlist.id, this.playlist.id);
                     this.active = this.playlist === playlist;
                 } else {
                     this.active = false;

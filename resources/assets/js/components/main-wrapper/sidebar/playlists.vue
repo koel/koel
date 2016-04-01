@@ -29,6 +29,8 @@
 </template>
 
 <script>
+    import { last } from 'lodash';
+
     import playlistStore from '../../../stores/playlist';
     import favoriteStore from '../../../stores/favorite';
 
@@ -55,7 +57,12 @@
             store() {
                 this.creating = false;
 
-                playlistStore.store(this.newName, [], () => this.newName = '');
+                playlistStore.store(this.newName, [], () => {
+                    this.newName = '';
+                    this.$nextTick(() => {
+                        this.$root.loadPlaylist(last(this.playlistState.playlists));
+                    });
+                });
             },
         },
     };

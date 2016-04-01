@@ -69,8 +69,10 @@
                 playlistStore.store(this.newPlaylistName, this.songs, () => {
                     this.newPlaylistName = '';
 
-                    // Activate the new playlist right away
-                    this.$root.loadPlaylist(last(this.playlistState.playlists));
+                    this.$nextTick(() => {
+                        // Activate the new playlist right away
+                        this.$root.loadPlaylist(last(this.playlistState.playlists));
+                    });
                 });
 
                 this.close();
