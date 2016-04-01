@@ -2,7 +2,7 @@
     <section id="albumsWrapper">
         <h1 class="heading">
             <span>Albums</span>
-            <view-mode-switch :mode.sync="viewMode" :for="'albums'"></view-mode-switch>
+            <view-mode-switch :mode.sync="viewMode" for="albums"></view-mode-switch>
         </h1>
 
         <div class="albums main-scroll-wrap as-{{ viewMode }}" v-el:wrapper @scroll="scrolling">

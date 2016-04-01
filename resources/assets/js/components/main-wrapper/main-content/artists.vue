@@ -2,7 +2,7 @@
     <section id="artistsWrapper">
         <h1 class="heading">
             <span>Artists</span>
-            <view-mode-switch :mode.sync="viewMode" :for="'artists'"></view-mode-switch>
+            <view-mode-switch :mode.sync="viewMode" for="artists"></view-mode-switch>
         </h1>
 
         <div class="artists main-scroll-wrap as-{{ viewMode }}" v-el:wrapper @scroll="scrolling">
