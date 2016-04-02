@@ -40,7 +40,7 @@ class InotifyWatchRecord extends WatchRecord implements WatchRecordInterface
 
     /**
      * Determine if the object has just been created or modified.
-     * For our purpose, we watch both the CREATE abd the CLOSE_WRITE event, because some operating
+     * For our purpose, we watch both the CREATE and the CLOSE_WRITE event, because some operating
      * systems only support CREATE, but not CLOSE_WRITE and MOVED_TO.
      * Additionally, a MOVED_TO (occurred after the object has been moved/renamed to another location
      * **under our watched directory**) should be considered as "modified" also.
