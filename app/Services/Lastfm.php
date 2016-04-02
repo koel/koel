@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use Log;
@@ -89,7 +90,7 @@ class Lastfm extends RESTfulService
                     'full' => $this->formatText(array_get($artist, 'bio.content')),
                 ],
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             return false;
@@ -145,7 +146,7 @@ class Lastfm extends RESTfulService
                     ];
                 }, array_get($album, 'tracks.track', [])),
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             return false;
@@ -172,7 +173,7 @@ class Lastfm extends RESTfulService
             $response = $this->get("/?$query", [], false);
 
             return (string) $response->session->key;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             return false;
@@ -202,7 +203,7 @@ class Lastfm extends RESTfulService
 
         try {
             return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             return false;
@@ -226,7 +227,7 @@ class Lastfm extends RESTfulService
 
         try {
             return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             return false;
@@ -255,7 +256,7 @@ class Lastfm extends RESTfulService
 
         try {
             return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             return false;

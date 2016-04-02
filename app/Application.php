@@ -3,6 +3,7 @@
 namespace App;
 
 use Cache;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application as IlluminateApplication;
 use InvalidArgumentException;
@@ -93,7 +94,7 @@ class Application extends IlluminateApplication
             Cache::put('latestKoelVersion', $v, 7 * 24 * 60);
 
             return $v;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             return self::VERSION;
