@@ -20,7 +20,7 @@ class WatchRecord
 
     /**
      * The input of the watch record.
-     * For example, a Inotifywatch record should have an input similar to
+     * For example, an inotifywatch record should have an input similar to
      * "DELETE /var/www/media/song.mp3".
      *
      * @var string
@@ -30,7 +30,7 @@ class WatchRecord
     /**
      * WatchRecord constructor.
      *
-     * @param $input string The output from a watcher command (which is an input for our script).
+     * @param $input string The output from a watcher command (which is an input for our script)
      */
     public function __construct($input)
     {

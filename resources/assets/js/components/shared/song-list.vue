@@ -10,17 +10,21 @@
         <table v-show="items.length">
             <thead>
                 <tr>
+                    <th @click="sort('track')" class="track-number">#
+                        <i class="fa fa-angle-down" v-show="sortKey === 'track' && order > 0"></i>
+                        <i class="fa fa-angle-up" v-show="sortKey === 'track' && order < 0"></i>
+                    </th>
                     <th @click="sort('title')">Title
                         <i class="fa fa-angle-down" v-show="sortKey === 'title' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'title' && order < 0"></i>
                     </th>
-                    <th @click="sort('album.artist.name')">Artist
-                        <i class="fa fa-angle-down" v-show="sortKey === 'album.artist.name' && order > 0"></i>
-                        <i class="fa fa-angle-up" v-show="sortKey === 'album.artist.name' && order < 0"></i>
+                    <th @click="sort(['album.artist.name', 'album.name', 'track'])">Artist
+                        <i class="fa fa-angle-down" v-show="sortingByArtist && order > 0"></i>
+                        <i class="fa fa-angle-up" v-show="sortingByArtist && order < 0"></i>
                     </th>
-                    <th @click="sort('album.name')">Album
-                        <i class="fa fa-angle-down" v-show="sortKey === 'album.name' && order > 0"></i>
-                        <i class="fa fa-angle-up" v-show="sortKey === 'album.name' && order < 0"></i>
+                    <th @click="sort(['album.name', 'track'])">Album
+                        <i class="fa fa-angle-down" v-show="sortingByAlbum && order > 0"></i>
+                        <i class="fa fa-angle-up" v-show="sortingByAlbum && order < 0"></i>
                     </th>
                     <th @click="sort('fmtLength')" class="time">Time
                         <i class="fa fa-angle-down" v-show="sortKey === 'fmtLength' && order > 0"></i>
@@ -34,11 +38,10 @@
                 <tr
                     v-for="item in items
                         | caseInsensitiveOrderBy sortKey order
-                        | filterBy q in 'title' 'album.name' 'album.artist.name'
+                        | filterSongBy q
                         | limitBy numOfItems"
                     is="song-item"
-                    :top-play-count="items[0].playCount"
-                    :show-play-count="type === 'top-songs'"
+                    data-track="{{ item.track }}"
                     data-song-id="{{ item.id }}"
                     track-by="id"
                     :song="item"
@@ -49,20 +52,23 @@
                     @dragleave="removeDroppableState"
                     @dragover.prevent="allowDrop(item.id, $event)"
                     @drop.stop.prevent="handleDrop(item.id, $event)"
+                    @contextmenu.prevent="openContextMenu(item.id, $event)"
                 >
                 </tr>
             </tbody>
         </table>
-    </div>
 
+        <song-menu v-ref:context-menu :songs="selectedSongs"></song-menu>
+    </div>
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { find, invokeMap, filter, map } from 'lodash';
     import isMobile from 'ismobilejs';
     import $ from 'jquery';
 
     import songItem from './song-item.vue';
+    import songMenu from './song-menu.vue';
     import infiniteScroll from '../../mixins/infinite-scroll';
     import playlistStore from '../../stores/playlist';
     import queueStore from '../../stores/queue';
@@ -73,15 +79,17 @@
     export default {
         props: ['items', 'type', 'playlist', 'selectedSongs', 'sortable'],
         mixins: [infiniteScroll],
-        components: { songItem },
+        components: { songItem, songMenu },
 
         data() {
             return {
                 lastSelectedRow: null,
                 q: '', // The filter query
-                sortKey: this.type === 'top-songs' ? 'playCount' : '',
-                order: this.type === 'top-songs' ? -1 : 1,
+                sortKey: '',
+                order: 1,
                 componentCache: {},
+                sortingByAlbum: false,
+                sortingByArtist: false,
             };
         },
 
@@ -115,13 +123,15 @@
 
                 this.sortKey = key;
                 this.order = 0 - this.order;
+                this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.name';
+                this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.artist.name';
             },
 
             /**
              * Execute the corresponding reaction(s) when the user presses Delete.
              */
             handleDelete() {
-                var songs = this.selectedSongs;
+                const songs = this.selectedSongs;
 
                 if (!songs.length) {
                     return;
@@ -135,7 +145,7 @@
                         favoriteStore.unlike(songs);
                         break;
                     case 'playlist':
-                        playlistStore.removeSongs(this.playlist, songs)
+                        playlistStore.removeSongs(this.playlist, songs);
                         break;
                     default:
                         break;
@@ -150,7 +160,7 @@
              * @param {Object} e The keydown event.
              */
             handleEnter(e) {
-                var songs = this.selectedSongs;
+                const songs = this.selectedSongs;
 
                 if (!songs.length) {
                     return;
@@ -192,7 +202,7 @@
                         this.$nextTick(() => {
                             this.$root.loadMainView('queue');
 
-                            if (e.ctrlKey || e.metaKey || songs.length == 1) {
+                            if (e.ctrlKey || e.metaKey || songs.length === 1) {
                                 playback.play(songs[0]);
                             }
                         });
@@ -213,7 +223,7 @@
             getComponentBySongId(id) {
                 // A Vue component can be removed (as a result of filter for example), so we check for its $el as well.
                 if (!this.componentCache[id] || !this.componentCache[id].$el) {
-                    this.componentCache[id] = _.find(this.$refs.rows, { song: { id } });
+                    this.componentCache[id] = find(this.$refs.rows, { song: { id } });
                 }
 
                 return this.componentCache[id];
@@ -229,7 +239,7 @@
                     return;
                 }
 
-                _.invoke(this.$refs.rows, 'select');
+                invokeMap(this.$refs.rows, 'select');
                 this.gatherSelected();
             },
 
@@ -239,12 +249,11 @@
              * @return {Array.<Object>} An array of Song objects
              */
             gatherSelected() {
-                var selectedRows = _.where(this.$refs.rows, { selected: true });
-                var ids = _.map(selectedRows, row => row.song.id);
+                const selectedRows = filter(this.$refs.rows, { selected: true });
+                const ids = map(selectedRows, row => row.song.id);
 
                 this.selectedSongs = songStore.byIds(ids);
             },
-
 
             /**
              * -----------------------------------------------------------
@@ -261,7 +270,7 @@
              * @param  {Object} e
              */
             rowClick(songId, e) {
-                var row = this.getComponentBySongId(songId);
+                const row = this.getComponentBySongId(songId);
 
                 // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
                 if (isMobile.any) {
@@ -302,10 +311,10 @@
             selectRowsBetweenIndexes(indexes) {
                 indexes.sort((a, b) => a - b);
 
-                var rows = $(this.$els.wrapper).find('tbody tr');
+                const rows = $(this.$els.wrapper).find('tbody tr');
 
-                for (var i = indexes[0]; i <= indexes[1]; ++i) {
-                    this.getComponentBySongId($(rows[i-1]).data('song-id')).select();
+                for (let i = indexes[0]; i <= indexes[1]; ++i) {
+                    this.getComponentBySongId($(rows[i - 1]).data('song-id')).select();
                 }
             },
 
@@ -313,7 +322,7 @@
              * Clear the current selection on this song list.
              */
             clearSelection() {
-                _.invoke(this.$refs.rows, 'deselect');
+                invokeMap(this.$refs.rows, 'deselect');
                 this.gatherSelected();
             },
 
@@ -325,19 +334,25 @@
              * @param {Object} e The event.
              */
             dragStart(songId, e) {
-                // Select the current target as well.
-                this.getComponentBySongId(songId).select();
-                this.gatherSelected();
+                // If the user is dragging an unselected row, clear the current selection.
+                const currentRow = this.getComponentBySongId(songId);
+                if (!currentRow.selected) {
+                    this.clearSelection();
+                    currentRow.select();
+                    this.gatherSelected();
+                }
 
-                // We can opt for something like application/x-koel.text+plain here to sound fancy,
-                // but forget it.
-                var songIds = _.pluck(this.selectedSongs, 'id');
-                e.dataTransfer.setData('text/plain', songIds);
-                e.dataTransfer.effectAllowed = 'move';
+                this.$nextTick(() => {
+                    // We can opt for something like application/x-koel.text+plain here to sound fancy,
+                    // but forget it.
+                    const songIds = map(this.selectedSongs, 'id');
+                    e.dataTransfer.setData('text/plain', songIds);
+                    e.dataTransfer.effectAllowed = 'move';
 
-                // Set a fancy drop image using our ghost element.
-                var $ghost = $('#dragGhost').text(`${songIds.length} song${songIds.length === 1 ? '' : 's'}`);
-                e.dataTransfer.setDragImage($ghost[0], 0, 0);
+                    // Set a fancy drop image using our ghost element.
+                    const $ghost = $('#dragGhost').text(`${songIds.length} song${songIds.length === 1 ? '' : 's'}`);
+                    e.dataTransfer.setDragImage($ghost[0], 0, 0);
+                });
             },
 
             /**
@@ -372,13 +387,11 @@
                     return false;
                 }
 
-                var songs = this.selectedSongs;
+                const songs = this.selectedSongs;
 
                 if (!songs.length) {
                     return false;
                 }
-
-                var $row = this.removeDroppableState(e);
 
                 queueStore.move(songs, songStore.byId(songId));
 
@@ -392,6 +405,20 @@
              */
             removeDroppableState(e) {
                 return $(e.target).parents('tr').removeClass('droppable');
+            },
+
+            openContextMenu(songId, e) {
+                // If the user is right-click an unselected row, clear the current selection and select it instead.
+                const currentRow = this.getComponentBySongId(songId);
+                if (!currentRow.selected) {
+                    this.clearSelection();
+                    currentRow.select();
+                    this.gatherSelected();
+                }
+
+                this.$nextTick(() => {
+                    this.$refs.contextMenu.open(e.pageY, e.pageX);
+                });
             },
         },
 
@@ -409,15 +436,15 @@
 
                 // Scroll the item into view if it's lost into oblivion.
                 if (this.type === 'queue') {
-                    var $wrapper = $(this.$els.wrapper);
-                    var $row = $wrapper.find(`.song-item[data-song-id="${song.id}"]`);
+                    const $wrapper = $(this.$els.wrapper);
+                    const $row = $wrapper.find(`.song-item[data-song-id="${song.id}"]`);
 
                     if (!$row.length) {
                         return;
                     }
 
-                    if ($wrapper[0].getBoundingClientRect().top + $wrapper[0].getBoundingClientRect().height
-                        < $row[0].getBoundingClientRect().top) {
+                    if ($wrapper[0].getBoundingClientRect().top + $wrapper[0].getBoundingClientRect().height <
+                        $row[0].getBoundingClientRect().top) {
                         $wrapper.scrollTop($wrapper.scrollTop() + $row.position().top);
                     }
                 }
@@ -453,14 +480,14 @@
              */
             'song:selection-clear': function () {
                 this.clearSelection();
-            }
+            },
         },
     };
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     .song-list-wrap {
         position: relative;
@@ -482,6 +509,10 @@
             &.time {
                 width: 72px;
                 text-align: right;
+            }
+
+            &.track-number {
+                min-width: 42px;
             }
 
             &.play {
@@ -516,8 +547,7 @@
         }
 
 
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-width: 768px) {
             table, tbody, tr {
                 display: block;
             }
@@ -536,7 +566,7 @@
                 padding: 0;
                 vertical-align: bottom;
 
-                &.album, &.time {
+                &.album, &.time, &.track-number {
                     display: none;
                 }
 

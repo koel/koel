@@ -2,33 +2,33 @@
     <section id="songsWrapper">
         <h1 class="heading">
             <span>All Songs
-                <i class="fa fa-angle-down toggler" 
-                    v-show="isPhone && !showingControls" 
+                <i class="fa fa-angle-down toggler"
+                    v-show="isPhone && !showingControls"
                     @click="showingControls = true"></i>
-                <i class="fa fa-angle-up toggler" 
-                    v-show="isPhone && showingControls" 
+                <i class="fa fa-angle-up toggler"
+                    v-show="isPhone && showingControls"
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
-                    • 
+                    •
                     {{ meta.totalLength }}
                 </span>
             </span>
-            
+
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button 
-                    class="play-shuffle" 
-                    @click.prevent="shuffle" 
+                <button
+                    class="play-shuffle btn btn-orange"
+                    @click.prevent="shuffle"
                     v-if="state.songs.length && selectedSongs.length < 2"
                 >
                     <i class="fa fa-random"></i> All
                 </button>
-                <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
+                <button class="play-shuffle btn btn-orange" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
 
-                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                <button class="btn btn-green" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
 
@@ -71,7 +71,7 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 </style>
 

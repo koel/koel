@@ -35,8 +35,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     #userBadge {
         @include vertical-center();
@@ -57,7 +57,7 @@
             @include vertical-center();
         }
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             flex: 0 0 96px;
             margin-right: 0;
             padding-right: 0;
@@ -75,5 +75,5 @@
                 @include vertical-center();
             }
         }
-    }    
+    }
 </style>

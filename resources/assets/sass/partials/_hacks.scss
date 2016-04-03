@@ -1,0 +1,51 @@
+/**
+ * ALL YOUR DIRTY UGLY HACKS ARE BELONG TO US.
+ */
+
+/**
+ * Make elements draggable in old WebKit
+ */
+[draggable] {
+  user-select: none;
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+/**
+ * Make webkit scrollbars a bit more good looking on non-mac systems.
+ */
+html.non-mac {
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-button {
+        width: 0px;
+        height: 0px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: $colorMainBgr;
+        border: 1px solid rgba(255, 255, 255, .2);
+        border-radius: 50px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #303030;
+    }
+    ::-webkit-scrollbar-thumb:active {
+        background: $colorMainBgr;
+    }
+    ::-webkit-scrollbar-track {
+        background: $colorMainBgr;
+        border: 0px none #ffffff;
+        border-radius: 50px;
+    }
+    ::-webkit-scrollbar-track:hover {
+        background: $colorMainBgr;
+    }
+    ::-webkit-scrollbar-track:active {
+        background: #333333;
+    }
+    ::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+}

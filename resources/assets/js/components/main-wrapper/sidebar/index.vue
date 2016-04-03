@@ -120,7 +120,7 @@
                     return false;
                 }
 
-                var songs = songStore.byIds(e.dataTransfer.getData('text/plain').split(','));
+                const songs = songStore.byIds(e.dataTransfer.getData('text/plain').split(','));
 
                 if (!songs.length) {
                     return false;
@@ -156,8 +156,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #sidebar {
         flex: 0 0 256px;
@@ -165,10 +165,13 @@
         padding: 22px 0 0;
         max-height: calc(100vh - #{$headerHeight + $footerHeight});
         overflow: auto;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
 
-        // Enable scroll with momentum on touch devices
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
+        html.touchevents & {
+            // Enable scroll with momentum on touch devices
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
 
         a.droppable {
             transform: scale(1.2);
@@ -276,7 +279,7 @@
         }
 
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             position: fixed;
             height: calc(100vh - #{$headerHeight + $footerHeight});
             padding-bottom: $footerHeight; // make sure the footer can never overlap the content

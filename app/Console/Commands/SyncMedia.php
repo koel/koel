@@ -15,7 +15,9 @@ class SyncMedia extends Command
      * @var string
      */
     protected $signature = 'koel:sync
-        {record? : A single watch record. Consult Wiki for more info.}';
+        {record? : A single watch record. Consult Wiki for more info.}
+        {--tags= : The comma-separated tags to sync into the database}
+        {--force : Force re-syncing even unchanged files}';
 
     protected $ignored = 0;
     protected $invalid = 0;
@@ -65,7 +67,12 @@ class SyncMedia extends Command
     {
         $this->info('Koel syncing started. All we need now is just a little patience…');
 
-        Media::sync(null, $this);
+        // Get the tags to sync.
+        // Notice that this is only meaningful for existing records.
+        // New records will have every applicable field sync'ed in.
+        $tags = $this->option('tags') ? explode(',', $this->option('tags')) : [];
+
+        Media::sync(null, $tags, $this->option('force'), $this);
 
         $this->output->writeln("<info>Completed! {$this->synced} new or updated song(s)</info>, "
             ."{$this->ignored} unchanged song(s), "
@@ -82,7 +89,7 @@ class SyncMedia extends Command
      *                       - "CLOSE_WRITE,CLOSE /var/www/media/new.mp3"
      *                       - "MOVED_TO /var/www/media/new_dir"
      *
-     * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
+     * @link http://man7.org/linux/man-pages/man1/inotifywait.1.html
      */
     public function syngle($record)
     {

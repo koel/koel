@@ -1,5 +1,5 @@
 <template>
-    <div class="add-to-playlist" v-show="showing">
+    <div class="add-to-playlist" v-show="showing" v-on-clickaway="close">
         <p>Add {{ songs.length }} {{ songs.length | pluralize 'song' }} to</p>
 
         <ul>
@@ -10,11 +10,11 @@
         </ul>
 
         <p>or create a new playlist</p>
-        
+
         <form class="form-save form-simple" @submit.prevent="createNewPlaylistFromSongs">
-            <input type="text" 
-                @keyup.esc.prevent="hideMenu"
-                v-model="newPlaylistName" 
+            <input type="text"
+                @keyup.esc.prevent="close"
+                v-model="newPlaylistName"
                 placeholder="Playlist name"
                 required>
             <button type="submit">
@@ -25,20 +25,21 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { assign, last } from 'lodash';
+    import VueClickaway from 'vue-clickaway';
 
+    import songMenuMethods from '../../mixins/song-menu-methods';
     import playlistStore from '../../stores/playlist';
-    import favoriteStore from '../../stores/favorite';
-    import queueStore from '../../stores/queue';
 
     export default {
         props: ['songs', 'showing', 'settings'],
+        mixins: [VueClickaway.mixin, songMenuMethods],
 
         data() {
             return {
                 newPlaylistName: '',
                 playlistState: playlistStore.state,
-                mergedSettings: _.assign({
+                mergedSettings: assign({
                     canQueue: true,
                     canLike: true,
                 }, this.settings),
@@ -48,103 +49,58 @@
         watch: {
             songs() {
                 if (!this.songs.length) {
-                    this.hideMenu();
+                    this.close();
                 }
             },
         },
 
         methods: {
             /**
-             * Add the selected songs into Favorite.
-             */
-            addSongsToFavorite() {
-                favoriteStore.like(this.songs, () => {
-                    // Nothing much now.
-                });
-
-                this.hideMenu();
-                this.clearSelection();
-            },
-
-            /**
-             * Queue selected songs to bottom of queue.
-             */
-            queueSongsToBottom() {
-                queueStore.queue(this.songs);
-
-                this.hideMenu();
-                this.clearSelection();
-            },
-
-            /**
-             * Queue selected songs to top of queue.
-             */
-            queueSongsToTop() {
-                queueStore.queue(this.songs, false, true);
-
-                this.hideMenu();
-                this.clearSelection();
-            },
-
-            /**
-             * Add the selected songs into the chosen playlist.
-             *
-             * @param {Object} playlist The playlist.
-             */
-            addSongsToExistingPlaylist(playlist) {
-                playlistStore.addSongs(playlist, this.songs, () => {
-                    // Nothing much now.
-                });
-
-                this.hideMenu();
-                this.clearSelection();
-            },
-
-            /**
              * Save the selected songs as a playlist.
              * As of current we don't have selective save.
              */
             createNewPlaylistFromSongs() {
                 this.newPlaylistName = this.newPlaylistName.trim();
-                
+
                 if (!this.newPlaylistName) {
                     return;
                 }
 
                 playlistStore.store(this.newPlaylistName, this.songs, () => {
                     this.newPlaylistName = '';
-                    
-                    // Activate the new playlist right away
-                    this.$root.loadPlaylist(_.last(this.playlistState.playlists));
+
+                    this.$nextTick(() => {
+                        // Activate the new playlist right away
+                        this.$root.loadPlaylist(last(this.playlistState.playlists));
+                    });
                 });
 
-                this.hideMenu();
-                this.clearSelection();
+                this.close();
             },
 
-            hideMenu() {
+            /**
+             * Override the method from "songMenuMethods" mixin for this own logic.
+             */
+            close() {
                 this.$dispatch('add-to-menu:close');
             },
-
-            clearSelection() {
-                this.$parent.$broadcast('song:selection-clear');  
-            }
         },
     };
 </script>
 
 <style lang="sass" scoped>
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     .add-to-playlist {
         @include context-menu();
 
         position: absolute;
+        padding: 8px;
         top: 36px;
         left: 0;
         width: 100%;
-        
+
         p {
             margin: 4px 0;
             font-size: 90%;
@@ -159,12 +115,11 @@
 
         ul {
             max-height: 5 * ($itemHeight + $itemMargin);
-            overflow-y: scroll; 
+            overflow-y: scroll;
             -webkit-overflow-scrolling: touch;
         }
 
         li {
-            cursor: pointer;
             background: rgba(255, 255, 255, .2);
             height: $itemHeight;
             line-height: $itemHeight;

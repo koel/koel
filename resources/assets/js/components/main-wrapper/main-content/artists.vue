@@ -2,31 +2,29 @@
     <section id="artistsWrapper">
         <h1 class="heading">
             <span>Artists</span>
+            <view-mode-switch :mode.sync="viewMode" for="artists"></view-mode-switch>
         </h1>
 
-        <div class="artists main-scroll-wrap" v-el:wrapper @scroll="scrolling">
+        <div class="artists main-scroll-wrap as-{{ viewMode }}" v-el:wrapper @scroll="scrolling">
             <artist-item v-for="item in items
                 | filterBy q in 'name'
                 | limitBy numOfItems" :artist="item"></artist-item>
 
-            <!--
-            Add several more items to make sure the last row is left-aligned.
-            Credits: http://codepen.io/dalgard/pen/Dbnus
-            -->
-            <span class="item" v-for="n in 10"></span>
+            <span class="item filler" v-for="n in 6"></span>
         </div>
     </section>
 </template>
 
 <script>
     import artistItem from '../../shared/artist-item.vue';
+    import viewModeSwitch from '../../shared/view-mode-switch.vue';
     import infiniteScroll from '../../../mixins/infinite-scroll';
     import artistStore from '../../../stores/artist';
 
     export default {
         mixins: [infiniteScroll],
 
-        components: { artistItem },
+        components: { artistItem, viewModeSwitch },
 
         data() {
             return {
@@ -34,6 +32,7 @@
                 numOfItems: 9,
                 state: artistStore.state,
                 q: '',
+                viewMode: null,
             };
         },
 
@@ -49,6 +48,8 @@
              */
             'koel:ready': function () {
                 this.displayMore();
+
+                return true;
             },
 
             'koel:teardown': function () {
@@ -64,8 +65,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #artistsWrapper {
         .artists {

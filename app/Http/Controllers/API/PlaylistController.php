@@ -10,7 +10,7 @@ class PlaylistController extends Controller
 {
     /**
      * Gets all playlists by the current user.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function index()

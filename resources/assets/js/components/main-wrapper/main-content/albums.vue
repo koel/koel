@@ -2,31 +2,29 @@
     <section id="albumsWrapper">
         <h1 class="heading">
             <span>Albums</span>
+            <view-mode-switch :mode.sync="viewMode" for="albums"></view-mode-switch>
         </h1>
 
-        <div class="albums main-scroll-wrap" v-el:wrapper @scroll="scrolling">
+        <div class="albums main-scroll-wrap as-{{ viewMode }}" v-el:wrapper @scroll="scrolling">
             <album-item v-for="item in items
                 | orderBy 'name'
                 | filterBy q in 'name' 'artist.name'
                 | limitBy numOfItems" :album="item"></album-item>
 
-            <!--
-            Add several more items to make sure the last row is left-aligned.
-            Credits: http://codepen.io/dalgard/pen/Dbnus
-            -->
-            <span class="item" v-for="n in 10"></span>
+            <span class="item filler" v-for="n in 6"></span>
         </div>
     </section>
 </template>
 
 <script>
     import albumItem from '../../shared/album-item.vue';
+    import viewModeSwitch from '../../shared/view-mode-switch.vue';
     import infiniteScroll from '../../../mixins/infinite-scroll';
     import albumStore from '../../../stores/album';
 
     export default {
         mixins: [infiniteScroll],
-        components: { albumItem },
+        components: { albumItem, viewModeSwitch },
 
         data() {
             return {
@@ -34,6 +32,7 @@
                 numOfItems: 9,
                 state: albumStore.state,
                 q: '',
+                viewMode: null,
             };
         },
 
@@ -49,6 +48,8 @@
              */
             'koel:ready': function () {
                 this.displayMore();
+
+                return true;
             },
 
             'koel:teardown': function () {
@@ -64,8 +65,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #albumsWrapper {
         .albums {

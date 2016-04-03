@@ -28,6 +28,8 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
         ]);
         Route::get('{song}/info', 'SongController@getInfo');
 
+        Route::put('songs', 'SongController@update');
+
         Route::post('interaction/play', 'InteractionController@play');
         Route::post('interaction/like', 'InteractionController@like');
         Route::post('interaction/batch/like', 'InteractionController@batchLike');

@@ -9,7 +9,7 @@ class LoveTrackOnLastfm
 {
     /**
      * The Last.fm service instance, which is DI'ed into our listener.
-     * 
+     *
      * @var Lastfm
      */
     protected $lastfm;

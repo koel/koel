@@ -1,10 +1,10 @@
-import _ from 'lodash';
-import { md5 } from 'blueimp-md5';
+import { each, find, without } from 'lodash';
+import md5 from 'blueimp-md5';
 import Vue from 'vue';
+import NProgress from 'nprogress';
 
 import http from '../services/http';
 import stub from '../stubs/user';
-import sharedStore from './shared';
 
 export default {
     stub,
@@ -25,18 +25,18 @@ export default {
         this.state.current = currentUser;
 
         // Set the avatar for each of the users…
-        _.each(this.state.users, this.setAvatar);
+        each(this.state.users, this.setAvatar);
 
         // …and the current user as well.
         this.setAvatar();
     },
 
     /**
-     * Get all users.
+     * All users.
      *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.users;
     },
 
@@ -48,22 +48,29 @@ export default {
      * @return {Object}
      */
     byId(id) {
-        return _.find(this.state.users, {id});
+        return find(this.state.users, { id });
     },
 
     /**
-     * Get or set the current user.
-     *
-     * @param {?Object} user
+     * The current user.
      *
      * @return {Object}
      */
-    current(user = null) {
-        if (user) {
-            this.state.current = user;
-        }
-
+    get current() {
         return this.state.current;
+    },
+
+    /**
+     * Set the current user.
+     *
+     * @param  {Object} user
+     *
+     * @return {Object}
+     */
+    set current(user) {
+        this.state.current = user;
+
+        return this.current;
     },
 
     /**
@@ -73,7 +80,7 @@ export default {
      */
     setAvatar(user = null) {
         if (!user) {
-            user = this.current();
+            user = this.current;
         }
 
         Vue.set(user, 'avatar', `https://www.gravatar.com/avatar/${md5(user.email)}?s=256`);
@@ -88,7 +95,12 @@ export default {
      * @param  {?Function}  errorCb
      */
     login(email, password, successCb = null, errorCb = null) {
-        http.post('me', { email, password }, successCb, errorCb);
+        NProgress.start();
+        http.post('me', { email, password }, () => {
+            if (successCb) {
+                successCb();
+            }
+        }, errorCb);
     },
 
     /**
@@ -112,10 +124,12 @@ export default {
      * @param  {?Function}  errorCb
      */
     updateProfile(password = null, cb = null) {
+        NProgress.start();
+
         http.put('me', {
                 password,
-                name: this.current().name,
-                email: this.current().email
+                name: this.current.name,
+                email: this.current.email
             }, () => {
                 this.setAvatar();
 
@@ -135,11 +149,13 @@ export default {
      * @param  {?Function}  cb
      */
     store(name, email, password, cb = null) {
+        NProgress.start();
+
         http.post('user', { name, email, password }, response => {
-            var user = response.data;
+            const user = response.data;
 
             this.setAvatar(user);
-            this.state.users.push(user);
+            this.state.users.unshift(user);
 
             if (cb) {
                 cb();
@@ -157,6 +173,8 @@ export default {
      * @param  {?Function}  cb
      */
     update(user, name, email, password, cb = null) {
+        NProgress.start();
+
         http.put(`user/${user.id}`, { name, email, password }, () => {
             this.setAvatar(user);
             user.password = '';
@@ -174,8 +192,10 @@ export default {
      * @param  {?Function}  cb
      */
     destroy(user, cb = null) {
+        NProgress.start();
+
         http.delete(`user/${user.id}`, {}, () => {
-            this.state.users = _.without(this.state.users, user);
+            this.state.users = without(this.state.users, user);
 
             // Mama, just killed a man
             // Put a gun against his head

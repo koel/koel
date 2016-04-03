@@ -8,55 +8,99 @@
     justify-content: space-between;
     flex-wrap: wrap;
     display: flex;
-
-    @media only screen
-    and (max-device-width : 768px) {
-        justify-content: center;
-    }
-
-    @media only screen
-    and (min-device-width: 769px)
-    and (max-device-width : 1024px) {
-        justify-content: space-around;
-    }
 }
 
 @mixin artist-album-card() {
     .item {
-        display: flex;
-        flex: 0 0 256px;
         flex-direction: column;
         margin-bottom: 16px;
+        width: 23.5%;
+        position: relative;
+
+        .as-list & {
+            flex-direction: row;
+            display: flex;
+            width: 100% !important;
+
+            .cover {
+                flex: 0 0 80px;
+                height: 80px;
+                padding-top: 0;
+            }
+
+            footer {
+                flex: 1;
+            }
+        }
+
+        .as-list &.filler {
+            display: none;
+        }
+
+        @media only screen and (max-width: 1200px) {
+            width: 32%;
+        }
+
+        @media only screen and (max-width: 960px) {
+            width: 48%;
+        }
+
+        @media only screen and (max-width: 320px) {
+            width: 100%;
+        }
+
+        html.with-extra-panel & {
+            width: 32%;
+
+            @media only screen and (max-width: 1200px) {
+                width: 48%;
+            }
+
+            @media only screen and (max-width: 960px) {
+                width: 100%;
+            }
+        }
 
         .cover {
             @include vertical_center();
 
-            display: flex;
-            flex: 0 0 256px;
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center center;
+            width: 100%;
+            padding-top: 100%;
             position: relative;
 
+            @mixin control($playBtnWidth, $fontSize, $textIndent) {
+                width: $playBtnWidth;
+                height: $playBtnWidth;
+                line-height: $playBtnWidth;
+                font-size: $fontSize;
+                text-indent: $textIndent;
+                left: calc(50% - #{$playBtnWidth/2});
+            }
+
             .control {
+                .as-list & {
+                    @include control(46px, 27px, 2px);
+                }
+
+                @include control(96px, 54px, 5px);
                 display: none;
-                width: 96px;
-                height: 96px;
                 text-align: center;
-                line-height: 96px;
-                font-size: 54px;
                 background: #111;
                 border-radius: 50%;
-                text-indent: 5px;
                 opacity: .7;
                 border: 1px solid transparent;
-
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
                 transition: .3s;
 
                 &:hover {
                     opacity: 1;
                     border-color: #fff;
-                    transform: scale(1.1);
+                    transform: translateY(-50%) scale(1.1);
                 }
 
                 html.touchevents & {
@@ -109,6 +153,10 @@
             &:hover {
                 color: $colorHighlight;
             }
+
+            .as-list & {
+                display: inline;
+            }
         }
     }
 }
@@ -128,7 +176,6 @@
     button {
         $buttonHeight: 28px;
 
-        background-color: $colorHighlight;
         font-size: 12px;
         height: $buttonHeight;
         padding: 0 16px;
@@ -152,25 +199,22 @@
         i {
             margin-right: 4px;
         }
-
-        &:hover {
-            background-color: darken($colorHighlight, 10%);
-        }
-
-        @include inset-when-pressed();
     }
 }
 
 @mixin context-menu() {
     font-weight: $fontWeight_Thin;
     font-size: $fontSize;
+    padding: 4px 0;
+    min-width: 144px;
     color: #111;
     background-color: rgb(232, 232, 232);
-    padding: 8px;
+    position: fixed;
     border-radius: 5px;
     display: flex;
     justify-content: center;
     flex-direction: column;
+    z-index: 1001;
     align-items: stretch;
     text-align: left;
     box-shadow: inset 0 0px 0 rgba(255,255,255,.6), 0 22px 70px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);

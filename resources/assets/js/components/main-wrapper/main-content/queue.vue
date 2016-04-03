@@ -18,19 +18,19 @@
 
             <div class="buttons" v-show="!isPhone || showingControls">
                 <button
-                    class="play-shuffle"
+                    class="play-shuffle btn btn-orange"
                     @click.prevent="shuffle"
                     v-if="state.songs.length > 1 && selectedSongs.length < 2"
                 >
                     <i class="fa fa-random"></i> All
                 </button>
-                <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
+                <button class="play-shuffle btn btn-orange" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="state.songs.length > 1">
+                <button class="btn btn-green" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="state.songs.length > 1">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
-                <button class="clear" @click.prevent="clear" v-if="state.songs.length">Clear</button>
+                <button class="btn btn-red" @click.prevent="clear" v-if="state.songs.length">Clear</button>
 
                 <add-to-menu
                     :songs="songsToAddTo"
@@ -59,10 +59,8 @@
 </template>
 
 <script>
-    import _ from 'lodash';
     import isMobile from 'ismobilejs';
 
-    import playlistStore from '../../../stores/playlist';
     import queueStore from '../../../stores/queue';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
@@ -88,7 +86,7 @@
              * @return {Array} The songs to add into a (new) playlist
              */
             songsToAddTo() {
-                return this.selectedSongs.length ? this.selectedSongs : queueStore.all();
+                return this.selectedSongs.length ? this.selectedSongs : queueStore.all;
             },
 
             /**
@@ -98,7 +96,7 @@
              * - We have songs to shuffle.
              */
             showShufflingAllOption() {
-                return songStore.all().length;
+                return songStore.all.length;
             },
         },
 
@@ -114,7 +112,7 @@
              * Shuffle all songs we have.
              */
             shuffleAll() {
-                playback.queueAndPlay(songStore.all(), true);
+                playback.queueAndPlay(songStore.all, true);
             },
 
             /**
@@ -128,8 +126,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #queueWrapper {
         .none {
@@ -148,23 +146,7 @@
             }
         }
 
-        button.clear {
-            background-color: $colorRed !important;
-
-            &:hover {
-                background-color: darken($colorRed, 10%) !important;
-            }
-        }
-
-        button.save {
-            background-color: $colorGreen !important;
-
-            &:hover {
-                background-color: darken($colorGreen, 10%) !important;
-            }
-        }
-
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
         }
     }
 </style>

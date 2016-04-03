@@ -45,7 +45,7 @@
                     // Re-init the app.
                     this.$root.init();
                 }, error => {
-                    var msg = 'Unknown error.';
+                    let msg = 'Unknown error.';
 
                     if (error.status === 422) {
                         msg = utils.parseValidationError(error.data)[0];
@@ -59,8 +59,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #settingsWrapper {
         input[type="text"] {
@@ -68,7 +68,7 @@
             margin-top: 12px;
         }
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             input[type="text"] {
                 width: 100%;
             }

@@ -31,6 +31,11 @@ class Album extends Model
         return $this->hasMany(Song::class);
     }
 
+    public function isUnknown()
+    {
+        return $this->id === self::UNKNOWN_ID;
+    }
+
     /**
      * Get an album using some provided information.
      *
@@ -54,12 +59,12 @@ class Album extends Model
 
     /**
      * Get extra information about the album from Last.fm.
-     * 
+     *
      * @return array|false
      */
     public function getInfo()
     {
-        if ($this->id === self::UNKNOWN_ID) {
+        if ($this->isUnknown()) {
             return false;
         }
 

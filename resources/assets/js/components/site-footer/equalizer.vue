@@ -41,7 +41,7 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import { map } from 'lodash';
     import $ from 'jquery';
     import rangeslider from 'rangeslider.js';
 
@@ -66,32 +66,32 @@
              * @param  {Element} player The audio player's DOM.
              */
             init(player) {
-                var settings = equalizerStore.get();
+                const settings = equalizerStore.get();
 
-                var AudioContext = window.AudioContext || window.webkitAudioContext || false;
+                const AudioContext = window.AudioContext || window.webkitAudioContext || false;
 
                 if (!AudioContext) {
                     return;
                 }
 
-                var context = new AudioContext();
+                const context = new AudioContext();
 
                 this.preampGainNode = context.createGain();
                 this.changePreampGain(settings.preamp);
 
-                var source = context.createMediaElementSource(player);
+                const source = context.createMediaElementSource(player);
                 source.connect(this.preampGainNode);
 
-                var prevFilter = null;
+                let prevFilter = null;
 
                 // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
                 [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000].forEach((f, i) => {
-                    var filter = context.createBiquadFilter();
+                    const filter = context.createBiquadFilter();
 
                     if (i === 0) {
                         filter.type = 'lowshelf';
                     } else if (i === 9) {
-                        filter.type = 'highshelf'
+                        filter.type = 'highshelf';
                     } else {
                         filter.type = 'peaking';
                     }
@@ -142,7 +142,7 @@
                             if ($(el).parents('.band').is('.preamp')) {
                                 this.changePreampGain(value);
                             } else {
-                                this.changeFilterGain(this.bands[i-1].filter, value);
+                                this.changeFilterGain(this.bands[i - 1].filter, value);
                             }
                         },
 
@@ -164,7 +164,7 @@
              */
             changePreampGain(dbValue) {
                 this.preampGainValue = dbValue;
-                this.preampGainNode.gain.value = Math.pow(10, dbValue/20);
+                this.preampGainNode.gain.value = Math.pow(10, dbValue / 20);
             },
 
             /**
@@ -181,19 +181,19 @@
              * Load a preset when the user select it from the dropdown.
              */
             loadPreset() {
-                if (Number.parseInt(this.selectedPresetIndex) === -1) {
+                if (Number.parseInt(this.selectedPresetIndex, 10) === -1) {
                     return;
                 }
 
-                var preset = this.presets[this.selectedPresetIndex];
+                const preset = this.presets[this.selectedPresetIndex];
 
                 $('#equalizer input[type=range]').each((i, input) => {
                     // We treat our preamp slider differently.
                     if ($(input).parents('.band').is('.preamp')) {
                         this.changePreampGain(preset.preamp);
                     } else {
-                        this.changeFilterGain(this.bands[i-1].filter, preset.gains[i-1]);
-                        input.value = preset.gains[i-1];
+                        this.changeFilterGain(this.bands[i - 1].filter, preset.gains[i - 1]);
+                        input.value = preset.gains[i - 1];
                     }
                 });
 
@@ -209,7 +209,7 @@
              * Save the current user's equalizer preferences into local storage.
              */
             save() {
-                equalizerStore.set(this.preampGainValue, _.pluck(this.bands, 'filter.gain.value'));
+                equalizerStore.set(this.preampGainValue, map(this.bands, 'filter.gain.value'));
             },
         },
 
@@ -224,8 +224,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     #equalizer {
         position: absolute;
@@ -275,6 +275,10 @@
                 padding-left: 0;
                 width: 100px;
                 text-transform: none;
+
+                option {
+                    color: #333;
+                }
             }
         }
 
@@ -365,7 +369,7 @@
             }
         }
 
-        @media only screen and (max-device-width : 768px) {
+        @media only screen and (max-width : 768px) {
             position: fixed;
             max-width: 414px;
             left: auto;

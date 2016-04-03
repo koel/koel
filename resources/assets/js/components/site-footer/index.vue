@@ -24,11 +24,11 @@
                 <div class="progress" id="progressPane">
                     <h3 class="title">{{ song.title }}</h3>
                     <p class="meta">
-                        <span class="artist">{{ song.album.artist.name }}</span> –
-                        <span class="album">{{ song.album.name }}</span>
+                        <a class="artist" @click.prevent="loadArtist(song.album.artist)">{{ song.album.artist.name }}</a> –
+                        <a class="album" @click.prevent="loadAlbum(song.album)">{{ song.album.name }}</a>
                     </p>
 
-                    <div class="player">
+                    <div class="plyr">
                         <audio crossorigin="anonymous" controls></audio>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                 <span class="volume control" id="volume">
                     <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"></i>
                     <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"></i>
-                    <input type="range" id="volumeRange" max="10" step="0.1" class="player-volume">
+                    <input type="range" id="volumeRange" max="10" step="0.1" class="plyr__volume">
                 </span>
             </span>
         </div>
@@ -124,7 +124,7 @@
              * @return {?Object}
              */
             prev() {
-                return playback.prevSong();
+                return playback.previous;
             },
 
             /**
@@ -133,7 +133,7 @@
              * @return {?Object}
              */
             next() {
-                return playback.nextSong();
+                return playback.next;
             },
         },
 
@@ -213,6 +213,24 @@
             toggleExtraPanel() {
                 preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel);
             },
+
+            /**
+             * Load the artist details panel.
+             *
+             * @param  {Object} artist
+             */
+            loadArtist(artist) {
+                this.$root.loadArtist(artist);
+            },
+
+            /**
+             * Load the album details panel.
+             *
+             * @param  {Object} album
+             */
+            loadAlbum(album) {
+                this.$root.loadAlbum(album);
+            },
         },
 
         events: {
@@ -247,8 +265,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     @mixin hasSoftGradientOnTop($startColor) {
         position: relative;
@@ -343,8 +361,7 @@
             }
 
 
-            @media only screen
-            and (max-device-width : 768px) {
+            @media only screen and (max-width: 768px) {
                 position: absolute !important;
                 right: 0;
                 height: $footerHeight;
@@ -406,12 +423,8 @@
         }
 
 
-        @media only screen
-        and (max-device-width : 768px) {
-            width: 50%;
-            position: absolute;
-            top: 0;
-            left: 0;
+        @media only screen and (max-width: 768px) {
+            flex: 1;
 
             &::before {
                 display: none;
@@ -433,9 +446,7 @@
 
         @include hasSoftGradientOnTop($colorMainBgr);
 
-
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-width: 768px) {
             width: 100%;
             position: absolute;
             top: 0;
@@ -468,39 +479,37 @@
 
         .meta {
             font-size: 90%;
-            opacity: .4;
+
+            a {
+                &:hover {
+                    color: $colorHighlight;
+                }
+            }
         }
 
-        $blue: $colorHighlight;
-        $control-color: $colorHighlight;
-        $control-bg-hover: $colorHighlight;
-        $volume-track-height: 8px;
-
-
-        @import "resources/assets/sass/vendors/_plyr.scss";
 
         // Some little tweaks here and there
-        .player {
+        .plyr {
             width: 100%;
             position: absolute;
             top: 0;
             left: 0;
         }
 
-        .player-controls {
+        .plyr__controls {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
+            padding: 0;
         }
 
-        .player-controls-left, .player-controls-right {
+        .plyr__controls--left, .plyr__controls--right {
             display: none;
         }
 
 
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-width: 768px) {
             .meta, .title {
                 display: none;
             }
@@ -522,8 +531,7 @@
             width: 16px;
         }
 
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-width: 768px) {
             display: none !important;
         }
     }

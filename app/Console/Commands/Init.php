@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use DB;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
@@ -32,7 +33,7 @@ class Init extends Command
     {
         try {
             DB::connection();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error('Unable to connect to database.');
             $this->error('Please fill valid database credentials into .env and rerun this command.');
 
@@ -67,7 +68,7 @@ class Init extends Command
             $this->comment('Data seeded -- skipping');
         }
 
-        $this->info('Executing npm install, bower install, gulp and whatnot');
+        $this->info('Executing npm install, gulp and whatnot');
         system('npm install');
 
         $this->comment("\n🎆  Success! You can now run Koel from localhost with `php artisan serve`.");

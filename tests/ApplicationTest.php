@@ -11,8 +11,8 @@ class ApplicationTest extends TestCase
     {
         putenv('CDN_URL');
 
-        $this->assertEquals(App::staticUrl(), '/');
-        $this->assertEquals(App::staticUrl('foo.css  '), '/foo.css');
+        $this->assertEquals(App::staticUrl(), 'http://localhost/');
+        $this->assertEquals(App::staticUrl('foo.css  '), 'http://localhost/foo.css');
     }
 
     public function testStaticUrlWithCDN()
@@ -28,7 +28,7 @@ class ApplicationTest extends TestCase
         putenv('CDN_URL');
 
         $manifestFile = dirname(__FILE__).'/blobs/rev-manifest.json';
-        $this->assertEquals(App::rev('foo.css', $manifestFile), '/public/build/foo00.css');
+        $this->assertEquals(App::rev('foo.css', $manifestFile), 'http://localhost/public/build/foo00.css');
 
         putenv('CDN_URL=http://cdn.bar');
         $this->assertEquals(App::rev('bar.js', $manifestFile), 'http://cdn.bar/public/build/bar00.js');

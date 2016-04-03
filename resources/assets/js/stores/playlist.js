@@ -1,4 +1,11 @@
-import _ from 'lodash';
+import {
+    each,
+    map,
+    difference,
+    union,
+    without
+} from 'lodash';
+import NProgress from 'nprogress';
 
 import http from '../services/http';
 import stub from '../stubs/playlist';
@@ -6,7 +13,7 @@ import songStore from './song';
 
 export default {
     stub,
-    
+
     state: {
         playlists: [],
     },
@@ -14,15 +21,15 @@ export default {
     init(playlists) {
         this.state.playlists = playlists;
 
-        _.each(this.state.playlists, this.getSongs);
+        each(this.state.playlists, this.getSongs);
     },
 
     /**
-     * Get all playlists of the current user.
-     * 
+     * All playlists of the current user.
+     *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.playlists;
     },
 
@@ -37,7 +44,7 @@ export default {
 
     /**
      * Create a new playlist, optionally with its songs.
-     * 
+     *
      * @param  {String}         name  Name of the playlist
      * @param  {Array.<Object>} songs An array of song objects
      * @param  {?Function}      cb
@@ -45,11 +52,13 @@ export default {
     store(name, songs, cb = null) {
         if (songs.length) {
             // Extract the IDs from the song objects.
-            songs = _.pluck(songs, 'id');
+            songs = map(songs, 'id');
         }
 
+        NProgress.start();
+
         http.post('playlist', { name, songs }, response => {
-            var playlist = response.data;
+            const playlist = response.data;
             playlist.songs = songs;
             this.getSongs(playlist);
             this.state.playlists.push(playlist);
@@ -62,13 +71,15 @@ export default {
 
     /**
      * Delete a playlist.
-     * 
+     *
      * @param  {Object}     playlist
      * @param  {?Function}  cb
      */
     delete(playlist, cb = null) {
+        NProgress.start();
+
         http.delete(`playlist/${playlist.id}`, {}, () => {
-            this.state.playlists = _.without(this.state.playlists, playlist);
+            this.state.playlists = without(this.state.playlists, playlist);
 
             if (cb) {
                 cb();
@@ -78,20 +89,20 @@ export default {
 
     /**
      * Add songs into a playlist.
-     * 
+     *
      * @param {Object}          playlist
      * @param {Array.<Object>}  songs
      * @param {?Function}       cb
      */
     addSongs(playlist, songs, cb = null) {
-        var count = playlist.songs.length;
-        playlist.songs = _.union(playlist.songs, songs);
+        const count = playlist.songs.length;
+        playlist.songs = union(playlist.songs, songs);
 
         if (count === playlist.songs.length) {
             return;
         }
 
-        http.put(`playlist/${playlist.id}/sync`, { songs: _.pluck(playlist.songs, 'id') }, () => {
+        http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
             if (cb) {
                 cb();
             }
@@ -100,15 +111,15 @@ export default {
 
     /**
      * Remove songs from a playlist.
-     * 
+     *
      * @param  {Object}         playlist
-     * @param  {Array.<Object>} songs 
+     * @param  {Array.<Object>} songs
      * @param  {?Function}      cb
      */
     removeSongs(playlist, songs, cb = null) {
-        playlist.songs = _.difference(playlist.songs, songs);
-        
-        http.put(`playlist/${playlist.id}/sync`, { songs: _.pluck(playlist.songs, 'id') }, () => {
+        playlist.songs = difference(playlist.songs, songs);
+
+        http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
             if (cb) {
                 cb();
             }
@@ -117,11 +128,13 @@ export default {
 
     /**
      * Update a playlist (just change its name).
-     * 
+     *
      * @param  {Object}     playlist
      * @param  {?Function}  cb
      */
     update(playlist, cb = null) {
+        NProgress.start();
+
         http.put(`playlist/${playlist.id}`, { name: playlist.name }, () => {
             if (cb) {
                 cb();

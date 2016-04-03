@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { extend, has } from 'lodash';
 
 import userStore from './user';
 import ls from '../services/ls';
@@ -15,21 +15,23 @@ export default {
         equalizer: {
             preamp: 0,
             gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        }
+        },
+        artistsViewMode: null,
+        albumsViewMode: null,
     },
 
     /**
      * Init the store.
-     * 
+     *
      * @param  {Object} user The user whose preferences we are managing.
      */
     init(user = null) {
         if (!user) {
-            user = userStore.current();
+            user = userStore.current;
         }
 
         this.storeKey = `preferences_${user.id}`;
-        _.extend(this.state, ls.get(this.storeKey, this.state));
+        extend(this.state, ls.get(this.storeKey, this.state));
     },
 
     set(key, val) {
@@ -38,7 +40,7 @@ export default {
     },
 
     get(key) {
-        return _.has(this.state, key) ? this.state[key] : null;
+        return has(this.state, key) ? this.state[key] : null;
     },
 
     save() {

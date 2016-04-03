@@ -1,0 +1,43 @@
+/**
+ * A stripped-down style of NProgress.
+ * Heck, rstacruz (the author) even said:
+ * > The included CSS file is pretty minimal... in fact, feel free to scrap it and make your own!
+ */
+#nprogress {
+    /* Make clicks pass-through */
+    pointer-events: none;
+
+    .bar {
+        background: $colorOrange;
+
+        position: fixed;
+        z-index: 1031;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 2px;
+    }
+
+    /* Fancy blur effect */
+    .peg {
+        display: block;
+        position: absolute;
+        right: 0px;
+        width: 100px;
+        height: 100%;
+        box-shadow: 0 0 10px $colorOrange, 0 0 5px $colorOrange;
+        opacity: 1.0;
+
+        transform: rotate(3deg) translate(0px, -4px);
+    }
+}
+
+.nprogress-custom-parent {
+    overflow: hidden;
+    position: relative;
+
+    #nprogress .spinner, #nprogress .bar {
+        position: absolute;
+    }
+}

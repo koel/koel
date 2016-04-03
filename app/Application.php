@@ -3,6 +3,7 @@
 namespace App;
 
 use Cache;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application as IlluminateApplication;
 use InvalidArgumentException;
@@ -18,7 +19,7 @@ class Application extends IlluminateApplication
      *
      * @link https://github.com/phanan/koel/releases
      */
-    const VERSION = 'v2.1.0';
+    const VERSION = 'v2.3.0';
 
     /**
      * We have merged public path and base path.
@@ -59,7 +60,7 @@ class Application extends IlluminateApplication
     /**
      * Get a URL for static file requests.
      * If this installation of Koel has a CDN_URL configured, use it as the base.
-     * Otherwise, just use a relative '/'.
+     * Otherwise, just use a full URL to the asset.
      *
      * @param string $name The additional resource name/path.
      *
@@ -67,7 +68,9 @@ class Application extends IlluminateApplication
      */
     public function staticUrl($name = null)
     {
-        return trim(env('CDN_URL'), '/ ').'/'.trim(ltrim($name, '/'));
+        $cdnUrl = trim(env('CDN_URL'), '/ ');
+
+        return $cdnUrl ? $cdnUrl.'/'.trim(ltrim($name, '/')) : trim(asset($name));
     }
 
     /**
@@ -91,7 +94,7 @@ class Application extends IlluminateApplication
             Cache::put('latestKoelVersion', $v, 7 * 24 * 60);
 
             return $v;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             return self::VERSION;

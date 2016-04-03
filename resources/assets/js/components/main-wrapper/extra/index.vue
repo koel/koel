@@ -21,11 +21,12 @@
 
 <script>
     import isMobile from 'ismobilejs';
-    import _ from 'lodash';
+    import { invokeMap } from 'lodash';
+    import $ from 'jquery';
 
     import lyrics from './lyrics.vue';
-    import artistInfo from './artist-info.vue'
-    import albumInfo from './album-info.vue'
+    import artistInfo from './artist-info.vue';
+    import albumInfo from './album-info.vue';
     import preferenceStore from '../../../stores/preference';
     import songStore from '../../../stores/song';
 
@@ -40,7 +41,27 @@
             };
         },
 
+        watch: {
+            /**
+             * Watch the "showExtraPanel" property to add/remove the corresponding class
+             * to/from the html tag.
+             * Some element's CSS can then be controlled based on this class.
+             */
+            'prefs.showExtraPanel': function (newVal) {
+                if (newVal && !isMobile.any) {
+                    $('html').addClass('with-extra-panel');
+                } else {
+                    $('html').removeClass('with-extra-panel');
+                }
+            },
+        },
+
         ready() {
+            // On ready, add 'with-extra-panel' class.
+            if (!isMobile.any) {
+                $('html').addClass('with-extra-panel');
+            }
+
             if (isMobile.phone) {
                 // On a mobile device, we always hide the panel initially regardless of
                 // the saved preference.
@@ -56,7 +77,7 @@
             resetState() {
                 this.currentView = 'lyrics';
                 this.song = songStore.stub;
-                _.invoke(this.$refs, 'resetState');
+                invokeMap(this.$refs, 'resetState');
             },
         },
 
@@ -82,22 +103,24 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #extra {
         flex: 0 0 $extraPanelWidth;
         padding: 24px 16px $footerHeight;
         background: $colorExtraBgr;
         max-height: calc(100vh - #{$headerHeight + $footerHeight});
-        overflow: auto;
-
-        // Enable scroll with momentum on touch devices
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
-
         display: none;
         color: $color2ndText;
+        overflow: auto;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+
+        html.touchevents & {
+            // Enable scroll with momentum on touch devices
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
 
         &.showing {
             display: block;
@@ -123,35 +146,6 @@
                 &:hover {
                     color: $colorHighlight;
                 }
-            }
-        }
-
-        .tabs {
-            .header {
-                $tabColor: #5c5c5c;
-                border-bottom: 1px solid $tabColor;
-
-
-                a {
-                    padding: 8px 12px;
-                    margin-left: 4px;
-                    border-radius: 4px 4px 0 0;
-                    text-transform: uppercase;
-                    color: lighten($tabColor, 50%);
-                    opacity: .4;
-                    border: 1px solid $tabColor;
-                    margin-bottom: -1px;
-                    float: left;
-
-                    &.active {
-                        border-bottom: 1px solid $colorExtraBgr;
-                        opacity: 1;
-                    }
-                }
-            }
-
-            .panes {
-                padding: 16px 0;
             }
         }
 
@@ -181,7 +175,7 @@
         }
 
 
-        @media only screen and (max-device-width : 1024px) {
+        @media only screen and (max-width : 1024px) {
             position: fixed;
             height: calc(100vh - #{$headerHeight + $footerHeight});
             padding-bottom: $footerHeight; // make sure the footer can never overlap the content
@@ -196,7 +190,7 @@
             }
         }
 
-        @media only screen and (max-device-width : 667px) {
+        @media only screen and (max-width : 667px) {
             width: 100%;
         }
     }

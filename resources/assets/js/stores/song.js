@@ -1,11 +1,15 @@
 import Vue from 'vue';
-import _ from 'lodash';
+import { without, map, take, remove, orderBy } from 'lodash';
 
 import http from '../services/http';
 import utils from '../services/utils';
 import stub from '../stubs/song';
 import favoriteStore from './favorite';
+import sharedStore from './shared';
 import userStore from './user';
+import albumStore from './album';
+import artistStore from './artist';
+import ls from '../services/ls';
 
 export default {
     stub,
@@ -35,12 +39,12 @@ export default {
      */
     init(albums) {
         // Iterate through the albums. With each, add its songs into our master song list.
-        this.state.songs = _.reduce(albums, (songs, album) => {
+        this.state.songs = albums.reduce((songs, album) => {
             // While doing so, we populate some other information into the songs as well.
-            _.each(album.songs, song => {
+            album.songs.forEach(song => {
                 song.fmtLength = utils.secondsToHis(song.length);
 
-                // Manually set these addtional properties to be reactive
+                // Manually set these additional properties to be reactive
                 Vue.set(song, 'playCount', 0);
                 Vue.set(song, 'album', album);
                 Vue.set(song, 'liked', false);
@@ -63,8 +67,8 @@ export default {
     initInteractions(interactions) {
         favoriteStore.clear();
 
-        _.each(interactions, interaction => {
-            var song = this.byId(interaction.song_id);
+        interactions.forEach(interaction => {
+            const song = this.byId(interaction.song_id);
 
             if (!song) {
                 return;
@@ -90,7 +94,7 @@ export default {
      * @return {Float|String}
      */
     getLength(songs, toHis) {
-        var duration = _.reduce(songs, (length, song) => length + song.length, 0);
+        const duration = songs.reduce((length, song) => length + song.length, 0);
 
         if (toHis) {
             return utils.secondsToHis(duration);
@@ -104,7 +108,7 @@ export default {
      *
      * @return {Array.<Object>}
      */
-    all() {
+    get all() {
         return this.state.songs;
     },
 
@@ -127,7 +131,7 @@ export default {
      * @return {Array.<Object>}
      */
     byIds(ids) {
-        return _.map(ids, id => this.byId(id));
+        return ids.map(id => this.byId(id));
     },
 
     /**
@@ -137,7 +141,7 @@ export default {
      * @param {?Function} cb
      */
     registerPlay(song, cb = null) {
-        var oldCount = song.playCount;
+        const oldCount = song.playCount;
 
         http.post('interaction/play', { song: song.id }, response => {
             // Use the data from the server to make sure we don't miss a play from another device.
@@ -158,7 +162,7 @@ export default {
      */
     addRecent(song) {
         // First we make sure that there's no duplicate.
-        this.state.recent = _.without(this.state.recent, song);
+        this.state.recent = without(this.state.recent, song);
 
         // Then we prepend the song into the list.
         this.state.recent.unshift(song);
@@ -172,7 +176,7 @@ export default {
      */
     getInfo(song, cb = null) {
         // Check if the song's info has been retrieved before.
-        if (song.lyrics !== null) {
+        if (song.infoRetrieved) {
             if (cb) {
                 cb();
             }
@@ -180,7 +184,9 @@ export default {
             return;
         }
 
-        http.get(`${song.id}/info`, data => {
+        http.get(`${song.id}/info`, response => {
+            const data = response.data;
+
             song.lyrics = data.lyrics;
 
             // If the artist image is not in a nice form, don't use it.
@@ -197,7 +203,7 @@ export default {
 
             // Convert the duration into i:s
             if (data.album_info && data.album_info.tracks) {
-                _.each(data.album_info.tracks, track => track.fmtLength = utils.secondsToHis(track.length));
+                data.album_info.tracks.forEach(track => track.fmtLength = utils.secondsToHis(track.length));
             }
 
             // If the album cover is not in a nice form, don't use it.
@@ -212,6 +218,8 @@ export default {
                 song.album.cover = data.album_info.cover;
             }
 
+            song.infoRetrieved = true;
+
             if (cb) {
                 cb();
             }
@@ -225,7 +233,7 @@ export default {
      * @param  {?Function}  cb
      */
     scrobble(song, cb = null) {
-        if (!window.useLastfm || !userStore.current().preferences.lastfm_session_key) {
+        if (!window.useLastfm || !userStore.current.preferences.lastfm_session_key) {
             return;
         }
 
@@ -237,6 +245,138 @@ export default {
     },
 
     /**
+     * Update song data.
+     *
+     * @param  {Array.<Object>} songs     An array of song
+     * @param  {Object}         data
+     * @param  {?Function}      successCb
+     * @param  {?Function}      errorCb
+     */
+    update(songs, data, successCb = null, errorCb = null) {
+        if (!userStore.current.is_admin) {
+            return;
+        }
+
+        http.put('songs', {
+            data,
+            songs: map(songs, 'id'),
+        }, response => {
+            response.data.forEach(song => {
+               this.syncUpdatedSong(song);
+            });
+
+            if (successCb) {
+                successCb();
+            }
+        }, () => {
+            if (errorCb) {
+                errorCb();
+            }
+        });
+    },
+
+    /**
+     * Sync an updated song into our current library.
+     *
+     * This is one of the most ugly functions I've written, if not the worst itself.
+     * Sorry, future me.
+     * Sorry guys.
+     * Forgive me.
+     *
+     * @param  {Object} updatedSong The updated song, with albums and whatnot.
+     *
+     * @return {?Object}             The updated song.
+     */
+    syncUpdatedSong(updatedSong) {
+        // Cases:
+        // 1. Album doesn't change (and then, artist doesn't either)
+        // 2. Album changes (note that a new album might have been created) and
+        //      2.a. Artist remains the same.
+        //      2.b. Artist changes as well. Note that an artist might have been created.
+
+        // Find the original song,
+        const originalSong = this.byId(updatedSong.id);
+
+        if (!originalSong) {
+            return;
+        }
+
+        // and keep track of original album/artist.
+        const originalAlbumId = originalSong.album.id;
+        const originalArtistId = originalSong.album.artist.id;
+
+        // First, we update the title, lyrics, and track #
+        originalSong.title = updatedSong.title;
+        originalSong.lyrics = updatedSong.lyrics;
+        originalSong.track = updatedSong.track;
+
+        if (updatedSong.album.id === originalAlbumId) { // case 1
+            // Nothing to do
+        } else { // case 2
+            // First, remove it from its old album
+            albumStore.removeSongsFromAlbum(originalSong.album, originalSong);
+
+            const existingAlbum = albumStore.byId(updatedSong.album.id);
+            const newAlbumCreated = !existingAlbum;
+
+            if (!newAlbumCreated) {
+                // The song changed to an existing album. We now add it to such album.
+                albumStore.addSongsIntoAlbum(existingAlbum, originalSong);
+            } else {
+                // A new album was created. We:
+                // - Add the new album into our collection
+                // - Add the song into it
+                albumStore.addSongsIntoAlbum(updatedSong.album, originalSong);
+                albumStore.append(updatedSong.album);
+            }
+
+            if (updatedSong.album.artist.id === originalArtistId) { // case 2.a
+                // Same artist, but what if the album is new?
+                if (newAlbumCreated) {
+                    artistStore.addAlbumsIntoArtist(artistStore.byId(originalArtistId), updatedSong.album);
+                }
+            } else { // case 2.b
+                // The artist changes.
+                const existingArtist = artistStore.byId(updatedSong.album.artist.id);
+
+                if (!existingArtist) {
+                    // New artist created. We:
+                    // - Add the album into it, because now it MUST BE a new album
+                    // (there's no "new artist with existing album" in our system).
+                    // - Add the new artist into our collection
+                    artistStore.addAlbumsIntoArtist(updatedSong.album.artist, updatedSong.album);
+                    artistStore.append(updatedSong.album.artist);
+                }
+            }
+
+            // As a last step, we purify our library of empty albums/artists.
+            if (albumStore.isAlbumEmpty(albumStore.byId(originalAlbumId))) {
+                albumStore.remove(albumStore.byId(originalAlbumId));
+            }
+
+            if (artistStore.isArtistEmpty(artistStore.byId(originalArtistId))) {
+                artistStore.remove(artistStore.byId(originalArtistId));
+            }
+
+            // Now we make sure the next call to info() get the refreshed, correct info.
+            originalSong.infoRetrieved = false;
+        }
+
+        return originalSong;
+    },
+
+    /**
+     * Get a song's playable source URL.
+     *
+     * @param  {Object} song
+     *
+     * @return {string} The source URL, with JWT token appended.
+     */
+    getSourceUrl(song) {
+        return `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`;
+    },
+
+    /**
      * Get the last n recently played songs.
      *
      * @param  {Number} n
@@ -244,8 +384,7 @@ export default {
      * @return {Array.<Object>}
      */
     getRecent(n = 10) {
-        // And last, make sure the list doesn't exceed 10 items.
-        return _.take(this.state.recent, n);
+        return take(this.state.recent, n);
     },
 
     /**
@@ -256,11 +395,19 @@ export default {
      * @return {Array.<Object>}
      */
     getMostPlayed(n = 10) {
-        var songs = _.take(_.sortByOrder(this.state.songs, 'playCount', 'desc'), n);
+        const songs = take(orderBy(this.state.songs, 'playCount', 'desc'), n);
 
         // Remove those with playCount=0
-        _.remove(songs, song => !song.playCount);
+        remove(songs, song => !song.playCount);
 
         return songs;
+    },
+
+    /**
+     * Called when the application is tore down.
+     * Reset stuff.
+     */
+    teardown() {
+        this.state.recent = [];
     },
 };

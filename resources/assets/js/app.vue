@@ -11,7 +11,8 @@
         <site-header></site-header>
         <main-wrapper></main-wrapper>
         <site-footer></site-footer>
-        <overlay :state.sync="overlayState"></overlay>
+        <overlay v-ref:overlay></overlay>
+        <edit-songs-form v-ref:edit-songs-form></edit-songs-form>
     </div>
 
     <div class="login-wrapper" v-else>
@@ -22,24 +23,26 @@
 <script>
     import Vue from 'vue';
     import $ from 'jquery';
-    import _ from 'lodash';
 
     import siteHeader from './components/site-header/index.vue';
     import siteFooter from './components/site-footer/index.vue';
     import mainWrapper from './components/main-wrapper/index.vue';
     import overlay from './components/shared/overlay.vue';
     import loginForm from './components/auth/login-form.vue';
+    import editSongsForm from './components/modals/edit-songs-form.vue';
 
     import sharedStore from './stores/shared';
     import queueStore from './stores/queue';
+    import songStore from './stores/song';
     import userStore from './stores/user';
     import preferenceStore from './stores/preference';
     import playback from './services/playback';
     import focusDirective from './directives/focus';
     import ls from './services/ls';
+    import { filterSongBy, caseInsensitiveOrderBy } from './filters/index';
 
     export default {
-        components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm },
+        components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
 
         replace: false,
 
@@ -47,19 +50,12 @@
             return {
                 prefs: preferenceStore.state,
                 authenticated: false,
-
-                overlayState: {
-                    showing: true,
-                    dismissable: false,
-                    type: 'loading',
-                    message: '',
-                },
             };
         },
 
         ready() {
             // The app has just been initialized, check if we can get the user data with an already existing token
-            var token = ls.get('jwt-token');
+            const token = ls.get('jwt-token');
             if (token) {
                 this.authenticated = true;
                 this.init();
@@ -67,6 +63,10 @@
 
             // Create the element to be the ghost drag image.
             $('<div id="dragGhost"></div>').appendTo('body');
+
+            // Add an ugly mac/non-mac class for OS-targeting styles.
+            // I'm crying inside.
+            $('html').addClass(navigator.userAgent.indexOf('Mac') !== -1 ? 'mac' : 'non-mac');
         },
 
         methods: {
@@ -95,7 +95,7 @@
                         return 'You asked Koel to confirm before closing, so here it is.';
                     };
 
-                    // Let all other compoenents know we're ready.
+                    // Let all other components know we're ready.
                     this.$broadcast('koel:ready');
                 }, () => this.authenticated = false);
             },
@@ -222,24 +222,30 @@
              * @param {Boolean} dismissable Whether to show the Close button
              */
             showOverlay(message = 'Just a little patience…', type = 'loading', dismissable = false) {
-                this.overlayState.message = message;
-                this.overlayState.type = type;
-                this.overlayState.dismissable = dismissable;
-                this.overlayState.showing = true;
+                this.$refs.overlay.show(message, type, dismissable);
             },
 
             /**
              * Hides the overlay.
              */
             hideOverlay() {
-                this.overlayState.showing = false;
+                this.$refs.overlay.hide();
             },
 
             /**
              * Shows the close button, allowing the user to close the overlay.
              */
             setOverlayDimissable() {
-                this.overlayState.dismissable = true;
+                this.$refs.overlay.setDismissable();
+            },
+
+            /**
+             * Shows the "Edit Song" form.
+             *
+             * @param {Array.<Object>} An array of songs to edit
+             */
+            showEditSongsForm(songs) {
+                this.$refs.editSongsForm.open(songs);
             },
 
             /**
@@ -251,6 +257,7 @@
                     this.authenticated = false;
                     playback.stop();
                     queueStore.clear();
+                    songStore.teardown();
                     this.loadMainView('queue');
                     this.$broadcast('koel:teardown');
                 });
@@ -258,6 +265,9 @@
         },
 
         events: {
+            /**
+             * When the user logs in, set the whole app to be "authenticated" and initialize it.
+             */
             'user:loggedin': function () {
                 this.authenticated = true;
                 this.init();
@@ -265,35 +275,11 @@
         },
     };
 
-    /**
-     * Modified version of orderBy that is case insensitive
-     *
-     * @source https://github.com/vuejs/vue/blob/dev/src/filters/array-filters.js
-     */
-    Vue.filter('caseInsensitiveOrderBy', (arr, sortKey, reverse) => {
-        if (!sortKey) {
-            return arr;
-        }
+    // Register our custom filters…
+    Vue.filter('filterSongBy', filterSongBy);
+    Vue.filter('caseInsensitiveOrderBy', caseInsensitiveOrderBy);
 
-        var order = (reverse && reverse < 0) ? -1 : 1;
-
-        // sort on a copy to avoid mutating original array
-        return arr.slice().sort((a, b) => {
-            a = Vue.util.isObject(a) ? Vue.parsers.path.getPath(a, sortKey) : a;
-            b = Vue.util.isObject(b) ? Vue.parsers.path.getPath(b, sortKey) : b;
-
-            if (_.isNumber(a) && _.isNumber(b)) {
-                return a === b ? 0 : a > b ? order : -order;
-            }
-
-            a = a === undefined ? a : a.toLowerCase();
-            b = b === undefined ? b : b.toLowerCase();
-
-            return a === b ? 0 : a > b ? order : -order;
-        });
-    });
-
-    // Register the global directives
+    // …and the global directives
     Vue.directive('koel-focus', focusDirective);
 </script>
 
@@ -312,6 +298,14 @@
         font-family: $fontFamily;
         font-size: $fontSize;
         font-weight: $fontWeight_Thin;
+
+        /**
+         * We can totally hide this element on touch devices, because there's
+         * no drag and drop support there anyway.
+         */
+        html.touchevents & {
+            display: none;
+        }
     }
 
     #app, .login-wrapper {

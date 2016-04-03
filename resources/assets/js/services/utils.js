@@ -6,21 +6,21 @@ export default {
      * If H is 0, it will be ommited.
      */
     secondsToHis(d) {
-        d = parseInt(d);
-        
-        var s = d%60;
+        d = parseInt(d, 10);
+
+        let s = d % 60;
 
         if (s < 10) {
             s = '0' + s;
         }
 
-        var i = Math.floor((d/60)%60);
+        let i = Math.floor((d / 60) % 60);
 
         if (i < 10) {
             i = '0' + i;
         }
 
-        var h = Math.floor(d/3600);
+        let h = Math.floor(d / 3600);
 
         if (h < 10) {
             h = '0' + h;
@@ -31,9 +31,9 @@ export default {
 
     /**
      * Parse the validation error from the server into a flattened array of messages.
-     * 
+     *
      * @param  {Object}  error  The error object in JSON format.
-     *                                    
+     *
      * @return {Array.<String>}
      */
     parseValidationError(error) {
@@ -42,7 +42,7 @@ export default {
 
     /**
      * Check if AudioContext is supported by the current browser.
-     * 
+     *
      * @return {Boolean}
      */
     isAudioContextSupported() {
@@ -51,11 +51,11 @@ export default {
             return false;
         }
 
-        var AudioContext = (window.AudioContext || 
-            window.webkitAudioContext || 
-            window.mozAudioContext || 
-            window.oAudioContext || 
-            window.msAudioContext); 
+        const AudioContext = (window.AudioContext ||
+            window.webkitAudioContext ||
+            window.mozAudioContext ||
+            window.oAudioContext ||
+            window.msAudioContext);
 
         if (!AudioContext) {
             return false;
@@ -69,4 +69,15 @@ export default {
 
         return true;
     },
+
+    /**
+     * Turn <br> into new line characters.
+     *
+     * @param  {string} str
+     *
+     * @return {string}
+     */
+    br2nl(str) {
+        return str.replace(/<br\s*[\/]?>/gi, '\n');
+    }
 };

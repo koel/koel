@@ -1,5 +1,14 @@
 import Vue from 'vue';
-import _ from 'lodash';
+import {
+    reduce,
+    each,
+    find,
+    union,
+    difference,
+    take,
+    filter,
+    orderBy
+} from 'lodash';
 
 import config from '../config';
 import stub from '../stubs/artist';
@@ -21,19 +30,81 @@ export default {
         this.state.artists = artists;
 
         // Traverse through artists array to get the cover and number of songs for each.
-        _.each(this.state.artists, artist => {
-            this.getImage(artist);
-
-            Vue.set(artist, 'playCount', 0);
-            Vue.set(artist, 'songCount', _.reduce(artist.albums, (count, album)  => count + album.songs.length, 0));
-            Vue.set(artist, 'info', null);
+        each(this.state.artists, artist => {
+            this.setupArtist(artist);
         });
 
         albumStore.init(this.state.artists);
     },
 
-    all() {
+    setupArtist(artist) {
+        this.getImage(artist);
+        Vue.set(artist, 'playCount', 0);
+        Vue.set(artist, 'songCount', reduce(artist.albums, (count, album) => count + album.songs.length, 0));
+        Vue.set(artist, 'info', null);
+
+        return artist;
+    },
+
+    get all() {
         return this.state.artists;
+    },
+
+    byId(id) {
+        return find(this.all, { id });
+    },
+
+    /**
+     * Appends a new artist into the current collection.
+     *
+     * @param  {Object} artist
+     */
+    append(artist) {
+        this.state.artists.push(this.setupArtist(artist));
+    },
+
+    addAlbumsIntoArtist(artist, albums) {
+        albums = [].concat(albums);
+
+        artist.albums = union(artist.albums ? artist.albums : [], albums);
+
+        albums.forEach(album => {
+            album.artist_id = artist.id;
+            album.artist = artist;
+        });
+
+        artist.playCount = reduce(artist.albums, (count, album) => count + album.playCount, 0);
+    },
+
+    /**
+     * Remove album(s) from an artist.
+     *
+     * @param  {Object} artist
+     * @param  {Array.<Object>|Object} albums
+     */
+    removeAlbumsFromArtist(artist, albums) {
+        artist.albums = difference(artist.albums, [].concat(albums));
+        artist.playCount = reduce(artist.albums, (count, album) => count + album.playCount, 0);
+    },
+
+    /**
+     * Checks if an artist is empty.
+     *
+     * @param  {Object}  artist
+     *
+     * @return {boolean}
+     */
+    isArtistEmpty(artist) {
+        return !artist.albums.length;
+    },
+
+    /**
+     * Remove artist(s) from the store.
+     *
+     * @param  {Array.<Object>|Object} artists
+     */
+    remove(artists) {
+        this.state.artists = difference(this.state.artists, [].concat(artists));
     },
 
     /**
@@ -45,7 +116,7 @@ export default {
      */
     getSongsByArtist(artist) {
         if (!artist.songs) {
-            artist.songs = _.reduce(artist.albums, (songs, album) => songs.concat(album.songs), []);
+            artist.songs = reduce(artist.albums, (songs, album) => songs.concat(album.songs), []);
         }
 
         return artist.songs;
@@ -69,7 +140,7 @@ export default {
 
         artist.albums.every(album => {
             // If there's a "real" cover, use it.
-            if (album.image != config.unknownCover) {
+            if (album.image !== config.unknownCover) {
                 artist.image = album.cover;
 
                 // I want to break free.
@@ -88,11 +159,11 @@ export default {
      * @return {Array.<Object>}
      */
     getMostPlayed(n = 6) {
-        var artists = _.take(_.sortByOrder(this.state.artists, 'playCount', 'desc'), n);
+        // Only non-unknown artists with actually play count are applicable.
+        const applicable = filter(this.state.artists, artist => {
+            return artist.playCount && artist.id !== 1;
+        });
 
-        // Remove those with playCount=0
-        _.remove(artists, artist => !artist.playCount);
-
-        return artists;
+        return take(orderBy(applicable, 'playCount', 'desc'), n);
     },
 };

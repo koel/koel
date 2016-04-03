@@ -7,16 +7,10 @@ use App\Models\Song;
 use App\Services\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Mockery as m;
 
 class MediaTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
-
-    public function tearDown()
-    {
-        m::close();
-    }
 
     public function testSync()
     {
@@ -26,7 +20,11 @@ class MediaTest extends TestCase
         $media->sync($this->mediaPath);
 
         // Standard mp3 files under root path should be recognized
-        $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/full.mp3']);
+        $this->seeInDatabase('songs', [
+            'path' => $this->mediaPath.'/full.mp3',
+            // Track # should be recognized
+            'track' => 5,
+        ]);
 
         // Ogg files and audio files in subdirectories should be recognized
         $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.ogg']);
@@ -63,6 +61,66 @@ class MediaTest extends TestCase
 
         // Albums with a non-default cover should have their covers overwritten
         $this->assertEquals($currentCover, Album::find($album->id)->cover);
+    }
+
+    public function testForceSync()
+    {
+        $this->expectsEvents(LibraryChanged::class);
+
+        $media = new Media();
+        $media->sync($this->mediaPath);
+
+        // Make some modification to the records
+        $song = Song::orderBy('id', 'desc')->first();
+        $orginalTitle = $song->title;
+        $orginalLyrics = $song->lyrics;
+
+        $song->update([
+            'title' => "It's John Cena!",
+            'lyrics' => 'Booom Wroooom',
+        ]);
+
+        // Resync without forcing
+        $media->sync($this->mediaPath);
+
+        // Validate that the changes are not lost
+        $song = Song::orderBy('id', 'desc')->first();
+        $this->assertEquals("It's John Cena!", $song->title);
+        $this->assertEquals('Booom Wroooom', $song->lyrics);
+
+        // Resync with force
+        $media->sync($this->mediaPath, [], true);
+
+        // All is lost.
+        $song = Song::orderBy('id', 'desc')->first();
+        $this->assertEquals($orginalTitle, $song->title);
+        $this->assertEquals($orginalLyrics, $song->lyrics);
+    }
+
+    public function testSyncSelectiveTags()
+    {
+        $this->expectsEvents(LibraryChanged::class);
+
+        $media = new Media();
+        $media->sync($this->mediaPath);
+
+        // Make some modification to the records
+        $song = Song::orderBy('id', 'desc')->first();
+        $orginalTitle = $song->title;
+        $orginalLyrics = $song->lyrics;
+
+        $song->update([
+            'title' => "It's John Cena!",
+            'lyrics' => 'Booom Wroooom',
+        ]);
+
+        // Sync only the selective tags
+        $media->sync($this->mediaPath, ['title'], true);
+
+        // Validate that the specified tags are changed, other remains the same
+        $song = Song::orderBy('id', 'desc')->first();
+        $this->assertEquals($orginalTitle, $song->title);
+        $this->assertEquals('Booom Wroooom', $song->lyrics);
     }
 
     public function testWatchSingleFileAdded()

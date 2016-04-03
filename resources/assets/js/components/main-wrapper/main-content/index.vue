@@ -50,14 +50,14 @@
             },
 
             /**
-             * When a new song is played, find it cover for the translucent effect.
+             * When a new song is played, find its cover for the translucent effect.
              *
              * @param  {Object} song
              *
              * @return {Boolean}
              */
             'song:played': function (song) {
-                this.albumCover = song.album.cover ===  albumStore.stub.cover ? null : song.album.cover;
+                this.albumCover = song.album.cover === albumStore.stub.cover ? null : song.album.cover;
 
                 return true;
             }
@@ -66,8 +66,8 @@
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #mainContent {
         flex: 1;
@@ -79,15 +79,19 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            backface-visibility: hidden;
 
             .main-scroll-wrap {
                 padding: 24px;
                 overflow: auto;
                 flex: 1;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
 
-                // Enable scroll with momentum on touch devices
-                overflow-y: scroll;
-                -webkit-overflow-scrolling: touch;
+                html.touchevents & {
+                    // Enable scroll with momentum on touch devices
+                    overflow-y: scroll;
+                    -webkit-overflow-scrolling: touch;
+                }
             }
         }
 
@@ -118,23 +122,6 @@
                 z-index: 2;
 
                 @include button-group();
-
-                .add-to {
-                    background-color: $colorGreen !important;
-
-                    &:hover {
-                        background-color: darken($colorGreen, 10%) !important;
-                    }
-                }
-            }
-
-            input[type="search"] {
-                width: 128px;
-                transition: width .3s;
-
-                &:focus {
-                    width: 192px;
-                }
             }
         }
 
@@ -156,10 +143,7 @@
             pointer-events: none;
         }
 
-
-
-        @media only screen
-        and (max-device-width : 768px) {
+        @media only screen and (max-width: 768px) {
             h1.heading {
                 font-size: 18px;
                 min-height: 0;
@@ -177,7 +161,7 @@
                     display: none;
                 }
 
-                .buttons, input[type="search"] {
+                .buttons {
                     justify-content: center;
                     margin-top: 8px;
                 }

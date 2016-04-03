@@ -15,7 +15,7 @@ describe('services/utils', () => {
 
     describe('#parseValidationError', () => {
         it('correctly parses single-level validation error', () => {
-            let error = {
+            const error = {
                 err_1: ['Foo'],
             };
 
@@ -23,7 +23,7 @@ describe('services/utils', () => {
         });
 
         it('correctly parses multi-level validation error', () => {
-            let error = {
+            const error = {
                 err_1: ['Foo', 'Bar'],
                 err_2: ['Baz', 'Qux'],
             };

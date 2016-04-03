@@ -4,17 +4,11 @@
         class="song-item"
         :class="{ selected: selected, playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
     >
-        <td class="title">
-            <span class="play-count" v-if="showPlayCount"
-                title="{{ song.playCount }} {{ song.playCount | pluralize 'play' }}"
-                :style="{ width: song.playCount * 100 / topPlayCount + '%' }"
-            >{{ song.title }}
-            </span>
-            <span v-else>{{ song.title }}</span>
-        </td>
+        <td class="track-number">{{ song.track || '' }}</td>
+        <td class="title">{{ song.title }}</td>
         <td class="artist">{{ song.album.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
-        <td class="time">{{ song.fmtLength }}</td>
+        <td class="time">{{* song.fmtLength }}</td>
         <td class="play" @click.stop="doPlayback">
             <i class="fa fa-pause-circle" v-show="song.playbackState === 'playing'"></i>
             <i class="fa fa-play-circle" v-else></i>
@@ -27,23 +21,7 @@
     import queueStore from '../../stores/queue';
 
     export default {
-        props: [
-            'song',
-
-            /**
-             * Whether or not we should display the play count indicators.
-             *
-             * @type {boolean}
-             */
-            'showPlayCount',
-
-            /**
-             * The play count of the most-played song, so that we can have some percentage-base comparison.
-             *
-             * @type {integer}
-             */
-            'topPlayCount'
-        ],
+        props: ['song'],
 
         data() {
             return {
@@ -91,7 +69,7 @@
              * Select the current component (apply a CSS class on its DOM).
              */
             select() {
-                this.selected  = true;
+                this.selected = true;
             },
 
             /**
@@ -99,14 +77,14 @@
              */
             deselect() {
                 this.selected = false;
-            }
+            },
         },
     };
 </script>
 
 <style lang="sass">
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../sass/partials/_vars.scss";
+    @import "../../../sass/partials/_mixins.scss";
 
     .song-item {
         border-bottom: 1px solid $color2ndBgr;
@@ -115,23 +93,12 @@
             background: rgba(255, 255, 255, .05);
         }
 
-        .time {
+        .time, .track-number {
             color: $color2ndText;
         }
 
         .title {
             min-width: 192px;
-            padding: 0;
-
-            span {
-                display: inline-block;
-                padding: 8px;
-
-                &.play-count {
-                    background: rgba(255, 255, 255, 0.08);
-                    white-space: nowrap;
-                }
-            }
         }
 
         .play {
@@ -149,21 +116,6 @@
 
         &.playing {
             color: $colorHighlight;
-        }
-
-        @media only screen and (max-device-width : 768px) {
-            .title {
-                padding: 0;
-
-                span {
-                    display: inline;
-                    padding: 0;
-
-                    &.play-count {
-                        background: none;
-                    }
-                }
-            }
         }
     }
 </style>

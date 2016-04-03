@@ -4,30 +4,30 @@
             <span class="overview">
                 <img :src="artist.image" width="64" height="64" class="cover">
                 {{ artist.name }}
-                <i class="fa fa-angle-down toggler" 
-                    v-show="isPhone && !showingControls" 
+                <i class="fa fa-angle-down toggler"
+                    v-show="isPhone && !showingControls"
                     @click="showingControls = true"></i>
-                <i class="fa fa-angle-up toggler" 
-                    v-show="isPhone && showingControls" 
+                <i class="fa fa-angle-up toggler"
+                    v-show="isPhone && showingControls"
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
                     {{ artist.albums.length }} {{ artist.albums.length | pluralize 'album' }}
                     •
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
-                    • 
+                    •
                     {{ meta.totalLength }}
                 </span>
             </span>
 
             <div class="buttons" v-show="!isPhone || showingControls">
-                <button class="play-shuffle" @click.prevent="shuffle" v-if="selectedSongs.length < 2">
+                <button class="play-shuffle btn btn-orange" @click.prevent="shuffle" v-if="selectedSongs.length < 2">
                     <i class="fa fa-random"></i> All
                 </button>
-                <button class="play-shuffle" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
+                <button class="play-shuffle btn btn-orange" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
                     <i class="fa fa-random"></i> Selected
                 </button>
-                <button class="add-to" @click.prevent="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
+                <button class="btn btn-green" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
                     {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
                 </button>
 
@@ -55,6 +55,20 @@
                 isPhone: isMobile.phone,
                 showingControls: false,
             };
+        },
+
+        watch: {
+            /**
+             * Watch the artist's album count.
+             * If this is changed to 0, the user has edit the songs by this artist
+             * and move all of them to another artist (thus delete this artist entirely).
+             * We should then go back to the artist list.
+             */
+            'artist.albums.length': function (newVal) {
+                if (!newVal) {
+                    this.$root.loadMainView('artists');
+                }
+            },
         },
 
         events: {
@@ -85,8 +99,8 @@
 </script>
 
 <style lang="sass" scoped>
-    @import "resources/assets/sass/partials/_vars.scss";
-    @import "resources/assets/sass/partials/_mixins.scss";
+    @import "../../../../sass/partials/_vars.scss";
+    @import "../../../../sass/partials/_mixins.scss";
 
     #artistWrapper {
         button.play-shuffle {
@@ -100,7 +114,7 @@
                 position: relative;
                 padding-left: 84px;
 
-                @media only screen and (max-device-width : 768px) {
+                @media only screen and (max-width : 768px) {
                     padding-left: 0;
                 }
             }
@@ -110,7 +124,7 @@
                 left: 0;
                 top: -7px;
 
-                @media only screen and (max-device-width : 768px) {
+                @media only screen and (max-width : 768px) {
                     display: none;
                 }
             }

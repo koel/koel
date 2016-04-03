@@ -1,14 +1,15 @@
 import Vue from 'vue';
 import ls from './services/ls';
+import NProgress from 'nprogress';
 
-var app = new Vue(require('./app.vue'));
+const app = new Vue(require('./app.vue'));
 
 Vue.config.debug = false;
 Vue.use(require('vue-resource'));
 Vue.http.options.root = '/api';
 Vue.http.interceptors.push({
     request(r) {
-        var token = ls.get('jwt-token');
+        const token = ls.get('jwt-token');
 
         if (token) {
             Vue.http.headers.common.Authorization = `Bearer ${token}`;
@@ -18,6 +19,8 @@ Vue.http.interceptors.push({
     },
 
     response(r) {
+        NProgress.done();
+
         if (r.status === 400 || r.status === 401) {
             if (r.request.method !== 'POST' && r.request.url !== 'me') {
                 // This is not a failed login. Log out then.

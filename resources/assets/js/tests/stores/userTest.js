@@ -15,7 +15,7 @@ describe('stores/user', () => {
 
     describe('#all', () => {
         it('correctly returns all users', () => {
-            userStore.all().should.equal(data.users);
+            userStore.all.should.equal(data.users);
         });
     });
 
@@ -27,19 +27,19 @@ describe('stores/user', () => {
 
     describe('#current', () => {
         it('correctly gets the current user', () => {
-            userStore.current().id.should.equal(1);
+            userStore.current.id.should.equal(1);
         });
 
         it('correctly sets the current user', () => {
-            userStore.current(data.users[1]);
-            userStore.state.current.id.should.equal(2);
+            userStore.current = data.users[1];
+            userStore.current.id.should.equal(2);
         });
     });
 
     describe('#setAvatar', () => {
         it('correctly sets the current user’s avatar', () => {
             userStore.setAvatar();
-            userStore.current().avatar.should.equal('https://www.gravatar.com/avatar/b9611f1bba1aacbe6f5de5856695a202?s=256');
+            userStore.current.avatar.should.equal('https://www.gravatar.com/avatar/b9611f1bba1aacbe6f5de5856695a202?s=256');
         });
 
         it('correctly sets a user’s avatar', () => {
@@ -49,7 +49,7 @@ describe('stores/user', () => {
     });
 
     describe('#updateProfile', () => {
-        
+
     });
 
     describe('#store', () => {
