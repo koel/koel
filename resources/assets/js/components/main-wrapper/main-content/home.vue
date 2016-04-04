@@ -4,7 +4,7 @@
             <span>{{ greeting }}</span>
         </h1>
 
-        <div class="main-scroll-wrap">
+        <div class="main-scroll-wrap" v-el:wrapper @scroll="scrolling">
             <div class="top-sections">
                 <section v-show="topSongs.length">
                     <h1>Most Played Songs</h1>
@@ -76,6 +76,8 @@
                     <span class="item filler" v-for="n in 3"></span>
                 </div>
             </section>
+
+            <to-top-button :showing="showBackToTop"></to-top-button>
         </div>
     </section>
 </template>
@@ -90,12 +92,18 @@
     import userStore from '../../../stores/user';
     import queueStore from '../../../stores/queue';
     import preferenceStore from '../../../stores/preference';
+    import infiniteScroll from '../../../mixins/infinite-scroll';
 
     import albumItem from '../../shared/album-item.vue';
     import artistItem from '../../shared/artist-item.vue';
 
     export default {
         components: { albumItem, artistItem },
+        /**
+         * We're not really using infinite scrolling here, but only the handy "Back to Top" button.
+         * @type {Array}
+         */
+        mixins: [infiniteScroll],
 
         data () {
             return {

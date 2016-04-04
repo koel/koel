@@ -12,6 +12,8 @@
                 | limitBy numOfItems" :album="item"></album-item>
 
             <span class="item filler" v-for="n in 6"></span>
+
+            <to-top-button :showing="showBackToTop"></to-top-button>
         </div>
     </section>
 </template>

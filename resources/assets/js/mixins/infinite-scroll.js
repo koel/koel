@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+import toTopButton from '../components/shared/to-top-button.vue';
+
 /**
  * Add a "infinite scroll" functionality to any component using this mixin.
  * Such a component should:
@@ -8,10 +10,13 @@ import $ from 'jquery';
  * - have the array of all objects named as `items`, either as data, computed, or a prop
  */
 export default {
+    components: { toTopButton },
+
     data() {
         return {
             numOfItems: 30, // Number of currently loaded and displayed items
             perPage: 30,    // Number of items to be loaded per "page"
+            showBackToTop: false,
         };
     },
 
@@ -24,6 +29,8 @@ export default {
             if ($wrapper.scrollTop() + $wrapper.innerHeight() >= $wrapper[0].scrollHeight - 32) {
                 this.displayMore();
             }
+
+            this.showBackToTop = $wrapper.scrollTop() > 64;
         },
 
         /**
@@ -32,11 +39,20 @@ export default {
         displayMore() {
             this.numOfItems += this.perPage;
         },
+
+        /**
+         * Scroll to top fo the wrapper.
+         */
+        scrollToTop() {
+            $(this.$els.wrapper).animate({ scrollTop: 0}, 500);
+            this.showBackToTop = false;
+        }
     },
 
     events: {
         'koel:teardown': function () {
             this.numOfItems = 30;
+            this.showBackToTop = false;
         },
     },
 };

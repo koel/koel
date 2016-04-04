@@ -59,6 +59,7 @@
         </table>
 
         <song-menu v-ref:context-menu :songs="selectedSongs"></song-menu>
+        <to-top-button :showing="showBackToTop"></to-top-button>
     </div>
 </template>
 

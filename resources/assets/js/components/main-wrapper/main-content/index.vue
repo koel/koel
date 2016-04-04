@@ -173,5 +173,14 @@
                 }
             }
         }
+
+        @media only screen and (max-width: 375px) {
+            > section {
+                // Leave some space for the "Back to top" button
+                .main-scroll-wrap {
+                    padding-bottom: 64px;
+                }
+            }
+        }
     }
 </style>
