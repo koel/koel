@@ -40,7 +40,7 @@ export default {
     },
 
     /**
-     * All queued songs.
+     * Get all queued songs.
      *
      * @return {Array.<Object>}
      */
@@ -49,12 +49,21 @@ export default {
     },
 
     /**
+     * Set all queued songs.
+     *
+     * @param {Array.<Object>}
+     */
+    set all(songs) {
+        this.state.songs = songs;
+    },
+
+    /**
      * The first song in the queue.
      *
      * @return {?Object}
      */
     get first() {
-        return head(this.state.songs);
+        return head(this.all);
     },
 
     /**
@@ -63,7 +72,7 @@ export default {
      * @return {?Object}
      */
     get last() {
-        return last(this.state.songs);
+        return last(this.all);
     },
 
     /**
@@ -89,13 +98,9 @@ export default {
         songs = [].concat(songs);
 
         if (replace) {
-            this.state.songs = songs;
+            this.all = songs;
         } else {
-            if (toTop) {
-                this.state.songs = union(songs, this.state.songs);
-            } else {
-                this.state.songs = union(this.state.songs, songs);
-            }
+            this.all = toTop ? union(songs, this.all) : union(this.all, songs);
         }
     },
 
@@ -107,12 +112,12 @@ export default {
     queueAfterCurrent(songs) {
         songs = [].concat(songs);
 
-        if (!this.state.current || !this.state.songs.length) {
+        if (!this.current || !this.all.length) {
             return this.queue(songs);
         }
 
-        const head = this.state.songs.splice(0, this.indexOf(this.state.current) + 1);
-        this.state.songs = head.concat(songs, this.state.songs);
+        const head = this.all.splice(0, this.indexOf(this.current) + 1);
+        this.all = head.concat(songs, this.all);
     },
 
     /**
@@ -121,7 +126,7 @@ export default {
      * @param  {Object|String|Array.<Object>} songs The song(s) to unqueue
      */
     unqueue(songs) {
-        this.state.songs = difference(this.state.songs, [].concat(songs));
+        this.all = difference(this.all, [].concat(songs));
     },
 
     /**
@@ -134,8 +139,8 @@ export default {
         const $targetIndex = this.indexOf(target);
 
         songs.forEach(song => {
-            this.state.songs.splice(this.indexOf(song), 1);
-            this.state.songs.splice($targetIndex, 0, song);
+            this.all.splice(this.indexOf(song), 1);
+            this.all.splice($targetIndex, 0, song);
         });
     },
 
@@ -145,8 +150,8 @@ export default {
      * @param {?Function} cb The function to execute after clearing
      */
     clear(cb = null) {
-        this.state.songs = [];
-        this.state.current = null;
+        this.all = [];
+        this.current = null;
 
         if (cb) {
             cb();
@@ -161,7 +166,7 @@ export default {
      * @return {?Integer}
      */
     indexOf(song) {
-        return this.state.songs.indexOf(song);
+        return this.all.indexOf(song);
     },
 
     /**
@@ -171,12 +176,12 @@ export default {
      */
     get next() {
         if (!this.current) {
-            return first(this.state.songs);
+            return first(this.all);
         }
 
-        const idx = map(this.state.songs, 'id').indexOf(this.current.id) + 1;
+        const idx = map(this.all, 'id').indexOf(this.current.id) + 1;
 
-        return idx >= this.state.songs.length ? null : this.state.songs[idx];
+        return idx >= this.all.length ? null : this.all[idx];
     },
 
     /**
@@ -186,12 +191,12 @@ export default {
      */
     get previous() {
         if (!this.current) {
-            return last(this.state.songs);
+            return last(this.all);
         }
 
-        const idx = map(this.state.songs, 'id').indexOf(this.current.id) - 1;
+        const idx = map(this.all, 'id').indexOf(this.current.id) - 1;
 
-        return idx < 0 ? null : this.state.songs[idx];
+        return idx < 0 ? null : this.all[idx];
     },
 
     /**
@@ -222,6 +227,6 @@ export default {
      * @return {Array.<Object>} The shuffled array of song objects
      */
     shuffle() {
-        return (this.state.songs = shuffle(this.state.songs));
+        return (this.all = shuffle(this.all));
     },
 };
