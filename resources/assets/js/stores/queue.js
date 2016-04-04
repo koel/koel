@@ -5,7 +5,8 @@ import {
     union,
     difference,
     map,
-    shuffle
+    shuffle,
+    first
 } from 'lodash';
 
 export default {
