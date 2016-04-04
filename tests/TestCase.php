@@ -78,6 +78,6 @@ abstract class TestCase extends IlluminateTestCase
             factory(Song::class, rand(7, 15))->create([
                 'album_id' => $album->id,
             ]);
-        };
+        }
     }
 }
