@@ -4,7 +4,6 @@ import {
     includes,
     union,
     difference,
-    indexOf,
     map,
     shuffle
 } from 'lodash';
@@ -162,7 +161,7 @@ export default {
      * @return {?Integer}
      */
     indexOf(song) {
-        return indexOf(this.state.songs, song);
+        return this.state.songs.indexOf(song);
     },
 
     /**
