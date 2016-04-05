@@ -37,12 +37,12 @@ describe('stores/album', () => {
         });
     });
 
-    describe('#append', () => {
+    describe('#add', () => {
         beforeEach(() => {
-            albumStore.append(cloneDeep(singleAlbum));
+            albumStore.add(cloneDeep(singleAlbum));
         });
 
-        it('correctly appends a new album into the state', () => {
+        it('correctly adds a new album into the state', () => {
             last(albumStore.state.albums).id.should.equal(9999);
         });
 

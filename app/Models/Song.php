@@ -237,9 +237,9 @@ class Song extends Model
      */
     public function getLyricsAttribute($value)
     {
-        // We don't use nl2br() here, because the function actually preserve linebreaks -
-        // it just _appends_ a "<br />" after each of them. This would case our client
-        // implementation of br2nl fails with duplicated linebreaks.
+        // We don't use nl2br() here, because the function actually preserves linebreaks -
+        // it just _appends_ a "<br />" after each of them. This would cause our client
+        // implementation of br2nl to fail with duplicated linebreaks.
         return str_replace(["\r\n", "\r", "\n"], '<br />', $value);
     }
 }

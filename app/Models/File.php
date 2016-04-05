@@ -62,12 +62,7 @@ class File
      */
     public function __construct($path, $getID3 = null)
     {
-        if ($path instanceof SplFileInfo) {
-            $this->splFileInfo = $path;
-        } else {
-            $this->splFileInfo = new SplFileInfo($path);
-        }
-
+        $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
         $this->setGetID3($getID3);
         $this->mtime = $this->splFileInfo->getMTime();
         $this->path = $this->splFileInfo->getPathname();

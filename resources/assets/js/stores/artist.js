@@ -27,14 +27,14 @@ export default {
      * @param  {Array.<Object>} artists The array of artists we got from the server.
      */
     init(artists) {
-        this.state.artists = artists;
+        this.all = artists;
 
         // Traverse through artists array to get the cover and number of songs for each.
-        each(this.state.artists, artist => {
+        each(this.all, artist => {
             this.setupArtist(artist);
         });
 
-        albumStore.init(this.state.artists);
+        albumStore.init(this.all);
     },
 
     setupArtist(artist) {
@@ -46,29 +46,67 @@ export default {
         return artist;
     },
 
+    /**
+     * Get all artists.
+     *
+     * @return {Array.<Object>}
+     */
     get all() {
         return this.state.artists;
     },
 
+    /**
+     * Set all artists.
+     *
+     * @param  {Array.<Object>} value
+     */
+    set all(value) {
+        this.state.artists = value;
+    },
+
+    /**
+     * Get an artist object by its ID.
+     *
+     * @param  {Number} id
+     */
     byId(id) {
         return find(this.all, { id });
     },
 
     /**
-     * Appends a new artist into the current collection.
+     * Adds an artist/artists into the current collection.
      *
-     * @param  {Object} artist
+     * @param  {Array.<Object>|Object} artists
      */
-    append(artist) {
-        this.state.artists.push(this.setupArtist(artist));
+    add(artists) {
+        artists = [].concat(artists);
+        each(artists, a => this.setupArtist(a));
+
+        this.all = union(this.all, artists);
     },
 
+    /**
+     * Remove artist(s) from the store.
+     *
+     * @param  {Array.<Object>|Object} artists
+     */
+    remove(artists) {
+        this.all = difference(this.all, [].concat(artists));
+    },
+
+    /**
+     * Add album(s) into an artist.
+     *
+     * @param {Object} artist
+     * @param {Array.<Object>|Object} albums
+     *
+     */
     addAlbumsIntoArtist(artist, albums) {
         albums = [].concat(albums);
 
         artist.albums = union(artist.albums ? artist.albums : [], albums);
 
-        albums.forEach(album => {
+        each(albums, album => {
             album.artist_id = artist.id;
             album.artist = artist;
         });
@@ -99,15 +137,6 @@ export default {
     },
 
     /**
-     * Remove artist(s) from the store.
-     *
-     * @param  {Array.<Object>|Object} artists
-     */
-    remove(artists) {
-        this.state.artists = difference(this.state.artists, [].concat(artists));
-    },
-
-    /**
      * Get all songs performed by an artist.
      *
      * @param {Object} artist
@@ -130,23 +159,20 @@ export default {
      * @return {String}
      */
     getImage(artist) {
-        // If the artist already has a proper image, just return it.
-        if (artist.image) {
-            return artist.image;
+        if (!artist.image) {
+            // Try to get an image from one of the albums.
+            artist.image = config.unknownCover;
+
+            artist.albums.every(album => {
+                // If there's a "real" cover, use it.
+                if (album.image !== config.unknownCover) {
+                    artist.image = album.cover;
+
+                    // I want to break free.
+                    return false;
+                }
+            });
         }
-
-        // Otherwise, we try to get an image from one of their albums.
-        artist.image = config.unknownCover;
-
-        artist.albums.every(album => {
-            // If there's a "real" cover, use it.
-            if (album.image !== config.unknownCover) {
-                artist.image = album.cover;
-
-                // I want to break free.
-                return false;
-            }
-        });
 
         return artist.image;
     },
@@ -160,7 +186,7 @@ export default {
      */
     getMostPlayed(n = 6) {
         // Only non-unknown artists with actually play count are applicable.
-        const applicable = filter(this.state.artists, artist => {
+        const applicable = filter(this.all, artist => {
             return artist.playCount && artist.id !== 1;
         });
 

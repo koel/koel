@@ -23,8 +23,13 @@ export default {
         return this.state.songs;
     },
 
-    clear() {
-        this.state.songs = [];
+    /**
+     * Set all favorite'd songs.
+     *
+     * @param  {Array.<Object>} value
+     */
+    set all(value) {
+        this.state.songs = value;
     },
 
     /**
@@ -53,21 +58,28 @@ export default {
     },
 
     /**
-     * Add a song into the store.
+     * Add a song/songs into the store.
      *
-     * @param {Object} song
+     * @param {Array.<Object>|Object} songs
      */
-    add(song) {
-        this.state.songs.push(song);
+    add(songs) {
+        this.all = union(this.all, [].concat(songs));
     },
 
     /**
-     * Remove a song from the store.
+     * Remove a song/songs from the store.
      *
-     * @param {Object} song
+     * @param {Array.<Object>|Object} songs
      */
-    remove(song) {
-        this.state.songs = difference(this.state.songs, [song]);
+    remove(songs) {
+        this.all = difference(this.all, [].concat(songs));
+    },
+
+    /**
+     * Remove all favorites.
+     */
+    clear() {
+        this.all = [];
     },
 
     /**
@@ -80,7 +92,7 @@ export default {
         // Don't wait for the HTTP response to update the status, just set them to Liked right away.
         // This may cause a minor problem if the request fails somehow, but do we care?
         each(songs, song => song.liked = true);
-        this.state.songs = union(this.state.songs, songs);
+        this.add(songs);
 
         http.post('interaction/batch/like', { songs: map(songs, 'id') }, () => {
             if (cb) {
@@ -99,7 +111,7 @@ export default {
         // Don't wait for the HTTP response to update the status, just set them to Unliked right away.
         // This may cause a minor problem if the request fails somehow, but do we care?
         each(songs, song => song.liked = false);
-        this.state.songs = difference(this.state.songs, songs);
+        this.remove(songs);
 
         http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, () => {
             if (cb) {

@@ -19,9 +19,8 @@ export default {
     },
 
     init(playlists) {
-        this.state.playlists = playlists;
-
-        each(this.state.playlists, this.getSongs);
+        this.all = playlists;
+        each(this.all, this.getSongs);
     },
 
     /**
@@ -34,12 +33,39 @@ export default {
     },
 
     /**
+     * Set all playlists.
+     *
+     * @param  {Array.<Object>} value
+     */
+    set all(value) {
+        this.state.playlists = value;
+    },
+
+    /**
      * Get all songs in a playlist.
      *
      * return {Array.<Object>}
      */
     getSongs(playlist) {
         return (playlist.songs = songStore.byIds(playlist.songs));
+    },
+
+    /**
+     * Add a playlist/playlists into the store.
+     *
+     * @param {Array.<Object>|Object} playlists
+     */
+    add(playlists) {
+        this.all = union(this.all, [].concat(playlists));
+    },
+
+    /**
+     * Remove a playlist/playlists from the store.
+     *
+     * @param  {Array.<Object>|Object} playlist
+     */
+    remove(playlists) {
+        this.all = difference(this.all, [].concat(playlists));
     },
 
     /**
@@ -61,7 +87,7 @@ export default {
             const playlist = response.data;
             playlist.songs = songs;
             this.getSongs(playlist);
-            this.state.playlists.push(playlist);
+            this.add(playlist);
 
             if (cb) {
                 cb();
@@ -79,7 +105,7 @@ export default {
         NProgress.start();
 
         http.delete(`playlist/${playlist.id}`, {}, () => {
-            this.state.playlists = without(this.state.playlists, playlist);
+            this.remove(playlist);
 
             if (cb) {
                 cb();

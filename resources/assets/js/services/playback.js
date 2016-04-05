@@ -1,12 +1,12 @@
 import { shuffle } from 'lodash';
 import $ from 'jquery';
+import plyr from 'plyr';
 
 import queueStore from '../stores/queue';
 import songStore from '../stores/song';
 import artistStore from '../stores/artist';
 import preferenceStore from '../stores/preference';
 import config from '../config';
-import plyr from 'plyr';
 
 export default {
     app: null,

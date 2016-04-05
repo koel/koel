@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { without, map, take, remove, orderBy } from 'lodash';
+import { without, map, take, remove, orderBy, each } from 'lodash';
 
 import http from '../services/http';
 import utils from '../services/utils';
@@ -39,9 +39,9 @@ export default {
      */
     init(albums) {
         // Iterate through the albums. With each, add its songs into our master song list.
-        this.state.songs = albums.reduce((songs, album) => {
+        this.all = albums.reduce((songs, album) => {
             // While doing so, we populate some other information into the songs as well.
-            album.songs.forEach(song => {
+            each(album.songs, song => {
                 song.fmtLength = utils.secondsToHis(song.length);
 
                 // Manually set these additional properties to be reactive
@@ -67,7 +67,7 @@ export default {
     initInteractions(interactions) {
         favoriteStore.clear();
 
-        interactions.forEach(interaction => {
+        each(interactions, interaction => {
             const song = this.byId(interaction.song_id);
 
             if (!song) {
@@ -110,6 +110,15 @@ export default {
      */
     get all() {
         return this.state.songs;
+    },
+
+    /**
+     * Set all songs.
+     *
+     * @param  {Array.<Object>} value
+     */
+    set all(value) {
+        this.state.songs = value;
     },
 
     /**
@@ -203,7 +212,7 @@ export default {
 
             // Convert the duration into i:s
             if (data.album_info && data.album_info.tracks) {
-                data.album_info.tracks.forEach(track => track.fmtLength = utils.secondsToHis(track.length));
+                each(data.album_info.tracks, track => track.fmtLength = utils.secondsToHis(track.length));
             }
 
             // If the album cover is not in a nice form, don't use it.
@@ -261,9 +270,7 @@ export default {
             data,
             songs: map(songs, 'id'),
         }, response => {
-            response.data.forEach(song => {
-               this.syncUpdatedSong(song);
-            });
+            each(response.data, song => this.syncUpdatedSong(song));
 
             if (successCb) {
                 successCb();
@@ -327,7 +334,7 @@ export default {
                 // - Add the new album into our collection
                 // - Add the song into it
                 albumStore.addSongsIntoAlbum(updatedSong.album, originalSong);
-                albumStore.append(updatedSong.album);
+                albumStore.add(updatedSong.album);
             }
 
             if (updatedSong.album.artist.id === originalArtistId) { // case 2.a
@@ -345,7 +352,7 @@ export default {
                     // (there's no "new artist with existing album" in our system).
                     // - Add the new artist into our collection
                     artistStore.addAlbumsIntoArtist(updatedSong.album.artist, updatedSong.album);
-                    artistStore.append(updatedSong.album.artist);
+                    artistStore.add(updatedSong.album.artist);
                 }
             }
 
@@ -395,7 +402,7 @@ export default {
      * @return {Array.<Object>}
      */
     getMostPlayed(n = 10) {
-        const songs = take(orderBy(this.state.songs, 'playCount', 'desc'), n);
+        const songs = take(orderBy(this.all, 'playCount', 'desc'), n);
 
         // Remove those with playCount=0
         remove(songs, song => !song.playCount);

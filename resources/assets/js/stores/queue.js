@@ -1,6 +1,7 @@
 import {
     head,
     last,
+    each,
     includes,
     union,
     difference,
@@ -139,7 +140,7 @@ export default {
     move(songs, target) {
         const $targetIndex = this.indexOf(target);
 
-        songs.forEach(song => {
+        each(songs, song => {
             this.all.splice(this.indexOf(song), 1);
             this.all.splice($targetIndex, 0, song);
         });

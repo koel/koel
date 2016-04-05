@@ -21,11 +21,11 @@ export default {
      * @param {Object}          currentUser The current user.
      */
     init(users, currentUser) {
-        this.state.users = users;
-        this.state.current = currentUser;
+        this.all = users;
+        this.current = currentUser;
 
         // Set the avatar for each of the users…
-        each(this.state.users, this.setAvatar);
+        each(this.all, this.setAvatar);
 
         // …and the current user as well.
         this.setAvatar();
@@ -41,6 +41,15 @@ export default {
     },
 
     /**
+     * Set all users.
+     *
+     * @param  {Array.<Object>} value
+     */
+    set all(value) {
+        this.state.users = value;
+    },
+
+    /**
      * Get a user by his ID
      *
      * @param  {Integer} id
@@ -48,7 +57,7 @@ export default {
      * @return {Object}
      */
     byId(id) {
-        return find(this.state.users, { id });
+        return find(this.all, { id });
     },
 
     /**
@@ -155,7 +164,7 @@ export default {
             const user = response.data;
 
             this.setAvatar(user);
-            this.state.users.unshift(user);
+            this.all.unshift(user);
 
             if (cb) {
                 cb();
@@ -195,7 +204,7 @@ export default {
         NProgress.start();
 
         http.delete(`user/${user.id}`, {}, () => {
-            this.state.users = without(this.state.users, user);
+            this.all = without(this.all, user);
 
             // Mama, just killed a man
             // Put a gun against his head

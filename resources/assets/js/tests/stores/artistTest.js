@@ -34,10 +34,10 @@ describe('stores/artist', () => {
         });
     });
 
-    describe('#append', () => {
-        beforeEach(() => artistStore.append(cloneDeep(singleArtist)));
+    describe('#add', () => {
+        beforeEach(() => artistStore.add(cloneDeep(singleArtist)));
 
-        it('correctly appends an artist', () => {
+        it('correctly adds an artist', () => {
             last(artistStore.state.artists).name.should.equal('John Cena');
         });
     });

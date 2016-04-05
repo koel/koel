@@ -29,7 +29,7 @@ export default {
      */
     init(artists) {
         // Traverse through the artists array and add their albums into our master album list.
-        this.state.albums = reduce(artists, (albums, artist) => {
+        this.all = reduce(artists, (albums, artist) => {
             // While we're doing so, for each album, we get its length
             // and keep a back reference to the artist too.
             each(artist.albums, album => {
@@ -40,7 +40,7 @@ export default {
         }, []);
 
         // Then we init the song store.
-        songStore.init(this.state.albums);
+        songStore.init(this.all);
     },
 
     setupAlbum(album, artist) {
@@ -59,6 +59,15 @@ export default {
      */
     get all() {
         return this.state.albums;
+    },
+
+    /**
+     * Set all albums.
+     *
+     * @param  {Array.<Object>} value
+     */
+    set all(value) {
+        this.state.albums = value;
     },
 
     byId(id) {
@@ -81,13 +90,18 @@ export default {
     },
 
     /**
-     * Appends a new album into the current collection.
+     * Add new album/albums into the current collection.
      *
-     * @param  {Object} album
+     * @param  {Array.<Object>|Object} albums
      */
-    append(album) {
-        this.state.albums.push(this.setupAlbum(album, album.artist));
-        album.playCount = reduce(album.songs, (count, song) => count + song.playCount, 0);
+    add(albums) {
+        albums = [].concat(albums);
+        each(albums, a => {
+            this.setupAlbum(a, a.artist)
+            a.playCount = reduce(a.songs, (count, song) => count + song.playCount, 0);
+        });
+
+        this.all = union(this.all, albums);
     },
 
     /**
@@ -101,7 +115,7 @@ export default {
 
         album.songs = union(album.songs ? album.songs : [], songs);
 
-        songs.forEach(song => {
+        each(songs, song => {
             song.album_id = album.id;
             song.album = album;
         });
@@ -140,10 +154,10 @@ export default {
      */
     remove(albums) {
         albums = [].concat(albums);
-        this.state.albums = difference(this.state.albums, albums);
+        this.all = difference(this.all, albums);
 
         // Remove from the artist as well
-        albums.forEach(album => {
+        each(albums, album => {
             artistStore.removeAlbumsFromArtist(album.artist, album);
         });
     },
@@ -157,7 +171,7 @@ export default {
      */
     getMostPlayed(n = 6) {
         // Only non-unknown albums with actually play count are applicable.
-        const applicable = filter(this.state.albums, album => {
+        const applicable = filter(this.all, album => {
             return album.playCount && album.id !== 1;
         });
 
