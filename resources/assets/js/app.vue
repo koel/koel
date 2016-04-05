@@ -35,7 +35,7 @@
     import queueStore from './stores/queue';
     import songStore from './stores/song';
     import userStore from './stores/user';
-    import preferenceStore from './stores/preference';
+    import preferences from './stores/preference';
     import playback from './services/playback';
     import focusDirective from './directives/focus';
     import ls from './services/ls';
@@ -48,7 +48,6 @@
 
         data() {
             return {
-                prefs: preferenceStore.state,
                 authenticated: false,
             };
         },
@@ -88,7 +87,7 @@
 
                     // To confirm or not to confirm closing, it's a question.
                     window.onbeforeunload = e => {
-                        if (!this.prefs.confirmClosing) {
+                        if (!preferences.confirmClosing) {
                             return;
                         }
 
@@ -161,10 +160,10 @@
              * Request for notification permission if it's not provided and the user is OK with notifs.
              */
             requestNotifPermission() {
-                if (window.Notification && this.prefs.notify && Notification.permission !== 'granted') {
+                if (window.Notification && preferences.notify && Notification.permission !== 'granted') {
                     Notification.requestPermission(result => {
                         if (result === 'denied') {
-                            preferenceStore.set('notify', false);
+                            preferences.notify = false;
                         }
                     });
                 }

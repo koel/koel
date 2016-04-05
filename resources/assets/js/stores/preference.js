@@ -1,4 +1,4 @@
-import { extend, has } from 'lodash';
+import { extend, has, each } from 'lodash';
 
 import userStore from './user';
 import ls from '../services/ls';
@@ -32,6 +32,23 @@ export default {
 
         this.storeKey = `preferences_${user.id}`;
         extend(this.state, ls.get(this.storeKey, this.state));
+        this.setupProxy();
+    },
+
+    /**
+     * Proxy the state properties, so that each can be directly accessed using the key.
+     */
+    setupProxy() {
+        each(Object.keys(this.state), key => {
+            Object.defineProperty(this, key, {
+                get: () => this.state[key],
+                set: (value) => {
+                    this.state[key] = value;
+                    this.save();
+                },
+                configurable: true,
+            });
+        });
     },
 
     set(key, val) {

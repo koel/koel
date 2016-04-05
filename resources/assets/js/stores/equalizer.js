@@ -1,4 +1,4 @@
-import preferenceStore from './preference';
+import preferences from './preference';
 
 export default {
     presets: [
@@ -80,7 +80,7 @@ export default {
      * @return {Object}
      */
     get() {
-        return preferenceStore.get('equalizer');
+        return preferences.equalizer;
     },
 
     /**
@@ -90,6 +90,6 @@ export default {
      * @param  {Array.<Number>} gains  The band's gain value (dB)
      */
     set(preamp, gains) {
-        preferenceStore.set('equalizer', { preamp, gains });
+        preferences.equalizer = { preamp, gains };
     },
 };

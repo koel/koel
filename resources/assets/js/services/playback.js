@@ -5,7 +5,7 @@ import plyr from 'plyr';
 import queueStore from '../stores/queue';
 import songStore from '../stores/song';
 import artistStore from '../stores/artist';
-import preferenceStore from '../stores/preference';
+import preferences from '../stores/preference';
 import config from '../config';
 
 export default {
@@ -49,7 +49,7 @@ export default {
         document.querySelector('.plyr').addEventListener('ended', e => {
             songStore.scrobble(queueStore.current);
 
-            if (preferenceStore.get('repeatMode') === 'REPEAT_ONE') {
+            if (preferences.repeatMode === 'REPEAT_ONE') {
                 this.restart();
 
                 return;
@@ -88,7 +88,7 @@ export default {
         });
 
         // On init, set the volume to the value found in the local storage.
-        this.setVolume(preferenceStore.get('volume'));
+        this.setVolume(preferences.volume);
 
         // Init the equalizer if supported.
         this.app.$broadcast('equalizer:init', this.player.media);
@@ -152,7 +152,7 @@ export default {
         songStore.registerPlay(song);
 
         // Show the notification if we're allowed to
-        if (!window.Notification || !preferenceStore.get('notify')) {
+        if (!window.Notification || !preferences.notify) {
             return;
         }
 
@@ -185,7 +185,7 @@ export default {
             return next;
         }
 
-        if (preferenceStore.get('repeatMode') === 'REPEAT_ALL') {
+        if (preferences.repeatMode === 'REPEAT_ALL') {
             return queueStore.first;
         }
     },
@@ -203,7 +203,7 @@ export default {
             return prev;
         }
 
-        if (preferenceStore.get('repeatMode') === 'REPEAT_ALL') {
+        if (preferences.repeatMode === 'REPEAT_ALL') {
             return queueStore.last;
         }
     },
@@ -213,13 +213,13 @@ export default {
      * The selected mode will be stored into local storage as well.
      */
     changeRepeatMode() {
-        let idx = this.repeatModes.indexOf(preferenceStore.get('repeatMode')) + 1;
+        let idx = this.repeatModes.indexOf(preferences.repeatMode) + 1;
 
         if (idx >= this.repeatModes.length) {
             idx = 0;
         }
 
-        preferenceStore.set('repeatMode', this.repeatModes[idx]);
+        preferences.repeatMode = this.repeatModes[idx];
     },
 
     /**
@@ -237,7 +237,7 @@ export default {
 
         const prev = this.previous;
 
-        if (!prev && preferenceStore.get('repeatMode') === 'NO_REPEAT') {
+        if (!prev && preferences.repeatMode === 'NO_REPEAT') {
             this.stop();
 
             return;
@@ -253,7 +253,7 @@ export default {
     playNext() {
         const next = this.next;
 
-        if (!next && preferenceStore.get('repeatMode') === 'NO_REPEAT') {
+        if (!next && preferences.repeatMode === 'NO_REPEAT') {
             //  Nothing lasts forever, even cold November rain.
             this.stop();
 
@@ -273,7 +273,7 @@ export default {
         this.player.setVolume(volume);
 
         if (persist) {
-            preferenceStore.set('volume', volume);
+            preferences.volume = volume;
         }
 
         this.$volumeInput.val(volume);
@@ -291,11 +291,11 @@ export default {
      */
     unmute() {
         // If the saved volume is 0, we unmute to the default level (7).
-        if (preferenceStore.get('volume') === '0' || preferenceStore.get('volume') === 0) {
-            preferenceStore.set('volume', 7);
+        if (preferences.volume === '0' || preferences.volume === 0) {
+            preferences.volume = 7;
         }
 
-        this.setVolume(preferenceStore.get('volume'));
+        this.setVolume(preferences.volume);
     },
 
     /**

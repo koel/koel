@@ -10,7 +10,7 @@
 </template>
 
 <script>
-    import preferenceStore from '../../stores/preference';
+    import preferences from '../../stores/preference';
     import isMobile from 'ismobilejs';
 
     export default {
@@ -29,13 +29,13 @@
 
         methods: {
             setMode(mode) {
-                preferenceStore.set(this.preferenceKey, this.mode = mode);
+                preferences[this.preferenceKey] = this.mode = mode;
             },
         },
 
         events: {
             'koel:ready': function () {
-                this.mode = preferenceStore.get(this.preferenceKey);
+                this.mode = preferences[this.preferenceKey];
 
                 // If the value is empty, we set a default mode.
                 // On mobile, the mode should be 'listing'.

@@ -19,12 +19,19 @@ describe('stores/preference', () => {
         it('correctly sets preferences', () => {
             preferenceStore.set('volume', 5);
             localStorage.get(`preferences_${user.id}`).volume.should.equal(5);
+
+            // Test the proxy
+            preferenceStore.volume = 6;
+            localStorage.get(`preferences_${user.id}`).volume.should.equal(6);
         });
     });
 
     describe("#get", () => {
         it('returns correct preference values', () => {
             preferenceStore.get('volume').should.equal(8);
+
+            // Test the proxy
+            preferenceStore.volume.should.equal(8);
         });
     });
 });

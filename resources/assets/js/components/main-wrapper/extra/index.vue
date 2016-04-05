@@ -1,5 +1,5 @@
 <template>
-    <section id="extra" :class="{ showing: prefs.showExtraPanel }">
+    <section id="extra" :class="{ showing: state.showExtraPanel }">
         <div class="tabs">
             <div class="header clear">
                 <a @click.prevent="currentView = 'lyrics'"
@@ -27,7 +27,7 @@
     import lyrics from './lyrics.vue';
     import artistInfo from './artist-info.vue';
     import albumInfo from './album-info.vue';
-    import preferenceStore from '../../../stores/preference';
+    import preferences from '../../../stores/preference';
     import songStore from '../../../stores/song';
 
     export default {
@@ -36,7 +36,7 @@
         data() {
             return {
                 song: songStore.stub,
-                prefs: preferenceStore.state,
+                state: preferences.state,
                 currentView: 'lyrics',
             };
         },
@@ -47,7 +47,7 @@
              * to/from the html tag.
              * Some element's CSS can then be controlled based on this class.
              */
-            'prefs.showExtraPanel': function (newVal) {
+            'state.showExtraPanel': function (newVal) {
                 if (newVal && !isMobile.any) {
                     $('html').addClass('with-extra-panel');
                 } else {
@@ -65,8 +65,7 @@
             if (isMobile.phone) {
                 // On a mobile device, we always hide the panel initially regardless of
                 // the saved preference.
-                this.prefs.showExtraPanel = false;
-                preferenceStore.save();
+                preferences.showExtraPanel = false;
             }
         },
 
@@ -85,7 +84,7 @@
             'main-content-view:load': function (view) {
                 // Hide the panel away if a main view is triggered on mobile.
                 if (isMobile.phone) {
-                    this.prefs.showExtraPanel = false;
+                    preferences.showExtraPanel = false;
                 }
 
                 return true;
