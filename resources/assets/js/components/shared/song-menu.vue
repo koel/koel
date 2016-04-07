@@ -19,7 +19,7 @@
                 <li @click="queueSongsToTop">Top of Queue</li>
                 <li class="separator"></li>
                 <li @click="addSongsToFavorite">Favorites</li>
-                <li class="separator"></li>
+                <li class="separator" v-show="playlistState.playlists.length"></li>
                 <li v-for="playlist in playlistState.playlists"
                     @click="addSongsToExistingPlaylist(playlist)"
                 >{{ playlist.name }}</li>
