@@ -30,6 +30,14 @@ export default {
         },
 
         /**
+         * Queue select songs after the current song.
+         */
+        queueSongsAfterCurrent() {
+            queueStore.queueAfterCurrent(this.songs);
+            this.close();
+        },
+
+        /**
          * Queue selected songs to bottom of queue.
          */
         queueSongsToBottom() {

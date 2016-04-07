@@ -15,6 +15,7 @@
         </li>
         <li class="has-sub">Add To
             <ul class="menu submenu">
+                <li @click="queueSongsAfterCurrent">After Current Song</li>
                 <li @click="queueSongsToBottom">Bottom of Queue</li>
                 <li @click="queueSongsToTop">Top of Queue</li>
                 <li class="separator"></li>

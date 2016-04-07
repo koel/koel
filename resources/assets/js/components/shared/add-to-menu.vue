@@ -3,6 +3,7 @@
         <p>Add {{ songs.length }} {{ songs.length | pluralize 'song' }} to</p>
 
         <ul>
+            <li v-if="mergedSettings.canQueue" @click="queueSongsAfterCurrent">After Current Song</li>
             <li v-if="mergedSettings.canQueue" @click="queueSongsToBottom">Bottom of Queue</li>
             <li v-if="mergedSettings.canQueue" @click="queueSongsToTop">Top of Queue</li>
             <li v-if="mergedSettings.canLike" @click="addSongsToFavorite">Favorites</li>
