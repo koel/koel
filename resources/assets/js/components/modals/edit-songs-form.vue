@@ -131,9 +131,7 @@
              * @return {boolean}
              */
             bySameArtist() {
-                return every(this.songs, song => {
-                    return song.album.artist.id === this.songs[0].album.artist.id;
-                });
+                return every(this.songs, song => song.album.artist.id === this.songs[0].album.artist.id);
             },
 
             /**
@@ -142,9 +140,7 @@
              * @return {boolean}
              */
             inSameAlbum() {
-                return every(this.songs, song => {
-                    return song.album.id === this.songs[0].album.id;
-                });
+                return every(this.songs, song => song.album.id === this.songs[0].album.id);
             },
 
             /**

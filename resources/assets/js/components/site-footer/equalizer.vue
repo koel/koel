@@ -100,12 +100,7 @@
                     filter.Q.value = 1;
                     filter.frequency.value = f;
 
-                    if (!prevFilter) {
-                        this.preampGainNode.connect(filter);
-                    } else {
-                        prevFilter.connect(filter);
-                    }
-
+                    prevFilter ? prevFilter.connect(filter) : this.preampGainNode.connect(filter);
                     prevFilter = filter;
 
                     this.bands.push({
@@ -152,7 +147,7 @@
                         onSlideEnd: () => {
                             this.selectedPresetIndex = -1;
                             this.save();
-                        }
+                        },
                     });
                 });
             },

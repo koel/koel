@@ -118,8 +118,8 @@ export default {
             return this.queue(songs);
         }
 
-        // First, make sure we don't have duplicates
-        this.all = difference(this.all, songs);
+        // First we unqueue the songs to make sure there are no duplicates.
+        this.unqueue(songs);
 
         const head = this.all.splice(0, this.indexOf(this.current) + 1);
         this.all = head.concat(songs, this.all);

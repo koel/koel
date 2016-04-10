@@ -194,11 +194,7 @@
                         // Also, if there's only one song selected, play it right away.
                         // --------------------------------------------------------------------
                         //
-                        if (e.shiftKey) {
-                            queueStore.queue(songs, false);
-                        } else {
-                            queueStore.queue(songs, false, false);
-                        }
+                        queueStore.queue(songs, false, e.shiftKey);
 
                         this.$nextTick(() => {
                             this.$root.loadMainView('queue');
@@ -409,7 +405,8 @@
             },
 
             openContextMenu(songId, e) {
-                // If the user is right-click an unselected row, clear the current selection and select it instead.
+                // If the user is right-clicking an unselected row,
+                // clear the current selection and select it instead.
                 const currentRow = this.getComponentBySongId(songId);
                 if (!currentRow.selected) {
                     this.clearSelection();

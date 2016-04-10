@@ -13,7 +13,7 @@
 
                 <div class="buttons">
                     <button class="btn btn-blue" @click="edit" v-show="!confirmingDelete">
-                        {{ user.id === state.current.id ? 'Update Profile' : 'Edit' }}
+                        {{ isCurrentUser ? 'Update Profile' : 'Edit' }}
                     </button>
                     <button v-show="!isCurrentUser && !confirmingDelete"
                         class="btn btn-red" @click="confirmDelete">Delete</button>
@@ -58,7 +58,6 @@
 
         data() {
             return {
-                state: userStore.state,
                 editing: false,
                 confirmingDelete: false,
                 cached: {},
@@ -72,7 +71,7 @@
              * @return {Boolean}
              */
             isCurrentUser() {
-                return this.user.id === this.state.current.id;
+                return this.user.id === userStore.current.id;
             },
         },
 
