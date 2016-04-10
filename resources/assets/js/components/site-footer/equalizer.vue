@@ -45,8 +45,8 @@
     import $ from 'jquery';
     import rangeslider from 'rangeslider.js';
 
+    import { isAudioContextSupported } from '../../services/utils';
     import equalizerStore from '../../stores/equalizer';
-    import utils from '../../services/utils';
 
     export default {
         data() {
@@ -210,7 +210,7 @@
 
         events: {
             'equalizer:init': function (player) {
-                if (utils.isAudioContextSupported()) {
+                if (isAudioContextSupported()) {
                     this.init(player);
                 }
             },

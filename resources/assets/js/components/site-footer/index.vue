@@ -73,7 +73,7 @@
 <script>
     import config from '../../config';
     import playback from '../../services/playback';
-    import utils from '../../services/utils';
+    import { isAudioContextSupported } from '../../services/utils';
 
     import songStore from '../../stores/song';
     import favoriteStore from '../../stores/favorite';
@@ -97,7 +97,7 @@
                  *
                  * @type {Boolean}
                  */
-                useEqualizer: utils.isAudioContextSupported(),
+                useEqualizer: isAudioContextSupported(),
             };
         },
 

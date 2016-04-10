@@ -25,7 +25,7 @@
 
 <script>
     import settingStore from '../../../stores/setting';
-    import utils from '../../../services/utils';
+    import { parseValidationError } from '../../../services/utils';
 
     export default {
         data() {
@@ -48,7 +48,7 @@
                     let msg = 'Unknown error.';
 
                     if (error.status === 422) {
-                        msg = utils.parseValidationError(error.data)[0];
+                        msg = parseValidationError(error.data)[0];
                     }
 
                     this.$root.showOverlay(`Error: ${msg}`, 'error', true);

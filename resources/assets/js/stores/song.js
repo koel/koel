@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { without, map, take, remove, orderBy, each } from 'lodash';
 
 import http from '../services/http';
-import utils from '../services/utils';
+import { secondsToHis } from '../services/utils';
 import stub from '../stubs/song';
 import favoriteStore from './favorite';
 import sharedStore from './shared';
@@ -42,7 +42,7 @@ export default {
         this.all = albums.reduce((songs, album) => {
             // While doing so, we populate some other information into the songs as well.
             each(album.songs, song => {
-                song.fmtLength = utils.secondsToHis(song.length);
+                song.fmtLength = secondsToHis(song.length);
 
                 // Manually set these additional properties to be reactive
                 Vue.set(song, 'playCount', 0);
@@ -97,7 +97,7 @@ export default {
         const duration = songs.reduce((length, song) => length + song.length, 0);
 
         if (toHis) {
-            return utils.secondsToHis(duration);
+            return secondsToHis(duration);
         }
 
         return duration;
@@ -212,7 +212,7 @@ export default {
 
             // Convert the duration into i:s
             if (data.album_info && data.album_info.tracks) {
-                each(data.album_info.tracks, track => track.fmtLength = utils.secondsToHis(track.length));
+                each(data.album_info.tracks, track => track.fmtLength = secondsToHis(track.length));
             }
 
             // If the album cover is not in a nice form, don't use it.

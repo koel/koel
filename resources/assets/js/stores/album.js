@@ -10,7 +10,7 @@ import {
     orderBy
 } from 'lodash';
 
-import utils from '../services/utils';
+import { secondsToHis } from '../services/utils';
 import stub from '../stubs/album';
 import songStore from './song';
 import artistStore from './artist';
@@ -84,7 +84,7 @@ export default {
      */
     getLength(album) {
         Vue.set(album, 'length', reduce(album.songs, (length, song) => length + song.length, 0));
-        Vue.set(album, 'fmtLength', utils.secondsToHis(album.length));
+        Vue.set(album, 'fmtLength', secondsToHis(album.length));
 
         return album.fmtLength;
     },

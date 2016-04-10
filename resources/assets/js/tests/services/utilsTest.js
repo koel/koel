@@ -1,15 +1,15 @@
 require('chai').should();
 
-import utils from '../../services/utils';
+import { secondsToHis, parseValidationError } from '../../services/utils';
 
 describe('services/utils', () => {
     describe('#secondsToHis', () => {
         it('correctly formats a duration to H:i:s', () => {
-            utils.secondsToHis(7547).should.equal('02:05:47');
+            secondsToHis(7547).should.equal('02:05:47');
         });
 
         it('ommits hours from short duration when formats to H:i:s', () => {
-            utils.secondsToHis(314).should.equal('05:14');
+            secondsToHis(314).should.equal('05:14');
         });
     });
 
@@ -19,7 +19,7 @@ describe('services/utils', () => {
                 err_1: ['Foo'],
             };
 
-            utils.parseValidationError(error).should.eql(['Foo']);
+            parseValidationError(error).should.eql(['Foo']);
         });
 
         it('correctly parses multi-level validation error', () => {
@@ -28,7 +28,7 @@ describe('services/utils', () => {
                 err_2: ['Baz', 'Qux'],
             };
 
-            utils.parseValidationError(error).should.eql(['Foo', 'Bar', 'Baz', 'Qux']);
+            parseValidationError(error).should.eql(['Foo', 'Bar', 'Baz', 'Qux']);
         });
     });
 });

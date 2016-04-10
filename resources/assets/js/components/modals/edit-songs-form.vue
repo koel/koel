@@ -69,7 +69,7 @@
 <script>
     import { every } from 'lodash';
 
-    import utils from '../../services/utils';
+    import { br2nl } from '../../services/utils';
     import artistStore from '../../stores/artist';
     import albumStore from '../../stores/album';
     import songStore from '../../stores/song';
@@ -197,11 +197,11 @@
 
                         songStore.getInfo(this.songs[0], () => {
                             this.loading = false;
-                            this.formData.lyrics = utils.br2nl(this.songs[0].lyrics);
+                            this.formData.lyrics = br2nl(this.songs[0].lyrics);
                             this.formData.track = this.songs[0].track;
                         });
                     } else {
-                        this.formData.lyrics = utils.br2nl(this.songs[0].lyrics);
+                        this.formData.lyrics = br2nl(this.songs[0].lyrics);
                         this.formData.track = this.songs[0].track;
                     }
                 } else {
