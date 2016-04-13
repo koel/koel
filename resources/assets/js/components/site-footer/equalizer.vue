@@ -47,6 +47,7 @@
 
     import { isAudioContextSupported } from '../../services/utils';
     import equalizerStore from '../../stores/equalizer';
+    import preferences from '../../stores/preference';
 
     export default {
         data() {
@@ -59,6 +60,17 @@
             };
         },
 
+        watch: {
+            /**
+             * Save the selected preset (index) into local storage every time the value's changed.
+             *
+             * @param  {Number} val
+             */
+            selectedPresetIndex(val) {
+                preferences.selectedPreset = val;
+            },
+        },
+
         methods: {
             /**
              * Init the equalizer.
@@ -66,6 +78,7 @@
              * @param  {Element} player The audio player's DOM.
              */
             init(player) {
+                this.selectedPresetIndex = preferences.selectedPreset;
                 const settings = equalizerStore.get();
 
                 const AudioContext = window.AudioContext || window.webkitAudioContext || false;

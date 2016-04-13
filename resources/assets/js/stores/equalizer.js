@@ -80,7 +80,12 @@ export default {
      * @return {Object}
      */
     get() {
-        return preferences.equalizer;
+        if (!this.presets[preferences.selectedPreset]) {
+            return preferences.equalizer;
+        }
+
+        // If the user chose a preset (instead of customizing one), just return it.
+        return this.presets[preferences.selectedPreset];
     },
 
     /**

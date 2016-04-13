@@ -18,6 +18,7 @@ export default {
         },
         artistsViewMode: null,
         albumsViewMode: null,
+        selectedPreset: -1,
     },
 
     /**
