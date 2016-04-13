@@ -391,6 +391,7 @@
                 }
 
                 queueStore.move(songs, songStore.byId(songId));
+                this.removeDroppableState(e);
 
                 return false;
             },
