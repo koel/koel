@@ -12,7 +12,9 @@
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
-                    by <a class="artist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
+                    by
+                    <a class="artist" v-if="isNormalArtist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
+                    <span class="nope" v-else>{{ album.artist.name }}</span>
                     •
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
                     •
@@ -43,6 +45,7 @@
     import isMobile from 'ismobilejs';
 
     import albumStore from '../../../stores/album';
+    import artistStore from '../../../stores/artist';
     import playback from '../../../services/playback';
     import hasSongList from '../../../mixins/has-song-list';
 
@@ -55,6 +58,13 @@
                 isPhone: isMobile.phone,
                 showingControls: false,
             };
+        },
+
+        computed: {
+            isNormalArtist() {
+                return !artistStore.isVariousArtists(this.album.artist)
+                    && !artistStore.isUnknownArtist(this.album.artist);
+            },
         },
 
         watch: {

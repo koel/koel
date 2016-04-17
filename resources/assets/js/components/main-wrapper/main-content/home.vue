@@ -24,7 +24,7 @@
                                 <span :style="{ width: song.playCount * 100 / topSongs[0].playCount + '%' }"
                                     class="play-count"></span>
                                 {{ song.title }}
-                                <span class="by">{{ song.album.artist.name }} –
+                                <span class="by">{{ song.artist.name }} –
                                 {{ song.playCount }} {{ song.playCount | pluralize 'play' }}</span>
                             </span>
                         </li>
@@ -47,7 +47,7 @@
                             </span>
                             <span class="details">
                                 {{ song.title }}
-                                <span class="by">{{ song.album.artist.name }}</span>
+                                <span class="by">{{ song.artist.name }}</span>
                             </span>
                         </li>
                     </ol>

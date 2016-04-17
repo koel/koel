@@ -6,11 +6,12 @@ use App\Facades\Lastfm;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string cover       The path to the album's cover
- * @property bool   has_cover   If the album has a cover image
+ * @property string cover           The path to the album's cover
+ * @property bool   has_cover       If the album has a cover image
  * @property int    id
- * @property string name        Name of the album
- * @property Artist artist      The album's artist
+ * @property string name            Name of the album
+ * @property bool   is_compilation  If the album is a compilation from multiple artists
+ * @property Artist artist          The album's artist
  */
 class Album extends Model
 {
@@ -20,6 +21,7 @@ class Album extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
+    protected $casts = ['is_compilation' => 'bool'];
 
     public function artist()
     {
@@ -40,21 +42,23 @@ class Album extends Model
      * Get an album using some provided information.
      *
      * @param Artist $artist
-     * @param        $name
+     * @param string $name
+     * @param bool   $isCompilation
      *
      * @return self
      */
-    public static function get(Artist $artist, $name)
+    public static function get(Artist $artist, $name, $isCompilation = false)
     {
-        // If an empty name is provided, turn it into our "Unknown Album"
-        $name = $name ?: self::UNKNOWN_NAME;
+        // If this is a compilation album, its artist must be "Various Artists"
+        if ($isCompilation) {
+            $artist = Artist::getVarious();
+        }
 
-        $album = self::firstOrCreate([
+        return self::firstOrCreate([
             'artist_id' => $artist->id,
-            'name' => $name,
+            'name' => $name ?: self::UNKNOWN_NAME,
+            'is_compilation' => $isCompilation,
         ]);
-
-        return $album;
     }
 
     /**

@@ -19,13 +19,13 @@ class ArtistTest extends TestCase
 
         $this->assertEquals($name, $artist->name);
 
-        // Should be only 2 records: UNKNOWN_ARTIST, and our Dave Grohl's band
-        $this->assertEquals(2, Artist::all()->count());
+        // Should be only 3 records: UNKNOWN_ARTIST, VARIOUS_ARTISTS, and our Dave Grohl's band
+        $this->assertEquals(3, Artist::all()->count());
 
         Artist::get($name);
 
-        // Should still be 2.
-        $this->assertEquals(2, Artist::all()->count());
+        // Should still be 3.
+        $this->assertEquals(3, Artist::all()->count());
     }
 
     public function testArtistWithEmptyNameShouldBeUnknown()

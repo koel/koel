@@ -34,13 +34,13 @@ class UpdateLastfmNowPlaying
     {
         if (!$this->lastfm->enabled() ||
             !($sessionKey = $event->user->getLastfmSessionKey()) ||
-            $event->song->album->artist->isUnknown()
+            $event->song->artist->isUnknown()
         ) {
             return;
         }
 
         $this->lastfm->updateNowPlaying(
-            $event->song->album->artist->name,
+            $event->song->artist->name,
             $event->song->title,
             $event->song->album->name === Album::UNKNOWN_NAME ? null : $event->song->album->name,
             $event->song->length,

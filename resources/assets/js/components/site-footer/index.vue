@@ -24,7 +24,7 @@
                 <div class="progress" id="progressPane">
                     <h3 class="title">{{ song.title }}</h3>
                     <p class="meta">
-                        <a class="artist" @click.prevent="loadArtist(song.album.artist)">{{ song.album.artist.name }}</a> –
+                        <a class="artist" @click.prevent="loadArtist(song.artist)">{{ song.artist.name }}</a> –
                         <a class="album" @click.prevent="loadAlbum(song.album)">{{ song.album.name }}</a>
                     </p>
 

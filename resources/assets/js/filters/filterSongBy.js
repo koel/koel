@@ -15,6 +15,6 @@ export function filterSongBy (songs, search, delimiter) {
     return filter(songs, song => {
         return song.title.toLowerCase().indexOf(search) !== -1 ||
             song.album.name.toLowerCase().indexOf(search) !== -1 ||
-            song.album.artist.name.toLowerCase().indexOf(search) !== -1;
+            song.artist.name.toLowerCase().indexOf(search) !== -1;
     });
 }

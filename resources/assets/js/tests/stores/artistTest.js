@@ -22,12 +22,6 @@ describe('stores/artist', () => {
         });
     });
 
-    describe('#getSongsByArtist', () => {
-        it('correctly gathers all songs by artist', () => {
-            artistStore.getSongsByArtist(artistStore.state.artists[0]).length.should.equal(3);
-        });
-    });
-
     describe('#getImage', () => {
         it('correctly gets an artist’s image', () => {
             artistStore.getImage(artistStore.state.artists[0]).should.equal('/public/img/covers/565c0f7067425.jpeg');

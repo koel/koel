@@ -31,6 +31,7 @@ class Song extends Model
         'length' => 'float',
         'mtime' => 'int',
         'track' => 'int',
+        'contributing_artist_id' => 'int',
     ];
 
     /**
@@ -39,6 +40,11 @@ class Song extends Model
      * @var bool
      */
     public $incrementing = false;
+
+    public function contributingArtist()
+    {
+        return $this->belongsTo(ContributingArtist::class);
+    }
 
     public function album()
     {
@@ -60,7 +66,7 @@ class Song extends Model
     public function scrobble($timestamp)
     {
         // Don't scrobble the unknown guys. No one knows them.
-        if ($this->album->artist->isUnknown()) {
+        if ($this->artist->isUnknown()) {
             return false;
         }
 
@@ -70,7 +76,7 @@ class Song extends Model
         }
 
         return Lastfm::scrobble(
-            $this->album->artist->name,
+            $this->artist->name,
             $this->title,
             $timestamp,
             $this->album->name === Album::UNKNOWN_NAME ? '' : $this->album->name,
@@ -241,5 +247,19 @@ class Song extends Model
         // it just _appends_ a "<br />" after each of them. This would cause our client
         // implementation of br2nl to fail with duplicated linebreaks.
         return str_replace(["\r\n", "\r", "\n"], '<br />', $value);
+    }
+
+    /**
+     * Get the correct artist of the song.
+     * If it's part of a compilation, that would be the contributing artist.
+     * Otherwise, it's the album artist.
+     *
+     * @return Artist
+     */
+    public function getArtistAttribute()
+    {
+        return $this->contributing_artist_id
+            ? $this->contributingArtist
+            : $this->album->artist;
     }
 }

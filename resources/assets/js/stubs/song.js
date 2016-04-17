@@ -1,7 +1,9 @@
 import album from './album';
+import artist from './artist';
 
 export default {
     album,
+    artist,
     id: null,
     album_id: 0,
     title: '',

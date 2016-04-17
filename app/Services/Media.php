@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Console\Commands\SyncMedia;
 use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\File;
 use App\Models\Setting;
 use App\Models\Song;
@@ -20,7 +22,17 @@ class Media
      *
      * @var array
      */
-    protected $allTags = ['artist', 'album', 'title', 'length', 'track', 'lyrics', 'cover', 'mtime'];
+    protected $allTags = [
+        'artist',
+        'album',
+        'title',
+        'length',
+        'track',
+        'lyrics',
+        'cover',
+        'mtime',
+        'part_of_a_compilation',
+    ];
 
     /**
      * Tags to be synced.
@@ -189,5 +201,30 @@ class Media
     public function getHash($path)
     {
         return File::getHash($path);
+    }
+
+    /**
+     * Tidy up the library by deleting empty albums and artists.
+     */
+    public function tidy()
+    {
+        $inUseAlbums = Song::select('album_id')->groupBy('album_id')->get()->lists('album_id')->toArray();
+        $inUseAlbums[] = Album::UNKNOWN_ID;
+        Album::whereNotIn('id', $inUseAlbums)->delete();
+
+        $inUseArtists = Album::select('artist_id')->groupBy('artist_id')->get()->lists('artist_id')->toArray();
+
+        $contributingArtists = Song::distinct()
+            ->select('contributing_artist_id')
+            ->groupBy('contributing_artist_id')
+            ->get()
+            ->lists('contributing_artist_id')
+            ->toArray();
+
+        $inUseArtists = array_merge($inUseArtists, $contributingArtists);
+        $inUseArtists[] = Artist::UNKNOWN_ID;
+        $inUseArtists[] = Artist::VARIOUS_ID;
+
+        Artist::whereNotIn('id', $inUseArtists)->delete();
     }
 }

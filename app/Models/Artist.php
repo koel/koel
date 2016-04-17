@@ -16,6 +16,8 @@ class Artist extends Model
 {
     const UNKNOWN_ID = 1;
     const UNKNOWN_NAME = 'Unknown Artist';
+    const VARIOUS_ID = 2;
+    const VARIOUS_NAME = 'Various Artists';
 
     protected $guarded = ['id'];
 
@@ -29,6 +31,21 @@ class Artist extends Model
     public function isUnknown()
     {
         return $this->id === self::UNKNOWN_ID;
+    }
+
+    public function isVarious()
+    {
+        return $this->id === self::VARIOUS_ID;
+    }
+
+    /**
+     * Get the "Various Artists" object.
+     *
+     * @return Artist
+     */
+    public static function getVarious()
+    {
+        return self::find(self::VARIOUS_ID);
     }
 
     /**

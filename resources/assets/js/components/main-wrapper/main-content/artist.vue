@@ -81,7 +81,6 @@
              */
             'main-content-view:load': function (view, artist) {
                 if (view === 'artist') {
-                    artistStore.getSongsByArtist(artist);
                     this.artist = artist;
                 }
             },

@@ -133,7 +133,7 @@
              * Navigate to the song's artist view
              */
             goToArtist() {
-                this.$root.loadArtist(this.songs[0].album.artist);
+                this.$root.loadArtist(this.songs[0].artist);
             },
         },
 

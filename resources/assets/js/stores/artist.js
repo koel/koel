@@ -7,12 +7,15 @@ import {
     difference,
     take,
     filter,
-    orderBy
+    orderBy,
 } from 'lodash';
 
 import config from '../config';
 import stub from '../stubs/artist';
 import albumStore from './album';
+
+const UNKNOWN_ARTIST_ID = 1;
+const VARIOUS_ARTISTS_ID = 2;
 
 export default {
     stub,
@@ -29,18 +32,38 @@ export default {
     init(artists) {
         this.all = artists;
 
+        albumStore.init(this.all);
+
         // Traverse through artists array to get the cover and number of songs for each.
         each(this.all, artist => {
             this.setupArtist(artist);
         });
-
-        albumStore.init(this.all);
     },
 
+    /**
+     * Set up the (reactive) properties of an artist.
+     *
+     * @param  {Object} artist
+     */
     setupArtist(artist) {
         this.getImage(artist);
         Vue.set(artist, 'playCount', 0);
-        Vue.set(artist, 'songCount', reduce(artist.albums, (count, album) => count + album.songs.length, 0));
+
+        // Here we build a list of songs performed by the artist, so that we don't need to traverse
+        // down the "artist > albums > items" route later.
+        // This also makes sure songs in compilation albums are counted as well.
+        Vue.set(artist, 'songs', reduce(artist.albums, (songs, album) => {
+            // If the album is compilation, we cater for the songs contributed by this artist only.
+            if (album.is_compilation) {
+                return songs.concat(filter(album.songs, { contributing_artist_id: artist.id }));
+            }
+
+            // Otherwise, just use all songs.
+            return songs.concat(album.songs);
+        }, []));
+
+        Vue.set(artist, 'songCount', artist.songs.length);
+
         Vue.set(artist, 'info', null);
 
         return artist;
@@ -137,6 +160,28 @@ export default {
     },
 
     /**
+     * Determine if the artist is the special "Various Artists".
+     *
+     * @param  {Object}  artist
+     *
+     * @return {Boolean}
+     */
+    isVariousArtists(artist) {
+        return artist.id === VARIOUS_ARTISTS_ID;
+    },
+
+    /**
+     * Determine if the artist is the special "Unknown Artist".
+     *
+     * @param  {Object}  artist [description]
+     *
+     * @return {Boolean}
+     */
+    isUnknownArtist(artist) {
+        return artist.id === UNKNOWN_ARTIST_ID;
+    },
+
+    /**
      * Get all songs performed by an artist.
      *
      * @param {Object} artist
@@ -144,10 +189,6 @@ export default {
      * @return {Array.<Object>}
      */
     getSongsByArtist(artist) {
-        if (!artist.songs) {
-            artist.songs = reduce(artist.albums, (songs, album) => songs.concat(album.songs), []);
-        }
-
         return artist.songs;
     },
 
@@ -186,8 +227,11 @@ export default {
      */
     getMostPlayed(n = 6) {
         // Only non-unknown artists with actually play count are applicable.
+        // Also, "Various Artists" doesn't count.
         const applicable = filter(this.all, artist => {
-            return artist.playCount && artist.id !== 1;
+            return artist.playCount
+                && !this.isUnknownArtist(artist)
+                && !this.isVariousArtists(artist);
         });
 
         return take(orderBy(applicable, 'playCount', 'desc'), n);

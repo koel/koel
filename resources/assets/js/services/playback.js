@@ -128,7 +128,7 @@ export default {
         this.player.media.src = songStore.getSourceUrl(song);
 
         $('title').text(`${song.title} ♫ ${config.appTitle}`);
-        $('.plyr audio').attr('title', `${song.album.artist.name} - ${song.title}`);
+        $('.plyr audio').attr('title', `${song.artist.name} - ${song.title}`);
 
         // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
         this.restart();
@@ -159,7 +159,7 @@ export default {
         try {
             const notification = new Notification(`♫ ${song.title}`, {
                 icon: song.album.cover,
-                body: `${song.album.name} – ${song.album.artist.name}`
+                body: `${song.album.name} – ${song.artist.name}`
             });
 
             notification.onclick = () => window.focus();
@@ -377,7 +377,7 @@ export default {
      * @param  {Boolean=true}   shuffle Whether to shuffle the songs
      */
     playAllByArtist(artist, shuffle = true) {
-        this.queueAndPlay(artistStore.getSongsByArtist(artist), true);
+        this.queueAndPlay(artist.songs, true);
     },
 
     /**

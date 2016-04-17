@@ -131,7 +131,7 @@
              * @return {boolean}
              */
             bySameArtist() {
-                return every(this.songs, song => song.album.artist.id === this.songs[0].album.artist.id);
+                return every(this.songs, song => song.artist.id === this.songs[0].artist.id);
             },
 
             /**
@@ -188,7 +188,7 @@
                 if (this.editSingle) {
                     this.formData.title = this.songs[0].title;
                     this.formData.albumName = this.songs[0].album.name;
-                    this.formData.artistName = this.songs[0].album.artist.name;
+                    this.formData.artistName = this.songs[0].artist.name;
 
                     // If we're editing only one song and the song's info (including lyrics)
                     // hasn't been loaded, load it now.
@@ -206,7 +206,7 @@
                     }
                 } else {
                     this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : '';
-                    this.formData.artistName = this.bySameArtist ? this.songs[0].album.artist.name : '';
+                    this.formData.artistName = this.bySameArtist ? this.songs[0].artist.name : '';
                     this.loading = false;
                 }
             },

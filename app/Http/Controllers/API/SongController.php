@@ -46,7 +46,7 @@ class SongController extends Controller
         return response()->json([
             'lyrics' => $song->lyrics,
             'album_info' => $song->album->getInfo(),
-            'artist_info' => $song->album->artist->getInfo(),
+            'artist_info' => $song->artist->getInfo(),
         ]);
     }
 

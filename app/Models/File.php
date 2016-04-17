@@ -79,7 +79,7 @@ class File
     {
         $info = $this->getID3->analyze($this->path);
 
-        if (isset($info['error'])) {
+        if (isset($info['error']) || !isset($info['playtime_seconds'])) {
             return;
         }
 
@@ -88,10 +88,6 @@ class File
         // We'll still prefer getting ID3v2 tags directly later.
         // Read on.
         getid3_lib::CopyTagsToComments($info);
-
-        if (!isset($info['playtime_seconds'])) {
-            return;
-        }
 
         $track = 0;
 
@@ -109,6 +105,7 @@ class File
         $props = [
             'artist' => '',
             'album' => '',
+            'part_of_a_compilation' => false,
             'title' => '',
             'length' => $info['playtime_seconds'],
             'track' => (int) $track,
@@ -121,6 +118,10 @@ class File
         if (!$comments = array_get($info, 'comments_html')) {
             return $props;
         }
+
+        // getID3's 'part_of_a_compilation' value can either be null, ['0'], or ['1']
+        // We convert it into a boolean here.
+        $props['part_of_a_compilation'] = !!array_get($comments, 'part_of_a_compilation', [false])[0];
 
         // We prefer id3v2 tags over others.
         if (!$artist = array_get($info, 'tags.id3v2.artist', [null])[0]) {
@@ -175,9 +176,11 @@ class File
             $info = array_intersect_key($info, array_flip($tags));
 
             $artist = isset($info['artist']) ? Artist::get($info['artist']) : $this->song->album->artist;
-            $album = isset($info['album']) ? Album::get($artist, $info['album']) : $this->song->album;
+            $album = isset($info['album'])
+                ? Album::get($artist, $info['album'], array_get($info, 'part_of_a_compilation'))
+                : $this->song->album;
         } else {
-            $album = Album::get(Artist::get($info['artist']), $info['album']);
+            $album = Album::get(Artist::get($info['artist']), $info['album'], array_get($info, 'part_of_a_compilation'));
         }
 
         if (!empty($info['cover']) && !$album->has_cover) {
@@ -190,8 +193,13 @@ class File
 
         $info['album_id'] = $album->id;
 
+        // If the song is part of a compilation, we set its artist as the contributing artist.
+        if (array_get($info, 'part_of_a_compilation')) {
+            $info['contributing_artist_id'] = Artist::get($info['artist'])->id;
+        }
+
         // Remove these values from the info array, so that we can just use the array as model's input data.
-        array_forget($info, ['artist', 'album', 'cover']);
+        array_forget($info, ['artist', 'album', 'cover', 'part_of_a_compilation']);
 
         $song = Song::updateOrCreate(['id' => $this->hash], $info);
         $song->save();

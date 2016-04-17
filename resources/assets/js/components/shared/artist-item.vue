@@ -1,5 +1,5 @@
 <template>
-    <article class="item" v-if="artist.songCount" draggable="true" @dragstart="dragStart">
+    <article class="item" v-if="showing" draggable="true" @dragstart="dragStart">
         <span class="cover" :style="{ backgroundImage: 'url(' + artist.image + ')' }">
             <a class="control" @click.prevent="play">
                 <i class="fa fa-play"></i>
@@ -29,13 +29,25 @@
     export default {
         props: ['artist'],
 
+        computed: {
+            /**
+             * Determine if the artist item should be shown.
+             * We're not showing those without any songs, or the special "Various Artists".
+             *
+             * @return {Boolean}
+             */
+            showing() {
+                return this.artist.songCount && !artistStore.isVariousArtists(this.artist);
+            }
+        },
+
         methods: {
             /**
              * Play all songs by the current artist, or queue them up if Ctrl/Cmd key is pressed.
              */
             play(e) {
                 if (e.metaKey || e.ctrlKey) {
-                    queueStore.queue(artistStore.getSongsByArtist(this.artist));
+                    queueStore.queue(this.artist.songs);
                 } else {
                     playback.playAllByArtist(this.artist);
                 }
@@ -49,7 +61,7 @@
              * Allow dragging the artist (actually, their songs).
              */
             dragStart(e) {
-                const songIds = map(artistStore.getSongsByArtist(this.artist), 'id');
+                const songIds = map(this.artist.songs, 'id');
                 e.dataTransfer.setData('text/plain', songIds);
                 e.dataTransfer.effectAllowed = 'move';
 

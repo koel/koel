@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { without, map, take, remove, orderBy, each } from 'lodash';
+import { without, map, take, remove, orderBy, each, union } from 'lodash';
 
 import http from '../services/http';
 import { secondsToHis } from '../services/utils';
@@ -51,6 +51,15 @@ export default {
                 Vue.set(song, 'lyrics', null);
                 Vue.set(song, 'playbackState', 'stopped');
 
+                if (song.contributing_artist_id) {
+                    const artist = artistStore.byId(song.contributing_artist_id);
+                    artist.albums = union(artist.albums, [album]);
+                    artistStore.setupArtist(artist);
+                    Vue.set(song, 'artist', artist);
+                } else {
+                    Vue.set(song, 'artist', artistStore.byId(song.album.artist.id));
+                }
+
                 // Cache the song, so that byId() is faster
                 this.cache[song.id] = song;
             });
@@ -77,7 +86,7 @@ export default {
             song.liked = interaction.liked;
             song.playCount = interaction.play_count;
             song.album.playCount += song.playCount;
-            song.album.artist.playCount += song.playCount;
+            song.artist.playCount += song.playCount;
 
             if (song.liked) {
                 favoriteStore.add(song);
@@ -156,7 +165,7 @@ export default {
             // Use the data from the server to make sure we don't miss a play from another device.
             song.playCount = response.data.play_count;
             song.album.playCount += song.playCount - oldCount;
-            song.album.artist.playCount += song.playCount - oldCount;
+            song.artist.playCount += song.playCount - oldCount;
 
             if (cb) {
                 cb();
@@ -203,11 +212,11 @@ export default {
                 data.artist_info.image = null;
             }
 
-            song.album.artist.info = data.artist_info;
+            song.artist.info = data.artist_info;
 
             // Set the artist image on the client side to the retrieved image from server.
             if (data.artist_info.image) {
-                song.album.artist.image = data.artist_info.image;
+                song.artist.image = data.artist_info.image;
             }
 
             // Convert the duration into i:s
@@ -310,7 +319,7 @@ export default {
 
         // and keep track of original album/artist.
         const originalAlbumId = originalSong.album.id;
-        const originalArtistId = originalSong.album.artist.id;
+        const originalArtistId = originalSong.artist.id;
 
         // First, we update the title, lyrics, and track #
         originalSong.title = updatedSong.title;

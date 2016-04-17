@@ -12,7 +12,7 @@
 
             <div class="panes">
                 <lyrics :song="song" v-ref:lyrics v-show="currentView === 'lyrics'"></lyrics>
-                <artist-info :artist="song.album.artist" v-ref:artist-info v-show="currentView === 'artistInfo'"></artist-info>
+                <artist-info :artist="song.artist" v-ref:artist-info v-show="currentView === 'artistInfo'"></artist-info>
                 <album-info :album="song.album" v-ref:album-info v-show="currentView === 'albumInfo'"></album-info>
             </div>
         </div>
