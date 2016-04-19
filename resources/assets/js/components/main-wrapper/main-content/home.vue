@@ -24,7 +24,8 @@
                                 <span :style="{ width: song.playCount * 100 / topSongs[0].playCount + '%' }"
                                     class="play-count"></span>
                                 {{ song.title }}
-                                <span class="by">{{ song.album.artist.name }} –
+                                <span class="by">
+                                    <a class="name" @click.prevent="viewDetails(song.album)">{{ song.album.name }}</a> – <a class="artist" @click.prevent="viewArtistDetails(song.album.artist)">{{ song.album.artist.name }}</a> –
                                 {{ song.playCount }} {{ song.playCount | pluralize 'play' }}</span>
                             </span>
                         </li>
@@ -47,7 +48,10 @@
                             </span>
                             <span class="details">
                                 {{ song.title }}
-                                <span class="by">{{ song.album.artist.name }}</span>
+                                <span class="by">
+                                    <a class="name" @click.prevent="viewDetails(song.album)">{{ song.album.name }}</a>
+                                    - <a class="artist" @click.prevent="viewArtistDetails(song.album.artist)">{{ song.album.artist.name }}</a>
+                                </span>
                             </span>
                         </li>
                     </ol>
@@ -163,6 +167,20 @@
                 this.topAlbums = albumStore.getMostPlayed(6);
                 this.topArtists = artistStore.getMostPlayed(6);
                 this.recentSongs = songStore.getRecent(7);
+            },
+
+            /**
+             * Load the album details screen.
+             */
+            viewDetails(album) {
+                this.$root.loadAlbum(album);
+            },
+
+            /**
+             * Load the artist details screen.
+             */
+            viewArtistDetails(artist) {
+                this.$root.loadArtist(artist);
             },
         },
 
@@ -283,6 +301,10 @@
                         font-size: 90%;
                         opacity: .6;
                         margin-top: 2px;
+
+                        a {
+                            color: $colorBtnText;
+                        }
                     }
                 }
 
