@@ -57,20 +57,28 @@ input[type="checkbox"] {
     width: 16px;
     min-width: 16px;
     box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+    background: #fff;
 
-    &:checked{
-        background: #fff;
+    &:before {
+        font-family: FontAwesome;
+        color: $colorHighlight;
+        display: inline-block;
+        vertical-align: middle;
+        width: 14px;
+        height: 14px;
+        line-height: 16px;
+        text-align: center;
+    }
 
+    &:checked {
         &:before {
-            font-family: FontAwesome;
             content: "\f00c";
-            color: $colorHighlight;
-            display: inline-block;
-            vertical-align: middle;
-            width: 14px;
-            height: 14px;
-            line-height: 14px;
-            text-align: center;
+        }
+    }
+
+    &:indeterminate {
+        &:before {
+            content: "\f068";
         }
     }
 }
@@ -121,6 +129,10 @@ label {
     font-size: 110%;
     margin-bottom: 8px;
     display: block;
+
+    &.small {
+        font-size: 100%;
+    }
 }
 
 button, input[type="submit"], input[type="reset"], input[type="button"], .btn {

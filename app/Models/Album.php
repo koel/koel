@@ -113,6 +113,20 @@ class Album extends Model
     }
 
     /**
+     * Set album as a compilation (or not).
+     *
+     * @param bool $state
+     *
+     * @return self
+     */
+    public function setCompilationState($state)
+    {
+        $this->save(['is_compilation' => $state]);
+
+        return $this;
+    }
+
+    /**
      * Write a cover image file with binary data and update the Album with the new cover file.
      *
      * @param string $binaryData

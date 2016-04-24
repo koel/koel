@@ -113,22 +113,6 @@ class Song extends Model
     public static function updateInfo($ids, $data)
     {
         /*
-         * The artist that our songs will be associated to.
-         * If they are not existing yet, we will create the object.
-         *
-         * @var Artist
-         */
-        $targetArtist = null;
-
-        /*
-         * The album that our songs will be associated to.
-         * If it can't be found, we'll create it.
-         *
-         * @var Album
-         */
-        $targetAlbum = null;
-
-        /*
          * An array of the updated songs.
          *
          * @var array
@@ -141,49 +125,16 @@ class Song extends Model
             }
 
             // If we're updating only one song, take into account the title, lyrics, and track number.
-            if (count($ids) === 1) {
-                $song->title = trim($data['title']) ?: $song->title;
-                $song->lyrics = trim($data['lyrics']);
-                $song->track = (int) trim($data['track']);
-            }
+            $single = count($ids) === 1;
 
-            // If "newArtist" is provided, we'll see if such an artist name is found in our database.
-            // If negative, we create a new record into $targetArtist.
-            if ($artistName = trim($data['artistName'])) {
-                $targetArtist = Artist::get($artistName);
-            } else {
-                $targetArtist = $song->album->artist;
-            }
-
-            // Here it gets a little tricky.
-
-            // If "newAlbum" is provided, we find the album OF THE ARTIST.
-            // If none is found, create it as $targetAlbum, which is also populated just once.
-            if ($albumName = trim($data['albumName'])) {
-                $targetAlbum = Album::get($targetArtist, $albumName);
-
-                $song->album_id = $targetAlbum->id;
-            } else {
-                // The albumName is empty.
-                // However, if the artist has changed, it's not the same album anymore.
-                // Instead, the song now belongs to another album WITH THE SAME NAME, but under the new artist.
-                //
-                // See? I told you, it's tricky.
-                // Or maybe it's not.
-                // Whatever.
-                if ($targetArtist->id !== $song->album->artist->id) {
-                    $song->album_id = Album::get($targetArtist, $song->album->name)->id;
-                }
-            }
-
-            $song->save();
-
-            // Get the updated record, with album and all.
-            $updatedSong = self::with('album', 'album.artist')->find($id);
-            // Make sure lyrics is included in the returned JSON.
-            $updatedSong->makeVisible('lyrics');
-
-            $updatedSongs[] = $updatedSong;
+            $updatedSongs[] = $song->updateSingle(
+                trim($data['title']) ?: $song->title,
+                trim($data['albumName'] ?: $song->album->name),
+                trim($data['artistName']) ?: $song->artist->name,
+                $single ? trim($data['lyrics']) : $song->lyrics,
+                $single ? intval($data['track']) : $song->track,
+                intval($data['compilationState'])
+            );
         }
 
         // Our library may have been changed. Broadcast an event to tidy it up if need be.
@@ -192,6 +143,58 @@ class Song extends Model
         }
 
         return $updatedSongs;
+    }
+
+    /**
+     * Update a single song's info.
+     *
+     * @param string $title
+     * @param string $albumName
+     * @param string $artistName
+     * @param string $lyrics
+     * @param int    $track
+     * @param int    $compilationState
+     *
+     * @return self
+     */
+    public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $compilationState)
+    {
+        // If the artist name is "Various Artists", it's a compilation song no matter what.
+        if ($artistName === Artist::VARIOUS_NAME) {
+            $compilationState = 1;
+        }
+
+        // If the complitation state is "no change," we determine it via the current
+        // "contributing_artist_id" field value.
+        if ($compilationState === 2) {
+            $compilationState = $this->contributing_artist_id ? 1 : 0;
+        }
+
+        $album = null;
+
+        if ($compilationState === 0) {
+            // Not a compilation song
+            $this->contributing_artist_id = null;
+            $albumArtist = Artist::get($artistName);
+            $album = Album::get($albumArtist, $albumName, false);
+        } else {
+            $contributingArtist = Artist::get($artistName);
+            $this->contributing_artist_id = $contributingArtist->id;
+            $album = Album::get(Artist::getVarious(), $albumName, true);
+        }
+
+        $this->album_id = $album->id;
+        $this->lyrics = $lyrics;
+        $this->track = $track;
+
+        $this->save();
+
+        // Get the updated record, with album and all.
+        $updatedSong = self::with('album', 'album.artist')->find($this->id);
+        // Make sure lyrics is included in the returned JSON.
+        $updatedSong->makeVisible('lyrics');
+
+        return $updatedSong;
     }
 
     /**

@@ -12,7 +12,7 @@ class SongTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
-    public function testSingleUpdateAllInfo()
+    public function testSingleUpdateAllInfoNoCompilation()
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -28,6 +28,7 @@ class SongTest extends TestCase
                     'albumName' => 'One by One',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
                     'track' => 1,
+                    'compilationState' => 0,
                 ],
             ])
             ->seeStatusCode(200);
@@ -46,7 +47,7 @@ class SongTest extends TestCase
         ]);
     }
 
-    public function testSingleUpdateSomeInfo()
+    public function testSingleUpdateSomeInfoNoCompilation()
     {
         $this->createSampleMediaSet();
         $song = Song::orderBy('id', 'desc')->first();
@@ -61,6 +62,7 @@ class SongTest extends TestCase
                     'albumName' => 'One by One',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
                     'track' => 1,
+                    'compilationState' => 0,
                 ],
             ])
             ->seeStatusCode(200);
@@ -72,7 +74,7 @@ class SongTest extends TestCase
         $this->assertEquals('One by One', Song::find($song->id)->album->name);
     }
 
-    public function testMultipleUpdateAllInfo()
+    public function testMultipleUpdateAllInfoNoCompilation()
     {
         $this->createSampleMediaSet();
         $songIds = Song::orderBy('id', 'desc')->take(3)->pluck('id')->toArray();
@@ -86,6 +88,7 @@ class SongTest extends TestCase
                     'albumName' => 'One by One',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
                     'track' => 1,
+                    'compilationState' => 0,
                 ],
             ])
             ->seeStatusCode(200);
@@ -107,7 +110,7 @@ class SongTest extends TestCase
         $this->assertEquals('John Cena', $songs[2]->album->artist->name);
     }
 
-    public function testMultipleUpdateSomeInfo()
+    public function testMultipleUpdateSomeInfoNoCompilation()
     {
         $this->createSampleMediaSet();
         $originalSongs = Song::orderBy('id', 'desc')->take(3)->get();
@@ -122,6 +125,7 @@ class SongTest extends TestCase
                     'albumName' => '',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
                     'track' => 1,
+                    'compilationState' => 0,
                 ],
             ])
             ->seeStatusCode(200);
@@ -141,5 +145,158 @@ class SongTest extends TestCase
         $this->assertEquals('John Cena', $songs[0]->album->artist->name); // JOHN CENA!!!
         $this->assertEquals('John Cena', $songs[1]->album->artist->name); // JOHN CENA!!!
         $this->assertEquals('John Cena', $songs[2]->album->artist->name); // And... JOHN CENAAAAAAAAAAA!!!
+    }
+
+    public function testSingleUpdateAllInfoYesCompilation()
+    {
+        $admin = factory(User::class, 'admin')->create();
+        $this->createSampleMediaSet();
+        $song = Song::orderBy('id', 'desc')->first();
+
+        $this->actingAs($admin)
+            ->put('/api/songs', [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => 'Foo Bar',
+                    'artistName' => 'John Cena',
+                    'albumName' => 'One by One',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                    'compilationState' => 1,
+                ],
+            ])
+            ->seeStatusCode(200);
+
+        $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'One by One')->first();
+        $this->assertNotNull($compilationAlbum);
+
+        $contributingArtist = Artist::whereName('John Cena')->first();
+        $this->assertNotNull($contributingArtist);
+
+        $this->seeInDatabase('songs', [
+            'id' => $song->id,
+            'contributing_artist_id' => $contributingArtist->id,
+            'album_id' => $compilationAlbum->id,
+            'lyrics' => 'Lorem ipsum dolor sic amet.',
+            'track' => 1,
+        ]);
+
+        // Now try changing stuff and make sure things work.
+        // Case 1: Keep compilation state and artist the same
+        $this->actingAs($admin)
+            ->put('/api/songs', [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => 'Barz Qux',
+                    'artistName' => 'John Cena',
+                    'albumName' => 'Two by Two',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                    'compilationState' => 2,
+                ],
+            ])
+            ->seeStatusCode(200);
+
+        $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'Two by Two')->first();
+        $this->assertNotNull($compilationAlbum);
+
+        $contributingArtist = Artist::whereName('John Cena')->first();
+        $this->assertNotNull($contributingArtist);
+
+        $this->seeInDatabase('songs', [
+            'id' => $song->id,
+            'contributing_artist_id' => $contributingArtist->id,
+            'album_id' => $compilationAlbum->id,
+        ]);
+
+        // Case 2: Keep compilation state, but change the artist.
+        $this->actingAs($admin)
+            ->put('/api/songs', [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => 'Barz Qux',
+                    'artistName' => 'Foo Fighters',
+                    'albumName' => 'One by One',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                    'compilationState' => 2,
+                ],
+            ])
+            ->seeStatusCode(200);
+
+        $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'One by One')->first();
+        $this->assertNotNull($compilationAlbum);
+
+        $contributingArtist = Artist::whereName('Foo Fighters')->first();
+        $this->assertNotNull($contributingArtist);
+
+        $this->seeInDatabase('songs', [
+            'id' => $song->id,
+            'contributing_artist_id' => $contributingArtist->id,
+            'album_id' => $compilationAlbum->id,
+        ]);
+
+        // Case 3: Change compilation state only
+        $this->actingAs($admin)
+            ->put('/api/songs', [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => 'Barz Qux',
+                    'artistName' => 'Foo Fighters',
+                    'albumName' => 'One by One',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                    'compilationState' => 0,
+                ],
+            ])
+            ->seeStatusCode(200);
+
+        $artist = Artist::whereName('Foo Fighters')->first();
+        $this->assertNotNull($artist);
+        $album = Album::whereArtistIdAndName($artist->id, 'One by One')->first();
+
+        $this->seeInDatabase('songs', [
+            'id' => $song->id,
+            'contributing_artist_id' => null,
+            'album_id' => $album->id,
+        ]);
+
+        // Case 3: Change compilation state and artist
+        // Remember to set the compliation state back to 1
+        $this->actingAs($admin)
+            ->put('/api/songs', [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => 'Barz Qux',
+                    'artistName' => 'Foo Fighters',
+                    'albumName' => 'One by One',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                    'compilationState' => 1,
+                ],
+            ])
+            ->put('/api/songs', [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => 'Twilight of the Thunder God',
+                    'artistName' => 'Amon Amarth',
+                    'albumName' => 'Twilight of the Thunder God',
+                    'lyrics' => 'Thor! Nanananananana Batman.',
+                    'track' => 1,
+                    'compilationState' => 0,
+                ],
+            ])
+            ->seeStatusCode(200);
+
+        $artist = Artist::whereName('Amon Amarth')->first();
+        $this->assertNotNull($artist);
+        $album = Album::whereArtistIdAndName($artist->id, 'Twilight of the Thunder God')->first();
+        $this->assertNotNull($album);
+        $this->seeInDatabase('songs', [
+            'id' => $song->id,
+            'contributing_artist_id' => null,
+            'album_id' => $album->id,
+            'lyrics' => 'Thor! Nanananananana Batman.', // haha
+        ]);
     }
 }

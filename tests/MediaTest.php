@@ -3,6 +3,7 @@
 use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Song;
 use App\Services\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -48,6 +49,12 @@ class MediaTest extends TestCase
         // Albums and artists should be correctly linked
         $album = Album::whereName('Koel Testing Vol. 1')->first();
         $this->assertEquals('Koel', $album->artist->name);
+
+        // Compilation albums, artists and songs must be recognized
+        $song = Song::whereTitle('This song belongs to a compilation')->first();
+        $this->assertNotNull($song->contributing_artist_id);
+        $this->assertTrue($song->album->is_compilation);
+        $this->assertEquals(Artist::VARIOUS_ID, $song->album->artist_id);
 
         $currentCover = $album->cover;
 

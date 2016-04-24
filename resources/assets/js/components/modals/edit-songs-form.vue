@@ -26,7 +26,7 @@
 
                     <div class="panes">
                         <div v-show="currentView === 'details'">
-                            <div class="form-row" v-show="editSingle">
+                            <div class="form-row" v-if="editSingle">
                                 <label>Title</label>
                                 <input type="text" v-model="formData.title">
                             </div>
@@ -43,6 +43,12 @@
                                     :items="albumState.albums"
                                     :options="albumTypeaheadOptions"
                                     :value.sync="formData.albumName"></typeahead>
+                            </div>
+                            <div class="form-row">
+                                <label class="small">
+                                    <input type="checkbox" @change="setCompilationState" v-el:compilation-state-chk />
+                                    Album is a compilation of songs by various artists
+                                </label>
                             </div>
                             <div class="form-row" v-show="editSingle">
                                 <label>Track</label>
@@ -67,7 +73,7 @@
 </template>
 
 <script>
-    import { every } from 'lodash';
+    import { every, filter } from 'lodash';
 
     import { br2nl } from '../../services/utils';
     import artistStore from '../../stores/artist';
@@ -76,6 +82,12 @@
 
     import soundBar from '../shared/sound-bar.vue';
     import typeahead from '../shared/typeahead.vue';
+
+    const COMPILATION_STATES = {
+        NONE: 0, // No songs belong to a compilation album
+        ALL: 1, // All songs belong to compilation album(s)
+        SOME: 2, // Some of the songs belong to compilation album(s)
+    };
 
     export default {
         components: { soundBar, typeahead },
@@ -111,6 +123,7 @@
                     artistName: '',
                     lyrics: '',
                     track: '',
+                    compilationState: null,
                 },
             };
         },
@@ -141,6 +154,25 @@
              */
             inSameAlbum() {
                 return every(this.songs, song => song.album.id === this.songs[0].album.id);
+            },
+
+            /**
+             * Determine the compilation state of the songs.
+             *
+             * @return {Number}
+             */
+            compilationState() {
+                let contributedSongs = filter(this.songs, song => song.contributing_artist_id)
+
+                if (!contributedSongs.length) {
+                    this.formData.compilationState = COMPILATION_STATES.NONE
+                } else if (contributedSongs.length === this.songs.length) {
+                    this.formData.compilationState = COMPILATION_STATES.ALL;
+                } else {
+                    this.formData.compilationState = COMPILATION_STATES.SOME;
+                }
+
+                return this.formData.compilationState;
             },
 
             /**
@@ -199,16 +231,55 @@
                             this.loading = false;
                             this.formData.lyrics = br2nl(this.songs[0].lyrics);
                             this.formData.track = this.songs[0].track;
+                            this.setAlbumCompilationState();
                         });
                     } else {
                         this.formData.lyrics = br2nl(this.songs[0].lyrics);
                         this.formData.track = this.songs[0].track;
+                        this.setAlbumCompilationState();
                     }
                 } else {
                     this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : '';
                     this.formData.artistName = this.bySameArtist ? this.songs[0].artist.name : '';
                     this.loading = false;
+                    this.setAlbumCompilationState();
                 }
+            },
+
+            /**
+             * Set the compilation state of the editing songs' album(s).
+             */
+            setAlbumCompilationState() {
+                // This must be wrapped in a $nextTick callback, because the form is dynamically
+                // attached into DOM in conjunction with `this.loading` data binding.
+                this.$nextTick(() => {
+                    let chk = this.$els.compilationStateChk;
+
+                    switch (this.compilationState) {
+                        case COMPILATION_STATES.ALL:
+                            chk.checked = true;
+                            chk.indeterminate = false;
+                            break;
+                        case COMPILATION_STATES.NONE:
+                            chk.checked = false;
+                            chk.indeterminate = false;
+                            break;
+                        default:
+                            chk.checked = false;
+                            chk.indeterminate = true;
+                            break;
+                    }
+                });
+            },
+
+            /**
+             * Manually set the compilation state.
+             * We can't use v-model here due to the tri-state nature of the property.
+             * Also, following iTunes style, we don't support circular switching of the states -
+             * once the user clicks the checkbox, there's no going back to indeterminate state.
+             */
+            setCompilationState(e) {
+                this.formData.compilationState = e.target.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE;
             },
 
             /**
@@ -262,12 +333,20 @@
             border-radius: $borderRadius;
             color: #333;
 
-            .form-row::first-child {
+            input[type="checkbox"] {
+                border: 1px solid #ccc;
+            }
+
+            .form-row:first-child {
                 margin-top: 0;
             }
 
             > header, > div, > footer {
                 padding: 16px;
+            }
+
+            > div {
+                padding-bottom: 0;
             }
 
             input[type="text"], input[type="number"], textarea {

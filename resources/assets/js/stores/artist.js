@@ -58,7 +58,7 @@ export default {
                 return songs.concat(filter(album.songs, { contributing_artist_id: artist.id }));
             }
 
-            // Otherwise, just use all songs.
+            // Otherwise, just use all songs in the album.
             return songs.concat(album.songs);
         }, []));
 
@@ -132,9 +132,8 @@ export default {
         each(albums, album => {
             album.artist_id = artist.id;
             album.artist = artist;
+            artist.playCount += album.playCount;
         });
-
-        artist.playCount = reduce(artist.albums, (count, album) => count + album.playCount, 0);
     },
 
     /**
@@ -144,8 +143,9 @@ export default {
      * @param  {Array.<Object>|Object} albums
      */
     removeAlbumsFromArtist(artist, albums) {
-        artist.albums = difference(artist.albums, [].concat(albums));
-        artist.playCount = reduce(artist.albums, (count, album) => count + album.playCount, 0);
+        albums = [].concat(albums);
+        artist.albums = difference(artist.albums, albums);
+        each(albums, album => artist.playCount -= album.playCount);
     },
 
     /**
