@@ -150,6 +150,9 @@ class Song extends Model
                 trim($data['artistName']) ?: $song->artist->name,
                 $single ? trim($data['lyrics']) : $song->lyrics,
                 $single ? (int) $data['track'] : $song->track,
+                intval($data['disc']) ?: $song->disc,
+                intval($data['albumYear']) ?: $song->album->year,
+                trim($data['genre']) ?: $song->genre,
                 (int) $data['compilationState']
             );
         }
@@ -174,7 +177,7 @@ class Song extends Model
      *
      * @return self
      */
-    public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $compilationState)
+    public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $disc, $year, $genre, $compilationState)
     {
         // If the artist name is "Various Artists", it's a compilation song no matter what.
         if ($artistName === Artist::VARIOUS_NAME) {
@@ -193,17 +196,19 @@ class Song extends Model
             // Not a compilation song
             $this->contributing_artist_id = null;
             $albumArtist = Artist::get($artistName);
-            $album = Album::get($albumArtist, $albumName, false);
+            $album = Album::get($albumArtist, $albumName, $year, false);
         } else {
             $contributingArtist = Artist::get($artistName);
             $this->contributing_artist_id = $contributingArtist->id;
-            $album = Album::get(Artist::getVarious(), $albumName, true);
+            $album = Album::get(Artist::getVarious(), $albumName, $year, true);
         }
 
-        $this->album_id = $album->id;
         $this->title = $title;
+        $this->album_id = $album->id;
         $this->lyrics = $lyrics;
+        $this->disc = $disc;
         $this->track = $track;
+        $this->genre = $genre;
 
         $this->save();
 

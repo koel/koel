@@ -53,7 +53,7 @@ class Album extends Model
      *
      * @return self
      */
-    public static function get(Artist $artist, $name, $isCompilation = false)
+    public static function get(Artist $artist, $name, $year, $isCompilation = false)
     {
         // If this is a compilation album, its artist must be "Various Artists"
         if ($isCompilation) {
@@ -63,6 +63,7 @@ class Album extends Model
         return self::firstOrCreate([
             'artist_id' => $artist->id,
             'name' => $name ?: self::UNKNOWN_NAME,
+            'year' => $year,
         ]);
     }
 

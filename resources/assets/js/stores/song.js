@@ -271,6 +271,8 @@ export const songStore = {
     originalSong.title = updatedSong.title
     originalSong.lyrics = updatedSong.lyrics
     originalSong.track = updatedSong.track
+    originalSong.disc = updatedSong.disc
+    originalSong.genre = updatedSong.genre
 
     if (updatedSong.album.id === originalAlbumId) { // case 1
       // Nothing to do
