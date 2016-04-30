@@ -28,6 +28,7 @@ $factory->define(App\Models\Album::class, function ($faker) {
     return [
         'name' => $faker->sentence,
         'cover' => md5(uniqid()).'.jpg',
+        'year' => $faker->randomNumber(4),
     ];
 });
 
@@ -36,6 +37,8 @@ $factory->define(App\Models\Song::class, function ($faker) {
         'title' => $faker->sentence,
         'length' => $faker->randomFloat(2, 10, 500),
         'track' => $faker->randomNumber(),
+        'disc' => $faker->randomNumber(),
+        'genre' => $faker->text,
         'lyrics' => $faker->paragraph(),
         'path' => '/tmp/'.uniqid().'.mp3',
         'mtime' => time(),

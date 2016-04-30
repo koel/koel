@@ -10,7 +10,7 @@
         <table v-show="items.length">
             <thead>
                 <tr>
-                    <th @click="sort('track')" class="track-number">#
+                    <th @click="sort(['track', 'disc'])" class="track-number">#
                         <i class="fa fa-angle-down" v-show="sortKey === 'track' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'track' && order < 0"></i>
                     </th>
@@ -18,11 +18,11 @@
                         <i class="fa fa-angle-down" v-show="sortKey === 'title' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'title' && order < 0"></i>
                     </th>
-                    <th @click="sort(['album.artist.name', 'album.name', 'track'])">Artist
+                    <th @click="sort(['album.artist.name', 'album.name', 'album.year', 'track', 'disc'])">Artist
                         <i class="fa fa-angle-down" v-show="sortingByArtist && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortingByArtist && order < 0"></i>
                     </th>
-                    <th @click="sort(['album.name', 'track'])">Album
+                    <th @click="sort(['album.name', 'album.year', 'track', 'disc'])">Album
                         <i class="fa fa-angle-down" v-show="sortingByAlbum && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortingByAlbum && order < 0"></i>
                     </th>

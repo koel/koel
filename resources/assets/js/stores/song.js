@@ -251,10 +251,12 @@ export default {
         const originalAlbumId = originalSong.album.id;
         const originalArtistId = originalSong.artist.id;
 
-        // First, we update the title, lyrics, and track #
+        // First, we update the title, lyrics, track #, disc #, and genre
         originalSong.title = updatedSong.title;
         originalSong.lyrics = updatedSong.lyrics;
         originalSong.track = updatedSong.track;
+        originalSong.disc = updatedSong.disc;
+        originalSong.genre = updatedSong.genre;
 
         if (updatedSong.album.id === originalAlbumId) { // case 1
             // Nothing to do

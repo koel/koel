@@ -57,9 +57,21 @@
                                 <label>Track</label>
                                 <input type="number" min="0" v-model="formData.track">
                             </div>
+                            <div class="form-row" style="display: none;">
+                                <label>Disc</label>
+                                <input type="number" min="0" v-model="formData.disc">
+                            </div>
+                            <div class="form-row" style="display: none;">
+                                <label>Year</label>
+                                <input type="number" min="0" v-model="formData.albumYear">
+                            </div>
+                            <div class="form-row" style="display: none;">
+                                <label>Genre</label>
+                                <input type="text" v-model="formData.genre">
+                            </div>
                         </div>
                         <div v-show="currentView === 'lyrics' && editSingle">
-                            <div class="form-row">
+                            <div class="form-row" style="display: none;">
                                 <textarea v-model="formData.lyrics"></textarea>
                             </div>
                         </div>
@@ -181,6 +193,33 @@
             },
 
             /**
+             * Determine if all the songs we're editing have the same year
+             *
+             * @return {boolean}
+             */
+            hasSameYear() {
+                return every(this.songs, song => song.album.year === this.songs[0].album.year);
+            },
+
+            /**
+             * Determine if all the songs we're editing are on the same disc
+             *
+             * @return {boolean}
+             */
+            onSameDisc() {
+                return every(this.songs, song => song.disc === this.songs[0].disc);
+            },
+
+            /**
+             * Determine if all the songs we're editing have the same genre
+             *
+             * @return {boolean}
+             */
+            isSameGenre() {
+                return every(this.songs, song => song.genre === this.songs[0].genre);
+            },
+
+            /**
              * The song title to be displayed.
              *
              * @return {string}
@@ -227,6 +266,8 @@
                     this.formData.title = this.songs[0].title;
                     this.formData.albumName = this.songs[0].album.name;
                     this.formData.artistName = this.songs[0].artist.name;
+                    this.formData.albumYear = this.songs[0].album.year;
+                    this.formData.genre = this.songs[0].genre;
 
                     // If we're editing only one song and the song's info (including lyrics)
                     // hasn't been loaded, load it now.
@@ -237,16 +278,21 @@
                             this.loading = false;
                             this.formData.lyrics = br2nl(this.songs[0].lyrics);
                             this.formData.track = this.songs[0].track;
+                            this.formData.disc = this.songs[0].disc;
                             this.initCompilationStateCheckbox();
                         });
                     } else {
                         this.formData.lyrics = br2nl(this.songs[0].lyrics);
                         this.formData.track = this.songs[0].track;
+                        this.formData.disc = this.songs[0].disc;
                         this.initCompilationStateCheckbox();
                     }
                 } else {
                     this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : '';
                     this.formData.artistName = this.bySameArtist ? this.songs[0].artist.name : '';
+                    this.formData.albumYear = this.hasSameYear ? this.songs[0].album.year : '';
+                    this.formData.disc = this.onSameDisc ? this.songs[0].disc : '';
+                    this.formData.genre = this.isSameGenre ? this.songs[0].genre : '';
                     this.loading = false;
                     this.initCompilationStateCheckbox();
                 }
