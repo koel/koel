@@ -23,6 +23,7 @@ elixir(function (mix) {
 
     mix.scripts([
             'node_modules/plyr/dist/plyr.js',
+            'node_modules/rangetouch/dist/rangetouch.js',
             'resources/assets/js/libs/modernizr-custom.js'
         ], 'public/js/vendors.js', './')
         .styles([
