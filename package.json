@@ -38,6 +38,7 @@
     "nprogress": "^0.2.0",
     "plyr": "^1.5.16",
     "rangeslider.js": "^2.1.1",
+    "rangetouch": "0.0.9",
     "sinon": "^1.17.2",
     "vue": "^1.0.20",
     "vue-clickaway": "^1.1.1",
