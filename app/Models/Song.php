@@ -190,7 +190,7 @@ class Song extends Model
         $this->save();
 
         // Get the updated record, with album and all.
-        $updatedSong = self::with('album', 'album.artist')->find($this->id);
+        $updatedSong = self::with('album', 'album.artist', 'contributingArtist')->find($this->id);
         // Make sure lyrics is included in the returned JSON.
         $updatedSong->makeVisible('lyrics');
 

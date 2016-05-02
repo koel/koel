@@ -39,33 +39,37 @@ export default {
      */
     init(albums) {
         // Iterate through the albums. With each, add its songs into our master song list.
+        // While doing so, we populate some other information into the songs as well.
         this.all = albums.reduce((songs, album) => {
-            // While doing so, we populate some other information into the songs as well.
             each(album.songs, song => {
-                song.fmtLength = secondsToHis(song.length);
-
-                // Manually set these additional properties to be reactive
-                Vue.set(song, 'playCount', 0);
-                Vue.set(song, 'album', album);
-                Vue.set(song, 'liked', false);
-                Vue.set(song, 'lyrics', null);
-                Vue.set(song, 'playbackState', 'stopped');
-
-                if (song.contributing_artist_id) {
-                    const artist = artistStore.byId(song.contributing_artist_id);
-                    artist.albums = union(artist.albums, [album]);
-                    artistStore.setupArtist(artist);
-                    Vue.set(song, 'artist', artist);
-                } else {
-                    Vue.set(song, 'artist', artistStore.byId(song.album.artist.id));
-                }
-
-                // Cache the song, so that byId() is faster
-                this.cache[song.id] = song;
+                this.setupSong(song, album);
             });
 
             return songs.concat(album.songs);
         }, []);
+    },
+
+    setupSong(song, album) {
+        song.fmtLength = secondsToHis(song.length);
+
+        // Manually set these additional properties to be reactive
+        Vue.set(song, 'playCount', 0);
+        Vue.set(song, 'album', album);
+        Vue.set(song, 'liked', false);
+        Vue.set(song, 'lyrics', null);
+        Vue.set(song, 'playbackState', 'stopped');
+
+        if (song.contributing_artist_id) {
+            const artist = artistStore.byId(song.contributing_artist_id);
+            artist.albums = union(artist.albums, [album]);
+            artistStore.setupArtist(artist);
+            Vue.set(song, 'artist', artist);
+        } else {
+            Vue.set(song, 'artist', artistStore.byId(song.album.artist.id));
+        }
+
+        // Cache the song, so that byId() is faster
+        this.cache[song.id] = song;
     },
 
     /**
