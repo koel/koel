@@ -105,11 +105,7 @@ export default {
      */
     login(email, password, successCb = null, errorCb = null) {
         NProgress.start();
-        http.post('me', { email, password }, () => {
-            if (successCb) {
-                successCb();
-            }
-        }, errorCb);
+        http.post('me', { email, password }, () => successCb && successCb(), errorCb);
     },
 
     /**
@@ -118,11 +114,7 @@ export default {
      * @param  {Function} cb The callback.
      */
     logout(cb = null) {
-        http.delete('me', {}, () => {
-            if (cb) {
-                cb();
-            }
-        });
+        http.delete('me', {}, () => cb && cb());
     },
 
     /**
@@ -141,10 +133,7 @@ export default {
                 email: this.current.email
             }, () => {
                 this.setAvatar();
-
-                if (cb) {
-                    cb();
-                }
+                cb && cb();
             }
         );
     },
@@ -166,9 +155,7 @@ export default {
             this.setAvatar(user);
             this.all.unshift(user);
 
-            if (cb) {
-                cb();
-            }
+            cb && cb();
         });
     },
 
@@ -188,9 +175,7 @@ export default {
             this.setAvatar(user);
             user.password = '';
 
-            if (cb) {
-                cb();
-            }
+            cb && cb();
         });
     },
 
@@ -228,9 +213,7 @@ export default {
             /**
              * Brian May enters the stage.
              */
-            if (cb) {
-                cb();
-            }
+            cb && cb();
         });
     },
 };

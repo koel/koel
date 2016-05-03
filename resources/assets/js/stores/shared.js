@@ -50,9 +50,7 @@ export default {
 
             window.useLastfm = this.state.useLastfm = data.useLastfm;
 
-            if (successCb) {
-                successCb();
-            }
+            successCb && successCb();
         }, errorCb);
     },
 

@@ -157,10 +157,7 @@ export default {
     clear(cb = null) {
         this.all = [];
         this.current = null;
-
-        if (cb) {
-            cb();
-        }
+        cb && cb();
     },
 
     /**
