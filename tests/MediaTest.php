@@ -3,10 +3,12 @@
 use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
+use App\Models\File;
 use App\Models\Song;
 use App\Services\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Mockery as m;
 
 class MediaTest extends TestCase
 {
@@ -156,5 +158,29 @@ class MediaTest extends TestCase
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/sic.mp3']);
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.MP3']);
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
+    }
+
+    public function testHtmlEntitiesInTags()
+    {
+        $getID3 = m::mock(getID3::class, [
+            'analyze' => [
+                'tags' => [
+                    'id3v2' => [
+                        'title' => ['&#27700;&#35895;&#24195;&#23455;'],
+                        'album' => ['&#23567;&#23721;&#20117;&#12371; Random'],
+                        'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown'],
+                    ],
+                ],
+                'encoding' => 'UTF-8',
+                'playtime_seconds' => 100,
+            ],
+        ]);
+
+        $file = new File(dirname(__FILE__).'/songs/blank.mp3', $getID3);
+        $info = $file->getInfo();
+
+        $this->assertEquals('佐倉綾音 Unknown', $info['artist']);
+        $this->assertEquals('小岩井こ Random', $info['album']);
+        $this->assertEquals('水谷広実', $info['title']);
     }
 }
