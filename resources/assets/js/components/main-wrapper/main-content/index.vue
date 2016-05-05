@@ -165,6 +165,10 @@
                     justify-content: center;
                     margin-top: 8px;
                 }
+
+                span:first-child {
+                    flex: 0 0 28px;
+                }
             }
 
             > section {
