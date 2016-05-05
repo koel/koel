@@ -157,10 +157,7 @@ export default {
     clear(cb = null) {
         this.all = [];
         this.current = null;
-
-        if (cb) {
-            cb();
-        }
+        cb && cb();
     },
 
     /**
@@ -221,9 +218,7 @@ export default {
      * @return {Object} The queued song.
      */
     set current(song) {
-        this.state.current = song;
-
-        return this.current;
+        return this.state.current = song;
     },
 
     /**
@@ -232,6 +227,6 @@ export default {
      * @return {Array.<Object>} The shuffled array of song objects
      */
     shuffle() {
-        return (this.all = shuffle(this.all));
+        return this.all = shuffle(this.all);
     },
 };

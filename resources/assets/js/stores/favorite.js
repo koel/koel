@@ -44,17 +44,9 @@ export default {
         // This may cause a minor problem if the request fails somehow, but do we care?
         song.liked = !song.liked;
 
-        if (song.liked) {
-            this.add(song);
-        } else {
-            this.remove(song);
-        }
+        song.liked ? this.add(song) : this.remove(song);
 
-        http.post('interaction/like', { song: song.id }, () => {
-            if (cb) {
-                cb();
-            }
-        });
+        http.post('interaction/like', { song: song.id }, () => cb && cb());
     },
 
     /**
@@ -94,11 +86,7 @@ export default {
         each(songs, song => song.liked = true);
         this.add(songs);
 
-        http.post('interaction/batch/like', { songs: map(songs, 'id') }, () => {
-            if (cb) {
-                cb();
-            }
-        });
+        http.post('interaction/batch/like', { songs: map(songs, 'id') }, () => cb && cb());
     },
 
     /**
@@ -108,15 +96,9 @@ export default {
      * @param {?Function}       cb
      */
     unlike(songs, cb = null) {
-        // Don't wait for the HTTP response to update the status, just set them to Unliked right away.
-        // This may cause a minor problem if the request fails somehow, but do we care?
         each(songs, song => song.liked = false);
         this.remove(songs);
 
-        http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, () => {
-            if (cb) {
-                cb();
-            }
-        });
+        http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, () => cb && cb());
     },
 };

@@ -89,9 +89,7 @@ export default {
             this.getSongs(playlist);
             this.add(playlist);
 
-            if (cb) {
-                cb();
-            }
+            cb && cb();
         });
     },
 
@@ -106,10 +104,7 @@ export default {
 
         http.delete(`playlist/${playlist.id}`, {}, () => {
             this.remove(playlist);
-
-            if (cb) {
-                cb();
-            }
+            cb && cb();
         });
     },
 
@@ -128,11 +123,7 @@ export default {
             return;
         }
 
-        http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
-            if (cb) {
-                cb();
-            }
-        });
+        http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => cb && cb());
     },
 
     /**
@@ -145,11 +136,7 @@ export default {
     removeSongs(playlist, songs, cb = null) {
         playlist.songs = difference(playlist.songs, songs);
 
-        http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
-            if (cb) {
-                cb();
-            }
-        });
+        http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => cb && cb());
     },
 
     /**
@@ -161,10 +148,6 @@ export default {
     update(playlist, cb = null) {
         NProgress.start();
 
-        http.put(`playlist/${playlist.id}`, { name: playlist.name }, () => {
-            if (cb) {
-                cb();
-            }
-        });
+        http.put(`playlist/${playlist.id}`, { name: playlist.name }, () => cb && cb());
     },
 };

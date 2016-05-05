@@ -73,7 +73,7 @@
         }
 
         @media only screen and(max-width: 768px) {
-            flex: 0;
+            flex: auto;
             width: 64px;
             margin-top: 8px;
         }

@@ -109,11 +109,7 @@ export default {
     getLength(songs, toHis) {
         const duration = songs.reduce((length, song) => length + song.length, 0);
 
-        if (toHis) {
-            return secondsToHis(duration);
-        }
-
-        return duration;
+        return toHis ? secondsToHis(duration) : duration;
     },
 
     /**
@@ -171,9 +167,7 @@ export default {
             song.album.playCount += song.playCount - oldCount;
             song.artist.playCount += song.playCount - oldCount;
 
-            if (cb) {
-                cb();
-            }
+            cb && cb();
         });
     },
 
@@ -199,9 +193,7 @@ export default {
     getInfo(song, cb = null) {
         // Check if the song's info has been retrieved before.
         if (song.infoRetrieved) {
-            if (cb) {
-                cb();
-            }
+            cb && cb();
 
             return;
         }
@@ -242,9 +234,7 @@ export default {
 
             song.infoRetrieved = true;
 
-            if (cb) {
-                cb();
-            }
+            cb && cb();
         });
     },
 
@@ -259,11 +249,7 @@ export default {
             return;
         }
 
-        http.post(`${song.id}/scrobble/${song.playStartTime}`, () => {
-            if (cb) {
-                cb();
-            }
-        });
+        http.post(`${song.id}/scrobble/${song.playStartTime}`, () => cb && cb());
     },
 
     /**
@@ -285,14 +271,8 @@ export default {
         }, response => {
             each(response.data, song => this.syncUpdatedSong(song));
 
-            if (successCb) {
-                successCb();
-            }
-        }, () => {
-            if (errorCb) {
-                errorCb();
-            }
-        });
+            successCb && successCb();
+        }, () => errorCb && errorCb());
     },
 
     /**
@@ -424,7 +404,7 @@ export default {
     },
 
     /**
-     * Called when the application is tore down.
+     * Called when the application is torn down.
      * Reset stuff.
      */
     teardown() {
