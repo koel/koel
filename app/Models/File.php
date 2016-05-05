@@ -140,10 +140,11 @@ class File
             $lyrics = array_get($comments, 'unsynchronised_lyric', [''])[0];
         }
 
-        $props['artist'] = trim($artist);
-        $props['album'] = trim($album);
-        $props['title'] = trim($title);
-        $props['lyrics'] = trim($lyrics);
+        // Fixes #323, where tag names can be htmlentities()'ed
+        $props['artist'] = html_entity_decode(trim($artist));
+        $props['album'] = html_entity_decode(trim($album));
+        $props['title'] = html_entity_decode(trim($title));
+        $props['lyrics'] = html_entity_decode(trim($lyrics));
 
         return $this->info = $props;
     }
