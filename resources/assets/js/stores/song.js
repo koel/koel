@@ -96,11 +96,7 @@ export default {
     getLength(songs, toHis) {
         const duration = songs.reduce((length, song) => length + song.length, 0);
 
-        if (toHis) {
-            return secondsToHis(duration);
-        }
-
-        return duration;
+        return toHis ? secondsToHis(duration) : duration;
     },
 
     /**
@@ -395,7 +391,7 @@ export default {
     },
 
     /**
-     * Called when the application is tore down.
+     * Called when the application is torn down.
      * Reset stuff.
      */
     teardown() {

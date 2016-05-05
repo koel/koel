@@ -44,11 +44,7 @@ export default {
         // This may cause a minor problem if the request fails somehow, but do we care?
         song.liked = !song.liked;
 
-        if (song.liked) {
-            this.add(song);
-        } else {
-            this.remove(song);
-        }
+        song.liked ? this.add(song) : this.remove(song);
 
         http.post('interaction/like', { song: song.id }, () => cb && cb());
     },

@@ -77,9 +77,7 @@ export default {
      * @return {Object}
      */
     set current(user) {
-        this.state.current = user;
-
-        return this.current;
+        return this.state.current = user;
     },
 
     /**
