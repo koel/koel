@@ -12,6 +12,7 @@ Route::get('/♫', function () {
 Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
 
     Route::post('me', 'UserController@login');
+    Route::delete('me', 'UserController@logout');
 
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::get('/', function () {
@@ -40,7 +41,6 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
 
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
         Route::put('me', 'UserController@updateProfile');
-        Route::delete('me', 'UserController@logout');
 
         Route::get('lastfm/connect', 'LastfmController@connect');
         Route::post('lastfm/session-key', 'LastfmController@setSessionKey');
