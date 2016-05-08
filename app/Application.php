@@ -19,7 +19,7 @@ class Application extends IlluminateApplication
      *
      * @link https://github.com/phanan/koel/releases
      */
-    const VERSION = 'v2.3.0';
+    const VERSION = 'v2.3.1';
 
     /**
      * We have merged public path and base path.
