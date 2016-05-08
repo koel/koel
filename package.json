@@ -36,7 +36,7 @@
     "mocha": "^2.3.4",
     "node-sass": "^3.4.2",
     "nprogress": "^0.2.0",
-    "plyr": "^1.5.16",
+    "plyr": "1.5.x",
     "rangeslider.js": "^2.1.1",
     "rangetouch": "0.0.9",
     "sinon": "^1.17.2",

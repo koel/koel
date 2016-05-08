@@ -7,6 +7,7 @@ use App\Http\Requests\API\UserLoginRequest;
 use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
 use App\Models\User;
+use Exception;
 use Hash;
 use JWTAuth;
 use Log;
@@ -43,12 +44,12 @@ class UserController extends Controller
      */
     public function logout()
     {
-        try {
-            JWTAuth::invalidate(JWTAuth::getToken());
-        } catch (JWTException $e) {
-            Log:error($e);
-
-            return response()->json(['error' => 'could_not_invalidate_token'], 500);
+        if ($token = JWTAuth::getToken()) {
+            try {
+                JWTAuth::invalidate($token);
+            } catch (Exception $e) {
+                Log::error($e);
+            }
         }
 
         return response()->json();

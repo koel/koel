@@ -22,7 +22,7 @@ Vue.http.interceptors.push({
         NProgress.done();
 
         if (r.status === 400 || r.status === 401) {
-            if (r.request.method !== 'POST' && r.request.url !== 'me') {
+            if (!(r.request.method === 'POST' && r.request.url === 'me')) {
                 // This is not a failed login. Log out then.
                 app.logout();
             }
