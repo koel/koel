@@ -17,7 +17,8 @@ class SyncMedia extends Command
     protected $signature = 'koel:sync
         {record? : A single watch record. Consult Wiki for more info.}
         {--tags= : The comma-separated tags to sync into the database}
-        {--force : Force re-syncing even unchanged files}';
+        {--force : Force re-syncing even unchanged files}
+        {--path= : Force re-syncing of files that match a given path}';
 
     protected $ignored = 0;
     protected $invalid = 0;
@@ -71,7 +72,7 @@ class SyncMedia extends Command
         // New records will have every applicable field sync'ed in.
         $tags = $this->option('tags') ? explode(',', $this->option('tags')) : [];
 
-        Media::sync(null, $tags, $this->option('force'), $this);
+        Media::sync(null, $tags, $this->option('force'), $this->option('path'), $this);
 
         $this->output->writeln(
             PHP_EOL.PHP_EOL

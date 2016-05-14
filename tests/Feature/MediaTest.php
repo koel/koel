@@ -114,6 +114,27 @@ class MediaTest extends BrowserKitTestCase
         $this->assertEquals($originalLyrics, $song->lyrics);
     }
 
+    public function testForcePathSync()
+    {
+        $this->expectsEvents(LibraryChanged::class);
+
+        $media = new Media();
+        $media->sync($this->mediaPath);
+
+        // Resync with force path
+        $media->sync($this->mediaPath, [], false, 'blank');
+
+        // Validate that only songs that pregmatch 'blank' were updated
+        $songs = Song::orderBy('id', 'desc');
+        foreach ($songs as $song) {
+            if (preg_match('#blank#', $song->path)) {
+                $this->assertNotEquals($song->created_at, $song->updated_at);
+            } else {
+                $this->assertEquals($song->created_at, $song->updated_at);
+            }
+        }
+    }
+
     public function testSyncSelectiveTags()
     {
         $this->expectsEvents(LibraryChanged::class);

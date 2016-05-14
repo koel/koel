@@ -182,17 +182,24 @@ class File
     /**
      * Sync the song with all available media info against the database.
      *
-     * @param array $tags  The (selective) tags to sync (if the song exists)
-     * @param bool  $force Whether to force syncing, even if the file is unchanged
+     * @param array  $tags  The (selective) tags to sync (if the song exists)
+     * @param bool   $force Whether to force syncing, even if the file is
+     *                      unchanged
+     * @param string $path  Whether to force syncing of a specific path, even
+     *                      if the file is unchanged
      *
      * @return bool|Song A Song object on success,
      *                   true if file exists but is unmodified,
      *                   or false on an error.
      */
-    public function sync($tags, $force = false)
+    public function sync($tags, $force = false, $path = '')
     {
         // If the file is not new or changed and we're not forcing update, don't do anything.
-        if (!$this->isNewOrChanged() && !$force) {
+        if (!$this->isNewOrChanged() && !$force && !$path) {
+            return true;
+        }
+
+        if ($path && !preg_match('/'.preg_quote($path, '/').'/', $this->getPath())) {
             return true;
         }
 
@@ -208,7 +215,7 @@ class File
 
         $artist = null;
 
-        if ($this->isChanged() || $force) {
+        if ($this->isChanged() || $force || $path) {
             // This is a changed file, or the user is forcing updates.
             // In such a case, the user must have specified a list of tags to sync.
             // A sample command could be: ./artisan koel:sync --force --tags=artist,album,lyrics
@@ -248,7 +255,7 @@ class File
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
 
-        if (!$album->has_cover) {
+        if (!$album->has_cover || $force || $path) {
             // If the album has no cover, we try to get the cover image from existing tag data
             if (!empty($info['cover'])) {
                 try {

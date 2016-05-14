@@ -53,9 +53,10 @@ class Media
      *                                 Only taken into account for existing records.
      *                                 New records will have all tags synced in regardless.
      * @param bool        $force       Whether to force syncing even unchanged files
+     * @param string      $forcePath   Whether to force syncing, even unchanged files, of a specific path
      * @param SyncMedia   $syncCommand The SyncMedia command object, to log to console if executed by artisan.
      */
-    public function sync($path = null, $tags = [], $force = false, SyncMedia $syncCommand = null)
+    public function sync($path = null, $tags = [], $force = false, $forcePath = '', SyncMedia $syncCommand = null)
     {
         if (!app()->runningInConsole()) {
             set_time_limit(config('koel.sync.timeout'));
@@ -81,7 +82,7 @@ class Media
         foreach ($files as $file) {
             $file = new File($file, $getID3);
 
-            $song = $file->sync($this->tags, $force);
+            $song = $file->sync($this->tags, $force, $forcePath);
 
             if ($song === true) {
                 $results['ugly'][] = $file;
