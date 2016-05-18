@@ -29,7 +29,7 @@
                     </p>
 
                     <div class="plyr">
-                        <audio crossorigin="anonymous" controls></audio>
+                        <video crossorigin="anonymous" controls></video>
                     </div>
                 </div>
             </div>

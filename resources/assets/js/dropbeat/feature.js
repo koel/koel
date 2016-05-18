@@ -1,0 +1,172 @@
+import Vue from 'vue';
+import dataList from './data-list.vue';
+
+import dropbeat from './dropbeat';
+import music from './music';
+import playerManager from './playermanager';
+import musicUpdate from './musicupdate';
+import utils from '../services/utils';
+
+import $ from 'jquery';
+import _ from 'lodash';
+
+export default {
+
+    state: {
+        searching: false,
+        keyword: null,
+        searchInput: "#search-input",
+        searchButton: "#search-button",
+        searchResultTemplate: "#tmpl-search-results",
+        searchResultSection: ".search-result-section",
+        musicContainer: ".a-addable-music",
+        playMusicBtn: ".play-music",
+        addToPlayListBtn: ".add-to-playlist",
+        results: [],
+
+    },
+
+
+    init() {
+        var that = this;
+
+        // that.delegateTrigger();
+
+        $(that.state.searchButton).click(function() {
+            that.onSubmit($(that.state.searchInput).val());
+        });
+
+        $(that.state.searchInput).keydown(function (event) {
+// Handles Keydown of `Enter key`
+            if (event.keyCode === 13) {
+                that.onSubmit($(that.state.searchInput).val());
+            }
+        });
+
+        that.delegateTrigger();
+    },
+
+    onSubmit(keyword) {
+        var that = this,
+            context = this.state;
+        var searchUrl = dropbeat.api('search');
+
+        keyword = encodeURIComponent(keyword);
+        context.searching = true;
+        context.keyword = keyword;
+
+
+        $.ajax({
+            url: searchUrl,
+            data: decodeURIComponent($.param({
+                'keyword': keyword,
+                'type': 'jsonp'
+            })),
+            dataType: 'jsonp',
+            jsonp: 'callback',
+            success: function (data) {
+                that.searchCallback(data);
+                // console.log(data);
+            }
+        });
+    },
+
+    searchCallback(data) {
+        this.state.searching = false;
+        this.updateView(data.tracks);
+    },
+
+    updateView(resp){
+        var that = this;
+
+        if (!resp) {
+            return;
+        }
+        // if (!that.template) {
+        //     that.template =
+        //         _.template($(that.state.searchResultTemplate).html());
+        // }
+         that.resultEscape(resp);
+        // $(that.state.searchResultSection).html(
+        //     that.template(
+        //         {results: resp}
+        //     )
+        // );
+
+        this.state.results = resp;
+        // console.log(this.state.results);
+    },
+
+    resultEscape(resp){
+        var i;
+
+        for (i = 0; i < resp.length; i += 1){
+            resp[i].title = dropbeat.escapes(resp[i].title);
+        }
+    },
+
+    delegateTrigger() {
+        var that = this;
+
+        $(that.state.searchResultSection).on(
+            "click",
+            that.state.addToPlayListBtn,
+            function() {
+                var self = this,
+                    $musicContainer =
+                        $(self).
+                            parents(that.state.musicContainer),
+                    musicData = {
+                        id: $musicContainer.data("musicId"),
+                        title: $musicContainer.data("musicTitle"),
+                        type: $musicContainer.data("musicType")
+                    };
+
+                musicUpdate.update(musicData,() => {
+                    // Re-init the app.
+                    // this.$root.init();
+
+                }, error => {
+                    // var msg = 'Unknown error.';
+                    //
+                    // if (error.status === 422) {
+                    //     msg = utils.parseValidationError(error.data)[0];
+                    // }
+                    //
+                    // this.$root.showOverlay(`Error: ${msg}`, 'error', true);
+                });
+
+                dataList.send = true;
+
+
+            }
+        );
+
+        $(that.state.searchResultSection).on(
+            "click",
+            that.state.playMusicBtn,
+            function() {
+                var self = this,
+                    $musicContainer =
+                        $(self).
+                            parents(that.state.musicContainer),
+                    musicData = {
+                        id: $musicContainer.data("musicId"),
+                        title: $musicContainer.data("musicTitle"),
+                        type: $musicContainer.data("musicType")
+                    };
+
+                music.MusicQueue.init();
+                playerManager.onMusicClicked(
+                    new music.Music({
+                        'id': musicData.id,
+                        'title': musicData.title,
+                        'type': musicData.type
+                    })
+                );
+            }
+        );
+    },
+
+
+};

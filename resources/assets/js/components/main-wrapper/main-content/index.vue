@@ -7,6 +7,7 @@
         <albums v-show="view === 'albums'"></albums>
         <album v-show="view === 'album'"></album>
         <artists v-show="view === 'artists'"></artists>
+        <dropbeat v-show="view === 'dropbeat'"></dropbeat>
         <artist v-show="view === 'artist'"></artist>
         <users v-show="view === 'users'"></users>
         <settings v-show="view === 'settings'"></settings>
@@ -29,11 +30,12 @@
     import playlist from './playlist.vue';
     import favorites from './favorites.vue';
     import profile from './profile.vue';
+    import dropbeat from './dropbeat.vue';
 
     import albumStore from '../../../stores/album';
 
     export default {
-        components: { albums, album, artists, artist, songs, settings, users, home, queue, playlist, favorites, profile },
+        components: { albums, album, artists, artist, songs, settings, users, home, queue, playlist, favorites, profile, dropbeat },
 
         data() {
             return {

@@ -24,7 +24,8 @@ elixir(function (mix) {
     mix.scripts([
             'node_modules/plyr/dist/plyr.js',
             'node_modules/rangetouch/dist/rangetouch.js',
-            'resources/assets/js/libs/modernizr-custom.js'
+            'resources/assets/js/libs/modernizr-custom.js',
+			'resources/assets/js/libs/soundmanager2-nodebug-jsmin.js'
         ], 'public/js/vendors.js', './')
         .styles([
             'resources/assets/css/**/*.css',

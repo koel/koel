@@ -16,6 +16,8 @@
     <link rel="icon" href="{{ App::staticUrl('public/img/icon.png') }}">
     <link rel="apple-touch-icon" href="{{ App::staticUrl('public/img/icon.png') }}">
 
+    <script src="http://www.youtube.com/player_api"></script>
+
     <link rel="stylesheet" href="{{ App::rev('css/vendors.css') }}">
     <link rel="stylesheet" href="{{ App::rev('css/app.css') }}">
 </head>

@@ -28,6 +28,10 @@
                     <a class="artists" :class="[currentView == 'artists' ? 'active' : '']"
                         @click.prevent="$root.loadMainView('artists')">Artists</a>
                 </li>
+                <li>
+                    <a class="dropbeat" :class="[currentView == 'dropbeat' ? 'active' : '']"
+                        @click.prevent="$root.loadMainView('dropbeat')">Dropbeat</a>
+                </li>
             </ul>
         </section>
 
@@ -234,6 +238,10 @@
                 &.artists::before {
                     content: "\f130";
                 }
+                
+                &.dropbeat::before {
+                    content: "\266D";
+                }
 
                 &.settings::before {
                     content: "\f013";
@@ -277,4 +285,3 @@
         }
     }
 </style>
-
