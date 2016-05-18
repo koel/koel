@@ -97,7 +97,7 @@ a.btn.btn-primary.btn-lg.hero-button{
 }
 
 .external-player-section{
-    /*height: 0%;
-    visibility:hidden;*/
+    height: 0%;
+    visibility:hidden;
 }
 </style>
