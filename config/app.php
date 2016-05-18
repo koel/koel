@@ -150,6 +150,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\MediaServiceProvider::class,
+        App\Providers\DropbeatMediaServiceProvider::class,
         App\Providers\UtilServiceProvider::class,
         App\Providers\LastfmServiceProvider::class,
 
@@ -200,6 +201,7 @@ return [
         'View'      => Illuminate\Support\Facades\View::class,
 
         'Media' => App\Facades\Media::class,
+        'DropbeatMedia' => App\Facades\DropbeatMedia::class,
         'Util' => App\Facades\Util::class,
         'Lastfm' => App\Facades\Lastfm::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
