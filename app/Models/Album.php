@@ -21,6 +21,7 @@ class Album extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
+    protected $casts = ['artist_id' => 'integer'];
 
     public function artist()
     {
@@ -158,5 +159,15 @@ class Album extends Model
     public function getNameAttribute($value)
     {
         return html_entity_decode($value);
+    }
+
+    /**
+     * Determine if the album is a compilation.
+     *
+     * @return bool
+     */
+    public function getIsCompilationAttribute()
+    {
+        return $this->artist_id === Artist::VARIOUS_ID;
     }
 }
