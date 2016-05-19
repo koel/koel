@@ -46,8 +46,11 @@
                             </div>
                             <div class="form-row">
                                 <label class="small">
-                                    <input type="checkbox" @change="setCompilationState" v-el:compilation-state-chk />
+                                    <input type="checkbox" @change="changeCompilationState" v-el:compilation-state-chk />
                                     Album is a compilation of songs by various artists
+                                </label>
+                                <label class="small warning" v-if="needsReload">
+                                    Koel will reload after saving.
                                 </label>
                             </div>
                             <div class="form-row" v-show="editSingle">
@@ -98,6 +101,7 @@
                 songs: [],
                 currentView: '',
                 loading: false,
+                needsReload: false,
 
                 artistState: artistStore.state,
                 artistTypeaheadOptions: {
@@ -216,6 +220,7 @@
                 this.shown = true;
                 this.songs = songs;
                 this.currentView = 'details';
+                this.needsReload = false;
 
                 if (this.editSingle) {
                     this.formData.title = this.songs[0].title;
@@ -231,25 +236,25 @@
                             this.loading = false;
                             this.formData.lyrics = br2nl(this.songs[0].lyrics);
                             this.formData.track = this.songs[0].track;
-                            this.setAlbumCompilationState();
+                            this.initCompilationStateCheckbox();
                         });
                     } else {
                         this.formData.lyrics = br2nl(this.songs[0].lyrics);
                         this.formData.track = this.songs[0].track;
-                        this.setAlbumCompilationState();
+                        this.initCompilationStateCheckbox();
                     }
                 } else {
                     this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : '';
                     this.formData.artistName = this.bySameArtist ? this.songs[0].artist.name : '';
                     this.loading = false;
-                    this.setAlbumCompilationState();
+                    this.initCompilationStateCheckbox();
                 }
             },
 
             /**
-             * Set the compilation state of the editing songs' album(s).
+             * Initialize the compilation state's checkbox of the editing songs' album(s).
              */
-            setAlbumCompilationState() {
+            initCompilationStateCheckbox() {
                 // This must be wrapped in a $nextTick callback, because the form is dynamically
                 // attached into DOM in conjunction with `this.loading` data binding.
                 this.$nextTick(() => {
@@ -278,8 +283,9 @@
              * Also, following iTunes style, we don't support circular switching of the states -
              * once the user clicks the checkbox, there's no going back to indeterminate state.
              */
-            setCompilationState(e) {
+            changeCompilationState(e) {
                 this.formData.compilationState = e.target.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE;
+                this.needsReload = true;
             },
 
             /**
@@ -299,6 +305,9 @@
                 songStore.update(this.songs, this.formData, () => {
                     this.loading = false;
                     this.close();
+                    if (this.needsReload) {
+                        this.$root.forceReloadWindow();
+                    }
                 }, () => {
                     this.loading = false;
                 });
@@ -357,6 +366,10 @@
                 &:focus {
                     border-color: $colorOrange;
                 }
+            }
+
+            .warning {
+                color: #f00;
             }
 
             textarea {

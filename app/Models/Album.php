@@ -21,7 +21,6 @@ class Album extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
-    protected $casts = ['is_compilation' => 'bool'];
 
     public function artist()
     {
@@ -57,7 +56,6 @@ class Album extends Model
         return self::firstOrCreate([
             'artist_id' => $artist->id,
             'name' => $name ?: self::UNKNOWN_NAME,
-            'is_compilation' => $isCompilation,
         ]);
     }
 
@@ -110,20 +108,6 @@ class Album extends Model
         $extension = empty($extension[1]) ? 'png' : $extension[1];
 
         $this->writeCoverFile($cover['data'], $extension);
-    }
-
-    /**
-     * Set album as a compilation (or not).
-     *
-     * @param bool $state
-     *
-     * @return self
-     */
-    public function setCompilationState($state)
-    {
-        $this->save(['is_compilation' => $state]);
-
-        return $this;
     }
 
     /**

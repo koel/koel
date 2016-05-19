@@ -261,6 +261,15 @@
                     this.$broadcast('koel:teardown');
                 });
             },
+
+            /**
+             * Force reloading window regardless of "Confirm before reload" setting.
+             * This is handy for certain cases, for example Last.fm connect/disconnect.
+             */
+            forceReloadWindow() {
+                window.onbeforeunload = function() {};
+                window.location.reload();
+            },
         },
 
         events: {
