@@ -28,9 +28,17 @@ export default {
 
         this.app = app;
 
+        this.dropbeatplayer = plyr.setup({
+            controls: [],
+            autoplay: true,
+            allowAudio: true
+        })[0];
+
         this.player = plyr.setup({
             controls: [],
-        })[0];
+        })[1];
+
+        console.log(this.player);
 
         this.audio = $('audio');
 
@@ -56,6 +64,10 @@ export default {
             }
 
             this.playNext();
+        });
+
+        document.querySelector('.plyr').addEventListener('ready', e => {
+            this.play();
         });
 
         /**
@@ -125,7 +137,44 @@ export default {
 
         // Manually set the `src` attribute of the audio to prevent plyr from resetting
         // the audio media object and cause our equalizer to malfunction.
-        this.player.media.src = songStore.getSourceUrl(song);
+
+
+
+
+        switch (song.type) {
+            case 'youtube':
+                this.player.pause();
+                this.dropbeatplayer.source({
+                    type:       'video',
+                    sources: [{
+                        src:    song.path,
+                        type:   'youtube'
+                    }]
+                });
+                break;
+            case 'soundcloud':
+                this.player.pause();
+                this.dropbeatplayer.source({
+                    type:       'video',
+                    sources: [{
+                        src:    song.path,
+                        type:   'soundcloud'
+                    }]
+                });
+                break;
+            case 'local':
+                this.dropbeatplayer.source({
+                    type:       'video',
+                    sources: [{
+                        src:    song.path,
+                        type:   'vimeo'
+                    }]
+                });
+                //init dropbeatplayer markup
+                this.dropbeatplayer.pause();
+                this.player.media.src = songStore.getSourceUrl(song);
+                break;
+        }
 
         $('title').text(`${song.title} ♫ ${config.appTitle}`);
         $('.plyr audio').attr('title', `${song.album.artist.name} - ${song.title}`);
@@ -145,8 +194,20 @@ export default {
 
         this.app.$broadcast('song:played', song);
 
-        this.player.restart();
-        this.player.play();
+        switch (song.type) {
+            case 'youtube':
+                this.dropbeatplayer.restart();
+                this.dropbeatplayer.play();
+                break;
+            case 'soundcloud':
+                this.dropbeatplayer.restart();
+                this.dropbeatplayer.play();
+                break;
+            case 'local':
+                this.player.restart();
+                this.player.play();
+                break;
+        }
 
         // Register the play to the server
         songStore.registerPlay(song);
@@ -229,6 +290,12 @@ export default {
     playPrev() {
         // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
         // restart playing instead.
+        if (this.dropbeatplayer.media.currentTime > 5 && queueStore.current.length > 5) {
+            this.dropbeatplayer.restart();
+
+            return;
+        }
+
         if (this.player.media.currentTime > 5 && queueStore.current.length > 5) {
             this.player.restart();
 
@@ -270,6 +337,7 @@ export default {
      * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
      */
     setVolume(volume, persist = true) {
+        this.dropbeatplayer.setVolume(volume);
         this.player.setVolume(volume);
 
         if (persist) {
@@ -303,6 +371,8 @@ export default {
      */
     stop() {
         $('title').text(config.appTitle);
+        this.dropbeatplayer.pause();
+        this.dropbeatplayer.seek(0);
         this.player.pause();
         this.player.seek(0);
 
@@ -315,6 +385,7 @@ export default {
      * Pause playback.
      */
     pause() {
+        this.dropbeatplayer.pause();
         this.player.pause();
         queueStore.current.playbackState = 'paused';
     },
@@ -323,7 +394,20 @@ export default {
      * Resume playback.
      */
     resume() {
-        this.player.play();
+        const song = queueStore.current;
+
+        switch (song.type) {
+            case 'youtube':
+                this.dropbeatplayer.play();
+                break;
+            case 'soundcloud':
+                this.dropbeatplayer.play();
+                break;
+            case 'local':
+                this.player.play();
+                break;
+        }
+
         queueStore.current.playbackState = 'playing';
         this.app.$broadcast('song:played', queueStore.current);
     },

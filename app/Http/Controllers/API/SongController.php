@@ -50,6 +50,14 @@ class SongController extends Controller
         ]);
     }
 
+    public function getTypenPath(Song $song)
+    {
+        return response()->json([
+            'type' => $song->type,
+            'path' => $song->path,
+        ]);
+    }
+
     /**
      * Scrobble a song.
      *

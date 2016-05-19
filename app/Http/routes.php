@@ -30,6 +30,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
             'timestamp' => '\d+',
         ]);
         Route::get('{song}/info', 'SongController@getInfo');
+        Route::get('{song}/TP', 'SongController@getTypenPath');
 
         Route::put('songs', 'SongController@update');
 

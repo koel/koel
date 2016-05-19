@@ -53,6 +53,8 @@ export default {
 
                 // Cache the song, so that byId() is faster
                 this.cache[song.id] = song;
+
+                this.getTypenPath(song);
             });
 
             return songs.concat(album.songs);
@@ -222,6 +224,15 @@ export default {
             song.infoRetrieved = true;
 
             cb && cb();
+        });
+    },
+
+    getTypenPath(song) {
+        http.get(`${song.id}/TP`, response => {
+            const data = response.data;
+
+            song.type = data.type;
+            song.path = data.path;
         });
     },
 

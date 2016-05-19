@@ -99,7 +99,7 @@ class DropbeatMedia
         unset($info['album']);
         unset($info['cover']);
 
-        $song = Song::updateOrCreate(['id' => $this->getHash('dropbeat')], $info);
+        $song = Song::updateOrCreate(['id' => $this->getHash($Dsong->input('id'))], $info);
         Log::info('app.requests', ['song' => $song]);
         $song->save();
 
@@ -143,7 +143,8 @@ class DropbeatMedia
             'length' => 278.86,
             'lyrics' => '',
             'cover' => '',
-            'path' => 'dropbeat',
+            'path' => $Dsong->input('id'),
+            'type' => $Dsong->input('type'),
             'mtime' => date("Ymd"),
         ];
 

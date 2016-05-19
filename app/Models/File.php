@@ -114,6 +114,7 @@ class File
             'track' => (int) $track,
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
+            'type' => 'local',
             'path' => $this->path,
             'mtime' => $this->mtime,
         ];

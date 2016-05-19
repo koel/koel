@@ -18,6 +18,7 @@ class CreateSongsTable extends Migration
             $table->string('title');
             $table->float('length');
             $table->text('lyrics');
+            $table->string('type');
             $table->text('path');
             $table->integer('mtime');
             $table->timestamps();
