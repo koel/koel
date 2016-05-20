@@ -15,7 +15,11 @@
     </div>
 
     <!-- <div class="plyr">
-            <video controls crossorigin></video>
+        <video controls ></video>
+
+    </div>
+    <div class="plyr">
+        <audio crossorigin="anonymous" controls ></audio>
     </div> -->
 
     <data-list class="search-result-section" v-show="state.results.length" :items="state.results"></data-list>

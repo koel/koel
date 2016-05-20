@@ -129,6 +129,8 @@ $plyr-bp-captions-large:         768px !default; // When captions jump to the la
     position: relative;
     max-width: 100%;
     min-width: 290px;
+    height: 0%;
+    display: inline;
 
     // border-box everything
     // http://paulirish.com/2012/box-sizing-border-box-ftw/
@@ -162,13 +164,13 @@ $plyr-bp-captions-large:         768px !default; // When captions jump to the la
     video,
     audio {
         width: 100%;
-        height: auto;
+        height: 0%;
         vertical-align: middle;
     }
 
     // For embeds
     &__video-embed {
-        padding-bottom: 56.25%; /* 16:9 */
+        // padding-bottom: 56.25%; /* 16:9 */
         height: 0;
         overflow: hidden;
         background: #000;
@@ -404,6 +406,7 @@ $plyr-bp-captions-large:         768px !default; // When captions jump to the la
         left: 0;
         right: 0;
         width: 100%;
+        display: inline;
         height: $plyr-control-spacing;
         background: $plyr-progress-bg;
 
