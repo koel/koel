@@ -28,17 +28,29 @@ export default {
 
         this.app = app;
 
+        var controls = ["<div style='position: relative;' class='plyr__controls'>",
+    "<span class='plyr__progress'>",
+        "<label for='seek{id}' class='plyr__sr-only'>Seek</label>",
+        "<input id='seek{id}' class='plyr__progress--seek' type='range' min='0' max='100' step='0.1' value='0' data-plyr='seek'>",
+        "<progress class='plyr__progress--played' max='100' value='0' role='presentation'></progress>",
+        "<progress class='plyr__progress--buffer' max='100' value='0'>",
+            "<span>0</span>% buffered",
+            "<span class='plyr__tooltip'>00:00</span>",
+        "</progress>",
+    "</span>",
+"</div>"].join("");
+
         this.dropbeatplayer = plyr.setup({
-            controls: [],
+            html: controls,
             autoplay: true,
             allowAudio: true
         })[0];
 
         this.player = plyr.setup({
-            controls: [],
+            html: controls,
         })[1];
 
-        console.log(this.player);
+        $(".plyr").hide();
 
         this.audio = $('audio');
 
@@ -48,7 +60,7 @@ export default {
          * Listen to 'error' event on the audio player and play the next song if any.
          */
         document.querySelector('.plyr').addEventListener('error', e => {
-            this.playNext();
+            this.play();
         }, true);
 
         /**
@@ -138,12 +150,12 @@ export default {
         // Manually set the `src` attribute of the audio to prevent plyr from resetting
         // the audio media object and cause our equalizer to malfunction.
 
-
-
+        $(".plyr").hide();
+        this.player.pause();
+        this.dropbeatplayer.pause();
 
         switch (song.type) {
             case 'youtube':
-                this.player.pause();
                 this.dropbeatplayer.source({
                     type:       'video',
                     sources: [{
@@ -151,9 +163,9 @@ export default {
                         type:   'youtube'
                     }]
                 });
+                $(".plyr.plyr--youtube").show();
                 break;
             case 'soundcloud':
-                this.player.pause();
                 this.dropbeatplayer.source({
                     type:       'video',
                     sources: [{
@@ -161,17 +173,10 @@ export default {
                         type:   'soundcloud'
                     }]
                 });
+                $(".plyr.plyr--soundcloud").show();
                 break;
             case 'local':
-                this.dropbeatplayer.source({
-                    type:       'video',
-                    sources: [{
-                        src:    song.path,
-                        type:   'vimeo'
-                    }]
-                });
-                //init dropbeatplayer markup
-                this.dropbeatplayer.pause();
+                $(".plyr.plyr--audio").show();
                 this.player.media.src = songStore.getSourceUrl(song);
                 break;
         }
@@ -372,9 +377,9 @@ export default {
     stop() {
         $('title').text(config.appTitle);
         this.dropbeatplayer.pause();
-        this.dropbeatplayer.seek(0);
+        // this.dropbeatplayer.seek(0);
         this.player.pause();
-        this.player.seek(0);
+        // this.player.seek(0);
 
         if (queueStore.current) {
             queueStore.current.playbackState = 'stopped';
