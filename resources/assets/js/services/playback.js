@@ -40,15 +40,14 @@ export default {
     "</span>",
 "</div>"].join("");
 
-        this.dropbeatplayer = plyr.setup({
+        this.dropbeatplayer = plyr.setup('.dropbeatplayer',{
             html: controls,
             autoplay: true,
-            allowAudio: true
         })[0];
 
-        this.player = plyr.setup({
+        this.player = plyr.setup('.player',{
             html: controls,
-        })[1];
+        })[0];
 
         $(".plyr").hide();
 
@@ -59,14 +58,14 @@ export default {
         /**
          * Listen to 'error' event on the audio player and play the next song if any.
          */
-        document.querySelector('.plyr').addEventListener('error', e => {
-            this.play();
+        document.querySelector('.player').addEventListener('error', e => {
+            this.playNext();
         }, true);
 
         /**
          * Listen to 'ended' event on the audio player and play the next song in the queue.
          */
-        document.querySelector('.plyr').addEventListener('ended', e => {
+        document.querySelector('.player').addEventListener('ended', e => {
             songStore.scrobble(queueStore.current);
 
             if (preferences.repeatMode === 'REPEAT_ONE') {
@@ -78,28 +77,24 @@ export default {
             this.playNext();
         });
 
-        document.querySelector('.plyr').addEventListener('ready', e => {
+        document.querySelector('.dropbeatplayer').addEventListener('error', e => {
             this.play();
-        });
+            //error occur, I don't know what error
+        }, true);
 
         /**
-         * Attempt to preload the next song if the current song is about to end.
+         * Listen to 'ended' event on the audio dropbeatplayer and play the next song in the queue.
          */
-        document.querySelector('.plyr').addEventListener('timeupdate', e => {
-            if (!this.player.media.duration || this.player.media.currentTime + 10 < this.player.media.duration) {
+        document.querySelector('.dropbeatplayer').addEventListener('ended', e => {
+            songStore.scrobble(queueStore.current);
+
+            if (preferences.repeatMode === 'REPEAT_ONE') {
+                this.restart();
+
                 return;
             }
 
-            // The current song has only 10 seconds left to play.
-            const nextSong = queueStore.next;
-            if (!nextSong || nextSong.preloaded) {
-                return;
-            }
-
-            const $preloader = $('<audio>');
-            $preloader.attr('src', songStore.getSourceUrl(nextSong));
-
-            nextSong.preloaded = true;
+            this.playNext();
         });
 
         /**
@@ -182,7 +177,7 @@ export default {
         }
 
         $('title').text(`${song.title} ♫ ${config.appTitle}`);
-        $('.plyr audio').attr('title', `${song.album.artist.name} - ${song.title}`);
+        $('.player audio').attr('title', `${song.album.artist.name} - ${song.title}`);
 
         // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
         this.restart();
@@ -199,19 +194,9 @@ export default {
 
         this.app.$broadcast('song:played', song);
 
-        switch (song.type) {
-            case 'youtube':
-                this.dropbeatplayer.restart();
-                this.dropbeatplayer.play();
-                break;
-            case 'soundcloud':
-                this.dropbeatplayer.restart();
-                this.dropbeatplayer.play();
-                break;
-            case 'local':
-                this.player.restart();
-                this.player.play();
-                break;
+        if (song.type == 'local'){
+            this.player.restart();
+            this.player.play();
         }
 
         // Register the play to the server

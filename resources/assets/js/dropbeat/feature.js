@@ -11,6 +11,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 
 export default {
+    app: null,
 
     state: {
         searching: false,
@@ -27,7 +28,8 @@ export default {
     },
 
 
-    init() {
+    init(app) {
+        this.app = app;
         var that = this;
 
         // that.delegateTrigger();
@@ -124,16 +126,17 @@ export default {
 
                 musicUpdate.update(musicData,() => {
                     // Re-init the app.
-                    // this.$root.init();
+                    var self = this;
+                    $(self).parents(that.app.$root.init());
 
                 }, error => {
-                    // var msg = 'Unknown error.';
-                    //
-                    // if (error.status === 422) {
-                    //     msg = utils.parseValidationError(error.data)[0];
-                    // }
-                    //
-                    // this.$root.showOverlay(`Error: ${msg}`, 'error', true);
+                    var msg = 'Unknown error.';
+
+                    if (error.status === 422) {
+                        msg = utils.parseValidationError(error.data)[0];
+                    }
+
+                    $(self).parents(that.parents.$root.showOverlay(`Error: ${msg}`, 'error', true));
                 });
 
                 dataList.send = true;

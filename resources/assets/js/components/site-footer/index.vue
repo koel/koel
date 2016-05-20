@@ -28,11 +28,11 @@
                         <a class="album" @click.prevent="loadAlbum(song.album)">{{ song.album.name }}</a>
                     </p>
 
-                    <div class="plyr">
+                    <div class="dropbeatplayer">
                         <video controls ></video>
 
                     </div>
-                    <div class="plyr">
+                    <div class="player">
                         <audio crossorigin="anonymous" controls ></audio>
                     </div>
                 </div>

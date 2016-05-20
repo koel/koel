@@ -17,7 +17,6 @@ export default {
     initialize() {
 
         playermanager.init();
-        feature.init();
 
     },
 

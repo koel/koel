@@ -37,6 +37,7 @@
     import userStore from './stores/user';
     import preferences from './stores/preference';
     import playback from './services/playback';
+    import feature from './dropbeat/feature';
     import focusDirective from './directives/focus';
     import ls from './services/ls';
     import { filterSongBy, caseInsensitiveOrderBy } from './filters/index';
@@ -45,6 +46,7 @@
         components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
 
         replace: false,
+        localsearching: false,
 
         data() {
             return {
@@ -76,11 +78,15 @@
                 // Afterwards, init all mandatory stores and services.
                 sharedStore.init(() => {
                     playback.init(this);
+                    feature.init(this);
 
                     this.hideOverlay();
 
-                    // Load the default view.
-                    this.loadMainView('home');
+                    if (this.localsearching) {
+                        // Load the default view.
+                        this.loadMainView('home');
+                        this.localsearching = false;
+                    }
 
                     // Ask for user's notification permission.
                     this.requestNotifPermission();

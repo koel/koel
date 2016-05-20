@@ -43,6 +43,7 @@
 
                 settingStore.update(() => {
                     // Re-init the app.
+                    this.$root.localsearching = true;
                     this.$root.init();
                 }, error => {
                     let msg = 'Unknown error.';
