@@ -20,8 +20,10 @@ class SongController extends Controller
      */
     public function play(Song $song)
     {
-        if (ends_with(mime_content_type($song->path), 'flac')) {
-            return (new TranscodingStreamer($song))->stream();
+        if (env('OUTPUT_BIT_RATE', 128) !== 'original') {
+            if (ends_with(mime_content_type($song->path), 'flac')) {
+                return (new TranscodingStreamer($song))->stream();
+            }
         }
 
         switch (env('STREAMING_METHOD')) {
