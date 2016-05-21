@@ -183,7 +183,7 @@
             z-index: 5;
 
             transform: translateX(100%);
-            transition: transform .3s ease-in;
+            transition: transform .3s $slideAnimation;
 
             &.showing {
                 transform: translateX(0);
