@@ -121,7 +121,7 @@ class File
 
         // getID3's 'part_of_a_compilation' value can either be null, ['0'], or ['1']
         // We convert it into a boolean here.
-        $props['part_of_a_compilation'] = !!array_get($comments, 'part_of_a_compilation', [false])[0];
+        $props['part_of_a_compilation'] = (bool) array_get($comments, 'part_of_a_compilation', [false])[0];
 
         // We prefer id3v2 tags over others.
         if (!$artist = array_get($info, 'tags.id3v2.artist', [null])[0]) {
@@ -190,7 +190,7 @@ class File
             // Otherwise, re-use the existing model value.
             $artist = isset($info['artist']) ? Artist::get($info['artist']) : $this->song->album->artist;
 
-            $isCompilation = !!array_get($info, 'part_of_a_compilation');
+            $isCompilation = (bool) array_get($info, 'part_of_a_compilation');
 
             // If the "album" tag is specified, use it.
             // Otherwise, re-use the existing model value.
@@ -199,7 +199,7 @@ class File
                 : $this->song->album;
         } else {
             // The file is newly added.
-            $isCompilation = !!array_get($info, 'part_of_a_compilation');
+            $isCompilation = (bool) array_get($info, 'part_of_a_compilation');
             $artist = Artist::get($info['artist']);
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
