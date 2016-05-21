@@ -6,9 +6,25 @@ use App\Models\Song;
 
 class TranscodingStreamer extends Streamer implements StreamerInterface
 {
-    public function __construct(Song $song)
+    /**
+     * Bitrate which the stream should be transcoded as.
+     *
+     * @var int
+     */
+    private $bitrate;
+
+    /**
+     * Time point to start transcoding from.
+     *
+     * @var int
+     */
+    private $startTime;
+
+    public function __construct(Song $song, $bitrate, $startTime = 0)
     {
         parent::__construct($song);
+        $this->bitrate = $bitrate;
+        $this->startTime = $startTime;
     }
 
     /**
@@ -20,7 +36,7 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
             abort(500, 'Transcoding requires valid ffmpeg settings.');
         }
 
-        $bitRate = filter_var(env('OUTPUT_BIT_RATE', 128), FILTER_SANITIZE_NUMBER_INT);
+        $bitRate = filter_var($this->bitrate, FILTER_SANITIZE_NUMBER_INT);
 
         // Since we can't really know the content length of a file while it's still being transcoded,
         // "calculating" it (like below) will be much likely to result in net::ERR_CONTENT_LENGTH_MISMATCH errors.
@@ -41,6 +57,10 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
             '-f mp3',
             '-',
         ];
+
+        if ($this->startTime) {
+            array_unshift($args, "-ss {$this->startTime}");
+        }
 
         passthru("$ffmpeg ".implode($args, ' '));
     }
