@@ -171,17 +171,37 @@ class File
             return false;
         }
 
+        $isCompilation = false;
+        $artist = null;
+
         if ($this->isChanged() || $force) {
             // This is a changed file, or the user is forcing updates.
-            // We cater for the tags by removing those not specified.
+            // In such a case, the user must have specified a list of tags to sync.
+            // A sample command could be: ./artisan koel:sync --force --tags=artist,album,lyrics
+            // We cater for these tags by removing those not specified.
+            if (in_array('part_of_a_compilation', $tags) && !in_array('album', $tags)) {
+                // If 'part_of_a_compilation' tag is specified, 'album' must be counted in as well.
+                $tags[] = 'album';
+            }
+
             $info = array_intersect_key($info, array_flip($tags));
 
+            // If the "artist" tag is specified, use it.
+            // Otherwise, re-use the existing model value.
             $artist = isset($info['artist']) ? Artist::get($info['artist']) : $this->song->album->artist;
+
+            $isCompilation = !!array_get($info, 'part_of_a_compilation');
+
+            // If the "album" tag is specified, use it.
+            // Otherwise, re-use the existing model value.
             $album = isset($info['album'])
-                ? Album::get($artist, $info['album'], array_get($info, 'part_of_a_compilation'))
+                ? Album::get($artist, $info['album'], $isCompilation)
                 : $this->song->album;
         } else {
-            $album = Album::get(Artist::get($info['artist']), $info['album'], array_get($info, 'part_of_a_compilation'));
+            // The file is newly added.
+            $isCompilation = !!array_get($info, 'part_of_a_compilation');
+            $artist = Artist::get($info['artist']);
+            $album = Album::get($artist, $info['album'], $isCompilation);
         }
 
         if (!empty($info['cover']) && !$album->has_cover) {
@@ -194,9 +214,10 @@ class File
 
         $info['album_id'] = $album->id;
 
-        // If the song is part of a compilation, we set its artist as the contributing artist.
-        if (array_get($info, 'part_of_a_compilation')) {
-            $info['contributing_artist_id'] = Artist::get($info['artist'])->id;
+        // If the song is part of a compilation, make sure we properly set its
+        // artist and contributing artist attributes.
+        if ($isCompilation) {
+            $info['contributing_artist_id'] = $artist->id;
         }
 
         // Remove these values from the info array, so that we can just use the array as model's input data.
