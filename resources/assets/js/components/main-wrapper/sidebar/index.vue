@@ -263,16 +263,17 @@
 
         @media only screen and (max-width : 667px) {
             position: fixed;
-            height: calc(100vh - #{$headerHeight + $footerHeight});
-            padding-bottom: $footerHeight; // make sure the footer can never overlap the content
-            width: 100%;
-            z-index: 99;
             top: $headerHeight;
-            left: -100%;
-            transition: left .3s ease-in;
+            height: calc(100vh - #{$headerHeight + $footerHeight});
+            width: 100%;
+            padding-bottom: $footerHeight; // make sure the footer can never overlap the content
+            z-index: 99;
+
+            transform: translateX(-100%);
+            transition: transform .3s $slideAnimation;
 
             &.showing {
-                left: 0;
+                transform: translateX(0);
             }
         }
     }
