@@ -110,10 +110,12 @@ class Media
      */
     public function gatherFiles($path)
     {
+        $types = array_map('trim', explode(',', env('SYNC_TYPES')));
+
         return Finder::create()
             ->ignoreUnreadableDirs()
             ->files()
-            ->name('/\.(mp3|ogg|m4a|flac)$/i')
+            ->name('/\.('.implode('|', $types).')$/i')
             ->in($path);
     }
 

@@ -20,7 +20,8 @@ class SongController extends Controller
      */
     public function play(Song $song)
     {
-        if (ends_with(mime_content_type($song->path), 'flac')) {
+        $types = array_map('trim', explode(',', env('TRANSCODE_TYPES')));
+        if (ends_with(mime_content_type($song->path), $types)) {
             return (new TranscodingStreamer($song))->stream();
         }
 
