@@ -105,7 +105,6 @@
             align-items: center;
             align-content: stretch;
             display: flex;
-            line-height: 1em;
 
             span:first-child {
                 flex: 1;

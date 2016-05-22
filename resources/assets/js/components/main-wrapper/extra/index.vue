@@ -110,6 +110,7 @@
         padding: 24px 16px $footerHeight;
         background: $colorExtraBgr;
         max-height: calc(100vh - #{$headerHeight + $footerHeight});
+        display: none;
         color: $color2ndText;
         overflow: auto;
         -ms-overflow-style: -ms-autohiding-scrollbar;
@@ -175,18 +176,16 @@
 
         @media only screen and (max-width : 1024px) {
             position: fixed;
-            top: $headerHeight;
-            right: 0;
             height: calc(100vh - #{$headerHeight + $footerHeight});
-            width: $extraPanelWidth;
             padding-bottom: $footerHeight; // make sure the footer can never overlap the content
+            width: $extraPanelWidth;
             z-index: 5;
-
-            transform: translateX(100%);
-            transition: transform .3s $slideAnimation;
+            top: $headerHeight;
+            right: -100%;
+            transition: right .3s ease-in;
 
             &.showing {
-                transform: translateX(0);
+                right: 0;
             }
         }
 
