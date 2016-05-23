@@ -42,7 +42,6 @@ export default {
 
         this.dropbeatplayer = plyr.setup('.dropbeatplayer',{
             html: controls,
-            autoplay: true,
         })[0];
 
         this.player = plyr.setup('.player',{
@@ -183,6 +182,37 @@ export default {
         this.restart();
     },
 
+    Splay(music) {
+
+        $(".plyr").hide();
+
+        this.player.pause();
+        this.dropbeatplayer.pause();
+
+        switch (music.type) {
+            case 'youtube':
+                this.dropbeatplayer.source({
+                    type:       'video',
+                    sources: [{
+                        src:    music.id,
+                        type:   'youtube'
+                    }]
+                });
+                $(".plyr.plyr--youtube").show();
+                break;
+            case 'soundcloud':
+                this.dropbeatplayer.source({
+                    type:       'video',
+                    sources: [{
+                        src:    music.id,
+                        type:   'soundcloud'
+                    }]
+                });
+                $(".plyr.plyr--soundcloud").show();
+                break;
+        }
+    },
+
     /**
      * Restart playing a song.
      */
@@ -194,7 +224,7 @@ export default {
 
         this.app.$broadcast('song:played', song);
 
-        if (song.type == 'local'){
+        if (song.type == 'local') {
             this.player.restart();
             this.player.play();
         }

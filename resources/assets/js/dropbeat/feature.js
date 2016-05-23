@@ -6,6 +6,7 @@ import music from './music';
 import playerManager from './playermanager';
 import musicUpdate from './musicupdate';
 import utils from '../services/utils';
+import playback from '../services/playback';
 
 import $ from 'jquery';
 import _ from 'lodash';
@@ -159,8 +160,7 @@ export default {
                         type: $musicContainer.data("musicType")
                     };
 
-                music.MusicQueue.init();
-                playerManager.onMusicClicked(
+                playback.Splay(
                     new music.Music({
                         'id': musicData.id,
                         'title': musicData.title,

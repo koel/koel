@@ -16,7 +16,7 @@ export default {
 
     initialize() {
 
-        playermanager.init();
+        // playermanager.init();
 
     },
 

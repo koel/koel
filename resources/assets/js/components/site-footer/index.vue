@@ -29,7 +29,7 @@
                     </p>
 
                     <div class="dropbeatplayer">
-                        <video controls ></video>
+                        <video autoplay="true" controls ></video>
 
                     </div>
                     <div class="player">
