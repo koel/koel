@@ -3,7 +3,6 @@ import dataList from './data-list.vue';
 
 import dropbeat from './dropbeat';
 import music from './music';
-import playerManager from './playermanager';
 import musicUpdate from './musicupdate';
 import utils from '../services/utils';
 import playback from '../services/playback';
@@ -32,8 +31,6 @@ export default {
     init(app) {
         this.app = app;
         var that = this;
-
-        // that.delegateTrigger();
 
         $(that.state.searchButton).click(function() {
             that.onSubmit($(that.state.searchInput).val());
@@ -69,7 +66,6 @@ export default {
             jsonp: 'callback',
             success: function (data) {
                 that.searchCallback(data);
-                // console.log(data);
             }
         });
     },
@@ -85,19 +81,9 @@ export default {
         if (!resp) {
             return;
         }
-        // if (!that.template) {
-        //     that.template =
-        //         _.template($(that.state.searchResultTemplate).html());
-        // }
          that.resultEscape(resp);
-        // $(that.state.searchResultSection).html(
-        //     that.template(
-        //         {results: resp}
-        //     )
-        // );
 
         this.state.results = resp;
-        // console.log(this.state.results);
     },
 
     resultEscape(resp){

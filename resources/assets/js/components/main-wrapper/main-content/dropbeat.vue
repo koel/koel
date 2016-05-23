@@ -13,15 +13,7 @@
             <div id="soundcloud-player"></div>
         </div>
     </div>
-
-    <!-- <div class="plyr">
-        <video controls ></video>
-
-    </div>
-    <div class="plyr">
-        <audio crossorigin="anonymous" controls ></audio>
-    </div> -->
-
+    
     <data-list class="search-result-section" v-show="state.results.length" :items="state.results"></data-list>
     </section>
 </template>
@@ -45,14 +37,6 @@ export default {
             state: feature.state
         };
     },
-
-
-    ready() {
-        dropbeat.initialize();
-        dropbeat.onYouTubeIframeAPIReady();
-    },
-
-
 
 };
 

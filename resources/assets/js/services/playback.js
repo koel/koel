@@ -42,6 +42,7 @@ export default {
 
         this.dropbeatplayer = plyr.setup('.dropbeatplayer',{
             html: controls,
+            autoplay: true,
         })[0];
 
         this.player = plyr.setup('.player',{
@@ -151,7 +152,7 @@ export default {
         switch (song.type) {
             case 'youtube':
                 this.dropbeatplayer.source({
-                    type:       'video',
+                    type:       'youtube',
                     sources: [{
                         src:    song.path,
                         type:   'youtube'
@@ -161,7 +162,7 @@ export default {
                 break;
             case 'soundcloud':
                 this.dropbeatplayer.source({
-                    type:       'video',
+                    type:       'soundcloud',
                     sources: [{
                         src:    song.path,
                         type:   'soundcloud'
