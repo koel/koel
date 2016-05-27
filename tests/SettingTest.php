@@ -1,11 +1,13 @@
 <?php
 
+use App\Models\User;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class SettingTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, WithoutMiddleware;
 
     public function testSetSingleKeyValue()
     {
@@ -40,5 +42,17 @@ class SettingTest extends TestCase
 
         $this->assertEquals('bar', Setting::get('foo'));
         $this->assertEquals(['baz' => 'qux'], Setting::get('bar'));
+    }
+
+    public function testApplicationSetting()
+    {
+        Media::shouldReceive('sync')->once();
+
+        $dir = dirname(__FILE__);
+        $this->actingAs(factory(User::class, 'admin')->create())
+            ->post('/api/settings', ['media_path' => $dir])
+            ->seeStatusCode(200);
+
+        $this->assertEquals($dir, Setting::get('media_path'));
     }
 }
