@@ -184,6 +184,7 @@ class Song extends Model
         }
 
         $this->album_id = $album->id;
+        $this->title = $title;
         $this->lyrics = $lyrics;
         $this->track = $track;
 
