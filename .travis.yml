@@ -18,12 +18,7 @@ env:
   LASTFM_API_KEY: foo
   LASTFM_API_SECRET: bar
 
-cache:
-  - npm
-  - composer
-
 branches:
-  only:
     - master
 
 before_script:
