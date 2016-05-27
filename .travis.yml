@@ -18,17 +18,9 @@ env:
   LASTFM_API_KEY: foo
   LASTFM_API_SECRET: bar
 
-cache:
-  - npm
-  - composer
-
 branches:
   only:
-    - master
-
-cache:
-  - npm
-  - composer
+    - travis
 
 before_script:
   - composer self-update
@@ -36,6 +28,6 @@ before_script:
   - npm install -g npm@latest
   - npm install
 
-script: 
+script:
   - phpunit
   - npm test
