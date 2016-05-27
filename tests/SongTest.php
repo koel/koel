@@ -83,11 +83,11 @@ class SongTest extends TestCase
             ->put('/api/songs', [
                 'songs' => $songIds,
                 'data' => [
-                    'title' => 'Foo Bar',
+                    'title' => 'foo',
                     'artistName' => 'John Cena',
                     'albumName' => 'One by One',
-                    'lyrics' => 'Lorem ipsum dolor sic amet.',
-                    'track' => 1,
+                    'lyrics' => 'bar',
+                    'track' => 9999,
                     'compilationState' => 0,
                 ],
             ])
@@ -95,10 +95,11 @@ class SongTest extends TestCase
 
         $songs = Song::orderBy('id', 'desc')->take(3)->get();
 
-        // Even though we post the title and lyrics, we don't expect them to take any effect
-        $this->assertNotEquals('Foo Bar', $songs[0]->title);
-        $this->assertNotEquals('Lorem ipsum dolor sic amet.', $songs[2]->lyrics);
-        $this->assertNotEquals(1, $songs[2]->track);
+        // Even though we post the title, lyrics, and tracks, we don't expect them to take any effect
+        // because we're updating multiple songs here.
+        $this->assertNotEquals('foo', $songs[0]->title);
+        $this->assertNotEquals('bar', $songs[2]->lyrics);
+        $this->assertNotEquals(9999, $songs[2]->track);
 
         // But all of these songs must now belong to a new album and artist set
         $this->assertEquals('One by One', $songs[0]->album->name);

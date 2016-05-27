@@ -119,16 +119,17 @@ class Song extends Model
          */
         $updatedSongs = [];
 
-        foreach ((array) $ids as $id) {
+        $ids = (array) $ids;
+        // If we're updating only one song, take into account the title, lyrics, and track number.
+        $single = count($ids) === 1;
+
+        foreach ($ids as $id) {
             if (!$song = self::with('album', 'album.artist')->find($id)) {
                 continue;
             }
 
-            // If we're updating only one song, take into account the title, lyrics, and track number.
-            $single = count($ids) === 1;
-
             $updatedSongs[] = $song->updateSingle(
-                trim($data['title']) ?: $song->title,
+                $single ? trim($data['title']) : $song->title,
                 trim($data['albumName'] ?: $song->album->name),
                 trim($data['artistName']) ?: $song->artist->name,
                 $single ? trim($data['lyrics']) : $song->lyrics,
