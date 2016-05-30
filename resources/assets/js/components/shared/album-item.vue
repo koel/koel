@@ -6,9 +6,12 @@
             </a>
         </span>
         <footer>
-            <a class="name" @click.prevent="viewDetails">{{ album.name }}</a>
+            <a class="name" @click.prevent="viewAlbumDetails(album)">{{ album.name }}</a>
             <span class="sep">by</span>
-            <a class="artist" v-if="isNormalArtist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
+            <a class="artist" v-if="isNormalArtist"
+                @click.prevent="viewArtistDetails(album.artist)">
+                {{ album.artist.name }}
+            </a>
             <span class="artist nope" v-else>{{ album.artist.name }}</span>
             <p class="meta">
                 {{ album.songs.length }} {{ album.songs.length | pluralize 'song' }}
@@ -28,9 +31,11 @@
     import playback from '../../services/playback';
     import queueStore from '../../stores/queue';
     import artistStore from '../../stores/artist';
+    import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {
         props: ['album'],
+        mixins: [artistAlbumDetails],
 
         computed: {
             isNormalArtist() {
@@ -49,20 +54,6 @@
                 } else {
                     playback.playAllInAlbum(this.album, false);
                 }
-            },
-
-            /**
-             * Load the album details screen.
-             */
-            viewDetails() {
-                this.$root.loadAlbum(this.album);
-            },
-
-            /**
-             * Load the artist details screen.
-             */
-            viewArtistDetails() {
-                this.$root.loadArtist(this.album.artist);
             },
 
             /**

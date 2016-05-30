@@ -6,7 +6,7 @@
             </a>
         </span>
         <footer>
-            <a class="name" @click.prevent="viewDetails">{{ artist.name }}</a>
+            <a class="name" @click.prevent="viewArtistDetails(artist)">{{ artist.name }}</a>
             <p class="meta">
                 {{ artist.albums.length }} {{ artist.albums.length | pluralize 'album' }}
                 •
@@ -25,9 +25,11 @@
     import playback from '../../services/playback';
     import artistStore from '../../stores/artist';
     import queueStore from '../../stores/queue';
+    import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {
         props: ['artist'],
+        mixins: [artistAlbumDetails],
 
         computed: {
             /**
@@ -51,10 +53,6 @@
                 } else {
                     playback.playAllByArtist(this.artist);
                 }
-            },
-
-            viewDetails() {
-                this.$root.loadArtist(this.artist);
             },
 
             /**

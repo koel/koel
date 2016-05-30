@@ -7,10 +7,10 @@
             <span v-if="songs[0].playbackState !== 'playing'">Play</span>
             <span v-else>Pause</span>
         </li>
-        <li v-if="onlyOneSongSelected" @click="goToAlbum">
+        <li v-if="onlyOneSongSelected" @click="viewAlbumDetails(songs[0].album)">
             <span>Go to Album</span>
         </li>
-        <li v-if="onlyOneSongSelected" @click="goToArtist">
+        <li v-if="onlyOneSongSelected" @click="viewArtistDetails(songs[0].artist)">
             <span>Go to Artist</span>
         </li>
         <li class="has-sub">Add To
@@ -34,6 +34,7 @@
     import $ from 'jquery';
 
     import songMenuMethods from '../../mixins/song-menu-methods';
+    import artistAlbumDetails from '../../mixins/artist-album-details';
 
     import queueStore from '../../stores/queue';
     import userStore from '../../stores/user';
@@ -42,7 +43,7 @@
 
     export default {
         props: ['songs'],
-        mixins: [songMenuMethods],
+        mixins: [songMenuMethods, artistAlbumDetails],
 
         data() {
             return {
@@ -120,20 +121,6 @@
                 }
 
                 this.close();
-            },
-
-            /**
-             * Navigate to the song's album view
-             */
-            goToAlbum() {
-                this.$root.loadAlbum(this.songs[0].album);
-            },
-
-            /**
-             * Navigate to the song's artist view
-             */
-            goToArtist() {
-                this.$root.loadArtist(this.songs[0].artist);
             },
         },
 

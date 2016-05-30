@@ -11,23 +11,9 @@
 
                     <ol class="top-song-list">
                         <li v-for="song in topSongs"
-                            :class="{ playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
-                            @dblclick.prevent="play(song)"
-                        >
-                            <span class="cover" :style="{ backgroundImage: 'url(' + song.album.cover + ')' }">
-                                <a class="control" @click.prevent="triggerPlay(song)">
-                                    <i class="fa fa-play" v-show="song.playbackState !== 'playing'"></i>
-                                    <i class="fa fa-pause" v-else></i>
-                                </a>
-                            </span>
-                            <span class="details">
-                                <span :style="{ width: song.playCount * 100 / topSongs[0].playCount + '%' }"
-                                    class="play-count"></span>
-                                {{ song.title }}
-                                <span class="by">{{ song.artist.name }} –
-                                {{ song.playCount }} {{ song.playCount | pluralize 'play' }}</span>
-                            </span>
-                        </li>
+                            :top-play-count="topSongs[0].playCount"
+                            :song="song"
+                            is="song-item"></li>
                     </ol>
                 </section>
 
@@ -36,20 +22,9 @@
 
                     <ol class="recent-song-list" v-show="recentSongs.length">
                         <li v-for="song in recentSongs"
-                            :class="{ playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
-                            @dblclick.prevent="play(song)"
-                        >
-                            <span class="cover" :style="{ backgroundImage: 'url(' + song.album.cover + ')' }">
-                                <a class="control" @click.prevent="triggerPlay(song)">
-                                    <i class="fa fa-play" v-show="song.playbackState !== 'playing'"></i>
-                                    <i class="fa fa-pause" v-else></i>
-                                </a>
-                            </span>
-                            <span class="details">
-                                {{ song.title }}
-                                <span class="by">{{ song.artist.name }}</span>
-                            </span>
-                        </li>
+                            :top-play-count="topSongs[0].playCount"
+                            :song="song"
+                            is="song-item"></li>
                     </ol>
 
                     <p class="none" v-show="!recentSongs.length">
@@ -85,23 +60,22 @@
 <script>
     import { sample } from 'lodash';
 
-    import playback from '../../../services/playback';
     import songStore from '../../../stores/song';
     import albumStore from '../../../stores/album';
     import artistStore from '../../../stores/artist';
     import userStore from '../../../stores/user';
-    import queueStore from '../../../stores/queue';
     import preferenceStore from '../../../stores/preference';
     import infiniteScroll from '../../../mixins/infinite-scroll';
 
     import albumItem from '../../shared/album-item.vue';
     import artistItem from '../../shared/artist-item.vue';
+    import songItem from '../../shared/home-song-item.vue';
 
     export default {
-        components: { albumItem, artistItem },
+        components: { albumItem, artistItem, songItem },
         /**
-         * We're not really using infinite scrolling here, but only the handy "Back to Top" button.
-         * @type {Array}
+         * Note: We're not really using infinite scrolling here,
+         * but only the handy "Back to Top" button.
          */
         mixins: [infiniteScroll],
 
@@ -134,27 +108,6 @@
         },
 
         methods: {
-            play(song) {
-                if (!queueStore.contains(song)) {
-                    queueStore.queueAfterCurrent(song);
-                }
-
-                playback.play(song);
-            },
-
-            /**
-             * Trigger playing a song.
-             */
-            triggerPlay(song) {
-                if (song.playbackState === 'stopped') {
-                    this.play(song);
-                } else if (song.playbackState === 'paused') {
-                    playback.resume();
-                } else {
-                    playback.pause();
-                }
-            },
-
             /**
              * Refresh the dashboard with latest data.
              */
@@ -193,101 +146,6 @@
                 &:first-of-type {
                     margin-right: 8px;
                 }
-            }
-
-            ol li {
-                display: flex;
-
-                &.playing {
-                    color: $colorHighlight;
-                }
-
-                &:hover .cover {
-                    .control {
-                        display: block;
-                    }
-
-                    &::before {
-                        opacity: .7;
-                    }
-                }
-
-                .cover {
-                    flex: 0 0 48px;
-                    height: 48px;
-                    background-size: cover;
-                    position: relative;
-
-                    @include vertical-center();
-
-                    &::before {
-                        content: " ";
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        pointer-events: none;
-                        background: #000;
-                        opacity: 0;
-
-                        html.touchevents & {
-                            opacity: .7;
-                        }
-                    }
-
-                    .control {
-                        border-radius: 50%;
-                        width: 28px;
-                        height: 28px;
-                        background: rgba(0, 0, 0, .7);
-                        border: 1px solid transparent;
-                        line-height: 26px;
-                        font-size: 13px;
-                        text-align: center;
-                        z-index: 1;
-                        display: none;
-                        color: #fff;
-                        transition: .3s;
-
-                        &:hover {
-                            transform: scale(1.2);
-                            border-color: #fff;
-                        }
-
-                        html.touchevents & {
-                            display: block;
-                        }
-                    }
-                }
-
-                .details {
-                    flex: 1;
-                    padding: 4px 8px;
-                    position: relative;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-
-                    .play-count {
-                        background: rgba(255, 255, 255, 0.08);
-                        position: absolute;
-                        height: 100%;
-                        top: 0;
-                        left: 0;
-                        pointer-events: none;
-                    }
-
-                    .by {
-                        display: block;
-                        font-size: 90%;
-                        opacity: .6;
-                        margin-top: 2px;
-                    }
-                }
-
-                //border-bottom: 1px solid $color2ndBgr;
-                margin-bottom: 8px;
             }
         }
 
