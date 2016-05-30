@@ -11,8 +11,8 @@ Route::get('/♫', function () {
 
 Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
 
-    Route::post('me', 'UserController@login');
-    Route::delete('me', 'UserController@logout');
+    Route::post('me', 'AuthController@login');
+    Route::delete('me', 'AuthController@logout');
 
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::get('/', function () {
@@ -21,14 +21,13 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
 
         Route::get('data', 'DataController@index');
 
-        Route::post('settings', 'SettingController@save');
+        Route::post('settings', 'SettingController@store');
 
         Route::get('{song}/play', 'SongController@play');
-        Route::post('{song}/scrobble/{timestamp}', 'SongController@scrobble')->where([
+        Route::post('{song}/scrobble/{timestamp}', 'ScrobbleController@store')->where([
             'timestamp' => '\d+',
         ]);
-        Route::get('{song}/info', 'SongController@getInfo');
-
+        Route::get('{song}/info', 'SongController@show');
         Route::put('songs', 'SongController@update');
 
         Route::post('interaction/play', 'InteractionController@play');
@@ -40,7 +39,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
         Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
 
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
-        Route::put('me', 'UserController@updateProfile');
+        Route::put('me', 'ProfileController@update');
 
         Route::get('lastfm/connect', 'LastfmController@connect');
         Route::post('lastfm/session-key', 'LastfmController@setSessionKey');

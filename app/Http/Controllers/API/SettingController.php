@@ -15,7 +15,7 @@ class SettingController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function save(SettingRequest $request)
+    public function store(SettingRequest $request)
     {
         // For right now there's only one setting to be saved
         Setting::set('media_path', rtrim(trim($request->input('media_path')), '/'));

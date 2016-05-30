@@ -30,16 +30,6 @@ class UserTest extends TestCase
         $this->seeInDatabase('users', ['name' => 'Foo']);
     }
 
-    public function testUpdateProfile()
-    {
-        $user = factory(User::class)->create();
-
-        $this->actingAs($user)
-            ->put('api/me', ['name' => 'Foo', 'email' => 'bar@baz.com']);
-
-        $this->seeInDatabase('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
-    }
-
     public function testUpdateUser()
     {
         $user = factory(User::class)->create();
