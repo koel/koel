@@ -13,7 +13,6 @@ class InteractionTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->createSampleMediaSet();
     }
 

@@ -7,11 +7,6 @@ class ArtistTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testShouldBeCreatedWithUniqueNames()
     {
         $name = 'Foo Fighters';

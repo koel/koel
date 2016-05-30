@@ -12,11 +12,15 @@ class SongTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->createSampleMediaSet();
+    }
+
     public function testSingleUpdateAllInfoNoCompilation()
     {
         $this->expectsEvents(LibraryChanged::class);
-
-        $this->createSampleMediaSet();
         $song = Song::orderBy('id', 'desc')->first();
 
         $this->actingAs(factory(User::class, 'admin')->create())
@@ -49,7 +53,6 @@ class SongTest extends TestCase
 
     public function testSingleUpdateSomeInfoNoCompilation()
     {
-        $this->createSampleMediaSet();
         $song = Song::orderBy('id', 'desc')->first();
         $originalArtistId = $song->album->artist->id;
 
@@ -76,7 +79,6 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateAllInfoNoCompilation()
     {
-        $this->createSampleMediaSet();
         $songIds = Song::orderBy('id', 'desc')->take(3)->pluck('id')->toArray();
 
         $this->actingAs(factory(User::class, 'admin')->create())
@@ -113,7 +115,6 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateSomeInfoNoCompilation()
     {
-        $this->createSampleMediaSet();
         $originalSongs = Song::orderBy('id', 'desc')->take(3)->get();
         $songIds = $originalSongs->pluck('id')->toArray();
 
@@ -151,7 +152,6 @@ class SongTest extends TestCase
     public function testSingleUpdateAllInfoYesCompilation()
     {
         $admin = factory(User::class, 'admin')->create();
-        $this->createSampleMediaSet();
         $song = Song::orderBy('id', 'desc')->first();
 
         $this->actingAs($admin)
@@ -303,7 +303,6 @@ class SongTest extends TestCase
 
     public function testGetSongInfo()
     {
-        $this->createSampleMediaSet();
         $song = Song::first();
 
         $this->actingAs(factory(User::class, 'admin')->create())
