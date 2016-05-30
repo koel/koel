@@ -10,7 +10,6 @@ Route::get('/♫', function () {
 });
 
 Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
-
     Route::post('me', 'AuthController@login');
     Route::delete('me', 'AuthController@logout');
 
