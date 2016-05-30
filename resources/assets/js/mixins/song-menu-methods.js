@@ -22,8 +22,10 @@ export default {
     methods: {
         open() {},
 
+        /**
+         * Close all submenus.
+         */
         close() {
-            // Close all submenus
             $(this.$el).find('.submenu').hide();
 
             this.shown = false;
@@ -54,7 +56,7 @@ export default {
         },
 
         /**
-         * Add the selected songs into Favorite.
+         * Add the selected songs into Favorites.
          */
         addSongsToFavorite() {
             favoriteStore.like(this.songs);
