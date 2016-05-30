@@ -133,7 +133,7 @@ class LastfmTest extends TestCase
     {
         $user = factory(User::class)->create();
         $this->actingAs($user)->post('api/lastfm/session-key', ['key' => 'foo']);
-        $this->assertEquals('foo', $user->getLastfmSessionKey());
+        $this->assertEquals('foo', $user->lastfm_session_key);
     }
 
     public function testControllerConnect()
@@ -160,14 +160,14 @@ class LastfmTest extends TestCase
 
         (new LastfmController($guard))->callback($request, $lastfm);
 
-        $this->assertEquals('bar', $user->getLastfmSessionKey());
+        $this->assertEquals('bar', $user->lastfm_session_key);
     }
 
     public function testControllerDisconnect()
     {
         $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
         $this->actingAs($user)->delete('api/lastfm/disconnect');
-        $this->assertNull($user->getLastfmSessionKey());
+        $this->assertNull($user->lastfm_session_key);
     }
 
     public function testLoveTrack()

@@ -116,7 +116,7 @@ class User extends Authenticatable
      */
     public function connectedToLastfm()
     {
-        return (bool) $this->getLastfmSessionKey();
+        return (bool) $this->lastfm_session_key;
     }
 
     /**
@@ -124,7 +124,7 @@ class User extends Authenticatable
      *
      * @return string|null The key if found, or null if user isn't connected to Last.fm
      */
-    public function getLastfmSessionKey()
+    public function getLastfmSessionKeyAttribute()
     {
         return $this->getPreference('lastfm_session_key');
     }

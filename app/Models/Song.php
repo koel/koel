@@ -71,7 +71,7 @@ class Song extends Model
         }
 
         // If the current user hasn't connected to Last.fm, don't do shit.
-        if (!$sessionKey = auth()->user()->getLastfmSessionKey()) {
+        if (!$sessionKey = auth()->user()->lastfm_session_key) {
             return false;
         }
 
