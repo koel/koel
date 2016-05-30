@@ -1,4 +1,4 @@
-import { shuffle } from 'lodash';
+import { shuffle, orderBy } from 'lodash';
 import $ from 'jquery';
 import plyr from 'plyr';
 
@@ -373,20 +373,26 @@ export default {
     /**
      * Play all songs by an artist.
      *
-     * @param  {Object}         artist  The artist object
-     * @param  {Boolean=true}   shuffle Whether to shuffle the songs
+     * @param  {Object}         artist   The artist object
+     * @param  {Boolean=true}   shuffled Whether to shuffle the songs
      */
-    playAllByArtist(artist, shuffle = true) {
-        this.queueAndPlay(artist.songs, true);
+    playAllByArtist(artist, shuffled = true) {
+        this.queueAndPlay(artist.songs, shuffled);
     },
 
     /**
      * Play all songs in an album.
      *
-     * @param  {Object}         album   The album object
-     * @param  {Boolean=true}   shuffle Whether to shuffle the songs
+     * @param  {Object}         album    The album object
+     * @param  {Boolean=true}   shuffled Whether to shuffle the songs
      */
-    playAllInAlbum(album, shuffle = true) {
+    playAllInAlbum(album, shuffled = true) {
+        if (!shuffled) {
+            this.queueAndPlay(orderBy(album.songs, 'track'));
+
+            return;
+        }
+
         this.queueAndPlay(album.songs, true);
     },
 };

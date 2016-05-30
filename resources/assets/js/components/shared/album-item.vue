@@ -47,7 +47,7 @@
                 if (e.metaKey || e.ctrlKey) {
                     queueStore.queue(this.album.songs);
                 } else {
-                    playback.playAllInAlbum(this.album);
+                    playback.playAllInAlbum(this.album, false);
                 }
             },
 
