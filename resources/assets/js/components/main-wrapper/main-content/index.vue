@@ -82,7 +82,7 @@
             backface-visibility: hidden;
 
             .main-scroll-wrap {
-                padding: 24px;
+                padding: 24px 24px 48px;
                 overflow: auto;
                 flex: 1;
                 -ms-overflow-style: -ms-autohiding-scrollbar;
