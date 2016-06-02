@@ -69,7 +69,7 @@
 
             .view-profile, .logout {
                 flex: 0 0 40px;
-                font-size: 140%;
+                font-size: 1.4rem;
                 margin-right: 0;
 
                 @include vertical-center();

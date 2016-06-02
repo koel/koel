@@ -251,7 +251,7 @@
             border: 1px solid $color2ndText;
             color: $colorMainText;
             opacity: .3;
-            font-size: 90%;
+            font-size: .9rem;
             display: block;
             transition: .3s;
 

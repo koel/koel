@@ -67,10 +67,10 @@
     }
 
     form {
-        width: 300px;
-        padding: 24px;
+        width: 280px;
+        padding: 1.8rem;
         background: rgba(255,255,255,.08);
-        border-radius: 8px;
+        border-radius: .6rem;
         border: 1px solid #333;
 
         &.error {
@@ -86,8 +86,7 @@
             height: 172px;
         }
 
-        @media only screen
-        and (max-width : 414px) {
+        @media only screen and (max-width : 414px) {
             border: 0;
             background: transparent;
         }
@@ -96,12 +95,10 @@
     input {
         display: block;
         margin-top: 12px;
-        padding: 8px;
         border: 0;
         background: #fff;
         outline: none;
         width: 100%;
-        border-radius: 3px;
     }
 
     button {

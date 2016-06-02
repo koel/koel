@@ -296,13 +296,16 @@
             left: 0;
             display: flex;
             justify-content: space-between;
-            font-size: 70%;
             align-items: flex-start;
 
             .band {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+
+                label {
+                    font-size: .9rem;
+                }
             }
 
             .indicators {

@@ -390,9 +390,9 @@
                     padding-left: 8px;
 
                     h1 {
-                        font-size: 24px;
-                        line-height: 28px;
-                        margin-bottom: 4px;
+                        font-size: 1.8rem;
+                        line-height: 2.2rem;
+                        margin-bottom: .3rem;
                     }
 
                     .mixed {

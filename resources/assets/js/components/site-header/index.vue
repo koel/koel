@@ -58,7 +58,7 @@
         h1.brand {
             flex: 1;
             color: $colorMainText;
-            font-size: 22px;
+            font-size: 1.7rem;
             font-weight: $fontWeight_UltraThin;
             opacity: 0;
             line-height: $headerHeight;
@@ -66,7 +66,7 @@
         }
 
         .hamburger, .magnifier {
-            font-size: 140%;
+            font-size: 1.4rem;
             flex: 0 0 48px;
             order: -1;
             line-height: $headerHeight;

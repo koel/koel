@@ -127,9 +127,9 @@
 
         h1 {
             font-weight: $fontWeight_UltraThin;
-            font-size: 28px;
+            font-size: 2.2rem;
             margin-bottom: 16px;
-            line-height: 36px;
+            line-height: 2.8rem;
 
             @include vertical-center();
             align-items: initial;
@@ -150,18 +150,18 @@
 
         .more {
             margin-top: 8px;
-            border-radius: 3px;
+            border-radius: .23rem;
             background: $colorBlue;
             color: #fff;
-            padding: 4px 8px;
+            padding: .3rem .6rem;
             display: inline-block;
             text-transform: uppercase;
-            font-size: 80%;
+            font-size: .8rem;
         }
 
         footer {
             margin-top: 24px;
-            font-size: 90%;
+            font-size: .9rem;
 
             a {
                 color: #fff;

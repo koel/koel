@@ -534,7 +534,7 @@
 
             i {
                 color: $colorHighlight;
-                font-size: 120%;
+                font-size: 1.2rem;
             }
         }
 
@@ -571,7 +571,7 @@
 
                 &.artist {
                     opacity: .5;
-                    font-size: 90%;
+                    font-size: .9rem;
                     padding: 0 4px;
                 }
             }

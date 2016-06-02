@@ -97,7 +97,6 @@
         }
 
         button {
-            font-size: 12px;
             margin-top: 16px;
         }
 

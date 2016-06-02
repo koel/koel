@@ -168,8 +168,8 @@
             }
 
             h1 {
-                font-size: 18px;
-                margin: 0 0 24px;
+                font-size: 1.4rem;
+                margin: 0 0 1.8rem;
                 font-weight: $fontWeight_UltraThin;
             }
         }

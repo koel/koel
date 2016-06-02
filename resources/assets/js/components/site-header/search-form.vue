@@ -61,8 +61,6 @@
             margin-top: 0;
         }
 
-
-
         @media only screen and (max-width : 667px) {
             z-index: -1;
             position: absolute;

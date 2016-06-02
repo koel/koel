@@ -56,15 +56,15 @@
         display: flex;
         flex: 0 0 64px;
         border: 1px solid rgba(255, 255, 255, .2);
-        height: 28px;
+        height: 2rem;
         border-radius: 5px;
         overflow: hidden;
 
         a {
             width: 50%;
             text-align: center;
-            line-height: 26px;
-            font-size: 14px;
+            line-height: 2rem;
+            font-size: 1rem;
 
             &.active {
                 background: #fff;

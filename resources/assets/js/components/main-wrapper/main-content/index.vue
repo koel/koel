@@ -97,8 +97,8 @@
 
         h1.heading {
             font-weight: $fontWeight_UltraThin;
-            font-size: 36px;
-            padding: 12px 24px;
+            font-size: 2.76rem;
+            padding: 1rem 1.8rem;
             border-bottom: 1px solid $color2ndBgr;
             min-height: 96px;
             position: relative;
@@ -145,14 +145,14 @@
 
         @media only screen and (max-width: 768px) {
             h1.heading {
-                font-size: 18px;
+                font-size: 1.38rem;
                 min-height: 0;
-                line-height: 24px;
+                line-height: 1.85rem;
                 text-align: center;
                 flex-direction: column;
 
                 .toggler {
-                    font-size: 14px;
+                    font-size: 1rem;
                     margin-left: 4px;
                     color: $colorHighlight;
                 }

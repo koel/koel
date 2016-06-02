@@ -5,6 +5,7 @@
 
 body, html {
     overflow: hidden;
+    font-size: $fontSize;
 }
 
 input, select, button, textarea, .btn {
@@ -12,10 +13,10 @@ input, select, button, textarea, .btn {
     border: 0;
     outline: 0;
     font-family: $fontFamily;
-    font-size: $fontSize;
+    font-size: 1rem;
     font-weight: $fontWeight_Thin;
-    padding: 4px 8px;
-    border-radius: 3px;
+    padding: .5rem .6rem;
+    border-radius: .2rem;
 
     &:required, &:invalid {
         box-shadow: none;
@@ -28,7 +29,7 @@ input, select, button, textarea, .btn {
     &[type="search"] {
         border-radius: 12px;
         height: 24px;
-        padding: 0 6px;
+        padding: 0 .5rem;
     }
 
     &[type="text"] {
@@ -66,7 +67,7 @@ input[type="checkbox"] {
         vertical-align: middle;
         width: 14px;
         height: 14px;
-        line-height: 16px;
+        line-height: 1.3rem;
         text-align: center;
     }
 
@@ -116,30 +117,30 @@ a, a:link, a:visited {
 }
 
 p {
-    line-height: 20px;
+    line-height: 1.5rem;
 }
 
 .help {
     opacity: .7;
-    font-size: 90%;
-    line-height: 16px;
+    font-size: .9rem;
+    line-height: 1.3rem;
 }
 
 label {
-    font-size: 110%;
+    font-size: 1.1rem;
     margin-bottom: 8px;
     display: block;
 
     &.small {
-        font-size: 100%;
+        font-size: 1rem;
     }
 }
 
 button, input[type="submit"], input[type="reset"], input[type="button"], .btn {
     background: $colorBtnBgr;
     color: $colorBtnText;
-    font-size: 14px;
-    padding: 8px 12px;
+    font-size: 1rem;
+    padding: .6rem 1rem;
     cursor: pointer;
 
     @include inset-when-pressed();
@@ -200,7 +201,7 @@ button, input[type="submit"], input[type="reset"], input[type="button"], .btn {
         border-bottom: 1px solid $tabColor;
 
         a {
-            padding: 8px 12px;
+            padding: .6rem 1rem;
             margin-left: 4px;
             border-radius: 4px 4px 0 0;
             text-transform: uppercase;

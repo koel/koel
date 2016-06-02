@@ -103,8 +103,8 @@
                 height: 28px;
                 background: rgba(0, 0, 0, .7);
                 border: 1px solid transparent;
-                line-height: 26px;
-                font-size: 13px;
+                line-height: 2rem;
+                font-size: 1rem;
                 text-align: center;
                 z-index: 1;
                 display: none;
@@ -141,7 +141,7 @@
 
             .by {
                 display: block;
-                font-size: 90%;
+                font-size: .9rem;
                 margin-top: 2px;
                 color: $color2ndText;
                 opacity: .8;

@@ -300,11 +300,11 @@
         position: relative;
         display: inline-block;
         background: $colorGreen;
-        padding: 10px;
-        border-radius: 3px;
+        padding: .8rem;
+        border-radius: .2rem;
         color: #fff;
         font-family: $fontFamily;
-        font-size: $fontSize;
+        font-size: 1rem;
         font-weight: $fontWeight_Thin;
 
         /**
@@ -325,8 +325,8 @@
         color: $colorMainText;
 
         font-family: $fontFamily;
-        font-size: $fontSize;
-        line-height: $fontSize * 1.5;
+        font-size: 1rem;
+        line-height: 1.5rem;
         font-weight: $fontWeight_Thin;
 
         padding-bottom: $footerHeight;

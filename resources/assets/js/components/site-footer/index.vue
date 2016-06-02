@@ -345,7 +345,7 @@
                     top: 0;
                     left: 0;
                     font-weight: 700;
-                    font-size: 50%;
+                    font-size: .5rem;
                     text-align: center;
                     width: 100%;
                 }
@@ -359,7 +359,6 @@
                     color: $colorHeart;
                 }
             }
-
 
             @media only screen and (max-width: 768px) {
                 position: absolute !important;
@@ -391,7 +390,7 @@
     #playerControls {
         @include vertical-center();
         flex: 0 0 256px;
-        font-size: 24px;
+        font-size: 1.8rem;
         background: $colorPlayerControlsBgr;
 
         @include hasSoftGradientOnTop($colorSidebarBgr);
@@ -401,7 +400,7 @@
         }
 
         .play, .pause {
-            font-size: 26px;
+            font-size: 2rem;
             display: inline-block;
             width: 42px;
             height: 42px;
@@ -478,7 +477,7 @@
         position: relative;
 
         .meta {
-            font-size: 90%;
+            font-size: .9rem;
 
             a {
                 &:hover {
@@ -486,7 +485,6 @@
                 }
             }
         }
-
 
         // Some little tweaks here and there
         .plyr {

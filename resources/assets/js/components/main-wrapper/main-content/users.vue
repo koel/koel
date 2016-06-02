@@ -131,8 +131,6 @@
         }
 
         button {
-            font-size: 12px;
-            padding: 6px 14px;
             margin-right: 3px;
         }
 
@@ -169,19 +167,17 @@
             }
 
             h1 {
-                font-size: 140%;
+                font-size: 1.4rem;
                 margin-bottom: 5px;
 
                 .you {
-                    font-size: 14px;
                     color: $colorHighlight;
-                    margin-left: 8px;
+                    margin-left: 5px;
                 }
             }
 
             .buttons {
                 display: none;
-
                 margin-top: 16px;
             }
 

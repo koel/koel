@@ -148,7 +148,7 @@
         .meta {
             color: $color2ndText;
             margin-top: 4px;
-            font-size: 12px;
+            font-size: .92rem;
         }
 
         a.name, a.artist {
@@ -185,9 +185,9 @@
     button {
         $buttonHeight: 28px;
 
-        font-size: 12px;
+        font-size: .92rem;
         height: $buttonHeight;
-        padding: 0 16px;
+        padding: 0 1.23rem;
         line-height: $buttonHeight;
         text-transform: uppercase;
         display: inline-block;
