@@ -27,6 +27,7 @@
             </ul>
         </li>
         <li v-if="isAdmin" @click="openEditForm">Edit</li>
+        <li @click="download">Download</li>
     </ul>
 </template>
 
@@ -40,6 +41,7 @@
     import userStore from '../../stores/user';
     import playlistStore from '../../stores/playlist';
     import playback from '../../services/playback';
+    import download from '../../services/download';
 
     export default {
         props: ['songs'],
@@ -120,6 +122,11 @@
                     this.$root.showEditSongsForm(this.songs);
                 }
 
+                this.close();
+            },
+
+            download() {
+                download.fromSongs(this.songs);
                 this.close();
             },
         },

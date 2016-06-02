@@ -29,24 +29,32 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
         Route::get('{song}/info', 'SongController@show');
         Route::put('songs', 'SongController@update');
 
+        // Interaction routes
         Route::post('interaction/play', 'InteractionController@play');
         Route::post('interaction/like', 'InteractionController@like');
         Route::post('interaction/batch/like', 'InteractionController@batchLike');
         Route::post('interaction/batch/unlike', 'InteractionController@batchUnlike');
 
+        // Playlist routes
         Route::resource('playlist', 'PlaylistController');
         Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
 
+        // User and user profile routes
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
         Route::put('me', 'ProfileController@update');
 
+        // Last.fm-related routes
         Route::get('lastfm/connect', 'LastfmController@connect');
         Route::post('lastfm/session-key', 'LastfmController@setSessionKey');
-
         Route::get('lastfm/callback', [
             'as' => 'lastfm.callback',
             'uses' => 'LastfmController@callback',
         ]);
         Route::delete('lastfm/disconnect', 'LastfmController@disconnect');
+
+        // Download routes
+        Route::group(['prefix' => 'download', 'namespace' => 'Download'], function () {
+            Route::get('songs', 'SongController@download');
+        });
     });
 });
