@@ -18,10 +18,21 @@ class SongController extends Controller
      *
      * @param Song $song
      */
-    public function play(Song $song)
+    public function play(Song $song, $transcode = null, $bitrate = null)
     {
-        if (ends_with(mime_content_type($song->path), 'flac')) {
-            return (new TranscodingStreamer($song))->stream();
+        if (is_null($bitrate)) {
+            $bitrate = env('OUTPUT_BIT_RATE', 128);
+        }
+
+        // If transcode parameter isn't passed, the default is to only transcode flac
+        if (is_null($transcode) && ends_with(mime_content_type($song->path), 'flac')) {
+            $transcode = true;
+        } else {
+            $transcode = (bool) $transcode;
+        }
+
+        if ($transcode) {
+            return (new TranscodingStreamer($song, $bitrate, request()->input('time', 0)))->stream();
         }
 
         switch (env('STREAMING_METHOD')) {
