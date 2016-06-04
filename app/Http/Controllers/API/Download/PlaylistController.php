@@ -14,7 +14,7 @@ class PlaylistController extends Controller
      * @param Request  $request
      * @param Playlist $playlist
      *
-     * @return
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function download(Request $request, Playlist $playlist)
     {

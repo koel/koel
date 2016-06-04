@@ -13,7 +13,7 @@ class SongController extends Controller
      *
      * @param  SongRequest $request
      *
-     * @return
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function download(SongRequest $request)
     {

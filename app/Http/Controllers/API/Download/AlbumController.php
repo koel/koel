@@ -14,7 +14,7 @@ class AlbumController extends Controller
      * @param Request $request
      * @param Album   $album
      *
-     * @return
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function download(Request $request, Album $album)
     {

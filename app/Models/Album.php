@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string name            Name of the album
  * @property bool   is_compilation  If the album is a compilation from multiple artists
  * @property Artist artist          The album's artist
+ * @property int    artist_id
  */
 class Album extends Model
 {

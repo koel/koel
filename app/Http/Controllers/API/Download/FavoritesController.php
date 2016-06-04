@@ -11,10 +11,9 @@ class FavoritesController extends Controller
     /**
      * Download all songs in a playlist.
      *
-     * @param Request  $request
-     * @param Playlist $playlist
+     * @param Request $request
      *
-     * @return
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function download(Request $request)
     {

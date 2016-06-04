@@ -11,6 +11,7 @@ use Log;
 /**
  * @property int    id      The model ID
  * @property string name    The artist name
+ * @property string image
  */
 class Artist extends Model
 {

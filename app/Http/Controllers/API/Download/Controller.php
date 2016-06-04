@@ -6,5 +6,4 @@ use App\Http\Controllers\API\Controller as BaseController;
 
 class Controller extends BaseController
 {
-
 }

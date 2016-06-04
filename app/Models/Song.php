@@ -9,7 +9,10 @@ use Lastfm;
 /**
  * @property string path
  * @property string title
- * @property Album album
+ * @property Album  album
+ * @property int    contributing_artist_id
+ * @property Artist contributingArtist
+ * @property Artist artist
  */
 class Song extends Model
 {
@@ -108,7 +111,7 @@ class Song extends Model
      *                    All of these are optional, in which case the info will not be changed
      *                    (except for lyrics, which will be emptied).
      *
-     * @return
+     * @return array
      */
     public static function updateInfo($ids, $data)
     {
@@ -165,7 +168,7 @@ class Song extends Model
             $compilationState = 1;
         }
 
-        // If the complitation state is "no change," we determine it via the current
+        // If the compilation state is "no change," we determine it via the current
         // "contributing_artist_id" field value.
         if ($compilationState === 2) {
             $compilationState = $this->contributing_artist_id ? 1 : 0;
@@ -216,12 +219,12 @@ class Song extends Model
     }
 
     /**
-     * Get all songs favorited by a user.
+     * Get all songs favored by a user.
      *
      * @param User $user
      * @param bool $toArray
      *
-     * @return \Illuminate\Database\Eloquent\Collection|Array
+     * @return \Illuminate\Database\Eloquent\Collection|array
      */
     public static function getFavorites(User $user, $toArray = false)
     {
@@ -269,9 +272,9 @@ class Song extends Model
      */
     public function getLyricsAttribute($value)
     {
-        // We don't use nl2br() here, because the function actually preserves linebreaks -
+        // We don't use nl2br() here, because the function actually preserves line breaks -
         // it just _appends_ a "<br />" after each of them. This would cause our client
-        // implementation of br2nl to fail with duplicated linebreaks.
+        // implementation of br2nl to fail with duplicated line breaks.
         return str_replace(["\r\n", "\r", "\n"], '<br />', $value);
     }
 

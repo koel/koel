@@ -16,7 +16,7 @@ class ArtistController extends Controller
      * @param Request $request
      * @param Artist  $artist
      *
-     * @return
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function download(Request $request, Artist $artist)
     {

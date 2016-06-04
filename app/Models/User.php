@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
- * @property array preferences
- * @property int   id
- * @property bool  is_admin
+ * @property array  preferences
+ * @property int    id
+ * @property bool   is_admin
+ * @property string lastfm_session_key
  */
 class User extends Authenticatable
 {

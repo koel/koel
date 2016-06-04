@@ -153,7 +153,7 @@ class File
      * Sync the song with all available media info against the database.
      *
      * @param array $tags  The (selective) tags to sync (if the song exists)
-     * @param bool  $force Whether to force syncing, even if the file is unchaged
+     * @param bool  $force Whether to force syncing, even if the file is unchanged
      *
      * @return bool|Song A Song object on success,
      *                   true if file exists but is unmodified,
@@ -171,7 +171,6 @@ class File
             return false;
         }
 
-        $isCompilation = false;
         $artist = null;
 
         if ($this->isChanged() || $force) {
