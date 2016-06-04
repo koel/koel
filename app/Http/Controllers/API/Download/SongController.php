@@ -11,7 +11,7 @@ class SongController extends Controller
     /**
      * Download a song or multiple songs.
      *
-     * @param  SongRequest $request
+     * @param SongRequest $request
      *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
