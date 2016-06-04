@@ -123,16 +123,6 @@
                 z-index: 0;
                 transition: .3s;
             }
-
-            &:hover {
-                &:before {
-                    background-color: rgba(0, 0, 0, .4);
-                }
-
-                .control {
-                    display: block;
-                }
-            }
         }
 
         footer {
@@ -149,6 +139,18 @@
             color: $color2ndText;
             margin-top: 4px;
             font-size: .92rem;
+            display: flex;
+            justify-content: space-between;
+
+            .right {
+                a {
+                    margin-left: 4px;
+
+                    &:hover {
+                        color: $colorHighlight;
+                    }
+                }
+            }
         }
 
         a.name, a.artist {
@@ -166,6 +168,17 @@
 
         .nope {
             opacity: .5;
+        }
+
+        &:hover {
+            .cover {
+                &:before {
+                    background-color: rgba(0, 0, 0, .4);
+                }
+                .control {
+                    display: block;
+                }
+            }
         }
     }
 }

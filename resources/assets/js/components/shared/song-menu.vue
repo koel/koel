@@ -27,7 +27,7 @@
             </ul>
         </li>
         <li v-if="isAdmin" @click="openEditForm">Edit</li>
-        <li @click="download">Download</li>
+        <li @click="download" v-if="sharedState.allowDownload">Download</li>
     </ul>
 </template>
 
@@ -40,6 +40,7 @@
     import queueStore from '../../stores/queue';
     import userStore from '../../stores/user';
     import playlistStore from '../../stores/playlist';
+    import sharedStore from '../../stores/shared';
     import playback from '../../services/playback';
     import download from '../../services/download';
 
@@ -50,6 +51,7 @@
         data() {
             return {
                 playlistState: playlistStore.state,
+                sharedState: sharedStore.state,
             };
         },
 

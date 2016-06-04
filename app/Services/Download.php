@@ -9,6 +9,7 @@ use App\Models\Playlist;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Log;
+use ZipArchive;
 
 class Download
 {
@@ -38,7 +39,7 @@ class Download
 
     protected function fromSong(Song $song)
     {
-        // Maybe more interesting things can be added in the future.
+        // Maybe more interesting things can be added in the future (ID3 writing, perhaps).
         // For now, we simply return the song's path.
         return $song->path;
     }
@@ -49,21 +50,22 @@ class Download
             return $this->fromSong($songs->first());
         }
 
-        if (!class_exists('\ZipArchive')) {
+        if (!class_exists('ZipArchive')) {
             throw new Exception('Downloading multiple files requires ZipArchive module.');
         }
 
         // Start gathering the songs into a zip file.
-        $zip = new \ZipArchive();
+        $zip = new ZipArchive();
 
         // We use system's temp dir instead storage_path() here, so that the generated files
         // can be cleaned up automatically after server reboot.
         $filename = rtrim(sys_get_temp_dir(), '/').'/koel-download-'.uniqid().'.zip';
-        if ($zip->open($filename, \ZipArchive::CREATE) !== true) {
+        if ($zip->open($filename, ZipArchive::CREATE) !== true) {
             throw new Exception('Cannot create zip file.');
         }
 
         $localNames = [
+            // The data will follow this format:
             // 'duplicated-name.mp3' => currentFileIndex
         ];
 
@@ -74,7 +76,7 @@ class Download
                 // The following several lines are to make sure each file name is unique.
                 $name = basename($s->path);
                 if (array_key_exists($name, $localNames)) {
-                    $localNames[$name]++;
+                    ++$localNames[$name];
                     $parts = explode('.', $name);
                     $ext = $parts[count($parts) - 1];
                     $parts[count($parts) - 1] = $localNames[$name].".$ext";
@@ -101,7 +103,7 @@ class Download
 
     protected function fromAlbum(Album $album)
     {
-        return $this->fromMultipleSongs($abum->songs);
+        return $this->fromMultipleSongs($album->songs);
     }
 
     protected function fromArtist(Artist $artist)

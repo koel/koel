@@ -22,6 +22,7 @@ export default {
         currentUser: null,
         playlists: [],
         useLastfm: false,
+        allowDownload: false,
         currentVersion: '',
         latestVersion: '',
         cdnUrl: '',
@@ -66,6 +67,7 @@ export default {
         this.state.currentUser = null;
         this.state.playlists = [];
         this.state.useLastfm = false;
+        this.state.allowDownload = false;
         this.state.currentVersion = '';
         this.state.latestVersion = '';
         this.state.cdnUrl = '';

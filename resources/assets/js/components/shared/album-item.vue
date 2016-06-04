@@ -14,11 +14,21 @@
             </a>
             <span class="artist nope" v-else>{{ album.artist.name }}</span>
             <p class="meta">
-                {{ album.songs.length }} {{ album.songs.length | pluralize 'song' }}
-                •
-                {{ album.fmtLength }}
-                •
-                {{ album.playCount }} {{ album.playCount | pluralize 'play' }}
+                <span class="left">
+                    {{ album.songs.length }} {{ album.songs.length | pluralize 'song' }}
+                    •
+                    {{ album.fmtLength }}
+                    •
+                    {{ album.playCount }} {{ album.playCount | pluralize 'play' }}
+                </span>
+                <span class="right">
+                    <a href="#" @click="shuffle" title="Shuffle">
+                        <i class="fa fa-random"></i>
+                    </a>
+                    <a href="#" @click="download" v-if="sharedState.allowDownload" title="Download all songs in album">
+                        <i class="fa fa-download"></i>
+                    </a>
+                </span>
             </p>
         </footer>
     </article>
@@ -29,13 +39,21 @@
     import $ from 'jquery';
 
     import playback from '../../services/playback';
+    import download from '../../services/download';
     import queueStore from '../../stores/queue';
     import artistStore from '../../stores/artist';
+    import sharedStore from '../../stores/shared';
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {
         props: ['album'],
         mixins: [artistAlbumDetails],
+
+        data() {
+            return {
+                sharedState: sharedStore.state,
+            };
+        },
 
         computed: {
             isNormalArtist() {
@@ -46,7 +64,8 @@
 
         methods: {
             /**
-             * Play all songs in the current album, or queue them up if Ctrl/Cmd key is pressed.
+             * Play all songs in the current album in track order,
+             * or queue them up if Ctrl/Cmd key is pressed.
              */
             play(e) {
                 if (e.metaKey || e.ctrlKey) {
@@ -54,6 +73,20 @@
                 } else {
                     playback.playAllInAlbum(this.album, false);
                 }
+            },
+
+            /**
+             * Shuffle all songs in album.
+             */
+            shuffle() {
+                playback.playAllInAlbum(this.album, true);
+            },
+
+            /**
+             * Download all songs in album.
+             */
+            download() {
+                download.fromAlbum(this.album);
             },
 
             /**
