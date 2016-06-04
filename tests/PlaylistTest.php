@@ -23,12 +23,11 @@ class PlaylistTest extends TestCase
 
         // Let's create a playlist with 3 songs
         $songs = Song::orderBy('id')->take(3)->get();
-        $songIds = array_pluck($songs->toArray(), 'id');
 
         $this->actingAs($user)
             ->post('api/playlist', [
                 'name' => 'Foo Bar',
-                'songs' => $songIds,
+                'songs' => $songs->pluck('id')->toArray(),
             ]);
 
         $this->seeInDatabase('playlists', [
@@ -89,19 +88,19 @@ class PlaylistTest extends TestCase
         ]);
 
         $songs = Song::orderBy('id')->take(4)->get();
-        $playlist->songs()->attach(array_pluck($songs->toArray(), 'id'));
+        $playlist->songs()->attach($songs->pluck('id')->toArray());
 
         $removedSong = $songs->pop();
 
         $this->actingAs($user2)
             ->put("api/playlist/{$playlist->id}/sync", [
-                'songs' => array_pluck($songs->toArray(), 'id'),
+                'songs' => $songs->pluck('id')->toArray(),
             ])
             ->seeStatusCode(403);
 
         $this->actingAs($user)
             ->put("api/playlist/{$playlist->id}/sync", [
-                'songs' => array_pluck($songs->toArray(), 'id'),
+                'songs' => $songs->pluck('id')->toArray(),
             ]);
 
         // We should still see the first 3 songs, but not the removed one
