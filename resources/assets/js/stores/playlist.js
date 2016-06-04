@@ -20,7 +20,7 @@ export default {
 
     init(playlists) {
         this.all = playlists;
-        each(this.all, this.getSongs);
+        each(this.all, this.objectifySongs);
     },
 
     /**
@@ -42,12 +42,24 @@ export default {
     },
 
     /**
+     * Objectify all songs in the playlist.
+     * (Initially, a playlist only contain the song IDs).
+     *
+     * @param  {Object} playlist
+     */
+    objectifySongs(playlist) {
+        playlist.songs = songStore.byIds(playlist.songs);
+    },
+
+    /**
      * Get all songs in a playlist.
+     *
+     * @param {Object}
      *
      * return {Array.<Object>}
      */
     getSongs(playlist) {
-        return (playlist.songs = songStore.byIds(playlist.songs));
+        return playlist.songs;
     },
 
     /**
@@ -86,7 +98,7 @@ export default {
         http.post('playlist', { name, songs }, response => {
             const playlist = response.data;
             playlist.songs = songs;
-            this.getSongs(playlist);
+            this.objectifySongs(playlist);
             this.add(playlist);
 
             cb && cb();

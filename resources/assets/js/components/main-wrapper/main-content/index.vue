@@ -115,6 +115,14 @@
                 font-size: $fontSize;
                 color: $color2ndText;
                 margin: 12px 0 0 2px;
+
+                a {
+                    color: #fff;
+
+                    &:hover {
+                        color: $colorHighlight;
+                    }
+                }
             }
 
             .buttons {

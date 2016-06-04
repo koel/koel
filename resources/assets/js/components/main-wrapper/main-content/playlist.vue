@@ -13,6 +13,13 @@
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
                     •
                     {{ meta.totalLength }}
+                    <template v-if="sharedState.allowDownload && playlist.songs.length">
+                        •
+                        <a href="#" @click.prevent="download"
+                            title="Download all songs in playlist">
+                            Download
+                        </a>
+                    </template>
                 </span>
             </span>
 
@@ -57,7 +64,9 @@
     import isMobile from 'ismobilejs';
 
     import playlistStore from '../../../stores/playlist';
+    import sharedStore from '../../../stores/shared';
     import playback from '../../../services/playback';
+    import download from '../../../services/download';
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {
@@ -66,6 +75,7 @@
         data() {
             return {
                 playlist: playlistStore.stub,
+                sharedState: sharedStore.state,
                 isPhone: isMobile.phone,
                 showingControls: false,
             };
@@ -106,6 +116,13 @@
                     // Switch back to Queue screen
                     this.$root.loadMainView('queue');
                 });
+            },
+
+            /**
+             * Download all songs in the current playlist.
+             */
+            download() {
+                return download.fromPlaylist(this.playlist);
             },
         },
     };

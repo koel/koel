@@ -13,6 +13,13 @@
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
                     •
                     {{ meta.totalLength }}
+                    <template v-if="sharedState.allowDownload && state.songs.length">
+                        •
+                        <a href="#" @click.prevent="download"
+                            title="Download all songs in playlist">
+                            Download
+                        </a>
+                    </template>
                 </span>
             </span>
 
@@ -57,7 +64,9 @@
     import isMobile from 'ismobilejs';
 
     import favoriteStore from '../../../stores/favorite';
+    import sharedStore from '../../../stores/shared';
     import playback from '../../../services/playback';
+    import download from '../../../services/download';
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {
@@ -66,6 +75,7 @@
         data () {
             return {
                 state: favoriteStore.state,
+                sharedState: sharedStore.state,
                 isPhone: isMobile.phone,
                 showingControls: false,
             };
@@ -77,6 +87,13 @@
              */
             shuffle() {
                 playback.queueAndPlay(this.state.songs, true);
+            },
+
+            /**
+             * Download all favorite songs.
+             */
+            download() {
+                download.fromFavorites();
             },
         },
     };
