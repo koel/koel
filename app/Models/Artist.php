@@ -28,6 +28,11 @@ class Artist extends Model
         return $this->hasMany(Album::class);
     }
 
+    public function songs()
+    {
+        return $this->hasManyThrough(Song::class, Album::class);
+    }
+
     public function isUnknown()
     {
         return $this->id === self::UNKNOWN_ID;
@@ -114,6 +119,16 @@ class Artist extends Model
         }
 
         return $info;
+    }
+
+    /**
+     * Get songs *contributed* (in compilation albums) by the artist.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getContributedSongs()
+    {
+        return Song::whereContributingArtistId($this->id)->get();
     }
 
     /**

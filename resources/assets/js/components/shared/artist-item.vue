@@ -8,11 +8,18 @@
         <footer>
             <a class="name" @click.prevent="viewArtistDetails(artist)">{{ artist.name }}</a>
             <p class="meta">
-                {{ artist.albums.length }} {{ artist.albums.length | pluralize 'album' }}
-                •
-                {{ artist.songCount }} {{ artist.songCount | pluralize 'song' }}
-                •
-                {{ artist.playCount }} {{ artist.playCount | pluralize 'play' }}
+                <span class="left">
+                    {{ artist.albums.length }} {{ artist.albums.length | pluralize 'album' }}
+                    •
+                    {{ artist.songCount }} {{ artist.songCount | pluralize 'song' }}
+                    •
+                    {{ artist.playCount }} {{ artist.playCount | pluralize 'play' }}
+                </span>
+                <span class="right">
+                    <a href="#" @click="download" v-if="sharedState.allowDownload" title="Download all songs in album">
+                        <i class="fa fa-download"></i>
+                    </a>
+                </span>
             </p>
         </footer>
     </article>
@@ -23,13 +30,21 @@
     import $ from 'jquery';
 
     import playback from '../../services/playback';
+    import download from '../../services/download';
     import artistStore from '../../stores/artist';
     import queueStore from '../../stores/queue';
+    import sharedStore from '../../stores/shared';
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {
         props: ['artist'],
         mixins: [artistAlbumDetails],
+
+        data() {
+            return {
+                sharedState: sharedStore.state,
+            };
+        },
 
         computed: {
             /**
@@ -53,6 +68,13 @@
                 } else {
                     playback.playAllByArtist(this.artist);
                 }
+            },
+
+            /**
+             * Download all songs by artist.
+             */
+            download() {
+                download.fromArtist(this.artist);
             },
 
             /**
