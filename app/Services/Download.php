@@ -7,7 +7,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Log;
 use ZipArchive;
 

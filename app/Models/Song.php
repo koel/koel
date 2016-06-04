@@ -216,6 +216,27 @@ class Song extends Model
     }
 
     /**
+     * Get all songs favorited by a user.
+     *
+     * @param User $user
+     * @param bool $toArray
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|Array
+     */
+    public static function getFavorites(User $user, $toArray = false)
+    {
+        $songs = Interaction::where([
+            'user_id' => $user->id,
+            'liked' => true,
+        ])
+            ->with('song')
+            ->get()
+            ->pluck('song');
+
+        return $toArray ? $songs->toArray() : $songs;
+    }
+
+    /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
      *

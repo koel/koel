@@ -58,6 +58,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
             Route::get('album/{album}', 'AlbumController@download');
             Route::get('artist/{artist}', 'ArtistController@download');
             Route::get('playlist/{playlist}', 'PlaylistController@download');
+            Route::get('favorites', 'FavoritesController@download');
         });
     });
 });
