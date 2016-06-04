@@ -13,12 +13,17 @@
 
                 <span class="meta" v-show="meta.songCount">
                     by
-                    <a class="artist" v-if="isNormalArtist" @click.prevent="viewArtistDetails">{{ album.artist.name }}</a>
+                    <a class="artist" v-if="isNormalArtist" @click.prevent="viewArtistDetails(album.artist)">{{ album.artist.name }}</a>
                     <span class="nope" v-else>{{ album.artist.name }}</span>
                     •
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
                     •
                     {{ meta.totalLength }}
+
+                    <template v-if="sharedState.allowDownload">
+                        •
+                        <a href="#" @click.prevent="download" title="Download all songs in album">Download</a>
+                    </template>
                 </span>
             </span>
 
@@ -46,14 +51,18 @@
 
     import albumStore from '../../../stores/album';
     import artistStore from '../../../stores/artist';
+    import sharedStore from '../../../stores/shared';
     import playback from '../../../services/playback';
+    import download from '../../../services/download';
     import hasSongList from '../../../mixins/has-song-list';
+    import artistAlbumDetails from '../../../mixins/artist-album-details';
 
     export default {
-        mixins: [hasSongList],
+        mixins: [hasSongList, artistAlbumDetails],
 
         data() {
             return {
+                sharedState: sharedStore.state,
                 album: albumStore.stub,
                 isPhone: isMobile.phone,
                 showingControls: false,
@@ -105,10 +114,10 @@
             },
 
             /**
-             * Load the artist details screen.
+             * Download all songs from the album.
              */
-            viewArtistDetails() {
-                this.$root.loadArtist(this.album.artist);
+            download() {
+                download.fromAlbum(this.album);
             },
         },
     };
