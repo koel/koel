@@ -18,6 +18,8 @@ class PlaylistController extends Controller
      */
     public function download(Request $request, Playlist $playlist)
     {
+        $this->authorize('owner', $playlist);
+
         return response()->download(Download::from($playlist));
     }
 }
