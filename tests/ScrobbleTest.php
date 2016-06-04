@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Song;
-use App\Models\User;
 use App\Services\Lastfm;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -16,7 +15,6 @@ class ScrobbleTest extends TestCase
         $this->withoutEvents();
         $this->createSampleMediaSet();
 
-        $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
         $song = Song::first();
 
         $ts = time();
