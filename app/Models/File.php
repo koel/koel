@@ -178,9 +178,15 @@ class File
             // In such a case, the user must have specified a list of tags to sync.
             // A sample command could be: ./artisan koel:sync --force --tags=artist,album,lyrics
             // We cater for these tags by removing those not specified.
+
+            // There's a special case with 'album though'.
+            // If 'part_of_a_compilation' tag is specified, 'album' must be counted in as well.
+            // But if 'album' isn't specified, we don't want to update normal albums.
+            // This variable is to keep track of this state.
+            $changeCompilationAlbumOnly = false;
             if (in_array('part_of_a_compilation', $tags) && !in_array('album', $tags)) {
-                // If 'part_of_a_compilation' tag is specified, 'album' must be counted in as well.
                 $tags[] = 'album';
+                $changeCompilationAlbumOnly = true;
             }
 
             $info = array_intersect_key($info, array_flip($tags));
@@ -193,9 +199,13 @@ class File
 
             // If the "album" tag is specified, use it.
             // Otherwise, re-use the existing model value.
-            $album = isset($info['album'])
-                ? Album::get($artist, $info['album'], $isCompilation)
-                : $this->song->album;
+            if (isset($info['album'])) {
+                $album = $changeCompilationAlbumOnly
+                    ? $this->song->album
+                    : Album::get($artist, $info['album'], $isCompilation);
+            } else {
+                $album = $this->song->album;
+            }
         } else {
             // The file is newly added.
             $isCompilation = (bool) array_get($info, 'part_of_a_compilation');
