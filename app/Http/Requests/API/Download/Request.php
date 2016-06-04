@@ -16,7 +16,8 @@ class Request extends BaseRequest
         return env('ALLOW_DOWNLOAD', true);
     }
 
-    public function rules() {
+    public function rules()
+    {
         return [];
     }
 }
