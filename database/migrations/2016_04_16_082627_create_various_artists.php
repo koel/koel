@@ -12,6 +12,12 @@ class CreateVariousArtists extends Migration
      */
     public function up()
     {
+        // Make sure modified artists cascade the album's artist_id field.
+        Schema::table('albums', function ($table) {
+            $table->dropForeign('albums_artist_id_foreign');
+            $table->foreign('artist_id')->references('id')->on('artists')->onUpdate('cascade')->onDelete('cascade');
+        });
+
         Artist::unguard();
 
         $existingArtist = Artist::find(Artist::VARIOUS_ID);
