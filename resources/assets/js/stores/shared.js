@@ -1,4 +1,5 @@
 import { assign } from 'lodash';
+import isMobile from 'ismobilejs';
 
 import http from '../services/http';
 import userStore from './user';
@@ -33,6 +34,9 @@ export default {
 
         http.get('data', response => {
             const data = response.data;
+
+            // Don't allow downloading on mobile devices
+            data.allowDownload = data.allowDownload && !isMobile.any;
 
             assign(this.state, data);
 
