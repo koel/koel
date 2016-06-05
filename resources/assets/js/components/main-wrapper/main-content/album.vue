@@ -168,11 +168,6 @@
             }
         }
 
-        .loading {
-            @include vertical-center();
-            height: 100%;
-        }
-
         .heading {
             .overview {
                 position: relative;
@@ -203,48 +198,6 @@
             }
         }
 
-        .info-wrapper {
-            color: $color2ndText;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: $colorMainBgr;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-
-            .close {
-                position: absolute;
-                right: 0;
-                top: 0;
-                background: $colorRed;
-                width: 24px;
-                height: 24px;
-                line-height: 24px;
-                text-align: center;
-                color: #fff;
-                opacity: 0;
-                transition: opacity .3s;
-
-                html.touchevents & {
-                    opacity: 1;
-                }
-            }
-
-            &:hover .close {
-                opacity: 1;
-            }
-
-            .inner {
-                padding: 24px;
-                overflow: auto;
-                height: 100%;
-                padding-bottom: 48px;
-
-                @media only screen and (max-width: 768px) {
-                    padding: 16px;
-                }
-            }
-        }
+        @include artist-album-info-wrapper();
     }
 </style>

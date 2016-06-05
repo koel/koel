@@ -1,5 +1,5 @@
 <template>
-    <article v-if="artist.id" id="artistInfo">
+    <article v-if="artist.id" id="artistInfo" :class="mode">
         <h1 class="name">
             <span>{{ artist.name }}</span>
 
@@ -12,10 +12,15 @@
                 class="cool-guys-posing cover">
 
             <div class="bio" v-if="artist.info.bio.summary">
-                <div class="summary" v-show="!showingFullBio">{{{ artist.info.bio.summary }}}</div>
-                <div class="full" v-show="showingFullBio">{{{ artist.info.bio.full }}}</div>
+                <div class="summary" v-show="mode !== 'full' && !showingFullBio">
+                    {{{ artist.info.bio.summary }}}
+                </div>
+                <div class="full" v-show="mode === 'full' || showingFullBio">
+                    {{{ artist.info.bio.full }}}
+                </div>
 
-                <button class="more" v-show="!showingFullBio" @click.prevent="showingFullBio = !showingFullBio">
+                <button class="more" v-show="mode !== 'full' && !showingFullBio"
+                    @click.prevent="showingFullBio = !showingFullBio">
                     Full Bio
                 </button>
             </div>
@@ -33,7 +38,7 @@
 
     export default {
         replace: false,
-        props: ['artist'],
+        props: ['artist', 'mode'],
 
         data() {
             return {

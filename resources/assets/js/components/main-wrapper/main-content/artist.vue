@@ -18,6 +18,11 @@
                     •
                     {{ meta.totalLength }}
 
+                    <template v-if="sharedState.useLastfm">
+                        •
+                        <a href="#" @click.prevent="showInfo" title="View artist's extra information">Info</a>
+                    </template>
+
                     <template v-if="sharedState.allowDownload">
                         •
                         <a href="#" @click.prevent="download" title="Download all songs by this artist">Download</a>
@@ -41,6 +46,16 @@
         </h1>
 
         <song-list :items="artist.songs" :selected-songs.sync="selectedSongs" type="artist"></song-list>
+
+        <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
+            <a href="#" class="close" @click="info.showing = false"><i class="fa fa-times"></i></a>
+            <div class="inner">
+                <div class="loading" v-show="info.loading">
+                    <sound-bar></sound-bar>
+                </div>
+                <artist-info :artist="artist" :mode="'full'" v-else></artist-info>
+            </div>
+        </section>
     </section>
 </template>
 
@@ -52,9 +67,12 @@
     import playback from '../../../services/playback';
     import download from '../../../services/download';
     import hasSongList from '../../../mixins/has-song-list';
+    import artistInfo from '../extra/artist-info.vue';
+    import soundBar from '../../shared/sound-bar.vue';
 
     export default {
         mixins: [hasSongList],
+        components: { artistInfo, soundBar },
 
         data() {
             return {
@@ -62,6 +80,10 @@
                 artist: artistStore.stub,
                 isPhone: isMobile.phone,
                 showingControls: false,
+                info: {
+                    showing: false,
+                    loading: true,
+                },
             };
         },
 
@@ -89,6 +111,7 @@
              */
             'main-content-view:load': function (view, artist) {
                 if (view === 'artist') {
+                    this.info.showing = false;
                     this.artist = artist;
                 }
             },
@@ -107,6 +130,18 @@
              */
             download() {
                 download.fromArtist(this.artist);
+            },
+
+            showInfo() {
+                this.info.showing = true;
+                if (!this.artist.info) {
+                    this.info.loading = true;
+                    artistStore.fetchInfo(this.artist, () => {
+                        this.info.loading = false;
+                    });
+                } else {
+                    this.info.loading = false;
+                }
             },
         },
     };
@@ -143,5 +178,7 @@
                 }
             }
         }
+
+        @include artist-album-info-wrapper();
     }
 </style>

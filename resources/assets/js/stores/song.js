@@ -203,18 +203,7 @@ export default {
 
             song.lyrics = data.lyrics;
 
-            // If the artist image is not in a nice form, don't use it.
-            if (data.artist_info && typeof data.artist_info.image !== 'string') {
-                data.artist_info.image = null;
-            }
-
-            song.artist.info = data.artist_info;
-
-            // Set the artist image on the client side to the retrieved image from server.
-            if (data.artist_info.image) {
-                song.artist.image = data.artist_info.image;
-            }
-
+            data.artist_info && artistStore.mergeArtistInfo(song.album.artist, data.artist_info);
             data.album_info && albumStore.mergeAlbumInfo(song.album, data.album_info);
 
             song.infoRetrieved = true;
