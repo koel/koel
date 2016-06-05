@@ -11,7 +11,7 @@
 
                     <ol class="top-song-list">
                         <li v-for="song in topSongs"
-                            :top-play-count="topSongs[0].playCount"
+                            :top-play-count="topSongs.length ? topSongs[0].playCount : 0"
                             :song="song"
                             is="song-item"></li>
                     </ol>
@@ -22,7 +22,7 @@
 
                     <ol class="recent-song-list" v-show="recentSongs.length">
                         <li v-for="song in recentSongs"
-                            :top-play-count="topSongs[0].playCount"
+                            :top-play-count="topSongs.length ? topSongs[0].playCount : 0"
                             :song="song"
                             is="song-item"></li>
                     </ol>
