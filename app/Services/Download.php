@@ -39,9 +39,21 @@ class Download
 
     protected function fromSong(Song $song)
     {
-        // Maybe more interesting things can be added in the future (ID3 writing, perhaps).
-        // For now, we simply return the song's path.
-        return $song->path;
+        if (!file_exists($song->path)) {
+            abort(404);
+        }
+
+        if (ctype_print($song->path)) {
+            return $song->path;
+        }
+
+        // The BinaryFileResponse factory only accept ASCII-only file names.
+        // For those with high-byte characters in names, we copy it into a safe name
+        // as a workaround.
+        $filename = rtrim(sys_get_temp_dir(), '/').'/'.utf8_decode(basename($song->path));
+        copy($song->path, $filename);
+
+        return $filename;
     }
 
     protected function fromMultipleSongs(Collection $songs)
