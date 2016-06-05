@@ -53,8 +53,6 @@ export default {
             queueStore.init();
             settingStore.init(this.state.settings);
 
-            window.useLastfm = this.state.useLastfm = data.useLastfm;
-
             successCb && successCb();
         }, errorCb);
     },

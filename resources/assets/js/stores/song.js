@@ -245,7 +245,7 @@ export default {
      * @param  {?Function}  cb
      */
     scrobble(song, cb = null) {
-        if (!window.useLastfm || !userStore.current.preferences.lastfm_session_key) {
+        if (!sharedStore.state.useLastfm || !userStore.current.preferences.lastfm_session_key) {
             return;
         }
 
