@@ -20,6 +20,10 @@
                     •
                     {{ meta.totalLength }}
 
+                    <template v-if="sharedState.useLastfm">
+                        •
+                        <a href="#" @click.prevent="showInfo" title="View album's extra information">Info</a>
+                    </template>
                     <template v-if="sharedState.allowDownload">
                         •
                         <a href="#" @click.prevent="download" title="Download all songs in album">Download</a>
@@ -43,6 +47,16 @@
         </h1>
 
         <song-list :items="album.songs" :selected-songs.sync="selectedSongs" type="album"></song-list>
+
+        <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
+            <a href="#" class="close" @click="info.showing = false"><i class="fa fa-times"></i></a>
+            <div class="inner">
+                <div class="loading" v-show="info.loading">
+                    <sound-bar></sound-bar>
+                </div>
+                <album-info :album="album" :mode="'full'" v-else></album-info>
+            </div>
+        </section>
     </section>
 </template>
 
@@ -56,9 +70,12 @@
     import download from '../../../services/download';
     import hasSongList from '../../../mixins/has-song-list';
     import artistAlbumDetails from '../../../mixins/artist-album-details';
+    import albumInfo from '../extra/album-info.vue';
+    import soundBar from '../../shared/sound-bar.vue';
 
     export default {
         mixins: [hasSongList, artistAlbumDetails],
+        components: { albumInfo, soundBar },
 
         data() {
             return {
@@ -66,6 +83,10 @@
                 album: albumStore.stub,
                 isPhone: isMobile.phone,
                 showingControls: false,
+                info: {
+                    showing: false,
+                    loading: true,
+                },
             };
         },
 
@@ -100,6 +121,7 @@
              */
             'main-content-view:load': function (view, album) {
                 if (view === 'album') {
+                    this.info.showing = false;
                     this.album = album;
                 }
             },
@@ -119,6 +141,18 @@
             download() {
                 download.fromAlbum(this.album);
             },
+
+            showInfo() {
+                this.info.showing = true;
+                if (!this.album.info) {
+                    this.info.loading = true;
+                    albumStore.fetchInfo(this.album, () => {
+                        this.info.loading = false;
+                    });
+                } else {
+                    this.info.loading = false;
+                }
+            },
         },
     };
 </script>
@@ -132,6 +166,11 @@
             i {
                 margin-right: 0 !important;
             }
+        }
+
+        .loading {
+            @include vertical-center();
+            height: 100%;
         }
 
         .heading {
@@ -160,6 +199,50 @@
 
                 &:hover {
                     color: $colorHighlight;
+                }
+            }
+        }
+
+        .info-wrapper {
+            color: $color2ndText;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: $colorMainBgr;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+
+            .close {
+                position: absolute;
+                right: 0;
+                top: 0;
+                background: $colorRed;
+                width: 24px;
+                height: 24px;
+                line-height: 24px;
+                text-align: center;
+                color: #fff;
+                opacity: 0;
+                transition: opacity .3s;
+
+                html.touchevents & {
+                    opacity: 1;
+                }
+            }
+
+            &:hover .close {
+                opacity: 1;
+            }
+
+            .inner {
+                padding: 24px;
+                overflow: auto;
+                height: 100%;
+                padding-bottom: 48px;
+
+                @media only screen and (max-width: 768px) {
+                    padding: 16px;
                 }
             }
         }

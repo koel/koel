@@ -1,6 +1,6 @@
 <template>
-    <article v-if="album.id" id="albumInfo">
-        <h1>
+    <article v-if="album.id" id="albumInfo" :class="mode">
+        <h1 class="name">
             <span>{{ album.name }}</span>
 
             <a class="shuffle" @click.prevent="shuffleAll"><i class="fa fa-random"></i></a>
@@ -12,10 +12,15 @@
                 class="cover">
 
             <div class="wiki" v-if="album.info.wiki && album.info.wiki.summary">
-                <div class="summary" v-show="!showingFullWiki">{{{ album.info.wiki.summary }}}</div>
-                <div class="full" v-show="showingFullWiki">{{{ album.info.wiki.full }}}</div>
+                <div class="summary" v-show="mode !== 'full' && !showingFullWiki">
+                    {{{ album.info.wiki.summary }}}
+                </div>
+                <div class="full" v-show="mode === 'full' || showingFullWiki">
+                    {{{ album.info.wiki.full }}}
+                </div>
 
-                <button class="more" v-show="!showingFullWiki" @click.prevent="showingFullWiki = !showingFullWiki">
+                <button class="more" v-show="mode !== 'full' && !showingFullWiki"
+                    @click.prevent="showingFullWiki = !showingFullWiki">
                     Full Wiki
                 </button>
             </div>
@@ -34,7 +39,7 @@
             <footer>Data &copy; <a target="_blank" href="{{{ album.info.url }}}">Last.fm</a></footer>
         </div>
 
-        <p class="none" v-else>No album information found. At all.</p>
+        <p class="none" v-else>No album information found.</p>
     </article>
 </template>
 
@@ -43,7 +48,7 @@
 
     export default {
         replace: false,
-        props: ['album'],
+        props: ['album', 'mode'],
 
         data() {
             return {
@@ -74,48 +79,6 @@
     @import "../../../../sass/partials/_mixins.scss";
 
     #albumInfo {
-        img.cover {
-            width: 100%;
-            height: auto;
-        }
-
-        .wiki {
-            margin-top: 16px;
-        }
-
-        .track-listing {
-            margin-top: 16px;
-
-            h1 {
-                font-size: 20px;
-                margin-bottom: 0;
-                display: block;
-            }
-
-            li {
-                display: flex;
-                justify-content: space-between;
-                padding: 8px;
-
-                &:nth-child(even) {
-                    background: rgba(255, 255, 255, 0.05);
-                }
-
-                .no {
-                    flex: 0 0 24px;
-                    opacity: .5;
-                }
-
-                .title {
-                    flex: 1;
-                }
-
-                .length {
-                    flex: 0 0 48px;
-                    text-align: right;
-                    opacity: .5;
-                }
-            }
-        }
+        @include artist-album-info();
     }
 </style>

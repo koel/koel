@@ -183,6 +183,133 @@
     }
 }
 
+@mixin artist-album-info() {
+    h1 {
+        font-weight: $fontWeight_UltraThin;
+        line-height: 2.8rem;
+
+        &.name {
+            font-size: 2rem;
+        }
+
+        @include vertical-center();
+        align-items: initial;
+
+        span {
+            flex: 1;
+            margin-right: 12px;
+        }
+
+        a {
+            font-size: 14px;
+
+            &:hover {
+                color: $colorHighlight;
+            }
+        }
+    }
+
+    .bio {
+        margin-top: 16px;
+    }
+
+    .more {
+        margin-top: 8px;
+        border-radius: .23rem;
+        background: $colorBlue;
+        color: #fff;
+        padding: .3rem .6rem;
+        display: inline-block;
+        text-transform: uppercase;
+        font-size: .8rem;
+    }
+
+    img.cover, img.cool-guys-posing {
+        width: 100%;
+        height: auto;
+    }
+
+    .wiki {
+        margin-top: 16px;
+    }
+
+    .track-listing {
+        margin-top: 16px;
+
+        ul {
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0;
+            display: block;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+
+            &:nth-child(even) {
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .no {
+                flex: 0 0 24px;
+                opacity: .5;
+            }
+
+            .title {
+                flex: 1;
+            }
+
+            .length {
+                flex: 0 0 48px;
+                text-align: right;
+                opacity: .5;
+            }
+        }
+    }
+
+    footer {
+        margin-top: 24px;
+        font-size: .9rem;
+        text-align: right;
+        clear: both;
+
+        a {
+            color: #fff;
+            font-weight: $fontWeight_Normal;
+
+            &:hover {
+                color: #b90000;
+            }
+        }
+    }
+
+    .none {
+        margin-top: 16px;
+    }
+
+    &.full {
+        img.cover, img.cool-guys-posing {
+            width: 300px;
+            max-width: 100%;
+            float: left;
+            margin: 0 16px 16px 0;
+        }
+
+        h1.name {
+            font-size: 2.4rem;
+
+            a.shuffle {
+                display: none;
+            }
+        }
+    }
+}
+
 @mixin inset-when-pressed() {
     &:active {
         box-shadow: inset 0px 10px 10px -10px rgba(0,0,0,1);

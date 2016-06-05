@@ -62,6 +62,8 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
         });
 
         // Info routes
-        //if (Lastfm::used())
+        if (Lastfm::used()) {
+            Route::get('album/{album}/info', 'AlbumController@getInfo');
+        }
     });
 });

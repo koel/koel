@@ -1,6 +1,6 @@
 <template>
     <article v-if="artist.id" id="artistInfo">
-        <h1>
+        <h1 class="name">
             <span>{{ artist.name }}</span>
 
             <a class="shuffle" @click.prevent="shuffleAll"><i class="fa fa-random"></i></a>
@@ -64,13 +64,6 @@
     @import "../../../../sass/partials/_mixins.scss";
 
     #artistInfo {
-        img.cool-guys-posing {
-            width: 100%;
-            height: auto;
-        }
-
-        .bio {
-            margin-top: 16px;
-        }
+        @include artist-album-info();
     }
 </style>

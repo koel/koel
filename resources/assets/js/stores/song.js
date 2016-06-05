@@ -215,22 +215,7 @@ export default {
                 song.artist.image = data.artist_info.image;
             }
 
-            // Convert the duration into i:s
-            if (data.album_info && data.album_info.tracks) {
-                each(data.album_info.tracks, track => track.fmtLength = secondsToHis(track.length));
-            }
-
-            // If the album cover is not in a nice form, don't use it.
-            if (data.album_info && typeof data.album_info.image !== 'string') {
-                data.album_info.image = null;
-            }
-
-            song.album.info = data.album_info;
-
-            // Set the album on the client side to the retrieved image from server.
-            if (data.album_info.cover) {
-                song.album.cover = data.album_info.cover;
-            }
+            data.album_info && albumStore.mergeAlbumInfo(song.album, data.album_info);
 
             song.infoRetrieved = true;
 

@@ -12,8 +12,10 @@
 
             <div class="panes">
                 <lyrics :song="song" v-ref:lyrics v-show="currentView === 'lyrics'"></lyrics>
-                <artist-info :artist="song.artist" v-ref:artist-info v-show="currentView === 'artistInfo'"></artist-info>
-                <album-info :album="song.album" v-ref:album-info v-show="currentView === 'albumInfo'"></album-info>
+                <artist-info :artist="song.artist" :mode="'sidebar'" v-ref:artist-info v-show="currentView === 'artistInfo'">
+                </artist-info>
+                <album-info :album="song.album" :mode="'sidebar'" v-ref:album-info v-show="currentView === 'albumInfo'">
+                </album-info>
             </div>
         </div>
     </section>
@@ -130,49 +132,7 @@
             font-size: 2.2rem;
             margin-bottom: 16px;
             line-height: 2.8rem;
-
-            @include vertical-center();
-            align-items: initial;
-
-            span {
-                flex: 1;
-                margin-right: 12px;
-            }
-
-            a {
-                font-size: 14px;
-
-                &:hover {
-                    color: $colorHighlight;
-                }
-            }
         }
-
-        .more {
-            margin-top: 8px;
-            border-radius: .23rem;
-            background: $colorBlue;
-            color: #fff;
-            padding: .3rem .6rem;
-            display: inline-block;
-            text-transform: uppercase;
-            font-size: .8rem;
-        }
-
-        footer {
-            margin-top: 24px;
-            font-size: .9rem;
-
-            a {
-                color: #fff;
-                font-weight: $fontWeight_Normal;
-
-                &:hover {
-                    color: #b90000;
-                }
-            }
-        }
-
 
         @media only screen and (max-width : 1024px) {
             position: fixed;
