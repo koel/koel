@@ -60,5 +60,8 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
             Route::get('playlist/{playlist}', 'PlaylistController@download');
             Route::get('favorites', 'FavoritesController@download');
         });
+
+        // Info routes
+        //if (Lastfm::used())
     });
 });

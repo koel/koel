@@ -41,6 +41,16 @@ class Lastfm extends RESTfulService
     }
 
     /**
+     * Determine if our application is using Last.fm.
+     *
+     * @return bool
+     */
+    public function used()
+    {
+        return env('LASTFM_API_KEY') && env('LASTFM_API_SECRET');
+    }
+
+    /**
      * Determine if Last.fm integration is enabled.
      *
      * @return bool
