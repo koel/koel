@@ -45,11 +45,7 @@ class Lastfm extends RESTfulService
      *
      * @return bool
      */
-<<<<<<< HEAD
     public function used()
-=======
-    public function usingLastfm()
->>>>>>> 48023f52be5e72c60bfdbd2c317e6ee775bc5049
     {
         return env('LASTFM_API_KEY') && env('LASTFM_API_SECRET');
     }
