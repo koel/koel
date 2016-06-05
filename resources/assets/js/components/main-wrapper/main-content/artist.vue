@@ -48,7 +48,7 @@
         <song-list :items="artist.songs" :selected-songs.sync="selectedSongs" type="artist"></song-list>
 
         <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
-            <a href="#" class="close" @click="info.showing = false"><i class="fa fa-times"></i></a>
+            <a href="#" class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
             <div class="inner">
                 <div class="loading" v-show="info.loading">
                     <sound-bar></sound-bar>
