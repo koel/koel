@@ -17,6 +17,11 @@
                     {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
                     •
                     {{ meta.totalLength }}
+
+                    <template v-if="sharedState.allowDownload">
+                        •
+                        <a href="#" @click.prevent="download" title="Download all songs by this artist">Download</a>
+                    </template>
                 </span>
             </span>
 
@@ -43,7 +48,9 @@
     import isMobile from 'ismobilejs';
 
     import artistStore from '../../../stores/artist';
+    import sharedStore from '../../../stores/shared';
     import playback from '../../../services/playback';
+    import download from '../../../services/download';
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {
@@ -51,6 +58,7 @@
 
         data() {
             return {
+                sharedState: sharedStore.state,
                 artist: artistStore.stub,
                 isPhone: isMobile.phone,
                 showingControls: false,
@@ -92,6 +100,13 @@
              */
             shuffle() {
                 playback.queueAndPlay(this.artist.songs, true);
+            },
+
+            /**
+             * Download all songs by the artist.
+             */
+            download() {
+                download.fromArtist(this.artist);
             },
         },
     };
