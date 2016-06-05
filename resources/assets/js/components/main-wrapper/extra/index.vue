@@ -31,6 +31,7 @@
     import albumInfo from './album-info.vue';
     import preferences from '../../../stores/preference';
     import songStore from '../../../stores/song';
+    import songInfoService from '../../../services/info/song';
 
     export default {
         components: { lyrics, artistInfo, albumInfo },
@@ -93,7 +94,7 @@
             },
 
             'song:played': function (song) {
-                songStore.getInfo(this.song = song);
+                songInfoService.fetch(this.song = song);
             },
 
             'koel:teardown': function () {

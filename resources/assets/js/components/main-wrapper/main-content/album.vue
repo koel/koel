@@ -67,6 +67,7 @@
     import artistStore from '../../../stores/artist';
     import sharedStore from '../../../stores/shared';
     import playback from '../../../services/playback';
+    import albumInfoService from '../../../services/info/album';
     import download from '../../../services/download';
     import hasSongList from '../../../mixins/has-song-list';
     import artistAlbumDetails from '../../../mixins/artist-album-details';
@@ -146,7 +147,7 @@
                 this.info.showing = true;
                 if (!this.album.info) {
                     this.info.loading = true;
-                    albumStore.fetchInfo(this.album, () => {
+                    albumInfoService.fetch(this.album, () => {
                         this.info.loading = false;
                     });
                 } else {

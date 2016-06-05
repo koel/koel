@@ -185,34 +185,6 @@ export default {
     },
 
     /**
-     * Get extra song information (lyrics, artist info, album info).
-     *
-     * @param  {Object}     song
-     * @param  {?Function}  cb
-     */
-    getInfo(song, cb = null) {
-        // Check if the song's info has been retrieved before.
-        if (song.infoRetrieved) {
-            cb && cb();
-
-            return;
-        }
-
-        http.get(`${song.id}/info`, response => {
-            const data = response.data;
-
-            song.lyrics = data.lyrics;
-
-            data.artist_info && artistStore.mergeArtistInfo(song.album.artist, data.artist_info);
-            data.album_info && albumStore.mergeAlbumInfo(song.album, data.album_info);
-
-            song.infoRetrieved = true;
-
-            cb && cb();
-        });
-    },
-
-    /**
      * Scrobble a song (using Last.fm).
      *
      * @param  {Object}     song

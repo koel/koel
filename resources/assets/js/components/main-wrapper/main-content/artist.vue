@@ -62,9 +62,10 @@
 <script>
     import isMobile from 'ismobilejs';
 
-    import artistStore from '../../../stores/artist';
     import sharedStore from '../../../stores/shared';
+    import artistStore from '../../../stores/artist';
     import playback from '../../../services/playback';
+    import artistInfoService from '../../../services/info/artist';
     import download from '../../../services/download';
     import hasSongList from '../../../mixins/has-song-list';
     import artistInfo from '../extra/artist-info.vue';
@@ -136,7 +137,7 @@
                 this.info.showing = true;
                 if (!this.artist.info) {
                     this.info.loading = true;
-                    artistStore.fetchInfo(this.artist, () => {
+                    artistInfoService.fetch(this.artist, () => {
                         this.info.loading = false;
                     });
                 } else {

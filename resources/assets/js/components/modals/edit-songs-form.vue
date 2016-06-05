@@ -79,6 +79,7 @@
     import { every, filter } from 'lodash';
 
     import { br2nl } from '../../services/utils';
+    import songInfoService from '../../services/info/song';
     import artistStore from '../../stores/artist';
     import albumStore from '../../stores/album';
     import songStore from '../../stores/song';
@@ -232,7 +233,7 @@
                     if (!this.songs[0].infoRetrieved) {
                         this.loading = true;
 
-                        songStore.getInfo(this.songs[0], () => {
+                        songInfoService.fetch(this.songs[0], () => {
                             this.loading = false;
                             this.formData.lyrics = br2nl(this.songs[0].lyrics);
                             this.formData.track = this.songs[0].track;
