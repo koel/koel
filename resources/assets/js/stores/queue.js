@@ -6,7 +6,7 @@ import {
     union,
     difference,
     map,
-    shuffle,
+    shuffle as _shuffle,
     first
 } from 'lodash';
 
@@ -227,6 +227,6 @@ export default {
      * @return {Array.<Object>} The shuffled array of song objects
      */
     shuffle() {
-        return this.all = shuffle(this.all);
+        return this.all = _shuffle(this.all);
     },
 };
