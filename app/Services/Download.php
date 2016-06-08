@@ -39,9 +39,7 @@ class Download
 
     protected function fromSong(Song $song)
     {
-        if (!file_exists($song->path)) {
-            abort(404);
-        }
+        abort_unless(file_exists($song->path), 404);
 
         if (ctype_print($song->path)) {
             return $song->path;
