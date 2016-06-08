@@ -5,7 +5,7 @@
             <view-mode-switch :mode.sync="viewMode" for="artists"></view-mode-switch>
         </h1>
 
-        <div class="artists main-scroll-wrap as-{{ viewMode }}" v-el:wrapper @scroll="scrolling">
+        <div class="artists main-scroll-wrap as-{{ viewMode }}" @scroll="scrolling">
             <artist-item v-for="item in items
                 | filterBy q in 'name'
                 | limitBy numOfItems" :artist="item"></artist-item>
