@@ -1,5 +1,5 @@
 server {
-  listen        *:8080;
+  listen        *:80;
   server_name   koel.dev;
   root          /var/www/koel;
   index         index.php;
