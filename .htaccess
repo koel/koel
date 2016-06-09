@@ -12,19 +12,16 @@
     RewriteEngine On
     RewriteBase /
 
-    # Deny access to framework directories
-    RewriteRule ^(app|bootstrap|config|database|resources|storage|tests|vendor|node_modules)/ - [R=404,L,NC]
-
-    # And dot files/folders (for example .env)
-    RedirectMatch 404 /\..*$
-
     # Redirect Trailing Slashes...
     RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+    # Whitelist only index.php, robots.txt, and those start with public/ or api/
+    RewriteRule ^(?!($|index\.php|robots\.txt|(public|api)/)) - [R=404,L]
 
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    RewriteRule .* index.php [L]
 
     # https://github.com/tymondesigns/jwt-auth/wiki/Authentication
     RewriteCond %{HTTP:Authorization} ^(.*)
