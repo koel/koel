@@ -298,14 +298,14 @@
             justify-content: space-between;
             align-items: flex-start;
 
+            label, .indicators {
+                font-size: .8rem;
+            }
+
             .band {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-
-                label {
-                    font-size: .9rem;
-                }
             }
 
             .indicators {
@@ -330,6 +330,10 @@
 
             &:hover .indicators {
                 opacity: 1;
+            }
+
+            .rangeslider__fill, .rangeslider__handle {
+                transition: .3s ease-in;
             }
         }
 
