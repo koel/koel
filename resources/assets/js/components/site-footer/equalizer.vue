@@ -331,10 +331,6 @@
             &:hover .indicators {
                 opacity: 1;
             }
-
-            .rangeslider__fill, .rangeslider__handle {
-                transition: .3s ease-in;
-            }
         }
 
         /**
