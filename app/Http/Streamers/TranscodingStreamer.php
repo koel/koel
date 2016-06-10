@@ -7,7 +7,7 @@ use App\Models\Song;
 class TranscodingStreamer extends Streamer implements StreamerInterface
 {
     /**
-     * Bitrate which the stream should be transcoded as.
+     * Bitrate the stream should be transcoded at.
      *
      * @var int
      */
@@ -32,9 +32,8 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
      */
     public function stream()
     {
-        if (!is_executable($ffmpeg = env('FFMPEG_PATH', '/usr/local/bin/ffmpeg'))) {
-            abort(500, 'Transcoding requires valid ffmpeg settings.');
-        }
+        $ffmpeg = env('FFMPEG_PATH', '/usr/local/bin/ffmpeg');
+        abort_unless(is_executable($ffmpeg), 500, 'Transcoding requires valid ffmpeg settings.');
 
         $bitRate = filter_var($this->bitrate, FILTER_SANITIZE_NUMBER_INT);
 
