@@ -81,11 +81,11 @@
                 this.selectedPresetIndex = preferences.selectedPreset;
                 const settings = equalizerStore.get();
 
-                const AudioContext = window.AudioContext || window.webkitAudioContext || false;
-
-                if (!AudioContext) {
-                    return;
-                }
+                const AudioContext = window.AudioContext ||
+                    window.webkitAudioContext ||
+                    window.mozAudioContext ||
+                    window.oAudioContext ||
+                    window.msAudioContext;
 
                 const context = new AudioContext();
 
