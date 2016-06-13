@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Http\Streamers\PHPStreamer;
+use App\Http\Streamers\S3Streamer;
 use App\Http\Streamers\TranscodingStreamer;
 use App\Http\Streamers\XAccelRedirectStreamer;
 use App\Http\Streamers\XSendFileStreamer;
@@ -22,6 +23,10 @@ class SongController extends Controller
     {
         if (is_null($bitrate)) {
             $bitrate = env('OUTPUT_BIT_RATE', 128);
+        }
+
+        if ($song->s3_params) {
+            return (new S3Streamer($song))->stream();
         }
 
         // If transcode parameter isn't passed, the default is to only transcode flac

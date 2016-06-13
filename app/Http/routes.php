@@ -67,4 +67,11 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
             Route::get('artist/{artist}/info', 'ArtistController@getInfo');
         }
     });
+
+    Route::group(['middleware' => 'os.auth', 'prefix' => 'os', 'namespace' => 'ObjectStorage'], function () {
+        Route::group(['prefix' => 's3', 'namespace' => 'S3'], function () {
+            Route::post('song', 'SongController@put'); // we follow AWS's convention here.
+            Route::delete('song', 'SongController@remove'); // and here.
+        });
+    });
 });

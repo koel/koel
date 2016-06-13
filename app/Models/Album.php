@@ -118,7 +118,7 @@ class Album extends Model
      * @param string $binaryData
      * @param string $extension  The file extension
      */
-    private function writeCoverFile($binaryData, $extension)
+    public function writeCoverFile($binaryData, $extension)
     {
         $extension = trim(strtolower($extension), '. ');
         $fileName = uniqid().".$extension";

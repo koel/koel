@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\GetUserFromToken;
+use App\Http\Middleware\ObjectStorageAuthenticate;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 
@@ -26,5 +27,6 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => Authenticate::class,
         'jwt.auth' => GetUserFromToken::class,
+        'os.auth' => ObjectStorageAuthenticate::class,
     ];
 }

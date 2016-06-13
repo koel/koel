@@ -291,4 +291,30 @@ class Song extends Model
             ? $this->contributingArtist
             : $this->album->artist;
     }
+
+    /**
+     * Determine if the song is an AWS S3 Object.
+     *
+     * @return boolean
+     */
+    public function isS3ObjectAttribute()
+    {
+        return strpos($this->path, 's3://') === 0;
+    }
+
+    /**
+     * Get the bucket and key name of an S3 object
+     *
+     * @return bool|array
+     */
+    public function getS3ParamsAttribute()
+    {
+        if (!preg_match('/^s3:\\/\\/(.*)/', $this->path, $matches)) {
+            return false;
+        }
+
+        list($bucket, $key) = explode('/', $matches[1], 2);
+
+        return compact('bucket', 'key');
+    }
 }
