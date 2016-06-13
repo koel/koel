@@ -11,7 +11,7 @@ class PutSongRequest extends BaseRequest
         return [
             'bucket' => 'required',
             'key' => 'required',
-            'tags.duration' => 'required|numeric'
+            'tags.duration' => 'required|numeric',
         ];
     }
 }

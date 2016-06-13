@@ -295,7 +295,7 @@ class Song extends Model
     /**
      * Determine if the song is an AWS S3 Object.
      *
-     * @return boolean
+     * @return bool
      */
     public function isS3ObjectAttribute()
     {
@@ -303,7 +303,7 @@ class Song extends Model
     }
 
     /**
-     * Get the bucket and key name of an S3 object
+     * Get the bucket and key name of an S3 object.
      *
      * @return bool|array
      */
