@@ -1,10 +1,6 @@
-# koel [![Build Status](https://travis-ci.org/phanan/koel.svg?branch=master)](https://travis-ci.org/phanan/koel)[![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers)[![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
+# koel [![Build Status](https://travis-ci.org/phanan/koel.svg?branch=master)](https://travis-ci.org/phanan/koel)
 
 ![Showcase](http://koel.phanan.net/dist/img/showcase.png?2)
-
-## Supporting Vue.js
-
-Koel is built on [Vue.js](http://vuejs.org/), the ongoing development of which is made possible thanks to the support by these awesome [backers](https://github.com/vuejs/vue/blob/dev/backers.md). If you'd like to join them, check out [Vue.js' Patreon campaign](https://www.patreon.com/evanyou).
 
 ## Intro
 
