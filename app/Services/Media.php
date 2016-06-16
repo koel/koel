@@ -31,7 +31,7 @@ class Media
         'lyrics',
         'cover',
         'mtime',
-        'part_of_a_compilation',
+        'compilation',
     ];
 
     /**

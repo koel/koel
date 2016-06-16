@@ -105,7 +105,7 @@ class File
         $props = [
             'artist' => '',
             'album' => '',
-            'part_of_a_compilation' => false,
+            'compilation' => false,
             'title' => '',
             'length' => $info['playtime_seconds'],
             'track' => (int) $track,
@@ -119,13 +119,13 @@ class File
             return $props;
         }
 
-        // getID3's 'part_of_a_compilation' value can either be null, ['0'], or ['1']
-        // We convert it into a boolean here.
-        $props['part_of_a_compilation'] = (bool) array_get($comments, 'part_of_a_compilation', [false])[0];
-
         // We prefer id3v2 tags over others.
         if (!$artist = array_get($info, 'tags.id3v2.artist', [null])[0]) {
             $artist = array_get($comments, 'artist', [''])[0];
+        }
+
+        if (!$albumArtist = array_get($info, 'tags.id3v2.band', [null])[0]) {
+            $albumArtist = array_get($comments, 'band', [''])[0];
         }
 
         if (!$album = array_get($info, 'tags.id3v2.album', [null])[0]) {
@@ -141,10 +141,18 @@ class File
         }
 
         // Fixes #323, where tag names can be htmlentities()'ed
-        $props['artist'] = html_entity_decode(trim($artist));
-        $props['album'] = html_entity_decode(trim($album));
         $props['title'] = html_entity_decode(trim($title));
+        $props['album'] = html_entity_decode(trim($album));
+        $props['artist'] = html_entity_decode(trim($artist));
+        $props['albumartist'] = html_entity_decode(trim($albumArtist));
         $props['lyrics'] = html_entity_decode(trim($lyrics));
+
+        // A "compilation" property can is determined by:
+        // - "part_of_a_compilation" tag (used by iTunes), or
+        // - "albumartist" (used by non-retarded applications).
+        $props['compilation'] = (bool) (
+            array_get($comments, 'part_of_a_compilation', [false])[0] || $props['albumartist']
+        );
 
         return $this->info = $props;
     }
@@ -179,12 +187,12 @@ class File
             // A sample command could be: ./artisan koel:sync --force --tags=artist,album,lyrics
             // We cater for these tags by removing those not specified.
 
-            // There's a special case with 'album though'.
-            // If 'part_of_a_compilation' tag is specified, 'album' must be counted in as well.
+            // There's a special case with 'album' though.
+            // If 'compilation' tag is specified, 'album' must be counted in as well.
             // But if 'album' isn't specified, we don't want to update normal albums.
             // This variable is to keep track of this state.
             $changeCompilationAlbumOnly = false;
-            if (in_array('part_of_a_compilation', $tags) && !in_array('album', $tags)) {
+            if (in_array('compilation', $tags) && !in_array('album', $tags)) {
                 $tags[] = 'album';
                 $changeCompilationAlbumOnly = true;
             }
@@ -195,7 +203,7 @@ class File
             // Otherwise, re-use the existing model value.
             $artist = isset($info['artist']) ? Artist::get($info['artist']) : $this->song->album->artist;
 
-            $isCompilation = (bool) array_get($info, 'part_of_a_compilation');
+            $isCompilation = (bool) array_get($info, 'compilation');
 
             // If the "album" tag is specified, use it.
             // Otherwise, re-use the existing model value.
@@ -208,7 +216,7 @@ class File
             }
         } else {
             // The file is newly added.
-            $isCompilation = (bool) array_get($info, 'part_of_a_compilation');
+            $isCompilation = (bool) array_get($info, 'compilation');
             $artist = Artist::get($info['artist']);
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
@@ -230,7 +238,7 @@ class File
         }
 
         // Remove these values from the info array, so that we can just use the array as model's input data.
-        array_forget($info, ['artist', 'album', 'cover', 'part_of_a_compilation']);
+        array_forget($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
 
         $song = Song::updateOrCreate(['id' => $this->hash], $info);
         $song->save();
