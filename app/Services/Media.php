@@ -225,6 +225,6 @@ class Media
         $inUseArtists[] = Artist::UNKNOWN_ID;
         $inUseArtists[] = Artist::VARIOUS_ID;
 
-        Artist::whereNotIn('id', $inUseArtists)->delete();
+        Artist::whereNotIn('id', array_filter($inUseArtists))->delete();
     }
 }
