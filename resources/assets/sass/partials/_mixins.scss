@@ -156,6 +156,9 @@
         a.name, a.artist {
             display: block;
             color: $colorMainText;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
 
             &:hover {
                 color: $colorHighlight;
