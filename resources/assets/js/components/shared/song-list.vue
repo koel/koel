@@ -519,11 +519,11 @@
             }
 
             &.artist {
-                width: 25%;
+                width: 23%;
             }
 
             &.album {
-                width: 30%;
+                width: 27%;
             }
 
             &.play {
