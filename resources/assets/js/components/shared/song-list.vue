@@ -14,15 +14,15 @@
                         <i class="fa fa-angle-down" v-show="sortKey === 'track' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'track' && order < 0"></i>
                     </th>
-                    <th @click="sort('title')">Title
+                    <th @click="sort('title')" class="title">Title
                         <i class="fa fa-angle-down" v-show="sortKey === 'title' && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortKey === 'title' && order < 0"></i>
                     </th>
-                    <th @click="sort(['album.artist.name', 'album.name', 'track'])">Artist
+                    <th @click="sort(['album.artist.name', 'album.name', 'track'])" class="artist">Artist
                         <i class="fa fa-angle-down" v-show="sortingByArtist && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortingByArtist && order < 0"></i>
                     </th>
-                    <th @click="sort(['album.name', 'track'])">Album
+                    <th @click="sort(['album.name', 'track'])" class="album">Album
                         <i class="fa fa-angle-down" v-show="sortingByAlbum && order > 0"></i>
                         <i class="fa fa-angle-up" v-show="sortingByAlbum && order < 0"></i>
                     </th>
@@ -493,6 +493,7 @@
 
         table {
             width: 100%;
+            table-layout: fixed;
         }
 
         tr.droppable {
@@ -504,6 +505,9 @@
             text-align: left;
             padding: 8px;
             vertical-align: middle;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
 
             &.time {
                 width: 72px;
@@ -511,7 +515,15 @@
             }
 
             &.track-number {
-                min-width: 42px;
+                width: 42px;
+            }
+
+            &.artist {
+                width: 25%;
+            }
+
+            &.album {
+                width: 30%;
             }
 
             &.play {
