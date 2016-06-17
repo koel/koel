@@ -368,8 +368,9 @@
                 text-align: right;
                 top: 0;
                 line-height: $footerHeight;
-                width: 168px;
+                width: 188px;
                 text-align: center;
+                font-size: 1.2rem;
 
                 &::before {
                     display: none;
@@ -380,10 +381,14 @@
                 }
 
                 .control {
-                    margin: 0;
+                    margin: 10px 0 0;
                     padding: 0 8px;
                 }
             }
+        }
+
+        @media only screen and (max-width: 768px) {
+            height: $footerHeightMobile;
         }
     }
 
@@ -424,6 +429,7 @@
 
         @media only screen and (max-width: 768px) {
             flex: 1;
+            padding-top: 11px;
 
             &::before {
                 display: none;
@@ -514,6 +520,18 @@
 
             top: -5px !important;
             padding-top: 0;
+
+            .plyr {
+                &__progress {
+                     height: 16px;
+
+                &--buffer[value],
+                &--played[value],
+                &--seek[type='range'] {
+                      height: 16px;
+                  }
+                }
+            }
         }
     }
 

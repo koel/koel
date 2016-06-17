@@ -385,7 +385,7 @@
             max-width: 414px;
             left: auto;
             right: 0;
-            bottom: $footerHeight + 5px;
+            bottom: $footerHeightMobile + 5px;
             display: block;
             height: auto;
 
