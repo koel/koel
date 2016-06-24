@@ -6,18 +6,15 @@
         </h1>
 
         <div class="artists main-scroll-wrap as-{{ viewMode }}" @scroll="scrolling">
-            <artist-item v-for="item in items
-                | filterBy q in 'name'
-                | limitBy numOfItems" :artist="item"></artist-item>
-
+            <artist-item v-for="item in displayedItems" :artist="item"></artist-item>
             <span class="item filler" v-for="n in 6"></span>
-
             <to-top-button :showing="showBackToTop"></to-top-button>
         </div>
     </section>
 </template>
 
 <script>
+    import { filterBy, limitBy } from '../../../utils';
     import artistItem from '../../shared/artist-item.vue';
     import viewModeSwitch from '../../shared/view-mode-switch.vue';
     import infiniteScroll from '../../../mixins/infinite-scroll';
@@ -32,15 +29,17 @@
             return {
                 perPage: 9,
                 numOfItems: 9,
-                state: artistStore.state,
                 q: '',
                 viewMode: null,
             };
         },
 
         computed: {
-            items() {
-                return this.state.artists;
+            displayedItems() {
+                return limitBy(
+                    filterBy(artistStore.all, this.q, 'name'),
+                    this.numOfItems
+                );
             },
         },
 

@@ -4,9 +4,8 @@ import toTopButton from '../components/shared/to-top-button.vue';
 
 /**
  * Add a "infinite scroll" functionality to any component using this mixin.
- * Such a component should:
- * - have a `scrolling` method bound to `scroll` event on the wrapper element: @scroll="scrolling"
- * - have the array of all objects named as `items`, either as data, computed, or a prop
+ * Such a component should have a `scrolling` method bound to `scroll` event on
+ * the wrapper element: @scroll="scrolling"
  */
 export default {
     components: { toTopButton },

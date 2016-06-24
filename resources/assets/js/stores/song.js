@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { without, map, take, remove, orderBy, each, union } from 'lodash';
 
 import http from '../services/http';
-import { secondsToHis } from '../services/utils';
+import { secondsToHis } from '../utils';
 import stub from '../stubs/song';
 import favoriteStore from './favorite';
 import sharedStore from './shared';

@@ -1,6 +1,6 @@
 require('chai').should();
 
-import { secondsToHis, parseValidationError } from '../../services/utils';
+import { secondsToHis, parseValidationError } from '../../utils';
 
 describe('services/utils', () => {
     describe('#secondsToHis', () => {

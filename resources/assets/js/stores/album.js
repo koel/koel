@@ -10,7 +10,7 @@ import {
     orderBy
 } from 'lodash';
 
-import { secondsToHis } from '../services/utils';
+import { secondsToHis } from '../utils';
 import stub from '../stubs/album';
 import songStore from './song';
 import artistStore from './artist';

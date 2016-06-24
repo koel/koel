@@ -36,10 +36,7 @@
 
             <tbody>
                 <tr
-                    v-for="item in items
-                        | caseInsensitiveOrderBy sortKey order
-                        | filterSongBy q
-                        | limitBy numOfItems"
+                    v-for="item in displayedItems"
                     is="song-item"
                     data-track="{{ item.track }}"
                     data-song-id="{{ item.id }}"
@@ -68,6 +65,7 @@
     import isMobile from 'ismobilejs';
     import $ from 'jquery';
 
+    import { filterBy, orderBy, limitBy } from '../../utils';
     import songItem from './song-item.vue';
     import songMenu from './song-menu.vue';
     import infiniteScroll from '../../mixins/infinite-scroll';
@@ -108,6 +106,19 @@
                     songCount: this.items.length,
                     totalLength: songStore.getLength(this.items, true),
                 });
+            },
+        },
+
+        computed: {
+            displayedItems() {
+                return limitBy(
+                    filterBy(
+                        orderBy(this.items, this.sortKey, this.order),
+                        this.q,
+                        'title', 'album.name', 'artist.name'
+                    ),
+                    this.numOfItems
+                );
             },
         },
 
