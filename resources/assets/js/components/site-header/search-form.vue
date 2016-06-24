@@ -2,15 +2,16 @@
     <div class="side search" id="searchForm" :class="{ showing: showing }">
         <input type="search"
             :class="{ dirty: q }"
+            @input="filter"
             placeholder="Search"
             v-model="q"
-            debounce="500"
             v-koel-focus="showing">
     </div>
 </template>
 
 <script>
     import isMobile from 'ismobilejs';
+    import { debounce } from 'lodash';
 
     export default {
         data() {
@@ -20,14 +21,13 @@
             };
         },
 
-        watch: {
+        methods: {
             /**
-             * Broadcast a 'filter:changed' event when the filtering query changes.
-             * Other components listening to this filter will update its content.
+             * Limit the filter's execution rate using lodash's debounce.
              */
-            q() {
+            filter: debounce(function () {
                 this.$root.$broadcast('filter:changed', this.q);
-            },
+            }, 200),
         },
 
         events: {
@@ -41,6 +41,7 @@
 
             'koel:teardown': function () {
                 this.q = '';
+                this.debounceFilter();
             },
         },
     };
