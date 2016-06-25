@@ -7,11 +7,11 @@ import { event } from '../utils'
 /**
  * Load (display) a main panel (view).
  *
- * @param {String} view     The view, which can be found under components/main-wrapper/main-content.
- * @param {...*}            Extra data to attach to the view.
+ * @param {String} view   The view, which can be found under components/main-wrapper/main-content.
+ * @param {...*}      Extra data to attach to the view.
  */
 export function loadMainView(view, ...args) {
-    event.emit('main-content-view:load', view, ...args);
+  event.emit('main-content-view:load', view, ...args);
 };
 
 /**
@@ -19,8 +19,8 @@ export function loadMainView(view, ...args) {
  * This is handy for certain cases, for example Last.fm connect/disconnect.
  */
 export function forceReloadWindow() {
-    window.onbeforeunload = function() {};
-    window.location.reload();
+  window.onbeforeunload = function() {};
+  window.location.reload();
 };
 
 /**
@@ -29,14 +29,14 @@ export function forceReloadWindow() {
  * @param {Object} playlist The playlist object
  */
 export function loadPlaylistView(playlist) {
-    loadMainView('playlist', playlist);
+  loadMainView('playlist', playlist);
 };
 
 /**
  * Load the Favorites view.
  */
 export function loadFavoritesView() {
-    loadMainView('favorites');
+  loadMainView('favorites');
 };
 
 /**
@@ -45,7 +45,7 @@ export function loadFavoritesView() {
  * @param  {Object} album The album object
  */
 export function loadAlbumView(album) {
-    loadMainView('album', album);
+  loadMainView('album', album);
 };
 
 /**
@@ -54,7 +54,7 @@ export function loadAlbumView(album) {
  * @param  {Object} artist The artist object
  */
 export function loadArtistView(artist) {
-    loadMainView('artist', artist);
+  loadMainView('artist', artist);
 };
 
 /**
@@ -64,7 +64,7 @@ export function loadArtistView(artist) {
  * @param  {Boolean} dismissable
  */
 export function showOverlay(message = 'Just a little patience…', type = 'loading', dismissable = false) {
-    event.emit('overlay:show', { message, type, dismissable });
+  event.emit('overlay:show', { message, type, dismissable });
 };
 
 /**
@@ -72,5 +72,5 @@ export function showOverlay(message = 'Just a little patience…', type = 'loadi
  * @return {[type]} [description]
  */
 export function hideOverlay() {
-    event.emit('overlay:hide');
+  event.emit('overlay:hide');
 };

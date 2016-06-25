@@ -1,3 +1,3 @@
 export default {
-    media_path: '',
+  media_path: '',
 };

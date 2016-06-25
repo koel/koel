@@ -1,3 +1,6 @@
-[*.{js,sass,scss,json,coffee,vue}]
+[*.{js,css,sass,scss,json,coffee,vue,html}]
 indent_style = space
+indent_size = 2
+
+[*.php]
 indent_size = 4

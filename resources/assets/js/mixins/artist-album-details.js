@@ -5,19 +5,19 @@
 import { loadAlbumView, loadArtistView } from './../utils';
 
 export default {
-    methods: {
-        /**
-         * Load the album details screen.
-         */
-        viewAlbumDetails(album) {
-            loadAlbumView(album);
-        },
-
-        /**
-         * Load the artist details screen.
-         */
-        viewArtistDetails(artist) {
-            loadArtistView(artist);
-        },
+  methods: {
+    /**
+     * Load the album details screen.
+     */
+    viewAlbumDetails(album) {
+      loadAlbumView(album);
     },
+
+    /**
+     * Load the artist details screen.
+     */
+    viewArtistDetails(artist) {
+      loadArtistView(artist);
+    },
+  },
 };

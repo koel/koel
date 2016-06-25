@@ -1,432 +1,432 @@
 @mixin vertical-center() {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @mixin artist-album-wrapper() {
-    justify-content: space-between;
-    flex-wrap: wrap;
-    display: flex;
-    align-content: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  display: flex;
+  align-content: flex-start;
 
-    .item {
-        align-self: flex-start;
-    }
+  .item {
+    align-self: flex-start;
+  }
 }
 
 @mixin artist-album-card() {
-    .item {
-        flex-direction: column;
-        margin-bottom: 16px;
-        width: 23.5%;
-        position: relative;
+  .item {
+    flex-direction: column;
+    margin-bottom: 16px;
+    width: 23.5%;
+    position: relative;
 
+    .as-list & {
+      flex-direction: row;
+      display: flex;
+      width: 100% !important;
+
+      .cover {
+        flex: 0 0 80px;
+        height: 80px;
+        padding-top: 0;
+      }
+
+      footer {
+        flex: 1;
+      }
+    }
+
+    .as-list &.filler {
+      display: none;
+    }
+
+    @media only screen and (max-width: 1200px) {
+      width: 32%;
+    }
+
+    @media only screen and (max-width: 960px) {
+      width: 48%;
+    }
+
+    @media only screen and (max-width: 320px) {
+      width: 100%;
+    }
+
+    html.with-extra-panel & {
+      width: 32%;
+
+      @media only screen and (max-width: 1200px) {
+        width: 48%;
+      }
+
+      @media only screen and (max-width: 960px) {
+        width: 100%;
+      }
+    }
+
+    .cover {
+      @include vertical_center();
+
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+      width: 100%;
+      padding-top: 100%;
+      position: relative;
+
+      @mixin control($playBtnWidth, $fontSize, $textIndent) {
+        width: $playBtnWidth;
+        height: $playBtnWidth;
+        line-height: $playBtnWidth;
+        font-size: $fontSize;
+        text-indent: $textIndent;
+        left: calc(50% - #{$playBtnWidth/2});
+      }
+
+      .control {
         .as-list & {
-            flex-direction: row;
-            display: flex;
-            width: 100% !important;
-
-            .cover {
-                flex: 0 0 80px;
-                height: 80px;
-                padding-top: 0;
-            }
-
-            footer {
-                flex: 1;
-            }
+          @include control(46px, 27px, 2px);
         }
 
-        .as-list &.filler {
-            display: none;
-        }
-
-        @media only screen and (max-width: 1200px) {
-            width: 32%;
-        }
-
-        @media only screen and (max-width: 960px) {
-            width: 48%;
-        }
-
-        @media only screen and (max-width: 320px) {
-            width: 100%;
-        }
-
-        html.with-extra-panel & {
-            width: 32%;
-
-            @media only screen and (max-width: 1200px) {
-                width: 48%;
-            }
-
-            @media only screen and (max-width: 960px) {
-                width: 100%;
-            }
-        }
-
-        .cover {
-            @include vertical_center();
-
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center center;
-            width: 100%;
-            padding-top: 100%;
-            position: relative;
-
-            @mixin control($playBtnWidth, $fontSize, $textIndent) {
-                width: $playBtnWidth;
-                height: $playBtnWidth;
-                line-height: $playBtnWidth;
-                font-size: $fontSize;
-                text-indent: $textIndent;
-                left: calc(50% - #{$playBtnWidth/2});
-            }
-
-            .control {
-                .as-list & {
-                    @include control(46px, 27px, 2px);
-                }
-
-                @include control(96px, 54px, 5px);
-                display: none;
-                text-align: center;
-                background: #111;
-                border-radius: 50%;
-                opacity: .7;
-                border: 1px solid transparent;
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                transition: .3s;
-
-                &:hover {
-                    opacity: 1;
-                    border-color: #fff;
-                    transform: translateY(-50%) scale(1.1);
-                }
-
-                html.touchevents & {
-                    display: block;
-                }
-            }
-
-            &:before {
-                content: " ";
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 0;
-                transition: .3s;
-            }
-        }
-
-        footer {
-            padding: 16px;
-            background: #333;
-            flex: 1;
-        }
-
-        .name {
-            font-weight: 500;
-        }
-
-        .meta {
-            color: $color2ndText;
-            margin-top: 4px;
-            font-size: .92rem;
-            display: flex;
-            justify-content: space-between;
-
-            .right {
-                a {
-                    margin-left: 4px;
-
-                    &:hover {
-                        color: $colorHighlight;
-                    }
-                }
-            }
-        }
-
-        a.name, a.artist {
-            display: block;
-            color: $colorMainText;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-
-            &:hover {
-                color: $colorHighlight;
-            }
-
-            .as-list & {
-                display: inline;
-            }
-        }
-
-        .nope {
-            opacity: .5;
-        }
+        @include control(96px, 54px, 5px);
+        display: none;
+        text-align: center;
+        background: #111;
+        border-radius: 50%;
+        opacity: .7;
+        border: 1px solid transparent;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: .3s;
 
         &:hover {
-            .cover {
-                &:before {
-                    background-color: rgba(0, 0, 0, .4);
-                }
-                .control {
-                    display: block;
-                }
-            }
+          opacity: 1;
+          border-color: #fff;
+          transform: translateY(-50%) scale(1.1);
         }
-    }
-}
 
-@mixin artist-album-info-wrapper() {
-    .loading {
-        @include vertical-center();
-        height: 100%;
-    }
+        html.touchevents & {
+          display: block;
+        }
+      }
 
-    .info-wrapper {
-        color: $color2ndText;
+      &:before {
+        content: " ";
         position: absolute;
         top: 0;
         left: 0;
-        background: $colorMainBgr;
         width: 100%;
         height: 100%;
-        z-index: 2;
-
-        .close {
-            position: absolute;
-            right: 0;
-            top: 0;
-            background: $colorRed;
-            width: 24px;
-            height: 24px;
-            line-height: 24px;
-            text-align: center;
-            color: #fff;
-            opacity: 0;
-            transition: opacity .3s;
-
-            html.touchevents & {
-                opacity: 1;
-            }
-        }
-
-        &:hover .close {
-            opacity: 1;
-        }
-
-        .inner {
-            padding: 24px;
-            overflow: auto;
-            height: 100%;
-            padding-bottom: 48px;
-
-            @media only screen and (max-width: 768px) {
-                padding: 16px;
-            }
-        }
-    }
-}
-
-@mixin artist-album-info() {
-    h1 {
-        font-weight: $fontWeight_UltraThin;
-        line-height: 2.8rem;
-
-        &.name {
-            font-size: 2rem;
-        }
-
-        @include vertical-center();
-        align-items: initial;
-
-        span {
-            flex: 1;
-            margin-right: 12px;
-        }
-
-        a {
-            font-size: 14px;
-
-            &:hover {
-                color: $colorHighlight;
-            }
-        }
-    }
-
-    .bio {
-        margin-top: 16px;
-    }
-
-    .more {
-        margin-top: 8px;
-        border-radius: .23rem;
-        background: $colorBlue;
-        color: #fff;
-        padding: .3rem .6rem;
-        display: inline-block;
-        text-transform: uppercase;
-        font-size: .8rem;
-    }
-
-    img.cover, img.cool-guys-posing {
-        width: 100%;
-        height: auto;
-    }
-
-    .wiki {
-        margin-top: 16px;
-    }
-
-    .track-listing {
-        margin-top: 16px;
-
-        ul {
-            overflow: hidden;
-        }
-
-        h1 {
-            font-size: 1.4rem;
-            margin-bottom: 0;
-            display: block;
-        }
-
-        li {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-
-            &:nth-child(even) {
-                background: rgba(255, 255, 255, 0.05);
-            }
-
-            .no {
-                flex: 0 0 24px;
-                opacity: .5;
-            }
-
-            .title {
-                flex: 1;
-            }
-
-            .length {
-                flex: 0 0 48px;
-                text-align: right;
-                opacity: .5;
-            }
-        }
+        z-index: 0;
+        transition: .3s;
+      }
     }
 
     footer {
-        margin-top: 24px;
-        font-size: .9rem;
-        text-align: right;
-        clear: both;
+      padding: 16px;
+      background: #333;
+      flex: 1;
+    }
 
+    .name {
+      font-weight: 500;
+    }
+
+    .meta {
+      color: $color2ndText;
+      margin-top: 4px;
+      font-size: .92rem;
+      display: flex;
+      justify-content: space-between;
+
+      .right {
         a {
-            color: #fff;
-            font-weight: $fontWeight_Normal;
+          margin-left: 4px;
 
-            &:hover {
-                color: #b90000;
-            }
+          &:hover {
+            color: $colorHighlight;
+          }
         }
+      }
     }
 
-    .none {
-        margin-top: 16px;
+    a.name, a.artist {
+      display: block;
+      color: $colorMainText;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &:hover {
+        color: $colorHighlight;
+      }
+
+      .as-list & {
+        display: inline;
+      }
     }
 
-    &.full {
-        img.cover, img.cool-guys-posing {
-            width: 300px;
-            max-width: 100%;
-            float: left;
-            margin: 0 16px 16px 0;
-        }
-
-        h1.name {
-            font-size: 2.4rem;
-
-            a.shuffle {
-                display: none;
-            }
-        }
+    .nope {
+      opacity: .5;
     }
+
+    &:hover {
+      .cover {
+        &:before {
+          background-color: rgba(0, 0, 0, .4);
+        }
+        .control {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+@mixin artist-album-info-wrapper() {
+  .loading {
+    @include vertical-center();
+    height: 100%;
+  }
+
+  .info-wrapper {
+    color: $color2ndText;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: $colorMainBgr;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+
+    .close {
+      position: absolute;
+      right: 0;
+      top: 0;
+      background: $colorRed;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      color: #fff;
+      opacity: 0;
+      transition: opacity .3s;
+
+      html.touchevents & {
+        opacity: 1;
+      }
+    }
+
+    &:hover .close {
+      opacity: 1;
+    }
+
+    .inner {
+      padding: 24px;
+      overflow: auto;
+      height: 100%;
+      padding-bottom: 48px;
+
+      @media only screen and (max-width: 768px) {
+        padding: 16px;
+      }
+    }
+  }
+}
+
+@mixin artist-album-info() {
+  h1 {
+    font-weight: $fontWeight_UltraThin;
+    line-height: 2.8rem;
+
+    &.name {
+      font-size: 2rem;
+    }
+
+    @include vertical-center();
+    align-items: initial;
+
+    span {
+      flex: 1;
+      margin-right: 12px;
+    }
+
+    a {
+      font-size: 14px;
+
+      &:hover {
+        color: $colorHighlight;
+      }
+    }
+  }
+
+  .bio {
+    margin-top: 16px;
+  }
+
+  .more {
+    margin-top: 8px;
+    border-radius: .23rem;
+    background: $colorBlue;
+    color: #fff;
+    padding: .3rem .6rem;
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: .8rem;
+  }
+
+  img.cover, img.cool-guys-posing {
+    width: 100%;
+    height: auto;
+  }
+
+  .wiki {
+    margin-top: 16px;
+  }
+
+  .track-listing {
+    margin-top: 16px;
+
+    ul {
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 0;
+      display: block;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+
+      &:nth-child(even) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .no {
+        flex: 0 0 24px;
+        opacity: .5;
+      }
+
+      .title {
+        flex: 1;
+      }
+
+      .length {
+        flex: 0 0 48px;
+        text-align: right;
+        opacity: .5;
+      }
+    }
+  }
+
+  footer {
+    margin-top: 24px;
+    font-size: .9rem;
+    text-align: right;
+    clear: both;
+
+    a {
+      color: #fff;
+      font-weight: $fontWeight_Normal;
+
+      &:hover {
+        color: #b90000;
+      }
+    }
+  }
+
+  .none {
+    margin-top: 16px;
+  }
+
+  &.full {
+    img.cover, img.cool-guys-posing {
+      width: 300px;
+      max-width: 100%;
+      float: left;
+      margin: 0 16px 16px 0;
+    }
+
+    h1.name {
+      font-size: 2.4rem;
+
+      a.shuffle {
+        display: none;
+      }
+    }
+  }
 }
 
 @mixin inset-when-pressed() {
-    &:active {
-        box-shadow: inset 0px 10px 10px -10px rgba(0,0,0,1);
-    }
+  &:active {
+    box-shadow: inset 0px 10px 10px -10px rgba(0,0,0,1);
+  }
 }
 
 @mixin button-group() {
-    display: flex;
-    position: relative;
-    min-width: 192px;
-    justify-content: flex-end;
+  display: flex;
+  position: relative;
+  min-width: 192px;
+  justify-content: flex-end;
 
-    button {
-        $buttonHeight: 28px;
+  button {
+    $buttonHeight: 28px;
 
-        font-size: .92rem;
-        height: $buttonHeight;
-        padding: 0 1.23rem;
-        line-height: $buttonHeight;
-        text-transform: uppercase;
-        display: inline-block;
+    font-size: .92rem;
+    height: $buttonHeight;
+    padding: 0 1.23rem;
+    line-height: $buttonHeight;
+    text-transform: uppercase;
+    display: inline-block;
 
-        border-radius: $buttonHeight/2 0px 0px $buttonHeight/2;
+    border-radius: $buttonHeight/2 0px 0px $buttonHeight/2;
 
-        &:last-of-type {
-            border-top-right-radius: $buttonHeight/2;
-            border-bottom-right-radius: $buttonHeight/2;
-        }
-
-        &:not(:first-child) {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            margin-left: 1px;
-        }
-
-        i {
-            margin-right: 4px;
-        }
+    &:last-of-type {
+      border-top-right-radius: $buttonHeight/2;
+      border-bottom-right-radius: $buttonHeight/2;
     }
+
+    &:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: 1px;
+    }
+
+    i {
+      margin-right: 4px;
+    }
+  }
 }
 
 @mixin context-menu() {
-    font-weight: $fontWeight_Thin;
-    font-size: $fontSize;
-    padding: 4px 0;
-    min-width: 144px;
-    color: #111;
-    background-color: rgb(232, 232, 232);
-    position: fixed;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 1001;
-    align-items: stretch;
-    text-align: left;
-    box-shadow: inset 0 0px 0 rgba(255,255,255,.6), 0 22px 70px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
+  font-weight: $fontWeight_Thin;
+  font-size: $fontSize;
+  padding: 4px 0;
+  min-width: 144px;
+  color: #111;
+  background-color: rgb(232, 232, 232);
+  position: fixed;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1001;
+  align-items: stretch;
+  text-align: left;
+  box-shadow: inset 0 0px 0 rgba(255,255,255,.6), 0 22px 70px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
 
-    input[type="search"], input[type="text"], input[type="email"], input[type="url"] {
-        background: #fff;
+  input[type="search"], input[type="text"], input[type="email"], input[type="url"] {
+    background: #fff;
 
-        &:focus {
-            background: $colorDirtyInputBgr;
-        }
+    &:focus {
+      background: $colorDirtyInputBgr;
     }
+  }
 }

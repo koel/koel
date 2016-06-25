@@ -2,21 +2,21 @@ import { http } from '../services';
 import stub from '../stubs/settings';
 
 export const settingStore = {
-    stub,
+  stub,
 
-    state: {
-        settings: [],
-    },
+  state: {
+    settings: [],
+  },
 
-    init(settings) {
-        this.state.settings = settings;
-    },
+  init(settings) {
+    this.state.settings = settings;
+  },
 
-    get all() {
-        return this.state.settings;
-    },
+  get all() {
+    return this.state.settings;
+  },
 
-    update(successCb = null, errorCb = null) {
-        http.post('settings', this.all, successCb, errorCb);
-    },
+  update(successCb = null, errorCb = null) {
+    http.post('settings', this.all, successCb, errorCb);
+  },
 };

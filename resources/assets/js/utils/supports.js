@@ -7,58 +7,58 @@ import Vue from 'vue'
  * @return {Boolean}
  */
 export function isAudioContextSupported() {
-    // Apple device just doesn't love AudioContext that much.
-    if (isMobile.apple.device) {
-        return false;
-    }
+  // Apple device just doesn't love AudioContext that much.
+  if (isMobile.apple.device) {
+    return false;
+  }
 
-    const AudioContext = (window.AudioContext ||
-        window.webkitAudioContext ||
-        window.mozAudioContext ||
-        window.oAudioContext ||
-        window.msAudioContext);
+  const AudioContext = (window.AudioContext ||
+    window.webkitAudioContext ||
+    window.mozAudioContext ||
+    window.oAudioContext ||
+    window.msAudioContext);
 
-    if (!AudioContext) {
-        return false;
-    }
+  if (!AudioContext) {
+    return false;
+  }
 
-    // Safari (MacOS & iOS alike) has webkitAudioContext, but is buggy.
-    // @link http://caniuse.com/#search=audiocontext
-    if (!(new AudioContext()).createMediaElementSource) {
-        return false;
-    }
+  // Safari (MacOS & iOS alike) has webkitAudioContext, but is buggy.
+  // @link http://caniuse.com/#search=audiocontext
+  if (!(new AudioContext()).createMediaElementSource) {
+    return false;
+  }
 
-    return true;
+  return true;
 };
 
 
 const event = {
-    bus: null,
+  bus: null,
 
-    init() {
-        if (!this.bus) {
-            this.bus = new Vue();
-        }
+  init() {
+    if (!this.bus) {
+      this.bus = new Vue();
+    }
 
-        return this;
-    },
+    return this;
+  },
 
-    emit(name, ...args) {
-        this.bus.$emit(name, ...args);
-        return this;
-    },
+  emit(name, ...args) {
+    this.bus.$emit(name, ...args);
+    return this;
+  },
 
-    on() {
-        if (arguments.length === 2) {
-            this.bus.$on(arguments[0], arguments[1]);
-        } else {
-            Object.keys(arguments[0]).forEach(key => {
-                this.bus.$on(key, arguments[0][key]);
-            });
-        }
+  on() {
+    if (arguments.length === 2) {
+      this.bus.$on(arguments[0], arguments[1]);
+    } else {
+      Object.keys(arguments[0]).forEach(key => {
+        this.bus.$on(key, arguments[0][key]);
+      });
+    }
 
-        return this;
-    },
+    return this;
+  },
 }
 
 export { event };
