@@ -52,6 +52,8 @@
                 if (!this.mutatedMode) {
                     this.mutatedMode = isMobile.phone ? 'list' : 'thumbnails';
                 }
+
+                this.setMode(this.mutatedMode);
             });
         },
     };
