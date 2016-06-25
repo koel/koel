@@ -182,7 +182,7 @@
                 // - Nope. Users should be grown-ass adults who take responsibilty of their actions.
                 // But one of my users is my new born kid!
                 // - Then? Kids will fuck things up anyway.
-                http.delete('lastfm/disconnect', {}, () => this.$root.forceReloadWindow());
+                http.delete('lastfm/disconnect', {}, forceReloadWindow);
             },
         },
     };

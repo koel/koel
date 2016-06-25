@@ -9,11 +9,11 @@
             <a class="name" @click.prevent="viewArtistDetails(artist)">{{ artist.name }}</a>
             <p class="meta">
                 <span class="left">
-                    {{ artist.albums.length }} {{ artist.albums.length | pluralize 'album' }}
+                    {{ artist.albums.length | pluralize('album') }}
                     •
-                    {{ artist.songCount }} {{ artist.songCount | pluralize 'song' }}
+                    {{ artist.songCount | pluralize('song') }}
                     •
-                    {{ artist.playCount }} {{ artist.playCount | pluralize 'play' }}
+                    {{ artist.playCount | pluralize('play') }}
                 </span>
                 <span class="right">
                     <a href="#" @click.prevent="download" v-if="sharedState.allowDownload" title="Download all songs by artist">
@@ -29,6 +29,7 @@
     import { map } from 'lodash';
     import $ from 'jquery';
 
+    import { pluralize } from '../../utils';
     import playback from '../../services/playback';
     import download from '../../services/download';
     import artistStore from '../../stores/artist';
@@ -37,8 +38,10 @@
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {
+        name: 'shared--artist-item',
         props: ['artist'],
         mixins: [artistAlbumDetails],
+        filters: { pluralize },
 
         data() {
             return {

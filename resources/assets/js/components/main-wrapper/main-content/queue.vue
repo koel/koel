@@ -10,7 +10,7 @@
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
-                    {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
+                    {{ meta.songCount }} {{ meta.songCount | pluralize('song') }}
                     •
                     {{ meta.totalLength }}
                 </span>
@@ -40,13 +40,7 @@
             </div>
         </h1>
 
-        <song-list
-            v-show="state.songs.length"
-            :items="state.songs"
-            :selected-songs.sync="selectedSongs"
-            :sortable="false"
-            type="queue">
-        </song-list>
+        <song-list v-show="state.songs.length" :items="state.songs" :sortable="false" type="queue"></song-list>
 
         <div v-show="!state.songs.length" class="none">
             <p>Empty spaces. Abandoned places.</p>
@@ -61,13 +55,16 @@
 <script>
     import isMobile from 'ismobilejs';
 
+    import { pluralize } from '../../../utils';
     import queueStore from '../../../stores/queue';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {
+        name: 'main-wrapper--main-content--queue',
         mixins: [hasSongList],
+        filters: { pluralize },
 
         data() {
             return {

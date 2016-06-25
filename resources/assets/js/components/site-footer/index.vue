@@ -4,7 +4,7 @@
             <i class="prev fa fa-step-backward control" @click.prevent="playPrev"></i>
 
             <span class="play control"
-                v-show="song.playbackState === 'stopped' || song.playbackState === 'paused'"
+                v-if="song.playbackState === 'stopped' || song.playbackState === 'paused'"
                 @click.prevent="resume"
             >
                 <i class="fa fa-play"></i>
@@ -24,8 +24,8 @@
                 <div class="progress" id="progressPane">
                     <h3 class="title">{{ song.title }}</h3>
                     <p class="meta">
-                        <a class="artist" @click.prevent="loadArtist(song.artist)">{{ song.artist.name }}</a> –
-                        <a class="album" @click.prevent="loadAlbum(song.album)">{{ song.album.name }}</a>
+                        <a class="artist" @click.prevent="loadArtistView(song.artist)">{{ song.artist.name }}</a> –
+                        <a class="album" @click.prevent="loadAlbumView(song.album)">{{ song.album.name }}</a>
                     </p>
 
                     <div class="plyr">
@@ -54,9 +54,9 @@
                 <i v-else
                     class="queue control fa fa-list-ol control"
                     :class="{ active: viewingQueue }"
-                    @click.prevent="$root.loadMainView('queue')"></i>
+                    @click.prevent="loadMainView('queue')"></i>
 
-                <span class="repeat control {{ prefs.repeatMode }}" @click.prevent="changeRepeatMode">
+                <span class="repeat control" :class="prefs.repeatMode" @click.prevent="changeRepeatMode">
                     <i class="fa fa-repeat"></i>
                 </span>
 
@@ -73,7 +73,7 @@
 <script>
     import config from '../../config';
     import playback from '../../services/playback';
-    import { isAudioContextSupported } from '../../services/utils';
+    import { isAudioContextSupported, event, loadMainView, loadArtistView, loadAlbumView } from '../../utils';
 
     import songStore from '../../stores/song';
     import favoriteStore from '../../stores/favorite';
@@ -138,6 +138,18 @@
         },
 
         methods: {
+            loadMainView(v) {
+                loadMainView(v);
+            },
+
+            loadArtistView(a) {
+                loadArtistView(a);
+            },
+
+            loadAlbumView(a) {
+                loadAlbumView(a);
+            },
+
             /**
              * Mute the volume.
              */
@@ -213,53 +225,27 @@
             toggleExtraPanel() {
                 preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel);
             },
-
-            /**
-             * Load the artist details panel.
-             *
-             * @param  {Object} artist
-             */
-            loadArtist(artist) {
-                this.$root.loadArtist(artist);
-            },
-
-            /**
-             * Load the album details panel.
-             *
-             * @param  {Object} album
-             */
-            loadAlbum(album) {
-                this.$root.loadAlbum(album);
-            },
         },
 
-        events: {
-            /**
-             * Listen to song:played event and set the current playing song.
-             *
-             * @param  {Object} song
-             *
-             * @return {Boolean}
-             */
-            'song:played': function (song) {
-                this.song = song;
+        created() {
+            event.on({
+                /**
+                 * Listen to song:played event and set the current playing song.
+                 *
+                 * @param  {Object} song
+                 *
+                 * @return {Boolean}
+                 */
+                'song:played': song => this.song = song,
 
-                return true;
-            },
+                /**
+                 * Listen to main-content-view:load event and highlight the Queue icon if
+                 * the Queue screen is being loaded.
+                 */
+                'main-content-view:load': view => this.viewingQueue = view === 'queue',
 
-            /**
-             * Listen to main-content-view:load event and highlight the Queue icon if
-             * the Queue screen is being loaded.
-             */
-            'main-content-view:load': function (view) {
-                this.viewingQueue = view === 'queue';
-
-                return true;
-            },
-
-            'koel:teardown': function () {
-                this.song = songStore.stub;
-            },
+                'koel:teardown': () => this.song = songStore.stub,
+            });
         },
     };
 </script>

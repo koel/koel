@@ -4,6 +4,7 @@
 
 import { assign } from 'lodash';
 
+import { event } from '../utils';
 import playback from '../services/playback';
 import addToMenu from '../components/shared/add-to-menu.vue';
 import songList from '../components/shared/song-list.vue';
@@ -45,18 +46,20 @@ export default {
 
             playback.queueAndPlay(this.selectedSongs, true);
         },
+
+        setSelectedSongs(songs) {
+            this.selectedSongs = songs;
+        },
     },
 
-    events: {
-        /**
-         * Listen to add-to-menu:close event to set showingAddToMenu to false (and subsequently close the menu).
-         */
-        'add-to-menu:close': function () {
-            this.showingAddToMenu = false;
-        },
+    created() {
+        event.on({
+            /**
+             * Listen to add-to-menu:close event to set showingAddToMenu to false (and subsequently close the menu).
+             */
+            'add-to-menu:close': () => this.showingAddToMenu = false,
 
-        'songlist:changed': function (meta) {
-            this.meta = assign(this.meta, meta);
-        },
+            'songlist:changed': meta => this.meta = assign(this.meta, meta),
+        });
     },
 };

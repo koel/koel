@@ -1,5 +1,5 @@
 <template>
-    <article v-if="album.id" id="albumInfo" :class="mode">
+    <article id="albumInfo" :class="mode">
         <h1 class="name">
             <span>{{ album.name }}</span>
 
@@ -12,12 +12,8 @@
                 class="cover">
 
             <div class="wiki" v-if="album.info.wiki && album.info.wiki.summary">
-                <div class="summary" v-show="mode !== 'full' && !showingFullWiki">
-                    {{{ album.info.wiki.summary }}}
-                </div>
-                <div class="full" v-show="mode === 'full' || showingFullWiki">
-                    {{{ album.info.wiki.full }}}
-                </div>
+                <div class="summary" v-show="mode !== 'full' && !showingFullWiki" v-html="album.info.wiki.summary"></div>
+                <div class="full" v-show="mode === 'full' || showingFullWiki" v-html="album.info.wiki.full"></div>
 
                 <button class="more" v-show="mode !== 'full' && !showingFullWiki"
                     @click.prevent="showingFullWiki = !showingFullWiki">
@@ -28,15 +24,15 @@
             <section class="track-listing" v-if="album.info.tracks.length">
                 <h1>Track Listing</h1>
                 <ul class="tracks">
-                    <li v-for="track in album.info.tracks">
-                        <span class="no">{{ $index + 1 }}</span>
+                    <li v-for="(track, idx) in album.info.tracks">
+                        <span class="no">{{ idx + 1 }}</span>
                         <span class="title">{{ track.title }}</span>
                         <span class="length">{{ track.fmtLength }}</span>
                     </li>
                 </ul>
             </section>
 
-            <footer>Data &copy; <a target="_blank" href="{{{ album.info.url }}}">Last.fm</a></footer>
+            <footer>Data &copy; <a target="_blank" :href="album.info.url">Last.fm</a></footer>
         </div>
 
         <p class="none" v-else>No album information found.</p>

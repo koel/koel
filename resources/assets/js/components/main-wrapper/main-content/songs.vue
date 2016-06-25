@@ -10,7 +10,7 @@
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
-                    {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
+                    {{ meta.songCount }} {{ meta.songCount | pluralize('song') }}
                     •
                     {{ meta.totalLength }}
                 </span>
@@ -36,19 +36,22 @@
             </div>
         </h1>
 
-        <song-list :items="state.songs" :selected-songs.sync="selectedSongs" type="allSongs"></song-list>
+        <song-list :items="state.songs" type="allSongs"></song-list>
     </section>
 </template>
 
 <script>
     import isMobile from 'ismobilejs';
 
+    import { pluralize } from '../../../utils';
     import songStore from '../../../stores/song';
     import playback from '../../../services/playback';
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {
+        name: 'main-wrapper--main-content--songs',
         mixins: [hasSongList],
+        filters: { pluralize },
 
         data() {
             return {

@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="{{ App::rev('css/app.css') }}">
 </head>
 <body>
-    <app></app>
+    <div id="app"></div>
 
     <script src="{{ App::rev('js/vendors.js') }}"></script>
     <script src="{{ App::rev('js/main.js') }}"></script>

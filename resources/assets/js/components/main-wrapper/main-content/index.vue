@@ -17,6 +17,8 @@
 </template>
 
 <script>
+    import { event } from '../../../utils';
+
     import albums from './albums.vue';
     import album from './album.vue';
     import artists from './artists.vue';
@@ -42,25 +44,21 @@
             };
         },
 
-        events: {
-            'main-content-view:load': function (view) {
-                this.view = view;
+        created() {
+            event.on({
+                'main-content-view:load': view => this.view = view,
 
-                return true;
-            },
-
-            /**
-             * When a new song is played, find its cover for the translucent effect.
-             *
-             * @param  {Object} song
-             *
-             * @return {Boolean}
-             */
-            'song:played': function (song) {
-                this.albumCover = song.album.cover === albumStore.stub.cover ? null : song.album.cover;
-
-                return true;
-            }
+                /**
+                 * When a new song is played, find its cover for the translucent effect.
+                 *
+                 * @param  {Object} song
+                 *
+                 * @return {Boolean}
+                 */
+                'song:played': song => {
+                    this.albumCover = song.album.cover === albumStore.stub.cover ? null : song.album.cover;
+                },
+            });
         },
     };
 </script>

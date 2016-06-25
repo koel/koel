@@ -1,5 +1,6 @@
 import $ from 'jquery';
 
+import { event } from '../utils';
 import toTopButton from '../components/shared/to-top-button.vue';
 
 /**
@@ -40,15 +41,15 @@ export default {
          * Scroll to top fo the wrapper.
          */
         scrollToTop() {
-            $(this.$els.wrapper).animate({ scrollTop: 0}, 500);
+            $(this.$refs.wrapper).animate({ scrollTop: 0}, 500);
             this.showBackToTop = false;
         },
     },
 
-    events: {
-        'koel:teardown': function () {
+    created() {
+        event.on('koel:teardown', () => {
             this.numOfItems = 30;
             this.showBackToTop = false;
-        },
+        });
     },
 };

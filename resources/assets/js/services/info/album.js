@@ -1,6 +1,6 @@
 import { each } from 'lodash';
 
-import { secondsToHis } from '../utils';
+import { secondsToHis } from '../../utils';
 import http from '../http';
 
 export default {

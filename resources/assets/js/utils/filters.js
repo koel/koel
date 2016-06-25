@@ -74,3 +74,11 @@ export function filterBy (arr, search, ...keys) {
 
     return res;
 };
+
+export function pluralize () {
+    if (!arguments[0] || arguments[0] > 1) {
+        return `${arguments[0]} ${arguments[1]}s`;
+    }
+
+    return `${arguments[0]} ${arguments[1]}`;
+};

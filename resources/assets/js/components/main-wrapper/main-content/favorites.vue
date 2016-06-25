@@ -10,7 +10,7 @@
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
-                    {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
+                    {{ meta.songCount }} {{ meta.songCount | pluralize('song') }}
                     •
                     {{ meta.totalLength }}
                     <template v-if="sharedState.allowDownload && state.songs.length">
@@ -45,12 +45,7 @@
             </div>
         </h1>
 
-        <song-list
-            v-show="state.songs.length"
-            :items="state.songs"
-            :selected-songs.sync="selectedSongs"
-            type="favorites">
-        </song-list>
+        <song-list v-show="state.songs.length" :items="state.songs" type="favorites"></song-list>
 
         <div v-show="!state.songs.length" class="none">
             Start loving!
@@ -63,6 +58,7 @@
 <script>
     import isMobile from 'ismobilejs';
 
+    import { pluralize } from '../../../utils';
     import favoriteStore from '../../../stores/favorite';
     import sharedStore from '../../../stores/shared';
     import playback from '../../../services/playback';
@@ -70,7 +66,9 @@
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {
+        name: 'main-wrapper--main-content--favorites',
         mixins: [hasSongList],
+        filters: { pluralize },
 
         data () {
             return {

@@ -1,7 +1,7 @@
 <template>
     <div>
         <input type="text"
-            placeholder="{{ options.placeholder || 'No change' }}"
+            :placeholder="options.placeholder || 'No change'"
             v-model="value"
             @keydown.down.prevent="down"
             @keydown.up.prevent="up"
@@ -9,32 +9,33 @@
             @keydown.tab="enter"
             @keyup="keyup"
             @click="showingResult = true"
-            v-on-clickaway="showingResult = false"
         >
         <ul class="result" v-show="showingResult">
-            <li
-                v-for="item in items
-                | filterBy filter in options.filterKey"
-                @click.prevent="resultClick($event)"
-            >{{ item[options.displayKey] }}</li>
+            <li v-for="item in displayedItems" @click.prevent="resultClick($event)">
+                {{ item[options.displayKey] }}
+            </li>
         </ul>
     </div>
 </template>
 
 <script>
     import $ from 'jquery';
-
-    import VueClickaway from 'vue-clickaway';
+    import { filterBy } from '../../utils';
 
     export default {
         props: ['options', 'value', 'items'],
-        mixins: [VueClickaway.mixin],
 
         data() {
             return {
                 filter: '',
                 showingResult: false,
             };
+        },
+
+        computed: {
+            displayedItems() {
+                return filterBy(this.items, this.filter, this.options.filterKey);
+            },
         },
 
         methods: {

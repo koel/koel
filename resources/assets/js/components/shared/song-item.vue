@@ -1,16 +1,25 @@
 <template>
     <tr
-        @dblclick.prevent="playRightAwayyyyyyy"
         class="song-item"
+        draggable="true"
+        :data-song-id="song.id"
+        key="id"
+        @click="$parent.rowClick(song.id, $event)"
+        @dblclick.prevent="playRightAwayyyyyyy"
+        @dragstart="$parent.dragStart(song.id, $event)"
+        @dragleave="$parent.removeDroppableState($event)"
+        @dragover.prevent="$parent.allowDrop(song.id, $event)"
+        @drop.stop.prevent="$parent.handleDrop(song.id, $event)"
+        @contextmenu.prevent="$parent.openContextMenu(song.id, $event)"
         :class="{ selected: selected, playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
     >
         <td class="track-number">{{ song.track || '' }}</td>
         <td class="title">{{ song.title }}</td>
         <td class="artist">{{ song.artist.name }}</td>
         <td class="album">{{ song.album.name }}</td>
-        <td class="time">{{* song.fmtLength }}</td>
+        <td class="time">{{ song.fmtLength }}</td>
         <td class="play" @click.stop="doPlayback">
-            <i class="fa fa-pause-circle" v-show="song.playbackState === 'playing'"></i>
+            <i class="fa fa-pause-circle" v-if="song.playbackState === 'playing'"></i>
             <i class="fa fa-play-circle" v-else></i>
         </td>
     </tr>

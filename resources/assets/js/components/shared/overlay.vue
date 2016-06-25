@@ -1,5 +1,5 @@
 <template>
-    <div id="overlay" v-show="state.showing" class="{{ state.type }}">
+    <div id="overlay" v-show="state.showing" :class="state.type">
         <div class="display">
             <sound-bar v-show="state.type === 'loading'"></sound-bar>
             <i class="fa fa-exclamation-circle" v-show="state.type === 'error'"></i>
@@ -7,7 +7,7 @@
             <i class="fa fa-info-circle" v-show="state.type === 'info'"></i>
             <i class="fa fa-check-circle" v-show="state.type === 'success'"></i>
 
-            <span>{{{ state.message }}}</span>
+            <span v-html="state.message"></span>
         </div>
 
         <button v-show="state.dismissable" @click.prevent="state.showing = false">Close</button>
@@ -15,6 +15,9 @@
 </template>
 
 <script>
+    import { assign } from 'lodash';
+
+    import { event } from '../../utils';
     import soundBar from './sound-bar.vue';
 
     export default {
@@ -45,10 +48,8 @@
              * @param {String}  type        (loading|success|info|warning|error)
              * @param {Boolean} dismissable Whether to show the Close button
              */
-            show(message = 'Just a little patience…', type = 'loading', dismissable = false) {
-                this.state.message = message;
-                this.state.type = type;
-                this.state.dismissable = dismissable;
+            show(options) {
+                assign(this.state, options);
                 this.state.showing = true;
             },
 
@@ -68,6 +69,18 @@
             setDimissable(dismissable = true) {
                 this.state.dismissable = dismissable;
             },
+        },
+
+        created() {
+            event.on({
+                'overlay:show': options => {
+                    this.show(options);
+                },
+
+                'overlay:hide': () => {
+                    this.hide();
+                },
+            });
         },
     };
 </script>

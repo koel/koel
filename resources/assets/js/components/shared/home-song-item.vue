@@ -5,7 +5,7 @@
     >
         <span class="cover" :style="{ backgroundImage: 'url(' + song.album.cover + ')' }">
             <a class="control" @click.prevent="changeSongState">
-                <i class="fa fa-play" v-show="song.playbackState !== 'playing'"></i>
+                <i class="fa fa-play" v-if="song.playbackState !== 'playing'"></i>
                 <i class="fa fa-pause" v-else></i>
             </a>
         </span>
@@ -15,20 +15,23 @@
             {{ song.title }}
             <span class="by">
                 <a href="#" @click.prevent="viewArtistDetails(song.artist)">{{ song.artist.name }}</a> -
-                {{ song.playCount }} {{ song.playCount | pluralize 'play' }}
+                {{ song.playCount | pluralize('play') }}
             </span>
         </span>
     </li>
 </template>
 
 <script>
+    import { pluralize } from '../../utils';
     import playback from '../../services/playback';
     import queueStore from '../../stores/queue';
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {
+        name: 'shared--home-song-item',
         props: ['song', 'topPlayCount'],
         mixins: [artistAlbumDetails],
+        filters: { pluralize },
 
         methods: {
             play() {

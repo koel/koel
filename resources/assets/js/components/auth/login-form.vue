@@ -8,6 +8,7 @@
 
 <script>
     import userStore from '../../stores/user';
+    import { event } from '../../utils';
 
     export default {
         data() {
@@ -28,7 +29,7 @@
                     // Reset the password so that the next login will have this field empty.
                     this.password = '';
 
-                    this.$dispatch('user:loggedin');
+                    event.emit('user:loggedin');
                 }, () => {
                     this.failed = true;
                 });

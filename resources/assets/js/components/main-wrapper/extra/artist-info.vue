@@ -1,5 +1,5 @@
 <template>
-    <article v-if="artist.id" id="artistInfo" :class="mode">
+    <article id="artistInfo" :class="mode">
         <h1 class="name">
             <span>{{ artist.name }}</span>
 
@@ -12,12 +12,8 @@
                 class="cool-guys-posing cover">
 
             <div class="bio" v-if="artist.info.bio.summary">
-                <div class="summary" v-show="mode !== 'full' && !showingFullBio">
-                    {{{ artist.info.bio.summary }}}
-                </div>
-                <div class="full" v-show="mode === 'full' || showingFullBio">
-                    {{{ artist.info.bio.full }}}
-                </div>
+                <div class="summary" v-show="mode !== 'full' && !showingFullBio" v-html="artist.info.bio.summary"></div>
+                <div class="full" v-show="mode === 'full' || showingFullBio" v-html="artist.info.bio.full"></div>
 
                 <button class="more" v-show="mode !== 'full' && !showingFullBio"
                     @click.prevent="showingFullBio = !showingFullBio">
@@ -26,7 +22,7 @@
             </div>
             <p class="none" v-else>This artist has no Last.fm biography – yet.</p>
 
-            <footer>Data &copy; <a target="_blank" href="{{{ artist.info.url }}}">Last.fm</a></footer>
+            <footer>Data &copy; <a target="_blank" :href="artist.info.url">Last.fm</a></footer>
         </div>
 
         <p class="none" v-else>Nothing can be found. This artist is a mystery.</p>

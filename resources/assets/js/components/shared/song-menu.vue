@@ -1,5 +1,5 @@
 <template>
-    <ul v-el:menu class="menu song-menu" v-show="shown" tabindex="-1" @contextmenu.prevent
+    <ul ref="menu" class="menu song-menu" v-show="shown" tabindex="-1" @contextmenu.prevent
         @blur="close"
         :style="{ top: top + 'px', left: left + 'px' }"
     >
@@ -37,6 +37,7 @@
     import songMenuMethods from '../../mixins/song-menu-methods';
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
+    import { event } from '../../utils';
     import queueStore from '../../stores/queue';
     import userStore from '../../stores/user';
     import playlistStore from '../../stores/playlist';
@@ -45,6 +46,7 @@
     import download from '../../services/download';
 
     export default {
+        name: 'song-menu',
         props: ['songs'],
         mixins: [songMenuMethods, artistAlbumDetails],
 
@@ -89,7 +91,7 @@
                         });
                     }
 
-                    this.$els.menu.focus();
+                    this.$refs.menu.focus();
                 });
             },
 
@@ -121,7 +123,7 @@
              */
             openEditForm() {
                 if (this.songs.length) {
-                    this.$root.showEditSongsForm(this.songs);
+                    event.emit('songs:edit', this.songs);
                 }
 
                 this.close();
@@ -134,11 +136,11 @@
         },
 
         /**
-         * On component ready(), we use some JavaScript to prepare the submenu triggering.
+         * On component mounted(), we use some JavaScript to prepare the submenu triggering.
          * With this, we can catch when the submenus shown or hidden, and can make sure
          * they don't appear off-screen.
          */
-        ready() {
+        mounted() {
             $(this.$el).find('.has-sub').hover(e => {
                 const $submenu = $(e.target).find('.submenu:first');
                 if (!$submenu.length) {

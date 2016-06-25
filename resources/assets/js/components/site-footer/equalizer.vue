@@ -4,7 +4,7 @@
             <label class="select-wrapper" @change="loadPreset">
                 <select v-model="selectedPresetIndex">
                     <option value="-1">Preset</option>
-                    <option v-for="preset in presets" :value="$index">{{* preset.name }}</option>
+                    <option v-for="(preset, idx) in presets" :value="idx">{{ preset.name }}</option>
                 </select>
             </label>
         </div>
@@ -34,7 +34,7 @@
                     step="0.01"
                     data-orientation="vertical"
                     :value="band.filter.gain.value">
-                <label>{{* band.label }}</label>
+                <label v-once="band.label"></label>
             </span>
         </div>
     </div>
@@ -45,13 +45,14 @@
     import $ from 'jquery';
     import rangeslider from 'rangeslider.js';
 
-    import { isAudioContextSupported } from '../../services/utils';
+    import { isAudioContextSupported, event } from '../../utils';
     import equalizerStore from '../../stores/equalizer';
     import preferences from '../../stores/preference';
 
     export default {
         data() {
             return {
+                idx: 0,
                 bands: [],
                 selectedPresetIndex: -1,
                 preampGainValue: 0,
@@ -221,12 +222,12 @@
             },
         },
 
-        events: {
-            'equalizer:init': function (player) {
+        mounted() {
+            event.on('equalizer:init', player => {
                 if (isAudioContextSupported()) {
                     this.init(player);
                 }
-            },
+            });
         },
     };
 </script>

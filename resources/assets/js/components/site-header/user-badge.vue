@@ -1,6 +1,6 @@
 <template>
     <span class="profile" id="userBadge">
-        <span class="view-profile control" @click="loadProfileView">
+        <span class="view-profile control" @click="loadMainView('profile')">
             <img class="avatar" :src="state.current.avatar" alt="Avatar"></img>
             <span class="name">{{ state.current.name }}</span>
         </span>
@@ -11,6 +11,7 @@
 
 <script>
     import userStore from '../../stores/user';
+    import { event, loadMainView } from '../../utils';
 
     export default {
         data() {
@@ -20,15 +21,12 @@
         },
 
         methods: {
-            /**
-             * Load the profile view if the user click on his avatar or name.
-             */
-            loadProfileView() {
-                this.$root.loadMainView('profile');
+            loadMainView(v) {
+                loadMainView(v);
             },
 
             logout() {
-                this.$root.logout();
+                event.emit('logout');
             },
         },
     };

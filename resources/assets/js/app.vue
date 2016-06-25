@@ -1,22 +1,24 @@
 <template>
-    <div id="app" tabindex="0" v-show="authenticated"
-        @keydown.space="togglePlayback"
-        @keydown.j = "playNext"
-        @keydown.k = "playPrev"
-        @keydown.f = "search"
-        @keydown.177 = "playPrev"
-        @keydown.176 = "playNext"
-        @keydown.179 = "togglePlayback"
-    >
-        <site-header></site-header>
-        <main-wrapper></main-wrapper>
-        <site-footer></site-footer>
-        <overlay v-ref:overlay></overlay>
-        <edit-songs-form v-ref:edit-songs-form></edit-songs-form>
-    </div>
+    <div id="app">
+        <div id="main" tabindex="0" v-show="authenticated"
+            @keydown.space="togglePlayback"
+            @keydown.j = "playNext"
+            @keydown.k = "playPrev"
+            @keydown.f = "search"
+            @keydown.177 = "playPrev"
+            @keydown.176 = "playNext"
+            @keydown.179 = "togglePlayback"
+        >
+            <site-header></site-header>
+            <main-wrapper></main-wrapper>
+            <site-footer></site-footer>
+            <overlay ref="overlay"></overlay>
+            <edit-songs-form ref="editSongsForm"></edit-songs-form>
+        </div>
 
-    <div class="login-wrapper" v-else>
-        <login-form></login-form>
+        <div class="login-wrapper" v-if="!authenticated">
+            <login-form></login-form>
+        </div>
     </div>
 </template>
 
@@ -39,12 +41,10 @@
     import playback from './services/playback';
     import focusDirective from './directives/focus';
     import ls from './services/ls';
-    import { filterSongBy, caseInsensitiveOrderBy } from './filters/index';
+    import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow } from './utils';
 
     export default {
         components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
-
-        replace: false,
 
         data() {
             return {
@@ -52,7 +52,7 @@
             };
         },
 
-        ready() {
+        mounted() {
             // The app has just been initialized, check if we can get the user data with an already existing token
             const token = ls.get('jwt-token');
             if (token) {
@@ -70,17 +70,16 @@
 
         methods: {
             init() {
-                this.showOverlay();
+                showOverlay();
 
                 // Make the most important HTTP request to get all necessary data from the server.
                 // Afterwards, init all mandatory stores and services.
                 sharedStore.init(() => {
-                    playback.init(this);
-
-                    this.hideOverlay();
+                    playback.init();
+                    hideOverlay();
 
                     // Load the default view.
-                    this.loadMainView('home');
+                    loadMainView('home');
 
                     // Ask for user's notification permission.
                     this.requestNotifPermission();
@@ -95,7 +94,7 @@
                     };
 
                     // Let all other components know we're ready.
-                    this.$broadcast('koel:ready');
+                    event.emit('koel:ready');
                 }, () => this.authenticated = false);
             },
 
@@ -168,124 +167,37 @@
                     });
                 }
             },
-
-            /**
-             * Load (display) a main panel (view).
-             *
-             * @param {String} view     The view, which can be found under components/main-wrapper/main-content.
-             * @param {...*}            Extra data to attach to the view.
-             */
-            loadMainView(view, ...args) {
-                this.$broadcast('main-content-view:load', view, ...args);
-            },
-
-            /**
-             * Load a playlist into the main panel.
-             *
-             * @param {Object} playlist The playlist object
-             */
-            loadPlaylist(playlist) {
-                this.loadMainView('playlist', playlist);
-            },
-
-            /**
-             * Load the Favorites view.
-             */
-            loadFavorites() {
-                this.loadMainView('favorites');
-            },
-
-            /**
-             * Load an album into the main panel.
-             *
-             * @param  {Object} album The album object
-             */
-            loadAlbum(album) {
-                this.loadMainView('album', album);
-            },
-
-            /**
-             * Load an artist into the main panel.
-             *
-             * @param  {Object} artist The artist object
-             */
-            loadArtist(artist) {
-                this.loadMainView('artist', artist);
-            },
-
-            /**
-             * Shows the overlay.
-             *
-             * @param {String}  message     The message to display.
-             * @param {String}  type        (loading|success|info|warning|error)
-             * @param {Boolean} dismissable Whether to show the Close button
-             */
-            showOverlay(message = 'Just a little patience…', type = 'loading', dismissable = false) {
-                this.$refs.overlay.show(message, type, dismissable);
-            },
-
-            /**
-             * Hides the overlay.
-             */
-            hideOverlay() {
-                this.$refs.overlay.hide();
-            },
-
-            /**
-             * Shows the close button, allowing the user to close the overlay.
-             */
-            setOverlayDimissable() {
-                this.$refs.overlay.setDismissable();
-            },
-
-            /**
-             * Shows the "Edit Song" form.
-             *
-             * @param {Array.<Object>} An array of songs to edit
-             */
-            showEditSongsForm(songs) {
-                this.$refs.editSongsForm.open(songs);
-            },
-
-            /**
-             * Log the current user out and reset the application state.
-             */
-            logout() {
-                userStore.logout(() => {
-                    ls.remove('jwt-token');
-                    this.authenticated = false;
-                    playback.stop();
-                    queueStore.clear();
-                    songStore.teardown();
-                    this.loadMainView('queue');
-                    this.$broadcast('koel:teardown');
-                });
-            },
-
-            /**
-             * Force reloading window regardless of "Confirm before reload" setting.
-             * This is handy for certain cases, for example Last.fm connect/disconnect.
-             */
-            forceReloadWindow() {
-                window.onbeforeunload = function() {};
-                window.location.reload();
-            },
         },
 
-        events: {
-            /**
-             * When the user logs in, set the whole app to be "authenticated" and initialize it.
-             */
-            'user:loggedin': function () {
-                this.authenticated = true;
-                this.init();
-            },
+        created() {
+            event.on({
+                /**
+                 * When the user logs in, set the whole app to be "authenticated" and initialize it.
+                 */
+               'user:loggedin': () => {
+                    this.authenticated = true;
+                    this.init();
+                },
+
+                /**
+                 * Shows the "Edit Song" form.
+                 *
+                 * @param {Array.<Object>} An array of songs to edit
+                 */
+                'songs:edit': songs => this.$refs.editSongsForm.open(songs),
+
+                /**
+                 * Log the current user out and reset the application state.
+                 */
+                logout() {
+                    userStore.logout(() => {
+                        ls.remove('jwt-token');
+                        forceReloadWindow();
+                    });
+                },
+            });
         },
     };
-
-    // Register our custom filters…
-    Vue.filter('filterSongBy', filterSongBy);
-    Vue.filter('caseInsensitiveOrderBy', caseInsensitiveOrderBy);
 
     // …and the global directives
     Vue.directive('koel-focus', focusDirective);
@@ -316,7 +228,7 @@
         }
     }
 
-    #app, .login-wrapper {
+    #main, .login-wrapper {
         display: flex;
         min-height: 100vh;
         flex-direction: column;

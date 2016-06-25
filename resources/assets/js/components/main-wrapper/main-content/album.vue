@@ -16,7 +16,7 @@
                     <a class="artist" v-if="isNormalArtist" @click.prevent="viewArtistDetails(album.artist)">{{ album.artist.name }}</a>
                     <span class="nope" v-else>{{ album.artist.name }}</span>
                     •
-                    {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
+                    {{ meta.songCount }} {{ meta.songCount | pluralize('song') }}
                     •
                     {{ meta.totalLength }}
 
@@ -46,12 +46,12 @@
             </div>
         </h1>
 
-        <song-list :items="album.songs" :selected-songs.sync="selectedSongs" type="album"></song-list>
+        <song-list :items="album.songs" type="album"></song-list>
 
         <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
             <a href="#" class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
             <div class="inner">
-                <div class="loading" v-show="info.loading">
+                <div class="loading" v-if="info.loading">
                     <sound-bar></sound-bar>
                 </div>
                 <album-info :album="album" :mode="'full'" v-else></album-info>
@@ -63,6 +63,7 @@
 <script>
     import isMobile from 'ismobilejs';
 
+    import { pluralize, event, loadMainView } from '../../../utils';
     import albumStore from '../../../stores/album';
     import artistStore from '../../../stores/artist';
     import sharedStore from '../../../stores/shared';
@@ -75,8 +76,10 @@
     import soundBar from '../../shared/sound-bar.vue';
 
     export default {
+        name: 'main-wrapper--main-content--album',
         mixins: [hasSongList, artistAlbumDetails],
         components: { albumInfo, soundBar },
+        filters: { pluralize },
 
         data() {
             return {
@@ -107,25 +110,25 @@
              */
             'album.songs.length': function (newVal) {
                 if (!newVal) {
-                    this.$root.loadMainView('albums');
+                    loadMainView('albums');
                 }
             },
         },
 
-        events: {
+        created() {
             /**
-             * Listen to 'main-content-view:load' event (triggered from $root currently)
-             * to load the requested album into view if applicable.
+             * Listen to 'main-content-view:load' event to load the requested album
+             * into view if applicable.
              *
              * @param {String} view     The view name
              * @param {Object} album    The album object
              */
-            'main-content-view:load': function (view, album) {
+            event.on('main-content-view:load', (view, album) => {
                 if (view === 'album') {
                     this.info.showing = false;
                     this.album = album;
                 }
-            },
+            });
         },
 
         methods: {

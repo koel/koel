@@ -31,6 +31,7 @@
 <script>
     import { last } from 'lodash';
 
+    import { loadPlaylistView } from '../../../utils';
     import playlistStore from '../../../stores/playlist';
     import favoriteStore from '../../../stores/favorite';
 
@@ -38,7 +39,6 @@
 
     export default {
         props: ['currentView'],
-
         components: { playlistItem },
 
         data() {
@@ -60,7 +60,7 @@
                 playlistStore.store(this.newName, [], () => {
                     this.newName = '';
                     this.$nextTick(() => {
-                        this.$root.loadPlaylist(last(this.playlistState.playlists));
+                        loadPlaylistView(last(this.playlistState.playlists));
                     });
                 });
             },

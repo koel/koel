@@ -1,6 +1,6 @@
 <template>
     <article class="user-item" :class="{ editing: editing }">
-        <div class="info" v-show="!editing">
+        <div class="info" v-if="!editing">
             <img :src="user.avatar" width="128" height="128" alt="">
 
             <div class="right">
@@ -50,6 +50,7 @@
 <script>
     import { clone, assign } from 'lodash';
 
+    import { loadMainView } from '../../utils';
     import userStore from '../../stores/user';
 
     export default {
@@ -82,7 +83,7 @@
              */
             edit() {
                 if (this.isCurrentUser) {
-                    this.$root.loadMainView('profile');
+                    loadMainView('profile');
 
                     return;
                 }

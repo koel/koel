@@ -12,9 +12,9 @@
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
-                    {{ artist.albums.length }} {{ artist.albums.length | pluralize 'album' }}
+                    {{ artist.albums.length }} {{ artist.albums.length | pluralize('album') }}
                     •
-                    {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
+                    {{ meta.songCount }} {{ meta.songCount | pluralize('song') }}
                     •
                     {{ meta.totalLength }}
 
@@ -45,12 +45,12 @@
             </div>
         </h1>
 
-        <song-list :items="artist.songs" :selected-songs.sync="selectedSongs" type="artist"></song-list>
+        <song-list :items="artist.songs" type="artist"></song-list>
 
         <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
             <a href="#" class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
             <div class="inner">
-                <div class="loading" v-show="info.loading">
+                <div class="loading" v-if="info.loading">
                     <sound-bar></sound-bar>
                 </div>
                 <artist-info :artist="artist" :mode="'full'" v-else></artist-info>
@@ -62,6 +62,7 @@
 <script>
     import isMobile from 'ismobilejs';
 
+    import { pluralize, event, loadMainView } from '../../../utils';
     import sharedStore from '../../../stores/shared';
     import artistStore from '../../../stores/artist';
     import playback from '../../../services/playback';
@@ -72,8 +73,10 @@
     import soundBar from '../../shared/sound-bar.vue';
 
     export default {
+        name: 'main-wrapper--main-content--artist',
         mixins: [hasSongList],
         components: { artistInfo, soundBar },
+        filters: { pluralize },
 
         data() {
             return {
@@ -97,25 +100,25 @@
              */
             'artist.albums.length': function (newVal) {
                 if (!newVal) {
-                    this.$root.loadMainView('artists');
+                    loadMainView('artists');
                 }
             },
         },
 
-        events: {
+        created() {
             /**
-             * Listen to 'main-content-view:load' event (triggered from $root currently)
-             * to load the requested artist into view if applicable.
+             * Listen to 'main-content-view:load' event to load the requested artist
+             * into view if applicable.
              *
              * @param {String} view     The view's name
              * @param {Object} artist
              */
-            'main-content-view:load': function (view, artist) {
+            event.on('main-content-view:load', (view, artist) => {
                 if (view === 'artist') {
                     this.info.showing = false;
                     this.artist = artist;
                 }
-            },
+            });
         },
 
         methods: {

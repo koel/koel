@@ -13,6 +13,8 @@
     import isMobile from 'ismobilejs';
     import { debounce } from 'lodash';
 
+    import { event } from '../../utils';
+
     export default {
         data() {
             return {
@@ -26,23 +28,19 @@
              * Limit the filter's execution rate using lodash's debounce.
              */
             filter: debounce(function () {
-                this.$root.$broadcast('filter:changed', this.q);
+                event.emit('filter:changed', this.q);
             }, 200),
         },
 
-        events: {
-            /**
-             * Listen to 'search:toggle' event to show or hide the search form.
-             * This should only be triggered on a mobile device.
-             */
-            'search:toggle': function () {
+        created() {
+            event.on('search:toggle', () => {
                 this.showing = !this.showing;
-            },
+            });
 
-            'koel:teardown': function () {
+            event.on('koel:teardown', () => {
                 this.q = '';
-                this.debounceFilter();
-            },
+                this.filter();
+            })
         },
     };
 </script>

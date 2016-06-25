@@ -6,27 +6,27 @@
             <ul class="menu">
                 <li>
                     <a class="home" :class="[currentView == 'home' ? 'active' : '']"
-                        @click.prevent="$root.loadMainView('home')">Home</a>
+                        @click.prevent="loadMainView('home')">Home</a>
                 </li>
                 <li>
                     <a class="queue"
                         :class="[currentView == 'queue' ? 'active' : '']"
-                        @click.prevent="$root.loadMainView('queue')"
+                        @click.prevent="loadMainView('queue')"
                         @dragleave="removeDroppableState"
                         @dragover.prevent="allowDrop"
                         @drop.stop.prevent="handleDrop">Current Queue</a>
                 </li>
                 <li>
                     <a class="songs" :class="[currentView == 'songs' ? 'active' : '']"
-                        @click.prevent="$root.loadMainView('songs')">All Songs</a>
+                        @click.prevent="loadMainView('songs')">All Songs</a>
                 </li>
                 <li>
                     <a class="albums" :class="[currentView == 'albums' ? 'active' : '']"
-                        @click.prevent="$root.loadMainView('albums')">Albums</a>
+                        @click.prevent="loadMainView('albums')">Albums</a>
                 </li>
                 <li>
                     <a class="artists" :class="[currentView == 'artists' ? 'active' : '']"
-                        @click.prevent="$root.loadMainView('artists')">Artists</a>
+                        @click.prevent="loadMainView('artists')">Artists</a>
                 </li>
             </ul>
         </section>
@@ -39,11 +39,11 @@
             <ul class="menu">
                 <li>
                     <a class="settings" :class="[currentView == 'settings' ? 'active' : '']"
-                        @click.prevent="$root.loadMainView('settings')">Settings</a>
+                        @click.prevent="loadMainView('settings')">Settings</a>
                     </li>
                 <li>
                     <a class="users" :class="[currentView == 'users' ? 'active' : '']"
-                        @click.prevent="$root.loadMainView('users')">Users</a>
+                        @click.prevent="loadMainView('users')">Users</a>
                 </li>
             </ul>
         </section>
@@ -62,6 +62,7 @@
     import isMobile from 'ismobilejs';
     import $ from 'jquery';
 
+    import { event, loadMainView } from '../../../utils';
     import playlists from './playlists.vue';
     import userStore from '../../../stores/user';
     import songStore from '../../../stores/song';
@@ -81,6 +82,10 @@
         },
 
         methods: {
+            loadMainView(v) {
+                loadMainView(v);
+            },
+
             /**
              * Remove the droppable state when a dragleave event occurs on the playlist's DOM element.
              *
@@ -128,25 +133,23 @@
             },
         },
 
-        events: {
-            'main-content-view:load': function (view) {
+        created() {
+            event.on('main-content-view:load', view => {
                 this.currentView = view;
 
                 // Hide the sidebar if on mobile
                 if (isMobile.phone) {
                     this.showing = false;
                 }
+            });
 
-                return true;
-            },
-
-            /**
+             /**
              * Listen to sidebar:toggle event to show or hide the sidebar.
              * This should only be triggered on a mobile device.
              */
-            'sidebar:toggle': function () {
+            event.on('sidebar:toggle', () => {
                 this.showing = !this.showing;
-            },
+            });
         },
     };
 </script>

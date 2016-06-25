@@ -21,6 +21,7 @@
 <script>
     import $ from 'jquery';
 
+    import { event, loadPlaylistView, loadFavoritesView } from '../../../utils';
     import songStore from '../../../stores/song';
     import playlistStore from '../../../stores/playlist';
     import favoriteStore from '../../../stores/favorite';
@@ -53,9 +54,9 @@
              */
             load() {
                 if (this.isFavorites) {
-                    this.$root.loadFavorites();
+                    loadFavoritesView();
                 } else {
-                    this.$root.loadPlaylist(this.playlist);
+                    loadPlaylistView(this.playlist);
                 }
             },
 
@@ -150,8 +151,8 @@
             },
         },
 
-        events: {
-            'main-content-view:load': function (view, playlist) {
+        created() {
+            event.on('main-content-view:load', (view, playlist) => {
                 if (view === 'favorites') {
                     this.active = this.isFavorites;
                 } else if (view === 'playlist') {
@@ -159,7 +160,7 @@
                 } else {
                     this.active = false;
                 }
-            },
+            });
         },
     };
 </script>

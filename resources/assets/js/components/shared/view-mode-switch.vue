@@ -1,20 +1,28 @@
 <template>
     <span class="view-modes">
-        <a :class="{ active: mode === 'thumbnails' }"
+        <a :class="{ active: mutatedMode === 'thumbnails' }"
             title="View as thumbnails"
             @click.prevent="setMode('thumbnails')"><i class="fa fa-th-large"></i></a>
-        <a :class="{ active: mode === 'list' }"
+        <a :class="{ active: mutatedMode === 'list' }"
             title="View as list"
             @click.prevent="setMode('list')"><i class="fa fa-list"></i></a>
     </span>
 </template>
 
 <script>
-    import preferences from '../../stores/preference';
     import isMobile from 'ismobilejs';
+
+    import { event } from '../../utils';
+    import preferences from '../../stores/preference';
 
     export default {
         props: ['mode', 'for'],
+
+        data() {
+            return {
+                mutatedMode: this.mode,
+            };
+        },
 
         computed: {
             /**
@@ -29,21 +37,22 @@
 
         methods: {
             setMode(mode) {
-                preferences[this.preferenceKey] = this.mode = mode;
+                preferences[this.preferenceKey] = this.mutatedMode = mode;
+                this.$parent.changeViewMode(mode);
             },
         },
 
-        events: {
-            'koel:ready': function () {
-                this.mode = preferences[this.preferenceKey];
+        created() {
+            event.on('koel:ready', () => {
+                this.mutatedMode = preferences[this.preferenceKey];
 
                 // If the value is empty, we set a default mode.
                 // On mobile, the mode should be 'listing'.
                 // For desktop, 'thumbnails'.
-                if (!this.mode) {
-                    this.mode = isMobile.phone ? 'list' : 'thumbnails';
+                if (!this.mutatedMode) {
+                    this.mutatedMode = isMobile.phone ? 'list' : 'thumbnails';
                 }
-            },
+            });
         },
     };
 </script>

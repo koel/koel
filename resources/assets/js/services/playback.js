@@ -1,7 +1,9 @@
 import { shuffle, orderBy } from 'lodash';
 import $ from 'jquery';
 import plyr from 'plyr';
+import Vue from 'vue';
 
+import { event, loadMainView } from '../utils';
 import queueStore from '../stores/queue';
 import songStore from '../stores/song';
 import artistStore from '../stores/artist';
@@ -9,7 +11,6 @@ import preferences from '../stores/preference';
 import config from '../config';
 
 export default {
-    app: null,
     player: null,
     $volumeInput: null,
     repeatModes: ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE'],
@@ -20,13 +21,11 @@ export default {
      *
      * @param  {Vue} app The root Vue component.
      */
-    init(app) {
+    init() {
         // We don't need to init this service twice, or the media events will be duplicated.
         if (this.initialized) {
             return;
         }
-
-        this.app = app;
 
         this.player = plyr.setup({
             controls: [],
@@ -91,7 +90,7 @@ export default {
         this.setVolume(preferences.volume);
 
         // Init the equalizer if supported.
-        this.app.$broadcast('equalizer:init', this.player.media);
+        event.emit('equalizer:init', this.player.media);
 
         this.initialized = true;
     },
@@ -143,7 +142,7 @@ export default {
         // Record the UNIX timestamp the song start playing, for scrobbling purpose
         song.playStartTime = Math.floor(Date.now() / 1000);
 
-        this.app.$broadcast('song:played', song);
+        event.emit('song:played', song);
 
         this.player.restart();
         this.player.play();
@@ -325,7 +324,7 @@ export default {
     resume() {
         this.player.play();
         queueStore.current.playbackState = 'playing';
-        this.app.$broadcast('song:played', queueStore.current);
+        event.emit('song:played', queueStore.current);
     },
 
     /**
@@ -349,11 +348,11 @@ export default {
 
         queueStore.queue(songs, true);
 
-        this.app.loadMainView('queue');
+        loadMainView('queue');
 
         // Wrap this inside a nextTick() to wait for the DOM to complete updating
         // and then play the first song in the queue.
-        this.app.$nextTick(() => this.play(queueStore.first));
+        Vue.nextTick(() => this.play(queueStore.first));
     },
 
     /**

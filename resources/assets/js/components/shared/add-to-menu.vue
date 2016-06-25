@@ -1,6 +1,6 @@
 <template>
-    <div class="add-to-playlist" v-show="showing" v-on-clickaway="close">
-        <p>Add {{ songs.length }} {{ songs.length | pluralize 'song' }} to</p>
+    <div class="add-to-playlist" v-show="showing">
+        <p>Add {{ songs.length }} {{ songs.length | pluralize('song') }} to</p>
 
         <ul>
             <li v-if="mergedSettings.canQueue" @click="queueSongsAfterCurrent">After Current Song</li>
@@ -27,14 +27,16 @@
 
 <script>
     import { assign, last } from 'lodash';
-    import VueClickaway from 'vue-clickaway';
 
+    import { pluralize, event, loadPlaylistView } from '../../utils';
     import songMenuMethods from '../../mixins/song-menu-methods';
     import playlistStore from '../../stores/playlist';
 
     export default {
+        name: 'shared--add-to-menu',
         props: ['songs', 'showing', 'settings'],
-        mixins: [VueClickaway.mixin, songMenuMethods],
+        mixins: [songMenuMethods],
+        filters: { pluralize },
 
         data() {
             return {
@@ -72,7 +74,7 @@
 
                     this.$nextTick(() => {
                         // Activate the new playlist right away
-                        this.$root.loadPlaylist(last(this.playlistState.playlists));
+                        loadPlaylistView(last(this.playlistState.playlists));
                     });
                 });
 
@@ -83,7 +85,7 @@
              * Override the method from "songMenuMethods" mixin for this own logic.
              */
             close() {
-                this.$dispatch('add-to-menu:close');
+                event.emit('add-to-menu:close');
             },
         },
     };

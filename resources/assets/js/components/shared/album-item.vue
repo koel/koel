@@ -15,11 +15,11 @@
             <span class="artist nope" v-else>{{ album.artist.name }}</span>
             <p class="meta">
                 <span class="left">
-                    {{ album.songs.length }} {{ album.songs.length | pluralize 'song' }}
+                    {{ album.songs.length | pluralize('song') }}
                     •
                     {{ album.fmtLength }}
                     •
-                    {{ album.playCount }} {{ album.playCount | pluralize 'play' }}
+                    {{ album.playCount | pluralize('play') }}
                 </span>
                 <span class="right">
                     <a href="#" @click.prevent="shuffle" title="Shuffle">
@@ -38,6 +38,7 @@
     import { map } from 'lodash';
     import $ from 'jquery';
 
+    import { pluralize } from '../../utils';
     import playback from '../../services/playback';
     import download from '../../services/download';
     import queueStore from '../../stores/queue';
@@ -46,8 +47,10 @@
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {
+        name: 'shared--album-item',
         props: ['album'],
         mixins: [artistAlbumDetails],
+        filters: { pluralize },
 
         data() {
             return {

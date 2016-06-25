@@ -3,10 +3,12 @@ import Vue from 'vue';
 /**
  * A simple directive to set focus into an input field when it's shown.
  */
-export default function (value) {
-    if (!value) {
-        return;
-    }
+export default {
+    bind (el, { value }) {
+        if (!value) {
+            return;
+        }
 
-    Vue.nextTick(() => this.el.focus());
+        Vue.nextTick(() => el.focus());
+    }
 };

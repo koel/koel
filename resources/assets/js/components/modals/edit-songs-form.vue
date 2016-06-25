@@ -46,7 +46,7 @@
                             </div>
                             <div class="form-row">
                                 <label class="small">
-                                    <input type="checkbox" @change="changeCompilationState" v-el:compilation-state-chk />
+                                    <input type="checkbox" @change="changeCompilationState" ref="compilationStateChk" />
                                     Album is a compilation of songs by various artists
                                 </label>
                                 <label class="small warning" v-if="needsReload">
@@ -78,7 +78,7 @@
 <script>
     import { every, filter } from 'lodash';
 
-    import { br2nl } from '../../services/utils';
+    import { br2nl } from '../../utils';
     import songInfoService from '../../services/info/song';
     import artistStore from '../../stores/artist';
     import albumStore from '../../stores/album';
@@ -259,7 +259,7 @@
                 // This must be wrapped in a $nextTick callback, because the form is dynamically
                 // attached into DOM in conjunction with `this.loading` data binding.
                 this.$nextTick(() => {
-                    let chk = this.$els.compilationStateChk;
+                    let chk = this.$refs.compilationStateChk;
 
                     switch (this.compilationState) {
                         case COMPILATION_STATES.ALL:
@@ -293,7 +293,6 @@
              * Close the modal.
              */
             close() {
-                // Todo: Confirm.
                 this.shown = false;
             },
 
@@ -307,7 +306,7 @@
                     this.loading = false;
                     this.close();
                     if (this.needsReload) {
-                        this.$root.forceReloadWindow();
+                        forceReloadWindow();
                     }
                 }, () => {
                     this.loading = false;

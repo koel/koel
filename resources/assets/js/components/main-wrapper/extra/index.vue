@@ -11,10 +11,18 @@
             </div>
 
             <div class="panes">
-                <lyrics :song="song" v-ref:lyrics v-show="currentView === 'lyrics'"></lyrics>
-                <artist-info :artist="song.artist" :mode="'sidebar'" v-ref:artist-info v-show="currentView === 'artistInfo'">
+                <lyrics :song="song" ref="lyrics" v-show="currentView === 'lyrics'"></lyrics>
+                <artist-info v-if="song.artist.id"
+                    :artist="song.artist"
+                    :mode="'sidebar'"
+                    ref="artist-info"
+                    v-show="currentView === 'artistInfo'">
                 </artist-info>
-                <album-info :album="song.album" :mode="'sidebar'" v-ref:album-info v-show="currentView === 'albumInfo'">
+                <album-info v-if="song.album.id"
+                    :album="song.album"
+                    :mode="'sidebar'"
+                    ref="album-info"
+                    v-show="currentView === 'albumInfo'">
                 </album-info>
             </div>
         </div>
@@ -26,6 +34,7 @@
     import { invokeMap } from 'lodash';
     import $ from 'jquery';
 
+    import { event } from '../../../utils';
     import lyrics from './lyrics.vue';
     import artistInfo from './artist-info.vue';
     import albumInfo from './album-info.vue';
@@ -34,6 +43,7 @@
     import songInfoService from '../../../services/info/song';
 
     export default {
+        name: 'main-wrapper--extra--index',
         components: { lyrics, artistInfo, albumInfo },
 
         data() {
@@ -59,7 +69,7 @@
             },
         },
 
-        ready() {
+        mounted() {
             // On ready, add 'with-extra-panel' class.
             if (!isMobile.any) {
                 $('html').addClass('with-extra-panel');
@@ -83,23 +93,19 @@
             },
         },
 
-        events: {
-            'main-content-view:load': function (view) {
-                // Hide the panel away if a main view is triggered on mobile.
-                if (isMobile.phone) {
-                    preferences.showExtraPanel = false;
-                }
+        created() {
+            event.on({
+                'main-content-view:load': view => {
+                    // Hide the panel away if a main view is triggered on mobile.
+                    if (isMobile.phone) {
+                        preferences.showExtraPanel = false;
+                    }
+                },
 
-                return true;
-            },
+                'song:played': song => songInfoService.fetch(this.song = song),
 
-            'song:played': function (song) {
-                songInfoService.fetch(this.song = song);
-            },
-
-            'koel:teardown': function () {
-                this.resetState();
-            },
+                'koel:teardown': () => this.resetState(),
+            });
         },
     };
 </script>

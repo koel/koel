@@ -10,7 +10,7 @@
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
-                    {{ meta.songCount }} {{ meta.songCount | pluralize 'song' }}
+                    {{ meta.songCount }} {{ meta.songCount | pluralize('song') }}
                     •
                     {{ meta.totalLength }}
                     <template v-if="sharedState.allowDownload && playlist.songs.length">
@@ -46,12 +46,7 @@
             </div>
         </h1>
 
-        <song-list v-show="playlist.songs.length"
-            :items="playlist.songs"
-            :selected-songs.sync="selectedSongs"
-            :playlist="playlist"
-            type="playlist">
-        </song-list>
+        <song-list v-show="playlist.songs.length" :items="playlist.songs" :playlist="playlist" type="playlist"></song-list>
 
         <div v-show="!playlist.songs.length" class="none">
             The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar,
@@ -63,6 +58,7 @@
 <script>
     import isMobile from 'ismobilejs';
 
+    import { pluralize, event, loadMainView } from '../../../utils';
     import playlistStore from '../../../stores/playlist';
     import sharedStore from '../../../stores/shared';
     import playback from '../../../services/playback';
@@ -70,7 +66,9 @@
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {
+        name: 'main-wrapper--main-content--playlist',
         mixins: [hasSongList],
+        filters: { pluralize },
 
         data() {
             return {
@@ -81,19 +79,19 @@
             };
         },
 
-        events: {
+        created() {
             /**
-             * Listen to 'main-content-view:load' event (triggered from $root currently)
-             * to load the requested playlist into view if applicable.
+             * Listen to 'main-content-view:load' event to load the requested
+             * playlist into view if applicable.
              *
              * @param {String} view     The view's name.
              * @param {Object} playlist
              */
-            'main-content-view:load': function (view, playlist) {
+            event.on('main-content-view:load', (view, playlist) => {
                 if (view === 'playlist') {
                     this.playlist = playlist;
                 }
-            },
+            });
         },
 
         methods: {
@@ -114,7 +112,7 @@
                     this.playlist = playlistStore.stub;
 
                     // Switch back to Queue screen
-                    this.$root.loadMainView('queue');
+                    loadMainView('queue');
                 });
             },
 

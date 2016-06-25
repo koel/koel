@@ -25,7 +25,7 @@
 
 <script>
     import settingStore from '../../../stores/setting';
-    import { parseValidationError } from '../../../services/utils';
+    import { parseValidationError, forceReloadWindow, event, showOverlay, hideOverlay } from '../../../utils';
 
     export default {
         data() {
@@ -39,11 +39,10 @@
              * Save the settings.
              */
             save() {
-                this.$root.showOverlay();
+                showOverlay();
 
                 settingStore.update(() => {
-                    // Re-init the app.
-                    this.$root.init();
+                    forceReloadWindow();
                 }, error => {
                     let msg = 'Unknown error.';
 
@@ -51,7 +50,7 @@
                         msg = parseValidationError(error.data)[0];
                     }
 
-                    this.$root.showOverlay(`Error: ${msg}`, 'error', true);
+                    showOverlay(`Error: ${msg}`, 'error', true);
                 });
             },
         },

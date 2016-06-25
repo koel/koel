@@ -37,13 +37,13 @@
             <section class="top-artists" v-show="topArtists.length">
                 <h1>Top Artists</h1>
 
-                <div class="wrapper as-{{ preferences.artistsViewMode }}">
+                <div class="wrapper" :class="'as-' + preferences.artistsViewMode">
                     <artist-item v-for="artist in topArtists" :artist="artist"></artist-item>
                     <span class="item filler" v-for="n in 3"></span>
                 </div>
             </section>
 
-            <section class="top-albums as-{{ preferences.albumsViewMode }}" v-show="topAlbums.length">
+            <section class="top-albums" :class="'as-' + preferences.albumsViewMode" v-show="topAlbums.length">
                 <h1>Top Albums</h1>
 
                 <div class="wrapper">
@@ -60,6 +60,7 @@
 <script>
     import { sample } from 'lodash';
 
+    import { event } from '../../../utils';
     import songStore from '../../../stores/song';
     import albumStore from '../../../stores/album';
     import artistStore from '../../../stores/artist';
@@ -119,14 +120,12 @@
             },
         },
 
-        events: {
-            'koel:ready': function () {
-                this.refreshDashboard();
-            },
+        created() {
+            event.on({
+                'koel:ready': () => this.refreshDashboard(),
 
-            'song:played': function () {
-                this.refreshDashboard();
-            },
+                'song:played': () => this.refreshDashboard(),
+            });
         },
     };
 </script>

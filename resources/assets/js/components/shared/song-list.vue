@@ -1,6 +1,6 @@
 <template>
-    <div class="song-list-wrap main-scroll-wrap {{ type }}"
-        v-el:wrapper
+    <div class="song-list-wrap main-scroll-wrap" :class="type"
+        ref="wrapper"
         tabindex="1"
         @scroll="scrolling"
         @keydown.delete.prevent.stop="handleDelete"
@@ -35,27 +35,11 @@
             </thead>
 
             <tbody>
-                <tr
-                    v-for="item in displayedItems"
-                    is="song-item"
-                    data-track="{{ item.track }}"
-                    data-song-id="{{ item.id }}"
-                    track-by="id"
-                    :song="item"
-                    v-ref:rows
-                    @click="rowClick(item.id, $event)"
-                    draggable="true"
-                    @dragstart="dragStart(item.id, $event)"
-                    @dragleave="removeDroppableState"
-                    @dragover.prevent="allowDrop(item.id, $event)"
-                    @drop.stop.prevent="handleDrop(item.id, $event)"
-                    @contextmenu.prevent="openContextMenu(item.id, $event)"
-                >
-                </tr>
+                <tr is="song-item" v-for="item in displayedItems" :song="item" ref="rows"></tr>
             </tbody>
         </table>
 
-        <song-menu v-ref:context-menu :songs="selectedSongs"></song-menu>
+        <song-menu ref="contextMenu" :songs="selectedSongs"></song-menu>
         <to-top-button :showing="showBackToTop"></to-top-button>
     </div>
 </template>
@@ -65,7 +49,7 @@
     import isMobile from 'ismobilejs';
     import $ from 'jquery';
 
-    import { filterBy, orderBy, limitBy } from '../../utils';
+    import { filterBy, orderBy, limitBy, event, loadMainView } from '../../utils';
     import songItem from './song-item.vue';
     import songMenu from './song-menu.vue';
     import infiniteScroll from '../../mixins/infinite-scroll';
@@ -76,7 +60,8 @@
     import playback from '../../services/playback';
 
     export default {
-        props: ['items', 'type', 'playlist', 'selectedSongs', 'sortable'],
+        name: 'song-list',
+        props: ['items', 'type', 'playlist', 'sortable'],
         mixins: [infiniteScroll],
         components: { songItem, songMenu },
 
@@ -89,6 +74,7 @@
                 componentCache: {},
                 sortingByAlbum: false,
                 sortingByArtist: false,
+                selectedSongs: [],
             };
         },
 
@@ -102,10 +88,14 @@
                 }
 
                 // Dispatch this event for the parent to update the song count and duration status.
-                this.$dispatch('songlist:changed', {
+                event.emit('songlist:changed', {
                     songCount: this.items.length,
                     totalLength: songStore.getLength(this.items, true),
                 });
+            },
+
+            selectedSongs(val) {
+                this.$parent.setSelectedSongs(val);
             },
         },
 
@@ -208,7 +198,7 @@
                         queueStore.queue(songs, false, e.shiftKey);
 
                         this.$nextTick(() => {
-                            this.$root.loadMainView('queue');
+                            loadMainView('queue');
 
                             if (e.ctrlKey || e.metaKey || songs.length === 1) {
                                 playback.play(songs[0]);
@@ -319,7 +309,7 @@
             selectRowsBetweenIndexes(indexes) {
                 indexes.sort((a, b) => a - b);
 
-                const rows = $(this.$els.wrapper).find('tbody tr');
+                const rows = $(this.$refs.wrapper).find('tbody tr');
 
                 for (let i = indexes[0]; i <= indexes[1]; ++i) {
                     this.getComponentBySongId($(rows[i - 1]).data('song-id')).select();
@@ -426,71 +416,61 @@
                     this.gatherSelected();
                 }
 
-                this.$nextTick(() => {
-                    this.$refs.contextMenu.open(e.pageY, e.pageX);
-                });
+                this.$nextTick(() => this.$refs.contextMenu.open(e.pageY, e.pageX));
             },
         },
 
-        events: {
-            /**
-             * Listen to song:played event to do some logic.
-             *
-             * @param  {Object} song The current playing song.
-             */
-            'song:played': function (song) {
-                // If the song is at the end of the current displayed items, load more.
-                if (this.type === 'queue' && this.items.indexOf(song) >= this.numOfItems) {
-                    this.displayMore();
-                }
-
-                // Scroll the item into view if it's lost into oblivion.
-                if (this.type === 'queue') {
-                    const $wrapper = $(this.$els.wrapper);
-                    const $row = $wrapper.find(`.song-item[data-song-id="${song.id}"]`);
-
-                    if (!$row.length) {
-                        return;
+        created() {
+            event.on({
+                /**
+                 * Listen to song:played event to do some logic.
+                 *
+                 * @param  {Object} song The current playing song.
+                 */
+                'song:played': song => {
+                    // If the song is at the end of the current displayed items, load more.
+                    if (this.type === 'queue' && this.items.indexOf(song) >= this.numOfItems) {
+                        this.displayMore();
                     }
 
-                    if ($wrapper[0].getBoundingClientRect().top + $wrapper[0].getBoundingClientRect().height <
-                        $row[0].getBoundingClientRect().top) {
-                        $wrapper.scrollTop($wrapper.scrollTop() + $row.position().top);
+                    // Scroll the item into view if it's lost into oblivion.
+                    if (this.type === 'queue') {
+                        const $wrapper = $(this.$refs.wrapper);
+                        const $row = $wrapper.find(`.song-item[data-song-id="${song.id}"]`);
+
+                        if (!$row.length) {
+                            return;
+                        }
+
+                        if ($wrapper[0].getBoundingClientRect().top + $wrapper[0].getBoundingClientRect().height <
+                            $row[0].getBoundingClientRect().top) {
+                            $wrapper.scrollTop($wrapper.scrollTop() + $row.position().top);
+                        }
                     }
-                }
+                },
 
-                return true;
-            },
+                /**
+                 * Listen to 'filter:changed' event to filter the current list.
+                 */
+                'filter:changed': q => this.q = q,
 
-            /**
-             * Listen to 'filter:changed' event to filter the current list.
-             */
-            'filter:changed': function (q) {
-                this.q = q;
-            },
+                /**
+                 * Clears the current list's selection if the user has switched to another view.
+                 */
+                'main-content-view:load': () => this.clearSelection(),
 
-            /**
-             * Clears the current list's selection if the user has switched to another view.
-             */
-            'main-content-view:load': function () {
-                this.clearSelection();
-            },
+                /**
+                 * Listens to the 'song:selection-changed' dispatched from a child song-item
+                 * to collect the selected songs.
+                 */
+                'song:selection-changed': () => this.gatherSelected(),
 
-            /**
-             * Listens to the 'song:selection-changed' dispatched from a child song-item
-             * to collect the selected songs.
-             */
-            'song:selection-changed': function () {
-                this.gatherSelected();
-            },
-
-            /**
-             * Listen to 'song:selection-clear' (often broadcasted from the direct parent)
-             * to clear the selected songs.
-             */
-            'song:selection-clear': function () {
-                this.clearSelection();
-            },
+                /**
+                 * Listen to 'song:selection-clear' (often broadcasted from the direct parent)
+                 * to clear the selected songs.
+                 */
+                'song:selection-clear': this.clearSelection(),
+            });
         },
     };
 </script>
