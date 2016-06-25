@@ -19,7 +19,7 @@ env:
   LASTFM_API_SECRET: bar
 
 branches:
-    - master
+    - vue2
 
 before_script:
   - composer self-update
