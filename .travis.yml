@@ -19,7 +19,7 @@ env:
   LASTFM_API_SECRET: bar
 
 branches:
-  - vue2
+  - master 
 
 install:
   - . $HOME/.nvm/nvm.sh
