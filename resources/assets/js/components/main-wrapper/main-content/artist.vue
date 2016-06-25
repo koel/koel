@@ -12,9 +12,9 @@
                     @click.prevent="showingControls = false"></i>
 
                 <span class="meta" v-show="meta.songCount">
-                    {{ artist.albums.length }} {{ artist.albums.length | pluralize('album') }}
+                    {{ artist.albums.length | pluralize('album') }}
                     •
-                    {{ meta.songCount }} {{ meta.songCount | pluralize('song') }}
+                    {{ meta.songCount | pluralize('song') }}
                     •
                     {{ meta.totalLength }}
 

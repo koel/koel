@@ -16,7 +16,7 @@
                     <a class="artist" v-if="isNormalArtist" @click.prevent="viewArtistDetails(album.artist)">{{ album.artist.name }}</a>
                     <span class="nope" v-else>{{ album.artist.name }}</span>
                     •
-                    {{ meta.songCount }} {{ meta.songCount | pluralize('song') }}
+                    {{ meta.songCount | pluralize('song') }}
                     •
                     {{ meta.totalLength }}
 

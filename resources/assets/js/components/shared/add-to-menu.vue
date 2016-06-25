@@ -1,6 +1,6 @@
 <template>
     <div class="add-to-playlist" v-show="showing">
-        <p>Add {{ songs.length }} {{ songs.length | pluralize('song') }} to</p>
+        <p>Add {{ songs.length | pluralize('song') }} to</p>
 
         <ul>
             <li v-if="mergedSettings.canQueue" @click="queueSongsAfterCurrent">After Current Song</li>
