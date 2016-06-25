@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\ProfileUpdateRequest;
-use App\Models\User;
 use Hash;
 
 class ProfileController extends Controller
