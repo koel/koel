@@ -165,7 +165,7 @@
        * @return {Number}
        */
       compilationState() {
-        let contributedSongs = filter(this.songs, song => song.contributing_artist_id)
+        const contributedSongs = filter(this.songs, song => song.contributing_artist_id)
 
         if (!contributedSongs.length) {
           this.formData.compilationState = COMPILATION_STATES.NONE
@@ -257,7 +257,7 @@
         // This must be wrapped in a $nextTick callback, because the form is dynamically
         // attached into DOM in conjunction with `this.loading` data binding.
         this.$nextTick(() => {
-          let chk = this.$refs.compilationStateChk;
+          const chk = this.$refs.compilationStateChk;
 
           switch (this.compilationState) {
             case COMPILATION_STATES.ALL:
