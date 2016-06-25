@@ -1,6 +1,6 @@
 require('chai').should();
 
-import queueStore from '../../stores/queue';
+import { queueStore } from '../../stores';
 import artists from '../blobs/media';
 
 const songs = artists[2].albums[0].songs;

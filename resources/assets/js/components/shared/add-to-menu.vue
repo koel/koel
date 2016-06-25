@@ -29,8 +29,8 @@
     import { assign, last } from 'lodash';
 
     import { pluralize, event, loadPlaylistView } from '../../utils';
+    import { playlistStore } from '../../stores';
     import songMenuMethods from '../../mixins/song-menu-methods';
-    import playlistStore from '../../stores/playlist';
 
     export default {
         name: 'shared--add-to-menu',

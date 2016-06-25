@@ -22,9 +22,7 @@
     import $ from 'jquery';
 
     import { event, loadPlaylistView, loadFavoritesView } from '../../../utils';
-    import songStore from '../../../stores/song';
-    import playlistStore from '../../../stores/playlist';
-    import favoriteStore from '../../../stores/favorite';
+    import { songStore, playlistStore, favoriteStore } from '../../../stores';
 
     export default {
         props: ['playlist', 'type'],

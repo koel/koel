@@ -12,12 +12,12 @@ import {
 
 import config from '../config';
 import stub from '../stubs/artist';
-import albumStore from './album';
+import { albumStore } from '.';
 
 const UNKNOWN_ARTIST_ID = 1;
 const VARIOUS_ARTISTS_ID = 2;
 
-export default {
+export const artistStore = {
     stub,
 
     state: {

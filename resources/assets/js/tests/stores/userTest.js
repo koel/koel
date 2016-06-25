@@ -1,6 +1,6 @@
 require('chai').should();
 
-import userStore from '../../stores/user';
+import { userStore } from '../../stores';
 import data from '../blobs/users';
 
 describe('stores/user', () => {

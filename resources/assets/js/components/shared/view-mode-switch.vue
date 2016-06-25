@@ -13,7 +13,7 @@
     import isMobile from 'ismobilejs';
 
     import { event } from '../../utils';
-    import preferences from '../../stores/preference';
+    import { preferenceStore as preferences } from '../../stores';
 
     export default {
         props: ['mode', 'for'],

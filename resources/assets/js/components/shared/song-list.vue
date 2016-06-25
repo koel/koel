@@ -50,14 +50,11 @@
     import $ from 'jquery';
 
     import { filterBy, orderBy, limitBy, event, loadMainView } from '../../utils';
+    import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores';
+    import { playback } from '../../services';
     import songItem from './song-item.vue';
     import songMenu from './song-menu.vue';
     import infiniteScroll from '../../mixins/infinite-scroll';
-    import playlistStore from '../../stores/playlist';
-    import queueStore from '../../stores/queue';
-    import songStore from '../../stores/song';
-    import favoriteStore from '../../stores/favorite';
-    import playback from '../../services/playback';
 
     export default {
         name: 'song-list',

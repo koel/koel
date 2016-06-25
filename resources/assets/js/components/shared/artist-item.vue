@@ -30,11 +30,8 @@
     import $ from 'jquery';
 
     import { pluralize } from '../../utils';
-    import playback from '../../services/playback';
-    import download from '../../services/download';
-    import artistStore from '../../stores/artist';
-    import queueStore from '../../stores/queue';
-    import sharedStore from '../../stores/shared';
+    import { artistStore, queueStore, sharedStore } from '../../stores';
+    import { playback, download } from '../../services';
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {

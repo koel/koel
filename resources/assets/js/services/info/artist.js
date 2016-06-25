@@ -1,6 +1,6 @@
-import http from '../http';
+import { http } from '..';
 
-export default {
+export const artistInfo = {
     /**
      * Get extra artist info (from Last.fm).
      *

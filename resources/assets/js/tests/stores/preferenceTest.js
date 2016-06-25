@@ -1,7 +1,7 @@
 require('chai').should();
 
 import localStorage from 'local-storage';
-import preferenceStore from '../../stores/preference';
+import { preferenceStore } from '../../stores';
 
 const user = { id: 0 };
 const preferences = {

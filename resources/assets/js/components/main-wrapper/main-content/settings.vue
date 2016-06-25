@@ -24,7 +24,7 @@
 </template>
 
 <script>
-    import settingStore from '../../../stores/setting';
+    import { settingStore } from '../../../stores';
     import { parseValidationError, forceReloadWindow, event, showOverlay, hideOverlay } from '../../../utils';
 
     export default {

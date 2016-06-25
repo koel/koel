@@ -1,9 +1,7 @@
 require('chai').should();
 import { cloneDeep, last } from 'lodash';
 
-import songStore from '../../stores/song';
-import albumStore from '../../stores/album';
-import artistStore from '../../stores/artist';
+import { songStore, albumStore, artistStore } from '../../stores';
 import artists from '../blobs/media';
 import interactions from '../blobs/interactions';
 

@@ -33,15 +33,10 @@
     import loginForm from './components/auth/login-form.vue';
     import editSongsForm from './components/modals/edit-songs-form.vue';
 
-    import sharedStore from './stores/shared';
-    import queueStore from './stores/queue';
-    import songStore from './stores/song';
-    import userStore from './stores/user';
-    import preferences from './stores/preference';
-    import playback from './services/playback';
-    import focusDirective from './directives/focus';
-    import ls from './services/ls';
     import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow } from './utils';
+    import { sharedStore, queueStore, songStore, userStore, preferenceStore as preferences } from './stores';
+    import { playback, ls } from './services';
+    import focusDirective from './directives/focus';
 
     export default {
         components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },

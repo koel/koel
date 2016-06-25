@@ -1,7 +1,7 @@
 require('chai').should();
 
 import localStorage from 'local-storage';
-import ls from '../../services/ls';
+import { ls } from '../../services';
 
 describe('services/ls', () => {
     beforeEach(() => localStorage.remove('foo'));

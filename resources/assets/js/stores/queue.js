@@ -10,7 +10,7 @@ import {
     first
 } from 'lodash';
 
-export default {
+export const queueStore = {
     state: {
         songs: [],
         current: null,

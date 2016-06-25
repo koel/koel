@@ -5,9 +5,9 @@ import {
     union
 } from 'lodash';
 
-import http from '../services/http';
+import { http } from '../services';
 
-export default {
+export const favoriteStore = {
     state: {
         songs: [],
         length: 0,

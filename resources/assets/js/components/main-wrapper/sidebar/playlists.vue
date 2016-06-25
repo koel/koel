@@ -32,12 +32,12 @@
     import { last } from 'lodash';
 
     import { loadPlaylistView } from '../../../utils';
-    import playlistStore from '../../../stores/playlist';
-    import favoriteStore from '../../../stores/favorite';
+    import { playlistStore, favoriteStore } from '../../../stores';
 
     import playlistItem from './playlist-item.vue';
 
     export default {
+        name: 'sidebar--playlists',
         props: ['currentView'],
         components: { playlistItem },
 

@@ -1,16 +1,10 @@
 import { assign } from 'lodash';
 import isMobile from 'ismobilejs';
 
-import http from '../services/http';
-import userStore from './user';
-import preferenceStore from './preference';
-import artistStore from './artist';
-import songStore from './song';
-import playlistStore from './playlist';
-import queueStore from './queue';
-import settingStore from './setting';
+import { http } from '../services';
+import { userStore, preferenceStore, artistStore, songStore, playlistStore, queueStore, settingStore } from '.';
 
-export default {
+export const sharedStore = {
     state: {
         songs: [],
         albums: [],

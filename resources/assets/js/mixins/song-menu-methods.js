@@ -1,8 +1,6 @@
 import $ from 'jquery';
 
-import queueStore from '../stores/queue';
-import playlistStore from '../stores/playlist';
-import favoriteStore from '../stores/favorite';
+import { queueStore, playlistStore, favoriteStore } from '../stores';
 
 /**
  * Includes the methods triggerable on a song (context) menu.

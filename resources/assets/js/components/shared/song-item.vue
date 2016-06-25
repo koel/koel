@@ -26,8 +26,8 @@
 </template>
 
 <script>
-    import playback from '../../services/playback';
-    import queueStore from '../../stores/queue';
+    import { playback } from '../../services';
+    import { queueStore } from '../../stores';
 
     export default {
         props: ['song'],

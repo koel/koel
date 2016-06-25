@@ -12,10 +12,9 @@ import {
 
 import { secondsToHis } from '../utils';
 import stub from '../stubs/album';
-import songStore from './song';
-import artistStore from './artist';
+import { songStore, artistStore } from '.';
 
-export default {
+export const albumStore = {
     stub,
 
     state: {

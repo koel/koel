@@ -18,6 +18,7 @@
 
 <script>
     import { event } from '../../../utils';
+    import { albumStore } from '../../../stores';
 
     import albums from './albums.vue';
     import album from './album.vue';
@@ -31,8 +32,6 @@
     import playlist from './playlist.vue';
     import favorites from './favorites.vue';
     import profile from './profile.vue';
-
-    import albumStore from '../../../stores/album';
 
     export default {
         components: { albums, album, artists, artist, songs, settings, users, home, queue, playlist, favorites, profile },

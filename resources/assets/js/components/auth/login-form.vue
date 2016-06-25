@@ -7,7 +7,7 @@
 </template>
 
 <script>
-    import userStore from '../../stores/user';
+    import { userStore } from '../../stores';
     import { event } from '../../utils';
 
     export default {

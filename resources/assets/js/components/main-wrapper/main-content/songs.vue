@@ -44,8 +44,8 @@
     import isMobile from 'ismobilejs';
 
     import { pluralize } from '../../../utils';
-    import songStore from '../../../stores/song';
-    import playback from '../../../services/playback';
+    import { songStore } from '../../../stores';
+    import { playback } from '../../../services';
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {

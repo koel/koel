@@ -10,10 +10,12 @@
 </template>
 
 <script>
-    import userStore from '../../stores/user';
+    import { userStore } from '../../stores';
     import { event, loadMainView } from '../../utils';
 
     export default {
+        name: 'site-header--user-badge',
+
         data() {
             return {
                 state: userStore.state,

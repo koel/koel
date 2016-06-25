@@ -4,13 +4,10 @@ import plyr from 'plyr';
 import Vue from 'vue';
 
 import { event, loadMainView } from '../utils';
-import queueStore from '../stores/queue';
-import songStore from '../stores/song';
-import artistStore from '../stores/artist';
-import preferences from '../stores/preference';
+import { queueStore, songStore, artistStore, preferenceStore as preferences } from '../stores';
 import config from '../config';
 
-export default {
+export const playback = {
     player: null,
     $volumeInput: null,
     repeatModes: ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE'],

@@ -7,11 +7,11 @@ import {
 } from 'lodash';
 import NProgress from 'nprogress';
 
-import http from '../services/http';
 import stub from '../stubs/playlist';
-import songStore from './song';
+import { http } from '../services';
+import { songStore } from '.';
 
-export default {
+export const playlistStore = {
     stub,
 
     state: {

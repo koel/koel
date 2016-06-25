@@ -63,11 +63,8 @@
     import $ from 'jquery';
 
     import { event, loadMainView } from '../../../utils';
+    import { sharedStore, userStore, songStore, queueStore } from '../../../stores';
     import playlists from './playlists.vue';
-    import userStore from '../../../stores/user';
-    import songStore from '../../../stores/song';
-    import queueStore from '../../../stores/queue';
-    import sharedStore from '../../../stores/shared';
 
     export default {
         components: { playlists },

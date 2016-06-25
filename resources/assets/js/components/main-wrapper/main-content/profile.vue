@@ -107,11 +107,8 @@
 <script>
     import $ from 'jquery';
 
-    import userStore from '../../../stores/user';
-    import preferenceStore from '../../../stores/preference';
-    import sharedStore from '../../../stores/shared';
-    import http from '../../../services/http';
-    import ls from '../../../services/ls';
+    import { userStore, preferenceStore, sharedStore } from '../../../stores';
+    import { http, ls } from '../../../services';
 
     export default {
         data() {

@@ -46,8 +46,7 @@
     import rangeslider from 'rangeslider.js';
 
     import { isAudioContextSupported, event } from '../../utils';
-    import equalizerStore from '../../stores/equalizer';
-    import preferences from '../../stores/preference';
+    import { equalizerStore, preferenceStore as preferences } from '../../stores';
 
     export default {
         data() {

@@ -1,6 +1,6 @@
-import preferences from './preference';
+import { preferenceStore } from '.';
 
-export default {
+export const equalizerStore = {
     presets: [
         {
             name: 'Default',
@@ -80,12 +80,12 @@ export default {
      * @return {Object}
      */
     get() {
-        if (!this.presets[preferences.selectedPreset]) {
-            return preferences.equalizer;
+        if (!this.presets[preferenceStore.selectedPreset]) {
+            return preferenceStore.equalizer;
         }
 
         // If the user chose a preset (instead of customizing one), just return it.
-        return this.presets[preferences.selectedPreset];
+        return this.presets[preferenceStore.selectedPreset];
     },
 
     /**
@@ -95,6 +95,6 @@ export default {
      * @param  {Array.<Number>} gains  The band's gain value (dB)
      */
     set(preamp, gains) {
-        preferences.equalizer = { preamp, gains };
+        preferenceStore.equalizer = { preamp, gains };
     },
 };

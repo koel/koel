@@ -23,8 +23,8 @@
 
 <script>
     import { pluralize } from '../../utils';
-    import playback from '../../services/playback';
-    import queueStore from '../../stores/queue';
+    import { queueStore } from '../../stores';
+    import { playback } from '../../services';
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
     export default {

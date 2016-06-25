@@ -1,9 +1,9 @@
 import { each } from 'lodash';
 
 import { secondsToHis } from '../../utils';
-import http from '../http';
+import { http } from '..';
 
-export default {
+export const albumInfo = {
     /**
      * Get extra album info (from Last.fm).
      *

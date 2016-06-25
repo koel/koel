@@ -52,7 +52,7 @@
     import isMobile from 'ismobilejs';
 
     import { loadMainView } from '../../../utils';
-    import userStore from '../../../stores/user';
+    import { userStore } from '../../../stores';
     import userItem from '../../shared/user-item.vue';
 
     export default {

@@ -1,8 +1,10 @@
 import Vue from 'vue';
-import App from './app.vue'
-import ls from './services/ls';
 import NProgress from 'nprogress';
+
+import { ls } from './services';
 import { event } from './utils';
+
+import App from './app.vue'
 
 Vue.config.debug = false;
 Vue.use(require('vue-resource'));

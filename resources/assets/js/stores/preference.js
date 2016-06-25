@@ -1,9 +1,9 @@
 import { extend, has, each } from 'lodash';
 
-import userStore from './user';
-import ls from '../services/ls';
+import { userStore } from '.';
+import { ls } from '../services';
 
-export default {
+export const preferenceStore = {
     storeKey: '',
 
     state: {

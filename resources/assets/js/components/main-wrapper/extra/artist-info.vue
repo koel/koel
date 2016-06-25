@@ -30,7 +30,7 @@
 </template>
 
 <script>
-    import playback from '../../../services/playback';
+    import { playback } from '../../../services';
 
     export default {
         replace: false,

@@ -1,11 +1,10 @@
 import $ from 'jquery';
 import { map } from 'lodash';
 
-import playlistStore from '../stores/playlist';
-import favoriteStore from '../stores/favorite';
-import ls from './ls';
+import { playlistStore, favoriteStore } from '../stores';
+import { ls } from '.';
 
-export default {
+export const download = {
     /**
      * Download individual song(s).
      *

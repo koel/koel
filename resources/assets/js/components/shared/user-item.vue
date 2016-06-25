@@ -51,7 +51,7 @@
     import { clone, assign } from 'lodash';
 
     import { loadMainView } from '../../utils';
-    import userStore from '../../stores/user';
+    import { userStore } from '../../stores';
 
     export default {
         props: ['user'],

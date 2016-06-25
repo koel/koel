@@ -79,10 +79,8 @@
     import { every, filter } from 'lodash';
 
     import { br2nl } from '../../utils';
-    import songInfoService from '../../services/info/song';
-    import artistStore from '../../stores/artist';
-    import albumStore from '../../stores/album';
-    import songStore from '../../stores/song';
+    import { songInfo } from '../../services/info';
+    import { artistStore, albumStore, songStore } from '../../stores';
 
     import soundBar from '../shared/sound-bar.vue';
     import typeahead from '../shared/typeahead.vue';
@@ -233,7 +231,7 @@
                     if (!this.songs[0].infoRetrieved) {
                         this.loading = true;
 
-                        songInfoService.fetch(this.songs[0], () => {
+                        songInfo.fetch(this.songs[0], () => {
                             this.loading = false;
                             this.formData.lyrics = br2nl(this.songs[0].lyrics);
                             this.formData.track = this.songs[0].track;

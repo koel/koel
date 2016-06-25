@@ -1,17 +1,12 @@
 import Vue from 'vue';
 import { without, map, take, remove, orderBy, each, union } from 'lodash';
 
-import http from '../services/http';
 import { secondsToHis } from '../utils';
+import { http, ls } from '../services';
+import { sharedStore, favoriteStore, userStore, albumStore, artistStore } from '.';
 import stub from '../stubs/song';
-import favoriteStore from './favorite';
-import sharedStore from './shared';
-import userStore from './user';
-import albumStore from './album';
-import artistStore from './artist';
-import ls from '../services/ls';
 
-export default {
+export const songStore = {
     stub,
     albums: [],
     cache: {},

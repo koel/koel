@@ -1,7 +1,7 @@
-import http from '../services/http';
+import { http } from '../services';
 import stub from '../stubs/settings';
 
-export default {
+export const settingStore = {
     stub,
 
     state: {

@@ -63,11 +63,8 @@
     import isMobile from 'ismobilejs';
 
     import { pluralize, event, loadMainView } from '../../../utils';
-    import sharedStore from '../../../stores/shared';
-    import artistStore from '../../../stores/artist';
-    import playback from '../../../services/playback';
-    import artistInfoService from '../../../services/info/artist';
-    import download from '../../../services/download';
+    import { sharedStore, artistStore } from '../../../stores';
+    import { playback, download, artistInfo as artistInfoService } from '../../../services';
     import hasSongList from '../../../mixins/has-song-list';
     import artistInfo from '../extra/artist-info.vue';
     import soundBar from '../../shared/sound-bar.vue';

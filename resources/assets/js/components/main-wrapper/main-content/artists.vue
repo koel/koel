@@ -15,10 +15,11 @@
 
 <script>
     import { filterBy, limitBy, event } from '../../../utils';
+    import { artistStore } from '../../../stores';
+
     import artistItem from '../../shared/artist-item.vue';
     import viewModeSwitch from '../../shared/view-mode-switch.vue';
     import infiniteScroll from '../../../mixins/infinite-scroll';
-    import artistStore from '../../../stores/artist';
 
     export default {
         mixins: [infiniteScroll],

@@ -3,10 +3,10 @@ import md5 from 'blueimp-md5';
 import Vue from 'vue';
 import NProgress from 'nprogress';
 
-import http from '../services/http';
+import { http } from '../services';
 import stub from '../stubs/user';
 
-export default {
+export const userStore = {
     stub,
 
     state: {

@@ -49,6 +49,6 @@
   },
   "scripts": {
     "postinstall": "cross-env NODE_ENV=production && gulp --production",
-    "test": "mocha --compilers js:babel-register resources/assets/js/tests/**/*Test.js"
+    "test": "mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js"
   }
 }

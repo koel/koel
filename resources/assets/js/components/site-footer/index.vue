@@ -72,12 +72,9 @@
 
 <script>
     import config from '../../config';
-    import playback from '../../services/playback';
+    import { playback } from '../../services';
     import { isAudioContextSupported, event, loadMainView, loadArtistView, loadAlbumView } from '../../utils';
-
-    import songStore from '../../stores/song';
-    import favoriteStore from '../../stores/favorite';
-    import preferenceStore from '../../stores/preference';
+    import { songStore, favoriteStore, preferenceStore } from '../../stores';
 
     import soundBar from '../shared/sound-bar.vue';
     import equalizer from './equalizer.vue';

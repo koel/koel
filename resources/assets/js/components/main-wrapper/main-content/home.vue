@@ -61,11 +61,7 @@
     import { sample } from 'lodash';
 
     import { event } from '../../../utils';
-    import songStore from '../../../stores/song';
-    import albumStore from '../../../stores/album';
-    import artistStore from '../../../stores/artist';
-    import userStore from '../../../stores/user';
-    import preferenceStore from '../../../stores/preference';
+    import { songStore, albumStore, artistStore, userStore, preferenceStore } from '../../../stores';
     import infiniteScroll from '../../../mixins/infinite-scroll';
 
     import albumItem from '../../shared/album-item.vue';

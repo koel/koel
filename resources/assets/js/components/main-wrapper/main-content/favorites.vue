@@ -59,10 +59,8 @@
     import isMobile from 'ismobilejs';
 
     import { pluralize } from '../../../utils';
-    import favoriteStore from '../../../stores/favorite';
-    import sharedStore from '../../../stores/shared';
-    import playback from '../../../services/playback';
-    import download from '../../../services/download';
+    import { favoriteStore, sharedStore } from '../../../stores';
+    import { playback, download } from '../../../services';
     import hasSongList from '../../../mixins/has-song-list';
 
     export default {

@@ -1,9 +1,6 @@
-import http from '../http';
+import { http, albumInfo, artistInfo } from '..';
 
-import albumInfo from './album';
-import artistInfo from './artist';
-
-export default {
+export const songInfo = {
     /**
      * Get extra song information (lyrics, artist info, album info).
      *

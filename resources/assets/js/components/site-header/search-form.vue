@@ -16,6 +16,8 @@
     import { event } from '../../utils';
 
     export default {
+        name: 'site-header--search-form',
+
         data() {
             return {
                 q: '',

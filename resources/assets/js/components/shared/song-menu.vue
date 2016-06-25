@@ -38,12 +38,8 @@
     import artistAlbumDetails from '../../mixins/artist-album-details';
 
     import { event } from '../../utils';
-    import queueStore from '../../stores/queue';
-    import userStore from '../../stores/user';
-    import playlistStore from '../../stores/playlist';
-    import sharedStore from '../../stores/shared';
-    import playback from '../../services/playback';
-    import download from '../../services/download';
+    import { sharedStore, queueStore, userStore, playlistStore } from '../../stores';
+    import { playback, download } from '../../services';
 
     export default {
         name: 'song-menu',

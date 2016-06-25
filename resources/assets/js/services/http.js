@@ -3,7 +3,7 @@ import Vue from 'vue';
 /**
  * Responsible for all HTTP requests.
  */
-export default {
+export const http = {
     request(method, url, data, successCb = null, errorCb = null) {
         return Vue.http[method](url, data).then(successCb, errorCb);
     },

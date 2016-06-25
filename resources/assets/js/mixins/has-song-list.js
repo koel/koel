@@ -5,7 +5,7 @@
 import { assign } from 'lodash';
 
 import { event } from '../utils';
-import playback from '../services/playback';
+import { playback } from '../services';
 import addToMenu from '../components/shared/add-to-menu.vue';
 import songList from '../components/shared/song-list.vue';
 

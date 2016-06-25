@@ -35,12 +35,12 @@
     import $ from 'jquery';
 
     import { event } from '../../../utils';
+    import { songStore, preferenceStore as preferences } from '../../../stores';
+    import { songInfo } from '../../../services';
+
     import lyrics from './lyrics.vue';
     import artistInfo from './artist-info.vue';
     import albumInfo from './album-info.vue';
-    import preferences from '../../../stores/preference';
-    import songStore from '../../../stores/song';
-    import songInfoService from '../../../services/info/song';
 
     export default {
         name: 'main-wrapper--extra--index',
@@ -102,7 +102,7 @@
                     }
                 },
 
-                'song:played': song => songInfoService.fetch(this.song = song),
+                'song:played': song => songInfo.fetch(this.song = song),
 
                 'koel:teardown': () => this.resetState(),
             });
