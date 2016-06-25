@@ -35,14 +35,14 @@
                                 <typeahead
                                     :items="artistState.artists"
                                     :options="artistTypeaheadOptions"
-                                    :value.sync="formData.artistName"></typeahead>
+                                    v-model="formData.artistName"></typeahead>
                             </div>
                             <div class="form-row">
                                 <label>Album</label>
                                 <typeahead
                                     :items="albumState.albums"
                                     :options="albumTypeaheadOptions"
-                                    :value.sync="formData.albumName"></typeahead>
+                                    v-model="formData.albumName"></typeahead>
                             </div>
                             <div class="form-row">
                                 <label class="small">

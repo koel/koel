@@ -54,14 +54,9 @@ export default {
         updateMeta(meta) {
             this.meta = assign(this.meta, meta);
         },
-    },
 
-    created() {
-        event.on({
-            /**
-             * Listen to add-to-menu:close event to set showingAddToMenu to false (and subsequently close the menu).
-             */
-            'add-to-menu:close': () => this.showingAddToMenu = false,
-        });
+        closeAddToMenu() {
+            this.showingAddToMenu = false;
+        },
     },
 };

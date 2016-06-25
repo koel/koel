@@ -42,7 +42,6 @@
     "rangetouch": "0.0.9",
     "sinon": "^1.17.2",
     "vue": "^2.0.0-alpha.6",
-    "vue-clickaway": "^1.1.1",
     "vue-hot-reload-api": "^1.3.2",
     "vue-resource": "^0.7.0",
     "vueify": "^9.1.0",

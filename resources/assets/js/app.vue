@@ -36,7 +36,7 @@
     import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow } from './utils';
     import { sharedStore, queueStore, songStore, userStore, preferenceStore as preferences } from './stores';
     import { playback, ls } from './services';
-    import focusDirective from './directives/focus';
+    import { focusDirective, clickawayDirective } from './directives';
 
     export default {
         components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
@@ -196,6 +196,7 @@
 
     // …and the global directives
     Vue.directive('koel-focus', focusDirective);
+    Vue.directive('koel-clickaway',clickawayDirective);
 </script>
 
 <style lang="sass">

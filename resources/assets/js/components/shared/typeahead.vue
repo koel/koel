@@ -2,13 +2,14 @@
     <div>
         <input type="text"
             :placeholder="options.placeholder || 'No change'"
-            v-model="value"
+            v-model="mutatedValue"
             @keydown.down.prevent="down"
             @keydown.up.prevent="up"
             @keydown.enter.prevent.stop="enter"
             @keydown.tab="enter"
             @keyup="keyup"
             @click="showingResult = true"
+            v-koel-clickaway="hideResults"
         >
         <ul class="result" v-show="showingResult">
             <li v-for="item in displayedItems" @click.prevent="resultClick($event)">
@@ -29,6 +30,7 @@
             return {
                 filter: '',
                 showingResult: false,
+                mutatedValue: this.value,
             };
         },
 
@@ -100,7 +102,7 @@
                     return;
                 }
 
-                this.filter = this.value;
+                this.filter = this.mutatedValue;
                 this.showingResult = true;
             },
 
@@ -113,7 +115,10 @@
             },
 
             apply() {
-                this.value = $(this.$el).find('.result li.selected').text() || this.value;
+                this.mutatedValue = $(this.$el).find('.result li.selected').text().trim() || this.mutatedValue;
+                // In Vue 2.0, we can use v-model on custom components like this.
+                // $emit an 'input' event in this format, and we're set.
+                this.$emit('input', { target: { value: this.mutatedValue } });
             },
 
             /**
@@ -133,6 +138,10 @@
                 if (elemRect.bottom > containerRect.bottom || elemRect.top < containerRect.top) {
                     elem.scrollIntoView(alignTop);
                 }
+            },
+
+            hideResults() {
+                this.showingResult = false;
             },
         },
     };

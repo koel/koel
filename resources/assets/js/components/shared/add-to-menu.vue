@@ -1,5 +1,5 @@
 <template>
-    <div class="add-to-playlist" v-show="showing">
+    <div class="add-to" v-show="showing" v-koel-clickaway="close">
         <p>Add {{ songs.length | pluralize('song') }} to</p>
 
         <ul>
@@ -81,11 +81,8 @@
                 this.close();
             },
 
-            /**
-             * Override the method from "songMenuMethods" mixin for this own logic.
-             */
             close() {
-                event.emit('add-to-menu:close');
+                this.$parent.closeAddToMenu();
             },
         },
     };
@@ -95,7 +92,7 @@
     @import "../../../sass/partials/_vars.scss";
     @import "../../../sass/partials/_mixins.scss";
 
-    .add-to-playlist {
+    .add-to {
         @include context-menu();
 
         position: absolute;
