@@ -50,6 +50,10 @@ export default {
         setSelectedSongs(songs) {
             this.selectedSongs = songs;
         },
+
+        updateMeta(meta) {
+            this.meta = assign(this.meta, meta);
+        },
     },
 
     created() {
@@ -58,8 +62,6 @@ export default {
              * Listen to add-to-menu:close event to set showingAddToMenu to false (and subsequently close the menu).
              */
             'add-to-menu:close': () => this.showingAddToMenu = false,
-
-            'songlist:changed': meta => this.meta = assign(this.meta, meta),
         });
     },
 };

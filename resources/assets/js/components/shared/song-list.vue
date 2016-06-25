@@ -84,8 +84,8 @@
                     this.sortKey = '';
                 }
 
-                // Dispatch this event for the parent to update the song count and duration status.
-                event.emit('songlist:changed', {
+                // Update the song count and duration status on parent.
+                this.$parent.updateMeta({
                     songCount: this.items.length,
                     totalLength: songStore.getLength(this.items, true),
                 });
