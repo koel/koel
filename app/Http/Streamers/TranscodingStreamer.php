@@ -33,7 +33,7 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
     public function stream()
     {
         $ffmpeg = env('FFMPEG_PATH', '/usr/local/bin/ffmpeg');
-        abort_unless(is_executable($ffmpeg), 500, 'Transcoding requires valid ffmpeg settings.');
+        abort_unless(is_executable($ffmpeg), 500, trans('messages.invalid_ffmpeg'));
 
         $bitRate = filter_var($this->bitrate, FILTER_SANITIZE_NUMBER_INT);
 
