@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\UserLoginRequest;
-use App\Models\User;
 use Exception;
 use JWTAuth;
 use Log;
