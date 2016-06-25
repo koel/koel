@@ -108,6 +108,7 @@
     import $ from 'jquery';
 
     import { userStore, preferenceStore, sharedStore } from '../../../stores';
+    import { forceReloadWindow } from '../../../utils';
     import { http, ls } from '../../../services';
 
     export default {
@@ -149,10 +150,9 @@
 
             /**
              * Save the current user's preference.
-             * Right now it's only "Song notification."
              */
             savePreference() {
-                preferenceStore.save();
+                this.$nextTick(() => preferenceStore.save());
             },
 
             /**
