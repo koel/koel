@@ -29,6 +29,7 @@
     "gulp-util": "^3.0.7",
     "ismobilejs": "^0.4.0",
     "jquery": "^2.2.1",
+    "jsdom": "^9.2.1",
     "laravel-elixir": "^5.0.0",
     "local-storage": "^1.4.2",
     "lodash": "^4.6.1",
