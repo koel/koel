@@ -1,13 +1,19 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 
+var cssnext = require('postcss-cssnext');
 var elixir = require('laravel-elixir');
 var gutils = require('gulp-util');
-var b = elixir.config.js.browserify;
 
-require('laravel-elixir-vueify');
+elixir.config.js.browserify.transformers.push({
+    name: 'vueify',
+
+    options: {
+        postcss: [cssnext()]
+    }
+});
 
 if (gutils.env._.indexOf('watch') > -1) {
-    b.plugins.push({
+    elixir.config.js.browserify.plugins.push({
         name: "browserify-hmr",
         options : {}
     });
