@@ -1,6 +1,6 @@
 <template>
   <header id="mainHeader">
-    <h1 class="brand" v-once="appTitle"></h1>
+    <h1 class="brand">{{ appTitle }}</h1>
     <span class="hamburger" @click="toggleSidebar">
       <i class="fa fa-bars"></i>
     </span>
