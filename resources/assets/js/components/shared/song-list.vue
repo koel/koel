@@ -564,6 +564,7 @@ export default {
       display: inline;
       padding: 0;
       vertical-align: bottom;
+      white-space: normal;
 
       &.album, &.time, &.track-number {
         display: none;
