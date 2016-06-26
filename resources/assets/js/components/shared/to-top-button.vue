@@ -20,15 +20,12 @@ export default {
 .to-top-btn-wrapper {
   position: fixed;
   width: 100%;
-  bottom: $footerHeightMobile + 30px;
+  bottom: $footerHeightMobile + 26px;
   left: 0;
   text-align: center;
   z-index: 9999;
-
-  &.fade-transition {
-    opacity: 1;
-    transition: opacity .5s;
-  }
+  opacity: 1;
+  transition: opacity .5s;
 
   &.fade-enter {
     opacity: 0;
