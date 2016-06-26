@@ -20,7 +20,7 @@ export default {
 .to-top-btn-wrapper {
   position: fixed;
   width: 100%;
-  bottom: $footerHeight + 16px;
+  bottom: $footerHeightMobile + 30px;
   left: 0;
   text-align: center;
   z-index: 9999;

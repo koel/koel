@@ -351,7 +351,7 @@ export default {
       text-align: right;
       top: 0;
       line-height: $footerHeight;
-      width: 168px;
+      width: 188px;
       text-align: center;
 
       &::before {
@@ -363,10 +363,14 @@ export default {
       }
 
       .control {
-        margin: 0;
+        margin: 10px 0 0;
         padding: 0 8px;
       }
     }
+  }
+
+  @media only screen and (max-width: 768px) {
+    height: $footerHeightMobile;
   }
 }
 
@@ -442,12 +446,6 @@ export default {
     ::before {
       display: none;
     }
-
-    #progressPane {
-      width: 100%;
-      position: absolute;
-      top: 0;
-    }
   }
 }
 
@@ -495,8 +493,22 @@ export default {
       display: none;
     }
 
-    top: -5px !important;
+    top: -15px;
     padding-top: 0;
+    width: 100%;
+    position: absolute;
+
+    .plyr {
+      &__progress {
+        height: 16px;
+
+        &--buffer[value],
+        &--played[value],
+        &--seek[type='range'] {
+          height: 16px;
+        }
+      }
+    }
   }
 }
 
