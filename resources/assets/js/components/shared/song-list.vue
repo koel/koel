@@ -72,6 +72,7 @@ export default {
       sortingByAlbum: false,
       sortingByArtist: false,
       selectedSongs: [],
+      mutatedItems: [],
     };
   },
 
@@ -83,6 +84,8 @@ export default {
       if (this.sortable === false) {
         this.sortKey = '';
       }
+
+      this.mutatedItems = this.items;
 
       // Update the song count and duration status on parent.
       this.$parent.updateMeta({
@@ -100,7 +103,7 @@ export default {
     displayedItems() {
       return limitBy(
         filterBy(
-          orderBy(this.items, this.sortKey, this.order),
+          this.mutatedItems,
           this.q,
           'title', 'album.name', 'artist.name'
         ),
@@ -124,6 +127,7 @@ export default {
       this.order = 0 - this.order;
       this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.name';
       this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.artist.name';
+      this.mutatedItems = orderBy(this.items, this.sortKey, this.order);
     },
 
     /**
