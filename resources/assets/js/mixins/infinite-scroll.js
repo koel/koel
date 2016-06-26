@@ -38,10 +38,10 @@ export default {
     },
 
     /**
-     * Scroll to top fo the wrapper.
+     * Scroll to top of the wrapper.
      */
     scrollToTop() {
-      $(this.$refs.wrapper).animate({ scrollTop: 0}, 500);
+      $(this.$refs.wrapper).animate({ scrollTop: 0 }, 500);
       this.showBackToTop = false;
     },
   },
