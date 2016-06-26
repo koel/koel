@@ -15,8 +15,8 @@ export function orderBy (arr, sortKey, reverse) {
       return aKey === bKey ? 0 : aKey > bKey;
     }
 
-    aKey = aKey === undefined ? aKey : aKey.toLowerCase();
-    bKey = bKey === undefined ? bKey : bKey.toLowerCase();
+    aKey = aKey === undefined ? aKey : `${aKey}`.toLowerCase();
+    bKey = bKey === undefined ? bKey : `${bKey}`.toLowerCase();
 
     return aKey === bKey ? 0 : aKey > bKey;
   }
