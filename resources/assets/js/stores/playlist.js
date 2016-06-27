@@ -79,9 +79,8 @@ export const playlistStore = {
    *
    * @param  {String}     name  Name of the playlist
    * @param  {Array.<Object>} songs An array of song objects
-   * @param  {?Function}    cb
    */
-  store(name, songs, cb = null) {
+  store(name, songs = []) {
     if (songs.length) {
       // Extract the IDs from the song objects.
       songs = map(songs, 'id');
@@ -89,13 +88,14 @@ export const playlistStore = {
 
     NProgress.start();
 
-    http.post('playlist', { name, songs }, response => {
-      const playlist = response.data;
-      playlist.songs = songs;
-      this.objectifySongs(playlist);
-      this.add(playlist);
-
-      cb && cb();
+    return new Promise((resolve, reject) => {
+      http.post('playlist', { name, songs }, r => {
+        const playlist = r.data;
+        playlist.songs = songs;
+        this.objectifySongs(playlist);
+        this.add(playlist);
+        resolve(playlist);
+      }, r => reject(r));
     });
   },
 
@@ -103,14 +103,15 @@ export const playlistStore = {
    * Delete a playlist.
    *
    * @param  {Object}   playlist
-   * @param  {?Function}  cb
    */
-  delete(playlist, cb = null) {
+  delete(playlist) {
     NProgress.start();
 
-    http.delete(`playlist/${playlist.id}`, {}, () => {
-      this.remove(playlist);
-      cb && cb();
+    return new Promise((resolve, reject) => {
+      http.delete(`playlist/${playlist.id}`, {}, r => {
+        this.remove(playlist);
+        resolve(r);
+      }, r => reject(r));
     });
   },
 
@@ -119,17 +120,22 @@ export const playlistStore = {
    *
    * @param {Object}      playlist
    * @param {Array.<Object>}  songs
-   * @param {?Function}     cb
    */
-  addSongs(playlist, songs, cb = null) {
-    const count = playlist.songs.length;
-    playlist.songs = union(playlist.songs, songs);
+  addSongs(playlist, songs) {
+    return new Promise((resolve, reject) => {
+      const count = playlist.songs.length;
+      playlist.songs = union(playlist.songs, songs);
 
-    if (count === playlist.songs.length) {
-      return;
-    }
+      if (count === playlist.songs.length) {
+        resolve(playlist);
+        return;
+      }
 
-    http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => cb && cb());
+      http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
+        r => resolve(playlist),
+        r => reject(r)
+      );
+    })
   },
 
   /**
@@ -137,23 +143,28 @@ export const playlistStore = {
    *
    * @param  {Object}     playlist
    * @param  {Array.<Object>} songs
-   * @param  {?Function}    cb
    */
-  removeSongs(playlist, songs, cb = null) {
+  removeSongs(playlist, songs) {
     playlist.songs = difference(playlist.songs, songs);
 
-    http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => cb && cb());
+    return new Promise((resolve, reject) => {
+      http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
+        r => resolve(playlist),
+        r => reject(r)
+      );
+    })
   },
 
   /**
    * Update a playlist (just change its name).
    *
    * @param  {Object}   playlist
-   * @param  {?Function}  cb
    */
-  update(playlist, cb = null) {
+  update(playlist) {
     NProgress.start();
 
-    http.put(`playlist/${playlist.id}`, { name: playlist.name }, () => cb && cb());
+    return new Promise((resolve, reject) => {
+      http.put(`playlist/${playlist.id}`, { name: playlist.name }, r => resolve(playlist), r => reject(r));
+    });
   },
 };

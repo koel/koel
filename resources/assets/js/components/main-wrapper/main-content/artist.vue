@@ -137,9 +137,7 @@ export default {
       this.info.showing = true;
       if (!this.artist.info) {
         this.info.loading = true;
-        artistInfoService.fetch(this.artist, () => {
-          this.info.loading = false;
-        });
+        artistInfoService.fetch(this.artist).then(() => this.info.loading = false);
       } else {
         this.info.loading = false;
       }

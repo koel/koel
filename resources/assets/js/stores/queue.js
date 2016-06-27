@@ -141,13 +141,10 @@ export const queueStore = {
 
   /**
    * Clear the current queue.
-   *
-   * @param {?Function} cb The function to execute after clearing
    */
-  clear(cb = null) {
+  clear() {
     this.all = [];
     this.current = null;
-    cb && cb();
   },
 
   /**

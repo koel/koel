@@ -23,32 +23,34 @@ export const sharedStore = {
     cdnUrl: '',
   },
 
-  init(successCb = null, errorCb = null) {
+  init() {
     this.reset();
 
-    http.get('data', response => {
-      const data = response.data;
+    return new Promise((resolve, reject) => {
+      http.get('data', r => {
+        const data = r.data;
 
-      // Don't allow downloading on mobile devices
-      data.allowDownload = data.allowDownload && !isMobile.any;
+        // Don't allow downloading on mobile devices
+        data.allowDownload = data.allowDownload && !isMobile.any;
 
-      assign(this.state, data);
+        assign(this.state, data);
 
-      // If this is a new user, initialize his preferences to be an empty object.
-      if (!this.state.currentUser.preferences) {
-        this.state.currentUser.preferences = {};
-      }
+        // If this is a new user, initialize his preferences to be an empty object.
+        if (!this.state.currentUser.preferences) {
+          this.state.currentUser.preferences = {};
+        }
 
-      userStore.init(this.state.users, this.state.currentUser);
-      preferenceStore.init(this.state.preferences);
-      artistStore.init(this.state.artists); // This will init album and song stores as well.
-      songStore.initInteractions(this.state.interactions);
-      playlistStore.init(this.state.playlists);
-      queueStore.init();
-      settingStore.init(this.state.settings);
+        userStore.init(this.state.users, this.state.currentUser);
+        preferenceStore.init(this.state.preferences);
+        artistStore.init(this.state.artists); // This will init album and song stores as well.
+        songStore.initInteractions(this.state.interactions);
+        playlistStore.init(this.state.playlists);
+        queueStore.init();
+        settingStore.init(this.state.settings);
 
-      successCb && successCb();
-    }, errorCb);
+        resolve(r)
+      }, r => reject(r));
+    });
   },
 
   reset() {

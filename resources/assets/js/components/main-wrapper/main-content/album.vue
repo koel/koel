@@ -146,9 +146,7 @@ export default {
       this.info.showing = true;
       if (!this.album.info) {
         this.info.loading = true;
-        albumInfoService.fetch(this.album, () => {
-          this.info.loading = false;
-        });
+        albumInfoService.fetch(this.album).then(() => this.info.loading = false);
       } else {
         this.info.loading = false;
       }

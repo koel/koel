@@ -4,7 +4,7 @@ import plyr from 'plyr';
 import Vue from 'vue';
 
 import { event, loadMainView } from '../utils';
-import { queueStore, songStore, artistStore, preferenceStore as preferences } from '../stores';
+import { queueStore, sharedStore, userStore, songStore, artistStore, preferenceStore as preferences } from '../stores';
 import config from '../config';
 
 export const playback = {
@@ -43,7 +43,9 @@ export const playback = {
      * Listen to 'ended' event on the audio player and play the next song in the queue.
      */
     document.querySelector('.plyr').addEventListener('ended', e => {
-      songStore.scrobble(queueStore.current);
+      if (sharedStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
+        songStore.scrobble(queueStore.current);
+      }
 
       if (preferences.repeatMode === 'REPEAT_ONE') {
         this.restart();

@@ -23,16 +23,14 @@ export default {
     login() {
       this.failed = false;
 
-      userStore.login(this.email, this.password, () => {
+      userStore.login(this.email, this.password).then(() => {
         this.failed = false;
 
         // Reset the password so that the next login will have this field empty.
         this.password = '';
 
         event.emit('user:loggedin');
-      }, () => {
-        this.failed = true;
-      });
+      }).catch(() => this.failed = true);
     },
   },
 };

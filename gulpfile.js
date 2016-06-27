@@ -28,6 +28,7 @@ elixir(function (mix) {
         .copy('resources/assets/fonts', 'public/build/fonts');
 
     mix.scripts([
+            'node_modules/babel-polyfill/dist/polyfill.min.js',
             'node_modules/plyr/dist/plyr.js',
             'node_modules/rangetouch/dist/rangetouch.js',
             'resources/assets/js/libs/modernizr-custom.js'

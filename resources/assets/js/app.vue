@@ -69,7 +69,7 @@ export default {
 
       // Make the most important HTTP request to get all necessary data from the server.
       // Afterwards, init all mandatory stores and services.
-      sharedStore.init(() => {
+      sharedStore.init().then(() => {
         playback.init();
         hideOverlay();
 
@@ -90,7 +90,7 @@ export default {
 
         // Let all other components know we're ready.
         event.emit('koel:ready');
-      }, () => this.authenticated = false);
+      }).catch(() => this.authenticated = false);
     },
 
     /**
@@ -185,7 +185,7 @@ export default {
        * Log the current user out and reset the application state.
        */
       logout() {
-        userStore.logout(() => {
+        userStore.logout().then((r) => {
           ls.remove('jwt-token');
           forceReloadWindow();
         });

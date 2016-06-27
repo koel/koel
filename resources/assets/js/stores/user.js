@@ -98,42 +98,43 @@ export const userStore = {
    *
    * @param  {String}   email
    * @param  {String}   password
-   * @param  {?Function}  successCb
-   * @param  {?Function}  errorCb
    */
-  login(email, password, successCb = null, errorCb = null) {
+  login(email, password) {
     NProgress.start();
-    http.post('me', { email, password }, () => successCb && successCb(), errorCb);
+
+    return new Promise((resolve, reject) => {
+      http.post('me', { email, password }, r => resolve(r), r => reject(r));
+    });
   },
 
   /**
    * Log the current user out.
-   *
-   * @param  {Function} cb The callback.
    */
-  logout(cb = null) {
-    http.delete('me', {}, () => cb && cb());
+  logout() {
+    return new Promise((resolve, reject) => {
+      http.delete('me', {}, r => resolve(r), r => reject(r));
+    });
   },
 
   /**
    * Update the current user's profile.
    *
    * @param  {string} password Can be an empty string if the user is not changing his password.
-   * @param  {?Function}  successCb
-   * @param  {?Function}  errorCb
    */
-  updateProfile(password = null, cb = null) {
+  updateProfile(password) {
     NProgress.start();
 
-    http.put('me', {
-        password,
-        name: this.current.name,
-        email: this.current.email
-      }, () => {
-        this.setAvatar();
-        cb && cb();
-      }
-    );
+    return new Promise((resolve, reject) => {
+      http.put('me', {
+          password,
+          name: this.current.name,
+          email: this.current.email
+        }, () => {
+          this.setAvatar();
+          resolve(this.current)
+        }, r => reject(r)
+      );
+    });
   },
 
   /**
@@ -142,18 +143,17 @@ export const userStore = {
    * @param  {string}   name
    * @param  {string}   email
    * @param  {string}   password
-   * @param  {?Function}  cb
    */
-  store(name, email, password, cb = null) {
+  store(name, email, password) {
     NProgress.start();
 
-    http.post('user', { name, email, password }, response => {
-      const user = response.data;
-
-      this.setAvatar(user);
-      this.all.unshift(user);
-
-      cb && cb();
+    return new Promise((resolve, reject) => {
+      http.post('user', { name, email, password }, r => {
+        const user = r.data;
+        this.setAvatar(user);
+        this.all.unshift(user);
+        resolve(user);
+      }, r => reject(r));
     });
   },
 
@@ -164,16 +164,16 @@ export const userStore = {
    * @param  {String}   name
    * @param  {String}   email
    * @param  {String}   password
-   * @param  {?Function}  cb
    */
-  update(user, name, email, password, cb = null) {
+  update(user, name, email, password) {
     NProgress.start();
 
-    http.put(`user/${user.id}`, { name, email, password }, () => {
-      this.setAvatar(user);
-      user.password = '';
-
-      cb && cb();
+    return new Promise((resolve, reject) => {
+      http.put(`user/${user.id}`, { name, email, password }, r => {
+        this.setAvatar(user);
+        user.password = '';
+        resolve(user);
+      }, r => reject(r));
     });
   },
 
@@ -181,37 +181,38 @@ export const userStore = {
    * Delete a user.
    *
    * @param  {Object}   user
-   * @param  {?Function}  cb
    */
-  destroy(user, cb = null) {
+  destroy(user) {
     NProgress.start();
 
-    http.delete(`user/${user.id}`, {}, () => {
-      this.all = without(this.all, user);
+    return new Promise((resolve, reject) => {
+      http.delete(`user/${user.id}`, {}, r => {
+        this.all = without(this.all, user);
 
-      // Mama, just killed a man
-      // Put a gun against his head
-      // Pulled my trigger, now he's dead
-      // Mama, life had just begun
-      // But now I've gone and thrown it all away
-      // Mama, oooh
-      // Didn't mean to make you cry
-      // If I'm not back again this time tomorrow
-      // Carry on, carry on, as if nothing really matters
-      //
-      // Too late, my time has come
-      // Sends shivers down my spine
-      // Body's aching all the time
-      // Goodbye everybody - I've got to go
-      // Gotta leave you all behind and face the truth
-      // Mama, oooh
-      // I don't want to die
-      // I sometimes wish I'd never been born at all
+        // Mama, just killed a man
+        // Put a gun against his head
+        // Pulled my trigger, now he's dead
+        // Mama, life had just begun
+        // But now I've gone and thrown it all away
+        // Mama, oooh
+        // Didn't mean to make you cry
+        // If I'm not back again this time tomorrow
+        // Carry on, carry on, as if nothing really matters
+        //
+        // Too late, my time has come
+        // Sends shivers down my spine
+        // Body's aching all the time
+        // Goodbye everybody - I've got to go
+        // Gotta leave you all behind and face the truth
+        // Mama, oooh
+        // I don't want to die
+        // I sometimes wish I'd never been born at all
 
-      /**
-       * Brian May enters the stage.
-       */
-      cb && cb();
+        /**
+         * Brian May enters the stage.
+         */
+        resolve(r);
+      }, r => reject(r));
     });
   },
 };

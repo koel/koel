@@ -80,7 +80,7 @@ export default {
      * Store the newly created user.
      */
     store() {
-      userStore.store(this.newUser.name, this.newUser.email, this.newUser.password, () => {
+      userStore.store(this.newUser.name, this.newUser.email, this.newUser.password).then(u => {
         this.newUser = clone(userStore.stub);
         this.creating = false;
       });

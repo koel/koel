@@ -138,7 +138,7 @@ export default {
 
       $('#inputProfilePassword, #inputProfileConfirmPassword').removeClass('error');
 
-      userStore.updateProfile(this.pwd, () => {
+      userStore.updateProfile(this.pwd).then(() => {
         this.pwd = '';
         this.confirmPwd = '';
 

@@ -16,7 +16,9 @@ export const settingStore = {
     return this.state.settings;
   },
 
-  update(successCb = null, errorCb = null) {
-    http.post('settings', this.all, successCb, errorCb);
+  update() {
+    return new Promise((resolve, reject) => {
+      http.post('settings', this.all, r => resolve(r), r => reject(r));
+    });
   },
 };

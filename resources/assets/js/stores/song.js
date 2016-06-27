@@ -151,18 +151,19 @@ export const songStore = {
    * Increase a play count for a song.
    *
    * @param {Object} song
-   * @param {?Function} cb
    */
-  registerPlay(song, cb = null) {
-    const oldCount = song.playCount;
+  registerPlay(song) {
+    return new Promise((resolve, reject) => {
+      const oldCount = song.playCount;
 
-    http.post('interaction/play', { song: song.id }, response => {
-      // Use the data from the server to make sure we don't miss a play from another device.
-      song.playCount = response.data.play_count;
-      song.album.playCount += song.playCount - oldCount;
-      song.artist.playCount += song.playCount - oldCount;
+      http.post('interaction/play', { song: song.id }, r => {
+        // Use the data from the server to make sure we don't miss a play from another device.
+        song.playCount = r.data.play_count;
+        song.album.playCount += song.playCount - oldCount;
+        song.artist.playCount += song.playCount - oldCount;
 
-      cb && cb();
+        resolve(r);
+      }, r => reject(r));
     });
   },
 
@@ -183,14 +184,13 @@ export const songStore = {
    * Scrobble a song (using Last.fm).
    *
    * @param  {Object}   song
-   * @param  {?Function}  cb
    */
-  scrobble(song, cb = null) {
-    if (!sharedStore.state.useLastfm || !userStore.current.preferences.lastfm_session_key) {
-      return;
-    }
-
-    http.post(`${song.id}/scrobble/${song.playStartTime}`, () => cb && cb());
+  scrobble(song) {
+    return new Promise((resolve, reject) => {
+      http.post(`${song.id}/scrobble/${song.playStartTime}`, r => {
+        resolve(response);
+      }, r => reject(r));
+    })
   },
 
   /**
@@ -198,22 +198,17 @@ export const songStore = {
    *
    * @param  {Array.<Object>} songs   An array of song
    * @param  {Object}     data
-   * @param  {?Function}    successCb
-   * @param  {?Function}    errorCb
    */
-  update(songs, data, successCb = null, errorCb = null) {
-    if (!userStore.current.is_admin) {
-      return;
-    }
-
-    http.put('songs', {
-      data,
-      songs: map(songs, 'id'),
-    }, response => {
-      each(response.data, song => this.syncUpdatedSong(song));
-
-      successCb && successCb();
-    }, () => errorCb && errorCb());
+  update(songs, data) {
+    return new Promise((resolve, reject) => {
+      http.put('songs', {
+        data,
+        songs: map(songs, 'id'),
+      }, r => {
+        each(r.data, song => this.syncUpdatedSong(song));
+        resolve(r);
+      }, r => reject(r));
+    });
   },
 
   /**

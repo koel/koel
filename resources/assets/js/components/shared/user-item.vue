@@ -105,7 +105,7 @@ export default {
      * Update the edited user.
      */
     update() {
-      userStore.update(this.user, this.user.name, this.user.email, this.user.password, () => {
+      userStore.update(this.user, this.user.name, this.user.email, this.user.password). then(u => {
         this.editing = false;
       });
     },
@@ -128,7 +128,8 @@ export default {
      * Kill off the freaking user.
      */
     destroy() {
-      userStore.destroy(this.user, () => {
+      userStore.destroy(this.user).then(() => {
+        this.confirmingDelete = false;
         this.$destroy(true);
       });
     },

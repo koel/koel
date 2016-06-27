@@ -231,7 +231,7 @@
           if (!this.songs[0].infoRetrieved) {
             this.loading = true;
 
-            songInfo.fetch(this.songs[0], () => {
+            songInfo.fetch(this.songs[0]).then(r => {
               this.loading = false;
               this.formData.lyrics = br2nl(this.songs[0].lyrics);
               this.formData.track = this.songs[0].track;
@@ -300,15 +300,13 @@
       submit() {
         this.loading = true;
 
-        songStore.update(this.songs, this.formData, () => {
+        songStore.update(this.songs, this.formData).then(r => {
           this.loading = false;
           this.close();
           if (this.needsReload) {
             forceReloadWindow();
           }
-        }, () => {
-          this.loading = false;
-        });
+        }).catch(r => this.loading = false);
       },
     },
   };

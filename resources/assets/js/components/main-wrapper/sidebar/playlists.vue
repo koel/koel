@@ -29,8 +29,6 @@
 </template>
 
 <script>
-import { last } from 'lodash';
-
 import { loadPlaylistView } from '../../../utils';
 import { playlistStore, favoriteStore } from '../../../stores';
 
@@ -57,11 +55,10 @@ export default {
     store() {
       this.creating = false;
 
-      playlistStore.store(this.newName, [], () => {
+      playlistStore.store(this.newName).then(p => {
         this.newName = '';
-        this.$nextTick(() => {
-          loadPlaylistView(last(this.playlistState.playlists));
-        });
+        // Activate the new playlist right away
+        this.$nextTick(() => loadPlaylistView(p));
       });
     },
   },

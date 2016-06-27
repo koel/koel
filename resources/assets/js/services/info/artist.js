@@ -5,21 +5,18 @@ export const artistInfo = {
    * Get extra artist info (from Last.fm).
    *
    * @param  {Object}  artist
-   * @param  {?Function} cb
    */
-  fetch(artist, cb = null) {
-    if (artist.info) {
-      cb && cb();
-
-      return;
-    }
-
-    http.get(`artist/${artist.id}/info`, response => {
-      if (response.data) {
-        this.merge(artist, response.data);
+  fetch(artist) {
+    return new Promise((resolve, reject) => {
+      if (artist.info) {
+        resolve(artist);
+        return;
       }
 
-      cb && cb();
+      http.get(`artist/${artist.id}/info`, r => {
+        r.data && this.merge(artist, r.data);
+        resolve(artist);
+      }, r => reject(r));
     });
   },
 

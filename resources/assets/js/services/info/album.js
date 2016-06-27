@@ -8,21 +8,18 @@ export const albumInfo = {
    * Get extra album info (from Last.fm).
    *
    * @param  {Object}  album
-   * @param  {?Function} cb
    */
-  fetch(album, cb = null) {
-    if (album.info) {
-      cb && cb();
-
-      return;
-    }
-
-    http.get(`album/${album.id}/info`, response => {
-      if (response.data) {
-        this.merge(album, response.data);
+  fetch(album) {
+    return new Promise((resolve, reject) => {
+      if (album.info) {
+        resolve(album);
+        return;
       }
 
-      cb && cb();
+      http.get(`album/${album.id}/info`, r => {
+        r.data && this.merge(album, r.data);
+        resolve(album);
+      }, r => reject(r));
     });
   },
 

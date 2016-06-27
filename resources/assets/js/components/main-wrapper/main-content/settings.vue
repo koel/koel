@@ -41,9 +41,9 @@ export default {
     save() {
       showOverlay();
 
-      settingStore.update(() => {
+      settingStore.update().then(() => {
         forceReloadWindow();
-      }, error => {
+      }).catch(error => {
         let msg = 'Unknown error.';
 
         if (error.status === 422) {

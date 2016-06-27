@@ -104,7 +104,7 @@ export default {
      * Delete the current playlist.
      */
     del() {
-      playlistStore.delete(this.playlist, () => {
+      playlistStore.delete(this.playlist).then(() => {
         // Reset the current playlist to our stub, so that we don't encounter
         // any property reference error.
         this.playlist = playlistStore.stub;
