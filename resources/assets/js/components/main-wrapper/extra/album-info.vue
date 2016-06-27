@@ -43,7 +43,6 @@
 import { playback } from '../../../services';
 
 export default {
-  replace: false,
   props: ['album', 'mode'],
 
   data() {

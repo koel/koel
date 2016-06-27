@@ -9,7 +9,6 @@
 
 <script>
 export default {
-  replace: false,
   props: ['song'],
 
   methods: {

@@ -55,7 +55,6 @@ import { userStore } from '../../stores';
 
 export default {
   props: ['user'],
-  replace: true,
 
   data() {
     return {

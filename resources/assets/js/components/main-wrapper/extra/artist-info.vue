@@ -33,7 +33,6 @@
 import { playback } from '../../../services';
 
 export default {
-  replace: false,
   props: ['artist', 'mode'],
 
   data() {
