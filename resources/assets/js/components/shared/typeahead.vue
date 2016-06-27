@@ -9,6 +9,7 @@
       @keydown.tab="enter"
       @keyup="keyup"
       @click="showingResult = true"
+      @blur="apply"
       v-koel-clickaway="hideResults"
     >
     <ul class="result" v-show="showingResult">
