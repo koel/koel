@@ -280,13 +280,16 @@ export const songStore = {
         // The artist changes.
         const existingArtist = artistStore.byId(updatedSong.album.artist.id);
 
-        if (!existingArtist) {
+        if (existingArtist) {
+          originalSong.artist = existingArtist;
+        } else {
           // New artist created. We:
           // - Add the album into it, because now it MUST BE a new album
           // (there's no "new artist with existing album" in our system).
           // - Add the new artist into our collection
           artistStore.addAlbumsIntoArtist(updatedSong.album.artist, updatedSong.album);
           artistStore.add(updatedSong.album.artist);
+          originalSong.artist = updatedSong.album.artist;
         }
       }
 
