@@ -187,9 +187,7 @@ export const songStore = {
    */
   scrobble(song) {
     return new Promise((resolve, reject) => {
-      http.post(`${song.id}/scrobble/${song.playStartTime}`, r => {
-        resolve(response);
-      }, r => reject(r));
+      http.post(`${song.id}/scrobble/${song.playStartTime}`, r => resolve(r), r => reject(r));
     })
   },
 
