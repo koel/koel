@@ -1,10 +1,9 @@
 <template>
   <div id="equalizer">
     <div class="presets">
-      <label class="select-wrapper" @change="loadPreset">
+      <label class="select-wrapper">
         <select v-model="selectedPresetIndex">
-          <option value="-1">Preset</option>
-          <option v-for="(preset, idx) in presets" :value="idx">{{ preset.name }}</option>
+          <option v-for="p in presets" :value="p.id" v-once>{{ p.name }}</option>
         </select>
       </label>
     </div>
@@ -34,14 +33,14 @@
           step="0.01"
           data-orientation="vertical"
           :value="band.filter.gain.value">
-        <label v-once="band.label"></label>
+        <label>{{ band.label }}</label>
       </span>
     </div>
   </div>
 </template>
 
 <script>
-import { map } from 'lodash';
+import { map, cloneDeep } from 'lodash';
 import $ from 'jquery';
 import rangeslider from 'rangeslider.js';
 
@@ -53,21 +52,37 @@ export default {
     return {
       idx: 0,
       bands: [],
-      selectedPresetIndex: -1,
       preampGainValue: 0,
-
-      presets: equalizerStore.presets,
+      selectedPresetIndex: -1,
     };
+  },
+
+  computed: {
+    presets() {
+      let clonedPreset = cloneDeep(equalizerStore.presets);
+      // Prepend an empty option for instruction purpose.
+      clonedPreset.unshift({
+        id: -1,
+        name: 'Preset',
+      });
+      return clonedPreset;
+    },
   },
 
   watch: {
     /**
-     * Save the selected preset (index) into local storage every time the value's changed.
-     *
-     * @param  {Number} val
+     * Watch selectedPresetIndex and trigger our logic.
+     * @param {Number} val
      */
     selectedPresetIndex(val) {
+      /**
+       * Save the selected preset (index) into local storage every time the value's changed.
+       */
       preferences.selectedPreset = val;
+
+      if (Number.parseInt(val, 10) !== -1) {
+        this.loadPreset(equalizerStore.getPresetById(val));
+      }
     },
   },
 
@@ -78,7 +93,6 @@ export default {
      * @param  {Element} player The audio player's DOM.
      */
     init(player) {
-      this.selectedPresetIndex = preferences.selectedPreset;
       const settings = equalizerStore.get();
 
       const AudioContext = window.AudioContext ||
@@ -125,6 +139,9 @@ export default {
       prevFilter.connect(context.destination);
 
       this.$nextTick(this.createRangeSliders);
+
+      // Now we set this value to trigger the audio processing.
+      this.selectedPresetIndex = preferences.selectedPreset;
     },
 
     /**
@@ -188,13 +205,7 @@ export default {
     /**
      * Load a preset when the user select it from the dropdown.
      */
-    loadPreset() {
-      if (Number.parseInt(this.selectedPresetIndex, 10) === -1) {
-        return;
-      }
-
-      const preset = this.presets[this.selectedPresetIndex];
-
+    loadPreset(preset) {
       $('#equalizer input[type=range]').each((i, input) => {
         // We treat our preamp slider differently.
         if ($(input).parents('.band').is('.preamp')) {
