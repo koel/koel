@@ -44,9 +44,12 @@
     "vueify-insert-css": "^1.0.0"
   },
   "devDependencies": {
+    "body-parser": "^1.15.2",
     "browserify-hmr": "^0.3.1",
     "chai": "^3.4.1",
+    "express": "^4.14.0",
     "faker": "^3.1.0",
+    "http-server": "^0.9.0",
     "jsdom": "^9.2.1",
     "json-server": "^0.8.14",
     "mocha": "^2.3.4",
@@ -55,6 +58,7 @@
   },
   "scripts": {
     "postinstall": "cross-env NODE_ENV=production && gulp --production",
-    "test": "mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js"
+    "test": "mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js",
+    "e2e": "mocha resources/assets/js/tests/e2e/runner.js"
   }
 }
