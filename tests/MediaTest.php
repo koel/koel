@@ -132,6 +132,24 @@ class MediaTest extends TestCase
         $this->assertEquals('Booom Wroooom', $song->lyrics);
     }
 
+    public function testAlwaysSyncAllTagsIfFileIsNew()
+    {
+        $media = new Media();
+        $media->sync($this->mediaPath);
+        $song = Song::orderBy('id')->first();
+        $song->delete();
+
+        // Selectively sync only one tag,
+        // but we still expect the whole song to be added back with all info
+        $media->sync($this->mediaPath, ['track'], true);
+        $this->seeInDatabase('songs', [
+            'id' => $song->id,
+            'lyrics' => $song->lyrics,
+            'title' => $song->title,
+            'track' => $song->track,
+        ]);
+    }
+
     public function testWatchSingleFileAdded()
     {
         $path = $this->mediaPath.'/blank.mp3';
