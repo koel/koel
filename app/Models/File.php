@@ -6,6 +6,7 @@ use Exception;
 use getID3;
 use getid3_lib;
 use Illuminate\Support\Facades\Log;
+use Media;
 use SplFileInfo;
 
 class File
@@ -179,6 +180,11 @@ class File
             return false;
         }
 
+        // Fixes #366. If the file is new, we use all tags by simply setting $force to false.
+        if ($this->isNew()) {
+            $force = false;
+        }
+
         $artist = null;
 
         if ($this->isChanged() || $force) {
@@ -240,10 +246,7 @@ class File
         // Remove these values from the info array, so that we can just use the array as model's input data.
         array_forget($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
 
-        $song = Song::updateOrCreate(['id' => $this->hash], $info);
-        $song->save();
-
-        return $song;
+        return Song::updateOrCreate(['id' => $this->hash], $info);
     }
 
     /**
