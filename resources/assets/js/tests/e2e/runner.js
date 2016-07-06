@@ -1,16 +1,27 @@
 'use strict'
 const fs = require('fs')
+const chalk = require('chalk')
 const path = require('path')
 require('chai').should()
+const express = require('express')
+const app = express()
 
-let server = require('./server')
+console.log(chalk.white.bgMagenta('Remember to run gulp before e2e!'))
+
+app.use('/public', express.static(path.resolve(__dirname, '../../../../public')))
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'app.html'))
+})
+const appServer = app.listen(8080, function () {
+  console.log('App server started at 8080')
+})
+
+let apiServer = require('./apiServer')
 
 const Nightmare = require('nightmare')
 const nightmare = Nightmare({ show: true })
 
-server.start()
-
-console.warn('Remember to run gulp before e2e')
+apiServer.start()
 
 describe('test elements rendered', function () {
   afterEach(() => {
@@ -18,8 +29,8 @@ describe('test elements rendered', function () {
   })
 
   after(function() {
-    server.stop()
-    server = null
+    apiServer.stop()
+    apiServer = null
   })
 
   it ('should display the login form', done => {
