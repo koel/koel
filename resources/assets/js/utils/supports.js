@@ -40,6 +40,11 @@ export function isClipboardSupported() {
   return 'execCommand' in document;
 };
 
+/**
+ * A simple event bus.
+ *
+ * @type {Object}
+ */
 const event = {
   bus: null,
 

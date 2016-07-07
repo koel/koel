@@ -59,6 +59,7 @@ export function loadArtistView(artist) {
 
 /**
  * Show the overlay.
+ *
  * @param  {String}  message
  * @param  {String}  type
  * @param  {Boolean} dismissable
@@ -69,7 +70,6 @@ export function showOverlay(message = 'Just a little patience…', type = 'loadi
 
 /**
  * Hide the overlay.
- * @return {[type]} [description]
  */
 export function hideOverlay() {
   event.emit('overlay:hide');
