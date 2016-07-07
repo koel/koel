@@ -247,6 +247,7 @@ export default {
 @import "../../../sass/partials/_mixins.scss";
 
 #equalizer {
+  user-select: none;
   position: absolute;
   bottom: $footerHeight;
   width: 100%;
