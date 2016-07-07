@@ -1,8 +1,12 @@
 server {
-  listen        *:80;
-  server_name   koel.dev;
-  root          /var/www/koel;
-  index         index.php;
+  listen          *:80;
+  server_name     koel.dev;
+  root            /var/www/koel;
+  index           index.php;
+
+  gzip            on;
+  gzip_types      text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/json;
+  gzip_com_level  9;
 
   # Whitelist only index.php, robots.txt, and those start with public/ or api/
   if ($request_uri !~ ^/$|index\.php|robots\.txt|api/|public/) {
