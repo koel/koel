@@ -3,16 +3,14 @@
     @blur="close"
     :style="{ top: top + 'px', left: left + 'px' }"
   >
-    <li v-if="onlyOneSongSelected" @click="doPlayback">
-      <span v-if="songs[0].playbackState !== 'playing'">Play</span>
-      <span v-else>Pause</span>
-    </li>
-    <li v-if="onlyOneSongSelected" @click="viewAlbumDetails(songs[0].album)">
-      <span>Go to Album</span>
-    </li>
-    <li v-if="onlyOneSongSelected" @click="viewArtistDetails(songs[0].artist)">
-      <span>Go to Artist</span>
-    </li>
+    <template v-show="onlyOneSongSelected">
+      <li @click="doPlayback">
+        <span v-if="!firstSongPlaying">Play</span>
+        <span v-else>Pause</span>
+      </li>
+      <li @click="viewAlbumDetails(songs[0].album)">Go to Album</li>
+      <li @click="viewArtistDetails(songs[0].artist)">Go to Artist</li>
+    </template>
     <li class="has-sub">Add To
       <ul class="menu submenu">
         <li @click="queueSongsAfterCurrent">After Current Song</li>
@@ -20,14 +18,14 @@
         <li @click="queueSongsToTop">Top of Queue</li>
         <li class="separator"></li>
         <li @click="addSongsToFavorite">Favorites</li>
-        <li class="separator" v-show="playlistState.playlists.length"></li>
-        <li v-for="playlist in playlistState.playlists"
-          @click="addSongsToExistingPlaylist(playlist)"
-        >{{ playlist.name }}</li>
+        <li class="separator" v-if="playlistState.playlists.length"></li>
+        <li v-for="p in playlistState.playlists" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
       </ul>
     </li>
     <li v-if="isAdmin" @click="openEditForm">Edit</li>
-    <li @click="download" v-if="sharedState.allowDownload">Download</li>
+    <li v-if="sharedState.allowDownload" @click="download">Download</li>
+    <!-- somehow v-if doesn't work here -->
+    <li v-show="copyable && onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
   </ul>
 </template>
 
@@ -37,8 +35,8 @@ import $ from 'jquery';
 import songMenuMethods from '../../mixins/song-menu-methods';
 import artistAlbumDetails from '../../mixins/artist-album-details';
 
-import { event } from '../../utils';
-import { sharedStore, queueStore, userStore, playlistStore } from '../../stores';
+import { event, isClipboardSupported, copyText } from '../../utils';
+import { sharedStore, songStore, queueStore, userStore, playlistStore } from '../../stores';
 import { playback, download } from '../../services';
 
 export default {
@@ -50,12 +48,17 @@ export default {
     return {
       playlistState: playlistStore.state,
       sharedState: sharedStore.state,
+      copyable: isClipboardSupported(),
     };
   },
 
   computed: {
     onlyOneSongSelected() {
       return this.songs.length === 1;
+    },
+
+    firstSongPlaying() {
+      return this.songs[0] ? this.songs[0].playbackState === 'playing' : false;
     },
 
     isAdmin() {
@@ -128,6 +131,10 @@ export default {
     download() {
       download.fromSongs(this.songs);
       this.close();
+    },
+
+    copyUrl() {
+      copyText(songStore.getShareableUrl(this.songs[0]));
     },
   },
 

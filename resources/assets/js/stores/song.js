@@ -314,6 +314,18 @@ export const songStore = {
   },
 
   /**
+   * Get a song's shareable URL.
+   * Visiting this URL will automatically queue the song and play it.
+   *
+   * @param  {Object} song
+   *
+   * @return {string}
+   */
+  getShareableUrl(song) {
+    return `${window.location.origin}/#!/song/${song.id}`;
+  },
+
+  /**
    * Get the last n recently played songs.
    *
    * @param  {Number} n

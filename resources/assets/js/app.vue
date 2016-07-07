@@ -33,7 +33,7 @@ import overlay from './components/shared/overlay.vue';
 import loginForm from './components/auth/login-form.vue';
 import editSongsForm from './components/modals/edit-songs-form.vue';
 
-import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow } from './utils';
+import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow, url } from './utils';
 import { sharedStore, queueStore, songStore, userStore, preferenceStore as preferences } from './stores';
 import { playback, ls } from './services';
 import { focusDirective, clickawayDirective } from './directives';
@@ -57,6 +57,9 @@ export default {
 
     // Create the element to be the ghost drag image.
     $('<div id="dragGhost"></div>').appendTo('body');
+
+    // And the textarea to copy stuff
+    $('<textarea id="copyArea"></textarea>').appendTo('body');
 
     // Add an ugly mac/non-mac class for OS-targeting styles.
     // I'm crying inside.
@@ -190,6 +193,17 @@ export default {
           forceReloadWindow();
         });
       },
+
+      /**
+       * Parse song ID from permalink and play.
+       */
+      'koel:ready': () => {
+        const songId = url.parseSongId();
+        if (!songId) return;
+        const song = songStore.byId(songId);
+        if (!song) return;
+        playback.queueAndPlay(song);
+      },
     });
   },
 };
@@ -219,6 +233,17 @@ Vue.directive('koel-clickaway',clickawayDirective);
    * We can totally hide this element on touch devices, because there's
    * no drag and drop support there anyway.
    */
+  html.touchevents & {
+    display: none;
+  }
+}
+
+#copyArea {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+
   html.touchevents & {
     display: none;
   }

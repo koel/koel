@@ -1,7 +1,7 @@
 /**
  * Other common methods.
  */
-
+import select from 'select';
 import { event } from '../utils'
 
 /**
@@ -68,9 +68,22 @@ export function showOverlay(message = 'Just a little patience…', type = 'loadi
 };
 
 /**
- * Hide the overlay
+ * Hide the overlay.
  * @return {[type]} [description]
  */
 export function hideOverlay() {
   event.emit('overlay:hide');
+};
+
+/**
+ * Copy a text into clipboard.
+ *
+ * @param  {string} txt
+ */
+export function copyText(txt) {
+  const copyArea = document.querySelector('#copyArea');
+  copyArea.style.top = (window.pageYOffset || document.documentElement.scrollTop) + 'px';
+  copyArea.value = txt;
+  select(copyArea);
+  document.execCommand('copy');
 };
