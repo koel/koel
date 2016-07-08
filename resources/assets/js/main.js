@@ -43,10 +43,10 @@ Vue.http.interceptors.push({
 });
 
 /**
- * Thor! Odin's son, protector of Mankind
- * Ride to meet your fate, your destiny awaits
- * Thor! Hlödyn's son, protector of Mankind
- * Ride to meet your fate, Ragnarök awaits
+ * For Ancelot, the ancient cross of war
+ * for the holy town of Gods
+ * Gloria, gloria perpetua
+ * in this dawn of victory
  */
 new Vue({
   el: '#app',
