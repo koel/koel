@@ -218,6 +218,7 @@ export default {
 
 // Register our custom key codes
 Vue.config.keyCodes = {
+  a: 65,
   j: 74,
   k: 75,
   f: 70,
