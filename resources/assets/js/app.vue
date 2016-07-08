@@ -25,6 +25,7 @@
 <script>
 import Vue from 'vue';
 import $ from 'jquery';
+import isMobile from 'ismobilejs';
 
 import siteHeader from './components/site-header/index.vue';
 import siteFooter from './components/site-footer/index.vue';
@@ -202,7 +203,14 @@ export default {
         if (!songId) return;
         const song = songStore.byId(songId);
         if (!song) return;
-        playback.queueAndPlay(song);
+
+        if (isMobile.apple.device) {
+          // Mobile Safari doesn't allow autoplay, so we just queue.
+          queueStore.queue(song);
+          loadMainView('queue');
+        } else {
+          playback.queueAndPlay(song);
+        }
       },
     });
   },
