@@ -118,8 +118,7 @@ export default {
     apply() {
       this.mutatedValue = $(this.$el).find('.result li.selected').text().trim() || this.mutatedValue;
       // In Vue 2.0, we can use v-model on custom components like this.
-      // $emit an 'input' event in this format, and we're set.
-      this.$emit('input', { target: { value: this.mutatedValue } });
+      this.$emit('input', this.mutatedValue);
     },
 
     /**
