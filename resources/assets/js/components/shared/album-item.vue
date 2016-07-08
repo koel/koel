@@ -6,13 +6,15 @@
       </a>
     </span>
     <footer>
-      <a class="name" @click.prevent="viewAlbumDetails(album)">{{ album.name }}</a>
-      <span class="sep">by</span>
-      <a class="artist" v-if="isNormalArtist"
-        @click.prevent="viewArtistDetails(album.artist)">
-        {{ album.artist.name }}
-      </a>
-      <span class="artist nope" v-else>{{ album.artist.name }}</span>
+      <div class="info">
+        <a class="name" @click.prevent="viewAlbumDetails(album)">{{ album.name }}</a>
+        <span class="sep">by</span>
+        <a class="artist" v-if="isNormalArtist"
+          @click.prevent="viewArtistDetails(album.artist)">
+          {{ album.artist.name }}
+        </a>
+        <span class="artist nope" v-else>{{ album.artist.name }}</span>
+      </div>
       <p class="meta">
         <span class="left">
           {{ album.songs.length | pluralize('song') }}

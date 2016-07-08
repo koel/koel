@@ -129,6 +129,7 @@
       padding: 16px;
       background: #333;
       flex: 1;
+      overflow: hidden;
     }
 
     .name {
@@ -166,6 +167,15 @@
 
       .as-list & {
         display: inline;
+        white-space: inherit;
+      }
+    }
+
+    .info {
+      .as-list & {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
 

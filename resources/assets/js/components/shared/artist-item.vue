@@ -6,7 +6,9 @@
       </a>
     </span>
     <footer>
-      <a class="name" @click.prevent="viewArtistDetails(artist)">{{ artist.name }}</a>
+      <div class="info">
+        <a class="name" @click.prevent="viewArtistDetails(artist)">{{ artist.name }}</a>
+      </div>
       <p class="meta">
         <span class="left">
           {{ artist.albums.length | pluralize('album') }}
