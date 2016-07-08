@@ -5,8 +5,8 @@
   >
     <template v-show="onlyOneSongSelected">
       <li @click="doPlayback">
-        <span v-if="!firstSongPlaying">Play</span>
-        <span v-else>Pause</span>
+        <span v-show="!firstSongPlaying">Play</span>
+        <span v-show="firstSongPlaying">Pause</span>
       </li>
       <li @click="viewAlbumDetails(songs[0].album)">Go to Album</li>
       <li @click="viewArtistDetails(songs[0].artist)">Go to Artist</li>
@@ -18,12 +18,12 @@
         <li @click="queueSongsToTop">Top of Queue</li>
         <li class="separator"></li>
         <li @click="addSongsToFavorite">Favorites</li>
-        <li class="separator" v-if="playlistState.playlists.length"></li>
+        <li class="separator" v-show="playlistState.playlists.length"></li>
         <li v-for="p in playlistState.playlists" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
       </ul>
     </li>
-    <li v-if="isAdmin" @click="openEditForm">Edit</li>
-    <li v-if="sharedState.allowDownload" @click="download">Download</li>
+    <li v-show="isAdmin" @click="openEditForm">Edit</li>
+    <li v-show="sharedState.allowDownload" @click="download">Download</li>
     <!-- somehow v-if doesn't work here -->
     <li v-show="copyable && onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
   </ul>
