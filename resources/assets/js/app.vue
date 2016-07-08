@@ -5,9 +5,9 @@
       @keydown.j = "playNext"
       @keydown.k = "playPrev"
       @keydown.f = "search"
-      @keydown.177 = "playPrev"
-      @keydown.176 = "playNext"
-      @keydown.179 = "togglePlayback"
+      @keydown.mediaPrev = "playPrev"
+      @keydown.mediaNext = "playNext"
+      @keydown.mediaToggle = "togglePlayback"
     >
       <site-header></site-header>
       <main-wrapper></main-wrapper>
@@ -214,6 +214,16 @@ export default {
       },
     });
   },
+};
+
+// Register our custom key codes
+Vue.config.keyCodes = {
+  j: 74,
+  k: 75,
+  f: 70,
+  mediaNext: 176,
+  mediaPrev: 177,
+  mediaToggle: 179
 };
 
 // …and the global directives
