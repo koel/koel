@@ -34,38 +34,33 @@
         </div>
       </div>
 
-      <span class="other-controls" :class="{ 'with-gradient': prefs.showExtraPanel }">
-        <equalizer v-if="useEqualizer" v-show="showEqualizer"></equalizer>
-
-        <sound-bar v-show="song.playbackState === 'playing'"></sound-bar>
-
-        <i class="like control fa fa-heart" :class="{ liked: song.liked }"
-          @click.prevent="like"></i>
-
-        <span class="control"
-          @click.prevent="toggleExtraPanel"
-          :class="{ active: prefs.showExtraPanel }">Info</span>
-
-        <i class="fa fa-sliders control"
-          v-if="useEqualizer"
-          @click="showEqualizer = !showEqualizer"
-          :class="{ active: showEqualizer }"></i>
-
-        <i v-else
-          class="queue control fa fa-list-ol control"
-          :class="{ active: viewingQueue }"
-          @click.prevent="loadMainView('queue')"></i>
-
-        <span class="repeat control" :class="prefs.repeatMode" @click.prevent="changeRepeatMode">
-          <i class="fa fa-repeat"></i>
-        </span>
-
-        <span class="volume control" id="volume">
-          <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"></i>
-          <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"></i>
-          <input type="range" id="volumeRange" max="10" step="0.1" class="plyr__volume">
-        </span>
-      </span>
+      <div class="other-controls" :class="{ 'with-gradient': prefs.showExtraPanel }">
+        <div class="wrapper">
+          <equalizer v-if="useEqualizer" v-show="showEqualizer"></equalizer>
+          <sound-bar v-show="song.playbackState === 'playing'"></sound-bar>
+          <i class="like control fa fa-heart" :class="{ liked: song.liked }"
+            @click.prevent="like"></i>
+          <span class="control"
+            @click.prevent="toggleExtraPanel"
+            :class="{ active: prefs.showExtraPanel }">Info</span>
+          <i class="fa fa-sliders control"
+            v-if="useEqualizer"
+            @click="showEqualizer = !showEqualizer"
+            :class="{ active: showEqualizer }"></i>
+          <i v-else
+            class="queue control fa fa-list-ol control"
+            :class="{ active: viewingQueue }"
+            @click.prevent="loadMainView('queue')"></i>
+          <span class="repeat control" :class="prefs.repeatMode" @click.prevent="changeRepeatMode">
+            <i class="fa fa-repeat"></i>
+          </span>
+          <span class="volume control" id="volume">
+            <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"></i>
+            <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"></i>
+            <input type="range" id="volumeRange" max="10" step="0.1" class="plyr__volume">
+          </span>
+        </div>
+      </div>
     </div>
   </footer>
 </template>
@@ -302,6 +297,10 @@ export default {
     flex: 0 0 $extraPanelWidth;
     color: $colorLink;
 
+    .wrapper {
+      display: inline-table;
+    }
+
     .control {
       display: inline-block;
       padding: 0 8px;
@@ -346,13 +345,9 @@ export default {
     @media only screen and (max-width: 768px) {
       position: absolute !important;
       right: 0;
-      height: $footerHeight;
-      display: block;
-      text-align: right;
       top: 0;
-      line-height: $footerHeight;
+      height: 100%;
       width: 188px;
-      text-align: center;
 
       &::before {
         display: none;
@@ -363,7 +358,6 @@ export default {
       }
 
       .control {
-        margin: 10px 0 0;
         padding: 0 8px;
       }
     }
