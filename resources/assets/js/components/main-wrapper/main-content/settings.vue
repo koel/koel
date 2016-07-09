@@ -43,11 +43,11 @@ export default {
 
       settingStore.update().then(() => {
         forceReloadWindow();
-      }).catch(error => {
+      }).catch(r => {
         let msg = 'Unknown error.';
 
-        if (error.status === 422) {
-          msg = parseValidationError(error.data)[0];
+        if (r.status === 422) {
+          msg = parseValidationError(r.responseJSON)[0];
         }
 
         showOverlay(`Error: ${msg}`, 'error', true);

@@ -14,12 +14,12 @@ export const songInfo = {
         return;
       }
 
-      http.get(`${song.id}/info`, r => {
-        song.lyrics = r.data.lyrics;
-        r.data.artist_info && artistInfo.merge(song.artist, r.data.artist_info);
-        r.data.album_info && albumInfo.merge(song.album, r.data.album_info);
+      http.get(`${song.id}/info`, data => {
+        song.lyrics = data.lyrics;
+        data.artist_info && artistInfo.merge(song.artist, data.artist_info);
+        data.album_info && albumInfo.merge(song.album, data.album_info);
         song.infoRetrieved = true;
-        resolve(song)
+        resolve(song);
       }, r => reject(r));
     });
   },

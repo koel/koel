@@ -40,7 +40,7 @@ export const favoriteStore = {
     song.liked ? this.add(song) : this.remove(song);
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/like', { song: song.id }, r => resolve(r), r => reject(r));
+      http.post('interaction/like', { song: song.id }, data => resolve(data), r => reject(r));
     });
   },
 
@@ -81,7 +81,7 @@ export const favoriteStore = {
     this.add(songs);
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/batch/like', { songs: map(songs, 'id') }, r => resolve(r), r => reject(r));
+      http.post('interaction/batch/like', { songs: map(songs, 'id') }, data => resolve(data), r => reject(r));
     });
   },
 
@@ -95,7 +95,7 @@ export const favoriteStore = {
     this.remove(songs);
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, r => resolve(r), r => reject(r));
+      http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, data => resolve(data), r => reject(r));
     });
   },
 };

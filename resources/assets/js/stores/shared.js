@@ -27,9 +27,7 @@ export const sharedStore = {
     this.reset();
 
     return new Promise((resolve, reject) => {
-      http.get('data', r => {
-        const data = r.data;
-
+      http.get('data', data => {
         // Don't allow downloading on mobile devices
         data.allowDownload = data.allowDownload && !isMobile.any;
 
@@ -48,7 +46,7 @@ export const sharedStore = {
         queueStore.init();
         settingStore.init(this.state.settings);
 
-        resolve(r)
+        resolve(data)
       }, r => reject(r));
     });
   },

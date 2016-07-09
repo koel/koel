@@ -69,6 +69,7 @@ export default {
 #mainContent {
   flex: 1;
   position: relative;
+  overflow: hidden;
 
   > section {
     position: absolute;
@@ -132,10 +133,10 @@ export default {
 
   .translucent {
     position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
     filter: blur(20px);
     opacity: .07;
     z-index: 0;

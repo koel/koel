@@ -18,7 +18,7 @@ export const settingStore = {
 
   update() {
     return new Promise((resolve, reject) => {
-      http.post('settings', this.all, r => resolve(r), r => reject(r));
+      http.post('settings', this.all, data => resolve(data), r => reject(r));
     });
   },
 };
