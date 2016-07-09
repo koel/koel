@@ -45,7 +45,7 @@ export const http = {
       NProgress.done();
 
       if (r.status === 400 || r.status === 401) {
-        if (!(settings.method === 'POST' && /\/api\/me\/?/.test(settings.url))) {
+        if (!(settings.method === 'POST' && /\/api\/me\/?$/.test(settings.url))) {
           // This is not a failed login. Log out then.
           event.emit('logout');
           return;
