@@ -67,7 +67,7 @@ class Download
         // Start gathering the songs into a zip file.
         $zip = new ZipArchive();
 
-        // We use system's temp dir instead storage_path() here, so that the generated files
+        // We use system's temp dir instead of storage_path() here, so that the generated files
         // can be cleaned up automatically after server reboot.
         $filename = rtrim(sys_get_temp_dir(), '/').'/koel-download-'.uniqid().'.zip';
         if ($zip->open($filename, ZipArchive::CREATE) !== true) {
