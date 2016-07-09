@@ -38,13 +38,6 @@ export const http = {
   },
 
   /**
-   * A shortcut method to ping and check if the user session is still valid.
-   */
-  ping() {
-    return this.get('/');
-  },
-
-  /**
    * Init the service.
    */
   init() {
