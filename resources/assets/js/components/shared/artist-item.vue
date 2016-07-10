@@ -7,7 +7,7 @@
     </span>
     <footer>
       <div class="info">
-        <a class="name" @click.prevent="viewArtistDetails(artist)">{{ artist.name }}</a>
+        <a class="name" :href="'/#!/artist/' + artist.id">{{ artist.name }}</a>
       </div>
       <p class="meta">
         <span class="left">
@@ -34,12 +34,10 @@ import $ from 'jquery';
 import { pluralize } from '../../utils';
 import { artistStore, queueStore, sharedStore } from '../../stores';
 import { playback, download } from '../../services';
-import artistAlbumDetails from '../../mixins/artist-album-details';
 
 export default {
   name: 'shared--artist-item',
   props: ['artist'],
-  mixins: [artistAlbumDetails],
   filters: { pluralize },
 
   data() {

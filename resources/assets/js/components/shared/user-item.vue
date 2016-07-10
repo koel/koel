@@ -50,8 +50,8 @@
 <script>
 import { clone, assign } from 'lodash';
 
-import { loadMainView } from '../../utils';
 import { userStore } from '../../stores';
+import router from '../../router';
 
 export default {
   props: ['user'],
@@ -82,7 +82,7 @@ export default {
      */
     edit() {
       if (this.isCurrentUser) {
-        loadMainView('profile');
+        router.go('/#!/profile');
 
         return;
       }

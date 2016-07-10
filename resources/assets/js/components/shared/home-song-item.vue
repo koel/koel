@@ -14,7 +14,7 @@
         class="play-count"></span>
       {{ song.title }}
       <span class="by">
-        <a href="#" @click.prevent="viewArtistDetails(song.artist)">{{ song.artist.name }}</a> -
+        <a :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a> -
         {{ song.playCount | pluralize('play') }}
       </span>
     </span>
@@ -25,12 +25,10 @@
 import { pluralize } from '../../utils';
 import { queueStore } from '../../stores';
 import { playback } from '../../services';
-import artistAlbumDetails from '../../mixins/artist-album-details';
 
 export default {
   name: 'shared--home-song-item',
   props: ['song', 'topPlayCount'],
-  mixins: [artistAlbumDetails],
   filters: { pluralize },
 
   methods: {

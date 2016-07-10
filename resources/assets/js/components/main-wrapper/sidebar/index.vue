@@ -5,28 +5,24 @@
 
       <ul class="menu">
         <li>
-          <a class="home" :class="[currentView == 'home' ? 'active' : '']"
-            @click.prevent="loadMainView('home')">Home</a>
+          <a class="home" :class="[currentView == 'home' ? 'active' : '']" href="/#!/home">Home</a>
         </li>
         <li>
           <a class="queue"
             :class="[currentView == 'queue' ? 'active' : '']"
-            @click.prevent="loadMainView('queue')"
+            href="/#!/queue"
             @dragleave="removeDroppableState"
             @dragover.prevent="allowDrop"
             @drop.stop.prevent="handleDrop">Current Queue</a>
         </li>
         <li>
-          <a class="songs" :class="[currentView == 'songs' ? 'active' : '']"
-            @click.prevent="loadMainView('songs')">All Songs</a>
+          <a class="songs" :class="[currentView == 'songs' ? 'active' : '']" href="/#!/songs">All Songs</a>
         </li>
         <li>
-          <a class="albums" :class="[currentView == 'albums' ? 'active' : '']"
-            @click.prevent="loadMainView('albums')">Albums</a>
+          <a class="albums" :class="[currentView == 'albums' ? 'active' : '']" href="/#!/albums">Albums</a>
         </li>
         <li>
-          <a class="artists" :class="[currentView == 'artists' ? 'active' : '']"
-            @click.prevent="loadMainView('artists')">Artists</a>
+          <a class="artists" :class="[currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
         </li>
       </ul>
     </section>
@@ -38,12 +34,10 @@
 
       <ul class="menu">
         <li>
-          <a class="settings" :class="[currentView == 'settings' ? 'active' : '']"
-            @click.prevent="loadMainView('settings')">Settings</a>
-          </li>
+          <a class="settings" :class="[currentView == 'settings' ? 'active' : '']" href="/#!/settings">Settings</a>
+        </li>
         <li>
-          <a class="users" :class="[currentView == 'users' ? 'active' : '']"
-            @click.prevent="loadMainView('users')">Users</a>
+          <a class="users" :class="[currentView == 'users' ? 'active' : '']" href="/#!/users">Users</a>
         </li>
       </ul>
     </section>

@@ -26,6 +26,7 @@
 <script>
 import { settingStore } from '../../../stores';
 import { parseValidationError, forceReloadWindow, event, showOverlay, hideOverlay } from '../../../utils';
+import router from '../../../router';
 
 export default {
   data() {
@@ -42,6 +43,8 @@ export default {
       showOverlay();
 
       settingStore.update().then(() => {
+        // Make sure we're back to home first.
+        router.go('/#!/home');
         forceReloadWindow();
       }).catch(r => {
         let msg = 'Unknown error.';

@@ -28,8 +28,9 @@
 <script>
 import { assign } from 'lodash';
 
-import { pluralize, event, loadPlaylistView } from '../../utils';
+import { pluralize, event } from '../../utils';
 import { playlistStore } from '../../stores';
+import router from '../../router';
 import songMenuMethods from '../../mixins/song-menu-methods';
 
 export default {
@@ -72,7 +73,7 @@ export default {
       playlistStore.store(this.newPlaylistName, this.songs).then(p => {
         this.newPlaylistName = '';
         // Activate the new playlist right away
-        this.$nextTick(() => loadPlaylistView(p));
+        this.$nextTick(() => router.go(`/#!/playlist/${p.id}`));
       });
 
       this.close();
