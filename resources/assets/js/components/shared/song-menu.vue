@@ -33,16 +33,16 @@
 import $ from 'jquery';
 
 import songMenuMethods from '../../mixins/song-menu-methods';
-import artistAlbumDetails from '../../mixins/artist-album-details';
 
 import { event, isClipboardSupported, copyText } from '../../utils';
 import { sharedStore, songStore, queueStore, userStore, playlistStore } from '../../stores';
 import { playback, download } from '../../services';
+import router from '../../router';
 
 export default {
   name: 'song-menu',
   props: ['songs'],
-  mixins: [songMenuMethods, artistAlbumDetails],
+  mixins: [songMenuMethods],
 
   data() {
     return {
@@ -125,6 +125,22 @@ export default {
         event.emit('songs:edit', this.songs);
       }
 
+      this.close();
+    },
+
+    /**
+     * Load the album details screen.
+     */
+    viewAlbumDetails(album) {
+      router.go(`/#!/album/${album.id}`);
+      this.close();
+    },
+
+    /**
+     * Load the artist details screen.
+     */
+    viewArtistDetails(artist) {
+      router.go(`/#!/artist/${artist.id}`);
       this.close();
     },
 

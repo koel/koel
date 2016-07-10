@@ -3,9 +3,10 @@ import $ from 'jquery';
 import plyr from 'plyr';
 import Vue from 'vue';
 
-import { event, loadMainView } from '../utils';
+import { event } from '../utils';
 import { queueStore, sharedStore, userStore, songStore, artistStore, preferenceStore as preferences } from '../stores';
 import config from '../config';
+import router from '../router';
 
 export const playback = {
   player: null,
@@ -347,11 +348,12 @@ export const playback = {
 
     queueStore.queue(songs, true);
 
-    loadMainView('queue');
-
     // Wrap this inside a nextTick() to wait for the DOM to complete updating
     // and then play the first song in the queue.
-    Vue.nextTick(() => this.play(queueStore.first));
+    Vue.nextTick(() => {
+      router.go('/#!/queue');
+      this.play(queueStore.first);
+    });
   },
 
   /**

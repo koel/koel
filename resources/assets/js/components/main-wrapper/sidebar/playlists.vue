@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import { loadPlaylistView } from '../../../utils';
 import { playlistStore, favoriteStore } from '../../../stores';
+import router from '../../../router';
 
 import playlistItem from './playlist-item.vue';
 
@@ -58,7 +58,7 @@ export default {
       playlistStore.store(this.newName).then(p => {
         this.newName = '';
         // Activate the new playlist right away
-        this.$nextTick(() => loadPlaylistView(p));
+        this.$nextTick(() => router.go(`/#!/playlist/${p.id}`));
       });
     },
   },

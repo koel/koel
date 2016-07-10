@@ -2,7 +2,6 @@ import Vue from 'vue';
 
 import { event } from './utils';
 import { http } from './services';
-
 /**
  * For Ancelot, the ancient cross of war
  * for the holy town of Gods

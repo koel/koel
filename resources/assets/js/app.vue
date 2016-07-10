@@ -38,6 +38,7 @@ import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow, url }
 import { sharedStore, queueStore, songStore, userStore, preferenceStore as preferences } from './stores';
 import { playback, ls } from './services';
 import { focusDirective, clickawayDirective } from './directives';
+import router from './router';
 
 export default {
   components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
@@ -199,6 +200,8 @@ export default {
        * Parse song ID from permalink and play.
        */
       'koel:ready': () => {
+        router.init();
+
         const songId = url.parseSongId();
         if (!songId) return;
         const song = songStore.byId(songId);
@@ -211,6 +214,8 @@ export default {
         } else {
           playback.queueAndPlay(song);
         }
+
+
       },
     });
   },

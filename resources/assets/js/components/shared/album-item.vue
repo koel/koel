@@ -7,12 +7,9 @@
     </span>
     <footer>
       <div class="info">
-        <a class="name" @click.prevent="viewAlbumDetails(album)">{{ album.name }}</a>
+        <a class="name" :href="'/#!/album/' + album.id">{{ album.name }}</a>
         <span class="sep">by</span>
-        <a class="artist" v-if="isNormalArtist"
-          @click.prevent="viewArtistDetails(album.artist)">
-          {{ album.artist.name }}
-        </a>
+        <a class="artist" v-if="isNormalArtist" :href="'/#!/artist/' + album.artist.id">{{ album.artist.name }}</a>
         <span class="artist nope" v-else>{{ album.artist.name }}</span>
       </div>
       <p class="meta">
@@ -43,12 +40,10 @@ import $ from 'jquery';
 import { pluralize } from '../../utils';
 import { queueStore, artistStore, sharedStore } from '../../stores';
 import { playback, download } from '../../services';
-import artistAlbumDetails from '../../mixins/artist-album-details';
 
 export default {
   name: 'shared--album-item',
   props: ['album'],
-  mixins: [artistAlbumDetails],
   filters: { pluralize },
 
   data() {

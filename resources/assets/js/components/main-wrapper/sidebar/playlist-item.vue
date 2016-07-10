@@ -1,6 +1,6 @@
 <template>
   <li @dblclick.prevent="edit" class="playlist" :class="[type, editing ? 'editing' : '']">
-    <a @click.prevent="load"
+    <a :href="isFavorites ? '/#!/favorites' : '/#!/playlist/' + playlist.id"
       @dragleave="removeDroppableState"
       @dragover.prevent="allowDrop"
       @drop.stop.prevent="handleDrop"
@@ -21,7 +21,7 @@
 <script>
 import $ from 'jquery';
 
-import { event, loadPlaylistView, loadFavoritesView } from '../../../utils';
+import { event } from '../../../utils';
 import { songStore, playlistStore, favoriteStore } from '../../../stores';
 
 export default {
@@ -47,17 +47,6 @@ export default {
   },
 
   methods: {
-    /**
-     * Load songs in the current playlist.
-     */
-    load() {
-      if (this.isFavorites) {
-        loadFavoritesView();
-      } else {
-        loadPlaylistView(this.playlist);
-      }
-    },
-
     /**
      * Show the form to edit the playlist.
      */
