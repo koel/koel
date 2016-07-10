@@ -1,5 +1,8 @@
+import isMobile from 'ismobilejs';
+
 import { loadMainView } from './utils';
-import { artistStore, albumStore, songStore, playlistStore } from './stores';
+import { artistStore, albumStore, songStore, queueStore, playlistStore } from './stores';
+import { playback } from './services';
 
 export default {
   routes: {
@@ -65,7 +68,16 @@ export default {
     },
 
     '/song/([a-z0-9]{32})'(id) {
-      console.log(id)
+      const song = songStore.byId(id);
+      if (!song) return;
+
+      if (isMobile.apple.device) {
+        // Mobile Safari doesn't allow autoplay, so we just queue.
+        queueStore.queue(song);
+        this.go('/#!/queue');
+      } else {
+        playback.queueAndPlay(song);
+      }
     },
   },
 

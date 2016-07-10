@@ -25,7 +25,6 @@
 <script>
 import Vue from 'vue';
 import $ from 'jquery';
-import isMobile from 'ismobilejs';
 
 import siteHeader from './components/site-header/index.vue';
 import siteFooter from './components/site-footer/index.vue';
@@ -35,7 +34,7 @@ import loginForm from './components/auth/login-form.vue';
 import editSongsForm from './components/modals/edit-songs-form.vue';
 
 import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow, url } from './utils';
-import { sharedStore, queueStore, songStore, userStore, preferenceStore as preferences } from './stores';
+import { sharedStore, songStore, userStore, preferenceStore as preferences } from './stores';
 import { playback, ls } from './services';
 import { focusDirective, clickawayDirective } from './directives';
 import router from './router';
@@ -201,21 +200,6 @@ export default {
        */
       'koel:ready': () => {
         router.init();
-
-        const songId = url.parseSongId();
-        if (!songId) return;
-        const song = songStore.byId(songId);
-        if (!song) return;
-
-        if (isMobile.apple.device) {
-          // Mobile Safari doesn't allow autoplay, so we just queue.
-          queueStore.queue(song);
-          loadMainView('queue');
-        } else {
-          playback.queueAndPlay(song);
-        }
-
-
       },
     });
   },
