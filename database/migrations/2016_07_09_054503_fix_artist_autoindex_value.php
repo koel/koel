@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Artist;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class FixArtistAutoindexValue extends Migration
@@ -21,7 +20,7 @@ class FixArtistAutoindexValue extends Migration
         }
 
         $latestArtist = Artist::orderBy('id', 'DESC')->first();
-        DB::statement("ALTER TABLE artists AUTO_INCREMENT=".($latestArtist->id + 1));
+        DB::statement('ALTER TABLE artists AUTO_INCREMENT='.($latestArtist->id + 1));
     }
 
     /**
