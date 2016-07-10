@@ -1,4 +1,4 @@
-import { each, map, difference, union, without } from 'lodash';
+import { each, find, map, difference, union, without } from 'lodash';
 import NProgress from 'nprogress';
 
 import stub from '../stubs/playlist';
@@ -33,6 +33,17 @@ export const playlistStore = {
    */
   set all(value) {
     this.state.playlists = value;
+  },
+
+  /**
+   * Find a playlist by its ID
+   *
+   * @param  {Number} id
+   *
+   * @return {Object}
+   */
+  byId(id) {
+    return find(this.all, { id });
   },
 
   /**
