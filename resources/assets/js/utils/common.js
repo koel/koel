@@ -24,40 +24,6 @@ export function forceReloadWindow() {
 };
 
 /**
- * Load a playlist into the main panel.
- *
- * @param {Object} playlist The playlist object
- */
-export function loadPlaylistView(playlist) {
-  loadMainView('playlist', playlist);
-};
-
-/**
- * Load the Favorites view.
- */
-export function loadFavoritesView() {
-  loadMainView('favorites');
-};
-
-/**
- * Load an album into the main panel.
- *
- * @param  {Object} album The album object
- */
-export function loadAlbumView(album) {
-  loadMainView('album', album);
-};
-
-/**
- * Load an artist into the main panel.
- *
- * @param  {Object} artist The artist object
- */
-export function loadArtistView(artist) {
-  loadMainView('artist', artist);
-};
-
-/**
  * Show the overlay.
  *
  * @param  {String}  message

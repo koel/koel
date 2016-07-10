@@ -33,7 +33,7 @@ import overlay from './components/shared/overlay.vue';
 import loginForm from './components/auth/login-form.vue';
 import editSongsForm from './components/modals/edit-songs-form.vue';
 
-import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow, url } from './utils';
+import { event, showOverlay, hideOverlay, forceReloadWindow, url } from './utils';
 import { sharedStore, songStore, userStore, preferenceStore as preferences } from './stores';
 import { playback, ls } from './services';
 import { focusDirective, clickawayDirective } from './directives';
@@ -78,7 +78,7 @@ export default {
         hideOverlay();
 
         // Load the default view.
-        loadMainView('home');
+        router.go('/#!/home');
 
         // Ask for user's notification permission.
         this.requestNotifPermission();

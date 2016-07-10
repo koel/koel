@@ -56,7 +56,7 @@
 import isMobile from 'ismobilejs';
 import $ from 'jquery';
 
-import { event, loadMainView } from '../../../utils';
+import { event } from '../../../utils';
 import { sharedStore, userStore, songStore, queueStore } from '../../../stores';
 import playlists from './playlists.vue';
 
@@ -73,10 +73,6 @@ export default {
   },
 
   methods: {
-    loadMainView(v) {
-      loadMainView(v);
-    },
-
     /**
      * Remove the droppable state when a dragleave event occurs on the playlist's DOM element.
      *

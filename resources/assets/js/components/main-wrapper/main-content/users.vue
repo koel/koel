@@ -51,7 +51,6 @@
 import { clone } from 'lodash';
 import isMobile from 'ismobilejs';
 
-import { loadMainView } from '../../../utils';
 import { userStore } from '../../../stores';
 import userItem from '../../shared/user-item.vue';
 
@@ -69,13 +68,6 @@ export default {
   },
 
   methods: {
-    /**
-     * Show the "Create User" form.
-     */
-    create() {
-      loadMainView('user-create');
-    },
-
     /**
      * Store the newly created user.
      */

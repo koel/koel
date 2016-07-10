@@ -1,9 +1,9 @@
 <template>
   <span class="profile" id="userBadge">
-    <span class="view-profile control" @click="loadMainView('profile')">
+    <a class="view-profile control" href="/#!/profile">
       <img class="avatar" :src="state.current.avatar" alt="Avatar"></img>
       <span class="name">{{ state.current.name }}</span>
-    </span>
+    </a>
 
     <a class="logout" @click.prevent="logout"><i class="fa fa-sign-out control"></i></a>
   </span>
@@ -11,7 +11,7 @@
 
 <script>
 import { userStore } from '../../stores';
-import { event, loadMainView } from '../../utils';
+import { event } from '../../utils';
 
 export default {
   name: 'site-header--user-badge',
@@ -23,10 +23,6 @@ export default {
   },
 
   methods: {
-    loadMainView(v) {
-      loadMainView(v);
-    },
-
     logout() {
       event.emit('logout');
     },

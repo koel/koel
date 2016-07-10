@@ -49,9 +49,10 @@ import { find, invokeMap, filter, map } from 'lodash';
 import isMobile from 'ismobilejs';
 import $ from 'jquery';
 
-import { filterBy, orderBy, limitBy, event, loadMainView } from '../../utils';
+import { filterBy, orderBy, limitBy, event } from '../../utils';
 import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores';
 import { playback } from '../../services';
+import router from '../../router';
 import songItem from './song-item.vue';
 import songMenu from './song-menu.vue';
 import infiniteScroll from '../../mixins/infinite-scroll';
@@ -199,7 +200,7 @@ export default {
           queueStore.queue(songs, false, e.shiftKey);
 
           this.$nextTick(() => {
-            loadMainView('queue');
+            router.go('/#!/queue');
 
             if (e.ctrlKey || e.metaKey || songs.length === 1) {
               playback.play(songs[0]);

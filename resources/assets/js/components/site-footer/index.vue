@@ -24,8 +24,8 @@
         <div class="progress" id="progressPane">
           <h3 class="title">{{ song.title }}</h3>
           <p class="meta">
-            <a class="artist" @click.prevent="loadArtistView(song.artist)">{{ song.artist.name }}</a> –
-            <a class="album" @click.prevent="loadAlbumView(song.album)">{{ song.album.name }}</a>
+            <a class="artist" :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a> –
+            <a class="album" :href="'/#!/album/' + song.album.id">{{ song.album.name }}</a>
           </p>
 
           <div class="plyr">
@@ -47,10 +47,12 @@
             v-if="useEqualizer"
             @click="showEqualizer = !showEqualizer"
             :class="{ active: showEqualizer }"></i>
-          <i v-else
-            class="queue control fa fa-list-ol control"
+          <a v-else
+            class="queue control"
             :class="{ active: viewingQueue }"
-            @click.prevent="loadMainView('queue')"></i>
+            href="/#!/queue">
+            <i class="fa fa-list-ol"></i>
+          </a>
           <span class="repeat control" :class="prefs.repeatMode" @click.prevent="changeRepeatMode">
             <i class="fa fa-repeat"></i>
           </span>
@@ -68,7 +70,7 @@
 <script>
 import config from '../../config';
 import { playback } from '../../services';
-import { isAudioContextSupported, event, loadMainView, loadArtistView, loadAlbumView } from '../../utils';
+import { isAudioContextSupported, event } from '../../utils';
 import { songStore, favoriteStore, preferenceStore } from '../../stores';
 
 import soundBar from '../shared/sound-bar.vue';
@@ -130,18 +132,6 @@ export default {
   },
 
   methods: {
-    loadMainView(v) {
-      loadMainView(v);
-    },
-
-    loadArtistView(a) {
-      loadArtistView(a);
-    },
-
-    loadAlbumView(a) {
-      loadAlbumView(a);
-    },
-
     /**
      * Mute the volume.
      */

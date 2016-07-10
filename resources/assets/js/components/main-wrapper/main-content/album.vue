@@ -63,9 +63,10 @@
 <script>
 import isMobile from 'ismobilejs';
 
-import { pluralize, event, loadMainView } from '../../../utils';
+import { pluralize, event } from '../../../utils';
 import { albumStore, artistStore, sharedStore } from '../../../stores';
 import { playback, download, albumInfo as albumInfoService } from '../../../services';
+import router from '../../../router';
 import hasSongList from '../../../mixins/has-song-list';
 import albumInfo from '../extra/album-info.vue';
 import soundBar from '../../shared/sound-bar.vue';
@@ -105,7 +106,7 @@ export default {
      */
     'album.songs.length': function (newVal) {
       if (!newVal) {
-        loadMainView('albums');
+        router.go('/#!/albums');
       }
     },
   },
