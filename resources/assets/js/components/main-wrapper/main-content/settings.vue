@@ -44,7 +44,7 @@ export default {
 
       settingStore.update().then(() => {
         // Make sure we're back to home first.
-        router.go('/#!/home');
+        router.go('home');
         forceReloadWindow();
       }).catch(r => {
         let msg = 'Unknown error.';

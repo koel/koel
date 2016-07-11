@@ -82,7 +82,7 @@ export default {
      */
     edit() {
       if (this.isCurrentUser) {
-        router.go('/#!/profile');
+        router.go('profile');
 
         return;
       }

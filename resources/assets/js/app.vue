@@ -78,7 +78,7 @@ export default {
         hideOverlay();
 
         // Load the default view.
-        router.go('/#!/home');
+        router.go('home');
 
         // Ask for user's notification permission.
         this.requestNotifPermission();

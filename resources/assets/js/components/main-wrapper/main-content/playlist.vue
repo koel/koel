@@ -111,7 +111,7 @@ export default {
         this.playlist = playlistStore.stub;
 
         // Switch back to Home screen
-        router.go('/#!/home');
+        router.go('home');
       });
     },
 

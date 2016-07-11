@@ -106,7 +106,7 @@ export default {
      */
     'album.songs.length': function (newVal) {
       if (!newVal) {
-        router.go('/#!/albums');
+        router.go('albums');
       }
     },
   },

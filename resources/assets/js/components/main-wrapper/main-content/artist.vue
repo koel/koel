@@ -98,7 +98,7 @@ export default {
      */
     'artist.albums.length': function (newVal) {
       if (!newVal) {
-        router.go('/#!/artists');
+        router.go('artists');
       }
     },
   },

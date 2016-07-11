@@ -102,7 +102,7 @@ export default {
   },
 
   /**
-   * Navigate to a (relative) path.
+   * Navigate to a (relative, hashed) path.
    *
    * @param  {String} path
    */
@@ -110,6 +110,11 @@ export default {
     if (path[0] !== '/') {
       path = `/${path}`;
     }
+
+    if (path.indexOf('/#!') !== 0) {
+      path = `/#!${path}`;
+    }
+
     document.location.href = `${document.location.origin}${path}`;
   },
 };

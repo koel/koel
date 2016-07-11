@@ -200,7 +200,7 @@ export default {
           queueStore.queue(songs, false, e.shiftKey);
 
           this.$nextTick(() => {
-            router.go('/#!/queue');
+            router.go('queue');
 
             if (e.ctrlKey || e.metaKey || songs.length === 1) {
               playback.play(songs[0]);

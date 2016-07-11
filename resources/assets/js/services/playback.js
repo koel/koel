@@ -351,7 +351,7 @@ export const playback = {
     // Wrap this inside a nextTick() to wait for the DOM to complete updating
     // and then play the first song in the queue.
     Vue.nextTick(() => {
-      router.go('/#!/queue');
+      router.go('queue');
       this.play(queueStore.first);
     });
   },

@@ -132,7 +132,7 @@ export default {
      * Load the album details screen.
      */
     viewAlbumDetails(album) {
-      router.go(`/#!/album/${album.id}`);
+      router.go(`album/${album.id}`);
       this.close();
     },
 
@@ -140,7 +140,7 @@ export default {
      * Load the artist details screen.
      */
     viewArtistDetails(artist) {
-      router.go(`/#!/artist/${artist.id}`);
+      router.go(`artist/${artist.id}`);
       this.close();
     },
 

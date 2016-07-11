@@ -73,7 +73,7 @@ export default {
       playlistStore.store(this.newPlaylistName, this.songs).then(p => {
         this.newPlaylistName = '';
         // Activate the new playlist right away
-        this.$nextTick(() => router.go(`/#!/playlist/${p.id}`));
+        this.$nextTick(() => router.go(`playlist/${p.id}`));
       });
 
       this.close();
