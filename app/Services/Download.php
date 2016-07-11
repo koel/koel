@@ -37,23 +37,62 @@ class Download
         }
     }
 
+    /**
+     * Generate the downloadable path for a song.
+     *
+     * @param Song $song
+     *
+     * @return string
+     */
     protected function fromSong(Song $song)
     {
-        abort_unless(file_exists($song->path), 404);
+        $localPath = '';
 
-        if (ctype_print($song->path)) {
-            return $song->path;
+        if ($s3Params = $song->s3_params) {
+            // The song is hosted on Amazon S3.
+            // We download it back to our local server first.
+            $localPath = rtrim(sys_get_temp_dir(), '/').'/'.basename($s3Params['key']);
+            $url = $song->getObjectStoragePublicUrl();
+
+            abort_unless($url, 404);
+
+            // The following function require allow_url_fopen to be ON.
+            // We're just assuming that to be the case here.
+            copy($url, $localPath);
+        } else {
+            // The song is hosted locally. Make sure the file exists.
+            abort_unless(file_exists($song->path), 404);
+            $localPath = $song->path;
         }
 
         // The BinaryFileResponse factory only accept ASCII-only file names.
+        if (ctype_print($localPath)) {
+            return $localPath;
+        }
+
         // For those with high-byte characters in names, we copy it into a safe name
         // as a workaround.
-        $filename = rtrim(sys_get_temp_dir(), '/').'/'.utf8_decode(basename($song->path));
-        copy($song->path, $filename);
+        $newPath = rtrim(sys_get_temp_dir(), '/').'/'.utf8_decode(basename($song->path));
 
-        return $filename;
+        if ($s3Params) {
+            // If the file is downloaded from S3, we rename it directly.
+            // This will save us some diskspace.
+            rename($localPath, $newPath);
+        } else {
+            // Else we copy it to another file to not mess up the original one.
+            copy($localPath, $newPath);
+        }
+
+        return $newPath;
     }
 
+    /**
+     * Generate a downloadable path of multiple songs in zip format.
+     *
+     * @param Collection $songs
+     *
+     * @return string
+     */
     protected function fromMultipleSongs(Collection $songs)
     {
         if ($songs->count() === 1) {
@@ -81,10 +120,12 @@ class Download
 
         $songs->each(function ($s) use ($zip, &$localNames) {
             try {
+                $path = $this->fromSong($s);
+
                 // We add all files into the zip archive as a flat structure.
                 // As a result, there can be duplicate file names.
                 // The following several lines are to make sure each file name is unique.
-                $name = basename($s->path);
+                $name = basename($path);
                 if (array_key_exists($name, $localNames)) {
                     ++$localNames[$name];
                     $parts = explode('.', $name);
@@ -95,7 +136,7 @@ class Download
                     $localNames[$name] = 1;
                 }
 
-                $zip->addFile($s->path, $name);
+                $zip->addFile($path, $name);
             } catch (Exception $e) {
                 Log::error($e);
             }

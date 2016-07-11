@@ -5,8 +5,11 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
+use Aws\AwsClient;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Mockery as m;
 
 class SongTest extends TestCase
 {
@@ -313,5 +316,23 @@ class SongTest extends TestCase
                 'artist_info' => false,
                 'album_info' => false,
             ]);
+    }
+
+    public function testGetObjectStoragePublicUrl()
+    {
+        $song = Song::first();
+        $song->path = 's3://foo/bar.mp3';
+        $fakeUrl = 'http://aws.com/foo/bar.mp3';
+
+        $client = m::mock(AwsClient::class, [
+            'getCommand' => null,
+            'createPresignedRequest' => m::mock(Request::class, [
+                'getUri' => $fakeUrl,
+            ]),
+        ]);
+
+        Cache::shouldReceive('get')->once()->with("OSUrl/{$song->id}");
+        Cache::shouldReceive('put')->once()->with("OSUrl/{$song->id}", $fakeUrl, 60);
+        $this->assertEquals($fakeUrl, $song->getObjectStoragePublicUrl($client));
     }
 }

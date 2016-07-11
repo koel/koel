@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Events\LibraryChanged;
+use AWS;
+use Aws\AwsClient;
+use Cache;
 use Illuminate\Database\Eloquent\Model;
 use Lastfm;
 
@@ -237,6 +240,39 @@ class Song extends Model
             ->pluck('song');
 
         return $toArray ? $songs->toArray() : $songs;
+    }
+
+    /**
+     * Get the song's Object Storage url for streaming or downloading.
+     *
+     * @param AwsClient $s3
+     *
+     * @return string
+     */
+    public function getObjectStoragePublicUrl(AwsClient $s3 = null)
+    {
+        // If we have a cached version, just return it.
+        if ($cached = Cache::get("OSUrl/{$this->id}")) {
+            return $cached;
+        }
+
+        // Otherwise, we query S3 for the presigned request.
+        if (!$s3) {
+            $s3 = AWS::createClient('s3');
+        }
+
+        $cmd = $s3->getCommand('GetObject', [
+            'Bucket' => $this->s3_params['bucket'],
+            'Key' => $this->s3_params['key'],
+        ]);
+
+        // Here we specify that the request is valid for 1 hour.
+        // We'll also cache the public URL for future reuse.
+        $request = $s3->createPresignedRequest($cmd, '+1 hour');
+        $url = (string) $request->getUri();
+        Cache::put("OSUrl/{$this->id}", $url, 60);
+
+        return $url;
     }
 
     /**
