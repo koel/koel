@@ -196,7 +196,7 @@ export default {
       },
 
       /**
-       * Parse song ID from permalink and play.
+       * Init our basic, custom router on ready to determine app state.
        */
       'koel:ready': () => {
         router.init();
