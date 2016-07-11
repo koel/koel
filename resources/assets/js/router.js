@@ -74,7 +74,7 @@ export default {
       if (isMobile.apple.device) {
         // Mobile Safari doesn't allow autoplay, so we just queue.
         queueStore.queue(song);
-        this.go('/#!/queue');
+        this.go('queue');
       } else {
         playback.queueAndPlay(song);
       }
@@ -88,7 +88,7 @@ export default {
 
   loadState() {
     if (!window.location.hash) {
-      return this.go('/#!/home');
+      return this.go('home');
     }
 
     Object.keys(this.routes).forEach(route => {
