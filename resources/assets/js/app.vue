@@ -77,9 +77,6 @@ export default {
         playback.init();
         hideOverlay();
 
-        // Load the default view.
-        router.go('home');
-
         // Ask for user's notification permission.
         this.requestNotifPermission();
 
