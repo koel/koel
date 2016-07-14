@@ -52,6 +52,11 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
         ]);
         Route::delete('lastfm/disconnect', 'LastfmController@disconnect');
 
+        // YouTube-related routes
+        if (YouTube::enabled()) {
+            Route::get('youtube/search/song/{song}', 'YouTubeController@searchVideosRelatedToSong');
+        }
+
         // Download routes
         Route::group(['prefix' => 'download', 'namespace' => 'Download'], function () {
             Route::get('songs', 'SongController@download');

@@ -152,6 +152,7 @@ return [
         App\Providers\MediaServiceProvider::class,
         App\Providers\UtilServiceProvider::class,
         App\Providers\LastfmServiceProvider::class,
+        App\Providers\YouTubeServiceProvider::class,
         App\Providers\DownloadServiceProvider::class,
 
     ],
@@ -203,6 +204,7 @@ return [
         'Media' => App\Facades\Media::class,
         'Util' => App\Facades\Util::class,
         'Lastfm' => App\Facades\Lastfm::class,
+        'YouTube' => App\Facades\YouTube::class,
         'Download' => App\Facades\Download::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,

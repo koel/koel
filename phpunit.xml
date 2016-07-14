@@ -26,5 +26,6 @@
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="LASTFM_API_KEY" value="foo"/>
         <env name="LASTFM_API_SECRET" value="bar"/>
+        <env name="YOUTUBE_API_KEY" value="foo"/>
     </php>
 </phpunit>
