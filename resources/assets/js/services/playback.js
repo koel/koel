@@ -16,8 +16,6 @@ export const playback = {
 
   /**
    * Initialize the playback service for this whole Koel app.
-   *
-   * @param  {Vue} app The root Vue component.
    */
   init() {
     // We don't need to init this service twice, or the media events will be duplicated.
