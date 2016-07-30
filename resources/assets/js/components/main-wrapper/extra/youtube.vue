@@ -23,7 +23,6 @@ import { youtube as youtubeService } from '../../../services';
 
 export default {
   name: 'main-wrapper--extra--youtube',
-  // We explicitly use 'youtube' as a prop here to force reactivity.
   props: ['song'],
 
   data() {
