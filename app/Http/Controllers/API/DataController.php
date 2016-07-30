@@ -9,6 +9,7 @@ use App\Models\Playlist;
 use App\Models\Setting;
 use App\Models\User;
 use Lastfm;
+use YouTube;
 
 class DataController extends Controller
 {
@@ -34,6 +35,7 @@ class DataController extends Controller
             'users' => auth()->user()->is_admin ? User::all() : [],
             'currentUser' => auth()->user(),
             'useLastfm' => Lastfm::used(),
+            'useYouTube' => YouTube::enabled(),
             'allowDownload' =>  env('ALLOW_DOWNLOAD', true),
             'cdnUrl' => app()->staticUrl(),
             'currentVersion' => Application::VERSION,

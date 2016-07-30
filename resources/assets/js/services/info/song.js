@@ -18,6 +18,7 @@ export const songInfo = {
         song.lyrics = data.lyrics;
         data.artist_info && artistInfo.merge(song.artist, data.artist_info);
         data.album_info && albumInfo.merge(song.album, data.album_info);
+        song.youtube = data.youtube;
         song.infoRetrieved = true;
         resolve(song);
       }, r => reject(r));

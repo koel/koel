@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Song;
 use Cache;
 use GuzzleHttp\Client;
 
@@ -34,7 +35,27 @@ class YouTube extends RESTfulService
     }
 
     /**
-     * Search for YouTube videos.
+     * Search for YouTube videos related to a song.
+     *
+     * @param Song $song
+     * @param string $pageToken
+     *
+     * @return object|false
+     */
+    public function searchVideosRelatedToSong($song, $pageToken = '')
+    {
+        $q = $song->title;
+
+        // If the artist is worth noticing, include them into the search.
+        if (!$song->artist->isUnknown() && !$song->artist->isVarious()) {
+            $q .= ' '.$song->artist->name;
+        }
+
+        return $this->search($q, $pageToken);
+    }
+
+    /**
+     * Search for YouTube videos by a query string.
      *
      * @param string $q         The query string
      * @param string $pageToken YouTube page token (e.g. for next/previous page)
@@ -48,7 +69,7 @@ class YouTube extends RESTfulService
             return false;
         }
 
-        $uri = sprintf('search?part=snippet&maxResults=%s&pageToken=%s&q=%s',
+        $uri = sprintf('search?part=snippet&type=video&maxResults=%s&pageToken=%s&q=%s',
             $perPage,
             urlencode($pageToken),
             urlencode($q)

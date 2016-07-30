@@ -17,6 +17,7 @@ export const sharedStore = {
     currentUser: null,
     playlists: [],
     useLastfm: false,
+    useYouTube: false,
     allowDownload: false,
     currentVersion: '',
     latestVersion: '',
@@ -32,6 +33,9 @@ export const sharedStore = {
         data.allowDownload = data.allowDownload && !isMobile.any;
 
         assign(this.state, data);
+
+        // Always disable YouTube integration on mobile.
+        this.state.useYouTube = this.state.useYouTube && !isMobile.phone;
 
         // If this is a new user, initialize his preferences to be an empty object.
         if (!this.state.currentUser.preferences) {

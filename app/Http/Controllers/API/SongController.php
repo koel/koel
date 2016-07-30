@@ -9,6 +9,7 @@ use App\Http\Streamers\TranscodingStreamer;
 use App\Http\Streamers\XAccelRedirectStreamer;
 use App\Http\Streamers\XSendFileStreamer;
 use App\Models\Song;
+use YouTube;
 
 class SongController extends Controller
 {
@@ -63,6 +64,7 @@ class SongController extends Controller
             'lyrics' => $song->lyrics,
             'album_info' => $song->album->getInfo(),
             'artist_info' => $song->artist->getInfo(),
+            'youtube' => YouTube::searchVideosRelatedToSong($song),
         ]);
     }
 

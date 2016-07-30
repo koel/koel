@@ -79,6 +79,10 @@ export default {
         playback.queueAndPlay(song);
       }
     },
+
+    '/youtube'() {
+      loadMainView('youtubePlayer');
+    },
   },
 
   init() {

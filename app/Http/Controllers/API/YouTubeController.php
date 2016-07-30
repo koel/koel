@@ -18,13 +18,6 @@ class YouTubeController extends Controller
      */
     public function searchVideosRelatedToSong(Request $request, Song $song)
     {
-        $q = $song->title;
-
-        // If the artist is worth noticing, include them into the search.
-        if (!$song->artist->isUnknown() && !$song->artist->isVarious()) {
-            $q .= ' '.$song->artist->name;
-        }
-
-        return response()->json(YouTube::search($q, $request->input('pageToken')));
+        return response()->json(YouTube::searchVideosRelatedToSong($song, $request->input('pageToken')));
     }
 }

@@ -8,6 +8,9 @@
           :class="{ active: currentView === 'artistInfo' }">Artist</a>
         <a @click.prevent="currentView = 'albumInfo'"
           :class="{ active: currentView === 'albumInfo' }">Album</a>
+        <a @click.prevent="currentView = 'youtube'"
+          v-if="sharedState.useYouTube"
+          :class="{ active: currentView === 'youtube' }"><i class="fa fa-youtube-play"></i></a>
       </div>
 
       <div class="panes">
@@ -24,6 +27,11 @@
           ref="album-info"
           v-show="currentView === 'albumInfo'">
         </album-info>
+        <youtube v-if="sharedState.useYouTube"
+          :song="song" :youtube="song.youtube"
+          ref="youtube"
+          v-show="currentView === 'youtube'">
+        </youtube>
       </div>
     </div>
   </section>
@@ -35,21 +43,23 @@ import { invokeMap } from 'lodash';
 import $ from 'jquery';
 
 import { event } from '../../../utils';
-import { songStore, preferenceStore as preferences } from '../../../stores';
+import { sharedStore, songStore, preferenceStore as preferences } from '../../../stores';
 import { songInfo } from '../../../services';
 
 import lyrics from './lyrics.vue';
 import artistInfo from './artist-info.vue';
 import albumInfo from './album-info.vue';
+import youtube from './youtube.vue';
 
 export default {
   name: 'main-wrapper--extra--index',
-  components: { lyrics, artistInfo, albumInfo },
+  components: { lyrics, artistInfo, albumInfo, youtube },
 
   data() {
     return {
       song: songStore.stub,
       state: preferences.state,
+      sharedState: sharedStore.state,
       currentView: 'lyrics',
     };
   },
@@ -102,7 +112,11 @@ export default {
         }
       },
 
-      'song:played': song => songInfo.fetch(this.song = song),
+      'song:played': song => {
+        songInfo.fetch(song).then(song => {
+          this.song = song;
+        });
+      },
 
       'koel:teardown': () => this.resetState(),
     });

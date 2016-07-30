@@ -13,6 +13,7 @@
     <playlist v-show="view === 'playlist'"></playlist>
     <favorites v-show="view === 'favorites'"></favorites>
     <profile v-show="view === 'profile'"></profile>
+    <youtube-player v-show="view === 'youtubePlayer'"></youtube-player>
   </section>
 </template>
 
@@ -32,9 +33,11 @@ import home from './home.vue';
 import playlist from './playlist.vue';
 import favorites from './favorites.vue';
 import profile from './profile.vue';
+import youtubePlayer from './youtube-player.vue';
 
 export default {
-  components: { albums, album, artists, artist, songs, settings, users, home, queue, playlist, favorites, profile },
+  components: { albums, album, artists, artist, songs, settings,
+    users, home, queue, playlist, favorites, profile, youtubePlayer },
 
   data() {
     return {

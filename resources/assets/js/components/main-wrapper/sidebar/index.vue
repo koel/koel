@@ -24,6 +24,9 @@
         <li>
           <a class="artists" :class="[currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
         </li>
+        <li v-if="sharedState.useYouTube">
+          <a class="youtube" :class="[currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
+        </li>
       </ul>
     </section>
 
@@ -223,6 +226,10 @@ export default {
 
       &.artists::before {
         content: "\f130";
+      }
+
+      &.youtube::before {
+        content: "\f16a";
       }
 
       &.settings::before {
