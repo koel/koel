@@ -2,11 +2,11 @@
 
 use App\Models\Song;
 use App\Services\YouTube;
-use Mockery as m;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Mockery as m;
 use YouTube as YouTubeFacade;
 
 class YouTubeTest extends TestCase
