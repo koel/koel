@@ -27,7 +27,7 @@ class YouTubeTest extends TestCase
         $this->assertEquals('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
 
         // Is it cached?
-        $this->assertNotNull(Cache::get('d8e86ba65cdf0000a30e9359f61ee58c'));
+        $this->assertNotNull(Cache::get('1492972ec5c8e6b3a9323ba719655ddb'));
     }
 
     public function testSearchVideosRelatedToSong()
@@ -36,7 +36,7 @@ class YouTubeTest extends TestCase
         $song = Song::first();
 
         // We test on the facade here
-        YouTubeFacade::shouldReceive('search')->once();
+        YouTubeFacade::shouldReceive('searchVideosRelatedToSong')->once();
 
         $this->visit("/api/youtube/search/song/{$song->id}");
     }
