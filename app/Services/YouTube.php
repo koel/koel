@@ -37,7 +37,7 @@ class YouTube extends RESTfulService
     /**
      * Search for YouTube videos related to a song.
      *
-     * @param Song $song
+     * @param Song   $song
      * @param string $pageToken
      *
      * @return object|false
