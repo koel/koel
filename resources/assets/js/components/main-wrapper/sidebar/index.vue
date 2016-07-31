@@ -46,9 +46,9 @@
     </section>
 
     <a
-      href="https://github.com/phanan/koel/releases"
+      :href="'https://github.com/phanan/koel/releases/tag/' + sharedState.latestVersion"
       target="_blank"
-      v-show="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
+      v-if="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
       class="new-ver">
       Koel version {{ sharedState.latestVersion }} is available!
     </a>
