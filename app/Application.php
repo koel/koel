@@ -90,8 +90,8 @@ class Application extends IlluminateApplication
 
         try {
             $v = json_decode($client->get('https://api.github.com/repos/phanan/koel/tags')->getBody())[0]->name;
-            // Cache for a week
-            Cache::put('latestKoelVersion', $v, 7 * 24 * 60);
+            // Cache for one day
+            Cache::put('latestKoelVersion', $v, 1 * 24 * 60);
 
             return $v;
         } catch (Exception $e) {
