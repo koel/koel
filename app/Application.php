@@ -82,11 +82,11 @@ class Application extends IlluminateApplication
      */
     public function getLatestVersion(Client $client = null)
     {
-        $client = $client ?: new Client();
-
         if ($v = Cache::get('latestKoelVersion')) {
             return $v;
         }
+
+        $client = $client ?: new Client();
 
         try {
             $v = json_decode($client->get('https://api.github.com/repos/phanan/koel/tags')->getBody())[0]->name;
