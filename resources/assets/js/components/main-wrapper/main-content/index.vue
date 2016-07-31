@@ -13,13 +13,13 @@
     <playlist v-show="view === 'playlist'"></playlist>
     <favorites v-show="view === 'favorites'"></favorites>
     <profile v-show="view === 'profile'"></profile>
-    <youtube-player v-show="view === 'youtubePlayer'"></youtube-player>
+    <youtube-player v-if="sharedState.useYouTube" v-show="view === 'youtubePlayer'"></youtube-player>
   </section>
 </template>
 
 <script>
 import { event } from '../../../utils';
-import { albumStore } from '../../../stores';
+import { albumStore, sharedStore } from '../../../stores';
 
 import albums from './albums.vue';
 import album from './album.vue';
@@ -43,6 +43,7 @@ export default {
     return {
       view: 'home', // The default view
       albumCover: null,
+      sharedState: sharedStore.state,
     };
   },
 
