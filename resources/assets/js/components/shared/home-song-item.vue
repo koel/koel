@@ -44,9 +44,9 @@ export default {
       if (this.song.playbackState === 'stopped') {
         this.play(this.song);
       } else if (this.song.playbackState === 'paused') {
-        this.playback.resume();
+        playback.resume();
       } else {
-        this.playback.pause();
+        playback.pause();
       }
     },
   },
