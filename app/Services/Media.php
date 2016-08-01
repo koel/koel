@@ -177,7 +177,7 @@ class Media
     /**
      * Construct an array of tags to be synced into the database from an input array of tags.
      * If the input array is empty or contains only invalid items, we use all tags.
-     * Otherwise, we only use the valid items it it.
+     * Otherwise, we only use the valid items in it.
      *
      * @param array $tags
      */
