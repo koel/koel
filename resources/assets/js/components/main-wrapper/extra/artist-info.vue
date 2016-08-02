@@ -22,7 +22,9 @@
       </div>
       <p class="none" v-else>This artist has no Last.fm biography – yet.</p>
 
-      <footer>Data &copy; <a target="_blank" :href="artist.info.url">Last.fm</a></footer>
+      <footer>Data &copy;
+        <a onmousedown="return false" target="_blank" :href="artist.info.url">Last.fm</a>
+      </footer>
     </div>
 
     <p class="none" v-else>Nothing can be found. This artist is a mystery.</p>

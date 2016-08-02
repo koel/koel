@@ -13,7 +13,7 @@
 
         <span class="meta" v-show="meta.songCount">
           by
-          <a class="artist" v-if="isNormalArtist" :href="'/#!/artist/' + album.artist.id">{{ album.artist.name }}</a>
+          <a class="artist" v-if="isNormalArtist" onmousedown="return false" :href="'/#!/artist/' + album.artist.id">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
           {{ meta.songCount | pluralize('song') }}
@@ -22,11 +22,19 @@
 
           <template v-if="sharedState.useLastfm">
             •
-            <a href="#" @click.prevent="showInfo" title="View album's extra information">Info</a>
+            <a onmousedown="return false"
+              href="#" @click.prevent="showInfo"
+              title="View album's extra information">
+              Info
+              </a>
           </template>
           <template v-if="sharedState.allowDownload">
             •
-            <a href="#" @click.prevent="download" title="Download all songs in album">Download</a>
+            <a onmousedown="return false"
+              href="#" @click.prevent="download"
+              title="Download all songs in album">
+              Download
+              </a>
           </template>
         </span>
       </span>

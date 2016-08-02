@@ -5,27 +5,43 @@
 
       <ul class="menu">
         <li>
-          <a class="home" :class="[currentView == 'home' ? 'active' : '']" href="/#!/home">Home</a>
+          <a class="home"
+            :class="[currentView == 'home' ? 'active' : '']"
+            onmousedown="return false"
+            href="/#!/home">Home</a>
         </li>
         <li>
           <a class="queue"
             :class="[currentView == 'queue' ? 'active' : '']"
+            onmousedown="return false"
             href="/#!/queue"
             @dragleave="removeDroppableState"
             @dragover.prevent="allowDrop"
             @drop.stop.prevent="handleDrop">Current Queue</a>
         </li>
         <li>
-          <a class="songs" :class="[currentView == 'songs' ? 'active' : '']" href="/#!/songs">All Songs</a>
+          <a class="songs"
+            :class="[currentView == 'songs' ? 'active' : '']"
+            onmousedown="return false"
+            href="/#!/songs">All Songs</a>
         </li>
         <li>
-          <a class="albums" :class="[currentView == 'albums' ? 'active' : '']" href="/#!/albums">Albums</a>
+          <a class="albums"
+            :class="[currentView == 'albums' ? 'active' : '']"
+            onmousedown="return false"
+            href="/#!/albums">Albums</a>
         </li>
         <li>
-          <a class="artists" :class="[currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
+          <a class="artists"
+            :class="[currentView == 'artists' ? 'active' : '']"
+            onmousedown="return false"
+            href="/#!/artists">Artists</a>
         </li>
         <li v-if="sharedState.useYouTube">
-          <a class="youtube" :class="[currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
+          <a class="youtube"
+            :class="[currentView == 'youtubePlayer' ? 'active' : '']"
+            onmousedown="return false"
+            href="/#!/youtube">YouTube Video</a>
         </li>
       </ul>
     </section>
@@ -37,10 +53,16 @@
 
       <ul class="menu">
         <li>
-          <a class="settings" :class="[currentView == 'settings' ? 'active' : '']" href="/#!/settings">Settings</a>
+          <a class="settings"
+            :class="[currentView == 'settings' ? 'active' : '']"
+            onmousedown="return false"
+            href="/#!/settings">Settings</a>
         </li>
         <li>
-          <a class="users" :class="[currentView == 'users' ? 'active' : '']" href="/#!/users">Users</a>
+          <a class="users"
+            :class="[currentView == 'users' ? 'active' : '']"
+            onmousedown="return false"
+            href="/#!/users">Users</a>
         </li>
       </ul>
     </section>
@@ -49,7 +71,8 @@
       :href="'https://github.com/phanan/koel/releases/tag/' + sharedState.latestVersion"
       target="_blank"
       v-if="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
-      class="new-ver">
+      class="new-ver"
+      onmousedown="return false">
       Koel version {{ sharedState.latestVersion }} is available!
     </a>
   </nav>

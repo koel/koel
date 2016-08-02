@@ -24,8 +24,12 @@
         <div class="progress" id="progressPane">
           <h3 class="title">{{ song.title }}</h3>
           <p class="meta">
-            <a class="artist" :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a> –
-            <a class="album" :href="'/#!/album/' + song.album.id">{{ song.album.name }}</a>
+            <a class="artist"
+              onmousedown="return false"
+              :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a> –
+            <a class="album"
+              onmousedown="return false"
+              :href="'/#!/album/' + song.album.id">{{ song.album.name }}</a>
           </p>
 
           <div class="plyr">
