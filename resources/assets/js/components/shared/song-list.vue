@@ -343,10 +343,8 @@ export default {
       }
 
       this.$nextTick(() => {
-        // We can opt for something like application/x-koel.text+plain here to sound fancy,
-        // but forget it.
         const songIds = map(this.selectedSongs, 'id');
-        e.dataTransfer.setData('text/plain', songIds);
+        e.dataTransfer.setData('application/x-koel.text+plain', songIds);
         e.dataTransfer.effectAllowed = 'move';
 
         // Set a fancy drop image using our ghost element.

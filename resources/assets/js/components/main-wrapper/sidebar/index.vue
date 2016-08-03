@@ -107,11 +107,11 @@ export default {
     handleDrop(e) {
       this.removeDroppableState(e);
 
-      if (!e.dataTransfer.getData('text/plain')) {
+      if (!e.dataTransfer.getData('application/x-koel.text+plain')) {
         return false;
       }
 
-      const songs = songStore.byIds(e.dataTransfer.getData('text/plain').split(','));
+      const songs = songStore.byIds(e.dataTransfer.getData('application/x-koel.text+plain').split(','));
 
       if (!songs.length) {
         return false;
