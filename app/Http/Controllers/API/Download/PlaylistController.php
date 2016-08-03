@@ -12,8 +12,9 @@ class PlaylistController extends Controller
      *
      * @param Playlist $playlist
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function download(Playlist $playlist)
     {

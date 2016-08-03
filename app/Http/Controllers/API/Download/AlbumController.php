@@ -10,7 +10,7 @@ class AlbumController extends Controller
     /**
      * Download all songs in an album.
      *
-     * @param Album   $album
+     * @param Album $album
      *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */

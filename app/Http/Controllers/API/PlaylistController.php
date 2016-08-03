@@ -41,8 +41,9 @@ class PlaylistController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param Playlist                 $playlist
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, Playlist $playlist)
     {
@@ -60,8 +61,9 @@ class PlaylistController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param Playlist                 $playlist
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sync(Request $request, Playlist $playlist)
     {
@@ -77,9 +79,10 @@ class PlaylistController extends Controller
      *
      * @param Playlist $playlist
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Playlist $playlist)
     {

@@ -18,8 +18,9 @@ class Download
      *
      * @param Song|Collection<Song>|Album|Artist|Playlist $mixed
      *
-     * @return string Full path to the generated archive
      * @throws Exception
+     *
+     * @return string Full path to the generated archive
      */
     public function from($mixed)
     {
@@ -90,8 +91,9 @@ class Download
      *
      * @param Collection $songs
      *
-     * @return string
      * @throws Exception
+     *
+     * @return string
      */
     protected function fromMultipleSongs(Collection $songs)
     {

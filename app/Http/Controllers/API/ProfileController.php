@@ -13,8 +13,9 @@ class ProfileController extends Controller
      *
      * @param ProfileUpdateRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \RuntimeException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(ProfileUpdateRequest $request)
     {
