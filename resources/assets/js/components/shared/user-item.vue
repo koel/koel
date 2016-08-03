@@ -1,7 +1,7 @@
 <template>
   <article class="user-item" :class="{ editing: editing }">
     <div class="info" v-if="!editing">
-      <img :src="user.avatar" width="128" height="128" alt="">
+      <img onmousedown="return false" :src="user.avatar" width="128" height="128" alt="">
 
       <div class="right">
         <div>

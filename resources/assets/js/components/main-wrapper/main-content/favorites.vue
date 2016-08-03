@@ -15,7 +15,8 @@
           {{ meta.totalLength }}
           <template v-if="sharedState.allowDownload && state.songs.length">
             •
-            <a href="#" @click.prevent="download"
+            <a onmousedown="return false"
+              href="#" @click.prevent="download"
               title="Download all songs in playlist">
               Download
             </a>

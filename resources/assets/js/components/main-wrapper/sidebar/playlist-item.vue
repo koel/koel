@@ -1,6 +1,7 @@
 <template>
   <li @dblclick.prevent="edit" class="playlist" :class="[type, editing ? 'editing' : '']">
     <a :href="isFavorites ? '/#!/favorites' : '/#!/playlist/' + playlist.id"
+      onmousedown="return false"
       @dragleave="removeDroppableState"
       @dragover.prevent="allowDrop"
       @drop.stop.prevent="handleDrop"

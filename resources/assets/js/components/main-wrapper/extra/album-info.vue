@@ -32,7 +32,9 @@
         </ul>
       </section>
 
-      <footer>Data &copy; <a target="_blank" :href="album.info.url">Last.fm</a></footer>
+      <footer>Data &copy;
+        <a onmousedown="return false" target="_blank" :href="album.info.url">Last.fm</a>
+      </footer>
     </div>
 
     <p class="none" v-else>No album information found.</p>
