@@ -74,7 +74,7 @@ class WatchRecord
      */
     protected function eventExists($event)
     {
-        return in_array($event, $this->events);
+        return in_array($event, $this->events, true);
     }
 
     public function __toString()

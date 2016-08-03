@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Facades\Lastfm;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool   is_compilation  If the album is a compilation from multiple artists
  * @property Artist artist          The album's artist
  * @property int    artist_id
+ * @property Collection  songs
  */
 class Album extends Model
 {
@@ -121,7 +123,7 @@ class Album extends Model
     public function writeCoverFile($binaryData, $extension)
     {
         $extension = trim(strtolower($extension), '. ');
-        $fileName = uniqid().".$extension";
+        $fileName = uniqid('', true).".$extension";
         $coverPath = app()->publicPath().'/public/img/covers/'.$fileName;
 
         file_put_contents($coverPath, $binaryData);

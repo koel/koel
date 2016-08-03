@@ -19,6 +19,7 @@ class Download
      * @param Song|Collection<Song>|Album|Artist|Playlist $mixed
      *
      * @return string Full path to the generated archive
+     * @throws Exception
      */
     public function from($mixed)
     {
@@ -46,8 +47,6 @@ class Download
      */
     protected function fromSong(Song $song)
     {
-        $localPath = '';
-
         if ($s3Params = $song->s3_params) {
             // The song is hosted on Amazon S3.
             // We download it back to our local server first.
@@ -76,7 +75,7 @@ class Download
 
         if ($s3Params) {
             // If the file is downloaded from S3, we rename it directly.
-            // This will save us some diskspace.
+            // This will save us some disk space.
             rename($localPath, $newPath);
         } else {
             // Else we copy it to another file to not mess up the original one.
@@ -92,6 +91,7 @@ class Download
      * @param Collection $songs
      *
      * @return string
+     * @throws Exception
      */
     protected function fromMultipleSongs(Collection $songs)
     {

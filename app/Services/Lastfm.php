@@ -65,7 +65,7 @@ class Lastfm extends RESTfulService
      *
      * @param $name string Name of the artist
      *
-     * @return object|false
+     * @return array|false
      */
     public function getArtistInfo($name)
     {

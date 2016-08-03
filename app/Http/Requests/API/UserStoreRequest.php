@@ -2,6 +2,11 @@
 
 namespace App\Http\Requests\API;
 
+/**
+ * @property string password
+ * @property string name
+ * @property string email
+ */
 class UserStoreRequest extends Request
 {
     /**

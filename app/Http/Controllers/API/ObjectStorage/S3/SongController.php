@@ -39,7 +39,7 @@ class SongController extends Controller
             'contributing_artist_id' => $compilation ? $artist->id : null,
             'title' => trim(array_get($tags, 'title', '')),
             'length' => array_get($tags, 'duration', 0),
-            'track' => intval(array_get($tags, 'track')),
+            'track' => (int) array_get($tags, 'track'),
             'lyrics' => array_get($tags, 'lyrics', ''),
             'mtime' => time(),
         ]);

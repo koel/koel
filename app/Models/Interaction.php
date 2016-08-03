@@ -7,8 +7,10 @@ use App\Traits\CanFilterByUser;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property bool liked
- * @property int play_count
+ * @property bool  liked
+ * @property int   play_count
+ * @property Song  song
+ * @property User  user
  */
 class Interaction extends Model
 {

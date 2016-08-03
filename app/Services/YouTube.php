@@ -42,7 +42,7 @@ class YouTube extends RESTfulService
      *
      * @return object|false
      */
-    public function searchVideosRelatedToSong($song, $pageToken = '')
+    public function searchVideosRelatedToSong(Song $song, $pageToken = '')
     {
         $q = $song->title;
 

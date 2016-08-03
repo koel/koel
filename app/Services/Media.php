@@ -186,7 +186,7 @@ class Media
         $this->tags = array_intersect((array) $tags, $this->allTags) ?: $this->allTags;
 
         // We always keep track of mtime.
-        if (!in_array('mtime', $this->tags)) {
+        if (!in_array('mtime', $this->tags, true)) {
             $this->tags[] = 'mtime';
         }
     }

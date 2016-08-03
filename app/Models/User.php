@@ -153,7 +153,7 @@ class User extends Authenticatable
 
         // Hide the user's secrets away!
         foreach ($this->hiddenPreferences as $key) {
-            if (isset($preferences[$key])) {
+            if (array_key_exists($key, $preferences)) {
                 $preferences[$key] = 'hidden';
             }
         }

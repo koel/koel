@@ -16,6 +16,9 @@ use Lastfm;
  * @property int    contributing_artist_id
  * @property Artist contributingArtist
  * @property Artist artist
+ * @property string s3_params
+ * @property float  length
+ * @property string lyrics
  */
 class Song extends Model
 {

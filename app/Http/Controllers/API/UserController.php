@@ -15,13 +15,14 @@ class UserController extends Controller
      * @param UserStoreRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \RuntimeException
      */
     public function store(UserStoreRequest $request)
     {
         return response()->json(User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]));
     }
 
@@ -32,13 +33,14 @@ class UserController extends Controller
      * @param User              $user
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \RuntimeException
      */
     public function update(UserUpdateRequest $request, User $user)
     {
         $data = $request->only('name', 'email');
 
-        if ($password = $request->input('password')) {
-            $data['password'] = Hash::make($password);
+        if ($request->password) {
+            $data['password'] = Hash::make($request->password);
         }
 
         return response()->json($user->update($data));
@@ -50,6 +52,8 @@ class UserController extends Controller
      * @param User $user
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(User $user)
     {

@@ -31,14 +31,6 @@ class SyncMedia extends Command
     protected $description = 'Sync songs found in configured directory against the database.';
 
     /**
-     * Create a new command instance.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
@@ -98,6 +90,9 @@ class SyncMedia extends Command
 
     /**
      * Log a song's sync status to console.
+     *
+     * @param string $path
+     * @param mixed  $result
      */
     public function logToConsole($path, $result)
     {
