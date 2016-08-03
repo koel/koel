@@ -19,7 +19,7 @@ class SongController extends Controller
      * @link https://github.com/phanan/koel/wiki#streaming-music
      *
      * @param Song $song
-     * @param boolean $transcode
+     * @param bool $transcode
      * @param null $bitrate
      */
     public function play(Song $song, $transcode = false, $bitrate = null)

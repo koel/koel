@@ -14,8 +14,9 @@ class UserController extends Controller
      *
      * @param UserStoreRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \RuntimeException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(UserStoreRequest $request)
     {
@@ -32,8 +33,9 @@ class UserController extends Controller
      * @param UserUpdateRequest $request
      * @param User              $user
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \RuntimeException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(UserUpdateRequest $request, User $user)
     {
@@ -51,9 +53,10 @@ class UserController extends Controller
      *
      * @param User $user
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(User $user)
     {

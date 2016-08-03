@@ -104,8 +104,9 @@ class RESTfulService
      * @param string $method The HTTP method
      * @param array  $args   An array of parameters
      *
-     * @return object
      * @throws \InvalidArgumentException
+     *
+     * @return object
      */
     public function __call($method, $args)
     {

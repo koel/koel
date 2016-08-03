@@ -12,7 +12,7 @@ class ArtistController extends Controller
      * Don't see why one would need this, really.
      * Let's pray to God the user doesn't trigger this on Elvis.
      *
-     * @param Artist  $artist
+     * @param Artist $artist
      *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
