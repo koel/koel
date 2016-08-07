@@ -7,7 +7,7 @@
     <div class="main-scroll-wrap" @scroll="scrolling">
       <div class="two-cols">
         <section v-show="topSongs.length">
-          <h1>Most Played Songs</h1>
+          <h1>Most Played</h1>
 
           <ol class="top-song-list">
             <li v-for="song in topSongs"
