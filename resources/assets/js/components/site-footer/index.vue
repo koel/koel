@@ -459,6 +459,16 @@ export default {
     left: 0;
   }
 
+  .plyr__progress {
+    overflow: hidden;
+    height: 1px;
+
+    html.touch &, .middle-pane:hover & {
+      overflow: visible;
+      height: $plyr-volume-track-height;
+    }
+  }
+
   .plyr__controls {
     position: absolute;
     top: 0;
