@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Cache;
 use Exception;
-use Symfony\Component\Finder\Finder;
 use getID3;
 use getid3_lib;
 use Illuminate\Support\Facades\Log;
 use Media;
 use SplFileInfo;
+use Symfony\Component\Finder\Finder;
 
 class File
 {
