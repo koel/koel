@@ -6,12 +6,12 @@
 
     <div class="main-scroll-wrap" @scroll="scrolling">
       <div class="two-cols">
-        <section v-show="topSongs.length">
+        <section v-show="top.songs.length">
           <h1>Most Played</h1>
 
           <ol class="top-song-list">
-            <li v-for="song in topSongs"
-              :top-play-count="topSongs.length ? topSongs[0].playCount : 0"
+            <li v-for="song in top.songs"
+              :top-play-count="top.songs.length ? top.songs[0].playCount : 0"
               :song="song"
               is="song-item"></li>
           </ol>
@@ -22,7 +22,7 @@
 
           <ol class="recent-song-list" v-show="recentSongs.length">
             <li v-for="song in recentSongs"
-              :top-play-count="topSongs.length ? topSongs[0].playCount : 0"
+              :top-play-count="top.songs.length ? top.songs[0].playCount : 0"
               :song="song"
               is="song-item"></li>
           </ol>
@@ -52,20 +52,20 @@
         </div>
       </section>
 
-      <section class="top-artists" v-show="topArtists.length">
+      <section class="top-artists" v-show="top.artists.length">
         <h1>Top Artists</h1>
 
         <div class="wrapper" :class="'as-' + preferences.artistsViewMode">
-          <artist-item v-for="artist in topArtists" :artist="artist"></artist-item>
+          <artist-item v-for="artist in top.artists" :artist="artist"></artist-item>
           <span class="item filler" v-for="n in 3"></span>
         </div>
       </section>
 
-      <section class="top-albums" :class="'as-' + preferences.albumsViewMode" v-show="topAlbums.length">
+      <section class="top-albums" :class="'as-' + preferences.albumsViewMode" v-show="top.albums.length">
         <h1>Top Albums</h1>
 
         <div class="wrapper">
-          <album-item v-for="album in topAlbums" :album="album"></album-item>
+          <album-item v-for="album in top.albums" :album="album"></album-item>
           <span class="item filler" v-for="n in 3"></span>
         </div>
       </section>
@@ -108,9 +108,11 @@ export default {
         'How have you been, %s?',
       ],
       recentSongs: [],
-      topSongs: [],
-      topAlbums: [],
-      topArtists: [],
+      top: {
+        songs: [],
+        albums: [],
+        artists: [],
+      },
       recentlyAdded: {
         albums: [],
         songs: [],
@@ -135,11 +137,11 @@ export default {
      * Refresh the dashboard with latest data.
      */
     refreshDashboard() {
-      this.topSongs = songStore.getMostPlayed(7);
-      this.topAlbums = albumStore.getMostPlayed(6);
+      this.top.songs = songStore.getMostPlayed(7);
+      this.top.albums = albumStore.getMostPlayed(6);
+      this.top.artists = artistStore.getMostPlayed(6);
       this.recentlyAdded.albums = albumStore.getRecentlyAdded(6);
       this.recentlyAdded.songs = songStore.getRecentlyAdded(10);
-      this.topArtists = artistStore.getMostPlayed(6);
       this.recentSongs = songStore.getRecent(7);
     },
   },
