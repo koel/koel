@@ -5,7 +5,7 @@
     </h1>
 
     <div class="main-scroll-wrap" @scroll="scrolling">
-      <div class="top-sections">
+      <div class="two-cols">
         <section v-show="topSongs.length">
           <h1>Most Played Songs</h1>
 
@@ -33,6 +33,24 @@
           </p>
         </section>
       </div>
+
+      <section class="recently-added" v-show="showRecentlyAddedSection">
+        <h1>Recently Added</h1>
+
+        <div class="two-cols">
+          <div class="wrapper as-list">
+            <album-item v-for="album in recentlyAdded.albums" :album="album"></album-item>
+            <span class="item filler" v-for="n in 3"></span>
+          </div>
+          <div>
+            <ul class="recently-added-song-list" v-show="recentlyAdded.songs.length">
+              <li v-for="song in recentlyAdded.songs"
+                :song="song"
+                is="song-item"></li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
       <section class="top-artists" v-show="topArtists.length">
         <h1>Top Artists</h1>
@@ -93,6 +111,10 @@ export default {
       topSongs: [],
       topAlbums: [],
       topArtists: [],
+      recentlyAdded: {
+        albums: [],
+        songs: [],
+      },
 
       preferences: preferenceStore.state,
     };
@@ -101,6 +123,10 @@ export default {
   computed: {
     greeting() {
       return sample(this.greetings).replace('%s', userStore.current.name);
+    },
+
+    showRecentlyAddedSection() {
+      return this.recentlyAdded.albums.length || this.recentlyAdded.songs.length;
     },
   },
 
@@ -111,6 +137,8 @@ export default {
     refreshDashboard() {
       this.topSongs = songStore.getMostPlayed(7);
       this.topAlbums = albumStore.getMostPlayed(6);
+      this.recentlyAdded.albums = albumStore.getRecentlyAdded(6);
+      this.recentlyAdded.songs = songStore.getRecentlyAdded(10);
       this.topArtists = artistStore.getMostPlayed(6);
       this.recentSongs = songStore.getRecent(7);
     },
@@ -131,10 +159,10 @@ export default {
 @import "../../../../sass/partials/_mixins.scss";
 
 #homeWrapper {
-  .top-sections {
+  .two-cols {
     display: flex;
 
-    > section {
+    > section, > div {
       flex-grow: 1;
       flex-basis: 0;
 
@@ -153,7 +181,17 @@ export default {
     }
   }
 
-  .top-artists .wrapper, .top-albums .wrapper {
+  .recently-added {
+    .song-item-home .details {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .item {
+      margin-bottom: 8px;
+    }
+  }
+
+  .top-artists .wrapper, .top-albums .wrapper, .recently-added .wrapper {
     @include artist-album-wrapper();
   }
 
@@ -170,10 +208,10 @@ export default {
   }
 
   @media only screen and (max-width: 768px) {
-    .top-sections {
+    .two-cols {
       display: block;
 
-      > section {
+      > section, > div {
         &:first-of-type {
           margin-right: 0;
         }

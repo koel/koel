@@ -353,6 +353,15 @@ export const songStore = {
   },
 
   /**
+   * Get n most recently added songs.
+   * @param  {Number} n
+   * @return {Array.<Object>}
+   */
+  getRecentlyAdded(n = 10) {
+    return take(orderBy(this.all, 'date_created', 'desc'), n);
+  },
+
+  /**
    * Called when the application is torn down.
    * Reset stuff.
    */

@@ -31,7 +31,7 @@ class Song extends Model
      *
      * @var array
      */
-    protected $hidden = ['lyrics', 'created_at', 'updated_at', 'path', 'mtime'];
+    protected $hidden = ['lyrics', 'updated_at', 'path', 'mtime'];
 
     /**
      * @var array

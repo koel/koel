@@ -167,4 +167,17 @@ export const albumStore = {
 
     return take(orderBy(applicable, 'playCount', 'desc'), n);
   },
+
+  /**
+   * Get n most recently added albums.
+   *
+   * @param  {Number} n
+   *
+   * @return {Array.<Object>}
+   */
+  getRecentlyAdded(n = 6) {
+    const applicable = filter(this.all, album => album.id !== 1);
+
+    return take(orderBy(applicable, 'date_created', 'desc'), n);
+  },
 };

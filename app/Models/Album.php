@@ -23,7 +23,7 @@ class Album extends Model
     const UNKNOWN_COVER = 'unknown-album.png';
 
     protected $guarded = ['id'];
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['updated_at'];
     protected $casts = ['artist_id' => 'integer'];
 
     public function artist()

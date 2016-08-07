@@ -10,12 +10,14 @@
       </a>
     </span>
     <span class="details">
-      <span :style="{ width: song.playCount * 100 / topPlayCount + '%' }"
+      <span v-if="showPlayCount" :style="{ width: song.playCount * 100 / topPlayCount + '%' }"
         class="play-count"></span>
       {{ song.title }}
       <span class="by">
-        <a :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a> -
+        <a :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a>
+        <template v-if="showPlayCount">-
         {{ song.playCount | pluralize('play') }}
+        </template>
       </span>
     </span>
   </li>
@@ -30,6 +32,12 @@ export default {
   name: 'shared--home-song-item',
   props: ['song', 'topPlayCount'],
   filters: { pluralize },
+
+  computed: {
+    showPlayCount() {
+      return this.topPlayCount && this.song.playCount;
+    },
+  },
 
   methods: {
     play() {
