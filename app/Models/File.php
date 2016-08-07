@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Cache;
 use Exception;
+use Symfony\Component\Finder\Finder;
 use getID3;
 use getid3_lib;
 use Illuminate\Support\Facades\Log;
@@ -99,7 +101,7 @@ class File
             'comments.track_number',
         ];
 
-        for ($i = 0; $i < count($trackIndices) && $track === 0; $i++) {
+        for ($i = 0; $i < count($trackIndices) && $track === 0; ++$i) {
             $track = array_get($info, $trackIndices[$i], [0])[0];
         }
 
@@ -227,11 +229,18 @@ class File
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
 
-        if (!empty($info['cover']) && !$album->has_cover) {
-            try {
-                $album->generateCover($info['cover']);
-            } catch (Exception $e) {
-                Log::error($e);
+        if (!$album->has_cover) {
+            // If the album has no cover, we try to get the cover image from existing tag data
+            if (!empty($info['cover'])) {
+                try {
+                    $album->generateCover($info['cover']);
+                } catch (Exception $e) {
+                    Log::error($e);
+                }
+            }
+            // or, if there's a cover image under the same directory, use it.
+            elseif ($cover = $this->getCoverFileUnderSameDirectory()) {
+                $album->copyCoverFile($cover);
             }
         }
 
@@ -301,6 +310,42 @@ class File
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Issue #380.
+     * Some albums have its own cover image under the same directory as cover|folder.jpg/png.
+     * We'll check if such a cover file is found, and use it if positive.
+     *
+     * @return string|false The cover file's full path, or false if none found
+     */
+    private function getCoverFileUnderSameDirectory()
+    {
+        // As directory scanning can be expensive, we cache and reuse the result.
+        $cacheKey = md5($this->path.'_cover');
+
+        if (!is_null($cover = Cache::get($cacheKey))) {
+            return $cover;
+        }
+
+        $matches = array_keys(iterator_to_array(
+            Finder::create()
+                ->depth(0)
+                ->ignoreUnreadableDirs()
+                ->files()
+                ->name('/(cov|fold)er\.(jpe?g|png)$/i')
+                ->in(dirname($this->path))
+        ));
+
+        $cover = $matches ? $matches[0] : false;
+        // Even if a file is found, make sure it's a real image.
+        if ($cover && exif_imagetype($cover) === false) {
+            $cover = false;
+        }
+
+        Cache::put($cacheKey, $cover, 24 * 60);
+
+        return $cover;
     }
 
     /**

@@ -123,12 +123,36 @@ class Album extends Model
     public function writeCoverFile($binaryData, $extension)
     {
         $extension = trim(strtolower($extension), '. ');
-        $fileName = uniqid('', true).".$extension";
-        $coverPath = app()->publicPath().'/public/img/covers/'.$fileName;
+        $destPath = $this->generateRandomCoverPath($extension);
+        file_put_contents($destPath, $binaryData);
 
-        file_put_contents($coverPath, $binaryData);
+        $this->update(['cover' => basename($destPath)]);
+    }
 
-        $this->update(['cover' => $fileName]);
+    /**
+     * Copy a cover file from an existing image on the system.
+     *
+     * @param string $srcPath The original image's full path.
+     */
+    public function copyCoverFile($srcPath)
+    {
+        $extension = pathinfo($srcPath, PATHINFO_EXTENSION);
+        $destPath = $this->generateRandomCoverPath($extension);
+        copy($srcPath, $destPath);
+
+        $this->update(['cover' => basename($destPath)]);
+    }
+
+    /**
+     * Generate a random path for the cover image.
+     *
+     * @param string $extension The extension of the cover (without dot)
+     *
+     * @return string
+     */
+    private function generateRandomCoverPath($extension)
+    {
+        return app()->publicPath().'/public/img/covers/'.uniqid('', true).".$extension";
     }
 
     public function setCoverAttribute($value)
