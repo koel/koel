@@ -29,7 +29,7 @@ class DataController extends Controller
 
         return response()->json([
             'artists' => Artist::orderBy('name')->with('albums', with('albums.songs'))->get(),
-            'settings' => Setting::lists('value', 'key')->all(),
+            'settings' => auth()->user()->is_admin ? Setting::lists('value', 'key')->all() : [],
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),
             'users' => auth()->user()->is_admin ? User::all() : [],
