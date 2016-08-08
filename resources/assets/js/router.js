@@ -1,7 +1,7 @@
 import isMobile from 'ismobilejs';
 
 import { loadMainView } from './utils';
-import { artistStore, albumStore, songStore, queueStore, playlistStore } from './stores';
+import { artistStore, albumStore, songStore, queueStore, playlistStore, userStore } from './stores';
 import { playback } from './services';
 
 export default {
@@ -52,11 +52,11 @@ export default {
     },
 
     '/settings'() {
-      loadMainView('settings');
+      userStore.current.is_admin && loadMainView('settings');
     },
 
     '/users'() {
-      loadMainView('users');
+      userStore.current.is_admin && loadMainView('users');
     },
 
     '/profile'() {
@@ -118,6 +118,8 @@ export default {
     if (path.indexOf('/#!') !== 0) {
       path = `/#!${path}`;
     }
+
+    console.log(`${document.location.origin}${path}`);
 
     document.location.href = `${document.location.origin}${path}`;
   },
