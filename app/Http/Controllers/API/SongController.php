@@ -18,11 +18,11 @@ class SongController extends Controller
      *
      * @link https://github.com/phanan/koel/wiki#streaming-music
      *
-     * @param Song $song
-     * @param bool $transcode
-     * @param null $bitrate
+     * @param Song      $song
+     * @param null|bool $transcode
+     * @param null|int  $bitrate
      */
-    public function play(Song $song, $transcode = false, $bitrate = null)
+    public function play(Song $song, $transcode = null, $bitrate = null)
     {
         if (null === $bitrate) {
             $bitrate = env('OUTPUT_BIT_RATE', 128);
@@ -33,7 +33,7 @@ class SongController extends Controller
         }
 
         // If transcode parameter isn't passed, the default is to only transcode flac
-        if (false === $transcode && ends_with(mime_content_type($song->path), 'flac')) {
+        if (null === $transcode && ends_with(mime_content_type($song->path), 'flac')) {
             $transcode = true;
         } else {
             $transcode = (bool) $transcode;
