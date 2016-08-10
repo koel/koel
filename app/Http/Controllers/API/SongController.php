@@ -33,7 +33,7 @@ class SongController extends Controller
         }
 
         // If transcode parameter isn't passed, the default is to only transcode flac
-        if (null === $transcode && ends_with(mime_content_type($song->path), 'flac')) {
+        if (false === $transcode && ends_with(mime_content_type($song->path), 'flac')) {
             $transcode = true;
         } else {
             $transcode = (bool) $transcode;
