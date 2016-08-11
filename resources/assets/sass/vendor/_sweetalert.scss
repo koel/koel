@@ -1,0 +1,23 @@
+.sweet-alert {
+  font-family: $fontFamily;
+
+  fieldset input {
+    display: none !important;
+  }
+
+  h2 {
+    font-weight: $fontWeight_UltraThin;
+  }
+
+  p {
+    font-size: 1.1rem;
+    line-height: 1.8rem;
+  }
+
+  button {
+    box-shadow: none !important;
+    font-family: $fontFamily;
+    font-weight: $fontWeight_Thin;
+    font-size: 1.1rem;
+  }
+}

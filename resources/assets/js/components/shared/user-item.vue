@@ -12,15 +12,10 @@
         </div>
 
         <div class="buttons">
-          <button class="btn btn-blue" @click="edit" v-show="!confirmingDelete">
+          <button class="btn btn-blue" @click="edit">
             {{ isCurrentUser ? 'Update Profile' : 'Edit' }}
           </button>
-          <button v-show="!isCurrentUser && !confirmingDelete"
-            class="btn btn-red" @click="confirmDelete">Delete</button>
-          <span v-show="confirmingDelete">
-            <button class="btn btn-red" @click="destroy">Confirm</button>
-            <button @click="cancelDelete">Cancel</button>
-          </span>
+          <button class="btn btn-red" @click="del">Delete</button>
         </div>
       </div>
     </div>
@@ -49,6 +44,7 @@
 
 <script>
 import { clone, assign } from 'lodash';
+import swal from 'sweetalert';
 
 import { userStore } from '../../stores';
 import router from '../../router';
@@ -111,26 +107,20 @@ export default {
     },
 
     /**
-     * Confirm the delete action by triggering the confirming div's visibility.
-     */
-    confirmDelete() {
-      this.confirmingDelete = true;
-    },
-
-    /**
-     * Cancel the delete action.
-     */
-    cancelDelete() {
-      this.confirmingDelete = false;
-    },
-
-    /**
      * Kill off the freaking user.
      */
-    destroy() {
-      userStore.destroy(this.user).then(() => {
-        this.confirmingDelete = false;
-        this.$destroy(true);
+    del() {
+      swal({
+        title: 'Hey…',
+        text: `You’re about to unperson ${this.user.name}. Are you sure?`,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Certainly',
+        cancelButtonText: 'Oops',
+      }, () => {
+        userStore.destroy(this.user).then(() => {
+          this.$destroy(true);
+        });
       });
     },
   },

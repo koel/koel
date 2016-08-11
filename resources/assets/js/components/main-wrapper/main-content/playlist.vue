@@ -38,7 +38,7 @@
         </button>
         <button class="del btn btn-red"
           title="Delete this playlist"
-          @click.prevent="del">
+          @click.prevent="confirmDelete">
           <i class="fa fa-times"></i> Playlist
         </button>
 
@@ -57,6 +57,7 @@
 
 <script>
 import isMobile from 'ismobilejs';
+import swal from 'sweetalert';
 
 import { pluralize, event } from '../../../utils';
 import { playlistStore, sharedStore } from '../../../stores';
@@ -99,6 +100,26 @@ export default {
      */
     shuffle() {
       playback.queueAndPlay(this.playlist.songs, true);
+    },
+
+    /**
+     * Confirm deleting the playlist.
+     */
+    confirmDelete() {
+      // If the playlist is empty, just go ahead and delete it.
+      if (!this.playlist.songs.length) {
+        this.del();
+
+        return;
+      }
+
+      swal({
+        title: 'Are you sure?',
+        text: 'Once it’s gone, it’s gone, and there’s no turning back.',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, go ahead',
+      }, this.del);
     },
 
     /**

@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import swal from 'sweetalert';
+
 import { settingStore } from '../../../stores';
 import { parseValidationError, forceReloadWindow, event, showOverlay, hideOverlay } from '../../../utils';
 import router from '../../../router';
@@ -32,7 +34,13 @@ export default {
   data() {
     return {
       state: settingStore.state,
+      originalMediaPath: null,
     };
+  },
+
+  created() {
+    this.originalMediaPath = this.state.settings.media_path;
+    console.log('dam');
   },
 
   methods: {
@@ -40,20 +48,38 @@ export default {
      * Save the settings.
      */
     save() {
-      showOverlay();
+      console.log(this.originalMediaPath);
+      swal({
+        title: 'Be careful!',
+        text: 'Changing the media path will essentially remove all existing data – songs, artists, \
+        albums, favorites, everything – and empty your playlists!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'I know. Go ahead.',
+        confirmButtonColor: '#c34848',
+      }, () => {
+        showOverlay();
 
-      settingStore.update().then(() => {
-        // Make sure we're back to home first.
-        router.go('home');
-        forceReloadWindow();
-      }).catch(r => {
-        let msg = 'Unknown error.';
+        settingStore.update().then(() => {
+          // Make sure we're back to home first.
+          router.go('home');
+          forceReloadWindow();
+        }).catch(r => {
+          let msg = 'Unknown error.';
 
-        if (r.status === 422) {
-          msg = parseValidationError(r.responseJSON)[0];
-        }
+          if (r.status === 422) {
+            msg = parseValidationError(r.responseJSON)[0];
+          }
 
-        showOverlay(`Error: ${msg}`, 'error', true);
+          hideOverlay();
+
+          swal({
+            title: 'Something went wrong',
+            text: msg,
+            type: 'error',
+            allowOutsideClick: true,
+          });
+        });
       });
     },
   },
