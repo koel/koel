@@ -67,7 +67,17 @@ class File
     {
         $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
         $this->setGetID3($getID3);
-        $this->mtime = $this->splFileInfo->getMTime();
+
+        // Workaround for #344, where getMTime() fails for certain files with Unicode names
+        // on Windows.
+        // Yes, beloved Windows.
+        try {
+            $this->mtime = $this->splFileInfo->getMTime();
+        } catch (Exception $e) {
+            // Not worth logging the error. Just use current stamp for mtime.
+            $this->mtime = time();
+        }
+
         $this->path = $this->splFileInfo->getPathname();
         $this->hash = self::getHash($this->path);
         $this->song = Song::find($this->hash);
