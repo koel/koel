@@ -113,6 +113,7 @@ class Media
         return Finder::create()
             ->ignoreUnreadableDirs()
             ->files()
+            ->followLinks()
             ->name('/\.(mp3|ogg|m4a|flac)$/i')
             ->in($path);
     }
