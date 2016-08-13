@@ -4,7 +4,7 @@
       <span>{{ greeting }}</span>
     </h1>
 
-    <div class="main-scroll-wrap" @scroll="scrolling">
+    <div class="main-scroll-wrap" @scroll="scrolling" ref="wrapper">
       <div class="two-cols">
         <section v-show="top.songs.length">
           <h1>Most Played</h1>
