@@ -178,6 +178,6 @@ export const albumStore = {
   getRecentlyAdded(n = 6) {
     const applicable = filter(this.all, album => album.id !== 1);
 
-    return take(orderBy(applicable, 'date_created', 'desc'), n);
+    return take(orderBy(applicable, 'created_at', 'desc'), n);
   },
 };

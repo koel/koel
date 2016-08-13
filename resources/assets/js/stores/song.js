@@ -358,7 +358,7 @@ export const songStore = {
    * @return {Array.<Object>}
    */
   getRecentlyAdded(n = 10) {
-    return take(orderBy(this.all, 'date_created', 'desc'), n);
+    return take(orderBy(this.all, 'created_at', 'desc'), n);
   },
 
   /**
