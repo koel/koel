@@ -22,6 +22,7 @@ export const sharedStore = {
     currentVersion: '',
     latestVersion: '',
     cdnUrl: '',
+    originalMediaPath: '',
   },
 
   init() {
@@ -49,6 +50,9 @@ export const sharedStore = {
         playlistStore.init(this.state.playlists);
         queueStore.init();
         settingStore.init(this.state.settings);
+
+        // Keep a copy of the media path. We'll need this to properly warn the user later.
+        this.state.originalMediaPath = this.state.settings.media_path;
 
         resolve(data)
       }, r => reject(r));
