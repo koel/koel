@@ -42,11 +42,11 @@ class SongController extends Controller
         if ($transcode) {
             $streamer = new TranscodingStreamer(
                 $song,
-                $bitRate ?: env('OUTPUT_BIT_RATE', 128),
+                $bitRate ?: config('koel.streaming.bitrate'),
                 request()->input('time', 0)
             );
         } else {
-            switch (env('STREAMING_METHOD')) {
+            switch (config('koel.streming.method')) {
                 case 'x-sendfile':
                     $streamer = new XSendFileStreamer($song);
                     break;

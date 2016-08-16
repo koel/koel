@@ -13,7 +13,7 @@ class Request extends BaseRequest
      */
     public function authorize()
     {
-        return env('ALLOW_DOWNLOAD', true);
+        return config('koel.download.allow');
     }
 
     public function rules()

@@ -58,7 +58,7 @@ class Media
     public function sync($path = null, $tags = [], $force = false, SyncMedia $syncCommand = null)
     {
         if (!app()->runningInConsole()) {
-            set_time_limit(env('APP_MAX_SCAN_TIME', 600));
+            set_time_limit(config('koel.sync.timeout'));
         }
 
         $path = $path ?: Setting::get('media_path');

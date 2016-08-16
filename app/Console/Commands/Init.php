@@ -44,14 +44,14 @@ class Init extends Command
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
         $this->info('📙  https://github.com/phanan/koel/wiki'.PHP_EOL);
 
-        if (!env('APP_KEY')) {
+        if (!config('app.key')) {
             $this->info('Generating app key');
             Artisan::call('key:generate');
         } else {
             $this->comment('App key exists -- skipping');
         }
 
-        if (!env('JWT_SECRET')) {
+        if (!config('jwt.secret')) {
             $this->info('Generating JWT secret');
             Artisan::call('koel:generate-jwt-secret');
         } else {
