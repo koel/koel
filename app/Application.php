@@ -38,8 +38,9 @@ class Application extends IlluminateApplication
      * @param string $file
      * @param string $manifestFile
      *
-     * @return string
      * @throws \InvalidArgumentException
+     *
+     * @return string
      */
     public function rev($file, $manifestFile = null)
     {

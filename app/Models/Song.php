@@ -145,8 +145,8 @@ class Song extends Model
                 trim($data['albumName'] ?: $song->album->name),
                 trim($data['artistName']) ?: $song->artist->name,
                 $single ? trim($data['lyrics']) : $song->lyrics,
-                $single ? (int)$data['track'] : $song->track,
-                (int)$data['compilationState']
+                $single ? (int) $data['track'] : $song->track,
+                (int) $data['compilationState']
             );
         }
 

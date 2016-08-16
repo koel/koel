@@ -12,8 +12,9 @@ class AlbumController extends Controller
      *
      * @param Album $album
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function download(Album $album)
     {

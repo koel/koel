@@ -23,6 +23,7 @@ class GenerateJWTSecret extends Command
 
     /**
      * Execute the console command.
+     *
      * @throws \RuntimeException
      */
     public function fire()
