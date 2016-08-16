@@ -327,8 +327,9 @@ class File
      * Some albums have its own cover image under the same directory as cover|folder.jpg/png.
      * We'll check if such a cover file is found, and use it if positive.
      *
-     * @return string|false The cover file's full path, or false if none found
      * @throws \InvalidArgumentException
+     *
+     * @return string|false The cover file's full path, or false if none found
      */
     private function getCoverFileUnderSameDirectory()
     {
