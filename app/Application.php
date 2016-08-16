@@ -68,7 +68,7 @@ class Application extends IlluminateApplication
      */
     public function staticUrl($name = null)
     {
-        $cdnUrl = trim(env('CDN_URL'), '/ ');
+        $cdnUrl = trim(config('koel.cdn.url'), '/ ');
 
         return $cdnUrl ? $cdnUrl.'/'.trim(ltrim($name, '/')) : trim(asset($name));
     }
