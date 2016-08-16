@@ -39,6 +39,7 @@ class Application extends IlluminateApplication
      * @param string $manifestFile
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function rev($file, $manifestFile = null)
     {
@@ -46,7 +47,7 @@ class Application extends IlluminateApplication
 
         $manifestFile = $manifestFile ?: $this->publicPath().'/public/build/rev-manifest.json';
 
-        if (is_null($manifest)) {
+        if ($manifest === null) {
             $manifest = json_decode(file_get_contents($manifestFile), true);
         }
 
@@ -74,7 +75,7 @@ class Application extends IlluminateApplication
     }
 
     /**
-     * Get the latest version number of Koel from Github.
+     * Get the latest version number of Koel from GitHub.
      *
      * @param Client $client
      *

@@ -77,7 +77,7 @@ class RESTfulService
      *
      * @return object|string
      */
-    public function request($verb, $uri, $appendKey = true, $params = [])
+    public function request($verb, $uri, $appendKey = true, array $params = [])
     {
         try {
             $body = (string) $this->getClient()
@@ -132,7 +132,7 @@ class RESTfulService
     public function buildUrl($uri, $appendKey = true)
     {
         if (!starts_with($uri, ['http://', 'https://'])) {
-            if ($uri[0] != '/') {
+            if ($uri[0] !== '/') {
                 $uri = "/$uri";
             }
 

@@ -14,6 +14,7 @@ class FavoritesController extends Controller
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @throws \Exception
      */
     public function download(Request $request)
     {

@@ -15,6 +15,7 @@ class PlaylistController extends Controller
      * @throws \Illuminate\Auth\Access\AuthorizationException
      *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @throws \Exception
      */
     public function download(Playlist $playlist)
     {

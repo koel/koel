@@ -19,6 +19,9 @@ use Lastfm;
  * @property string s3_params
  * @property float  length
  * @property string lyrics
+ * @property int    track
+ * @property int    album_id
+ * @property int    id
  */
 class Song extends Model
 {
@@ -142,8 +145,8 @@ class Song extends Model
                 trim($data['albumName'] ?: $song->album->name),
                 trim($data['artistName']) ?: $song->artist->name,
                 $single ? trim($data['lyrics']) : $song->lyrics,
-                $single ? intval($data['track']) : $song->track,
-                intval($data['compilationState'])
+                $single ? (int)$data['track'] : $song->track,
+                (int)$data['compilationState']
             );
         }
 

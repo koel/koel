@@ -23,6 +23,8 @@ class SongController extends Controller
      *                             If this is omitted, by default Koel will transcode FLAC.
      * @param null|int  $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
      *                             Only taken into account if $transcode is truthy.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function play(Song $song, $transcode = null, $bitRate = null)
     {
@@ -40,7 +42,7 @@ class SongController extends Controller
         if ($transcode) {
             $streamer = new TranscodingStreamer(
                 $song,
-                $bitRate ? $bitRate : env('OUTPUT_BIT_RATE', 128),
+                $bitRate ?: env('OUTPUT_BIT_RATE', 128),
                 request()->input('time', 0)
             );
         } else {

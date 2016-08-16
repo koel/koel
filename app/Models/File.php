@@ -210,7 +210,7 @@ class File
             // But if 'album' isn't specified, we don't want to update normal albums.
             // This variable is to keep track of this state.
             $changeCompilationAlbumOnly = false;
-            if (in_array('compilation', $tags) && !in_array('album', $tags)) {
+            if (in_array('compilation', $tags, true) && !in_array('album', $tags, true)) {
                 $tags[] = 'album';
                 $changeCompilationAlbumOnly = true;
             }
@@ -328,6 +328,7 @@ class File
      * We'll check if such a cover file is found, and use it if positive.
      *
      * @return string|false The cover file's full path, or false if none found
+     * @throws \InvalidArgumentException
      */
     private function getCoverFileUnderSameDirectory()
     {

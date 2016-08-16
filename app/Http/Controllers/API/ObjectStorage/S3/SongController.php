@@ -53,6 +53,7 @@ class SongController extends Controller
      * @param RemoveSongRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function remove(RemoveSongRequest $request)
     {

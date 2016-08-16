@@ -69,7 +69,7 @@ class PlaylistController extends Controller
     {
         $this->authorize('owner', $playlist);
 
-        $playlist->songs()->sync($request->input('songs'));
+        $playlist->songs()->sync($request->songs);
 
         return response()->json();
     }

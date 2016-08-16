@@ -42,7 +42,7 @@ class Init extends Command
 
         $this->comment('Attempting to install or upgrade Koel.');
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
-        $this->info("📙  https://github.com/phanan/koel/wiki\n");
+        $this->info('📙  https://github.com/phanan/koel/wiki'.PHP_EOL);
 
         if (!env('APP_KEY')) {
             $this->info('Generating app key');
@@ -71,7 +71,7 @@ class Init extends Command
         $this->info('Executing npm install, gulp and whatnot');
         system('npm install');
 
-        $this->comment("\n🎆  Success! You can now run Koel from localhost with `php artisan serve`.");
+        $this->comment(PHP_EOL.'🎆  Success! You can now run Koel from localhost with `php artisan serve`.');
         $this->comment('Again, for more configuration guidance, refer to');
         $this->info('📙  https://github.com/phanan/koel/wiki.');
         $this->comment('WIKI ROCKS WIKI RULES.');
