@@ -93,7 +93,7 @@ class Media
 
             if ($syncCommand) {
                 $syncCommand->updateProgressBar();
-                $syncCommand->logToConsole($file->getPath(), $song);
+                $syncCommand->logToConsole($file->getPath(), $song, $file->getSyncError());
             }
         }
 

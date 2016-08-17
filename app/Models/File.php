@@ -57,6 +57,13 @@ class File
     protected $song;
 
     /**
+     * The last parsing error text, if any.
+     *
+     * @var string
+     */
+    protected $syncError;
+
+    /**
      * Construct our File object.
      * Upon construction, we'll set the path, hash, and associated Song object (if any).
      *
@@ -81,6 +88,7 @@ class File
         $this->path = $this->splFileInfo->getPathname();
         $this->hash = self::getHash($this->path);
         $this->song = Song::find($this->hash);
+        $this->syncError = '';
     }
 
     /**
@@ -93,6 +101,8 @@ class File
         $info = $this->getID3->analyze($this->path);
 
         if (isset($info['error']) || !isset($info['playtime_seconds'])) {
+            $this->syncError = isset($info['error']) ? $info['error'][0] : 'No playtime found';
+
             return;
         }
 
@@ -304,6 +314,16 @@ class File
     public function getGetID3()
     {
         return $this->getID3;
+    }
+
+    /**
+     * Get the last parsing error's text.
+     *
+     * @return syncError
+     */
+    public function getSyncError()
+    {
+        return $this->syncError;
     }
 
     /**
