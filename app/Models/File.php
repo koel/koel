@@ -345,6 +345,7 @@ class File
                 ->depth(0)
                 ->ignoreUnreadableDirs()
                 ->files()
+                ->followLinks()
                 ->name('/(cov|fold)er\.(jpe?g|png)$/i')
                 ->in(dirname($this->path))
         ));
