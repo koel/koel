@@ -40,7 +40,7 @@ class SongController extends Controller
         if ($transcode) {
             $streamer = new TranscodingStreamer(
                 $song,
-                $bitRate ? $bitRate : config('koel.streaming.bitrate'),
+                $bitRate ?: config('koel.streaming.bitrate'),
                 request()->input('time', 0)
             );
         } else {
