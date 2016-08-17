@@ -72,7 +72,13 @@ class Media
 
         $getID3 = new getID3();
 
-        foreach ($this->gatherFiles($path) as $file) {
+        $files = $this->gatherFiles($path);
+
+        if ($syncCommand) {
+            $syncCommand->createProgressBar(count($files));
+        }
+
+        foreach ($files as $file) {
             $file = new File($file, $getID3);
 
             $song = $file->sync($this->tags, $force);
@@ -86,6 +92,7 @@ class Media
             }
 
             if ($syncCommand) {
+                $syncCommand->updateProgressBar();
                 $syncCommand->logToConsole($file->getPath(), $song);
             }
         }

@@ -24,6 +24,13 @@ class SyncMedia extends Command
     protected $synced = 0;
 
     /**
+     * The progress bar.
+     *
+     * @var \Symfony\Component\Console\Helper\ProgressBar
+     */
+    protected $bar;
+
+    /**
      * The console command description.
      *
      * @var string
@@ -57,7 +64,7 @@ class SyncMedia extends Command
      */
     protected function syncAll()
     {
-        $this->info('Koel syncing started. All we need now is just a little patience…');
+        $this->info('Koel syncing started.'.PHP_EOL);
 
         // Get the tags to sync.
         // Notice that this is only meaningful for existing records.
@@ -66,9 +73,12 @@ class SyncMedia extends Command
 
         Media::sync(null, $tags, $this->option('force'), $this);
 
-        $this->output->writeln("<info>Completed! {$this->synced} new or updated song(s)</info>, "
+        $this->output->writeln(
+            PHP_EOL.PHP_EOL
+            ."<info>Completed! {$this->synced} new or updated song(s)</info>, "
             ."{$this->ignored} unchanged song(s), "
-            ."and <comment>{$this->invalid} invalid file(s)</comment>.");
+            ."and <comment>{$this->invalid} invalid file(s)</comment>."
+        );
     }
 
     /**
@@ -117,5 +127,24 @@ class SyncMedia extends Command
 
             ++$this->synced;
         }
+    }
+
+    /**
+     * Create a progress bar.
+     *
+     * @param  int $max Max steps
+     */
+    public function createProgressBar($max)
+    {
+        $this->bar = $this->getOutput()->createProgressBar($max);
+
+    }
+
+    /**
+     * Update the progress bar (advance by 1 step).
+     */
+    public function updateProgressBar()
+    {
+        $this->bar->advance();
     }
 }
