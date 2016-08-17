@@ -14,15 +14,15 @@ class UserTableSeeder extends Seeder
             'is_admin' => true,
         ]);
 
-        if (! app()->runningUnitTests()) {
-        $this->command->info('Admin user created. You can (and should) remove the auth details from .env now.');
+        if (!app()->runningUnitTests()) {
+            $this->command->info('Admin user created. You can (and should) remove the auth details from .env now.');
         }
     }
 
     protected function getUserDetails()
     {
         $details = array_filter(array_only(config('koel.admin', []), [
-            'name', 'email', 'password'
+            'name', 'email', 'password',
         ]));
 
         if (count($details) != 3) {
