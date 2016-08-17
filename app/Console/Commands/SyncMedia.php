@@ -132,12 +132,11 @@ class SyncMedia extends Command
     /**
      * Create a progress bar.
      *
-     * @param  int $max Max steps
+     * @param int $max Max steps
      */
     public function createProgressBar($max)
     {
         $this->bar = $this->getOutput()->createProgressBar($max);
-
     }
 
     /**
