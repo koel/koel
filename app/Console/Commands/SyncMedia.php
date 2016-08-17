@@ -103,8 +103,9 @@ class SyncMedia extends Command
      *
      * @param string $path
      * @param mixed  $result
+     * @param string $reason
      */
-    public function logToConsole($path, $result)
+    public function logToConsole($path, $result, $reason = '')
     {
         $name = basename($path);
 
@@ -116,7 +117,7 @@ class SyncMedia extends Command
             ++$this->ignored;
         } elseif ($result === false) {
             if ($this->option('verbose')) {
-                $this->error("$name is not a valid media file");
+                $this->error("$name is not a valid media file because: ".$reason);
             }
 
             ++$this->invalid;
