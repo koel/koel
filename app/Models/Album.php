@@ -64,6 +64,22 @@ class Album extends Model
     }
 
     /**
+     * Get the first album using only the given name.
+     *
+     * @param string $name
+     *
+     * @return self|null
+     */
+    public static function getFromName($name)
+    {
+        if (strlen($name) == 0) {
+            return;
+        }
+
+        return self::where('name', $name)->first();
+    }
+
+    /**
      * Get extra information about the album from Last.fm.
      *
      * @return array|false
