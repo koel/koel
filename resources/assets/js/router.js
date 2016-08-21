@@ -119,8 +119,6 @@ export default {
       path = `/#!${path}`;
     }
 
-    console.log(`${document.location.origin}${path}`);
-
     document.location.href = `${document.location.origin}${path}`;
   },
 };
