@@ -10,15 +10,17 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        if (!env('ADMIN_NAME') || !env('ADMIN_EMAIL') || !env('ADMIN_PASSWORD')) {
+        if (!config('koel.admin.name') ||
+            !config('koel.admin.email') ||
+            !config('koel.admin.password')) {
             $this->command->error('Please fill in initial admin details in .env file first.');
             abort(422);
         }
 
         User::create([
-            'name' => env('ADMIN_NAME'),
-            'email' => env('ADMIN_EMAIL'),
-            'password' => Hash::make(env('ADMIN_PASSWORD')),
+            'name' => config('koel.admin.name'),
+            'email' => config('koel.admin.email'),
+            'password' => Hash::make(config('koel.admin.password')),
             'is_admin' => true,
         ]);
 

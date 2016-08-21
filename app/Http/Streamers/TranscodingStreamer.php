@@ -32,7 +32,7 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
      */
     public function stream()
     {
-        $ffmpeg = env('FFMPEG_PATH', '/usr/local/bin/ffmpeg');
+        $ffmpeg = config('koel.streaming.transcoding');
         abort_unless(is_executable($ffmpeg), 500, 'Transcoding requires valid ffmpeg settings.');
 
         $bitRate = filter_var($this->bitRate, FILTER_SANITIZE_NUMBER_INT);

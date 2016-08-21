@@ -36,7 +36,7 @@ class DataController extends Controller
             'currentUser' => auth()->user(),
             'useLastfm' => Lastfm::used(),
             'useYouTube' => YouTube::enabled(),
-            'allowDownload' =>  env('ALLOW_DOWNLOAD', true),
+            'allowDownload' =>  config('koel.download.allow'),
             'cdnUrl' => app()->staticUrl(),
             'currentVersion' => Application::VERSION,
             'latestVersion' => auth()->user()->is_admin ? app()->getLatestVersion() : Application::VERSION,

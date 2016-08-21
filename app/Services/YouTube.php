@@ -17,7 +17,7 @@ class YouTube extends RESTfulService
     public function __construct($key = null, Client $client = null)
     {
         parent::__construct(
-            $key ?: env('YOUTUBE_API_KEY'),
+            $key ?: config('koel.youtube.key'),
             null,
             'https://www.googleapis.com/youtube/v3',
             $client ?: new Client()
@@ -31,7 +31,7 @@ class YouTube extends RESTfulService
      */
     public function enabled()
     {
-        return (bool) env('YOUTUBE_API_KEY');
+        return (bool) config('koel.youtube.key');
     }
 
     /**
