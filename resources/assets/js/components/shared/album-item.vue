@@ -91,7 +91,7 @@ export default {
      */
     dragStart(e) {
       const songIds = map(this.album.songs, 'id');
-      e.dataTransfer.setData('text/plain', songIds);
+      e.dataTransfer.setData('application/x-koel.text+plain', songIds);
       e.dataTransfer.effectAllowed = 'move';
 
       // Set a fancy drop image using our ghost element.

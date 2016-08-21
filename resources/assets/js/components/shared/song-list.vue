@@ -378,23 +378,22 @@ export default {
      */
     handleDrop(songId, e) {
       if (this.type !== 'queue') {
-        return;
+        return this.removeDroppableState(e) && false;
       }
 
-      if (!e.dataTransfer.getData('text/plain')) {
-        return false;
+      if (!e.dataTransfer.getData('application/x-koel.text+plain')) {
+        return this.removeDroppableState(e) && false;
       }
 
       const songs = this.selectedSongs;
 
       if (!songs.length) {
-        return false;
+        return this.removeDroppableState(e) && false;
       }
 
       queueStore.move(songs, songStore.byId(songId));
-      this.removeDroppableState(e);
 
-      return false;
+      return this.removeDroppableState(e) && false;
     },
 
     /**
