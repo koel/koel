@@ -17,7 +17,8 @@
       </div>
 
       <div class="form-row">
-        <button type="submit">Scan</button>
+        <button type="submit">Save settings</button>
+        <button type="button" @click="scanLibrary">Scan library</button>
       </div>
     </form>
   </section>
@@ -28,9 +29,11 @@ import swal from 'sweetalert';
 
 import { settingStore, sharedStore } from '../../../stores';
 import { parseValidationError, forceReloadWindow, event, showOverlay, hideOverlay } from '../../../utils';
+import { http } from '../../../services';
 import router from '../../../router';
 
 export default {
+
   data() {
     return {
       state: settingStore.state,
@@ -74,9 +77,8 @@ export default {
       showOverlay();
 
       settingStore.update().then(() => {
-        // Make sure we're back to home first.
-        router.go('home');
-        forceReloadWindow();
+        hideOverlay();
+
       }).catch(r => {
         let msg = 'Unknown error.';
 
@@ -93,6 +95,35 @@ export default {
           allowOutsideClick: true,
         });
       });
+    },
+
+    /**
+     * Scan the media path
+     */
+    scanLibrary() {
+      showOverlay();
+      new Promise((resolve, reject) => {
+          http.post('syncLibrary', null, data => resolve(data), r => reject(r));
+        }).then(r => {
+          // Make sure we're back to home first.
+          router.go('home');
+          forceReloadWindow();
+        }).catch(r => {
+          let msg = 'Unknown error.';
+
+          if (r.status === 422) {
+            msg = parseValidationError(r.responseJSON)[0];
+          }
+
+          hideOverlay();
+
+          swal({
+            title: 'Something went wrong',
+            text: msg,
+            type: 'error',
+            allowOutsideClick: true,
+          });
+        });
     },
   },
 };
