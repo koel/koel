@@ -46,8 +46,6 @@ class SettingTest extends TestCase
 
     public function testApplicationSetting()
     {
-        Media::shouldReceive('sync')->once();
-
         $dir = dirname(__FILE__);
         $this->actingAs(factory(User::class, 'admin')->create())
             ->post('/api/settings', ['media_path' => $dir])

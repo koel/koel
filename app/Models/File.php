@@ -327,6 +327,16 @@ class File
     }
 
     /**
+     * Set the last parsing error's text.
+     *
+     * @param string $msg The error message
+     */
+    public function setSyncError($msg)
+    {
+        $this->syncError = $msg;
+    }
+
+    /**
      * @param getID3 $getID3
      */
     public function setGetID3($getID3 = null)
