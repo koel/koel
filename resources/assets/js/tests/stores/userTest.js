@@ -39,12 +39,12 @@ describe('stores/user', () => {
   describe('#setAvatar', () => {
     it('correctly sets the current user’s avatar', () => {
       userStore.setAvatar();
-      userStore.current.avatar.should.equal('https://www.gravatar.com/avatar/b9611f1bba1aacbe6f5de5856695a202?s=256');
+      userStore.current.avatar.should.equal('https://www.gravatar.com/avatar/b9611f1bba1aacbe6f5de5856695a202?s=256&d=mm');
     });
 
     it('correctly sets a user’s avatar', () => {
       userStore.setAvatar(data.users[1]);
-      data.users[1].avatar.should.equal('https://www.gravatar.com/avatar/5024672cfe53f113b746e1923e373058?s=256');
+      data.users[1].avatar.should.equal('https://www.gravatar.com/avatar/5024672cfe53f113b746e1923e373058?s=256&d=mm');
     });
   });
 
