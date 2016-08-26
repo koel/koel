@@ -107,6 +107,7 @@ export default {
     align-items: center;
     align-content: stretch;
     display: flex;
+    line-height: normal;
 
     span:first-child {
       flex: 1;
