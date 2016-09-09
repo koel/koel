@@ -46,7 +46,7 @@ class SongController extends Controller
                 request()->input('time', 0)
             );
         } else {
-            switch (config('koel.streming.method')) {
+            switch (config('koel.streaming.method')) {
                 case 'x-sendfile':
                     $streamer = new XSendFileStreamer($song);
                     break;
