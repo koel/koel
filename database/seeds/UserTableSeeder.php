@@ -31,6 +31,8 @@ class UserTableSeeder extends Seeder
             abort(422);
         }
 
+        $details['password'] = Hash::make($details['password']);
+
         return $details;
     }
 }
