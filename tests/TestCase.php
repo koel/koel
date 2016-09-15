@@ -43,7 +43,7 @@ abstract class TestCase extends IlluminateTestCase
 
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
-        $this->coverPath = $app->publicPath().'/img/covers';
+        $this->coverPath = $app->basePath().'/public/img/covers';
 
         return $app;
     }
