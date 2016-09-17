@@ -63,7 +63,6 @@ class MediaTest extends TestCase
         $this->assertTrue($song->album->is_compilation);
         $this->assertEquals(Artist::VARIOUS_ID, $song->album->artist_id);
 
-
         $currentCover = $album->cover;
 
         $song = Song::orderBy('id', 'desc')->first();
@@ -213,5 +212,17 @@ class MediaTest extends TestCase
         $this->assertEquals('佐倉綾音 Unknown', $info['artist']);
         $this->assertEquals('小岩井こ Random', $info['album']);
         $this->assertEquals('水谷広実', $info['title']);
+    }
+
+    public function testDotDirectories()
+    {
+        config(['koel.ingore_dot_files' => false]);
+        $media = new Media();
+        $media->sync($this->mediaPath);
+        $this->seeInDatabase('albums', ['name' => 'Hidden Album']);
+
+        config(['koel.ingore_dot_files' => true]);
+        $media->sync($this->mediaPath);
+        $this->notSeeInDatabase('albums', ['name' => 'Hidden Album']);
     }
 }

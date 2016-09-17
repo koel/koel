@@ -100,4 +100,14 @@ return [
         'allow' => env('ALLOW_DOWNLOAD', true),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Ignore Dot Files
+    |--------------------------------------------------------------------------
+    |
+    | Ignore dot files and folders when scanning for media files.
+    |
+    */
+    'ingore_dot_files' => env('IGNORE_DOT_FILES', true),
+
 ];
