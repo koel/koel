@@ -24,8 +24,7 @@ elixir(function (mix) {
   mix.sass('app.scss');
 
   mix.copy('resources/assets/img', 'public/img')
-    .copy('node_modules/font-awesome/fonts', 'public/build/fonts')
-    .copy('resources/assets/fonts', 'public/build/fonts');
+    .copy('node_modules/font-awesome/fonts', 'public/build/fonts');
 
   mix.scripts([
       'node_modules/babel-polyfill/dist/polyfill.min.js',
