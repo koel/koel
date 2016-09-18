@@ -35,7 +35,7 @@
       </div>
 
       <div class="other-controls" :class="{ 'with-gradient': prefs.showExtraPanel }">
-        <div class="wrapper">
+        <div class="wrapper" v-koel-clickaway="closeEqualizer">
           <equalizer v-if="useEqualizer" v-show="showEqualizer"></equalizer>
           <sound-bar v-show="song.playbackState === 'playing'"></sound-bar>
           <i class="like control fa fa-heart" :class="{ liked: song.liked }"
@@ -206,6 +206,10 @@ export default {
      */
     toggleExtraPanel() {
       preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel);
+    },
+
+    closeEqualizer() {
+      this.showEqualizer = false;
     },
   },
 
