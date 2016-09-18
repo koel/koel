@@ -216,12 +216,12 @@ class MediaTest extends TestCase
 
     public function testDotDirectories()
     {
-        config(['koel.ingore_dot_files' => false]);
+        config(['koel.ignore_dot_files' => false]);
         $media = new Media();
         $media->sync($this->mediaPath);
         $this->seeInDatabase('albums', ['name' => 'Hidden Album']);
 
-        config(['koel.ingore_dot_files' => true]);
+        config(['koel.ignore_dot_files' => true]);
         $media->sync($this->mediaPath);
         $this->notSeeInDatabase('albums', ['name' => 'Hidden Album']);
     }

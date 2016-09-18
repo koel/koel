@@ -119,7 +119,7 @@ class Media
     {
         return Finder::create()
             ->ignoreUnreadableDirs()
-            ->ignoreDotFiles((bool) config('koel.ingore_dot_files')) // https://github.com/phanan/koel/issues/450
+            ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/phanan/koel/issues/450
             ->files()
             ->followLinks()
             ->name('/\.(mp3|ogg|m4a|flac)$/i')
