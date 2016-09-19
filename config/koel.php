@@ -108,6 +108,6 @@ return [
     | Ignore dot files and folders when scanning for media files.
     |
     */
-    'ingore_dot_files' => env('IGNORE_DOT_FILES', true),
+    'ignore_dot_files' => env('IGNORE_DOT_FILES', true),
 
 ];
