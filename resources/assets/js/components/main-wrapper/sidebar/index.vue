@@ -164,7 +164,8 @@ export default {
 
   a.droppable {
     transform: scale(1.2);
-    transition: .3s;
+    width: 213px;
+    transition: .2s;
     transform-origin: center left;
 
     color: $colorMainText;
