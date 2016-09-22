@@ -68,7 +68,7 @@ export default {
 
   data() {
     return {
-      currentView: 'queue',
+      currentView: 'home',
       user: userStore.state,
       showing: !isMobile.phone,
       sharedState: sharedStore.state,
