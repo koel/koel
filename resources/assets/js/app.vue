@@ -224,7 +224,7 @@ Vue.directive('koel-clickaway',clickawayDirective);
 @import "resources/assets/sass/partials/_shared.scss";
 
 #dragGhost {
-  position: relative;
+  position: absolute;
   display: inline-block;
   background: $colorGreen;
   padding: .8rem;
@@ -233,6 +233,8 @@ Vue.directive('koel-clickaway',clickawayDirective);
   font-family: $fontFamily;
   font-size: 1rem;
   font-weight: $fontWeight_Thin;
+  top: -100px;
+  left: 0px;
 
   /**
    * We can totally hide this element on touch devices, because there's
@@ -248,6 +250,7 @@ Vue.directive('koel-clickaway',clickawayDirective);
   left: -9999px;
   width: 1px;
   height: 1px;
+  bottom: 1px;
 
   html.touchevents & {
     display: none;
