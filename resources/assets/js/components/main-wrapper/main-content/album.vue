@@ -104,7 +104,7 @@ export default {
      * and move all of them into another album.
      * We should then go back to the album list.
      */
-    'album.songs.length': function (newVal) {
+    'album.songs.length' (newVal) {
       if (!newVal) {
         router.go('albums');
       }

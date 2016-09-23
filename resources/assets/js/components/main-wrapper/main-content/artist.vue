@@ -96,7 +96,7 @@ export default {
      * and move all of them to another artist (thus delete this artist entirely).
      * We should then go back to the artist list.
      */
-    'artist.albums.length': function (newVal) {
+    'artist.albums.length' (newVal) {
       if (!newVal) {
         router.go('artists');
       }
