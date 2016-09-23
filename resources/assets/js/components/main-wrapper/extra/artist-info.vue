@@ -41,14 +41,13 @@ export default {
     };
   },
 
-  methods: {
-    /**
-     * Reset the component's current state.
-     */
-    resetState() {
+  watch: {
+    artist() {
       this.showingFullBio = false;
     },
+  },
 
+  methods: {
     /**
      * Shuffle all songs performed by the current song's artist.
      */

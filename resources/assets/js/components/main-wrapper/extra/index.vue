@@ -99,7 +99,6 @@ export default {
     resetState() {
       this.currentView = 'lyrics';
       this.song = songStore.stub;
-      invokeMap(this.$refs, 'resetState');
     },
   },
 
