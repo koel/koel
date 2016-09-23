@@ -468,7 +468,7 @@ export default {
        * Listen to 'song:selection-clear' (often broadcasted from the direct parent)
        * to clear the selected songs.
        */
-      'song:selection-clear': this.clearSelection(),
+      'song:selection-clear': () => this.clearSelection(),
     });
   },
 };
