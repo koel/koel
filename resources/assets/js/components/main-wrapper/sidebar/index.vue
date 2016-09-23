@@ -137,9 +137,7 @@ export default {
      * Listen to sidebar:toggle event to show or hide the sidebar.
      * This should only be triggered on a mobile device.
      */
-    event.on('sidebar:toggle', () => {
-      this.showing = !this.showing;
-    });
+    event.on('sidebar:toggle', () => this.showing = !this.showing);
   },
 };
 </script>
