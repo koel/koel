@@ -85,6 +85,7 @@ export default {
 
       prefs: preferenceStore.state,
       showEqualizer: false,
+      cover: null,
 
       /**
        * Indicate if we should build and use an equalizer.
@@ -98,20 +99,6 @@ export default {
   components: { soundBar, equalizer },
 
   computed: {
-    /**
-     * Get the album cover for the current song.
-     *
-     * @return {?String}
-     */
-    cover() {
-      // don't display the default cover here
-      if (this.song.album.cover === config.unknownCover) {
-        return null;
-      }
-
-      return this.song.album.cover;
-    },
-
     /**
      * Get the previous song in queue.
      *
@@ -216,13 +203,16 @@ export default {
   created() {
     event.on({
       /**
-       * Listen to song:played event and set the current playing song.
+       * Listen to song:played event to set the current playing song and the cover image.
        *
        * @param  {Object} song
        *
        * @return {Boolean}
        */
-      'song:played': song => this.song = song,
+      'song:played': song => {
+        this.song = song;
+        this.cover = this.song.album.cover;
+      },
 
       /**
        * Listen to main-content-view:load event and highlight the Queue icon if
