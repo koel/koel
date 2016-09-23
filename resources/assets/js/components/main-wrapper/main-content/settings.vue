@@ -41,6 +41,7 @@ export default {
   computed: {
     /**
      * Determine if we should warn the user upon saving.
+     *
      * @return {boolean}
      */
     shouldWarn() {
