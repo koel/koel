@@ -95,7 +95,7 @@
               <a href="https://github.com/phanan/koel/wiki" target="_blank">Koel’s Wiki</a>
               for a quick how-to. Really, you should do it.
             </span>
-            <span v-else>Try politely asking your adminstrator to enable it.</span>
+            <span v-else>Try politely asking your administrator to enable it.</span>
           </p>
         </div>
       </section>
