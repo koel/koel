@@ -30,5 +30,6 @@
         <env name="ADMIN_EMAIL" value="koel@example.com"/>
         <env name="ADMIN_NAME" value="Koel"/>
         <env name="ADMIN_PASSWORD" value="SoSecureK0el"/>
+        <env name="BROADCAST_DRIVER" value="log"/>
     </php>
 </phpunit>
