@@ -48,6 +48,6 @@ class Kernel extends HttpKernel
         'os.auth' => ObjectStorageAuthenticate::class,
         'bindings' => SubstituteBindings::class,
         'can' => Authorize::class,
-        'throttle' => ThrottleRequests::class
+        'throttle' => ThrottleRequests::class,
     ];
 }
