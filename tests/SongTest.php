@@ -321,4 +321,12 @@ class SongTest extends TestCase
         Cache::shouldReceive('put')->once()->with("OSUrl/{$song->id}", $fakeUrl, 60);
         $this->assertEquals($fakeUrl, $song->getObjectStoragePublicUrl($client));
     }
+
+    public function testDeletingByChunk()
+    {
+        $this->assertNotEquals(0, Song::count());
+        $ids = Song::select('id')->get()->pluck('id')->all();
+        Song::deleteByChunk($ids, 'id', 1);
+        $this->assertEquals(0, Song::count());
+    }
 }

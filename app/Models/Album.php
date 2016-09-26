@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Facades\Lastfm;
+use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Album extends Model
 {
+    use SupportsDeleteWhereIDsNotIn;
+
     const UNKNOWN_ID = 1;
     const UNKNOWN_NAME = 'Unknown Album';
     const UNKNOWN_COVER = 'unknown-album.png';

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\LibraryChanged;
+use App\Traits\SupportsDeleteWhereIDsNotIn;
 use AWS;
 use Aws\AwsClient;
 use Cache;
@@ -26,6 +27,8 @@ use YouTube;
  */
 class Song extends Model
 {
+    use SupportsDeleteWhereIDsNotIn;
+
     protected $guarded = [];
 
     /**

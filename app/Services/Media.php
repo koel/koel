@@ -102,7 +102,7 @@ class Media
             return self::getHash($f->getPath());
         }, array_merge($results['ugly'], $results['good']));
 
-        Song::whereNotIn('id', $hashes)->delete();
+        Song::deleteWhereIDsNotIn($hashes);
 
         // Trigger LibraryChanged, so that TidyLibrary handler is fired to, erm, tidy our library.
         event(new LibraryChanged());
@@ -219,7 +219,7 @@ class Media
     {
         $inUseAlbums = Song::select('album_id')->groupBy('album_id')->get()->pluck('album_id')->toArray();
         $inUseAlbums[] = Album::UNKNOWN_ID;
-        Album::whereNotIn('id', $inUseAlbums)->delete();
+        Album::deleteWhereIDsNotIn($inUseAlbums);
 
         $inUseArtists = Album::select('artist_id')->groupBy('artist_id')->get()->pluck('artist_id')->toArray();
 
@@ -234,6 +234,6 @@ class Media
         $inUseArtists[] = Artist::UNKNOWN_ID;
         $inUseArtists[] = Artist::VARIOUS_ID;
 
-        Artist::whereNotIn('id', array_filter($inUseArtists))->delete();
+        Artist::deleteWhereIDsNotIn(array_filter($inUseArtists));
     }
 }
