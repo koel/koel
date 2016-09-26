@@ -18,6 +18,6 @@ class YouTubeController extends Controller
      */
     public function searchVideosRelatedToSong(Request $request, Song $song)
     {
-        return response()->json(YouTube::searchVideosRelatedToSong($song, $request->pageToken));
+        return response()->json($song->getRelatedYouTubeVideos($request->pageToken));
     }
 }

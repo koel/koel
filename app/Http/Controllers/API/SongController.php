@@ -75,7 +75,7 @@ class SongController extends Controller
             'lyrics' => $song->lyrics,
             'album_info' => $song->album->getInfo(),
             'artist_info' => $song->artist->getInfo(),
-            'youtube' => YouTube::searchVideosRelatedToSong($song),
+            'youtube' => $song->getRelatedYouTubeVideos(),
         ]);
     }
 

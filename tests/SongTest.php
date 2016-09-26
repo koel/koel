@@ -304,20 +304,6 @@ class SongTest extends TestCase
         ]);
     }
 
-    public function testGetSongInfo()
-    {
-        $song = Song::first();
-
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->get("/api/{$song->id}/info")
-            ->seeStatusCode(200)
-            ->seeJson([
-                'lyrics' => $song->lyrics,
-                'artist_info' => false,
-                'album_info' => false,
-            ]);
-    }
-
     public function testGetObjectStoragePublicUrl()
     {
         $song = Song::first();
