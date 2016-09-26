@@ -25,6 +25,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         parent::boot();
     }
+
     /**
      * Define the routes for the application.
      *
@@ -36,6 +37,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapWebRoutes();
         //
     }
+
     /**
      * Define the "web" routes for the application.
      *
@@ -52,6 +54,7 @@ class RouteServiceProvider extends ServiceProvider
             require base_path('routes/web.php');
         });
     }
+
     /**
      * Define the "api" routes for the application.
      *
