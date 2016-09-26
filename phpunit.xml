@@ -20,6 +20,8 @@
     </filter>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
+        <env name="JWT_SECRET" value="ki8jSvMf5wFrlSRBAWcGbmAzBUJfc8p8"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
