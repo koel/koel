@@ -60,7 +60,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $this->authorize($user);
+        $this->authorize('destroy', $user);
 
         return response()->json($user->delete());
     }

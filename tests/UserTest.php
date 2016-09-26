@@ -2,17 +2,15 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class UserTest extends TestCase
 {
-    use WithoutMiddleware, DatabaseTransactions;
+    use DatabaseTransactions;
 
     public function testCreateUser()
     {
         // Non-admins can't do shit
-        $this->actingAs(factory(User::class)->create())
-            ->post('api/user', [
+        $this->postAsUser('api/user', [
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'password' => 'qux',
@@ -20,12 +18,11 @@ class UserTest extends TestCase
             ->seeStatusCode(403);
 
         // But admins can
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->post('api/user', [
+        $this->postAsUser('api/user', [
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'password' => 'qux',
-            ]);
+            ], factory(User::class, 'admin')->create());
 
         $this->seeInDatabase('users', ['name' => 'Foo']);
     }
@@ -34,12 +31,11 @@ class UserTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->put("api/user/{$user->id}", [
+        $this->putAsUser("api/user/{$user->id}", [
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'password' => 'qux',
-            ]);
+            ], factory(User::class, 'admin')->create());
 
         $this->seeInDatabase('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
     }
@@ -49,13 +45,11 @@ class UserTest extends TestCase
         $user = factory(User::class)->create();
         $admin = factory(User::class, 'admin')->create();
 
-        $this->actingAs($admin)
-            ->delete("api/user/{$user->id}")
+        $this->deleteAsUser("api/user/{$user->id}", [], $admin)
             ->notSeeInDatabase('users', ['id' => $user->id]);
 
         // A user can't delete himself
-        $this->actingAs($admin)
-            ->delete("api/user/{$admin->id}")
+        $this->deleteAsUser("api/user/{$admin->id}", [], $admin)
             ->seeStatusCode(403)
             ->seeInDatabase('users', ['id' => $admin->id]);
     }

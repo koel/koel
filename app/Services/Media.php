@@ -217,17 +217,17 @@ class Media
      */
     public function tidy()
     {
-        $inUseAlbums = Song::select('album_id')->groupBy('album_id')->get()->lists('album_id')->toArray();
+        $inUseAlbums = Song::select('album_id')->groupBy('album_id')->get()->pluck('album_id')->toArray();
         $inUseAlbums[] = Album::UNKNOWN_ID;
         Album::whereNotIn('id', $inUseAlbums)->delete();
 
-        $inUseArtists = Album::select('artist_id')->groupBy('artist_id')->get()->lists('artist_id')->toArray();
+        $inUseArtists = Album::select('artist_id')->groupBy('artist_id')->get()->pluck('artist_id')->toArray();
 
         $contributingArtists = Song::distinct()
             ->select('contributing_artist_id')
             ->groupBy('contributing_artist_id')
             ->get()
-            ->lists('contributing_artist_id')
+            ->pluck('contributing_artist_id')
             ->toArray();
 
         $inUseArtists = array_merge($inUseArtists, $contributingArtists);

@@ -1,15 +1,6 @@
 <?php
 
-Route::get('/', function () {
-    return view('index');
-});
-
-// Some backward compatibilities.
-Route::get('/♫', function () {
-    return redirect('/');
-});
-
-Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
+Route::group(['namespace' => 'API'], function () {
     Route::post('me', 'AuthController@login');
     Route::delete('me', 'AuthController@logout');
 

@@ -6,11 +6,10 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class DownloadTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions;
 
     public function setUp()
     {
@@ -25,7 +24,7 @@ class DownloadTest extends TestCase
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->get("api/download/songs?songs[]={$song->id}")
+        $this->getAsUser("api/download/songs?songs[]={$song->id}")
             ->seeStatusCode(200);
     }
 
@@ -36,7 +35,7 @@ class DownloadTest extends TestCase
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3'); // should be a zip file, but we're testing here…
 
-        $this->get("api/download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}")
+        $this->getAsUser("api/download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}")
             ->seeStatusCode(200);
     }
 
@@ -48,7 +47,7 @@ class DownloadTest extends TestCase
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->get("api/download/album/{$album->id}")
+        $this->getAsUser("api/download/album/{$album->id}")
             ->seeStatusCode(200);
     }
 
@@ -60,29 +59,26 @@ class DownloadTest extends TestCase
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->get("api/download/artist/{$artist->id}")
+        $this->getAsUser("api/download/artist/{$artist->id}")
             ->seeStatusCode(200);
     }
 
     public function testPlaylist()
     {
         $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
 
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
         ]);
 
-        $this->actingAs($user2)
-            ->get("api/download/playlist/{$playlist->id}")
+        $this->getAsUser("api/download/playlist/{$playlist->id}")
             ->seeStatusCode(403);
 
         $mocked = Download::shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->actingAs($user)
-            ->get("api/download/playlist/{$playlist->id}")
+        $this->getAsUser("api/download/playlist/{$playlist->id}", $user)
             ->seeStatusCode(200);
     }
 
@@ -92,8 +88,7 @@ class DownloadTest extends TestCase
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->actingAs(factory(User::class)->create())
-            ->get('api/download/favorites')
+        $this->getAsUser('api/download/favorites')
             ->seeStatusCode(200);
     }
 }
