@@ -1,7 +1,7 @@
 language: php
 
 php:
-  - 5.6
+  - 5.6.4
   - 7.0
   - hhvm
 
@@ -17,9 +17,10 @@ env:
   ADMIN_PASSWORD: SoSecureK0el
   LASTFM_API_KEY: foo
   LASTFM_API_SECRET: bar
+  BROADCAST_DRIVER: log
 
 branches:
-  - master 
+  - master
 
 install:
   - . $HOME/.nvm/nvm.sh
