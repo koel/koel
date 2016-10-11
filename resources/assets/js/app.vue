@@ -86,6 +86,8 @@ export default {
             return;
           }
 
+          // Notice that a custom message like this has ceased to be supported
+          // starting from Chrome 51.
           return 'You asked Koel to confirm before closing, so here it is.';
         };
 
