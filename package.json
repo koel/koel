@@ -44,7 +44,7 @@
     "select": "^1.0.6",
     "sinon": "^1.17.2",
     "sweetalert": "^1.1.3",
-    "vue": "^2.0.0-beta.5",
+    "vue": "^2.0.1",
     "vue-hot-reload-api": "^1.3.2",
     "vueify": "^9.1.0",
     "vueify-insert-css": "^1.0.0",
