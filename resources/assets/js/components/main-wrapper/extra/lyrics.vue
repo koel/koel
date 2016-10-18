@@ -10,10 +10,6 @@
 <script>
 export default {
   props: ['song'],
-
-  methods: {
-    resetState() {},
-  },
 };
 </script>
 

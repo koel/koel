@@ -17,23 +17,26 @@ export const sharedStore = {
     currentUser: null,
     playlists: [],
     useLastfm: false,
+    useYouTube: false,
     allowDownload: false,
     currentVersion: '',
     latestVersion: '',
     cdnUrl: '',
+    originalMediaPath: '',
   },
 
   init() {
     this.reset();
 
     return new Promise((resolve, reject) => {
-      http.get('data', r => {
-        const data = r.data;
-
+      http.get('data', data => {
         // Don't allow downloading on mobile devices
         data.allowDownload = data.allowDownload && !isMobile.any;
 
         assign(this.state, data);
+
+        // Always disable YouTube integration on mobile.
+        this.state.useYouTube = this.state.useYouTube && !isMobile.phone;
 
         // If this is a new user, initialize his preferences to be an empty object.
         if (!this.state.currentUser.preferences) {
@@ -48,7 +51,10 @@ export const sharedStore = {
         queueStore.init();
         settingStore.init(this.state.settings);
 
-        resolve(r)
+        // Keep a copy of the media path. We'll need this to properly warn the user later.
+        this.state.originalMediaPath = this.state.settings.media_path;
+
+        resolve(data)
       }, r => reject(r));
     });
   },

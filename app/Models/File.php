@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Cache;
 use Exception;
 use getID3;
 use getid3_lib;
 use Illuminate\Support\Facades\Log;
 use Media;
 use SplFileInfo;
+use Symfony\Component\Finder\Finder;
 
 class File
 {
@@ -55,6 +57,13 @@ class File
     protected $song;
 
     /**
+     * The last parsing error text, if any.
+     *
+     * @var string
+     */
+    protected $syncError;
+
+    /**
      * Construct our File object.
      * Upon construction, we'll set the path, hash, and associated Song object (if any).
      *
@@ -65,10 +74,21 @@ class File
     {
         $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
         $this->setGetID3($getID3);
-        $this->mtime = $this->splFileInfo->getMTime();
+
+        // Workaround for #344, where getMTime() fails for certain files with Unicode names
+        // on Windows.
+        // Yes, beloved Windows.
+        try {
+            $this->mtime = $this->splFileInfo->getMTime();
+        } catch (Exception $e) {
+            // Not worth logging the error. Just use current stamp for mtime.
+            $this->mtime = time();
+        }
+
         $this->path = $this->splFileInfo->getPathname();
         $this->hash = self::getHash($this->path);
         $this->song = Song::find($this->hash);
+        $this->syncError = '';
     }
 
     /**
@@ -81,6 +101,8 @@ class File
         $info = $this->getID3->analyze($this->path);
 
         if (isset($info['error']) || !isset($info['playtime_seconds'])) {
+            $this->syncError = isset($info['error']) ? $info['error'][0] : 'No playtime found';
+
             return;
         }
 
@@ -99,7 +121,7 @@ class File
             'comments.track_number',
         ];
 
-        for ($i = 0; $i < count($trackIndices) && $track === 0; $i++) {
+        for ($i = 0; $i < count($trackIndices) && $track === 0; ++$i) {
             $track = array_get($info, $trackIndices[$i], [0])[0];
         }
 
@@ -198,7 +220,7 @@ class File
             // But if 'album' isn't specified, we don't want to update normal albums.
             // This variable is to keep track of this state.
             $changeCompilationAlbumOnly = false;
-            if (in_array('compilation', $tags) && !in_array('album', $tags)) {
+            if (in_array('compilation', $tags, true) && !in_array('album', $tags, true)) {
                 $tags[] = 'album';
                 $changeCompilationAlbumOnly = true;
             }
@@ -227,11 +249,18 @@ class File
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
 
-        if (!empty($info['cover']) && !$album->has_cover) {
-            try {
-                $album->generateCover($info['cover']);
-            } catch (Exception $e) {
-                Log::error($e);
+        if (!$album->has_cover) {
+            // If the album has no cover, we try to get the cover image from existing tag data
+            if (!empty($info['cover'])) {
+                try {
+                    $album->generateCover($info['cover']);
+                } catch (Exception $e) {
+                    Log::error($e);
+                }
+            }
+            // or, if there's a cover image under the same directory, use it.
+            elseif ($cover = $this->getCoverFileUnderSameDirectory()) {
+                $album->copyCoverFile($cover);
             }
         }
 
@@ -288,6 +317,16 @@ class File
     }
 
     /**
+     * Get the last parsing error's text.
+     *
+     * @return syncError
+     */
+    public function getSyncError()
+    {
+        return $this->syncError;
+    }
+
+    /**
      * @param getID3 $getID3
      */
     public function setGetID3($getID3 = null)
@@ -301,6 +340,45 @@ class File
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Issue #380.
+     * Some albums have its own cover image under the same directory as cover|folder.jpg/png.
+     * We'll check if such a cover file is found, and use it if positive.
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string|false The cover file's full path, or false if none found
+     */
+    private function getCoverFileUnderSameDirectory()
+    {
+        // As directory scanning can be expensive, we cache and reuse the result.
+        $cacheKey = md5($this->path.'_cover');
+
+        if (!is_null($cover = Cache::get($cacheKey))) {
+            return $cover;
+        }
+
+        $matches = array_keys(iterator_to_array(
+            Finder::create()
+                ->depth(0)
+                ->ignoreUnreadableDirs()
+                ->files()
+                ->followLinks()
+                ->name('/(cov|fold)er\.(jpe?g|png)$/i')
+                ->in(dirname($this->path))
+        ));
+
+        $cover = $matches ? $matches[0] : false;
+        // Even if a file is found, make sure it's a real image.
+        if ($cover && exif_imagetype($cover) === false) {
+            $cover = false;
+        }
+
+        Cache::put($cacheKey, $cover, 24 * 60);
+
+        return $cover;
     }
 
     /**

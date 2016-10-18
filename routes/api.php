@@ -1,15 +1,6 @@
 <?php
 
-Route::get('/', function () {
-    return view('index');
-});
-
-// Some backward compatibilities.
-Route::get('/♫', function () {
-    return redirect('/');
-});
-
-Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
+Route::group(['namespace' => 'API'], function () {
     Route::post('me', 'AuthController@login');
     Route::delete('me', 'AuthController@logout');
 
@@ -51,6 +42,11 @@ Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
             'uses' => 'LastfmController@callback',
         ]);
         Route::delete('lastfm/disconnect', 'LastfmController@disconnect');
+
+        // YouTube-related routes
+        if (YouTube::enabled()) {
+            Route::get('youtube/search/song/{song}', 'YouTubeController@searchVideosRelatedToSong');
+        }
 
         // Download routes
         Route::group(['prefix' => 'download', 'namespace' => 'Download'], function () {

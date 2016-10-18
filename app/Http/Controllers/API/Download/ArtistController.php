@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\Download;
 
-use App\Http\Requests\API\Download\Request;
 use App\Models\Artist;
 use Download;
 
@@ -13,12 +12,13 @@ class ArtistController extends Controller
      * Don't see why one would need this, really.
      * Let's pray to God the user doesn't trigger this on Elvis.
      *
-     * @param Request $request
-     * @param Artist  $artist
+     * @param Artist $artist
+     *
+     * @throws \Exception
      *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function download(Request $request, Artist $artist)
+    public function download(Artist $artist)
     {
         return response()->download(Download::from($artist));
     }

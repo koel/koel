@@ -247,6 +247,7 @@ export default {
 @import "../../../sass/partials/_mixins.scss";
 
 #equalizer {
+  user-select: none;
   position: absolute;
   bottom: $footerHeight;
   width: 100%;
@@ -396,7 +397,7 @@ export default {
     max-width: 414px;
     left: auto;
     right: 0;
-    bottom: $footerHeightMobile + 5px;
+    bottom: $footerHeightMobile + 14px;
     display: block;
     height: auto;
 

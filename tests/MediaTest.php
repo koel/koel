@@ -32,6 +32,11 @@ class MediaTest extends TestCase
         // Ogg files and audio files in subdirectories should be recognized
         $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.ogg']);
 
+        // GitHub issue #380. folder.png should be copied and used as the cover for files
+        // under subdir/
+        $song = Song::wherePath($this->mediaPath.'/subdir/back-in-black.ogg')->first();
+        $this->assertNotNull($song->album->cover);
+
         // File search shouldn't be case-sensitive.
         $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.MP3']);
 
@@ -207,5 +212,17 @@ class MediaTest extends TestCase
         $this->assertEquals('佐倉綾音 Unknown', $info['artist']);
         $this->assertEquals('小岩井こ Random', $info['album']);
         $this->assertEquals('水谷広実', $info['title']);
+    }
+
+    public function testDotDirectories()
+    {
+        config(['koel.ignore_dot_files' => false]);
+        $media = new Media();
+        $media->sync($this->mediaPath);
+        $this->seeInDatabase('albums', ['name' => 'Hidden Album']);
+
+        config(['koel.ignore_dot_files' => true]);
+        $media->sync($this->mediaPath);
+        $this->notSeeInDatabase('albums', ['name' => 'Hidden Album']);
     }
 }

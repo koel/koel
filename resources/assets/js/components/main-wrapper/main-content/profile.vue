@@ -35,7 +35,6 @@
 
         <div class="form-row">
           <button type="submit">Save</button>
-          <span v-show="showStatus" class="status">Saved!</span>
         </div>
       </form>
 
@@ -96,7 +95,7 @@
               <a href="https://github.com/phanan/koel/wiki" target="_blank">Koel’s Wiki</a>
               for a quick how-to. Really, you should do it.
             </span>
-            <span v-else>Try politely asking your adminstrator to enable it.</span>
+            <span v-else>Try politely asking your administrator to enable it.</span>
           </p>
         </div>
       </section>
@@ -106,6 +105,7 @@
 
 <script>
 import $ from 'jquery';
+import swal from 'sweetalert';
 
 import { userStore, preferenceStore, sharedStore } from '../../../stores';
 import { forceReloadWindow } from '../../../utils';
@@ -118,7 +118,6 @@ export default {
       cache: userStore.stub,
       pwd: '',
       confirmPwd: '',
-      showStatus: false,
       prefs: preferenceStore.state,
       sharedState: sharedStore.state,
     };
@@ -142,9 +141,12 @@ export default {
         this.pwd = '';
         this.confirmPwd = '';
 
-        // "Save!" aaaaaaaand it's gone!
-        this.showStatus = true;
-        setTimeout(() => this.showStatus = false, 3000);
+        swal({
+          title: 'Done!',
+          text: 'Profile saved.',
+          type: 'success',
+          allowOutsideClick: true,
+        });
       });
     },
 

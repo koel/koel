@@ -9,6 +9,7 @@ use App\Models\Playlist;
 use App\Models\Setting;
 use App\Models\User;
 use Lastfm;
+use YouTube;
 
 class DataController extends Controller
 {
@@ -28,13 +29,14 @@ class DataController extends Controller
 
         return response()->json([
             'artists' => Artist::orderBy('name')->with('albums', with('albums.songs'))->get(),
-            'settings' => Setting::lists('value', 'key')->all(),
+            'settings' => auth()->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),
             'users' => auth()->user()->is_admin ? User::all() : [],
             'currentUser' => auth()->user(),
             'useLastfm' => Lastfm::used(),
-            'allowDownload' =>  env('ALLOW_DOWNLOAD', true),
+            'useYouTube' => YouTube::enabled(),
+            'allowDownload' =>  config('koel.download.allow'),
             'cdnUrl' => app()->staticUrl(),
             'currentVersion' => Application::VERSION,
             'latestVersion' => auth()->user()->is_admin ? app()->getLatestVersion() : Application::VERSION,

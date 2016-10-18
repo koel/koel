@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * @property array  preferences
@@ -12,6 +13,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  */
 class User extends Authenticatable
 {
+    use Notifiable;
+
     /**
      * The database table used by the model.
      *
@@ -153,7 +156,7 @@ class User extends Authenticatable
 
         // Hide the user's secrets away!
         foreach ($this->hiddenPreferences as $key) {
-            if (isset($preferences[$key])) {
+            if (array_key_exists($key, $preferences)) {
                 $preferences[$key] = 'hidden';
             }
         }

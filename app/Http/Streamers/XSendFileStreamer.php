@@ -2,15 +2,8 @@
 
 namespace App\Http\Streamers;
 
-use App\Models\Song;
-
 class XSendFileStreamer extends Streamer implements StreamerInterface
 {
-    public function __construct(Song $song)
-    {
-        parent::__construct($song);
-    }
-
     /**
      * Stream the current song using Apache's x_sendfile module.
      */

@@ -62,9 +62,10 @@
 <script>
 import isMobile from 'ismobilejs';
 
-import { pluralize, event, loadMainView } from '../../../utils';
+import { pluralize, event } from '../../../utils';
 import { sharedStore, artistStore } from '../../../stores';
 import { playback, download, artistInfo as artistInfoService } from '../../../services';
+import router from '../../../router';
 import hasSongList from '../../../mixins/has-song-list';
 import artistInfo from '../extra/artist-info.vue';
 import soundBar from '../../shared/sound-bar.vue';
@@ -95,9 +96,9 @@ export default {
      * and move all of them to another artist (thus delete this artist entirely).
      * We should then go back to the artist list.
      */
-    'artist.albums.length': function (newVal) {
+    'artist.albums.length' (newVal) {
       if (!newVal) {
-        loadMainView('artists');
+        router.go('artists');
       }
     },
   },

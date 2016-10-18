@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\Download;
 
-use App\Http\Requests\API\Download\Request;
 use App\Models\Playlist;
 use Download;
 
@@ -11,12 +10,14 @@ class PlaylistController extends Controller
     /**
      * Download all songs in a playlist.
      *
-     * @param Request  $request
      * @param Playlist $playlist
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Exception
      *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function download(Request $request, Playlist $playlist)
+    public function download(Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
 

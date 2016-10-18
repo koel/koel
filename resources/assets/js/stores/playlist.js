@@ -1,4 +1,4 @@
-import { each, map, difference, union, without } from 'lodash';
+import { each, find, map, difference, union, without } from 'lodash';
 import NProgress from 'nprogress';
 
 import stub from '../stubs/playlist';
@@ -33,6 +33,17 @@ export const playlistStore = {
    */
   set all(value) {
     this.state.playlists = value;
+  },
+
+  /**
+   * Find a playlist by its ID
+   *
+   * @param  {Number} id
+   *
+   * @return {Object}
+   */
+  byId(id) {
+    return find(this.all, { id });
   },
 
   /**
@@ -89,8 +100,7 @@ export const playlistStore = {
     NProgress.start();
 
     return new Promise((resolve, reject) => {
-      http.post('playlist', { name, songs }, r => {
-        const playlist = r.data;
+      http.post('playlist', { name, songs }, playlist => {
         playlist.songs = songs;
         this.objectifySongs(playlist);
         this.add(playlist);
@@ -108,9 +118,9 @@ export const playlistStore = {
     NProgress.start();
 
     return new Promise((resolve, reject) => {
-      http.delete(`playlist/${playlist.id}`, {}, r => {
+      http.delete(`playlist/${playlist.id}`, {}, data => {
         this.remove(playlist);
-        resolve(r);
+        resolve(data);
       }, r => reject(r));
     });
   },
@@ -132,7 +142,7 @@ export const playlistStore = {
       }
 
       http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
-        r => resolve(playlist),
+        data => resolve(playlist),
         r => reject(r)
       );
     })
@@ -149,7 +159,7 @@ export const playlistStore = {
 
     return new Promise((resolve, reject) => {
       http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
-        r => resolve(playlist),
+        data => resolve(playlist),
         r => reject(r)
       );
     })
@@ -164,7 +174,7 @@ export const playlistStore = {
     NProgress.start();
 
     return new Promise((resolve, reject) => {
-      http.put(`playlist/${playlist.id}`, { name: playlist.name }, r => resolve(playlist), r => reject(r));
+      http.put(`playlist/${playlist.id}`, { name: playlist.name }, data => resolve(playlist), r => reject(r));
     });
   },
 };

@@ -5,9 +5,9 @@
       @keydown.j = "playNext"
       @keydown.k = "playPrev"
       @keydown.f = "search"
-      @keydown.177 = "playPrev"
-      @keydown.176 = "playNext"
-      @keydown.179 = "togglePlayback"
+      @keydown.mediaPrev = "playPrev"
+      @keydown.mediaNext = "playNext"
+      @keydown.mediaToggle = "togglePlayback"
     >
       <site-header></site-header>
       <main-wrapper></main-wrapper>
@@ -33,10 +33,11 @@ import overlay from './components/shared/overlay.vue';
 import loginForm from './components/auth/login-form.vue';
 import editSongsForm from './components/modals/edit-songs-form.vue';
 
-import { event, showOverlay, hideOverlay, loadMainView, forceReloadWindow } from './utils';
-import { sharedStore, queueStore, songStore, userStore, preferenceStore as preferences } from './stores';
+import { event, showOverlay, hideOverlay, forceReloadWindow, url } from './utils';
+import { sharedStore, songStore, userStore, preferenceStore as preferences } from './stores';
 import { playback, ls } from './services';
 import { focusDirective, clickawayDirective } from './directives';
+import router from './router';
 
 export default {
   components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
@@ -58,6 +59,9 @@ export default {
     // Create the element to be the ghost drag image.
     $('<div id="dragGhost"></div>').appendTo('body');
 
+    // And the textarea to copy stuff
+    $('<textarea id="copyArea"></textarea>').appendTo('body');
+
     // Add an ugly mac/non-mac class for OS-targeting styles.
     // I'm crying inside.
     $('html').addClass(navigator.userAgent.indexOf('Mac') !== -1 ? 'mac' : 'non-mac');
@@ -73,9 +77,6 @@ export default {
         playback.init();
         hideOverlay();
 
-        // Load the default view.
-        loadMainView('home');
-
         // Ask for user's notification permission.
         this.requestNotifPermission();
 
@@ -85,6 +86,8 @@ export default {
             return;
           }
 
+          // Notice that a custom message like this has ceased to be supported
+          // starting from Chrome 51.
           return 'You asked Koel to confirm before closing, so here it is.';
         };
 
@@ -190,8 +193,26 @@ export default {
           forceReloadWindow();
         });
       },
+
+      /**
+       * Init our basic, custom router on ready to determine app state.
+       */
+      'koel:ready': () => {
+        router.init();
+      },
     });
   },
+};
+
+// Register our custom key codes
+Vue.config.keyCodes = {
+  a: 65,
+  j: 74,
+  k: 75,
+  f: 70,
+  mediaNext: 176,
+  mediaPrev: 177,
+  mediaToggle: 179
 };
 
 // …and the global directives
@@ -219,6 +240,17 @@ Vue.directive('koel-clickaway',clickawayDirective);
    * We can totally hide this element on touch devices, because there's
    * no drag and drop support there anyway.
    */
+  html.touchevents & {
+    display: none;
+  }
+}
+
+#copyArea {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+
   html.touchevents & {
     display: none;
   }

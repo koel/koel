@@ -33,8 +33,8 @@ class Lastfm extends RESTfulService
     public function __construct($key = null, $secret = null, Client $client = null)
     {
         parent::__construct(
-            $key ?: env('LASTFM_API_KEY'),
-            $secret ?: env('LASTFM_API_SECRET'),
+            $key ?: config('koel.lastfm.key'),
+            $secret ?: config('koel.lastfm.secret'),
             'https://ws.audioscrobbler.com/2.0',
             $client ?: new Client()
         );
@@ -47,7 +47,7 @@ class Lastfm extends RESTfulService
      */
     public function used()
     {
-        return env('LASTFM_API_KEY') && env('LASTFM_API_SECRET');
+        return config('koel.lastfm.key') && config('koel.lastfm.secret');
     }
 
     /**
@@ -65,7 +65,7 @@ class Lastfm extends RESTfulService
      *
      * @param $name string Name of the artist
      *
-     * @return object|false
+     * @return array|false
      */
     public function getArtistInfo($name)
     {

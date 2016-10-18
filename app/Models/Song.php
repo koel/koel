@@ -3,8 +3,13 @@
 namespace App\Models;
 
 use App\Events\LibraryChanged;
+use App\Traits\SupportsDeleteWhereIDsNotIn;
+use AWS;
+use Aws\AwsClient;
+use Cache;
 use Illuminate\Database\Eloquent\Model;
 use Lastfm;
+use YouTube;
 
 /**
  * @property string path
@@ -13,9 +18,17 @@ use Lastfm;
  * @property int    contributing_artist_id
  * @property Artist contributingArtist
  * @property Artist artist
+ * @property string s3_params
+ * @property float  length
+ * @property string lyrics
+ * @property int    track
+ * @property int    album_id
+ * @property int    id
  */
 class Song extends Model
 {
+    use SupportsDeleteWhereIDsNotIn;
+
     protected $guarded = [];
 
     /**
@@ -25,7 +38,7 @@ class Song extends Model
      *
      * @var array
      */
-    protected $hidden = ['lyrics', 'created_at', 'updated_at', 'path', 'mtime'];
+    protected $hidden = ['lyrics', 'updated_at', 'path', 'mtime'];
 
     /**
      * @var array
@@ -136,8 +149,8 @@ class Song extends Model
                 trim($data['albumName'] ?: $song->album->name),
                 trim($data['artistName']) ?: $song->artist->name,
                 $single ? trim($data['lyrics']) : $song->lyrics,
-                $single ? intval($data['track']) : $song->track,
-                intval($data['compilationState'])
+                $single ? (int) $data['track'] : $song->track,
+                (int) $data['compilationState']
             );
         }
 
@@ -237,6 +250,51 @@ class Song extends Model
             ->pluck('song');
 
         return $toArray ? $songs->toArray() : $songs;
+    }
+
+    /**
+     * Get the song's Object Storage url for streaming or downloading.
+     *
+     * @param AwsClient $s3
+     *
+     * @return string
+     */
+    public function getObjectStoragePublicUrl(AwsClient $s3 = null)
+    {
+        // If we have a cached version, just return it.
+        if ($cached = Cache::get("OSUrl/{$this->id}")) {
+            return $cached;
+        }
+
+        // Otherwise, we query S3 for the presigned request.
+        if (!$s3) {
+            $s3 = AWS::createClient('s3');
+        }
+
+        $cmd = $s3->getCommand('GetObject', [
+            'Bucket' => $this->s3_params['bucket'],
+            'Key' => $this->s3_params['key'],
+        ]);
+
+        // Here we specify that the request is valid for 1 hour.
+        // We'll also cache the public URL for future reuse.
+        $request = $s3->createPresignedRequest($cmd, '+1 hour');
+        $url = (string) $request->getUri();
+        Cache::put("OSUrl/{$this->id}", $url, 60);
+
+        return $url;
+    }
+
+    /**
+     * Get the YouTube videos related to this song.
+     *
+     * @param string $youTubePageToken The YouTube page token, for pagination purpose.
+     *
+     * @return @return object|false
+     */
+    public function getRelatedYouTubeVideos($youTubePageToken = '')
+    {
+        return YouTube::searchVideosRelatedToSong($this, $youTubePageToken);
     }
 
     /**

@@ -13,8 +13,8 @@ export const artistInfo = {
         return;
       }
 
-      http.get(`artist/${artist.id}/info`, r => {
-        r.data && this.merge(artist, r.data);
+      http.get(`artist/${artist.id}/info`, data => {
+        data && this.merge(artist, data);
         resolve(artist);
       }, r => reject(r));
     });

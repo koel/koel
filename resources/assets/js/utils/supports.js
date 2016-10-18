@@ -31,7 +31,20 @@ export function isAudioContextSupported() {
   return true;
 };
 
+/**
+ * Checks if HTML5 clipboard can be used.
+ *
+ * @return {Boolean}
+ */
+export function isClipboardSupported() {
+  return 'execCommand' in document;
+};
 
+/**
+ * A simple event bus.
+ *
+ * @type {Object}
+ */
 const event = {
   bus: null,
 

@@ -4,7 +4,7 @@
       <span>Settings</span>
     </h1>
 
-    <form @submit.prevent="save" class="main-scroll-wrap">
+    <form @submit.prevent="confirmThenSave" class="main-scroll-wrap">
       <div class="form-row">
         <label for="inputSettingsPath">Media Path</label>
         <p class="help">
@@ -24,17 +24,50 @@
 </template>
 
 <script>
-import { settingStore } from '../../../stores';
+import swal from 'sweetalert';
+
+import { settingStore, sharedStore } from '../../../stores';
 import { parseValidationError, forceReloadWindow, event, showOverlay, hideOverlay } from '../../../utils';
+import router from '../../../router';
 
 export default {
   data() {
     return {
       state: settingStore.state,
+      sharedState: sharedStore.state,
     };
   },
 
+  computed: {
+    /**
+     * Determine if we should warn the user upon saving.
+     *
+     * @return {boolean}
+     */
+    shouldWarn() {
+      // Warn the user if the media path is not empty and about to change.
+      return this.sharedState.originalMediaPath &&
+        this.sharedState.originalMediaPath !== this.state.settings.media_path.trim();
+    },
+  },
+
   methods: {
+    confirmThenSave() {
+      if (this.shouldWarn) {
+        swal({
+          title: 'Be careful!',
+          text: 'Changing the media path will essentially remove all existing data – songs, artists, \
+          albums, favorites, everything – and empty your playlists!',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'I know. Go ahead.',
+          confirmButtonColor: '#c34848',
+        }, this.save);
+      } else {
+        this.save();
+      }
+    },
+
     /**
      * Save the settings.
      */
@@ -42,15 +75,24 @@ export default {
       showOverlay();
 
       settingStore.update().then(() => {
+        // Make sure we're back to home first.
+        router.go('home');
         forceReloadWindow();
-      }).catch(error => {
+      }).catch(r => {
         let msg = 'Unknown error.';
 
-        if (error.status === 422) {
-          msg = parseValidationError(error.data)[0];
+        if (r.status === 422) {
+          msg = parseValidationError(r.responseJSON)[0];
         }
 
-        showOverlay(`Error: ${msg}`, 'error', true);
+        hideOverlay();
+
+        swal({
+          title: 'Something went wrong',
+          text: msg,
+          type: 'error',
+          allowOutsideClick: true,
+        });
       });
     },
   },

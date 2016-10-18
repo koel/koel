@@ -16,8 +16,8 @@ export const albumInfo = {
         return;
       }
 
-      http.get(`album/${album.id}/info`, r => {
-        r.data && this.merge(album, r.data);
+      http.get(`album/${album.id}/info`, data => {
+        data && this.merge(album, data);
         resolve(album);
       }, r => reject(r));
     });

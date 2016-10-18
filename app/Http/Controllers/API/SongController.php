@@ -9,45 +9,57 @@ use App\Http\Streamers\TranscodingStreamer;
 use App\Http\Streamers\XAccelRedirectStreamer;
 use App\Http\Streamers\XSendFileStreamer;
 use App\Models\Song;
+use YouTube;
 
 class SongController extends Controller
 {
     /**
-     * Play a song.
+     * Play/stream a song.
      *
      * @link https://github.com/phanan/koel/wiki#streaming-music
      *
-     * @param Song $song
+     * @param Song      $song      The song to stream.
+     * @param null|bool $transcode Whether to force transcoding the song.
+     *                             If this is omitted, by default Koel will transcode FLAC.
+     * @param null|int  $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
+     *                             Only taken into account if $transcode is truthy.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function play(Song $song, $transcode = null, $bitrate = null)
+    public function play(Song $song, $transcode = null, $bitRate = null)
     {
-        if (is_null($bitrate)) {
-            $bitrate = env('OUTPUT_BIT_RATE', 128);
-        }
-
         if ($song->s3_params) {
             return (new S3Streamer($song))->stream();
         }
 
-        // If transcode parameter isn't passed, the default is to only transcode flac
-        if (is_null($transcode) && ends_with(mime_content_type($song->path), 'flac')) {
+        // If `transcode` parameter isn't passed, the default is to only transcode FLAC.
+        if ($transcode === null && ends_with(mime_content_type($song->path), 'flac')) {
             $transcode = true;
-        } else {
-            $transcode = (bool) $transcode;
         }
+
+        $streamer = null;
 
         if ($transcode) {
-            return (new TranscodingStreamer($song, $bitrate, request()->input('time', 0)))->stream();
+            $streamer = new TranscodingStreamer(
+                $song,
+                $bitRate ?: config('koel.streaming.bitrate'),
+                request()->input('time', 0)
+            );
+        } else {
+            switch (config('koel.streaming.method')) {
+                case 'x-sendfile':
+                    $streamer = new XSendFileStreamer($song);
+                    break;
+                case 'x-accel-redirect':
+                    $streamer = new XAccelRedirectStreamer($song);
+                    break;
+                default:
+                    $streamer = new PHPStreamer($song);
+                    break;
+            }
         }
 
-        switch (env('STREAMING_METHOD')) {
-            case 'x-sendfile':
-                return (new XSendFileStreamer($song))->stream();
-            case 'x-accel-redirect':
-                return (new XAccelRedirectStreamer($song))->stream();
-            default:
-                return (new PHPStreamer($song))->stream();
-        }
+        $streamer->stream();
     }
 
     /**
@@ -63,6 +75,7 @@ class SongController extends Controller
             'lyrics' => $song->lyrics,
             'album_info' => $song->album->getInfo(),
             'artist_info' => $song->artist->getInfo(),
+            'youtube' => $song->getRelatedYouTubeVideos(),
         ]);
     }
 

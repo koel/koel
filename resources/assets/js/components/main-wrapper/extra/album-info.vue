@@ -51,14 +51,13 @@ export default {
     };
   },
 
-  methods: {
-    /**
-     * Reset the component's current state.
-     */
-    resetState() {
+  watch: {
+    album() {
       this.showingFullWiki = false;
     },
+  },
 
+  methods: {
     /**
      * Shuffle all songs in the current album.
      */

@@ -1,0 +1,45 @@
+{
+ "kind": "youtube#searchListResponse",
+ "etag": "\"5g01s4-wS2b4VpScndqCYc5Y-8k/UCO_ojwcllr5xSMZQsFwq0cvepc\"",
+ "nextPageToken": "CAEQAA",
+ "regionCode": "SG",
+ "pageInfo": {
+  "totalResults": 482593,
+  "resultsPerPage": 1
+ },
+ "items": [
+  {
+   "kind": "youtube#searchResult",
+   "etag": "\"5g01s4-wS2b4VpScndqCYc5Y-8k/IjJV4muQQUfhpREAafJz5Ku_zHI\"",
+   "id": {
+    "kind": "youtube#video",
+    "videoId": "LXEKuttVRIo"
+   },
+   "snippet": {
+    "publishedAt": "2009-12-21T17:25:13.000Z",
+    "channelId": "UCOJZ1tna8yj8mAEITPkHNCQ",
+    "title": "Slipknot - Snuff [OFFICIAL VIDEO]",
+    "description": "Slipknot's music video for 'Snuff' from the album, All Hope Is Gone - available now on Roadrunner Records. Download now on iTunes: http://smarturl.it/allhope ...",
+    "thumbnails": {
+     "default": {
+      "url": "https://i.ytimg.com/vi/LXEKuttVRIo/default.jpg",
+      "width": 120,
+      "height": 90
+     },
+     "medium": {
+      "url": "https://i.ytimg.com/vi/LXEKuttVRIo/mqdefault.jpg",
+      "width": 320,
+      "height": 180
+     },
+     "high": {
+      "url": "https://i.ytimg.com/vi/LXEKuttVRIo/hqdefault.jpg",
+      "width": 480,
+      "height": 360
+     }
+    },
+    "channelTitle": "Slipknot",
+    "liveBroadcastContent": "none"
+   }
+  }
+ ]
+}

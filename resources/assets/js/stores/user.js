@@ -103,7 +103,7 @@ export const userStore = {
     NProgress.start();
 
     return new Promise((resolve, reject) => {
-      http.post('me', { email, password }, r => resolve(r), r => reject(r));
+      http.post('me', { email, password }, data => resolve(data), r => reject(r));
     });
   },
 
@@ -112,7 +112,7 @@ export const userStore = {
    */
   logout() {
     return new Promise((resolve, reject) => {
-      http.delete('me', {}, r => resolve(r), r => reject(r));
+      http.delete('me', {}, data => resolve(data), r => reject(r));
     });
   },
 
@@ -148,8 +148,7 @@ export const userStore = {
     NProgress.start();
 
     return new Promise((resolve, reject) => {
-      http.post('user', { name, email, password }, r => {
-        const user = r.data;
+      http.post('user', { name, email, password }, user => {
         this.setAvatar(user);
         this.all.unshift(user);
         resolve(user);
@@ -169,7 +168,7 @@ export const userStore = {
     NProgress.start();
 
     return new Promise((resolve, reject) => {
-      http.put(`user/${user.id}`, { name, email, password }, r => {
+      http.put(`user/${user.id}`, { name, email, password }, () => {
         this.setAvatar(user);
         user.password = '';
         resolve(user);
@@ -186,7 +185,7 @@ export const userStore = {
     NProgress.start();
 
     return new Promise((resolve, reject) => {
-      http.delete(`user/${user.id}`, {}, r => {
+      http.delete(`user/${user.id}`, {}, data => {
         this.all = without(this.all, user);
 
         // Mama, just killed a man
@@ -211,7 +210,7 @@ export const userStore = {
         /**
          * Brian May enters the stage.
          */
-        resolve(r);
+        resolve(data);
       }, r => reject(r));
     });
   },

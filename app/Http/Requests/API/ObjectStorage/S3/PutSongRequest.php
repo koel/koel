@@ -4,6 +4,10 @@ namespace App\Http\Requests\API\ObjectStorage\S3;
 
 use App\Http\Requests\API\ObjectStorage\S3\Request as BaseRequest;
 
+/**
+ * @property string bucket
+ * @property array  tags
+ */
 class PutSongRequest extends BaseRequest
 {
     public function rules()

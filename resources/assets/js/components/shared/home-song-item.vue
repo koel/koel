@@ -10,12 +10,14 @@
       </a>
     </span>
     <span class="details">
-      <span :style="{ width: song.playCount * 100 / topPlayCount + '%' }"
+      <span v-if="showPlayCount" :style="{ width: song.playCount * 100 / topPlayCount + '%' }"
         class="play-count"></span>
       {{ song.title }}
       <span class="by">
-        <a href="#" @click.prevent="viewArtistDetails(song.artist)">{{ song.artist.name }}</a> -
+        <a :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a>
+        <template v-if="showPlayCount">-
         {{ song.playCount | pluralize('play') }}
+        </template>
       </span>
     </span>
   </li>
@@ -25,13 +27,17 @@
 import { pluralize } from '../../utils';
 import { queueStore } from '../../stores';
 import { playback } from '../../services';
-import artistAlbumDetails from '../../mixins/artist-album-details';
 
 export default {
   name: 'shared--home-song-item',
   props: ['song', 'topPlayCount'],
-  mixins: [artistAlbumDetails],
   filters: { pluralize },
+
+  computed: {
+    showPlayCount() {
+      return this.topPlayCount && this.song.playCount;
+    },
+  },
 
   methods: {
     play() {
@@ -46,9 +52,9 @@ export default {
       if (this.song.playbackState === 'stopped') {
         this.play(this.song);
       } else if (this.song.playbackState === 'paused') {
-        this.playback.resume();
+        playback.resume();
       } else {
-        this.playback.pause();
+        playback.pause();
       }
     },
   },

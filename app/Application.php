@@ -19,7 +19,7 @@ class Application extends IlluminateApplication
      *
      * @link https://github.com/phanan/koel/releases
      */
-    const VERSION = 'v2.3.0';
+    const VERSION = 'v3.3.1';
 
     /**
      * We have merged public path and base path.
@@ -38,6 +38,8 @@ class Application extends IlluminateApplication
      * @param string $file
      * @param string $manifestFile
      *
+     * @throws \InvalidArgumentException
+     *
      * @return string
      */
     public function rev($file, $manifestFile = null)
@@ -46,7 +48,7 @@ class Application extends IlluminateApplication
 
         $manifestFile = $manifestFile ?: $this->publicPath().'/public/build/rev-manifest.json';
 
-        if (is_null($manifest)) {
+        if ($manifest === null) {
             $manifest = json_decode(file_get_contents($manifestFile), true);
         }
 
@@ -68,13 +70,13 @@ class Application extends IlluminateApplication
      */
     public function staticUrl($name = null)
     {
-        $cdnUrl = trim(env('CDN_URL'), '/ ');
+        $cdnUrl = trim(config('koel.cdn.url'), '/ ');
 
         return $cdnUrl ? $cdnUrl.'/'.trim(ltrim($name, '/')) : trim(asset($name));
     }
 
     /**
-     * Get the latest version number of Koel from Github.
+     * Get the latest version number of Koel from GitHub.
      *
      * @param Client $client
      *
@@ -82,16 +84,16 @@ class Application extends IlluminateApplication
      */
     public function getLatestVersion(Client $client = null)
     {
-        $client = $client ?: new Client();
-
         if ($v = Cache::get('latestKoelVersion')) {
             return $v;
         }
 
+        $client = $client ?: new Client();
+
         try {
             $v = json_decode($client->get('https://api.github.com/repos/phanan/koel/tags')->getBody())[0]->name;
-            // Cache for a week
-            Cache::put('latestKoelVersion', $v, 7 * 24 * 60);
+            // Cache for one day
+            Cache::put('latestKoelVersion', $v, 1 * 24 * 60);
 
             return $v;
         } catch (Exception $e) {

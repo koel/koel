@@ -28,7 +28,7 @@ class PlaylistController extends Controller
     public function store(PlaylistStoreRequest $request)
     {
         $playlist = auth()->user()->playlists()->create($request->only('name'));
-        $playlist->songs()->sync($request->input('songs'));
+        $playlist->songs()->sync($request->input('songs', []));
 
         $playlist->songs = $playlist->songs->pluck('id');
 
@@ -40,6 +40,8 @@ class PlaylistController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param Playlist                 $playlist
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -59,13 +61,15 @@ class PlaylistController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param Playlist                 $playlist
      *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function sync(Request $request, Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
 
-        $playlist->songs()->sync($request->input('songs'));
+        $playlist->songs()->sync($request->songs);
 
         return response()->json();
     }
@@ -74,6 +78,9 @@ class PlaylistController extends Controller
      * Delete a playlist.
      *
      * @param Playlist $playlist
+     *
+     * @throws \Exception
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      *
      * @return \Illuminate\Http\JsonResponse
      */

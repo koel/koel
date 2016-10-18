@@ -38,7 +38,7 @@
         </button>
         <button class="del btn btn-red"
           title="Delete this playlist"
-          @click.prevent="del">
+          @click.prevent="confirmDelete">
           <i class="fa fa-times"></i> Playlist
         </button>
 
@@ -57,10 +57,12 @@
 
 <script>
 import isMobile from 'ismobilejs';
+import swal from 'sweetalert';
 
-import { pluralize, event, loadMainView } from '../../../utils';
+import { pluralize, event } from '../../../utils';
 import { playlistStore, sharedStore } from '../../../stores';
 import { playback, download } from '../../../services';
+import router from '../../../router';
 import hasSongList from '../../../mixins/has-song-list';
 
 export default {
@@ -101,6 +103,26 @@ export default {
     },
 
     /**
+     * Confirm deleting the playlist.
+     */
+    confirmDelete() {
+      // If the playlist is empty, just go ahead and delete it.
+      if (!this.playlist.songs.length) {
+        this.del();
+
+        return;
+      }
+
+      swal({
+        title: 'Are you sure?',
+        text: 'Once it’s gone, it’s gone, and there’s no turning back.',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, go ahead',
+      }, this.del);
+    },
+
+    /**
      * Delete the current playlist.
      */
     del() {
@@ -109,8 +131,8 @@ export default {
         // any property reference error.
         this.playlist = playlistStore.stub;
 
-        // Switch back to Queue screen
-        loadMainView('queue');
+        // Switch back to Home screen
+        router.go('home');
       });
     },
 

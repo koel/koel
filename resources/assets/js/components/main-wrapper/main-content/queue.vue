@@ -86,10 +86,7 @@ export default {
     },
 
     /**
-     * Determine if we should display a "Shuffling All" link.
-     * This should be true if:
-     * - The current list is queue, and
-     * - We have songs to shuffle.
+     * Determine if we should display a "Shuffle All" link.
      */
     showShufflingAllOption() {
       return songStore.all.length;

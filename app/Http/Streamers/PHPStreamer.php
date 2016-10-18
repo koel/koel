@@ -2,15 +2,8 @@
 
 namespace App\Http\Streamers;
 
-use App\Models\Song;
-
 class PHPStreamer extends Streamer implements StreamerInterface
 {
-    public function __construct(Song $song)
-    {
-        parent::__construct($song);
-    }
-
     /**
      * Stream the current song using the most basic PHP method: readfile()
      * Credits: DaveRandom @ http://stackoverflow.com/a/4451376/794641.
@@ -18,7 +11,7 @@ class PHPStreamer extends Streamer implements StreamerInterface
     public function stream()
     {
         // Get the 'Range' header if one was sent
-        if (isset($_SERVER['HTTP_RANGE'])) {
+        if (array_key_exists('HTTP_RANGE', $_SERVER)) {
             // IIS/Some Apache versions
             $range = $_SERVER['HTTP_RANGE'];
         } elseif (function_exists('apache_request_headers') && $apache = apache_request_headers()) {
@@ -29,7 +22,7 @@ class PHPStreamer extends Streamer implements StreamerInterface
                 $headers[strtolower($header)] = $val;
             }
 
-            $range = isset($headers['range']) ? $headers['range'] : false;
+            $range = array_key_exists('range', $headers) ? $headers['range'] : false;
         } else {
             // We can't get the header/there isn't one set
             $range = false;
@@ -54,17 +47,17 @@ class PHPStreamer extends Streamer implements StreamerInterface
             if ($range[0] === '') {
                 // First number missing, return last $range[1] bytes
                 $end = $fileSize - 1;
-                $start = $end - intval($range[0]);
+                $start = $end - (int) $range[0];
             } elseif ($range[1] === '') {
                 // Second number missing, return from byte $range[0] to end
-                $start = intval($range[0]);
+                $start = (int) $range[0];
                 $end = $fileSize - 1;
             } else {
                 // Both numbers present, return specific range
-                $start = intval($range[0]);
-                $end = intval($range[1]);
+                $start = (int) $range[0];
+                $end = (int) $range[1];
 
-                if ($end >= $fileSize || (!$start && (!$end || $end == ($fileSize - 1)))) {
+                if ($end >= $fileSize || (!$start && (!$end || $end === ($fileSize - 1)))) {
                     // Invalid range/whole file specified, return whole file
                     $partial = false;
                 }

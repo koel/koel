@@ -49,9 +49,10 @@ import { find, invokeMap, filter, map } from 'lodash';
 import isMobile from 'ismobilejs';
 import $ from 'jquery';
 
-import { filterBy, orderBy, limitBy, event, loadMainView } from '../../utils';
+import { filterBy, orderBy, limitBy, event } from '../../utils';
 import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores';
 import { playback } from '../../services';
+import router from '../../router';
 import songItem from './song-item.vue';
 import songMenu from './song-menu.vue';
 import infiniteScroll from '../../mixins/infinite-scroll';
@@ -199,7 +200,7 @@ export default {
           queueStore.queue(songs, false, e.shiftKey);
 
           this.$nextTick(() => {
-            loadMainView('queue');
+            router.go('queue');
 
             if (e.ctrlKey || e.metaKey || songs.length === 1) {
               playback.play(songs[0]);
@@ -342,10 +343,8 @@ export default {
       }
 
       this.$nextTick(() => {
-        // We can opt for something like application/x-koel.text+plain here to sound fancy,
-        // but forget it.
         const songIds = map(this.selectedSongs, 'id');
-        e.dataTransfer.setData('text/plain', songIds);
+        e.dataTransfer.setData('application/x-koel.text+plain', songIds);
         e.dataTransfer.effectAllowed = 'move';
 
         // Set a fancy drop image using our ghost element.
@@ -379,23 +378,22 @@ export default {
      */
     handleDrop(songId, e) {
       if (this.type !== 'queue') {
-        return;
+        return this.removeDroppableState(e) && false;
       }
 
-      if (!e.dataTransfer.getData('text/plain')) {
-        return false;
+      if (!e.dataTransfer.getData('application/x-koel.text+plain')) {
+        return this.removeDroppableState(e) && false;
       }
 
       const songs = this.selectedSongs;
 
       if (!songs.length) {
-        return false;
+        return this.removeDroppableState(e) && false;
       }
 
       queueStore.move(songs, songStore.byId(songId));
-      this.removeDroppableState(e);
 
-      return false;
+      return this.removeDroppableState(e) && false;
     },
 
     /**
@@ -470,7 +468,7 @@ export default {
        * Listen to 'song:selection-clear' (often broadcasted from the direct parent)
        * to clear the selected songs.
        */
-      'song:selection-clear': this.clearSelection(),
+      'song:selection-clear': () => this.clearSelection(),
     });
   },
 };

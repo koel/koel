@@ -24,19 +24,18 @@ class SyncMedia extends Command
     protected $synced = 0;
 
     /**
+     * The progress bar.
+     *
+     * @var \Symfony\Component\Console\Helper\ProgressBar
+     */
+    protected $bar;
+
+    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Sync songs found in configured directory against the database.';
-
-    /**
-     * Create a new command instance.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.
@@ -65,7 +64,7 @@ class SyncMedia extends Command
      */
     protected function syncAll()
     {
-        $this->info('Koel syncing started. All we need now is just a little patience…');
+        $this->info('Koel syncing started.'.PHP_EOL);
 
         // Get the tags to sync.
         // Notice that this is only meaningful for existing records.
@@ -74,9 +73,12 @@ class SyncMedia extends Command
 
         Media::sync(null, $tags, $this->option('force'), $this);
 
-        $this->output->writeln("<info>Completed! {$this->synced} new or updated song(s)</info>, "
+        $this->output->writeln(
+            PHP_EOL.PHP_EOL
+            ."<info>Completed! {$this->synced} new or updated song(s)</info>, "
             ."{$this->ignored} unchanged song(s), "
-            ."and <comment>{$this->invalid} invalid file(s)</comment>.");
+            ."and <comment>{$this->invalid} invalid file(s)</comment>."
+        );
     }
 
     /**
@@ -98,8 +100,12 @@ class SyncMedia extends Command
 
     /**
      * Log a song's sync status to console.
+     *
+     * @param string $path
+     * @param mixed  $result
+     * @param string $reason
      */
-    public function logToConsole($path, $result)
+    public function logToConsole($path, $result, $reason = '')
     {
         $name = basename($path);
 
@@ -111,7 +117,7 @@ class SyncMedia extends Command
             ++$this->ignored;
         } elseif ($result === false) {
             if ($this->option('verbose')) {
-                $this->error("$name is not a valid media file");
+                $this->error("$name is not a valid media file because: ".$reason);
             }
 
             ++$this->invalid;
@@ -122,5 +128,23 @@ class SyncMedia extends Command
 
             ++$this->synced;
         }
+    }
+
+    /**
+     * Create a progress bar.
+     *
+     * @param int $max Max steps
+     */
+    public function createProgressBar($max)
+    {
+        $this->bar = $this->getOutput()->createProgressBar($max);
+    }
+
+    /**
+     * Update the progress bar (advance by 1 step).
+     */
+    public function updateProgressBar()
+    {
+        $this->bar->advance();
     }
 }

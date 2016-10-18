@@ -47,7 +47,7 @@ export default {
   }
 }
 
-@media screen and (min-width: 376px) {
+@media screen and (min-width: 415px) {
   .to-top-btn-wrapper {
     display: none;
   }

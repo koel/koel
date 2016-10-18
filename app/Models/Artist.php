@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Facades\Lastfm;
 use App\Facades\Util;
+use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Log;
@@ -15,6 +16,8 @@ use Log;
  */
 class Artist extends Model
 {
+    use SupportsDeleteWhereIDsNotIn;
+
     const UNKNOWN_ID = 1;
     const UNKNOWN_NAME = 'Unknown Artist';
     const VARIOUS_ID = 2;

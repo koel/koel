@@ -13,12 +13,13 @@
     <playlist v-show="view === 'playlist'"></playlist>
     <favorites v-show="view === 'favorites'"></favorites>
     <profile v-show="view === 'profile'"></profile>
+    <youtube-player v-if="sharedState.useYouTube" v-show="view === 'youtubePlayer'"></youtube-player>
   </section>
 </template>
 
 <script>
 import { event } from '../../../utils';
-import { albumStore } from '../../../stores';
+import { albumStore, sharedStore } from '../../../stores';
 
 import albums from './albums.vue';
 import album from './album.vue';
@@ -32,14 +33,17 @@ import home from './home.vue';
 import playlist from './playlist.vue';
 import favorites from './favorites.vue';
 import profile from './profile.vue';
+import youtubePlayer from './youtube-player.vue';
 
 export default {
-  components: { albums, album, artists, artist, songs, settings, users, home, queue, playlist, favorites, profile },
+  components: { albums, album, artists, artist, songs, settings,
+    users, home, queue, playlist, favorites, profile, youtubePlayer },
 
   data() {
     return {
       view: 'home', // The default view
       albumCover: null,
+      sharedState: sharedStore.state,
     };
   },
 
@@ -69,6 +73,7 @@ export default {
 #mainContent {
   flex: 1;
   position: relative;
+  overflow: hidden;
 
   > section {
     position: absolute;
@@ -102,6 +107,7 @@ export default {
     align-items: center;
     align-content: stretch;
     display: flex;
+    line-height: normal;
 
     span:first-child {
       flex: 1;
@@ -132,10 +138,10 @@ export default {
 
   .translucent {
     position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
     filter: blur(20px);
     opacity: .07;
     z-index: 0;

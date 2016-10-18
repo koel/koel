@@ -23,7 +23,7 @@ $colorLinkHovered: #fff;
 
 $colorHighlight: $colorOrange;
 
-$fontFamily: 'Roboto', sans-serif;
+$fontFamily: system, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 $fontSize: 13px;
 
 $fontWeight_UltraThin: 100;
@@ -36,3 +36,10 @@ $footerHeightMobile: 74px;
 $mainHeadingHeight: 64px;
 
 $extraPanelWidth: 334px;
+
+$plyr-blue: $colorHighlight;
+$plyr-control-color: $colorHighlight;
+$plyr-control-color-hover: $colorHighlight;
+$plyr-control-bg-hover: $colorHighlight;
+$plyr-volume-track-height: 6px;
+$plyr-control-spacing: 6px;

@@ -5,28 +5,27 @@
 
       <ul class="menu">
         <li>
-          <a class="home" :class="[currentView == 'home' ? 'active' : '']"
-            @click.prevent="loadMainView('home')">Home</a>
+          <a class="home" :class="[currentView == 'home' ? 'active' : '']" href="/#!/home">Home</a>
         </li>
         <li>
           <a class="queue"
             :class="[currentView == 'queue' ? 'active' : '']"
-            @click.prevent="loadMainView('queue')"
+            href="/#!/queue"
             @dragleave="removeDroppableState"
             @dragover.prevent="allowDrop"
             @drop.stop.prevent="handleDrop">Current Queue</a>
         </li>
         <li>
-          <a class="songs" :class="[currentView == 'songs' ? 'active' : '']"
-            @click.prevent="loadMainView('songs')">All Songs</a>
+          <a class="songs" :class="[currentView == 'songs' ? 'active' : '']" href="/#!/songs">All Songs</a>
         </li>
         <li>
-          <a class="albums" :class="[currentView == 'albums' ? 'active' : '']"
-            @click.prevent="loadMainView('albums')">Albums</a>
+          <a class="albums" :class="[currentView == 'albums' ? 'active' : '']" href="/#!/albums">Albums</a>
         </li>
         <li>
-          <a class="artists" :class="[currentView == 'artists' ? 'active' : '']"
-            @click.prevent="loadMainView('artists')">Artists</a>
+          <a class="artists" :class="[currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
+        </li>
+        <li v-if="sharedState.useYouTube">
+          <a class="youtube" :class="[currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
         </li>
       </ul>
     </section>
@@ -38,20 +37,18 @@
 
       <ul class="menu">
         <li>
-          <a class="settings" :class="[currentView == 'settings' ? 'active' : '']"
-            @click.prevent="loadMainView('settings')">Settings</a>
-          </li>
+          <a class="settings" :class="[currentView == 'settings' ? 'active' : '']" href="/#!/settings">Settings</a>
+        </li>
         <li>
-          <a class="users" :class="[currentView == 'users' ? 'active' : '']"
-            @click.prevent="loadMainView('users')">Users</a>
+          <a class="users" :class="[currentView == 'users' ? 'active' : '']" href="/#!/users">Users</a>
         </li>
       </ul>
     </section>
 
     <a
-      href="https://github.com/phanan/koel/releases"
+      :href="'https://github.com/phanan/koel/releases/tag/' + sharedState.latestVersion"
       target="_blank"
-      v-show="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
+      v-if="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
       class="new-ver">
       Koel version {{ sharedState.latestVersion }} is available!
     </a>
@@ -62,7 +59,7 @@
 import isMobile from 'ismobilejs';
 import $ from 'jquery';
 
-import { event, loadMainView } from '../../../utils';
+import { event } from '../../../utils';
 import { sharedStore, userStore, songStore, queueStore } from '../../../stores';
 import playlists from './playlists.vue';
 
@@ -71,7 +68,7 @@ export default {
 
   data() {
     return {
-      currentView: 'queue',
+      currentView: 'home',
       user: userStore.state,
       showing: !isMobile.phone,
       sharedState: sharedStore.state,
@@ -79,10 +76,6 @@ export default {
   },
 
   methods: {
-    loadMainView(v) {
-      loadMainView(v);
-    },
-
     /**
      * Remove the droppable state when a dragleave event occurs on the playlist's DOM element.
      *
@@ -114,11 +107,11 @@ export default {
     handleDrop(e) {
       this.removeDroppableState(e);
 
-      if (!e.dataTransfer.getData('text/plain')) {
+      if (!e.dataTransfer.getData('application/x-koel.text+plain')) {
         return false;
       }
 
-      const songs = songStore.byIds(e.dataTransfer.getData('text/plain').split(','));
+      const songs = songStore.byIds(e.dataTransfer.getData('application/x-koel.text+plain').split(','));
 
       if (!songs.length) {
         return false;
@@ -144,9 +137,7 @@ export default {
      * Listen to sidebar:toggle event to show or hide the sidebar.
      * This should only be triggered on a mobile device.
      */
-    event.on('sidebar:toggle', () => {
-      this.showing = !this.showing;
-    });
+    event.on('sidebar:toggle', () => this.showing = !this.showing);
   },
 };
 </script>
@@ -161,6 +152,7 @@ export default {
   padding: 22px 0 0;
   max-height: calc(100vh - #{$headerHeight + $footerHeight});
   overflow: auto;
+  overflow-x: hidden;
   -ms-overflow-style: -ms-autohiding-scrollbar;
 
   html.touchevents & {
@@ -233,6 +225,10 @@ export default {
 
       &.artists::before {
         content: "\f130";
+      }
+
+      &.youtube::before {
+        content: "\f16a";
       }
 
       &.settings::before {

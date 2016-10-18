@@ -156,13 +156,13 @@ export const songStore = {
     return new Promise((resolve, reject) => {
       const oldCount = song.playCount;
 
-      http.post('interaction/play', { song: song.id }, r => {
+      http.post('interaction/play', { song: song.id }, data => {
         // Use the data from the server to make sure we don't miss a play from another device.
-        song.playCount = r.data.play_count;
+        song.playCount = data.play_count;
         song.album.playCount += song.playCount - oldCount;
         song.artist.playCount += song.playCount - oldCount;
 
-        resolve(r);
+        resolve(data);
       }, r => reject(r));
     });
   },
@@ -187,7 +187,7 @@ export const songStore = {
    */
   scrobble(song) {
     return new Promise((resolve, reject) => {
-      http.post(`${song.id}/scrobble/${song.playStartTime}`, r => resolve(r), r => reject(r));
+      http.post(`${song.id}/scrobble/${song.playStartTime}`, {}, data => resolve(data), r => reject(r));
     })
   },
 
@@ -202,9 +202,9 @@ export const songStore = {
       http.put('songs', {
         data,
         songs: map(songs, 'id'),
-      }, r => {
-        each(r.data, song => this.syncUpdatedSong(song));
-        resolve(r);
+      }, songs => {
+        each(songs, song => this.syncUpdatedSong(song));
+        resolve(songs);
       }, r => reject(r));
     });
   },
@@ -314,6 +314,18 @@ export const songStore = {
   },
 
   /**
+   * Get a song's shareable URL.
+   * Visiting this URL will automatically queue the song and play it.
+   *
+   * @param  {Object} song
+   *
+   * @return {string}
+   */
+  getShareableUrl(song) {
+    return `${window.location.origin}/#!/song/${song.id}`;
+  },
+
+  /**
    * Get the last n recently played songs.
    *
    * @param  {Number} n
@@ -338,6 +350,15 @@ export const songStore = {
     remove(songs, song => !song.playCount);
 
     return songs;
+  },
+
+  /**
+   * Get n most recently added songs.
+   * @param  {Number} n
+   * @return {Array.<Object>}
+   */
+  getRecentlyAdded(n = 10) {
+    return take(orderBy(this.all, 'created_at', 'desc'), n);
   },
 
   /**

@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests\API;
 
+/**
+ * @property string password
+ */
 class UserUpdateRequest extends Request
 {
     /**

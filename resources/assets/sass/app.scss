@@ -4,14 +4,8 @@
 @import "partials/_mixins.scss";
 @import "partials/_hacks.scss";
 
-// Here we set some default variables to tweak plyr to our theme.
-$plyr-blue: $colorHighlight;
-$plyr-control-color: $colorHighlight;
-$plyr-control-bg-hover: $colorHighlight;
-$plyr-volume-track-height: 6px;
-$plyr-control-spacing: 6px;
 @import "vendor/_plyr.scss";
-
 @import "vendor/_nprogress.scss";
+@import "vendor/_sweetalert.scss";
 
 @import "partials/_shared.scss";

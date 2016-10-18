@@ -13,7 +13,7 @@
 
         <span class="meta" v-show="meta.songCount">
           by
-          <a class="artist" v-if="isNormalArtist" @click.prevent="viewArtistDetails(album.artist)">{{ album.artist.name }}</a>
+          <a class="artist" v-if="isNormalArtist" :href="'/#!/artist/' + album.artist.id">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
           {{ meta.songCount | pluralize('song') }}
@@ -63,17 +63,17 @@
 <script>
 import isMobile from 'ismobilejs';
 
-import { pluralize, event, loadMainView } from '../../../utils';
+import { pluralize, event } from '../../../utils';
 import { albumStore, artistStore, sharedStore } from '../../../stores';
 import { playback, download, albumInfo as albumInfoService } from '../../../services';
+import router from '../../../router';
 import hasSongList from '../../../mixins/has-song-list';
-import artistAlbumDetails from '../../../mixins/artist-album-details';
 import albumInfo from '../extra/album-info.vue';
 import soundBar from '../../shared/sound-bar.vue';
 
 export default {
   name: 'main-wrapper--main-content--album',
-  mixins: [hasSongList, artistAlbumDetails],
+  mixins: [hasSongList],
   components: { albumInfo, soundBar },
   filters: { pluralize },
 
@@ -104,9 +104,9 @@ export default {
      * and move all of them into another album.
      * We should then go back to the album list.
      */
-    'album.songs.length': function (newVal) {
+    'album.songs.length' (newVal) {
       if (!newVal) {
-        loadMainView('albums');
+        router.go('albums');
       }
     },
   },

@@ -6,7 +6,9 @@
       </a>
     </span>
     <footer>
-      <a class="name" @click.prevent="viewArtistDetails(artist)">{{ artist.name }}</a>
+      <div class="info">
+        <a class="name" :href="'/#!/artist/' + artist.id">{{ artist.name }}</a>
+      </div>
       <p class="meta">
         <span class="left">
           {{ artist.albums.length | pluralize('album') }}
@@ -32,12 +34,10 @@ import $ from 'jquery';
 import { pluralize } from '../../utils';
 import { artistStore, queueStore, sharedStore } from '../../stores';
 import { playback, download } from '../../services';
-import artistAlbumDetails from '../../mixins/artist-album-details';
 
 export default {
   name: 'shared--artist-item',
   props: ['artist'],
-  mixins: [artistAlbumDetails],
   filters: { pluralize },
 
   data() {
@@ -82,7 +82,7 @@ export default {
      */
     dragStart(e) {
       const songIds = map(this.artist.songs, 'id');
-      e.dataTransfer.setData('text/plain', songIds);
+      e.dataTransfer.setData('application/x-koel.text+plain', songIds);
       e.dataTransfer.effectAllowed = 'move';
 
       // Set a fancy drop image using our ghost element.

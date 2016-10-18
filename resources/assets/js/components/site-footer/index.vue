@@ -24,8 +24,8 @@
         <div class="progress" id="progressPane">
           <h3 class="title">{{ song.title }}</h3>
           <p class="meta">
-            <a class="artist" @click.prevent="loadArtistView(song.artist)">{{ song.artist.name }}</a> –
-            <a class="album" @click.prevent="loadAlbumView(song.album)">{{ song.album.name }}</a>
+            <a class="artist" :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a> –
+            <a class="album" :href="'/#!/album/' + song.album.id">{{ song.album.name }}</a>
           </p>
 
           <div class="plyr">
@@ -34,38 +34,35 @@
         </div>
       </div>
 
-      <span class="other-controls" :class="{ 'with-gradient': prefs.showExtraPanel }">
-        <equalizer v-if="useEqualizer" v-show="showEqualizer"></equalizer>
-
-        <sound-bar v-show="song.playbackState === 'playing'"></sound-bar>
-
-        <i class="like control fa fa-heart" :class="{ liked: song.liked }"
-          @click.prevent="like"></i>
-
-        <span class="control"
-          @click.prevent="toggleExtraPanel"
-          :class="{ active: prefs.showExtraPanel }">Info</span>
-
-        <i class="fa fa-sliders control"
-          v-if="useEqualizer"
-          @click="showEqualizer = !showEqualizer"
-          :class="{ active: showEqualizer }"></i>
-
-        <i v-else
-          class="queue control fa fa-list-ol control"
-          :class="{ active: viewingQueue }"
-          @click.prevent="loadMainView('queue')"></i>
-
-        <span class="repeat control" :class="prefs.repeatMode" @click.prevent="changeRepeatMode">
-          <i class="fa fa-repeat"></i>
-        </span>
-
-        <span class="volume control" id="volume">
-          <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"></i>
-          <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"></i>
-          <input type="range" id="volumeRange" max="10" step="0.1" class="plyr__volume">
-        </span>
-      </span>
+      <div class="other-controls" :class="{ 'with-gradient': prefs.showExtraPanel }">
+        <div class="wrapper" v-koel-clickaway="closeEqualizer">
+          <equalizer v-if="useEqualizer" v-show="showEqualizer"></equalizer>
+          <sound-bar v-show="song.playbackState === 'playing'"></sound-bar>
+          <i class="like control fa fa-heart" :class="{ liked: song.liked }"
+            @click.prevent="like"></i>
+          <span class="control"
+            @click.prevent="toggleExtraPanel"
+            :class="{ active: prefs.showExtraPanel }">Info</span>
+          <i class="fa fa-sliders control"
+            v-if="useEqualizer"
+            @click="showEqualizer = !showEqualizer"
+            :class="{ active: showEqualizer }"></i>
+          <a v-else
+            class="queue control"
+            :class="{ active: viewingQueue }"
+            href="/#!/queue">
+            <i class="fa fa-list-ol"></i>
+          </a>
+          <span class="repeat control" :class="prefs.repeatMode" @click.prevent="changeRepeatMode">
+            <i class="fa fa-repeat"></i>
+          </span>
+          <span class="volume control" id="volume">
+            <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"></i>
+            <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"></i>
+            <input type="range" id="volumeRange" max="10" step="0.1" class="plyr__volume">
+          </span>
+        </div>
+      </div>
     </div>
   </footer>
 </template>
@@ -73,7 +70,7 @@
 <script>
 import config from '../../config';
 import { playback } from '../../services';
-import { isAudioContextSupported, event, loadMainView, loadArtistView, loadAlbumView } from '../../utils';
+import { isAudioContextSupported, event } from '../../utils';
 import { songStore, favoriteStore, preferenceStore } from '../../stores';
 
 import soundBar from '../shared/sound-bar.vue';
@@ -88,6 +85,7 @@ export default {
 
       prefs: preferenceStore.state,
       showEqualizer: false,
+      cover: null,
 
       /**
        * Indicate if we should build and use an equalizer.
@@ -101,20 +99,6 @@ export default {
   components: { soundBar, equalizer },
 
   computed: {
-    /**
-     * Get the album cover for the current song.
-     *
-     * @return {?String}
-     */
-    cover() {
-      // don't display the default cover here
-      if (this.song.album.cover === config.unknownCover) {
-        return null;
-      }
-
-      return this.song.album.cover;
-    },
-
     /**
      * Get the previous song in queue.
      *
@@ -135,18 +119,6 @@ export default {
   },
 
   methods: {
-    loadMainView(v) {
-      loadMainView(v);
-    },
-
-    loadArtistView(a) {
-      loadArtistView(a);
-    },
-
-    loadAlbumView(a) {
-      loadAlbumView(a);
-    },
-
     /**
      * Mute the volume.
      */
@@ -222,18 +194,25 @@ export default {
     toggleExtraPanel() {
       preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel);
     },
+
+    closeEqualizer() {
+      this.showEqualizer = false;
+    },
   },
 
   created() {
     event.on({
       /**
-       * Listen to song:played event and set the current playing song.
+       * Listen to song:played event to set the current playing song and the cover image.
        *
        * @param  {Object} song
        *
        * @return {Boolean}
        */
-      'song:played': song => this.song = song,
+      'song:played': song => {
+        this.song = song;
+        this.cover = this.song.album.cover;
+      },
 
       /**
        * Listen to main-content-view:load event and highlight the Queue icon if
@@ -302,6 +281,10 @@ export default {
     flex: 0 0 $extraPanelWidth;
     color: $colorLink;
 
+    .wrapper {
+      display: inline-table;
+    }
+
     .control {
       display: inline-block;
       padding: 0 8px;
@@ -346,13 +329,9 @@ export default {
     @media only screen and (max-width: 768px) {
       position: absolute !important;
       right: 0;
-      height: $footerHeight;
-      display: block;
-      text-align: right;
       top: 0;
-      line-height: $footerHeight;
+      height: 100%;
       width: 188px;
-      text-align: center;
 
       &::before {
         display: none;
@@ -363,7 +342,6 @@ export default {
       }
 
       .control {
-        margin: 10px 0 0;
         padding: 0 8px;
       }
     }
@@ -473,6 +451,16 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
+  }
+
+  .plyr__progress {
+    overflow: hidden;
+    height: 1px;
+
+    html.touch &, .middle-pane:hover & {
+      overflow: visible;
+      height: $plyr-volume-track-height;
+    }
   }
 
   .plyr__controls {

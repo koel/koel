@@ -2,6 +2,10 @@
 
 namespace App\Http\Requests\API;
 
+/**
+ * @property array songs
+ * @property array data
+ */
 class SongUpdateRequest extends Request
 {
     /**

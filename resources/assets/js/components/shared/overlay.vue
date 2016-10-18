@@ -73,13 +73,8 @@ export default {
 
   created() {
     event.on({
-      'overlay:show': options => {
-        this.show(options);
-      },
-
-      'overlay:hide': () => {
-        this.hide();
-      },
+      'overlay:show': options => this.show(options),
+      'overlay:hide': () => this.hide(),
     });
   },
 };

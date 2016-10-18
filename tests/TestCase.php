@@ -43,7 +43,7 @@ abstract class TestCase extends IlluminateTestCase
 
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
-        $this->coverPath = $app->publicPath().'/img/covers';
+        $this->coverPath = $app->basePath().'/public/img/covers';
 
         return $app;
     }
@@ -79,5 +79,49 @@ abstract class TestCase extends IlluminateTestCase
                 'album_id' => $album->id,
             ]);
         }
+    }
+
+    protected function getAsUser($url, $user = null)
+    {
+        if (!$user) {
+            $user = factory(User::class)->create();
+        }
+
+        return $this->get($url, [
+            'Authorization' => 'Bearer '.JWTAuth::fromUser($user),
+        ]);
+    }
+
+    protected function deleteAsUser($url, $data = [], $user = null)
+    {
+        if (!$user) {
+            $user = factory(User::class)->create();
+        }
+
+        return $this->delete($url, $data, [
+            'Authorization' => 'Bearer '.JWTAuth::fromUser($user),
+        ]);
+    }
+
+    protected function postAsUser($url, $data, $user = null)
+    {
+        if (!$user) {
+            $user = factory(User::class)->create();
+        }
+
+        return $this->post($url, $data, [
+            'Authorization' => 'Bearer '.JWTAuth::fromUser($user),
+        ]);
+    }
+
+    protected function putAsUser($url, $data, $user = null)
+    {
+        if (!$user) {
+            $user = factory(User::class)->create();
+        }
+
+        return $this->put($url, $data, [
+            'Authorization' => 'Bearer '.JWTAuth::fromUser($user),
+        ]);
     }
 }
