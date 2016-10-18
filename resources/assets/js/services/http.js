@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import $ from 'jquery';
 import NProgress from 'nprogress';
 
