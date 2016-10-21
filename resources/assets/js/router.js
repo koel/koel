@@ -23,7 +23,7 @@ export default {
     },
 
     '/album/(\\d+)'(id) {
-      const album = albumStore.byId(Number.parseInt(id, 10));
+      const album = albumStore.byId(~~id);
       if (album) {
         loadMainView('album', album);
       }
@@ -34,7 +34,7 @@ export default {
     },
 
     '/artist/(\\d+)'(id) {
-      const artist = artistStore.byId(Number.parseInt(id, 10));
+      const artist = artistStore.byId(~~id);
       if (artist) {
         loadMainView('artist', artist);
       }
@@ -45,7 +45,7 @@ export default {
     },
 
     '/playlist/(\\d+)'(id) {
-      const playlist = playlistStore.byId(Number.parseInt(id, 10));
+      const playlist = playlistStore.byId(~~id);
       if (playlist) {
         loadMainView('playlist', playlist);
       }

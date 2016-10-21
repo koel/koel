@@ -3,7 +3,7 @@
  * If H is 0, it will be ommited.
  */
 export function secondsToHis(d) {
-  d = parseInt(d, 10);
+  d = ~~d;
 
   let s = d % 60;
 
