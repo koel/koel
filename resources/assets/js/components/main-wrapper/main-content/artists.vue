@@ -5,7 +5,7 @@
       <view-mode-switch :mode="viewMode" for="artists"/>
     </h1>
 
-    <div class="artists main-scroll-wrap" :class="`as-${viewMode}`" @scroll="scrolling">
+    <div class="artists main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
       <artist-item v-for="item in displayedItems" :artist="item"/>
       <span class="item filler" v-for="n in 6"/>
       <to-top-button :showing="showBackToTop"/>

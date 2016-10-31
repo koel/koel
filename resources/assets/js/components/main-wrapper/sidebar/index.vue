@@ -45,7 +45,7 @@
     </section>
 
     <a
-      :href="`https://github.com/phanan/koel/releases/tag/${sharedState.latestVersion}`"
+      :href="latestVersionUrl"
       target="_blank"
       v-if="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
       class="new-ver">
@@ -72,6 +72,12 @@ export default {
       showing: !isMobile.phone,
       sharedState: sharedStore.state,
     };
+  },
+
+  computed: {
+    latestVersionUrl() {
+      return 'https://github.com/phanan/koel/releases/tag/' + this.sharedState.latestVersion;
+    },
   },
 
   methods: {

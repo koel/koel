@@ -53,13 +53,13 @@
       <section class="top-artists" v-show="top.artists.length">
         <h1>Top Artists</h1>
 
-        <div class="wrapper" :class="`as-${preferences.artistsViewMode}`">
+        <div class="wrapper" :class="'as-'+preferences.artistsViewMode">
           <artist-item v-for="artist in top.artists" :artist="artist"/>
           <span class="item filler" v-for="n in 3"/>
         </div>
       </section>
 
-      <section class="top-albums" :class="`as-${preferences.albumsViewMode}`" v-show="top.albums.length">
+      <section class="top-albums" :class="'as-'+preferences.albumsViewMode" v-show="top.albums.length">
         <h1>Top Albums</h1>
 
         <div class="wrapper">

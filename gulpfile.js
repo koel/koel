@@ -6,10 +6,7 @@ var gutils = require('gulp-util');
 
 elixir.config.js.browserify.transformers.push({
   name: 'vueify',
-
-  options: {
-    postcss: [cssnext()]
-  }
+  options: { postcss: [cssnext()] }
 });
 
 if (gutils.env._.indexOf('watch') > -1) {
