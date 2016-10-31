@@ -10,11 +10,10 @@
       <img v-if="album.info.image" :src="album.info.image" class="cover">
 
       <div class="wiki" v-if="album.info.wiki && album.info.wiki.summary">
-        <div class="summary" v-show="mode !== 'full' && !showingFullWiki" v-html="album.info.wiki.summary"/>
-        <div class="full" v-show="mode === 'full' || showingFullWiki" v-html="album.info.wiki.full"/>
+        <div class="summary" v-show="showSummary" v-html="album.info.wiki.summary"/>
+        <div class="full" v-show="showFull" v-html="album.info.wiki.full"/>
 
-        <button class="more" v-show="mode !== 'full' && !showingFullWiki"
-          @click.prevent="showingFullWiki = !showingFullWiki">
+        <button class="more" v-show="showSummary" @click.prevent="showingFullWiki = true">
           Full Wiki
         </button>
       </div>
@@ -52,6 +51,16 @@ export default {
   watch: {
     album() {
       this.showingFullWiki = false;
+    },
+  },
+
+  computed {
+    showSummary() {
+      return this.mode !== 'full' && !this.showingFullWiki;
+    },
+
+    showFull() {
+      return this.mode === 'full' || this.showingFullWiki;
     },
   },
 
