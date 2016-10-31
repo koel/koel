@@ -18,7 +18,7 @@
           {{ artist.playCount | pluralize('play') }}
         </span>
         <span class="right">
-          <a href="#" @click.prevent="download" v-if="sharedState.allowDownload" title="Download all songs by artist">
+          <a href @click.prevent="download" v-if="sharedState.allowDownload" title="Download all songs by artist">
             <i class="fa fa-download"></i>
           </a>
         </span>

@@ -30,7 +30,7 @@
       </ul>
     </section>
 
-    <playlists :current-view="currentView"></playlists>
+    <playlists :current-view="currentView"/>
 
     <section v-if="user.current.is_admin" class="manage">
       <h1>Manage</h1>

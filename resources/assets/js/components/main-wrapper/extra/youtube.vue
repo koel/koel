@@ -1,7 +1,7 @@
 <template>
   <div id="youtube-wrapper">
     <template v-if="videos && videos.length">
-      <a class="video" v-for="video in videos" href="#" @click.prevent="playYouTube(video.id.videoId)">
+      <a class="video" v-for="video in videos" href @click.prevent="playYouTube(video.id.videoId)">
         <div class="thumb">
           <img :src="video.snippet.thumbnails.default.url" width="90">
         </div>

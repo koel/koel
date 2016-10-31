@@ -11,36 +11,36 @@
       <thead>
         <tr>
           <th @click="sort('track')" class="track-number">#
-            <i class="fa fa-angle-down" v-show="sortKey === 'track' && order > 0"></i>
-            <i class="fa fa-angle-up" v-show="sortKey === 'track' && order < 0"></i>
+            <i class="fa fa-angle-down" v-show="sortKey === 'track' && order > 0"/>
+            <i class="fa fa-angle-up" v-show="sortKey === 'track' && order < 0"/>
           </th>
           <th @click="sort('title')" class="title">Title
-            <i class="fa fa-angle-down" v-show="sortKey === 'title' && order > 0"></i>
-            <i class="fa fa-angle-up" v-show="sortKey === 'title' && order < 0"></i>
+            <i class="fa fa-angle-down" v-show="sortKey === 'title' && order > 0"/>
+            <i class="fa fa-angle-up" v-show="sortKey === 'title' && order < 0"/>
           </th>
           <th @click="sort(['album.artist.name', 'album.name', 'track'])" class="artist">Artist
-            <i class="fa fa-angle-down" v-show="sortingByArtist && order > 0"></i>
-            <i class="fa fa-angle-up" v-show="sortingByArtist && order < 0"></i>
+            <i class="fa fa-angle-down" v-show="sortingByArtist && order > 0"/>
+            <i class="fa fa-angle-up" v-show="sortingByArtist && order < 0"/>
           </th>
           <th @click="sort(['album.name', 'track'])" class="album">Album
-            <i class="fa fa-angle-down" v-show="sortingByAlbum && order > 0"></i>
-            <i class="fa fa-angle-up" v-show="sortingByAlbum && order < 0"></i>
+            <i class="fa fa-angle-down" v-show="sortingByAlbum && order > 0"/>
+            <i class="fa fa-angle-up" v-show="sortingByAlbum && order < 0"/>
           </th>
           <th @click="sort('fmtLength')" class="time">Time
-            <i class="fa fa-angle-down" v-show="sortKey === 'fmtLength' && order > 0"></i>
-            <i class="fa fa-angle-up" v-show="sortKey === 'fmtLength' && order < 0"></i>
+            <i class="fa fa-angle-down" v-show="sortKey === 'fmtLength' && order > 0"/>
+            <i class="fa fa-angle-up" v-show="sortKey === 'fmtLength' && order < 0"/>
           </th>
           <th class="play"></th>
         </tr>
       </thead>
 
       <tbody>
-        <tr is="song-item" v-for="item in displayedItems" :song="item" ref="rows"></tr>
+        <tr is="song-item" v-for="item in displayedItems" :song="item" ref="rows"/>
       </tbody>
     </table>
 
-    <song-menu ref="contextMenu" :songs="selectedSongs"></song-menu>
-    <to-top-button :showing="showBackToTop"></to-top-button>
+    <song-menu ref="contextMenu" :songs="selectedSongs"/>
+    <to-top-button :showing="showBackToTop"/>
   </div>
 </template>
 

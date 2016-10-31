@@ -1,13 +1,13 @@
 <template>
   <div id="overlay" v-show="state.showing" :class="state.type">
     <div class="display">
-      <sound-bar v-show="state.type === 'loading'"></sound-bar>
-      <i class="fa fa-exclamation-circle" v-show="state.type === 'error'"></i>
-      <i class="fa fa-exclamation-triangle" v-show="state.type === 'warning'"></i>
-      <i class="fa fa-info-circle" v-show="state.type === 'info'"></i>
-      <i class="fa fa-check-circle" v-show="state.type === 'success'"></i>
+      <sound-bar v-show="state.type === 'loading'"/>
+      <i class="fa fa-exclamation-circle" v-show="state.type === 'error'"/>
+      <i class="fa fa-exclamation-triangle" v-show="state.type === 'warning'"/>
+      <i class="fa fa-info-circle" v-show="state.type === 'info'"/>
+      <i class="fa fa-check-circle" v-show="state.type === 'success'"/>
 
-      <span v-html="state.message"></span>
+      <span v-html="state.message"/>
     </div>
 
     <button v-show="state.dismissable" @click.prevent="state.showing = false">Close</button>

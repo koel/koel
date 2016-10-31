@@ -2,12 +2,8 @@
   <section id="queueWrapper">
     <h1 class="heading">
       <span title="That's a freaking lot of U's and E's">Current Queue
-        <i class="fa fa-angle-down toggler"
-          v-show="isPhone && !showingControls"
-          @click="showingControls = true"></i>
-        <i class="fa fa-angle-up toggler"
-          v-show="isPhone && showingControls"
-          @click.prevent="showingControls = false"></i>
+        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
+        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
 
         <span class="meta" v-show="meta.songCount">
           {{ meta.songCount | pluralize('song') }}
@@ -35,12 +31,11 @@
         <add-to-menu
           :songs="songsToAddTo"
           :showing="showingAddToMenu && state.songs.length"
-          :settings="{ canQueue: false }">
-        </add-to-menu>
+          :settings="{ canQueue: false }"/>
       </div>
     </h1>
 
-    <song-list v-show="state.songs.length" :items="state.songs" :sortable="false" type="queue"></song-list>
+    <song-list v-show="state.songs.length" :items="state.songs" :sortable="false" type="queue"/>
 
     <div v-show="!state.songs.length" class="none">
       <p>Empty spaces. Abandoned places.</p>

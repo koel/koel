@@ -35,14 +35,14 @@
                 <typeahead
                   :items="artistState.artists"
                   :options="artistTypeaheadOptions"
-                  v-model="formData.artistName"></typeahead>
+                  v-model="formData.artistName"/>
               </div>
               <div class="form-row">
                 <label>Album</label>
                 <typeahead
                   :items="albumState.albums"
                   :options="albumTypeaheadOptions"
-                  v-model="formData.albumName"></typeahead>
+                  v-model="formData.albumName"/>
               </div>
               <div class="form-row">
                 <label class="small">
@@ -60,7 +60,7 @@
             </div>
             <div v-show="currentView === 'lyrics' && editSingle">
               <div class="form-row">
-                <textarea v-model="formData.lyrics"></textarea>
+                <textarea v-model="formData.lyrics"/>
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@
       </div>
 
       <footer>
-        <input type="submit" value="Update" />
+        <input type="submit" value="Update">
         <a @click.prevent="close" class="btn btn-white">Cancel</a>
       </footer>
     </form>

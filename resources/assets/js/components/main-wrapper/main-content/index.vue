@@ -1,19 +1,19 @@
 <template>
   <section id="mainContent">
     <div class="translucent" :style="{ backgroundImage: albumCover ? 'url(' + albumCover + ')' : 'none' }"></div>
-    <home v-show="view === 'home'"></home>
-    <queue v-show="view === 'queue'"></queue>
-    <songs v-show="view === 'songs'"></songs>
-    <albums v-show="view === 'albums'"></albums>
-    <album v-show="view === 'album'"></album>
-    <artists v-show="view === 'artists'"></artists>
-    <artist v-show="view === 'artist'"></artist>
-    <users v-show="view === 'users'"></users>
-    <settings v-show="view === 'settings'"></settings>
-    <playlist v-show="view === 'playlist'"></playlist>
-    <favorites v-show="view === 'favorites'"></favorites>
-    <profile v-show="view === 'profile'"></profile>
-    <youtube-player v-if="sharedState.useYouTube" v-show="view === 'youtubePlayer'"></youtube-player>
+    <home v-show="view === 'home'"/>
+    <queue v-show="view === 'queue'"/>
+    <songs v-show="view === 'songs'"/>
+    <albums v-show="view === 'albums'"/>
+    <album v-show="view === 'album'"/>
+    <artists v-show="view === 'artists'"/>
+    <artist v-show="view === 'artist'"/>
+    <users v-show="view === 'users'"/>
+    <settings v-show="view === 'settings'"/>
+    <playlist v-show="view === 'playlist'"/>
+    <favorites v-show="view === 'favorites'"/>
+    <profile v-show="view === 'profile'"/>
+    <youtube-player v-if="sharedState.useYouTube" v-show="view === 'youtubePlayer'"/>
   </section>
 </template>
 

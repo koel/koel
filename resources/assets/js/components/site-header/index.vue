@@ -7,8 +7,8 @@
     <span class="magnifier" @click="toggleSearchForm">
       <i class="fa fa-search"></i>
     </span>
-    <search-form></search-form>
-    <user-badge></user-badge>
+    <search-form/>
+    <user-badge/>
   </header>
 
 </template>

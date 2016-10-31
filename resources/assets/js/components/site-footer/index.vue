@@ -1,7 +1,7 @@
 <template>
   <footer id="mainFooter">
     <div class="side player-controls" id="playerControls">
-      <i class="prev fa fa-step-backward control" @click.prevent="playPrev"></i>
+      <i class="prev fa fa-step-backward control" @click.prevent="playPrev"/>
 
       <span class="play control"
         v-if="song.playbackState === 'stopped' || song.playbackState === 'paused'"
@@ -13,13 +13,12 @@
         <i class="fa fa-pause"></i>
       </span>
 
-      <i class="next fa fa-step-forward control" @click.prevent="playNext"></i>
+      <i class="next fa fa-step-forward control" @click.prevent="playNext"/>
     </div>
 
     <div class="media-info-wrap">
       <div class="middle-pane">
-
-        <span class="album-thumb" v-if="cover" :style="{ backgroundImage: 'url(' + cover + ')' }"></span>
+        <span class="album-thumb" v-if="cover" :style="{ backgroundImage: 'url(' + cover + ')' }"/>
 
         <div class="progress" id="progressPane">
           <h3 class="title">{{ song.title }}</h3>
@@ -36,17 +35,16 @@
 
       <div class="other-controls" :class="{ 'with-gradient': prefs.showExtraPanel }">
         <div class="wrapper" v-koel-clickaway="closeEqualizer">
-          <equalizer v-if="useEqualizer" v-show="showEqualizer"></equalizer>
-          <sound-bar v-show="song.playbackState === 'playing'"></sound-bar>
-          <i class="like control fa fa-heart" :class="{ liked: song.liked }"
-            @click.prevent="like"></i>
+          <equalizer v-if="useEqualizer" v-show="showEqualizer"/>
+          <sound-bar v-show="song.playbackState === 'playing'"/>
+          <i class="like control fa fa-heart" :class="{ liked: song.liked }" @click.prevent="like"/>
           <span class="control"
             @click.prevent="toggleExtraPanel"
             :class="{ active: prefs.showExtraPanel }">Info</span>
           <i class="fa fa-sliders control"
             v-if="useEqualizer"
             @click="showEqualizer = !showEqualizer"
-            :class="{ active: showEqualizer }"></i>
+            :class="{ active: showEqualizer }"/>
           <a v-else
             class="queue control"
             :class="{ active: viewingQueue }"
@@ -57,8 +55,8 @@
             <i class="fa fa-repeat"></i>
           </span>
           <span class="volume control" id="volume">
-            <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"></i>
-            <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"></i>
+            <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"/>
+            <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"/>
             <input type="range" id="volumeRange" max="10" step="0.1" class="plyr__volume">
           </span>
         </div>

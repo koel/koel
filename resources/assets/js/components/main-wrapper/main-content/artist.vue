@@ -4,12 +4,8 @@
       <span class="overview">
         <img :src="artist.image" width="64" height="64" class="cover">
         {{ artist.name }}
-        <i class="fa fa-angle-down toggler"
-          v-show="isPhone && !showingControls"
-          @click="showingControls = true"></i>
-        <i class="fa fa-angle-up toggler"
-          v-show="isPhone && showingControls"
-          @click.prevent="showingControls = false"></i>
+        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
+        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
 
         <span class="meta" v-show="meta.songCount">
           {{ artist.albums.length | pluralize('album') }}
@@ -20,12 +16,12 @@
 
           <template v-if="sharedState.useLastfm">
             •
-            <a href="#" @click.prevent="showInfo" title="View artist's extra information">Info</a>
+            <a href @click.prevent="showInfo" title="View artist's extra information">Info</a>
           </template>
 
           <template v-if="sharedState.allowDownload">
             •
-            <a href="#" @click.prevent="download" title="Download all songs by this artist">Download</a>
+            <a href @click.prevent="download" title="Download all songs by this artist">Download</a>
           </template>
         </span>
       </span>
@@ -41,19 +37,17 @@
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </button>
 
-        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"><add-to-menu>
+        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"/>
       </div>
     </h1>
 
-    <song-list :items="artist.songs" type="artist"></song-list>
+    <song-list :items="artist.songs" type="artist"/>
 
     <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
-      <a href="#" class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
+      <a href class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
       <div class="inner">
-        <div class="loading" v-if="info.loading">
-          <sound-bar></sound-bar>
-        </div>
-        <artist-info :artist="artist" :mode="'full'" v-else></artist-info>
+        <div class="loading" v-if="info.loading"><sound-bar/></div>
+        <artist-info :artist="artist" :mode="'full'" v-else/>
       </div>
     </section>
   </section>

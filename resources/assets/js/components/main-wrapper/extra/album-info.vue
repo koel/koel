@@ -7,13 +7,11 @@
     </h1>
 
     <div v-if="album.info">
-      <img v-if="album.info.image" :src="album.info.image"
-        title=""
-        class="cover">
+      <img v-if="album.info.image" :src="album.info.image" class="cover">
 
       <div class="wiki" v-if="album.info.wiki && album.info.wiki.summary">
-        <div class="summary" v-show="mode !== 'full' && !showingFullWiki" v-html="album.info.wiki.summary"></div>
-        <div class="full" v-show="mode === 'full' || showingFullWiki" v-html="album.info.wiki.full"></div>
+        <div class="summary" v-show="mode !== 'full' && !showingFullWiki" v-html="album.info.wiki.summary"/>
+        <div class="full" v-show="mode === 'full' || showingFullWiki" v-html="album.info.wiki.full"/>
 
         <button class="more" v-show="mode !== 'full' && !showingFullWiki"
           @click.prevent="showingFullWiki = !showingFullWiki">

@@ -4,12 +4,8 @@
       <span class="overview">
         <img :src="album.cover" width="64" height="64" class="cover">
         {{ album.name }}
-        <i class="fa fa-angle-down toggler"
-          v-show="isPhone && !showingControls"
-          @click="showingControls = true"></i>
-        <i class="fa fa-angle-up toggler"
-          v-show="isPhone && showingControls"
-          @click.prevent="showingControls = false"></i>
+        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
+        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
 
         <span class="meta" v-show="meta.songCount">
           by
@@ -22,11 +18,11 @@
 
           <template v-if="sharedState.useLastfm">
             •
-            <a href="#" @click.prevent="showInfo" title="View album's extra information">Info</a>
+            <a href @click.prevent="showInfo" title="View album's extra information">Info</a>
           </template>
           <template v-if="sharedState.allowDownload">
             •
-            <a href="#" @click.prevent="download" title="Download all songs in album">Download</a>
+            <a href @click.prevent="download" title="Download all songs in album">Download</a>
           </template>
         </span>
       </span>
@@ -42,19 +38,17 @@
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </button>
 
-        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"></add-to-menu>
+        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"/>
       </div>
     </h1>
 
-    <song-list :items="album.songs" type="album"></song-list>
+    <song-list :items="album.songs" type="album"/>
 
     <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
-      <a href="#" class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
+      <a href class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
       <div class="inner">
-        <div class="loading" v-if="info.loading">
-          <sound-bar></sound-bar>
-        </div>
-        <album-info :album="album" :mode="'full'" v-else></album-info>
+        <div class="loading" v-if="info.loading"><sound-bar/></div>
+        <album-info :album="album" :mode="'full'" v-else/>
       </div>
     </section>
   </section>
