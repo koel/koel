@@ -3,7 +3,7 @@
     <sound-bar v-if="loading"></sound-bar>
     <form v-else @submit.prevent="submit">
       <header>
-        <img :src="inSameAlbum ? songs[0].album.cover : '/public/img/covers/unknown-album.png'" width="96" height="96">
+        <img :src="coverUrl" width="96" height="96">
         <hgroup class="meta">
           <h1 :class="{ mixed: !editSingle }">{{ displayedTitle }}</h1>
           <h2 :class="{ mixed: !bySameArtist &&  !formData.artistName }">
@@ -157,6 +157,15 @@
        */
       inSameAlbum() {
         return every(this.songs, song => song.album.id === this.songs[0].album.id);
+      },
+
+      /**
+       * URL of the cover to display.
+       *
+       * @return {string}
+       */
+      coverUrl() {
+        return this.inSameAlbum ? this.songs[0].album.cover : '/public/img/covers/unknown-album.png';
       },
 
       /**

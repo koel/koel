@@ -3,10 +3,7 @@
     <div class="side player-controls" id="playerControls">
       <i class="prev fa fa-step-backward control" @click.prevent="playPrev"/>
 
-      <span class="play control"
-        v-if="song.playbackState === 'stopped' || song.playbackState === 'paused'"
-        @click.prevent="resume"
-      >
+      <span class="play control" v-if="song.playbackState !== 'playing'" @click.prevent="resume">
         <i class="fa fa-play"></i>
       </span>
       <span class="pause control" v-else @click.prevent="pause">

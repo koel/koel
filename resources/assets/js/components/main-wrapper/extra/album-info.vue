@@ -54,7 +54,7 @@ export default {
     },
   },
 
-  computed {
+  computed: {
     showSummary() {
       return this.mode !== 'full' && !this.showingFullWiki;
     },
