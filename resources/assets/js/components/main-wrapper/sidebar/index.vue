@@ -45,7 +45,7 @@
     </section>
 
     <a
-      :href="'https://github.com/phanan/koel/releases/tag/' + sharedState.latestVersion"
+      :href="`https://github.com/phanan/koel/releases/tag/${sharedState.latestVersion}`"
       target="_blank"
       v-if="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
       class="new-ver">

@@ -1,13 +1,13 @@
 <template>
   <article class="item" v-if="showing" draggable="true" @dragstart="dragStart">
-    <span class="cover" :style="{ backgroundImage: 'url(' + artist.image + ')' }">
+    <span class="cover" :style="{ backgroundImage: `url(${artist.image})` }">
       <a class="control" @click.prevent="play">
         <i class="fa fa-play"></i>
       </a>
     </span>
     <footer>
       <div class="info">
-        <a class="name" :href="'/#!/artist/' + artist.id">{{ artist.name }}</a>
+        <a class="name" :href="`/#!/artist/${artist.id}`">{{ artist.name }}</a>
       </div>
       <p class="meta">
         <span class="left">

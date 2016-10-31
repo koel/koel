@@ -1,6 +1,6 @@
 <template>
   <section id="mainContent">
-    <div class="translucent" :style="{ backgroundImage: albumCover ? 'url(' + albumCover + ')' : 'none' }"></div>
+    <div class="translucent" :style="{ backgroundImage: albumCover ? `url(${albumCover})` : 'none' }"></div>
     <home v-show="view === 'home'"/>
     <queue v-show="view === 'queue'"/>
     <songs v-show="view === 'songs'"/>
