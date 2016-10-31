@@ -12,7 +12,7 @@
       </a>
       <button @click="loadMore" v-if="!loading" class="more btn-blue">Load More</button>
     </template>
-    <p class="nope" v-else>Play a song to retreive related YouTube videos.</p>
+    <p class="nope" v-else>Play a song to retrieve related YouTube videos.</p>
     <p class="nope" v-show="loading">Loading…</p>
   </div>
 </template>
