@@ -12,11 +12,10 @@
         class="cool-guys-posing cover">
 
       <div class="bio" v-if="artist.info.bio.summary">
-        <div class="summary" v-show="mode !== 'full' && !showingFullBio" v-html="artist.info.bio.summary"/>
-        <div class="full" v-show="mode === 'full' || showingFullBio" v-html="artist.info.bio.full"/>
+        <div class="summary" v-show="showSummary" v-html="artist.info.bio.summary"/>
+        <div class="full" v-show="showFull" v-html="artist.info.bio.full"/>
 
-        <button class="more" v-show="mode !== 'full' && !showingFullBio"
-          @click.prevent="showingFullBio = !showingFullBio">
+        <button class="more" v-show="showSummary" @click.prevent="showingFullBio = true">
           Full Bio
         </button>
       </div>
@@ -45,6 +44,16 @@ export default {
     artist() {
       this.showingFullBio = false;
     },
+  },
+
+  computed: {
+    showSummary() {
+      return this.mode !== 'full' && !this.showingFullBio;
+    },
+
+    showFull() {
+      return this.mode === 'full' || this.showingFullBio;
+    }
   },
 
   methods: {
