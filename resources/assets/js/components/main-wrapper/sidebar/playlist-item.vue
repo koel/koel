@@ -1,6 +1,6 @@
 <template>
   <li @dblclick.prevent="edit" :class="['playlist', type, editing ? 'editing' : '']">
-    <a :href="isFavorites ? '/#!/favorites' : `/#!/playlist/${playlist.id}`"
+    <a :href="playlistUrl"
       @dragleave="removeDroppableState"
       @dragover.prevent="allowDrop"
       @drop.stop.prevent="handleDrop"
@@ -43,6 +43,10 @@ export default {
      */
     isFavorites() {
       return this.type === 'favorites';
+    },
+
+    playlistUrl() {
+      return this.isFavorites ? '/#!/favorites' : `/#!/playlist/${this.playlist.id}`;
     },
   },
 
