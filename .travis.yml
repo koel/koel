@@ -10,7 +10,7 @@ env:
   SESSION_DRIVER: array
   QUEUE_DRIVER: sync
   DB_CONNECTION: sqlite
-  DB_DATABASE: :memory:
+  DB_DATABASE: ':memory:'
   APP_KEY: 16efa6c23c2e8c705826b0e66778fbe7
   JWT_SECRET: ki8jSvMf5wFrlSRBAWcGbmAzBUJfc8p8
   ADMIN_EMAIL: koel@example.com
