@@ -2,12 +2,8 @@
   <section id="favoritesWrapper">
     <h1 class="heading">
       <span>Songs You Love
-        <i class="fa fa-angle-down toggler"
-          v-show="isPhone && !showingControls"
-          @click="showingControls = true"></i>
-        <i class="fa fa-angle-up toggler"
-          v-show="isPhone && showingControls"
-          @click.prevent="showingControls = false"></i>
+        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
+        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
 
         <span class="meta" v-show="meta.songCount">
           {{ meta.songCount | pluralize('song') }}
@@ -15,8 +11,7 @@
           {{ meta.totalLength }}
           <template v-if="sharedState.allowDownload && state.songs.length">
             •
-            <a href="#" @click.prevent="download"
-              title="Download all songs in playlist">
+            <a href @click.prevent="download" title="Download all songs in playlist">
               Download
             </a>
           </template>
@@ -40,12 +35,11 @@
         <add-to-menu
           :songs="selectedSongs"
           :showing="showingAddToMenu && state.songs.length"
-          :settings="{ canLike: false }">
-        <add-to-menu>
+          :settings="{ canLike: false }"/>
       </div>
     </h1>
 
-    <song-list v-show="state.songs.length" :items="state.songs" type="favorites"></song-list>
+    <song-list v-show="state.songs.length" :items="state.songs" type="favorites"/>
 
     <div v-show="!state.songs.length" class="none">
       Start loving!

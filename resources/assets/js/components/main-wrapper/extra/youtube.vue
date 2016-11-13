@@ -1,7 +1,7 @@
 <template>
   <div id="youtube-wrapper">
     <template v-if="videos && videos.length">
-      <a class="video" v-for="video in videos" href="#" @click.prevent="playYouTube(video.id.videoId)">
+      <a class="video" v-for="video in videos" href @click.prevent="playYouTube(video.id.videoId)">
         <div class="thumb">
           <img :src="video.snippet.thumbnails.default.url" width="90">
         </div>
@@ -12,7 +12,7 @@
       </a>
       <button @click="loadMore" v-if="!loading" class="more btn-blue">Load More</button>
     </template>
-    <p class="nope" v-else>Play a song to retreive related YouTube videos.</p>
+    <p class="nope" v-else>Play a song to retrieve related YouTube videos.</p>
     <p class="nope" v-show="loading">Loading…</p>
   </div>
 </template>

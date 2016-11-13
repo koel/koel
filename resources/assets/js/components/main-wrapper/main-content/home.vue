@@ -13,7 +13,7 @@
             <li v-for="song in top.songs"
               :top-play-count="top.songs.length ? top.songs[0].playCount : 0"
               :song="song"
-              is="song-item"></li>
+              is="song-item"/>
           </ol>
         </section>
 
@@ -24,7 +24,7 @@
             <li v-for="song in recentSongs"
               :top-play-count="top.songs.length ? top.songs[0].playCount : 0"
               :song="song"
-              is="song-item"></li>
+              is="song-item"/>
           </ol>
 
           <p class="none" v-show="!recentSongs.length">
@@ -39,14 +39,12 @@
 
         <div class="two-cols">
           <div class="wrapper as-list">
-            <album-item v-for="album in recentlyAdded.albums" :album="album"></album-item>
-            <span class="item filler" v-for="n in 3"></span>
+            <album-item v-for="album in recentlyAdded.albums" :album="album"/>
+            <span class="item filler" v-for="n in 3"/>
           </div>
           <div>
             <ul class="recently-added-song-list" v-show="recentlyAdded.songs.length">
-              <li v-for="song in recentlyAdded.songs"
-                :song="song"
-                is="song-item"></li>
+              <li v-for="song in recentlyAdded.songs" :song="song" is="song-item"/>
             </ul>
           </div>
         </div>
@@ -55,22 +53,22 @@
       <section class="top-artists" v-show="top.artists.length">
         <h1>Top Artists</h1>
 
-        <div class="wrapper" :class="'as-' + preferences.artistsViewMode">
-          <artist-item v-for="artist in top.artists" :artist="artist"></artist-item>
-          <span class="item filler" v-for="n in 3"></span>
+        <div class="wrapper" :class="'as-'+preferences.artistsViewMode">
+          <artist-item v-for="artist in top.artists" :artist="artist"/>
+          <span class="item filler" v-for="n in 3"/>
         </div>
       </section>
 
-      <section class="top-albums" :class="'as-' + preferences.albumsViewMode" v-show="top.albums.length">
+      <section class="top-albums" :class="'as-'+preferences.albumsViewMode" v-show="top.albums.length">
         <h1>Top Albums</h1>
 
         <div class="wrapper">
-          <album-item v-for="album in top.albums" :album="album"></album-item>
-          <span class="item filler" v-for="n in 3"></span>
+          <album-item v-for="album in top.albums" :album="album"/>
+          <span class="item filler" v-for="n in 3"/>
         </div>
       </section>
 
-      <to-top-button :showing="showBackToTop"></to-top-button>
+      <to-top-button :showing="showBackToTop"/>
     </div>
   </section>
 </template>

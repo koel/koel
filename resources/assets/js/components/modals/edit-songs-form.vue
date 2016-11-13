@@ -3,7 +3,7 @@
     <sound-bar v-if="loading"></sound-bar>
     <form v-else @submit.prevent="submit">
       <header>
-        <img :src="inSameAlbum ? songs[0].album.cover : '/public/img/covers/unknown-album.png'" width="96" height="96">
+        <img :src="coverUrl" width="96" height="96">
         <hgroup class="meta">
           <h1 :class="{ mixed: !editSingle }">{{ displayedTitle }}</h1>
           <h2 :class="{ mixed: !bySameArtist &&  !formData.artistName }">
@@ -35,14 +35,14 @@
                 <typeahead
                   :items="artistState.artists"
                   :options="artistTypeaheadOptions"
-                  v-model="formData.artistName"></typeahead>
+                  v-model="formData.artistName"/>
               </div>
               <div class="form-row">
                 <label>Album</label>
                 <typeahead
                   :items="albumState.albums"
                   :options="albumTypeaheadOptions"
-                  v-model="formData.albumName"></typeahead>
+                  v-model="formData.albumName"/>
               </div>
               <div class="form-row">
                 <label class="small">
@@ -60,7 +60,7 @@
             </div>
             <div v-show="currentView === 'lyrics' && editSingle">
               <div class="form-row">
-                <textarea v-model="formData.lyrics"></textarea>
+                <textarea v-model="formData.lyrics"/>
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@
       </div>
 
       <footer>
-        <input type="submit" value="Update" />
+        <input type="submit" value="Update">
         <a @click.prevent="close" class="btn btn-white">Cancel</a>
       </footer>
     </form>
@@ -157,6 +157,15 @@
        */
       inSameAlbum() {
         return every(this.songs, song => song.album.id === this.songs[0].album.id);
+      },
+
+      /**
+       * URL of the cover to display.
+       *
+       * @return {string}
+       */
+      coverUrl() {
+        return this.inSameAlbum ? this.songs[0].album.cover : '/public/img/covers/unknown-album.png';
       },
 
       /**

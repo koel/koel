@@ -80,7 +80,7 @@ export default {
        */
       preferences.selectedPreset = val;
 
-      if (Number.parseInt(val, 10) !== -1) {
+      if (~~val !== -1) {
         this.loadPreset(equalizerStore.getPresetById(val));
       }
     },

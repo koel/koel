@@ -2,12 +2,8 @@
   <section id="songsWrapper">
     <h1 class="heading">
       <span>All Songs
-        <i class="fa fa-angle-down toggler"
-          v-show="isPhone && !showingControls"
-          @click="showingControls = true"></i>
-        <i class="fa fa-angle-up toggler"
-          v-show="isPhone && showingControls"
-          @click.prevent="showingControls = false"></i>
+        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
+        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
 
         <span class="meta" v-show="meta.songCount">
           {{ meta.songCount | pluralize('song') }}
@@ -32,11 +28,11 @@
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </button>
 
-        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"><add-to-menu>
+        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"/>
       </div>
     </h1>
 
-    <song-list :items="state.songs" type="allSongs"></song-list>
+    <song-list :items="state.songs" type="allSongs"/>
   </section>
 </template>
 

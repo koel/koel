@@ -1,7 +1,7 @@
 <template>
   <ul ref="menu" class="menu song-menu" v-show="shown" tabindex="-1" @contextmenu.prevent
     @blur="close"
-    :style="{ top: top + 'px', left: left + 'px' }"
+    :style="{ top: top+'px', left: left+'px' }"
   >
     <template v-show="onlyOneSongSelected">
       <li @click="doPlayback">

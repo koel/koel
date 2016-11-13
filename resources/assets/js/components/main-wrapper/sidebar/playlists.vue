@@ -1,9 +1,7 @@
 <template>
   <section id="playlists">
     <h1>Playlists
-      <i class="fa fa-plus-circle control create"
-        :class="{ creating: creating }"
-        @click="creating = !creating"></i>
+      <i class="fa fa-plus-circle control create" :class="{ creating: creating }" @click="creating = !creating"/>
     </h1>
 
     <form v-show="creating" @submit.prevent="store" class="create">
@@ -17,13 +15,8 @@
     </form>
 
     <ul class="menu">
-      <playlist-item
-        type="favorites"
-        :playlist="{ name: 'Favorites', songs: favoriteState.songs }"></playlist-item>
-      <playlist-item
-        v-for="playlist in playlistState.playlists"
-        type="playlist"
-        :playlist="playlist"></playlist-item>
+      <playlist-item type="favorites" :playlist="{ name: 'Favorites', songs: favoriteState.songs }"/>
+      <playlist-item v-for="playlist in playlistState.playlists" type="playlist" :playlist="playlist"/>
     </ul>
   </section>
 </template>

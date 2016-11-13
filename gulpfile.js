@@ -6,10 +6,7 @@ var gutils = require('gulp-util');
 
 elixir.config.js.browserify.transformers.push({
   name: 'vueify',
-
-  options: {
-    postcss: [cssnext()]
-  }
+  options: { postcss: [cssnext()] }
 });
 
 if (gutils.env._.indexOf('watch') > -1) {
@@ -29,7 +26,6 @@ elixir(function (mix) {
   mix.scripts([
       'node_modules/babel-polyfill/dist/polyfill.min.js',
       'node_modules/plyr/dist/plyr.js',
-      'node_modules/rangetouch/dist/rangetouch.js',
       'resources/assets/js/libs/modernizr-custom.js'
     ], 'public/js/vendors.js', './')
     .styles([

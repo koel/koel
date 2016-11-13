@@ -5,48 +5,47 @@
 
       <ul class="menu">
         <li>
-          <a class="home" :class="[currentView == 'home' ? 'active' : '']" href="/#!/home">Home</a>
+          <a :class="['home', currentView == 'home' ? 'active' : '']" href="/#!/home">Home</a>
         </li>
         <li>
-          <a class="queue"
-            :class="[currentView == 'queue' ? 'active' : '']"
+          <a :class="['queue', currentView == 'queue' ? 'active' : '']"
             href="/#!/queue"
             @dragleave="removeDroppableState"
             @dragover.prevent="allowDrop"
             @drop.stop.prevent="handleDrop">Current Queue</a>
         </li>
         <li>
-          <a class="songs" :class="[currentView == 'songs' ? 'active' : '']" href="/#!/songs">All Songs</a>
+          <a :class="['songs', currentView == 'songs' ? 'active' : '']" href="/#!/songs">All Songs</a>
         </li>
         <li>
-          <a class="albums" :class="[currentView == 'albums' ? 'active' : '']" href="/#!/albums">Albums</a>
+          <a :class="['albums', currentView == 'albums' ? 'active' : '']" href="/#!/albums">Albums</a>
         </li>
         <li>
-          <a class="artists" :class="[currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
+          <a :class="['artists', currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
         </li>
         <li v-if="sharedState.useYouTube">
-          <a class="youtube" :class="[currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
+          <a :class="['youtube', currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
         </li>
       </ul>
     </section>
 
-    <playlists :current-view="currentView"></playlists>
+    <playlists :current-view="currentView"/>
 
     <section v-if="user.current.is_admin" class="manage">
       <h1>Manage</h1>
 
       <ul class="menu">
         <li>
-          <a class="settings" :class="[currentView == 'settings' ? 'active' : '']" href="/#!/settings">Settings</a>
+          <a :class="['settings', currentView == 'settings' ? 'active' : '']" href="/#!/settings">Settings</a>
         </li>
         <li>
-          <a class="users" :class="[currentView == 'users' ? 'active' : '']" href="/#!/users">Users</a>
+          <a :class="['users', currentView == 'users' ? 'active' : '']" href="/#!/users">Users</a>
         </li>
       </ul>
     </section>
 
     <a
-      :href="'https://github.com/phanan/koel/releases/tag/' + sharedState.latestVersion"
+      :href="latestVersionUrl"
       target="_blank"
       v-if="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
       class="new-ver">
@@ -73,6 +72,12 @@ export default {
       showing: !isMobile.phone,
       sharedState: sharedStore.state,
     };
+  },
+
+  computed: {
+    latestVersionUrl() {
+      return 'https://github.com/phanan/koel/releases/tag/' + this.sharedState.latestVersion;
+    },
   },
 
   methods: {

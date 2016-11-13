@@ -1,12 +1,12 @@
 <template>
   <article class="user-item" :class="{ editing: editing }">
     <div class="info" v-if="!editing">
-      <img :src="user.avatar" width="128" height="128" alt="">
+      <img :src="user.avatar" width="128" height="128">
 
       <div class="right">
         <div>
           <h1>{{ user.name }}
-            <i v-if="isCurrentUser" class="you fa fa-check-circle"></i>
+            <i v-if="isCurrentUser" class="you fa fa-check-circle"/>
           </h1>
           <p>{{ user.email }}</p>
         </div>

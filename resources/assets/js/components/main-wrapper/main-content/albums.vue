@@ -2,13 +2,13 @@
   <section id="albumsWrapper">
     <h1 class="heading">
       <span>Albums</span>
-      <view-mode-switch :mode="viewMode" for="albums"></view-mode-switch>
+      <view-mode-switch :mode="viewMode" for="albums"/>
     </h1>
 
-    <div class="albums main-scroll-wrap" :class="'as-' + viewMode" @scroll="scrolling">
-      <album-item v-for="item in displayedItems" :album="item"></album-item>
-      <span class="item filler" v-for="n in 6"></span>
-      <to-top-button :showing="showBackToTop"></to-top-button>
+    <div class="albums main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
+      <album-item v-for="item in displayedItems" :album="item"/>
+      <span class="item filler" v-for="n in 6"/>
+      <to-top-button :showing="showBackToTop"/>
     </div>
   </section>
 </template>

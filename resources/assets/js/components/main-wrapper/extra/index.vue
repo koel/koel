@@ -14,24 +14,21 @@
       </div>
 
       <div class="panes">
-        <lyrics :song="song" ref="lyrics" v-show="currentView === 'lyrics'"></lyrics>
+        <lyrics :song="song" ref="lyrics" v-show="currentView === 'lyrics'"/>
         <artist-info v-if="song.artist.id"
           :artist="song.artist"
           :mode="'sidebar'"
           ref="artist-info"
-          v-show="currentView === 'artistInfo'">
-        </artist-info>
+          v-show="currentView === 'artistInfo'"/>
         <album-info v-if="song.album.id"
           :album="song.album"
           :mode="'sidebar'"
           ref="album-info"
-          v-show="currentView === 'albumInfo'">
-        </album-info>
+          v-show="currentView === 'albumInfo'"/>
         <youtube v-if="sharedState.useYouTube"
           :song="song" :youtube="song.youtube"
           ref="youtube"
-          v-show="currentView === 'youtube'">
-        </youtube>
+          v-show="currentView === 'youtube'"/>
       </div>
     </div>
   </section>

@@ -9,15 +9,15 @@
       @keydown.mediaNext = "playNext"
       @keydown.mediaToggle = "togglePlayback"
     >
-      <site-header></site-header>
-      <main-wrapper></main-wrapper>
-      <site-footer></site-footer>
-      <overlay ref="overlay"></overlay>
-      <edit-songs-form ref="editSongsForm"></edit-songs-form>
+      <site-header/>
+      <main-wrapper/>
+      <site-footer/>
+      <overlay ref="overlay"/>
+      <edit-songs-form ref="editSongsForm"/>
     </div>
 
     <div class="login-wrapper" v-if="!authenticated">
-      <login-form></login-form>
+      <login-form/>
     </div>
   </div>
 </template>

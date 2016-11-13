@@ -3,21 +3,18 @@
     :class="{ playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
     @dblclick.prevent="play"
   >
-    <span class="cover" :style="{ backgroundImage: 'url(' + song.album.cover + ')' }">
+    <span class="cover" :style="{ backgroundImage: 'url('+song.album.cover+')' }">
       <a class="control" @click.prevent="changeSongState">
         <i class="fa fa-play" v-if="song.playbackState !== 'playing'"></i>
         <i class="fa fa-pause" v-else></i>
       </a>
     </span>
     <span class="details">
-      <span v-if="showPlayCount" :style="{ width: song.playCount * 100 / topPlayCount + '%' }"
-        class="play-count"></span>
+      <span v-if="showPlayCount" :style="{ width: song.playCount*100/topPlayCount+'%' }" class="play-count"/>
       {{ song.title }}
       <span class="by">
-        <a :href="'/#!/artist/' + song.artist.id">{{ song.artist.name }}</a>
-        <template v-if="showPlayCount">-
-        {{ song.playCount | pluralize('play') }}
-        </template>
+        <a :href="'/#!/artist/'+song.artist.id">{{ song.artist.name }}</a>
+        <template v-if="showPlayCount">- {{ song.playCount | pluralize('play') }}</template>
       </span>
     </span>
   </li>

@@ -1,8 +1,8 @@
 <template>
   <div id="mainWrapper">
-    <sidebar></sidebar>
-    <main-content></main-content>
-    <extra></extra>
+    <sidebar/>
+    <main-content/>
+    <extra/>
   </div>
 </template>
 

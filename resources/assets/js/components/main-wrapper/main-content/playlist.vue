@@ -2,12 +2,8 @@
   <section id="playlistWrapper">
     <h1 class="heading">
       <span>{{ playlist.name }}
-        <i class="fa fa-angle-down toggler"
-          v-show="isPhone && !showingControls"
-          @click="showingControls = true"></i>
-        <i class="fa fa-angle-up toggler"
-          v-show="isPhone && showingControls"
-          @click.prevent="showingControls = false"></i>
+        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
+        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
 
         <span class="meta" v-show="meta.songCount">
           {{ meta.songCount | pluralize('song') }}
@@ -15,8 +11,7 @@
           {{ meta.totalLength }}
           <template v-if="sharedState.allowDownload && playlist.songs.length">
             •
-            <a href="#" @click.prevent="download"
-              title="Download all songs in playlist">
+            <a href @click.prevent="download" title="Download all songs in playlist">
               Download
             </a>
           </template>
@@ -42,11 +37,11 @@
           <i class="fa fa-times"></i> Playlist
         </button>
 
-        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu && playlist.songs.length"><add-to-menu>
+        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu && playlist.songs.length"/>
       </div>
     </h1>
 
-    <song-list v-show="playlist.songs.length" :items="playlist.songs" :playlist="playlist" type="playlist"></song-list>
+    <song-list v-show="playlist.songs.length" :items="playlist.songs" :playlist="playlist" type="playlist"/>
 
     <div v-show="!playlist.songs.length" class="none">
       The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar,

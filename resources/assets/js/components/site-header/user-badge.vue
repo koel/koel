@@ -1,7 +1,7 @@
 <template>
   <span class="profile" id="userBadge">
     <a class="view-profile control" href="/#!/profile">
-      <img class="avatar" :src="state.current.avatar" alt="Avatar"></img>
+      <img class="avatar" :src="state.current.avatar" alt="Avatar"/>
       <span class="name">{{ state.current.name }}</span>
     </a>
 
