@@ -63,6 +63,6 @@
   "scripts": {
     "postinstall": "cross-env NODE_ENV=production && gulp --production",
     "test": "mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js",
-    "e2e": "mocha resources/assets/js/tests/e2e/runner.js"
+    "e2e": "echo 'remember to run `php artisan serve --port=8081`' && phpunit tests/e2e -c phpunit.e2e.xml"
   }
 }

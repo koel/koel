@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\GetUserFromToken;
 use App\Http\Middleware\ObjectStorageAuthenticate;
+use App\Http\Middleware\UseDifferentConfigIfE2E;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
@@ -20,6 +21,7 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         CheckForMaintenanceMode::class,
+        UseDifferentConfigIfE2E::class,
     ];
 
     /**

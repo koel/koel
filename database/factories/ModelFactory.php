@@ -26,16 +26,16 @@ $factory->define(App\Models\Artist::class, function ($faker) {
 
 $factory->define(App\Models\Album::class, function ($faker) {
     return [
-        'name' => $faker->sentence,
+        'name' => ucwords($faker->words(random_int(2, 5), true)),
         'cover' => md5(uniqid()).'.jpg',
     ];
 });
 
 $factory->define(App\Models\Song::class, function ($faker) {
     return [
-        'title' => $faker->sentence,
+        'title' => ucwords($faker->words(random_int(2, 5), true)),
         'length' => $faker->randomFloat(2, 10, 500),
-        'track' => $faker->randomNumber(),
+        'track' => random_int(1, 20),
         'lyrics' => $faker->paragraph(),
         'path' => '/tmp/'.uniqid().'.mp3',
         'mtime' => time(),

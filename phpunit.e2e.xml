@@ -9,9 +9,8 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Application Test Suite">
-            <directory>./tests/</directory>
-            <exclude>./tests/e2e</exclude>
+        <testsuite name="E2E Test Suite">
+            <directory>./tests/e2e</directory>
         </testsuite>
     </testsuites>
     <filter>
@@ -20,18 +19,18 @@
         </whitelist>
     </filter>
     <php>
-        <env name="APP_ENV" value="testing"/>
+        <env name="APP_ENV" value="e2e"/>
         <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
         <env name="JWT_SECRET" value="ki8jSvMf5wFrlSRBAWcGbmAzBUJfc8p8"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_CONNECTION" value="sqlite-e2e"/>
         <env name="LASTFM_API_KEY" value="foo"/>
         <env name="LASTFM_API_SECRET" value="bar"/>
         <env name="YOUTUBE_API_KEY" value="foo"/>
         <env name="ADMIN_EMAIL" value="koel@example.com"/>
-        <env name="ADMIN_NAME" value="Koel"/>
+        <env name="ADMIN_NAME" value="Koel Admin"/>
         <env name="ADMIN_PASSWORD" value="SoSecureK0el"/>
         <env name="BROADCAST_DRIVER" value="log"/>
     </php>
