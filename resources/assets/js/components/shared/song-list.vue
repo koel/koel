@@ -26,9 +26,9 @@
             <i class="fa fa-angle-down" v-show="sortingByAlbum && order > 0"/>
             <i class="fa fa-angle-up" v-show="sortingByAlbum && order < 0"/>
           </th>
-          <th @click="sort('fmtLength')" class="time">Time
-            <i class="fa fa-angle-down" v-show="sortKey === 'fmtLength' && order > 0"/>
-            <i class="fa fa-angle-up" v-show="sortKey === 'fmtLength' && order < 0"/>
+          <th @click="sort('length')" class="time">Time
+            <i class="fa fa-angle-down" v-show="sortKey === 'length' && order > 0"/>
+            <i class="fa fa-angle-up" v-show="sortKey === 'length' && order < 0"/>
           </th>
           <th class="play"></th>
         </tr>
@@ -117,7 +117,7 @@ export default {
     /**
      * Handle sorting the song list.
      *
-     * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
+     * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'length'
      */
     sort(key) {
       if (this.sortable === false) {
