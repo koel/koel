@@ -3,15 +3,14 @@
     class="song-item"
     draggable="true"
     :data-song-id="song.id"
-    key="id"
-    @click="$parent.rowClick(song.id, $event)"
+    @click="clicked($event)"
     @dblclick.prevent="playRightAwayyyyyyy"
     @dragstart="$parent.dragStart(song.id, $event)"
     @dragleave="$parent.removeDroppableState($event)"
     @dragover.prevent="$parent.allowDrop(song.id, $event)"
     @drop.stop.prevent="$parent.handleDrop(song.id, $event)"
     @contextmenu.prevent="$parent.openContextMenu(song.id, $event)"
-    :class="{ selected: selected, playing: song.playbackState === 'playing' || song.playbackState === 'paused' }"
+    :class="{ selected: selected, playing: playing }"
   >
     <td class="track-number">{{ song.track || '' }}</td>
     <td class="title">{{ song.title }}</td>
@@ -36,6 +35,12 @@ export default {
     return {
       selected: false,
     };
+  },
+
+  computed: {
+    playing() {
+      return this.song.playbackState === 'playing' || this.song.playbackState === 'paused';
+    },
   },
 
   methods: {
@@ -67,25 +72,23 @@ export default {
       }
     },
 
+    clicked($e) {
+      this.$emit('itemClicked', this.song.id, $e);
+    },
+
+    select() {
+      this.selected = true;
+    },
+
+    deselect() {
+      this.selected = false;
+    },
+
     /**
      * Toggle the "selected" state of the current component.
      */
     toggleSelectedState() {
       this.selected = !this.selected;
-    },
-
-    /**
-     * Select the current component (apply a CSS class on its DOM).
-     */
-    select() {
-      this.selected = true;
-    },
-
-    /**
-     * Deselect the current component.
-     */
-    deselect() {
-      this.selected = false;
     },
   },
 };

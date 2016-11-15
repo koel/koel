@@ -28,7 +28,7 @@
             <div v-show="currentView === 'details'">
               <div class="form-row" v-if="editSingle">
                 <label>Title</label>
-                <input type="text" v-model="formData.title">
+                <input name="title" type="text" v-model="formData.title">
               </div>
               <div class="form-row">
                 <label>Artist</label>
@@ -55,7 +55,7 @@
               </div>
               <div class="form-row" v-show="editSingle">
                 <label>Track</label>
-                <input type="number" min="0" v-model="formData.track">
+                <input name="track" type="number" min="0" v-model="formData.track">
               </div>
             </div>
             <div v-show="currentView === 'lyrics' && editSingle">

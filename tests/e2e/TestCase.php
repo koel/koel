@@ -3,22 +3,16 @@
 namespace E2E;
 
 use App\Application;
-use Facebook\WebDriver\Interactions\Internal\WebDriverDoubleClickAction;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverDimension;
-use Facebook\WebDriver\WebDriverKeys;
-use Facebook\WebDriver\WebDriverPoint;
+use Facebook\WebDriver\WebDriverExpectedCondition;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var RemoteWebDriver
-     */
-    protected $driver;
+    use WebDriverShortcuts;
 
     /**
      * @var Application
@@ -42,8 +36,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->createApp();
         $this->prepareForE2E();
         $this->driver = RemoteWebDriver::create('http://localhost:4444/wd/hub', DesiredCapabilities::chrome());
-        $this->driver->manage()->window()->setPosition(new WebDriverPoint(0, 0))
-            ->setSize(new WebDriverDimension(1440, 900));
     }
 
     /**
@@ -72,85 +64,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function setUp()
-    {
-        $this->driver->get($this->url);
-    }
-
-    public function tearDown()
-    {
-        //$this->driver->quit();
-    }
-
-    protected function el($selector)
-    {
-        return $this->driver->findElement(WebDriverBy::cssSelector($selector));
-    }
-
-    protected function els($selector)
-    {
-        return $this->driver->findElements(WebDriverBy::cssSelector($selector));
-    }
-
-    protected function type($string)
-    {
-        return $this->driver->getKeyboard()->sendKeys($string);
-    }
-
-    protected function typeIn($element, $string)
-    {
-        if (is_string($element)) {
-            $element = $this->el($element);
-        }
-        $element->click()->clear();
-
-        return $this->type($string);
-    }
-
-    protected function press($key = WebDriverKeys::ENTER)
-    {
-        return $this->driver->getKeyboard()->pressKey($key);
-    }
-
-    protected function enter()
-    {
-        return $this->press();
-    }
-
-    protected function click($element)
-    {
-        return $this->el($element)->click();
-    }
-
-    protected function doubleClick($element)
-    {
-        if (is_string($element)) {
-            $element = $this->el($element);
-        }
-        $action = new WebDriverDoubleClickAction($this->driver->getMouse(), $element);
-
-        return $action->perform();
-    }
-
-    protected function sleep($seconds)
-    {
-        $this->driver->manage()->timeouts()->implicitlyWait($seconds);
-    }
-
-    /**
-     * Wait until a condition is met.
-     *
-     * @param     $func (closure|WebDriverExpectedCondition)
-     * @param int $timeout
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-    protected function waitUntil($func, $timeout = 10)
-    {
-        return $this->driver->wait($timeout)->until($func);
-    }
-
     /**
      * Log into Koel.
      *
@@ -164,27 +77,57 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->enter();
     }
 
+    protected function loginAndWait()
+    {
+        $this->login();
+        $this->waitUntil(WebDriverExpectedCondition::textToBePresentInElement(
+            WebDriverBy::cssSelector('#userBadge > a.view-profile.control > span'), 'Koel Admin'
+        ));
+
+        return $this;
+    }
+
     /**
      * A helper to allow going to a specific screen.
      *
      * @param $screen
      *
      * @return \Facebook\WebDriver\Remote\RemoteWebElement
+     *
+     * @throws \Exception
      */
-    protected function goTo($screen)
+    protected function goto($screen)
     {
         if ($screen === 'favorites') {
-            return $this->click('#sidebar .favorites a');
+            $this->click('#sidebar .favorites a');
         } else {
-            return $this->click("#sidebar a.$screen");
+            $this->click("#sidebar a.$screen");
+        }
+
+        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
+            WebDriverBy::cssSelector("#{$screen}Wrapper")
+        ));
+    }
+
+    protected function waitForUserInput()
+    {
+        if (trim(fgets(fopen('php://stdin', 'rb'))) !== chr(13)) {
+            return;
         }
     }
 
-    protected function clearQueue()
+    protected function focusIntoApp()
     {
-        $this->goTo('queue');
-        if ($this->els('#queueWrapper .song-item')) {
-            $this->click('#queueWrapper > h1 > div > button.btn.btn-red');
-        }
+        $this->click('#app');
+    }
+
+    public function setUp()
+    {
+        $this->driver->get($this->url);
+    }
+
+    public function tearDown()
+    {
+        $this->driver->quit();
     }
 }

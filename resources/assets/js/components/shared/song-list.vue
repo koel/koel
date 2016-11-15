@@ -26,16 +26,21 @@
             <i class="fa fa-angle-down" v-show="sortingByAlbum && order > 0"/>
             <i class="fa fa-angle-up" v-show="sortingByAlbum && order < 0"/>
           </th>
-          <th @click="sort('fmtLength')" class="time">Time
-            <i class="fa fa-angle-down" v-show="sortKey === 'fmtLength' && order > 0"/>
-            <i class="fa fa-angle-up" v-show="sortKey === 'fmtLength' && order < 0"/>
+          <th @click="sort('length')" class="time">Time
+            <i class="fa fa-angle-down" v-show="sortKey === 'length' && order > 0"/>
+            <i class="fa fa-angle-up" v-show="sortKey === 'length' && order < 0"/>
           </th>
           <th class="play"></th>
         </tr>
       </thead>
 
       <tbody>
-        <tr is="song-item" v-for="item in displayedItems" :song="item" ref="rows"/>
+        <tr is="song-item"
+          v-for="item in displayedItems"
+          @itemClicked="itemClicked"
+          :song="item"
+          :key="item.id"
+          ref="rows"/>
       </tbody>
     </table>
 
@@ -69,7 +74,6 @@ export default {
       q: '', // The filter query
       sortKey: '',
       order: 1,
-      componentCache: {},
       sortingByAlbum: false,
       sortingByArtist: false,
       selectedSongs: [],
@@ -117,7 +121,7 @@ export default {
     /**
      * Handle sorting the song list.
      *
-     * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'fmtLength'
+     * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'length'
      */
     sort(key) {
       if (this.sortable === false) {
@@ -221,12 +225,7 @@ export default {
      * @return {Object}  The Vue compoenent
      */
     getComponentBySongId(id) {
-      // A Vue component can be removed (as a result of filter for example), so we check for its $el as well.
-      if (!this.componentCache[id] || !this.componentCache[id].$el) {
-        this.componentCache[id] = find(this.$refs.rows, { song: { id } });
-      }
-
-      return this.componentCache[id];
+      return find(this.$refs.rows, { song: { id } });
     },
 
     /**
@@ -269,7 +268,7 @@ export default {
      * @param  {String} songId
      * @param  {Object} e
      */
-    rowClick(songId, e) {
+    itemClicked(songId, e) {
       const row = this.getComponentBySongId(songId);
 
       // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
@@ -342,8 +341,11 @@ export default {
         this.gatherSelected();
       }
 
+      console.log('selected songs before drop:', this.selectedSongs);
+
       this.$nextTick(() => {
         const songIds = map(this.selectedSongs, 'id');
+        console.log('dragging', songIds);
         e.dataTransfer.setData('application/x-koel.text+plain', songIds);
         e.dataTransfer.effectAllowed = 'move';
 
@@ -377,6 +379,7 @@ export default {
      * @param  {Object} e
      */
     handleDrop(songId, e) {
+      console.log('dropping into', songId);
       if (this.type !== 'queue') {
         return this.removeDroppableState(e) && false;
       }
@@ -386,6 +389,7 @@ export default {
       }
 
       const songs = this.selectedSongs;
+      console.log('selected songs after drop:', songs);
 
       if (!songs.length) {
         return this.removeDroppableState(e) && false;
@@ -457,12 +461,6 @@ export default {
        * Clears the current list's selection if the user has switched to another view.
        */
       'main-content-view:load': () => this.clearSelection(),
-
-      /**
-       * Listens to the 'song:selection-changed' dispatched from a child song-item
-       * to collect the selected songs.
-       */
-      'song:selection-changed': () => this.gatherSelected(),
 
       /**
        * Listen to 'song:selection-clear' (often broadcasted from the direct parent)
