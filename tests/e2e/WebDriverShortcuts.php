@@ -22,11 +22,11 @@ trait WebDriverShortcuts
      */
     protected function el($selector)
     {
-        if (is_a($selector, WebDriverElement::class)) {
-            return $selector;
+        if (is_string($selector)) {
+            return $this->driver->findElement(WebDriverBy::cssSelector($selector));
         }
 
-        return $this->driver->findElement(WebDriverBy::cssSelector($selector));
+        return $selector;
     }
 
     protected function els($selector)

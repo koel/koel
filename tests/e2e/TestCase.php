@@ -10,7 +10,7 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
     use WebDriverShortcuts;
 
