@@ -3,7 +3,6 @@
     class="song-item"
     draggable="true"
     :data-song-id="song.id"
-    key="id"
     @click="$parent.rowClick(song.id, $event)"
     @dblclick.prevent="playRightAwayyyyyyy"
     @dragstart="$parent.dragStart(song.id, $event)"

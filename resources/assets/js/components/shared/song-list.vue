@@ -35,7 +35,7 @@
       </thead>
 
       <tbody>
-        <tr is="song-item" v-for="item in displayedItems" :song="item" ref="rows"/>
+        <tr is="song-item" v-for="item in displayedItems" :song="item" ref="rows" :key="item.id"/>
       </tbody>
     </table>
 
