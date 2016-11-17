@@ -17,11 +17,11 @@
 
           <template v-if="sharedState.useLastfm">
             •
-            <a href @click.prevent="showInfo" title="View album's extra information">Info</a>
+            <a class="info" href @click.prevent="showInfo" title="View album's extra information">Info</a>
           </template>
           <template v-if="sharedState.allowDownload">
             •
-            <a href @click.prevent="download" title="Download all songs in album">Download</a>
+            <a class="download" href @click.prevent="download" title="Download all songs in album">Download</a>
           </template>
         </span>
       </span>
