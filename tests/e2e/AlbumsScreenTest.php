@@ -17,9 +17,9 @@ class AlbumsScreenTest extends TestCase
         static::assertContains('10 songs', $firstAlbum->findElement(WebDriverBy::cssSelector('.meta'))->getText());
 
         // test the view modes
-        $this->click('#albumsWrapper > h1.heading > span.view-modes > a:nth-child(2)');
+        $this->click('#albumsWrapper > h1.heading > span.view-modes > a.list');
         static::assertCount(1, $this->els('#albumsWrapper > div.albums.as-list'));
-        $this->click('#albumsWrapper > h1.heading > span.view-modes > a:nth-child(1)');
+        $this->click('#albumsWrapper > h1.heading > span.view-modes > a.thumbnails');
         static::assertCount(1, $this->els('#albumsWrapper > div.albums.as-thumbnails'));
     }
 }

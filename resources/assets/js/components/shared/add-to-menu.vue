@@ -3,11 +3,12 @@
     <p>Add {{ songs.length | pluralize('song') }} to</p>
 
     <ul>
-      <li v-if="mergedSettings.canQueue" @click="queueSongsAfterCurrent">After Current Song</li>
-      <li v-if="mergedSettings.canQueue" @click="queueSongsToBottom">Bottom of Queue</li>
-      <li v-if="mergedSettings.canQueue" @click="queueSongsToTop">Top of Queue</li>
-      <li v-if="mergedSettings.canLike" @click="addSongsToFavorite">Favorites</li>
-      <li v-for="playlist in playlistState.playlists" @click="addSongsToExistingPlaylist(playlist)">{{ playlist.name }}</li>
+      <li class="after-current" @click="queueSongsAfterCurrent">After Current Song</li>
+      <li class="bottom-queue" @click="queueSongsToBottom">Bottom of Queue</li>
+      <li class="top-queue" @click="queueSongsToTop">Top of Queue</li>
+      <li class="favorites" v-if="config.favorites" @click="addSongsToFavorite">Favorites</li>
+      <li class="playlist" v-for="playlist in playlistState.playlists"
+        @click="addSongsToExistingPlaylist(playlist)">{{ playlist.name }}</li>
     </ul>
 
     <p>or create a new playlist</p>
@@ -35,7 +36,7 @@ import songMenuMethods from '../../mixins/song-menu-methods';
 
 export default {
   name: 'shared--add-to-menu',
-  props: ['songs', 'showing', 'settings'],
+  props: ['songs', 'showing', 'config'],
   mixins: [songMenuMethods],
   filters: { pluralize },
 
@@ -43,10 +44,6 @@ export default {
     return {
       newPlaylistName: '',
       playlistState: playlistStore.state,
-      mergedSettings: assign({
-        canQueue: true,
-        canLike: true,
-      }, this.settings),
     };
   },
 

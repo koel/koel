@@ -64,23 +64,28 @@ class SongListTest extends TestCase
     {
         $this->loginAndWait()->repopulateList();
 
-        // Since no songs are selected, the shuffle button must read "(Shuffle) All"
-        static::assertContains('ALL', $this->el('#queueWrapper button.play-shuffle')->getText());
-        // Now we selected all songs it to read "(Shuffle) Selected"
+        // Since no songs are selected, the "Shuffle All" button must be shown
+        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
+            WebDriverBy::cssSelector('#queueWrapper button.btn-shuffle-all')
+        ));
+
+        // Now we selected all songs for the "Shuffle Selected" button to be shown
         $this->selectAll();
-        static::assertContains('SELECTED', $this->el('#queueWrapper button.play-shuffle')->getText());
+        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
+            WebDriverBy::cssSelector('#queueWrapper button.btn-shuffle-selected')
+        ));
 
         // Add to favorites
         $this->el('#queueWrapper tr.song-item:nth-child(1)')->click();
-        $this->click('#queueWrapper .buttons button.btn.btn-green');
-        $this->click('#queueWrapper .buttons li:nth-child(1)');
+        $this->click('#queueWrapper .buttons button.btn-add-to');
+        $this->click('#queueWrapper .buttons .add-to li.favorites');
         $this->goto('favorites');
         static::assertCount(1, $this->els('#favoritesWrapper tr.song-item'));
 
         $this->goto('queue');
         $this->click('#queueWrapper tr.song-item:nth-child(1)');
         // Try adding a song into a new playlist
-        $this->click('#queueWrapper .buttons button.btn.btn-green');
+        $this->click('#queueWrapper .buttons button.btn-add-to');
         $this->typeIn('#queueWrapper .buttons input[type="text"]', 'Foo');
         $this->enter();
         $this->waitUntil(WebDriverExpectedCondition::textToBePresentInElement(
@@ -178,7 +183,7 @@ class SongListTest extends TestCase
     {
         // Go back to Albums and queue an album of 10 songs
         $this->goto('albums');
-        $this->click('#albumsWrapper > div > article:nth-child(1) > footer > p > span.right > a:nth-child(1)');
+        $this->click('#albumsWrapper > div > article:nth-child(1) .meta a.shuffle-album');
         $this->goto('queue');
     }
 

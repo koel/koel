@@ -16,9 +16,9 @@ class ArtistsScreenTest extends TestCase
         static::assertContains('5 albums • 50 songs', $firstArtist->findElement(WebDriverBy::cssSelector('.meta'))->getText());
 
         // test the view modes
-        $this->click('#artistsWrapper > h1.heading > span.view-modes > a:nth-child(2)');
+        $this->click('#artistsWrapper > h1.heading > span.view-modes > a.list');
         static::assertCount(1, $this->els('#artistsWrapper > div.artists.as-list'));
-        $this->click('#artistsWrapper > h1.heading > span.view-modes > a:nth-child(1)');
+        $this->click('#artistsWrapper > h1.heading > span.view-modes > a.thumbnails');
         static::assertCount(1, $this->els('#artistsWrapper > div.artists.as-thumbnails'));
     }
 }

@@ -1,30 +1,30 @@
 <template>
   <div class="buttons song-list-controls">
-    <button class="play-shuffle btn btn-orange"
+    <button class="btn btn-orange btn-shuffle-all"
       @click.prevent="shuffle"
       v-if="selectedSongs.length < 2">
       <i class="fa fa-random"></i> All
     </button>
 
-    <button class="play-shuffle btn btn-orange"
+    <button class="btn btn-orange btn-shuffle-selected"
       @click.prevent="shuffleSelected"
       v-if="selectedSongs.length > 1">
       <i class="fa fa-random"></i> Selected
     </button>
 
-    <button class="btn btn-green"
+    <button class="btn btn-green btn-add-to"
       @click.prevent.stop="showingAddToMenu = !showingAddToMenu"
       v-if="selectedSongs.length">
       {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
     </button>
 
-    <button class="btn btn-red"
+    <button class="btn btn-red btn-clear-queue"
       @click.prevent="clearQueue"
       v-if="showClearQueueButton">
       Clear
     </button>
 
-    <button class="del btn btn-red" v-if="showDeletePlaylistButton"
+    <button class="del btn btn-red btn-delete-playlist" v-if="showDeletePlaylistButton"
       title="Delete this playlist"
       @click.prevent="deletePlaylist">
       <i class="fa fa-times"></i> Playlist

@@ -21,10 +21,12 @@
           {{ album.playCount | pluralize('play') }}
         </span>
         <span class="right">
-          <a href @click.prevent="shuffle" title="Shuffle">
+          <a href @click.prevent="shuffle" title="Shuffle" class="shuffle-album">
             <i class="fa fa-random"></i>
           </a>
-          <a href @click.prevent="download" v-if="sharedState.allowDownload" title="Download all songs in album">
+          <a href @click.prevent="download" v-if="sharedState.allowDownload"
+            class="download-album"
+            title="Download all songs in album">
             <i class="fa fa-download"></i>
           </a>
         </span>

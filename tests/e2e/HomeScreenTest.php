@@ -28,7 +28,7 @@ class HomeScreenTest extends TestCase
         static::assertCount(10, $this->els('#homeWrapper .recently-added-song-list .song-item-home'));
 
         // Shuffle must work for latest albums
-        $this->click('#homeWrapper section.recently-added article:nth-child(1) span.right a:nth-child(1)');
+        $this->click('#homeWrapper section.recently-added article:nth-child(1) a.shuffle-album');
         static::assertCount(10, $this->els('#queueWrapper .song-list-wrap tr.song-item'));
 
         $this->goto('home');
