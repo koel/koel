@@ -162,12 +162,6 @@ export default {
       text-align: center;
       flex-direction: column;
 
-      .toggler {
-        font-size: 1rem;
-        margin-left: 4px;
-        color: $colorHighlight;
-      }
-
       .meta {
         display: none;
       }

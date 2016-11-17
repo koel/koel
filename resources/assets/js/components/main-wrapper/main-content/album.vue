@@ -4,8 +4,7 @@
       <span class="overview">
         <img :src="album.cover" width="64" height="64" class="cover">
         {{ album.name }}
-        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
-        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
+        <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
         <span class="meta" v-show="meta.songCount">
           by
@@ -27,7 +26,11 @@
         </span>
       </span>
 
-      <song-list-controls :config="songListControlConfig" :selectedSongs="selectedSongs"/>
+      <song-list-controls
+        v-show="!isPhone || showingControls"
+        :config="songListControlConfig"
+        :selectedSongs="selectedSongs"
+      />
     </h1>
 
     <song-list :items="album.songs" type="album"/>

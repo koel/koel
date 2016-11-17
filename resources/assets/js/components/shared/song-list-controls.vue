@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
 import { assign } from 'lodash';
 import { queueStore } from '../../stores';
 import addToMenu from './add-to-menu.vue';
@@ -52,7 +51,6 @@ export default {
 
   data() {
     return {
-      isPhone: isMobile.phone,
       fullConfig: {
         shuffle: true,
         addTo: {
@@ -112,6 +110,4 @@ export default {
 };
 </script>
 
-<style lang="sass">
-
-</style>
+<style lang="sass"></style>

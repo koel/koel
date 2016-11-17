@@ -8,9 +8,10 @@ import isMobile from 'ismobilejs';
 import { playback } from '../services';
 import songList from '../components/shared/song-list.vue';
 import songListControls from '../components/shared/song-list-controls.vue';
+import controlsToggler from '../components/shared/song-list-controls-toggler.vue';
 
 export default {
-  components: { songList, songListControls },
+  components: { songList, songListControls, controlsToggler },
 
   data() {
     return {
@@ -20,9 +21,9 @@ export default {
         totalLength: '00:00',
       },
       selectedSongs: [],
-      isPhone: isMobile.phone,
-      showingControls: true,
+      showingControls: false,
       songListControlConfig: {},
+      isPhone: isMobile.phone,
     };
   },
 
@@ -42,5 +43,9 @@ export default {
     shuffleSelected() {
       playback.queueAndPlay(this.selectedSongs, true);
     },
+
+    toggleControls() {
+      this.showingControls = !this.showingControls;
+    }
   },
 };

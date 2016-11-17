@@ -2,8 +2,7 @@
   <section id="queueWrapper">
     <h1 class="heading">
       <span title="That's a freaking lot of U's and E's">Current Queue
-        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
-        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
+        <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
         <span class="meta" v-show="meta.songCount">
           {{ meta.songCount | pluralize('song') }}
@@ -13,7 +12,7 @@
       </span>
 
       <song-list-controls
-        v-show="state.songs.length"
+        v-show="state.songs.length && (!isPhone || showingControls)"
         @shuffleAll="shuffleAll"
         @shuffleSelected="shuffleSelected"
         @clearQueue="clearQueue"
@@ -97,7 +96,6 @@ export default {
       color: $colorHighlight;
     }
   }
-
 
   button.play-shuffle {
     i {
