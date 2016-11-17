@@ -3,50 +3,30 @@
  */
 
 import { assign } from 'lodash';
+import isMobile from 'ismobilejs';
 
-import { event } from '../utils';
 import { playback } from '../services';
-import addToMenu from '../components/shared/add-to-menu.vue';
 import songList from '../components/shared/song-list.vue';
+import songListControls from '../components/shared/song-list-controls.vue';
 
 export default {
-  components: { addToMenu, songList },
+  components: { songList, songListControls },
 
   data() {
     return {
-      /**
-       * Whether or not to show the "Add To" button in the header.
-       *
-       * @type {Boolean}
-       */
-      showingAddToMenu: false,
-
-      /**
-       * An array of selected songs in the list.
-       *
-       * @type {Array.<Object>}
-       */
-      selectedSongs: [],
-
+      state: null,
       meta: {
         songCount: 0,
         totalLength: '00:00',
       },
+      selectedSongs: [],
+      isPhone: isMobile.phone,
+      showingControls: true,
+      songListControlConfig: {},
     };
   },
 
   methods: {
-    /**
-     * Shuffles the currently selected songs.
-     */
-    shuffleSelected() {
-      if (this.selectedSongs.length < 2) {
-        return;
-      }
-
-      playback.queueAndPlay(this.selectedSongs, true);
-    },
-
     setSelectedSongs(songs) {
       this.selectedSongs = songs;
     },
@@ -55,8 +35,12 @@ export default {
       this.meta = assign(this.meta, meta);
     },
 
-    closeAddToMenu() {
-      this.showingAddToMenu = false;
+    shuffleAll() {
+      playback.queueAndPlay(this.state.songs, true);
+    },
+
+    shuffleSelected() {
+      playback.queueAndPlay(this.selectedSongs, true);
     },
   },
 };

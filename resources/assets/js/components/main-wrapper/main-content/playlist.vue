@@ -18,27 +18,14 @@
         </span>
       </span>
 
-      <div class="buttons" v-show="!isPhone || showingControls">
-        <button class="play-shuffle btn btn-orange"
-          @click.prevent="shuffle"
-          v-if="playlist.songs.length && selectedSongs.length < 2"
-        >
-          <i class="fa fa-random"></i> All
-        </button>
-        <button class="play-shuffle btn btn-orange" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
-          <i class="fa fa-random"></i> Selected
-        </button>
-        <button class="btn btn-green" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
-          {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
-        </button>
-        <button class="del btn btn-red"
-          title="Delete this playlist"
-          @click.prevent="confirmDelete">
-          <i class="fa fa-times"></i> Playlist
-        </button>
-
-        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu && playlist.songs.length"/>
-      </div>
+      <song-list-controls
+        v-show="playlist.songs.length"
+        @shuffleAll="shuffleAll"
+        @shuffleSelected="shuffleSelected"
+        @deletePlaylist="confirmDelete"
+        :config="songListControlConfig"
+        :selectedSongs="selectedSongs"
+      />
     </h1>
 
     <song-list v-show="playlist.songs.length" :items="playlist.songs" :playlist="playlist" type="playlist"/>
@@ -69,8 +56,9 @@ export default {
     return {
       playlist: playlistStore.stub,
       sharedState: sharedStore.state,
-      isPhone: isMobile.phone,
-      showingControls: false,
+      songListControlConfig: {
+        deletePlaylist: true,
+      },
     };
   },
 
@@ -92,8 +80,9 @@ export default {
   methods: {
     /**
      * Shuffle the songs in the current playlist.
+     * Overriding the mixin.
      */
-    shuffle() {
+    shuffleAll() {
       playback.queueAndPlay(this.playlist.songs, true);
     },
 

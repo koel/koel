@@ -18,25 +18,7 @@
         </span>
       </span>
 
-      <div class="buttons" v-show="!isPhone || showingControls">
-        <button class="play-shuffle btn-orange"
-          @click.prevent="shuffle"
-          v-if="state.songs.length && selectedSongs.length < 2"
-        >
-          <i class="fa fa-random"></i> All
-        </button>
-        <button class="play-shuffle btn-orange" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
-          <i class="fa fa-random"></i> Selected
-        </button>
-        <button class="add-to btn-green" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
-          {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
-        </button>
-
-        <add-to-menu
-          :songs="selectedSongs"
-          :showing="showingAddToMenu && state.songs.length"
-          :settings="{ canLike: false }"/>
-      </div>
+      <song-list-controls :config="songListControlConfig" :selectedSongs="selectedSongs"/>
     </h1>
 
     <song-list v-show="state.songs.length" :items="state.songs" type="favorites"/>
