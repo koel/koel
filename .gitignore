@@ -66,3 +66,5 @@ Temporary Items
 ### Sass ###
 .sass-cache/
 *.css.map
+
+/database/e2e.sqlite

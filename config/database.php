@@ -52,6 +52,12 @@ return [
             'prefix'   => '',
         ],
 
+        'sqlite-e2e' => [
+            'driver'   => 'sqlite',
+            'database' => __DIR__.'/../database/e2e.sqlite',
+            'prefix'   => '',
+        ],
+
         'mysql' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),

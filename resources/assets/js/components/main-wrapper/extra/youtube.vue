@@ -1,5 +1,5 @@
 <template>
-  <div id="youtube-wrapper">
+  <div id="youtube-extra-wrapper">
     <template v-if="videos && videos.length">
       <a class="video" v-for="video in videos" href @click.prevent="playYouTube(video.id.videoId)">
         <div class="thumb">
@@ -58,7 +58,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-#youtube-wrapper {
+#youtube-extra-wrapper {
   overflow-x: hidden;
 
   .video {

@@ -1,5 +1,5 @@
 <template>
-  <section id="youTubePlayer">
+  <section id="youtubeWrapper">
     <h1 class="heading"><span>YouTube Video</span></h1>
     <div id="player">
       <p class="none">Your YouTube video will be played here.<br/>
