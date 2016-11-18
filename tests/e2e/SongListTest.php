@@ -2,7 +2,6 @@
 
 namespace E2E;
 
-use Facebook\WebDriver\Interactions\WebDriverActions;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
@@ -10,32 +9,22 @@ use Facebook\WebDriver\WebDriverKeys;
 
 class SongListTest extends TestCase
 {
+    use SongListActions;
+
     public function testSelection()
     {
         $this->loginAndWait()->repopulateList();
 
         // Single song selection
-        static::assertContains(
-            'selected',
-            $this->click('#queueWrapper tr.song-item:nth-child(1)')->getAttribute('class')
-        );
+        static::assertContains('selected', $this->selectSong()->getAttribute('class'));
 
-        // shift+click
-        (new WebDriverActions($this->driver))
-            ->keyDown(null, WebDriverKeys::SHIFT)
-            ->click($this->el('#queueWrapper tr.song-item:nth-child(5)'))
-            ->keyUp(null, WebDriverKeys::SHIFT)
-            ->perform();
+        // Shift+Click
+        $this->selectRange();
         // should have 5 selected rows
         static::assertCount(5, $this->els('#queueWrapper tr.song-item.selected'));
 
         // Cmd+Click
-        (new WebDriverActions($this->driver))
-            ->keyDown(null, WebDriverKeys::COMMAND)
-            ->click($this->el('#queueWrapper tr.song-item:nth-child(2)'))
-            ->click($this->el('#queueWrapper tr.song-item:nth-child(3)'))
-            ->keyUp(null, WebDriverKeys::COMMAND)
-            ->perform();
+        $this->cmdSelectSongs(2, 3);
         // should have only 3 selected rows remaining
         static::assertCount(3, $this->els('#queueWrapper tr.song-item.selected'));
         // 2nd and 3rd rows must not be selected
@@ -56,7 +45,7 @@ class SongListTest extends TestCase
         });
 
         // Ctrl+A/Cmd+A should select all songs
-        $this->selectAll();
+        $this->selectAllSongs();
         static::assertCount(7, $this->els('#queueWrapper tr.song-item.selected'));
     }
 
@@ -70,24 +59,22 @@ class SongListTest extends TestCase
         ));
 
         // Now we selected all songs for the "Shuffle Selected" button to be shown
-        $this->selectAll();
+        $this->selectAllSongs();
         $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
             WebDriverBy::cssSelector('#queueWrapper button.btn-shuffle-selected')
         ));
 
         // Add to favorites
-        $this->el('#queueWrapper tr.song-item:nth-child(1)')->click();
+        $this->selectSong();
         $this->click('#queueWrapper .buttons button.btn-add-to');
         $this->click('#queueWrapper .buttons .add-to li.favorites');
         $this->goto('favorites');
         static::assertCount(1, $this->els('#favoritesWrapper tr.song-item'));
 
         $this->goto('queue');
-        $this->click('#queueWrapper tr.song-item:nth-child(1)');
+        $this->selectSong();
         // Try adding a song into a new playlist
-        $this->click('#queueWrapper .buttons button.btn-add-to');
-        $this->typeIn('#queueWrapper .buttons input[type="text"]', 'Foo');
-        $this->enter();
+        $this->createPlaylist('Foo');
         $this->waitUntil(WebDriverExpectedCondition::textToBePresentInElement(
             WebDriverBy::cssSelector('#playlists > ul'), 'Foo'
         ));
@@ -139,7 +126,7 @@ class SongListTest extends TestCase
     public function testContextMenu()
     {
         $this->loginAndWait()->goto('songs');
-        $this->rightClick('#songsWrapper tr.song-item:nth-child(1)');
+        $this->rightClickOnSong();
 
         $by = WebDriverBy::cssSelector('#songsWrapper .song-menu');
         $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated($by));
@@ -155,7 +142,7 @@ class SongListTest extends TestCase
 
         // Clicking the "Go to Artist" menu item
         $this->back();
-        $this->rightClick('#songsWrapper tr.song-item:nth-child(1)');
+        $this->rightClickOnSong();
         $this->click('#songsWrapper .song-menu > li:nth-child(3)');
         $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
             WebDriverBy::cssSelector('#artistWrapper')
@@ -163,7 +150,7 @@ class SongListTest extends TestCase
 
         // Clicking "Edit"
         $this->back();
-        $this->rightClick('#songsWrapper tr.song-item:nth-child(1)');
+        $this->rightClickOnSong();
         $this->click('#songsWrapper .song-menu > li:nth-child(5)');
         $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
             WebDriverBy::cssSelector('#editSongsOverlay form')
@@ -185,16 +172,5 @@ class SongListTest extends TestCase
         $this->goto('albums');
         $this->click('#albumsWrapper > div > article:nth-child(1) .meta a.shuffle-album');
         $this->goto('queue');
-    }
-
-    private function selectAll()
-    {
-        $this->focusIntoApp(); // make sure focus is there before executing shortcut keys
-        (new WebDriverActions($this->driver))
-            ->keyDown(null, WebDriverKeys::COMMAND)
-            ->keyDown(null, 'A')
-            ->keyUp(null, 'A')
-            ->keyUp(null, WebDriverKeys::COMMAND)
-            ->perform();
     }
 }

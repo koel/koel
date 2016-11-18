@@ -20,6 +20,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected $app;
 
     /**
+     * ID of the current screen wrapper (with leading #)
+     *
+     * @var string
+     */
+    public $wrapperId;
+
+    /**
      * The default Koel URL for E2E (server by `php artisan serve --port=8081`).
      *
      * @var string
@@ -92,12 +99,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @param $screen
      *
-     * @return \Facebook\WebDriver\Remote\RemoteWebElement
+     * @return $this
      *
      * @throws \Exception
      */
     protected function goto($screen)
     {
+        $this->wrapperId = "#{$screen}Wrapper";
+
         if ($screen === 'favorites') {
             $this->click('#sidebar .favorites a');
         } else {
@@ -105,8 +114,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
-            WebDriverBy::cssSelector("#{$screen}Wrapper")
+            WebDriverBy::cssSelector($this->wrapperId)
         ));
+
+        return $this;
     }
 
     protected function waitForUserInput()
