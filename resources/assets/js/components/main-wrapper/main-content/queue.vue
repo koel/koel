@@ -47,8 +47,6 @@ export default {
   data() {
     return {
       state: queueStore.state,
-      showingAddToMenu: false,
-      playlistName: '',
       songListControlConfig: {
         clearQueue: true,
       }

@@ -65,8 +65,6 @@ export default {
     return {
       sharedState: sharedStore.state,
       artist: artistStore.stub,
-      isPhone: isMobile.phone,
-      showingControls: false,
       info: {
         showing: false,
         loading: true,

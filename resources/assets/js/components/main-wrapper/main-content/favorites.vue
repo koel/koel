@@ -51,19 +51,10 @@ export default {
     return {
       state: favoriteStore.state,
       sharedState: sharedStore.state,
-      isPhone: isMobile.phone,
-      showingControls: false,
     };
   },
 
   methods: {
-    /**
-     * Shuffle the current favorite songs.
-     */
-    shuffle() {
-      playback.queueAndPlay(this.state.songs, true);
-    },
-
     /**
      * Download all favorite songs.
      */
@@ -79,12 +70,6 @@ export default {
 @import "../../../../sass/partials/_mixins.scss";
 
 #favoritesWrapper {
-  button.play-shuffle, button.del {
-    i {
-      margin-right: 0 !important;
-    }
-  }
-
   .none {
     color: $color2ndText;
     padding: 16px 24px;

@@ -341,11 +341,8 @@ export default {
         this.gatherSelected();
       }
 
-      console.log('selected songs before drop:', this.selectedSongs);
-
       this.$nextTick(() => {
         const songIds = map(this.selectedSongs, 'id');
-        console.log('dragging', songIds);
         e.dataTransfer.setData('application/x-koel.text+plain', songIds);
         e.dataTransfer.effectAllowed = 'move';
 

@@ -2,13 +2,13 @@
   <div class="buttons song-list-controls">
     <button class="btn btn-orange btn-shuffle-all"
       @click.prevent="shuffle"
-      v-if="selectedSongs.length < 2">
+      v-if="fullConfig.shuffle && selectedSongs.length < 2">
       <i class="fa fa-random"></i> All
     </button>
 
     <button class="btn btn-orange btn-shuffle-selected"
       @click.prevent="shuffleSelected"
-      v-if="selectedSongs.length > 1">
+      v-if="fullConfig.shuffle && selectedSongs.length > 1">
       <i class="fa fa-random"></i> Selected
     </button>
 
@@ -78,15 +78,10 @@ export default {
   },
 
   mounted() {
-    this.mergeConfig();
-    this.$watch('config', this.mergeConfig, { deep: true });
+    assign(this.fullConfig, this.config);
   },
 
   methods: {
-    mergeConfig() {
-      this.fullConfig = assign(this.fullConfig, this.config);
-    },
-
     shuffle() {
       this.$emit('shuffleAll');
     },

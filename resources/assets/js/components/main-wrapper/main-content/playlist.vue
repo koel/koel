@@ -18,7 +18,7 @@
       </span>
 
       <song-list-controls
-        v-show="playlist.songs.length && (!isPhone || showingControls)"
+        v-show="!isPhone || showingControls"
         @shuffleAll="shuffleAll"
         @shuffleSelected="shuffleSelected"
         @deletePlaylist="confirmDelete"
@@ -55,9 +55,6 @@ export default {
     return {
       playlist: playlistStore.stub,
       sharedState: sharedStore.state,
-      songListControlConfig: {
-        deletePlaylist: true,
-      },
     };
   },
 
