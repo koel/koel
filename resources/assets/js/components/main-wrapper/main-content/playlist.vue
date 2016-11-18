@@ -55,6 +55,9 @@ export default {
     return {
       playlist: playlistStore.stub,
       sharedState: sharedStore.state,
+      songListControlConfig: {
+        deletePlaylist: true,
+      },
     };
   },
 
