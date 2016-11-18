@@ -18,7 +18,7 @@
       </span>
 
       <song-list-controls
-        v-show="!isPhone || showingControls"
+        v-show="state.songs.length && (!isPhone || showingControls)"
         :config="songListControlConfig"
         :selectedSongs="selectedSongs"
       />

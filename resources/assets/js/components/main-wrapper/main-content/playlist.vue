@@ -18,7 +18,7 @@
       </span>
 
       <song-list-controls
-        v-show="!isPhone || showingControls"
+        v-show="playlist.songs.length && (!isPhone || showingControls)"
         @shuffleAll="shuffleAll"
         @shuffleSelected="shuffleSelected"
         @deletePlaylist="confirmDelete"
