@@ -19,5 +19,4 @@ class QueueScreenTest extends TestCase
         $this->click('#queueWrapper .buttons button.btn-clear-queue');
         static::assertEmpty($this->els('#queueWrapper tr.song-item'));
     }
-
 }
