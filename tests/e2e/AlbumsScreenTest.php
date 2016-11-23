@@ -8,7 +8,7 @@ class AlbumsScreenTest extends TestCase
 {
     public function testAlbumsScreen()
     {
-        $this->loginAndWait()->goto('albums');
+        $this->loginAndGoTo('albums');
 
         static::assertNotEmpty($this->els('#albumsWrapper .albums article.item'));
         $firstAlbum = $this->el('#albumsWrapper .albums article.item:nth-child(1)');

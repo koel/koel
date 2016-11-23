@@ -6,8 +6,7 @@ class QueueScreenTest extends TestCase
 {
     public function test()
     {
-        $this->loginAndWait();
-        $this->goto('queue');
+        $this->loginAndGoTo('queue');
         static::assertContains('Current Queue', $this->el('#queueWrapper > h1 > span')->getText());
 
         // As the queue is currently empty, the "Shuffling all song" link should be there

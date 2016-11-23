@@ -8,7 +8,7 @@ class ArtistsScreenTest extends TestCase
 {
     public function testArtistsScreen()
     {
-        $this->loginAndWait()->goto('artists');
+        $this->loginAndGoTo('artists');
 
         static::assertNotEmpty($this->els('#artistsWrapper .artists article.item'));
         $firstArtist = $this->el('#artistsWrapper .artists article.item:nth-child(1)');

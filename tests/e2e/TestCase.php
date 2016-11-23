@@ -76,20 +76,22 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @param string $username
      * @param string $password
+     *
+     * @return $this
      */
     protected function login($username = 'koel@example.com', $password = 'SoSecureK0el')
     {
         $this->typeIn("#app > div.login-wrapper > form > [type='email']", $username);
         $this->typeIn("#app > div.login-wrapper > form > [type='password']", $password);
         $this->enter();
+
+        return $this;
     }
 
     protected function loginAndWait()
     {
         $this->login();
-        $this->waitUntil(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#userBadge > a.view-profile.control > span'), 'Koel Admin'
-        ));
+        $this->waitUntilTextSeenIn('Koel Admin', '#userBadge > a.view-profile.control > span');
 
         return $this;
     }
@@ -113,11 +115,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $this->click("#sidebar a.$screen");
         }
 
-        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
-            WebDriverBy::cssSelector($this->wrapperId)
-        ));
+        $this->waitUntilSeen($this->wrapperId);
 
         return $this;
+    }
+
+    protected function loginAndGoTo($screen)
+    {
+        return $this->loginAndWait()->goto($screen);
     }
 
     protected function waitForUserInput()

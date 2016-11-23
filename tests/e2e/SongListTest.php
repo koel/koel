@@ -125,7 +125,7 @@ class SongListTest extends TestCase
 
     public function testContextMenu()
     {
-        $this->loginAndWait()->goto('songs');
+        $this->loginAndGoTo('songs');
         $this->rightClickOnSong();
 
         $by = WebDriverBy::cssSelector('#songsWrapper .song-menu');

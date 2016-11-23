@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: an
- * Date: 15/11/16
- * Time: 4:14 PM
- */
 
 namespace E2E;
 
@@ -14,9 +8,7 @@ class HomeScreenTest extends TestCase
 {
     public function testHomeScreen()
     {
-        $this->loginAndWait();
-
-        $this->click('#sidebar a.home');
+        $this->loginAndGoTo('home');
 
         // We must see some greetings
         static::assertTrue($this->el('#homeWrapper > h1')->isDisplayed());

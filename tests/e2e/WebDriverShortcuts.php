@@ -6,6 +6,7 @@ use Facebook\WebDriver\Interactions\Internal\WebDriverDoubleClickAction;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
+use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
 
 trait WebDriverShortcuts
@@ -97,6 +98,27 @@ trait WebDriverShortcuts
         return $this->driver->wait($timeout)->until($func);
     }
 
+    public function waitUntilSeen($selector)
+    {
+        return $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
+            WebDriverBy::cssSelector($selector)
+        ));
+    }
+
+    public function waitUntilNotSeen($selector)
+    {
+        return $this->waitUntil(WebDriverExpectedCondition::invisibilityOfElementLocated(
+            WebDriverBy::cssSelector($selector)
+        ));
+    }
+
+    public function waitUntilTextSeenIn($text, $selector)
+    {
+        $this->waitUntil(WebDriverExpectedCondition::textToBePresentInElement(
+            WebDriverBy::cssSelector($selector), $text
+        ));
+    }
+
     protected function back()
     {
         return $this->driver->navigate()->back();
@@ -111,4 +133,6 @@ trait WebDriverShortcuts
     {
         return $this->driver->navigate()->refresh();
     }
+
+
 }
