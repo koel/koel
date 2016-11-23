@@ -59,12 +59,18 @@ gulp.task("e2e", function (cb) {
 
   console.log(chalk.green('Running E2E tests'));
   console.log(chalk.yellow('Make sure Selenium server with Chrome webdriver is listening on port 4444'));
-  exec('php artisan serve --port=8081');
-  var child = exec('phpunit tests/e2e -c phpunit.e2e.xml');
-  child.stdout.on('data', function(data) {
+  var tasks = [
+    'php artisan serve --port=8081',
+    'phpunit tests/e2e -c phpunit.e2e.xml'
+  ];
+  tasks.forEach(function (t) {
+    console.log('Executing ' + chalk.magenta(t));
+    var child = exec(t);
+    child.stdout.on('data', function(data) {
       process.stdout.write(data);
-  });
-  child.stderr.on('data', function(data) {
+    });
+    child.stderr.on('data', function(data) {
       process.stderr.write(data);
-  });
+    });
+  })
 });

@@ -43,7 +43,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         parent::__construct();
         $this->createApp();
-        $this->prepareForE2E();
+        $this->resetData();
         $this->driver = RemoteWebDriver::create('http://localhost:4444/wd/hub', DesiredCapabilities::chrome());
         $this->driver->manage()->window()->setSize(new WebDriverDimension(1440, 900));
         $this->driver->manage()->window()->setPosition(new WebDriverPoint(0, 0));
@@ -60,7 +60,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this->app;
     }
 
-    private function prepareForE2E()
+    protected function resetData()
     {
         // Make sure we have a fresh database.
         @unlink(__DIR__.'/../../database/e2e.sqlite');
@@ -95,7 +95,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function loginAndWait()
     {
         $this->login();
-        $this->seeText('Koel Admin', '#userBadge > a.view-profile.control > span');
+        $this->seeText('Koel Admin', '#userBadge > a.view-profile');
 
         return $this;
     }
