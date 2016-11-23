@@ -30,7 +30,7 @@ class SideBarTest extends TestCase
         /** @var WebDriverElement $mostRecentPlaylist */
         $mostRecentPlaylist = null;
         $this->waitUntil(function () use (&$mostRecentPlaylist) {
-            /** @var WebDriverElement $mostRecentPlaylist */
+            /* @var WebDriverElement $mostRecentPlaylist */
             $list = $this->els('#playlists .playlist');
             $mostRecentPlaylist = end($list);
 
@@ -38,31 +38,28 @@ class SideBarTest extends TestCase
         });
 
         // Double click to edit/rename a playlist
-        $this->doubleClick($mostRecentPlaylist);
-        $this->waitUntil(function () use (&$mostRecentPlaylist) {
-            return count($mostRecentPlaylist->findElements(WebDriverBy::cssSelector('input[type="text"]')));
-        });
-        $this->typeIn(
-            $mostRecentPlaylist->findElement(WebDriverBy::cssSelector('input[type="text"]')),
-            'Baz'
-        );
+        $this->doubleClick('#playlists .playlist:nth-child(2)');
+        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
+            WebDriverBy::cssSelector('#playlists .playlist:nth-child(2) input[type="text"]')
+        ));
+        $this->typeIn('#playlists .playlist:nth-child(2) input[type="text"]', 'Qux');
         $this->enter();
-        $this->waitUntil(function () {
-            $list = $this->els('#playlists .playlist');
-            $mostRecentPlaylist = end($list);
-
-            return $mostRecentPlaylist->getText() === 'Baz';
-        });
+        $this->waitUntil(
+            WebDriverExpectedCondition::textToBePresentInElement(
+                WebDriverBy::cssSelector('#playlists .playlist:nth-child(2)'),
+                'Qux'
+            )
+        );
 
         // Edit with an empty name shouldn't do anything.
-        $this->doubleClick($mostRecentPlaylist);
-        $mostRecentPlaylist->findElement(WebDriverBy::cssSelector('input[type="text"]'))->clear();
+        $this->doubleClick('#playlists .playlist:nth-child(2)');
+        $this->click('#playlists .playlist:nth-child(2) input[type="text"]')->clear();
         $this->enter();
-        $this->waitUntil(function () {
-            $list = $this->els('#playlists .playlist');
-            $mostRecentPlaylist = end($list);
-
-            return $mostRecentPlaylist->getText() === 'Baz';
-        });
+        $this->waitUntil(
+            WebDriverExpectedCondition::textToBePresentInElement(
+                WebDriverBy::cssSelector('#playlists .playlist:nth-child(2)'),
+                'Qux'
+            )
+        );
     }
 }

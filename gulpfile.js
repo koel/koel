@@ -54,7 +54,7 @@ elixir(function (mix) {
 gulp.task("e2e", function (cb) {
   if (process.platform !== 'darwin') {
     console.log(chalk.red('Unsupported OS. Exiting.'));
-    process.exit(0);
+    process.exit(1);
   }
 
   console.log(chalk.green('Running E2E tests'));
@@ -62,12 +62,9 @@ gulp.task("e2e", function (cb) {
   exec('php artisan serve --port=8081');
   var child = exec('phpunit tests/e2e -c phpunit.e2e.xml');
   child.stdout.on('data', function(data) {
-      console.log(data);
+      process.stdout.write(data);
   });
   child.stderr.on('data', function(data) {
-      console.log(data);
-  });
-  child.on('close', function(code) {
-      console.log('Closing code: ' + code);
+      process.stderr.write(data);
   });
 });
