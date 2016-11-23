@@ -1,5 +1,5 @@
 <template>
-  <article class="user-item" :class="{ editing: editing }">
+  <article class="user-item" :class="{ editing: editing, me: isCurrentUser }">
     <div class="info" v-if="!editing">
       <img :src="user.avatar" width="128" height="128">
 
@@ -12,31 +12,31 @@
         </div>
 
         <div class="buttons">
-          <button class="btn btn-blue" @click="edit">
+          <button class="btn btn-blue btn-edit" @click="edit">
             {{ isCurrentUser ? 'Update Profile' : 'Edit' }}
           </button>
-          <button class="btn btn-red" @click="del">Delete</button>
+          <button class="btn btn-red btn-delete" @click="del">Delete</button>
         </div>
       </div>
     </div>
 
-    <form class="edit" @submit.prevent="update" v-else>
+    <form class="user-edit" @submit.prevent="update" v-else>
       <div class="input-row">
         <label>Name</label>
-        <input type="text" v-model="user.name" required v-koel-focus="editing">
+        <input type="text" name="name" v-model="user.name" required v-koel-focus>
       </div>
       <div class="input-row">
         <label>Email</label>
-        <input type="email" v-model="user.email" required>
+        <input type="email" name="email" v-model="user.email" required>
       </div>
       <div class="input-row">
         <label>Password</label>
-        <input type="password" v-model="user.password" placeholder="Leave blank for no changes">
+        <input type="password" name="password" v-model="user.password" placeholder="Leave blank for no changes">
       </div>
       <div class="input-row">
         <label></label>
-        <button class="btn btn-green">Update</button>
-        <button class="btn btn-red" @click.prevent="cancelEdit">Cancel</button>
+        <button class="btn btn-green btn-update">Update</button>
+        <button class="btn btn-red btn-cancel" @click.prevent="cancelEdit">Cancel</button>
       </div>
     </form>
   </article>

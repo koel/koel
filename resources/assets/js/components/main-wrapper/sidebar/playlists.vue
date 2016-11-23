@@ -4,11 +4,11 @@
       <i class="fa fa-plus-circle control create" :class="{ creating: creating }" @click="creating = !creating"/>
     </h1>
 
-    <form v-show="creating" @submit.prevent="store" class="create">
+    <form v-if="creating" @submit.prevent="store" class="create">
       <input type="text"
         @keyup.esc.prevent="creating = false"
         v-model="newName"
-        v-koel-focus="creating"
+        v-koel-focus
         placeholder="↵ to save"
         required
       >

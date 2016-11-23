@@ -7,7 +7,7 @@
       </span>
 
       <div class="buttons" v-show="!isPhone || showingControls">
-        <button class="btn btn-green" @click="creating = !creating">
+        <button class="btn btn-green btn-add" @click="creating = !creating">
           <i class="fa fa-plus"></i>
           Add</button>
       </div>
@@ -18,20 +18,20 @@
         <form class="user-create user-item" v-if="creating" @submit.prevent="store">
           <div class="input-row">
             <label>Name</label>
-            <input type="text" v-model="newUser.name" required v-koel-focus="creating">
+            <input type="text" name="name" v-model="newUser.name" required v-koel-focus>
           </div>
           <div class="input-row">
             <label>Email</label>
-            <input type="email" v-model="newUser.email" required>
+            <input type="email" name="email" v-model="newUser.email" required>
           </div>
           <div class="input-row">
             <label>Password</label>
-            <input type="password" v-model="newUser.password" required>
+            <input type="password" name="password" v-model="newUser.password" required>
           </div>
           <div class="input-row">
             <label></label>
-            <button class="btn btn-green">Create</button>
-            <button class="btn btn-red" @click.prevent="creating = false">Cancel</button>
+            <button class="btn btn-green btn-create">Create</button>
+            <button class="btn btn-red btn-cancel" @click.prevent="creating = false">Cancel</button>
           </div>
         </form>
 

@@ -12,7 +12,8 @@
       @keyup.enter="update"
       @blur="update"
       v-model="playlist.name"
-      v-koel-focus="editing"
+      v-if="editing"
+      v-koel-focus
       required
     >
   </li>
@@ -183,8 +184,6 @@ export default {
   }
 
   input {
-    display: none;
-
     width: calc(100% - 32px);
     margin: 5px 16px;
   }
@@ -192,10 +191,6 @@ export default {
   &.editing {
     a {
       display: none !important;
-    }
-
-    input {
-      display: block;
     }
   }
 }
