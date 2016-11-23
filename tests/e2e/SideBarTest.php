@@ -18,7 +18,7 @@ class SideBarTest extends TestCase
 
         // Add a playlist
         $this->click('#playlists > h1 > i.create');
-        $this->waitUntilSeen('#playlists > form.create');
+        $this->see('#playlists > form.create');
         $this->typeIn('#playlists > form > input[type="text"]', 'Bar');
         $this->enter();
         $this->waitUntil(function () {
@@ -29,15 +29,15 @@ class SideBarTest extends TestCase
 
         // Double click to edit/rename a playlist
         $this->doubleClick('#playlists .playlist:nth-child(2)');
-        $this->waitUntilSeen('#playlists .playlist:nth-child(2) input[type="text"]');
+        $this->see('#playlists .playlist:nth-child(2) input[type="text"]');
         $this->typeIn('#playlists .playlist:nth-child(2) input[type="text"]', 'Qux');
         $this->enter();
-        $this->waitUntilTextSeenIn('Qux', '#playlists .playlist:nth-child(2)');
+        $this->seeText('Qux', '#playlists .playlist:nth-child(2)');
 
         // Edit with an empty name shouldn't do anything.
         $this->doubleClick('#playlists .playlist:nth-child(2)');
         $this->click('#playlists .playlist:nth-child(2) input[type="text"]')->clear();
         $this->enter();
-        $this->waitUntilTextSeenIn('Qux', '#playlists .playlist:nth-child(2)');
+        $this->seeText('Qux', '#playlists .playlist:nth-child(2)');
     }
 }

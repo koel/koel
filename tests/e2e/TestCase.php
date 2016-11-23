@@ -6,7 +6,9 @@ use App\Application;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use Facebook\WebDriver\WebDriverPoint;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 
@@ -43,6 +45,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $this->createApp();
         $this->prepareForE2E();
         $this->driver = RemoteWebDriver::create('http://localhost:4444/wd/hub', DesiredCapabilities::chrome());
+        $this->driver->manage()->window()->setSize(new WebDriverDimension(1440, 900));
+        $this->driver->manage()->window()->setPosition(new WebDriverPoint(0, 0));
     }
 
     /**
@@ -91,7 +95,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function loginAndWait()
     {
         $this->login();
-        $this->waitUntilTextSeenIn('Koel Admin', '#userBadge > a.view-profile.control > span');
+        $this->seeText('Koel Admin', '#userBadge > a.view-profile.control > span');
 
         return $this;
     }
@@ -115,7 +119,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $this->click("#sidebar a.$screen");
         }
 
-        $this->waitUntilSeen($this->wrapperId);
+        $this->see($this->wrapperId);
 
         return $this;
     }

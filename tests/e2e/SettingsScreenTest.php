@@ -14,9 +14,9 @@ class SettingsScreenTest extends TestCase
             return $this->driver->executeScript('return document.readyState') === 'complete';
         });
         // And for the loading screen to disappear
-        $this->waitUntilNotSeen('#overlay');
+        $this->notSee('#overlay');
         $this->goto('albums');
         // and make sure the scanning is good.
-        $this->waitUntilTextSeenIn('Koel Testing Vol', '#albumsWrapper');
+        $this->seeText('Koel Testing Vol', '#albumsWrapper');
     }
 }

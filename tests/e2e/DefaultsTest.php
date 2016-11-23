@@ -15,17 +15,17 @@ class KoelTest extends TestCase
 
         // We submit rubbish and expect an error class on the form.
         $this->login('foo@bar.com', 'ThisIsWongOnSoManyLevels')
-            ->waitUntilSeen("$formSelector.error");
+            ->see("$formSelector.error");
 
         // Now we submit good stuff and make sure we're in.
         $this->login()
-            ->waitUntilTextSeenIn('Koel Admin', '#userBadge > a.view-profile.control > span');
+            ->seeText('Koel Admin', '#userBadge > a.view-profile.control > span');
 
         // Default URL must be Home
         static::assertEquals($this->url.'/#!/home', $this->driver->getCurrentURL());
 
         // While we're at this, test logging out as well.
         $this->click('#userBadge > a.logout');
-        $this->waitUntilSeen($formSelector);
+        $this->see($formSelector);
     }
 }

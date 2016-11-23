@@ -98,21 +98,21 @@ trait WebDriverShortcuts
         return $this->driver->wait($timeout)->until($func);
     }
 
-    public function waitUntilSeen($selector)
+    public function see($selector)
     {
         return $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
             WebDriverBy::cssSelector($selector)
         ));
     }
 
-    public function waitUntilNotSeen($selector)
+    public function notSee($selector)
     {
         return $this->waitUntil(WebDriverExpectedCondition::invisibilityOfElementLocated(
             WebDriverBy::cssSelector($selector)
         ));
     }
 
-    public function waitUntilTextSeenIn($text, $selector)
+    public function seeText($text, $selector)
     {
         $this->waitUntil(WebDriverExpectedCondition::textToBePresentInElement(
             WebDriverBy::cssSelector($selector), $text
