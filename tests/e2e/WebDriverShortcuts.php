@@ -133,6 +133,4 @@ trait WebDriverShortcuts
     {
         return $this->driver->navigate()->refresh();
     }
-
-
 }

@@ -8,12 +8,12 @@
       <form @submit.prevent="update">
         <div class="form-row">
           <label for="inputProfileName">Name</label>
-          <input type="text" id="inputProfileName" v-model="state.current.name">
+          <input type="text" name="name" id="inputProfileName" v-model="state.current.name">
         </div>
 
         <div class="form-row">
           <label for="inputProfileEmail">Email Address</label>
-          <input type="email" id="inputProfileEmail" v-model="state.current.email">
+          <input type="email" name="email" id="inputProfileEmail" v-model="state.current.email">
         </div>
 
         <div class="change-pwd">
@@ -24,30 +24,30 @@
 
           <div class="form-row">
             <label for="inputProfilePassword">New Password</label>
-            <input v-model="pwd" type="password" id="inputProfilePassword" autocomplete="off">
+            <input v-model="pwd" name="password" type="password" id="inputProfilePassword" autocomplete="off">
           </div>
 
           <div class="form-row">
             <label for="inputProfileConfirmPassword">Confirm Password</label>
-            <input v-model="confirmPwd" type="password" id="inputProfileConfirmPassword" autocomplete="off">
+            <input v-model="confirmPwd" name="confirmPassword" type="password" id="inputProfileConfirmPassword" autocomplete="off">
           </div>
         </div>
 
         <div class="form-row">
-          <button type="submit">Save</button>
+          <button type="submit" class="btn btn-submit">Save</button>
         </div>
       </form>
 
       <div class="preferences">
         <div class="form-row">
           <label>
-            <input type="checkbox" v-model="prefs.notify" @change="savePreference">
+            <input type="checkbox" name="notify" v-model="prefs.notify" @change="savePreference">
             Show “Now Playing” song notification
           </label>
         </div>
         <div class="form-row">
           <label>
-            <input type="checkbox" v-model="prefs.confirmClosing" @change="savePreference">
+            <input type="checkbox" name="confirmClosing" v-model="prefs.confirmClosing" @change="savePreference">
             Confirm before closing Koel
           </label>
         </div>
