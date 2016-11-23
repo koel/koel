@@ -6,8 +6,6 @@ namespace E2E;
  * Class ZSettingsScreenTest
  * The name is an ugly trick to force this test to run last, due to it changing the whole suite's
  * data, causing other tests to fail otherwise.
- *
- * @package E2E
  */
 class ZSettingsScreenTest extends TestCase
 {

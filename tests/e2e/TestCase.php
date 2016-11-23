@@ -5,9 +5,7 @@ namespace E2E;
 use App\Application;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverDimension;
-use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverPoint;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
@@ -22,7 +20,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected $app;
 
     /**
-     * ID of the current screen wrapper (with leading #)
+     * ID of the current screen wrapper (with leading #).
      *
      * @var string
      */
@@ -105,9 +103,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @param $screen
      *
-     * @return $this
-     *
      * @throws \Exception
+     *
+     * @return $this
      */
     protected function goto($screen)
     {

@@ -87,11 +87,12 @@ trait WebDriverShortcuts
     /**
      * Wait until a condition is met.
      *
-     * @param     $func (closure|WebDriverExpectedCondition)
+     * @param     $func    (closure|WebDriverExpectedCondition)
      * @param int $timeout
      *
-     * @return mixed
      * @throws \Exception
+     *
+     * @return mixed
      */
     protected function waitUntil($func, $timeout = 10)
     {

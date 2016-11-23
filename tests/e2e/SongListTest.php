@@ -106,7 +106,6 @@ class SongListTest extends TestCase
             $current = $td->getText();
             $results[] = $last === null ? true : $current <= $last;
             $last = $current;
-
         }
         static::assertNotContains(false, $results);
 

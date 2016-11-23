@@ -2,7 +2,7 @@
 
 namespace E2E;
 
-class KoelTest extends TestCase
+class DefaultsTest extends TestCase
 {
     public function testDefaults()
     {
