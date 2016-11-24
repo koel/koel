@@ -3,7 +3,7 @@ node_modules
 Homestead.yaml
 Homestead.json
 .env
-/.idea
+.idea
 /_ide_helper.php
 /config.testing
 /config.local
