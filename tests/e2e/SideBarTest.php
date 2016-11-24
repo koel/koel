@@ -23,6 +23,7 @@ class SideBarTest extends TestCase
             ->enter()
             ->waitUntil(function () {
                 $list = $this->els('#playlists .playlist');
+
                 return end($list)->getText() === 'Bar';
             });
 

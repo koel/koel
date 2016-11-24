@@ -169,9 +169,9 @@ trait WebDriverShortcuts
      *
      * @param $selector
      *
-     * @return $this
-     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function see($selector)
     {
@@ -187,9 +187,9 @@ trait WebDriverShortcuts
      *
      * @param $selector string The element's CSS selector.
      *
-     * @return $this
-     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function notSee($selector)
     {
@@ -206,8 +206,9 @@ trait WebDriverShortcuts
      * @param $text
      * @param $selector string The element's CSS selector.
      *
-     * @return $this
      * @throws \Exception
+     *
+     * @return $this
      */
     public function seeText($text, $selector)
     {
