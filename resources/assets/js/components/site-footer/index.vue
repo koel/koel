@@ -42,20 +42,13 @@
             v-if="useEqualizer"
             @click="showEqualizer = !showEqualizer"
             :class="{ active: showEqualizer }"/>
-          <a v-else
-            class="queue control"
-            :class="{ active: viewingQueue }"
-            href="/#!/queue">
+          <a v-else class="queue control" :class="{ active: viewingQueue }" href="/#!/queue">
             <i class="fa fa-list-ol"></i>
           </a>
           <span class="repeat control" :class="prefs.repeatMode" @click.prevent="changeRepeatMode">
             <i class="fa fa-repeat"></i>
           </span>
-          <span class="volume control" id="volume">
-            <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"/>
-            <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"/>
-            <input type="range" id="volumeRange" max="10" step="0.1" @change="muted = false" class="plyr__volume">
-          </span>
+          <volume/>
         </div>
       </div>
     </div>
@@ -70,12 +63,12 @@ import { songStore, favoriteStore, preferenceStore } from '../../stores';
 
 import soundBar from '../shared/sound-bar.vue';
 import equalizer from './equalizer.vue';
+import volume from './volume.vue';
 
 export default {
   data() {
     return {
       song: songStore.stub,
-      muted: false,
       viewingQueue: false,
 
       prefs: preferenceStore.state,
@@ -91,7 +84,7 @@ export default {
     };
   },
 
-  components: { soundBar, equalizer },
+  components: { soundBar, equalizer, volume },
 
   computed: {
     /**
@@ -114,24 +107,6 @@ export default {
   },
 
   methods: {
-    /**
-     * Mute the volume.
-     */
-    mute() {
-      this.muted = true;
-
-      return playback.mute();
-    },
-
-    /**
-     * Unmute the volume.
-     */
-    unmute() {
-      this.muted = false;
-
-      return playback.unmute();
-    },
-
     /**
      * Play the previous song in queue.
      */
@@ -492,23 +467,6 @@ export default {
         }
       }
     }
-  }
-}
-
-#volume {
-  @include vertical-center();
-
-  // More tweaks
-  input[type=range] {
-    margin-top: -3px;
-  }
-
-  i {
-    width: 16px;
-  }
-
-  @media only screen and (max-width: 768px) {
-    display: none !important;
   }
 }
 </style>
