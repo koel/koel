@@ -96,9 +96,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Log in and wait for the app to finish loading.
      *
-     * @return $this
-     *
      * @throws \Exception
+     *
+     * @return $this
      */
     protected function loginAndWait()
     {
@@ -137,9 +137,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @param $screen string
      *
-     * @return $this
-     *
      * @throws \Exception
+     *
+     * @return $this
      */
     protected function loginAndGoTo($screen)
     {
