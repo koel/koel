@@ -16,7 +16,7 @@ abstract class TestCase extends IlluminateTestCase
     {
         parent::__construct();
 
-        $this->mediaPath = dirname(__FILE__).'/songs';
+        $this->mediaPath = __DIR__.'/songs';
     }
 
     public function setUp()
@@ -75,7 +75,7 @@ abstract class TestCase extends IlluminateTestCase
 
         // 7-15 songs per albums
         foreach ($albums as $album) {
-            factory(Song::class, rand(7, 15))->create([
+            factory(Song::class, random_int(7, 15))->create([
                 'album_id' => $album->id,
             ]);
         }

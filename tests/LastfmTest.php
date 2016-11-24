@@ -26,7 +26,7 @@ class LastfmTest extends TestCase
     public function testGetArtistInfo()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(dirname(__FILE__).'/blobs/lastfm/artist.xml')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/lastfm/artist.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -47,7 +47,7 @@ class LastfmTest extends TestCase
     public function testGetArtistInfoFailed()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(400, [], file_get_contents(dirname(__FILE__).'/blobs/lastfm/artist-notfound.xml')),
+            'get' => new Response(400, [], file_get_contents(__DIR__.'/blobs/lastfm/artist-notfound.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -58,7 +58,7 @@ class LastfmTest extends TestCase
     public function testGetAlbumInfo()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(dirname(__FILE__).'/blobs/lastfm/album.xml')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/lastfm/album.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -91,7 +91,7 @@ class LastfmTest extends TestCase
     public function testGetAlbumInfoFailed()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(400, [], file_get_contents(dirname(__FILE__).'/blobs/lastfm/album-notfound.xml')),
+            'get' => new Response(400, [], file_get_contents(__DIR__.'/blobs/lastfm/album-notfound.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -121,7 +121,7 @@ class LastfmTest extends TestCase
     public function testGetSessionKey()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(dirname(__FILE__).'/blobs/lastfm/session-key.xml')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/lastfm/session-key.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);

@@ -20,7 +20,7 @@ class DownloadTest extends TestCase
     public function testOneSong()
     {
         $song = Song::first();
-        $mocked = Download::shouldReceive('from')
+        Download::shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
@@ -31,7 +31,7 @@ class DownloadTest extends TestCase
     public function testMultipleSongs()
     {
         $songs = Song::take(2)->get();
-        $mocked = Download::shouldReceive('from')
+        Download::shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3'); // should be a zip file, but we're testing here…
 
@@ -43,7 +43,7 @@ class DownloadTest extends TestCase
     {
         $album = Album::first();
 
-        $mocked = Download::shouldReceive('from')
+        Download::shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
@@ -55,7 +55,7 @@ class DownloadTest extends TestCase
     {
         $artist = Artist::first();
 
-        $mocked = Download::shouldReceive('from')
+        Download::shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
@@ -74,7 +74,7 @@ class DownloadTest extends TestCase
         $this->getAsUser("api/download/playlist/{$playlist->id}")
             ->seeStatusCode(403);
 
-        $mocked = Download::shouldReceive('from')
+        Download::shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
@@ -84,7 +84,7 @@ class DownloadTest extends TestCase
 
     public function testFavorites()
     {
-        $mocked = Download::shouldReceive('from')
+        Download::shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 

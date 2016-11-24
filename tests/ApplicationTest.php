@@ -27,7 +27,7 @@ class ApplicationTest extends TestCase
     {
         config(['koel.cdn.url' => '']);
 
-        $manifestFile = dirname(__FILE__).'/blobs/rev-manifest.json';
+        $manifestFile = __DIR__.'/blobs/rev-manifest.json';
         $this->assertEquals(App::rev('foo.css', $manifestFile), 'http://localhost/public/build/foo00.css');
 
         config(['koel.cdn.url' => 'http://cdn.bar']);
@@ -37,7 +37,7 @@ class ApplicationTest extends TestCase
     public function testGetLatestVersion()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(dirname(__FILE__).'/blobs/github-tags.json')),
+            new Response(200, [], file_get_contents(__DIR__.'/blobs/github-tags.json')),
         ]);
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);

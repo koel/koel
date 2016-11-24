@@ -19,8 +19,8 @@ class ScrobbleTest extends TestCase
 
         $ts = time();
 
-        $lastfm = m::mock(Lastfm::class, ['enabled' => true]);
-        $lastfm->shouldReceive('scrobble')
+        m::mock(Lastfm::class, ['enabled' => true])
+            ->shouldReceive('scrobble')
             ->with($song->album->artist->name, $song->title, $ts, $song->album->name, 'bar');
 
         $this->post("/api/{$song->id}/scrobble/$ts");

@@ -11,11 +11,6 @@ class ObjectStorage_S3Test extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testPut()
     {
         $this->post('api/os/s3/song', [

@@ -30,7 +30,7 @@ class ArtistTest extends TestCase
 
     public function testUtf16Names()
     {
-        $name = file_get_contents(dirname(__FILE__).'/blobs/utf16');
+        $name = file_get_contents(__DIR__.'/blobs/utf16');
 
         $artist = Artist::get($name);
         $artist = Artist::get($name); // to make sure there's no constraint exception

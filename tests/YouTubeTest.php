@@ -18,7 +18,7 @@ class YouTubeTest extends TestCase
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(dirname(__FILE__).'/blobs/youtube/search.json')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/youtube/search.json')),
         ]);
 
         $api = new YouTube(null, $client);
