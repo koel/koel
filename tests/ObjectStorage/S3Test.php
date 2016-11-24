@@ -1,9 +1,6 @@
 <?php
 
 use App\Events\LibraryChanged;
-use App\Models\Album;
-use App\Models\Artist;
-use App\Models\Song;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
