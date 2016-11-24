@@ -19,6 +19,8 @@ trait SupportsDeleteWhereIDsNotIn
      * @param string $key Name of the primary key.
      *
      * @return mixed
+     *
+     * @throws \Exception
      */
     public static function deleteWhereIDsNotIn(array $ids, $key = 'id')
     {
@@ -37,7 +39,7 @@ trait SupportsDeleteWhereIDsNotIn
 
         // If that's not possible (i.e. this array has more than 65535 elements, too)
         // then we'll delete chunk by chunk.
-        return static::deleteByChunk($ids, $key);
+        static::deleteByChunk($ids, $key);
     }
 
     /**
@@ -46,6 +48,8 @@ trait SupportsDeleteWhereIDsNotIn
      * @param array  $ids       The array of record IDs to delete
      * @param string $key       Name of the primary key
      * @param int    $chunkSize Size of each chunk. Defaults to 2^16-1 (65535)
+     *
+     * @throws \Exception
      */
     public static function deleteByChunk(array $ids, $key = 'id', $chunkSize = 65535)
     {
