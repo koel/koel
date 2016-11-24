@@ -35,10 +35,10 @@
           <equalizer v-if="useEqualizer" v-show="showEqualizer"/>
           <sound-bar v-show="song.playbackState === 'playing'"/>
           <i class="like control fa fa-heart" :class="{ liked: song.liked }" @click.prevent="like"/>
-          <span class="control"
+          <span class="control info"
             @click.prevent="toggleExtraPanel"
             :class="{ active: prefs.showExtraPanel }">Info</span>
-          <i class="fa fa-sliders control"
+          <i class="fa fa-sliders control equalizer"
             v-if="useEqualizer"
             @click="showEqualizer = !showEqualizer"
             :class="{ active: showEqualizer }"/>
@@ -54,7 +54,7 @@
           <span class="volume control" id="volume">
             <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"/>
             <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"/>
-            <input type="range" id="volumeRange" max="10" step="0.1" class="plyr__volume">
+            <input type="range" id="volumeRange" max="10" step="0.1" @change="muted = false" class="plyr__volume">
           </span>
         </div>
       </div>
