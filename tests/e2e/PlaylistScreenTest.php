@@ -10,9 +10,8 @@ class PlaylistScreenTest extends TestCase
     {
         $this->loginAndGoTo('songs')
             ->selectRange()
-            ->createPlaylist('Bar');
-
-        $this->seeText('Bar', '#playlists > ul');
+            ->createPlaylist('Bar')
+            ->seeText('Bar', '#playlists > ul');
 
         $this->click('#sidebar .playlist:nth-last-child(1)');
         $this->see('#playlistWrapper');

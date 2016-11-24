@@ -58,6 +58,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this->app;
     }
 
+    /**
+     * Reset the test data for E2E tests.
+     */
     protected function resetData()
     {
         // Make sure we have a fresh database.
@@ -90,16 +93,23 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this;
     }
 
+    /**
+     * Log in and wait for the app to finish loading.
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
     protected function loginAndWait()
     {
-        $this->login();
-        $this->seeText('Koel Admin', '#userBadge > a.view-profile');
+        $this->login()
+            ->seeText('Koel Admin', '#userBadge > a.view-profile');
 
         return $this;
     }
 
     /**
-     * A helper to allow going to a specific screen.
+     * Go to a specific screen.
      *
      * @param $screen
      *
@@ -122,11 +132,23 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this;
     }
 
+    /**
+     * Log in and go to a specific screen.
+     *
+     * @param $screen string
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
     protected function loginAndGoTo($screen)
     {
         return $this->loginAndWait()->goto($screen);
     }
 
+    /**
+     * Wait for the user to press ENTER key before continuing.
+     */
     protected function waitForUserInput()
     {
         if (trim(fgets(fopen('php://stdin', 'rb'))) !== chr(13)) {

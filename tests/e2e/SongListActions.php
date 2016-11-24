@@ -55,13 +55,11 @@ trait SongListActions
      */
     public function cmdSelectSongs()
     {
-        $actions = (new WebDriverActions($this->driver))
-            ->keyDown(null, WebDriverKeys::COMMAND);
+        $actions = (new WebDriverActions($this->driver))->keyDown(null, WebDriverKeys::COMMAND);
         foreach (func_get_args() as $i) {
             $actions->click($this->el("{$this->wrapperId} tr.song-item:nth-child($i)"));
         }
-        $actions->keyUp(null, WebDriverKeys::COMMAND)
-            ->perform();
+        $actions->keyUp(null, WebDriverKeys::COMMAND)->perform();
 
         return $this;
     }
@@ -77,8 +75,8 @@ trait SongListActions
     {
         // Try adding a song into a new playlist
         $this->click("{$this->wrapperId} .buttons button.btn-add-to");
-        $this->typeIn("{$this->wrapperId} .buttons input[type='text']", $playlistName);
-        $this->enter();
+        $this->typeIn("{$this->wrapperId} .buttons input[type='text']", $playlistName)
+            ->enter();
 
         return $this;
     }

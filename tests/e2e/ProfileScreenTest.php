@@ -9,17 +9,17 @@ class ProfileScreenTest extends TestCase
 {
     public function testProfileScreen()
     {
-        $this->loginAndWait();
-        $this->click('a.view-profile');
-        $this->see('#profileWrapper');
-        // Now we change some user profile details
-        $this->typeIn('#profileWrapper input[name="name"]', 'Mr Bar');
-        $this->typeIn('#profileWrapper input[name="email"]', 'bar@koel.net');
-        $this->enter();
-        $this->see('.sweet-alert');
-        // Dismiss the alert first
-        $this->press(WebDriverKeys::ESCAPE);
-        $this->notSee('.sweet-alert');
+        $this->loginAndWait()
+            ->click('a.view-profile');
+        $this->see('#profileWrapper')
+            // Now we change some user profile details
+            ->typeIn('#profileWrapper input[name="name"]', 'Mr Bar')
+            ->typeIn('#profileWrapper input[name="email"]', 'bar@koel.net')
+            ->enter()
+            ->see('.sweet-alert')
+            // Dismiss the alert first
+            ->press(WebDriverKeys::ESCAPE)
+            ->notSee('.sweet-alert');
 
         $avatar = $this->el('a.view-profile img');
         // Expect the Gravatar to be updated
@@ -27,17 +27,17 @@ class ProfileScreenTest extends TestCase
 
         // Check "Confirm Closing" and validate its functionality
         $this->click('#profileWrapper input[name="confirmClosing"]');
-        $this->refresh();
-        $this->waitUntil(WebDriverExpectedCondition::alertIsPresent());
+        $this->refresh()
+            ->waitUntil(WebDriverExpectedCondition::alertIsPresent());
         $this->driver->switchTo()->alert()->dismiss();
 
         // Reverse all changes for other tests to not be affected
-        $this->typeIn('#profileWrapper input[name="name"]', 'Koel Admin');
-        $this->typeIn('#profileWrapper input[name="email"]', 'koel@example.com');
-        $this->enter();
-        $this->see('.sweet-alert');
-        $this->press(WebDriverKeys::ESCAPE);
-        $this->notSee('.sweet-alert');
-        $this->click('#profileWrapper input[name="confirmClosing"]');
+        $this->typeIn('#profileWrapper input[name="name"]', 'Koel Admin')
+            ->typeIn('#profileWrapper input[name="email"]', 'koel@example.com')
+            ->enter()
+            ->see('.sweet-alert')
+            ->press(WebDriverKeys::ESCAPE)
+            ->notSee('.sweet-alert')
+            ->click('#profileWrapper input[name="confirmClosing"]');
     }
 }

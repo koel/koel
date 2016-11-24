@@ -11,9 +11,7 @@ class QueueScreenTest extends TestCase
 
         // As the queue is currently empty, the "Shuffling all song" link should be there
         $this->click('#queueWrapper a.start');
-        $this->waitUntil(function () {
-            return count($this->els('#queueWrapper .song-item'));
-        });
+        $this->see('#queueWrapper .song-item');
 
         // Clear the queue
         $this->click('#queueWrapper .buttons button.btn-clear-queue');

@@ -4,7 +4,6 @@ namespace E2E;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
-use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverKeys;
 
 class SongListTest extends TestCase
@@ -38,8 +37,7 @@ class SongListTest extends TestCase
         );
 
         // Delete key should remove selected songs
-        $this->press(WebDriverKeys::DELETE);
-        $this->waitUntil(function () {
+        $this->press(WebDriverKeys::DELETE)->waitUntil(function () {
             return count($this->els('#queueWrapper tr.song-item.selected')) === 0
             && count($this->els('#queueWrapper tr.song-item')) === 7;
         });
@@ -51,18 +49,13 @@ class SongListTest extends TestCase
 
     public function testActionButtons()
     {
-        $this->loginAndWait()->repopulateList();
-
-        // Since no songs are selected, the "Shuffle All" button must be shown
-        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
-            WebDriverBy::cssSelector('#queueWrapper button.btn-shuffle-all')
-        ));
-
-        // Now we selected all songs for the "Shuffle Selected" button to be shown
-        $this->selectAllSongs();
-        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
-            WebDriverBy::cssSelector('#queueWrapper button.btn-shuffle-selected')
-        ));
+        $this->loginAndWait()
+            ->repopulateList()
+            // Since no songs are selected, the "Shuffle All" button must be shown
+            ->see('#queueWrapper button.btn-shuffle-all')
+            // Now we selected all songs for the "Shuffle Selected" button to be shown
+            ->selectAllSongs()
+            ->see('#queueWrapper button.btn-shuffle-selected');
 
         // Add to favorites
         $this->selectSong();
@@ -71,13 +64,11 @@ class SongListTest extends TestCase
         $this->goto('favorites');
         static::assertCount(1, $this->els('#favoritesWrapper tr.song-item'));
 
-        $this->goto('queue');
-        $this->selectSong();
+        $this->goto('queue')
+            ->selectSong();
         // Try adding a song into a new playlist
-        $this->createPlaylist('Foo');
-        $this->waitUntil(WebDriverExpectedCondition::textToBePresentInElement(
-            WebDriverBy::cssSelector('#playlists > ul'), 'Foo'
-        ));
+        $this->createPlaylist('Foo')
+            ->seeText('Foo', '#playlists > ul');
     }
 
     public function testSorting()
@@ -97,8 +88,8 @@ class SongListTest extends TestCase
         }
 
         // Now go to All Songs screen and sort there
-        $this->goto('songs');
-        $this->click('#songsWrapper div.song-list-wrap th:nth-child(2)');
+        $this->goto('songs')
+            ->click('#songsWrapper div.song-list-wrap th:nth-child(2)');
         $last = null;
         $results = [];
         /** @var WebDriverElement $td */
@@ -124,43 +115,34 @@ class SongListTest extends TestCase
 
     public function testContextMenu()
     {
-        $this->loginAndGoTo('songs');
-        $this->rightClickOnSong();
-
-        $by = WebDriverBy::cssSelector('#songsWrapper .song-menu');
-        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated($by));
+        $this->loginAndGoTo('songs')
+            ->rightClickOnSong()
+            ->see('#songsWrapper .song-menu');
 
         // 7 sub menu items
         static::assertCount(7, $this->els('#songsWrapper .song-menu > li'));
 
         // Clicking the "Go to Album" menu item
         $this->click('#songsWrapper .song-menu > li:nth-child(2)');
-        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
-            WebDriverBy::cssSelector('#albumWrapper')
-        ));
+        $this->see('#albumWrapper');
 
         // Clicking the "Go to Artist" menu item
-        $this->back();
-        $this->rightClickOnSong();
-        $this->click('#songsWrapper .song-menu > li:nth-child(3)');
-        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
-            WebDriverBy::cssSelector('#artistWrapper')
-        ));
+        $this->back()
+            ->rightClickOnSong()
+            ->click('#songsWrapper .song-menu > li:nth-child(3)');
+        $this->see('#artistWrapper');
 
         // Clicking "Edit"
-        $this->back();
-        $this->rightClickOnSong();
-        $this->click('#songsWrapper .song-menu > li:nth-child(5)');
-        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
-            WebDriverBy::cssSelector('#editSongsOverlay form')
-        ));
+        $this->back()
+            ->rightClickOnSong()
+            ->click('#songsWrapper .song-menu > li:nth-child(5)');
+        $this->see('#editSongsOverlay form');
+
         // Updating song
-        $this->typeIn('#editSongsOverlay form input[name="title"]', 'Foo');
-        $this->typeIn('#editSongsOverlay form input[name="track"]', 99);
-        $this->enter();
-        $this->waitUntil(WebDriverExpectedCondition::invisibilityOfElementLocated(
-            WebDriverBy::cssSelector('#editSongsOverlay form')
-        ));
+        $this->typeIn('#editSongsOverlay form input[name="title"]', 'Foo')
+            ->typeIn('#editSongsOverlay form input[name="track"]', 99)
+            ->enter()
+            ->notSee('#editSongsOverlay form');
         static::assertEquals('99', $this->el('#songsWrapper tr.song-item:nth-child(1) .track-number')->getText());
         static::assertEquals('Foo', $this->el('#songsWrapper tr.song-item:nth-child(1) .title')->getText());
     }
@@ -171,5 +153,7 @@ class SongListTest extends TestCase
         $this->goto('albums');
         $this->click('#albumsWrapper > div > article:nth-child(1) .meta a.shuffle-album');
         $this->goto('queue');
+
+        return $this;
     }
 }

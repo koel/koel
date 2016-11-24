@@ -30,16 +30,40 @@ trait WebDriverShortcuts
         return $selector;
     }
 
+    /**
+     * Get a list of elements by a selector.
+     *
+     * @param $selector
+     *
+     * @return \Facebook\WebDriver\Remote\RemoteWebElement[]
+     */
     protected function els($selector)
     {
         return $this->driver->findElements(WebDriverBy::cssSelector($selector));
     }
 
+    /**
+     * Type a string.
+     *
+     * @param $string
+     *
+     * @return $this
+     */
     protected function type($string)
     {
-        return $this->driver->getKeyboard()->sendKeys($string);
+        $this->driver->getKeyboard()->sendKeys($string);
+
+        return $this;
     }
 
+    /**
+     * Type into an element.
+     *
+     * @param $element
+     * @param $string
+     *
+     * @return $this
+     */
     protected function typeIn($element, $string)
     {
         $this->click($element)->clear();
@@ -47,41 +71,80 @@ trait WebDriverShortcuts
         return $this->type($string);
     }
 
+    /**
+     * Press a key.
+     *
+     * @param string $key
+     *
+     * @return $this
+     */
     protected function press($key = WebDriverKeys::ENTER)
     {
-        return $this->driver->getKeyboard()->pressKey($key);
+        $this->driver->getKeyboard()->pressKey($key);
+
+        return $this;
     }
 
+    /**
+     * Press enter.
+     *
+     * @return $this
+     */
     protected function enter()
     {
         return $this->press();
     }
 
+    /**
+     * Click an element.
+     *
+     * @param $element
+     *
+     * @return WebDriverElement
+     */
     protected function click($element)
     {
         return $this->el($element)->click();
     }
 
+    /**
+     * Right-click an element.
+     *
+     * @param $element
+     *
+     * @return \Facebook\WebDriver\Remote\RemoteMouse
+     */
     protected function rightClick($element)
     {
         return $this->driver->getMouse()->contextClick($this->el($element)->getCoordinates());
     }
 
+    /**
+     * Double-click and element.
+     *
+     * @param $element
+     *
+     * @return $this
+     */
     protected function doubleClick($element)
     {
-        $action = new WebDriverDoubleClickAction($this->driver->getMouse(), $this->el($element));
+        (new WebDriverDoubleClickAction($this->driver->getMouse(), $this->el($element)))->perform();
 
-        $action->perform();
+        return $this;
     }
 
     /**
      * Sleep (implicit wait) for some seconds.
      *
      * @param $seconds
+     *
+     * @return $this
      */
     protected function sleep($seconds)
     {
         $this->driver->manage()->timeouts()->implicitlyWait($seconds);
+
+        return $this;
     }
 
     /**
@@ -92,46 +155,102 @@ trait WebDriverShortcuts
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return $this
      */
     protected function waitUntil($func, $timeout = 10)
     {
-        return $this->driver->wait($timeout)->until($func);
+        $this->driver->wait($timeout)->until($func);
+
+        return $this;
     }
 
+    /**
+     * Wait and validate an element to be visible.
+     *
+     * @param $selector
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
     public function see($selector)
     {
-        return $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
+        $this->waitUntil(WebDriverExpectedCondition::visibilityOfElementLocated(
             WebDriverBy::cssSelector($selector)
         ));
+
+        return $this;
     }
 
+    /**
+     * Wait and validate an element to be invisible.
+     *
+     * @param $selector string The element's CSS selector.
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
     public function notSee($selector)
     {
-        return $this->waitUntil(WebDriverExpectedCondition::invisibilityOfElementLocated(
+        $this->waitUntil(WebDriverExpectedCondition::invisibilityOfElementLocated(
             WebDriverBy::cssSelector($selector)
         ));
+
+        return $this;
     }
 
+    /**
+     * Wait and validate a text to be visible in an element.
+     *
+     * @param $text
+     * @param $selector string The element's CSS selector.
+     *
+     * @return $this
+     * @throws \Exception
+     */
     public function seeText($text, $selector)
     {
         $this->waitUntil(WebDriverExpectedCondition::textToBePresentInElement(
             WebDriverBy::cssSelector($selector), $text
         ));
+
+        return $this;
     }
 
+    /**
+     * Navigate back.
+     *
+     * @return $this
+     */
     protected function back()
     {
-        return $this->driver->navigate()->back();
+        $this->driver->navigate()->back();
+
+        return $this;
     }
 
+    /**
+     * Navigate forward.
+     *
+     * @return $this
+     */
     protected function forward()
     {
-        return $this->driver->navigate()->forward();
+        $this->driver->navigate()->forward();
+
+        return $this;
     }
 
+    /**
+     * Refresh the page.
+     *
+     * @return $this
+     */
     protected function refresh()
     {
-        return $this->driver->navigate()->refresh();
+        $this->driver->navigate()->refresh();
+
+        return $this;
     }
 }
