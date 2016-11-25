@@ -3,11 +3,9 @@
 namespace E2E;
 
 /**
- * Class PlaybackControlsTest
+ * Class PlaybackControlsTest.
  *
  * Tests the playback controls (the footer buttons).
- *
- * @package E2E
  */
 class PlaybackControlsTest extends TestCase
 {
