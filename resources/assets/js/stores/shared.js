@@ -2,13 +2,14 @@ import { assign } from 'lodash';
 import isMobile from 'ismobilejs';
 
 import { http } from '../services';
-import { userStore, preferenceStore, artistStore, songStore, playlistStore, queueStore, settingStore } from '.';
+import { userStore, preferenceStore, artistStore, songStore, playlistStore, queueStore, settingStore, genreStore } from '.';
 
 export const sharedStore = {
   state: {
     songs: [],
     albums: [],
     artists: [],
+    genres: [],
     favorites: [],
     queued: [],
     interactions: [],
@@ -45,6 +46,7 @@ export const sharedStore = {
 
         userStore.init(this.state.users, this.state.currentUser);
         preferenceStore.init(this.state.preferences);
+        genreStore.init(this.state.genres); // Must be done before initializing songs.
         artistStore.init(this.state.artists); // This will init album and song stores as well.
         songStore.initInteractions(this.state.interactions);
         playlistStore.init(this.state.playlists);
@@ -62,6 +64,7 @@ export const sharedStore = {
   reset() {
     this.state.songs = [];
     this.state.albums = [];
+    this.state.genres = [];
     this.state.artists = [];
     this.state.favorites = [];
     this.state.queued = [];

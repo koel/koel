@@ -2,6 +2,7 @@
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Genre;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as IlluminateTestCase;
@@ -73,10 +74,15 @@ abstract class TestCase extends IlluminateTestCase
             'artist_id' => $artist->id,
         ]);
 
+        $genre = factory(Genre::class)->create([
+            'name' => 'Rock',
+        ]);
+
         // 7-15 songs per albums
         foreach ($albums as $album) {
             factory(Song::class, random_int(7, 15))->create([
                 'album_id' => $album->id,
+                'genre_id' => $genre->id,
             ]);
         }
     }

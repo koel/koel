@@ -24,6 +24,9 @@
           <a :class="['artists', currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
         </li>
         <li v-if="sharedState.useYouTube">
+          <a :class="['genres', currentView == 'genres' ? 'active' : '']" href="/#!/genres">Genres</a>
+        </li>
+        <li>
           <a :class="['youtube', currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
         </li>
       </ul>
@@ -235,6 +238,11 @@ export default {
       &.youtube::before {
         content: "\f16a";
       }
+      &.genres::before {
+        content: "\f500";
+        font-family: kutr;
+      }
+
 
       &.settings::before {
         content: "\f013";

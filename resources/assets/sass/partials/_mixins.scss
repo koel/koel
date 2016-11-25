@@ -15,6 +15,17 @@
   }
 }
 
+@mixin genre-wrapper() {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  display: flex;
+  align-content: flex-start;
+
+  .item {
+    align-self: flex-start;
+  }
+}
+
 @mixin artist-album-card() {
   .item {
     flex-direction: column;
@@ -154,7 +165,7 @@
       }
     }
 
-    a.name, a.artist {
+    a.name, a.artist, a.genre {
       display: block;
       color: $colorMainText;
       white-space: nowrap;

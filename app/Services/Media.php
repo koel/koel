@@ -8,6 +8,7 @@ use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\File;
+use App\Models\Genre;
 use App\Models\Setting;
 use App\Models\Song;
 use getID3;
@@ -28,6 +29,9 @@ class Media
         'title',
         'length',
         'track',
+        'disc',
+        'genre',
+        'year',
         'lyrics',
         'cover',
         'mtime',
@@ -213,7 +217,7 @@ class Media
     }
 
     /**
-     * Tidy up the library by deleting empty albums and artists.
+     * Tidy up the library by deleting empty albums, artists and genres.
      */
     public function tidy()
     {
@@ -235,5 +239,9 @@ class Media
         $inUseArtists[] = Artist::VARIOUS_ID;
 
         Artist::deleteWhereIDsNotIn(array_filter($inUseArtists));
+
+        $inUseGenres = Song::select('genre_id')->groupBy('genre_id')->get()->pluck('genre_id')->toArray();
+        $inUseGenres[] = Genre::UNKNOWN_ID;
+        Genre::deleteWhereIDsNotIn($inUseGenres);
     }
 }
