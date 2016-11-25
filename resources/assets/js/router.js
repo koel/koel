@@ -1,7 +1,7 @@
 import isMobile from 'ismobilejs';
 
 import { loadMainView } from './utils';
-import { artistStore, albumStore, songStore, queueStore, playlistStore, userStore } from './stores';
+import { artistStore, albumStore, songStore, queueStore, playlistStore, userStore, genreStore } from './stores';
 import { playback } from './services';
 
 export default {
@@ -31,6 +31,17 @@ export default {
 
     '/artists'() {
       loadMainView('artists');
+    },
+
+    '/genres'() {
+      loadMainView('genres');
+    },
+
+    '/genre/(\\d+)'(id) {
+      const genre = genreStore.byId(~~id);
+      if (genre) {
+        loadMainView('genre', genre);
+      }
     },
 
     '/artist/(\\d+)'(id) {

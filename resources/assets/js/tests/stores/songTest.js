@@ -1,12 +1,13 @@
 require('chai').should();
 import { cloneDeep, last } from 'lodash';
 
-import { songStore, albumStore, artistStore } from '../../stores';
-import artists from '../blobs/media';
+import { songStore, albumStore, artistStore, genreStore } from '../../stores';
+import { default as artists, genres }  from '../blobs/media';
 import interactions from '../blobs/interactions';
 
 describe('stores/song', () => {
   beforeEach(() => {
+    genreStore.init(cloneDeep(genres));
     artistStore.init(artists);
   });
 
@@ -61,6 +62,7 @@ describe('stores/song', () => {
       id: "39189f4545f9d5671fb3dc964f0080a0",
       album_id: 1193,
       title: "I Swear A Lot",
+      genre_id: 42,
       album: {
         id: 1193,
         arist_id: 1,
@@ -68,6 +70,10 @@ describe('stores/song', () => {
           id: 1,
           name: 'All-4-One',
         },
+      },
+      genre: {
+        id: 42,
+        name: 'Rock',
       },
     };
 

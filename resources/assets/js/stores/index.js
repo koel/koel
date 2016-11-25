@@ -1,5 +1,6 @@
 export * from './album';
 export * from './artist';
+export * from './genre';
 export * from './equalizer';
 export * from './favorite';
 export * from './playlist';
