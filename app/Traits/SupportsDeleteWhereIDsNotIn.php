@@ -18,9 +18,9 @@ trait SupportsDeleteWhereIDsNotIn
      * @param array  $ids The array of IDs.
      * @param string $key Name of the primary key.
      *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public static function deleteWhereIDsNotIn(array $ids, $key = 'id')
     {
