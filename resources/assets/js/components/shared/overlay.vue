@@ -15,15 +15,15 @@
 </template>
 
 <script>
-import { assign } from 'lodash';
+import { assign } from 'lodash'
 
-import { event } from '../../utils';
-import soundBar from './sound-bar.vue';
+import { event } from '../../utils'
+import soundBar from './sound-bar.vue'
 
 export default {
   components: { soundBar },
 
-  data() {
+  data () {
     return {
       state: {
         showing: true,
@@ -35,9 +35,9 @@ export default {
          * @type {String}
          */
         type: 'loading',
-        message: '',
-      },
-    };
+        message: ''
+      }
+    }
   },
 
   methods: {
@@ -48,16 +48,16 @@ export default {
      * @param {String}  type    (loading|success|info|warning|error)
      * @param {Boolean} dismissable Whether to show the Close button
      */
-    show(options) {
-      assign(this.state, options);
-      this.state.showing = true;
+    show (options) {
+      assign(this.state, options)
+      this.state.showing = true
     },
 
     /**
      * Hide the overlay.
      */
-    hide() {
-      this.state.showing = false;
+    hide () {
+      this.state.showing = false
     },
 
     /**
@@ -66,18 +66,18 @@ export default {
      *
      * @param {Boolean} dismissable
      */
-    setDimissable(dismissable = true) {
-      this.state.dismissable = dismissable;
-    },
+    setDimissable (dismissable = true) {
+      this.state.dismissable = dismissable
+    }
   },
 
-  created() {
+  created () {
     event.on({
       'overlay:show': options => this.show(options),
-      'overlay:hide': () => this.hide(),
-    });
-  },
-};
+      'overlay:hide': () => this.hide()
+    })
+  }
+}
 </script>
 
 <style lang="sass">

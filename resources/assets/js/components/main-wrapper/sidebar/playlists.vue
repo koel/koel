@@ -22,40 +22,40 @@
 </template>
 
 <script>
-import { playlistStore, favoriteStore } from '../../../stores';
-import router from '../../../router';
+import { playlistStore, favoriteStore } from '../../../stores'
+import router from '../../../router'
 
-import playlistItem from './playlist-item.vue';
+import playlistItem from './playlist-item.vue'
 
 export default {
   name: 'sidebar--playlists',
   props: ['currentView'],
   components: { playlistItem },
 
-  data() {
+  data () {
     return {
       playlistState: playlistStore.state,
       favoriteState: favoriteStore.state,
       creating: false,
-      newName: '',
-    };
+      newName: ''
+    }
   },
 
   methods: {
     /**
      * Store/create a new playlist.
      */
-    store() {
-      this.creating = false;
+    store () {
+      this.creating = false
 
       playlistStore.store(this.newName).then(p => {
-        this.newName = '';
+        this.newName = ''
         // Activate the new playlist right away
-        this.$nextTick(() => router.go(`playlist/${p.id}`));
-      });
-    },
-  },
-};
+        this.$nextTick(() => router.go(`playlist/${p.id}`))
+      })
+    }
+  }
+}
 </script>
 
 <style lang="sass">

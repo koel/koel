@@ -104,57 +104,56 @@
 </template>
 
 <script>
-import $ from 'jquery';
-import swal from 'sweetalert';
+import $ from 'jquery'
+import swal from 'sweetalert'
 
-import { userStore, preferenceStore, sharedStore } from '../../../stores';
-import { forceReloadWindow } from '../../../utils';
-import { http, ls } from '../../../services';
+import { userStore, preferenceStore, sharedStore } from '../../../stores'
+import { forceReloadWindow } from '../../../utils'
+import { http, ls } from '../../../services'
 
 export default {
-  data() {
+  data () {
     return {
       state: userStore.state,
       cache: userStore.stub,
       pwd: '',
       confirmPwd: '',
       prefs: preferenceStore.state,
-      sharedState: sharedStore.state,
-    };
+      sharedState: sharedStore.state
+    }
   },
 
   methods: {
     /**
      * Update the current user's profile.
      */
-    update() {
+    update () {
       // A little validation put in a small place.
       if ((this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd) {
-        $('#inputProfilePassword, #inputProfileConfirmPassword').addClass('error');
-
-        return;
+        $('#inputProfilePassword, #inputProfileConfirmPassword').addClass('error')
+        return
       }
 
-      $('#inputProfilePassword, #inputProfileConfirmPassword').removeClass('error');
+      $('#inputProfilePassword, #inputProfileConfirmPassword').removeClass('error')
 
       userStore.updateProfile(this.pwd).then(() => {
-        this.pwd = '';
-        this.confirmPwd = '';
+        this.pwd = ''
+        this.confirmPwd = ''
 
         swal({
           title: 'Done!',
           text: 'Profile saved.',
           type: 'success',
-          allowOutsideClick: true,
-        });
-      });
+          allowOutsideClick: true
+        })
+      })
     },
 
     /**
      * Save the current user's preference.
      */
-    savePreference() {
-      this.$nextTick(() => preferenceStore.save());
+    savePreference () {
+      this.$nextTick(() => preferenceStore.save())
     },
 
     /**
@@ -162,29 +161,29 @@ export default {
      * This method opens a new window.
      * Koel will reload once the connection is successful.
      */
-    connectToLastfm() {
+    connectToLastfm () {
       window.open(
         `/api/lastfm/connect?jwt-token=${ls.get('jwt-token')}`,
         '_blank',
         'toolbar=no,titlebar=no,location=no,width=1024,height=640'
-      );
+      )
     },
 
     /**
      * Disconnect the current user from Last.fm.
      * Oh God why.
      */
-    disconnectFromLastfm() {
+    disconnectFromLastfm () {
       // Should we use userStore?
       // - We shouldn't. This doesn't have anything to do with stores.
       // Should we confirm the user?
       // - Nope. Users should be grown-ass adults who take responsibilty of their actions.
       // But one of my users is my new born kid!
       // - Then? Kids will fuck things up anyway.
-      http.delete('lastfm/disconnect', {}, forceReloadWindow);
-    },
-  },
-};
+      http.delete('lastfm/disconnect', {}, forceReloadWindow)
+    }
+  }
+}
 </script>
 
 <style lang="sass">

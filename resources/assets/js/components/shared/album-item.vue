@@ -36,29 +36,29 @@
 </template>
 
 <script>
-import { map } from 'lodash';
-import $ from 'jquery';
+import { map } from 'lodash'
+import $ from 'jquery'
 
-import { pluralize } from '../../utils';
-import { queueStore, artistStore, sharedStore } from '../../stores';
-import { playback, download } from '../../services';
+import { pluralize } from '../../utils'
+import { queueStore, artistStore, sharedStore } from '../../stores'
+import { playback, download } from '../../services'
 
 export default {
   name: 'shared--album-item',
   props: ['album'],
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
-      sharedState: sharedStore.state,
-    };
+      sharedState: sharedStore.state
+    }
   },
 
   computed: {
-    isNormalArtist() {
-      return !artistStore.isVariousArtists(this.album.artist)
-        && !artistStore.isUnknownArtist(this.album.artist);
-    },
+    isNormalArtist () {
+      return !artistStore.isVariousArtists(this.album.artist) &&
+        !artistStore.isUnknownArtist(this.album.artist)
+    }
   },
 
   methods: {
@@ -66,42 +66,42 @@ export default {
      * Play all songs in the current album in track order,
      * or queue them up if Ctrl/Cmd key is pressed.
      */
-    play(e) {
+    play (e) {
       if (e.metaKey || e.ctrlKey) {
-        queueStore.queue(this.album.songs);
+        queueStore.queue(this.album.songs)
       } else {
-        playback.playAllInAlbum(this.album, false);
+        playback.playAllInAlbum(this.album, false)
       }
     },
 
     /**
      * Shuffle all songs in album.
      */
-    shuffle() {
-      playback.playAllInAlbum(this.album, true);
+    shuffle () {
+      playback.playAllInAlbum(this.album, true)
     },
 
     /**
      * Download all songs in album.
      */
-    download() {
-      download.fromAlbum(this.album);
+    download () {
+      download.fromAlbum(this.album)
     },
 
     /**
      * Allow dragging the album (actually, its songs).
      */
-    dragStart(e) {
-      const songIds = map(this.album.songs, 'id');
-      e.dataTransfer.setData('application/x-koel.text+plain', songIds);
-      e.dataTransfer.effectAllowed = 'move';
+    dragStart (e) {
+      const songIds = map(this.album.songs, 'id')
+      e.dataTransfer.setData('application/x-koel.text+plain', songIds)
+      e.dataTransfer.effectAllowed = 'move'
 
       // Set a fancy drop image using our ghost element.
-      const $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} in ${this.album.name}`);
-      e.dataTransfer.setDragImage($ghost[0], 0, 0);
-    },
-  },
-};
+      const $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} in ${this.album.name}`)
+      e.dataTransfer.setDragImage($ghost[0], 0, 0)
+    }
+  }
+}
 </script>
 
 <style lang="sass">

@@ -9,8 +9,8 @@
 
 <script>
 export default {
-  props: ['showing'],
-};
+  props: ['showing']
+}
 </script>
 
 <style lang="sass">

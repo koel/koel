@@ -18,43 +18,42 @@
 </template>
 
 <script>
-import { event } from '../../../utils';
-import { youtube as youtubeService } from '../../../services';
+import { youtube as youtubeService } from '../../../services'
 
 export default {
   name: 'main-wrapper--extra--youtube',
   props: ['song'],
 
-  data() {
+  data () {
     return {
       loading: false,
-      videos: [],
-    };
+      videos: []
+    }
   },
 
   watch: {
-    song(val) {
-      this.videos = val.youtube ? val.youtube.items : [];
-    },
+    song (val) {
+      this.videos = val.youtube ? val.youtube.items : []
+    }
   },
 
   methods: {
-    playYouTube(id) {
-      youtubeService.play(id);
+    playYouTube (id) {
+      youtubeService.play(id)
     },
 
     /**
      * Load more videos.
      */
-    loadMore() {
-      this.loading = true;
+    loadMore () {
+      this.loading = true
       youtubeService.searchVideosRelatedToSong(this.song, () => {
-        this.videos = this.song.youtube.items;
-        this.loading = false;
-      });
-    },
-  },
-};
+        this.videos = this.song.youtube.items
+        this.loading = false
+      })
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>

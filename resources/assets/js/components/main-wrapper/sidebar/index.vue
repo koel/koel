@@ -55,29 +55,29 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
-import $ from 'jquery';
+import isMobile from 'ismobilejs'
+import $ from 'jquery'
 
-import { event } from '../../../utils';
-import { sharedStore, userStore, songStore, queueStore } from '../../../stores';
-import playlists from './playlists.vue';
+import { event } from '../../../utils'
+import { sharedStore, userStore, songStore, queueStore } from '../../../stores'
+import playlists from './playlists.vue'
 
 export default {
   components: { playlists },
 
-  data() {
+  data () {
     return {
       currentView: 'home',
       user: userStore.state,
       showing: !isMobile.phone,
-      sharedState: sharedStore.state,
-    };
+      sharedState: sharedStore.state
+    }
   },
 
   computed: {
-    latestVersionUrl() {
-      return 'https://github.com/phanan/koel/releases/tag/' + this.sharedState.latestVersion;
-    },
+    latestVersionUrl () {
+      return 'https://github.com/phanan/koel/releases/tag/' + this.sharedState.latestVersion
+    }
   },
 
   methods: {
@@ -86,8 +86,8 @@ export default {
      *
      * @param  {Object} e The dragleave event.
      */
-    removeDroppableState(e) {
-      $(e.target).removeClass('droppable');
+    removeDroppableState (e) {
+      $(e.target).removeClass('droppable')
     },
 
     /**
@@ -95,11 +95,11 @@ export default {
      *
      * @param  {Object} e The dragover event.
      */
-    allowDrop(e) {
-      $(e.target).addClass('droppable');
-      e.dataTransfer.dropEffect = 'move';
+    allowDrop (e) {
+      $(e.target).addClass('droppable')
+      e.dataTransfer.dropEffect = 'move'
 
-      return false;
+      return false
     },
 
     /**
@@ -109,42 +109,44 @@ export default {
      *
      * @return {Boolean}
      */
-    handleDrop(e) {
-      this.removeDroppableState(e);
+    handleDrop (e) {
+      this.removeDroppableState(e)
 
       if (!e.dataTransfer.getData('application/x-koel.text+plain')) {
-        return false;
+        return false
       }
 
-      const songs = songStore.byIds(e.dataTransfer.getData('application/x-koel.text+plain').split(','));
+      const songs = songStore.byIds(e.dataTransfer.getData('application/x-koel.text+plain').split(','))
 
       if (!songs.length) {
-        return false;
+        return false
       }
 
-      queueStore.queue(songs);
+      queueStore.queue(songs)
 
-      return false;
-    },
+      return false
+    }
   },
 
-  created() {
+  created () {
     event.on('main-content-view:load', view => {
-      this.currentView = view;
+      this.currentView = view
 
       // Hide the sidebar if on mobile
       if (isMobile.phone) {
-        this.showing = false;
+        this.showing = false
       }
-    });
+    })
 
      /**
      * Listen to sidebar:toggle event to show or hide the sidebar.
      * This should only be triggered on a mobile device.
      */
-    event.on('sidebar:toggle', () => this.showing = !this.showing);
-  },
-};
+    event.on('sidebar:toggle', () => {
+      this.showing = !this.showing
+    })
+  }
+}
 </script>
 
 <style lang="sass">

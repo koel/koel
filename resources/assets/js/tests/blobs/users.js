@@ -3,7 +3,7 @@ export default {
     id: 1,
     name: 'Phan An',
     email: 'me@phanan.net',
-    is_admin: true,
+    is_admin: true
   },
 
   users: [
@@ -11,13 +11,13 @@ export default {
       id: 1,
       name: 'Phan An',
       email: 'me@phanan.net',
-      is_admin: true,
+      is_admin: true
     },
     {
       id: 2,
       name: 'John Doe',
       email: 'john@doe.tld',
-      is_admin: false,
-    },
+      is_admin: false
+    }
   ]
-};
+}

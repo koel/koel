@@ -1,24 +1,24 @@
-import { http } from '../services';
-import stub from '../stubs/settings';
+import { http } from '../services'
+import stub from '../stubs/settings'
 
 export const settingStore = {
   stub,
 
   state: {
-    settings: [],
+    settings: []
   },
 
-  init(settings) {
-    this.state.settings = settings;
+  init (settings) {
+    this.state.settings = settings
   },
 
-  get all() {
-    return this.state.settings;
+  get all () {
+    return this.state.settings
   },
 
-  update() {
+  update () {
     return new Promise((resolve, reject) => {
-      http.post('settings', this.all, data => resolve(data), r => reject(r));
-    });
-  },
-};
+      http.post('settings', this.all, data => resolve(data), r => reject(r))
+    })
+  }
+}

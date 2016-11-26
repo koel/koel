@@ -6,21 +6,21 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
+import isMobile from 'ismobilejs'
 
 export default {
   name: 'shared--song-list-controls-toggler',
   props: ['showingControls'],
 
-  data() {
+  data () {
     return {
       isPhone: isMobile.phone
     }
   },
 
   methods: {
-    toggleControls() {
-      this.$emit('toggleControls');
+    toggleControls () {
+      this.$emit('toggleControls')
     }
   }
 }

@@ -45,15 +45,13 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
-
-import { pluralize, event } from '../../../utils';
-import { sharedStore, artistStore } from '../../../stores';
-import { playback, download, artistInfo as artistInfoService } from '../../../services';
-import router from '../../../router';
-import hasSongList from '../../../mixins/has-song-list';
-import artistInfo from '../extra/artist-info.vue';
-import soundBar from '../../shared/sound-bar.vue';
+import { pluralize, event } from '../../../utils'
+import { sharedStore, artistStore } from '../../../stores'
+import { playback, download, artistInfo as artistInfoService } from '../../../services'
+import router from '../../../router'
+import hasSongList from '../../../mixins/has-song-list'
+import artistInfo from '../extra/artist-info.vue'
+import soundBar from '../../shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--artist',
@@ -61,15 +59,15 @@ export default {
   components: { artistInfo, soundBar },
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
       sharedState: sharedStore.state,
       artist: artistStore.stub,
       info: {
         showing: false,
-        loading: true,
-      },
-    };
+        loading: true
+      }
+    }
   },
 
   watch: {
@@ -81,12 +79,12 @@ export default {
      */
     'artist.albums.length' (newVal) {
       if (!newVal) {
-        router.go('artists');
+        router.go('artists')
       }
-    },
+    }
   },
 
-  created() {
+  created () {
     /**
      * Listen to 'main-content-view:load' event to load the requested artist
      * into view if applicable.
@@ -96,38 +94,40 @@ export default {
      */
     event.on('main-content-view:load', (view, artist) => {
       if (view === 'artist') {
-        this.info.showing = false;
-        this.artist = artist;
+        this.info.showing = false
+        this.artist = artist
       }
-    });
+    })
   },
 
   methods: {
     /**
      * Shuffle the songs by the current artist.
      */
-    shuffle() {
-      playback.queueAndPlay(this.artist.songs, true);
+    shuffle () {
+      playback.queueAndPlay(this.artist.songs, true)
     },
 
     /**
      * Download all songs by the artist.
      */
-    download() {
-      download.fromArtist(this.artist);
+    download () {
+      download.fromArtist(this.artist)
     },
 
-    showInfo() {
-      this.info.showing = true;
+    showInfo () {
+      this.info.showing = true
       if (!this.artist.info) {
-        this.info.loading = true;
-        artistInfoService.fetch(this.artist).then(() => this.info.loading = false);
+        this.info.loading = true
+        artistInfoService.fetch(this.artist).then(() => {
+          this.info.loading = false
+        })
       } else {
-        this.info.loading = false;
+        this.info.loading = false
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>

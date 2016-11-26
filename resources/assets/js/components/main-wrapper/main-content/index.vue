@@ -18,38 +18,40 @@
 </template>
 
 <script>
-import { event } from '../../../utils';
-import { albumStore, sharedStore } from '../../../stores';
+import { event } from '../../../utils'
+import { albumStore, sharedStore } from '../../../stores'
 
-import albums from './albums.vue';
-import album from './album.vue';
-import artists from './artists.vue';
-import artist from './artist.vue';
-import songs from './songs.vue';
-import settings from './settings.vue';
-import users from './users.vue';
-import queue from './queue.vue';
-import home from './home.vue';
-import playlist from './playlist.vue';
-import favorites from './favorites.vue';
-import profile from './profile.vue';
-import youtubePlayer from './youtube-player.vue';
+import albums from './albums.vue'
+import album from './album.vue'
+import artists from './artists.vue'
+import artist from './artist.vue'
+import songs from './songs.vue'
+import settings from './settings.vue'
+import users from './users.vue'
+import queue from './queue.vue'
+import home from './home.vue'
+import playlist from './playlist.vue'
+import favorites from './favorites.vue'
+import profile from './profile.vue'
+import youtubePlayer from './youtube-player.vue'
 
 export default {
   components: { albums, album, artists, artist, songs, settings,
     users, home, queue, playlist, favorites, profile, youtubePlayer },
 
-  data() {
+  data () {
     return {
       view: 'home', // The default view
       albumCover: null,
-      sharedState: sharedStore.state,
-    };
+      sharedState: sharedStore.state
+    }
   },
 
-  created() {
+  created () {
     event.on({
-      'main-content-view:load': view => this.view = view,
+      'main-content-view:load': view => {
+        this.view = view
+      },
 
       /**
        * When a new song is played, find its cover for the translucent effect.
@@ -59,11 +61,11 @@ export default {
        * @return {Boolean}
        */
       'song:played': song => {
-        this.albumCover = song.album.cover === albumStore.stub.cover ? null : song.album.cover;
-      },
-    });
-  },
-};
+        this.albumCover = song.album.cover === albumStore.stub.cover ? null : song.album.cover
+      }
+    })
+  }
+}
 </script>
 
 <style lang="sass">

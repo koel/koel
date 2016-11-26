@@ -29,30 +29,30 @@
 </template>
 
 <script>
-import { playback } from '../../../services';
+import { playback } from '../../../services'
 
 export default {
   props: ['artist', 'mode'],
 
-  data() {
+  data () {
     return {
-      showingFullBio: false,
-    };
+      showingFullBio: false
+    }
   },
 
   watch: {
-    artist() {
-      this.showingFullBio = false;
-    },
+    artist () {
+      this.showingFullBio = false
+    }
   },
 
   computed: {
-    showSummary() {
-      return this.mode !== 'full' && !this.showingFullBio;
+    showSummary () {
+      return this.mode !== 'full' && !this.showingFullBio
     },
 
-    showFull() {
-      return this.mode === 'full' || this.showingFullBio;
+    showFull () {
+      return this.mode === 'full' || this.showingFullBio
     }
   },
 
@@ -60,11 +60,11 @@ export default {
     /**
      * Shuffle all songs performed by the current song's artist.
      */
-    shuffleAll() {
-      playback.playAllByArtist(this.artist);
-    },
-  },
-};
+    shuffleAll () {
+      playback.playAllByArtist(this.artist)
+    }
+  }
+}
 </script>
 
 <style lang="sass">

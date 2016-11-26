@@ -27,12 +27,10 @@
 </template>
 
 <script>
-import { assign } from 'lodash';
-
-import { pluralize, event } from '../../utils';
-import { playlistStore } from '../../stores';
-import router from '../../router';
-import songMenuMethods from '../../mixins/song-menu-methods';
+import { pluralize } from '../../utils'
+import { playlistStore } from '../../stores'
+import router from '../../router'
+import songMenuMethods from '../../mixins/song-menu-methods'
 
 export default {
   name: 'shared--add-to-menu',
@@ -40,19 +38,19 @@ export default {
   mixins: [songMenuMethods],
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
       newPlaylistName: '',
-      playlistState: playlistStore.state,
-    };
+      playlistState: playlistStore.state
+    }
   },
 
   watch: {
-    songs() {
+    songs () {
       if (!this.songs.length) {
-        this.close();
+        this.close()
       }
-    },
+    }
   },
 
   methods: {
@@ -60,27 +58,27 @@ export default {
      * Save the selected songs as a playlist.
      * As of current we don't have selective save.
      */
-    createNewPlaylistFromSongs() {
-      this.newPlaylistName = this.newPlaylistName.trim();
+    createNewPlaylistFromSongs () {
+      this.newPlaylistName = this.newPlaylistName.trim()
 
       if (!this.newPlaylistName) {
-        return;
+        return
       }
 
       playlistStore.store(this.newPlaylistName, this.songs).then(p => {
-        this.newPlaylistName = '';
+        this.newPlaylistName = ''
         // Activate the new playlist right away
-        this.$nextTick(() => router.go(`playlist/${p.id}`));
-      });
+        this.$nextTick(() => router.go(`playlist/${p.id}`))
+      })
 
-      this.close();
+      this.close()
     },
 
-    close() {
-      this.$parent.closeAddToMenu();
-    },
-  },
-};
+    close () {
+      this.$parent.closeAddToMenu()
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>

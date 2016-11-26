@@ -50,13 +50,16 @@
     "browserify-hmr": "^0.3.1",
     "chai": "^3.4.1",
     "chalk": "^1.1.3",
+    "eslint": "^3.10.2",
+    "eslint-config-vue": "^2.0.1",
+    "eslint-plugin-vue": "^1.0.0",
     "jsdom": "^9.2.1",
     "mocha": "^2.3.4",
     "sinon": "^1.17.2"
   },
   "scripts": {
     "postinstall": "cross-env NODE_ENV=production && gulp --production",
-    "test": "mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js",
+    "test": "eslint resources/assets/js --ext=js,vue && mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js",
     "e2e": "gulp e2e"
   }
 }

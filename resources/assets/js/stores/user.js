@@ -1,17 +1,17 @@
-import { each, find, without } from 'lodash';
-import md5 from 'blueimp-md5';
-import Vue from 'vue';
-import NProgress from 'nprogress';
+import { each, find, without } from 'lodash'
+import md5 from 'blueimp-md5'
+import Vue from 'vue'
+import NProgress from 'nprogress'
 
-import { http } from '../services';
-import stub from '../stubs/user';
+import { http } from '../services'
+import stub from '../stubs/user'
 
 export const userStore = {
   stub,
 
   state: {
     users: [],
-    current: stub,
+    current: stub
   },
 
   /**
@@ -20,15 +20,15 @@ export const userStore = {
    * @param {Array.<Object>}  users     The users in the system. Empty array if current user is not an admin.
    * @param {Object}      currentUser The current user.
    */
-  init(users, currentUser) {
-    this.all = users;
-    this.current = currentUser;
+  init (users, currentUser) {
+    this.all = users
+    this.current = currentUser
 
     // Set the avatar for each of the users…
-    each(this.all, this.setAvatar);
+    each(this.all, this.setAvatar)
 
     // …and the current user as well.
-    this.setAvatar();
+    this.setAvatar()
   },
 
   /**
@@ -36,8 +36,8 @@ export const userStore = {
    *
    * @return {Array.<Object>}
    */
-  get all() {
-    return this.state.users;
+  get all () {
+    return this.state.users
   },
 
   /**
@@ -45,8 +45,8 @@ export const userStore = {
    *
    * @param  {Array.<Object>} value
    */
-  set all(value) {
-    this.state.users = value;
+  set all (value) {
+    this.state.users = value
   },
 
   /**
@@ -56,8 +56,8 @@ export const userStore = {
    *
    * @return {Object}
    */
-  byId(id) {
-    return find(this.all, { id });
+  byId (id) {
+    return find(this.all, { id })
   },
 
   /**
@@ -65,8 +65,8 @@ export const userStore = {
    *
    * @return {Object}
    */
-  get current() {
-    return this.state.current;
+  get current () {
+    return this.state.current
   },
 
   /**
@@ -76,8 +76,9 @@ export const userStore = {
    *
    * @return {Object}
    */
-  set current(user) {
-    return this.state.current = user;
+  set current (user) {
+    this.state.current = user
+    return this.state.current
   },
 
   /**
@@ -85,12 +86,12 @@ export const userStore = {
    *
    * @param {?Object} user The user. If null, the current user.
    */
-  setAvatar(user = null) {
+  setAvatar (user = null) {
     if (!user) {
-      user = this.current;
+      user = this.current
     }
 
-    Vue.set(user, 'avatar', `https://www.gravatar.com/avatar/${md5(user.email)}?s=256`);
+    Vue.set(user, 'avatar', `https://www.gravatar.com/avatar/${md5(user.email)}?s=256`)
   },
 
   /**
@@ -99,21 +100,21 @@ export const userStore = {
    * @param  {String}   email
    * @param  {String}   password
    */
-  login(email, password) {
-    NProgress.start();
+  login (email, password) {
+    NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('me', { email, password }, data => resolve(data), r => reject(r));
-    });
+      http.post('me', { email, password }, data => resolve(data), r => reject(r))
+    })
   },
 
   /**
    * Log the current user out.
    */
-  logout() {
+  logout () {
     return new Promise((resolve, reject) => {
-      http.delete('me', {}, data => resolve(data), r => reject(r));
-    });
+      http.delete('me', {}, data => resolve(data), r => reject(r))
+    })
   },
 
   /**
@@ -121,20 +122,20 @@ export const userStore = {
    *
    * @param  {string} password Can be an empty string if the user is not changing his password.
    */
-  updateProfile(password) {
-    NProgress.start();
+  updateProfile (password) {
+    NProgress.start()
 
     return new Promise((resolve, reject) => {
       http.put('me', {
-          password,
-          name: this.current.name,
-          email: this.current.email
-        }, () => {
-          this.setAvatar();
-          resolve(this.current)
-        }, r => reject(r)
-      );
-    });
+        password,
+        name: this.current.name,
+        email: this.current.email
+      }, () => {
+        this.setAvatar()
+        resolve(this.current)
+      },
+      r => reject(r))
+    })
   },
 
   /**
@@ -144,16 +145,16 @@ export const userStore = {
    * @param  {string}   email
    * @param  {string}   password
    */
-  store(name, email, password) {
-    NProgress.start();
+  store (name, email, password) {
+    NProgress.start()
 
     return new Promise((resolve, reject) => {
       http.post('user', { name, email, password }, user => {
-        this.setAvatar(user);
-        this.all.unshift(user);
-        resolve(user);
-      }, r => reject(r));
-    });
+        this.setAvatar(user)
+        this.all.unshift(user)
+        resolve(user)
+      }, r => reject(r))
+    })
   },
 
   /**
@@ -164,16 +165,16 @@ export const userStore = {
    * @param  {String}   email
    * @param  {String}   password
    */
-  update(user, name, email, password) {
-    NProgress.start();
+  update (user, name, email, password) {
+    NProgress.start()
 
     return new Promise((resolve, reject) => {
       http.put(`user/${user.id}`, { name, email, password }, () => {
-        this.setAvatar(user);
-        user.password = '';
-        resolve(user);
-      }, r => reject(r));
-    });
+        this.setAvatar(user)
+        user.password = ''
+        resolve(user)
+      }, r => reject(r))
+    })
   },
 
   /**
@@ -181,12 +182,12 @@ export const userStore = {
    *
    * @param  {Object}   user
    */
-  destroy(user) {
-    NProgress.start();
+  destroy (user) {
+    NProgress.start()
 
     return new Promise((resolve, reject) => {
       http.delete(`user/${user.id}`, {}, data => {
-        this.all = without(this.all, user);
+        this.all = without(this.all, user)
 
         // Mama, just killed a man
         // Put a gun against his head
@@ -210,8 +211,8 @@ export const userStore = {
         /**
          * Brian May enters the stage.
          */
-        resolve(data);
-      }, r => reject(r));
-    });
-  },
-};
+        resolve(data)
+      }, r => reject(r))
+    })
+  }
+}

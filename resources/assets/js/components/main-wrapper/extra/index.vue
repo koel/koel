@@ -35,30 +35,29 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
-import { invokeMap } from 'lodash';
-import $ from 'jquery';
+import isMobile from 'ismobilejs'
+import $ from 'jquery'
 
-import { event } from '../../../utils';
-import { sharedStore, songStore, preferenceStore as preferences } from '../../../stores';
-import { songInfo } from '../../../services';
+import { event } from '../../../utils'
+import { sharedStore, songStore, preferenceStore as preferences } from '../../../stores'
+import { songInfo } from '../../../services'
 
-import lyrics from './lyrics.vue';
-import artistInfo from './artist-info.vue';
-import albumInfo from './album-info.vue';
-import youtube from './youtube.vue';
+import lyrics from './lyrics.vue'
+import artistInfo from './artist-info.vue'
+import albumInfo from './album-info.vue'
+import youtube from './youtube.vue'
 
 export default {
   name: 'main-wrapper--extra--index',
   components: { lyrics, artistInfo, albumInfo, youtube },
 
-  data() {
+  data () {
     return {
       song: songStore.stub,
       state: preferences.state,
       sharedState: sharedStore.state,
-      currentView: 'lyrics',
-    };
+      currentView: 'lyrics'
+    }
   },
 
   watch: {
@@ -67,25 +66,25 @@ export default {
      * to/from the html tag.
      * Some element's CSS can then be controlled based on this class.
      */
-    'state.showExtraPanel': function (newVal) {
+    'state.showExtraPanel' (newVal) {
       if (newVal && !isMobile.any) {
-        $('html').addClass('with-extra-panel');
+        $('html').addClass('with-extra-panel')
       } else {
-        $('html').removeClass('with-extra-panel');
+        $('html').removeClass('with-extra-panel')
       }
-    },
+    }
   },
 
-  mounted() {
+  mounted () {
     // On ready, add 'with-extra-panel' class.
     if (!isMobile.any) {
-      $('html').addClass('with-extra-panel');
+      $('html').addClass('with-extra-panel')
     }
 
     if (isMobile.phone) {
       // On a mobile device, we always hide the panel initially regardless of
       // the saved preference.
-      preferences.showExtraPanel = false;
+      preferences.showExtraPanel = false
     }
   },
 
@@ -93,31 +92,31 @@ export default {
     /**
      * Reset all self and applicable child components' states.
      */
-    resetState() {
-      this.currentView = 'lyrics';
-      this.song = songStore.stub;
-    },
+    resetState () {
+      this.currentView = 'lyrics'
+      this.song = songStore.stub
+    }
   },
 
-  created() {
+  created () {
     event.on({
       'main-content-view:load': view => {
         // Hide the panel away if a main view is triggered on mobile.
         if (isMobile.phone) {
-          preferences.showExtraPanel = false;
+          preferences.showExtraPanel = false
         }
       },
 
       'song:played': song => {
         songInfo.fetch(song).then(song => {
-          this.song = song;
-        });
+          this.song = song
+        })
       },
 
-      'koel:teardown': () => this.resetState(),
-    });
-  },
-};
+      'koel:teardown': () => this.resetState()
+    })
+  }
+}
 </script>
 
 <style lang="sass">

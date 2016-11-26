@@ -1,108 +1,108 @@
-import isMobile from 'ismobilejs';
+import isMobile from 'ismobilejs'
 
-import { loadMainView } from './utils';
-import { artistStore, albumStore, songStore, queueStore, playlistStore, userStore } from './stores';
-import { playback } from './services';
+import { loadMainView } from './utils'
+import { artistStore, albumStore, songStore, queueStore, playlistStore, userStore } from './stores'
+import { playback } from './services'
 
 export default {
   routes: {
-    '/home'() {
-      loadMainView('home');
+    '/home' () {
+      loadMainView('home')
     },
 
-    '/queue'() {
-      loadMainView('queue');
+    '/queue' () {
+      loadMainView('queue')
     },
 
-    '/songs'() {
-      loadMainView('songs');
+    '/songs' () {
+      loadMainView('songs')
     },
 
-    '/albums'() {
-      loadMainView('albums');
+    '/albums' () {
+      loadMainView('albums')
     },
 
-    '/album/(\\d+)'(id) {
-      const album = albumStore.byId(~~id);
+    '/album/(\\d+)' (id) {
+      const album = albumStore.byId(~~id)
       if (album) {
-        loadMainView('album', album);
+        loadMainView('album', album)
       }
     },
 
-    '/artists'() {
-      loadMainView('artists');
+    '/artists' () {
+      loadMainView('artists')
     },
 
-    '/artist/(\\d+)'(id) {
-      const artist = artistStore.byId(~~id);
+    '/artist/(\\d+)' (id) {
+      const artist = artistStore.byId(~~id)
       if (artist) {
-        loadMainView('artist', artist);
+        loadMainView('artist', artist)
       }
     },
 
-    '/favorites'() {
-      loadMainView('favorites');
+    '/favorites' () {
+      loadMainView('favorites')
     },
 
-    '/playlist/(\\d+)'(id) {
-      const playlist = playlistStore.byId(~~id);
+    '/playlist/(\\d+)' (id) {
+      const playlist = playlistStore.byId(~~id)
       if (playlist) {
-        loadMainView('playlist', playlist);
+        loadMainView('playlist', playlist)
       }
     },
 
-    '/settings'() {
-      userStore.current.is_admin && loadMainView('settings');
+    '/settings' () {
+      userStore.current.is_admin && loadMainView('settings')
     },
 
-    '/users'() {
-      userStore.current.is_admin && loadMainView('users');
+    '/users' () {
+      userStore.current.is_admin && loadMainView('users')
     },
 
-    '/profile'() {
-      loadMainView('profile');
+    '/profile' () {
+      loadMainView('profile')
     },
 
-    '/login'() {
+    '/login' () {
 
     },
 
-    '/song/([a-z0-9]{32})'(id) {
-      const song = songStore.byId(id);
-      if (!song) return;
+    '/song/([a-z0-9]{32})' (id) {
+      const song = songStore.byId(id)
+      if (!song) return
 
       if (isMobile.apple.device) {
         // Mobile Safari doesn't allow autoplay, so we just queue.
-        queueStore.queue(song);
-        loadMainView('queue');
+        queueStore.queue(song)
+        loadMainView('queue')
       } else {
-        playback.queueAndPlay(song);
+        playback.queueAndPlay(song)
       }
     },
 
-    '/youtube'() {
-      loadMainView('youtubePlayer');
-    },
+    '/youtube' () {
+      loadMainView('youtubePlayer')
+    }
   },
 
-  init() {
-    this.loadState();
-    window.addEventListener('popstate', () => this.loadState(), true);
+  init () {
+    this.loadState()
+    window.addEventListener('popstate', () => this.loadState(), true)
   },
 
-  loadState() {
+  loadState () {
     if (!window.location.hash) {
-      return this.go('home');
+      return this.go('home')
     }
 
     Object.keys(this.routes).forEach(route => {
-      const matches = window.location.hash.match(new RegExp(`^#!${route}$`));
+      const matches = window.location.hash.match(new RegExp(`^#!${route}$`))
       if (matches) {
-        const [, ...params] = matches;
-        this.routes[route](...params);
-        return false;
+        const [, ...params] = matches
+        this.routes[route](...params)
+        return false
       }
-    });
+    })
   },
 
   /**
@@ -110,15 +110,15 @@ export default {
    *
    * @param  {String} path
    */
-  go(path) {
+  go (path) {
     if (path[0] !== '/') {
-      path = `/${path}`;
+      path = `/${path}`
     }
 
     if (path.indexOf('/#!') !== 0) {
-      path = `/#!${path}`;
+      path = `/#!${path}`
     }
 
-    document.location.href = `${document.location.origin}${path}`;
-  },
-};
+    document.location.href = `${document.location.origin}${path}`
+  }
+}

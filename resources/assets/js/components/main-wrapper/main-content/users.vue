@@ -44,37 +44,37 @@
 </template>
 
 <script>
-import { clone } from 'lodash';
-import isMobile from 'ismobilejs';
+import { clone } from 'lodash'
+import isMobile from 'ismobilejs'
 
-import { userStore } from '../../../stores';
-import userItem from '../../shared/user-item.vue';
+import { userStore } from '../../../stores'
+import userItem from '../../shared/user-item.vue'
 
 export default {
   components: { userItem },
 
-  data() {
+  data () {
     return {
       state: userStore.state,
       isPhone: isMobile.phone,
       showingControls: false,
       creating: false,
-      newUser: {},
-    };
+      newUser: {}
+    }
   },
 
   methods: {
     /**
      * Store the newly created user.
      */
-    store() {
+    store () {
       userStore.store(this.newUser.name, this.newUser.email, this.newUser.password).then(u => {
-        this.newUser = clone(userStore.stub);
-        this.creating = false;
-      });
-    },
-  },
-};
+        this.newUser = clone(userStore.stub)
+        this.creating = false
+      })
+    }
+  }
+}
 </script>
 
 <style lang="sass">

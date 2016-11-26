@@ -25,73 +25,73 @@
 </template>
 
 <script>
-import { playback } from '../../services';
-import { queueStore } from '../../stores';
+import { playback } from '../../services'
+import { queueStore } from '../../stores'
 
 export default {
   props: ['song'],
 
-  data() {
+  data () {
     return {
-      selected: false,
-    };
+      selected: false
+    }
   },
 
   computed: {
-    playing() {
-      return this.song.playbackState === 'playing' || this.song.playbackState === 'paused';
-    },
+    playing () {
+      return this.song.playbackState === 'playing' || this.song.playbackState === 'paused'
+    }
   },
 
   methods: {
     /**
      * Play the song right away.
      */
-    playRightAwayyyyyyy() {
+    playRightAwayyyyyyy () {
       if (!queueStore.contains(this.song)) {
-        queueStore.queueAfterCurrent(this.song);
+        queueStore.queueAfterCurrent(this.song)
       }
 
-      playback.play(this.song);
+      playback.play(this.song)
     },
 
     /**
      * Take the right playback action based on the current playback state.
      */
-    doPlayback() {
+    doPlayback () {
       switch (this.song.playbackState) {
         case 'playing':
-          playback.pause();
-          break;
+          playback.pause()
+          break
         case 'paused':
-          playback.resume();
-          break;
+          playback.resume()
+          break
         default:
-          this.playRightAwayyyyyyy();
-          break;
+          this.playRightAwayyyyyyy()
+          break
       }
     },
 
-    clicked($e) {
-      this.$emit('itemClicked', this.song.id, $e);
+    clicked ($e) {
+      this.$emit('itemClicked', this.song.id, $e)
     },
 
-    select() {
-      this.selected = true;
+    select () {
+      this.selected = true
     },
 
-    deselect() {
-      this.selected = false;
+    deselect () {
+      this.selected = false
     },
 
     /**
      * Toggle the "selected" state of the current component.
      */
-    toggleSelectedState() {
-      this.selected = !this.selected;
-    },
-  },
-};
+    toggleSelectedState () {
+      this.selected = !this.selected
+    }
+  }
+}
 </script>
 
 <style lang="sass">

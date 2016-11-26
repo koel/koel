@@ -1,6 +1,6 @@
-import { find } from 'lodash';
+import { find } from 'lodash'
 
-import { preferenceStore } from '.';
+import { preferenceStore } from '.'
 
 export const equalizerStore = {
   presets: [
@@ -8,25 +8,25 @@ export const equalizerStore = {
       id: 0,
       name: 'Default',
       preamp: 0,
-      gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     },
     {
       id: 1,
       name: 'Classical',
       preamp: -1,
-      gains: [-1, -1, -1, -1, -1, -1, -7, -7, -7, -9],
+      gains: [-1, -1, -1, -1, -1, -1, -7, -7, -7, -9]
     },
     {
       id: 2,
       name: 'Club',
       preamp: -6.7,
-      gains: [-1, -1, 8, 5, 5, 5, 3, -1, -1, -1],
+      gains: [-1, -1, 8, 5, 5, 5, 3, -1, -1, -1]
     },
     {
       id: 3,
       name: 'Dance',
       preamp: -4.3,
-      gains: [9, 7, 2, -1, -1, -5, -7, -7, -1, -1],
+      gains: [9, 7, 2, -1, -1, -5, -7, -7, -1, -1]
     },
     {
       id: 4,
@@ -50,48 +50,48 @@ export const equalizerStore = {
       id: 7,
       name: 'Large Hall',
       preamp: -7.2,
-      gains: [10, 10, 5, 5, -1, -4, -4, -4, -1, -1],
+      gains: [10, 10, 5, 5, -1, -4, -4, -4, -1, -1]
     },
     {
       id: 8,
       name: 'Live',
       preamp: -5.3,
-      gains: [-4, -1, 4, 5, 5, 5, 4, 2, 2, 2],
+      gains: [-4, -1, 4, 5, 5, 5, 4, 2, 2, 2]
     },
     {
       id: 9,
       name: 'Pop',
       preamp: -6.2,
-      gains: [-1, 4, 7, 8, 5, -1, -2, -2, -1, -1],
+      gains: [-1, 4, 7, 8, 5, -1, -2, -2, -1, -1]
     },
     {
       id: 10,
       name: 'Reggae',
       preamp: -8.2,
-      gains: [-1, -1, -1, -5, -1, 6, 6, -1, -1, -1],
+      gains: [-1, -1, -1, -5, -1, 6, 6, -1, -1, -1]
     },
     {
       id: 11,
       name: 'Rock',
       preamp: -10,
-      gains: [8, 4, -5, -8, -3, 4, 8, 11, 11, 11],
+      gains: [8, 4, -5, -8, -3, 4, 8, 11, 11, 11]
     },
     {
       id: 12,
       name: 'Soft Rock',
       preamp: -5.3,
-      gains: [4, 4, 2, -1, -4, -5, -3, -1, 2, 8],
+      gains: [4, 4, 2, -1, -4, -5, -3, -1, 2, 8]
     },
     {
       id: 13,
       name: 'Techno',
       preamp: -7.7,
-      gains: [8, 5, -1, -5, -4, -1, 8, 9, 9, 8],
-    },
+      gains: [8, 5, -1, -5, -4, -1, 8, 9, 9, 8]
+    }
   ],
 
-  getPresetById(id) {
-    return find(this.presets, { id });
+  getPresetById (id) {
+    return find(this.presets, { id })
   },
 
   /**
@@ -99,9 +99,9 @@ export const equalizerStore = {
    *
    * @return {Object}
    */
-  get() {
+  get () {
     if (!this.presets[preferenceStore.selectedPreset]) {
-      return preferenceStore.equalizer;
+      return preferenceStore.equalizer
     }
 
     // If the user chose a preset (instead of customizing one), just return it.
@@ -114,7 +114,7 @@ export const equalizerStore = {
    * @param  {Number} preamp The preamp value (dB)
    * @param  {Array.<Number>} gains  The band's gain value (dB)
    */
-  set(preamp, gains) {
-    preferenceStore.equalizer = { preamp, gains };
-  },
-};
+  set (preamp, gains) {
+    preferenceStore.equalizer = { preamp, gains }
+  }
+}

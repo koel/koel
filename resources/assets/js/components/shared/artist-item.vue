@@ -28,22 +28,22 @@
 </template>
 
 <script>
-import { map } from 'lodash';
-import $ from 'jquery';
+import { map } from 'lodash'
+import $ from 'jquery'
 
-import { pluralize } from '../../utils';
-import { artistStore, queueStore, sharedStore } from '../../stores';
-import { playback, download } from '../../services';
+import { pluralize } from '../../utils'
+import { artistStore, queueStore, sharedStore } from '../../stores'
+import { playback, download } from '../../services'
 
 export default {
   name: 'shared--artist-item',
   props: ['artist'],
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
-      sharedState: sharedStore.state,
-    };
+      sharedState: sharedStore.state
+    }
   },
 
   computed: {
@@ -53,8 +53,8 @@ export default {
      *
      * @return {Boolean}
      */
-    showing() {
-      return this.artist.songCount && !artistStore.isVariousArtists(this.artist);
+    showing () {
+      return this.artist.songCount && !artistStore.isVariousArtists(this.artist)
     }
   },
 
@@ -62,35 +62,35 @@ export default {
     /**
      * Play all songs by the current artist, or queue them up if Ctrl/Cmd key is pressed.
      */
-    play(e) {
+    play (e) {
       if (e.metaKey || e.ctrlKey) {
-        queueStore.queue(this.artist.songs);
+        queueStore.queue(this.artist.songs)
       } else {
-        playback.playAllByArtist(this.artist);
+        playback.playAllByArtist(this.artist)
       }
     },
 
     /**
      * Download all songs by artist.
      */
-    download() {
-      download.fromArtist(this.artist);
+    download () {
+      download.fromArtist(this.artist)
     },
 
     /**
      * Allow dragging the artist (actually, their songs).
      */
-    dragStart(e) {
-      const songIds = map(this.artist.songs, 'id');
-      e.dataTransfer.setData('application/x-koel.text+plain', songIds);
-      e.dataTransfer.effectAllowed = 'move';
+    dragStart (e) {
+      const songIds = map(this.artist.songs, 'id')
+      e.dataTransfer.setData('application/x-koel.text+plain', songIds)
+      e.dataTransfer.effectAllowed = 'move'
 
       // Set a fancy drop image using our ghost element.
-      const $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} by ${this.artist.name}`);
-      e.dataTransfer.setDragImage($ghost[0], 0, 0);
-    },
-  },
-};
+      const $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} by ${this.artist.name}`)
+      e.dataTransfer.setDragImage($ghost[0], 0, 0)
+    }
+  }
+}
 </script>
 
 <style lang="sass">

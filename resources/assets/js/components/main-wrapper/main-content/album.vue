@@ -46,15 +46,13 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
-
-import { pluralize, event } from '../../../utils';
-import { albumStore, artistStore, sharedStore } from '../../../stores';
-import { playback, download, albumInfo as albumInfoService } from '../../../services';
-import router from '../../../router';
-import hasSongList from '../../../mixins/has-song-list';
-import albumInfo from '../extra/album-info.vue';
-import soundBar from '../../shared/sound-bar.vue';
+import { pluralize, event } from '../../../utils'
+import { albumStore, artistStore, sharedStore } from '../../../stores'
+import { playback, download, albumInfo as albumInfoService } from '../../../services'
+import router from '../../../router'
+import hasSongList from '../../../mixins/has-song-list'
+import albumInfo from '../extra/album-info.vue'
+import soundBar from '../../shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--album',
@@ -62,22 +60,22 @@ export default {
   components: { albumInfo, soundBar },
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
       sharedState: sharedStore.state,
       album: albumStore.stub,
       info: {
         showing: false,
-        loading: true,
-      },
-    };
+        loading: true
+      }
+    }
   },
 
   computed: {
-    isNormalArtist() {
-      return !artistStore.isVariousArtists(this.album.artist)
-        && !artistStore.isUnknownArtist(this.album.artist);
-    },
+    isNormalArtist () {
+      return !artistStore.isVariousArtists(this.album.artist) &&
+        !artistStore.isUnknownArtist(this.album.artist)
+    }
   },
 
   watch: {
@@ -89,12 +87,12 @@ export default {
      */
     'album.songs.length' (newVal) {
       if (!newVal) {
-        router.go('albums');
+        router.go('albums')
       }
-    },
+    }
   },
 
-  created() {
+  created () {
     /**
      * Listen to 'main-content-view:load' event to load the requested album
      * into view if applicable.
@@ -104,38 +102,40 @@ export default {
      */
     event.on('main-content-view:load', (view, album) => {
       if (view === 'album') {
-        this.info.showing = false;
-        this.album = album;
+        this.info.showing = false
+        this.album = album
       }
-    });
+    })
   },
 
   methods: {
     /**
      * Shuffle the songs in the current album.
      */
-    shuffle() {
-      playback.queueAndPlay(this.album.songs, true);
+    shuffle () {
+      playback.queueAndPlay(this.album.songs, true)
     },
 
     /**
      * Download all songs from the album.
      */
-    download() {
-      download.fromAlbum(this.album);
+    download () {
+      download.fromAlbum(this.album)
     },
 
-    showInfo() {
-      this.info.showing = true;
+    showInfo () {
+      this.info.showing = true
       if (!this.album.info) {
-        this.info.loading = true;
-        albumInfoService.fetch(this.album).then(() => this.info.loading = false);
+        this.info.loading = true
+        albumInfoService.fetch(this.album).then(() => {
+          this.info.loading = false
+        })
       } else {
-        this.info.loading = false;
+        this.info.loading = false
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>

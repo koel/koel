@@ -37,42 +37,42 @@
 </template>
 
 <script>
-import { playback } from '../../../services';
+import { playback } from '../../../services'
 
 export default {
   props: ['album', 'mode'],
 
-  data() {
+  data () {
     return {
-      showingFullWiki: false,
-    };
+      showingFullWiki: false
+    }
   },
 
   watch: {
-    album() {
-      this.showingFullWiki = false;
-    },
+    album () {
+      this.showingFullWiki = false
+    }
   },
 
   computed: {
-    showSummary() {
-      return this.mode !== 'full' && !this.showingFullWiki;
+    showSummary () {
+      return this.mode !== 'full' && !this.showingFullWiki
     },
 
-    showFull() {
-      return this.mode === 'full' || this.showingFullWiki;
-    },
+    showFull () {
+      return this.mode === 'full' || this.showingFullWiki
+    }
   },
 
   methods: {
     /**
      * Shuffle all songs in the current album.
      */
-    shuffleAll() {
-      playback.playAllInAlbum(this.album);
-    },
-  },
-};
+    shuffleAll () {
+      playback.playAllInAlbum(this.album)
+    }
+  }
+}
 </script>
 
 <style lang="sass">

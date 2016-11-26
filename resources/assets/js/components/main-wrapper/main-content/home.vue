@@ -74,15 +74,15 @@
 </template>
 
 <script>
-import { sample } from 'lodash';
+import { sample } from 'lodash'
 
-import { event } from '../../../utils';
-import { songStore, albumStore, artistStore, userStore, preferenceStore } from '../../../stores';
-import infiniteScroll from '../../../mixins/infinite-scroll';
+import { event } from '../../../utils'
+import { songStore, albumStore, artistStore, userStore, preferenceStore } from '../../../stores'
+import infiniteScroll from '../../../mixins/infinite-scroll'
 
-import albumItem from '../../shared/album-item.vue';
-import artistItem from '../../shared/artist-item.vue';
-import songItem from '../../shared/home-song-item.vue';
+import albumItem from '../../shared/album-item.vue'
+import artistItem from '../../shared/artist-item.vue'
+import songItem from '../../shared/home-song-item.vue'
 
 export default {
   components: { albumItem, artistItem, songItem },
@@ -103,55 +103,55 @@ export default {
         'Sup, %s?',
         'How’s life, %s?',
         'How’s your day, %s?',
-        'How have you been, %s?',
+        'How have you been, %s?'
       ],
       recentSongs: [],
       top: {
         songs: [],
         albums: [],
-        artists: [],
+        artists: []
       },
       recentlyAdded: {
         albums: [],
-        songs: [],
+        songs: []
       },
 
-      preferences: preferenceStore.state,
-    };
+      preferences: preferenceStore.state
+    }
   },
 
   computed: {
-    greeting() {
-      return sample(this.greetings).replace('%s', userStore.current.name);
+    greeting () {
+      return sample(this.greetings).replace('%s', userStore.current.name)
     },
 
-    showRecentlyAddedSection() {
-      return this.recentlyAdded.albums.length || this.recentlyAdded.songs.length;
-    },
+    showRecentlyAddedSection () {
+      return this.recentlyAdded.albums.length || this.recentlyAdded.songs.length
+    }
   },
 
   methods: {
     /**
      * Refresh the dashboard with latest data.
      */
-    refreshDashboard() {
-      this.top.songs = songStore.getMostPlayed(7);
-      this.top.albums = albumStore.getMostPlayed(6);
-      this.top.artists = artistStore.getMostPlayed(6);
-      this.recentlyAdded.albums = albumStore.getRecentlyAdded(6);
-      this.recentlyAdded.songs = songStore.getRecentlyAdded(10);
-      this.recentSongs = songStore.getRecent(7);
-    },
+    refreshDashboard () {
+      this.top.songs = songStore.getMostPlayed(7)
+      this.top.albums = albumStore.getMostPlayed(6)
+      this.top.artists = artistStore.getMostPlayed(6)
+      this.recentlyAdded.albums = albumStore.getRecentlyAdded(6)
+      this.recentlyAdded.songs = songStore.getRecentlyAdded(10)
+      this.recentSongs = songStore.getRecent(7)
+    }
   },
 
-  created() {
+  created () {
     event.on({
       'koel:ready': () => this.refreshDashboard(),
 
-      'song:played': () => this.refreshDashboard(),
-    });
-  },
-};
+      'song:played': () => this.refreshDashboard()
+    })
+  }
+}
 </script>
 
 <style lang="sass">

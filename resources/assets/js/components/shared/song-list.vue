@@ -50,17 +50,17 @@
 </template>
 
 <script>
-import { find, invokeMap, filter, map } from 'lodash';
-import isMobile from 'ismobilejs';
-import $ from 'jquery';
+import { find, invokeMap, filter, map } from 'lodash'
+import isMobile from 'ismobilejs'
+import $ from 'jquery'
 
-import { filterBy, orderBy, limitBy, event } from '../../utils';
-import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores';
-import { playback } from '../../services';
-import router from '../../router';
-import songItem from './song-item.vue';
-import songMenu from './song-menu.vue';
-import infiniteScroll from '../../mixins/infinite-scroll';
+import { filterBy, orderBy, limitBy, event } from '../../utils'
+import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores'
+import { playback } from '../../services'
+import router from '../../router'
+import songItem from './song-item.vue'
+import songMenu from './song-menu.vue'
+import infiniteScroll from '../../mixins/infinite-scroll'
 
 export default {
   name: 'song-list',
@@ -68,7 +68,7 @@ export default {
   mixins: [infiniteScroll],
   components: { songItem, songMenu },
 
-  data() {
+  data () {
     return {
       lastSelectedRow: null,
       q: '', // The filter query
@@ -77,35 +77,35 @@ export default {
       sortingByAlbum: false,
       sortingByArtist: false,
       selectedSongs: [],
-      mutatedItems: [],
-    };
+      mutatedItems: []
+    }
   },
 
   watch: {
     /**
      * Watch the items.
      */
-    items() {
+    items () {
       if (this.sortable === false) {
-        this.sortKey = '';
+        this.sortKey = ''
       }
 
-      this.mutatedItems = this.items;
+      this.mutatedItems = this.items
 
       // Update the song count and duration status on parent.
       this.$parent.updateMeta({
         songCount: this.items.length,
-        totalLength: songStore.getLength(this.items, true),
-      });
+        totalLength: songStore.getLength(this.items, true)
+      })
     },
 
-    selectedSongs(val) {
-      this.$parent.setSelectedSongs(val);
-    },
+    selectedSongs (val) {
+      this.$parent.setSelectedSongs(val)
+    }
   },
 
   computed: {
-    displayedItems() {
+    displayedItems () {
       return limitBy(
         filterBy(
           this.mutatedItems,
@@ -113,8 +113,8 @@ export default {
           'title', 'album.name', 'artist.name'
         ),
         this.numOfItems
-      );
-    },
+      )
+    }
   },
 
   methods: {
@@ -123,43 +123,43 @@ export default {
      *
      * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'length'
      */
-    sort(key) {
+    sort (key) {
       if (this.sortable === false) {
-        return;
+        return
       }
 
-      this.sortKey = key;
-      this.order = 0 - this.order;
-      this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.name';
-      this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.artist.name';
-      this.mutatedItems = orderBy(this.items, this.sortKey, this.order);
+      this.sortKey = key
+      this.order = 0 - this.order
+      this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.name'
+      this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'album.artist.name'
+      this.mutatedItems = orderBy(this.items, this.sortKey, this.order)
     },
 
     /**
      * Execute the corresponding reaction(s) when the user presses Delete.
      */
-    handleDelete() {
-      const songs = this.selectedSongs;
+    handleDelete () {
+      const songs = this.selectedSongs
 
       if (!songs.length) {
-        return;
+        return
       }
 
       switch (this.type) {
         case 'queue':
-          queueStore.unqueue(songs);
-          break;
+          queueStore.unqueue(songs)
+          break
         case 'favorites':
-          favoriteStore.unlike(songs);
-          break;
+          favoriteStore.unlike(songs)
+          break
         case 'playlist':
-          playlistStore.removeSongs(this.playlist, songs);
-          break;
+          playlistStore.removeSongs(this.playlist, songs)
+          break
         default:
-          break;
+          break
       }
 
-      this.clearSelection();
+      this.clearSelection()
     },
 
     /**
@@ -167,25 +167,25 @@ export default {
      *
      * @param {Object} e The keydown event.
      */
-    handleEnter(e) {
-      const songs = this.selectedSongs;
+    handleEnter (e) {
+      const songs = this.selectedSongs
 
       if (!songs.length) {
-        return;
+        return
       }
 
       if (songs.length === 1) {
         // Just play the song
-        playback.play(songs[0]);
+        playback.play(songs[0])
 
-        return;
+        return
       }
 
       switch (this.type) {
         case 'queue':
           // Play the first song selected if we're in Queue screen.
-          playback.play(songs[0]);
-          break;
+          playback.play(songs[0])
+          break
         case 'favorites':
         case 'playlist':
         default:
@@ -201,20 +201,20 @@ export default {
           // Also, if there's only one song selected, play it right away.
           // --------------------------------------------------------------------
           //
-          queueStore.queue(songs, false, e.shiftKey);
+          queueStore.queue(songs, false, e.shiftKey)
 
           this.$nextTick(() => {
-            router.go('queue');
+            router.go('queue')
 
             if (e.ctrlKey || e.metaKey || songs.length === 1) {
-              playback.play(songs[0]);
+              playback.play(songs[0])
             }
-          });
+          })
 
-          break;
+          break
       }
 
-      this.clearSelection();
+      this.clearSelection()
     },
 
     /**
@@ -224,8 +224,8 @@ export default {
      *
      * @return {Object}  The Vue compoenent
      */
-    getComponentBySongId(id) {
-      return find(this.$refs.rows, { song: { id } });
+    getComponentBySongId (id) {
+      return find(this.$refs.rows, { song: { id }})
     },
 
     /**
@@ -233,13 +233,13 @@ export default {
      *
      * @param {Object} e The keydown event.
      */
-    handleA(e) {
+    handleA (e) {
       if (!e.metaKey && !e.ctrlKey) {
-        return;
+        return
       }
 
-      invokeMap(this.$refs.rows, 'select');
-      this.gatherSelected();
+      invokeMap(this.$refs.rows, 'select')
+      this.gatherSelected()
     },
 
     /**
@@ -247,11 +247,11 @@ export default {
      *
      * @return {Array.<Object>} An array of Song objects
      */
-    gatherSelected() {
-      const selectedRows = filter(this.$refs.rows, { selected: true });
-      const ids = map(selectedRows, row => row.song.id);
+    gatherSelected () {
+      const selectedRows = filter(this.$refs.rows, { selected: true })
+      const ids = map(selectedRows, row => row.song.id)
 
-      this.selectedSongs = songStore.byIds(ids);
+      this.selectedSongs = songStore.byIds(ids)
     },
 
     /**
@@ -268,33 +268,33 @@ export default {
      * @param  {String} songId
      * @param  {Object} e
      */
-    itemClicked(songId, e) {
-      const row = this.getComponentBySongId(songId);
+    itemClicked (songId, e) {
+      const row = this.getComponentBySongId(songId)
 
       // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
       if (isMobile.any) {
-        this.toggleRow(row);
-        this.gatherSelected();
+        this.toggleRow(row)
+        this.gatherSelected()
 
-        return;
+        return
       }
 
       if (e.ctrlKey || e.metaKey) {
-        this.toggleRow(row);
+        this.toggleRow(row)
       }
 
       if (e.button === 0) {
         if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
-          this.clearSelection();
-          this.toggleRow(row);
+          this.clearSelection()
+          this.toggleRow(row)
         }
 
         if (e.shiftKey && this.lastSelectedRow && this.lastSelectedRow.$el) {
-          this.selectRowsBetweenIndexes([this.lastSelectedRow.$el.rowIndex, row.$el.rowIndex]);
+          this.selectRowsBetweenIndexes([this.lastSelectedRow.$el.rowIndex, row.$el.rowIndex])
         }
       }
 
-      this.gatherSelected();
+      this.gatherSelected()
     },
 
     /**
@@ -302,27 +302,27 @@ export default {
      *
      * @param  {Object} row The song-item component
      */
-    toggleRow(row) {
-      row.toggleSelectedState();
-      this.lastSelectedRow = row;
+    toggleRow (row) {
+      row.toggleSelectedState()
+      this.lastSelectedRow = row
     },
 
-    selectRowsBetweenIndexes(indexes) {
-      indexes.sort((a, b) => a - b);
+    selectRowsBetweenIndexes (indexes) {
+      indexes.sort((a, b) => a - b)
 
-      const rows = $(this.$refs.wrapper).find('tbody tr');
+      const rows = $(this.$refs.wrapper).find('tbody tr')
 
       for (let i = indexes[0]; i <= indexes[1]; ++i) {
-        this.getComponentBySongId($(rows[i - 1]).data('song-id')).select();
+        this.getComponentBySongId($(rows[i - 1]).data('song-id')).select()
       }
     },
 
     /**
      * Clear the current selection on this song list.
      */
-    clearSelection() {
-      invokeMap(this.$refs.rows, 'deselect');
-      this.gatherSelected();
+    clearSelection () {
+      invokeMap(this.$refs.rows, 'deselect')
+      this.gatherSelected()
     },
 
     /**
@@ -332,24 +332,24 @@ export default {
      *
      * @param {Object} e The event.
      */
-    dragStart(songId, e) {
+    dragStart (songId, e) {
       // If the user is dragging an unselected row, clear the current selection.
-      const currentRow = this.getComponentBySongId(songId);
+      const currentRow = this.getComponentBySongId(songId)
       if (!currentRow.selected) {
-        this.clearSelection();
-        currentRow.select();
-        this.gatherSelected();
+        this.clearSelection()
+        currentRow.select()
+        this.gatherSelected()
       }
 
       this.$nextTick(() => {
-        const songIds = map(this.selectedSongs, 'id');
-        e.dataTransfer.setData('application/x-koel.text+plain', songIds);
-        e.dataTransfer.effectAllowed = 'move';
+        const songIds = map(this.selectedSongs, 'id')
+        e.dataTransfer.setData('application/x-koel.text+plain', songIds)
+        e.dataTransfer.effectAllowed = 'move'
 
         // Set a fancy drop image using our ghost element.
-        const $ghost = $('#dragGhost').text(`${songIds.length} song${songIds.length === 1 ? '' : 's'}`);
-        e.dataTransfer.setDragImage($ghost[0], 0, 0);
-      });
+        const $ghost = $('#dragGhost').text(`${songIds.length} song${songIds.length === 1 ? '' : 's'}`)
+        e.dataTransfer.setDragImage($ghost[0], 0, 0)
+      })
     },
 
     /**
@@ -358,15 +358,15 @@ export default {
      * @param {String} songId
      * @param {Object} e The dragover event.
      */
-    allowDrop(songId, e) {
+    allowDrop (songId, e) {
       if (this.type !== 'queue') {
-        return;
+        return
       }
 
-      $(e.target).parents('tr').addClass('droppable');
-      e.dataTransfer.dropEffect = 'move';
+      $(e.target).parents('tr').addClass('droppable')
+      e.dataTransfer.dropEffect = 'move'
 
-      return false;
+      return false
     },
 
     /**
@@ -375,26 +375,24 @@ export default {
      * @param  {String} songId
      * @param  {Object} e
      */
-    handleDrop(songId, e) {
-      console.log('dropping into', songId);
+    handleDrop (songId, e) {
       if (this.type !== 'queue') {
-        return this.removeDroppableState(e) && false;
+        return this.removeDroppableState(e) && false
       }
 
       if (!e.dataTransfer.getData('application/x-koel.text+plain')) {
-        return this.removeDroppableState(e) && false;
+        return this.removeDroppableState(e) && false
       }
 
-      const songs = this.selectedSongs;
-      console.log('selected songs after drop:', songs);
+      const songs = this.selectedSongs
 
       if (!songs.length) {
-        return this.removeDroppableState(e) && false;
+        return this.removeDroppableState(e) && false
       }
 
-      queueStore.move(songs, songStore.byId(songId));
+      queueStore.move(songs, songStore.byId(songId))
 
-      return this.removeDroppableState(e) && false;
+      return this.removeDroppableState(e) && false
     },
 
     /**
@@ -402,25 +400,25 @@ export default {
      *
      * @param  {Object} e
      */
-    removeDroppableState(e) {
-      return $(e.target).parents('tr').removeClass('droppable');
+    removeDroppableState (e) {
+      return $(e.target).parents('tr').removeClass('droppable')
     },
 
-    openContextMenu(songId, e) {
+    openContextMenu (songId, e) {
       // If the user is right-clicking an unselected row,
       // clear the current selection and select it instead.
-      const currentRow = this.getComponentBySongId(songId);
+      const currentRow = this.getComponentBySongId(songId)
       if (!currentRow.selected) {
-        this.clearSelection();
-        currentRow.select();
-        this.gatherSelected();
+        this.clearSelection()
+        currentRow.select()
+        this.gatherSelected()
       }
 
-      this.$nextTick(() => this.$refs.contextMenu.open(e.pageY, e.pageX));
-    },
+      this.$nextTick(() => this.$refs.contextMenu.open(e.pageY, e.pageX))
+    }
   },
 
-  created() {
+  created () {
     event.on({
       /**
        * Listen to song:played event to do some logic.
@@ -430,21 +428,21 @@ export default {
       'song:played': song => {
         // If the song is at the end of the current displayed items, load more.
         if (this.type === 'queue' && this.items.indexOf(song) >= this.numOfItems) {
-          this.displayMore();
+          this.displayMore()
         }
 
         // Scroll the item into view if it's lost into oblivion.
         if (this.type === 'queue') {
-          const $wrapper = $(this.$refs.wrapper);
-          const $row = $wrapper.find(`.song-item[data-song-id="${song.id}"]`);
+          const $wrapper = $(this.$refs.wrapper)
+          const $row = $wrapper.find(`.song-item[data-song-id="${song.id}"]`)
 
           if (!$row.length) {
-            return;
+            return
           }
 
           if ($wrapper[0].getBoundingClientRect().top + $wrapper[0].getBoundingClientRect().height <
             $row[0].getBoundingClientRect().top) {
-            $wrapper.scrollTop($wrapper.scrollTop() + $row.position().top);
+            $wrapper.scrollTop($wrapper.scrollTop() + $row.position().top)
           }
         }
       },
@@ -452,7 +450,9 @@ export default {
       /**
        * Listen to 'filter:changed' event to filter the current list.
        */
-      'filter:changed': q => this.q = q,
+      'filter:changed': q => {
+        this.q = q
+      },
 
       /**
        * Clears the current list's selection if the user has switched to another view.
@@ -463,10 +463,10 @@ export default {
        * Listen to 'song:selection-clear' (often broadcasted from the direct parent)
        * to clear the selected songs.
        */
-      'song:selection-clear': () => this.clearSelection(),
-    });
-  },
-};
+      'song:selection-clear': () => this.clearSelection()
+    })
+  }
+}
 </script>
 
 <style lang="sass">

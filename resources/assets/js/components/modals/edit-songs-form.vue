@@ -76,25 +76,25 @@
 </template>
 
 <script>
-  import { every, filter } from 'lodash';
+  import { every, filter } from 'lodash'
 
-  import { br2nl } from '../../utils';
-  import { songInfo } from '../../services/info';
-  import { artistStore, albumStore, songStore } from '../../stores';
+  import { br2nl, forceReloadWindow } from '../../utils'
+  import { songInfo } from '../../services/info'
+  import { artistStore, albumStore, songStore } from '../../stores'
 
-  import soundBar from '../shared/sound-bar.vue';
-  import typeahead from '../shared/typeahead.vue';
+  import soundBar from '../shared/sound-bar.vue'
+  import typeahead from '../shared/typeahead.vue'
 
   const COMPILATION_STATES = {
     NONE: 0, // No songs belong to a compilation album
     ALL: 1, // All songs belong to compilation album(s)
-    SOME: 2, // Some of the songs belong to compilation album(s)
-  };
+    SOME: 2 // Some of the songs belong to compilation album(s)
+  }
 
   export default {
     components: { soundBar, typeahead },
 
-    data() {
+    data () {
       return {
         shown: false,
         songs: [],
@@ -105,13 +105,13 @@
         artistState: artistStore.state,
         artistTypeaheadOptions: {
           displayKey: 'name',
-          filterKey: 'name',
+          filterKey: 'name'
         },
 
         albumState: albumStore.state,
         albumTypeaheadOptions: {
           displayKey: 'name',
-          filterKey: 'name',
+          filterKey: 'name'
         },
 
         /**
@@ -126,9 +126,9 @@
           artistName: '',
           lyrics: '',
           track: '',
-          compilationState: null,
-        },
-      };
+          compilationState: null
+        }
+      }
     },
 
     computed: {
@@ -137,8 +137,8 @@
        *
        * @return {boolean}
        */
-      editSingle() {
-        return this.songs.length === 1;
+      editSingle () {
+        return this.songs.length === 1
       },
 
       /**
@@ -146,8 +146,8 @@
        *
        * @return {boolean}
        */
-      bySameArtist() {
-        return every(this.songs, song => song.artist.id === this.songs[0].artist.id);
+      bySameArtist () {
+        return every(this.songs, song => song.artist.id === this.songs[0].artist.id)
       },
 
       /**
@@ -155,8 +155,8 @@
        *
        * @return {boolean}
        */
-      inSameAlbum() {
-        return every(this.songs, song => song.album.id === this.songs[0].album.id);
+      inSameAlbum () {
+        return every(this.songs, song => song.album.id === this.songs[0].album.id)
       },
 
       /**
@@ -164,8 +164,8 @@
        *
        * @return {string}
        */
-      coverUrl() {
-        return this.inSameAlbum ? this.songs[0].album.cover : '/public/img/covers/unknown-album.png';
+      coverUrl () {
+        return this.inSameAlbum ? this.songs[0].album.cover : '/public/img/covers/unknown-album.png'
       },
 
       /**
@@ -173,18 +173,18 @@
        *
        * @return {Number}
        */
-      compilationState() {
+      compilationState () {
         const contributedSongs = filter(this.songs, song => song.contributing_artist_id)
 
         if (!contributedSongs.length) {
           this.formData.compilationState = COMPILATION_STATES.NONE
         } else if (contributedSongs.length === this.songs.length) {
-          this.formData.compilationState = COMPILATION_STATES.ALL;
+          this.formData.compilationState = COMPILATION_STATES.ALL
         } else {
-          this.formData.compilationState = COMPILATION_STATES.SOME;
+          this.formData.compilationState = COMPILATION_STATES.SOME
         }
 
-        return this.formData.compilationState;
+        return this.formData.compilationState
       },
 
       /**
@@ -192,8 +192,8 @@
        *
        * @return {string}
        */
-      displayedTitle() {
-        return this.editSingle ? this.formData.title : `${this.songs.length} songs selected`;
+      displayedTitle () {
+        return this.editSingle ? this.formData.title : `${this.songs.length} songs selected`
       },
 
       /**
@@ -201,11 +201,11 @@
        *
        * @return {string}
        */
-      displayedAlbum() {
+      displayedAlbum () {
         if (this.editSingle) {
-          return this.formData.albumName;
+          return this.formData.albumName
         } else {
-          return this.formData.albumName ? this.formData.albumName : 'Mixed Albums';
+          return this.formData.albumName ? this.formData.albumName : 'Mixed Albums'
         }
       },
 
@@ -214,75 +214,75 @@
        *
        * @return {string}
        */
-      displayedArtist() {
+      displayedArtist () {
         if (this.editSingle) {
-          return this.formData.artistName;
+          return this.formData.artistName
         } else {
-          return this.formData.artistName ? this.formData.artistName : 'Mixed Artists';
+          return this.formData.artistName ? this.formData.artistName : 'Mixed Artists'
         }
-      },
+      }
     },
 
     methods: {
-      open(songs) {
-        this.shown = true;
-        this.songs = songs;
-        this.currentView = 'details';
-        this.needsReload = false;
+      open (songs) {
+        this.shown = true
+        this.songs = songs
+        this.currentView = 'details'
+        this.needsReload = false
 
         if (this.editSingle) {
-          this.formData.title = this.songs[0].title;
-          this.formData.albumName = this.songs[0].album.name;
-          this.formData.artistName = this.songs[0].artist.name;
+          this.formData.title = this.songs[0].title
+          this.formData.albumName = this.songs[0].album.name
+          this.formData.artistName = this.songs[0].artist.name
 
           // If we're editing only one song and the song's info (including lyrics)
           // hasn't been loaded, load it now.
           if (!this.songs[0].infoRetrieved) {
-            this.loading = true;
+            this.loading = true
 
             songInfo.fetch(this.songs[0]).then(r => {
-              this.loading = false;
-              this.formData.lyrics = br2nl(this.songs[0].lyrics);
-              this.formData.track = this.songs[0].track;
-              this.initCompilationStateCheckbox();
-            });
+              this.loading = false
+              this.formData.lyrics = br2nl(this.songs[0].lyrics)
+              this.formData.track = this.songs[0].track
+              this.initCompilationStateCheckbox()
+            })
           } else {
-            this.formData.lyrics = br2nl(this.songs[0].lyrics);
-            this.formData.track = this.songs[0].track;
-            this.initCompilationStateCheckbox();
+            this.formData.lyrics = br2nl(this.songs[0].lyrics)
+            this.formData.track = this.songs[0].track
+            this.initCompilationStateCheckbox()
           }
         } else {
-          this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : '';
-          this.formData.artistName = this.bySameArtist ? this.songs[0].artist.name : '';
-          this.loading = false;
-          this.initCompilationStateCheckbox();
+          this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : ''
+          this.formData.artistName = this.bySameArtist ? this.songs[0].artist.name : ''
+          this.loading = false
+          this.initCompilationStateCheckbox()
         }
       },
 
       /**
        * Initialize the compilation state's checkbox of the editing songs' album(s).
        */
-      initCompilationStateCheckbox() {
+      initCompilationStateCheckbox () {
         // This must be wrapped in a $nextTick callback, because the form is dynamically
         // attached into DOM in conjunction with `this.loading` data binding.
         this.$nextTick(() => {
-          const chk = this.$refs.compilationStateChk;
+          const chk = this.$refs.compilationStateChk
 
           switch (this.compilationState) {
             case COMPILATION_STATES.ALL:
-              chk.checked = true;
-              chk.indeterminate = false;
-              break;
+              chk.checked = true
+              chk.indeterminate = false
+              break
             case COMPILATION_STATES.NONE:
-              chk.checked = false;
-              chk.indeterminate = false;
-              break;
+              chk.checked = false
+              chk.indeterminate = false
+              break
             default:
-              chk.checked = false;
-              chk.indeterminate = true;
-              break;
+              chk.checked = false
+              chk.indeterminate = true
+              break
           }
-        });
+        })
       },
 
       /**
@@ -291,34 +291,34 @@
        * Also, following iTunes style, we don't support circular switching of the states -
        * once the user clicks the checkbox, there's no going back to indeterminate state.
        */
-      changeCompilationState(e) {
-        this.formData.compilationState = e.target.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE;
-        this.needsReload = true;
+      changeCompilationState (e) {
+        this.formData.compilationState = e.target.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE
+        this.needsReload = true
       },
 
       /**
        * Close the modal.
        */
-      close() {
-        this.shown = false;
+      close () {
+        this.shown = false
       },
 
       /**
        * Submit the form.
        */
-      submit() {
-        this.loading = true;
+      submit () {
+        this.loading = true
 
         songStore.update(this.songs, this.formData).then(r => {
-          this.loading = false;
-          this.close();
-          if (this.needsReload) {
-            forceReloadWindow();
-          }
-        }).catch(r => this.loading = false);
-      },
-    },
-  };
+          this.loading = false
+          this.close()
+          this.needsReload && forceReloadWindow()
+        }).catch(r => {
+          this.loading = false
+        })
+      }
+    }
+  }
 </script>
 
 <style lang="sass">

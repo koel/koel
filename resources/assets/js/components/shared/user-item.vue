@@ -43,21 +43,21 @@
 </template>
 
 <script>
-import { clone, assign } from 'lodash';
-import swal from 'sweetalert';
+import { clone, assign } from 'lodash'
+import swal from 'sweetalert'
 
-import { userStore } from '../../stores';
-import router from '../../router';
+import { userStore } from '../../stores'
+import router from '../../router'
 
 export default {
   props: ['user'],
 
-  data() {
+  data () {
     return {
       editing: false,
       confirmingDelete: false,
-      cached: {},
-    };
+      cached: {}
+    }
   },
 
   computed: {
@@ -66,9 +66,9 @@ export default {
      *
      * @return {Boolean}
      */
-    isCurrentUser() {
-      return this.user.id === userStore.current.id;
-    },
+    isCurrentUser () {
+      return this.user.id === userStore.current.id
+    }
   },
 
   methods: {
@@ -76,55 +76,55 @@ export default {
      * Trigger editing a user.
      * If the user is the current logged-in user, redirect to the profile screen instead.
      */
-    edit() {
+    edit () {
       if (this.isCurrentUser) {
-        router.go('profile');
+        router.go('profile')
 
-        return;
+        return
       }
 
       // Keep a cached version of the user for rolling back.
-      this.cached = clone(this.user);
-      this.editing = true;
+      this.cached = clone(this.user)
+      this.editing = true
     },
 
     /**
      * Cancel editing a user.
      */
-    cancelEdit() {
+    cancelEdit () {
       // Restore the original user's properties
-      assign(this.user, this.cached);
-      this.editing = false;
+      assign(this.user, this.cached)
+      this.editing = false
     },
 
     /**
      * Update the edited user.
      */
-    update() {
-      userStore.update(this.user, this.user.name, this.user.email, this.user.password). then(u => {
-        this.editing = false;
-      });
+    update () {
+      userStore.update(this.user, this.user.name, this.user.email, this.user.password).then(u => {
+        this.editing = false
+      })
     },
 
     /**
      * Kill off the freaking user.
      */
-    del() {
+    del () {
       swal({
         title: 'Hey…',
         text: `You’re about to unperson ${this.user.name}. Are you sure?`,
         type: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Certainly',
-        cancelButtonText: 'Oops',
+        cancelButtonText: 'Oops'
       }, () => {
         userStore.destroy(this.user).then(() => {
-          this.$destroy(true);
-        });
-      });
-    },
-  },
-};
+          this.$destroy(true)
+        })
+      })
+    }
+  }
+}
 </script>
 
 <style lang="sass">

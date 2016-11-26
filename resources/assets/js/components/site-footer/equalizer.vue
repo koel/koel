@@ -40,33 +40,34 @@
 </template>
 
 <script>
-import { map, cloneDeep } from 'lodash';
-import $ from 'jquery';
-import rangeslider from 'rangeslider.js';
+import { map, cloneDeep } from 'lodash'
+import $ from 'jquery'
+// eslint-disable-next-line no-unused-vars
+import rangeslider from 'rangeslider.js'
 
-import { isAudioContextSupported, event } from '../../utils';
-import { equalizerStore, preferenceStore as preferences } from '../../stores';
+import { isAudioContextSupported, event } from '../../utils'
+import { equalizerStore, preferenceStore as preferences } from '../../stores'
 
 export default {
-  data() {
+  data () {
     return {
       idx: 0,
       bands: [],
       preampGainValue: 0,
-      selectedPresetIndex: -1,
-    };
+      selectedPresetIndex: -1
+    }
   },
 
   computed: {
-    presets() {
-      let clonedPreset = cloneDeep(equalizerStore.presets);
+    presets () {
+      const clonedPreset = cloneDeep(equalizerStore.presets)
       // Prepend an empty option for instruction purpose.
       clonedPreset.unshift({
         id: -1,
-        name: 'Preset',
-      });
-      return clonedPreset;
-    },
+        name: 'Preset'
+      })
+      return clonedPreset
+    }
   },
 
   watch: {
@@ -74,16 +75,16 @@ export default {
      * Watch selectedPresetIndex and trigger our logic.
      * @param {Number} val
      */
-    selectedPresetIndex(val) {
+    selectedPresetIndex (val) {
       /**
        * Save the selected preset (index) into local storage every time the value's changed.
        */
-      preferences.selectedPreset = val;
+      preferences.selectedPreset = val
 
       if (~~val !== -1) {
-        this.loadPreset(equalizerStore.getPresetById(val));
+        this.loadPreset(equalizerStore.getPresetById(val))
       }
-    },
+    }
   },
 
   methods: {
@@ -92,62 +93,63 @@ export default {
      *
      * @param  {Element} player The audio player's DOM.
      */
-    init(player) {
-      const settings = equalizerStore.get();
+    init (player) {
+      const settings = equalizerStore.get()
 
       const AudioContext = window.AudioContext ||
         window.webkitAudioContext ||
         window.mozAudioContext ||
         window.oAudioContext ||
-        window.msAudioContext;
+        window.msAudioContext
 
-      const context = new AudioContext();
+      const context = new AudioContext()
 
-      this.preampGainNode = context.createGain();
-      this.changePreampGain(settings.preamp);
+      this.preampGainNode = context.createGain()
+      this.changePreampGain(settings.preamp)
 
-      const source = context.createMediaElementSource(player);
-      source.connect(this.preampGainNode);
+      const source = context.createMediaElementSource(player)
+      source.connect(this.preampGainNode)
 
-      let prevFilter = null;
+      let prevFilter = null
 
       // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
-      [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000].forEach((f, i) => {
-        const filter = context.createBiquadFilter();
+      const freqs = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000]
+      freqs.forEach((f, i) => {
+        const filter = context.createBiquadFilter()
 
         if (i === 0) {
-          filter.type = 'lowshelf';
+          filter.type = 'lowshelf'
         } else if (i === 9) {
-          filter.type = 'highshelf';
+          filter.type = 'highshelf'
         } else {
-          filter.type = 'peaking';
+          filter.type = 'peaking'
         }
 
-        filter.gain.value = settings.gains[i] ? settings.gains[i] : 0;
-        filter.Q.value = 1;
-        filter.frequency.value = f;
+        filter.gain.value = settings.gains[i] ? settings.gains[i] : 0
+        filter.Q.value = 1
+        filter.frequency.value = f
 
-        prevFilter ? prevFilter.connect(filter) : this.preampGainNode.connect(filter);
-        prevFilter = filter;
+        prevFilter ? prevFilter.connect(filter) : this.preampGainNode.connect(filter)
+        prevFilter = filter
 
         this.bands.push({
           filter,
-          label: (f + '').replace('000', 'K'),
-        });
-      });
+          label: (f + '').replace('000', 'K')
+        })
+      })
 
-      prevFilter.connect(context.destination);
+      prevFilter.connect(context.destination)
 
-      this.$nextTick(this.createRangeSliders);
+      this.$nextTick(this.createRangeSliders)
 
       // Now we set this value to trigger the audio processing.
-      this.selectedPresetIndex = preferences.selectedPreset;
+      this.selectedPresetIndex = preferences.selectedPreset
     },
 
     /**
      * Create the UI slider for both the preamp and the normal bands using rangeslider.js.
      */
-    createRangeSliders() {
+    createRangeSliders () {
       $('#equalizer input[type="range"]').each((i, el) => {
         $(el).rangeslider({
           /**
@@ -165,9 +167,9 @@ export default {
            */
           onSlide: (position, value) => {
             if ($(el).parents('.band').is('.preamp')) {
-              this.changePreampGain(value);
+              this.changePreampGain(value)
             } else {
-              this.changeFilterGain(this.bands[i - 1].filter, value);
+              this.changeFilterGain(this.bands[i - 1].filter, value)
             }
           },
 
@@ -175,11 +177,11 @@ export default {
            * Save the settings and set the preset index to -1 (which is None) on slideEnd.
            */
           onSlideEnd: () => {
-            this.selectedPresetIndex = -1;
-            this.save();
-          },
-        });
-      });
+            this.selectedPresetIndex = -1
+            this.save()
+          }
+        })
+      })
     },
 
     /**
@@ -187,9 +189,9 @@ export default {
      *
      * @param  {Number} dbValue The value of the gain, in dB.
      */
-    changePreampGain(dbValue) {
-      this.preampGainValue = dbValue;
-      this.preampGainNode.gain.value = Math.pow(10, dbValue / 20);
+    changePreampGain (dbValue) {
+      this.preampGainValue = dbValue
+      this.preampGainNode.gain.value = Math.pow(10, dbValue / 20)
     },
 
     /**
@@ -198,48 +200,48 @@ export default {
      * @param  {Object} filter The filter object
      * @param  {Object} value  Value of the gain, in dB.
      */
-    changeFilterGain(filter, value) {
-      filter.gain.value = value;
+    changeFilterGain (filter, value) {
+      filter.gain.value = value
     },
 
     /**
      * Load a preset when the user select it from the dropdown.
      */
-    loadPreset(preset) {
+    loadPreset (preset) {
       $('#equalizer input[type=range]').each((i, input) => {
         // We treat our preamp slider differently.
         if ($(input).parents('.band').is('.preamp')) {
-          this.changePreampGain(preset.preamp);
+          this.changePreampGain(preset.preamp)
         } else {
-          this.changeFilterGain(this.bands[i - 1].filter, preset.gains[i - 1]);
-          input.value = preset.gains[i - 1];
+          this.changeFilterGain(this.bands[i - 1].filter, preset.gains[i - 1])
+          input.value = preset.gains[i - 1]
         }
-      });
+      })
 
       this.$nextTick(() => {
         // Update the slider values into GUI.
-        $('#equalizer input[type="range"]').rangeslider('update', true);
-      });
+        $('#equalizer input[type="range"]').rangeslider('update', true)
+      })
 
-      this.save();
+      this.save()
     },
 
     /**
      * Save the current user's equalizer preferences into local storage.
      */
-    save() {
-      equalizerStore.set(this.preampGainValue, map(this.bands, 'filter.gain.value'));
-    },
+    save () {
+      equalizerStore.set(this.preampGainValue, map(this.bands, 'filter.gain.value'))
+    }
   },
 
-  mounted() {
+  mounted () {
     event.on('equalizer:init', player => {
       if (isAudioContextSupported()) {
-        this.init(player);
+        this.init(player)
       }
-    });
-  },
-};
+    })
+  }
+}
 </script>
 
 <style lang="sass">

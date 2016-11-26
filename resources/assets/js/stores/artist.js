@@ -1,18 +1,18 @@
-import Vue from 'vue';
-import { reduce, each, find, union, difference, take, filter, orderBy } from 'lodash';
+import Vue from 'vue'
+import { reduce, each, find, union, difference, take, filter, orderBy } from 'lodash'
 
-import config from '../config';
-import stub from '../stubs/artist';
-import { albumStore } from '.';
+import config from '../config'
+import stub from '../stubs/artist'
+import { albumStore } from '.'
 
-const UNKNOWN_ARTIST_ID = 1;
-const VARIOUS_ARTISTS_ID = 2;
+const UNKNOWN_ARTIST_ID = 1
+const VARIOUS_ARTISTS_ID = 2
 
 export const artistStore = {
   stub,
 
   state: {
-    artists: [],
+    artists: []
   },
 
   /**
@@ -20,15 +20,15 @@ export const artistStore = {
    *
    * @param  {Array.<Object>} artists The array of artists we got from the server.
    */
-  init(artists) {
-    this.all = artists;
+  init (artists) {
+    this.all = artists
 
-    albumStore.init(this.all);
+    albumStore.init(this.all)
 
     // Traverse through artists array to get the cover and number of songs for each.
     each(this.all, artist => {
-      this.setupArtist(artist);
-    });
+      this.setupArtist(artist)
+    })
   },
 
   /**
@@ -36,9 +36,9 @@ export const artistStore = {
    *
    * @param  {Object} artist
    */
-  setupArtist(artist) {
-    this.getImage(artist);
-    Vue.set(artist, 'playCount', 0);
+  setupArtist (artist) {
+    this.getImage(artist)
+    Vue.set(artist, 'playCount', 0)
 
     // Here we build a list of songs performed by the artist, so that we don't need to traverse
     // down the "artist > albums > items" route later.
@@ -46,18 +46,18 @@ export const artistStore = {
     Vue.set(artist, 'songs', reduce(artist.albums, (songs, album) => {
       // If the album is compilation, we cater for the songs contributed by this artist only.
       if (album.is_compilation) {
-        return songs.concat(filter(album.songs, { contributing_artist_id: artist.id }));
+        return songs.concat(filter(album.songs, { contributing_artist_id: artist.id }))
       }
 
       // Otherwise, just use all songs in the album.
-      return songs.concat(album.songs);
-    }, []));
+      return songs.concat(album.songs)
+    }, []))
 
-    Vue.set(artist, 'songCount', artist.songs.length);
+    Vue.set(artist, 'songCount', artist.songs.length)
 
-    Vue.set(artist, 'info', null);
+    Vue.set(artist, 'info', null)
 
-    return artist;
+    return artist
   },
 
   /**
@@ -65,8 +65,8 @@ export const artistStore = {
    *
    * @return {Array.<Object>}
    */
-  get all() {
-    return this.state.artists;
+  get all () {
+    return this.state.artists
   },
 
   /**
@@ -74,8 +74,8 @@ export const artistStore = {
    *
    * @param  {Array.<Object>} value
    */
-  set all(value) {
-    this.state.artists = value;
+  set all (value) {
+    this.state.artists = value
   },
 
   /**
@@ -83,8 +83,8 @@ export const artistStore = {
    *
    * @param  {Number} id
    */
-  byId(id) {
-    return find(this.all, { id });
+  byId (id) {
+    return find(this.all, { id })
   },
 
   /**
@@ -92,11 +92,11 @@ export const artistStore = {
    *
    * @param  {Array.<Object>|Object} artists
    */
-  add(artists) {
-    artists = [].concat(artists);
-    each(artists, a => this.setupArtist(a));
+  add (artists) {
+    artists = [].concat(artists)
+    each(artists, a => this.setupArtist(a))
 
-    this.all = union(this.all, artists);
+    this.all = union(this.all, artists)
   },
 
   /**
@@ -104,8 +104,8 @@ export const artistStore = {
    *
    * @param  {Array.<Object>|Object} artists
    */
-  remove(artists) {
-    this.all = difference(this.all, [].concat(artists));
+  remove (artists) {
+    this.all = difference(this.all, [].concat(artists))
   },
 
   /**
@@ -115,16 +115,16 @@ export const artistStore = {
    * @param {Array.<Object>|Object} albums
    *
    */
-  addAlbumsIntoArtist(artist, albums) {
-    albums = [].concat(albums);
+  addAlbumsIntoArtist (artist, albums) {
+    albums = [].concat(albums)
 
-    artist.albums = union(artist.albums ? artist.albums : [], albums);
+    artist.albums = union(artist.albums ? artist.albums : [], albums)
 
     each(albums, album => {
-      album.artist_id = artist.id;
-      album.artist = artist;
-      artist.playCount += album.playCount;
-    });
+      album.artist_id = artist.id
+      album.artist = artist
+      artist.playCount += album.playCount
+    })
   },
 
   /**
@@ -133,10 +133,12 @@ export const artistStore = {
    * @param  {Object} artist
    * @param  {Array.<Object>|Object} albums
    */
-  removeAlbumsFromArtist(artist, albums) {
-    albums = [].concat(albums);
-    artist.albums = difference(artist.albums, albums);
-    each(albums, album => artist.playCount -= album.playCount);
+  removeAlbumsFromArtist (artist, albums) {
+    albums = [].concat(albums)
+    artist.albums = difference(artist.albums, albums)
+    each(albums, album => {
+      artist.playCount -= album.playCount
+    })
   },
 
   /**
@@ -146,8 +148,8 @@ export const artistStore = {
    *
    * @return {boolean}
    */
-  isArtistEmpty(artist) {
-    return !artist.albums.length;
+  isArtistEmpty (artist) {
+    return !artist.albums.length
   },
 
   /**
@@ -157,8 +159,8 @@ export const artistStore = {
    *
    * @return {Boolean}
    */
-  isVariousArtists(artist) {
-    return artist.id === VARIOUS_ARTISTS_ID;
+  isVariousArtists (artist) {
+    return artist.id === VARIOUS_ARTISTS_ID
   },
 
   /**
@@ -168,8 +170,8 @@ export const artistStore = {
    *
    * @return {Boolean}
    */
-  isUnknownArtist(artist) {
-    return artist.id === UNKNOWN_ARTIST_ID;
+  isUnknownArtist (artist) {
+    return artist.id === UNKNOWN_ARTIST_ID
   },
 
   /**
@@ -179,8 +181,8 @@ export const artistStore = {
    *
    * @return {Array.<Object>}
    */
-  getSongsByArtist(artist) {
-    return artist.songs;
+  getSongsByArtist (artist) {
+    return artist.songs
   },
 
   /**
@@ -190,23 +192,23 @@ export const artistStore = {
    *
    * @return {String}
    */
-  getImage(artist) {
+  getImage (artist) {
     if (!artist.image) {
       // Try to get an image from one of the albums.
-      artist.image = config.unknownCover;
+      artist.image = config.unknownCover
 
       artist.albums.every(album => {
         // If there's a "real" cover, use it.
         if (album.image !== config.unknownCover) {
-          artist.image = album.cover;
+          artist.image = album.cover
 
           // I want to break free.
-          return false;
+          return false
         }
-      });
+      })
     }
 
-    return artist.image;
+    return artist.image
   },
 
   /**
@@ -216,15 +218,15 @@ export const artistStore = {
    *
    * @return {Array.<Object>}
    */
-  getMostPlayed(n = 6) {
+  getMostPlayed (n = 6) {
     // Only non-unknown artists with actually play count are applicable.
     // Also, "Various Artists" doesn't count.
     const applicable = filter(this.all, artist => {
-      return artist.playCount
-        && !this.isUnknownArtist(artist)
-        && !this.isVariousArtists(artist);
-    });
+      return artist.playCount &&
+        !this.isUnknownArtist(artist) &&
+        !this.isVariousArtists(artist)
+    })
 
-    return take(orderBy(applicable, 'playCount', 'desc'), n);
-  },
-};
+    return take(orderBy(applicable, 'playCount', 'desc'), n)
+  }
+}

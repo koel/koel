@@ -10,24 +10,24 @@
 </template>
 
 <script>
-import { userStore } from '../../stores';
-import { event } from '../../utils';
+import { userStore } from '../../stores'
+import { event } from '../../utils'
 
 export default {
   name: 'site-header--user-badge',
 
-  data() {
+  data () {
     return {
-      state: userStore.state,
-    };
+      state: userStore.state
+    }
   },
 
   methods: {
-    logout() {
-      event.emit('logout');
-    },
-  },
-};
+    logout () {
+      event.emit('logout')
+    }
+  }
+}
 </script>
 
 <style lang="sass">

@@ -1,5 +1,5 @@
-import album from './album';
-import artist from './artist';
+import album from './album'
+import artist from './artist'
 
 export default {
   album,
@@ -12,5 +12,5 @@ export default {
   lyrics: '',
   liked: false,
   playCount: 0,
-  playbackState: 'stopped',
-};
+  playbackState: 'stopped'
+}

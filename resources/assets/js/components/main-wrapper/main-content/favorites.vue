@@ -35,12 +35,10 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
-
-import { pluralize } from '../../../utils';
-import { favoriteStore, sharedStore } from '../../../stores';
-import { playback, download } from '../../../services';
-import hasSongList from '../../../mixins/has-song-list';
+import { pluralize } from '../../../utils'
+import { favoriteStore, sharedStore } from '../../../stores'
+import { download } from '../../../services'
+import hasSongList from '../../../mixins/has-song-list'
 
 export default {
   name: 'main-wrapper--main-content--favorites',
@@ -50,19 +48,19 @@ export default {
   data () {
     return {
       state: favoriteStore.state,
-      sharedState: sharedStore.state,
-    };
+      sharedState: sharedStore.state
+    }
   },
 
   methods: {
     /**
      * Download all favorite songs.
      */
-    download() {
-      download.fromFavorites();
-    },
-  },
-};
+    download () {
+      download.fromFavorites()
+    }
+  }
+}
 </script>
 
 <style lang="sass">

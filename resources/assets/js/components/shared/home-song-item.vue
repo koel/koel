@@ -21,9 +21,9 @@
 </template>
 
 <script>
-import { pluralize } from '../../utils';
-import { queueStore } from '../../stores';
-import { playback } from '../../services';
+import { pluralize } from '../../utils'
+import { queueStore } from '../../stores'
+import { playback } from '../../services'
 
 export default {
   name: 'shared--home-song-item',
@@ -31,31 +31,31 @@ export default {
   filters: { pluralize },
 
   computed: {
-    showPlayCount() {
-      return this.topPlayCount && this.song.playCount;
-    },
+    showPlayCount () {
+      return this.topPlayCount && this.song.playCount
+    }
   },
 
   methods: {
-    play() {
+    play () {
       if (!queueStore.contains(this.song)) {
-        queueStore.queueAfterCurrent(this.song);
+        queueStore.queueAfterCurrent(this.song)
       }
 
-      playback.play(this.song);
+      playback.play(this.song)
     },
 
-    changeSongState() {
+    changeSongState () {
       if (this.song.playbackState === 'stopped') {
-        this.play(this.song);
+        this.play(this.song)
       } else if (this.song.playbackState === 'paused') {
-        playback.resume();
+        playback.resume()
       } else {
-        playback.pause();
+        playback.pause()
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>

@@ -25,24 +25,21 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
-
-import { pluralize } from '../../../utils';
-import { songStore } from '../../../stores';
-import { playback } from '../../../services';
-import hasSongList from '../../../mixins/has-song-list';
+import { pluralize } from '../../../utils'
+import { songStore } from '../../../stores'
+import hasSongList from '../../../mixins/has-song-list'
 
 export default {
   name: 'main-wrapper--main-content--songs',
   mixins: [hasSongList],
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
       state: songStore.state
-    };
-  },
-};
+    }
+  }
+}
 </script>
 
 <style lang="sass">

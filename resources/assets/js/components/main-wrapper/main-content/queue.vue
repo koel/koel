@@ -34,32 +34,32 @@
 </template>
 
 <script>
-import { pluralize } from '../../../utils';
-import { queueStore, songStore } from '../../../stores';
-import { playback } from '../../../services';
-import hasSongList from '../../../mixins/has-song-list';
+import { pluralize } from '../../../utils'
+import { queueStore, songStore } from '../../../stores'
+import { playback } from '../../../services'
+import hasSongList from '../../../mixins/has-song-list'
 
 export default {
   name: 'main-wrapper--main-content--queue',
   mixins: [hasSongList],
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
       state: queueStore.state,
       songListControlConfig: {
-        clearQueue: true,
+        clearQueue: true
       }
-    };
+    }
   },
 
   computed: {
     /**
      * Determine if we should display a "Shuffle All" link.
      */
-    showShufflingAllOption() {
-      return songStore.all.length;
-    },
+    showShufflingAllOption () {
+      return songStore.all.length
+    }
   },
 
   methods: {
@@ -67,18 +67,18 @@ export default {
      * Shuffle all songs we have.
      * Overriding the mixin.
      */
-    shuffleAll() {
-      playback.queueAndPlay(this.state.songs.length ? this.state.songs : songStore.all, true);
+    shuffleAll () {
+      playback.queueAndPlay(this.state.songs.length ? this.state.songs : songStore.all, true)
     },
 
     /**
      * Clear the queue.
      */
-    clearQueue() {
-      queueStore.clear();
-    },
-  },
-};
+    clearQueue () {
+      queueStore.clear()
+    }
+  }
+}
 </script>
 
 <style lang="sass">

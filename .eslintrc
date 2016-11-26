@@ -1,0 +1,6 @@
+{
+  "extends": "vue",
+  "rules": {
+    "no-multi-str": "off"
+  }
+}

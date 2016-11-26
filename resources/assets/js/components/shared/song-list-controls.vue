@@ -39,9 +39,8 @@
 </template>
 
 <script>
-import { assign } from 'lodash';
-import { queueStore } from '../../stores';
-import addToMenu from './add-to-menu.vue';
+import { assign } from 'lodash'
+import addToMenu from './add-to-menu.vue'
 
 export default {
   name: 'shared--song-list-controls',
@@ -49,7 +48,7 @@ export default {
 
   components: { addToMenu },
 
-  data() {
+  data () {
     return {
       fullConfig: {
         shuffle: true,
@@ -57,52 +56,52 @@ export default {
           queue: true,
           favorites: true,
           playlists: true,
-          newPlaylist: true,
+          newPlaylist: true
         },
         clearQueue: false,
         deletePlaylist: false
       },
       showingAddToMenu: false,
       numberOfQueuedSongs: 0
-    };
+    }
   },
 
   computed: {
-    showClearQueueButton() {
-      return this.fullConfig.clearQueue;
+    showClearQueueButton () {
+      return this.fullConfig.clearQueue
     },
 
-    showDeletePlaylistButton() {
-      return this.fullConfig.deletePlaylist;
-    },
+    showDeletePlaylistButton () {
+      return this.fullConfig.deletePlaylist
+    }
   },
 
-  mounted() {
-    assign(this.fullConfig, this.config);
+  mounted () {
+    assign(this.fullConfig, this.config)
   },
 
   methods: {
-    shuffle() {
-      this.$emit('shuffleAll');
+    shuffle () {
+      this.$emit('shuffleAll')
     },
 
-    shuffleSelected() {
-      this.$emit('shuffleSelected');
+    shuffleSelected () {
+      this.$emit('shuffleSelected')
     },
 
-    clearQueue() {
-      this.$emit('clearQueue');
+    clearQueue () {
+      this.$emit('clearQueue')
     },
 
-    deletePlaylist() {
-      this.$emit('deletePlaylist');
+    deletePlaylist () {
+      this.$emit('deletePlaylist')
     },
 
-    closeAddToMenu() {
-      this.showingAddToMenu = false;
+    closeAddToMenu () {
+      this.showingAddToMenu = false
     }
   }
-};
+}
 </script>
 
 <style lang="sass"></style>

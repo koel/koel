@@ -1,2 +1,2 @@
-export * from './focus';
-export * from './clickaway';
+export * from './focus'
+export * from './clickaway'

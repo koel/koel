@@ -37,31 +37,30 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
-import swal from 'sweetalert';
+import swal from 'sweetalert'
 
-import { pluralize, event } from '../../../utils';
-import { playlistStore, sharedStore } from '../../../stores';
-import { playback, download } from '../../../services';
-import router from '../../../router';
-import hasSongList from '../../../mixins/has-song-list';
+import { pluralize, event } from '../../../utils'
+import { playlistStore, sharedStore } from '../../../stores'
+import { playback, download } from '../../../services'
+import router from '../../../router'
+import hasSongList from '../../../mixins/has-song-list'
 
 export default {
   name: 'main-wrapper--main-content--playlist',
   mixins: [hasSongList],
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
       playlist: playlistStore.stub,
       sharedState: sharedStore.state,
       songListControlConfig: {
-        deletePlaylist: true,
-      },
-    };
+        deletePlaylist: true
+      }
+    }
   },
 
-  created() {
+  created () {
     /**
      * Listen to 'main-content-view:load' event to load the requested
      * playlist into view if applicable.
@@ -71,9 +70,9 @@ export default {
      */
     event.on('main-content-view:load', (view, playlist) => {
       if (view === 'playlist') {
-        this.playlist = playlist;
+        this.playlist = playlist
       }
-    });
+    })
   },
 
   methods: {
@@ -81,19 +80,18 @@ export default {
      * Shuffle the songs in the current playlist.
      * Overriding the mixin.
      */
-    shuffleAll() {
-      playback.queueAndPlay(this.playlist.songs, true);
+    shuffleAll () {
+      playback.queueAndPlay(this.playlist.songs, true)
     },
 
     /**
      * Confirm deleting the playlist.
      */
-    confirmDelete() {
+    confirmDelete () {
       // If the playlist is empty, just go ahead and delete it.
       if (!this.playlist.songs.length) {
-        this.del();
-
-        return;
+        this.del()
+        return
       }
 
       swal({
@@ -101,32 +99,32 @@ export default {
         text: 'Once it’s gone, it’s gone, and there’s no turning back.',
         type: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, go ahead',
-      }, this.del);
+        confirmButtonText: 'Yes, go ahead'
+      }, this.del)
     },
 
     /**
      * Delete the current playlist.
      */
-    del() {
+    del () {
       playlistStore.delete(this.playlist).then(() => {
         // Reset the current playlist to our stub, so that we don't encounter
         // any property reference error.
-        this.playlist = playlistStore.stub;
+        this.playlist = playlistStore.stub
 
         // Switch back to Home screen
-        router.go('home');
-      });
+        router.go('home')
+      })
     },
 
     /**
      * Download all songs in the current playlist.
      */
-    download() {
-      return download.fromPlaylist(this.playlist);
-    },
-  },
-};
+    download () {
+      return download.fromPlaylist(this.playlist)
+    }
+  }
+}
 </script>
 
 <style lang="sass">

@@ -21,104 +21,104 @@
 </template>
 
 <script>
-import $ from 'jquery';
-import { filterBy } from '../../utils';
+import $ from 'jquery'
+import { filterBy } from '../../utils'
 
 export default {
   props: ['options', 'value', 'items'],
 
-  data() {
+  data () {
     return {
       filter: '',
       showingResult: false,
-      mutatedValue: this.value,
-    };
+      mutatedValue: this.value
+    }
   },
 
   computed: {
-    displayedItems() {
-      return filterBy(this.items, this.filter, this.options.filterKey);
-    },
+    displayedItems () {
+      return filterBy(this.items, this.filter, this.options.filterKey)
+    }
   },
 
   methods: {
     /**
      * Navigate down the result list.
      */
-    down(e) {
-      const selected = $(this.$el).find('.result li.selected');
+    down (e) {
+      const selected = $(this.$el).find('.result li.selected')
 
       if (!selected.length || !selected.removeClass('selected').next('li').addClass('selected').length) {
-        $(this.$el).find('.result li:first').addClass('selected');
+        $(this.$el).find('.result li:first').addClass('selected')
       }
 
-      this.scrollSelectedIntoView(false);
-      this.apply();
+      this.scrollSelectedIntoView(false)
+      this.apply()
     },
 
     /**
      * Navigate up the result list.
      */
-    up(e) {
-      const selected = $(this.$el).find('.result li.selected');
+    up (e) {
+      const selected = $(this.$el).find('.result li.selected')
 
       if (!selected.length || !selected.removeClass('selected').prev('li').addClass('selected').length) {
-        $(this.$el).find('.result li:last').addClass('selected');
+        $(this.$el).find('.result li:last').addClass('selected')
       }
 
-      this.scrollSelectedIntoView(true);
-      this.apply();
+      this.scrollSelectedIntoView(true)
+      this.apply()
     },
 
     /**
      * Handle ENTER or TAB keydown events.
      */
-    enter() {
-      this.apply();
-      this.showingResult = false;
+    enter () {
+      this.apply()
+      this.showingResult = false
     },
 
-    keyup(e) {
+    keyup (e) {
       /**
        * If it's an UP or DOWN arrow key, stop event bubbling.
        * The actually result navigation is handled by this.up() and this.down().
        */
       if (e.keyCode === 38 || e.keyCode === 40) {
-        e.stopPropagation();
-        e.preventDefault();
+        e.stopPropagation()
+        e.preventDefault()
 
-        return;
+        return
       }
 
       // If it's an ENTER or TAB key, don't do anything.
       // We've handled ENTER & TAB on keydown.
       if (e.keyCode === 13 || e.keyCode === 9) {
-        return;
+        return
       }
 
       // Hide the typeahead results and reset the value if ESC is pressed.
       if (e.keyCode === 27) {
-        this.showingResult = false;
+        this.showingResult = false
 
-        return;
+        return
       }
 
-      this.filter = this.mutatedValue;
-      this.showingResult = true;
+      this.filter = this.mutatedValue
+      this.showingResult = true
     },
 
-    resultClick(e) {
-      $(this.$el).find('.result li.selected').removeClass('selected');
-      $(e.target).addClass('selected');
+    resultClick (e) {
+      $(this.$el).find('.result li.selected').removeClass('selected')
+      $(e.target).addClass('selected')
 
-      this.apply();
-      this.showingResult = false;
+      this.apply()
+      this.showingResult = false
     },
 
-    apply() {
-      this.mutatedValue = $(this.$el).find('.result li.selected').text().trim() || this.mutatedValue;
+    apply () {
+      this.mutatedValue = $(this.$el).find('.result li.selected').text().trim() || this.mutatedValue
       // In Vue 2.0, we can use v-model on custom components like this.
-      this.$emit('input', this.mutatedValue);
+      this.$emit('input', this.mutatedValue)
     },
 
     /**
@@ -126,25 +126,25 @@ export default {
      *
      * @param  {boolean} alignTop Whether the item should be aligned to top of its container.
      */
-    scrollSelectedIntoView(alignTop) {
-      const elem = $(this.$el).find('.result li.selected')[0];
+    scrollSelectedIntoView (alignTop) {
+      const elem = $(this.$el).find('.result li.selected')[0]
       if (!elem) {
-        return;
+        return
       }
 
-      const elemRect = elem.getBoundingClientRect();
-      const containerRect = elem.offsetParent.getBoundingClientRect();
+      const elemRect = elem.getBoundingClientRect()
+      const containerRect = elem.offsetParent.getBoundingClientRect()
 
       if (elemRect.bottom > containerRect.bottom || elemRect.top < containerRect.top) {
-        elem.scrollIntoView(alignTop);
+        elem.scrollIntoView(alignTop)
       }
     },
 
-    hideResults() {
-      this.showingResult = false;
-    },
-  },
-};
+    hideResults () {
+      this.showingResult = false
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>

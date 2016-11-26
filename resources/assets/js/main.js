@@ -1,7 +1,7 @@
-import Vue from 'vue';
+import Vue from 'vue'
 
-import { event } from './utils';
-import { http } from './services';
+import { event } from './utils'
+import { http } from './services'
 /**
  * For Ancelot, the ancient cross of war
  * for the holy town of Gods
@@ -11,8 +11,8 @@ import { http } from './services';
 new Vue({
   el: '#app',
   render: h => h(require('./app.vue')),
-  created() {
-    event.init();
-    http.init();
-  },
-});
+  created () {
+    event.init()
+    http.init()
+  }
+})

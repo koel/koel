@@ -14,36 +14,36 @@
 </template>
 
 <script>
-import config from '../../config';
-import { event } from '../../utils';
-import searchForm from './search-form.vue';
-import userBadge from './user-badge.vue';
+import config from '../../config'
+import { event } from '../../utils'
+import searchForm from './search-form.vue'
+import userBadge from './user-badge.vue'
 
 export default {
   components: { searchForm, userBadge },
 
-  data() {
+  data () {
     return {
-      appTitle: config.appTitle,
-    };
+      appTitle: config.appTitle
+    }
   },
 
   methods: {
     /**
      * No I'm not documenting this.
      */
-    toggleSidebar() {
-      event.emit('sidebar:toggle');
+    toggleSidebar () {
+      event.emit('sidebar:toggle')
     },
 
     /**
      * or this.
      */
-    toggleSearchForm() {
-      event.emit('search:toggle');
-    },
-  },
-};
+    toggleSearchForm () {
+      event.emit('search:toggle')
+    }
+  }
+}
 </script>
 
 <style lang="sass">

@@ -42,7 +42,7 @@ export default {
   // They call the Rising Sun
   // And it's been the ruin of many a poor boy
   // And God, I know I'm one.
-};
+}
 </script>
 
 <style lang="sass">

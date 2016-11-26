@@ -20,20 +20,20 @@
 </template>
 
 <script>
-import $ from 'jquery';
+import $ from 'jquery'
 
-import { event } from '../../../utils';
-import { songStore, playlistStore, favoriteStore } from '../../../stores';
+import { event } from '../../../utils'
+import { songStore, playlistStore, favoriteStore } from '../../../stores'
 
 export default {
   props: ['playlist', 'type'],
 
-  data() {
+  data () {
     return {
       newName: '',
       editing: false,
-      active: false,
-    };
+      active: false
+    }
   },
 
   computed: {
@@ -42,53 +42,53 @@ export default {
      *
      * @return {Boolean}
      */
-    isFavorites() {
-      return this.type === 'favorites';
+    isFavorites () {
+      return this.type === 'favorites'
     },
 
-    playlistUrl() {
-      return this.isFavorites ? '/#!/favorites' : `/#!/playlist/${this.playlist.id}`;
-    },
+    playlistUrl () {
+      return this.isFavorites ? '/#!/favorites' : `/#!/playlist/${this.playlist.id}`
+    }
   },
 
   methods: {
     /**
      * Show the form to edit the playlist.
      */
-    edit() {
+    edit () {
       if (this.isFavorites) {
-        return;
+        return
       }
 
-      this.beforeEditCache = this.playlist.name;
-      this.editing = true;
+      this.beforeEditCache = this.playlist.name
+      this.editing = true
     },
 
     /**
      * Update the playlist's name.
      */
-    update() {
+    update () {
       if (this.isFavorites || !this.editing) {
-        return;
+        return
       }
 
-      this.editing = false;
+      this.editing = false
 
-      this.playlist.name = this.playlist.name.trim();
+      this.playlist.name = this.playlist.name.trim()
       if (!this.playlist.name) {
-        this.playlist.name = this.beforeEditCache;
-        return;
+        this.playlist.name = this.beforeEditCache
+        return
       }
 
-      playlistStore.update(this.playlist);
+      playlistStore.update(this.playlist)
     },
 
     /**
      * Cancel editing.
      */
-    cancelEdit() {
-      this.editing = false;
-      this.playlist.name = this.beforeEditCache;
+    cancelEdit () {
+      this.editing = false
+      this.playlist.name = this.beforeEditCache
     },
 
     /**
@@ -96,8 +96,8 @@ export default {
      *
      * @param {Object} e The dragleave event.
      */
-    removeDroppableState(e) {
-      $(e.target).removeClass('droppable');
+    removeDroppableState (e) {
+      $(e.target).removeClass('droppable')
     },
 
     /**
@@ -106,11 +106,11 @@ export default {
      *
      * @param {Object} e The dragover event.
      */
-    allowDrop(e) {
-      $(e.target).addClass('droppable');
-      e.dataTransfer.dropEffect = 'move';
+    allowDrop (e) {
+      $(e.target).addClass('droppable')
+      e.dataTransfer.dropEffect = 'move'
 
-      return false;
+      return false
     },
 
     /**
@@ -120,41 +120,41 @@ export default {
      *
      * @return {Boolean}
      */
-    handleDrop(e) {
-      this.removeDroppableState(e);
+    handleDrop (e) {
+      this.removeDroppableState(e)
 
       if (!e.dataTransfer.getData('application/x-koel.text+plain')) {
-        return false;
+        return false
       }
 
-      const songs = songStore.byIds(e.dataTransfer.getData('application/x-koel.text+plain').split(','));
+      const songs = songStore.byIds(e.dataTransfer.getData('application/x-koel.text+plain').split(','))
 
       if (!songs.length) {
-        return false;
+        return false
       }
 
       if (this.type === 'favorites') {
-        favoriteStore.like(songs);
+        favoriteStore.like(songs)
       } else {
-        playlistStore.addSongs(this.playlist, songs);
+        playlistStore.addSongs(this.playlist, songs)
       }
 
-      return false;
-    },
+      return false
+    }
   },
 
-  created() {
+  created () {
     event.on('main-content-view:load', (view, playlist) => {
       if (view === 'favorites') {
-        this.active = this.isFavorites;
+        this.active = this.isFavorites
       } else if (view === 'playlist') {
-        this.active = this.playlist === playlist;
+        this.active = this.playlist === playlist
       } else {
-        this.active = false;
+        this.active = false
       }
-    });
-  },
-};
+    })
+  }
+}
 </script>
 
 <style lang="sass" scoped>

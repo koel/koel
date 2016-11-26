@@ -4,5 +4,5 @@ export default {
   image: null,
   playCount: 0,
   albums: [],
-  songs: [],
-};
+  songs: []
+}

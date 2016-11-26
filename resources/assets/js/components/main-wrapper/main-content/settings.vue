@@ -24,18 +24,18 @@
 </template>
 
 <script>
-import swal from 'sweetalert';
+import swal from 'sweetalert'
 
-import { settingStore, sharedStore } from '../../../stores';
-import { parseValidationError, forceReloadWindow, event, showOverlay, hideOverlay } from '../../../utils';
-import router from '../../../router';
+import { settingStore, sharedStore } from '../../../stores'
+import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay } from '../../../utils'
+import router from '../../../router'
 
 export default {
-  data() {
+  data () {
     return {
       state: settingStore.state,
-      sharedState: sharedStore.state,
-    };
+      sharedState: sharedStore.state
+    }
   },
 
   computed: {
@@ -44,15 +44,15 @@ export default {
      *
      * @return {boolean}
      */
-    shouldWarn() {
+    shouldWarn () {
       // Warn the user if the media path is not empty and about to change.
       return this.sharedState.originalMediaPath &&
-        this.sharedState.originalMediaPath !== this.state.settings.media_path.trim();
-    },
+        this.sharedState.originalMediaPath !== this.state.settings.media_path.trim()
+    }
   },
 
   methods: {
-    confirmThenSave() {
+    confirmThenSave () {
       if (this.shouldWarn) {
         swal({
           title: 'Be careful!',
@@ -61,42 +61,42 @@ export default {
           type: 'warning',
           showCancelButton: true,
           confirmButtonText: 'I know. Go ahead.',
-          confirmButtonColor: '#c34848',
-        }, this.save);
+          confirmButtonColor: '#c34848'
+        }, this.save)
       } else {
-        this.save();
+        this.save()
       }
     },
 
     /**
      * Save the settings.
      */
-    save() {
-      showOverlay();
+    save () {
+      showOverlay()
 
       settingStore.update().then(() => {
         // Make sure we're back to home first.
-        router.go('home');
-        forceReloadWindow();
+        router.go('home')
+        forceReloadWindow()
       }).catch(r => {
-        let msg = 'Unknown error.';
+        let msg = 'Unknown error.'
 
         if (r.status === 422) {
-          msg = parseValidationError(r.responseJSON)[0];
+          msg = parseValidationError(r.responseJSON)[0]
         }
 
-        hideOverlay();
+        hideOverlay()
 
         swal({
           title: 'Something went wrong',
           text: msg,
           type: 'error',
-          allowOutsideClick: true,
-        });
-      });
-    },
-  },
-};
+          allowOutsideClick: true
+        })
+      })
+    }
+  }
+}
 </script>
 
 <style lang="sass">

@@ -1,13 +1,13 @@
-import { jsdom } from 'jsdom';
+import { jsdom } from 'jsdom'
 
-const doc = jsdom('<!doctype html><html><body></body></html>');
-const win = doc.defaultView;
+const doc = jsdom('<!doctype html><html><body></body></html>')
+const win = doc.defaultView
 
-global.document = doc;
-global.window = win;
+global.document = doc
+global.window = win
 
 Object.keys(window).forEach((key) => {
   if (!(key in global)) {
-    global[key] = window[key];
+    global[key] = window[key]
   }
-});
+})

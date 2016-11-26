@@ -56,17 +56,16 @@
 </template>
 
 <script>
-import config from '../../config';
-import { playback } from '../../services';
-import { isAudioContextSupported, event } from '../../utils';
-import { songStore, favoriteStore, preferenceStore } from '../../stores';
+import { playback } from '../../services'
+import { isAudioContextSupported, event } from '../../utils'
+import { songStore, favoriteStore, preferenceStore } from '../../stores'
 
-import soundBar from '../shared/sound-bar.vue';
-import equalizer from './equalizer.vue';
-import volume from './volume.vue';
+import soundBar from '../shared/sound-bar.vue'
+import equalizer from './equalizer.vue'
+import volume from './volume.vue'
 
 export default {
-  data() {
+  data () {
     return {
       song: songStore.stub,
       viewingQueue: false,
@@ -80,8 +79,8 @@ export default {
        *
        * @type {Boolean}
        */
-      useEqualizer: isAudioContextSupported(),
-    };
+      useEqualizer: isAudioContextSupported()
+    }
   },
 
   components: { soundBar, equalizer, volume },
@@ -92,8 +91,8 @@ export default {
      *
      * @return {?Object}
      */
-    prev() {
-      return playback.previous;
+    prev () {
+      return playback.previous
     },
 
     /**
@@ -101,76 +100,76 @@ export default {
      *
      * @return {?Object}
      */
-    next() {
-      return playback.next;
-    },
+    next () {
+      return playback.next
+    }
   },
 
   methods: {
     /**
      * Play the previous song in queue.
      */
-    playPrev() {
-      return playback.playPrev();
+    playPrev () {
+      return playback.playPrev()
     },
 
     /**
      * Play the next song in queue.
      */
-    playNext() {
-      return playback.playNext();
+    playNext () {
+      return playback.playNext()
     },
 
     /**
      * Resume the current song.
      * If the current song is the stub, just play the first song in the queue.
      */
-    resume() {
+    resume () {
       if (!this.song.id) {
-        return playback.playFirstInQueue();
+        return playback.playFirstInQueue()
       }
 
-      playback.resume();
+      playback.resume()
     },
 
     /**
      * Pause the playback.
      */
-    pause() {
-      playback.pause();
+    pause () {
+      playback.pause()
     },
 
     /**
      * Change the repeat mode.
      */
-    changeRepeatMode() {
-      return playback.changeRepeatMode();
+    changeRepeatMode () {
+      return playback.changeRepeatMode()
     },
 
     /**
      * Like the current song.
      */
-    like() {
+    like () {
       if (!this.song.id) {
-        return;
+        return
       }
 
-      favoriteStore.toggleOne(this.song);
+      favoriteStore.toggleOne(this.song)
     },
 
     /**
      * Toggle hide or show the extra panel.
      */
-    toggleExtraPanel() {
-      preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel);
+    toggleExtraPanel () {
+      preferenceStore.set('showExtraPanel', !this.prefs.showExtraPanel)
     },
 
-    closeEqualizer() {
-      this.showEqualizer = false;
-    },
+    closeEqualizer () {
+      this.showEqualizer = false
+    }
   },
 
-  created() {
+  created () {
     event.on({
       /**
        * Listen to song:played event to set the current playing song and the cover image.
@@ -180,20 +179,24 @@ export default {
        * @return {Boolean}
        */
       'song:played': song => {
-        this.song = song;
-        this.cover = this.song.album.cover;
+        this.song = song
+        this.cover = this.song.album.cover
       },
 
       /**
        * Listen to main-content-view:load event and highlight the Queue icon if
        * the Queue screen is being loaded.
        */
-      'main-content-view:load': view => this.viewingQueue = view === 'queue',
+      'main-content-view:load': view => {
+        this.viewingQueue = view === 'queue'
+      },
 
-      'koel:teardown': () => this.song = songStore.stub,
-    });
-  },
-};
+      'koel:teardown': () => {
+        this.song = songStore.stub
+      }
+    })
+  }
+}
 </script>
 
 <style lang="sass">

@@ -7,35 +7,33 @@
 </template>
 
 <script>
-import { playback } from '../../services';
+import { playback } from '../../services'
 
 export default {
-  data() {
+  data () {
     return {
-      muted: false,
-    };
+      muted: false
+    }
   },
 
   methods: {
     /**
      * Mute the volume.
      */
-    mute() {
-      this.muted = true;
-
-      return playback.mute();
+    mute () {
+      this.muted = true
+      return playback.mute()
     },
 
     /**
      * Unmute the volume.
      */
-    unmute() {
-      this.muted = false;
-
-      return playback.unmute();
-    },
-  },
-};
+    unmute () {
+      this.muted = false
+      return playback.unmute()
+    }
+  }
+}
 </script>
 
 <style lang="sass">

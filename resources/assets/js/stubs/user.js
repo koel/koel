@@ -3,5 +3,5 @@ export default {
   name: '',
   email: '',
   avatar: '',
-  is_admin: false,
-};
+  is_admin: false
+}

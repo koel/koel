@@ -1,12 +1,12 @@
-import { shuffle, orderBy } from 'lodash';
-import $ from 'jquery';
-import plyr from 'plyr';
-import Vue from 'vue';
+import { shuffle, orderBy } from 'lodash'
+import $ from 'jquery'
+import plyr from 'plyr'
+import Vue from 'vue'
 
-import { event } from '../utils';
-import { queueStore, sharedStore, userStore, songStore, artistStore, preferenceStore as preferences } from '../stores';
-import config from '../config';
-import router from '../router';
+import { event } from '../utils'
+import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '../stores'
+import config from '../config'
+import router from '../router'
 
 export const playback = {
   player: null,
@@ -17,63 +17,63 @@ export const playback = {
   /**
    * Initialize the playback service for this whole Koel app.
    */
-  init() {
+  init () {
     // We don't need to init this service twice, or the media events will be duplicated.
     if (this.initialized) {
-      return;
+      return
     }
 
     this.player = plyr.setup({
-      controls: [],
-    })[0];
+      controls: []
+    })[0]
 
-    this.audio = $('audio');
+    this.audio = $('audio')
 
-    this.$volumeInput = $('#volumeRange');
+    this.$volumeInput = $('#volumeRange')
 
     /**
      * Listen to 'error' event on the audio player and play the next song if any.
      */
     document.querySelector('.plyr').addEventListener('error', e => {
-      this.playNext();
-    }, true);
+      this.playNext()
+    }, true)
 
     /**
      * Listen to 'ended' event on the audio player and play the next song in the queue.
      */
     document.querySelector('.plyr').addEventListener('ended', e => {
       if (sharedStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
-        songStore.scrobble(queueStore.current);
+        songStore.scrobble(queueStore.current)
       }
 
       if (preferences.repeatMode === 'REPEAT_ONE') {
-        this.restart();
+        this.restart()
 
-        return;
+        return
       }
 
-      this.playNext();
-    });
+      this.playNext()
+    })
 
     /**
      * Attempt to preload the next song if the current song is about to end.
      */
     document.querySelector('.plyr').addEventListener('timeupdate', e => {
       if (!this.player.media.duration || this.player.media.currentTime + 10 < this.player.media.duration) {
-        return;
+        return
       }
 
       // The current song has only 10 seconds left to play.
-      const nextSong = queueStore.next;
+      const nextSong = queueStore.next
       if (!nextSong || nextSong.preloaded) {
-        return;
+        return
       }
 
-      const $preloader = $('<audio>');
-      $preloader.attr('src', songStore.getSourceUrl(nextSong));
+      const $preloader = $('<audio>')
+      $preloader.attr('src', songStore.getSourceUrl(nextSong))
 
-      nextSong.preloaded = true;
-    });
+      nextSong.preloaded = true
+    })
 
     /**
      * Listen to 'input' event on the volume range control.
@@ -81,16 +81,16 @@ export const playback = {
      * update the volume on the plyr object.
      */
     this.$volumeInput.on('input', e => {
-      this.setVolume($(e.target).val());
-    });
+      this.setVolume($(e.target).val())
+    })
 
     // On init, set the volume to the value found in the local storage.
-    this.setVolume(preferences.volume);
+    this.setVolume(preferences.volume)
 
     // Init the equalizer if supported.
-    event.emit('equalizer:init', this.player.media);
+    event.emit('equalizer:init', this.player.media)
 
-    this.initialized = true;
+    this.initialized = true
   },
 
   /**
@@ -103,66 +103,66 @@ export const playback = {
    *
    * @param  {Object} song The song to play
    */
-  play(song) {
+  play (song) {
     if (!song) {
-      return;
+      return
     }
 
     if (queueStore.current) {
-      queueStore.current.playbackState = 'stopped';
+      queueStore.current.playbackState = 'stopped'
     }
 
-    song.playbackState = 'playing';
+    song.playbackState = 'playing'
 
     // Set the song as the current song
-    queueStore.current = song;
+    queueStore.current = song
 
     // Add it into the "recent" list
-    songStore.addRecent(song);
+    songStore.addRecent(song)
 
     // Manually set the `src` attribute of the audio to prevent plyr from resetting
     // the audio media object and cause our equalizer to malfunction.
-    this.player.media.src = songStore.getSourceUrl(song);
+    this.player.media.src = songStore.getSourceUrl(song)
 
-    $('title').text(`${song.title} ♫ ${config.appTitle}`);
-    $('.plyr audio').attr('title', `${song.artist.name} - ${song.title}`);
+    $('title').text(`${song.title} ♫ ${config.appTitle}`)
+    $('.plyr audio').attr('title', `${song.artist.name} - ${song.title}`)
 
     // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
-    this.restart();
+    this.restart()
   },
 
   /**
    * Restart playing a song.
    */
-  restart() {
-    const song = queueStore.current;
+  restart () {
+    const song = queueStore.current
 
     // Record the UNIX timestamp the song start playing, for scrobbling purpose
-    song.playStartTime = Math.floor(Date.now() / 1000);
+    song.playStartTime = Math.floor(Date.now() / 1000)
 
-    event.emit('song:played', song);
+    event.emit('song:played', song)
 
-    this.player.restart();
-    this.player.play();
+    this.player.restart()
+    this.player.play()
 
     // Register the play to the server
-    songStore.registerPlay(song);
+    songStore.registerPlay(song)
 
     // Show the notification if we're allowed to
     if (!window.Notification || !preferences.notify) {
-      return;
+      return
     }
 
     try {
-      const notification = new Notification(`♫ ${song.title}`, {
+      const notif = new window.Notification(`♫ ${song.title}`, {
         icon: song.album.cover,
         body: `${song.album.name} – ${song.artist.name}`
-      });
+      })
 
-      notification.onclick = () => window.focus();
+      notif.onclick = () => window.focus()
 
       // Close the notif after 5 secs.
-      window.setTimeout(() => notification.close(), 5000);
+      window.setTimeout(() => notif.close(), 5000)
     } catch (e) {
       // Notification fails.
       // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
@@ -175,15 +175,15 @@ export const playback = {
    *
    * @return {Object} The song
    */
-  get next() {
-    const next = queueStore.next;
+  get next () {
+    const next = queueStore.next
 
     if (next) {
-      return next;
+      return next
     }
 
     if (preferences.repeatMode === 'REPEAT_ALL') {
-      return queueStore.first;
+      return queueStore.first
     }
   },
 
@@ -193,15 +193,15 @@ export const playback = {
    *
    * @return {Object} The song
    */
-  get previous() {
-    const prev = queueStore.previous;
+  get previous () {
+    const prev = queueStore.previous
 
     if (prev) {
-      return prev;
+      return prev
     }
 
     if (preferences.repeatMode === 'REPEAT_ALL') {
-      return queueStore.last;
+      return queueStore.last
     }
   },
 
@@ -209,55 +209,55 @@ export const playback = {
    * Circle through the repeat mode.
    * The selected mode will be stored into local storage as well.
    */
-  changeRepeatMode() {
-    let idx = this.repeatModes.indexOf(preferences.repeatMode) + 1;
+  changeRepeatMode () {
+    let idx = this.repeatModes.indexOf(preferences.repeatMode) + 1
 
     if (idx >= this.repeatModes.length) {
-      idx = 0;
+      idx = 0
     }
 
-    preferences.repeatMode = this.repeatModes[idx];
+    preferences.repeatMode = this.repeatModes[idx]
   },
 
   /**
    * Play the prev song in the queue, if one is found.
    * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
    */
-  playPrev() {
+  playPrev () {
     // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
     // restart playing instead.
     if (this.player.media.currentTime > 5 && queueStore.current.length > 5) {
-      this.player.restart();
+      this.player.restart()
 
-      return;
+      return
     }
 
-    const prev = this.previous;
+    const prev = this.previous
 
     if (!prev && preferences.repeatMode === 'NO_REPEAT') {
-      this.stop();
+      this.stop()
 
-      return;
+      return
     }
 
-    this.play(prev);
+    this.play(prev)
   },
 
   /**
    * Play the next song in the queue, if one is found.
    * If the next song is not found and the current mode is NO_REPEAT, we stop completely.
    */
-  playNext() {
-    const next = this.next;
+  playNext () {
+    const next = this.next
 
     if (!next && preferences.repeatMode === 'NO_REPEAT') {
       //  Nothing lasts forever, even cold November rain.
-      this.stop();
+      this.stop()
 
-      return;
+      return
     }
 
-    this.play(next);
+    this.play(next)
   },
 
   /**
@@ -266,63 +266,63 @@ export const playback = {
    * @param {Number}     volume   0-10
    * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
    */
-  setVolume(volume, persist = true) {
-    this.player.setVolume(volume);
+  setVolume (volume, persist = true) {
+    this.player.setVolume(volume)
 
     if (persist) {
-      preferences.volume = volume;
+      preferences.volume = volume
     }
 
-    this.$volumeInput.val(volume);
+    this.$volumeInput.val(volume)
   },
 
   /**
    * Mute playback.
    */
-  mute() {
-    this.setVolume(0, false);
+  mute () {
+    this.setVolume(0, false)
   },
 
   /**
    * Unmute playback.
    */
-  unmute() {
+  unmute () {
     // If the saved volume is 0, we unmute to the default level (7).
     if (preferences.volume === '0' || preferences.volume === 0) {
-      preferences.volume = 7;
+      preferences.volume = 7
     }
 
-    this.setVolume(preferences.volume);
+    this.setVolume(preferences.volume)
   },
 
   /**
    * Completely stop playback.
    */
-  stop() {
-    $('title').text(config.appTitle);
-    this.player.pause();
-    this.player.seek(0);
+  stop () {
+    $('title').text(config.appTitle)
+    this.player.pause()
+    this.player.seek(0)
 
     if (queueStore.current) {
-      queueStore.current.playbackState = 'stopped';
+      queueStore.current.playbackState = 'stopped'
     }
   },
 
   /**
    * Pause playback.
    */
-  pause() {
-    this.player.pause();
-    queueStore.current.playbackState = 'paused';
+  pause () {
+    this.player.pause()
+    queueStore.current.playbackState = 'paused'
   },
 
   /**
    * Resume playback.
    */
-  resume() {
-    this.player.play();
-    queueStore.current.playbackState = 'playing';
-    event.emit('song:played', queueStore.current);
+  resume () {
+    this.player.play()
+    queueStore.current.playbackState = 'playing'
+    event.emit('song:played', queueStore.current)
   },
 
   /**
@@ -331,41 +331,41 @@ export const playback = {
    * @param {?Array.<Object>} songs  An array of song objects. Defaults to all songs if null.
    * @param {Boolean=false}   shuffled Whether to shuffle the songs before playing.
    */
-  queueAndPlay(songs = null, shuffled = false) {
+  queueAndPlay (songs = null, shuffled = false) {
     if (!songs) {
-      songs = songStore.all;
+      songs = songStore.all
     }
 
     if (!songs.length) {
-      return;
+      return
     }
 
     if (shuffled) {
-      songs = shuffle(songs);
+      songs = shuffle(songs)
     }
 
-    queueStore.queue(songs, true);
+    queueStore.queue(songs, true)
 
     // Wrap this inside a nextTick() to wait for the DOM to complete updating
     // and then play the first song in the queue.
     Vue.nextTick(() => {
-      router.go('queue');
-      this.play(queueStore.first);
-    });
+      router.go('queue')
+      this.play(queueStore.first)
+    })
   },
 
   /**
    * Play the first song in the queue.
    * If the current queue is empty, try creating it by shuffling all songs.
    */
-  playFirstInQueue() {
+  playFirstInQueue () {
     if (!queueStore.all.length) {
-      this.queueAndPlay();
+      this.queueAndPlay()
 
-      return;
+      return
     }
 
-    this.play(queueStore.first);
+    this.play(queueStore.first)
   },
 
   /**
@@ -374,8 +374,8 @@ export const playback = {
    * @param  {Object}     artist   The artist object
    * @param  {Boolean=true}   shuffled Whether to shuffle the songs
    */
-  playAllByArtist(artist, shuffled = true) {
-    this.queueAndPlay(artist.songs, shuffled);
+  playAllByArtist (artist, shuffled = true) {
+    this.queueAndPlay(artist.songs, shuffled)
   },
 
   /**
@@ -384,13 +384,12 @@ export const playback = {
    * @param  {Object}     album  The album object
    * @param  {Boolean=true}   shuffled Whether to shuffle the songs
    */
-  playAllInAlbum(album, shuffled = true) {
+  playAllInAlbum (album, shuffled = true) {
     if (!shuffled) {
-      this.queueAndPlay(orderBy(album.songs, 'track'));
-
-      return;
+      this.queueAndPlay(orderBy(album.songs, 'track'))
+      return
     }
 
-    this.queueAndPlay(album.songs, true);
-  },
-};
+    this.queueAndPlay(album.songs, true)
+  }
+}
