@@ -117,9 +117,9 @@ export default {
 
     .meta {
       display: block;
-      font-size: $fontSize;
+      font-size: .9rem;
       color: $color2ndText;
-      margin: 12px 0 0 2px;
+      margin: 6px 0 0 2px;
 
       a {
         color: #fff;
