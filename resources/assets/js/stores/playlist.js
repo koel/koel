@@ -132,6 +132,8 @@ export const playlistStore = {
    * @param {Array.<Object>}  songs
    */
   addSongs (playlist, songs) {
+    NProgress.start()
+
     return new Promise((resolve, reject) => {
       const count = playlist.songs.length
       playlist.songs = union(playlist.songs, songs)
@@ -155,6 +157,8 @@ export const playlistStore = {
    * @param  {Array.<Object>} songs
    */
   removeSongs (playlist, songs) {
+    NProgress.start()
+
     playlist.songs = difference(playlist.songs, songs)
 
     return new Promise((resolve, reject) => {

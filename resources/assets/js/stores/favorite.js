@@ -1,4 +1,5 @@
 import { each, map, difference, union } from 'lodash'
+import NProgress from 'nprogress'
 
 import { http } from '../services'
 
@@ -38,6 +39,8 @@ export const favoriteStore = {
     // This may cause a minor problem if the request fails somehow, but do we care?
     song.liked = !song.liked
     song.liked ? this.add(song) : this.remove(song)
+
+    NProgress.start()
 
     return new Promise((resolve, reject) => {
       http.post('interaction/like', { song: song.id }, data => resolve(data), r => reject(r))
@@ -82,6 +85,8 @@ export const favoriteStore = {
     })
     this.add(songs)
 
+    NProgress.start()
+
     return new Promise((resolve, reject) => {
       http.post('interaction/batch/like', { songs: map(songs, 'id') }, data => resolve(data), r => reject(r))
     })
@@ -97,6 +102,8 @@ export const favoriteStore = {
       song.liked = false
     })
     this.remove(songs)
+
+    NProgress.start()
 
     return new Promise((resolve, reject) => {
       http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, data => resolve(data), r => reject(r))
