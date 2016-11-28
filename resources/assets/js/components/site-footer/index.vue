@@ -34,7 +34,10 @@
         <div class="wrapper" v-koel-clickaway="closeEqualizer">
           <equalizer v-if="useEqualizer" v-show="showEqualizer"/>
           <sound-bar v-show="song.playbackState === 'playing'"/>
-          <i class="like control fa fa-heart" :class="{ liked: song.liked }" @click.prevent="like"/>
+          <i v-if="song.id"
+            class="like control fa fa-heart"
+            :class="{ liked: song.liked }"
+            @click.prevent="like"/>
           <span class="control info"
             @click.prevent="toggleExtraPanel"
             :class="{ active: prefs.showExtraPanel }">Info</span>
