@@ -1,5 +1,5 @@
 <template>
-  <div id="bars">
+  <div class="bars">
     <img src="/public/img/bars.gif" alt="Sound bars" height="13" width="auto">
   </div>
 </template>
@@ -45,12 +45,13 @@ export default {
 }
 </script>
 
-<style lang="sass">
-#bars {
+<style lang="sass" scoped>
+.bars {
   width: 28px;
   height: 13px;
   position: relative;
   display: inline-block;
   backface-visibility: hidden;
+  margin-bottom: 5px;
 }
 </style>
