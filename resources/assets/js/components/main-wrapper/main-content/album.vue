@@ -27,7 +27,7 @@
       </span>
 
       <song-list-controls
-        v-show="state.songs.length && (!isPhone || showingControls)"
+        v-show="album.songs.length && (!isPhone || showingControls)"
         @shuffleAll="shuffleAll"
         @shuffleSelected="shuffleSelected"
         :config="songListControlConfig"
