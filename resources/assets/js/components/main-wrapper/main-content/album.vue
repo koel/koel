@@ -21,7 +21,9 @@
           </template>
           <template v-if="sharedState.allowDownload">
             •
-            <a class="download" href @click.prevent="download" title="Download all songs in album">Download</a>
+            <a class="download" href @click.prevent="download" title="Download all songs in album">
+              Download All
+            </a>
           </template>
         </span>
       </span>

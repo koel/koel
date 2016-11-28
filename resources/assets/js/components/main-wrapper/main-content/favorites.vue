@@ -11,7 +11,7 @@
           <template v-if="sharedState.allowDownload && state.songs.length">
             •
             <a href @click.prevent="download" title="Download all songs in playlist">
-              Download
+              Download All
             </a>
           </template>
         </span>
