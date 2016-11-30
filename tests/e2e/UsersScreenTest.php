@@ -21,10 +21,10 @@ class UsersScreenTest extends TestCase
             ->back()
             // Add new user
             ->click('#usersWrapper .btn-add');
-        $this->see('form.user-create')
-            ->typeIn('form.user-create input[name="name"]', 'Foo')
-            ->typeIn('form.user-create input[name="email"]', 'foo@koel.net')
-            ->typeIn('form.user-create input[name="password"]', 'SecureMuch')
+        $this->see('form.user-add')
+            ->typeIn('form.user-add input[name="name"]', 'Foo')
+            ->typeIn('form.user-add input[name="email"]', 'foo@koel.net')
+            ->typeIn('form.user-add input[name="password"]', 'SecureMuch')
             ->enter()
             ->seeText('foo@koel.net', '#usersWrapper');
 

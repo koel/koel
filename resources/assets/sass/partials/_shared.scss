@@ -246,3 +246,74 @@ button, input[type="submit"], input[type="reset"], input[type="button"], .btn {
   margin-top: 16px;
   position: relative;
 }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, .7);
+
+  @include vertical-center();
+
+  form {
+    $borderRadius: 5px;
+
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    background: #fff;
+    border-radius: $borderRadius;
+    color: #333;
+
+    input[type="checkbox"] {
+      border: 1px solid #ccc;
+    }
+
+    .form-row:first-child {
+      margin-top: 0;
+    }
+
+    > header, > div, > footer {
+      padding: 16px;
+    }
+
+    > div {
+      padding-bottom: 0;
+    }
+
+    input[type="text"], input[type="number"], input[type="email"], input[type="password"],
+    input[type="url"], textarea {
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 100%;
+
+      &:focus {
+        border-color: $colorOrange;
+      }
+    }
+
+    .warning {
+      color: #f00;
+    }
+
+    textarea {
+      min-height: 192px;
+    }
+
+    > header {
+      display: flex;
+      background: #eee;
+      border-radius: $borderRadius $borderRadius 0 0;
+
+      h1 {
+        font-size: 1.8rem;
+        line-height: 2.2rem;
+        margin-bottom: .3rem;
+      }
+    }
+  }
+}

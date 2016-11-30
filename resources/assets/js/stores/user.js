@@ -171,6 +171,8 @@ export const userStore = {
     return new Promise((resolve, reject) => {
       http.put(`user/${user.id}`, { name, email, password }, () => {
         this.setAvatar(user)
+        user.name = name
+        user.email = email
         user.password = ''
         resolve(user)
       }, r => reject(r))

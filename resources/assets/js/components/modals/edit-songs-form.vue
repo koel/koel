@@ -1,5 +1,5 @@
 <template>
-  <div id="editSongsOverlay" v-if="shown">
+  <div id="editSongsOverlay" v-if="shown" class="overlay">
     <sound-bar v-if="loading"></sound-bar>
     <form v-else @submit.prevent="submit">
       <header>
@@ -330,66 +330,8 @@ export default {
 @import "../../../sass/partials/_mixins.scss";
 
 #editSongsOverlay {
-  z-index: 9999;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, .7);
-  overflow: auto;
-
-  @include vertical-center();
-
-  $borderRadius: 5px;
-
   form {
-    position: relative;
-    width: 100%;
-    max-width: 460px;
-    background: #fff;
-    border-radius: $borderRadius;
-    color: #333;
-
-    input[type="checkbox"] {
-      border: 1px solid #ccc;
-    }
-
-    .form-row:first-child {
-      margin-top: 0;
-    }
-
-    > header, > div, > footer {
-      padding: 16px;
-    }
-
-    > div {
-      padding-bottom: 0;
-    }
-
-    input[type="text"], input[type="number"], textarea {
-      border: 1px solid #ccc;
-      width: 100%;
-      max-width: 100%;
-
-      &:focus {
-        border-color: $colorOrange;
-      }
-    }
-
-    .warning {
-      color: #f00;
-    }
-
-    textarea {
-      min-height: 192px;
-    }
-
     > header {
-      display: flex;
-      background: #eee;
-      border-radius: $borderRadius $borderRadius 0 0;
-
       img {
         flex: 0 0 96px;
       }
@@ -397,12 +339,6 @@ export default {
       .meta {
         flex: 1;
         padding-left: 8px;
-
-        h1 {
-          font-size: 1.8rem;
-          line-height: 2.2rem;
-          margin-bottom: .3rem;
-        }
 
         .mixed {
           opacity: .5;

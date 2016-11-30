@@ -7,7 +7,7 @@
       </span>
 
       <div class="buttons" v-show="!isPhone || showingControls">
-        <button class="btn btn-green btn-add" @click="creating = !creating">
+        <button class="btn btn-green btn-add" @click="addUser">
           <i class="fa fa-plus"></i>
           Add</button>
       </div>
@@ -15,63 +15,50 @@
 
     <div class="main-scroll-wrap">
       <div class="users">
-        <form class="user-create user-item" v-if="creating" @submit.prevent="store">
-          <div class="input-row">
-            <label>Name</label>
-            <input type="text" name="name" v-model="newUser.name" required v-koel-focus>
-          </div>
-          <div class="input-row">
-            <label>Email</label>
-            <input type="email" name="email" v-model="newUser.email" required>
-          </div>
-          <div class="input-row">
-            <label>Password</label>
-            <input type="password" name="password" v-model="newUser.password" required>
-          </div>
-          <div class="input-row">
-            <label></label>
-            <button class="btn btn-green btn-create">Create</button>
-            <button class="btn btn-red btn-cancel" @click.prevent="creating = false">Cancel</button>
-          </div>
-        </form>
-
-        <user-item v-for="user in state.users" :user="user"/>
-
+        <user-item v-for="user in state.users" :user="user" @editUser="editUser"/>
         <article class="user-item" v-for="n in 6"/>
       </div>
     </div>
+
+    <edit-user-form ref="editUserForm"/>
+    <add-user-form ref="addUserForm"/>
   </section>
 </template>
 
 <script>
-import { clone } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { userStore } from '../../../stores'
 import userItem from '../../shared/user-item.vue'
+import editUserForm from '../../modals/edit-user-form.vue'
+import addUserForm from '../../modals/add-user-form.vue'
 
 export default {
-  components: { userItem },
+  components: { userItem, editUserForm, addUserForm },
 
   data () {
     return {
       state: userStore.state,
       isPhone: isMobile.phone,
-      showingControls: false,
-      creating: false,
-      newUser: {}
+      showingControls: false
     }
   },
 
   methods: {
     /**
-     * Store the newly created user.
+     * Open the "Add User" form.
      */
-    store () {
-      userStore.store(this.newUser.name, this.newUser.email, this.newUser.password).then(u => {
-        this.newUser = clone(userStore.stub)
-        this.creating = false
-      })
+    addUser () {
+      this.$refs.addUserForm.open()
+    },
+
+    /**
+     * Open the "Edit User" form.
+     *
+     * @param  {Object} user
+     */
+    editUser (user) {
+      this.$refs.editUserForm.open(user)
     }
   }
 }
@@ -86,36 +73,6 @@ export default {
     justify-content: space-between;
     flex-wrap: wrap;
     display: flex;
-  }
-
-  form {
-    padding: 8px 16px;
-    background-size: 30px 30px;
-    background-image: linear-gradient(
-      -45deg,
-      rgba(black, 0.3)  25%,
-      transparent     25%,
-      transparent     50%,
-      rgba(black, 0.3)  50%,
-      rgba(black, 0.3)  75%,
-      transparent     75%,
-      transparent
-    );
-
-    .input-row {
-      display: flex;
-      margin: 6px 0;
-    }
-
-    label {
-      flex: 0 0 128px;
-      margin-bottom: 0;
-      font-size: 100%;
-    }
-
-    input {
-      flex: 1;
-    }
   }
 
   button {

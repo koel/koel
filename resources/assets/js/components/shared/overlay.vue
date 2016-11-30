@@ -1,5 +1,5 @@
 <template>
-  <div id="overlay" v-show="state.showing" :class="state.type">
+  <div id="overlay" v-show="state.showing" class="overlay" :class="state.type">
     <div class="display">
       <sound-bar v-show="state.type === 'loading'"/>
       <i class="fa fa-exclamation-circle" v-show="state.type === 'error'"/>
@@ -85,15 +85,7 @@ export default {
 @import "../../../sass/partials/_mixins.scss";
 
 #overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  width: 100%;
-  height: 100%;
   background-color: rgba(0, 0, 0, 1);
-
-  @include vertical-center();
   flex-direction: column;
 
   .display {
