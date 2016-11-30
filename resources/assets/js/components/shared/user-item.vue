@@ -15,7 +15,7 @@
           <button class="btn btn-blue btn-edit" @click="edit">
             {{ isCurrentUser ? 'Update Profile' : 'Edit' }}
           </button>
-          <button class="btn btn-red btn-delete" @click="del">Delete</button>
+          <button v-if="!isCurrentUser" class="btn btn-red btn-delete" @click="del">Delete</button>
         </div>
       </div>
     </div>
