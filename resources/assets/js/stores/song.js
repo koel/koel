@@ -155,7 +155,7 @@ export const songStore = {
    * @param  {string} title
    * @param  {Object} album
    *
-   * @return {?Object}
+   * @return {Object|false}
    */
   guess (title, album) {
     title = slugify(title.toLowerCase())
