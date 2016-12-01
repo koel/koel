@@ -160,7 +160,7 @@ export const songStore = {
   guess (title, album) {
     title = slugify(title.toLowerCase())
     let found = false
-    album.songs.forEach (song => {
+    album.songs.forEach(song => {
       if (slugify(song.title.toLowerCase()) === title) {
         found = song
       }
