@@ -10,7 +10,6 @@ Route::get('/♫', function () {
 });
 
 Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
-
     Route::post('me', 'UserController@login');
 
     Route::group(['middleware' => 'jwt.auth'], function () {
