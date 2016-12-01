@@ -3,6 +3,7 @@ import NProgress from 'nprogress'
 
 import stub from '../stubs/playlist'
 import { http } from '../services'
+import { alerts } from '../utils'
 import { songStore } from '.'
 
 export const playlistStore = {
@@ -104,6 +105,7 @@ export const playlistStore = {
         playlist.songs = songs
         this.objectifySongs(playlist)
         this.add(playlist)
+        alerts.success(`Created playlist &quot;${playlist.name}&quot;.`)
         resolve(playlist)
       }, r => reject(r))
     })
@@ -120,6 +122,7 @@ export const playlistStore = {
     return new Promise((resolve, reject) => {
       http.delete(`playlist/${playlist.id}`, {}, data => {
         this.remove(playlist)
+        alerts.success(`Deleted playlist &quot;${playlist.name}&quot;.`)
         resolve(data)
       }, r => reject(r))
     })
@@ -132,8 +135,6 @@ export const playlistStore = {
    * @param {Array.<Object>}  songs
    */
   addSongs (playlist, songs) {
-    NProgress.start()
-
     return new Promise((resolve, reject) => {
       const count = playlist.songs.length
       playlist.songs = union(playlist.songs, songs)
@@ -143,8 +144,13 @@ export const playlistStore = {
         return
       }
 
+      NProgress.start()
+
       http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
-        data => resolve(playlist),
+        data => {
+          alerts.success(`Added ${songs.length} song${songs.length === 1 ? '' : 's'} into &quot;${playlist.name}&quot;.`)
+          resolve(playlist)
+        },
         r => reject(r)
       )
     })
@@ -163,7 +169,10 @@ export const playlistStore = {
 
     return new Promise((resolve, reject) => {
       http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
-        data => resolve(playlist),
+        data => {
+          alerts.success(`Removed ${songs.length} song${songs.length === 1 ? '' : 's'} from &quot;${playlist.name}&quot;.`)
+          resolve(playlist)
+        },
         r => reject(r)
       )
     })

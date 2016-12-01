@@ -23,10 +23,9 @@
 </template>
 
 <script>
-import swal from 'sweetalert'
-
 import { userStore } from '../../stores'
 import router from '../../router'
+import { alerts } from '../../utils'
 
 export default {
   props: ['user'],
@@ -67,14 +66,7 @@ export default {
      * Kill off the freaking user.
      */
     del () {
-      swal({
-        title: 'Hey…',
-        text: `You’re about to unperson ${this.user.name}. Are you sure?`,
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Certainly',
-        cancelButtonText: 'Oops'
-      }, () => {
+      alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, () => {
         userStore.destroy(this.user).then(() => {
           this.$destroy(true)
         })

@@ -37,9 +37,7 @@
 </template>
 
 <script>
-import swal from 'sweetalert'
-
-import { pluralize, event } from '../../../utils'
+import { pluralize, event, alerts } from '../../../utils'
 import { playlistStore, sharedStore } from '../../../stores'
 import { playback, download } from '../../../services'
 import router from '../../../router'
@@ -94,13 +92,7 @@ export default {
         return
       }
 
-      swal({
-        title: 'Are you sure?',
-        text: 'Once it’s gone, it’s gone, and there’s no turning back.',
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, go ahead'
-      }, this.del)
+      alerts.confirm('Are you sure? This is a one-way street!', this.del)
     },
 
     /**

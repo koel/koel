@@ -105,7 +105,6 @@
 
 <script>
 import $ from 'jquery'
-import swal from 'sweetalert'
 
 import { userStore, preferenceStore, sharedStore } from '../../../stores'
 import { forceReloadWindow } from '../../../utils'
@@ -139,13 +138,6 @@ export default {
       userStore.updateProfile(this.pwd).then(() => {
         this.pwd = ''
         this.confirmPwd = ''
-
-        swal({
-          title: 'Done!',
-          text: 'Profile saved.',
-          type: 'success',
-          allowOutsideClick: true
-        })
       })
     },
 

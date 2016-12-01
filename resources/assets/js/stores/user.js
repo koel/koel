@@ -4,6 +4,7 @@ import Vue from 'vue'
 import NProgress from 'nprogress'
 
 import { http } from '../services'
+import { alerts } from '../utils'
 import stub from '../stubs/user'
 
 export const userStore = {
@@ -132,6 +133,7 @@ export const userStore = {
         email: this.current.email
       }, () => {
         this.setAvatar()
+        alerts.success('Profile updated.')
         resolve(this.current)
       },
       r => reject(r))
@@ -152,6 +154,7 @@ export const userStore = {
       http.post('user', { name, email, password }, user => {
         this.setAvatar(user)
         this.all.unshift(user)
+        alerts.success(`New user &quot;${name}&quot; created.`)
         resolve(user)
       }, r => reject(r))
     })
@@ -174,6 +177,7 @@ export const userStore = {
         user.name = name
         user.email = email
         user.password = ''
+        alerts.success('User profile updated.')
         resolve(user)
       }, r => reject(r))
     })
@@ -190,6 +194,7 @@ export const userStore = {
     return new Promise((resolve, reject) => {
       http.delete(`user/${user.id}`, {}, data => {
         this.all = without(this.all, user)
+        alerts.success(`User &quot;${user.name}&quot; deleted.`)
 
         // Mama, just killed a man
         // Put a gun against his head

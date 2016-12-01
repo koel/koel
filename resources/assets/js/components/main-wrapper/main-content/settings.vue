@@ -24,10 +24,8 @@
 </template>
 
 <script>
-import swal from 'sweetalert'
-
 import { settingStore, sharedStore } from '../../../stores'
-import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay } from '../../../utils'
+import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay, alerts } from '../../../utils'
 import router from '../../../router'
 
 export default {
@@ -54,15 +52,8 @@ export default {
   methods: {
     confirmThenSave () {
       if (this.shouldWarn) {
-        swal({
-          title: 'Be careful!',
-          text: 'Changing the media path will essentially remove all existing data – songs, artists, \
-          albums, favorites, everything – and empty your playlists!',
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'I know. Go ahead.',
-          confirmButtonColor: '#c34848'
-        }, this.save)
+        alerts.confirm('Warning: Changing the media path will essentially remove all existing data – songs, artists, \
+          albums, favorites, everything – and empty your playlists! Sure you want to proceed?', this.save)
       } else {
         this.save()
       }
@@ -86,13 +77,7 @@ export default {
         }
 
         hideOverlay()
-
-        swal({
-          title: 'Something went wrong',
-          text: msg,
-          type: 'error',
-          allowOutsideClick: true
-        })
+        alerts.error(msg)
       })
     }
   }

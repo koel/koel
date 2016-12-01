@@ -1,4 +1,5 @@
 import { http } from '../services'
+import { alerts } from '../utils'
 import stub from '../stubs/settings'
 
 export const settingStore = {
@@ -18,7 +19,10 @@ export const settingStore = {
 
   update () {
     return new Promise((resolve, reject) => {
-      http.post('settings', this.all, data => resolve(data), r => reject(r))
+      http.post('settings', this.all, data => {
+        alerts.success('Settings saved.')
+        resolve(data)
+      }, r => reject(r))
     })
   }
 }
