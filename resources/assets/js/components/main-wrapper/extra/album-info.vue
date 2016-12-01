@@ -21,11 +21,12 @@
       <section class="track-listing" v-if="album.info.tracks.length">
         <h1>Track Listing</h1>
         <ul class="tracks">
-          <li v-for="(track, idx) in album.info.tracks">
-            <span class="no">{{ idx + 1 }}</span>
-            <span class="title">{{ track.title }}</span>
-            <span class="length">{{ track.fmtLength }}</span>
-          </li>
+          <li is="track-list-item"
+            v-for="(track, idx) in album.info.tracks"
+            :album="album"
+            :track="track"
+            :index="idx"
+          />
         </ul>
       </section>
 
@@ -38,9 +39,11 @@
 
 <script>
 import { playback } from '../../../services'
+import trackListItem from '../../shared/track-list-item.vue'
 
 export default {
   props: ['album', 'mode'],
+  components: { trackListItem },
 
   data () {
     return {

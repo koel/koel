@@ -333,6 +333,15 @@
         text-align: right;
         opacity: .5;
       }
+
+      &.available {
+        color: #fff;
+        cursor: pointer;
+
+        &:hover {
+          color: $colorHighlight;
+        }
+      }
     }
   }
 

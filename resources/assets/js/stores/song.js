@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import slugify from 'slugify'
 import { without, map, take, remove, orderBy, each, union } from 'lodash'
 
 import { secondsToHis, alerts } from '../utils'
@@ -145,6 +146,27 @@ export const songStore = {
    */
   byIds (ids) {
     return ids.map(id => this.byId(id))
+  },
+
+  /**
+   * Guess a song by its title and album.
+   * Forget about Levenshtein distance, this implementation is good enough.
+   *
+   * @param  {string} title
+   * @param  {Object} album
+   *
+   * @return {?Object}
+   */
+  guess (title, album) {
+    title = slugify(title.toLowerCase())
+    let found = false
+    album.songs.forEach (song => {
+      if (slugify(song.title.toLowerCase()) === title) {
+        found = song
+      }
+    })
+
+    return found
   },
 
   /**
