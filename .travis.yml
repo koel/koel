@@ -3,7 +3,6 @@ language: php
 php:
   - 5.6
   - 7.0
-  - hhvm
 
 env:
   APP_ENV: testing
@@ -12,30 +11,25 @@ env:
   QUEUE_DRIVER: sync
   DB_CONNECTION: sqlite
   APP_KEY: 16efa6c23c2e8c705826b0e66778fbe7
+  JWT_SECRET: ki8jSvMf5wFrlSRBAWcGbmAzBUJfc8p8
   ADMIN_EMAIL: koel@example.com
   ADMIN_NAME: Koel
   ADMIN_PASSWORD: SoSecureK0el
   LASTFM_API_KEY: foo
   LASTFM_API_SECRET: bar
-
-cache:
-  - npm
-  - composer
+  BROADCAST_DRIVER: log
 
 branches:
-  only:
-    - master
+  - master
 
-cache:
-  - npm
-  - composer
-
-before_script:
+install:
+  - . $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
+  - npm install
   - composer self-update
   - composer install --prefer-source --no-interaction
-  - npm install -g npm@latest
-  - npm install
 
-script: 
+script:
   - phpunit
   - npm test

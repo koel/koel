@@ -33,14 +33,14 @@ class UpdateLastfmNowPlaying
     public function handle(SongStartedPlaying $event)
     {
         if (!$this->lastfm->enabled() ||
-            !($sessionKey = $event->user->getLastfmSessionKey()) ||
-            $event->song->album->artist->isUnknown()
+            !($sessionKey = $event->user->lastfm_session_key) ||
+            $event->song->artist->isUnknown()
         ) {
             return;
         }
 
         $this->lastfm->updateNowPlaying(
-            $event->song->album->artist->name,
+            $event->song->artist->name,
             $event->song->title,
             $event->song->album->name === Album::UNKNOWN_NAME ? null : $event->song->album->name,
             $event->song->length,

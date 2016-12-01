@@ -10,20 +10,29 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        if (!env('ADMIN_NAME') || !env('ADMIN_EMAIL') || !env('ADMIN_PASSWORD')) {
-            $this->command->error('Please fill in initial admin details in .env file first.');
-            abort(422);
-        }
-
-        User::create([
-            'name' => env('ADMIN_NAME'),
-            'email' => env('ADMIN_EMAIL'),
-            'password' => Hash::make(env('ADMIN_PASSWORD')),
+        User::create($this->getUserDetails() + [
             'is_admin' => true,
         ]);
 
-        if (app()->environment() !== 'testing') {
+        if (!app()->runningUnitTests()) {
             $this->command->info('Admin user created. You can (and should) remove the auth details from .env now.');
         }
+    }
+
+    protected function getUserDetails()
+    {
+        $details = array_filter(array_only(config('koel.admin', []), [
+            'name', 'email', 'password',
+        ]));
+
+        if (count($details) !== 3) {
+            $this->command->error('Please fill in initial admin details in .env file first.');
+
+            abort(422);
+        }
+
+        $details['password'] = Hash::make($details['password']);
+
+        return $details;
     }
 }

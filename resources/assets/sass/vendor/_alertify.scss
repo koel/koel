@@ -1,0 +1,19 @@
+.alertify {
+  font-family: $fontFamily;
+  font-weight: $fontWeight_UltraThin;
+  background-color: rgba(0, 0, 0, .7);
+  z-index: 9999;
+
+  .dialog > div {
+    border-radius: 3px;
+  }
+}
+
+.alertify-logs {
+  font-family: $fontFamily;
+  font-weight: $fontWeight_UltraThin;
+
+  .show {
+    border-radius: 3px;
+  }
+}

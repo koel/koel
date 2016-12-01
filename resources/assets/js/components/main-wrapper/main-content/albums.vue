@@ -1,76 +1,80 @@
 <template>
-    <section id="albumsWrapper">
-        <h1 class="heading">
-            <span>Albums</span>
-            <view-mode-switch :mode.sync="viewMode" for="albums"></view-mode-switch>
-        </h1>
+  <section id="albumsWrapper">
+    <h1 class="heading">
+      <span>Albums</span>
+      <view-mode-switch :mode="viewMode" for="albums"/>
+    </h1>
 
-        <div class="albums main-scroll-wrap as-{{ viewMode }}" v-el:wrapper @scroll="scrolling">
-            <album-item v-for="item in items
-                | orderBy 'name'
-                | filterBy q in 'name' 'artist.name'
-                | limitBy numOfItems" :album="item"></album-item>
-
-            <span class="item filler" v-for="n in 6"></span>
-        </div>
-    </section>
+    <div class="albums main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
+      <album-item v-for="item in displayedItems" :album="item"/>
+      <span class="item filler" v-for="n in 6"/>
+      <to-top-button :showing="showBackToTop"/>
+    </div>
+  </section>
 </template>
 
 <script>
-    import albumItem from '../../shared/album-item.vue';
-    import viewModeSwitch from '../../shared/view-mode-switch.vue';
-    import infiniteScroll from '../../../mixins/infinite-scroll';
-    import albumStore from '../../../stores/album';
+import { filterBy, limitBy, event } from '../../../utils'
+import { albumStore } from '../../../stores'
+import albumItem from '../../shared/album-item.vue'
+import viewModeSwitch from '../../shared/view-mode-switch.vue'
+import infiniteScroll from '../../../mixins/infinite-scroll'
 
-    export default {
-        mixins: [infiniteScroll],
-        components: { albumItem, viewModeSwitch },
+export default {
+  mixins: [infiniteScroll],
+  components: { albumItem, viewModeSwitch },
 
-        data() {
-            return {
-                perPage: 9,
-                numOfItems: 9,
-                state: albumStore.state,
-                q: '',
-                viewMode: null,
-            };
-        },
+  data () {
+    return {
+      perPage: 9,
+      numOfItems: 9,
+      q: '',
+      viewMode: null
+    }
+  },
 
-        computed: {
-            items() {
-                return this.state.albums;
-            },
-        },
+  computed: {
+    displayedItems () {
+      return limitBy(
+        filterBy(albumStore.all, this.q, 'name', 'artist.name'),
+        this.numOfItems
+      )
+    }
+  },
 
-        events: {
-            /**
-             * When the application is ready, load the first batch of items.
-             */
-            'koel:ready': function () {
-                this.displayMore();
+  methods: {
+    changeViewMode (mode) {
+      this.viewMode = mode
+    }
+  },
 
-                return true;
-            },
+  created () {
+    event.on({
+      /**
+       * When the application is ready, load the first batch of items.
+       */
+      'koel:ready': () => this.displayMore(),
 
-            'koel:teardown': function () {
-                this.q = '';
-                this.numOfItems = 9;
-            },
+      'koel:teardown': () => {
+        this.q = ''
+        this.numOfItems = 9
+      },
 
-            'filter:changed': function (q) {
-                this.q = q;
-            },
-        },
-    };
+      'filter:changed': q => {
+        this.q = q
+      }
+    })
+  }
+}
 </script>
 
 <style lang="sass">
-    @import "../../../../sass/partials/_vars.scss";
-    @import "../../../../sass/partials/_mixins.scss";
+@import "../../../../sass/partials/_vars.scss";
+@import "../../../../sass/partials/_mixins.scss";
 
-    #albumsWrapper {
-        .albums {
-            @include artist-album-wrapper();
-        }
-    }
+#albumsWrapper {
+  .albums {
+    @include artist-album-wrapper();
+  }
+}
 </style>

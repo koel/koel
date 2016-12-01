@@ -1,216 +1,234 @@
 <template>
-    <ul v-el:menu class="menu song-menu" v-show="shown" tabindex="-1" @contextmenu.prevent
-        @blur="close"
-        :style="{ top: top + 'px', left: left + 'px' }"
-    >
-        <li v-if="onlyOneSongSelected" @click="doPlayback">
-            <span v-if="songs[0].playbackState !== 'playing'">Play</span>
-            <span v-else>Pause</span>
-        </li>
-        <li v-if="onlyOneSongSelected" @click="goToAlbum">
-            <span>Go to Album</span>
-        </li>
-        <li v-if="onlyOneSongSelected" @click="goToArtist">
-            <span>Go to Artist</span>
-        </li>
-        <li class="has-sub">Add To
-            <ul class="menu submenu">
-                <li @click="queueSongsToBottom">Bottom of Queue</li>
-                <li @click="queueSongsToTop">Top of Queue</li>
-                <li class="separator"></li>
-                <li @click="addSongsToFavorite">Favorites</li>
-                <li class="separator"></li>
-                <li v-for="playlist in playlistState.playlists"
-                    @click="addSongsToExistingPlaylist(playlist)"
-                >{{ playlist.name }}</li>
-            </ul>
-        </li>
-        <li v-if="isAdmin" @click="openEditForm">Edit</li>
-    </ul>
+  <ul ref="menu" class="menu song-menu" v-show="shown" tabindex="-1" @contextmenu.prevent
+    @blur="close"
+    :style="{ top: top+'px', left: left+'px' }"
+  >
+    <template v-show="onlyOneSongSelected">
+      <li @click="doPlayback">
+        <span v-show="!firstSongPlaying">Play</span>
+        <span v-show="firstSongPlaying">Pause</span>
+      </li>
+      <li @click="viewAlbumDetails(songs[0].album)">Go to Album</li>
+      <li @click="viewArtistDetails(songs[0].artist)">Go to Artist</li>
+    </template>
+    <li class="has-sub">Add To
+      <ul class="menu submenu">
+        <li @click="queueSongsAfterCurrent">After Current Song</li>
+        <li @click="queueSongsToBottom">Bottom of Queue</li>
+        <li @click="queueSongsToTop">Top of Queue</li>
+        <li class="separator"></li>
+        <li @click="addSongsToFavorite">Favorites</li>
+        <li class="separator" v-show="playlistState.playlists.length"></li>
+        <li v-for="p in playlistState.playlists" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
+      </ul>
+    </li>
+    <li v-show="isAdmin" @click="openEditForm">Edit</li>
+    <li v-show="sharedState.allowDownload" @click="download">Download</li>
+    <!-- somehow v-if doesn't work here -->
+    <li v-show="copyable && onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
+  </ul>
 </template>
 
 <script>
-    import $ from 'jquery';
+import $ from 'jquery'
 
-    import songMenuMethods from '../../mixins/song-menu-methods';
+import songMenuMethods from '../../mixins/song-menu-methods'
 
-    import queueStore from '../../stores/queue';
-    import userStore from '../../stores/user';
-    import playlistStore from '../../stores/playlist';
-    import playback from '../../services/playback';
+import { event, isClipboardSupported, copyText } from '../../utils'
+import { sharedStore, songStore, queueStore, userStore, playlistStore } from '../../stores'
+import { playback, download } from '../../services'
+import router from '../../router'
 
-    export default {
-        props: ['songs'],
-        mixins: [songMenuMethods],
+export default {
+  name: 'song-menu',
+  props: ['songs'],
+  mixins: [songMenuMethods],
 
-        data() {
-            return {
-                playlistState: playlistStore.state,
-            };
-        },
+  data () {
+    return {
+      playlistState: playlistStore.state,
+      sharedState: sharedStore.state,
+      copyable: isClipboardSupported()
+    }
+  },
 
-        computed: {
-            onlyOneSongSelected() {
-                return this.songs.length === 1;
-            },
+  computed: {
+    onlyOneSongSelected () {
+      return this.songs.length === 1
+    },
 
-            isAdmin() {
-                return userStore.current.is_admin;
-            },
-        },
+    firstSongPlaying () {
+      return this.songs[0] ? this.songs[0].playbackState === 'playing' : false
+    },
 
-        methods: {
-            open(top = 0, left = 0) {
-                if (!this.songs.length) {
-                    return;
-                }
+    isAdmin () {
+      return userStore.current.is_admin
+    }
+  },
 
-                this.top = top;
-                this.left = left;
-                this.shown = true;
+  methods: {
+    open (top = 0, left = 0) {
+      if (!this.songs.length) {
+        return
+      }
 
-                this.$nextTick(() => {
-                    // Make sure the menu isn't off-screen
-                    if (this.$el.getBoundingClientRect().bottom > window.innerHeight) {
-                        $(this.$el).css({
-                            top: 'auto',
-                            bottom: 0,
-                        });
-                    } else {
-                        $(this.$el).css({
-                            top: this.top,
-                            bottom: 'auto',
-                        });
-                    }
+      this.top = top
+      this.left = left
+      this.shown = true
 
-                    this.$els.menu.focus();
-                });
-            },
+      this.$nextTick(() => {
+        // Make sure the menu isn't off-screen
+        if (this.$el.getBoundingClientRect().bottom > window.innerHeight) {
+          $(this.$el).css({
+            top: 'auto',
+            bottom: 0
+          })
+        } else {
+          $(this.$el).css({
+            top: this.top,
+            bottom: 'auto'
+          })
+        }
 
-            /**
-             * Take the right playback action based on the current playback state.
-             */
-            doPlayback() {
-                switch (this.songs[0].playbackState) {
-                    case 'playing':
-                        playback.pause();
-                        break;
-                    case 'paused':
-                        playback.resume();
-                        break;
-                    default:
-                        if (!queueStore.contains(this.songs[0])) {
-                            queueStore.queueAfterCurrent(this.songs[0]);
-                        }
+        this.$refs.menu.focus()
+      })
+    },
 
-                        playback.play(this.songs[0]);
-                        break;
-                }
+    /**
+     * Take the right playback action based on the current playback state.
+     */
+    doPlayback () {
+      switch (this.songs[0].playbackState) {
+        case 'playing':
+          playback.pause()
+          break
+        case 'paused':
+          playback.resume()
+          break
+        default:
+          if (!queueStore.contains(this.songs[0])) {
+            queueStore.queueAfterCurrent(this.songs[0])
+          }
 
-                this.close();
-            },
+          playback.play(this.songs[0])
+          break
+      }
 
-            /**
-             * Trigger opening the "Edit Song" form/overlay.
-             */
-            openEditForm() {
-                if (this.songs.length) {
-                    this.$root.showEditSongsForm(this.songs);
-                }
+      this.close()
+    },
 
-                this.close();
-            },
+    /**
+     * Trigger opening the "Edit Song" form/overlay.
+     */
+    openEditForm () {
+      if (this.songs.length) {
+        event.emit('songs:edit', this.songs)
+      }
 
-            /**
-             * Navigate to the song's album view
-             */
-            goToAlbum() {
-                this.$root.loadAlbum(this.songs[0].album);
-            },
+      this.close()
+    },
 
-            /**
-             * Navigate to the song's artist view
-             */
-            goToArtist() {
-                this.$root.loadArtist(this.songs[0].album.artist);
-            },
-        },
+    /**
+     * Load the album details screen.
+     */
+    viewAlbumDetails (album) {
+      router.go(`album/${album.id}`)
+      this.close()
+    },
 
-        /**
-         * On component ready(), we use some JavaScript to prepare the submenu triggering.
-         * With this, we can catch when the submenus shown or hidden, and can make sure
-         * they don't appear off-screen.
-         */
-        ready() {
-            $(this.$el).find('.has-sub').hover(e => {
-                const $submenu = $(e.target).find('.submenu:first');
-                if (!$submenu.length) {
-                    return;
-                }
+    /**
+     * Load the artist details screen.
+     */
+    viewArtistDetails (artist) {
+      router.go(`artist/${artist.id}`)
+      this.close()
+    },
 
-                $submenu.show();
+    download () {
+      download.fromSongs(this.songs)
+      this.close()
+    },
 
-                // Make sure the submenu isn't off-screen
-                if ($submenu[0].getBoundingClientRect().bottom > window.innerHeight) {
-                    $submenu.css({
-                        top: 'auto',
-                        bottom: 0,
-                    });
-                }
-            }, e => {
-                $(e.target).find('.submenu:first').hide().css({
-                    top: 0,
-                    bottom: 'auto',
-                });
-            });
-        },
-    };
+    copyUrl () {
+      copyText(songStore.getShareableUrl(this.songs[0]))
+    }
+  },
+
+  /**
+   * On component mounted(), we use some JavaScript to prepare the submenu triggering.
+   * With this, we can catch when the submenus shown or hidden, and can make sure
+   * they don't appear off-screen.
+   */
+  mounted () {
+    $(this.$el).find('.has-sub').hover(e => {
+      const $submenu = $(e.target).find('.submenu:first')
+      if (!$submenu.length) {
+        return
+      }
+
+      $submenu.show()
+
+      // Make sure the submenu isn't off-screen
+      if ($submenu[0].getBoundingClientRect().bottom > window.innerHeight) {
+        $submenu.css({
+          top: 'auto',
+          bottom: 0
+        })
+      }
+    }, e => {
+      $(e.target).find('.submenu:first').hide().css({
+        top: 0,
+        bottom: 'auto'
+      })
+    })
+  }
+}
 </script>
 
 <style lang="sass" scoped>
-    @import "../../../sass/partials/_vars.scss";
-    @import "../../../sass/partials/_mixins.scss";
+@import "../../../sass/partials/_vars.scss";
+@import "../../../sass/partials/_mixins.scss";
 
-    .menu {
-        @include context-menu();
-        position: fixed;
+.menu {
+  @include context-menu();
+  position: fixed;
 
-        li {
-            position: relative;
-            padding: 4px 12px;
-            cursor: default;
-            white-space: nowrap;
+  li {
+    position: relative;
+    padding: 4px 12px;
+    cursor: default;
+    white-space: nowrap;
 
-            &:hover {
-                background: $colorOrange;
-                color: #fff;
-            }
-
-            &.separator {
-                pointer-event: none;
-                padding: 1px 0;
-                background: #ccc;
-            }
-
-            &.has-sub {
-                padding-right: 24px;
-
-                &:after {
-                    position: absolute;
-                    right: 12px;
-                    top: 4px;
-                    content: "▸";
-                    width: 16px;
-                    text-align: right;
-                }
-            }
-        }
-
-        .submenu {
-            position: absolute;
-            display: none;
-            left: 100%;
-            top: 0;
-        }
+    &:hover {
+      background: $colorOrange;
+      color: #fff;
     }
+
+    &.separator {
+      pointer-event: none;
+      padding: 1px 0;
+      background: #ccc;
+    }
+
+    &.has-sub {
+      padding-right: 24px;
+
+      &:after {
+        position: absolute;
+        right: 12px;
+        top: 4px;
+        content: "▸";
+        width: 16px;
+        text-align: right;
+      }
+    }
+  }
+
+  .submenu {
+    position: absolute;
+    display: none;
+    left: 100%;
+    top: 0;
+  }
+}
 </style>

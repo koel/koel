@@ -7,11 +7,6 @@ class ArtistTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testShouldBeCreatedWithUniqueNames()
     {
         $name = 'Foo Fighters';
@@ -19,13 +14,13 @@ class ArtistTest extends TestCase
 
         $this->assertEquals($name, $artist->name);
 
-        // Should be only 2 records: UNKNOWN_ARTIST, and our Dave Grohl's band
-        $this->assertEquals(2, Artist::all()->count());
+        // Should be only 3 records: UNKNOWN_ARTIST, VARIOUS_ARTISTS, and our Dave Grohl's band
+        $this->assertEquals(3, Artist::all()->count());
 
         Artist::get($name);
 
-        // Should still be 2.
-        $this->assertEquals(2, Artist::all()->count());
+        // Should still be 3.
+        $this->assertEquals(3, Artist::all()->count());
     }
 
     public function testArtistWithEmptyNameShouldBeUnknown()
@@ -35,7 +30,7 @@ class ArtistTest extends TestCase
 
     public function testUtf16Names()
     {
-        $name = file_get_contents(dirname(__FILE__).'/blobs/utf16');
+        $name = file_get_contents(__DIR__.'/blobs/utf16');
 
         $artist = Artist::get($name);
         $artist = Artist::get($name); // to make sure there's no constraint exception

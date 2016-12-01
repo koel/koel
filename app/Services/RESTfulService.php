@@ -25,7 +25,7 @@ class RESTfulService
      *
      * @var string
      */
-    protected $endpoint = null;
+    protected $endpoint;
 
     /**
      * The GuzzleHttp client to talk to the API.
@@ -75,9 +75,9 @@ class RESTfulService
      *                          an "API signature" of the request. Appending an API key will break the request.
      * @param array  $params    An array of parameters
      *
-     * @return object
+     * @return object|string
      */
-    public function request($verb, $uri, $appendKey = true, $params = [])
+    public function request($verb, $uri, $appendKey = true, array $params = [])
     {
         try {
             $body = (string) $this->getClient()
@@ -103,6 +103,8 @@ class RESTfulService
      *
      * @param string $method The HTTP method
      * @param array  $args   An array of parameters
+     *
+     * @throws \InvalidArgumentException
      *
      * @return object
      */
@@ -130,7 +132,7 @@ class RESTfulService
     public function buildUrl($uri, $appendKey = true)
     {
         if (!starts_with($uri, ['http://', 'https://'])) {
-            if ($uri[0] != '/') {
+            if ($uri[0] !== '/') {
                 $uri = "/$uri";
             }
 

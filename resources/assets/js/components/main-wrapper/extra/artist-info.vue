@@ -1,76 +1,77 @@
 <template>
-    <article v-if="artist.id" id="artistInfo">
-        <h1>
-            <span>{{ artist.name }}</span>
+  <article id="artistInfo" :class="mode">
+    <h1 class="name">
+      <span>{{ artist.name }}</span>
 
-            <a class="shuffle" @click.prevent="shuffleAll"><i class="fa fa-random"></i></a>
-        </h1>
+      <a class="shuffle" @click.prevent="shuffleAll"><i class="fa fa-random"></i></a>
+    </h1>
 
-        <div v-if="artist.info">
-            <img v-if="artist.info.image" :src="artist.info.image"
-                title="They see me posin, they hatin"
-                class="cool-guys-posing cover">
+    <div v-if="artist.info">
+      <img v-if="artist.info.image" :src="artist.info.image"
+        title="They see me posin, they hatin"
+        class="cool-guys-posing cover">
 
-            <div class="bio" v-if="artist.info.bio.summary">
-                <div class="summary" v-show="!showingFullBio">{{{ artist.info.bio.summary }}}</div>
-                <div class="full" v-show="showingFullBio">{{{ artist.info.bio.full }}}</div>
+      <div class="bio" v-if="artist.info.bio.summary">
+        <div class="summary" v-show="showSummary" v-html="artist.info.bio.summary"/>
+        <div class="full" v-show="showFull" v-html="artist.info.bio.full"/>
 
-                <button class="more" v-show="!showingFullBio" @click.prevent="showingFullBio = !showingFullBio">
-                    Full Bio
-                </button>
-            </div>
-            <p class="none" v-else>This artist has no Last.fm biography – yet.</p>
+        <button class="more" v-show="showSummary" @click.prevent="showingFullBio = true">
+          Full Bio
+        </button>
+      </div>
+      <p class="none" v-else>This artist has no Last.fm biography – yet.</p>
 
-            <footer>Data &copy; <a target="_blank" href="{{{ artist.info.url }}}">Last.fm</a></footer>
-        </div>
+      <footer>Data &copy; <a target="_blank" :href="artist.info.url">Last.fm</a></footer>
+    </div>
 
-        <p class="none" v-else>Nothing can be found. This artist is a mystery.</p>
-    </article>
+    <p class="none" v-else>Nothing can be found. This artist is a mystery.</p>
+  </article>
 </template>
 
 <script>
-    import playback from '../../../services/playback';
+import { playback } from '../../../services'
 
-    export default {
-        replace: false,
-        props: ['artist'],
+export default {
+  props: ['artist', 'mode'],
 
-        data() {
-            return {
-                showingFullBio: false,
-            };
-        },
+  data () {
+    return {
+      showingFullBio: false
+    }
+  },
 
-        methods: {
-            /**
-             * Reset the component's current state.
-             */
-            resetState() {
-                this.showingFullBio = false;
-            },
+  watch: {
+    artist () {
+      this.showingFullBio = false
+    }
+  },
 
-            /**
-             * Shuffle all songs performed by the current song's artist.
-             */
-            shuffleAll() {
-                playback.playAllByArtist(this.artist);
-            },
-        },
-    };
+  computed: {
+    showSummary () {
+      return this.mode !== 'full' && !this.showingFullBio
+    },
+
+    showFull () {
+      return this.mode === 'full' || this.showingFullBio
+    }
+  },
+
+  methods: {
+    /**
+     * Shuffle all songs performed by the current song's artist.
+     */
+    shuffleAll () {
+      playback.playAllByArtist(this.artist, false)
+    }
+  }
+}
 </script>
 
 <style lang="sass">
-    @import "../../../../sass/partials/_vars.scss";
-    @import "../../../../sass/partials/_mixins.scss";
+@import "../../../../sass/partials/_vars.scss";
+@import "../../../../sass/partials/_mixins.scss";
 
-    #artistInfo {
-        img.cool-guys-posing {
-            width: 100%;
-            height: auto;
-        }
-
-        .bio {
-            margin-top: 16px;
-        }
-    }
+#artistInfo {
+  @include artist-album-info();
+}
 </style>

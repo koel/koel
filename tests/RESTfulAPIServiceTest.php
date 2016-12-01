@@ -5,6 +5,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Mockery as m;
 
 class RESTfulAPIServiceTest extends TestCase
 {
@@ -12,7 +13,7 @@ class RESTfulAPIServiceTest extends TestCase
 
     public function testUrlConstruction()
     {
-        $api = new RESTfulService('bar', null, 'http://foo.com', \Mockery::mock(Client::class));
+        $api = new RESTfulService('bar', null, 'http://foo.com', m::mock(Client::class));
         $this->assertEquals('http://foo.com/get/param?key=bar', $api->buildUrl('get/param'));
         $this->assertEquals('http://foo.com/get/param?baz=moo&key=bar', $api->buildUrl('/get/param?baz=moo'));
         $this->assertEquals('http://baz.com/?key=bar', $api->buildUrl('http://baz.com/'));
@@ -20,7 +21,7 @@ class RESTfulAPIServiceTest extends TestCase
 
     public function testRequest()
     {
-        $client = \Mockery::mock(Client::class, [
+        $client = m::mock(Client::class, [
             'get' => new Response(200, [], '{"foo":"bar"}'),
             'post' => new Response(200, [], '{"foo":"bar"}'),
             'delete' => new Response(200, [], '{"foo":"bar"}'),

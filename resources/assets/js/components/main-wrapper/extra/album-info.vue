@@ -1,121 +1,88 @@
 <template>
-    <article v-if="album.id" id="albumInfo">
-        <h1>
-            <span>{{ album.name }}</span>
+  <article id="albumInfo" :class="mode">
+    <h1 class="name">
+      <span>{{ album.name }}</span>
 
-            <a class="shuffle" @click.prevent="shuffleAll"><i class="fa fa-random"></i></a>
-        </h1>
+      <a class="shuffle" @click.prevent="shuffleAll"><i class="fa fa-random"></i></a>
+    </h1>
 
-        <div v-if="album.info">
-            <img v-if="album.info.image" :src="album.info.image"
-                title=""
-                class="cover">
+    <div v-if="album.info">
+      <img v-if="album.info.image" :src="album.info.image" class="cover">
 
-            <div class="wiki" v-if="album.info.wiki && album.info.wiki.summary">
-                <div class="summary" v-show="!showingFullWiki">{{{ album.info.wiki.summary }}}</div>
-                <div class="full" v-show="showingFullWiki">{{{ album.info.wiki.full }}}</div>
+      <div class="wiki" v-if="album.info.wiki && album.info.wiki.summary">
+        <div class="summary" v-show="showSummary" v-html="album.info.wiki.summary"/>
+        <div class="full" v-show="showFull" v-html="album.info.wiki.full"/>
 
-                <button class="more" v-show="!showingFullWiki" @click.prevent="showingFullWiki = !showingFullWiki">
-                    Full Wiki
-                </button>
-            </div>
+        <button class="more" v-show="showSummary" @click.prevent="showingFullWiki = true">
+          Full Wiki
+        </button>
+      </div>
 
-            <section class="track-listing" v-if="album.info.tracks.length">
-                <h1>Track Listing</h1>
-                <ul class="tracks">
-                    <li v-for="track in album.info.tracks">
-                        <span class="no">{{ $index + 1 }}</span>
-                        <span class="title">{{ track.title }}</span>
-                        <span class="length">{{ track.fmtLength }}</span>
-                    </li>
-                </ul>
-            </section>
+      <section class="track-listing" v-if="album.info.tracks.length">
+        <h1>Track Listing</h1>
+        <ul class="tracks">
+          <li is="track-list-item"
+            v-for="(track, idx) in album.info.tracks"
+            :album="album"
+            :track="track"
+            :index="idx"
+          />
+        </ul>
+      </section>
 
-            <footer>Data &copy; <a target="_blank" href="{{{ album.info.url }}}">Last.fm</a></footer>
-        </div>
+      <footer>Data &copy; <a target="_blank" :href="album.info.url">Last.fm</a></footer>
+    </div>
 
-        <p class="none" v-else>No album information found. At all.</p>
-    </article>
+    <p class="none" v-else>No album information found.</p>
+  </article>
 </template>
 
 <script>
-    import playback from '../../../services/playback';
+import { playback } from '../../../services'
+import trackListItem from '../../shared/track-list-item.vue'
 
-    export default {
-        replace: false,
-        props: ['album'],
+export default {
+  props: ['album', 'mode'],
+  components: { trackListItem },
 
-        data() {
-            return {
-                showingFullWiki: false,
-            };
-        },
+  data () {
+    return {
+      showingFullWiki: false
+    }
+  },
 
-        methods: {
-            /**
-             * Reset the component's current state.
-             */
-            resetState() {
-                this.showingFullWiki = false;
-            },
+  watch: {
+    album () {
+      this.showingFullWiki = false
+    }
+  },
 
-            /**
-             * Shuffle all songs in the current album.
-             */
-            shuffleAll() {
-                playback.playAllInAlbum(this.album);
-            },
-        },
-    };
+  computed: {
+    showSummary () {
+      return this.mode !== 'full' && !this.showingFullWiki
+    },
+
+    showFull () {
+      return this.mode === 'full' || this.showingFullWiki
+    }
+  },
+
+  methods: {
+    /**
+     * Shuffle all songs in the current album.
+     */
+    shuffleAll () {
+      playback.playAllInAlbum(this.album)
+    }
+  }
+}
 </script>
 
 <style lang="sass">
-    @import "../../../../sass/partials/_vars.scss";
-    @import "../../../../sass/partials/_mixins.scss";
+@import "../../../../sass/partials/_vars.scss";
+@import "../../../../sass/partials/_mixins.scss";
 
-    #albumInfo {
-        img.cover {
-            width: 100%;
-            height: auto;
-        }
-
-        .wiki {
-            margin-top: 16px;
-        }
-
-        .track-listing {
-            margin-top: 16px;
-
-            h1 {
-                font-size: 20px;
-                margin-bottom: 0;
-                display: block;
-            }
-
-            li {
-                display: flex;
-                justify-content: space-between;
-                padding: 8px;
-
-                &:nth-child(even) {
-                    background: rgba(255, 255, 255, 0.05);
-                }
-
-                .no {
-                    flex: 0 0 24px;
-                    opacity: .5;
-                }
-
-                .title {
-                    flex: 1;
-                }
-
-                .length {
-                    flex: 0 0 48px;
-                    text-align: right;
-                    opacity: .5;
-                }
-            }
-        }
-    }
+#albumInfo {
+  @include artist-album-info();
+}
 </style>

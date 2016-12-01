@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Console\Commands\SyncMedia;
 use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\File;
 use App\Models\Setting;
 use App\Models\Song;
@@ -20,7 +22,17 @@ class Media
      *
      * @var array
      */
-    protected $allTags = ['artist', 'album', 'title', 'length', 'track', 'lyrics', 'cover', 'mtime'];
+    protected $allTags = [
+        'artist',
+        'album',
+        'title',
+        'length',
+        'track',
+        'lyrics',
+        'cover',
+        'mtime',
+        'compilation',
+    ];
 
     /**
      * Tags to be synced.
@@ -46,7 +58,7 @@ class Media
     public function sync($path = null, $tags = [], $force = false, SyncMedia $syncCommand = null)
     {
         if (!app()->runningInConsole()) {
-            set_time_limit(env('APP_MAX_SCAN_TIME', 600));
+            set_time_limit(config('koel.sync.timeout'));
         }
 
         $path = $path ?: Setting::get('media_path');
@@ -60,7 +72,13 @@ class Media
 
         $getID3 = new getID3();
 
-        foreach ($this->gatherFiles($path) as $file) {
+        $files = $this->gatherFiles($path);
+
+        if ($syncCommand) {
+            $syncCommand->createProgressBar(count($files));
+        }
+
+        foreach ($files as $file) {
             $file = new File($file, $getID3);
 
             $song = $file->sync($this->tags, $force);
@@ -74,7 +92,8 @@ class Media
             }
 
             if ($syncCommand) {
-                $syncCommand->logToConsole($file->getPath(), $song);
+                $syncCommand->updateProgressBar();
+                $syncCommand->logToConsole($file->getPath(), $song, $file->getSyncError());
             }
         }
 
@@ -83,7 +102,7 @@ class Media
             return self::getHash($f->getPath());
         }, array_merge($results['ugly'], $results['good']));
 
-        Song::whereNotIn('id', $hashes)->delete();
+        Song::deleteWhereIDsNotIn($hashes);
 
         // Trigger LibraryChanged, so that TidyLibrary handler is fired to, erm, tidy our library.
         event(new LibraryChanged());
@@ -100,7 +119,9 @@ class Media
     {
         return Finder::create()
             ->ignoreUnreadableDirs()
+            ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/phanan/koel/issues/450
             ->files()
+            ->followLinks()
             ->name('/\.(mp3|ogg|m4a|flac)$/i')
             ->in($path);
     }
@@ -165,7 +186,7 @@ class Media
     /**
      * Construct an array of tags to be synced into the database from an input array of tags.
      * If the input array is empty or contains only invalid items, we use all tags.
-     * Otherwise, we only use the valid items it it.
+     * Otherwise, we only use the valid items in it.
      *
      * @param array $tags
      */
@@ -174,7 +195,7 @@ class Media
         $this->tags = array_intersect((array) $tags, $this->allTags) ?: $this->allTags;
 
         // We always keep track of mtime.
-        if (!in_array('mtime', $this->tags)) {
+        if (!in_array('mtime', $this->tags, true)) {
             $this->tags[] = 'mtime';
         }
     }
@@ -189,5 +210,30 @@ class Media
     public function getHash($path)
     {
         return File::getHash($path);
+    }
+
+    /**
+     * Tidy up the library by deleting empty albums and artists.
+     */
+    public function tidy()
+    {
+        $inUseAlbums = Song::select('album_id')->groupBy('album_id')->get()->pluck('album_id')->toArray();
+        $inUseAlbums[] = Album::UNKNOWN_ID;
+        Album::deleteWhereIDsNotIn($inUseAlbums);
+
+        $inUseArtists = Album::select('artist_id')->groupBy('artist_id')->get()->pluck('artist_id')->toArray();
+
+        $contributingArtists = Song::distinct()
+            ->select('contributing_artist_id')
+            ->groupBy('contributing_artist_id')
+            ->get()
+            ->pluck('contributing_artist_id')
+            ->toArray();
+
+        $inUseArtists = array_merge($inUseArtists, $contributingArtists);
+        $inUseArtists[] = Artist::UNKNOWN_ID;
+        $inUseArtists[] = Artist::VARIOUS_ID;
+
+        Artist::deleteWhereIDsNotIn(array_filter($inUseArtists));
     }
 }

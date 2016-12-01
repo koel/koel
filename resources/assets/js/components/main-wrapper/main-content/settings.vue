@@ -1,77 +1,103 @@
 <template>
-    <section id="settingsWrapper">
-        <h1 class="heading">
-            <span>Settings</span>
-        </h1>
+  <section id="settingsWrapper">
+    <h1 class="heading">
+      <span>Settings</span>
+    </h1>
 
-        <form @submit.prevent="save" class="main-scroll-wrap">
-            <div class="form-row">
-                <label for="inputSettingsPath">Media Path</label>
-                <p class="help">
-                    The <em>absolute</em> path to the server directory containing your media.
-                    Koel will scan this directory for songs and extract any available information.<br>
-                    Scanning may take a while, especially if you have a lot of songs, so be patient.
-                </p>
+    <form @submit.prevent="confirmThenSave" class="main-scroll-wrap">
+      <div class="form-row">
+        <label for="inputSettingsPath">Media Path</label>
+        <p class="help">
+          The <em>absolute</em> path to the server directory containing your media.
+          Koel will scan this directory for songs and extract any available information.<br>
+          Scanning may take a while, especially if you have a lot of songs, so be patient.
+        </p>
 
-                <input type="text" v-model="state.settings.media_path" id="inputSettingsPath">
-            </div>
+        <input type="text" v-model="state.settings.media_path" id="inputSettingsPath">
+      </div>
 
-            <div class="form-row">
-                <button type="submit">Scan</button>
-            </div>
-        </form>
-    </section>
+      <div class="form-row">
+        <button type="submit">Scan</button>
+      </div>
+    </form>
+  </section>
 </template>
 
 <script>
-    import settingStore from '../../../stores/setting';
-    import utils from '../../../services/utils';
+import { settingStore, sharedStore } from '../../../stores'
+import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay, alerts } from '../../../utils'
+import router from '../../../router'
 
-    export default {
-        data() {
-            return {
-                state: settingStore.state,
-            };
-        },
+export default {
+  data () {
+    return {
+      state: settingStore.state,
+      sharedState: sharedStore.state
+    }
+  },
 
-        methods: {
-            /**
-             * Save the settings.
-             */
-            save() {
-                this.$root.showOverlay();
+  computed: {
+    /**
+     * Determine if we should warn the user upon saving.
+     *
+     * @return {boolean}
+     */
+    shouldWarn () {
+      // Warn the user if the media path is not empty and about to change.
+      return this.sharedState.originalMediaPath &&
+        this.sharedState.originalMediaPath !== this.state.settings.media_path.trim()
+    }
+  },
 
-                settingStore.update(() => {
-                    // Re-init the app.
-                    this.$root.init();
-                }, error => {
-                    let msg = 'Unknown error.';
+  methods: {
+    confirmThenSave () {
+      if (this.shouldWarn) {
+        alerts.confirm('Warning: Changing the media path will essentially remove all existing data – songs, artists, \
+          albums, favorites, everything – and empty your playlists! Sure you want to proceed?', this.save)
+      } else {
+        this.save()
+      }
+    },
 
-                    if (error.status === 422) {
-                        msg = utils.parseValidationError(error.data)[0];
-                    }
+    /**
+     * Save the settings.
+     */
+    save () {
+      showOverlay()
 
-                    this.$root.showOverlay(`Error: ${msg}`, 'error', true);
-                });
-            },
-        },
-    };
+      settingStore.update().then(() => {
+        // Make sure we're back to home first.
+        router.go('home')
+        forceReloadWindow()
+      }).catch(r => {
+        let msg = 'Unknown error.'
+
+        if (r.status === 422) {
+          msg = parseValidationError(r.responseJSON)[0]
+        }
+
+        hideOverlay()
+        alerts.error(msg)
+      })
+    }
+  }
+}
 </script>
 
 <style lang="sass">
-    @import "../../../../sass/partials/_vars.scss";
-    @import "../../../../sass/partials/_mixins.scss";
+@import "../../../../sass/partials/_vars.scss";
+@import "../../../../sass/partials/_mixins.scss";
 
-    #settingsWrapper {
-        input[type="text"] {
-            width: 384px;
-            margin-top: 12px;
-        }
+#settingsWrapper {
+  input[type="text"] {
+    width: 384px;
+    margin-top: 12px;
+  }
 
-        @media only screen and (max-width : 667px) {
-            input[type="text"] {
-                width: 100%;
-            }
-        }
+  @media only screen and (max-width : 667px) {
+    input[type="text"] {
+      width: 100%;
     }
+  }
+}
 </style>

@@ -3,15 +3,9 @@
 namespace App\Http\Streamers;
 
 use App\Models\Setting;
-use App\Models\Song;
 
 class XAccelRedirectStreamer extends Streamer implements StreamerInterface
 {
-    public function __construct(Song $song)
-    {
-        parent::__construct($song);
-    }
-
     /**
      * Stream the current song using nginx's X-Accel-Redirect.
      */

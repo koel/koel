@@ -35,7 +35,7 @@ class Authenticate
     public function handle($request, Closure $next)
     {
         if ($this->auth->guest()) {
-            if ($request->ajax() || $request->route()->getName() == 'play') {
+            if ($request->ajax() || $request->route()->getName() === 'play') {
                 return response('Unauthorized.', 401);
             } else {
                 return redirect()->guest('login');

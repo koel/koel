@@ -2,61 +2,50 @@
  * Add necessary functionalities into a view that contains a song-list component.
  */
 
-import { assign } from 'lodash';
+import { assign } from 'lodash'
+import isMobile from 'ismobilejs'
 
-import playback from '../services/playback';
-import addToMenu from '../components/shared/add-to-menu.vue';
-import songList from '../components/shared/song-list.vue';
+import { playback } from '../services'
+import songList from '../components/shared/song-list.vue'
+import songListControls from '../components/shared/song-list-controls.vue'
+import controlsToggler from '../components/shared/song-list-controls-toggler.vue'
 
 export default {
-    components: { addToMenu, songList },
+  components: { songList, songListControls, controlsToggler },
 
-    data() {
-        return {
-            /**
-             * Whether or not to show the "Add To" button in the header.
-             *
-             * @type {Boolean}
-             */
-            showingAddToMenu: false,
+  data () {
+    return {
+      state: null,
+      meta: {
+        songCount: 0,
+        totalLength: '00:00'
+      },
+      selectedSongs: [],
+      showingControls: false,
+      songListControlConfig: {},
+      isPhone: isMobile.phone
+    }
+  },
 
-            /**
-             * An array of selected songs in the list.
-             *
-             * @type {Array.<Object>}
-             */
-            selectedSongs: [],
-
-            meta: {
-                songCount: 0,
-                totalLength: '00:00',
-            },
-        };
+  methods: {
+    setSelectedSongs (songs) {
+      this.selectedSongs = songs
     },
 
-    methods: {
-        /**
-         * Shuffles the currently selected songs.
-         */
-        shuffleSelected() {
-            if (this.selectedSongs.length < 2) {
-                return;
-            }
-
-            playback.queueAndPlay(this.selectedSongs, true);
-        },
+    updateMeta (meta) {
+      this.meta = assign(this.meta, meta)
     },
 
-    events: {
-        /**
-         * Listen to add-to-menu:close event to set showingAddToMenu to false (and subsequently close the menu).
-         */
-        'add-to-menu:close': function () {
-            this.showingAddToMenu = false;
-        },
-
-        'songlist:changed': function (meta) {
-            this.meta = assign(this.meta, meta);
-        },
+    shuffleAll () {
+      playback.queueAndPlay(this.state.songs, true)
     },
-};
+
+    shuffleSelected () {
+      playback.queueAndPlay(this.selectedSongs, true)
+    },
+
+    toggleControls () {
+      this.showingControls = !this.showingControls
+    }
+  }
+}

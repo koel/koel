@@ -1,76 +1,82 @@
 <template>
-    <section id="artistsWrapper">
-        <h1 class="heading">
-            <span>Artists</span>
-            <view-mode-switch :mode.sync="viewMode" for="artists"></view-mode-switch>
-        </h1>
+  <section id="artistsWrapper">
+    <h1 class="heading">
+      <span>Artists</span>
+      <view-mode-switch :mode="viewMode" for="artists"/>
+    </h1>
 
-        <div class="artists main-scroll-wrap as-{{ viewMode }}" v-el:wrapper @scroll="scrolling">
-            <artist-item v-for="item in items
-                | filterBy q in 'name'
-                | limitBy numOfItems" :artist="item"></artist-item>
-
-            <span class="item filler" v-for="n in 6"></span>
-        </div>
-    </section>
+    <div class="artists main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
+      <artist-item v-for="item in displayedItems" :artist="item"/>
+      <span class="item filler" v-for="n in 6"/>
+      <to-top-button :showing="showBackToTop"/>
+    </div>
+  </section>
 </template>
 
 <script>
-    import artistItem from '../../shared/artist-item.vue';
-    import viewModeSwitch from '../../shared/view-mode-switch.vue';
-    import infiniteScroll from '../../../mixins/infinite-scroll';
-    import artistStore from '../../../stores/artist';
+import { filterBy, limitBy, event } from '../../../utils'
+import { artistStore } from '../../../stores'
 
-    export default {
-        mixins: [infiniteScroll],
+import artistItem from '../../shared/artist-item.vue'
+import viewModeSwitch from '../../shared/view-mode-switch.vue'
+import infiniteScroll from '../../../mixins/infinite-scroll'
 
-        components: { artistItem, viewModeSwitch },
+export default {
+  mixins: [infiniteScroll],
 
-        data() {
-            return {
-                perPage: 9,
-                numOfItems: 9,
-                state: artistStore.state,
-                q: '',
-                viewMode: null,
-            };
-        },
+  components: { artistItem, viewModeSwitch },
 
-        computed: {
-            items() {
-                return this.state.artists;
-            },
-        },
+  data () {
+    return {
+      perPage: 9,
+      numOfItems: 9,
+      q: '',
+      viewMode: null
+    }
+  },
 
-        events: {
-            /**
-             * When the application is ready, load the first batch of items.
-             */
-            'koel:ready': function () {
-                this.displayMore();
+  computed: {
+    displayedItems () {
+      return limitBy(
+        filterBy(artistStore.all, this.q, 'name'),
+        this.numOfItems
+      )
+    }
+  },
 
-                return true;
-            },
+  methods: {
+    changeViewMode (mode) {
+      this.viewMode = mode
+    }
+  },
 
-            'koel:teardown': function () {
-                this.q = '';
-                this.numOfItems = 9;
-            },
+  created () {
+    event.on({
+      /**
+       * When the application is ready, load the first batch of items.
+       */
+      'koel:ready': () => this.displayMore(),
 
-            'filter:changed': function (q) {
-                this.q = q;
-            },
-        },
-    };
+      'koel:teardown': () => {
+        this.q = ''
+        this.numOfItems = 9
+      },
+
+      'filter:changed': q => {
+        this.q = q
+      }
+    })
+  }
+}
 </script>
 
 <style lang="sass">
-    @import "../../../../sass/partials/_vars.scss";
-    @import "../../../../sass/partials/_mixins.scss";
+@import "../../../../sass/partials/_vars.scss";
+@import "../../../../sass/partials/_mixins.scss";
 
-    #artistsWrapper {
-        .artists {
-            @include artist-album-wrapper();
-        }
-    }
+#artistsWrapper {
+  .artists {
+    @include artist-album-wrapper();
+  }
+}
 </style>

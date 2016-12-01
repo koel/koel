@@ -11,7 +11,8 @@
     <meta name="theme-color" content="#282828">
     <meta name="msapplication-navbutton-color" content="#282828">
 
-    <link rel="manifest" href="{{ App::staticUrl('manifest.json') }}" />
+    <link rel="manifest" href="{{ App::staticUrl('public/manifest.json') }}" />
+    <meta name="msapplication-config" content="{{ App::staticUrl('public/browserconfig.xml') }}" />
     <link rel="icon" type="image/x-icon" href="{{ App::staticUrl('public/img/favicon.ico') }}" />
     <link rel="icon" href="{{ App::staticUrl('public/img/icon.png') }}">
     <link rel="apple-touch-icon" href="{{ App::staticUrl('public/img/icon.png') }}">
@@ -29,8 +30,8 @@
         ga('create', 'UA-73152563-1', 'auto');
         ga('send', 'pageview');
     </script>
-    
-    <app></app>
+
+    <div id="app"></div>
 
     <script src="{{ App::rev('js/vendors.js') }}"></script>
     <script src="{{ App::rev('js/main.js') }}"></script>

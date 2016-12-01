@@ -3,23 +3,31 @@
 namespace App\Models;
 
 use App\Facades\Lastfm;
+use App\Traits\SupportsDeleteWhereIDsNotIn;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string cover       The path to the album's cover
- * @property bool   has_cover   If the album has a cover image
+ * @property string cover           The path to the album's cover
+ * @property bool   has_cover       If the album has a cover image
  * @property int    id
- * @property string name        Name of the album
- * @property Artist artist      The album's artist
+ * @property string name            Name of the album
+ * @property bool   is_compilation  If the album is a compilation from multiple artists
+ * @property Artist artist          The album's artist
+ * @property int    artist_id
+ * @property Collection  songs
  */
 class Album extends Model
 {
+    use SupportsDeleteWhereIDsNotIn;
+
     const UNKNOWN_ID = 1;
     const UNKNOWN_NAME = 'Unknown Album';
     const UNKNOWN_COVER = 'unknown-album.png';
 
     protected $guarded = ['id'];
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['updated_at'];
+    protected $casts = ['artist_id' => 'integer'];
 
     public function artist()
     {
@@ -40,21 +48,22 @@ class Album extends Model
      * Get an album using some provided information.
      *
      * @param Artist $artist
-     * @param        $name
+     * @param string $name
+     * @param bool   $isCompilation
      *
      * @return self
      */
-    public static function get(Artist $artist, $name)
+    public static function get(Artist $artist, $name, $isCompilation = false)
     {
-        // If an empty name is provided, turn it into our "Unknown Album"
-        $name = $name ?: self::UNKNOWN_NAME;
+        // If this is a compilation album, its artist must be "Various Artists"
+        if ($isCompilation) {
+            $artist = Artist::getVarious();
+        }
 
-        $album = self::firstOrCreate([
+        return self::firstOrCreate([
             'artist_id' => $artist->id,
-            'name' => $name,
+            'name' => $name ?: self::UNKNOWN_NAME,
         ]);
-
-        return $album;
     }
 
     /**
@@ -114,15 +123,39 @@ class Album extends Model
      * @param string $binaryData
      * @param string $extension  The file extension
      */
-    private function writeCoverFile($binaryData, $extension)
+    public function writeCoverFile($binaryData, $extension)
     {
         $extension = trim(strtolower($extension), '. ');
-        $fileName = uniqid().".$extension";
-        $coverPath = app()->publicPath().'/public/img/covers/'.$fileName;
+        $destPath = $this->generateRandomCoverPath($extension);
+        file_put_contents($destPath, $binaryData);
 
-        file_put_contents($coverPath, $binaryData);
+        $this->update(['cover' => basename($destPath)]);
+    }
 
-        $this->update(['cover' => $fileName]);
+    /**
+     * Copy a cover file from an existing image on the system.
+     *
+     * @param string $srcPath The original image's full path.
+     */
+    public function copyCoverFile($srcPath)
+    {
+        $extension = pathinfo($srcPath, PATHINFO_EXTENSION);
+        $destPath = $this->generateRandomCoverPath($extension);
+        copy($srcPath, $destPath);
+
+        $this->update(['cover' => basename($destPath)]);
+    }
+
+    /**
+     * Generate a random path for the cover image.
+     *
+     * @param string $extension The extension of the cover (without dot)
+     *
+     * @return string
+     */
+    private function generateRandomCoverPath($extension)
+    {
+        return app()->publicPath().'/public/img/covers/'.uniqid('', true).".$extension";
     }
 
     public function setCoverAttribute($value)
@@ -156,5 +189,15 @@ class Album extends Model
     public function getNameAttribute($value)
     {
         return html_entity_decode($value);
+    }
+
+    /**
+     * Determine if the album is a compilation.
+     *
+     * @return bool
+     */
+    public function getIsCompilationAttribute()
+    {
+        return $this->artist_id === Artist::VARIOUS_ID;
     }
 }

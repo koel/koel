@@ -8,13 +8,11 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class InteractionTest extends TestCase
 {
-    use DatabaseTransactions;
-    use WithoutMiddleware;
+    use DatabaseTransactions, WithoutMiddleware;
 
     public function setUp()
     {
         parent::setUp();
-
         $this->createSampleMediaSet();
     }
 

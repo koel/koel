@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Facades\Lastfm;
 use App\Facades\Util;
+use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Log;
@@ -11,11 +12,16 @@ use Log;
 /**
  * @property int    id      The model ID
  * @property string name    The artist name
+ * @property string image
  */
 class Artist extends Model
 {
+    use SupportsDeleteWhereIDsNotIn;
+
     const UNKNOWN_ID = 1;
     const UNKNOWN_NAME = 'Unknown Artist';
+    const VARIOUS_ID = 2;
+    const VARIOUS_NAME = 'Various Artists';
 
     protected $guarded = ['id'];
 
@@ -26,9 +32,29 @@ class Artist extends Model
         return $this->hasMany(Album::class);
     }
 
+    public function songs()
+    {
+        return $this->hasManyThrough(Song::class, Album::class);
+    }
+
     public function isUnknown()
     {
         return $this->id === self::UNKNOWN_ID;
+    }
+
+    public function isVarious()
+    {
+        return $this->id === self::VARIOUS_ID;
+    }
+
+    /**
+     * Get the "Various Artists" object.
+     *
+     * @return Artist
+     */
+    public static function getVarious()
+    {
+        return self::find(self::VARIOUS_ID);
     }
 
     /**
@@ -97,6 +123,16 @@ class Artist extends Model
         }
 
         return $info;
+    }
+
+    /**
+     * Get songs *contributed* (in compilation albums) by the artist.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getContributedSongs()
+    {
+        return Song::whereContributingArtistId($this->id)->get();
     }
 
     /**

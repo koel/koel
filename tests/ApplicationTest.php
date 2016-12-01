@@ -9,7 +9,7 @@ class ApplicationTest extends TestCase
 {
     public function testStaticUrlWithoutCDN()
     {
-        putenv('CDN_URL');
+        config(['koel.cdn.url' => '']);
 
         $this->assertEquals(App::staticUrl(), 'http://localhost/');
         $this->assertEquals(App::staticUrl('foo.css  '), 'http://localhost/foo.css');
@@ -17,7 +17,7 @@ class ApplicationTest extends TestCase
 
     public function testStaticUrlWithCDN()
     {
-        putenv('CDN_URL=http://cdn.bar');
+        config(['koel.cdn.url' => 'http://cdn.bar']);
 
         $this->assertEquals(App::staticUrl(), 'http://cdn.bar/');
         $this->assertEquals(App::staticUrl('foo.css  '), 'http://cdn.bar/foo.css');
@@ -25,19 +25,19 @@ class ApplicationTest extends TestCase
 
     public function testRev()
     {
-        putenv('CDN_URL');
+        config(['koel.cdn.url' => '']);
 
-        $manifestFile = dirname(__FILE__).'/blobs/rev-manifest.json';
+        $manifestFile = __DIR__.'/blobs/rev-manifest.json';
         $this->assertEquals(App::rev('foo.css', $manifestFile), 'http://localhost/public/build/foo00.css');
 
-        putenv('CDN_URL=http://cdn.bar');
+        config(['koel.cdn.url' => 'http://cdn.bar']);
         $this->assertEquals(App::rev('bar.js', $manifestFile), 'http://cdn.bar/public/build/bar00.js');
     }
 
     public function testGetLatestVersion()
     {
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(dirname(__FILE__).'/blobs/github-tags.json')),
+            new Response(200, [], file_get_contents(__DIR__.'/blobs/github-tags.json')),
         ]);
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);

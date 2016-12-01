@@ -1,392 +1,399 @@
-import { shuffle } from 'lodash';
-import $ from 'jquery';
+import { shuffle, orderBy } from 'lodash'
+import $ from 'jquery'
+import plyr from 'plyr'
+import Vue from 'vue'
 
-import queueStore from '../stores/queue';
-import songStore from '../stores/song';
-import artistStore from '../stores/artist';
-import preferenceStore from '../stores/preference';
-import config from '../config';
-import plyr from 'plyr';
+import { event } from '../utils'
+import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '../stores'
+import config from '../config'
+import router from '../router'
 
-export default {
-    app: null,
-    player: null,
-    $volumeInput: null,
-    repeatModes: ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE'],
-    initialized: false,
+export const playback = {
+  player: null,
+  $volumeInput: null,
+  repeatModes: ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE'],
+  initialized: false,
 
-    /**
-     * Initialize the playback service for this whole Koel app.
-     *
-     * @param  {Vue} app The root Vue component.
-     */
-    init(app) {
-        // We don't need to init this service twice, or the media events will be duplicated.
-        if (this.initialized) {
-            return;
-        }
+  /**
+   * Initialize the playback service for this whole Koel app.
+   */
+  init () {
+    // We don't need to init this service twice, or the media events will be duplicated.
+    if (this.initialized) {
+      return
+    }
 
-        this.app = app;
+    this.player = plyr.setup({
+      controls: []
+    })[0]
 
-        this.player = plyr.setup({
-            controls: [],
-        })[0];
+    this.audio = $('audio')
 
-        this.audio = $('audio');
-
-        this.$volumeInput = $('#volumeRange');
-
-        /**
-         * Listen to 'error' event on the audio player and play the next song if any.
-         */
-        document.querySelector('.plyr').addEventListener('error', e => {
-            this.playNext();
-        }, true);
-
-        /**
-         * Listen to 'ended' event on the audio player and play the next song in the queue.
-         */
-        document.querySelector('.plyr').addEventListener('ended', e => {
-            songStore.scrobble(queueStore.current);
-
-            if (preferenceStore.get('repeatMode') === 'REPEAT_ONE') {
-                this.restart();
-
-                return;
-            }
-
-            this.playNext();
-        });
-
-        /**
-         * Attempt to preload the next song if the current song is about to end.
-         */
-        document.querySelector('.plyr').addEventListener('timeupdate', e => {
-            if (!this.player.media.duration || this.player.media.currentTime + 10 < this.player.media.duration) {
-                return;
-            }
-
-            // The current song has only 10 seconds left to play.
-            const nextSong = queueStore.next;
-            if (!nextSong || nextSong.preloaded) {
-                return;
-            }
-
-            const $preloader = $('<audio>');
-            $preloader.attr('src', songStore.getSourceUrl(nextSong));
-
-            nextSong.preloaded = true;
-        });
-
-        /**
-         * Listen to 'input' event on the volume range control.
-         * When user drags the volume control, this event will be triggered, and we
-         * update the volume on the plyr object.
-         */
-        this.$volumeInput.on('input', e => {
-            this.setVolume($(e.target).val());
-        });
-
-        // On init, set the volume to the value found in the local storage.
-        this.setVolume(preferenceStore.get('volume'));
-
-        // Init the equalizer if supported.
-        this.app.$broadcast('equalizer:init', this.player.media);
-
-        this.initialized = true;
-    },
+    this.$volumeInput = $('#volumeRange')
 
     /**
-     * Play a song. Because
-     *
-     * So many adventures couldn't happen today,
-     * So many songs we forgot to play
-     * So many dreams swinging out of the blue
-     * We'll let them come true
-     *
-     * @param  {Object} song The song to play
+     * Listen to 'error' event on the audio player and play the next song if any.
      */
-    play(song) {
-        if (!song) {
-            return;
-        }
-
-        if (queueStore.current) {
-            queueStore.current.playbackState = 'stopped';
-        }
-
-        song.playbackState = 'playing';
-
-        // Set the song as the current song
-        queueStore.current = song;
-
-        // Add it into the "recent" list
-        songStore.addRecent(song);
-
-        // Manually set the `src` attribute of the audio to prevent plyr from resetting
-        // the audio media object and cause our equalizer to malfunction.
-        this.player.media.src = songStore.getSourceUrl(song);
-
-        $('title').text(`${song.title} ♫ ${config.appTitle}`);
-        $('.plyr audio').attr('title', `${song.album.artist.name} - ${song.title}`);
-
-        // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
-        this.restart();
-    },
+    document.querySelector('.plyr').addEventListener('error', e => {
+      this.playNext()
+    }, true)
 
     /**
-     * Restart playing a song.
+     * Listen to 'ended' event on the audio player and play the next song in the queue.
      */
-    restart() {
-        const song = queueStore.current;
+    document.querySelector('.plyr').addEventListener('ended', e => {
+      if (sharedStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
+        songStore.scrobble(queueStore.current)
+      }
 
-        // Record the UNIX timestamp the song start playing, for scrobbling purpose
-        song.playStartTime = Math.floor(Date.now() / 1000);
+      if (preferences.repeatMode === 'REPEAT_ONE') {
+        this.restart()
 
-        this.app.$broadcast('song:played', song);
+        return
+      }
 
-        this.player.restart();
-        this.player.play();
-
-        // Register the play to the server
-        songStore.registerPlay(song);
-
-        // Show the notification if we're allowed to
-        if (!window.Notification || !preferenceStore.get('notify')) {
-            return;
-        }
-
-        try {
-            const notification = new Notification(`♫ ${song.title}`, {
-                icon: song.album.cover,
-                body: `${song.album.name} – ${song.album.artist.name}`
-            });
-
-            notification.onclick = () => window.focus();
-
-            // Close the notif after 5 secs.
-            window.setTimeout(() => notification.close(), 5000);
-        } catch (e) {
-            // Notification fails.
-            // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
-        }
-    },
+      this.playNext()
+    })
 
     /**
-     * The next song in the queue.
-     * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
-     *
-     * @return {Object} The song
+     * Attempt to preload the next song if the current song is about to end.
      */
-    get next() {
-        const next = queueStore.next;
+    document.querySelector('.plyr').addEventListener('timeupdate', e => {
+      if (!this.player.media.duration || this.player.media.currentTime + 10 < this.player.media.duration) {
+        return
+      }
 
-        if (next) {
-            return next;
-        }
+      // The current song has only 10 seconds left to play.
+      const nextSong = queueStore.next
+      if (!nextSong || nextSong.preloaded) {
+        return
+      }
 
-        if (preferenceStore.get('repeatMode') === 'REPEAT_ALL') {
-            return queueStore.first;
-        }
-    },
+      const $preloader = $('<audio>')
+      $preloader.attr('src', songStore.getSourceUrl(nextSong))
+
+      nextSong.preloaded = true
+    })
 
     /**
-     * The previous song in the queue.
-     * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
-     *
-     * @return {Object} The song
+     * Listen to 'input' event on the volume range control.
+     * When user drags the volume control, this event will be triggered, and we
+     * update the volume on the plyr object.
      */
-    get previous() {
-        const prev = queueStore.previous;
+    this.$volumeInput.on('input', e => {
+      this.setVolume($(e.target).val())
+    })
 
-        if (prev) {
-            return prev;
-        }
+    // On init, set the volume to the value found in the local storage.
+    this.setVolume(preferences.volume)
 
-        if (preferenceStore.get('repeatMode') === 'REPEAT_ALL') {
-            return queueStore.last;
-        }
-    },
+    // Init the equalizer if supported.
+    event.emit('equalizer:init', this.player.media)
 
-    /**
-     * Circle through the repeat mode.
-     * The selected mode will be stored into local storage as well.
-     */
-    changeRepeatMode() {
-        let idx = this.repeatModes.indexOf(preferenceStore.get('repeatMode')) + 1;
+    this.initialized = true
+  },
 
-        if (idx >= this.repeatModes.length) {
-            idx = 0;
-        }
+  /**
+   * Play a song. Because
+   *
+   * So many adventures couldn't happen today,
+   * So many songs we forgot to play
+   * So many dreams swinging out of the blue
+   * We'll let them come true
+   *
+   * @param  {Object} song The song to play
+   */
+  play (song) {
+    if (!song) {
+      return
+    }
 
-        preferenceStore.set('repeatMode', this.repeatModes[idx]);
-    },
+    if (queueStore.current) {
+      queueStore.current.playbackState = 'stopped'
+    }
 
-    /**
-     * Play the prev song in the queue, if one is found.
-     * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
-     */
-    playPrev() {
-        // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
-        // restart playing instead.
-        if (this.player.media.currentTime > 5 && queueStore.current.length > 5) {
-            this.player.restart();
+    song.playbackState = 'playing'
 
-            return;
-        }
+    // Set the song as the current song
+    queueStore.current = song
 
-        const prev = this.previous;
+    // Add it into the "recent" list
+    songStore.addRecent(song)
 
-        if (!prev && preferenceStore.get('repeatMode') === 'NO_REPEAT') {
-            this.stop();
+    // Manually set the `src` attribute of the audio to prevent plyr from resetting
+    // the audio media object and cause our equalizer to malfunction.
+    this.player.media.src = songStore.getSourceUrl(song)
 
-            return;
-        }
+    $('title').text(`${song.title} ♫ ${config.appTitle}`)
+    $('.plyr audio').attr('title', `${song.artist.name} - ${song.title}`)
 
-        this.play(prev);
-    },
+    // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
+    this.restart()
+  },
 
-    /**
-     * Play the next song in the queue, if one is found.
-     * If the next song is not found and the current mode is NO_REPEAT, we stop completely.
-     */
-    playNext() {
-        const next = this.next;
+  /**
+   * Restart playing a song.
+   */
+  restart () {
+    const song = queueStore.current
 
-        if (!next && preferenceStore.get('repeatMode') === 'NO_REPEAT') {
-            //  Nothing lasts forever, even cold November rain.
-            this.stop();
+    // Record the UNIX timestamp the song start playing, for scrobbling purpose
+    song.playStartTime = Math.floor(Date.now() / 1000)
 
-            return;
-        }
+    event.emit('song:played', song)
 
-        this.play(next);
-    },
+    this.player.restart()
+    this.player.play()
 
-    /**
-     * Set the volume level.
-     *
-     * @param {Number}         volume   0-10
-     * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
-     */
-    setVolume(volume, persist = true) {
-        this.player.setVolume(volume);
+    // Register the play to the server
+    songStore.registerPlay(song)
 
-        if (persist) {
-            preferenceStore.set('volume', volume);
-        }
+    // Show the notification if we're allowed to
+    if (!window.Notification || !preferences.notify) {
+      return
+    }
 
-        this.$volumeInput.val(volume);
-    },
+    try {
+      const notif = new window.Notification(`♫ ${song.title}`, {
+        icon: song.album.cover,
+        body: `${song.album.name} – ${song.artist.name}`
+      })
 
-    /**
-     * Mute playback.
-     */
-    mute() {
-        this.setVolume(0, false);
-    },
+      notif.onclick = () => window.focus()
 
-    /**
-     * Unmute playback.
-     */
-    unmute() {
-        // If the saved volume is 0, we unmute to the default level (7).
-        if (preferenceStore.get('volume') === '0' || preferenceStore.get('volume') === 0) {
-            preferenceStore.set('volume', 7);
-        }
+      // Close the notif after 5 secs.
+      window.setTimeout(() => notif.close(), 5000)
+    } catch (e) {
+      // Notification fails.
+      // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+    }
+  },
 
-        this.setVolume(preferenceStore.get('volume'));
-    },
+  /**
+   * The next song in the queue.
+   * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
+   *
+   * @return {Object} The song
+   */
+  get next () {
+    const next = queueStore.next
 
-    /**
-     * Completely stop playback.
-     */
-    stop() {
-        $('title').text(config.appTitle);
-        this.player.pause();
-        this.player.seek(0);
+    if (next) {
+      return next
+    }
 
-        if (queueStore.current) {
-            queueStore.current.playbackState = 'stopped';
-        }
-    },
+    if (preferences.repeatMode === 'REPEAT_ALL') {
+      return queueStore.first
+    }
+  },
 
-    /**
-     * Pause playback.
-     */
-    pause() {
-        this.player.pause();
-        queueStore.current.playbackState = 'paused';
-    },
+  /**
+   * The previous song in the queue.
+   * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
+   *
+   * @return {Object} The song
+   */
+  get previous () {
+    const prev = queueStore.previous
 
-    /**
-     * Resume playback.
-     */
-    resume() {
-        this.player.play();
-        queueStore.current.playbackState = 'playing';
-        this.app.$broadcast('song:played', queueStore.current);
-    },
+    if (prev) {
+      return prev
+    }
 
-    /**
-     * Queue up songs (replace them into the queue) and start playing right away.
-     *
-     * @param {?Array.<Object>} songs    An array of song objects. Defaults to all songs if null.
-     * @param {Boolean=false}   shuffled Whether to shuffle the songs before playing.
-     */
-    queueAndPlay(songs = null, shuffled = false) {
-        if (!songs) {
-            songs = songStore.all;
-        }
+    if (preferences.repeatMode === 'REPEAT_ALL') {
+      return queueStore.last
+    }
+  },
 
-        if (!songs.length) {
-            return;
-        }
+  /**
+   * Circle through the repeat mode.
+   * The selected mode will be stored into local storage as well.
+   */
+  changeRepeatMode () {
+    let idx = this.repeatModes.indexOf(preferences.repeatMode) + 1
 
-        if (shuffled) {
-            songs = shuffle(songs);
-        }
+    if (idx >= this.repeatModes.length) {
+      idx = 0
+    }
 
-        queueStore.queue(songs, true);
+    preferences.repeatMode = this.repeatModes[idx]
+  },
 
-        this.app.loadMainView('queue');
+  /**
+   * Play the prev song in the queue, if one is found.
+   * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
+   */
+  playPrev () {
+    // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
+    // restart playing instead.
+    if (this.player.media.currentTime > 5 && queueStore.current.length > 5) {
+      this.player.restart()
 
-        // Wrap this inside a nextTick() to wait for the DOM to complete updating
-        // and then play the first song in the queue.
-        this.app.$nextTick(() => this.play(queueStore.first));
-    },
+      return
+    }
 
-    /**
-     * Play the first song in the queue.
-     * If the current queue is empty, try creating it by shuffling all songs.
-     */
-    playFirstInQueue() {
-        if (!queueStore.all.length) {
-            this.queueAndPlay();
+    const prev = this.previous
 
-            return;
-        }
+    if (!prev && preferences.repeatMode === 'NO_REPEAT') {
+      this.stop()
 
-        this.play(queueStore.first);
-    },
+      return
+    }
 
-    /**
-     * Play all songs by an artist.
-     *
-     * @param  {Object}         artist  The artist object
-     * @param  {Boolean=true}   shuffle Whether to shuffle the songs
-     */
-    playAllByArtist(artist, shuffle = true) {
-        this.queueAndPlay(artistStore.getSongsByArtist(artist), true);
-    },
+    this.play(prev)
+  },
 
-    /**
-     * Play all songs in an album.
-     *
-     * @param  {Object}         album   The album object
-     * @param  {Boolean=true}   shuffle Whether to shuffle the songs
-     */
-    playAllInAlbum(album, shuffle = true) {
-        this.queueAndPlay(album.songs, true);
-    },
-};
+  /**
+   * Play the next song in the queue, if one is found.
+   * If the next song is not found and the current mode is NO_REPEAT, we stop completely.
+   */
+  playNext () {
+    const next = this.next
+
+    if (!next && preferences.repeatMode === 'NO_REPEAT') {
+      //  Nothing lasts forever, even cold November rain.
+      this.stop()
+
+      return
+    }
+
+    this.play(next)
+  },
+
+  /**
+   * Set the volume level.
+   *
+   * @param {Number}     volume   0-10
+   * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
+   */
+  setVolume (volume, persist = true) {
+    this.player.setVolume(volume)
+
+    if (persist) {
+      preferences.volume = volume
+    }
+
+    this.$volumeInput.val(volume)
+  },
+
+  /**
+   * Mute playback.
+   */
+  mute () {
+    this.setVolume(0, false)
+  },
+
+  /**
+   * Unmute playback.
+   */
+  unmute () {
+    // If the saved volume is 0, we unmute to the default level (7).
+    if (preferences.volume === '0' || preferences.volume === 0) {
+      preferences.volume = 7
+    }
+
+    this.setVolume(preferences.volume)
+  },
+
+  /**
+   * Completely stop playback.
+   */
+  stop () {
+    $('title').text(config.appTitle)
+    this.player.pause()
+    this.player.seek(0)
+
+    if (queueStore.current) {
+      queueStore.current.playbackState = 'stopped'
+    }
+  },
+
+  /**
+   * Pause playback.
+   */
+  pause () {
+    this.player.pause()
+    queueStore.current.playbackState = 'paused'
+  },
+
+  /**
+   * Resume playback.
+   */
+  resume () {
+    this.player.play()
+    queueStore.current.playbackState = 'playing'
+    event.emit('song:played', queueStore.current)
+  },
+
+  /**
+   * Queue up songs (replace them into the queue) and start playing right away.
+   *
+   * @param {?Array.<Object>} songs  An array of song objects. Defaults to all songs if null.
+   * @param {Boolean=false}   shuffled Whether to shuffle the songs before playing.
+   */
+  queueAndPlay (songs = null, shuffled = false) {
+    if (!songs) {
+      songs = songStore.all
+    }
+
+    if (!songs.length) {
+      return
+    }
+
+    if (shuffled) {
+      songs = shuffle(songs)
+    }
+
+    queueStore.queue(songs, true)
+
+    // Wrap this inside a nextTick() to wait for the DOM to complete updating
+    // and then play the first song in the queue.
+    Vue.nextTick(() => {
+      router.go('queue')
+      this.play(queueStore.first)
+    })
+  },
+
+  /**
+   * Play the first song in the queue.
+   * If the current queue is empty, try creating it by shuffling all songs.
+   */
+  playFirstInQueue () {
+    if (!queueStore.all.length) {
+      this.queueAndPlay()
+
+      return
+    }
+
+    this.play(queueStore.first)
+  },
+
+  /**
+   * Play all songs by an artist.
+   *
+   * @param  {Object}     artist   The artist object
+   * @param  {Boolean=true}   shuffled Whether to shuffle the songs
+   */
+  playAllByArtist (artist, shuffled = true) {
+    if (!shuffled) {
+      this.queueAndPlay(orderBy(artist.songs, 'album_id', 'track'))
+    }
+
+    this.queueAndPlay(artist.songs, true)
+  },
+
+  /**
+   * Play all songs in an album.
+   *
+   * @param  {Object}     album  The album object
+   * @param  {Boolean=true}   shuffled Whether to shuffle the songs
+   */
+  playAllInAlbum (album, shuffled = true) {
+    if (!shuffled) {
+      this.queueAndPlay(orderBy(album.songs, 'track'))
+      return
+    }
+
+    this.queueAndPlay(album.songs, true)
+  }
+}

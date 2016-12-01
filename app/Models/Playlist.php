@@ -3,8 +3,13 @@
 namespace App\Models;
 
 use App\Traits\CanFilterByUser;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int   user_id
+ * @property Collection songs
+ */
 class Playlist extends Model
 {
     use CanFilterByUser;

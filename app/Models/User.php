@@ -3,14 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 /**
- * @property array preferences
- * @property int   id
- * @property bool  is_admin
+ * @property array  preferences
+ * @property int    id
+ * @property bool   is_admin
+ * @property string lastfm_session_key
  */
 class User extends Authenticatable
 {
+    use Notifiable;
+
     /**
      * The database table used by the model.
      *
@@ -116,7 +120,7 @@ class User extends Authenticatable
      */
     public function connectedToLastfm()
     {
-        return (bool) $this->getLastfmSessionKey();
+        return (bool) $this->lastfm_session_key;
     }
 
     /**
@@ -124,7 +128,7 @@ class User extends Authenticatable
      *
      * @return string|null The key if found, or null if user isn't connected to Last.fm
      */
-    public function getLastfmSessionKey()
+    public function getLastfmSessionKeyAttribute()
     {
         return $this->getPreference('lastfm_session_key');
     }
@@ -152,7 +156,7 @@ class User extends Authenticatable
 
         // Hide the user's secrets away!
         foreach ($this->hiddenPreferences as $key) {
-            if (isset($preferences[$key])) {
+            if (array_key_exists($key, $preferences)) {
                 $preferences[$key] = 'hidden';
             }
         }
