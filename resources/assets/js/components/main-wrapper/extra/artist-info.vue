@@ -61,7 +61,7 @@ export default {
      * Shuffle all songs performed by the current song's artist.
      */
     shuffleAll () {
-      playback.playAllByArtist(this.artist)
+      playback.playAllByArtist(this.artist, false)
     }
   }
 }

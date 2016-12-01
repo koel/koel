@@ -375,7 +375,11 @@ export const playback = {
    * @param  {Boolean=true}   shuffled Whether to shuffle the songs
    */
   playAllByArtist (artist, shuffled = true) {
-    this.queueAndPlay(artist.songs, shuffled)
+    if (!shuffled) {
+      this.queueAndPlay(orderBy(artist.songs, 'album_id', 'track'))
+    }
+
+    this.queueAndPlay(artist.songs, true)
   },
 
   /**

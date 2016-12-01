@@ -66,7 +66,7 @@ export default {
       if (e.metaKey || e.ctrlKey) {
         queueStore.queue(this.artist.songs)
       } else {
-        playback.playAllByArtist(this.artist)
+        playback.playAllByArtist(this.artist, false)
       }
     },
 
