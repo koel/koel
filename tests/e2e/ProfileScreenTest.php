@@ -16,10 +16,10 @@ class ProfileScreenTest extends TestCase
             ->typeIn('#profileWrapper input[name="name"]', 'Mr Bar')
             ->typeIn('#profileWrapper input[name="email"]', 'bar@koel.net')
             ->enter()
-            ->see('.sweet-alert')
+            ->see('.alertify-logs')
             // Dismiss the alert first
             ->press(WebDriverKeys::ESCAPE)
-            ->notSee('.sweet-alert');
+            ->notSee('.alertify-logs');
 
         $avatar = $this->el('a.view-profile img');
         // Expect the Gravatar to be updated
@@ -35,9 +35,9 @@ class ProfileScreenTest extends TestCase
         $this->typeIn('#profileWrapper input[name="name"]', 'Koel Admin')
             ->typeIn('#profileWrapper input[name="email"]', 'koel@example.com')
             ->enter()
-            ->see('.sweet-alert')
+            ->see('.alertify-logs')
             ->press(WebDriverKeys::ESCAPE)
-            ->notSee('.sweet-alert')
+            ->notSee('.alertify-logs')
             ->click('#profileWrapper input[name="confirmClosing"]');
     }
 }

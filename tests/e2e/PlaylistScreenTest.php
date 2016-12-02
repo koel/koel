@@ -18,6 +18,6 @@ class PlaylistScreenTest extends TestCase
 
         $this->click('#playlistWrapper .btn-delete-playlist');
         // expect a confirmation
-        $this->see('.sweet-alert');
+        $this->see('.alertify');
     }
 }
