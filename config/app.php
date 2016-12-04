@@ -157,7 +157,6 @@ return [
         App\Providers\DownloadServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
 
-
     ],
 
     /*
