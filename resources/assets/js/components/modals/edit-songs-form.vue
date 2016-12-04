@@ -147,9 +147,7 @@ export default {
      * @return {boolean}
      */
     bySameArtist () {
-      return every(this.songs, song => {
-        song.artist.id === this.songs[0].artist.id
-      })
+      return every(this.songs, song => song.artist.id === this.songs[0].artist.id)
     },
 
     /**
@@ -158,9 +156,7 @@ export default {
      * @return {boolean}
      */
     inSameAlbum () {
-      return every(this.songs, song => {
-        song.album.id === this.songs[0].album.id
-      })
+      return every(this.songs, song => song.album.id === this.songs[0].album.id)
     },
 
     /**
