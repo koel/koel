@@ -12,7 +12,8 @@
         "guzzlehttp/guzzle": "^6.1",
         "tymon/jwt-auth": "^0.5.6",
         "aws/aws-sdk-php-laravel": "^3.1",
-        "facebook/webdriver": "^1.2"
+        "facebook/webdriver": "^1.2",
+        "sentry/sentry-laravel": "^0.5.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

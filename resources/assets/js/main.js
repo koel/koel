@@ -1,7 +1,15 @@
 import Vue from 'vue'
+import Raven from 'raven-js'
+import RavenVue from 'raven-js/plugins/vue'
 
 import { event } from './utils'
 import { http } from './services'
+
+Raven
+  .config('https://766d8f0fc072470ba5ea0ef253fafc89@sentry.io/120890')
+  .addPlugin(RavenVue, Vue)
+  .install()
+
 /**
  * For Ancelot, the ancient cross of war
  * for the holy town of Gods

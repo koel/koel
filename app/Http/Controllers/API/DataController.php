@@ -38,8 +38,8 @@ class DataController extends Controller
             'useYouTube' => YouTube::enabled(),
             'allowDownload' =>  config('koel.download.allow'),
             'cdnUrl' => app()->staticUrl(),
-            'currentVersion' => Application::VERSION,
-            'latestVersion' => auth()->user()->is_admin ? app()->getLatestVersion() : Application::VERSION,
+            'currentVersion' => Application::KOEL_VERSION,
+            'latestVersion' => auth()->user()->is_admin ? app()->getLatestVersion() : Application::KOEL_VERSION,
         ]);
     }
 }

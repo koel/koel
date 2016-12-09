@@ -19,7 +19,7 @@ class Application extends IlluminateApplication
      *
      * @link https://github.com/phanan/koel/releases
      */
-    const VERSION = 'v3.4.1';
+    const KOEL_VERSION = 'v3.4.1';
 
     /**
      * We have merged public path and base path.
@@ -99,7 +99,7 @@ class Application extends IlluminateApplication
         } catch (Exception $e) {
             Log::error($e);
 
-            return self::VERSION;
+            return self::KOEL_VERSION;
         }
     }
 }
