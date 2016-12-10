@@ -61,6 +61,7 @@
   "scripts": {
     "postinstall": "cross-env NODE_ENV=production && gulp --production",
     "test": "eslint resources/assets/js --ext=js,vue && mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js",
-    "e2e": "gulp e2e"
+    "e2e": "gulp e2e",
+    "dev": "cross-env NODE_ENV=development && gulp watch"
   }
 }
