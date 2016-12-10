@@ -23,6 +23,7 @@
 <body>
     <div id="app"></div>
 
+    <noscript>It may sound funny, but Koel requires JavaScript to sing. Please enable it.</noscript>
     <script src="{{ App::rev('js/vendors.js') }}"></script>
     <script src="{{ App::rev('js/main.js') }}"></script>
 </body>
