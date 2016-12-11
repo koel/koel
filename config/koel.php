@@ -113,6 +113,6 @@ return [
     'itunes' => [
         'enabled' => env('USE_ITUNES', true),
         'affiliate_id' => '1000lsGu',
-    ]
+    ],
 
 ];
