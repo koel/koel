@@ -21,5 +21,7 @@ class iTunesTest extends TestCase
             'https://itunes.apple.com/us/album/i-remember-you/id265611220?i=265611396&uo=4&at=1000lsGu',
             $api->getTrackUrl('Foo Bar')
         );
+
+        self::assertNotNull(cache(md5('itunes_track_url_Foo Bar')));
     }
 }
