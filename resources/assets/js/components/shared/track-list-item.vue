@@ -67,6 +67,7 @@ a.view-on-itunes {
   background: rgba(255, 255, 255, .1);
   height: 20px;
   line-height: 20px;
+  margin-left: 4px;
 
   &:hover {
     background: linear-gradient(27deg, #fe5c52 0%,#c74bd5 50%,#2daaff 100%);
