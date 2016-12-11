@@ -157,6 +157,7 @@ return [
         App\Providers\YouTubeServiceProvider::class,
         App\Providers\DownloadServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
+        App\Providers\iTunesServiceProvider::class,
 
     ],
 
@@ -214,6 +215,7 @@ return [
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'AWS' => Aws\Laravel\AwsFacade::class,
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
+        'iTunes' => App\Facades\iTunes::class,
 
     ],
 

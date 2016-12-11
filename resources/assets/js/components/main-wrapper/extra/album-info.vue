@@ -38,7 +38,8 @@
 </template>
 
 <script>
-import { playback } from '../../../services'
+import { sharedStore } from '../../../stores'
+import { playback, ls } from '../../../services'
 import trackListItem from '../../shared/track-list-item.vue'
 
 export default {
@@ -47,7 +48,8 @@ export default {
 
   data () {
     return {
-      showingFullWiki: false
+      showingFullWiki: false,
+      useiTunes: sharedStore.state.useiTunes
     }
   },
 
@@ -64,6 +66,10 @@ export default {
 
     showFull () {
       return this.mode === 'full' || this.showingFullWiki
+    },
+
+    iTunesUrl () {
+      return `/api/itunes/album/${this.album.id}&jwt-token=${ls.get('jwt-token')}`
     }
   },
 

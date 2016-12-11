@@ -110,4 +110,9 @@ return [
     */
     'ignore_dot_files' => env('IGNORE_DOT_FILES', true),
 
+    'itunes' => [
+        'enabled' => env('USE_ITUNES', true),
+        'affiliate_id' => '1000lsGu',
+    ]
+
 ];

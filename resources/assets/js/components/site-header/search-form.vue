@@ -5,7 +5,8 @@
       @input="filter"
       placeholder="Search"
       v-model="q"
-      v-koel-focus="showing">
+      v-koel-focus
+    >
   </div>
 </template>
 

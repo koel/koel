@@ -8,6 +8,7 @@ use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Setting;
 use App\Models\User;
+use iTunes;
 use Lastfm;
 use YouTube;
 
@@ -36,6 +37,7 @@ class DataController extends Controller
             'currentUser' => auth()->user(),
             'useLastfm' => Lastfm::used(),
             'useYouTube' => YouTube::enabled(),
+            'useiTunes' => iTunes::used(),
             'allowDownload' =>  config('koel.download.allow'),
             'cdnUrl' => app()->staticUrl(),
             'currentVersion' => Application::KOEL_VERSION,

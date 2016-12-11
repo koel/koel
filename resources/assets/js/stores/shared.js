@@ -18,6 +18,7 @@ export const sharedStore = {
     playlists: [],
     useLastfm: false,
     useYouTube: false,
+    useiTunes: true,
     allowDownload: false,
     currentVersion: '',
     latestVersion: '',
@@ -71,6 +72,8 @@ export const sharedStore = {
     this.state.currentUser = null
     this.state.playlists = []
     this.state.useLastfm = false
+    this.state.useYouTube = false
+    this.state.useiTunes = true
     this.state.allowDownload = false
     this.state.currentVersion = ''
     this.state.latestVersion = ''

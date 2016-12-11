@@ -62,6 +62,11 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('album/{album}/info', 'AlbumController@getInfo');
             Route::get('artist/{artist}/info', 'ArtistController@getInfo');
         }
+
+        // iTunes routes
+        if (iTunes::used()) {
+            Route::get('itunes/song/{album}', 'iTunesController@viewSong');
+        }
     });
 
     Route::group(['middleware' => 'os.auth', 'prefix' => 'os', 'namespace' => 'ObjectStorage'], function () {
