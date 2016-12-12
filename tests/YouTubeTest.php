@@ -27,7 +27,7 @@ class YouTubeTest extends TestCase
         $this->assertEquals('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
 
         // Is it cached?
-        $this->assertNotNull(Cache::get('1492972ec5c8e6b3a9323ba719655ddb'));
+        $this->assertNotNull(cache('1492972ec5c8e6b3a9323ba719655ddb'));
     }
 
     public function testSearchVideosRelatedToSong()

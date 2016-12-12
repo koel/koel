@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Cache;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application as IlluminateApplication;
@@ -84,7 +83,7 @@ class Application extends IlluminateApplication
      */
     public function getLatestVersion(Client $client = null)
     {
-        if ($v = Cache::get('latestKoelVersion')) {
+        if ($v = cache('latestKoelVersion')) {
             return $v;
         }
 
@@ -93,7 +92,7 @@ class Application extends IlluminateApplication
         try {
             $v = json_decode($client->get('https://api.github.com/repos/phanan/koel/tags')->getBody())[0]->name;
             // Cache for one day
-            Cache::put('latestKoelVersion', $v, 1 * 24 * 60);
+            cache(['latestKoelVersion' => $v], 1 * 24 * 60);
 
             return $v;
         } catch (Exception $e) {

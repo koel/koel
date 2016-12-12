@@ -78,11 +78,11 @@ class Lastfm extends RESTfulService
         try {
             $cacheKey = md5("lastfm_artist_$name");
 
-            if ($response = Cache::get($cacheKey)) {
+            if ($response = cache($cacheKey)) {
                 $response = simplexml_load_string($response);
             } else {
                 if ($response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name")) {
-                    Cache::put($cacheKey, $response->asXML(), 24 * 60 * 7);
+                    cache([$cacheKey => $response->asXML()], 24 * 60 * 7);
                 }
             }
 
@@ -127,11 +127,11 @@ class Lastfm extends RESTfulService
         try {
             $cacheKey = md5("lastfm_album_{$name}_{$artistName}");
 
-            if ($response = Cache::get($cacheKey)) {
+            if ($response = cache($cacheKey)) {
                 $response = simplexml_load_string($response);
             } else {
                 if ($response = $this->get("?method=album.getInfo&autocorrect=1&album=$name&artist=$artistName")) {
-                    Cache::put($cacheKey, $response->asXML(), 24 * 60 * 7);
+                    cache([$cacheKey => $response->asXML()], 24 * 60 * 7);
                 }
             }
 

@@ -41,7 +41,7 @@ class LastfmTest extends TestCase
         ], $api->getArtistInfo('foo'));
 
         // Is it cached?
-        $this->assertNotNull(Cache::get(md5('lastfm_artist_foo')));
+        $this->assertNotNull(cache(md5('lastfm_artist_foo')));
     }
 
     public function testGetArtistInfoFailed()
@@ -85,7 +85,7 @@ class LastfmTest extends TestCase
         ], $api->getAlbumInfo('foo', 'bar'));
 
         // Is it cached?
-        $this->assertNotNull(Cache::get(md5('lastfm_album_foo_bar')));
+        $this->assertNotNull(cache(md5('lastfm_album_foo_bar')));
     }
 
     public function testGetAlbumInfoFailed()
