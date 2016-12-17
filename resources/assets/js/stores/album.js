@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { reduce, each, find, union, difference, take, filter, orderBy } from 'lodash'
+import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
 
 import { secondsToHis } from '../utils'
 import stub from '../stubs/album'
@@ -151,6 +151,9 @@ export const albumStore = {
     // Remove from the artist as well
     each(albums, album => {
       artistStore.removeAlbumsFromArtist(album.artist, album)
+
+      // Delete the cache while we're here
+      delete this.cache[album.id]
     })
   },
 

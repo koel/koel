@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { reduce, each, find, union, difference, take, filter, orderBy } from 'lodash'
+import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
 
 import config from '../config'
 import stub from '../stubs/artist'
@@ -98,7 +98,6 @@ export const artistStore = {
     each(artists, a => this.setupArtist(a))
 
     this.all = union(this.all, artists)
-
   },
 
   /**
@@ -107,7 +106,13 @@ export const artistStore = {
    * @param  {Array.<Object>|Object} artists
    */
   remove (artists) {
-    this.all = difference(this.all, [].concat(artists))
+    artists = [].concat(artists)
+    this.all = difference(this.all, artists)
+
+    // Remember to clear the cache
+    each(artists, artist => {
+      delete this.cache[artist.id]
+    })
   },
 
   /**
