@@ -10,6 +10,7 @@ const VARIOUS_ARTISTS_ID = 2
 
 export const artistStore = {
   stub,
+  cache: [],
 
   state: {
     artists: []
@@ -84,7 +85,11 @@ export const artistStore = {
    * @param  {Number} id
    */
   byId (id) {
-    return find(this.all, { id })
+    if (!this.cache[id]) {
+      this.cache[id] = find(this.all, { id })
+    }
+
+    return this.cache[id]
   },
 
   /**

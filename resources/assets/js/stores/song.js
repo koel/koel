@@ -63,9 +63,6 @@ export const songStore = {
     } else {
       Vue.set(song, 'artist', artistStore.byId(song.album.artist.id))
     }
-
-    // Cache the song, so that byId() is faster
-    this.cache[song.id] = song
   },
 
   /**
@@ -134,6 +131,10 @@ export const songStore = {
    * @return {Object}
    */
   byId (id) {
+    if (!this.cache[id]) {
+      this.cache[id] = find(this.all, { id })
+    }
+
     return this.cache[id]
   },
 

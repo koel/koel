@@ -7,6 +7,7 @@ import { songStore, artistStore } from '.'
 
 export const albumStore = {
   stub,
+  cache: [],
 
   state: {
     albums: [stub]
@@ -61,7 +62,11 @@ export const albumStore = {
   },
 
   byId (id) {
-    return find(this.all, { id })
+    if (!this.cache[id]) {
+      this.cache[id] = find(this.all, { id })
+    }
+
+    return this.cache[id]
   },
 
   /**
