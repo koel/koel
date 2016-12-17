@@ -24,12 +24,12 @@ export const artistStore = {
   init (artists) {
     this.all = artists
 
-    albumStore.init(this.all)
-
     // Traverse through artists array to get the cover and number of songs for each.
     each(this.all, artist => {
       this.setupArtist(artist)
     })
+
+    albumStore.init(this.all)
   },
 
   /**
@@ -55,8 +55,8 @@ export const artistStore = {
     }, []))
 
     Vue.set(artist, 'songCount', artist.songs.length)
-
     Vue.set(artist, 'info', null)
+    this.cache[artist.id] = artist
 
     return artist
   },
@@ -85,10 +85,6 @@ export const artistStore = {
    * @param  {Number} id
    */
   byId (id) {
-    if (!this.cache[id]) {
-      this.cache[id] = find(this.all, { id })
-    }
-
     return this.cache[id]
   },
 
@@ -102,6 +98,7 @@ export const artistStore = {
     each(artists, a => this.setupArtist(a))
 
     this.all = union(this.all, artists)
+
   },
 
   /**

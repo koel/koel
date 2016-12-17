@@ -39,6 +39,7 @@ export const albumStore = {
     Vue.set(album, 'artist', artist)
     Vue.set(album, 'info', null)
     this.getLength(album)
+    this.cache[album.id] = album
 
     return album
   },
@@ -62,10 +63,6 @@ export const albumStore = {
   },
 
   byId (id) {
-    if (!this.cache[id]) {
-      this.cache[id] = find(this.all, { id })
-    }
-
     return this.cache[id]
   },
 
