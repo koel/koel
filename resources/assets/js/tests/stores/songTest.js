@@ -94,9 +94,9 @@ describe('stores/song', () => {
 
     it ('correctly syncs an updated song into a new album of same artist', () => {
       const song = cloneDeep(updatedSong)
-      song.album_id = 9999
+      song.album_id = 1000
       song.album = {
-        id: 9999,
+        id: 1000,
         artist_id: 1,
         name: 'Brand New Album from All-4-One',
         artist: {
