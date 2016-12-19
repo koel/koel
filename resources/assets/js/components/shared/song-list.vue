@@ -54,7 +54,7 @@ import { find, invokeMap, filter, map } from 'lodash'
 import isMobile from 'ismobilejs'
 import $ from 'jquery'
 
-import { filterBy, orderBy, limitBy, event } from '../../utils'
+import { filterBy, orderBy, limitBy, event, pluralize } from '../../utils'
 import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores'
 import { playback } from '../../services'
 import router from '../../router'
@@ -347,7 +347,7 @@ export default {
         e.dataTransfer.effectAllowed = 'move'
 
         // Set a fancy drop image using our ghost element.
-        const $ghost = $('#dragGhost').text(`${songIds.length} song${songIds.length === 1 ? '' : 's'}`)
+        const $ghost = $('#dragGhost').text(`${pluralize(songIds.length, 'song')}`)
         e.dataTransfer.setDragImage($ghost[0], 0, 0)
       })
     },

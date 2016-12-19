@@ -2,7 +2,7 @@ import Vue from 'vue'
 import slugify from 'slugify'
 import { without, map, take, remove, orderBy, each, union } from 'lodash'
 
-import { secondsToHis, alerts } from '../utils'
+import { secondsToHis, alerts, pluralize } from '../utils'
 import { http, ls } from '../services'
 import { sharedStore, favoriteStore, albumStore, artistStore } from '.'
 import stub from '../stubs/song'
@@ -226,7 +226,7 @@ export const songStore = {
         songs: map(songs, 'id')
       }, songs => {
         each(songs, song => this.syncUpdatedSong(song))
-        alerts.success(`Updated ${songs.length} song${songs.length === 1 ? '' : 's'}.`)
+        alerts.success(`Updated ${pluralize(songs.length, 'song')}.`)
         resolve(songs)
       }, r => reject(r))
     })

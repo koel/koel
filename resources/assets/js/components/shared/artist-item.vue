@@ -86,7 +86,7 @@ export default {
       e.dataTransfer.effectAllowed = 'move'
 
       // Set a fancy drop image using our ghost element.
-      const $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} by ${this.artist.name}`)
+      const $ghost = $('#dragGhost').text(`All ${pluralize(songIds.length, 'song')} by ${this.artist.name}`)
       e.dataTransfer.setDragImage($ghost[0], 0, 0)
     }
   }

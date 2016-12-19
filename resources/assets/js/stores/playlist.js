@@ -3,7 +3,7 @@ import NProgress from 'nprogress'
 
 import stub from '../stubs/playlist'
 import { http } from '../services'
-import { alerts } from '../utils'
+import { alerts, pluralize } from '../utils'
 import { songStore } from '.'
 
 export const playlistStore = {
@@ -148,7 +148,7 @@ export const playlistStore = {
 
       http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
         data => {
-          alerts.success(`Added ${songs.length} song${songs.length === 1 ? '' : 's'} into &quot;${playlist.name}&quot;.`)
+          alerts.success(`Added ${pluralize(songs.length, 'song')} into &quot;${playlist.name}&quot;.`)
           resolve(playlist)
         },
         r => reject(r)
@@ -170,7 +170,7 @@ export const playlistStore = {
     return new Promise((resolve, reject) => {
       http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
         data => {
-          alerts.success(`Removed ${songs.length} song${songs.length === 1 ? '' : 's'} from &quot;${playlist.name}&quot;.`)
+          alerts.success(`Removed ${pluralize(songs.length, 'song')} from &quot;${playlist.name}&quot;.`)
           resolve(playlist)
         },
         r => reject(r)
