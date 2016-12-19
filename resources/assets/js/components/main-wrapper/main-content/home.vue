@@ -140,7 +140,7 @@ export default {
       this.top.artists = artistStore.getMostPlayed(6)
       this.recentlyAdded.albums = albumStore.getRecentlyAdded(6)
       this.recentlyAdded.songs = songStore.getRecentlyAdded(10)
-      this.recentSongs = songStore.getRecent(7)
+      this.recentSongs = songStore.recentlyPlayed
     }
   },
 

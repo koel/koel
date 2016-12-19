@@ -117,8 +117,8 @@ export const playback = {
     // Set the song as the current song
     queueStore.current = song
 
-    // Add it into the "recent" list
-    songStore.addRecent(song)
+    // Add it into the "recently played" list
+    songStore.addRecentlyPlayed(song)
 
     // Manually set the `src` attribute of the audio to prevent plyr from resetting
     // the audio media object and cause our equalizer to malfunction.

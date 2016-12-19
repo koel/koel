@@ -1,7 +1,7 @@
 require('chai').should()
 import { cloneDeep, last } from 'lodash'
 
-import { songStore, albumStore, artistStore } from '../../stores'
+import { songStore, albumStore, artistStore, preferenceStore } from '../../stores'
 import artists from '../blobs/media'
 import interactions from '../blobs/interactions'
 
@@ -142,6 +142,18 @@ describe('stores/song', () => {
 
       // And the song belongs to the album.
       songStore.byId(song.id).album.should.equal(lastAlbum)
+    })
+  })
+
+  describe('#addRecentlyPlayed', () => {
+    it('correctly adds a recently played song', () => {
+      songStore.addRecentlyPlayed(songStore.byId('cb7edeac1f097143e65b1b2cde102482'))
+      songStore.recentlyPlayed[0].id.should.equal('cb7edeac1f097143e65b1b2cde102482')
+      preferenceStore.get('recent-songs')[0].should.equal('cb7edeac1f097143e65b1b2cde102482')
+    })
+
+    it('correctly gathers the songs from local storage', () => {
+      songStore.gatherRecentlyPlayedFromLocalStorage()[0].id.should.equal('cb7edeac1f097143e65b1b2cde102482')
     })
   })
 })

@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import slugify from 'slugify'
-import { without, map, take, remove, orderBy, each, union } from 'lodash'
+import { without, map, take, remove, orderBy, each, union, compact } from 'lodash'
 
 import { secondsToHis, alerts, pluralize } from '../utils'
 import { http, ls } from '../services'
-import { sharedStore, favoriteStore, albumStore, artistStore } from '.'
+import { sharedStore, favoriteStore, albumStore, artistStore, preferenceStore } from '.'
 import stub from '../stubs/song'
 
 export const songStore = {
@@ -21,11 +21,11 @@ export const songStore = {
     songs: [stub],
 
     /**
-     * The recently played songs **in the current session**
+     * The recently played songs **on the current machine**
      *
      * @type {Array}
      */
-    recent: []
+    recentlyPlayed: []
   },
 
   /**
@@ -43,6 +43,8 @@ export const songStore = {
 
       return songs.concat(album.songs)
     }, [])
+
+    this.state.recentlyPlayed = this.gatherRecentlyPlayedFromLocalStorage()
   },
 
   setupSong (song, album) {
@@ -194,12 +196,16 @@ export const songStore = {
    *
    * @param {Object}
    */
-  addRecent (song) {
+  addRecentlyPlayed (song) {
     // First we make sure that there's no duplicate.
-    this.state.recent = without(this.state.recent, song)
+    this.state.recentlyPlayed = without(this.state.recentlyPlayed, song)
 
     // Then we prepend the song into the list.
-    this.state.recent.unshift(song)
+    this.state.recentlyPlayed.unshift(song)
+    // Only take first 7 songs
+    this.state.recentlyPlayed.splice(7)
+    // Save to local storage as well
+    preferenceStore.set('recent-songs', map(this.state.recentlyPlayed, 'id'))
   },
 
   /**
@@ -349,14 +355,19 @@ export const songStore = {
   },
 
   /**
-   * Get the last n recently played songs.
-   *
-   * @param  {Number} n
-   *
+   * The recently played songs.
    * @return {Array.<Object>}
    */
-  getRecent (n = 10) {
-    return take(this.state.recent, n)
+  get recentlyPlayed () {
+    return this.state.recentlyPlayed
+  },
+
+  /**
+   * Gather the recently played songs from local storage.
+   * @return {Array.<Object>}
+   */
+  gatherRecentlyPlayedFromLocalStorage () {
+    return compact(this.byIds(preferenceStore.get('recent-songs') || []))
   },
 
   /**
@@ -389,6 +400,6 @@ export const songStore = {
    * Reset stuff.
    */
   teardown () {
-    this.state.recent = []
+    this.state.recentlyPlayed = []
   }
 }
