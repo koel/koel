@@ -1,4 +1,3 @@
-import { $ } from '../utils'
 import { queueStore, playlistStore, favoriteStore } from '../stores'
 
 /**

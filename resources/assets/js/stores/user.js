@@ -197,7 +197,7 @@ export const userStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.delete(`user/${user.id}`, {}, () => {
+      http.delete(`user/${user.id}`, {}, response => {
         this.all = without(this.all, user)
         alerts.success(`User &quot;${user.name}&quot; deleted.`)
 

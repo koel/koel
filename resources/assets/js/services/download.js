@@ -1,8 +1,7 @@
-import { map, reduce } from 'lodash'
+import { reduce } from 'lodash'
 
 import { playlistStore, favoriteStore } from '../stores'
 import { ls } from '.'
-import { $ } from '../utils'
 
 export const download = {
   /**
@@ -12,7 +11,7 @@ export const download = {
    */
   fromSongs (songs) {
     songs = [].concat(songs)
-    const query = reduce(songs, (q, song) => `songs[]=${song.id}&${segment}`, '')
+    const query = reduce(songs, (q, song) => `songs[]=${song.id}&${q}`, '')
     return this.trigger(`songs?${query}`)
   },
 

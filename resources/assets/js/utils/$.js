@@ -43,7 +43,7 @@ export const $ = {
       if (el.scrollTop === to) {
         return
       }
-      this.scrollTo(el, to, duration - 10);
+      this.scrollTo(el, to, duration - 10)
     }, 10)
   }
 }
