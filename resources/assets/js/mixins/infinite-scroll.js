@@ -1,6 +1,4 @@
-import $ from 'jquery'
-
-import { event } from '../utils'
+import { event, $ } from '../utils'
 import toTopButton from '../components/shared/to-top-button.vue'
 
 /**
@@ -41,7 +39,7 @@ export default {
      * Scroll to top of the wrapper.
      */
     scrollToTop () {
-      $(this.$refs.wrapper).animate({ scrollTop: 0 }, 500)
+      $.scrollTo(this.$refs.wrapper, 0, 500)
       this.showBackToTop = false
     }
   },

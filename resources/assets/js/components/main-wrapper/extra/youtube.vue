@@ -47,7 +47,7 @@ export default {
      */
     loadMore () {
       this.loading = true
-      youtubeService.searchVideosRelatedToSong(this.song, () => {
+      youtubeService.searchVideosRelatedToSong(this.song).then(() => {
         this.videos = this.song.youtube.items
         this.loading = false
       })

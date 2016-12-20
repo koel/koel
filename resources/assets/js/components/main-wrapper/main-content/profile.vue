@@ -104,10 +104,8 @@
 </template>
 
 <script>
-import $ from 'jquery'
-
 import { userStore, preferenceStore, sharedStore } from '../../../stores'
-import { forceReloadWindow } from '../../../utils'
+import { forceReloadWindow, $ } from '../../../utils'
 import { http, ls } from '../../../services'
 
 export default {
@@ -129,11 +127,13 @@ export default {
     update () {
       // A little validation put in a small place.
       if ((this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd) {
-        $('#inputProfilePassword, #inputProfileConfirmPassword').addClass('error')
+        document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
+          .forEach(el => $.addClass(el, 'error'))
         return
       }
 
-      $('#inputProfilePassword, #inputProfileConfirmPassword').removeClass('error')
+      document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
+          .forEach(el => $.removeClass(el, 'error'))
 
       userStore.updateProfile(this.pwd).then(() => {
         this.pwd = ''

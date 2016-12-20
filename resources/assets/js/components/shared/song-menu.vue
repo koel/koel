@@ -30,8 +30,6 @@
 </template>
 
 <script>
-import $ from 'jquery'
-
 import songMenuMethods from '../../mixins/song-menu-methods'
 
 import { event, isClipboardSupported, copyText } from '../../utils'
@@ -79,15 +77,11 @@ export default {
       this.$nextTick(() => {
         // Make sure the menu isn't off-screen
         if (this.$el.getBoundingClientRect().bottom > window.innerHeight) {
-          $(this.$el).css({
-            top: 'auto',
-            bottom: 0
-          })
+          this.$el.style.top = 'auto'
+          this.$el.style.bottom = 0
         } else {
-          $(this.$el).css({
-            top: this.top,
-            bottom: 'auto'
-          })
+          this.$el.style.top = this.top
+          this.$el.style.bottom = 'auto'
         }
 
         this.$refs.menu.focus()
@@ -160,25 +154,26 @@ export default {
    * they don't appear off-screen.
    */
   mounted () {
-    $(this.$el).find('.has-sub').hover(e => {
-      const $submenu = $(e.target).find('.submenu:first')
-      if (!$submenu.length) {
+    this.$el.querySelectorAll('.has-sub').forEach(item => {
+      const submenu = item.querySelector('.submenu')
+      if (!submenu) {
         return
       }
 
-      $submenu.show()
+      item.addEventListener('mouseenter', e => {
+        submenu.style.display = 'block'
 
-      // Make sure the submenu isn't off-screen
-      if ($submenu[0].getBoundingClientRect().bottom > window.innerHeight) {
-        $submenu.css({
-          top: 'auto',
-          bottom: 0
-        })
-      }
-    }, e => {
-      $(e.target).find('.submenu:first').hide().css({
-        top: 0,
-        bottom: 'auto'
+        // Make sure the submenu isn't off-screen
+        if (submenu.getBoundingClientRect().bottom > window.innerHeight) {
+          submenu.style.top = 'auto'
+          submenu.style.bottom = 0
+        }
+      })
+
+      item.addEventListener('mouseleave', e => {
+        submenu.style.top = 0
+        submenu.style.bottom = 'auto'
+        submenu.style.display = 'none'
       })
     })
   }

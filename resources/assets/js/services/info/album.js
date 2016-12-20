@@ -16,10 +16,10 @@ export const albumInfo = {
         return
       }
 
-      http.get(`album/${album.id}/info`, data => {
-        data && this.merge(album, data)
+      http.get(`album/${album.id}/info`, response => {
+        response.data && this.merge(album, response.data)
         resolve(album)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   },
 

@@ -30,11 +30,10 @@ export const sharedStore = {
     this.reset()
 
     return new Promise((resolve, reject) => {
-      http.get('data', data => {
+      http.get('data', response => {
+        assign(this.state, response.data)
         // Don't allow downloading on mobile devices
-        data.allowDownload = data.allowDownload && !isMobile.any
-
-        assign(this.state, data)
+        this.state.allowDownload = this.state.allowDownload && !isMobile.any
 
         // Always disable YouTube integration on mobile.
         this.state.useYouTube = this.state.useYouTube && !isMobile.phone
@@ -55,8 +54,8 @@ export const sharedStore = {
         // Keep a copy of the media path. We'll need this to properly warn the user later.
         this.state.originalMediaPath = this.state.settings.media_path
 
-        resolve(data)
-      }, r => reject(r))
+        resolve(this.state)
+      }, error => reject(error))
     })
   },
 

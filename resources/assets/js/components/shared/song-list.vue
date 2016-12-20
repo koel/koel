@@ -52,9 +52,8 @@
 <script>
 import { find, invokeMap, filter, map } from 'lodash'
 import isMobile from 'ismobilejs'
-import $ from 'jquery'
 
-import { filterBy, orderBy, limitBy, event, pluralize } from '../../utils'
+import { filterBy, orderBy, limitBy, event, pluralize, $ } from '../../utils'
 import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores'
 import { playback } from '../../services'
 import router from '../../router'
@@ -310,10 +309,10 @@ export default {
     selectRowsBetweenIndexes (indexes) {
       indexes.sort((a, b) => a - b)
 
-      const rows = $(this.$refs.wrapper).find('tbody tr')
+      const rows = this.$refs.wrapper.querySelectorAll('tbody tr')
 
       for (let i = indexes[0]; i <= indexes[1]; ++i) {
-        this.getComponentBySongId($(rows[i - 1]).data('song-id')).select()
+        this.getComponentBySongId(rows[i - 1].getAttribute('data-song-id')).select()
       }
     },
 
@@ -347,8 +346,9 @@ export default {
         e.dataTransfer.effectAllowed = 'move'
 
         // Set a fancy drop image using our ghost element.
-        const $ghost = $('#dragGhost').text(`${pluralize(songIds.length, 'song')}`)
-        e.dataTransfer.setDragImage($ghost[0], 0, 0)
+        const ghost = document.getElementById('dragGhost')
+        ghost.innerText = `${pluralize(songIds.length, 'song')}`
+        e.dataTransfer.setDragImage(ghost, 0, 0)
       })
     },
 
@@ -363,7 +363,7 @@ export default {
         return
       }
 
-      $(e.target).parents('tr').addClass('droppable')
+      $.addClass(e.target.parentNode, 'droppable')
       e.dataTransfer.dropEffect = 'move'
 
       return false
@@ -401,7 +401,7 @@ export default {
      * @param  {Object} e
      */
     removeDroppableState (e) {
-      return $(e.target).parents('tr').removeClass('droppable')
+      $.removeClass(e.target.parentNode, 'droppable')
     },
 
     openContextMenu (songId, e) {
@@ -433,16 +433,15 @@ export default {
 
         // Scroll the item into view if it's lost into oblivion.
         if (this.type === 'queue') {
-          const $wrapper = $(this.$refs.wrapper)
-          const $row = $wrapper.find(`.song-item[data-song-id="${song.id}"]`)
+          const row = this.$refs.wrapper.querySelector(`.song-item[data-song-id="${song.id}"]`)
 
-          if (!$row.length) {
+          if (!row) {
             return
           }
 
-          if ($wrapper[0].getBoundingClientRect().top + $wrapper[0].getBoundingClientRect().height <
-            $row[0].getBoundingClientRect().top) {
-            $wrapper.scrollTop($wrapper.scrollTop() + $row.position().top)
+          const wrapperRec = this.$refs.wrapper.getBoundingClientRect()
+          if (wrapperRec.top + wrapperRec.height < row.getBoundingClientRect().top) {
+            this.$refs.wrapper.scrollTop = this.$refs.wrapper.scrollTop + row.offsetTop
           }
         }
       },

@@ -101,13 +101,14 @@ export const playlistStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('playlist', { name, songs }, playlist => {
+      http.post('playlist', { name, songs }, response => {
+        const playlist = response.data
         playlist.songs = songs
         this.objectifySongs(playlist)
         this.add(playlist)
         alerts.success(`Created playlist &quot;${playlist.name}&quot;.`)
         resolve(playlist)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   },
 
@@ -120,11 +121,11 @@ export const playlistStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.delete(`playlist/${playlist.id}`, {}, data => {
+      http.delete(`playlist/${playlist.id}`, {}, response => {
         this.remove(playlist)
         alerts.success(`Deleted playlist &quot;${playlist.name}&quot;.`)
-        resolve(data)
-      }, r => reject(r))
+        resolve(response.data)
+      }, error => reject(error))
     })
   },
 
@@ -146,13 +147,10 @@ export const playlistStore = {
 
       NProgress.start()
 
-      http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
-        data => {
-          alerts.success(`Added ${pluralize(songs.length, 'song')} into &quot;${playlist.name}&quot;.`)
-          resolve(playlist)
-        },
-        r => reject(r)
-      )
+      http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
+        alerts.success(`Added ${pluralize(songs.length, 'song')} into &quot;${playlist.name}&quot;.`)
+        resolve(playlist)
+      }, error => reject(error))
     })
   },
 
@@ -168,13 +166,10 @@ export const playlistStore = {
     playlist.songs = difference(playlist.songs, songs)
 
     return new Promise((resolve, reject) => {
-      http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') },
-        data => {
-          alerts.success(`Removed ${pluralize(songs.length, 'song')} from &quot;${playlist.name}&quot;.`)
-          resolve(playlist)
-        },
-        r => reject(r)
-      )
+      http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
+        alerts.success(`Removed ${pluralize(songs.length, 'song')} from &quot;${playlist.name}&quot;.`)
+        resolve(playlist)
+      }, error => reject(error))
     })
   },
 
@@ -187,7 +182,7 @@ export const playlistStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.put(`playlist/${playlist.id}`, { name: playlist.name }, data => resolve(playlist), r => reject(r))
+      http.put(`playlist/${playlist.id}`, { name: playlist.name }, () => resolve(playlist), error => reject(error))
     })
   }
 }

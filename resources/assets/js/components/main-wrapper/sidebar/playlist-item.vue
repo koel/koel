@@ -20,9 +20,7 @@
 </template>
 
 <script>
-import $ from 'jquery'
-
-import { event } from '../../../utils'
+import { event, $ } from '../../../utils'
 import { songStore, playlistStore, favoriteStore } from '../../../stores'
 
 export default {
@@ -97,7 +95,7 @@ export default {
      * @param {Object} e The dragleave event.
      */
     removeDroppableState (e) {
-      $(e.target).removeClass('droppable')
+      $.removeClass(e.target, 'droppable')
     },
 
     /**
@@ -107,7 +105,7 @@ export default {
      * @param {Object} e The dragover event.
      */
     allowDrop (e) {
-      $(e.target).addClass('droppable')
+      $.addClass(e.target, 'droppable')
       e.dataTransfer.dropEffect = 'move'
 
       return false

@@ -1,5 +1,4 @@
-import $ from 'jquery'
-
+import { $ } from '../utils'
 import { queueStore, playlistStore, favoriteStore } from '../stores'
 
 /**
@@ -24,7 +23,9 @@ export default {
      * Close all submenus.
      */
     close () {
-      $(this.$el).find('.submenu').hide()
+      this.$el.querySelectorAll('.submenu').forEach(el => {
+        el.style.display = 'none'
+      })
       this.shown = false
     },
 

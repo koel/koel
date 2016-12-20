@@ -14,14 +14,14 @@ export const songInfo = {
         return
       }
 
-      http.get(`${song.id}/info`, data => {
-        song.lyrics = data.lyrics
-        data.artist_info && artistInfo.merge(song.artist, data.artist_info)
-        data.album_info && albumInfo.merge(song.album, data.album_info)
-        song.youtube = data.youtube
+      http.get(`${song.id}/info`, response => {
+        song.lyrics = response.data.lyrics
+        response.data.artist_info && artistInfo.merge(song.artist, response.data.artist_info)
+        response.data.album_info && albumInfo.merge(song.album, response.data.album_info)
+        song.youtube = response.data.youtube
         song.infoRetrieved = true
         resolve(song)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   }
 }

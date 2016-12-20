@@ -1,5 +1,4 @@
 import { shuffle, orderBy } from 'lodash'
-import $ from 'jquery'
 import plyr from 'plyr'
 import Vue from 'vue'
 
@@ -10,7 +9,7 @@ import router from '../router'
 
 export const playback = {
   player: null,
-  $volumeInput: null,
+  volumeInput: null,
   repeatModes: ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE'],
   initialized: false,
 
@@ -27,9 +26,8 @@ export const playback = {
       controls: []
     })[0]
 
-    this.audio = $('audio')
-
-    this.$volumeInput = $('#volumeRange')
+    this.audio = document.querySelector('audio')
+    this.volumeInput = document.getElementById('volumeRange')
 
     /**
      * Listen to 'error' event on the audio player and play the next song if any.
@@ -69,8 +67,8 @@ export const playback = {
         return
       }
 
-      const $preloader = $('<audio>')
-      $preloader.attr('src', songStore.getSourceUrl(nextSong))
+      const preloader = document.createElement('audio')
+      preloader.setAttribute('src', songStore.getSourceUrl(nextSong))
 
       nextSong.preloaded = true
     })
@@ -80,8 +78,8 @@ export const playback = {
      * When user drags the volume control, this event will be triggered, and we
      * update the volume on the plyr object.
      */
-    this.$volumeInput.on('input', e => {
-      this.setVolume($(e.target).val())
+    this.volumeInput.addEventListener('input', e => {
+      this.setVolume(e.target.value)
     })
 
     // On init, set the volume to the value found in the local storage.
@@ -124,8 +122,8 @@ export const playback = {
     // the audio media object and cause our equalizer to malfunction.
     this.player.media.src = songStore.getSourceUrl(song)
 
-    $('title').text(`${song.title} ♫ ${config.appTitle}`)
-    $('.plyr audio').attr('title', `${song.artist.name} - ${song.title}`)
+    document.title = `${song.title} ♫ ${config.appTitle}`
+    document.querySelector('.plyr audio').setAttribute('title', `${song.artist.name} - ${song.title}`)
 
     // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
     this.restart()
@@ -273,7 +271,7 @@ export const playback = {
       preferences.volume = volume
     }
 
-    this.$volumeInput.val(volume)
+    this.volumeInput.value = volume
   },
 
   /**
@@ -299,7 +297,7 @@ export const playback = {
    * Completely stop playback.
    */
   stop () {
-    $('title').text(config.appTitle)
+    document.title = config.appTitle
     this.player.pause()
     this.player.seek(0)
 

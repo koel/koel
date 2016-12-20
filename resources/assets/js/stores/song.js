@@ -180,14 +180,14 @@ export const songStore = {
     return new Promise((resolve, reject) => {
       const oldCount = song.playCount
 
-      http.post('interaction/play', { song: song.id }, data => {
+      http.post('interaction/play', { song: song.id }, response => {
         // Use the data from the server to make sure we don't miss a play from another device.
-        song.playCount = data.play_count
+        song.playCount = response.data.play_count
         song.album.playCount += song.playCount - oldCount
         song.artist.playCount += song.playCount - oldCount
 
-        resolve(data)
-      }, r => reject(r))
+        resolve(response.data)
+      }, error => reject(error))
     })
   },
 
@@ -215,7 +215,9 @@ export const songStore = {
    */
   scrobble (song) {
     return new Promise((resolve, reject) => {
-      http.post(`${song.id}/scrobble/${song.playStartTime}`, {}, data => resolve(data), r => reject(r))
+      http.post(`${song.id}/scrobble/${song.playStartTime}`, {}, response => {
+        resolve(data.response)
+      }, error => reject(error))
     })
   },
 
@@ -230,11 +232,12 @@ export const songStore = {
       http.put('songs', {
         data,
         songs: map(songs, 'id')
-      }, songs => {
+      }, response => {
+        const songs = response.data
         each(songs, song => this.syncUpdatedSong(song))
         alerts.success(`Updated ${pluralize(songs.length, 'song')}.`)
         resolve(songs)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   },
 

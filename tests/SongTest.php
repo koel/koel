@@ -279,6 +279,7 @@ class SongTest extends TestCase
                     'compilationState' => 1,
                 ],
             ])
+
             ->put('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [

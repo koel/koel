@@ -15,15 +15,15 @@
   },
   "dependencies": {
     "alertify.js": "^1.0.12",
+    "axios": "^0.15.3",
     "blueimp-md5": "^2.3.0",
     "font-awesome": "^4.5.0",
     "ismobilejs": "^0.4.0",
-    "jquery": "^3.1.1",
     "local-storage": "^1.4.2",
     "lodash": "^4.6.1",
+    "nouislider": "^9.1.0",
     "nprogress": "^0.2.0",
     "plyr": "1.5.x",
-    "rangeslider.js": "^2.2.1",
     "raven-js": "^3.9.1",
     "select": "^1.0.6",
     "slugify": "^1.0.2",
@@ -60,6 +60,7 @@
   },
   "scripts": {
     "postinstall": "cross-env NODE_ENV=production && gulp --production",
+    "build": "cross-env NODE_ENV=production && gulp --production",
     "test": "eslint resources/assets/js --ext=js,vue && mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js",
     "e2e": "gulp e2e",
     "dev": "cross-env NODE_ENV=development && gulp watch"

@@ -19,10 +19,10 @@ export const settingStore = {
 
   update () {
     return new Promise((resolve, reject) => {
-      http.post('settings', this.all, data => {
+      http.post('settings', this.all, response => {
         alerts.success('Settings saved.')
-        resolve(data)
-      }, r => reject(r))
+        resolve(response.data)
+      }, error => reject(error))
     })
   }
 }
