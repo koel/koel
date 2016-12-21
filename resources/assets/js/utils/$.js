@@ -1,3 +1,7 @@
+/**
+ * A utility that aims to replace jQuery for the most basic DOM methods.
+ * @type {Object}
+ */
 export const $ = {
   is (el, selector) {
     return (el.matches ||
