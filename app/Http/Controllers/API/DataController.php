@@ -50,7 +50,7 @@ class DataController extends Controller
             if (env('CACHE_DRIVER') == 'apc') {
                 apc_store(auth()->user()->id.'_load', $response, 86400);
             }
-            
+
             return $response;
         }
     }

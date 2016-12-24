@@ -54,7 +54,7 @@ class InitCache extends Command
     {
         if (env('CACHE_DRIVER') != 'apc') {
             $this->error('Requires APC cache driver.');
-            
+
             return;
         }
         $this->info('Starting to cache profiles, playlists and settings...');
