@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\SyncMedia::class,
         Commands\Init::class,
         Commands\GenerateJWTSecret::class,
+        Commands\InitCache::class,
     ];
 
     /**
