@@ -6,15 +6,14 @@ use App\Application;
 use App\Models\Artist;
 use App\Models\Interaction;
 use App\Models\Playlist;
-use App\Models\User;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Lastfm;
 use YouTube;
 
 class InitCache extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -53,9 +52,9 @@ class InitCache extends Command
      */
     public function handle()
     {
-
         if (env('CACHE_DRIVER') != 'apc') {
             $this->error('Requires APC cache driver.');
+            
             return;
         }
         $this->info('Starting to cache profiles, playlists and settings...');

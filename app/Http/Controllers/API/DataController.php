@@ -12,15 +12,14 @@ use iTunes;
 use Lastfm;
 use YouTube;
 
-class DataController extends Controller 
+class DataController extends Controller
 {
-
     /**
      * Get a set of application data.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index() 
+    public function index()
     {
         if (env('CACHE_DRIVER') == 'apc' && apc_exists(auth()->user()->id.'_load')) {
             return apc_fetch(auth()->user()->id.'_load');
@@ -51,6 +50,7 @@ class DataController extends Controller
             if (env('CACHE_DRIVER') == 'apc') {
                 apc_store(auth()->user()->id.'_load', $response, 86400);
             }
+            
             return $response;
         }
     }
