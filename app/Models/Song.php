@@ -24,6 +24,8 @@ use YouTube;
  * @property int    track
  * @property int    album_id
  * @property int    id
+ * @property int    genreId
+ * @property Genre  genre
  */
 class Song extends Model
 {
@@ -48,6 +50,7 @@ class Song extends Model
         'mtime' => 'int',
         'track' => 'int',
         'contributing_artist_id' => 'int',
+        'genre_id' => 'int',
     ];
 
     /**
@@ -70,6 +73,11 @@ class Song extends Model
     public function playlists()
     {
         return $this->belongsToMany(Playlist::class);
+    }
+
+    public function genre()
+    {
+        return $this->belongsTo(Genre::class);
     }
 
     /**
@@ -121,6 +129,8 @@ class Song extends Model
      *                    - artistName
      *                    - albumName
      *                    - lyrics
+     *                    - genre
+     *                    - albumYear
      *                    All of these are optional, in which case the info will not be changed
      *                    (except for lyrics, which will be emptied).
      *
@@ -173,11 +183,14 @@ class Song extends Model
      * @param string $artistName
      * @param string $lyrics
      * @param int    $track
+     * @param int    $disc
+     * @param int    $year
+     * @param string $genreName
      * @param int    $compilationState
      *
      * @return self
      */
-    public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $disc, $year, $genre, $compilationState)
+    public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $disc, $year, $genreName, $compilationState)
     {
         // If the artist name is "Various Artists", it's a compilation song no matter what.
         if ($artistName === Artist::VARIOUS_NAME) {
@@ -202,6 +215,8 @@ class Song extends Model
             $this->contributing_artist_id = $contributingArtist->id;
             $album = Album::get(Artist::getVarious(), $albumName, $year, true);
         }
+
+        $genre_id = Genre::get($genreName);
 
         $this->title = $title;
         $this->album_id = $album->id;

@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddGenreToSongsTable extends Migration
+class AddGenreIdToSongsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,8 @@ class AddGenreToSongsTable extends Migration
     public function up()
     {
         Schema::table('songs', function (Blueprint $table) {
-            $table->string('genre')->after('disc')->nullable();
+            $table->integer('genre_id')->unsigned()->nullable()->after('contributing_artist_id');
+            $table->foreign('genre_id')->references('id')->on('genres')->onDelete('cascade');
         });
     }
 
@@ -25,7 +26,8 @@ class AddGenreToSongsTable extends Migration
     public function down()
     {
         Schema::table('songs', function (Blueprint $table) {
-            $table->dropColumn('genre');
+            $table->dropForeign('songs_genre_id_foreign');
+            $table->dropColumn('genre_id');
         });
     }
 }

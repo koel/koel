@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Application;
+use App\Models\Genre;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Setting;
@@ -28,8 +29,12 @@ class DataController extends Controller
             $playlist['songs'] = array_pluck($playlist['songs'], 'id');
         }
 
+        // We don't need songs, the JavaScript code will figure this out
+        $genres = Genre::orderBy('name')->get()->toArray();
+
         return response()->json([
             'artists' => MediaCache::get(),
+            'genres' => $genres,
             'settings' => auth()->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),
