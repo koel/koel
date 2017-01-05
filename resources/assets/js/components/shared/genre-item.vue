@@ -33,16 +33,16 @@ import $ from 'jquery'
 
 import { pluralize } from '../../utils'
 import { queueStore, sharedStore } from '../../stores'
-import { playback, download } from '../../services'
+import { playback } from '../../services'
 
 export default {
   name: 'shared--genre-item',
   props: ['genre'],
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
-      sharedState: sharedStore.state,
+      sharedState: sharedStore.state
     }
   },
 
@@ -79,8 +79,8 @@ export default {
       // Set a fancy drop image using our ghost element.
       const $ghost = $('#dragGhost').text(`All ${songIds.length} song${songIds.length === 1 ? '' : 's'} in ${this.genre.name}`)
       e.dataTransfer.setDragImage($ghost[0], 0, 0)
-    },
-  },
+    }
+  }
 }
 </script>
 

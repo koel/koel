@@ -94,7 +94,7 @@ export default {
     /**
      * Shuffle the songs in the current genre.
      */
-    shuffle() {
+    shuffle () {
       playback.queueAndPlay(this.genre.songs, true)
     }
   }

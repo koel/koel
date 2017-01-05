@@ -29,12 +29,12 @@ export default {
       perPage: 9,
       numOfItems: 9,
       q: '',
-      viewMode: null,
+      viewMode: null
     }
   },
 
   computed: {
-    displayedItems() {
+    displayedItems () {
       return limitBy(
         filterBy(genreStore.all, this.q, 'name', 'genre.name'),
         this.numOfItems
@@ -43,7 +43,7 @@ export default {
   },
 
   methods: {
-    changeViewMode(mode) {
+    changeViewMode (mode) {
       this.viewMode = mode
     }
   },
@@ -60,7 +60,9 @@ export default {
         this.numOfItems = 9
       },
 
-      'filter:changed': q => this.q = q,
+      'filter:changed': q => {
+        this.q = q
+      }
     })
   }
 }
