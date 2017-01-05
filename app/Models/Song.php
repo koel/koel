@@ -223,7 +223,7 @@ class Song extends Model
         $this->lyrics = $lyrics;
         $this->disc = $disc;
         $this->track = $track;
-        $this->genre = $genre;
+        $this->genre_id = $genre_id;
 
         $this->save();
 

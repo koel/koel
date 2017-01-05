@@ -313,7 +313,7 @@ class File
             $info['contributing_artist_id'] = $artist->id;
         }
 
-        $info['genre_id'] = Genre::get($info['genre'])->id;
+        $info['genre_id'] = !isset($info['genre']) || !$info['genre'] ? null : Genre::get($info['genre'])->id;
 
         // Remove these values from the info array, so that we can just use the array as model's input data.
         array_forget($info, ['artist', 'albumartist', 'album', 'year', 'cover', 'compilation', 'genre']);
