@@ -35,13 +35,13 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
+import isMobile from 'ismobilejs'
 
-import { pluralize, event } from '../../../utils';
-import { genreStore, songStore, sharedStore } from '../../../stores';
-import { playback } from '../../../services';
-import router from '../../../router';
-import hasSongList from '../../../mixins/has-song-list';
+import { pluralize, event } from '../../../utils'
+import { genreStore, sharedStore } from '../../../stores'
+import { playback } from '../../../services'
+import router from '../../../router'
+import hasSongList from '../../../mixins/has-song-list'
 
 export default {
   name: 'main-wrapper--main-content--genre',
@@ -49,13 +49,13 @@ export default {
   components: { },
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
       sharedState: sharedStore.state,
       genre: genreStore.stub,
       isPhone: isMobile.phone,
-      showingControls: false,
-    };
+      showingControls: false
+    }
   },
 
   computed: {
@@ -70,12 +70,12 @@ export default {
      */
     'genre.songs.length' (newVal) {
       if (!newVal) {
-        router.go('genres');
+        router.go('genres')
       }
-    },
+    }
   },
 
-  created() {
+  created () {
     /**
      * Listen to 'main-content-view:load' event to load the requested genre
      * into view if applicable.
@@ -85,9 +85,9 @@ export default {
      */
     event.on('main-content-view:load', (view, genre) => {
       if (view === 'genre') {
-        this.genre = genre;
+        this.genre = genre
       }
-    });
+    })
   },
 
   methods: {
@@ -95,40 +95,40 @@ export default {
      * Shuffle the songs in the current genre.
      */
     shuffle() {
-      playback.queueAndPlay(this.genre.songs, true);
-    },
-  },
-};
+      playback.queueAndPlay(this.genre.songs, true)
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>
-@import "../../../../sass/partials/_vars.scss";
-@import "../../../../sass/partials/_mixins.scss";
+@import "../../../../sass/partials/_vars.scss"
+@import "../../../../sass/partials/_mixins.scss"
 
 #genreWrapper {
   button.play-shuffle {
     i {
-      margin-right: 0 !important;
+      margin-right: 0 !important
     }
   }
 
   .heading {
     .overview {
-      position: relative;
-      padding-left: 84px;
+      position: relative
+      padding-left: 84px
 
       @media only screen and (max-width : 768px) {
-        padding-left: 0;
+        padding-left: 0
       }
     }
 
     .cover {
-      position: absolute;
-      left: 0;
-      top: -7px;
+      position: absolute
+      left: 0
+      top: -7px
 
       @media only screen and (max-width : 768px) {
-        display: none;
+        display: none
       }
     }
   }
