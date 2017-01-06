@@ -110,6 +110,7 @@ export default {
     align-content: stretch;
     display: flex;
     line-height: normal;
+    background: rgba(0, 0, 0, .1);
 
     span:first-child {
       flex: 1;

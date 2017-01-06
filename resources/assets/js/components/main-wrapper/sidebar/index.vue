@@ -201,6 +201,11 @@ export default {
         border-left-color: $colorHighlight;
         color: $colorLinkHovered;
         background: rgba(255, 255, 255, .05);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
+      }
+
+      &:active {
+        opacity: .5;
       }
 
       &:hover {
@@ -261,7 +266,6 @@ export default {
       opacity: .7;
     }
   }
-
 
   @media only screen and (max-width : 667px) {
     position: fixed;
