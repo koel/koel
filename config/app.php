@@ -152,6 +152,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\MediaServiceProvider::class,
+        App\Providers\MediaCacheServiceProvider::class,
         App\Providers\UtilServiceProvider::class,
         App\Providers\LastfmServiceProvider::class,
         App\Providers\YouTubeServiceProvider::class,
@@ -207,6 +208,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'Media' => App\Facades\Media::class,
+        'MediaCache' => App\Facades\MediaCache::class,
         'Util' => App\Facades\Util::class,
         'Lastfm' => App\Facades\Lastfm::class,
         'YouTube' => App\Facades\YouTube::class,

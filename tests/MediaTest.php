@@ -156,6 +156,8 @@ class MediaTest extends TestCase
 
     public function testWatchSingleFileAdded()
     {
+        $this->expectsEvents(LibraryChanged::class);
+
         $path = $this->mediaPath.'/blank.mp3';
 
         (new Media())->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));

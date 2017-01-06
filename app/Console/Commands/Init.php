@@ -7,6 +7,7 @@ use DB;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use MediaCache;
 
 class Init extends Command
 {
@@ -60,6 +61,8 @@ class Init extends Command
 
         $this->info('Migrating database');
         Artisan::call('migrate', ['--force' => true]);
+        // Clean the media cache, just in case we did any media-related migration
+        MediaCache::clear();
 
         if (!User::count()) {
             $this->info('Seeding initial data');
