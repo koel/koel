@@ -183,6 +183,8 @@ class Media
                 (new File($file))->sync($this->tags);
             }
 
+            event(new LibraryChanged());
+
             Log::info("Synced all song(s) under $path");
         }
     }
