@@ -19,7 +19,7 @@
         <div class="change-pwd">
           <div class="form-row">
             <p class="help">If you want to change your password, enter it below. <br>
-              Otherwise, just leave the next two fields empty. It’s OK – no one will blame you.</p>
+              Otherwise, just leave the next two fields empty. It’s OK – no one will judge you.</p>
           </div>
 
           <div class="form-row">

@@ -28,7 +28,7 @@
           </ol>
 
           <p class="none" v-show="!recentSongs.length">
-            Your most-recent songs in this session will be displayed here.<br />
+            Your recently played songs will be displayed here.<br />
             Start listening!
           </p>
         </section>
