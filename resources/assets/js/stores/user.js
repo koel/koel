@@ -105,8 +105,8 @@ export const userStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('me', { email, password }, response => {
-        resolve(response.data)
+      http.post('me', { email, password }, ({ data }) => {
+        resolve(data)
       }, error => reject(error))
     })
   },
@@ -116,8 +116,8 @@ export const userStore = {
    */
   logout () {
     return new Promise((resolve, reject) => {
-      http.delete('me', {}, response => {
-        resolve(response.data)
+      http.delete('me', {}, ({ data }) => {
+        resolve(data)
       }, error => reject(error))
     })
   },
@@ -155,8 +155,7 @@ export const userStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('user', { name, email, password }, response => {
-        const user = response.data
+      http.post('user', { name, email, password }, ({ data: user }) => {
         this.setAvatar(user)
         this.all.unshift(user)
         alerts.success(`New user &quot;${name}&quot; created.`)
@@ -178,10 +177,8 @@ export const userStore = {
 
     return new Promise((resolve, reject) => {
       http.put(`user/${user.id}`, { name, email, password }, () => {
-        this.setAvatar(user)
-        user.name = name
-        user.email = email
-        user.password = ''
+        this.setAvatar(user);
+        [user.name, user.email, user.password] = [name, email, '']
         alerts.success('User profile updated.')
         resolve(user)
       }, error => reject(error))
@@ -197,7 +194,7 @@ export const userStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.delete(`user/${user.id}`, {}, response => {
+      http.delete(`user/${user.id}`, {}, ({ data }) => {
         this.all = without(this.all, user)
         alerts.success(`User &quot;${user.name}&quot; deleted.`)
 
@@ -223,7 +220,7 @@ export const userStore = {
         /**
          * Brian May enters the stage.
          */
-        resolve(response.data)
+        resolve(data)
       }, error => reject(error))
     })
   }

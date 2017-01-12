@@ -44,9 +44,9 @@ export const favoriteStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/like', { song: song.id }, response => {
+      http.post('interaction/like', { song: song.id }, ({ data }) => {
         // We don't really need to notify just for one song.
-        resolve(response.data)
+        resolve(data)
       }, error => reject(error))
     })
   },
@@ -92,9 +92,9 @@ export const favoriteStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/batch/like', { songs: map(songs, 'id') }, response => {
+      http.post('interaction/batch/like', { songs: map(songs, 'id') }, ({ data }) => {
         alerts.success(`Added ${pluralize(songs.length, 'song')} into Favorites.`)
-        resolve(response.data)
+        resolve(data)
       }, error => reject(error))
     })
   },
@@ -113,9 +113,9 @@ export const favoriteStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, response => {
+      http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, ({ data }) => {
         alerts.success(`Removed ${pluralize(songs.length, 'song')} from Favorites.`)
-        resolve(response.data)
+        resolve(data)
       }, error => reject(error))
     })
   }

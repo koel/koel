@@ -25,9 +25,7 @@ export const artistStore = {
     this.all = artists
 
     // Traverse through artists array to get the cover and number of songs for each.
-    each(this.all, artist => {
-      this.setupArtist(artist)
-    })
+    each(this.all, artist => this.setupArtist(artist))
 
     albumStore.init(this.all)
   },
@@ -95,7 +93,7 @@ export const artistStore = {
    */
   add (artists) {
     artists = [].concat(artists)
-    each(artists, a => this.setupArtist(a))
+    each(artists, artist => this.setupArtist(artist))
 
     this.all = union(this.all, artists)
   },
@@ -110,9 +108,7 @@ export const artistStore = {
     this.all = difference(this.all, artists)
 
     // Remember to clear the cache
-    each(artists, artist => {
-      delete this.cache[artist.id]
-    })
+    each(artists, artist => delete this.cache[artist.id])
   },
 
   /**

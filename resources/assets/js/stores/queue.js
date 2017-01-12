@@ -168,9 +168,9 @@ export const queueStore = {
       return first(this.all)
     }
 
-    const idx = map(this.all, 'id').indexOf(this.current.id) + 1
+    const index = map(this.all, 'id').indexOf(this.current.id) + 1
 
-    return idx >= this.all.length ? null : this.all[idx]
+    return index >= this.all.length ? null : this.all[index]
   },
 
   /**
@@ -183,9 +183,9 @@ export const queueStore = {
       return last(this.all)
     }
 
-    const idx = map(this.all, 'id').indexOf(this.current.id) - 1
+    const index = map(this.all, 'id').indexOf(this.current.id) - 1
 
-    return idx < 0 ? null : this.all[idx]
+    return index < 0 ? null : this.all[index]
   },
 
   /**

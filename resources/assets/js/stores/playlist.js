@@ -101,8 +101,7 @@ export const playlistStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('playlist', { name, songs }, response => {
-        const playlist = response.data
+      http.post('playlist', { name, songs }, ({ data: playlist }) => {
         playlist.songs = songs
         this.objectifySongs(playlist)
         this.add(playlist)
@@ -121,10 +120,10 @@ export const playlistStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.delete(`playlist/${playlist.id}`, {}, response => {
+      http.delete(`playlist/${playlist.id}`, {}, ({ data }) => {
         this.remove(playlist)
         alerts.success(`Deleted playlist &quot;${playlist.name}&quot;.`)
-        resolve(response.data)
+        resolve(data)
       }, error => reject(error))
     })
   },
@@ -182,7 +181,12 @@ export const playlistStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.put(`playlist/${playlist.id}`, { name: playlist.name }, () => resolve(playlist), error => reject(error))
+      http.put(
+        `playlist/${playlist.id}`,
+        { name: playlist.name },
+        () => resolve(playlist),
+        error => reject(error)
+      )
     })
   }
 }

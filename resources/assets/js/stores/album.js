@@ -23,9 +23,7 @@ export const albumStore = {
     this.all = reduce(artists, (albums, artist) => {
       // While we're doing so, for each album, we get its length
       // and keep a back reference to the artist too.
-      each(artist.albums, album => {
-        this.setupAlbum(album, artist)
-      })
+      each(artist.albums, album => this.setupAlbum(album, artist))
 
       return albums.concat(artist.albums)
     }, [])

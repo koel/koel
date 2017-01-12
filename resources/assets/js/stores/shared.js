@@ -1,37 +1,39 @@
-import { assign } from 'lodash'
+import { assign, clone } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { http } from '../services'
 import { userStore, preferenceStore, artistStore, songStore, playlistStore, queueStore, settingStore } from '.'
 
+const emptyState = {
+  songs: [],
+  albums: [],
+  artists: [],
+  favorites: [],
+  queued: [],
+  interactions: [],
+  users: [],
+  settings: [],
+  currentUser: null,
+  playlists: [],
+  useLastfm: false,
+  useYouTube: false,
+  useiTunes: true,
+  allowDownload: false,
+  currentVersion: '',
+  latestVersion: '',
+  cdnUrl: '',
+  originalMediaPath: ''
+}
+
 export const sharedStore = {
-  state: {
-    songs: [],
-    albums: [],
-    artists: [],
-    favorites: [],
-    queued: [],
-    interactions: [],
-    users: [],
-    settings: [],
-    currentUser: null,
-    playlists: [],
-    useLastfm: false,
-    useYouTube: false,
-    useiTunes: true,
-    allowDownload: false,
-    currentVersion: '',
-    latestVersion: '',
-    cdnUrl: '',
-    originalMediaPath: ''
-  },
+  state: clone(emptyState),
 
   init () {
     this.reset()
 
     return new Promise((resolve, reject) => {
-      http.get('data', response => {
-        assign(this.state, response.data)
+      http.get('data', ({ data }) => {
+        assign(this.state, data)
         // Don't allow downloading on mobile devices
         this.state.allowDownload = this.state.allowDownload && !isMobile.any
 
@@ -60,22 +62,6 @@ export const sharedStore = {
   },
 
   reset () {
-    this.state.songs = []
-    this.state.albums = []
-    this.state.artists = []
-    this.state.favorites = []
-    this.state.queued = []
-    this.state.interactions = []
-    this.state.users = []
-    this.state.settings = []
-    this.state.currentUser = null
-    this.state.playlists = []
-    this.state.useLastfm = false
-    this.state.useYouTube = false
-    this.state.useiTunes = true
-    this.state.allowDownload = false
-    this.state.currentVersion = ''
-    this.state.latestVersion = ''
-    this.state.cdnUrl = ''
+    this.state = clone(emptyState)
   }
 }
