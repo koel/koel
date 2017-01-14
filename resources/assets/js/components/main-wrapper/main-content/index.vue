@@ -147,7 +147,7 @@ export default {
     bottom: -20px;
     filter: blur(20px);
     opacity: .07;
-    z-index: 0;
+    z-index: 2;
     overflow: hidden;
     background-size: cover;
     background-position: center;

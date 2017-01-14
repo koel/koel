@@ -3,14 +3,14 @@
     class="song-item"
     draggable="true"
     :data-song-id="song.id"
-    @click="clicked($event)"
+    @click="clicked"
     @dblclick.prevent="playRightAwayyyyyyy"
-    @dragstart="$parent.dragStart(song.id, $event)"
-    @dragleave="$parent.removeDroppableState($event)"
-    @dragover.prevent="$parent.allowDrop(song.id, $event)"
-    @drop.stop.prevent="$parent.handleDrop(song.id, $event)"
-    @contextmenu.prevent="$parent.openContextMenu(song.id, $event)"
-    :class="{ selected: selected, playing: playing }"
+    @dragstart="dragStart"
+    @dragleave="removeDroppableState"
+    @dragover.prevent="allowDrop"
+    @drop.stop.prevent="handleDrop"
+    @contextmenu.prevent="openContextMenu"
+    :class="{ selected: item.selected, playing: playing }"
   >
     <td class="track-number">{{ song.track || '' }}</td>
     <td class="title">{{ song.title }}</td>
@@ -27,20 +27,34 @@
 <script>
 import { playback } from '../../services'
 import { queueStore } from '../../stores'
+import $v from 'vuequery'
 
 export default {
-  props: ['song'],
+  props: ['item'],
+  name: 'song-item',
 
   data () {
     return {
-      selected: false
+      parentSongList: null
     }
   },
 
   computed: {
+    /**
+     * A shortcut to access the current vm's song (instead of this.item.song).
+     * @return {Object}
+     */
+    song () {
+      return this.item.song
+    },
+
     playing () {
       return this.song.playbackState === 'playing' || this.song.playbackState === 'paused'
     }
+  },
+
+  created () {
+    this.parentSongList = $v(this).closest('song-list').vm
   },
 
   methods: {
@@ -72,23 +86,33 @@ export default {
       }
     },
 
-    clicked ($e) {
-      this.$emit('itemClicked', this.song.id, $e)
+    clicked (event) {
+      this.parentSongList.rowClicked(this, event)
     },
 
-    select () {
-      this.selected = true
+    dragStart (event) {
+      this.parentSongList.dragStart(this, event)
     },
 
-    deselect () {
-      this.selected = false
+    removeDroppableState (event) {
+      this.parentSongList.removeDroppableState(event)
     },
 
     /**
-     * Toggle the "selected" state of the current component.
+     * Add a "droppable" class and set the drop effect when other songs are dragged over the row.
+     *
+     * @param {Object} event The dragover event.
      */
-    toggleSelectedState () {
-      this.selected = !this.selected
+    allowDrop (event) {
+      this.parentSongList.allowDrop(event)
+    },
+
+    handleDrop (event) {
+      this.parentSongList.handleDrop(this, event)
+    },
+
+    openContextMenu (event) {
+      this.parentSongList.openContextMenu(this, event)
     }
   }
 }
@@ -100,6 +124,7 @@ export default {
 
 .song-item {
   border-bottom: 1px solid $color2ndBgr;
+  height: 35px;
 
   html.no-touchevents &:hover {
     background: rgba(255, 255, 255, .05);
@@ -126,7 +151,7 @@ export default {
     background-color: rgba(255, 255, 255, .08);
   }
 
-  &.playing {
+  &.playing td {
     color: $colorHighlight;
   }
 }

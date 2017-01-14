@@ -15,9 +15,9 @@ export const youtube = {
 
     const pageToken = song.youtube.nextPageToken || ''
     return new Promise((resolve, reject) => {
-      http.get(`youtube/search/song/${song.id}?pageToken=${pageToken}`, response => {
-        song.youtube.nextPageToken = response.data.nextPageToken
-        song.youtube.items.push(...response.data.items)
+      http.get(`youtube/search/song/${song.id}?pageToken=${pageToken}`, ({ data }) => {
+        song.youtube.nextPageToken = data.nextPageToken
+        song.youtube.items.push(...data.items)
         resolve()
       }, error => reject(error))
     })
