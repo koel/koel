@@ -208,13 +208,13 @@ export const playback = {
    * The selected mode will be stored into local storage as well.
    */
   changeRepeatMode () {
-    let idx = this.repeatModes.indexOf(preferences.repeatMode) + 1
+    let index = this.repeatModes.indexOf(preferences.repeatMode) + 1
 
-    if (idx >= this.repeatModes.length) {
-      idx = 0
+    if (index >= this.repeatModes.length) {
+      index = 0
     }
 
-    preferences.repeatMode = this.repeatModes[idx]
+    preferences.repeatMode = this.repeatModes[index]
   },
 
   /**
