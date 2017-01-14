@@ -410,7 +410,7 @@ export default {
       // clear the current selection and select it instead.
       if (!rowVm.item.selected) {
         this.clearSelection()
-        rowVm.item.selected = true
+        this.toggleRow(rowVm)
       }
 
       this.$nextTick(() => this.$refs.contextMenu.open(event.pageY, event.pageX))
