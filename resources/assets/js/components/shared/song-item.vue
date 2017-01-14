@@ -6,10 +6,10 @@
     @click="clicked"
     @dblclick.prevent="playRightAwayyyyyyy"
     @dragstart="dragStart"
-    @dragleave="removeDroppableState"
-    @dragover.prevent="allowDrop"
-    @drop.stop.prevent="handleDrop"
-    @contextmenu.prevent="openContextMenu"
+    @dragleave="dragLeave"
+    @dragover.prevent="dragOver"
+    @drop.stop.prevent="dropStop"
+    @contextmenu.prevent="contextMenu"
     :class="{ selected: item.selected, playing: playing }"
   >
     <td class="track-number">{{ song.track || '' }}</td>
@@ -48,6 +48,10 @@ export default {
       return this.item.song
     },
 
+    /**
+     * Determine if the current song is being played (or paused).
+     * @return {Bool}
+     */
     playing () {
       return this.song.playbackState === 'playing' || this.song.playbackState === 'paused'
     }
@@ -86,32 +90,51 @@ export default {
       }
     },
 
+    /**
+     * Proxy the click event to the parent song list component.
+     * @param  {Event} event
+     */
     clicked (event) {
       this.parentSongList.rowClicked(this, event)
     },
 
+    /**
+     * Proxy the dragstart event to the parent song list component.
+     * @param  {Event} event
+     */
     dragStart (event) {
       this.parentSongList.dragStart(this, event)
     },
 
-    removeDroppableState (event) {
+    /**
+     * Proxy the dragleave event to the parent song list component.
+     * @param  {Event} event
+     */
+    dragLeave (event) {
       this.parentSongList.removeDroppableState(event)
     },
 
     /**
-     * Add a "droppable" class and set the drop effect when other songs are dragged over the row.
-     *
-     * @param {Object} event The dragover event.
+     * Proxy the dragover event to the parent song list component.
+     * @param {Event} event The dragover event.
      */
-    allowDrop (event) {
+    dragOver (event) {
       this.parentSongList.allowDrop(event)
     },
 
-    handleDrop (event) {
+    /**
+     * Proxy the dropstop event to the parent song list component.
+     * @param  {Event} event
+     */
+    dropStop (event) {
       this.parentSongList.handleDrop(this, event)
     },
 
-    openContextMenu (event) {
+    /**
+     * Proxy the contextmenu event to the parent song list component.
+     * @param  {Event} event
+     */
+    contextMenu (event) {
       this.parentSongList.openContextMenu(this, event)
     }
   }
