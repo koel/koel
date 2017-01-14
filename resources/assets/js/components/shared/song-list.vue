@@ -522,11 +522,17 @@ export default {
     left: 0;
     bottom: 0;
     right: 0;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
 
     .item-container {
       position: absolute;
       left: 24px;
       right: 24px;
+    }
+
+    .item {
+      margin-bottom: 0;
     }
   }
 
@@ -539,23 +545,38 @@ export default {
       display: none;
     }
 
+    .scroller {
+      top: 0;
+      bottom: 24px;
+
+      .item-container {
+        left: 12px;
+        right: 12px;
+      }
+    }
+
     tr {
       padding: 8px 32px 8px 4px;
       position: relative;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: $color2ndText;
+      width: 100%;
     }
 
     td {
       display: inline;
       padding: 0;
       vertical-align: bottom;
-      white-space: normal;
+      color: $colorMainText;
 
       &.album, &.time, &.track-number {
         display: none;
       }
 
       &.artist {
-        opacity: .5;
+        color: $color2ndText;
         font-size: .9rem;
         padding: 0 4px;
       }

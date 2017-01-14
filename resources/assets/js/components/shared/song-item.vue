@@ -151,7 +151,7 @@ export default {
     background-color: rgba(255, 255, 255, .08);
   }
 
-  &.playing {
+  &.playing td {
     color: $colorHighlight;
   }
 }
