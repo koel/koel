@@ -232,7 +232,7 @@ export const songStore = {
       http.put('songs', {
         data,
         songs: map(songs, 'id')
-      }, ({ songs }) => {
+      }, ({ data: songs }) => {
         each(songs, song => this.syncUpdatedSong(song))
         alerts.success(`Updated ${pluralize(songs.length, 'song')}.`)
         resolve(songs)
