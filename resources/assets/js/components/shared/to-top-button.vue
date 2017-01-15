@@ -23,7 +23,7 @@ export default {
   bottom: $footerHeightMobile + 26px;
   left: 0;
   text-align: center;
-  z-index: 9999;
+  z-index: 20;
   opacity: 1;
   transition: opacity .5s;
 
