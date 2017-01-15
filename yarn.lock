@@ -3687,6 +3687,10 @@ interpret@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.0.1.tgz#d579fb7f693b858004947af39fa0db49f795602c"
 
+intersection-observer@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/intersection-observer/-/intersection-observer-0.2.0.tgz#d52acb737614275d9f46641b2d38641e14259d1d"
+
 invariant@^2.2.0:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.2.tgz#9e1f56ac0acdb6bf303306f338be3b204ae60360"
