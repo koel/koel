@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import { each } from 'lodash'
 import { userStore, preferenceStore, sharedStore } from '../../../stores'
 import { forceReloadWindow, $ } from '../../../utils'
 import { http, ls } from '../../../services'
@@ -127,13 +128,16 @@ export default {
     update () {
       // A little validation put in a small place.
       if ((this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd) {
-        document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
-          .forEach(el => $.addClass(el, 'error'))
+        each(
+          document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword'),
+          el => $.addClass(el, 'error')
+        )
         return
       }
 
-      document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
-          .forEach(el => $.removeClass(el, 'error'))
+      each(document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword'), el => {
+        $.removeClass(el, 'error')
+      })
 
       userStore.updateProfile(this.pwd).then(() => {
         this.pwd = ''

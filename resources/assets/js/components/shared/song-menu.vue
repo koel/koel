@@ -30,8 +30,9 @@
 </template>
 
 <script>
-import songMenuMethods from '../../mixins/song-menu-methods'
+import { each } from 'lodash'
 
+import songMenuMethods from '../../mixins/song-menu-methods'
 import { event, isClipboardSupported, copyText } from '../../utils'
 import { sharedStore, songStore, queueStore, userStore, playlistStore } from '../../stores'
 import { playback, download } from '../../services'
@@ -154,7 +155,7 @@ export default {
    * they don't appear off-screen.
    */
   mounted () {
-    this.$el.querySelectorAll('.has-sub').forEach(item => {
+    each(this.$el.querySelectorAll('.has-sub'), item => {
       const submenu = item.querySelector('.submenu')
       if (!submenu) {
         return

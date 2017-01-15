@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { map, cloneDeep } from 'lodash'
+import { map, cloneDeep, each } from 'lodash'
 import nouislider from 'nouislider'
 
 import { isAudioContextSupported, event, $ } from '../../utils'
@@ -98,7 +98,7 @@ export default {
 
       // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
       const frequencies = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000]
-      frequencies.forEach((frequency, i) => {
+      each(frequencies, (frequency, i) => {
         const filter = context.createBiquadFilter()
 
         if (i === 0) {
@@ -135,7 +135,7 @@ export default {
      */
     createSliders () {
       const config = equalizerStore.get()
-      document.querySelectorAll('#equalizer .slider').forEach((el, i) => {
+      each(document.querySelectorAll('#equalizer .slider'), (el, i) => {
         nouislider.create(el, {
           connect: [false, true],
           // the first element is the preamp. The rest are gains.
@@ -192,7 +192,7 @@ export default {
      * Load a preset when the user select it from the dropdown.
      */
     loadPreset (preset) {
-      document.querySelectorAll('#equalizer .slider').forEach((el, i) => {
+      each(document.querySelectorAll('#equalizer .slider'), (el, i) => {
         // We treat our preamp slider differently.
         if ($.is(el.parentNode, '.preamp')) {
           this.changePreampGain(preset.preamp)

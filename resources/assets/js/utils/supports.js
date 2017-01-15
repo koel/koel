@@ -1,5 +1,6 @@
 import isMobile from 'ismobilejs'
 import Vue from 'vue'
+import { each } from 'lodash'
 
 /**
  * Check if AudioContext is supported by the current browser.
@@ -65,7 +66,7 @@ const event = {
     if (arguments.length === 2) {
       this.bus.$on(arguments[0], arguments[1])
     } else {
-      Object.keys(arguments[0]).forEach(key => {
+      each(Object.keys(arguments[0]), key => {
         this.bus.$on(key, arguments[0][key])
       })
     }
