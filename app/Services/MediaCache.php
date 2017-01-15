@@ -11,6 +11,10 @@ class MediaCache
 
     public function get()
     {
+        if (!config('koel.cache_media')) {
+            return Artist::orderBy('name')->with('albums', with('albums.songs'))->get();
+        }
+
         $data = Cache::get($this->keyName);
         if (!$data) {
             $data = Artist::orderBy('name')->with('albums', with('albums.songs'))->get();

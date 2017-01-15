@@ -115,4 +115,6 @@ return [
         'affiliate_id' => '1000lsGu',
     ],
 
+    'cache_media' => env('CACHE_MEDIA', true),
+
 ];
