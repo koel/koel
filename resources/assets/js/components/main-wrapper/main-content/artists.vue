@@ -57,11 +57,6 @@ export default {
        */
       'koel:ready': () => this.displayMore(),
 
-      'koel:teardown': () => {
-        this.q = ''
-        this.numOfItems = 9
-      },
-
       'filter:changed': q => {
         this.q = q
       }

@@ -110,9 +110,7 @@ export default {
         songInfo.fetch(song).then(song => {
           this.song = song
         })
-      },
-
-      'koel:teardown': () => this.resetState()
+      }
     })
   }
 }

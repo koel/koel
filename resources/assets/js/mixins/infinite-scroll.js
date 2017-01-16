@@ -42,12 +42,5 @@ export default {
       $.scrollTo(this.$refs.wrapper, 0, 500)
       this.showBackToTop = false
     }
-  },
-
-  created () {
-    event.on('koel:teardown', () => {
-      this.numOfItems = 30
-      this.showBackToTop = false
-    })
   }
 }

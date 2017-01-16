@@ -39,11 +39,6 @@ export default {
     event.on('search:toggle', () => {
       this.showing = !this.showing
     })
-
-    event.on('koel:teardown', () => {
-      this.q = ''
-      this.filter()
-    })
   }
 }
 </script>

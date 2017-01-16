@@ -192,10 +192,6 @@ export default {
        */
       'main-content-view:load': view => {
         this.viewingQueue = view === 'queue'
-      },
-
-      'koel:teardown': () => {
-        this.song = songStore.stub
       }
     })
   }
