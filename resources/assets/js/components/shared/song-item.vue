@@ -7,7 +7,8 @@
     @dblclick.prevent="playRightAwayyyyyyy"
     @dragstart="dragStart"
     @dragleave="dragLeave"
-    @dragover.prevent="dragOver"
+    @dragenter.prevent="dragEnter"
+    @dragover.prevent
     @drop.stop.prevent="drop"
     @contextmenu.prevent="contextMenu"
     :class="{ selected: item.selected, playing: playing }"
@@ -62,6 +63,8 @@ export default {
   },
 
   methods: {
+    noop () {},
+
     /**
      * Play the song right away.
      */
@@ -115,7 +118,7 @@ export default {
      * Proxy the dragover event to the parent song list component.
      * @param {Event} event The dragover event.
      */
-    dragOver (event) {
+    dragEnter (event) {
       this.parentSongList.allowDrop(event)
     },
 

@@ -2,7 +2,8 @@
   <li @dblclick.prevent="edit" :class="['playlist', type, editing ? 'editing' : '']">
     <a :href="playlistUrl"
       @dragleave="removeDroppableState"
-      @dragover.prevent="allowDrop"
+      @dragenter.prevent="allowDrop"
+      @dragover.prevent
       @drop.stop.prevent="handleDrop"
       :class="{ active: active }"
     >{{ playlist.name }}</a>
