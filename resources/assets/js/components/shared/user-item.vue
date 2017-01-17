@@ -66,7 +66,7 @@ export default {
      */
     del () {
       alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, () => {
-        userStore.destroy(this.user).then(() => this.$destroy(true))
+        userStore.destroy(this.user).then(() => this.$destroy())
       })
     }
   }
