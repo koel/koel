@@ -26,7 +26,6 @@ export const artistStore = {
 
     // Traverse through artists array to get the cover and number of songs for each.
     each(this.all, artist => this.setupArtist(artist))
-
     albumStore.init(this.all)
   },
 
@@ -121,7 +120,7 @@ export const artistStore = {
   addAlbumsIntoArtist (artist, albums) {
     albums = [].concat(albums)
 
-    artist.albums = union(artist.albums ? artist.albums : [], albums)
+    artist.albums = union(artist.albums || [], albums)
 
     each(albums, album => {
       album.artist_id = artist.id

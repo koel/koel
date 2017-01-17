@@ -369,6 +369,7 @@ export const playback = {
   playAllByArtist (artist, shuffled = true) {
     if (!shuffled) {
       this.queueAndPlay(orderBy(artist.songs, 'album_id', 'track'))
+      return
     }
 
     this.queueAndPlay(artist.songs, true)

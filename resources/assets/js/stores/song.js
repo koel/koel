@@ -37,10 +37,7 @@ export const songStore = {
     // Iterate through the albums. With each, add its songs into our master song list.
     // While doing so, we populate some other information into the songs as well.
     this.all = albums.reduce((songs, album) => {
-      each(album.songs, song => {
-        this.setupSong(song, album)
-      })
-
+      each(album.songs, song => this.setupSong(song, album))
       return songs.concat(album.songs)
     }, [])
 

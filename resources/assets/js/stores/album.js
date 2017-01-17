@@ -24,7 +24,6 @@ export const albumStore = {
       // While we're doing so, for each album, we get its length
       // and keep a back reference to the artist too.
       each(artist.albums, album => this.setupAlbum(album, artist))
-
       return albums.concat(artist.albums)
     }, [])
 
@@ -103,7 +102,7 @@ export const albumStore = {
   addSongsIntoAlbum (album, songs) {
     songs = [].concat(songs)
 
-    album.songs = union(album.songs ? album.songs : [], songs)
+    album.songs = union(album.songs || [], songs)
 
     each(songs, song => {
       song.album_id = album.id

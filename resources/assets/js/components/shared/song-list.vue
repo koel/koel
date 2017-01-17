@@ -160,7 +160,7 @@ export default {
       }
 
       this.sortKey = key
-      this.order = 0 - this.order
+      this.order *= -1
       this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.name'
       this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.artist.name'
       this.songRows = orderBy(this.songRows, this.sortKey, this.order)
