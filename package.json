@@ -28,7 +28,7 @@
     "raven-js": "^3.9.1",
     "select": "^1.0.6",
     "slugify": "^1.0.2",
-    "vue": "^2.0.1",
+    "vue": "^2.1.9",
     "vue-virtual-scroller": "^0.5.0",
     "vuequery": "^1.0.0",
     "youtube-player": "^3.0.4"
