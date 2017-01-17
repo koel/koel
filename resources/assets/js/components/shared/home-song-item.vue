@@ -38,10 +38,7 @@ export default {
 
   methods: {
     play () {
-      if (!queueStore.contains(this.song)) {
-        queueStore.queueAfterCurrent(this.song)
-      }
-
+      queueStore.contains(this.song) || queueStore.queueAfterCurrent(this.song)
       playback.play(this.song)
     },
 

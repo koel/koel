@@ -54,6 +54,10 @@ export default {
   },
 
   watch: {
+    /**
+     * Whenever a new album is loaded into this component, we reset the "full wiki" state.
+     * @return {Boolean}
+     */
     album () {
       this.showingFullWiki = false
     }

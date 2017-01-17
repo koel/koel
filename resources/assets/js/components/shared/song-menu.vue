@@ -101,10 +101,7 @@ export default {
           playback.resume()
           break
         default:
-          if (!queueStore.contains(this.songs[0])) {
-            queueStore.queueAfterCurrent(this.songs[0])
-          }
-
+          queueStore.contains(this.songs[0]) || queueStore.queueAfterCurrent(this.songs[0])
           playback.play(this.songs[0])
           break
       }
@@ -116,10 +113,7 @@ export default {
      * Trigger opening the "Edit Song" form/overlay.
      */
     openEditForm () {
-      if (this.songs.length) {
-        event.emit('songs:edit', this.songs)
-      }
-
+      this.songs.length || event.emit('songs:edit', this.songs)
       this.close()
     },
 

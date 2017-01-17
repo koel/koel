@@ -47,9 +47,7 @@ export default {
 
   watch: {
     songs () {
-      if (!this.songs.length) {
-        this.close()
-      }
+      this.songs.length || this.close()
     }
   },
 
@@ -65,10 +63,10 @@ export default {
         return
       }
 
-      playlistStore.store(this.newPlaylistName, this.songs).then(p => {
+      playlistStore.store(this.newPlaylistName, this.songs).then(playlist => {
         this.newPlaylistName = ''
         // Activate the new playlist right away
-        this.$nextTick(() => router.go(`playlist/${p.id}`))
+        this.$nextTick(() => router.go(`playlist/${playlist.id}`))
       })
 
       this.close()

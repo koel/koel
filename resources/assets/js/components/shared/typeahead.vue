@@ -108,7 +108,6 @@ export default {
       // Hide the typeahead results and reset the value if ESC is pressed.
       if (e.keyCode === 27) {
         this.showingResult = false
-
         return
       }
 

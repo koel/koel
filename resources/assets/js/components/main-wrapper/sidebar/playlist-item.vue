@@ -28,7 +28,6 @@ export default {
 
   data () {
     return {
-      newName: '',
       editing: false,
       active: false
     }

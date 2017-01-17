@@ -32,9 +32,7 @@ export const playback = {
     /**
      * Listen to 'error' event on the audio player and play the next song if any.
      */
-    document.querySelector('.plyr').addEventListener('error', e => {
-      this.playNext()
-    }, true)
+    document.querySelector('.plyr').addEventListener('error', () => this.playNext(), true)
 
     /**
      * Listen to 'ended' event on the audio player and play the next song in the queue.
@@ -46,7 +44,6 @@ export const playback = {
 
       if (preferences.repeatMode === 'REPEAT_ONE') {
         this.restart()
-
         return
       }
 
@@ -67,8 +64,7 @@ export const playback = {
         return
       }
 
-      const preloader = document.createElement('audio')
-      preloader.setAttribute('src', songStore.getSourceUrl(nextSong))
+      document.createElement('audio').setAttribute('src', songStore.getSourceUrl(nextSong))
 
       nextSong.preloaded = true
     })
@@ -78,9 +74,7 @@ export const playback = {
      * When user drags the volume control, this event will be triggered, and we
      * update the volume on the plyr object.
      */
-    this.volumeInput.addEventListener('input', e => {
-      this.setVolume(e.target.value)
-    })
+    this.volumeInput.addEventListener('input', e => this.setVolume(e.target.value))
 
     // On init, set the volume to the value found in the local storage.
     this.setVolume(preferences.volume)

@@ -75,7 +75,7 @@ export default {
 
   computed: {
     latestVersionUrl () {
-      return 'https://github.com/phanan/koel/releases/tag/' + this.sharedState.latestVersion
+      return `https://github.com/phanan/koel/releases/tag/${this.sharedState.latestVersion}`
     }
   },
 

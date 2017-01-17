@@ -1,4 +1,4 @@
-import { event, $ } from '../utils'
+import { $ } from '../utils'
 import toTopButton from '../components/shared/to-top-button.vue'
 
 /**

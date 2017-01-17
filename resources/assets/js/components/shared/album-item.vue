@@ -36,8 +36,6 @@
 </template>
 
 <script>
-import { map } from 'lodash'
-
 import { pluralize } from '../../utils'
 import { queueStore, artistStore, sharedStore } from '../../stores'
 import { playback, download } from '../../services'
@@ -91,7 +89,7 @@ export default {
      * Allow dragging the album (actually, its songs).
      */
     dragStart (e) {
-      const songIds = map(this.album.songs, 'id')
+      const songIds = this.album.songs.map(song => song.id)
       e.dataTransfer.setData('application/x-koel.text+plain', songIds)
       e.dataTransfer.effectAllowed = 'move'
 

@@ -46,10 +46,7 @@ export default {
   methods: {
     play () {
       if (this.correspondingSong) {
-        if (!queueStore.contains(this.correspondingSong)) {
-          queueStore.queueAfterCurrent(this.correspondingSong)
-        }
-
+        queueStore.contains(this.correspondingSong) || queueStore.queueAfterCurrent(this.correspondingSong)
         playback.play(this.correspondingSong)
       }
     }

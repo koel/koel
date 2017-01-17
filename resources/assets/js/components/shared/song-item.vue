@@ -8,7 +8,7 @@
     @dragstart="dragStart"
     @dragleave="dragLeave"
     @dragover.prevent="dragOver"
-    @drop.stop.prevent="dropStop"
+    @drop.stop.prevent="drop"
     @contextmenu.prevent="contextMenu"
     :class="{ selected: item.selected, playing: playing }"
   >
@@ -66,10 +66,7 @@ export default {
      * Play the song right away.
      */
     playRightAwayyyyyyy () {
-      if (!queueStore.contains(this.song)) {
-        queueStore.queueAfterCurrent(this.song)
-      }
-
+      queueStore.contains(this.song) || queueStore.queueAfterCurrent(this.song)
       playback.play(this.song)
     },
 
@@ -126,7 +123,7 @@ export default {
      * Proxy the dropstop event to the parent song list component.
      * @param  {Event} event
      */
-    dropStop (event) {
+    drop (event) {
       this.parentSongList.handleDrop(this, event)
     },
 

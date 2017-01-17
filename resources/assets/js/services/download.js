@@ -43,7 +43,6 @@ export const download = {
    */
   fromPlaylist (playlist) {
     if (!playlistStore.getSongs(playlist).length) {
-      console.warn('Empty playlist.')
       return
     }
 

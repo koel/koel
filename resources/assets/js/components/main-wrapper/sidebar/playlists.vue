@@ -48,10 +48,10 @@ export default {
     store () {
       this.creating = false
 
-      playlistStore.store(this.newName).then(p => {
+      playlistStore.store(this.newName).then(playlist => {
         this.newName = ''
         // Activate the new playlist right away
-        this.$nextTick(() => router.go(`playlist/${p.id}`))
+        this.$nextTick(() => router.go(`playlist/${playlist.id}`))
       })
     }
   }

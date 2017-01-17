@@ -41,6 +41,10 @@ export default {
   },
 
   watch: {
+    /**
+     * Whenever a new artist is loaded into this component, we reset the "full bio" state.
+     * @return {Boolean}
+     */
     artist () {
       this.showingFullBio = false
     }

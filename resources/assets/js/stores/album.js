@@ -86,9 +86,9 @@ export const albumStore = {
    */
   add (albums) {
     albums = [].concat(albums)
-    each(albums, a => {
-      this.setupAlbum(a, a.artist)
-      a.playCount = reduce(a.songs, (count, song) => count + song.playCount, 0)
+    each(albums, album => {
+      this.setupAlbum(album, album.artist)
+      album.playCount = reduce(album.songs, (count, song) => count + song.playCount, 0)
     })
 
     this.all = union(this.all, albums)
@@ -164,10 +164,7 @@ export const albumStore = {
    */
   getMostPlayed (n = 6) {
     // Only non-unknown albums with actually play count are applicable.
-    const applicable = filter(this.all, album => {
-      return album.playCount && album.id !== 1
-    })
-
+    const applicable = filter(this.all, album => album.playCount && album.id !== 1)
     return take(orderBy(applicable, 'playCount', 'desc'), n)
   },
 
@@ -180,7 +177,6 @@ export const albumStore = {
    */
   getRecentlyAdded (n = 6) {
     const applicable = filter(this.all, album => album.id !== 1)
-
     return take(orderBy(applicable, 'created_at', 'desc'), n)
   }
 }
