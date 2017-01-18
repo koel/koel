@@ -126,18 +126,16 @@ export default {
      * Update the current user's profile.
      */
     update () {
+      const passwordFields = Array.from(
+        document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
+      )
       // A little validation put in a small place.
       if ((this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd) {
-        each(
-          document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword'),
-          el => $.addClass(el, 'error')
-        )
+        each(passwordFields, el => $.addClass(el, 'error'))
         return
       }
 
-      each(document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword'), el => {
-        $.removeClass(el, 'error')
-      })
+      each(passwordFields, el => $.removeClass(el, 'error'))
 
       userStore.updateProfile(this.pwd).then(() => {
         this.pwd = ''

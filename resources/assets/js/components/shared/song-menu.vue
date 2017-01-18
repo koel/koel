@@ -149,7 +149,7 @@ export default {
    * they don't appear off-screen.
    */
   mounted () {
-    each(this.$el.querySelectorAll('.has-sub'), item => {
+    each(Array.from(this.$el.querySelectorAll('.has-sub')), item => {
       const submenu = item.querySelector('.submenu')
       if (!submenu) {
         return

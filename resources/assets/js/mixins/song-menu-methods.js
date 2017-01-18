@@ -24,7 +24,7 @@ export default {
      * Close all submenus.
      */
     close () {
-      each(this.$el.querySelectorAll('.submenu'), el => {
+      each(Array.from(this.$el.querySelectorAll('.submenu')), el => {
         el.style.display = 'none'
       })
       this.shown = false

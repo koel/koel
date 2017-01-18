@@ -135,7 +135,7 @@ export default {
      */
     createSliders () {
       const config = equalizerStore.get()
-      each(document.querySelectorAll('#equalizer .slider'), (el, i) => {
+      each(Array.from(document.querySelectorAll('#equalizer .slider')), (el, i) => {
         nouislider.create(el, {
           connect: [false, true],
           // the first element is the preamp. The rest are gains.
@@ -192,7 +192,7 @@ export default {
      * Load a preset when the user select it from the dropdown.
      */
     loadPreset (preset) {
-      each(document.querySelectorAll('#equalizer .slider'), (el, i) => {
+      each(Array.from(document.querySelectorAll('#equalizer .slider')), (el, i) => {
         // We treat our preamp slider differently.
         if ($.is(el.parentNode, '.preamp')) {
           this.changePreampGain(preset.preamp)
