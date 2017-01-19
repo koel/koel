@@ -36,7 +36,7 @@ export const $ = {
     }
   },
 
-  scrollTo (el, to, duration) {
+  scrollTo (el, to, duration, cb = null) {
     if (duration <= 0 || !el) {
       return
     }
@@ -45,6 +45,7 @@ export const $ = {
     window.setTimeout(() => {
       el.scrollTop = el.scrollTop + perTick
       if (el.scrollTop === to) {
+        cb && cb()
         return
       }
       this.scrollTo(el, to, duration - 10)

@@ -68,7 +68,7 @@
         </div>
       </section>
 
-      <to-top-button :showing="showBackToTop"/>
+      <to-top-button/>
     </div>
   </section>
 </template>

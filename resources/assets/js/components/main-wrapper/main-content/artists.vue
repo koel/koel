@@ -8,7 +8,7 @@
     <div class="artists main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
       <artist-item v-for="item in displayedItems" :artist="item"/>
       <span class="item filler" v-for="n in 6"/>
-      <to-top-button :showing="showBackToTop"/>
+      <to-top-button/>
     </div>
   </section>
 </template>

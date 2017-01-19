@@ -5,10 +5,10 @@
       <view-mode-switch :mode="viewMode" for="albums"/>
     </h1>
 
-    <div class="albums main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
+    <div ref="scroller" class="albums main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
       <album-item v-for="item in displayedItems" :album="item"/>
       <span class="item filler" v-for="n in 6"/>
-      <to-top-button :showing="showBackToTop"/>
+      <to-top-button/>
     </div>
   </section>
 </template>
