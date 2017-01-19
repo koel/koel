@@ -4,33 +4,29 @@ import isMobile from 'ismobilejs'
 import { http } from '../services'
 import { userStore, preferenceStore, artistStore, songStore, playlistStore, queueStore, settingStore } from '.'
 
-const emptyState = {
-  songs: [],
-  albums: [],
-  artists: [],
-  favorites: [],
-  queued: [],
-  interactions: [],
-  users: [],
-  settings: [],
-  currentUser: null,
-  playlists: [],
-  useLastfm: false,
-  useYouTube: false,
-  useiTunes: true,
-  allowDownload: false,
-  currentVersion: '',
-  latestVersion: '',
-  cdnUrl: '',
-  originalMediaPath: ''
-}
-
 export const sharedStore = {
-  state: clone(emptyState),
+  state: {
+    songs: [],
+    albums: [],
+    artists: [],
+    favorites: [],
+    queued: [],
+    interactions: [],
+    users: [],
+    settings: [],
+    currentUser: null,
+    playlists: [],
+    useLastfm: false,
+    useYouTube: false,
+    useiTunes: false,
+    allowDownload: false,
+    currentVersion: '',
+    latestVersion: '',
+    cdnUrl: '',
+    originalMediaPath: ''
+  },
 
   init () {
-    this.reset()
-
     return new Promise((resolve, reject) => {
       http.get('data', ({ data }) => {
         assign(this.state, data)
@@ -59,9 +55,5 @@ export const sharedStore = {
         resolve(this.state)
       }, error => reject(error))
     })
-  },
-
-  reset () {
-    this.state = clone(emptyState)
   }
 }
