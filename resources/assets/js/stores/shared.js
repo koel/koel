@@ -1,4 +1,4 @@
-import { assign, clone } from 'lodash'
+import { assign } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { http } from '../services'
