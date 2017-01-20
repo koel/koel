@@ -55,7 +55,8 @@
               </div>
               <div class="form-row" v-show="editSingle">
                 <label>Track</label>
-                <input name="track" type="number" min="0" v-model="formData.track">
+                <input name="track" type="text" pattern="\d*" v-model="formData.track"
+                title="Empty or a number">
               </div>
             </div>
             <div v-show="currentView === 'lyrics' && editSingle">
@@ -243,12 +244,12 @@ export default {
           songInfo.fetch(this.songs[0]).then(r => {
             this.loading = false
             this.formData.lyrics = br2nl(this.songs[0].lyrics)
-            this.formData.track = this.songs[0].track
+            this.formData.track = this.songs[0].track || ''
             this.initCompilationStateCheckbox()
           })
         } else {
           this.formData.lyrics = br2nl(this.songs[0].lyrics)
-          this.formData.track = this.songs[0].track
+          this.formData.track = this.songs[0].track || ''
           this.initCompilationStateCheckbox()
         }
       } else {
