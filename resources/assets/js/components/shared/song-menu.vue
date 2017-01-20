@@ -113,7 +113,7 @@ export default {
      * Trigger opening the "Edit Song" form/overlay.
      */
     openEditForm () {
-      this.songs.length || event.emit('songs:edit', this.songs)
+      this.songs.length && event.emit('songs:edit', this.songs)
       this.close()
     },
 
