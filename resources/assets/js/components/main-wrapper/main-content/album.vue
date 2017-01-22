@@ -115,8 +115,9 @@ export default {
   methods: {
     /**
      * Shuffle the songs in the current album.
+     * Overriding the mixin.
      */
-    shuffle () {
+    shuffleAll () {
       playback.queueAndPlay(this.album.songs, true)
     },
 

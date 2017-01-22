@@ -107,8 +107,9 @@ export default {
   methods: {
     /**
      * Shuffle the songs by the current artist.
+     * Overriding the mixin.
      */
-    shuffle () {
+    shuffleAll () {
       playback.queueAndPlay(this.artist.songs, true)
     },
 
