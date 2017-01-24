@@ -10,6 +10,7 @@ use App\Http\Streamers\XAccelRedirectStreamer;
 use App\Http\Streamers\XSendFileStreamer;
 use App\Models\Song;
 use YouTube;
+use Jenssengers\Agent\Facades\Agent;
 
 class SongController extends Controller
 {
@@ -33,8 +34,14 @@ class SongController extends Controller
         }
 
         // If `transcode` parameter isn't passed, the default is to only transcode FLAC.
+        // Chrome 56 and Firefox 51 added native support from flac, so do not transcode for those versions.
         if ($transcode === null && ends_with(mime_content_type($song->path), 'flac')) {
-            $transcode = true;
+            if ((Agent::is('Chrome') && Agent::version(Agent::browser()) > 55) ||
+                (Agent::is('Firefox') && Agent::version(Agent::browser()) > 50)) {
+                $transcode = false;
+            } else {
+                $transcode = true;
+            }
         }
 
         $streamer = null;
