@@ -25,7 +25,7 @@
           <a :class="['artists', currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
         </li>
         <li>
-            <a :class="['genres', currentView == 'genres' ? 'active' : '']" href="/#!/genres">Genres</a>
+          <a :class="['genres', currentView == 'genres' ? 'active' : '']" href="/#!/genres">Genres</a>
         </li>
         <li v-if="sharedState.useYouTube">
           <a :class="['youtube', currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
@@ -240,6 +240,10 @@ export default {
 
       &.artists::before {
         content: "\f130";
+      }
+
+      &.genres::before {
+        content: "\f500";
       }
 
       &.youtube::before {
