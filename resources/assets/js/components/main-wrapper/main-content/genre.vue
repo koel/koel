@@ -102,33 +102,33 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-@import "../../../../sass/partials/_vars.scss"
-@import "../../../../sass/partials/_mixins.scss"
+@import "../../../../sass/partials/_vars.scss";
+@import "../../../../sass/partials/_mixins.scss";
 
 #genreWrapper {
   button.play-shuffle {
     i {
-      margin-right: 0 !important
+      margin-right: 0 !important;
     }
   }
 
   .heading {
     .overview {
-      position: relative
-      padding-left: 84px
+      position: relative;
+      padding-left: 84px;
 
       @media only screen and (max-width : 768px) {
-        padding-left: 0
+        padding-left: 0;
       }
     }
 
     .cover {
-      position: absolute
-      left: 0
-      top: -7px
+      position: absolute;
+      left: 0;
+      top: -7px;
 
       @media only screen and (max-width : 768px) {
-        display: none
+        display: none;
       }
     }
   }
