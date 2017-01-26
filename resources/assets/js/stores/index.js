@@ -10,4 +10,3 @@ export * from './setting'
 export * from './shared'
 export * from './song'
 export * from './user'
-exports
