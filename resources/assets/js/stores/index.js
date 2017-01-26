@@ -1,5 +1,6 @@
 export * from './album'
 export * from './artist'
+export * from './genre'
 export * from './equalizer'
 export * from './favorite'
 export * from './playlist'
@@ -9,3 +10,4 @@ export * from './setting'
 export * from './shared'
 export * from './song'
 export * from './user'
+exports
