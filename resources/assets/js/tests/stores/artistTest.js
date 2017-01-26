@@ -57,7 +57,7 @@ describe('stores/artist', () => {
     it('correctly sets the album artist', () => {
       const addedAlbum = last(artistStore.state.artists[0].albums)
       addedAlbum.artist.should.equal(artistStore.state.artists[0])
-      addedAlbum.artist_id.should.equal(artistStore.state.artists[0].id)
+      addedAlbum.artistId.should.equal(artistStore.state.artists[0].id)
     })
   })
 
