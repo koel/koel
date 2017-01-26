@@ -243,7 +243,7 @@ export default {
       }
 
       &.genres::before {
-        content: "\f500";
+        content: "\f115";
       }
 
       &.youtube::before {

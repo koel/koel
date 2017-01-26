@@ -22,7 +22,7 @@
   align-content: flex-start;
 
   .item {
-     align-self: flex-start;
+    align-self: flex-start;
   }
 }
 
@@ -165,7 +165,7 @@
       }
     }
 
-    a.name, a.artist {
+    a.name, a.artist, a.genre {
       display: block;
       color: $colorMainText;
       white-space: nowrap;

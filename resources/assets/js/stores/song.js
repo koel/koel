@@ -4,7 +4,7 @@ import { without, map, take, remove, orderBy, each, union, compact } from 'lodas
 
 import { secondsToHis, alerts, pluralize } from '../utils'
 import { http, ls } from '../services'
-import { sharedStore, favoriteStore, albumStore, artistStore, preferenceStore } from '.'
+import { sharedStore, favoriteStore, albumStore, artistStore, preferenceStore, genreStore } from '.'
 import stub from '../stubs/song'
 
 export const songStore = {
@@ -61,6 +61,12 @@ export const songStore = {
       Vue.set(song, 'artist', artist)
     } else {
       Vue.set(song, 'artist', artistStore.byId(song.album.artist.id))
+    }
+
+    if (song.genre_id) {
+      var genre = genreStore.byId(song.genre_id);
+      Vue.set(song, 'genre', genre);
+      genre.songs.push(song);
     }
 
     // Cache the song, so that byId() is faster
@@ -266,13 +272,19 @@ export const songStore = {
     // and keep track of original album/artist.
     const originalAlbumId = originalSong.album.id
     const originalArtistId = originalSong.artist.id
+    const originalGenreId = originalSong.genre.id
 
     // First, we update the title, lyrics, and track #
     originalSong.title = updatedSong.title
     originalSong.lyrics = updatedSong.lyrics
     originalSong.track = updatedSong.track
     originalSong.disc = updatedSong.disc
-    originalSong.genre = updatedSong.genre
+
+    if (updatedSong.genre.id !== originalGenreId) {
+      // Store the new genre in the store
+      genreStore.addSongsIntoGenre(updatedSong.genre, originalSong)
+      genreStore.add(updatedSong.genre)
+    }
 
     if (updatedSong.album.id === originalAlbumId) { // case 1
       // Nothing to do

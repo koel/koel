@@ -62,15 +62,15 @@
                   <label>Track</label>
                   <input type="number" min="0" v-model="formData.track">
               </div>
-              <div class="form-row" style="display: none;">
+              <div class="form-row">
                   <label>Disc</label>
                   <input type="number" min="0" v-model="formData.disc">
               </div>
-              <div class="form-row" style="display: none;">
+              <div class="form-row">
                   <label>Year</label>
                   <input type="number" min="0" v-model="formData.albumYear">
               </div>
-              <div class="form-row" style="display: none;">
+              <div class="form-row">
                   <label>Genre</label>
                   <input type="text" v-model="formData.genre">
               </div>
@@ -128,7 +128,7 @@ export default {
       albumState: albumStore.state,
       albumTypeaheadOptions: {
         displayKey: 'name',
-        filterKey: 'name'
+        filterKey: 'name',
       },
 
       /**
@@ -159,48 +159,12 @@ export default {
     },
 
     /**
-     * Determine if all songs we're editing are by the same artist.
-     *
-     * @return {boolean}
-     */
-    bySameArtist () {
-      return every(this.songs, song => song.artist.id === this.songs[0].artist.id)
-    },
-
-    /**
      * Determine if all songs we're editing are from the same album.
      *
      * @return {boolean}
      */
     inSameAlbum () {
       return every(this.songs, song => song.album.id === this.songs[0].album.id)
-    },
-
-    /**
-     * Determine if all the songs we're editing have the same year
-     *
-     * @return {boolean}
-     */
-    hasSameYear () {
-      return every(this.songs, song => song.album.year === this.songs[0].album.year)
-    },
-
-    /**
-     * Determine if all the songs we're editing are on the same disc
-     *
-     * @return {boolean}
-     */
-    onSameDisc () {
-      return every(this.songs, song => song.disc === this.songs[0].disc)
-    },
-
-    /**
-     * Determine if all the songs we're editing have the same genre
-     *
-     * @return {boolean}
-     */
-    isSameGenre () {
-      return every(this.songs, song => song.genre === this.songs[0].genre)
     },
 
     /**
@@ -278,8 +242,6 @@ export default {
         this.formData.title = this.songs[0].title
         this.formData.albumName = this.songs[0].album.name
         this.formData.artistName = this.songs[0].artist.name
-        this.formData.albumYear = this.songs[0].album.year
-        this.formData.genre = this.songs[0].genre
 
         // If we're editing only one song and the song's info (including lyrics)
         // hasn't been loaded, load it now.
@@ -290,21 +252,16 @@ export default {
             this.loading = false
             this.formData.lyrics = br2nl(this.songs[0].lyrics)
             this.formData.track = this.songs[0].track || ''
-            this.formData.disc = this.songs[0].disc || ''
             this.initCompilationStateCheckbox()
           })
         } else {
           this.formData.lyrics = br2nl(this.songs[0].lyrics)
           this.formData.track = this.songs[0].track || ''
-          this.formData.disc = this.songs[0].disc || ''
           this.initCompilationStateCheckbox()
         }
       } else {
         this.formData.albumName = this.inSameAlbum ? this.songs[0].album.name : ''
         this.formData.artistName = this.bySameArtist ? this.songs[0].artist.name : ''
-        this.formData.albumYear = this.hasSameYear ? this.songs[0].album.year : ''
-        this.formData.disc = this.onSameDisc ? this.songs[0].disc : ''
-        this.formData.genre = this.isSameGenre ? this.songs[0].genre : ''
         this.loading = false
         this.initCompilationStateCheckbox()
       }

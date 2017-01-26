@@ -1,13 +1,13 @@
 require('chai').should()
 import { cloneDeep, last } from 'lodash'
 
-import { albumStore, artistStore } from '../../stores'
-import { default as artists, singleAlbum, singleSong } from '../blobs/media'
+import { albumStore, artistStore, genreStore } from '../../stores'
+import { default as artists, singleAlbum, singleSong, genres } from '../blobs/media'
 
 describe('stores/album', () => {
-  beforeEach(() => albumStore.init(cloneDeep(artists)))
+  beforeEach(() => { genreStore.init(cloneDeep(genres)); albumStore.init(cloneDeep(artists)) })
 
-  afterEach(() => albumStore.state.albums = [])
+  afterEach(() => { genreStore.state.genres = []; albumStore.state.albums = [] })
 
   describe('#init', () => {
     it('correctly gathers albums', () => {

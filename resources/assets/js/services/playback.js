@@ -388,5 +388,15 @@ export const playback = {
     }
 
     this.queueAndPlay(album.songs, true)
+  },
+
+  /**
+   * Play all songs by a genre.
+   *
+   * @param  {Object}     genre   The genre object
+   * @param  {Boolean=true}   shuffled Whether to shuffle the songs
+   */
+  playAllByGenre(genre, shuffled = true) {
+    this.queueAndPlay(genre.songs, shuffled)
   }
 }
