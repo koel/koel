@@ -46,7 +46,7 @@ export const artistStore = {
     Vue.set(artist, 'songs', reduce(artist.albums, (songs, album) => {
       // If the album is compilation, we cater for the songs contributed by this artist only.
       if (album.is_compilation) {
-        return songs.concat(filter(album.songs, { contributing_artist_id: artist.id }))
+        return songs.concat(filter(album.songs, { contributingArtistId: artist.id }))
       }
 
       // Otherwise, just use all songs in the album.
@@ -125,7 +125,7 @@ export const artistStore = {
     artist.albums = union(artist.albums || [], albums)
 
     each(albums, album => {
-      album.artist_id = artist.id
+      album.artistId = artist.id
       album.artist = artist
       artist.playCount += album.playCount
     })

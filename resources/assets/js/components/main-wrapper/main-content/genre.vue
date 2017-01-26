@@ -28,13 +28,13 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs';
+import isMobile from 'ismobilejs'
 
-import { pluralize, event } from '../../../utils';
-import { genreStore, songStore, sharedStore } from '../../../stores';
-import { playback } from '../../../services';
-import router from '../../../router';
-import hasSongList from '../../../mixins/has-song-list';
+import { pluralize, event } from '../../../utils'
+import { genreStore, sharedStore } from '../../../stores'
+import { playback } from '../../../services'
+import router from '../../../router'
+import hasSongList from '../../../mixins/has-song-list'
 
 export default {
   name: 'main-wrapper--main-content--genre',
@@ -42,7 +42,7 @@ export default {
   components: { },
   filters: { pluralize },
 
-  data() {
+  data () {
     return {
       sharedState: sharedStore.state,
       genre: genreStore.stub,
@@ -68,7 +68,7 @@ export default {
     }
   },
 
-  created() {
+  created () {
     /**
      * Listen to 'main-content-view:load' event to load the requested genre
      * into view if applicable.
@@ -87,13 +87,13 @@ export default {
     /**
      * Shuffle the songs in the current genre.
      */
-    shuffle() {
+    shuffle () {
       playback.queueAndPlay(this.genre.songs, true)
     },
     /**
      * Overload the mixin default shuffleAll method, since we don't have this.state
      */
-    shuffleAll() {
+    shuffleAll () {
       this.shuffle()
     }
   }

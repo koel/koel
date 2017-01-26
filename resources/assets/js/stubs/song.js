@@ -5,7 +5,7 @@ export default {
   album,
   artist,
   id: null,
-  album_id: 0,
+  albumId: 0,
   title: '',
   length: 0,
   fmtLength: '00:00',

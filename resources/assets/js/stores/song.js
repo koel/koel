@@ -64,9 +64,9 @@ export const songStore = {
     }
 
     if (song.genre_id) {
-      var genre = genreStore.byId(song.genre_id);
-      Vue.set(song, 'genre', genre);
-      genre.songs.push(song);
+      var genre = genreStore.byId(song.genre_id)
+      Vue.set(song, 'genre', genre)
+      genre.songs.push(song)
     }
 
     // Cache the song, so that byId() is faster

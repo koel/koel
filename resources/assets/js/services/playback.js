@@ -396,7 +396,7 @@ export const playback = {
    * @param  {Object}     genre   The genre object
    * @param  {Boolean=true}   shuffled Whether to shuffle the songs
    */
-  playAllByGenre(genre, shuffled = true) {
+  playAllByGenre (genre, shuffled = true) {
     this.queueAndPlay(genre.songs, shuffled)
   }
 }

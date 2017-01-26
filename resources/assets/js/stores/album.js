@@ -107,7 +107,7 @@ export const albumStore = {
     album.songs = union(album.songs || [], songs)
 
     each(songs, song => {
-      song.album_id = album.id
+      song.albumId = album.id
       song.album = album
     })
 

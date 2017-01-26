@@ -34,14 +34,14 @@ export default {
       loadMainView('artists')
     },
 
-    '/genres'() {
-      loadMainView('genres');
+    '/genres' () {
+      loadMainView('genres')
     },
 
-    '/genre/(\\d+)'(id) {
-      const genre = genreStore.byId(~~id);
+    '/genre/(\\d+)' (id) {
+      const genre = genreStore.byId(~~id)
       if (genre) {
-        loadMainView('genre', genre);
+        loadMainView('genre', genre)
       }
     },
 

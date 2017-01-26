@@ -128,7 +128,7 @@ export default {
       albumState: albumStore.state,
       albumTypeaheadOptions: {
         displayKey: 'name',
-        filterKey: 'name',
+        filterKey: 'name'
       },
 
       /**
