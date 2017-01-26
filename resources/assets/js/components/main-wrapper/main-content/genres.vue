@@ -14,41 +14,41 @@
 </template>
 
 <script>
-import { filterBy, limitBy, event } from '../../../utils'
-import { genreStore } from '../../../stores'
-import genreItem from '../../shared/genre-item.vue'
-import viewModeSwitch from '../../shared/view-mode-switch.vue'
-import infiniteScroll from '../../../mixins/infinite-scroll'
+import { filterBy, limitBy, event } from '../../../utils';
+import { genreStore } from '../../../stores';
+import genreItem from '../../shared/genre-item.vue';
+import viewModeSwitch from '../../shared/view-mode-switch.vue';
+import infiniteScroll from '../../../mixins/infinite-scroll';
 
 export default {
   mixins: [infiniteScroll],
   components: { genreItem, viewModeSwitch },
 
-  data () {
+  data() {
     return {
       perPage: 9,
       numOfItems: 9,
       q: '',
-      viewMode: null
-    }
+      viewMode: null,
+    };
   },
 
   computed: {
-    displayedItems () {
+    displayedItems() {
       return limitBy(
         filterBy(genreStore.all, this.q, 'name', 'genre.name'),
         this.numOfItems
-      )
-    }
+      );
+    },
   },
 
   methods: {
-    changeViewMode (mode) {
-      this.viewMode = mode
-    }
+    changeViewMode(mode) {
+      this.viewMode = mode;
+    },
   },
 
-  created () {
+  created() {
     event.on({
       /**
        * When the application is ready, load the first batch of items.
@@ -56,16 +56,14 @@ export default {
       'koel:ready': () => this.displayMore(),
 
       'koel:teardown': () => {
-        this.q = ''
-        this.numOfItems = 9
+        this.q = '';
+        this.numOfItems = 9;
       },
 
-      'filter:changed': q => {
-        this.q = q
-      }
-    })
-  }
-}
+      'filter:changed': q => this.q = q,
+    });
+  },
+};
 </script>
 
 <style lang="sass">

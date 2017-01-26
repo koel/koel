@@ -4,8 +4,7 @@
       <span class="overview">
         <img :src="genre.image" width="64" height="64" class="cover">
         {{ genre.name }}
-        <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
-        <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
+        <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
         <span class="meta" v-show="meta.songCount">
           {{ meta.songCount | pluralize('song') }}
@@ -14,19 +13,13 @@
         </span>
       </span>
 
-      <div class="buttons" v-show="!isPhone || showingControls">
-        <button class="play-shuffle btn btn-orange" @click.prevent="shuffle" v-if="selectedSongs.length < 2">
-          <i class="fa fa-random"></i> All
-        </button>
-        <button class="play-shuffle btn btn-orange" @click.prevent="shuffleSelected" v-if="selectedSongs.length > 1">
-          <i class="fa fa-random"></i> Selected
-        </button>
-        <button class="btn btn-green" @click.prevent.stop="showingAddToMenu = !showingAddToMenu" v-if="selectedSongs.length">
-          {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
-        </button>
-
-        <add-to-menu :songs="selectedSongs" :showing="showingAddToMenu"/>
-      </div>
+      <song-list-controls
+        v-show="genre.songs.length && (!isPhone || showingControls)"
+        @shuffleAll="shuffleAll"
+        @shuffleSelected="shuffleSelected"
+        :config="songListControlConfig"
+        :selectedSongs="selectedSongs"
+      />
     </h1>
 
     <song-list :items="genre.songs" type="genre"/>
@@ -35,13 +28,13 @@
 </template>
 
 <script>
-import isMobile from 'ismobilejs'
+import isMobile from 'ismobilejs';
 
-import { pluralize, event } from '../../../utils'
-import { genreStore, sharedStore } from '../../../stores'
-import { playback } from '../../../services'
-import router from '../../../router'
-import hasSongList from '../../../mixins/has-song-list'
+import { pluralize, event } from '../../../utils';
+import { genreStore, songStore, sharedStore } from '../../../stores';
+import { playback } from '../../../services';
+import router from '../../../router';
+import hasSongList from '../../../mixins/has-song-list';
 
 export default {
   name: 'main-wrapper--main-content--genre',
@@ -49,7 +42,7 @@ export default {
   components: { },
   filters: { pluralize },
 
-  data () {
+  data() {
     return {
       sharedState: sharedStore.state,
       genre: genreStore.stub,
@@ -75,7 +68,7 @@ export default {
     }
   },
 
-  created () {
+  created() {
     /**
      * Listen to 'main-content-view:load' event to load the requested genre
      * into view if applicable.
@@ -94,8 +87,14 @@ export default {
     /**
      * Shuffle the songs in the current genre.
      */
-    shuffle () {
+    shuffle() {
       playback.queueAndPlay(this.genre.songs, true)
+    },
+    /**
+     * Overload the mixin default shuffleAll method, since we don't have this.state
+     */
+    shuffleAll() {
+      this.shuffle()
     }
   }
 }
