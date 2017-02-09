@@ -125,9 +125,6 @@ export default {
       prevFilter.connect(context.destination)
 
       this.$nextTick(this.createSliders)
-
-      // Now we set this value to trigger the audio processing.
-      this.selectedPresetIndex = preferences.selectedPreset
     },
 
     /**
@@ -166,6 +163,9 @@ export default {
           this.save()
         })
       })
+
+      // Now we set this value to trigger the audio processing.
+      this.selectedPresetIndex = preferences.selectedPreset
     },
 
     /**
