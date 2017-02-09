@@ -1,3 +1,5 @@
+/*eslint camelcase: ["error", {properties: "never"}]*/
+
 import Vue from 'vue'
 import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
 
