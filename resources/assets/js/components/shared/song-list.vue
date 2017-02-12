@@ -154,13 +154,16 @@ export default {
      *
      * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'length'
      */
-    sort (key) {
+    sort (key = null) {
       if (this.sortable === false) {
         return
       }
 
-      this.sortKey = key
-      this.order *= -1
+      if (key) {
+        this.sortKey = key
+        this.order *= -1
+      }
+
       this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.name'
       this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.artist.name'
       this.songRows = orderBy(this.songRows, this.sortKey, this.order)
