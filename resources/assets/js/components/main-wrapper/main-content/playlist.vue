@@ -27,7 +27,12 @@
       />
     </h1>
 
-    <song-list v-show="playlist.songs.length" :items="playlist.songs" :playlist="playlist" type="playlist"/>
+    <song-list v-show="playlist.songs.length"
+      :items="playlist.songs"
+      :playlist="playlist"
+      type="playlist"
+      ref="songList"
+    />
 
     <div v-show="!playlist.songs.length" class="none">
       The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar,
@@ -69,6 +74,10 @@ export default {
     event.on('main-content-view:load', (view, playlist) => {
       if (view === 'playlist') {
         this.playlist = playlist
+        // #530
+        this.$nextTick(() => {
+          this.$refs.songList.sort()
+        })
       }
     })
   },
