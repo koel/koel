@@ -13,6 +13,16 @@
     "type": "git",
     "url": "https://github.com/phanan/koel"
   },
+  "babel": {
+    "presets": ["es2015"],
+    "plugins": ["lodash"]
+  },
+  "eslintConfig": {
+    "extends": "vue",
+    "rules": {
+      "no-multi-str": "off"
+    }
+  },
   "dependencies": {
     "alertify.js": "^1.0.12",
     "axios": "^0.15.3",
