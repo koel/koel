@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
-        "laravel/framework": "5.3.*",
+        "laravel/framework": "5.4.*",
         "james-heinrich/getid3": "^1.9",
         "guzzlehttp/guzzle": "^6.1",
         "tymon/jwt-auth": "^0.5.6",
@@ -17,24 +17,27 @@
     "require-dev": {
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~4.0",
-        "phpspec/phpspec": "~2.1",
+        "phpunit/phpunit": "~5.7",
         "symfony/css-selector": "2.8.*|3.0.*",
-        "symfony/dom-crawler": "2.8.*|3.0.*",
+        "symfony/dom-crawler": "^3.2",
         "facebook/webdriver": "^1.2",
-        "barryvdh/laravel-ide-helper": "^2.1"
+        "barryvdh/laravel-ide-helper": "^2.1",
+        "laravel/tinker": "^1.0",
+        "laravel/browser-kit-testing": "^1.0"
     },
     "autoload": {
         "classmap": [
             "database"
         ],
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Tests\\": "tests/"
         }
     },
     "autoload-dev": {
         "classmap": [
             "tests/TestCase.php",
+            "tests/BrowserKitTestCase.php",
             "tests/e2e"
         ]
     },

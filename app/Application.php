@@ -45,14 +45,16 @@ class Application extends IlluminateApplication
     {
         static $manifest = null;
 
-        $manifestFile = $manifestFile ?: $this->publicPath().'/public/build/rev-manifest.json';
+        $manifestFile = $manifestFile ?: public_path('public/mix-manifest.json');
 
         if ($manifest === null) {
             $manifest = json_decode(file_get_contents($manifestFile), true);
         }
 
         if (isset($manifest[$file])) {
-            return $this->staticUrl("public/build/{$manifest[$file]}");
+            return file_exists(public_path('public/hot'))
+                    ? "http://localhost:8080{$manifest[$file]}"
+                    : $this->staticUrl("public{$manifest[$file]}");
         }
 
         throw new InvalidArgumentException("File {$file} not defined in asset manifest.");

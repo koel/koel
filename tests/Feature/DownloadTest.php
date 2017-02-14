@@ -1,13 +1,17 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
+use Download;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\BrowserKitTestCase;
 
-class DownloadTest extends TestCase
+class DownloadTest extends BrowserKitTestCase
 {
     use DatabaseTransactions;
 

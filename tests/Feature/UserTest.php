@@ -1,9 +1,12 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\BrowserKitTestCase;
 
-class UserTest extends TestCase
+class UserTest extends BrowserKitTestCase
 {
     use DatabaseTransactions;
 

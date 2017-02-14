@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
@@ -10,8 +12,9 @@ use App\Services\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
+use Tests\BrowserKitTestCase;
 
-class MediaTest extends TestCase
+class MediaTest extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 

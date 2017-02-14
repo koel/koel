@@ -1,13 +1,16 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Services\RESTfulService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
+use Tests\BrowserKitTestCase;
 
-class RESTfulAPIServiceTest extends TestCase
+class RESTfulAPIServiceTest extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 

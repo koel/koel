@@ -1,12 +1,21 @@
 <?php
 
+namespace Tests\Feature\ObjectStorage;
+
 use App\Events\LibraryChanged;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\BrowserKitTestCase;
 
-class ObjectStorage_S3Test extends TestCase
+class S3Test extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->withoutMiddleware();
+    }
 
     public function testPut()
     {
@@ -27,7 +36,6 @@ class ObjectStorage_S3Test extends TestCase
     public function testRemove()
     {
         $this->expectsEvents(LibraryChanged::class);
-
         $this->post('api/os/s3/song', [
             'bucket' => 'koel',
             'key' => 'sample.mp3',

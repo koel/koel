@@ -1,12 +1,15 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Events\SongLikeToggled;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\BrowserKitTestCase;
 
-class InteractionTest extends TestCase
+class InteractionTest extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
@@ -22,8 +25,7 @@ class InteractionTest extends TestCase
         $user = factory(User::class)->create();
 
         $song = Song::orderBy('id')->first();
-        $this->actingAs($user)
-            ->post('api/interaction/play', ['song' => $song->id]);
+        $this->postAsUser('api/interaction/play', ['song' => $song->id], $user);
 
         $this->seeInDatabase('interactions', [
             'user_id' => $user->id,
@@ -32,8 +34,7 @@ class InteractionTest extends TestCase
         ]);
 
         // Try again
-        $this->actingAs($user)
-            ->post('api/interaction/play', ['song' => $song->id]);
+        $this->postAsUser('api/interaction/play', ['song' => $song->id], $user);
 
         $this->seeInDatabase('interactions', [
             'user_id' => $user->id,
@@ -49,8 +50,7 @@ class InteractionTest extends TestCase
         $user = factory(User::class)->create();
 
         $song = Song::orderBy('id')->first();
-        $this->actingAs($user)
-            ->post('api/interaction/like', ['song' => $song->id]);
+        $this->postAsUser('api/interaction/like', ['song' => $song->id], $user);
 
         $this->seeInDatabase('interactions', [
             'user_id' => $user->id,
@@ -59,8 +59,7 @@ class InteractionTest extends TestCase
         ]);
 
         // Try again
-        $this->actingAs($user)
-            ->post('api/interaction/like', ['song' => $song->id]);
+        $this->postAsUser('api/interaction/like', ['song' => $song->id], $user);
 
         $this->seeInDatabase('interactions', [
             'user_id' => $user->id,
@@ -78,8 +77,7 @@ class InteractionTest extends TestCase
         $songs = Song::orderBy('id')->take(2)->get();
         $songIds = array_pluck($songs->toArray(), 'id');
 
-        $this->actingAs($user)
-            ->post('api/interaction/batch/like', ['songs' => $songIds]);
+        $this->postAsUser('api/interaction/batch/like', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
             $this->seeInDatabase('interactions', [
@@ -89,8 +87,7 @@ class InteractionTest extends TestCase
             ]);
         }
 
-        $this->actingAs($user)
-            ->post('api/interaction/batch/unlike', ['songs' => $songIds]);
+        $this->postAsUser('api/interaction/batch/unlike', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
             $this->seeInDatabase('interactions', [

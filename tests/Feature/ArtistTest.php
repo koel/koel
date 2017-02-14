@@ -1,9 +1,12 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Artist;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\BrowserKitTestCase;
 
-class ArtistTest extends TestCase
+class ArtistTest extends BrowserKitTestCase
 {
     use DatabaseTransactions;
 
@@ -30,7 +33,7 @@ class ArtistTest extends TestCase
 
     public function testUtf16Names()
     {
-        $name = file_get_contents(__DIR__.'/blobs/utf16');
+        $name = file_get_contents(__DIR__.'../../blobs/utf16');
 
         $artist = Artist::get($name);
         $artist = Artist::get($name); // to make sure there's no constraint exception

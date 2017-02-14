@@ -229,7 +229,7 @@ Vue.directive('koel-focus', focusDirective)
 Vue.directive('koel-clickaway', clickawayDirective)
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "resources/assets/sass/partials/_vars.scss";
 @import "resources/assets/sass/partials/_mixins.scss";
 @import "resources/assets/sass/partials/_shared.scss";

@@ -5,12 +5,15 @@ namespace App\Http;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\GetUserFromToken;
 use App\Http\Middleware\ObjectStorageAuthenticate;
+use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\UseDifferentConfigIfE2E;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 
 class Kernel extends HttpKernel
 {
@@ -22,6 +25,9 @@ class Kernel extends HttpKernel
     protected $middleware = [
         CheckForMaintenanceMode::class,
         UseDifferentConfigIfE2E::class,
+        ValidatePostSize::class,
+        TrimStrings::class,
+        ConvertEmptyStringsToNull::class,
     ];
 
     /**

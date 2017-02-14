@@ -56,7 +56,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 #youtube-extra-wrapper {
   overflow-x: hidden;
 

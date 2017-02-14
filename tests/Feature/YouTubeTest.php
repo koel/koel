@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Song;
 use App\Services\YouTube;
 use GuzzleHttp\Client;
@@ -7,9 +9,10 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
+use Tests\BrowserKitTestCase;
 use YouTube as YouTubeFacade;
 
-class YouTubeTest extends TestCase
+class YouTubeTest extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
@@ -18,7 +21,7 @@ class YouTubeTest extends TestCase
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/youtube/search.json')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/youtube/search.json')),
         ]);
 
         $api = new YouTube(null, $client);
@@ -38,6 +41,6 @@ class YouTubeTest extends TestCase
         // We test on the facade here
         YouTubeFacade::shouldReceive('searchVideosRelatedToSong')->once();
 
-        $this->visit("/api/youtube/search/song/{$song->id}");
+        $this->getAsUser("/api/youtube/search/song/{$song->id}");
     }
 }

@@ -1,11 +1,15 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Media;
+use Tests\BrowserKitTestCase;
 
-class SettingTest extends TestCase
+class SettingTest extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
@@ -48,8 +52,8 @@ class SettingTest extends TestCase
     {
         Media::shouldReceive('sync')->once();
 
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->post('/api/settings', ['media_path' => __DIR__])
+        $user = factory(User::class, 'admin')->create();
+        $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user)
             ->seeStatusCode(200);
 
         $this->assertEquals(__DIR__, Setting::get('media_path'));

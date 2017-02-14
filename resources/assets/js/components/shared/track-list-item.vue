@@ -54,7 +54,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 a.view-on-itunes {
   display: inline-block;
   border-radius: 3px;

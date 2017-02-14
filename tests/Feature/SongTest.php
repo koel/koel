@@ -1,17 +1,21 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Events\LibraryChanged;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use Aws\AwsClient;
+use Cache;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
+use Tests\BrowserKitTestCase;
 
-class SongTest extends TestCase
+class SongTest extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
@@ -26,8 +30,8 @@ class SongTest extends TestCase
         $this->expectsEvents(LibraryChanged::class);
         $song = Song::orderBy('id', 'desc')->first();
 
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->put('/api/songs', [
+        $user = factory(User::class, 'admin')->create();
+        $this->putAsUser('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [
                     'title' => 'Foo Bar',
@@ -37,7 +41,7 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 0,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         $artist = Artist::whereName('John Cena')->first();
@@ -59,8 +63,8 @@ class SongTest extends TestCase
         $song = Song::orderBy('id', 'desc')->first();
         $originalArtistId = $song->album->artist->id;
 
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->put('/api/songs', [
+        $user = factory(User::class, 'admin')->create();
+        $this->putAsUser('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [
                     'title' => '',
@@ -70,7 +74,7 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 0,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         // We don't expect the song's artist to change
@@ -84,8 +88,8 @@ class SongTest extends TestCase
     {
         $songIds = Song::orderBy('id', 'desc')->take(3)->pluck('id')->toArray();
 
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->put('/api/songs', [
+        $user = factory(User::class, 'admin')->create();
+        $this->putAsUser('/api/songs', [
                 'songs' => $songIds,
                 'data' => [
                     'title' => 'foo',
@@ -95,7 +99,7 @@ class SongTest extends TestCase
                     'track' => 9999,
                     'compilationState' => 0,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         $songs = Song::orderBy('id', 'desc')->take(3)->get();
@@ -121,8 +125,8 @@ class SongTest extends TestCase
         $originalSongs = Song::orderBy('id', 'desc')->take(3)->get();
         $songIds = $originalSongs->pluck('id')->toArray();
 
-        $this->actingAs(factory(User::class, 'admin')->create())
-            ->put('/api/songs', [
+        $user = factory(User::class, 'admin')->create();
+        $this->putAsUser('/api/songs', [
                 'songs' => $songIds,
                 'data' => [
                     'title' => 'Foo Bar',
@@ -132,7 +136,7 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 0,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         $songs = Song::orderBy('id', 'desc')->take(3)->get();
@@ -154,11 +158,10 @@ class SongTest extends TestCase
 
     public function testSingleUpdateAllInfoYesCompilation()
     {
-        $admin = factory(User::class, 'admin')->create();
         $song = Song::orderBy('id', 'desc')->first();
 
-        $this->actingAs($admin)
-            ->put('/api/songs', [
+        $user = factory(User::class, 'admin')->create();
+        $this->putAsUser('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [
                     'title' => 'Foo Bar',
@@ -168,7 +171,7 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 1,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'One by One')->first();
@@ -187,8 +190,7 @@ class SongTest extends TestCase
 
         // Now try changing stuff and make sure things work.
         // Case 1: Keep compilation state and artist the same
-        $this->actingAs($admin)
-            ->put('/api/songs', [
+        $this->putAsUser('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [
                     'title' => 'Barz Qux',
@@ -198,7 +200,7 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 2,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'Two by Two')->first();
@@ -214,8 +216,7 @@ class SongTest extends TestCase
         ]);
 
         // Case 2: Keep compilation state, but change the artist.
-        $this->actingAs($admin)
-            ->put('/api/songs', [
+        $this->putAsUser('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [
                     'title' => 'Barz Qux',
@@ -225,7 +226,7 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 2,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'One by One')->first();
@@ -241,8 +242,7 @@ class SongTest extends TestCase
         ]);
 
         // Case 3: Change compilation state only
-        $this->actingAs($admin)
-            ->put('/api/songs', [
+        $this->putAsUser('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [
                     'title' => 'Barz Qux',
@@ -252,7 +252,7 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 0,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         $artist = Artist::whereName('Foo Fighters')->first();
@@ -267,8 +267,7 @@ class SongTest extends TestCase
 
         // Case 3: Change compilation state and artist
         // Remember to set the compliation state back to 1
-        $this->actingAs($admin)
-            ->put('/api/songs', [
+        $this->putAsUser('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [
                     'title' => 'Barz Qux',
@@ -278,9 +277,8 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 1,
                 ],
-            ])
-
-            ->put('/api/songs', [
+            ], $user)
+            ->putAsUser('/api/songs', [
                 'songs' => [$song->id],
                 'data' => [
                     'title' => 'Twilight of the Thunder God',
@@ -290,7 +288,7 @@ class SongTest extends TestCase
                     'track' => 1,
                     'compilationState' => 0,
                 ],
-            ])
+            ], $user)
             ->seeStatusCode(200);
 
         $artist = Artist::whereName('Amon Amarth')->first();

@@ -17,14 +17,12 @@
     <link rel="icon" href="{{ App::staticUrl('public/img/icon.png') }}">
     <link rel="apple-touch-icon" href="{{ App::staticUrl('public/img/icon.png') }}">
 
-    <link rel="stylesheet" href="{{ App::rev('css/vendors.css') }}">
-    <link rel="stylesheet" href="{{ App::rev('css/app.css') }}">
+    <link rel="stylesheet" href="{{ App::rev('/css/app.css') }}">
 </head>
 <body>
     <div id="app"></div>
 
     <noscript>It may sound funny, but Koel requires JavaScript to sing. Please enable it.</noscript>
-    <script src="{{ App::rev('js/vendors.js') }}"></script>
-    <script src="{{ App::rev('js/main.js') }}"></script>
+    <script src="{{ App::rev('/js/app.js') }}"></script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Events\SongLikeToggled;
 use App\Events\SongStartedPlaying;
 use App\Http\Controllers\API\LastfmController;
@@ -17,16 +19,17 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Mockery as m;
+use Tests\BrowserKitTestCase;
 use Tymon\JWTAuth\JWTAuth;
 
-class LastfmTest extends TestCase
+class LastfmTest extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
     public function testGetArtistInfo()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/lastfm/artist.xml')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/artist.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -47,7 +50,7 @@ class LastfmTest extends TestCase
     public function testGetArtistInfoFailed()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(400, [], file_get_contents(__DIR__.'/blobs/lastfm/artist-notfound.xml')),
+            'get' => new Response(400, [], file_get_contents(__DIR__.'../../blobs/lastfm/artist-notfound.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -58,7 +61,7 @@ class LastfmTest extends TestCase
     public function testGetAlbumInfo()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/lastfm/album.xml')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/album.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -91,7 +94,7 @@ class LastfmTest extends TestCase
     public function testGetAlbumInfoFailed()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(400, [], file_get_contents(__DIR__.'/blobs/lastfm/album-notfound.xml')),
+            'get' => new Response(400, [], file_get_contents(__DIR__.'../../blobs/lastfm/album-notfound.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -121,7 +124,7 @@ class LastfmTest extends TestCase
     public function testGetSessionKey()
     {
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/lastfm/session-key.xml')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/session-key.xml')),
         ]);
 
         $api = new Lastfm(null, null, $client);
@@ -132,7 +135,8 @@ class LastfmTest extends TestCase
     public function testSetSessionKey()
     {
         $user = factory(User::class)->create();
-        $this->actingAs($user)->post('api/lastfm/session-key', ['key' => 'foo']);
+        $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user);
+        $user = User::find($user->id);
         $this->assertEquals('foo', $user->lastfm_session_key);
     }
 
@@ -166,7 +170,8 @@ class LastfmTest extends TestCase
     public function testControllerDisconnect()
     {
         $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
-        $this->actingAs($user)->delete('api/lastfm/disconnect');
+        $this->deleteAsUser('api/lastfm/disconnect', [], $user);
+        $user = User::find($user->id);
         $this->assertNull($user->lastfm_session_key);
     }
 

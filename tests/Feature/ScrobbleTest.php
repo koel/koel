@@ -1,12 +1,15 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Song;
 use App\Services\Lastfm;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
+use Tests\BrowserKitTestCase;
 
-class ScrobbleTest extends TestCase
+class ScrobbleTest extends BrowserKitTestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 

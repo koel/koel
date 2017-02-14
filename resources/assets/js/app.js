@@ -1,10 +1,8 @@
-require('intersection-observer')
+import './static-loader'
 import Vue from 'vue'
-import { VirtualScroller } from 'vue-virtual-scroller'
-
 import { event } from './utils'
 import { http } from './services'
-
+import { VirtualScroller } from 'vue-virtual-scroller/dist/vue-virtual-scroller'
 Vue.component('virtual-scroller', VirtualScroller)
 
 /**
