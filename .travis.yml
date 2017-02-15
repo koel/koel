@@ -22,14 +22,16 @@ env:
 branches:
   - master
 
-install:
+before_script:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - npm install
+  - npm install -g yarn
+
+install:
   - composer self-update
   - composer install --prefer-source --no-interaction
 
 script:
   - phpunit
-  - npm test
+  - yarn test
