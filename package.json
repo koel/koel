@@ -54,7 +54,7 @@
     "eslint-plugin-vue": "^1.0.0",
     "font-awesome": "^4.7.0",
     "jsdom": "^9.2.1",
-    "laravel-mix": "^0.7.4",
+    "laravel-mix": "^0.8.0",
     "mocha": "^2.3.4",
     "node-sass": "^3.4.2",
     "sinon": "^1.17.2"
