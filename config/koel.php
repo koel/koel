@@ -117,4 +117,9 @@ return [
 
     'cache_media' => env('CACHE_MEDIA', true),
 
+    'misc' => [
+        'home_url' => 'https://koel.phanan.net/',
+        'docs_url' => 'https://koel.phanan.net/docs',
+    ],
+
 ];
