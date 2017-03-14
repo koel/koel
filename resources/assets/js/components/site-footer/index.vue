@@ -376,7 +376,7 @@ export default {
     flex: 0 0 $footerHeight;
     height: $footerHeight;
     background: url(/public/img/covers/unknown-album.png);
-    background-size: $footerHeight;
+    background-size: cover;
     position: relative;
   }
 
