@@ -168,7 +168,7 @@ class File
             'disc' => $disc === null ? null : (int) $disc,
             'genre' => $genre,
             'lyrics' => '',
-            'year' => $year === null ? null : ((int) $year > 1900 ? (int) $year: ((int) $year % 100) + 1900), // Normalize year
+            'year' => $year === null ? null : ((int) $year > 1900 ? (int) $year : ((int) $year % 100) + 1900), // Normalize year
             'cover' => array_get($info, 'comments.picture', [null])[0],
             'path' => $this->path,
             'mtime' => $this->mtime,

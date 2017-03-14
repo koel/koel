@@ -35,7 +35,7 @@ $factory->define(App\Models\Album::class, function ($faker) {
 $factory->define(App\Models\Genre::class, function ($faker) {
     return [
         'name' => $faker->name,
-        'image' => md5(uniqid()) . '.jpg',
+        'image' => md5(uniqid()).'.jpg',
     ];
 });
 
