@@ -84,18 +84,18 @@ export default {
 }
 </script>
 
-<style lang="sass">
-@import "../../../sass/partials/_vars.scss"
-@import "../../../sass/partials/_mixins.scss"
+<style lang="scss" scoped>
+@import "../../../sass/partials/_vars.scss";
+@import "../../../sass/partials/_mixins.scss";
 
-@include artist-album-card()
+@include artist-album-card();
 
 .sep {
-  display: none
-  color: $color2ndText
+  display: none;
+  color: $color2ndText;
 
   .as-list & {
-    display: inline
+    display: inline;
   }
 }
 </style>
