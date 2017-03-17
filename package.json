@@ -48,7 +48,7 @@
     "babel-runtime": "^6.22.0",
     "chai": "^3.4.1",
     "chalk": "^1.1.3",
-    "cross-env": "^3.1.4",
+    "cross-env": "^3.2.3",
     "eslint": "^3.10.2",
     "eslint-config-vue": "^2.0.1",
     "eslint-plugin-vue": "^1.0.0",
@@ -62,9 +62,9 @@
   "scripts": {
     "postinstall": "yarn build",
     "test": "eslint resources/assets/js --ext=js,vue && mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js",
-    "dev": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules",
-    "watch": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules",
-    "hot": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot",
-    "build": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules"
+    "dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules",
+    "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules",
+    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot",
+    "build": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules"
   }
 }
