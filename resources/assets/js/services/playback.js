@@ -51,21 +51,18 @@ export const playback = {
     })
 
     /**
-     * Attempt to preload the next song if the current song is about to end.
+     * Attempt to preload the next song.
      */
-    document.querySelector('.plyr').addEventListener('timeupdate', e => {
-      if (!this.player.media.duration || this.player.media.currentTime + 10 < this.player.media.duration) {
-        return
-      }
-
-      // The current song has only 10 seconds left to play.
+    document.querySelector('.plyr').addEventListener('canplaythrough', e => {
       const nextSong = queueStore.next
       if (!nextSong || nextSong.preloaded) {
         return
       }
 
-      document.createElement('audio').setAttribute('src', songStore.getSourceUrl(nextSong))
-
+      const audio = document.createElement('audio')
+      audio.setAttribute('src', songStore.getSourceUrl(nextSong))
+      audio.setAttribute('preload', 'auto')
+      audio.load()
       nextSong.preloaded = true
     })
 
