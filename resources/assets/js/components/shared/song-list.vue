@@ -103,10 +103,28 @@ export default {
 
   computed: {
     filteredItems () {
+      // Allow searching specifically in title, album, and artist
+      const re = /in:(title|album|artist)/ig
+      const fields = []
+      const matches = this.q.match(re)
+      if (matches) {
+        this.q = this.q.replace(re, '').trim()
+        if (!this.q) {
+          return this.songRows
+        }
+        matches.forEach(match => {
+          let field = match.split(':')[1].toLowerCase()
+          if (field !== 'title') {
+            field = `${field}.name`
+          }
+          fields.push(`song.${field}`)
+        })
+      }
+
       return filterBy(
         this.songRows,
         this.q,
-        'song.title', 'song.album.name', 'song.artist.name'
+        ...(fields.length ? fields : ['song.title', 'song.album.name', 'song.artist.name'])
       )
     },
 
