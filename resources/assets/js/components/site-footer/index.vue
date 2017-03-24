@@ -153,11 +153,7 @@ export default {
      * Like the current song.
      */
     like () {
-      if (!this.song.id) {
-        return
-      }
-
-      favoriteStore.toggleOne(this.song)
+      this.song.id && favoriteStore.toggleOne(this.song)
     },
 
     /**
