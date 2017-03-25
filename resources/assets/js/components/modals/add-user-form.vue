@@ -26,7 +26,7 @@
         <button class="btn btn-white btn-cancel" @click.prevent="cancel">Cancel</button>
       </footer>
     </form>
-  </overlay>
+  </div>
 </template>
 
 <script>
