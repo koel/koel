@@ -93,9 +93,11 @@ export const playback = {
         this.pause()
       })
       navigator.mediaSession.setActionHandler('previoustrack', () => {
+        navigator.mediaSession.playbackState = 'playing'
         this.playPrev()
       })
       navigator.mediaSession.setActionHandler('nexttrack', () => {
+        navigator.mediaSession.playbackState = 'playing'
         this.playNext()
       })
     }
