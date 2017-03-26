@@ -98,8 +98,8 @@
         <div v-else>
           <p>This installation of Koel has no Last.fm integration.
             <span v-if="state.current.is_admin">Visit
-              <a href="https://github.com/phanan/koel/wiki" target="_blank">Koel’s Wiki</a>
-              for a quick how-to. Really, you should do it.
+              <a href="https://koel.phanan.net/docs/#/3rd-party?id=last-fm" target="_blank">Koel’s Wiki</a>
+              for a quick how-to.
             </span>
             <span v-else>Try politely asking your administrator to enable it.</span>
           </p>
