@@ -165,6 +165,7 @@ export const playback = {
     }
 
     if ('mediaSession' in navigator) {
+      /* global MediaMetadata */
       navigator.mediaSession.metadata = new MediaMetadata({
         title: song.title,
         artist: song.artist.name,
