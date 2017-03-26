@@ -80,18 +80,8 @@ export const playback = {
     event.emit('equalizer:init', this.player.media)
 
     if ('mediaSession' in navigator) {
-      navigator.mediaSession.setActionHandler('play', () => {
-        if (queueStore.current) {
-          if (queueStore.current.playbackState === 'paused') {
-            this.resume()
-          } else {
-            this.pause()
-          }
-        }
-      })
-      navigator.mediaSession.setActionHandler('pause', () => {
-        this.pause()
-      })
+      navigator.mediaSession.setActionHandler('play', () => this.resume())
+      navigator.mediaSession.setActionHandler('pause', () => this.pause())
       navigator.mediaSession.setActionHandler('previoustrack', () => {
         navigator.mediaSession.playbackState = 'playing'
         this.playPrev()
