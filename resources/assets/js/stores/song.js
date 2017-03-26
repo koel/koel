@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import slugify from 'slugify'
 import { without, map, take, remove, orderBy, each, union, compact } from 'lodash'
+import isMobile from 'ismobilejs'
 
 import { secondsToHis, alerts, pluralize } from '../utils'
 import { http, ls } from '../services'
@@ -338,6 +339,9 @@ export const songStore = {
    * @return {string} The source URL, with JWT token appended.
    */
   getSourceUrl (song) {
+    if (isMobile.any && preferenceStore.transcodeOnMobile) {
+      return `${sharedStore.state.cdnUrl}api/${song.id}/play/1/128?jwt-token=${ls.get('jwt-token')}`
+    }
     return `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`
   },
 

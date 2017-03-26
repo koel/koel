@@ -44,7 +44,7 @@ return [
     'streaming' => [
         'bitrate' => env('OUTPUT_BIT_RATE', 128),
         'method' => env('STREAMING_METHOD'),
-        'transcoding' => env('FFMPEG_PATH', '/usr/local/bin/ffmpeg'),
+        'ffmpeg_path' => env('FFMPEG_PATH'),
     ],
 
     /*

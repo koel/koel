@@ -39,6 +39,7 @@ class DataController extends Controller
             'useYouTube' => YouTube::enabled(),
             'useiTunes' => iTunes::used(),
             'allowDownload' =>  config('koel.download.allow'),
+            'supportsTranscoding' => config('koel.streaming.ffmpeg_path') && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdnUrl' => app()->staticUrl(),
             'currentVersion' => Application::KOEL_VERSION,
             'latestVersion' => auth()->user()->is_admin ? app()->getLatestVersion() : Application::KOEL_VERSION,

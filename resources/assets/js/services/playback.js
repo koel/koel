@@ -1,6 +1,7 @@
 import { shuffle, orderBy } from 'lodash'
 import plyr from 'plyr'
 import Vue from 'vue'
+import isMobile from 'ismobilejs'
 
 import { event } from '../utils'
 import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '../stores'
@@ -55,7 +56,11 @@ export const playback = {
      */
     document.querySelector('.plyr').addEventListener('canplaythrough', e => {
       const nextSong = queueStore.next
-      if (!nextSong || nextSong.preloaded) {
+      if (!nextSong || nextSong.preloaded || (isMobile.any && preferences.transcodeOnMobile)) {
+        // Don't preload if
+        // - there's no next song
+        // - next song has already been preloaded
+        // - we're on mobile and "transcode" option is check, because it will break the functionality
         return
       }
 

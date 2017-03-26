@@ -18,7 +18,8 @@ export const preferenceStore = {
     },
     artistsViewMode: null,
     albumsViewMode: null,
-    selectedPreset: -1
+    selectedPreset: -1,
+    transcodeOnMobile: false
   },
 
   /**

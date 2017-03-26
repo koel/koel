@@ -51,6 +51,12 @@
             Confirm before closing Koel
           </label>
         </div>
+        <div class="form-row">
+          <label>
+            <input type="checkbox" name="transcodeOnMobile" v-model="prefs.transcodeOnMobile" @change="savePreference">
+            Convert and play media at 128kbps on mobile
+          </label>
+        </div>
       </div>
 
       <section class="lastfm" >
