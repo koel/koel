@@ -79,6 +79,27 @@ export const playback = {
     // Init the equalizer if supported.
     event.emit('equalizer:init', this.player.media)
 
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', () => {
+        if (queueStore.current) {
+          if (queueStore.current.playbackState === 'paused') {
+            this.resume()
+          } else {
+            this.pause()
+          }
+        }
+      })
+      navigator.mediaSession.setActionHandler('pause', () => {
+        this.pause()
+      })
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        this.playPrev()
+      })
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        this.playNext()
+      })
+    }
+
     this.initialized = true
   },
 
@@ -155,6 +176,17 @@ export const playback = {
     } catch (e) {
       // Notification fails.
       // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+    }
+
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: song.title,
+        artist: song.artist.name,
+        album: song.album.name,
+        artwork: [
+          { src: song.album.cover, sizes: '256x256', type: 'image/png' }
+        ]
+      })
     }
   },
 
