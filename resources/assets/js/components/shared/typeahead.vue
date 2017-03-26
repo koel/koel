@@ -125,7 +125,8 @@ export default {
     },
 
     apply () {
-      this.mutatedValue = this.$el.querySelector('.result li.selected').innerText.trim() || this.mutatedValue
+      const selected = this.$el.querySelector('.result li.selected')
+      this.mutatedValue = (selected && selected.innerText.trim()) || this.mutatedValue
       this.$emit('input', this.mutatedValue)
     },
 
