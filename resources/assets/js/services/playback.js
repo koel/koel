@@ -60,7 +60,7 @@ export const playback = {
         // Don't preload if
         // - there's no next song
         // - next song has already been preloaded
-        // - we're on mobile and "transcode" option is check, because it will break the functionality
+        // - we're on mobile and "transcode" option is checked
         return
       }
 
