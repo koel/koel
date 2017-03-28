@@ -42,7 +42,7 @@
       <a href class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
       <div class="inner">
         <div class="loading" v-if="info.loading"><sound-bar/></div>
-        <artist-info :artist="artist" :mode="'full'" v-else/>
+        <artist-info :artist="artist" mode="full" v-else/>
       </div>
     </section>
   </section>

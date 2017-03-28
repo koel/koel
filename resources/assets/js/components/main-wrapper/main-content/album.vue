@@ -8,7 +8,7 @@
 
         <span class="meta" v-show="meta.songCount">
           by
-          <a class="artist" v-if="isNormalArtist" :href="'/#!/artist/'+album.artist.id">{{ album.artist.name }}</a>
+          <a class="artist" v-if="isNormalArtist" :href="`/#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
           {{ meta.songCount | pluralize('song') }}
@@ -43,7 +43,7 @@
       <a href class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
       <div class="inner">
         <div class="loading" v-if="info.loading"><sound-bar/></div>
-        <album-info :album="album" :mode="'full'" v-else/>
+        <album-info :album="album" mode="full" v-else/>
       </div>
     </section>
   </section>

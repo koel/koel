@@ -17,12 +17,12 @@
         <lyrics :song="song" ref="lyrics" v-show="currentView === 'lyrics'"/>
         <artist-info v-if="song.artist.id"
           :artist="song.artist"
-          :mode="'sidebar'"
+          mode="sidebar"
           ref="artist-info"
           v-show="currentView === 'artistInfo'"/>
         <album-info v-if="song.album.id"
           :album="song.album"
-          :mode="'sidebar'"
+          mode="sidebar"
           ref="album-info"
           v-show="currentView === 'albumInfo'"/>
         <youtube v-if="sharedState.useYouTube"

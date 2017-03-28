@@ -7,7 +7,7 @@
     </span>
     <footer>
       <div class="info">
-        <a class="name" :href="'/#!/artist/'+artist.id">{{ artist.name }}</a>
+        <a class="name" :href="`/#!/artist/${artist.id}`">{{ artist.name }}</a>
       </div>
       <p class="meta">
         <span class="left">
