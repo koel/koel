@@ -68,7 +68,7 @@
               It appears that you have connected your Last.fm account as well – Perfect!
             </span>
             <span v-else>
-              It appears that you haven’t connected to your Last.fm account thought.
+              It appears that you haven’t connected to your Last.fm account though.
             </span>
           </p>
           <p>
