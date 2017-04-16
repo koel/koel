@@ -31,6 +31,7 @@
 import { map, cloneDeep, each } from 'lodash'
 import nouislider from 'nouislider'
 
+import { mapGetters } from 'vuex'
 import { isAudioContextSupported, event, $ } from '../../utils'
 import { equalizerStore, preferenceStore as preferences } from '../../stores'
 
@@ -44,6 +45,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['equalizerSettings', 'preferenceByKey']),
     presets () {
       const clonedPreset = cloneDeep(equalizerStore.presets)
       // Prepend an empty option for instruction purpose.
@@ -69,7 +71,13 @@ export default {
       if (~~val !== -1) {
         this.loadPreset(equalizerStore.getPresetById(val))
       }
-    }
+    },
+  },
+
+  created () {
+    event.on('equalizer:init', mediaElement => {
+      isAudioContextSupported() && this.init(mediaElement)
+    })
   },
 
   methods: {
@@ -78,8 +86,6 @@ export default {
      * @param  {Element} player The audio player's node.
      */
     init (player) {
-      const settings = equalizerStore.get()
-
       const AudioContext = window.AudioContext ||
         window.webkitAudioContext ||
         window.mozAudioContext ||
@@ -89,7 +95,7 @@ export default {
       const context = new AudioContext()
 
       this.preampGainNode = context.createGain()
-      this.changePreampGain(settings.preamp)
+      this.changePreampGain(this.equalizerSettings.preamp)
 
       const source = context.createMediaElementSource(player)
       source.connect(this.preampGainNode)
@@ -109,7 +115,7 @@ export default {
           filter.type = 'peaking'
         }
 
-        filter.gain.value = settings.gains[i] ? settings.gains[i] : 0
+        filter.gain.value = this.equalizerSettings.gains[i] ? this.equalizerSettings.gains[i] : 0
         filter.Q.value = 1
         filter.frequency.value = frequency
 
@@ -131,12 +137,11 @@ export default {
      * Create the UI sliders for both the preamp and the normal bands.
      */
     createSliders () {
-      const config = equalizerStore.get()
       each(Array.from(document.querySelectorAll('#equalizer .slider')), (el, i) => {
         nouislider.create(el, {
           connect: [false, true],
           // the first element is the preamp. The rest are gains.
-          start: i === 0 ? config.preamp : config.gains[i - 1],
+          start: i === 0 ? this.equalizerSettings.preamp : this.equalizerSettings.gains[i - 1],
           range: { min: -20, max: 20 },
           orientation: 'vertical',
           direction: 'rtl'
@@ -165,7 +170,7 @@ export default {
       })
 
       // Now we set this value to trigger the audio processing.
-      this.selectedPresetIndex = preferences.selectedPreset
+      this.selectedPresetIndex = this.preferenceByKey('selectedPreset')
     },
 
     /**
@@ -215,12 +220,6 @@ export default {
       equalizerStore.set(this.preampGainValue, map(this.bands, 'filter.gain.value'))
     }
   },
-
-  mounted () {
-    event.on('equalizer:init', player => {
-      isAudioContextSupported() && this.init(player)
-    })
-  }
 }
 </script>
 

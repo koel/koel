@@ -24,6 +24,7 @@
 
 <script>
 import Vue from 'vue'
+import { mapGetters, mapActions } from 'vuex'
 
 import siteHeader from './components/site-header/index.vue'
 import siteFooter from './components/site-footer/index.vue'
@@ -47,13 +48,26 @@ export default {
     }
   },
 
-  mounted () {
-    // The app has just been initialized, check if we can get the user data with an already existing token
-    const token = ls.get('jwt-token')
-    if (token) {
-      this.authenticated = true
+  computed: {
+    ...mapGetters(['jwtToken'])
+  },
+
+  watch: {
+    jwtToken (token) {
+      if (!token) {
+        // log out
+        this.authenticated = false
+        forceReloadWindow()
+        return
+      }
       this.init()
     }
+  },
+
+  mounted () {
+    console.log(this.$store._modules)
+    // if a jwt token is found in local storage, init
+    this.jwtToken && this.init()
 
     // Create the element to be the ghost drag image.
     const dragGhost = document.createElement('div')
@@ -73,29 +87,37 @@ export default {
   methods: {
     init () {
       showOverlay()
+      this.authenticated = true
 
       // Make the most important HTTP request to get all necessary data from the server.
       // Afterwards, init all mandatory stores and services.
-      sharedStore.init().then(() => {
-        playback.init()
-        hideOverlay()
+      this.$store.dispatch('initGlobal').then(data => {
+        this.$store.dispatch('initArtists', data)
+          .then(artists => this.$store.dispatch('initAlbums', artists))
+          .then(albums => this.$store.dispatch('initSongs', albums))
+          .then(() => this.$store.dispatch('initInteractions', data))
+          .then(() => this.$store.dispatch('initPlaylists', data))
+          .then(() => this.$store.dispatch('initSettings', data))
+          .then(() => this.$store.dispatch('initUsers', data))
+          .then(() => this.$store.dispatch('initPreferences', data))
+          .then(() => playback.init())
+          .then(({ player: { media } }) => {
+            event.emit('equalizer:init', media)
+            hideOverlay()
+            // Ask for user's notification permission.
+            this.requestNotifPermission()
 
-        // Ask for user's notification permission.
-        this.requestNotifPermission()
+            // To confirm or not to confirm closing, it's a question.
+            window.onbeforeunload = e => {
+              if (!preferences.confirmClosing) {
+                return
+              }
 
-        // To confirm or not to confirm closing, it's a question.
-        window.onbeforeunload = e => {
-          if (!preferences.confirmClosing) {
-            return
-          }
-
-          // Notice that a custom message like this has ceased to be supported
-          // starting from Chrome 51.
-          return 'You asked Koel to confirm before closing, so here it is.'
-        }
-
-        // Let all other components know we're ready.
-        event.emit('koel:ready')
+              // Notice that a custom message like this has ceased to be supported
+              // starting from Chrome 51.
+              return 'You asked Koel to confirm before closing, so here it is.'
+            }
+          })
       }).catch(() => {
         this.authenticated = false
       })
@@ -192,16 +214,6 @@ export default {
        * @param {Array.<Object>} An array of songs to edit
        */
       'songs:edit': songs => this.$refs.editSongsForm.open(songs),
-
-      /**
-       * Log the current user out and reset the application state.
-       */
-      logout () {
-        userStore.logout().then((r) => {
-          ls.remove('jwt-token')
-          forceReloadWindow()
-        })
-      },
 
       /**
        * Init our basic, custom router on ready to determine app state.

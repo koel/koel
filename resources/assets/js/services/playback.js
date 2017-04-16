@@ -18,80 +18,81 @@ export const playback = {
    * Initialize the playback service for this whole Koel app.
    */
   init () {
-    // We don't need to init this service twice, or the media events will be duplicated.
-    if (this.initialized) {
-      return
-    }
-
-    this.player = plyr.setup({
-      controls: []
-    })[0]
-
-    this.audio = document.querySelector('audio')
-    this.volumeInput = document.getElementById('volumeRange')
-
-    /**
-     * Listen to 'error' event on the audio player and play the next song if any.
-     */
-    document.querySelector('.plyr').addEventListener('error', () => this.playNext(), true)
-
-    /**
-     * Listen to 'ended' event on the audio player and play the next song in the queue.
-     */
-    document.querySelector('.plyr').addEventListener('ended', e => {
-      if (sharedStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
-        songStore.scrobble(queueStore.current)
+    return new Promise(resolve => {
+      // We don't need to init this service twice, or the media events will be duplicated.
+      if (this.initialized) {
+        return resolve()
       }
 
-      if (preferences.repeatMode === 'REPEAT_ONE') {
-        this.restart()
-        return
+      this.player = plyr.setup({
+        controls: []
+      })[0]
+
+      this.audio = document.querySelector('audio')
+      this.volumeInput = document.getElementById('volumeRange')
+
+      /**
+       * Listen to 'error' event on the audio player and play the next song if any.
+       */
+      document.querySelector('.plyr').addEventListener('error', () => this.playNext(), true)
+
+      /**
+       * Listen to 'ended' event on the audio player and play the next song in the queue.
+       */
+      document.querySelector('.plyr').addEventListener('ended', e => {
+        if (sharedStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
+          songStore.scrobble(queueStore.current)
+        }
+
+        if (preferences.repeatMode === 'REPEAT_ONE') {
+          this.restart()
+          return
+        }
+
+        this.playNext()
+      })
+
+      /**
+       * Attempt to preload the next song.
+       */
+      document.querySelector('.plyr').addEventListener('canplaythrough', e => {
+        const nextSong = queueStore.next
+        if (!nextSong || nextSong.preloaded || (isMobile.any && preferences.transcodeOnMobile)) {
+          // Don't preload if
+          // - there's no next song
+          // - next song has already been preloaded
+          // - we're on mobile and "transcode" option is checked
+          return
+        }
+
+        const audio = document.createElement('audio')
+        audio.setAttribute('src', songStore.getSourceUrl(nextSong))
+        audio.setAttribute('preload', 'auto')
+        audio.load()
+        nextSong.preloaded = true
+      })
+
+      /**
+       * Listen to 'input' event on the volume range control.
+       * When user drags the volume control, this event will be triggered, and we
+       * update the volume on the plyr object.
+       */
+      this.volumeInput.addEventListener('input', e => this.setVolume(e.target.value))
+
+      // On init, set the volume to the value found in the local storage.
+      this.setVolume(preferences.volume)
+
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', () => this.resume())
+        navigator.mediaSession.setActionHandler('pause', () => this.pause())
+        navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
+        navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
       }
 
-      this.playNext()
+      this.initialized = true
+
+      resolve(this)
     })
-
-    /**
-     * Attempt to preload the next song.
-     */
-    document.querySelector('.plyr').addEventListener('canplaythrough', e => {
-      const nextSong = queueStore.next
-      if (!nextSong || nextSong.preloaded || (isMobile.any && preferences.transcodeOnMobile)) {
-        // Don't preload if
-        // - there's no next song
-        // - next song has already been preloaded
-        // - we're on mobile and "transcode" option is checked
-        return
-      }
-
-      const audio = document.createElement('audio')
-      audio.setAttribute('src', songStore.getSourceUrl(nextSong))
-      audio.setAttribute('preload', 'auto')
-      audio.load()
-      nextSong.preloaded = true
-    })
-
-    /**
-     * Listen to 'input' event on the volume range control.
-     * When user drags the volume control, this event will be triggered, and we
-     * update the volume on the plyr object.
-     */
-    this.volumeInput.addEventListener('input', e => this.setVolume(e.target.value))
-
-    // On init, set the volume to the value found in the local storage.
-    this.setVolume(preferences.volume)
-
-    // Init the equalizer if supported.
-    event.emit('equalizer:init', this.player.media)
-
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.setActionHandler('play', () => this.resume())
-      navigator.mediaSession.setActionHandler('pause', () => this.pause())
-      navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
-      navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
-    }
-
-    this.initialized = true
   },
 
   /**

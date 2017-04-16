@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="login" :class="{ error: failed }">
-    <input v-model="email" type="email" placeholder="Email Address" autofocus required>
-    <input v-model="password" type="password" placeholder="Password" required>
+    <input v-model="credentials.email" type="email" placeholder="Email Address" autofocus required>
+    <input v-model="credentials.password" type="password" placeholder="Password" required>
     <button type="submit">Log In</button>
   </form>
 </template>
@@ -13,8 +13,10 @@ import { event } from '../../utils'
 export default {
   data () {
     return {
-      email: '',
-      password: '',
+      credentials: {
+        email: '',
+        password: ''
+      },
       failed: false
     }
   },
@@ -22,14 +24,11 @@ export default {
   methods: {
     login () {
       this.failed = false
-
-      userStore.login(this.email, this.password).then(() => {
+      this.$store.dispatch('login', this.credentials).then(() => {
         this.failed = false
 
         // Reset the password so that the next login will have this field empty.
-        this.password = ''
-
-        event.emit('user:loggedin')
+        this.credentials.password = ''
       }).catch(() => {
         this.failed = true
       })

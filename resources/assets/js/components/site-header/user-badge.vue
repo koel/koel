@@ -1,8 +1,8 @@
 <template>
   <span class="profile" id="userBadge">
     <a class="view-profile control" href="/#!/profile">
-      <img class="avatar" :src="state.current.avatar" alt="Avatar"/>
-      <span class="name">{{ state.current.name }}</span>
+      <img class="avatar" :src="currentUser.avatar" alt="Avatar"/>
+      <span class="name">{{ currentUser.name }}</span>
     </a>
 
     <a class="logout" @click.prevent="logout"><i class="fa fa-sign-out control"></i></a>
@@ -10,22 +10,17 @@
 </template>
 
 <script>
-import { userStore } from '../../stores'
-import { event } from '../../utils'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'site-header--user-badge',
 
-  data () {
-    return {
-      state: userStore.state
-    }
+  computed: {
+    ...mapGetters(['currentUser'])
   },
 
   methods: {
-    logout () {
-      event.emit('logout')
-    }
+    ...mapActions(['logout'])
   }
 }
 </script>
