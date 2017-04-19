@@ -16,7 +16,7 @@ if (mix.config.hmr) {
     });
 } else {
     mix.copy('resources/assets/img', 'public/img', false)
-        .copy('node_modules/font-awesome/fonts', 'public/fonts');
+        .copy('node_modules/font-awesome/fonts', 'public/fonts', false);
 }
 
 mix.js('resources/assets/js/app.js', 'public/js')
