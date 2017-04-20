@@ -1,6 +1,6 @@
 Hey, thanks for contributing to Koel! To save time for both of us, please make sure these checkboxes are checked before submitting the issue:
 
-- [ ] You have read and followed closely the [Wiki](https://github.com/phanan/koel/wiki), [Upgrade Guide](https://github.com/phanan/koel/releases), as well as [Troubleshooting](https://github.com/phanan/koel/wiki/Troubleshooting)
+- [ ] You have read and followed closely the [Wiki](https://koel.phanan.net/docs), [Upgrade Guide](https://github.com/phanan/koel/releases), as well as [Troubleshooting](https://koel.phanan.net/docs/#/troubleshooting)
 - [ ] The issue has not been reported before
 - [ ] This is not a "how to install on Windows" or "why is my npm messed up" question
 - [ ] You're a cool person
