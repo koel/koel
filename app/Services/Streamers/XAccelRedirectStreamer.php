@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Streamers;
+namespace App\Services\Streamers;
 
 use App\Models\Setting;
 
