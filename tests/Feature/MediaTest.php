@@ -41,7 +41,7 @@ class MediaTest extends BrowserKitTestCase
         $this->assertNotNull($song->album->cover);
 
         // File search shouldn't be case-sensitive.
-        $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.MP3']);
+        $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
 
         // Non-audio files shouldn't be recognized
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/rubbish.log']);
@@ -190,7 +190,7 @@ class MediaTest extends BrowserKitTestCase
         $media->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR {$this->mediaPath}/subdir"));
 
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/sic.mp3']);
-        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.MP3']);
+        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
     }
 
