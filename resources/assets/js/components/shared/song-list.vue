@@ -141,7 +141,7 @@ export default {
      * @return {Array.<Object>}
      */
     selectedSongs () {
-      return this.songRows.filter(row => row.selected).map(row => row.song)
+      return this.filteredItems.filter(row => row.selected).map(row => row.song)
     }
   },
 
@@ -276,10 +276,10 @@ export default {
     },
 
     /**
-     * Select all rows in the current list.
+     * Select all (filtered) rows in the current list.
      */
     selectAllRows () {
-      each(this.songRows, row => {
+      each(this.filteredItems, row => {
         row.selected = true
       })
     },
@@ -330,11 +330,14 @@ export default {
      * @param  {VueComponent} secondRowVm The second row's component
      */
     selectRowsBetween (firstRowVm, secondRowVm) {
-      const indexes = [this.songRows.indexOf(firstRowVm.item), this.songRows.indexOf(secondRowVm.item)]
+      const indexes = [
+        this.filteredItems.indexOf(firstRowVm.item),
+        this.filteredItems.indexOf(secondRowVm.item)
+      ]
       indexes.sort((a, b) => a - b)
 
       for (let i = indexes[0]; i <= indexes[1]; ++i) {
-        this.songRows[i].selected = true
+        this.filteredItems[i].selected = true
       }
     },
 
@@ -342,7 +345,7 @@ export default {
      * Clear the current selection on this song list.
      */
     clearSelection () {
-      each(this.songRows, row => {
+      each(this.filteredItems, row => {
         row.selected = false
       })
     },
