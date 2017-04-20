@@ -86,6 +86,8 @@ class Artist extends Model
         }
 
         $name = trim($name) ?: self::UNKNOWN_NAME;
+        
+        $name = !empty($name) ?: self::UNKNOWN_NAME;
 
         return self::firstOrCreate(compact('name'), compact('name'));
     }
