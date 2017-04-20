@@ -114,20 +114,22 @@ class SyncMedia extends Command
                 $this->line("$name has no changes – ignoring");
             }
 
-            ++$this->ignored;
-        } elseif ($result === false) {
+            return ++$this->ignored;
+        }
+
+        if ($result === false) {
             if ($this->option('verbose')) {
                 $this->error("$name is not a valid media file because: ".$reason);
             }
 
-            ++$this->invalid;
-        } else {
-            if ($this->option('verbose')) {
-                $this->info("$name synced");
-            }
-
-            ++$this->synced;
+            return ++$this->invalid;
         }
+
+        if ($this->option('verbose')) {
+            $this->info("$name synced");
+        }
+
+        return ++$this->synced;
     }
 
     /**
