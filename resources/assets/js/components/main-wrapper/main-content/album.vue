@@ -6,14 +6,14 @@
         {{ album.name }}
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-        <span class="meta" v-show="meta.songCount">
+        <span class="meta" v-show="album.songs.length">
           by
           <a class="artist" v-if="isNormalArtist" :href="`/#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
-          {{ meta.songCount | pluralize('song') }}
+          {{ album.songs.length | pluralize('song') }}
           •
-          {{ meta.totalLength }}
+          {{ fmtLength }}
 
           <template v-if="sharedState.useLastfm">
             •
@@ -55,12 +55,13 @@ import { albumStore, artistStore, sharedStore } from '../../../stores'
 import { playback, download, albumInfo as albumInfoService } from '../../../services'
 import router from '../../../router'
 import hasSongList from '../../../mixins/has-song-list'
+import albumAttributes from '../../../mixins/album-attributes'
 import albumInfo from '../extra/album-info.vue'
 import soundBar from '../../shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--album',
-  mixins: [hasSongList],
+  mixins: [hasSongList, albumAttributes],
   components: { albumInfo, soundBar },
   filters: { pluralize },
 

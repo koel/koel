@@ -1,6 +1,6 @@
 <template>
   <article class="item" v-if="album.songs.length" draggable="true" @dragstart="dragStart">
-    <span class="cover" :style="{ backgroundImage: 'url('+album.cover+')' }">
+    <span class="cover" :style="{ backgroundImage: `url(${album.cover})` }">
       <a class="control" @click.prevent="play">
         <i class="fa fa-play"></i>
       </a>
@@ -16,7 +16,7 @@
         <span class="left">
           {{ album.songs.length | pluralize('song') }}
           •
-          {{ album.fmtLength }}
+          {{ fmtLength }}
           •
           {{ album.playCount | pluralize('play') }}
         </span>
@@ -39,11 +39,13 @@
 import { pluralize } from '../../utils'
 import { queueStore, artistStore, sharedStore } from '../../stores'
 import { playback, download } from '../../services'
+import albumAttributes from '../../mixins/album-attributes'
 
 export default {
   name: 'shared--album-item',
   props: ['album'],
   filters: { pluralize },
+  mixins: [albumAttributes],
 
   data () {
     return {

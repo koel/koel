@@ -2,16 +2,16 @@
   <section id="artistWrapper">
     <h1 class="heading">
       <span class="overview">
-        <img :src="artist.image" width="64" height="64" class="cover">
+        <img :src="image" width="64" height="64" class="cover">
         {{ artist.name }}
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-        <span class="meta" v-show="meta.songCount">
+        <span class="meta" v-show="artist.songs.length">
           {{ artist.albums.length | pluralize('album') }}
           •
-          {{ meta.songCount | pluralize('song') }}
+          {{ artist.songs.length | pluralize('song') }}
           •
-          {{ meta.totalLength }}
+          {{ fmtLength }}
 
           <template v-if="sharedState.useLastfm">
             •
@@ -54,12 +54,13 @@ import { sharedStore, artistStore } from '../../../stores'
 import { playback, download, artistInfo as artistInfoService } from '../../../services'
 import router from '../../../router'
 import hasSongList from '../../../mixins/has-song-list'
+import artistAttributes from '../../../mixins/artist-attributes'
 import artistInfo from '../extra/artist-info.vue'
 import soundBar from '../../shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--artist',
-  mixins: [hasSongList],
+  mixins: [hasSongList, artistAttributes],
   components: { artistInfo, soundBar },
   filters: { pluralize },
 

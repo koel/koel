@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import slugify from 'slugify'
-import { without, map, take, remove, orderBy, each, union, compact } from 'lodash'
+import { assign, filter, without, map, take, remove, orderBy, each, union, unionBy, compact } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { secondsToHis, alerts, pluralize } from '../utils'
@@ -32,40 +32,41 @@ export const songStore = {
   /**
    * Init the store.
    *
-   * @param  {Array.<Object>} albums The array of albums to extract our songs from
+   * @param  {Array.<Object>} songs The array of song objects
    */
-  init (albums) {
-    // Iterate through the albums. With each, add its songs into our master song list.
-    // While doing so, we populate some other information into the songs as well.
-    this.all = albums.reduce((songs, album) => {
-      each(album.songs, song => this.setupSong(song, album))
-      return songs.concat(album.songs)
-    }, [])
-
+  init (songs) {
+    this.all = songs
+    each(this.all, song => this.setupSong(song))
     this.state.recentlyPlayed = this.gatherRecentlyPlayedFromLocalStorage()
   },
 
-  setupSong (song, album) {
+  setupSong (song) {
     song.fmtLength = secondsToHis(song.length)
 
-    // Manually set these additional properties to be reactive
-    Vue.set(song, 'playCount', 0)
-    Vue.set(song, 'album', album)
-    Vue.set(song, 'liked', false)
-    Vue.set(song, 'lyrics', null)
-    Vue.set(song, 'playbackState', 'stopped')
+    const album = albumStore.byId(song.album_id)
+    const artist = artistStore.byId(song.contributing_artist_id)
 
-    if (song.contributing_artist_id) {
-      const artist = artistStore.byId(song.contributing_artist_id)
-      artist.albums = union(artist.albums, [album])
-      artistStore.setupArtist(artist)
-      Vue.set(song, 'artist', artist)
-    } else {
-      Vue.set(song, 'artist', artistStore.byId(song.album.artist.id))
+    // Manually set these additional properties to be reactive
+    Vue.set(song, 'playCount', song.playCount || 0)
+    Vue.set(song, 'album', album)
+    Vue.set(song, 'artist', artist)
+    Vue.set(song, 'liked', song.liked || false)
+    Vue.set(song, 'lyrics', song.lyrics || null)
+    Vue.set(song, 'playbackState', song.playbackState || 'stopped')
+
+    artist.songs = unionBy(artist.songs || [], [song], 'id')
+    album.songs = unionBy(album.songs || [], [song], 'id')
+
+    // now if the song is part of a compilation album, the album must be added
+    // into its artist as well
+    if (album.is_compilation) {
+      artist.albums = unionBy(artist.albums, [album], 'id')
     }
 
     // Cache the song, so that byId() is faster
     this.cache[song.id] = song
+
+    return song
   },
 
   /**
@@ -230,8 +231,40 @@ export const songStore = {
       http.put('songs', {
         data,
         songs: map(songs, 'id')
-      }, ({ data: songs }) => {
-        each(songs, song => this.syncUpdatedSong(song))
+      }, ({ data: { songs, artists, albums }}) => {
+        each(artists, artist => {
+          if (!artistStore.byId(artist.id)) {
+            artistStore.add(artist)
+          }
+        })
+
+        each(albums, album => {
+          if (!albumStore.byId(album.id)) {
+            albumStore.add(album)
+          }
+        })
+
+        each(songs, song => {
+          const originalSong = this.byId(song.id)
+
+          if (originalSong.album_id !== song.album_id) {
+            // album has been changed. Remove the song from its old album.
+            originalSong.album.songs = without(originalSong.album.songs, originalSong)
+          }
+
+          if (originalSong.contributing_artist_id !== song.contributing_artist_id) {
+            // artist has been changed. Remove the song from its old artist
+            originalSong.artist.songs = without(originalSong.artist.songs, originalSong)
+          }
+
+          assign(originalSong, song)
+          // re-setup the song
+          this.setupSong(originalSong)
+        })
+
+        artistStore.all = filter(artistStore.all, artist => artist.songs.length !== 0)
+        albumStore.all = filter(albumStore.all, album => album.songs.length !== 0)
+
         alerts.success(`Updated ${pluralize(songs.length, 'song')}.`)
         resolve(songs)
       }, error => reject(error))
@@ -263,6 +296,7 @@ export const songStore = {
     if (!originalSong) {
       return
     }
+    //
 
     // and keep track of original album/artist.
     const originalAlbumId = originalSong.album.id

@@ -93,7 +93,7 @@ class File
     /**
      * Get all applicable ID3 info from the file.
      *
-     * @return array|void
+     * @return array
      */
     public function getInfo()
     {
@@ -176,7 +176,7 @@ class File
             array_get($comments, 'part_of_a_compilation', [false])[0] || $props['albumartist']
         );
 
-        return $this->info = $props;
+        return $props;
     }
 
     /**
@@ -264,12 +264,7 @@ class File
         }
 
         $info['album_id'] = $album->id;
-
-        // If the song is part of a compilation, make sure we properly set its
-        // artist and contributing artist attributes.
-        if ($isCompilation) {
-            $info['contributing_artist_id'] = $artist->id;
-        }
+        $info['contributing_artist_id'] = $artist->id;
 
         // Remove these values from the info array, so that we can just use the array as model's input data.
         array_forget($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
@@ -318,7 +313,7 @@ class File
     /**
      * Get the last parsing error's text.
      *
-     * @return syncError
+     * @return string
      */
     public function getSyncError()
     {

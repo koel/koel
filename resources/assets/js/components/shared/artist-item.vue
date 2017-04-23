@@ -1,6 +1,6 @@
 <template>
   <article class="item" v-if="showing" draggable="true" @dragstart="dragStart">
-    <span class="cover" :style="{ backgroundImage: 'url('+artist.image+')' }">
+    <span class="cover" :style="{ backgroundImage: `url(${image})` }">
       <a class="control" @click.prevent="play">
         <i class="fa fa-play"></i>
       </a>
@@ -13,7 +13,7 @@
         <span class="left">
           {{ artist.albums.length | pluralize('album') }}
           •
-          {{ artist.songCount | pluralize('song') }}
+          {{ artist.songs.length | pluralize('song') }}
           •
           {{ artist.playCount | pluralize('play') }}
         </span>
@@ -31,11 +31,13 @@
 import { pluralize } from '../../utils'
 import { artistStore, queueStore, sharedStore } from '../../stores'
 import { playback, download } from '../../services'
+import artistAttributes from '../../mixins/artist-attributes'
 
 export default {
   name: 'shared--artist-item',
   props: ['artist'],
   filters: { pluralize },
+  mixins: [artistAttributes],
 
   data () {
     return {
@@ -51,7 +53,7 @@ export default {
      * @return {Boolean}
      */
     showing () {
-      return this.artist.songCount && !artistStore.isVariousArtists(this.artist)
+      return this.artist.songs.length && !artistStore.isVariousArtists(this.artist)
     }
   },
 

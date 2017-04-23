@@ -81,6 +81,7 @@ abstract class BrowserKitTestCase extends BaseBrowserKitTestCase
         foreach ($albums as $album) {
             factory(Song::class, random_int(7, 15))->create([
                 'album_id' => $album->id,
+                'contributing_artist_id' => $artist->id,
             ]);
         }
     }

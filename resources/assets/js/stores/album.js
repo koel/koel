@@ -18,26 +18,23 @@ export const albumStore = {
   /**
    * Init the store.
    *
-   * @param  {Array.<Object>} artists The array of artists to extract album data from.
+   * @param  {Array.<Object>} albums The array of album objects
    */
-  init (artists) {
+  init (albums) {
     // Traverse through the artists array and add their albums into our master album list.
-    this.all = reduce(artists, (albums, artist) => {
-      // While we're doing so, for each album, we get its length
-      // and keep a back reference to the artist too.
-      each(artist.albums, album => this.setupAlbum(album, artist))
-      return albums.concat(artist.albums)
-    }, [])
-
-    // Then we init the song store.
-    songStore.init(this.all)
+    this.all = albums
+    each(this.all, album => this.setupAlbum(album))
   },
 
-  setupAlbum (album, artist) {
-    Vue.set(album, 'playCount', 0)
+  setupAlbum (album) {
+    const artist = artistStore.byId(album.artist_id)
+    artist.albums = union(artist.albums, [album])
+
     Vue.set(album, 'artist', artist)
     Vue.set(album, 'info', null)
-    this.getLength(album)
+    Vue.set(album, 'songs', [])
+    Vue.set(album, 'playCount', 0)
+
     this.cache[album.id] = album
 
     return album

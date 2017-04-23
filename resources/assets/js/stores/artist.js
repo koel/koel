@@ -28,7 +28,6 @@ export const artistStore = {
 
     // Traverse through artists array to get the cover and number of songs for each.
     each(this.all, artist => this.setupArtist(artist))
-    albumStore.init(this.all)
   },
 
   /**
@@ -37,24 +36,11 @@ export const artistStore = {
    * @param  {Object} artist
    */
   setupArtist (artist) {
-    this.getImage(artist)
     Vue.set(artist, 'playCount', 0)
-
-    // Here we build a list of songs performed by the artist, so that we don't need to traverse
-    // down the "artist > albums > items" route later.
-    // This also makes sure songs in compilation albums are counted as well.
-    Vue.set(artist, 'songs', reduce(artist.albums, (songs, album) => {
-      // If the album is compilation, we cater for the songs contributed by this artist only.
-      if (album.is_compilation) {
-        return songs.concat(filter(album.songs, { contributing_artist_id: artist.id }))
-      }
-
-      // Otherwise, just use all songs in the album.
-      return songs.concat(album.songs)
-    }, []))
-
-    Vue.set(artist, 'songCount', artist.songs.length)
     Vue.set(artist, 'info', null)
+    Vue.set(artist, 'albums', [])
+    Vue.set(artist, 'songs', [])
+
     this.cache[artist.id] = artist
 
     return artist
@@ -94,7 +80,10 @@ export const artistStore = {
    */
   add (artists) {
     artists = [].concat(artists)
-    each(artists, artist => this.setupArtist(artist))
+    each(artists, artist => {
+      this.setupArtist(artist)
+      artist.playCount = reduce(artist.songs, (count, song) => count + song.playCount, 0)
+    })
 
     this.all = union(this.all, artists)
   },
@@ -187,32 +176,6 @@ export const artistStore = {
    */
   getSongsByArtist (artist) {
     return artist.songs
-  },
-
-  /**
-   * Get the artist's image.
-   *
-   * @param {Object} artist
-   *
-   * @return {String}
-   */
-  getImage (artist) {
-    if (!artist.image) {
-      // Try to get an image from one of the albums.
-      artist.image = config.unknownCover
-
-      artist.albums.every(album => {
-        // If there's a "real" cover, use it.
-        if (album.image !== config.unknownCover) {
-          artist.image = album.cover
-
-          // I want to break free.
-          return false
-        }
-      })
-    }
-
-    return artist.image
   },
 
   /**

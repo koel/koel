@@ -4,6 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Application;
 use App\Models\Interaction;
+use App\Models\Artist;
+use App\Models\Album;
+use App\Models\Song;
 use App\Models\Playlist;
 use App\Models\Setting;
 use App\Models\User;
@@ -29,7 +32,9 @@ class DataController extends Controller
         }
 
         return response()->json([
-            'artists' => MediaCache::get(),
+            'artists' => Artist::orderBy('name')->get(),
+            'songs' => Song::all(),
+            'albums' => Album::orderBy('name')->get(),
             'settings' => auth()->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),
