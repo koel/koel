@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\SongUpdateRequest;
+use App\Models\Song;
 use App\Services\Streamers\PHPStreamer;
 use App\Services\Streamers\S3Streamer;
 use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
-use App\Models\Song;
 use YouTube;
 
 class SongController extends Controller
