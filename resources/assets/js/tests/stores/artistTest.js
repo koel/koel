@@ -44,30 +44,4 @@ describe('stores/artist', () => {
       artistStore.state.artists[0].name.should.equal('Bob Dylan')
     })
   })
-
-  describe('#addAlbumsIntoArtist', () => {
-    beforeEach(() => {
-      artistStore.addAlbumsIntoArtist(artistStore.state.artists[0], cloneDeep(singleAlbum))
-    })
-
-    it('correctly adds albums into an artist', () => {
-      artistStore.state.artists[0].albums.length.should.equal(4)
-    })
-
-    it('correctly sets the album artist', () => {
-      const addedAlbum = last(artistStore.state.artists[0].albums)
-      addedAlbum.artist.should.equal(artistStore.state.artists[0])
-      addedAlbum.artist_id.should.equal(artistStore.state.artists[0].id)
-    })
-  })
-
-  describe('#removeAlbumsFromArtist', () => {
-    beforeEach(() => {
-      artistStore.removeAlbumsFromArtist(artistStore.state.artists[0], artistStore.state.artists[0].albums[0])
-    })
-
-    it('correctly removes an album from an artist', () => {
-      artistStore.state.artists[0].albums.length.should.equal(2)
-    })
-  })
 })

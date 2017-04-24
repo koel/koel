@@ -63,40 +63,4 @@ describe('stores/album', () => {
       albumStore.state.albums.length.should.equal(6)
     })
   })
-
-  describe('#addSongsIntoAlbum', () => {
-    beforeEach(() => {
-      albumStore.addSongsIntoAlbum(albumStore.state.albums[0], cloneDeep(singleSong))
-    })
-
-    it('correctly adds a song into an album', () => {
-      albumStore.state.albums[0].songs.length.should.equal(2)
-    })
-
-    it('correctly recalculates the play count', () => {
-      albumStore.state.albums[0].playCount.should.equal(4)
-    })
-
-    it ('correctly recalculates album length', () => {
-      albumStore.state.albums[0].length.should.equal(359.92)
-    })
-  })
-
-  describe('#removeSongsFromAlbum', () => {
-    beforeEach(() => {
-      albumStore.removeSongsFromAlbum(albumStore.state.albums[0], albumStore.state.albums[0].songs[0])
-    })
-
-    it('correctly removes a song from an album', () => {
-      albumStore.state.albums[0].songs.length.should.equal(0)
-    })
-
-    it('correctly recalculates the play count', () => {
-      albumStore.state.albums[0].playCount.should.equal(0)
-    })
-
-    it('correctly recalculates the length', () => {
-      albumStore.state.albums[0].length.should.equal(0)
-    })
-  })
 })

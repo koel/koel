@@ -5,7 +5,7 @@ import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
 
 import { secondsToHis } from '../utils'
 import stub from '../stubs/album'
-import { songStore, artistStore } from '.'
+import { artistStore } from '.'
 
 export const albumStore = {
   stub,
@@ -92,65 +92,21 @@ export const albumStore = {
     this.all = union(this.all, albums)
   },
 
-  /**
-   * Add song(s) into an album.
-   *
-   * @param {Object} album
-   * @param {Array.<Object>|Object} song
-   */
-  addSongsIntoAlbum (album, songs) {
-    songs = [].concat(songs)
-
-    album.songs = union(album.songs || [], songs)
-
-    each(songs, song => {
-      song.album_id = album.id
-      song.album = album
-    })
-
-    album.playCount = reduce(album.songs, (count, song) => count + song.playCount, 0)
-    this.getLength(album)
+  purify () {
+    this.compact()
   },
 
   /**
-   * Remove song(s) from an album.
-   *
-   * @param  {Object} album
-   * @param  {Array.<Object>|Object} songs
+   * Remove empty albums from the store.
    */
-  removeSongsFromAlbum (album, songs) {
-    album.songs = difference(album.songs, [].concat(songs))
-    album.playCount = reduce(album.songs, (count, song) => count + song.playCount, 0)
-    this.getLength(album)
-  },
+  compact () {
+    const emptyAlbums = filter(this.all, album => album.songs.length === 0)
+    if (!emptyAlbums.length) {
+      return
+    }
 
-  /**
-   * Checks if an album is empty.
-   *
-   * @param  {Object}  album
-   *
-   * @return {boolean}
-   */
-  isAlbumEmpty (album) {
-    return !album.songs.length
-  },
-
-  /**
-   * Remove album(s) from the store.
-   *
-   * @param  {Array.<Object>|Object} albums
-   */
-  remove (albums) {
-    albums = [].concat(albums)
-    this.all = difference(this.all, albums)
-
-    // Remove from the artist as well
-    each(albums, album => {
-      artistStore.removeAlbumsFromArtist(album.artist, album)
-
-      // Delete the cache while we're here
-      delete this.cache[album.id]
-    })
+    this.all = difference(this.all, emptyAlbums)
+    each(emptyAlbums, album => delete this.cache[album.id])
   },
 
   /**

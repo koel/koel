@@ -76,7 +76,7 @@
 <script>
 import { every, filter, union } from 'lodash'
 
-import { br2nl, forceReloadWindow } from '../../utils'
+import { br2nl } from '../../utils'
 import { songInfo } from '../../services/info'
 import { artistStore, albumStore, songStore } from '../../stores'
 import config from '../../config'

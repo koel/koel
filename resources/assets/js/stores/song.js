@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import slugify from 'slugify'
-import { assign, filter, without, map, take, remove, orderBy, each, union, unionBy, compact } from 'lodash'
+import { assign, without, map, take, remove, orderBy, each, unionBy, compact } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { secondsToHis, alerts, pluralize } from '../utils'
@@ -232,17 +232,9 @@ export const songStore = {
         data,
         songs: map(songs, 'id')
       }, ({ data: { songs, artists, albums }}) => {
-        each(artists, artist => {
-          if (!artistStore.byId(artist.id)) {
-            artistStore.add(artist)
-          }
-        })
-
-        each(albums, album => {
-          if (!albumStore.byId(album.id)) {
-            albumStore.add(album)
-          }
-        })
+        // Add the artist and album into stores if they're new
+        each(artists, artist => !artistStore.byId(artist.id) && artistStore.add(artist))
+        each(albums, album => !albumStore.byId(album.id) && albumStore.add(album))
 
         each(songs, song => {
           const originalSong = this.byId(song.id)
@@ -262,107 +254,13 @@ export const songStore = {
           this.setupSong(originalSong)
         })
 
-        artistStore.all = filter(artistStore.all, artist => artist.songs.length !== 0)
-        albumStore.all = filter(albumStore.all, album => album.songs.length !== 0)
+        artistStore.compact()
+        albumStore.compact()
 
         alerts.success(`Updated ${pluralize(songs.length, 'song')}.`)
         resolve(songs)
       }, error => reject(error))
     })
-  },
-
-  /**
-   * Sync an updated song into our current library.
-   *
-   * This is one of the most ugly functions I've written, if not the worst itself.
-   * Sorry, future me.
-   * Sorry guys.
-   * Forgive me.
-   *
-   * @param  {Object} updatedSong The updated song, with albums and whatnot.
-   *
-   * @return {?Object}       The updated song.
-   */
-  syncUpdatedSong (updatedSong) {
-    // Cases:
-    // 1. Album doesn't change (and then, artist doesn't either)
-    // 2. Album changes (note that a new album might have been created) and
-    //    2.a. Artist remains the same.
-    //    2.b. Artist changes as well. Note that an artist might have been created.
-
-    // Find the original song,
-    const originalSong = this.byId(updatedSong.id)
-
-    if (!originalSong) {
-      return
-    }
-    //
-
-    // and keep track of original album/artist.
-    const originalAlbumId = originalSong.album.id
-    const originalArtistId = originalSong.artist.id
-
-    // First, we update the title, lyrics, and track #
-    originalSong.title = updatedSong.title
-    originalSong.lyrics = updatedSong.lyrics
-    originalSong.track = updatedSong.track
-
-    if (updatedSong.album.id === originalAlbumId) { // case 1
-      // Nothing to do
-    } else { // case 2
-      // First, remove it from its old album
-      albumStore.removeSongsFromAlbum(originalSong.album, originalSong)
-
-      const existingAlbum = albumStore.byId(updatedSong.album.id)
-      const newAlbumCreated = !existingAlbum
-
-      if (!newAlbumCreated) {
-        // The song changed to an existing album. We now add it to such album.
-        albumStore.addSongsIntoAlbum(existingAlbum, originalSong)
-      } else {
-        // A new album was created. We:
-        // - Add the new album into our collection
-        // - Add the song into it
-        albumStore.addSongsIntoAlbum(updatedSong.album, originalSong)
-        albumStore.add(updatedSong.album)
-      }
-
-      if (updatedSong.album.artist.id === originalArtistId) { // case 2.a
-        // Same artist, but what if the album is new?
-        if (newAlbumCreated) {
-          artistStore.addAlbumsIntoArtist(artistStore.byId(originalArtistId), updatedSong.album)
-        }
-      } else { // case 2.b
-        // The artist changes.
-        const existingArtist = artistStore.byId(updatedSong.album.artist.id)
-
-        if (existingArtist) {
-          originalSong.artist = existingArtist
-        } else {
-          // New artist created. We:
-          // - Add the album into it, because now it MUST BE a new album
-          // (there's no "new artist with existing album" in our system).
-          // - Add the new artist into our collection
-          artistStore.addAlbumsIntoArtist(updatedSong.album.artist, updatedSong.album)
-          artistStore.add(updatedSong.album.artist)
-          originalSong.artist = updatedSong.album.artist
-        }
-      }
-
-      // As a last step, we purify our library of empty albums/artists.
-      if (albumStore.isAlbumEmpty(albumStore.byId(originalAlbumId))) {
-        albumStore.remove(albumStore.byId(originalAlbumId))
-      }
-
-      if (artistStore.isArtistEmpty(artistStore.byId(originalArtistId))) {
-        artistStore.remove(artistStore.byId(originalArtistId))
-      }
-
-      // Now we make sure the next call to info() get the refreshed, correct info.
-      originalSong.infoRetrieved = false
-    }
-
-    return originalSong
   },
 
   /**

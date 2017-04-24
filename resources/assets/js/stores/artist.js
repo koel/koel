@@ -3,9 +3,7 @@
 import Vue from 'vue'
 import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
 
-import config from '../config'
 import stub from '../stubs/artist'
-import { albumStore } from '.'
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
@@ -88,61 +86,21 @@ export const artistStore = {
     this.all = union(this.all, artists)
   },
 
-  /**
-   * Remove artist(s) from the store.
-   *
-   * @param  {Array.<Object>|Object} artists
-   */
-  remove (artists) {
-    artists = [].concat(artists)
-    this.all = difference(this.all, artists)
-
-    // Remember to clear the cache
-    each(artists, artist => delete this.cache[artist.id])
+  purify () {
+    this.compact()
   },
 
   /**
-   * Add album(s) into an artist.
-   *
-   * @param {Object} artist
-   * @param {Array.<Object>|Object} albums
-   *
+   * Remove empty artists from the store.
    */
-  addAlbumsIntoArtist (artist, albums) {
-    albums = [].concat(albums)
+  compact () {
+    const emptyArtists = filter(this.all, artist => artist.songs.length === 0)
+    if (!emptyArtists.length) {
+      return
+    }
 
-    artist.albums = union(artist.albums || [], albums)
-
-    each(albums, album => {
-      album.artist_id = artist.id
-      album.artist = artist
-      artist.playCount += album.playCount
-    })
-  },
-
-  /**
-   * Remove album(s) from an artist.
-   *
-   * @param  {Object} artist
-   * @param  {Array.<Object>|Object} albums
-   */
-  removeAlbumsFromArtist (artist, albums) {
-    albums = [].concat(albums)
-    artist.albums = difference(artist.albums, albums)
-    each(albums, album => {
-      artist.playCount -= album.playCount
-    })
-  },
-
-  /**
-   * Checks if an artist is empty.
-   *
-   * @param  {Object}  artist
-   *
-   * @return {boolean}
-   */
-  isArtistEmpty (artist) {
-    return !artist.albums.length
+    this.all = difference(this.all, emptyArtists)
+    each(emptyArtists, artist => delete this.cache[artist.id])
   },
 
   /**
