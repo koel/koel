@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
             'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class'
         );
         if (! $this->app->environment('production')) {
-			$this->app->register('Laravel\Tinker\TinkerServiceProvider');
+            $this->app->register('Laravel\Tinker\TinkerServiceProvider');
         }
     }
 }
