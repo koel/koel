@@ -9,7 +9,6 @@ use Aws\AwsClient;
 use Cache;
 use Illuminate\Database\Eloquent\Model;
 use Lastfm;
-use Media;
 use YouTube;
 
 /**
