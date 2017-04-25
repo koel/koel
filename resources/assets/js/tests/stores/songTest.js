@@ -68,4 +68,10 @@ describe('stores/song', () => {
       songStore.gatherRecentlyPlayedFromLocalStorage()[0].id.should.equal('cb7edeac1f097143e65b1b2cde102482')
     })
   })
+
+  describe('#guess', () => {
+    it('correcty guesses a song', () => {
+      songStore.guess('i swear', albumStore.byId(1193)).id.should.equal('39189f4545f9d5671fb3dc964f0080a0')
+    })
+  })
 })
