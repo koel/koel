@@ -1,9 +1,11 @@
 require('chai').should()
 
 import { queueStore } from '../../stores'
-import artists from '../blobs/media'
+import data from '../blobs/data'
 
-const songs = artists[2].albums[0].songs
+const { songs: allSongs } = data
+// only get the songs by James Blunt
+const songs = allSongs.filter(song => song.contributing_artist_id === 5)
 
 describe('stores/queue', () => {
   beforeEach(() => {
@@ -32,7 +34,7 @@ describe('stores/queue', () => {
   describe('#queue', () => {
     beforeEach(() => queueStore.state.songs = songs)
 
-    const song = artists[0].albums[0].songs[0]
+    const song = allSongs[0]
 
     it('correctly appends a song to end of the queue', () => {
       queueStore.queue(song)

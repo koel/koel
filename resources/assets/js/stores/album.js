@@ -63,21 +63,6 @@ export const albumStore = {
   },
 
   /**
-   * Get the total length of an album by summing up its songs' duration.
-   * The length will also be converted into a H:i:s format and stored as fmtLength.
-   *
-   * @param  {Object} album
-   *
-   * @return {String} The H:i:s format of the album length.
-   */
-  getLength (album) {
-    Vue.set(album, 'length', reduce(album.songs, (length, song) => length + song.length, 0))
-    Vue.set(album, 'fmtLength', secondsToHis(album.length))
-
-    return album.fmtLength
-  },
-
-  /**
    * Add new album/albums into the current collection.
    *
    * @param  {Array.<Object>|Object} albums
