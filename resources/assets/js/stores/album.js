@@ -3,7 +3,6 @@
 import Vue from 'vue'
 import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
 
-import { secondsToHis } from '../utils'
 import stub from '../stubs/album'
 import { artistStore } from '.'
 
