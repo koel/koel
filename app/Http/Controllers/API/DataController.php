@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Application;
-use App\Models\Interaction;
-use App\Models\Artist;
 use App\Models\Album;
-use App\Models\Song;
+use App\Models\Artist;
+use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Setting;
+use App\Models\Song;
 use App\Models\User;
 use iTunes;
 use Lastfm;
-use MediaCache;
 use YouTube;
 
 class DataController extends Controller
