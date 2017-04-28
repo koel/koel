@@ -149,7 +149,7 @@ if (Mix.preprocessors) {
         let sourceMap = Mix.sourcemaps ? '?sourceMap' : '';
 
         module.exports.module.rules.push({
-            test: new RegExp(toCompile.src.path.replace(/\\/g, '\\\\') + '$'),
+            test: new RegExp(toCompile.src.file.replace(/\\/g, '\\\\') + '$'),
             use: extractPlugin.extract({
                 fallback: 'style-loader',
                 use: [
