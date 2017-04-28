@@ -3,15 +3,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Application;
-use App\Models\Album;
-use App\Models\Artist;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Setting;
-use App\Models\Song;
 use App\Models\User;
 use iTunes;
 use Lastfm;
+use MediaCache;
 use YouTube;
 
 class DataController extends Controller
@@ -30,10 +28,7 @@ class DataController extends Controller
             $playlist['songs'] = array_pluck($playlist['songs'], 'id');
         }
 
-        return response()->json([
-            'artists' => Artist::orderBy('name')->get(),
-            'songs' => Song::all(),
-            'albums' => Album::orderBy('name')->get(),
+        return response()->json(MediaCache::get() + [
             'settings' => auth()->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),
