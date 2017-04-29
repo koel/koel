@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\Request;
 use App\Models\Song;
 
 class ScrobbleController extends Controller
@@ -9,13 +10,14 @@ class ScrobbleController extends Controller
     /**
      * Create a Last.fm scrobble entry for a song.
      *
-     * @param Song   $song
-     * @param string $timestamp The UNIX timestamp when the song started playing.
+     * @param Request $request
+     * @param Song    $song
+     * @param string  $timestamp The UNIX timestamp when the song started playing.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Song $song, $timestamp)
+    public function store(Request $request, Song $song, $timestamp)
     {
-        return response()->json($song->scrobble($timestamp));
+        return response()->json($song->scrobble($request->user(), $timestamp));
     }
 }

@@ -74,11 +74,12 @@ class Song extends Model
     /**
      * Scrobble the song using Last.fm service.
      *
+     * @param User   $user
      * @param string $timestamp The UNIX timestamp in which the song started playing.
      *
      * @return mixed
      */
-    public function scrobble($timestamp)
+    public function scrobble(User $user, $timestamp)
     {
         // Don't scrobble the unknown guys. No one knows them.
         if ($this->artist->isUnknown()) {
@@ -86,7 +87,7 @@ class Song extends Model
         }
 
         // If the current user hasn't connected to Last.fm, don't do shit.
-        if (!$sessionKey = auth()->user()->lastfm_session_key) {
+        if (!$user->lastfm_session_key) {
             return false;
         }
 
@@ -95,7 +96,7 @@ class Song extends Model
             $this->title,
             $timestamp,
             $this->album->name === Album::UNKNOWN_NAME ? '' : $this->album->name,
-            $sessionKey
+            $user->lastfm_session_key
         );
     }
 
