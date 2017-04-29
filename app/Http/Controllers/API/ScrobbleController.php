@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Requests\API\Request;
+use Illuminate\Http\Request;
 use App\Models\Song;
 
 class ScrobbleController extends Controller
