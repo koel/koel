@@ -5,7 +5,7 @@ import data from '../blobs/data'
 
 const { songs: allSongs } = data
 // only get the songs by James Blunt
-const songs = allSongs.filter(song => song.contributing_artist_id === 5)
+const songs = allSongs.filter(song => song.artist_id === 5)
 
 describe('stores/queue', () => {
   beforeEach(() => {

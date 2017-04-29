@@ -44,7 +44,7 @@ export const songStore = {
     song.fmtLength = secondsToHis(song.length)
 
     const album = albumStore.byId(song.album_id)
-    const artist = artistStore.byId(song.contributing_artist_id)
+    const artist = artistStore.byId(song.artist_id)
 
     // Manually set these additional properties to be reactive
     Vue.set(song, 'playCount', song.playCount || 0)
@@ -244,7 +244,7 @@ export const songStore = {
             originalSong.album.songs = without(originalSong.album.songs, originalSong)
           }
 
-          if (originalSong.contributing_artist_id !== song.contributing_artist_id) {
+          if (originalSong.artist_id !== song.artist_id) {
             // artist has been changed. Remove the song from its old artist
             originalSong.artist.songs = without(originalSong.artist.songs, originalSong)
           }

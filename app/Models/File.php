@@ -264,7 +264,7 @@ class File
         }
 
         $info['album_id'] = $album->id;
-        $info['contributing_artist_id'] = $artist->id;
+        $info['artist_id'] = $artist->id;
 
         // Remove these values from the info array, so that we can just use the array as model's input data.
         array_forget($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);

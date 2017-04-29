@@ -233,10 +233,10 @@ class Media
         Album::deleteWhereIDsNotIn($inUseAlbums);
 
         $inUseArtists = Song::distinct()
-            ->select('contributing_artist_id')
-            ->groupBy('contributing_artist_id')
+            ->select('artist_id')
+            ->groupBy('artist_id')
             ->get()
-            ->pluck('contributing_artist_id')
+            ->pluck('artist_id')
             ->toArray();
         $inUseArtists[] = Artist::UNKNOWN_ID;
         $inUseArtists[] = Artist::VARIOUS_ID;

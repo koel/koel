@@ -182,7 +182,7 @@ class SongTest extends BrowserKitTestCase
 
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => $artist->id,
+            'artist_id' => $artist->id,
             'album_id' => $compilationAlbum->id,
             'lyrics' => 'Lorem ipsum dolor sic amet.',
             'track' => 1,
@@ -211,7 +211,7 @@ class SongTest extends BrowserKitTestCase
 
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => $contributingArtist->id,
+            'artist_id' => $contributingArtist->id,
             'album_id' => $compilationAlbum->id,
         ]);
 
@@ -237,7 +237,7 @@ class SongTest extends BrowserKitTestCase
 
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => $contributingArtist->id,
+            'artist_id' => $contributingArtist->id,
             'album_id' => $compilationAlbum->id,
         ]);
 
@@ -262,7 +262,7 @@ class SongTest extends BrowserKitTestCase
 
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => $artist->id,
+            'artist_id' => $artist->id,
             'album_id' => $album->id,
         ]);
 
@@ -298,7 +298,7 @@ class SongTest extends BrowserKitTestCase
         $this->assertNotNull($album);
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => $artist->id,
+            'artist_id' => $artist->id,
             'album_id' => $album->id,
             'lyrics' => 'Thor! Nanananananana Batman.', // haha
         ]);

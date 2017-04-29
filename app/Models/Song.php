@@ -15,7 +15,6 @@ use YouTube;
  * @property string path
  * @property string title
  * @property Album  album
- * @property int    contributing_artist_id
  * @property Artist artist
  * @property string s3_params
  * @property float  length
@@ -46,7 +45,6 @@ class Song extends Model
         'length' => 'float',
         'mtime' => 'int',
         'track' => 'int',
-        'contributing_artist_id' => 'int',
     ];
 
     /**
@@ -58,7 +56,7 @@ class Song extends Model
 
     public function artist()
     {
-        return $this->belongsTo(ContributingArtist::class, 'contributing_artist_id');
+        return $this->belongsTo(Artist::class);
     }
 
     public function album()
@@ -160,7 +158,7 @@ class Song extends Model
         }
 
         return [
-            'artists' => Artist::whereIn('id', $updatedSongs->pluck('contributing_artist_id'))->get(),
+            'artists' => Artist::whereIn('id', $updatedSongs->pluck('artist_id'))->get(),
             'albums' => Album::whereIn('id', $updatedSongs->pluck('album_id'))->get(),
             'songs' => $updatedSongs,
         ];
@@ -203,7 +201,7 @@ class Song extends Model
 
         $album = Album::get($artist, $albumName, $isCompilation);
 
-        $this->contributing_artist_id = $artist->id;
+        $this->artist_id = $artist->id;
         $this->album_id = $album->id;
         $this->title = $title;
         $this->lyrics = $lyrics;
