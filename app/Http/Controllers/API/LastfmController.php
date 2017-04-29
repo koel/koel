@@ -64,7 +64,7 @@ class LastfmController extends Controller
      */
     public function callback(Request $request, Lastfm $lastfm)
     {
-        abort_unless($token = $request->input('token'), 500, 'Something wrong happened.');
+        abort_unless($token = $request->token, 500, 'Something wrong happened.');
 
         // Get the session key using the obtained token.
         abort_unless($sessionKey = $lastfm->getSessionKey($token), 500, 'Invalid token key.');
@@ -83,7 +83,7 @@ class LastfmController extends Controller
      */
     public function setSessionKey(Request $request)
     {
-        $this->auth->user()->savePreference('lastfm_session_key', trim($request->input('key')));
+        $this->auth->user()->savePreference('lastfm_session_key', trim($request->key));
 
         return response()->json();
     }
