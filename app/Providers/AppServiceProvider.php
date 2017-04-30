@@ -31,10 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            'Laravel\Tinker\TinkerServiceProvider::class',
-            'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class'
-        );
         if (!$this->app->environment('production')) {
             $this->app->register('Laravel\Tinker\TinkerServiceProvider');
             $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
