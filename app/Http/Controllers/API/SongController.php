@@ -10,7 +10,6 @@ use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
 use Illuminate\Http\Request;
-use YouTube;
 
 class SongController extends Controller
 {
