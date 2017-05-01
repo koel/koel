@@ -343,7 +343,7 @@ class Song extends Model
      */
     public function isS3ObjectAttribute()
     {
-        return strpos($this->path, 's3://') === 0;
+        return starts_with($this->path, 's3://');
     }
 
     /**
