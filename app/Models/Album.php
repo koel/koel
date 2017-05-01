@@ -28,6 +28,7 @@ class Album extends Model
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
     protected $casts = ['artist_id' => 'integer'];
+    protected $appends = ['is_compilation'];
 
     public function artist()
     {

@@ -3,9 +3,8 @@
 import Vue from 'vue'
 import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
 
-import { secondsToHis } from '../utils'
 import stub from '../stubs/album'
-import { songStore, artistStore } from '.'
+import { artistStore } from '.'
 
 export const albumStore = {
   stub,
@@ -18,26 +17,23 @@ export const albumStore = {
   /**
    * Init the store.
    *
-   * @param  {Array.<Object>} artists The array of artists to extract album data from.
+   * @param  {Array.<Object>} albums The array of album objects
    */
-  init (artists) {
+  init (albums) {
     // Traverse through the artists array and add their albums into our master album list.
-    this.all = reduce(artists, (albums, artist) => {
-      // While we're doing so, for each album, we get its length
-      // and keep a back reference to the artist too.
-      each(artist.albums, album => this.setupAlbum(album, artist))
-      return albums.concat(artist.albums)
-    }, [])
-
-    // Then we init the song store.
-    songStore.init(this.all)
+    this.all = albums
+    each(this.all, album => this.setupAlbum(album))
   },
 
-  setupAlbum (album, artist) {
-    Vue.set(album, 'playCount', 0)
+  setupAlbum (album) {
+    const artist = artistStore.byId(album.artist_id)
+    artist.albums = union(artist.albums, [album])
+
     Vue.set(album, 'artist', artist)
     Vue.set(album, 'info', null)
-    this.getLength(album)
+    Vue.set(album, 'songs', [])
+    Vue.set(album, 'playCount', 0)
+
     this.cache[album.id] = album
 
     return album
@@ -66,21 +62,6 @@ export const albumStore = {
   },
 
   /**
-   * Get the total length of an album by summing up its songs' duration.
-   * The length will also be converted into a H:i:s format and stored as fmtLength.
-   *
-   * @param  {Object} album
-   *
-   * @return {String} The H:i:s format of the album length.
-   */
-  getLength (album) {
-    Vue.set(album, 'length', reduce(album.songs, (length, song) => length + song.length, 0))
-    Vue.set(album, 'fmtLength', secondsToHis(album.length))
-
-    return album.fmtLength
-  },
-
-  /**
    * Add new album/albums into the current collection.
    *
    * @param  {Array.<Object>|Object} albums
@@ -95,65 +76,21 @@ export const albumStore = {
     this.all = union(this.all, albums)
   },
 
-  /**
-   * Add song(s) into an album.
-   *
-   * @param {Object} album
-   * @param {Array.<Object>|Object} song
-   */
-  addSongsIntoAlbum (album, songs) {
-    songs = [].concat(songs)
-
-    album.songs = union(album.songs || [], songs)
-
-    each(songs, song => {
-      song.album_id = album.id
-      song.album = album
-    })
-
-    album.playCount = reduce(album.songs, (count, song) => count + song.playCount, 0)
-    this.getLength(album)
+  purify () {
+    this.compact()
   },
 
   /**
-   * Remove song(s) from an album.
-   *
-   * @param  {Object} album
-   * @param  {Array.<Object>|Object} songs
+   * Remove empty albums from the store.
    */
-  removeSongsFromAlbum (album, songs) {
-    album.songs = difference(album.songs, [].concat(songs))
-    album.playCount = reduce(album.songs, (count, song) => count + song.playCount, 0)
-    this.getLength(album)
-  },
+  compact () {
+    const emptyAlbums = filter(this.all, album => album.songs.length === 0)
+    if (!emptyAlbums.length) {
+      return
+    }
 
-  /**
-   * Checks if an album is empty.
-   *
-   * @param  {Object}  album
-   *
-   * @return {boolean}
-   */
-  isAlbumEmpty (album) {
-    return !album.songs.length
-  },
-
-  /**
-   * Remove album(s) from the store.
-   *
-   * @param  {Array.<Object>|Object} albums
-   */
-  remove (albums) {
-    albums = [].concat(albums)
-    this.all = difference(this.all, albums)
-
-    // Remove from the artist as well
-    each(albums, album => {
-      artistStore.removeAlbumsFromArtist(album.artist, album)
-
-      // Delete the cache while we're here
-      delete this.cache[album.id]
-    })
+    this.all = difference(this.all, emptyAlbums)
+    each(emptyAlbums, album => delete this.cache[album.id])
   },
 
   /**

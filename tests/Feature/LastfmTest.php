@@ -156,7 +156,8 @@ class LastfmTest extends BrowserKitTestCase
 
     public function testControllerCallback()
     {
-        $request = m::mock(Request::class, ['input' => 'token']);
+        $request = m::mock(Request::class);
+        $request->token = 'foo';
         $lastfm = m::mock(Lastfm::class, ['getSessionKey' => 'bar']);
 
         $user = factory(User::class)->create();

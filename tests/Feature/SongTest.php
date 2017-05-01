@@ -177,12 +177,12 @@ class SongTest extends BrowserKitTestCase
         $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'One by One')->first();
         $this->assertNotNull($compilationAlbum);
 
-        $contributingArtist = Artist::whereName('John Cena')->first();
-        $this->assertNotNull($contributingArtist);
+        $artist = Artist::whereName('John Cena')->first();
+        $this->assertNotNull($artist);
 
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => $contributingArtist->id,
+            'artist_id' => $artist->id,
             'album_id' => $compilationAlbum->id,
             'lyrics' => 'Lorem ipsum dolor sic amet.',
             'track' => 1,
@@ -211,7 +211,7 @@ class SongTest extends BrowserKitTestCase
 
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => $contributingArtist->id,
+            'artist_id' => $contributingArtist->id,
             'album_id' => $compilationAlbum->id,
         ]);
 
@@ -237,7 +237,7 @@ class SongTest extends BrowserKitTestCase
 
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => $contributingArtist->id,
+            'artist_id' => $contributingArtist->id,
             'album_id' => $compilationAlbum->id,
         ]);
 
@@ -258,10 +258,11 @@ class SongTest extends BrowserKitTestCase
         $artist = Artist::whereName('Foo Fighters')->first();
         $this->assertNotNull($artist);
         $album = Album::whereArtistIdAndName($artist->id, 'One by One')->first();
+        $this->assertNotNull($album);
 
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => null,
+            'artist_id' => $artist->id,
             'album_id' => $album->id,
         ]);
 
@@ -297,7 +298,7 @@ class SongTest extends BrowserKitTestCase
         $this->assertNotNull($album);
         $this->seeInDatabase('songs', [
             'id' => $song->id,
-            'contributing_artist_id' => null,
+            'artist_id' => $artist->id,
             'album_id' => $album->id,
             'lyrics' => 'Thor! Nanananananana Batman.', // haha
         ]);

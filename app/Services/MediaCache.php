@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
 use Cache;
 
 class MediaCache
@@ -12,16 +14,30 @@ class MediaCache
     public function get()
     {
         if (!config('koel.cache_media')) {
-            return Artist::orderBy('name')->with('albums', with('albums.songs'))->get();
+            return $this->query();
         }
 
         $data = Cache::get($this->keyName);
         if (!$data) {
-            $data = Artist::orderBy('name')->with('albums', with('albums.songs'))->get();
+            $data = $this->query();
             Cache::forever($this->keyName, $data);
         }
 
         return $data;
+    }
+
+    /**
+     * Query fresh data from the database.
+     *
+     * @return array
+     */
+    private function query()
+    {
+        return [
+            'albums' => Album::orderBy('name')->get(),
+            'artists' => Artist::orderBy('name')->get(),
+            'songs' => Song::all(),
+        ];
     }
 
     public function clear()

@@ -49,9 +49,6 @@
                   <input type="checkbox" @change="changeCompilationState" ref="compilationStateChk" />
                   Album is a compilation of songs by various artists
                 </label>
-                <label class="small warning" v-if="needsReload">
-                  Koel will reload after saving.
-                </label>
               </div>
               <div class="form-row" v-show="editSingle">
                 <label>Track</label>
@@ -77,11 +74,12 @@
 </template>
 
 <script>
-import { every, filter } from 'lodash'
+import { every, filter, union } from 'lodash'
 
-import { br2nl, forceReloadWindow } from '../../utils'
+import { br2nl } from '../../utils'
 import { songInfo } from '../../services/info'
 import { artistStore, albumStore, songStore } from '../../stores'
+import config from '../../config'
 
 import soundBar from '../shared/sound-bar.vue'
 import typeahead from '../shared/typeahead.vue'
@@ -101,7 +99,6 @@ export default {
       songs: [],
       currentView: '',
       loading: false,
-      needsReload: false,
 
       artistState: artistStore.state,
       artistTypeaheadOptions: {
@@ -166,7 +163,7 @@ export default {
      * @return {string}
      */
     coverUrl () {
-      return this.inSameAlbum ? this.songs[0].album.cover : '/public/img/covers/unknown-album.png'
+      return this.inSameAlbum ? this.songs[0].album.cover : config.unknownCover
     },
 
     /**
@@ -175,11 +172,15 @@ export default {
      * @return {Number}
      */
     compilationState () {
-      const contributedSongs = filter(this.songs, song => song.contributing_artist_id)
+      const albums = this.songs.reduce((acc, song) => {
+        return union(acc, [song.album])
+      }, [])
 
-      if (!contributedSongs.length) {
+      const compiledAlbums = filter(albums, album => album.is_compilation)
+
+      if (!compiledAlbums.length) {
         this.formData.compilationState = COMPILATION_STATES.NONE
-      } else if (contributedSongs.length === this.songs.length) {
+      } else if (compiledAlbums.length === albums.length) {
         this.formData.compilationState = COMPILATION_STATES.ALL
       } else {
         this.formData.compilationState = COMPILATION_STATES.SOME
@@ -229,7 +230,6 @@ export default {
       this.shown = true
       this.songs = songs
       this.currentView = 'details'
-      this.needsReload = false
 
       if (this.editSingle) {
         this.formData.title = this.songs[0].title
@@ -294,7 +294,6 @@ export default {
      */
     changeCompilationState (e) {
       this.formData.compilationState = e.target.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE
-      this.needsReload = true
     },
 
     /**
@@ -310,11 +309,10 @@ export default {
     submit () {
       this.loading = true
 
-      songStore.update(this.songs, this.formData).then(r => {
+      songStore.update(this.songs, this.formData).then(() => {
         this.loading = false
         this.close()
-        this.needsReload && forceReloadWindow()
-      }).catch(r => {
+      }).catch(() => {
         this.loading = false
       })
     }

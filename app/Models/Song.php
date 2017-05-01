@@ -15,8 +15,6 @@ use YouTube;
  * @property string path
  * @property string title
  * @property Album  album
- * @property int    contributing_artist_id
- * @property Artist contributingArtist
  * @property Artist artist
  * @property string s3_params
  * @property float  length
@@ -47,7 +45,6 @@ class Song extends Model
         'length' => 'float',
         'mtime' => 'int',
         'track' => 'int',
-        'contributing_artist_id' => 'int',
     ];
 
     /**
@@ -57,9 +54,9 @@ class Song extends Model
      */
     public $incrementing = false;
 
-    public function contributingArtist()
+    public function artist()
     {
-        return $this->belongsTo(ContributingArtist::class);
+        return $this->belongsTo(Artist::class);
     }
 
     public function album()
@@ -75,11 +72,12 @@ class Song extends Model
     /**
      * Scrobble the song using Last.fm service.
      *
+     * @param User   $user
      * @param string $timestamp The UNIX timestamp in which the song started playing.
      *
      * @return mixed
      */
-    public function scrobble($timestamp)
+    public function scrobble(User $user, $timestamp)
     {
         // Don't scrobble the unknown guys. No one knows them.
         if ($this->artist->isUnknown()) {
@@ -87,7 +85,7 @@ class Song extends Model
         }
 
         // If the current user hasn't connected to Last.fm, don't do shit.
-        if (!$sessionKey = auth()->user()->lastfm_session_key) {
+        if (!$user->connectedToLastfm()) {
             return false;
         }
 
@@ -96,7 +94,7 @@ class Song extends Model
             $this->title,
             $timestamp,
             $this->album->name === Album::UNKNOWN_NAME ? '' : $this->album->name,
-            $sessionKey
+            $user->lastfm_session_key
         );
     }
 
@@ -129,11 +127,11 @@ class Song extends Model
     public static function updateInfo($ids, $data)
     {
         /*
-         * An array of the updated songs.
+         * A collection of the updated songs.
          *
-         * @var array
+         * @var \Illuminate\Support\Collection
          */
-        $updatedSongs = [];
+        $updatedSongs = collect();
 
         $ids = (array) $ids;
         // If we're updating only one song, take into account the title, lyrics, and track number.
@@ -144,22 +142,26 @@ class Song extends Model
                 continue;
             }
 
-            $updatedSongs[] = $song->updateSingle(
+            $updatedSongs->push($song->updateSingle(
                 $single ? trim($data['title']) : $song->title,
                 trim($data['albumName'] ?: $song->album->name),
                 trim($data['artistName']) ?: $song->artist->name,
                 $single ? trim($data['lyrics']) : $song->lyrics,
                 $single ? (int) $data['track'] : $song->track,
                 (int) $data['compilationState']
-            );
+            ));
         }
 
         // Our library may have been changed. Broadcast an event to tidy it up if need be.
-        if ($updatedSongs) {
+        if ($updatedSongs->count()) {
             event(new LibraryChanged());
         }
 
-        return $updatedSongs;
+        return [
+            'artists' => Artist::whereIn('id', $updatedSongs->pluck('artist_id'))->get(),
+            'albums' => Album::whereIn('id', $updatedSongs->pluck('album_id'))->get(),
+            'songs' => $updatedSongs,
+        ];
     }
 
     /**
@@ -176,30 +178,30 @@ class Song extends Model
      */
     public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $compilationState)
     {
-        // If the artist name is "Various Artists", it's a compilation song no matter what.
         if ($artistName === Artist::VARIOUS_NAME) {
+            // If the artist name is "Various Artists", it's a compilation song no matter what.
             $compilationState = 1;
+            // and since we can't determine the real contributing artist, it's "Unknown"
+            $artistName = Artist::UNKNOWN_NAME;
         }
 
-        // If the compilation state is "no change," we determine it via the current
-        // "contributing_artist_id" field value.
-        if ($compilationState === 2) {
-            $compilationState = $this->contributing_artist_id ? 1 : 0;
+        $artist = Artist::get($artistName);
+
+        switch ($compilationState) {
+            case 1: // ALL, or forcing compilation status to be Yes
+                $isCompilation = true;
+                break;
+            case 2: // Keep current compilation status
+                $isCompilation = $this->album->artist_id === Artist::VARIOUS_ID;
+                break;
+            default:
+                $isCompilation = false;
+                break;
         }
 
-        $album = null;
+        $album = Album::get($artist, $albumName, $isCompilation);
 
-        if ($compilationState === 0) {
-            // Not a compilation song
-            $this->contributing_artist_id = null;
-            $albumArtist = Artist::get($artistName);
-            $album = Album::get($albumArtist, $albumName, false);
-        } else {
-            $contributingArtist = Artist::get($artistName);
-            $this->contributing_artist_id = $contributingArtist->id;
-            $album = Album::get(Artist::getVarious(), $albumName, true);
-        }
-
+        $this->artist_id = $artist->id;
         $this->album_id = $album->id;
         $this->title = $title;
         $this->lyrics = $lyrics;
@@ -207,12 +209,13 @@ class Song extends Model
 
         $this->save();
 
-        // Get the updated record, with album and all.
-        $updatedSong = self::with('album', 'album.artist', 'contributingArtist')->find($this->id);
-        // Make sure lyrics is included in the returned JSON.
-        $updatedSong->makeVisible('lyrics');
+        // Clean up unnecessary data from the object
+        unset($this->album);
+        unset($this->artist);
+        // and make sure the lyrics is shown
+        $this->makeVisible('lyrics');
 
-        return $updatedSong;
+        return $this;
     }
 
     /**
@@ -241,10 +244,7 @@ class Song extends Model
      */
     public static function getFavorites(User $user, $toArray = false)
     {
-        $songs = Interaction::where([
-            'user_id' => $user->id,
-            'liked' => true,
-        ])
+        $songs = Interaction::whereUserIdAndLike($user->id, true)
             ->with('song')
             ->get()
             ->pluck('song');
@@ -337,27 +337,13 @@ class Song extends Model
     }
 
     /**
-     * Get the correct artist of the song.
-     * If it's part of a compilation, that would be the contributing artist.
-     * Otherwise, it's the album artist.
-     *
-     * @return Artist
-     */
-    public function getArtistAttribute()
-    {
-        return $this->contributing_artist_id
-            ? $this->contributingArtist
-            : $this->album->artist;
-    }
-
-    /**
      * Determine if the song is an AWS S3 Object.
      *
      * @return bool
      */
     public function isS3ObjectAttribute()
     {
-        return strpos($this->path, 's3://') === 0;
+        return starts_with($this->path, 's3://');
     }
 
     /**

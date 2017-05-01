@@ -38,5 +38,6 @@
         <env name="ADMIN_NAME" value="Koel"/>
         <env name="ADMIN_PASSWORD" value="SoSecureK0el"/>
         <env name="BROADCAST_DRIVER" value="log"/>
+        <env name="CACHE_MEDIA" value="true"/>
     </php>
 </phpunit>

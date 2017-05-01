@@ -21,8 +21,8 @@ class ProfileController extends Controller
     {
         $data = $request->only('name', 'email');
 
-        if ($password = $request->input('password')) {
-            $data['password'] = Hash::make($password);
+        if ($request->password) {
+            $data['password'] = Hash::make($request->password);
         }
 
         return response()->json(auth()->user()->update($data));

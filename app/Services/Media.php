@@ -117,13 +117,15 @@ class Media
      */
     public function gatherFiles($path)
     {
-        return Finder::create()
-            ->ignoreUnreadableDirs()
-            ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/phanan/koel/issues/450
-            ->files()
-            ->followLinks()
-            ->name('/\.(mp3|ogg|m4a|flac)$/i')
-            ->in($path);
+        return iterator_to_array(
+            Finder::create()
+                ->ignoreUnreadableDirs()
+                ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/phanan/koel/issues/450
+                ->files()
+                ->followLinks()
+                ->name('/\.(mp3|ogg|m4a|flac)$/i')
+                ->in($path)
+        );
     }
 
     /**
@@ -222,23 +224,22 @@ class Media
      */
     public function tidy()
     {
-        $inUseAlbums = Song::select('album_id')->groupBy('album_id')->get()->pluck('album_id')->toArray();
+        $inUseAlbums = Song::select('album_id')
+            ->groupBy('album_id')
+            ->get()
+            ->pluck('album_id')
+            ->toArray();
         $inUseAlbums[] = Album::UNKNOWN_ID;
         Album::deleteWhereIDsNotIn($inUseAlbums);
 
-        $inUseArtists = Album::select('artist_id')->groupBy('artist_id')->get()->pluck('artist_id')->toArray();
-
-        $contributingArtists = Song::distinct()
-            ->select('contributing_artist_id')
-            ->groupBy('contributing_artist_id')
+        $inUseArtists = Song::distinct()
+            ->select('artist_id')
+            ->groupBy('artist_id')
             ->get()
-            ->pluck('contributing_artist_id')
+            ->pluck('artist_id')
             ->toArray();
-
-        $inUseArtists = array_merge($inUseArtists, $contributingArtists);
         $inUseArtists[] = Artist::UNKNOWN_ID;
         $inUseArtists[] = Artist::VARIOUS_ID;
-
         Artist::deleteWhereIDsNotIn(array_filter($inUseArtists));
     }
 }

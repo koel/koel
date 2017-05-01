@@ -19,10 +19,8 @@ class iTunesController extends Controller
     public function viewSong(ViewSongRequest $request, Album $album)
     {
         $url = iTunes::getTrackUrl($request->q, $album->name, $album->artist->name);
-        if ($url) {
-            return redirect($url);
-        } else {
-            abort(404, "Koel can't find such a song on iTunes Store.");
-        }
+        abort_unless($url, 404, "Koel can't find such a song on iTunes Store.");
+
+        return redirect($url);
     }
 }

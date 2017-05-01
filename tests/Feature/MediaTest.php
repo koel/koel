@@ -62,7 +62,7 @@ class MediaTest extends BrowserKitTestCase
 
         // Compilation albums, artists and songs must be recognized
         $song = Song::whereTitle('This song belongs to a compilation')->first();
-        $this->assertNotNull($song->contributing_artist_id);
+        $this->assertNotNull($song->artist_id);
         $this->assertTrue($song->album->is_compilation);
         $this->assertEquals(Artist::VARIOUS_ID, $song->album->artist_id);
 

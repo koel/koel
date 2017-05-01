@@ -28,8 +28,7 @@ class DataController extends Controller
             $playlist['songs'] = array_pluck($playlist['songs'], 'id');
         }
 
-        return response()->json([
-            'artists' => MediaCache::get(),
+        return response()->json(MediaCache::get() + [
             'settings' => auth()->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),

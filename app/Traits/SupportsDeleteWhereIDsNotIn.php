@@ -40,6 +40,8 @@ trait SupportsDeleteWhereIDsNotIn
         // If that's not possible (i.e. this array has more than 65535 elements, too)
         // then we'll delete chunk by chunk.
         static::deleteByChunk($ids, $key);
+
+        return $whereInIDs;
     }
 
     /**
