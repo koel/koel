@@ -244,10 +244,7 @@ class Song extends Model
      */
     public static function getFavorites(User $user, $toArray = false)
     {
-        $songs = Interaction::where([
-            'user_id' => $user->id,
-            'liked' => true,
-        ])
+        $songs = Interaction::whereUserIdAndLike($user->id, true)
             ->with('song')
             ->get()
             ->pluck('song');
