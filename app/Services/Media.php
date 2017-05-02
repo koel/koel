@@ -41,10 +41,6 @@ class Media
      */
     protected $tags = [];
 
-    public function __construct()
-    {
-    }
-
     /**
      * Sync the media. Oh sync the media.
      *
@@ -232,8 +228,7 @@ class Media
         $inUseAlbums[] = Album::UNKNOWN_ID;
         Album::deleteWhereIDsNotIn($inUseAlbums);
 
-        $inUseArtists = Song::distinct()
-            ->select('artist_id')
+        $inUseArtists = Song::select('artist_id')
             ->groupBy('artist_id')
             ->get()
             ->pluck('artist_id')

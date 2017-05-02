@@ -17,7 +17,7 @@ class XAccelRedirectStreamer extends Streamer implements StreamerInterface
         // It will then be use as `alias` in X-Accel config location block.
         // See nginx.conf.example.
         header('X-Media-Root: '.Setting::get('media_path'));
-        header('X-Accel-Redirect: /media/'.$relativePath);
+        header("X-Accel-Redirect: /media/$relativePath");
         header("Content-Type: {$this->contentType}");
         header('Content-Disposition: inline; filename="'.basename($this->song->path).'"');
 

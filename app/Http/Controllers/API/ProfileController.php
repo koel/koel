@@ -25,6 +25,6 @@ class ProfileController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
-        return response()->json(auth()->user()->update($data));
+        return response()->json($request->user()->update($data));
     }
 }
