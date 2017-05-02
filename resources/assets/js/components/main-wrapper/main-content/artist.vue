@@ -125,13 +125,12 @@ export default {
       download.fromArtist(this.artist)
     },
 
-    showInfo () {
+    async showInfo () {
       this.info.showing = true
       if (!this.artist.info) {
         this.info.loading = true
-        artistInfoService.fetch(this.artist).then(() => {
-          this.info.loading = false
-        })
+        await artistInfoService.fetch(this.artist)
+        this.info.loading = false
       } else {
         this.info.loading = false
       }

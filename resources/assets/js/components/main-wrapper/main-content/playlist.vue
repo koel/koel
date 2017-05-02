@@ -107,15 +107,14 @@ export default {
     /**
      * Delete the current playlist.
      */
-    del () {
-      playlistStore.delete(this.playlist).then(() => {
-        // Reset the current playlist to our stub, so that we don't encounter
-        // any property reference error.
-        this.playlist = playlistStore.stub
+    async del () {
+      await playlistStore.delete(this.playlist)
+      // Reset the current playlist to our stub, so that we don't encounter
+      // any property reference error.
+      this.playlist = playlistStore.stub
 
-        // Switch back to Home screen
-        router.go('home')
-      })
+      // Switch back to Home screen
+      router.go('home')
     },
 
     /**

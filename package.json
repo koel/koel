@@ -14,9 +14,12 @@
     "url": "https://github.com/phanan/koel"
   },
   "babel": {
-    "presets": ["es2015"]
+    "presets": [
+      "es2015"
+    ]
   },
   "eslintConfig": {
+    "parser": "babel-eslint",
     "extends": "vue",
     "rules": {
       "no-multi-str": "off"
@@ -42,6 +45,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
+    "babel-eslint": "^7.2.3",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.23.0",
     "babel-register": "^6.23.0",

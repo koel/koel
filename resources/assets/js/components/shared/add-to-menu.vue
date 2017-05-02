@@ -56,18 +56,17 @@ export default {
      * Save the selected songs as a playlist.
      * As of current we don't have selective save.
      */
-    createNewPlaylistFromSongs () {
+    async createNewPlaylistFromSongs () {
       this.newPlaylistName = this.newPlaylistName.trim()
 
       if (!this.newPlaylistName) {
         return
       }
 
-      playlistStore.store(this.newPlaylistName, this.songs).then(playlist => {
-        this.newPlaylistName = ''
-        // Activate the new playlist right away
-        this.$nextTick(() => router.go(`playlist/${playlist.id}`))
-      })
+      const playlist = await playlistStore.store(this.newPlaylistName, this.songs)
+      this.newPlaylistName = ''
+      // Activate the new playlist right away
+      this.$nextTick(() => router.go(`playlist/${playlist.id}`))
 
       this.close()
     },

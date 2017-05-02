@@ -106,10 +106,8 @@ export default {
         }
       },
 
-      'song:played': song => {
-        songInfo.fetch(song).then(song => {
-          this.song = song
-        })
+      'song:played': async song => {
+        this.song = await songInfo.fetch(song)
       }
     })
   }

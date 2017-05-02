@@ -71,12 +71,13 @@ export default {
   },
 
   methods: {
-    init () {
+    async init () {
       showOverlay()
 
       // Make the most important HTTP request to get all necessary data from the server.
       // Afterwards, init all mandatory stores and services.
-      sharedStore.init().then(() => {
+      try {
+        await sharedStore.init()
         playback.init()
         hideOverlay()
 
@@ -96,9 +97,9 @@ export default {
 
         // Let all other components know we're ready.
         event.emit('koel:ready')
-      }).catch(() => {
+      } catch (err) {
         this.authenticated = false
-      })
+      }
     },
 
     /**
@@ -196,11 +197,10 @@ export default {
       /**
        * Log the current user out and reset the application state.
        */
-      logout () {
-        userStore.logout().then((r) => {
-          ls.remove('jwt-token')
-          forceReloadWindow()
-        })
+      async logout () {
+        await userStore.logout()
+        ls.remove('jwt-token')
+        forceReloadWindow()
       },
 
       /**

@@ -45,14 +45,13 @@ export default {
     /**
      * Store/create a new playlist.
      */
-    store () {
+    async store () {
       this.creating = false
 
-      playlistStore.store(this.newName).then(playlist => {
-        this.newName = ''
-        // Activate the new playlist right away
-        this.$nextTick(() => router.go(`playlist/${playlist.id}`))
-      })
+      const playlist = await playlistStore.store(this.newName)
+      this.newName = ''
+      // Activate the new playlist right away
+      this.$nextTick(() => router.go(`playlist/${playlist.id}`))
     }
   }
 }

@@ -226,7 +226,7 @@ export default {
   },
 
   methods: {
-    open (songs) {
+    async open (songs) {
       this.shown = true
       this.songs = songs
       this.currentView = 'details'
@@ -241,12 +241,11 @@ export default {
         if (!this.songs[0].infoRetrieved) {
           this.loading = true
 
-          songInfo.fetch(this.songs[0]).then(r => {
-            this.loading = false
-            this.formData.lyrics = br2nl(this.songs[0].lyrics)
-            this.formData.track = this.songs[0].track || ''
-            this.initCompilationStateCheckbox()
-          })
+          await songInfo.fetch(this.songs[0])
+          this.loading = false
+          this.formData.lyrics = br2nl(this.songs[0].lyrics)
+          this.formData.track = this.songs[0].track || ''
+          this.initCompilationStateCheckbox()
         } else {
           this.formData.lyrics = br2nl(this.songs[0].lyrics)
           this.formData.track = this.songs[0].track || ''
@@ -306,15 +305,15 @@ export default {
     /**
      * Submit the form.
      */
-    submit () {
+    async submit () {
       this.loading = true
 
-      songStore.update(this.songs, this.formData).then(() => {
-        this.loading = false
+      try {
+        await songStore.update(this.songs, this.formData)
         this.close()
-      }).catch(() => {
+      } finally {
         this.loading = false
-      })
+      }
     }
   }
 }

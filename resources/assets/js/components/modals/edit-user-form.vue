@@ -54,14 +54,11 @@ export default {
       this.user = user
     },
 
-    submit () {
+    async submit () {
       this.loading = true
-      userStore.update(this.user, this.copiedUser.name, this.copiedUser.email, this.copiedUser.password)
-        .then(() => {
-          this.loading = false
-          this.copiedUser = null
-        }
-      )
+      await userStore.update(this.user, this.copiedUser.name, this.copiedUser.email, this.copiedUser.password)
+      this.loading = false
+      this.copiedUser = null
     },
 
     cancel () {

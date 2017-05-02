@@ -131,7 +131,7 @@ export default {
     /**
      * Update the current user's profile.
      */
-    update () {
+    async update () {
       const passwordFields = Array.from(
         document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
       )
@@ -143,10 +143,9 @@ export default {
 
       each(passwordFields, el => $.removeClass(el, 'error'))
 
-      userStore.updateProfile(this.pwd).then(() => {
-        this.pwd = ''
-        this.confirmPwd = ''
-      })
+      await userStore.updateProfile(this.pwd)
+      this.pwd = ''
+      this.confirmPwd = ''
     },
 
     /**

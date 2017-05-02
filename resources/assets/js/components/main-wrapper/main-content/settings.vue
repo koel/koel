@@ -62,23 +62,24 @@ export default {
     /**
      * Save the settings.
      */
-    save () {
+    async save () {
       showOverlay()
 
-      settingStore.update().then(() => {
+      try {
+        await settingStore.update()
         // Make sure we're back to home first.
         router.go('home')
         forceReloadWindow()
-      }).catch(r => {
+      } catch (err) {
         let msg = 'Unknown error.'
 
-        if (r.status === 422) {
-          msg = parseValidationError(r.responseJSON)[0]
+        if (err.status === 422) {
+          msg = parseValidationError(err.responseJSON)[0]
         }
 
         hideOverlay()
         alerts.error(msg)
-      })
+      }
     }
   }
 }
