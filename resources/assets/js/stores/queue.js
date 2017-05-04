@@ -144,7 +144,6 @@ export const queueStore = {
    */
   clear () {
     this.all = []
-    this.current = null
   },
 
   /**
