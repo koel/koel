@@ -292,24 +292,19 @@ class Song extends Model
         if ($cached = Cache::get("OSUrl/{$this->id}")) {
             return $cached;
         }
-
         if (!$gcs) {
-            $gcs = new StorageClient([
-			]);
+            $gcs = new StorageClient([]);
         }
-
-		$bucket = $gcs->bucket($this->gcp_params['bucket']);	
-		$object = $bucket->object($this->gcp_params['key']);
-		$object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);	  		
-		$url =  'https://storage.googleapis.com/' . $this->gcp_params['bucket'] . '/' . rawurlencode($this->gcp_params['key']);
-		
+        $bucket = $gcs->bucket($this->gcp_params['bucket']);
+        $object = $bucket->object($this->gcp_params['key']);
+        $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
+        $url = 'https://storage.googleapis.com/' . $this->gcp_params['bucket'] . '/' . rawurlencode($this->gcp_params['key']);
         Cache::put("OSUrl/{$this->id}", $url, 60);
-		
         return $url;
     }
 
 
-	
+
     /**
      * Get the YouTube videos related to this song.
      *

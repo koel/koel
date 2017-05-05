@@ -59,8 +59,8 @@ class Download
             // The following function require allow_url_fopen to be ON.
             // We're just assuming that to be the case here.
             copy($url, $localPath);
-        }   else if ($gcpParams = $song->gcp_params) {
-            // The song is hosted on Amazon S3.
+        } else if ($gcpParams = $song->gcp_params) {
+            // The song is hosted on Google CLoud Storage.
             // We download it back to our local server first.
             $localPath = rtrim(sys_get_temp_dir(), '/').'/'.basename($gcpParams['key']);
             $url = $song->getGcpObjectStoragePublicUrl();
@@ -85,7 +85,7 @@ class Download
         // as a workaround.
         $newPath = rtrim(sys_get_temp_dir(), '/').'/'.utf8_decode(basename($song->path));
 
-        if ($s3Params || $gcpParams) { 
+        if ($s3Params || $gcpParams) {
             // If the file is downloaded from S3, we rename it directly.
             // This will save us some disk space.
             rename($localPath, $newPath);
