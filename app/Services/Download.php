@@ -24,15 +24,15 @@ class Download
      */
     public function from($mixed)
     {
-        if (is_a($mixed, Song::class)) {
+        if ($mixed instanceof Song) {
             return $this->fromSong($mixed);
-        } elseif (is_a($mixed, Collection::class)) {
+        } elseif (mixed instanceof Collection) {
             return $this->fromMultipleSongs($mixed);
-        } elseif (is_a($mixed, Album::class)) {
+        } elseif ($mixed instanceof Album) {
             return $this->fromAlbum($mixed);
-        } elseif (is_a($mixed, Artist::class)) {
+        } elseif ($mixed instanceof Artist) {
             return $this->fromArtist($mixed);
-        } elseif (is_a($mixed, Playlist::class)) {
+        } elseif ($mixed instanceof Playlist) {
             return $this->fromPlaylist($mixed);
         } else {
             throw new Exception('Unsupport download type.');
@@ -63,7 +63,7 @@ class Download
             // The song is hosted on Amazon S3.
             // We download it back to our local server first.
             $localPath = rtrim(sys_get_temp_dir(), '/').'/'.basename($gcpParams['key']);
-            $url = $song->getObjectStoragePublicUrl();
+            $url = $song->getGcpObjectStoragePublicUrl();
 
             abort_unless($url, 404);
 

@@ -10,8 +10,6 @@ use Cache;
 use Illuminate\Database\Eloquent\Model;
 use Lastfm;
 use YouTube;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Google\Cloud\Storage\StorageClient;
 
 /**
@@ -297,7 +295,6 @@ class Song extends Model
 
         if (!$gcs) {
             $gcs = new StorageClient([
-				//'projectId' => 'my-projectid'
 			]);
         }
 
