@@ -55,7 +55,6 @@ export default {
     edit () {
       if (this.isCurrentUser) {
         router.go('profile')
-
         return
       }
 
@@ -66,17 +65,16 @@ export default {
      * Kill off the freaking user.
      */
     del () {
-      alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, () => {
-        userStore.destroy(this.user).then(() => {
-          this.$destroy(true)
-        })
+      alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, async () => {
+        userStore.destroy(this.user)
+        this.$destroy()
       })
     }
   }
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 </style>

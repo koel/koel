@@ -19,7 +19,7 @@
         <div class="change-pwd">
           <div class="form-row">
             <p class="help">If you want to change your password, enter it below. <br>
-              Otherwise, just leave the next two fields empty. It’s OK – no one will blame you.</p>
+              Otherwise, just leave the next two fields empty. It’s OK – no one will judge you.</p>
           </div>
 
           <div class="form-row">
@@ -51,6 +51,12 @@
             Confirm before closing Koel
           </label>
         </div>
+        <div class="form-row">
+          <label>
+            <input type="checkbox" name="transcodeOnMobile" v-model="prefs.transcodeOnMobile" @change="savePreference">
+            Convert and play media at 128kbps on mobile
+          </label>
+        </div>
       </div>
 
       <section class="lastfm" >
@@ -62,7 +68,7 @@
               It appears that you have connected your Last.fm account as well – Perfect!
             </span>
             <span v-else>
-              It appears that you haven’t connected to your Last.fm account thought.
+              It appears that you haven’t connected to your Last.fm account though.
             </span>
           </p>
           <p>
@@ -92,8 +98,8 @@
         <div v-else>
           <p>This installation of Koel has no Last.fm integration.
             <span v-if="state.current.is_admin">Visit
-              <a href="https://github.com/phanan/koel/wiki" target="_blank">Koel’s Wiki</a>
-              for a quick how-to. Really, you should do it.
+              <a href="https://koel.phanan.net/docs/#/3rd-party?id=last-fm" target="_blank">Koel’s Wiki</a>
+              for a quick how-to.
             </span>
             <span v-else>Try politely asking your administrator to enable it.</span>
           </p>
@@ -104,10 +110,9 @@
 </template>
 
 <script>
-import $ from 'jquery'
-
+import { each } from 'lodash'
 import { userStore, preferenceStore, sharedStore } from '../../../stores'
-import { forceReloadWindow } from '../../../utils'
+import { forceReloadWindow, $ } from '../../../utils'
 import { http, ls } from '../../../services'
 
 export default {
@@ -126,19 +131,21 @@ export default {
     /**
      * Update the current user's profile.
      */
-    update () {
+    async update () {
+      const passwordFields = Array.from(
+        document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
+      )
       // A little validation put in a small place.
       if ((this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd) {
-        $('#inputProfilePassword, #inputProfileConfirmPassword').addClass('error')
+        each(passwordFields, el => $.addClass(el, 'error'))
         return
       }
 
-      $('#inputProfilePassword, #inputProfileConfirmPassword').removeClass('error')
+      each(passwordFields, el => $.removeClass(el, 'error'))
 
-      userStore.updateProfile(this.pwd).then(() => {
-        this.pwd = ''
-        this.confirmPwd = ''
-      })
+      await userStore.updateProfile(this.pwd)
+      this.pwd = ''
+      this.confirmPwd = ''
     },
 
     /**
@@ -178,7 +185,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

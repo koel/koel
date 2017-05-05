@@ -18,7 +18,8 @@ export const preferenceStore = {
     },
     artistsViewMode: null,
     albumsViewMode: null,
-    selectedPreset: -1
+    selectedPreset: -1,
+    transcodeOnMobile: false
   },
 
   /**
@@ -43,7 +44,7 @@ export const preferenceStore = {
     each(Object.keys(this.state), key => {
       Object.defineProperty(this, key, {
         get: () => this.state[key],
-        set: (value) => {
+        set: value => {
           this.state[key] = value
           this.save()
         },

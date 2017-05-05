@@ -5,10 +5,10 @@
       <view-mode-switch :mode="viewMode" for="artists"/>
     </h1>
 
-    <div class="artists main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
+    <div class="artists main-scroll-wrap" :class="`as-${viewMode}`" @scroll="scrolling">
       <artist-item v-for="item in displayedItems" :artist="item"/>
       <span class="item filler" v-for="n in 6"/>
-      <to-top-button :showing="showBackToTop"/>
+      <to-top-button/>
     </div>
   </section>
 </template>
@@ -57,11 +57,6 @@ export default {
        */
       'koel:ready': () => this.displayMore(),
 
-      'koel:teardown': () => {
-        this.q = ''
-        this.numOfItems = 9
-      },
-
       'filter:changed': q => {
         this.q = q
       }
@@ -70,7 +65,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

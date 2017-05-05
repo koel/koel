@@ -56,7 +56,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

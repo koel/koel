@@ -130,11 +130,11 @@ class Interaction extends Model
      */
     public static function batchUnlike(array $songIds, User $user)
     {
-        foreach (self::whereIn('song_id', $songIds)->whereUserId($user->id)->get() as $interaction) {
+        self::whereIn('song_id', $songIds)->whereUserId($user->id)->get()->each(function ($interaction) {
             $interaction->liked = false;
             $interaction->save();
 
             event(new SongLikeToggled($interaction));
-        }
+        });
     }
 }

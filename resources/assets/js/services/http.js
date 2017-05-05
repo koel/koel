@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import axios from 'axios'
 import NProgress from 'nprogress'
 
 import { event } from '../utils'
@@ -9,15 +9,11 @@ import { ls } from '../services'
  */
 export const http = {
   request (method, url, data, successCb = null, errorCb = null) {
-    return $.ajax({
+    axios.request({
+      url,
       data,
-      dataType: 'json',
-      url: `/api/${url}`,
-      method: method.toUpperCase(),
-      headers: {
-        Authorization: `Bearer ${ls.get('jwt-token')}`
-      }
-    }).done(successCb).fail(errorCb)
+      method: method.toLowerCase()
+    }).then(successCb).catch(errorCb)
   },
 
   get (url, successCb = null, errorCb = null) {
@@ -40,25 +36,37 @@ export const http = {
    * Init the service.
    */
   init () {
-    $(document).ajaxComplete((e, r, settings) => {
+    axios.defaults.baseURL = '/api'
+
+    // Intercept the request to make sure the token is injected into the header.
+    axios.interceptors.request.use(config => {
+      config.headers.Authorization = `Bearer ${ls.get('jwt-token')}`
+      return config
+    })
+
+    // Intercept the response and…
+    axios.interceptors.response.use(response => {
       NProgress.done()
 
-      if (r.status === 400 || r.status === 401) {
-        if (!(settings.method === 'POST' && /\/api\/me\/?$/.test(settings.url))) {
-          // This is not a failed login. Log out then.
-          event.emit('logout')
-          return
-        }
-      }
-
-      const token = r.getResponseHeader('Authorization')
+      // …get the token from the header or response data if exists, and save it.
+      const token = response.headers['Authorization'] || response.data['token']
       if (token) {
         ls.set('jwt-token', token)
       }
 
-      if (r.responseJSON && r.responseJSON.token && r.responseJSON.token.length > 10) {
-        ls.set('jwt-token', r.responseJSON.token)
+      return response
+    }, error => {
+      NProgress.done()
+      // Also, if we receive a Bad Request / Unauthorized error
+      if (error.response.status === 400 || error.response.status === 401) {
+        // and we're not trying to login
+        if (!(error.config.method === 'post' && /\/api\/me\/?$/.test(error.config.url))) {
+          // the token must have expired. Log out.
+          event.emit('logout')
+        }
       }
+
+      return Promise.reject(error)
     })
   }
 }

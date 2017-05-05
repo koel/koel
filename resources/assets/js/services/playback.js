@@ -1,7 +1,7 @@
 import { shuffle, orderBy } from 'lodash'
-import $ from 'jquery'
 import plyr from 'plyr'
 import Vue from 'vue'
+import isMobile from 'ismobilejs'
 
 import { event } from '../utils'
 import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '../stores'
@@ -10,7 +10,7 @@ import router from '../router'
 
 export const playback = {
   player: null,
-  $volumeInput: null,
+  volumeInput: null,
   repeatModes: ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE'],
   initialized: false,
 
@@ -27,16 +27,13 @@ export const playback = {
       controls: []
     })[0]
 
-    this.audio = $('audio')
-
-    this.$volumeInput = $('#volumeRange')
+    this.audio = document.querySelector('audio')
+    this.volumeInput = document.getElementById('volumeRange')
 
     /**
      * Listen to 'error' event on the audio player and play the next song if any.
      */
-    document.querySelector('.plyr').addEventListener('error', e => {
-      this.playNext()
-    }, true)
+    document.querySelector('.plyr').addEventListener('error', () => this.playNext(), true)
 
     /**
      * Listen to 'ended' event on the audio player and play the next song in the queue.
@@ -48,7 +45,6 @@ export const playback = {
 
       if (preferences.repeatMode === 'REPEAT_ONE') {
         this.restart()
-
         return
       }
 
@@ -56,22 +52,22 @@ export const playback = {
     })
 
     /**
-     * Attempt to preload the next song if the current song is about to end.
+     * Attempt to preload the next song.
      */
-    document.querySelector('.plyr').addEventListener('timeupdate', e => {
-      if (!this.player.media.duration || this.player.media.currentTime + 10 < this.player.media.duration) {
-        return
-      }
-
-      // The current song has only 10 seconds left to play.
+    document.querySelector('.plyr').addEventListener('canplaythrough', e => {
       const nextSong = queueStore.next
-      if (!nextSong || nextSong.preloaded) {
+      if (!nextSong || nextSong.preloaded || (isMobile.any && preferences.transcodeOnMobile)) {
+        // Don't preload if
+        // - there's no next song
+        // - next song has already been preloaded
+        // - we're on mobile and "transcode" option is checked
         return
       }
 
-      const $preloader = $('<audio>')
-      $preloader.attr('src', songStore.getSourceUrl(nextSong))
-
+      const audio = document.createElement('audio')
+      audio.setAttribute('src', songStore.getSourceUrl(nextSong))
+      audio.setAttribute('preload', 'auto')
+      audio.load()
       nextSong.preloaded = true
     })
 
@@ -80,15 +76,20 @@ export const playback = {
      * When user drags the volume control, this event will be triggered, and we
      * update the volume on the plyr object.
      */
-    this.$volumeInput.on('input', e => {
-      this.setVolume($(e.target).val())
-    })
+    this.volumeInput.addEventListener('input', e => this.setVolume(e.target.value))
 
     // On init, set the volume to the value found in the local storage.
     this.setVolume(preferences.volume)
 
     // Init the equalizer if supported.
     event.emit('equalizer:init', this.player.media)
+
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', () => this.resume())
+      navigator.mediaSession.setActionHandler('pause', () => this.pause())
+      navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
+      navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
+    }
 
     this.initialized = true
   },
@@ -117,15 +118,15 @@ export const playback = {
     // Set the song as the current song
     queueStore.current = song
 
-    // Add it into the "recent" list
-    songStore.addRecent(song)
+    // Add it into the "recently played" list
+    songStore.addRecentlyPlayed(song)
 
     // Manually set the `src` attribute of the audio to prevent plyr from resetting
     // the audio media object and cause our equalizer to malfunction.
     this.player.media.src = songStore.getSourceUrl(song)
 
-    $('title').text(`${song.title} ♫ ${config.appTitle}`)
-    $('.plyr audio').attr('title', `${song.artist.name} - ${song.title}`)
+    document.title = `${song.title} ♫ ${config.appTitle}`
+    document.querySelector('.plyr audio').setAttribute('title', `${song.artist.name} - ${song.title}`)
 
     // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
     this.restart()
@@ -166,6 +167,18 @@ export const playback = {
     } catch (e) {
       // Notification fails.
       // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+    }
+
+    if ('mediaSession' in navigator) {
+      /* global MediaMetadata */
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: song.title,
+        artist: song.artist.name,
+        album: song.album.name,
+        artwork: [
+          { src: song.album.cover, sizes: '256x256', type: 'image/png' }
+        ]
+      })
     }
   },
 
@@ -210,13 +223,13 @@ export const playback = {
    * The selected mode will be stored into local storage as well.
    */
   changeRepeatMode () {
-    let idx = this.repeatModes.indexOf(preferences.repeatMode) + 1
+    let index = this.repeatModes.indexOf(preferences.repeatMode) + 1
 
-    if (idx >= this.repeatModes.length) {
-      idx = 0
+    if (index >= this.repeatModes.length) {
+      index = 0
     }
 
-    preferences.repeatMode = this.repeatModes[idx]
+    preferences.repeatMode = this.repeatModes[index]
   },
 
   /**
@@ -273,7 +286,7 @@ export const playback = {
       preferences.volume = volume
     }
 
-    this.$volumeInput.val(volume)
+    this.volumeInput.value = volume
   },
 
   /**
@@ -299,7 +312,7 @@ export const playback = {
    * Completely stop playback.
    */
   stop () {
-    $('title').text(config.appTitle)
+    document.title = config.appTitle
     this.player.pause()
     this.player.seek(0)
 
@@ -377,6 +390,7 @@ export const playback = {
   playAllByArtist (artist, shuffled = true) {
     if (!shuffled) {
       this.queueAndPlay(orderBy(artist.songs, 'album_id', 'track'))
+      return
     }
 
     this.queueAndPlay(artist.songs, true)

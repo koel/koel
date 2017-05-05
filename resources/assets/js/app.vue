@@ -24,7 +24,6 @@
 
 <script>
 import Vue from 'vue'
-import $ from 'jquery'
 
 import siteHeader from './components/site-header/index.vue'
 import siteFooter from './components/site-footer/index.vue'
@@ -33,7 +32,7 @@ import overlay from './components/shared/overlay.vue'
 import loginForm from './components/auth/login-form.vue'
 import editSongsForm from './components/modals/edit-songs-form.vue'
 
-import { event, showOverlay, hideOverlay, forceReloadWindow } from './utils'
+import { event, showOverlay, hideOverlay, forceReloadWindow, $ } from './utils'
 import { sharedStore, userStore, preferenceStore as preferences } from './stores'
 import { playback, ls } from './services'
 import { focusDirective, clickawayDirective } from './directives'
@@ -57,23 +56,28 @@ export default {
     }
 
     // Create the element to be the ghost drag image.
-    $('<div id="dragGhost"></div>').appendTo('body')
+    const dragGhost = document.createElement('div')
+    dragGhost.id = 'dragGhost'
+    document.body.appendChild(dragGhost)
 
     // And the textarea to copy stuff
-    $('<textarea id="copyArea"></textarea>').appendTo('body')
+    const copyArea = document.createElement('textarea')
+    copyArea.id = 'copyArea'
+    document.body.appendChild(copyArea)
 
     // Add an ugly mac/non-mac class for OS-targeting styles.
     // I'm crying inside.
-    $('html').addClass(navigator.userAgent.indexOf('Mac') !== -1 ? 'mac' : 'non-mac')
+    $.addClass(document.documentElement, navigator.userAgent.indexOf('Mac') !== -1 ? 'mac' : 'non-mac')
   },
 
   methods: {
-    init () {
+    async init () {
       showOverlay()
 
       // Make the most important HTTP request to get all necessary data from the server.
       // Afterwards, init all mandatory stores and services.
-      sharedStore.init().then(() => {
+      try {
+        await sharedStore.init()
         playback.init()
         hideOverlay()
 
@@ -93,9 +97,9 @@ export default {
 
         // Let all other components know we're ready.
         event.emit('koel:ready')
-      }).catch(() => {
+      } catch (err) {
         this.authenticated = false
-      })
+      }
     },
 
     /**
@@ -104,12 +108,14 @@ export default {
      * @param {Object} e The keydown event
      */
     togglePlayback (e) {
-      if ($(e.target).is('input,textarea,button,select')) {
+      if ($.is(e.target, 'input,textarea,button,select')) {
         return true
       }
 
-      // Ah... Good ol' jQuery. Whatever play/pause control is there, we blindly click it.
-      $('#mainFooter .play:visible, #mainFooter .pause:visible').click()
+      // Whatever play/pause control is there, we blindly click it.
+      const play = document.querySelector('#mainFooter .play')
+      play ? play.click() : document.querySelector('#mainFooter .pause').click()
+
       e.preventDefault()
     },
 
@@ -119,7 +125,7 @@ export default {
      * @param {Object} e The keydown event
      */
     playPrev (e) {
-      if ($(e.target).is('input,textarea')) {
+      if ($.is(e.target, 'input,textarea')) {
         return true
       }
 
@@ -133,7 +139,7 @@ export default {
      * @param {Object} e The keydown event
      */
     playNext (e) {
-      if ($(e.target).is('input,textarea')) {
+      if ($.is(e.target, 'input,textarea')) {
         return true
       }
 
@@ -147,11 +153,13 @@ export default {
      * @param {Object} e The keydown event
      */
     search (e) {
-      if ($(e.target).is('input,textarea') || e.metaKey || e.ctrlKey) {
+      if ($.is(e.target, 'input,textarea') || e.metaKey || e.ctrlKey) {
         return true
       }
 
-      $('#searchForm input[type="search"]').focus().select()
+      const selectBox = document.querySelector('#searchForm input[type="search"]')
+      selectBox.focus()
+      selectBox.select()
       e.preventDefault()
     },
 
@@ -189,11 +197,10 @@ export default {
       /**
        * Log the current user out and reset the application state.
        */
-      logout () {
-        userStore.logout().then((r) => {
-          ls.remove('jwt-token')
-          forceReloadWindow()
-        })
+      async logout () {
+        await userStore.logout()
+        ls.remove('jwt-token')
+        forceReloadWindow()
       },
 
       /**
@@ -222,7 +229,7 @@ Vue.directive('koel-focus', focusDirective)
 Vue.directive('koel-clickaway', clickawayDirective)
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "resources/assets/sass/partials/_vars.scss";
 @import "resources/assets/sass/partials/_mixins.scss";
 @import "resources/assets/sass/partials/_shared.scss";

@@ -20,25 +20,24 @@ export default {
   },
 
   methods: {
-    login () {
-      this.failed = false
-
-      userStore.login(this.email, this.password).then(() => {
+    async login () {
+      try {
+        await userStore.login(this.email, this.password)
         this.failed = false
 
         // Reset the password so that the next login will have this field empty.
         this.password = ''
 
         event.emit('user:loggedin')
-      }).catch(() => {
+      } catch (err) {
         this.failed = true
-      })
+      }
     }
   }
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 @import "../../../sass/partials/_shared.scss";

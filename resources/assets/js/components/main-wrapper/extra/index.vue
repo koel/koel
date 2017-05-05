@@ -17,12 +17,12 @@
         <lyrics :song="song" ref="lyrics" v-show="currentView === 'lyrics'"/>
         <artist-info v-if="song.artist.id"
           :artist="song.artist"
-          :mode="'sidebar'"
+          mode="sidebar"
           ref="artist-info"
           v-show="currentView === 'artistInfo'"/>
         <album-info v-if="song.album.id"
           :album="song.album"
-          :mode="'sidebar'"
+          mode="sidebar"
           ref="album-info"
           v-show="currentView === 'albumInfo'"/>
         <youtube v-if="sharedState.useYouTube"
@@ -36,9 +36,8 @@
 
 <script>
 import isMobile from 'ismobilejs'
-import $ from 'jquery'
 
-import { event } from '../../../utils'
+import { event, $ } from '../../../utils'
 import { sharedStore, songStore, preferenceStore as preferences } from '../../../stores'
 import { songInfo } from '../../../services'
 
@@ -68,9 +67,9 @@ export default {
      */
     'state.showExtraPanel' (newVal) {
       if (newVal && !isMobile.any) {
-        $('html').addClass('with-extra-panel')
+        $.addClass(document.documentElement, 'with-extra-panel')
       } else {
-        $('html').removeClass('with-extra-panel')
+        $.removeClass(document.documentElement, 'with-extra-panel')
       }
     }
   },
@@ -78,7 +77,7 @@ export default {
   mounted () {
     // On ready, add 'with-extra-panel' class.
     if (!isMobile.any) {
-      $('html').addClass('with-extra-panel')
+      $.addClass(document.documentElement, 'with-extra-panel')
     }
 
     if (isMobile.phone) {
@@ -107,19 +106,15 @@ export default {
         }
       },
 
-      'song:played': song => {
-        songInfo.fetch(song).then(song => {
-          this.song = song
-        })
-      },
-
-      'koel:teardown': () => this.resetState()
+      'song:played': async song => {
+        this.song = await songInfo.fetch(song)
+      }
     })
   }
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

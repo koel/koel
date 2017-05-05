@@ -105,7 +105,9 @@ export const userStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('me', { email, password }, data => resolve(data), r => reject(r))
+      http.post('me', { email, password }, ({ data }) => {
+        resolve(data)
+      }, error => reject(error))
     })
   },
 
@@ -114,7 +116,9 @@ export const userStore = {
    */
   logout () {
     return new Promise((resolve, reject) => {
-      http.delete('me', {}, data => resolve(data), r => reject(r))
+      http.delete('me', {}, ({ data }) => {
+        resolve(data)
+      }, error => reject(error))
     })
   },
 
@@ -136,7 +140,7 @@ export const userStore = {
         alerts.success('Profile updated.')
         resolve(this.current)
       },
-      r => reject(r))
+      error => reject(error))
     })
   },
 
@@ -151,12 +155,12 @@ export const userStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('user', { name, email, password }, user => {
+      http.post('user', { name, email, password }, ({ data: user }) => {
         this.setAvatar(user)
         this.all.unshift(user)
         alerts.success(`New user &quot;${name}&quot; created.`)
         resolve(user)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   },
 
@@ -173,13 +177,11 @@ export const userStore = {
 
     return new Promise((resolve, reject) => {
       http.put(`user/${user.id}`, { name, email, password }, () => {
-        this.setAvatar(user)
-        user.name = name
-        user.email = email
-        user.password = ''
+        this.setAvatar(user);
+        [user.name, user.email, user.password] = [name, email, '']
         alerts.success('User profile updated.')
         resolve(user)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   },
 
@@ -192,7 +194,7 @@ export const userStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.delete(`user/${user.id}`, {}, data => {
+      http.delete(`user/${user.id}`, {}, ({ data }) => {
         this.all = without(this.all, user)
         alerts.success(`User &quot;${user.name}&quot; deleted.`)
 
@@ -219,7 +221,7 @@ export const userStore = {
          * Brian May enters the stage.
          */
         resolve(data)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   }
 }

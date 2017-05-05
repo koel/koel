@@ -1,7 +1,8 @@
 <template>
   <div id="youtube-extra-wrapper">
     <template v-if="videos && videos.length">
-      <a class="video" v-for="video in videos" href @click.prevent="playYouTube(video.id.videoId)">
+      <a class="video" v-for="video in videos" :href="`https://youtu.be/${video.id.videoId}`"
+        @click.prevent="playYouTube(video.id.videoId)">
         <div class="thumb">
           <img :src="video.snippet.thumbnails.default.url" width="90">
         </div>
@@ -45,18 +46,17 @@ export default {
     /**
      * Load more videos.
      */
-    loadMore () {
+    async loadMore () {
       this.loading = true
-      youtubeService.searchVideosRelatedToSong(this.song, () => {
-        this.videos = this.song.youtube.items
-        this.loading = false
-      })
+      await youtubeService.searchVideosRelatedToSong(this.song)
+      this.videos = this.song.youtube.items
+      this.loading = false
     }
   }
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 #youtube-extra-wrapper {
   overflow-x: hidden;
 

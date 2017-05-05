@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.6
   - 7.0
 
 env:
@@ -26,10 +25,11 @@ install:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - npm install
+  - npm install -g yarn
+  - yarn
   - composer self-update
-  - composer install --prefer-source --no-interaction
+  - composer install --prefer-dist --no-interaction
 
 script:
   - phpunit
-  - npm test
+  - yarn test

@@ -26,7 +26,7 @@
         <button class="btn btn-white btn-cancel" @click.prevent="cancel">Cancel</button>
       </footer>
     </form>
-  </overlay>
+  </div>
 </template>
 
 <script>
@@ -50,12 +50,11 @@ export default {
       this.newUser = clone(userStore.stub)
     },
 
-    submit () {
+    async submit () {
       this.loading = true
-      userStore.store(this.newUser.name, this.newUser.email, this.newUser.password).then(() => {
-        this.loading = false
-        this.newUser = null
-      })
+      await userStore.store(this.newUser.name, this.newUser.email, this.newUser.password)
+      this.loading = false
+      this.newUser = null
     },
 
     cancel () {

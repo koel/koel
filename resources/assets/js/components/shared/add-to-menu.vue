@@ -47,9 +47,7 @@ export default {
 
   watch: {
     songs () {
-      if (!this.songs.length) {
-        this.close()
-      }
+      this.songs.length || this.close()
     }
   },
 
@@ -58,18 +56,17 @@ export default {
      * Save the selected songs as a playlist.
      * As of current we don't have selective save.
      */
-    createNewPlaylistFromSongs () {
+    async createNewPlaylistFromSongs () {
       this.newPlaylistName = this.newPlaylistName.trim()
 
       if (!this.newPlaylistName) {
         return
       }
 
-      playlistStore.store(this.newPlaylistName, this.songs).then(p => {
-        this.newPlaylistName = ''
-        // Activate the new playlist right away
-        this.$nextTick(() => router.go(`playlist/${p.id}`))
-      })
+      const playlist = await playlistStore.store(this.newPlaylistName, this.songs)
+      this.newPlaylistName = ''
+      // Activate the new playlist right away
+      this.$nextTick(() => router.go(`playlist/${playlist.id}`))
 
       this.close()
     },
@@ -81,7 +78,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

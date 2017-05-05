@@ -1,7 +1,9 @@
 require('chai').should()
 
 import { userStore } from '../../stores'
-import data from '../blobs/users'
+import data from '../blobs/data'
+
+const { users } = data
 
 describe('stores/user', () => {
   beforeEach(() => userStore.init(data.users, data.currentUser))

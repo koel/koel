@@ -25,6 +25,7 @@ class EventServiceProvider extends ServiceProvider
 
         'App\Events\LibraryChanged' => [
             'App\Listeners\TidyLibrary',
+            'App\Listeners\ClearMediaCache',
         ],
     ];
 

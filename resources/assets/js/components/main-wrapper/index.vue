@@ -16,7 +16,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

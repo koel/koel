@@ -5,7 +5,8 @@
       @input="filter"
       placeholder="Search"
       v-model="q"
-      v-koel-focus="showing">
+      v-koel-focus
+    >
   </div>
 </template>
 
@@ -38,16 +39,11 @@ export default {
     event.on('search:toggle', () => {
       this.showing = !this.showing
     })
-
-    event.on('koel:teardown', () => {
-      this.q = ''
-      this.filter()
-    })
   }
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

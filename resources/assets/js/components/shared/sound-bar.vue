@@ -45,7 +45,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 .bars {
   width: 28px;
   height: 13px;

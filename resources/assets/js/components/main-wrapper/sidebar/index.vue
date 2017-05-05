@@ -11,7 +11,8 @@
           <a :class="['queue', currentView == 'queue' ? 'active' : '']"
             href="/#!/queue"
             @dragleave="removeDroppableState"
-            @dragover.prevent="allowDrop"
+            @dragenter.prevent="allowDrop"
+            @dragover.prevent
             @drop.stop.prevent="handleDrop">Current Queue</a>
         </li>
         <li>
@@ -56,9 +57,8 @@
 
 <script>
 import isMobile from 'ismobilejs'
-import $ from 'jquery'
 
-import { event } from '../../../utils'
+import { event, $ } from '../../../utils'
 import { sharedStore, userStore, songStore, queueStore } from '../../../stores'
 import playlists from './playlists.vue'
 
@@ -76,7 +76,7 @@ export default {
 
   computed: {
     latestVersionUrl () {
-      return 'https://github.com/phanan/koel/releases/tag/' + this.sharedState.latestVersion
+      return `https://github.com/phanan/koel/releases/tag/${this.sharedState.latestVersion}`
     }
   },
 
@@ -87,7 +87,7 @@ export default {
      * @param  {Object} e The dragleave event.
      */
     removeDroppableState (e) {
-      $(e.target).removeClass('droppable')
+      $.removeClass(e.target, 'droppable')
     },
 
     /**
@@ -96,7 +96,7 @@ export default {
      * @param  {Object} e The dragover event.
      */
     allowDrop (e) {
-      $(e.target).addClass('droppable')
+      $.addClass(e.target, 'droppable')
       e.dataTransfer.dropEffect = 'move'
 
       return false
@@ -149,7 +149,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 
@@ -202,6 +202,11 @@ export default {
         border-left-color: $colorHighlight;
         color: $colorLinkHovered;
         background: rgba(255, 255, 255, .05);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
+      }
+
+      &:active {
+        opacity: .5;
       }
 
       &:hover {
@@ -262,7 +267,6 @@ export default {
       opacity: .7;
     }
   }
-
 
   @media only screen and (max-width : 667px) {
     position: fixed;

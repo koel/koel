@@ -38,7 +38,8 @@
 </template>
 
 <script>
-import { playback } from '../../../services'
+import { sharedStore } from '../../../stores'
+import { playback, ls } from '../../../services'
 import trackListItem from '../../shared/track-list-item.vue'
 
 export default {
@@ -47,11 +48,16 @@ export default {
 
   data () {
     return {
-      showingFullWiki: false
+      showingFullWiki: false,
+      useiTunes: sharedStore.state.useiTunes
     }
   },
 
   watch: {
+    /**
+     * Whenever a new album is loaded into this component, we reset the "full wiki" state.
+     * @return {Boolean}
+     */
     album () {
       this.showingFullWiki = false
     }
@@ -64,6 +70,10 @@ export default {
 
     showFull () {
       return this.mode === 'full' || this.showingFullWiki
+    },
+
+    iTunesUrl () {
+      return `/api/itunes/album/${this.album.id}&jwt-token=${ls.get('jwt-token')}`
     }
   },
 
@@ -78,7 +88,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

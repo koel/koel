@@ -48,7 +48,7 @@ export function hideOverlay () {
  */
 export function copyText (txt) {
   const copyArea = document.querySelector('#copyArea')
-  copyArea.style.top = (window.pageYOffset || document.documentElement.scrollTop) + 'px'
+  copyArea.style.top = `${window.pageYOffset || document.documentElement.scrollTop}px`
   copyArea.value = txt
   select(copyArea)
   document.execCommand('copy')

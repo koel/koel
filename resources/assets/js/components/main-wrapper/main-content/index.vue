@@ -68,7 +68,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 
@@ -110,6 +110,7 @@ export default {
     align-content: stretch;
     display: flex;
     line-height: normal;
+    background: rgba(0, 0, 0, .1);
 
     span:first-child {
       flex: 1;
@@ -146,7 +147,7 @@ export default {
     bottom: -20px;
     filter: blur(20px);
     opacity: .07;
-    z-index: 0;
+    z-index: 2;
     overflow: hidden;
     background-size: cover;
     background-position: center;

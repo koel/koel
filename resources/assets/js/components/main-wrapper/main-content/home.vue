@@ -28,7 +28,7 @@
           </ol>
 
           <p class="none" v-show="!recentSongs.length">
-            Your most-recent songs in this session will be displayed here.<br />
+            Your recently played songs will be displayed here.<br />
             Start listening!
           </p>
         </section>
@@ -53,13 +53,13 @@
       <section class="top-artists" v-show="top.artists.length">
         <h1>Top Artists</h1>
 
-        <div class="wrapper" :class="'as-'+preferences.artistsViewMode">
+        <div class="wrapper" :class="`as-${preferences.artistsViewMode}`">
           <artist-item v-for="artist in top.artists" :artist="artist"/>
           <span class="item filler" v-for="n in 3"/>
         </div>
       </section>
 
-      <section class="top-albums" :class="'as-'+preferences.albumsViewMode" v-show="top.albums.length">
+      <section class="top-albums" :class="`as-${preferences.albumsViewMode}`" v-show="top.albums.length">
         <h1>Top Albums</h1>
 
         <div class="wrapper">
@@ -68,7 +68,7 @@
         </div>
       </section>
 
-      <to-top-button :showing="showBackToTop"/>
+      <to-top-button/>
     </div>
   </section>
 </template>
@@ -140,7 +140,7 @@ export default {
       this.top.artists = artistStore.getMostPlayed(6)
       this.recentlyAdded.albums = albumStore.getRecentlyAdded(6)
       this.recentlyAdded.songs = songStore.getRecentlyAdded(10)
-      this.recentSongs = songStore.getRecent(7)
+      this.recentSongs = songStore.recentlyPlayed
     }
   },
 
@@ -154,7 +154,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

@@ -1,5 +1,4 @@
-import $ from 'jquery'
-import { map } from 'lodash'
+import { reduce } from 'lodash'
 
 import { playlistStore, favoriteStore } from '../stores'
 import { ls } from '.'
@@ -12,10 +11,8 @@ export const download = {
    */
   fromSongs (songs) {
     songs = [].concat(songs)
-    const ids = map(songs, 'id')
-    const params = $.param({ songs: ids })
-
-    return this.trigger(`songs?${params}`)
+    const query = reduce(songs, (q, song) => `songs[]=${song.id}&${q}`, '')
+    return this.trigger(`songs?${query}`)
   },
 
   /**
@@ -46,7 +43,6 @@ export const download = {
    */
   fromPlaylist (playlist) {
     if (!playlistStore.getSongs(playlist).length) {
-      console.warn('Empty playlist.')
       return
     }
 
@@ -73,8 +69,9 @@ export const download = {
    */
   trigger (uri) {
     const sep = uri.indexOf('?') === -1 ? '?' : '&'
-    const frameId = `downloader${Date.now()}`
-    $(`<iframe id="${frameId}" style="display:none"></iframe`).appendTo('body')
-    document.getElementById(frameId).src = `/api/download/${uri}${sep}jwt-token=${ls.get('jwt-token')}`
+    const iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
+    iframe.setAttribute('src', `/api/download/${uri}${sep}jwt-token=${ls.get('jwt-token')}`)
+    document.body.appendChild(iframe)
   }
 }

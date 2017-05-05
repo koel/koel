@@ -1,0 +1,38 @@
+{
+  "resultCount": 1,
+  "results": [
+    {
+      "wrapperType": "track",
+      "kind": "song",
+      "artistId": 163805,
+      "collectionId": 265611220,
+      "trackId": 265611396,
+      "artistName": "Skid Row",
+      "collectionName": "40 Seasons - The Best of Skid Row",
+      "trackName": "I Remember You",
+      "collectionCensoredName": "40 Seasons - The Best of Skid Row",
+      "trackCensoredName": "I Remember You",
+      "artistViewUrl": "https://itunes.apple.com/us/artist/skid-row/id163805?uo=4",
+      "collectionViewUrl": "https://itunes.apple.com/us/album/i-remember-you/id265611220?i=265611396&uo=4",
+      "trackViewUrl": "https://itunes.apple.com/us/album/i-remember-you/id265611220?i=265611396&uo=4",
+      "previewUrl": "http://audio.itunes.apple.com/apple-assets-us-std-000001/AudioPreview71/v4/fb/72/5d/fb725d9b-371f-1fe2-ba47-798f6058d4e0/mzaf_5805178457647444594.plus.aac.p.m4a",
+      "artworkUrl30": "http://is3.mzstatic.com/image/thumb/Music/v4/b3/5e/28/b35e28a2-2485-3124-721c-1948a9b99220/source/30x30bb.jpg",
+      "artworkUrl60": "http://is3.mzstatic.com/image/thumb/Music/v4/b3/5e/28/b35e28a2-2485-3124-721c-1948a9b99220/source/60x60bb.jpg",
+      "artworkUrl100": "http://is3.mzstatic.com/image/thumb/Music/v4/b3/5e/28/b35e28a2-2485-3124-721c-1948a9b99220/source/100x100bb.jpg",
+      "collectionPrice": 11.99,
+      "trackPrice": 1.29,
+      "releaseDate": "1998-11-03T08:00:00Z",
+      "collectionExplicitness": "notExplicit",
+      "trackExplicitness": "notExplicit",
+      "discCount": 1,
+      "discNumber": 1,
+      "trackCount": 16,
+      "trackNumber": 4,
+      "trackTimeMillis": 314027,
+      "country": "USA",
+      "currency": "USD",
+      "primaryGenreName": "Rock",
+      "isStreamable": true
+    }
+  ]
+}

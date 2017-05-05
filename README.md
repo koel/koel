@@ -8,9 +8,7 @@
 
 ## Install and Upgrade Guide
 
-For system requirements, installation guides, and troubleshooting, head over to [Wiki](https://github.com/phanan/koel/wiki).
-
-If you are upgrading, see [Releases](https://github.com/phanan/koel/releases) for guides corresponding to your version.
+For system requirements, installation/upgrade guides, troubleshooting etc., head over to the [Official Documentation](http://koel.phanan.net/docs).
 
 ## Native App
 

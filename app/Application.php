@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Cache;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Application as IlluminateApplication;
@@ -19,7 +18,7 @@ class Application extends IlluminateApplication
      *
      * @link https://github.com/phanan/koel/releases
      */
-    const VERSION = 'v3.4.0';
+    const KOEL_VERSION = 'v3.6.2';
 
     /**
      * We have merged public path and base path.
@@ -46,14 +45,16 @@ class Application extends IlluminateApplication
     {
         static $manifest = null;
 
-        $manifestFile = $manifestFile ?: $this->publicPath().'/public/build/rev-manifest.json';
+        $manifestFile = $manifestFile ?: public_path('public/mix-manifest.json');
 
         if ($manifest === null) {
             $manifest = json_decode(file_get_contents($manifestFile), true);
         }
 
         if (isset($manifest[$file])) {
-            return $this->staticUrl("public/build/{$manifest[$file]}");
+            return file_exists(public_path('public/hot'))
+                    ? "http://localhost:8080{$manifest[$file]}"
+                    : $this->staticUrl("public{$manifest[$file]}");
         }
 
         throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
@@ -84,7 +85,7 @@ class Application extends IlluminateApplication
      */
     public function getLatestVersion(Client $client = null)
     {
-        if ($v = Cache::get('latestKoelVersion')) {
+        if ($v = cache('latestKoelVersion')) {
             return $v;
         }
 
@@ -93,13 +94,13 @@ class Application extends IlluminateApplication
         try {
             $v = json_decode($client->get('https://api.github.com/repos/phanan/koel/tags')->getBody())[0]->name;
             // Cache for one day
-            Cache::put('latestKoelVersion', $v, 1 * 24 * 60);
+            cache(['latestKoelVersion' => $v], 1 * 24 * 60);
 
             return $v;
         } catch (Exception $e) {
             Log::error($e);
 
-            return self::VERSION;
+            return self::KOEL_VERSION;
         }
     }
 }

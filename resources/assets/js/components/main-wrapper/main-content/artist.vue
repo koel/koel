@@ -2,16 +2,16 @@
   <section id="artistWrapper">
     <h1 class="heading">
       <span class="overview">
-        <img :src="artist.image" width="64" height="64" class="cover">
+        <img :src="image" width="64" height="64" class="cover">
         {{ artist.name }}
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-        <span class="meta" v-show="meta.songCount">
+        <span class="meta" v-show="artist.songs.length">
           {{ artist.albums.length | pluralize('album') }}
           •
-          {{ meta.songCount | pluralize('song') }}
+          {{ artist.songs.length | pluralize('song') }}
           •
-          {{ meta.totalLength }}
+          {{ fmtLength }}
 
           <template v-if="sharedState.useLastfm">
             •
@@ -36,13 +36,13 @@
       />
     </h1>
 
-    <song-list :items="artist.songs" type="artist"/>
+    <song-list :items="artist.songs" type="artist" ref="songList"/>
 
     <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
       <a href class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
       <div class="inner">
         <div class="loading" v-if="info.loading"><sound-bar/></div>
-        <artist-info :artist="artist" :mode="'full'" v-else/>
+        <artist-info :artist="artist" mode="full" v-else/>
       </div>
     </section>
   </section>
@@ -54,12 +54,13 @@ import { sharedStore, artistStore } from '../../../stores'
 import { playback, download, artistInfo as artistInfoService } from '../../../services'
 import router from '../../../router'
 import hasSongList from '../../../mixins/has-song-list'
+import artistAttributes from '../../../mixins/artist-attributes'
 import artistInfo from '../extra/artist-info.vue'
 import soundBar from '../../shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--artist',
-  mixins: [hasSongList],
+  mixins: [hasSongList, artistAttributes],
   components: { artistInfo, soundBar },
   filters: { pluralize },
 
@@ -100,6 +101,10 @@ export default {
       if (view === 'artist') {
         this.info.showing = false
         this.artist = artist
+        // #530
+        this.$nextTick(() => {
+          this.$refs.songList.sort()
+        })
       }
     })
   },
@@ -107,8 +112,9 @@ export default {
   methods: {
     /**
      * Shuffle the songs by the current artist.
+     * Overriding the mixin.
      */
-    shuffle () {
+    shuffleAll () {
       playback.queueAndPlay(this.artist.songs, true)
     },
 
@@ -119,13 +125,12 @@ export default {
       download.fromArtist(this.artist)
     },
 
-    showInfo () {
+    async showInfo () {
       this.info.showing = true
       if (!this.artist.info) {
         this.info.loading = true
-        artistInfoService.fetch(this.artist).then(() => {
-          this.info.loading = false
-        })
+        await artistInfoService.fetch(this.artist)
+        this.info.loading = false
       } else {
         this.info.loading = false
       }
@@ -134,7 +139,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

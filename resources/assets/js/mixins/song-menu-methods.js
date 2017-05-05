@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import { each } from 'lodash'
 
 import { queueStore, playlistStore, favoriteStore } from '../stores'
 
@@ -24,7 +24,9 @@ export default {
      * Close all submenus.
      */
     close () {
-      $(this.$el).find('.submenu').hide()
+      each(Array.from(this.$el.querySelectorAll('.submenu')), el => {
+        el.style.display = 'none'
+      })
       this.shown = false
     },
 

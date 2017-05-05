@@ -18,7 +18,7 @@ class SettingController extends Controller
     public function store(SettingRequest $request)
     {
         // For right now there's only one setting to be saved
-        Setting::set('media_path', rtrim(trim($request->input('media_path')), '/'));
+        Setting::set('media_path', rtrim(trim($request->media_path), '/'));
 
         // In a next version we should opt for a "MediaPathChanged" event,
         // but let's just do this async now.

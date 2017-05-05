@@ -7,6 +7,7 @@ use DB;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use MediaCache;
 
 class Init extends Command
 {
@@ -42,7 +43,7 @@ class Init extends Command
 
         $this->comment('Attempting to install or upgrade Koel.');
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
-        $this->info('📙  https://github.com/phanan/koel/wiki'.PHP_EOL);
+        $this->info('📙  '.config('koel.misc.docs_url').PHP_EOL);
 
         if (!config('app.key')) {
             $this->info('Generating app key');
@@ -60,6 +61,8 @@ class Init extends Command
 
         $this->info('Migrating database');
         Artisan::call('migrate', ['--force' => true]);
+        // Clean the media cache, just in case we did any media-related migration
+        MediaCache::clear();
 
         if (!User::count()) {
             $this->info('Seeding initial data');
@@ -68,13 +71,12 @@ class Init extends Command
             $this->comment('Data seeded -- skipping');
         }
 
-        $this->info('Executing yarn install, gulp and whatnot');
+        $this->info('Compiling front-end stuff');
         system('yarn install');
 
         $this->comment(PHP_EOL.'🎆  Success! You can now run Koel from localhost with `php artisan serve`.');
         $this->comment('Again, for more configuration guidance, refer to');
-        $this->info('📙  https://github.com/phanan/koel/wiki.');
-        $this->comment('WIKI ROCKS WIKI RULES.');
-        $this->comment('KTHXBYE.');
+        $this->info('📙  '.config('koel.misc.docs_url'));
+        $this->comment('Thanks for using Koel. You rock!');
     }
 }

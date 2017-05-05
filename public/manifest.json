@@ -3,5 +3,12 @@
     "start_url": "/",
     "display": "standalone",
     "orientation": "portrait",
-    "icons": []
+    "icons": [{
+      "src": "/public/img/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }],
+    "background_color": "#181818",
+    "description": "Personal audio streaming service that works.",
+    "theme_color": "#181818"
 }

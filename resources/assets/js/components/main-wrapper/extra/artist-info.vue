@@ -41,6 +41,10 @@ export default {
   },
 
   watch: {
+    /**
+     * Whenever a new artist is loaded into this component, we reset the "full bio" state.
+     * @return {Boolean}
+     */
     artist () {
       this.showingFullBio = false
     }
@@ -67,7 +71,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

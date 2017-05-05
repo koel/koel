@@ -1,15 +1,16 @@
-import Vue from 'vue'
-import { reduce, each, find, union, difference, take, filter, orderBy } from 'lodash'
+/*eslint camelcase: ["error", {properties: "never"}]*/
 
-import config from '../config'
+import Vue from 'vue'
+import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
+
 import stub from '../stubs/artist'
-import { albumStore } from '.'
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
 
 export const artistStore = {
   stub,
+  cache: [],
 
   state: {
     artists: []
@@ -23,12 +24,8 @@ export const artistStore = {
   init (artists) {
     this.all = artists
 
-    albumStore.init(this.all)
-
     // Traverse through artists array to get the cover and number of songs for each.
-    each(this.all, artist => {
-      this.setupArtist(artist)
-    })
+    each(this.all, artist => this.setupArtist(artist))
   },
 
   /**
@@ -37,25 +34,12 @@ export const artistStore = {
    * @param  {Object} artist
    */
   setupArtist (artist) {
-    this.getImage(artist)
     Vue.set(artist, 'playCount', 0)
-
-    // Here we build a list of songs performed by the artist, so that we don't need to traverse
-    // down the "artist > albums > items" route later.
-    // This also makes sure songs in compilation albums are counted as well.
-    Vue.set(artist, 'songs', reduce(artist.albums, (songs, album) => {
-      // If the album is compilation, we cater for the songs contributed by this artist only.
-      if (album.is_compilation) {
-        return songs.concat(filter(album.songs, { contributing_artist_id: artist.id }))
-      }
-
-      // Otherwise, just use all songs in the album.
-      return songs.concat(album.songs)
-    }, []))
-
-    Vue.set(artist, 'songCount', artist.songs.length)
-
     Vue.set(artist, 'info', null)
+    Vue.set(artist, 'albums', [])
+    Vue.set(artist, 'songs', [])
+
+    this.cache[artist.id] = artist
 
     return artist
   },
@@ -84,7 +68,7 @@ export const artistStore = {
    * @param  {Number} id
    */
   byId (id) {
-    return find(this.all, { id })
+    return this.cache[id]
   },
 
   /**
@@ -94,62 +78,29 @@ export const artistStore = {
    */
   add (artists) {
     artists = [].concat(artists)
-    each(artists, a => this.setupArtist(a))
+    each(artists, artist => {
+      this.setupArtist(artist)
+      artist.playCount = reduce(artist.songs, (count, song) => count + song.playCount, 0)
+    })
 
     this.all = union(this.all, artists)
   },
 
-  /**
-   * Remove artist(s) from the store.
-   *
-   * @param  {Array.<Object>|Object} artists
-   */
-  remove (artists) {
-    this.all = difference(this.all, [].concat(artists))
+  purify () {
+    this.compact()
   },
 
   /**
-   * Add album(s) into an artist.
-   *
-   * @param {Object} artist
-   * @param {Array.<Object>|Object} albums
-   *
+   * Remove empty artists from the store.
    */
-  addAlbumsIntoArtist (artist, albums) {
-    albums = [].concat(albums)
+  compact () {
+    const emptyArtists = filter(this.all, artist => artist.songs.length === 0)
+    if (!emptyArtists.length) {
+      return
+    }
 
-    artist.albums = union(artist.albums ? artist.albums : [], albums)
-
-    each(albums, album => {
-      album.artist_id = artist.id
-      album.artist = artist
-      artist.playCount += album.playCount
-    })
-  },
-
-  /**
-   * Remove album(s) from an artist.
-   *
-   * @param  {Object} artist
-   * @param  {Array.<Object>|Object} albums
-   */
-  removeAlbumsFromArtist (artist, albums) {
-    albums = [].concat(albums)
-    artist.albums = difference(artist.albums, albums)
-    each(albums, album => {
-      artist.playCount -= album.playCount
-    })
-  },
-
-  /**
-   * Checks if an artist is empty.
-   *
-   * @param  {Object}  artist
-   *
-   * @return {boolean}
-   */
-  isArtistEmpty (artist) {
-    return !artist.albums.length
+    this.all = difference(this.all, emptyArtists)
+    each(emptyArtists, artist => delete this.cache[artist.id])
   },
 
   /**
@@ -183,32 +134,6 @@ export const artistStore = {
    */
   getSongsByArtist (artist) {
     return artist.songs
-  },
-
-  /**
-   * Get the artist's image.
-   *
-   * @param {Object} artist
-   *
-   * @return {String}
-   */
-  getImage (artist) {
-    if (!artist.image) {
-      // Try to get an image from one of the albums.
-      artist.image = config.unknownCover
-
-      artist.albums.every(album => {
-        // If there's a "real" cover, use it.
-        if (album.image !== config.unknownCover) {
-          artist.image = album.cover
-
-          // I want to break free.
-          return false
-        }
-      })
-    }
-
-    return artist.image
   },
 
   /**

@@ -11,9 +11,7 @@ export const clickawayDirective = {
     }
 
     document.addEventListener('click', e => {
-      if (!el.contains(e.target)) {
-        value()
-      }
+      el.contains(e.target) || value()
     })
   }
 }

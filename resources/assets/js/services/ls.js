@@ -2,9 +2,7 @@ import localStore from 'local-storage'
 
 export const ls = {
   get (key, defaultVal = null) {
-    const val = localStore(key)
-
-    return val || defaultVal
+    return localStore(key) || defaultVal
   },
 
   set (key, val) {

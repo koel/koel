@@ -1,6 +1,0 @@
-{
-  "globals": { "$": false },
-  "globalstrict": false,
-  "devel": true,
-  "esnext": true
-}

@@ -27,8 +27,8 @@ class PlaylistController extends Controller
      */
     public function store(PlaylistStoreRequest $request)
     {
-        $playlist = auth()->user()->playlists()->create($request->only('name'));
-        $playlist->songs()->sync($request->input('songs', []));
+        $playlist = $request->user()->playlists()->create($request->only('name'));
+        $playlist->songs()->sync((array) $request->songs);
 
         $playlist->songs = $playlist->songs->pluck('id');
 

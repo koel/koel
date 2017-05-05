@@ -6,14 +6,14 @@
         {{ album.name }}
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-        <span class="meta" v-show="meta.songCount">
+        <span class="meta" v-show="album.songs.length">
           by
-          <a class="artist" v-if="isNormalArtist" :href="'/#!/artist/'+album.artist.id">{{ album.artist.name }}</a>
+          <a class="artist" v-if="isNormalArtist" :href="`/#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
-          {{ meta.songCount | pluralize('song') }}
+          {{ album.songs.length | pluralize('song') }}
           •
-          {{ meta.totalLength }}
+          {{ fmtLength }}
 
           <template v-if="sharedState.useLastfm">
             •
@@ -37,13 +37,13 @@
       />
     </h1>
 
-    <song-list :items="album.songs" type="album"/>
+    <song-list :items="album.songs" type="album" ref="songList"/>
 
     <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
       <a href class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
       <div class="inner">
         <div class="loading" v-if="info.loading"><sound-bar/></div>
-        <album-info :album="album" :mode="'full'" v-else/>
+        <album-info :album="album" mode="full" v-else/>
       </div>
     </section>
   </section>
@@ -55,12 +55,13 @@ import { albumStore, artistStore, sharedStore } from '../../../stores'
 import { playback, download, albumInfo as albumInfoService } from '../../../services'
 import router from '../../../router'
 import hasSongList from '../../../mixins/has-song-list'
+import albumAttributes from '../../../mixins/album-attributes'
 import albumInfo from '../extra/album-info.vue'
 import soundBar from '../../shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--album',
-  mixins: [hasSongList],
+  mixins: [hasSongList, albumAttributes],
   components: { albumInfo, soundBar },
   filters: { pluralize },
 
@@ -108,6 +109,10 @@ export default {
       if (view === 'album') {
         this.info.showing = false
         this.album = album
+        // #530
+        this.$nextTick(() => {
+          this.$refs.songList.sort()
+        })
       }
     })
   },
@@ -115,8 +120,9 @@ export default {
   methods: {
     /**
      * Shuffle the songs in the current album.
+     * Overriding the mixin.
      */
-    shuffle () {
+    shuffleAll () {
       playback.queueAndPlay(this.album.songs, true)
     },
 
@@ -127,13 +133,12 @@ export default {
       download.fromAlbum(this.album)
     },
 
-    showInfo () {
+    async showInfo () {
       this.info.showing = true
       if (!this.album.info) {
         this.info.loading = true
-        albumInfoService.fetch(this.album).then(() => {
-          this.info.loading = false
-        })
+        await albumInfoService.fetch(this.album)
+        this.info.loading = false
       } else {
         this.info.loading = false
       }
@@ -142,7 +147,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

@@ -20,8 +20,8 @@
         <div class="progress" id="progressPane">
           <h3 class="title">{{ song.title }}</h3>
           <p class="meta">
-            <a class="artist" :href="'/#!/artist/'+song.artist.id">{{ song.artist.name }}</a> –
-            <a class="album" :href="'/#!/album/'+song.album.id">{{ song.album.name }}</a>
+            <a class="artist" :href="`/#!/artist/${song.artist.id}`">{{ song.artist.name }}</a> –
+            <a class="album" :href="`/#!/album/${song.album.id}`">{{ song.album.name }}</a>
           </p>
 
           <div class="plyr">
@@ -153,11 +153,7 @@ export default {
      * Like the current song.
      */
     like () {
-      if (!this.song.id) {
-        return
-      }
-
-      favoriteStore.toggleOne(this.song)
+      this.song.id && favoriteStore.toggleOne(this.song)
     },
 
     /**
@@ -192,17 +188,13 @@ export default {
        */
       'main-content-view:load': view => {
         this.viewingQueue = view === 'queue'
-      },
-
-      'koel:teardown': () => {
-        this.song = songStore.stub
       }
     })
   }
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 
@@ -380,7 +372,7 @@ export default {
     flex: 0 0 $footerHeight;
     height: $footerHeight;
     background: url(/public/img/covers/unknown-album.png);
-    background-size: $footerHeight;
+    background-size: cover;
     position: relative;
   }
 

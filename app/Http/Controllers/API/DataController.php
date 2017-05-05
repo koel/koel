@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Application;
-use App\Models\Artist;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Http\Request;
+use iTunes;
 use Lastfm;
+use MediaCache;
 use YouTube;
 
 class DataController extends Controller
@@ -16,9 +18,11 @@ class DataController extends Controller
     /**
      * Get a set of application data.
      *
+     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         $playlists = Playlist::byCurrentUser()->orderBy('name')->with('songs')->get()->toArray();
 
@@ -27,19 +31,20 @@ class DataController extends Controller
             $playlist['songs'] = array_pluck($playlist['songs'], 'id');
         }
 
-        return response()->json([
-            'artists' => Artist::orderBy('name')->with('albums', with('albums.songs'))->get(),
-            'settings' => auth()->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
+        return response()->json(MediaCache::get() + [
+            'settings' => $request->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),
-            'users' => auth()->user()->is_admin ? User::all() : [],
-            'currentUser' => auth()->user(),
+            'users' => $request->user()->is_admin ? User::all() : [],
+            'currentUser' => $request->user(),
             'useLastfm' => Lastfm::used(),
             'useYouTube' => YouTube::enabled(),
+            'useiTunes' => iTunes::used(),
             'allowDownload' =>  config('koel.download.allow'),
+            'supportsTranscoding' => config('koel.streaming.ffmpeg_path') && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdnUrl' => app()->staticUrl(),
-            'currentVersion' => Application::VERSION,
-            'latestVersion' => auth()->user()->is_admin ? app()->getLatestVersion() : Application::VERSION,
+            'currentVersion' => Application::KOEL_VERSION,
+            'latestVersion' => $request->user()->is_admin ? app()->getLatestVersion() : Application::KOEL_VERSION,
         ]);
     }
 }

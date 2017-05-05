@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\JWTAuth;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Routing\ResponseFactory;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Tymon\JWTAuth\Middleware\BaseMiddleware as JWTBaseMiddleware;
 
 abstract class BaseMiddleware extends JWTBaseMiddleware

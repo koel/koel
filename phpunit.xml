@@ -9,18 +9,22 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Application Test Suite">
-            <directory>./tests/</directory>
-            <exclude>./tests/e2e</exclude>
+        <testsuite name="Feature Tests">
+            <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+
+        <testsuite name="Unit Tests">
+            <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
     </testsuites>
     <filter>
-        <whitelist>
-            <directory suffix=".php">app/</directory>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./app/</directory>
         </whitelist>
     </filter>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_URL" value="http://localhost/"/>
         <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
         <env name="JWT_SECRET" value="ki8jSvMf5wFrlSRBAWcGbmAzBUJfc8p8"/>
         <env name="CACHE_DRIVER" value="array"/>
@@ -34,5 +38,6 @@
         <env name="ADMIN_NAME" value="Koel"/>
         <env name="ADMIN_PASSWORD" value="SoSecureK0el"/>
         <env name="BROADCAST_DRIVER" value="log"/>
+        <env name="CACHE_MEDIA" value="true"/>
     </php>
 </phpunit>

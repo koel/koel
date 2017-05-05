@@ -36,7 +36,7 @@ class SongController extends Controller
         $song = Song::updateOrCreate(['id' => Media::getHash($path)], [
             'path' => $path,
             'album_id' => $album->id,
-            'contributing_artist_id' => $compilation ? $artist->id : null,
+            'artist_id' => $artist->id,
             'title' => trim(array_get($tags, 'title', '')),
             'length' => array_get($tags, 'duration', 0),
             'track' => (int) array_get($tags, 'track'),

@@ -1,4 +1,5 @@
 import isMobile from 'ismobilejs'
+import { each } from 'lodash'
 
 import { loadMainView } from './utils'
 import { artistStore, albumStore, songStore, queueStore, playlistStore, userStore } from './stores'
@@ -95,7 +96,7 @@ export default {
       return this.go('home')
     }
 
-    Object.keys(this.routes).forEach(route => {
+    each(Object.keys(this.routes), route => {
       const matches = window.location.hash.match(new RegExp(`^#!${route}$`))
       if (matches) {
         const [, ...params] = matches

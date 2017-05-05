@@ -1,4 +1,4 @@
 {
-    "foo.css": "foo00.css",
-    "bar.js": "bar00.js"
+    "/foo.css": "/foo00.css",
+    "/bar.js": "/bar00.js"
 }

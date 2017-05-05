@@ -2,7 +2,7 @@ import { each, map, difference, union } from 'lodash'
 import NProgress from 'nprogress'
 
 import { http } from '../services'
-import { alerts } from '../utils'
+import { alerts, pluralize } from '../utils'
 
 export const favoriteStore = {
   state: {
@@ -44,10 +44,10 @@ export const favoriteStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/like', { song: song.id }, data => {
+      http.post('interaction/like', { song: song.id }, ({ data }) => {
         // We don't really need to notify just for one song.
         resolve(data)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   },
 
@@ -92,10 +92,10 @@ export const favoriteStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/batch/like', { songs: map(songs, 'id') }, data => {
-        alerts.success(`Added ${songs.length} song${songs.length === 1 ? '' : 's'} into Favorites.`)
+      http.post('interaction/batch/like', { songs: map(songs, 'id') }, ({ data }) => {
+        alerts.success(`Added ${pluralize(songs.length, 'song')} into Favorites.`)
         resolve(data)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   },
 
@@ -113,10 +113,10 @@ export const favoriteStore = {
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, data => {
-        alerts.success(`Removed ${songs.length} song${songs.length === 1 ? '' : 's'} from Favorites.`)
+      http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, ({ data }) => {
+        alerts.success(`Removed ${pluralize(songs.length, 'song')} from Favorites.`)
         resolve(data)
-      }, r => reject(r))
+      }, error => reject(error))
     })
   }
 }
