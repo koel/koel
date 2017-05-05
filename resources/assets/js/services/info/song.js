@@ -14,11 +14,11 @@ export const songInfo = {
         return
       }
 
-      http.get(`${song.id}/info`, response => {
-        song.lyrics = response.data.lyrics
-        response.data.artist_info && artistInfo.merge(song.artist, response.data.artist_info)
-        response.data.album_info && albumInfo.merge(song.album, response.data.album_info)
-        song.youtube = response.data.youtube
+      http.get(`${song.id}/info`, ({ data: { artist_info, album_info, youtube, lyrics }}) => {
+        song.lyrics = lyrics
+        artist_info && artistInfo.merge(song.artist, artist_info) // eslint-disable-line camelcase
+        album_info && albumInfo.merge(song.album, album_info) // eslint-disable-line camelcase
+        song.youtube = youtube
         song.infoRetrieved = true
         resolve(song)
       }, error => reject(error))
