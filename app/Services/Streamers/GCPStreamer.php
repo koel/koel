@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Streamers;
+namespace App\Services\Streamers;
 
 class GCPStreamer extends Streamer implements StreamerInterface
 {

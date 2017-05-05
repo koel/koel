@@ -9,7 +9,7 @@ use App\Services\Streamers\S3Streamer;
 use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
-use App\Http\Streamers\GCPStreamer;
+use App\Services\Streamers\GCPStreamer;
 use Illuminate\Http\Request;
 
 class SongController extends Controller
