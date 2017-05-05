@@ -59,6 +59,17 @@ class Download
             // The following function require allow_url_fopen to be ON.
             // We're just assuming that to be the case here.
             copy($url, $localPath);
+        }   else if ($gcpParams = $song->gcp_params) {
+            // The song is hosted on Amazon S3.
+            // We download it back to our local server first.
+            $localPath = rtrim(sys_get_temp_dir(), '/').'/'.basename($gcpParams['key']);
+            $url = $song->getObjectStoragePublicUrl();
+
+            abort_unless($url, 404);
+
+            // The following function require allow_url_fopen to be ON.
+            // We're just assuming that to be the case here.
+            copy($url, $localPath);
         } else {
             // The song is hosted locally. Make sure the file exists.
             abort_unless(file_exists($song->path), 404);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Http\Streamers\PHPStreamer;
+use App\Http\Streamers\GCPStreamer;
 use App\Http\Streamers\S3Streamer;
 use App\Http\Streamers\TranscodingStreamer;
 use App\Http\Streamers\XAccelRedirectStreamer;
@@ -32,6 +33,10 @@ class SongController extends Controller
             return (new S3Streamer($song))->stream();
         }
 
+        if ($song->gcp_params) {
+            return (new GCPStreamer($song))->stream();
+        }
+		
         // If `transcode` parameter isn't passed, the default is to only transcode FLAC.
         if ($transcode === null && ends_with(mime_content_type($song->path), 'flac')) {
             $transcode = true;

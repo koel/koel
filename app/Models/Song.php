@@ -10,6 +10,9 @@ use Cache;
 use Illuminate\Database\Eloquent\Model;
 use Lastfm;
 use YouTube;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Google\Cloud\Storage\StorageClient;
 
 /**
  * @property string path
@@ -285,6 +288,31 @@ class Song extends Model
         return $url;
     }
 
+    public function getGcpObjectStoragePublicUrl(StorageClient $gcs = null)
+    {
+        // If we have a cached version, just return it.
+        if ($cached = Cache::get("OSUrl/{$this->id}")) {
+            return $cached;
+        }
+
+        if (!$gcs) {
+            $gcs = new StorageClient([
+				//'projectId' => 'my-projectid'
+			]);
+        }
+
+		$bucket = $gcs->bucket($this->gcp_params['bucket']);	
+		$object = $bucket->object($this->gcp_params['key']);
+		$object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);	  		
+		$url =  'https://storage.googleapis.com/' . $this->gcp_params['bucket'] . '/' . rawurlencode($this->gcp_params['key']);
+		
+        Cache::put("OSUrl/{$this->id}", $url, 60);
+		
+        return $url;
+    }
+
+
+	
     /**
      * Get the YouTube videos related to this song.
      *
@@ -375,4 +403,25 @@ class Song extends Model
 
         return compact('bucket', 'key');
     }
+
+    public function isGCPObjectAttribute()
+    {
+        return strpos($this->path, 'gs://') === 0;
+    }
+
+    /**
+     * Get the bucket and key name of an GCS object.
+     *
+     * @return bool|array
+     */
+    public function getGCPParamsAttribute()
+    {
+        if (!preg_match('/^gs:\\/\\/(.*)/', $this->path, $matches)) {
+            return false;
+        }
+
+        list($bucket, $key) = explode('/', $matches[1], 2);
+
+        return compact('bucket', 'key');
+    }	
 }
