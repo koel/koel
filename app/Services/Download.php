@@ -24,15 +24,15 @@ class Download
      */
     public function from($mixed)
     {
-        if ($mixed instanceof Song) {
+        if (is_a($mixed, Song::class)) {
             return $this->fromSong($mixed);
-        } elseif (mixed instanceof Collection) {
+        } elseif (is_a($mixed, Collection::class)) {
             return $this->fromMultipleSongs($mixed);
-        } elseif ($mixed instanceof Album) {
+        } elseif (is_a($mixed, Album::class)) {
             return $this->fromAlbum($mixed);
-        } elseif ($mixed instanceof Artist) {
+        } elseif (is_a($mixed, Artist::class)) {
             return $this->fromArtist($mixed);
-        } elseif ($mixed instanceof Playlist) {
+        } elseif (is_a($mixed, Playlist::class)) {
             return $this->fromPlaylist($mixed);
         } else {
             throw new Exception('Unsupport download type.');
@@ -85,7 +85,7 @@ class Download
         // as a workaround.
         $newPath = rtrim(sys_get_temp_dir(), '/').'/'.utf8_decode(basename($song->path));
 
-        if ($s3Params) {
+        if ($s3Params || $gcpParams) { 
             // If the file is downloaded from S3, we rename it directly.
             // This will save us some disk space.
             rename($localPath, $newPath);
