@@ -43,11 +43,8 @@ export const preferenceStore = {
   setupProxy () {
     each(Object.keys(this.state), key => {
       Object.defineProperty(this, key, {
-        get: () => this.state[key],
-        set: value => {
-          this.state[key] = value
-          this.save()
-        },
+        get: () => this.get(key),
+        set: value => this.set(key, value),
         configurable: true
       })
     })
