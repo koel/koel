@@ -3,7 +3,7 @@ import plyr from 'plyr'
 import Vue from 'vue'
 import isMobile from 'ismobilejs'
 
-import { event } from '../utils'
+import { event, isMediaSessionSupported } from '../utils'
 import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '../stores'
 import config from '../config'
 import router from '../router'
@@ -43,12 +43,7 @@ export const playback = {
         songStore.scrobble(queueStore.current)
       }
 
-      if (preferences.repeatMode === 'REPEAT_ONE') {
-        this.restart()
-        return
-      }
-
-      this.playNext()
+      preferences.repeatMode === 'REPEAT_ONE' ? this.restart() : this.playNext()
     })
 
     /**
@@ -84,7 +79,7 @@ export const playback = {
     // Init the equalizer if supported.
     event.emit('equalizer:init', this.player.media)
 
-    if ('mediaSession' in navigator) {
+    if (isMediaSessionSupported()) {
       navigator.mediaSession.setActionHandler('play', () => this.resume())
       navigator.mediaSession.setActionHandler('pause', () => this.pause())
       navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
@@ -189,10 +184,8 @@ export const playback = {
    * @return {Object} The song
    */
   get next () {
-    const next = queueStore.next
-
-    if (next) {
-      return next
+    if (queueStore.next) {
+      return queueStore.next
     }
 
     if (preferences.repeatMode === 'REPEAT_ALL') {
@@ -207,10 +200,8 @@ export const playback = {
    * @return {Object} The song
    */
   get previous () {
-    const prev = queueStore.previous
-
-    if (prev) {
-      return prev
+    if (queueStore.previous) {
+      return queueStore.previous
     }
 
     if (preferences.repeatMode === 'REPEAT_ALL') {
@@ -246,14 +237,9 @@ export const playback = {
     }
 
     const prev = this.previous
-
-    if (!prev && preferences.repeatMode === 'NO_REPEAT') {
-      this.stop()
-
-      return
-    }
-
-    this.play(prev)
+    !prev && preferences.repeatMode === 'NO_REPEAT'
+      ? this.stop()
+      : this.play(prev)
   },
 
   /**
@@ -262,15 +248,9 @@ export const playback = {
    */
   playNext () {
     const next = this.next
-
-    if (!next && preferences.repeatMode === 'NO_REPEAT') {
-      //  Nothing lasts forever, even cold November rain.
-      this.stop()
-
-      return
-    }
-
-    this.play(next)
+    !next && preferences.repeatMode === 'NO_REPEAT'
+      ? this.stop() //  Nothing lasts forever, even cold November rain.
+      : this.play(next)
   },
 
   /**
@@ -372,13 +352,7 @@ export const playback = {
    * If the current queue is empty, try creating it by shuffling all songs.
    */
   playFirstInQueue () {
-    if (!queueStore.all.length) {
-      this.queueAndPlay()
-
-      return
-    }
-
-    this.play(queueStore.first)
+    queueStore.all.length ? this.play(queueStore.first) : this.queueAndPlay()
   },
 
   /**
@@ -387,13 +361,10 @@ export const playback = {
    * @param  {Object}     artist   The artist object
    * @param  {Boolean=true}   shuffled Whether to shuffle the songs
    */
-  playAllByArtist (artist, shuffled = true) {
-    if (!shuffled) {
-      this.queueAndPlay(orderBy(artist.songs, 'album_id', 'track'))
-      return
-    }
-
-    this.queueAndPlay(artist.songs, true)
+  playAllByArtist ({ songs }, shuffled = true) {
+    shuffled
+      ? this.queueAndPlay(songs, true)
+      : this.queueAndPlay(orderBy(songs, 'album_id', 'track'))
   },
 
   /**
@@ -402,12 +373,9 @@ export const playback = {
    * @param  {Object}     album  The album object
    * @param  {Boolean=true}   shuffled Whether to shuffle the songs
    */
-  playAllInAlbum (album, shuffled = true) {
-    if (!shuffled) {
-      this.queueAndPlay(orderBy(album.songs, 'track'))
-      return
-    }
-
-    this.queueAndPlay(album.songs, true)
+  playAllInAlbum ({ songs }, shuffled = true) {
+    shuffled
+      ? this.queueAndPlay(songs, true)
+      : this.queueAndPlay(orderBy(songs, 'track'))
   }
 }

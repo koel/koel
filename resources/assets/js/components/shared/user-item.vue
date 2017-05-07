@@ -53,12 +53,7 @@ export default {
      * If the user is the current logged-in user, redirect to the profile screen instead.
      */
     edit () {
-      if (this.isCurrentUser) {
-        router.go('profile')
-        return
-      }
-
-      this.$emit('editUser', this.user)
+      this.isCurrentUser ? router.go('profile') : this.$emit('editUser', this.user)
     },
 
     /**

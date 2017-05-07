@@ -16,8 +16,8 @@ export const albumInfo = {
         return
       }
 
-      http.get(`album/${album.id}/info`, response => {
-        response.data && this.merge(album, response.data)
+      http.get(`album/${album.id}/info`, ({ data }) => {
+        data && this.merge(album, data)
         resolve(album)
       }, error => reject(error))
     })

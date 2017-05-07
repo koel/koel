@@ -2,7 +2,7 @@
  * Add necessary functionalities into a view that contains a song-list component.
  */
 
-import { assign } from 'lodash'
+import { assignIn } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { playback } from '../services'
@@ -33,7 +33,7 @@ export default {
     },
 
     updateMeta (meta) {
-      this.meta = assign(this.meta, meta)
+      assignIn(this.meta, meta)
     },
 
     shuffleAll () {

@@ -15,11 +15,13 @@ export const youtube = {
 
     const pageToken = song.youtube.nextPageToken || ''
     return new Promise((resolve, reject) => {
-      http.get(`youtube/search/song/${song.id}?pageToken=${pageToken}`, ({ data }) => {
-        song.youtube.nextPageToken = data.nextPageToken
-        song.youtube.items.push(...data.items)
-        resolve()
-      }, error => reject(error))
+      http.get(`youtube/search/song/${song.id}?pageToken=${pageToken}`,
+        ({ data: { nextPageToken, items }}) => {
+          song.youtube.nextPageToken = nextPageToken
+          song.youtube.items.push(...items)
+          resolve()
+        }, error => reject(error)
+      )
     })
   },
 

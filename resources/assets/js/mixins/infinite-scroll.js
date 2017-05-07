@@ -16,10 +16,10 @@ export default {
   },
 
   methods: {
-    scrolling (e) {
+    scrolling ({ target: { scrollTop, clientHeight, scrollHeight }}) {
       // Here we check if the user has scrolled to the end of the wrapper (or 32px to the end).
       // If that's true, load more items.
-      if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 32) {
+      if (scrollTop + clientHeight >= scrollHeight - 32) {
         this.displayMore()
       }
     },

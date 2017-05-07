@@ -75,9 +75,7 @@ export default {
       if (view === 'playlist') {
         this.playlist = playlist
         // #530
-        this.$nextTick(() => {
-          this.$refs.songList.sort()
-        })
+        this.$nextTick(() => this.$refs.songList.sort())
       }
     })
   },

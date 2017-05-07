@@ -65,8 +65,8 @@ export default {
      * to/from the html tag.
      * Some element's CSS can then be controlled based on this class.
      */
-    'state.showExtraPanel' (newVal) {
-      if (newVal && !isMobile.any) {
+    'state.showExtraPanel' (showingExtraPanel) {
+      if (showingExtraPanel && !isMobile.any) {
         $.addClass(document.documentElement, 'with-extra-panel')
       } else {
         $.removeClass(document.documentElement, 'with-extra-panel')

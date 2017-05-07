@@ -90,10 +90,8 @@ export default {
      * and move all of them into another album.
      * We should then go back to the album list.
      */
-    'album.songs.length' (newVal) {
-      if (!newVal) {
-        router.go('albums')
-      }
+    'album.songs.length' (newSongCount) {
+      newSongCount || router.go('albums')
     }
   },
 
@@ -110,9 +108,7 @@ export default {
         this.info.showing = false
         this.album = album
         // #530
-        this.$nextTick(() => {
-          this.$refs.songList.sort()
-        })
+        this.$nextTick(() => this.$refs.songList.sort())
       }
     })
   },

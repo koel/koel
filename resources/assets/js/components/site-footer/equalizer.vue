@@ -217,9 +217,7 @@ export default {
   },
 
   mounted () {
-    event.on('equalizer:init', player => {
-      isAudioContextSupported() && this.init(player)
-    })
+    event.on('equalizer:init', player => isAudioContextSupported() && this.init(player))
   }
 }
 </script>
