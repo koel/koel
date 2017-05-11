@@ -9,11 +9,8 @@ import { ls } from '../services'
  */
 export const http = {
   request (method, url, data, successCb = null, errorCb = null) {
-    axios.request({
-      url,
-      data,
-      method: method.toLowerCase()
-    }).then(successCb).catch(errorCb)
+    method = method.toLowerCase()
+    axios.request({ url, data, method }).then(successCb).catch(errorCb)
   },
 
   get (url, successCb = null, errorCb = null) {
@@ -50,9 +47,7 @@ export const http = {
 
       // …get the token from the header or response data if exists, and save it.
       const token = response.headers['Authorization'] || response.data['token']
-      if (token) {
-        ls.set('jwt-token', token)
-      }
+      token && ls.set('jwt-token', token)
 
       return response
     }, error => {

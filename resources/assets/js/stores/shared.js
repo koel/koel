@@ -31,10 +31,10 @@ export const sharedStore = {
       http.get('data', ({ data }) => {
         assign(this.state, data)
         // Don't allow downloading on mobile devices
-        this.state.allowDownload = this.state.allowDownload && !isMobile.any
+        this.state.allowDownload &= !isMobile.any
 
         // Always disable YouTube integration on mobile.
-        this.state.useYouTube = this.state.useYouTube && !isMobile.phone
+        this.state.useYouTube &= !isMobile.phone
 
         // If this is a new user, initialize his preferences to be an empty object.
         if (!this.state.currentUser.preferences) {
