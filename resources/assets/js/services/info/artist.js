@@ -13,8 +13,8 @@ export const artistInfo = {
         return
       }
 
-      http.get(`artist/${artist.id}/info`, response => {
-        response.data && this.merge(artist, response.data)
+      http.get(`artist/${artist.id}/info`, ({ data }) => {
+        data && this.merge(artist, data)
         resolve(artist)
       }, error => reject(error))
     })

@@ -102,9 +102,7 @@ export default {
         this.info.showing = false
         this.artist = artist
         // #530
-        this.$nextTick(() => {
-          this.$refs.songList.sort()
-        })
+        this.$nextTick(() => this.$refs.songList.sort())
       }
     })
   },

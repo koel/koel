@@ -128,11 +128,7 @@ export default {
      * If the current song is the stub, just play the first song in the queue.
      */
     resume () {
-      if (!this.song.id) {
-        return playback.playFirstInQueue()
-      }
-
-      playback.resume()
+      this.song.id ? playback.resume() : playback.playFirstInQueue()
     },
 
     /**

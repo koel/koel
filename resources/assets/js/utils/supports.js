@@ -34,11 +34,18 @@ export function isAudioContextSupported () {
 
 /**
  * Checks if HTML5 clipboard can be used.
- *
  * @return {Boolean}
  */
 export function isClipboardSupported () {
   return 'execCommand' in document
+}
+
+/**
+ * Checks if Media Session API is supported.
+ * @return {Boolean}
+ */
+export function isMediaSessionSupported () {
+  return 'mediaSession' in navigator
 }
 
 /**

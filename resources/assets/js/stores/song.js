@@ -89,9 +89,7 @@ export const songStore = {
       song.album.playCount += song.playCount
       song.artist.playCount += song.playCount
 
-      if (song.liked) {
-        favoriteStore.add(song)
-      }
+      song.liked && favoriteStore.add(song)
     })
   },
 
