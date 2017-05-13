@@ -384,7 +384,7 @@ class Song extends Model
 
     public function isGCPObjectAttribute()
     {
-        return strpos($this->path, 'gs://') === 0;
+        return starts_with($this->path, 'gs://');
     }
 
     /**
