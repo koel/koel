@@ -1,0 +1,15 @@
+db:
+  image: mysql:latest
+  environment:
+    - MYSQL_DATABASE=koel
+    - MYSQL_ROOT_PASSWORD=secret
+
+web:
+  image: nampnq/koel:feature-docker
+  links:
+    - db:db
+  ports:
+    - 8000:80
+  volumes:
+    - ~/Music:/home/koel/media
+    - .env:/var/www/html/.env
