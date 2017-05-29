@@ -73,8 +73,8 @@ export default {
       } catch (err) {
         let msg = 'Unknown error.'
 
-        if (err.status === 422) {
-          msg = parseValidationError(err.responseJSON)[0]
+        if (err.response.status === 422) {
+          msg = parseValidationError(err.response.data)[0]
         }
 
         hideOverlay()
