@@ -26,7 +26,7 @@ class Download
     {
         if ($mixed instanceof Song) {
             return $this->fromSong($mixed);
-        } elseif (mixed instanceof Collection) {
+        } elseif ($mixed instanceof Collection) {
             return $this->fromMultipleSongs($mixed);
         } elseif ($mixed instanceof Album) {
             return $this->fromAlbum($mixed);
