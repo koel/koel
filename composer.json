@@ -24,7 +24,8 @@
         "facebook/webdriver": "^1.2",
         "barryvdh/laravel-ide-helper": "^2.1",
         "laravel/tinker": "^1.0",
-        "laravel/browser-kit-testing": "^1.0"
+        "laravel/browser-kit-testing": "^1.0",
+        "codeclimate/php-test-reporter": "^0.4.4"
     },
     "autoload": {
         "classmap": [
