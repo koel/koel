@@ -127,7 +127,7 @@ class Media
     /**
      * Sync media using a watch record.
      *
-     * @param WatchRecordInterface $record      The watch record.
+     * @param WatchRecordInterface $record The watch record.
      */
     public function syncByWatchRecord(WatchRecordInterface $record)
     {

@@ -47,7 +47,8 @@ class EventServiceProvider extends ServiceProvider
             if ($album->hasCover) {
                 try {
                     unlink(app()->publicPath()."/public/img/covers/{$album->cover}");
-                } catch (Exception $e) {}
+                } catch (Exception $e) {
+                }
             }
         });
     }
