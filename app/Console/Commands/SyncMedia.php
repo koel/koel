@@ -103,7 +103,7 @@ class SyncMedia extends Command
      * Log a song's sync status to console.
      *
      * @param string $path
-     * @param int $result
+     * @param int    $result
      * @param string $reason
      */
     public function logToConsole($path, $result, $reason = '')
