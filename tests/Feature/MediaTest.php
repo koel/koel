@@ -149,12 +149,12 @@ class MediaTest extends BrowserKitTestCase
         // Selectively sync only one tag,
         // but we still expect the whole song to be added back with all info
         $media->sync($this->mediaPath, ['track'], true);
-        $this->seeInDatabase('songs', [
-            'id' => $song->id,
-            'lyrics' => $song->lyrics,
-            'title' => $song->title,
-            'track' => $song->track,
-        ]);
+
+        $addedSong = Song::findOrFail($song)->toArray();
+        array_forget($addedSong, 'created_date');
+        $song = $song->toArray();
+        array_forget($song, 'created_date');
+        $this->assertEquals($song, $addedSong);
     }
 
     public function testWatchSingleFileAdded()
