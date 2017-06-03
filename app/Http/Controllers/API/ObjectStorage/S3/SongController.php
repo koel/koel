@@ -58,7 +58,8 @@ class SongController extends Controller
      */
     public function remove(RemoveSongRequest $request)
     {
-        abort_unless($song = Song::byPath("s3://{$request->bucket}/{$request->key}"), 404);
+        $song = Song::byPath("s3://{$request->bucket}/{$request->key}");
+        abort_unless((bool) $song, 404);
         $song->delete();
         event(new LibraryChanged());
 

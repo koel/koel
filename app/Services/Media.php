@@ -128,9 +128,8 @@ class Media
      * Sync media using a watch record.
      *
      * @param WatchRecordInterface $record      The watch record.
-     * @param SyncMedia|null       $syncCommand The SyncMedia command object, to log to console if executed by artisan.
      */
-    public function syncByWatchRecord(WatchRecordInterface $record, SyncMedia $syncCommand = null)
+    public function syncByWatchRecord(WatchRecordInterface $record)
     {
         Log::info("New watch record received: '$record'");
         $path = $record->getPath();

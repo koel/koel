@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Album;
 use App\Models\File;
 use App\Models\Song;
+use Exception;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -44,7 +45,9 @@ class EventServiceProvider extends ServiceProvider
         // Remove the cover file if the album is deleted
         Album::deleted(function ($album) {
             if ($album->hasCover) {
-                @unlink(app()->publicPath().'/public/img/covers/'.$album->cover);
+                try {
+                    unlink(app()->publicPath()."/public/img/covers/{$album->cover}");
+                } catch (Exception $e) {}
             }
         });
     }

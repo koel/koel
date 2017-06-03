@@ -169,7 +169,7 @@ class File
         $props['albumartist'] = html_entity_decode(trim($albumArtist));
         $props['lyrics'] = html_entity_decode(trim($lyrics));
 
-        // A "compilation" property can is determined by:
+        // A "compilation" property can be determined by:
         // - "part_of_a_compilation" tag (used by iTunes), or
         // - "albumartist" (used by non-retarded applications).
         $props['compilation'] = (bool) (
@@ -205,8 +205,6 @@ class File
         if ($this->isNew()) {
             $force = false;
         }
-
-        $artist = null;
 
         if ($this->isChanged() || $force) {
             // This is a changed file, or the user is forcing updates.
