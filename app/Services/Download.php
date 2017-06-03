@@ -120,9 +120,9 @@ class Download
             // 'duplicated-name.mp3' => currentFileIndex
         ];
 
-        $songs->each(function ($s) use ($zip, &$localNames) {
+        $songs->each(function ($song) use ($zip, &$localNames) {
             try {
-                $path = $this->fromSong($s);
+                $path = $this->fromSong($song);
 
                 // We add all files into the zip archive as a flat structure.
                 // As a result, there can be duplicate file names.

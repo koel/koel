@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Libraries\WatchRecord\InotifyWatchRecord;
+use App\Models\File;
 use App\Models\Setting;
 use Illuminate\Console\Command;
 use Media;
@@ -102,20 +103,20 @@ class SyncMedia extends Command
      * Log a song's sync status to console.
      *
      * @param string $path
-     * @param mixed  $result
+     * @param int $result
      * @param string $reason
      */
     public function logToConsole($path, $result, $reason = '')
     {
         $name = basename($path);
 
-        if ($result === true) {
+        if ($result === File::SYNC_RESULT_UNMODIFIED) {
             if ($this->option('verbose')) {
                 $this->line("$name has no changes – ignoring");
             }
 
             ++$this->ignored;
-        } elseif ($result === false) {
+        } elseif ($result === File::SYNC_RESULT_BAD_FILE) {
             if ($this->option('verbose')) {
                 $this->error("$name is not a valid media file because: ".$reason);
             }

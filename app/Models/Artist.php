@@ -13,6 +13,8 @@ use Log;
  * @property int    id      The model ID
  * @property string name    The artist name
  * @property string image
+ * @property bool   is_unknown
+ * @property bool   is_various
  */
 class Artist extends Model
 {
@@ -37,12 +39,12 @@ class Artist extends Model
         return $this->hasManyThrough(Song::class, Album::class);
     }
 
-    public function isUnknown()
+    public function getIsUnknownAttribute()
     {
         return $this->id === self::UNKNOWN_ID;
     }
 
-    public function isVarious()
+    public function getVariousAttribute()
     {
         return $this->id === self::VARIOUS_ID;
     }
@@ -52,7 +54,7 @@ class Artist extends Model
      *
      * @return Artist
      */
-    public static function getVarious()
+    public static function getVariousArtist()
     {
         return self::find(self::VARIOUS_ID);
     }
@@ -97,17 +99,15 @@ class Artist extends Model
      */
     public function getInfo()
     {
-        if ($this->isUnknown()) {
+        if ($this->is_unknown) {
             return false;
         }
 
         $info = Lastfm::getArtistInfo($this->name);
+        $image = array_get($info, 'image');
 
         // If our current artist has no image, and Last.fm has one, copy the image for our local use.
-        if (!$this->image &&
-            is_string($image = array_get($info, 'image')) &&
-            ini_get('allow_url_fopen')
-        ) {
+        if (!$this->image && is_string($image) && ini_get('allow_url_fopen')) {
             try {
                 $extension = explode('.', $image);
                 $fileName = uniqid().'.'.trim(strtolower(last($extension)), '. ');

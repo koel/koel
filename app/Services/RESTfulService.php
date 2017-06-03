@@ -10,10 +10,10 @@ use InvalidArgumentException;
  * Class RESTfulService.
  *
  * @method object get($uri)
- * @method object post($uri, array $data = [])
- * @method object put($uri, array $data = [])
- * @method object patch($uri, array $data = [])
- * @method object head($uri, array $data = [])
+ * @method object post($uri, ...$data)
+ * @method object put($uri, ...$data)
+ * @method object patch($uri, ...$data)
+ * @method object head($uri, ...$data)
  * @method object delete($uri)
  */
 class RESTfulService

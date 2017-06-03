@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Artist artist          The album's artist
  * @property int    artist_id
  * @property Collection  songs
+ * @property bool   is_unknown
  */
 class Album extends Model
 {
@@ -40,7 +41,7 @@ class Album extends Model
         return $this->hasMany(Song::class);
     }
 
-    public function isUnknown()
+    public function getIsUnknownAttribute()
     {
         return $this->id === self::UNKNOWN_ID;
     }
@@ -58,7 +59,7 @@ class Album extends Model
     {
         // If this is a compilation album, its artist must be "Various Artists"
         if ($isCompilation) {
-            $artist = Artist::getVarious();
+            $artist = Artist::getVariousArtist();
         }
 
         return self::firstOrCreate([
@@ -74,18 +75,16 @@ class Album extends Model
      */
     public function getInfo()
     {
-        if ($this->isUnknown()) {
+        if ($this->is_unknown) {
             return false;
         }
 
         $info = Lastfm::getAlbumInfo($this->name, $this->artist->name);
+        $image = array_get($info, 'image');
 
         // If our current album has no cover, and Last.fm has one, why don't we steal it?
         // Great artists steal for their great albums!
-        if (!$this->has_cover &&
-            is_string($image = array_get($info, 'image')) &&
-            ini_get('allow_url_fopen')
-        ) {
+        if (!$this->has_cover && is_string($image) && ini_get('allow_url_fopen')) {
             $extension = explode('.', $image);
             $this->writeCoverFile(file_get_contents($image), last($extension));
             $info['cover'] = $this->cover;
@@ -127,24 +126,24 @@ class Album extends Model
     public function writeCoverFile($binaryData, $extension)
     {
         $extension = trim(strtolower($extension), '. ');
-        $destPath = $this->generateRandomCoverPath($extension);
-        file_put_contents($destPath, $binaryData);
+        $destination = $this->generateRandomCoverPath($extension);
+        file_put_contents($destination, $binaryData);
 
-        $this->update(['cover' => basename($destPath)]);
+        $this->update(['cover' => basename($destination)]);
     }
 
     /**
      * Copy a cover file from an existing image on the system.
      *
-     * @param string $srcPath The original image's full path.
+     * @param string $source The original image's full path.
      */
-    public function copyCoverFile($srcPath)
+    public function copyCoverFile($source)
     {
-        $extension = pathinfo($srcPath, PATHINFO_EXTENSION);
-        $destPath = $this->generateRandomCoverPath($extension);
-        copy($srcPath, $destPath);
+        $extension = pathinfo($source, PATHINFO_EXTENSION);
+        $destination = $this->generateRandomCoverPath($extension);
+        copy($source, $destination);
 
-        $this->update(['cover' => basename($destPath)]);
+        $this->update(['cover' => basename($destination)]);
     }
 
     /**

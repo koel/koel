@@ -201,6 +201,7 @@ class SongTest extends BrowserKitTestCase
                     'compilationState' => 2,
                 ],
             ], $user)
+//            ->seeText('jaja')
             ->seeStatusCode(200);
 
         $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'Two by Two')->first();

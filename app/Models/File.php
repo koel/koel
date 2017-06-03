@@ -62,6 +62,10 @@ class File
      */
     protected $syncError;
 
+    const SYNC_RESULT_SUCCESS = 1;
+    const SYNC_RESULT_BAD_FILE = 2;
+    const SYNC_RESULT_UNMODIFIED = 3;
+
     /**
      * Construct our File object.
      * Upon construction, we'll set the path, hash, and associated Song object (if any).
@@ -102,7 +106,7 @@ class File
         if (isset($info['error']) || !isset($info['playtime_seconds'])) {
             $this->syncError = isset($info['error']) ? $info['error'][0] : 'No playtime found';
 
-            return;
+            return [];
         }
 
         // Copy the available tags over to comment.
@@ -193,12 +197,12 @@ class File
     {
         // If the file is not new or changed and we're not forcing update, don't do anything.
         if (!$this->isNewOrChanged() && !$force) {
-            return true;
+            return self::SYNC_RESULT_UNMODIFIED;
         }
 
         // If the file is invalid, don't do anything.
         if (!$info = $this->getInfo()) {
-            return false;
+            return self::SYNC_RESULT_BAD_FILE;
         }
 
         // Fixes #366. If the file is new, we use all tags by simply setting $force to false.
@@ -246,28 +250,41 @@ class File
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
 
-        if (!$album->has_cover) {
-            // If the album has no cover, we try to get the cover image from existing tag data
-            if (!empty($info['cover'])) {
-                try {
-                    $album->generateCover($info['cover']);
-                } catch (Exception $e) {
-                    Log::error($e);
-                }
-            }
-            // or, if there's a cover image under the same directory, use it.
-            elseif ($cover = $this->getCoverFileUnderSameDirectory()) {
-                $album->copyCoverFile($cover);
-            }
-        }
+        $album->has_cover || $this->generateAlbumCover($album, array_get($info, 'cover'));
 
         $info['album_id'] = $album->id;
         $info['artist_id'] = $artist->id;
 
         // Remove these values from the info array, so that we can just use the array as model's input data.
         array_forget($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
+        $this->song = Song::updateOrCreate(['id' => $this->hash], $info);
 
-        return Song::updateOrCreate(['id' => $this->hash], $info);
+        return self::SYNC_RESULT_SUCCESS;
+    }
+
+    /**
+     * Try to generate a cover for an album based on extracted data, or use the cover file under the directory.
+     *
+     * @param Album $album
+     * @param $coverData
+     */
+    private function generateAlbumCover(Album $album, $coverData)
+    {
+        // If the album has no cover, we try to get the cover image from existing tag data
+        if ($coverData) {
+            try {
+                $album->generateCover($coverData);
+
+                return;
+            } catch (Exception $e) {
+                Log::error($e);
+            }
+        }
+
+        // Or, if there's a cover image under the same directory, use it.
+        if ($cover = $this->getCoverFileUnderSameDirectory()) {
+            $album->copyCoverFile($cover);
+        }
     }
 
     /**
