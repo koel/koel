@@ -23,8 +23,8 @@ branches:
 
 install:
   - . $HOME/.nvm/nvm.sh
-  - nvm install stable
-  - nvm use stable
+  - nvm install 6.10.3
+  - nvm use 6.10.3
   - npm install -g yarn
   - yarn
   - composer self-update
