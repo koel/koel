@@ -9,7 +9,6 @@ use App\Models\Song;
 use App\Models\SongZipArchive;
 use Exception;
 use Illuminate\Support\Collection;
-use Log;
 
 class Download
 {
