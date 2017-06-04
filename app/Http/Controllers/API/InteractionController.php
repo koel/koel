@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Events\SongStartedPlaying;
 use App\Http\Requests\API\BatchInteractionRequest;
 use App\Models\Interaction;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class InteractionController extends Controller
@@ -14,7 +15,7 @@ class InteractionController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function play(Request $request)
     {
@@ -31,7 +32,7 @@ class InteractionController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function like(Request $request)
     {
@@ -43,7 +44,7 @@ class InteractionController extends Controller
      *
      * @param BatchInteractionRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function batchLike(BatchInteractionRequest $request)
     {
@@ -55,7 +56,7 @@ class InteractionController extends Controller
      *
      * @param BatchInteractionRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function batchUnlike(BatchInteractionRequest $request)
     {

@@ -50,8 +50,6 @@ class SongZipArchive
         if ($this->archive->open($this->path, ZipArchive::CREATE) !== true) {
             throw new Exception('Cannot create zip file.');
         }
-
-        return $this;
     }
 
     /**

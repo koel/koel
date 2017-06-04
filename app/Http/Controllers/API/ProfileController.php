@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\ProfileUpdateRequest;
-use App\Models\User;
 use Hash;
+use Illuminate\Http\JsonResponse;
+use RuntimeException;
 
 class ProfileController extends Controller
 {
@@ -13,9 +14,9 @@ class ProfileController extends Controller
      *
      * @param ProfileUpdateRequest $request
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(ProfileUpdateRequest $request)
     {

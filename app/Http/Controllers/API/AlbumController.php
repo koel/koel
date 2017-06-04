@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Album;
+use Illuminate\Http\JsonResponse;
 
 class AlbumController extends Controller
 {
@@ -11,7 +12,7 @@ class AlbumController extends Controller
      *
      * @param Album $album
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getInfo(Album $album)
     {

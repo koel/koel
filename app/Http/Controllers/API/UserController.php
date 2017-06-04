@@ -5,7 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
 use App\Models\User;
+use Exception;
 use Hash;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
+use RuntimeException;
 
 class UserController extends Controller
 {
@@ -14,9 +18,9 @@ class UserController extends Controller
      *
      * @param UserStoreRequest $request
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(UserStoreRequest $request)
     {
@@ -33,9 +37,9 @@ class UserController extends Controller
      * @param UserUpdateRequest $request
      * @param User              $user
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(UserUpdateRequest $request, User $user)
     {
@@ -53,10 +57,10 @@ class UserController extends Controller
      *
      * @param User $user
      *
-     * @throws \Exception
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws Exception
+     * @throws AuthorizationException
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(User $user)
     {

@@ -9,7 +9,10 @@ use App\Services\Streamers\S3Streamer;
 use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 
 class SongController extends Controller
 {
@@ -25,7 +28,7 @@ class SongController extends Controller
      * @param null|int  $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
      *                             Only taken into account if $transcode is truthy.
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return RedirectResponse|Redirector
      */
     public function play(Request $request, Song $song, $transcode = null, $bitRate = null)
     {
@@ -68,7 +71,7 @@ class SongController extends Controller
      *
      * @param Song $song
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Song $song)
     {
@@ -85,7 +88,7 @@ class SongController extends Controller
      *
      * @param SongUpdateRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(SongUpdateRequest $request)
     {

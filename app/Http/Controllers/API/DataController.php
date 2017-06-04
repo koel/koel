@@ -7,6 +7,7 @@ use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use iTunes;
 use Lastfm;
@@ -20,7 +21,7 @@ class DataController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request)
     {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Song;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ScrobbleController extends Controller
@@ -14,7 +15,7 @@ class ScrobbleController extends Controller
      * @param Song    $song
      * @param string  $timestamp The UNIX timestamp when the song started playing.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(Request $request, Song $song, $timestamp)
     {

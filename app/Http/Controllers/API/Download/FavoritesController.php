@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\Download;
 use App\Http\Requests\API\Download\Request;
 use App\Models\Song;
 use Download;
+use Exception;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FavoritesController extends Controller
 {
@@ -13,9 +15,9 @@ class FavoritesController extends Controller
      *
      * @param Request $request
      *
-     * @throws \Exception
+     * @throws Exception
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function download(Request $request)
     {

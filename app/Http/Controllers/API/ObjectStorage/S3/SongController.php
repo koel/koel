@@ -8,6 +8,8 @@ use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Media;
 
 class SongController extends Controller
@@ -17,7 +19,7 @@ class SongController extends Controller
      *
      * @param PutSongRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function put(PutSongRequest $request)
     {
@@ -52,9 +54,9 @@ class SongController extends Controller
      *
      * @param RemoveSongRequest $request
      *
-     * @throws \Exception
+     * @throws Exception
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function remove(RemoveSongRequest $request)
     {
