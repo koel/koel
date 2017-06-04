@@ -15,6 +15,7 @@ use Log;
  * @property string image
  * @property bool   is_unknown
  * @property bool   is_various
+ * @property \Illuminate\Database\Eloquent\Collection songs
  */
 class Artist extends Model
 {
