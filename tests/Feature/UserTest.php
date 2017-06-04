@@ -68,4 +68,15 @@ class UserTest extends BrowserKitTestCase
         $user->deletePreference('foo');
         $this->assertNull($user->getPreference('foo'));
     }
+
+    public function testHidingUserPreferences()
+    {
+        $user = factory(User::class)->create([
+            'preferences' => [
+                'lastfm_session_key' => '123456',
+            ],
+        ]);
+
+        $this->assertEquals('hidden', $user->preferences['lastfm_session_key']);
+    }
 }

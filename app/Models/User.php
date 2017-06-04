@@ -152,13 +152,15 @@ class User extends Authenticatable
      */
     public function getPreferencesAttribute($value)
     {
-        return tap(unserialize($value) ?: [], function (array $preferences) {
-            // Hide the user's secrets away!
-            foreach ($this->hiddenPreferences as $key) {
-                if (array_key_exists($key, $preferences)) {
-                    $preferences[$key] = 'hidden';
-                }
+        $preferences = unserialize($value) ?: [];
+
+        // Hide sensitive data from returned preferences.
+        foreach ($this->hiddenPreferences as $key) {
+            if (array_key_exists($key, $preferences)) {
+                $preferences[$key] = 'hidden';
             }
-        });
+        }
+
+        return $preferences;
     }
 }
