@@ -31,7 +31,7 @@ install:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - phpunit
+  - vendor/bin/phpunit
   - yarn test
 
 addons:
