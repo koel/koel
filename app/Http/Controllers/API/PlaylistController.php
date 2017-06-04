@@ -41,8 +41,8 @@ class PlaylistController extends Controller
     /**
      * Rename a playlist.
      *
-     * @param Request $request
-     * @param Playlist                 $playlist
+     * @param Request  $request
+     * @param Playlist $playlist
      *
      * @throws AuthorizationException
      *
@@ -61,8 +61,8 @@ class PlaylistController extends Controller
      * Sync a playlist with songs.
      * Any songs that are not populated here will be removed from the playlist.
      *
-     * @param Request $request
-     * @param Playlist                 $playlist
+     * @param Request  $request
+     * @param Playlist $playlist
      *
      * @throws AuthorizationException
      *
