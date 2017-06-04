@@ -16,7 +16,7 @@ class SongZipArchive
     protected $archive;
 
     /**
-     * Path to the zip archive
+     * Path to the zip archive.
      *
      * @var string
      */
@@ -24,7 +24,7 @@ class SongZipArchive
 
     /**
      * Names of the files in the archive
-     * Format: [file-name.mp3' => currentFileIndex]
+     * Format: [file-name.mp3' => currentFileIndex].
      *
      * @var array
      */
