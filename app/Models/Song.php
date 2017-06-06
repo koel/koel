@@ -227,7 +227,7 @@ class Song extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeInDirectory($query, $path)
+    public static function scopeInDirectory($query, $path)
     {
         // Make sure the path ends with a directory separator.
         $path = rtrim(trim($path), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;

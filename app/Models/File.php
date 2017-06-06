@@ -184,6 +184,35 @@ class File
     }
 
     /**
+     * Check if the given file is likely a compilation.
+     *
+     * @param array $info     The extracted tags to sync
+     * @param int   $artistId The artist id found from the tags
+     *
+     * @return bool The compilation likelyness flag
+     */
+    private function isLikelyCompilation($info, $artist)
+    {
+        // Check if we need to set up the compilation flag by ourselves
+        if (!isset($info['album'])) {
+            return false;
+        }
+
+        $albumFromName = Album::getFromName($info['album']);
+
+        if ($albumFromName !== null && $albumFromName->artist_id != $artist->id
+            && Song::scopeInDirectory(Song::where('album_id', $albumFromName->id), pathinfo($this->path, PATHINFO_DIRNAME))->first() !== null) {
+            // It seems the compilation flag should be set
+            // Also update the previous album's artist to various artist
+            $albumFromName->update(['is_compilation' => '1', 'artist_id' => Artist::VARIOUS_ID]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Sync the song with all available media info against the database.
      *
      * @param array $tags  The (selective) tags to sync (if the song exists)
@@ -234,6 +263,11 @@ class File
 
             $isCompilation = (bool) array_get($info, 'compilation');
 
+            // Check if we need to set up the compilation flag by ourselves
+            if (!$isCompilation) {
+                $isCompilation = $this->isLikelyCompilation($info, $artist);
+            }
+
             // If the "album" tag is specified, use it.
             // Otherwise, re-use the existing model value.
             if (isset($info['album'])) {
@@ -247,6 +281,12 @@ class File
             // The file is newly added.
             $isCompilation = (bool) array_get($info, 'compilation');
             $artist = Artist::get($info['artist']);
+
+            // Check if we need to set up the compilation flag by ourselves
+            if (!$isCompilation) {
+                $isCompilation = $this->isLikelyCompilation($info, $artist);
+            }
+
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
 
