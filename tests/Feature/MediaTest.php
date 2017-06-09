@@ -151,9 +151,9 @@ class MediaTest extends BrowserKitTestCase
         $media->sync($this->mediaPath, ['track'], true);
 
         $addedSong = Song::findOrFail($song)->toArray();
-        array_forget($addedSong, 'created_date');
+        array_forget($addedSong, 'created_at');
         $song = $song->toArray();
-        array_forget($song, 'created_date');
+        array_forget($song, 'created_at');
         $this->assertEquals($song, $addedSong);
     }
 
