@@ -45,7 +45,7 @@ class Artist extends Model
         return $this->id === self::UNKNOWN_ID;
     }
 
-    public function getVariousAttribute()
+    public function getIsVariousAttribute()
     {
         return $this->id === self::VARIOUS_ID;
     }
