@@ -26,7 +26,7 @@ $factory->define(App\Models\Artist::class, function ($faker) {
 
 $factory->define(App\Models\Album::class, function ($faker) {
     return [
-        'artist_id' => factory(\App\Models\Artist::class)->create(),
+        'artist_id' => factory(\App\Models\Artist::class)->create()->id,
         'name' => ucwords($faker->words(random_int(2, 5), true)),
         'cover' => md5(uniqid()).'.jpg',
     ];
