@@ -291,7 +291,7 @@ class Song extends Model
      *
      * @param string $youTubePageToken The YouTube page token, for pagination purpose.
      *
-     * @return @return object|false
+     * @return false|object
      */
     public function getRelatedYouTubeVideos($youTubePageToken = '')
     {

@@ -111,12 +111,7 @@ class Artist extends Model
         if (!$this->image && is_string($image) && ini_get('allow_url_fopen')) {
             try {
                 $extension = explode('.', $image);
-                $fileName = uniqid().'.'.trim(strtolower(last($extension)), '. ');
-                $coverPath = app()->publicPath().'/public/img/artists/'.$fileName;
-
-                file_put_contents($coverPath, file_get_contents($image));
-
-                $this->update(['image' => $fileName]);
+                $this->writeImageFile(file_get_contents($image), last($extension));
                 $info['image'] = $this->image;
             } catch (Exception $e) {
                 Log::error($e);
@@ -124,6 +119,35 @@ class Artist extends Model
         }
 
         return $info;
+    }
+
+
+    /**
+     * Write an artist image file with binary data and update the Artist with the new cover file.
+     *
+     * @param string $binaryData
+     * @param string $extension     The file extension
+     * @param string $destination   The destination path. Automatically generated if empty.
+     */
+    public function writeImageFile($binaryData, $extension, $destination = '')
+    {
+        $extension = trim(strtolower($extension), '. ');
+        $destination = $destination ?: $this->generateRandomImagePath($extension);
+        file_put_contents($destination, $binaryData);
+
+        $this->update(['image' => basename($destination)]);
+    }
+
+    /**
+     * Generate a random path for the artist's image.
+     *
+     * @param string $extension The extension of the cover (without dot)
+     *
+     * @return string
+     */
+    private function generateRandomImagePath($extension)
+    {
+        return app()->publicPath().'/public/img/artists/'.uniqid('', true).".$extension";
     }
 
     /**

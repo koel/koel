@@ -6,22 +6,12 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Support\Facades\Artisan;
 use JWTAuth;
 use Laravel\BrowserKitTesting\TestCase as BaseBrowserKitTestCase;
 
 abstract class BrowserKitTestCase extends BaseBrowserKitTestCase
 {
-    protected $mediaPath;
-    protected $coverPath;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->mediaPath = __DIR__.'/songs';
-    }
+    use CreatesApplication;
 
     public function setUp()
     {
@@ -29,43 +19,7 @@ abstract class BrowserKitTestCase extends BaseBrowserKitTestCase
         $this->prepareForTests();
     }
 
-    /**
-     * The base URL to use while testing the application.
-     *
-     * @var string
-     */
-    protected $baseUrl = 'http://localhost';
-
-    /**
-     * Creates the application.
-     *
-     * @return \Illuminate\Foundation\Application
-     */
-    public function createApplication()
-    {
-        $app = require __DIR__.'/../bootstrap/app.php';
-
-        $app->make(Kernel::class)->bootstrap();
-
-        $this->coverPath = $app->basePath().'/public/img/covers';
-
-        return $app;
-    }
-
-    private function prepareForTests()
-    {
-        Artisan::call('migrate');
-
-        if (!User::all()->count()) {
-            Artisan::call('db:seed');
-        }
-
-        if (!file_exists($this->coverPath)) {
-            mkdir($this->coverPath, 0777, true);
-        }
-    }
-
-    /**
+        /**
      * Create a sample media set, with a complete artist+album+song trio.
      */
     protected function createSampleMediaSet()

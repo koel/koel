@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Facades\Lastfm;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Log;
 
 /**
  * @property string cover           The path to the album's cover
@@ -85,9 +87,13 @@ class Album extends Model
         // If our current album has no cover, and Last.fm has one, why don't we steal it?
         // Great artists steal for their great albums!
         if (!$this->has_cover && is_string($image) && ini_get('allow_url_fopen')) {
-            $extension = explode('.', $image);
-            $this->writeCoverFile(file_get_contents($image), last($extension));
-            $info['cover'] = $this->cover;
+            try {
+                $extension = explode('.', $image);
+                $this->writeCoverFile(file_get_contents($image), last($extension));
+                $info['cover'] = $this->cover;
+            } catch (Exception $e) {
+                Log::error($e);
+            }
         }
 
         return $info;

@@ -2,11 +2,14 @@
 
 namespace Tests;
 
+use App\Models\User;
+use Artisan;
 use Illuminate\Contracts\Console\Kernel;
 
 trait CreatesApplication
 {
     protected $coverPath;
+    protected $mediaPath = __DIR__.'/songs';
 
     /**
      * The base URL to use while testing the application.
@@ -29,5 +32,18 @@ trait CreatesApplication
         $this->coverPath = $app->basePath().'/public/img/covers';
 
         return $app;
+    }
+
+    private function prepareForTests()
+    {
+        Artisan::call('migrate');
+
+        if (!User::all()->count()) {
+            Artisan::call('db:seed');
+        }
+
+        if (!file_exists($this->coverPath)) {
+            mkdir($this->coverPath, 0777, true);
+        }
     }
 }
