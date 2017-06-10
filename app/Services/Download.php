@@ -118,9 +118,6 @@ class Download
 
     protected function fromArtist(Artist $artist)
     {
-        // Don't forget the contributed songs.
-        $songs = $artist->songs->merge($artist->getContributedSongs());
-
-        return $this->fromMultipleSongs($songs);
+        return $this->fromMultipleSongs($artist->songs);
     }
 }

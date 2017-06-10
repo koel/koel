@@ -127,16 +127,6 @@ class Artist extends Model
     }
 
     /**
-     * Get songs *contributed* (in compilation albums) by the artist.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getContributedSongs()
-    {
-        return Song::whereContributingArtistId($this->id)->get();
-    }
-
-    /**
      * Turn the image name into its absolute URL.
      *
      * @param mixed $value
