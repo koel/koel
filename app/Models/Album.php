@@ -121,12 +121,13 @@ class Album extends Model
      * Write a cover image file with binary data and update the Album with the new cover file.
      *
      * @param string $binaryData
-     * @param string $extension  The file extension
+     * @param string $extension     The file extension
+     * @param string $destination   The destination path. Automatically generated if empty.
      */
-    public function writeCoverFile($binaryData, $extension)
+    public function writeCoverFile($binaryData, $extension, $destination = '')
     {
         $extension = trim(strtolower($extension), '. ');
-        $destination = $this->generateRandomCoverPath($extension);
+        $destination = $destination ?: $this->generateRandomCoverPath($extension);
         file_put_contents($destination, $binaryData);
 
         $this->update(['cover' => basename($destination)]);
@@ -135,12 +136,13 @@ class Album extends Model
     /**
      * Copy a cover file from an existing image on the system.
      *
-     * @param string $source The original image's full path.
+     * @param string $source        The original image's full path.
+     * @param string $destination   The destination path. Automatically generated if empty.
      */
-    public function copyCoverFile($source)
+    public function copyCoverFile($source, $destination = '')
     {
         $extension = pathinfo($source, PATHINFO_EXTENSION);
-        $destination = $this->generateRandomCoverPath($extension);
+        $destination = $destination ?: $this->generateRandomCoverPath($extension);
         copy($source, $destination);
 
         $this->update(['cover' => basename($destination)]);
