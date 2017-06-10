@@ -109,4 +109,19 @@ class ArtistTest extends TestCase
         // Then I receive the extra info
         $this->assertEquals(['foo' => 'bar'], $info);
     }
+
+    /** @test */
+    public function artists_with_name_in_utf16_encoding_are_retrieved_correctly()
+    {
+        // Given there's an artist with name in UTF-16 encoding
+        $name = file_get_contents(__DIR__.'../../blobs/utf16');
+        $artist = Artist::get($name);
+
+        // When I get the artist using the name
+        $retrieved = Artist::get($name);
+
+        // Then I receive the artist
+        $this->assertEquals($artist->id, $retrieved->id);
+
+    }
 }

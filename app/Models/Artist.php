@@ -121,7 +121,6 @@ class Artist extends Model
         return $info;
     }
 
-
     /**
      * Write an artist image file with binary data and update the Artist with the new cover file.
      *
