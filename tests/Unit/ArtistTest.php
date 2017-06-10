@@ -32,6 +32,7 @@ class ArtistTest extends TestCase
     public function existing_artist_can_be_retrieved_using_name()
     {
         // Given an existing artist with a name
+        /** @var Artist $artist */
         $artist = factory(Artist::class)->create(['name' => 'Foo']);
 
         // When I get the artist by name
@@ -74,6 +75,7 @@ class ArtistTest extends TestCase
     public function it_can_write_an_image_file_and_update_itself_with_the_image()
     {
         // Given there's an artist and an image file content
+        /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
         $imageContent = 'dummy';
         $root = vfsStream::setup('home');
@@ -93,6 +95,7 @@ class ArtistTest extends TestCase
     public function extra_info_can_be_retrieved_for_an_artist()
     {
         // Given there's an artist
+        /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
 
         // When I get the extra info

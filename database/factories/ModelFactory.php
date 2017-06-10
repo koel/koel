@@ -33,7 +33,11 @@ $factory->define(App\Models\Album::class, function ($faker) {
 });
 
 $factory->define(App\Models\Song::class, function ($faker) {
+    $album = factory(\App\Models\Album::class)->create();
+
     return [
+        'album_id' => $album->id,
+        'artist_id' => $album->artist->id,
         'title' => ucwords($faker->words(random_int(2, 5), true)),
         'length' => $faker->randomFloat(2, 10, 500),
         'track' => random_int(1, 20),

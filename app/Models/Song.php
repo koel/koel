@@ -338,16 +338,6 @@ class Song extends Model
     }
 
     /**
-     * Determine if the song is an AWS S3 Object.
-     *
-     * @return bool
-     */
-    public function isS3ObjectAttribute()
-    {
-        return starts_with($this->path, 's3://');
-    }
-
-    /**
      * Get the bucket and key name of an S3 object.
      *
      * @return bool|array

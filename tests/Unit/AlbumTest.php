@@ -23,7 +23,9 @@ class AlbumTest extends TestCase
     public function exist_album_can_be_retrieved_using_artist_and_name()
     {
         // Given there's an exist album from an artist
+        /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
+        /** @var Album $album */
         $album = factory(Album::class)->create([
             'artist_id' => $artist->id,
         ]);
@@ -82,6 +84,7 @@ class AlbumTest extends TestCase
     public function it_can_write_a_cover_file_and_update_itself_with_the_cover_file()
     {
         // Given there's an album and a cover file content
+        /** @var Album $album */
         $album = factory(Album::class)->create();
         $coverContent = 'dummy';
         $root = vfsStream::setup('home');
@@ -101,6 +104,7 @@ class AlbumTest extends TestCase
     public function it_can_copy_a_cover_file_and_update_itself_with_the_cover_file()
     {
         // Given there's an album and an original image file
+        /** @var Album $album */
         $album = factory(Album::class)->create();
         $root = vfsStream::setup('home');
         $imageFile = vfsStream::newFile('foo.jpg')->at($root)->setContent('foo');
@@ -120,6 +124,7 @@ class AlbumTest extends TestCase
     public function extra_info_can_be_retrieved_for_an_album()
     {
         // Given there's an album
+        /** @var Album $album */
         $album = factory(Album::class)->create();
 
         // When I get the extra info for the album

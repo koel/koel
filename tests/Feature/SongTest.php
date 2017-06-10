@@ -305,24 +305,6 @@ class SongTest extends BrowserKitTestCase
         ]);
     }
 
-    public function testGetObjectStoragePublicUrl()
-    {
-        $song = Song::first();
-        $song->path = 's3://foo/bar.mp3';
-        $fakeUrl = 'http://aws.com/foo/bar.mp3';
-
-        $client = m::mock(AwsClient::class, [
-            'getCommand' => null,
-            'createPresignedRequest' => m::mock(Request::class, [
-                'getUri' => $fakeUrl,
-            ]),
-        ]);
-
-        Cache::shouldReceive('get')->once()->with("OSUrl/{$song->id}");
-        Cache::shouldReceive('put')->once()->with("OSUrl/{$song->id}", $fakeUrl, 60);
-        $this->assertEquals($fakeUrl, $song->getObjectStoragePublicUrl($client));
-    }
-
     public function testDeletingByChunk()
     {
         $this->assertNotEquals(0, Song::count());
