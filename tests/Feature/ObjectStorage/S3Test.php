@@ -14,7 +14,7 @@ class S3Test extends BrowserKitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->withoutMiddleware();
+        $this->disableMiddlewareForAllTests();
     }
 
     public function testPut()
