@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int   play_count
  * @property Song  song
  * @property User  user
+ * @property int id
  */
 class Interaction extends Model
 {

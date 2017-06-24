@@ -352,4 +352,9 @@ class Song extends Model
 
         return compact('bucket', 'key');
     }
+
+    public function __toString()
+    {
+        return $this->id;
+    }
 }

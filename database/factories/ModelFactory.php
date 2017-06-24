@@ -52,3 +52,12 @@ $factory->define(App\Models\Playlist::class, function ($faker) {
         'name' => $faker->name,
     ];
 });
+
+$factory->define(\App\Models\Interaction::class, function ($faker) {
+    return [
+        'song_id' => factory(\App\Models\Song::class)->create()->id,
+        'user_id' => factory(\App\Models\User::class)->create()->id,
+        'liked' => $faker->boolean,
+        'play_count' => $faker->randomNumber,
+    ];
+});
