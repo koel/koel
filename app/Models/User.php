@@ -154,7 +154,7 @@ class User extends Authenticatable
     {
         $preferences = unserialize($value) ?: [];
 
-        // Hide the user's secrets away!
+        // Hide sensitive data from returned preferences.
         foreach ($this->hiddenPreferences as $key) {
             if (array_key_exists($key, $preferences)) {
                 $preferences[$key] = 'hidden';

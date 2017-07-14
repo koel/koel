@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\ViewSongRequest;
 use App\Models\Album;
+use Illuminate\Http\RedirectResponse;
 use iTunes;
 
 class iTunesController extends Controller
@@ -14,7 +15,7 @@ class iTunesController extends Controller
      * @param ViewSongRequest $request
      * @param Album           $album
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function viewSong(ViewSongRequest $request, Album $album)
     {

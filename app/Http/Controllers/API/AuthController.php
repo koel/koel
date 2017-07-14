@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\UserLoginRequest;
-use App\Models\User;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use JWTAuth;
 use Log;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -16,7 +16,7 @@ class AuthController extends Controller
      *
      * @param UserLoginRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function login(UserLoginRequest $request)
     {
@@ -36,7 +36,7 @@ class AuthController extends Controller
     /**
      * Log the current user out.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function logout()
     {

@@ -4,7 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Services\Lastfm;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Tymon\JWTAuth\JWTAuth;
 
@@ -34,7 +37,7 @@ class LastfmController extends Controller
      * @param Lastfm     $lastfm
      * @param JWTAuth    $auth
      *
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return Redirector|RedirectResponse
      */
     public function connect(Redirector $redirector, Lastfm $lastfm, JWTAuth $auth = null)
     {
@@ -60,7 +63,7 @@ class LastfmController extends Controller
      * @param Request $request
      * @param Lastfm  $lastfm
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function callback(Request $request, Lastfm $lastfm)
     {
@@ -79,7 +82,7 @@ class LastfmController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function setSessionKey(Request $request)
     {
@@ -91,7 +94,7 @@ class LastfmController extends Controller
     /**
      * Disconnect the current user from Last.fm.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function disconnect()
     {

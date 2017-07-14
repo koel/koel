@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Facades\Media;
 use App\Http\Requests\API\SettingRequest;
 use App\Models\Setting;
+use Illuminate\Http\JsonResponse;
 
 class SettingController extends Controller
 {
@@ -13,7 +14,7 @@ class SettingController extends Controller
      *
      * @param SettingRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(SettingRequest $request)
     {

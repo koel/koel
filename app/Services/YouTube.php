@@ -46,8 +46,8 @@ class YouTube extends RESTfulService
         $q = $song->title;
 
         // If the artist is worth noticing, include them into the search.
-        if (!$song->artist->isUnknown() && !$song->artist->isVarious()) {
-            $q .= ' '.$song->artist->name;
+        if (!$song->artist->is_unknown && !$song->artist->is_various) {
+            $q .= " {$song->artist->name}";
         }
 
         return $this->search($q, $pageToken);

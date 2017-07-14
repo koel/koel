@@ -23,6 +23,7 @@ use Google\Cloud\Storage\StorageClient;
  * @property int    track
  * @property int    album_id
  * @property int    id
+ * @property int    artist_id
  */
 class Song extends Model
 {
@@ -81,7 +82,7 @@ class Song extends Model
     public function scrobble(User $user, $timestamp)
     {
         // Don't scrobble the unknown guys. No one knows them.
-        if ($this->artist->isUnknown()) {
+        if ($this->artist->is_unknown) {
             return false;
         }
 

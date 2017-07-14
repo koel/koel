@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Artist;
+use Illuminate\Http\JsonResponse;
 
 class ArtistController extends Controller
 {
@@ -11,7 +12,7 @@ class ArtistController extends Controller
      *
      * @param Artist $artist
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getInfo(Artist $artist)
     {
