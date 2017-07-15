@@ -74,9 +74,6 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('song', 'SongController@put'); // we follow AWS's convention here.
             Route::delete('song', 'SongController@remove'); // and here.
         });
-    });
-
-    Route::group(['middleware' => 'os.auth', 'prefix' => 'os', 'namespace' => 'ObjectStorage'], function () {
         Route::group(['prefix' => 'gcs', 'namespace' => 'GCS'], function () {
             Route::post('song', 'SongController@put'); // we follow AWS's convention here.
             Route::delete('song', 'SongController@remove'); // and here.
