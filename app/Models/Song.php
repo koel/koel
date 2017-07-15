@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Lastfm;
 use YouTube;
 use Google\Cloud\Storage\StorageClient;
+use Carbon\Carbon;
 
 /**
  * @property string path
@@ -298,8 +299,9 @@ class Song extends Model
         }
         $bucket = $gcs->bucket($this->gcp_params['bucket']);
         $object = $bucket->object($this->gcp_params['key']);
-        $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
-        $url = 'https://storage.googleapis.com/' . $this->gcp_params['bucket'] . '/' . rawurlencode($this->gcp_params['key']);
+        $options = array();
+        $options['keyFilePath'] = env('GCS_KEY_FILE_PATH');
+        $url = $object->signedUrl(Carbon::now()->addHours(24)->timestamp, $options);
         Cache::put("OSUrl/{$this->id}", $url, 60);
         return $url;
     }
