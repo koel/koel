@@ -7,6 +7,7 @@ use App\Http\Requests\API\ObjectStorage\GCS\Request as BaseRequest;
 /**
  * @property string bucket
  * @property array  tags
+ * @property string key
  */
 class PutSongRequest extends BaseRequest
 {

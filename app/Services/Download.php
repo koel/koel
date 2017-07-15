@@ -61,7 +61,7 @@ class Download
         } else if ($gcpParams = $song->gcp_params) {
             // The song is hosted on Google CLoud Storage.
             // We download it back to our local server first.
-            $localPath = rtrim(sys_get_temp_dir(), '/').'/'.basename($gcpParams['key']);
+            $localPath = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.basename($gcpParams['key']);
             $url = $song->getGcpObjectStoragePublicUrl();
 
             abort_unless($url, 404);
