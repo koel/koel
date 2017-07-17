@@ -347,7 +347,17 @@ class Song extends Model
         // implementation of br2nl to fail with duplicated line breaks.
         return str_replace(["\r\n", "\r", "\n"], '<br />', $value);
     }
-
+    
+    /**
+     * Determine if the song has lyrics.
+     *
+     * @return bool
+     */
+    public function hasLyrics()
+    {
+        return (bool) $this->lyrics;
+    }
+    
     /**
      * Determine if the song is an AWS S3 Object.
      *
