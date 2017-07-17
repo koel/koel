@@ -10,6 +10,7 @@ use Cache;
 use Illuminate\Database\Eloquent\Model;
 use Lastfm;
 use YouTube;
+use Musixmatch;
 
 /**
  * @property string path
@@ -297,7 +298,17 @@ class Song extends Model
     {
         return YouTube::searchVideosRelatedToSong($this, $youTubePageToken);
     }
-
+    
+    /**
+     * Get Lyrics related to this song.
+     * 
+     * @return object|false
+     */
+    public function getSongLyrics()
+    {
+        return Musixmatch::searchLyricsRelatedToSong($this);
+    }
+    
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
