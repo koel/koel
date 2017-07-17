@@ -1,13 +1,16 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Song;
 use App\Services\Musixmatch;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
+use Tests\BrowserKitTestCase;
 
-class MusixmatchTest extends TestCase
+class MusixmatchTest extends BrowserKitTestCase
 {
     use WithoutMiddleware;
 
