@@ -150,10 +150,14 @@ class MediaTest extends BrowserKitTestCase
         // but we still expect the whole song to be added back with all info
         $media->sync($this->mediaPath, ['track'], true);
 
-        $addedSong = Song::findOrFail($song)->toArray();
+        $addedSong = Song::findOrFail($song)->toArray()[0];
+        
         array_forget($addedSong, 'created_at');
+        
         $song = $song->toArray();
+        
         array_forget($song, 'created_at');
+        
         $this->assertEquals($song, $addedSong);
     }
 
