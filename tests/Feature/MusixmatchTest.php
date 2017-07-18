@@ -7,9 +7,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
+use Tests\TestCase;
 
-class MusixmatchTest extends BrowserKitTestCase
+class MusixmatchTest extends TestCase
 {
     use WithoutMiddleware;
 
@@ -18,7 +18,7 @@ class MusixmatchTest extends BrowserKitTestCase
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/youtube/search.jsonp')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search.jsonp')),
         ]);
         
         $api = new Musixmatch(null, $client);
