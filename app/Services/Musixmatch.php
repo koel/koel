@@ -77,7 +77,7 @@ class Musixmatch extends RESTfulService
         try{
             $response = $this->jsonpDecode($this->get($uri));
             
-            return $this->getLyrics($response);
+            return dd($this->getLyrics($response));
         }catch(\Exception $e){
             Log::error($e);
 
