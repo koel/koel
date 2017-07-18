@@ -19,7 +19,7 @@ class MusixmatchTest extends BrowserKitTestCase
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/musixmatch/search.jsonp')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search.jsonp')),
         ]);
 
         $api = new Musixmatch(null, $client);
@@ -34,7 +34,7 @@ class MusixmatchTest extends BrowserKitTestCase
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'/blobs/musixmatch/search_failure.jsonp')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search_failure.jsonp')),
         ]);
 
         $api = new Musixmatch(null, $client);
