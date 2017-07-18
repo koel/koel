@@ -2,15 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\Song;
 use App\Services\Musixmatch;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
+use Tests\TestCase;
 
-class MusixmatchTest extends BrowserKitTestCase
+class MusixmatchTest extends TestCase
 {
     use WithoutMiddleware;
 
@@ -25,8 +24,6 @@ class MusixmatchTest extends BrowserKitTestCase
         $api = new Musixmatch(null, $client);
         
         $response = $api->search('fly away', 'lenny kravitz');
-        
-        return dd([$response, config('koel.musixmatch.key')]);
         
         $this->assertTrue(strpos($response, "*** This Lyrics are NOT for Commercial use ***") > 0);
     }
