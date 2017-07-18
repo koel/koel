@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Song;
-use Cache;
 use GuzzleHttp\Client;
 use Log;
 
@@ -77,7 +76,7 @@ class Musixmatch extends RESTfulService
         try{
             $response = $this->jsonpDecode($this->get($uri));
             
-            return dd($this->getLyrics($response));
+            return $this->getLyrics($response);
         }catch(\Exception $e){
             Log::error($e);
 

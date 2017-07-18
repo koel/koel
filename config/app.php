@@ -140,7 +140,8 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Aws\Laravel\AwsServiceProvider::class,
-
+        Laravel\Tinker\TinkerServiceProvider::class, 
+         
         /*
          * Application Service Providers...
          */

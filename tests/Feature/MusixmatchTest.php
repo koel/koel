@@ -17,9 +17,11 @@ class MusixmatchTest extends BrowserKitTestCase
     public function testMusixmatchSearch()
     {
         $this->withoutEvents();
-
+        
+        $file = file_get_contents(__DIR__.'../../blobs/musixmatch/search.jsonp');
+        
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search.jsonp')),
+            'get' => new Response(200, [], $file),
         ]);
         
         $api = new Musixmatch(null, $client);

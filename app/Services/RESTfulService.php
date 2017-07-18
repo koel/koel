@@ -85,7 +85,11 @@ class RESTfulService
                 ->getBody();
 
             if ($this->responseFormat === 'json') {
-                return json_decode($body);
+                $response = json_decode($body);
+                
+                if($response) return $response;
+                
+                return $body;
             }
 
             if ($this->responseFormat === 'xml') {
