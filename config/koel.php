@@ -59,7 +59,20 @@ return [
     'youtube' => [
         'key' => env('YOUTUBE_API_KEY'),
     ],
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Musixmatch Integration
+    |--------------------------------------------------------------------------
+    |
+    | Musixmatch integration requires a musixmatch API key
+    |
+    */
 
+    'musixmatch' => [
+        'key' => env('MUSIXMATCH_API_KEY'),
+    ],
+    
     /*
     |--------------------------------------------------------------------------
     | Last.FM Integration

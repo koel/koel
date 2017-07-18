@@ -140,7 +140,8 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Aws\Laravel\AwsServiceProvider::class,
-
+        Laravel\Tinker\TinkerServiceProvider::class, 
+         
         /*
          * Application Service Providers...
          */
@@ -153,6 +154,7 @@ return [
         App\Providers\UtilServiceProvider::class,
         App\Providers\LastfmServiceProvider::class,
         App\Providers\YouTubeServiceProvider::class,
+        App\Providers\MusixmatchServiceProvider::class,
         App\Providers\DownloadServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\iTunesServiceProvider::class,
@@ -208,6 +210,7 @@ return [
         'MediaCache' => App\Facades\MediaCache::class,
         'Util' => App\Facades\Util::class,
         'Lastfm' => App\Facades\Lastfm::class,
+        'Musixmatch' => App\Facades\Musixmatch::class,
         'YouTube' => App\Facades\YouTube::class,
         'Download' => App\Facades\Download::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,

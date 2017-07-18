@@ -75,6 +75,8 @@ class SongController extends Controller
      */
     public function show(Song $song)
     {
+        $song->getSongLyrics();
+        
         return response()->json([
             'lyrics' => $song->lyrics,
             'album_info' => $song->album->getInfo(),

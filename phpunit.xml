@@ -30,10 +30,11 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_CONNECTION" value="mysql"/>
         <env name="LASTFM_API_KEY" value="foo"/>
         <env name="LASTFM_API_SECRET" value="bar"/>
         <env name="YOUTUBE_API_KEY" value="foo"/>
+        <env name="MUSIXMATCH_API_KEY" value="foo"/>
         <env name="ADMIN_EMAIL" value="koel@example.com"/>
         <env name="ADMIN_NAME" value="Koel"/>
         <env name="ADMIN_PASSWORD" value="SoSecureK0el"/>

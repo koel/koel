@@ -84,8 +84,8 @@ class RESTfulService
                 ->$verb($this->buildUrl($uri, $appendKey), ['form_params' => $params])
                 ->getBody();
 
-            if ($this->responseFormat === 'json') {
-                return json_decode($body);
+            if ($this->responseFormat === 'json' && !is_null($response = json_decode($body))) {
+                return $response;
             }
 
             if ($this->responseFormat === 'xml') {
