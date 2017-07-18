@@ -18,12 +18,12 @@ class MusixmatchTest extends TestCase
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../blobs/musixmatch/search.jsonp')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'/../blobs/musixmatch/search.jsonp')),
         ]);
         
         $api = new Musixmatch(null, $client);
         
-        $response = $api->search('fly away', 'lenny kravitz');
+        $response = $api->search('foo', 'bar');
         
         $this->assertTrue(strpos($response, "*** This Lyrics are NOT for Commercial use ***") > 0);
     }
@@ -33,12 +33,12 @@ class MusixmatchTest extends TestCase
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search_failure.jsonp')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'/../blobs/musixmatch/search_failure.jsonp')),
         ]);
 
         $api = new Musixmatch(null, $client);
         
-        $response = $api->search("baba o'riley", "the who");
+        $response = $api->search("foo", "bar");
 
         $this->assertEquals($response, false);
     }
