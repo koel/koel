@@ -6,19 +6,20 @@ use App\Services\Musixmatch;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Mockery as m;
-use Tests\TestCase;
+use Tests\BrowserKitTestCase;
 
-class MusixmatchTest extends TestCase
+class MusixmatchTest extends BrowserKitTestCase
 {
-    use WithoutMiddleware;
+    use DatabaseTransactions, WithoutMiddleware;
 
-    public function testSearch()
+    public function testMusixmatchSearch()
     {
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'/../blobs/musixmatch/search.jsonp')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search.jsonp')),
         ]);
         
         $api = new Musixmatch(null, $client);
@@ -28,12 +29,12 @@ class MusixmatchTest extends TestCase
         $this->assertTrue(strpos($response, "*** This Lyrics are NOT for Commercial use ***") > 0);
     }
     
-    public function testSearchFailure()
+    public function testMusixmatchSearchFailure()
     {
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'/../blobs/musixmatch/search_failure.jsonp')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search_failure.jsonp')),
         ]);
 
         $api = new Musixmatch(null, $client);
