@@ -87,9 +87,7 @@ class RESTfulService
             if ($this->responseFormat === 'json') {
                 $response = json_decode($body);
                 
-                if($response) return $response;
-                
-                return $body;
+                if(!is_null($response)) return $response;
             }
 
             if ($this->responseFormat === 'xml') {
