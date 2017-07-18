@@ -17,6 +17,7 @@ env:
   LASTFM_API_KEY: foo
   LASTFM_API_SECRET: bar
   BROADCAST_DRIVER: log
+  MUSIXMATCH_API_KEY: foo
 
 branches:
   - master
