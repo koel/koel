@@ -18,7 +18,7 @@ class MusixmatchTest extends BrowserKitTestCase
         $this->withoutEvents();
 
         $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search.jsonp')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/youtube/search.jsonp')),
         ]);
         
         $api = new Musixmatch(null, $client);
