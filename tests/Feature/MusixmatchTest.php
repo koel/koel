@@ -25,7 +25,9 @@ class MusixmatchTest extends BrowserKitTestCase
         $api = new Musixmatch(null, $client);
         
         $response = $api->search('fly away', 'lenny kravitz');
-
+        
+        echo $response;
+        
         $this->assertTrue(strpos($response, "*** This Lyrics are NOT for Commercial use ***") > 0);
     }
     
