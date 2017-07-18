@@ -41,6 +41,6 @@ class MusixmatchTest extends BrowserKitTestCase
         
         $response = $api->search("baba o'riley", "the who");
 
-        $this->assertEquals($response, false);
+        $this->assertTrue($response == false);
     }
 }
