@@ -26,8 +26,6 @@ class MusixmatchTest extends BrowserKitTestCase
         
         $response = $api->search('fly away', 'lenny kravitz');
         
-        echo $response;
-        
         $this->assertTrue(strpos($response, "*** This Lyrics are NOT for Commercial use ***") > 0);
     }
     
@@ -43,6 +41,6 @@ class MusixmatchTest extends BrowserKitTestCase
         
         $response = $api->search("baba o'riley", "the who");
 
-        $this->assertTrue($response == false);
+        $this->assertEquals($response, false);
     }
 }
