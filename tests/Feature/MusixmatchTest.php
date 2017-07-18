@@ -21,10 +21,12 @@ class MusixmatchTest extends BrowserKitTestCase
         $client = m::mock(Client::class, [
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/musixmatch/search.jsonp')),
         ]);
-
+        
         $api = new Musixmatch(null, $client);
         
         $response = $api->search('fly away', 'lenny kravitz');
+        
+        return dd($response);
         
         $this->assertTrue(strpos($response, "*** This Lyrics are NOT for Commercial use ***") > 0);
     }
