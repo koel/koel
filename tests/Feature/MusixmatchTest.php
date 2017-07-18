@@ -26,7 +26,7 @@ class MusixmatchTest extends BrowserKitTestCase
         
         $response = $api->search('fly away', 'lenny kravitz');
         
-        return dd([$response, config('musixmatch.key')]);
+        return dd([$response, config('koel.musixmatch.key')]);
         
         $this->assertTrue(strpos($response, "*** This Lyrics are NOT for Commercial use ***") > 0);
     }
