@@ -109,7 +109,5 @@ class Musixmatch extends RESTfulService
             return substr($lyrics, 0, strpos($lyrics, "******* This Lyrics is NOT for Commercial use *******")).
                 "*** This Lyrics are NOT for Commercial use ***";
         }
-        
-        return false;
     }
 }
