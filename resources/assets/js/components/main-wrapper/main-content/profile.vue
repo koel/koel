@@ -1,40 +1,40 @@
 <template>
   <section id="profileWrapper">
     <h1 class="heading">
-      <span>Profile &amp; Preferences</span>
+      <span>个人资料 &amp; 首选项</span>
     </h1>
 
     <div class="main-scroll-wrap">
       <form @submit.prevent="update">
         <div class="form-row">
-          <label for="inputProfileName">Name</label>
+          <label for="inputProfileName">姓名</label>
           <input type="text" name="name" id="inputProfileName" v-model="state.current.name">
         </div>
 
         <div class="form-row">
-          <label for="inputProfileEmail">Email Address</label>
+          <label for="inputProfileEmail">邮箱地址</label>
           <input type="email" name="email" id="inputProfileEmail" v-model="state.current.email">
         </div>
 
         <div class="change-pwd">
           <div class="form-row">
-            <p class="help">If you want to change your password, enter it below. <br>
-              Otherwise, just leave the next two fields empty. It’s OK – no one will judge you.</p>
+            <p class="help">请在下方输入你要修改的密码 —— 当然没人会强迫你改 <br>
+              不想改?留空即可.</p>
           </div>
 
           <div class="form-row">
-            <label for="inputProfilePassword">New Password</label>
+            <label for="inputProfilePassword">新密码</label>
             <input v-model="pwd" name="password" type="password" id="inputProfilePassword" autocomplete="off">
           </div>
 
           <div class="form-row">
-            <label for="inputProfileConfirmPassword">Confirm Password</label>
+            <label for="inputProfileConfirmPassword">确认您的新密码</label>
             <input v-model="confirmPwd" name="confirmPassword" type="password" id="inputProfileConfirmPassword" autocomplete="off">
           </div>
         </div>
 
         <div class="form-row">
-          <button type="submit" class="btn btn-submit">Save</button>
+          <button type="submit" class="btn btn-submit">保存</button>
         </div>
       </form>
 
@@ -42,47 +42,40 @@
         <div class="form-row">
           <label>
             <input type="checkbox" name="notify" v-model="prefs.notify" @change="savePreference">
-            Show “Now Playing” song notification
+            显示"正在播放歌曲"通知
           </label>
         </div>
         <div class="form-row">
           <label>
             <input type="checkbox" name="confirmClosing" v-model="prefs.confirmClosing" @change="savePreference">
-            Confirm before closing Koel
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            <input type="checkbox" name="transcodeOnMobile" v-model="prefs.transcodeOnMobile" @change="savePreference">
-            Convert and play media at 128kbps on mobile
+            关闭Koel前确认
           </label>
         </div>
       </div>
 
       <section class="lastfm" >
-        <h1>Last.fm Integration</h1>
+        <h1>Last.fm模块</h1>
 
         <div v-if="sharedState.useLastfm">
-          <p>This installation of Koel integrates with Last.fm.
+          <p>此版本的Koel已经与Last.fm整合.
             <span v-if="state.current.preferences.lastfm_session_key">
-              It appears that you have connected your Last.fm account as well – Perfect!
+		我们现在已经成功连接到Last.fm,恭喜!.
             </span>
             <span v-else>
-              It appears that you haven’t connected to your Last.fm account though.
+		很抱歉，连接Last.fm失败，请检查配置并重试.
             </span>
           </p>
           <p>
-            Connecting Koel and your Last.fm account enables exciting features – scrobbling is one of them.
+		通过连接Koel和Last.fm，您可以使用各种激动人心的功能，比如记录歌曲
           </p>
           <p v-if="state.current.preferences.lastfm_session_key">
-            For the sake of democracy, you have the option to disconnect from Last.fm too.
-            Doing so will reload Koel, though.
+		您随时可以断开和Last.fm的连接，此操作需要重启Koel.
           </p>
 
           <div class="buttons">
             <button @click.prevent="connectToLastfm" class="connect">
               <i class="fa fa-lastfm"></i>
-              {{ state.current.preferences.lastfm_session_key ? 'Reconnect' : 'Connect' }}
+              {{ state.current.preferences.lastfm_session_key ? '重新连接' : '连接' }}
             </button>
 
             <button
@@ -90,18 +83,18 @@
               @click.prevent="disconnectFromLastfm"
               class="disconnect"
             >
-              Disconnect
+              断开
             </button>
           </div>
         </div>
 
         <div v-else>
-          <p>This installation of Koel has no Last.fm integration.
-            <span v-if="state.current.is_admin">Visit
-              <a href="https://koel.phanan.net/docs/#/3rd-party?id=last-fm" target="_blank">Koel’s Wiki</a>
-              for a quick how-to.
+          <p>貌似没有安装 Last.fm 模块，请检查.
+            <span v-if="state.current.is_admin">请访问
+              <a href="https://github.com/phanan/koel/wiki" target="_blank">Koel’s Wiki</a>
+              来修复这个问题.
             </span>
-            <span v-else>Try politely asking your administrator to enable it.</span>
+            <span v-else>联系你的管理员开启Last.fm.</span>
           </p>
         </div>
       </section>
@@ -110,9 +103,10 @@
 </template>
 
 <script>
-import { each } from 'lodash'
+import $ from 'jquery'
+
 import { userStore, preferenceStore, sharedStore } from '../../../stores'
-import { forceReloadWindow, $ } from '../../../utils'
+import { forceReloadWindow } from '../../../utils'
 import { http, ls } from '../../../services'
 
 export default {
@@ -131,21 +125,19 @@ export default {
     /**
      * Update the current user's profile.
      */
-    async update () {
-      const passwordFields = Array.from(
-        document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
-      )
+    update () {
       // A little validation put in a small place.
       if ((this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd) {
-        each(passwordFields, el => $.addClass(el, 'error'))
+        $('#inputProfilePassword, #inputProfileConfirmPassword').addClass('error')
         return
       }
 
-      each(passwordFields, el => $.removeClass(el, 'error'))
+      $('#inputProfilePassword, #inputProfileConfirmPassword').removeClass('error')
 
-      await userStore.updateProfile(this.pwd)
-      this.pwd = ''
-      this.confirmPwd = ''
+      userStore.updateProfile(this.pwd).then(() => {
+        this.pwd = ''
+        this.confirmPwd = ''
+      })
     },
 
     /**
@@ -185,7 +177,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

@@ -1,7 +1,7 @@
 <template>
   <section id="favoritesWrapper">
     <h1 class="heading">
-      <span>Songs You Love
+      <span>你喜爱的音乐
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
         <span class="meta" v-show="meta.songCount">
@@ -11,7 +11,7 @@
           <template v-if="sharedState.allowDownload && state.songs.length">
             •
             <a href @click.prevent="download" title="Download all songs in playlist">
-              Download All
+              下载全部
             </a>
           </template>
         </span>
@@ -29,9 +29,8 @@
     <song-list v-show="state.songs.length" :items="state.songs" type="favorites"/>
 
     <div v-show="!state.songs.length" class="none">
-      Start loving!
-      Click the <i style="margin: 0 5px" class="fa fa-heart"></i> icon when a song is playing to add it
-      to this list.
+      要记录你喜欢的音乐!
+      单击正在播放歌曲的<i style="margin: 0 5px" class="fa fa-heart"></i>图标来添加到我的喜爱列表.
     </div>
   </section>
 </template>
@@ -65,7 +64,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

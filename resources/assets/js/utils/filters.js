@@ -76,9 +76,11 @@ export function filterBy (arr, search, ...keys) {
 }
 
 export function pluralize () {
-  if (!arguments[0] || arguments[0] > 1) {
-    return `${arguments[0]} ${arguments[1]}s`
+  /*if (!arguments[0] || arguments[0] > 1) 
+  {  
+  return `${arguments[0]} ${arguments[1]}s`
   }
 
-  return `${arguments[0]} ${arguments[1]}`
+  return `${arguments[0]} ${arguments[1]}`*/
+  return `${arguments[0]} 首歌曲`
 }

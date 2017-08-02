@@ -1,6 +1,6 @@
 <template>
   <section id="playlists">
-    <h1>Playlists
+    <h1>歌单
       <i class="fa fa-plus-circle control create" :class="{ creating: creating }" @click="creating = !creating"/>
     </h1>
 
@@ -9,13 +9,13 @@
         @keyup.esc.prevent="creating = false"
         v-model="newName"
         v-koel-focus
-        placeholder="↵ to save"
+        placeholder="敲 ↵ 保存"
         required
       >
     </form>
 
     <ul class="menu">
-      <playlist-item type="favorites" :playlist="{ name: 'Favorites', songs: favoriteState.songs }"/>
+      <playlist-item type="favorites" :playlist="{ name: '我喜欢的音乐', songs: favoriteState.songs }"/>
       <playlist-item v-for="playlist in playlistState.playlists" type="playlist" :playlist="playlist"/>
     </ul>
   </section>
@@ -45,19 +45,20 @@ export default {
     /**
      * Store/create a new playlist.
      */
-    async store () {
+    store () {
       this.creating = false
 
-      const playlist = await playlistStore.store(this.newName)
-      this.newName = ''
-      // Activate the new playlist right away
-      this.$nextTick(() => router.go(`playlist/${playlist.id}`))
+      playlistStore.store(this.newName).then(p => {
+        this.newName = ''
+        // Activate the new playlist right away
+        this.$nextTick(() => router.go(`playlist/${p.id}`))
+      })
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

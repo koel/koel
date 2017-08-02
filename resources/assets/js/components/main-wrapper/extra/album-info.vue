@@ -30,16 +30,15 @@
         </ul>
       </section>
 
-      <footer>Data &copy; <a target="_blank" :href="album.info.url">Last.fm</a></footer>
+      <footer>来源 &copy; <a target="_blank" :href="album.info.url">Last.fm</a></footer>
     </div>
 
-    <p class="none" v-else>No album information found.</p>
+    <p class="none" v-else>未找到专辑信息.</p>
   </article>
 </template>
 
 <script>
-import { sharedStore } from '../../../stores'
-import { playback, ls } from '../../../services'
+import { playback } from '../../../services'
 import trackListItem from '../../shared/track-list-item.vue'
 
 export default {
@@ -48,16 +47,11 @@ export default {
 
   data () {
     return {
-      showingFullWiki: false,
-      useiTunes: sharedStore.state.useiTunes
+      showingFullWiki: false
     }
   },
 
   watch: {
-    /**
-     * Whenever a new album is loaded into this component, we reset the "full wiki" state.
-     * @return {Boolean}
-     */
     album () {
       this.showingFullWiki = false
     }
@@ -70,10 +64,6 @@ export default {
 
     showFull () {
       return this.mode === 'full' || this.showingFullWiki
-    },
-
-    iTunesUrl () {
-      return `/api/itunes/album/${this.album.id}&jwt-token=${ls.get('jwt-token')}`
     }
   },
 
@@ -88,7 +78,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

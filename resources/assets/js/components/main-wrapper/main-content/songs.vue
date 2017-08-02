@@ -1,7 +1,7 @@
 <template>
   <section id="songsWrapper">
     <h1 class="heading">
-      <span>All Songs
+      <span>所有歌曲
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
         <span class="meta" v-show="meta.songCount">
@@ -42,7 +42,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 </style>

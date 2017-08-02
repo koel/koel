@@ -19,12 +19,11 @@
           Full Bio
         </button>
       </div>
-      <p class="none" v-else>This artist has no Last.fm biography – yet.</p>
+      <p class="none" v-else>此歌手未有与Last.fm相关联的内容 .</p>
 
-      <footer>Data &copy; <a target="_blank" :href="artist.info.url">Last.fm</a></footer>
+      <footer>来源 &copy; <a target="_blank" :href="artist.info.url">Last.fm</a></footer>
     </div>
-
-    <p class="none" v-else>Nothing can be found. This artist is a mystery.</p>
+    <p class="none" v-else>没有找到任何东西 这位歌手仍然是个谜.</p>
   </article>
 </template>
 
@@ -41,10 +40,6 @@ export default {
   },
 
   watch: {
-    /**
-     * Whenever a new artist is loaded into this component, we reset the "full bio" state.
-     * @return {Boolean}
-     */
     artist () {
       this.showingFullBio = false
     }
@@ -71,7 +66,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

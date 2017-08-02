@@ -10,7 +10,7 @@
       <span v-html="state.message"/>
     </div>
 
-    <button v-show="state.dismissable" @click.prevent="state.showing = false">Close</button>
+    <button v-show="state.dismissable" @click.prevent="state.showing = false">关闭</button>
   </div>
 </template>
 
@@ -80,7 +80,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

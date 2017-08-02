@@ -1,23 +1,23 @@
 <template>
   <div class="add-to" v-show="showing" v-koel-clickaway="close">
-    <p>Add {{ songs.length | pluralize('song') }} to</p>
+    <p>添加 {{ songs.length | pluralize('首歌曲') }} 到</p>
 
     <ul>
-      <li class="after-current" @click="queueSongsAfterCurrent">After Current Song</li>
-      <li class="bottom-queue" @click="queueSongsToBottom">Bottom of Queue</li>
-      <li class="top-queue" @click="queueSongsToTop">Top of Queue</li>
-      <li class="favorites" v-if="config.favorites" @click="addSongsToFavorite">Favorites</li>
+      <li class="after-current" @click="queueSongsAfterCurrent">当前歌曲之后</li>
+      <li class="bottom-queue" @click="queueSongsToBottom">队列尾部</li>
+      <li class="top-queue" @click="queueSongsToTop">队列开头</li>
+      <li class="favorites" v-if="config.favorites" @click="addSongsToFavorite">我喜爱的音乐</li>
       <li class="playlist" v-for="playlist in playlistState.playlists"
         @click="addSongsToExistingPlaylist(playlist)">{{ playlist.name }}</li>
     </ul>
 
-    <p>or create a new playlist</p>
+    <p>或者创建一个新歌单</p>
 
     <form class="form-save form-simple" @submit.prevent="createNewPlaylistFromSongs">
       <input type="text"
         @keyup.esc.prevent="close"
         v-model="newPlaylistName"
-        placeholder="Playlist name"
+        placeholder="新建歌单名称"
         required>
       <button type="submit">
         <i class="fa fa-save"></i>
@@ -47,7 +47,9 @@ export default {
 
   watch: {
     songs () {
-      this.songs.length || this.close()
+      if (!this.songs.length) {
+        this.close()
+      }
     }
   },
 
@@ -56,17 +58,18 @@ export default {
      * Save the selected songs as a playlist.
      * As of current we don't have selective save.
      */
-    async createNewPlaylistFromSongs () {
+    createNewPlaylistFromSongs () {
       this.newPlaylistName = this.newPlaylistName.trim()
 
       if (!this.newPlaylistName) {
         return
       }
 
-      const playlist = await playlistStore.store(this.newPlaylistName, this.songs)
-      this.newPlaylistName = ''
-      // Activate the new playlist right away
-      this.$nextTick(() => router.go(`playlist/${playlist.id}`))
+      playlistStore.store(this.newPlaylistName, this.songs).then(p => {
+        this.newPlaylistName = ''
+        // Activate the new playlist right away
+        this.$nextTick(() => router.go(`playlist/${p.id}`))
+      })
 
       this.close()
     },
@@ -78,7 +81,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

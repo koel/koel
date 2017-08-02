@@ -3,30 +3,30 @@
     <sound-bar v-if="loading"/>
     <form class="user-add" @submit.prevent="submit" v-else>
       <header>
-        <h1>Add New User</h1>
+        <h1>添加新用户</h1>
       </header>
 
       <div>
         <div class="form-row">
-          <label>Name</label>
+          <label>姓名</label>
           <input type="text" name="name" v-model="newUser.name" required v-koel-focus>
         </div>
         <div class="form-row">
-          <label>Email</label>
+          <label>电子邮件</label>
           <input type="email" name="email" v-model="newUser.email" required>
         </div>
         <div class="form-row">
-          <label>Password</label>
+          <label>密码</label>
           <input type="password" name="password" v-model="newUser.password">
         </div>
       </div>
 
       <footer>
-        <button class="btn btn-green btn-add">Save</button>
-        <button class="btn btn-white btn-cancel" @click.prevent="cancel">Cancel</button>
+        <button class="btn btn-green btn-add">保存</button>
+        <button class="btn btn-white btn-cancel" @click.prevent="cancel">取消</button>
       </footer>
     </form>
-  </div>
+  </overlay>
 </template>
 
 <script>
@@ -50,11 +50,12 @@ export default {
       this.newUser = clone(userStore.stub)
     },
 
-    async submit () {
+    submit () {
       this.loading = true
-      await userStore.store(this.newUser.name, this.newUser.email, this.newUser.password)
-      this.loading = false
-      this.newUser = null
+      userStore.store(this.newUser.name, this.newUser.email, this.newUser.password).then(() => {
+        this.loading = false
+        this.newUser = null
+      })
     },
 
     cancel () {

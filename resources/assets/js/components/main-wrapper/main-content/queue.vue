@@ -1,7 +1,7 @@
 <template>
   <section id="queueWrapper">
     <h1 class="heading">
-      <span title="That's a freaking lot of U's and E's">Current Queue
+      <span title="That's a freaking lot of U's and E's">当前播放队列
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
         <span class="meta" v-show="meta.songCount">
@@ -24,10 +24,10 @@
     <song-list v-show="state.songs.length" :items="state.songs" :sortable="false" type="queue"/>
 
     <div v-show="!state.songs.length" class="none">
-      <p>Empty spaces. Abandoned places.</p>
+      <p>别看了,这里什么也没有.</p>
 
-      <p v-if="showShufflingAllOption">How about
-        <a class="start" @click.prevent="shuffleAll">shuffling all songs</a>?
+      <p v-if="showShufflingAllOption">试试
+        <a class="start" @click.prevent="shuffleAll">刷新所有歌曲</a>?
       </p>
     </div>
   </section>
@@ -81,7 +81,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

@@ -3,26 +3,26 @@
     <div class="tabs">
       <div class="header clear">
         <a @click.prevent="currentView = 'lyrics'"
-          :class="{ active: currentView === 'lyrics' }">Lyrics</a>
+          :class="{ active: currentView === 'lyrics' }">歌 词</a>
         <a @click.prevent="currentView = 'artistInfo'"
-          :class="{ active: currentView === 'artistInfo' }">Artist</a>
+          :class="{ active: currentView === 'artistInfo' }">歌 手</a>
         <a @click.prevent="currentView = 'albumInfo'"
-          :class="{ active: currentView === 'albumInfo' }">Album</a>
+          :class="{ active: currentView === 'albumInfo' }">专 辑</a>
         <a @click.prevent="currentView = 'youtube'"
           v-if="sharedState.useYouTube"
-          :class="{ active: currentView === 'youtube' }"><i class="fa fa-youtube-play"></i></a>
+          :class="{ active: currentView === 'youtube' }"><i class="fa fa-youtube-play"></i>  YouTuBe</a>
       </div>
 
       <div class="panes">
         <lyrics :song="song" ref="lyrics" v-show="currentView === 'lyrics'"/>
         <artist-info v-if="song.artist.id"
           :artist="song.artist"
-          mode="sidebar"
+          :mode="'sidebar'"
           ref="artist-info"
           v-show="currentView === 'artistInfo'"/>
         <album-info v-if="song.album.id"
           :album="song.album"
-          mode="sidebar"
+          :mode="'sidebar'"
           ref="album-info"
           v-show="currentView === 'albumInfo'"/>
         <youtube v-if="sharedState.useYouTube"
@@ -36,8 +36,9 @@
 
 <script>
 import isMobile from 'ismobilejs'
+import $ from 'jquery'
 
-import { event, $ } from '../../../utils'
+import { event } from '../../../utils'
 import { sharedStore, songStore, preferenceStore as preferences } from '../../../stores'
 import { songInfo } from '../../../services'
 
@@ -65,11 +66,11 @@ export default {
      * to/from the html tag.
      * Some element's CSS can then be controlled based on this class.
      */
-    'state.showExtraPanel' (showingExtraPanel) {
-      if (showingExtraPanel && !isMobile.any) {
-        $.addClass(document.documentElement, 'with-extra-panel')
+    'state.showExtraPanel' (newVal) {
+      if (newVal && !isMobile.any) {
+        $('html').addClass('with-extra-panel')
       } else {
-        $.removeClass(document.documentElement, 'with-extra-panel')
+        $('html').removeClass('with-extra-panel')
       }
     }
   },
@@ -77,7 +78,7 @@ export default {
   mounted () {
     // On ready, add 'with-extra-panel' class.
     if (!isMobile.any) {
-      $.addClass(document.documentElement, 'with-extra-panel')
+      $('html').addClass('with-extra-panel')
     }
 
     if (isMobile.phone) {
@@ -106,15 +107,19 @@ export default {
         }
       },
 
-      'song:played': async song => {
-        this.song = await songInfo.fetch(song)
-      }
+      'song:played': song => {
+        songInfo.fetch(song).then(song => {
+          this.song = song
+        })
+      },
+
+      'koel:teardown': () => this.resetState()
     })
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

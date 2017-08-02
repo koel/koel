@@ -3,15 +3,14 @@
     class="song-item"
     draggable="true"
     :data-song-id="song.id"
-    @click="clicked"
+    @click="clicked($event)"
     @dblclick.prevent="playRightAwayyyyyyy"
-    @dragstart="dragStart"
-    @dragleave="dragLeave"
-    @dragenter.prevent="dragEnter"
-    @dragover.prevent
-    @drop.stop.prevent="drop"
-    @contextmenu.prevent="contextMenu"
-    :class="{ selected: item.selected, playing: playing }"
+    @dragstart="$parent.dragStart(song.id, $event)"
+    @dragleave="$parent.removeDroppableState($event)"
+    @dragover.prevent="$parent.allowDrop(song.id, $event)"
+    @drop.stop.prevent="$parent.handleDrop(song.id, $event)"
+    @contextmenu.prevent="$parent.openContextMenu(song.id, $event)"
+    :class="{ selected: selected, playing: playing }"
   >
     <td class="track-number">{{ song.track || '' }}</td>
     <td class="title">{{ song.title }}</td>
@@ -28,48 +27,31 @@
 <script>
 import { playback } from '../../services'
 import { queueStore } from '../../stores'
-import $v from 'vuequery'
 
 export default {
-  props: ['item'],
-  name: 'song-item',
+  props: ['song'],
 
   data () {
     return {
-      parentSongList: null
+      selected: false
     }
   },
 
   computed: {
-    /**
-     * A shortcut to access the current vm's song (instead of this.item.song).
-     * @return {Object}
-     */
-    song () {
-      return this.item.song
-    },
-
-    /**
-     * Determine if the current song is being played (or paused).
-     * @return {Bool}
-     */
     playing () {
       return this.song.playbackState === 'playing' || this.song.playbackState === 'paused'
     }
   },
 
-  created () {
-    this.parentSongList = $v(this).closest('song-list').vm
-  },
-
   methods: {
-    noop () {},
-
     /**
      * Play the song right away.
      */
     playRightAwayyyyyyy () {
-      queueStore.contains(this.song) || queueStore.queueAfterCurrent(this.song)
+      if (!queueStore.contains(this.song)) {
+        queueStore.queueAfterCurrent(this.song)
+      }
+
       playback.play(this.song)
     },
 
@@ -90,64 +72,34 @@ export default {
       }
     },
 
-    /**
-     * Proxy the click event to the parent song list component.
-     * @param  {Event} event
-     */
-    clicked (event) {
-      this.parentSongList.rowClicked(this, event)
+    clicked ($e) {
+      this.$emit('itemClicked', this.song.id, $e)
+    },
+
+    select () {
+      this.selected = true
+    },
+
+    deselect () {
+      this.selected = false
     },
 
     /**
-     * Proxy the dragstart event to the parent song list component.
-     * @param  {Event} event
+     * Toggle the "selected" state of the current component.
      */
-    dragStart (event) {
-      this.parentSongList.dragStart(this, event)
-    },
-
-    /**
-     * Proxy the dragleave event to the parent song list component.
-     * @param  {Event} event
-     */
-    dragLeave (event) {
-      this.parentSongList.removeDroppableState(event)
-    },
-
-    /**
-     * Proxy the dragover event to the parent song list component.
-     * @param {Event} event The dragover event.
-     */
-    dragEnter (event) {
-      this.parentSongList.allowDrop(event)
-    },
-
-    /**
-     * Proxy the dropstop event to the parent song list component.
-     * @param  {Event} event
-     */
-    drop (event) {
-      this.parentSongList.handleDrop(this, event)
-    },
-
-    /**
-     * Proxy the contextmenu event to the parent song list component.
-     * @param  {Event} event
-     */
-    contextMenu (event) {
-      this.parentSongList.openContextMenu(this, event)
+    toggleSelectedState () {
+      this.selected = !this.selected
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 
 .song-item {
   border-bottom: 1px solid $color2ndBgr;
-  height: 35px;
 
   html.no-touchevents &:hover {
     background: rgba(255, 255, 255, .05);
@@ -174,7 +126,7 @@ export default {
     background-color: rgba(255, 255, 255, .08);
   }
 
-  &.playing td {
+  &.playing {
     color: $colorHighlight;
   }
 }

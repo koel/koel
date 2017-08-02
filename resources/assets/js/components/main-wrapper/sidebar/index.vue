@@ -1,31 +1,30 @@
 <template>
   <nav class="side side-nav" id="sidebar" :class="{ showing: showing }">
     <section class="music">
-      <h1>Your Music</h1>
+      <h1>我的音乐</h1>
 
       <ul class="menu">
         <li>
-          <a :class="['home', currentView == 'home' ? 'active' : '']" href="/#!/home">Home</a>
+          <a :class="['home', currentView == 'home' ? 'active' : '']" href="/#!/home">主页</a>
         </li>
         <li>
           <a :class="['queue', currentView == 'queue' ? 'active' : '']"
             href="/#!/queue"
             @dragleave="removeDroppableState"
-            @dragenter.prevent="allowDrop"
-            @dragover.prevent
-            @drop.stop.prevent="handleDrop">Current Queue</a>
+            @dragover.prevent="allowDrop"
+            @drop.stop.prevent="handleDrop">播放队列</a>
         </li>
         <li>
-          <a :class="['songs', currentView == 'songs' ? 'active' : '']" href="/#!/songs">All Songs</a>
+          <a :class="['songs', currentView == 'songs' ? 'active' : '']" href="/#!/songs">所有歌曲</a>
         </li>
         <li>
-          <a :class="['albums', currentView == 'albums' ? 'active' : '']" href="/#!/albums">Albums</a>
+          <a :class="['albums', currentView == 'albums' ? 'active' : '']" href="/#!/albums">专辑</a>
         </li>
         <li>
-          <a :class="['artists', currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
+          <a :class="['artists', currentView == 'artists' ? 'active' : '']" href="/#!/artists">歌手</a>
         </li>
         <li v-if="sharedState.useYouTube">
-          <a :class="['youtube', currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
+          <a :class="['youtube', currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube 视频</a>
         </li>
       </ul>
     </section>
@@ -33,14 +32,14 @@
     <playlists :current-view="currentView"/>
 
     <section v-if="user.current.is_admin" class="manage">
-      <h1>Manage</h1>
+      <h1>管理</h1>
 
       <ul class="menu">
         <li>
-          <a :class="['settings', currentView == 'settings' ? 'active' : '']" href="/#!/settings">Settings</a>
+          <a :class="['settings', currentView == 'settings' ? 'active' : '']" href="/#!/settings">设置</a>
         </li>
         <li>
-          <a :class="['users', currentView == 'users' ? 'active' : '']" href="/#!/users">Users</a>
+          <a :class="['users', currentView == 'users' ? 'active' : '']" href="/#!/users">用户</a>
         </li>
       </ul>
     </section>
@@ -57,8 +56,9 @@
 
 <script>
 import isMobile from 'ismobilejs'
+import $ from 'jquery'
 
-import { event, $ } from '../../../utils'
+import { event } from '../../../utils'
 import { sharedStore, userStore, songStore, queueStore } from '../../../stores'
 import playlists from './playlists.vue'
 
@@ -76,7 +76,7 @@ export default {
 
   computed: {
     latestVersionUrl () {
-      return `https://github.com/phanan/koel/releases/tag/${this.sharedState.latestVersion}`
+      return 'https://github.com/phanan/koel/releases/tag/' + this.sharedState.latestVersion
     }
   },
 
@@ -87,7 +87,7 @@ export default {
      * @param  {Object} e The dragleave event.
      */
     removeDroppableState (e) {
-      $.removeClass(e.target, 'droppable')
+      $(e.target).removeClass('droppable')
     },
 
     /**
@@ -96,7 +96,7 @@ export default {
      * @param  {Object} e The dragover event.
      */
     allowDrop (e) {
-      $.addClass(e.target, 'droppable')
+      $(e.target).addClass('droppable')
       e.dataTransfer.dropEffect = 'move'
 
       return false
@@ -149,7 +149,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 
@@ -202,11 +202,6 @@ export default {
         border-left-color: $colorHighlight;
         color: $colorLinkHovered;
         background: rgba(255, 255, 255, .05);
-        box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
-      }
-
-      &:active {
-        opacity: .5;
       }
 
       &:hover {
@@ -267,6 +262,7 @@ export default {
       opacity: .7;
     }
   }
+
 
   @media only screen and (max-width : 667px) {
     position: fixed;

@@ -1,7 +1,7 @@
 <template>
   <section id="usersWrapper">
     <h1 class="heading">
-      <span>Users
+      <span>用户
         <i class="fa fa-angle-down toggler" v-show="isPhone && !showingControls" @click="showingControls = true"/>
         <i class="fa fa-angle-up toggler" v-show="isPhone && showingControls" @click.prevent="showingControls = false"/>
       </span>
@@ -9,7 +9,7 @@
       <div class="buttons" v-show="!isPhone || showingControls">
         <button class="btn btn-green btn-add" @click="addUser">
           <i class="fa fa-plus"></i>
-          Add</button>
+          添加</button>
       </div>
     </h1>
 
@@ -64,7 +64,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

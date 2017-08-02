@@ -3,10 +3,9 @@
     <input type="search"
       :class="{ dirty: q }"
       @input="filter"
-      placeholder="Search"
+      placeholder="搜索"
       v-model="q"
-      v-koel-focus
-    >
+      v-koel-focus="showing">
   </div>
 </template>
 
@@ -39,11 +38,16 @@ export default {
     event.on('search:toggle', () => {
       this.showing = !this.showing
     })
+
+    event.on('koel:teardown', () => {
+      this.q = ''
+      this.filter()
+    })
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

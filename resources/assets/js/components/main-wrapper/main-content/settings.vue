@@ -1,23 +1,22 @@
 <template>
   <section id="settingsWrapper">
     <h1 class="heading">
-      <span>Settings</span>
+      <span>设置</span>
     </h1>
 
     <form @submit.prevent="confirmThenSave" class="main-scroll-wrap">
       <div class="form-row">
-        <label for="inputSettingsPath">Media Path</label>
+        <label for="inputSettingsPath">查找媒体所在文件夹</label>
         <p class="help">
-          The <em>absolute</em> path to the server directory containing your media.
-          Koel will scan this directory for songs and extract any available information.<br>
-          Scanning may take a while, especially if you have a lot of songs, so be patient.
+          请在下方输入您的媒体的<em>绝对</em>路径.Koel会自动扫描该文件夹下所有支持的媒体文件.<br>
+          扫描可能需要一段时间,尤其在歌曲比较多的时候.
         </p>
 
         <input type="text" v-model="state.settings.media_path" id="inputSettingsPath">
       </div>
 
       <div class="form-row">
-        <button type="submit">Scan</button>
+        <button type="submit">扫描</button>
       </div>
     </form>
   </section>
@@ -62,30 +61,29 @@ export default {
     /**
      * Save the settings.
      */
-    async save () {
+    save () {
       showOverlay()
 
-      try {
-        await settingStore.update()
+      settingStore.update().then(() => {
         // Make sure we're back to home first.
         router.go('home')
         forceReloadWindow()
-      } catch (err) {
+      }).catch(r => {
         let msg = 'Unknown error.'
 
-        if (err.response.status === 422) {
-          msg = parseValidationError(err.response.data)[0]
+        if (r.status === 422) {
+          msg = parseValidationError(r.responseJSON)[0]
         }
 
         hideOverlay()
         alerts.error(msg)
-      }
+      })
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

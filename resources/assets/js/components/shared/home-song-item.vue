@@ -13,7 +13,7 @@
       <span v-if="showPlayCount" :style="{ width: song.playCount*100/topPlayCount+'%' }" class="play-count"/>
       {{ song.title }}
       <span class="by">
-        <a :href="`/#!/artist/${song.artist.id}`">{{ song.artist.name }}</a>
+        <a :href="'/#!/artist/'+song.artist.id">{{ song.artist.name }}</a>
         <template v-if="showPlayCount">- {{ song.playCount | pluralize('play') }}</template>
       </span>
     </span>
@@ -38,7 +38,10 @@ export default {
 
   methods: {
     play () {
-      queueStore.contains(this.song) || queueStore.queueAfterCurrent(this.song)
+      if (!queueStore.contains(this.song)) {
+        queueStore.queueAfterCurrent(this.song)
+      }
+
       playback.play(this.song)
     },
 
@@ -55,7 +58,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

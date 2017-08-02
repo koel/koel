@@ -6,23 +6,23 @@
         {{ album.name }}
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-        <span class="meta" v-show="album.songs.length">
+        <span class="meta" v-show="meta.songCount">
           by
-          <a class="artist" v-if="isNormalArtist" :href="`/#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
+          <a class="artist" v-if="isNormalArtist" :href="'/#!/artist/'+album.artist.id">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
-          {{ album.songs.length | pluralize('song') }}
+          {{ meta.songCount | pluralize('song') }}
           •
-          {{ fmtLength }}
+          {{ meta.totalLength }}
 
           <template v-if="sharedState.useLastfm">
             •
-            <a class="info" href @click.prevent="showInfo" title="View album's extra information">Info</a>
+            <a class="info" href @click.prevent="showInfo" title="View album's extra information">详细信息</a>
           </template>
           <template v-if="sharedState.allowDownload">
             •
-            <a class="download" href @click.prevent="download" title="Download all songs in album">
-              Download All
+            <a class="download" href @click.prevent="download" title="下载该专辑所有歌曲">
+              下载全部
             </a>
           </template>
         </span>
@@ -37,13 +37,13 @@
       />
     </h1>
 
-    <song-list :items="album.songs" type="album" ref="songList"/>
+    <song-list :items="album.songs" type="album"/>
 
     <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
       <a href class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
       <div class="inner">
         <div class="loading" v-if="info.loading"><sound-bar/></div>
-        <album-info :album="album" mode="full" v-else/>
+        <album-info :album="album" :mode="'full'" v-else/>
       </div>
     </section>
   </section>
@@ -55,13 +55,12 @@ import { albumStore, artistStore, sharedStore } from '../../../stores'
 import { playback, download, albumInfo as albumInfoService } from '../../../services'
 import router from '../../../router'
 import hasSongList from '../../../mixins/has-song-list'
-import albumAttributes from '../../../mixins/album-attributes'
 import albumInfo from '../extra/album-info.vue'
 import soundBar from '../../shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--album',
-  mixins: [hasSongList, albumAttributes],
+  mixins: [hasSongList],
   components: { albumInfo, soundBar },
   filters: { pluralize },
 
@@ -90,8 +89,10 @@ export default {
      * and move all of them into another album.
      * We should then go back to the album list.
      */
-    'album.songs.length' (newSongCount) {
-      newSongCount || router.go('albums')
+    'album.songs.length' (newVal) {
+      if (!newVal) {
+        router.go('albums')
+      }
     }
   },
 
@@ -107,8 +108,6 @@ export default {
       if (view === 'album') {
         this.info.showing = false
         this.album = album
-        // #530
-        this.$nextTick(() => this.$refs.songList.sort())
       }
     })
   },
@@ -116,9 +115,8 @@ export default {
   methods: {
     /**
      * Shuffle the songs in the current album.
-     * Overriding the mixin.
      */
-    shuffleAll () {
+    shuffle () {
       playback.queueAndPlay(this.album.songs, true)
     },
 
@@ -129,12 +127,13 @@ export default {
       download.fromAlbum(this.album)
     },
 
-    async showInfo () {
+    showInfo () {
       this.info.showing = true
       if (!this.album.info) {
         this.info.loading = true
-        await albumInfoService.fetch(this.album)
-        this.info.loading = false
+        albumInfoService.fetch(this.album).then(() => {
+          this.info.loading = false
+        })
       } else {
         this.info.loading = false
       }
@@ -143,7 +142,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 
