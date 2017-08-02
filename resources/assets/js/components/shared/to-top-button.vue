@@ -1,41 +1,19 @@
 <template>
-  <transition name="fade">
-    <div class="to-top-btn-wrapper" v-show="showing">
-      <button @click="scrollToTop">
-        <i class="fa fa-arrow-circle-up"/> Top
-      </button>
-    </div>
-  </transition>
+  <div class="to-top-btn-wrapper" v-show="showing" transition="fade">
+    <button @click="$parent.scrollToTop()">
+      <i class="fa fa-arrow-circle-up"></i>
+      回到顶部
+    </button>
+  </div>
 </template>
 
 <script>
-import { $ } from '../../utils'
-
 export default {
-  props: ['el'],
-  data () {
-    return {
-      showing: false
-    }
-  },
-
-  methods: {
-    scrollToTop () {
-      $.scrollTo(this.$el.parentNode, 0, 500, () => {
-        this.showing = false
-      })
-    }
-  },
-
-  mounted () {
-    this.$el.parentNode.addEventListener('scroll', e => {
-      this.showing = e.target.scrollTop > 64
-    })
-  }
+  props: ['showing']
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 
@@ -45,11 +23,15 @@ export default {
   bottom: $footerHeightMobile + 26px;
   left: 0;
   text-align: center;
-  z-index: 20;
+  z-index: 9999;
   opacity: 1;
   transition: opacity .5s;
 
-  &.fade-enter, &.fade-leave-to {
+  &.fade-enter {
+    opacity: 0;
+  }
+
+  &.fade-leave {
     opacity: 0;
   }
 

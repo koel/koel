@@ -2,8 +2,7 @@
   <li @dblclick.prevent="edit" :class="['playlist', type, editing ? 'editing' : '']">
     <a :href="playlistUrl"
       @dragleave="removeDroppableState"
-      @dragenter.prevent="allowDrop"
-      @dragover.prevent
+      @dragover.prevent="allowDrop"
       @drop.stop.prevent="handleDrop"
       :class="{ active: active }"
     >{{ playlist.name }}</a>
@@ -21,7 +20,9 @@
 </template>
 
 <script>
-import { event, $ } from '../../../utils'
+import $ from 'jquery'
+
+import { event } from '../../../utils'
 import { songStore, playlistStore, favoriteStore } from '../../../stores'
 
 export default {
@@ -29,6 +30,7 @@ export default {
 
   data () {
     return {
+      newName: '',
       editing: false,
       active: false
     }
@@ -95,7 +97,7 @@ export default {
      * @param {Object} e The dragleave event.
      */
     removeDroppableState (e) {
-      $.removeClass(e.target, 'droppable')
+      $(e.target).removeClass('droppable')
     },
 
     /**
@@ -105,7 +107,7 @@ export default {
      * @param {Object} e The dragover event.
      */
     allowDrop (e) {
-      $.addClass(e.target, 'droppable')
+      $(e.target).addClass('droppable')
       e.dataTransfer.dropEffect = 'move'
 
       return false
@@ -155,7 +157,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

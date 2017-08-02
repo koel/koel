@@ -11,7 +11,7 @@
           <template v-if="sharedState.allowDownload && playlist.songs.length">
             •
             <a href @click.prevent="download" title="Download all songs in playlist">
-              Download All
+              下载全部
             </a>
           </template>
         </span>
@@ -27,16 +27,11 @@
       />
     </h1>
 
-    <song-list v-show="playlist.songs.length"
-      :items="playlist.songs"
-      :playlist="playlist"
-      type="playlist"
-      ref="songList"
-    />
+    <song-list v-show="playlist.songs.length" :items="playlist.songs" :playlist="playlist" type="playlist"/>
 
     <div v-show="!playlist.songs.length" class="none">
-      The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar,
-      or use the &quot;Add To…&quot; button.
+      播放列表为空，你可以将歌曲拖到侧栏对应的位置,
+      或者也可以使用&quot;添加到…&quot;按钮.
     </div>
   </section>
 </template>
@@ -74,8 +69,6 @@ export default {
     event.on('main-content-view:load', (view, playlist) => {
       if (view === 'playlist') {
         this.playlist = playlist
-        // #530
-        this.$nextTick(() => this.$refs.songList.sort())
       }
     })
   },
@@ -105,14 +98,15 @@ export default {
     /**
      * Delete the current playlist.
      */
-    async del () {
-      await playlistStore.delete(this.playlist)
-      // Reset the current playlist to our stub, so that we don't encounter
-      // any property reference error.
-      this.playlist = playlistStore.stub
+    del () {
+      playlistStore.delete(this.playlist).then(() => {
+        // Reset the current playlist to our stub, so that we don't encounter
+        // any property reference error.
+        this.playlist = playlistStore.stub
 
-      // Switch back to Home screen
-      router.go('home')
+        // Switch back to Home screen
+        router.go('home')
+      })
     },
 
     /**
@@ -125,7 +119,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

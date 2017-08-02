@@ -1,14 +1,14 @@
 <template>
   <section id="albumsWrapper">
     <h1 class="heading">
-      <span>Albums</span>
+      <span>专辑</span>
       <view-mode-switch :mode="viewMode" for="albums"/>
     </h1>
 
-    <div ref="scroller" class="albums main-scroll-wrap" :class="`as-${viewMode}`" @scroll="scrolling">
+    <div class="albums main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
       <album-item v-for="item in displayedItems" :album="item"/>
       <span class="item filler" v-for="n in 6"/>
-      <to-top-button/>
+      <to-top-button :showing="showBackToTop"/>
     </div>
   </section>
 </template>
@@ -55,6 +55,11 @@ export default {
        */
       'koel:ready': () => this.displayMore(),
 
+      'koel:teardown': () => {
+        this.q = ''
+        this.numOfItems = 9
+      },
+
       'filter:changed': q => {
         this.q = q
       }
@@ -63,7 +68,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

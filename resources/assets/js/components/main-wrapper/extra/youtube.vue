@@ -1,8 +1,7 @@
 <template>
   <div id="youtube-extra-wrapper">
     <template v-if="videos && videos.length">
-      <a class="video" v-for="video in videos" :href="`https://youtu.be/${video.id.videoId}`"
-        @click.prevent="playYouTube(video.id.videoId)">
+      <a class="video" v-for="video in videos" href @click.prevent="playYouTube(video.id.videoId)">
         <div class="thumb">
           <img :src="video.snippet.thumbnails.default.url" width="90">
         </div>
@@ -11,10 +10,10 @@
           <p class="desc">{{ video.snippet.description }}</p>
         </div>
       </a>
-      <button @click="loadMore" v-if="!loading" class="more btn-blue">Load More</button>
+      <button @click="loadMore" v-if="!loading" class="more btn-blue">加载更多</button>
     </template>
-    <p class="nope" v-else>Play a song to retrieve related YouTube videos.</p>
-    <p class="nope" v-show="loading">Loading…</p>
+    <p class="nope" v-else>播放一首歌曲与YouTuBe资源相关联.</p>
+    <p class="nope" v-show="loading">加载中…</p>
   </div>
 </template>
 
@@ -46,17 +45,18 @@ export default {
     /**
      * Load more videos.
      */
-    async loadMore () {
+    loadMore () {
       this.loading = true
-      await youtubeService.searchVideosRelatedToSong(this.song)
-      this.videos = this.song.youtube.items
-      this.loading = false
+      youtubeService.searchVideosRelatedToSong(this.song, () => {
+        this.videos = this.song.youtube.items
+        this.loading = false
+      })
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 #youtube-extra-wrapper {
   overflow-x: hidden;
 

@@ -1,11 +1,10 @@
 <template>
   <section id="youtubeWrapper">
-    <h1 class="heading"><span>YouTube Video</span></h1>
+    <h1 class="heading"><span>YouTube 视频</span></h1>
     <div id="player">
-      <p class="none">Your YouTube video will be played here.<br/>
-      You can start a video playback from the right sidebar. When a song is playing, that is.<br>
-      It might also be worth noting that video’s volume, progress and such are controlled from within
-      the video itself, and not via Koel’s controls.</p>
+      <p class="none">YouTube 视频会在这里播放.<br/>
+	您可以从右侧栏开始播放视频.<br>
+	需要注意的是，视频的音量，进度等都是从视频内部控制的,而不是通过Koel.</p>
     </div>
   </section>
 </template>
@@ -56,7 +55,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

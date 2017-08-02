@@ -3,31 +3,31 @@
     <button class="btn btn-orange btn-shuffle-all"
       @click.prevent="shuffle"
       v-if="fullConfig.shuffle && selectedSongs.length < 2">
-      <i class="fa fa-random"></i> All
+      <i class="fa fa-random"></i> 播放全部
     </button>
 
     <button class="btn btn-orange btn-shuffle-selected"
       @click.prevent="shuffleSelected"
       v-if="fullConfig.shuffle && selectedSongs.length > 1">
-      <i class="fa fa-random"></i> Selected
+      <i class="fa fa-random"></i> 选择
     </button>
 
     <button class="btn btn-green btn-add-to"
       @click.prevent.stop="showingAddToMenu = !showingAddToMenu"
       v-if="selectedSongs.length">
-      {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
+      {{ showingAddToMenu ? '取消' : '添加到…' }}
     </button>
 
     <button class="btn btn-red btn-clear-queue"
       @click.prevent="clearQueue"
       v-if="showClearQueueButton">
-      Clear
+      清除列表
     </button>
 
     <button class="del btn btn-red btn-delete-playlist" v-if="showDeletePlaylistButton"
       title="Delete this playlist"
       @click.prevent="deletePlaylist">
-      <i class="fa fa-times"></i> Playlist
+      <i class="fa fa-times"></i> 歌单
     </button>
 
     <add-to-menu v-koel-clickaway="closeAddToMenu"
@@ -104,4 +104,4 @@ export default {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="sass"></style>

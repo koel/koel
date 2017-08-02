@@ -13,18 +13,15 @@ use Log;
  * @property int    id      The model ID
  * @property string name    The artist name
  * @property string image
- * @property bool   is_unknown
- * @property bool   is_various
- * @property \Illuminate\Database\Eloquent\Collection songs
  */
 class Artist extends Model
 {
     use SupportsDeleteWhereIDsNotIn;
 
     const UNKNOWN_ID = 1;
-    const UNKNOWN_NAME = 'Unknown Artist';
+    const UNKNOWN_NAME = '未知歌手';
     const VARIOUS_ID = 2;
-    const VARIOUS_NAME = 'Various Artists';
+    const VARIOUS_NAME = '多种歌手';
 
     protected $guarded = ['id'];
 
@@ -40,12 +37,12 @@ class Artist extends Model
         return $this->hasManyThrough(Song::class, Album::class);
     }
 
-    public function getIsUnknownAttribute()
+    public function isUnknown()
     {
         return $this->id === self::UNKNOWN_ID;
     }
 
-    public function getIsVariousAttribute()
+    public function isVarious()
     {
         return $this->id === self::VARIOUS_ID;
     }
@@ -55,7 +52,7 @@ class Artist extends Model
      *
      * @return Artist
      */
-    public static function getVariousArtist()
+    public static function getVarious()
     {
         return self::find(self::VARIOUS_ID);
     }
@@ -100,15 +97,17 @@ class Artist extends Model
      */
     public function getInfo()
     {
-        if ($this->is_unknown) {
+        if ($this->isUnknown()) {
             return false;
         }
 
         $info = Lastfm::getArtistInfo($this->name);
-        $image = array_get($info, 'image');
 
         // If our current artist has no image, and Last.fm has one, copy the image for our local use.
-        if (!$this->image && is_string($image) && ini_get('allow_url_fopen')) {
+        if (!$this->image &&
+            is_string($image = array_get($info, 'image')) &&
+            ini_get('allow_url_fopen')
+        ) {
             try {
                 $extension = explode('.', $image);
                 $fileName = uniqid().'.'.trim(strtolower(last($extension)), '. ');

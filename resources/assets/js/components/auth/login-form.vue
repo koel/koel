@@ -1,8 +1,8 @@
 <template>
   <form @submit.prevent="login" :class="{ error: failed }">
-    <input v-model="email" type="email" placeholder="Email Address" autofocus required>
-    <input v-model="password" type="password" placeholder="Password" required>
-    <button type="submit">Log In</button>
+    <input v-model="email" type="email" placeholder="请输入电子邮件" autofocus required>
+    <input v-model="password" type="password" placeholder="请输入密码" required>
+    <button type="submit">登陆</button>
   </form>
 </template>
 
@@ -20,24 +20,25 @@ export default {
   },
 
   methods: {
-    async login () {
-      try {
-        await userStore.login(this.email, this.password)
+    login () {
+      this.failed = false
+
+      userStore.login(this.email, this.password).then(() => {
         this.failed = false
 
         // Reset the password so that the next login will have this field empty.
         this.password = ''
 
         event.emit('user:loggedin')
-      } catch (err) {
+      }).catch(() => {
         this.failed = true
-      }
+      })
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 @import "../../../sass/partials/_shared.scss";

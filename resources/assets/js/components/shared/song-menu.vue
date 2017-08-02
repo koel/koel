@@ -5,34 +5,35 @@
   >
     <template v-show="onlyOneSongSelected">
       <li @click="doPlayback">
-        <span v-show="!firstSongPlaying">Play</span>
-        <span v-show="firstSongPlaying">Pause</span>
+        <span v-show="!firstSongPlaying">播放</span>
+        <span v-show="firstSongPlaying">暂停</span>
       </li>
-      <li @click="viewAlbumDetails(songs[0].album)">Go to Album</li>
-      <li @click="viewArtistDetails(songs[0].artist)">Go to Artist</li>
+      <li @click="viewAlbumDetails(songs[0].album)">转到专辑</li>
+      <li @click="viewArtistDetails(songs[0].artist)">转到歌手</li>
     </template>
-    <li class="has-sub">Add To
+    <li class="has-sub">添加到
       <ul class="menu submenu">
-        <li @click="queueSongsAfterCurrent">After Current Song</li>
-        <li @click="queueSongsToBottom">Bottom of Queue</li>
-        <li @click="queueSongsToTop">Top of Queue</li>
+        <li @click="queueSongsAfterCurrent">当前歌曲之后</li>
+        <li @click="queueSongsToBottom">队列尾部</li>
+        <li @click="queueSongsToTop">队列开头</li>
         <li class="separator"></li>
-        <li @click="addSongsToFavorite">Favorites</li>
+        <li @click="addSongsToFavorite">我喜爱的歌曲</li>
         <li class="separator" v-show="playlistState.playlists.length"></li>
         <li v-for="p in playlistState.playlists" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
       </ul>
     </li>
-    <li v-show="isAdmin" @click="openEditForm">Edit</li>
-    <li v-show="sharedState.allowDownload" @click="download">Download</li>
+    <li v-show="isAdmin" @click="openEditForm">编辑</li>
+    <li v-show="sharedState.allowDownload" @click="download">下载</li>
     <!-- somehow v-if doesn't work here -->
-    <li v-show="copyable && onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
+    <li v-show="copyable && onlyOneSongSelected" @click="copyUrl">复制分享外链</li>
   </ul>
 </template>
 
 <script>
-import { each } from 'lodash'
+import $ from 'jquery'
 
 import songMenuMethods from '../../mixins/song-menu-methods'
+
 import { event, isClipboardSupported, copyText } from '../../utils'
 import { sharedStore, songStore, queueStore, userStore, playlistStore } from '../../stores'
 import { playback, download } from '../../services'
@@ -78,11 +79,15 @@ export default {
       this.$nextTick(() => {
         // Make sure the menu isn't off-screen
         if (this.$el.getBoundingClientRect().bottom > window.innerHeight) {
-          this.$el.style.top = 'auto'
-          this.$el.style.bottom = 0
+          $(this.$el).css({
+            top: 'auto',
+            bottom: 0
+          })
         } else {
-          this.$el.style.top = this.top
-          this.$el.style.bottom = 'auto'
+          $(this.$el).css({
+            top: this.top,
+            bottom: 'auto'
+          })
         }
 
         this.$refs.menu.focus()
@@ -101,7 +106,10 @@ export default {
           playback.resume()
           break
         default:
-          queueStore.contains(this.songs[0]) || queueStore.queueAfterCurrent(this.songs[0])
+          if (!queueStore.contains(this.songs[0])) {
+            queueStore.queueAfterCurrent(this.songs[0])
+          }
+
           playback.play(this.songs[0])
           break
       }
@@ -113,7 +121,10 @@ export default {
      * Trigger opening the "Edit Song" form/overlay.
      */
     openEditForm () {
-      this.songs.length && event.emit('songs:edit', this.songs)
+      if (this.songs.length) {
+        event.emit('songs:edit', this.songs)
+      }
+
       this.close()
     },
 
@@ -149,33 +160,32 @@ export default {
    * they don't appear off-screen.
    */
   mounted () {
-    each(Array.from(this.$el.querySelectorAll('.has-sub')), item => {
-      const submenu = item.querySelector('.submenu')
-      if (!submenu) {
+    $(this.$el).find('.has-sub').hover(e => {
+      const $submenu = $(e.target).find('.submenu:first')
+      if (!$submenu.length) {
         return
       }
 
-      item.addEventListener('mouseenter', e => {
-        submenu.style.display = 'block'
+      $submenu.show()
 
-        // Make sure the submenu isn't off-screen
-        if (submenu.getBoundingClientRect().bottom > window.innerHeight) {
-          submenu.style.top = 'auto'
-          submenu.style.bottom = 0
-        }
-      })
-
-      item.addEventListener('mouseleave', e => {
-        submenu.style.top = 0
-        submenu.style.bottom = 'auto'
-        submenu.style.display = 'none'
+      // Make sure the submenu isn't off-screen
+      if ($submenu[0].getBoundingClientRect().bottom > window.innerHeight) {
+        $submenu.css({
+          top: 'auto',
+          bottom: 0
+        })
+      }
+    }, e => {
+      $(e.target).find('.submenu:first').hide().css({
+        top: 0,
+        bottom: 'auto'
       })
     })
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

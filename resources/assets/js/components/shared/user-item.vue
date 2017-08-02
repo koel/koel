@@ -13,9 +13,9 @@
 
         <div class="buttons">
           <button class="btn btn-blue btn-edit" @click="edit">
-            {{ isCurrentUser ? 'Update Profile' : 'Edit' }}
+            {{ isCurrentUser ? '更新个人信息' : '编辑' }}
           </button>
-          <button v-if="!isCurrentUser" class="btn btn-red btn-delete" @click="del">Delete</button>
+          <button v-if="!isCurrentUser" class="btn btn-red btn-delete" @click="del">删除</button>
         </div>
       </div>
     </div>
@@ -53,23 +53,30 @@ export default {
      * If the user is the current logged-in user, redirect to the profile screen instead.
      */
     edit () {
-      this.isCurrentUser ? router.go('profile') : this.$emit('editUser', this.user)
+      if (this.isCurrentUser) {
+        router.go('profile')
+
+        return
+      }
+
+      this.$emit('editUser', this.user)
     },
 
     /**
      * Kill off the freaking user.
      */
     del () {
-      alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, async () => {
-        userStore.destroy(this.user)
-        this.$destroy()
+      alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, () => {
+        userStore.destroy(this.user).then(() => {
+          this.$destroy(true)
+        })
       })
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 </style>

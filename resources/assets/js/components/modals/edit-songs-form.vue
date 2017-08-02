@@ -19,26 +19,26 @@
         <div class="tabs tabs-white">
           <div class="header clear">
             <a @click.prevent="currentView = 'details'"
-              :class="{ active: currentView === 'details' }">Details</a>
+              :class="{ active: currentView === 'details' }">详细信息</a>
             <a @click.prevent="currentView = 'lyrics'" v-show="editSingle"
-              :class="{ active: currentView === 'lyrics' }">Lyrics</a>
+              :class="{ active: currentView === 'lyrics' }">歌词</a>
           </div>
 
           <div class="panes">
             <div v-show="currentView === 'details'">
               <div class="form-row" v-if="editSingle">
-                <label>Title</label>
+                <label>标题</label>
                 <input name="title" type="text" v-model="formData.title">
               </div>
               <div class="form-row">
-                <label>Artist</label>
+                <label>歌手</label>
                 <typeahead
                   :items="artistState.artists"
                   :options="artistTypeaheadOptions"
                   v-model="formData.artistName"/>
               </div>
               <div class="form-row">
-                <label>Album</label>
+                <label>专辑</label>
                 <typeahead
                   :items="albumState.albums"
                   :options="albumTypeaheadOptions"
@@ -47,13 +47,15 @@
               <div class="form-row">
                 <label class="small">
                   <input type="checkbox" @change="changeCompilationState" ref="compilationStateChk" />
-                  Album is a compilation of songs by various artists
+		  是否允许创建音乐合辑.
+                </label>
+                <label class="small warning" v-if="needsReload">
+                  该选项保存后须重启.
                 </label>
               </div>
               <div class="form-row" v-show="editSingle">
-                <label>Track</label>
-                <input name="track" type="text" pattern="\d*" v-model="formData.track"
-                title="Empty or a number">
+                <label>定位歌曲</label>
+                <input name="track" type="number" min="0" v-model="formData.track">
               </div>
             </div>
             <div v-show="currentView === 'lyrics' && editSingle">
@@ -66,20 +68,19 @@
       </div>
 
       <footer>
-        <input type="submit" value="Update">
-        <a @click.prevent="close" class="btn btn-white">Cancel</a>
+        <input type="submit" value="更新">
+        <a @click.prevent="close" class="btn btn-white">取消</a>
       </footer>
     </form>
   </div>
 </template>
 
 <script>
-import { every, filter, union } from 'lodash'
+import { every, filter } from 'lodash'
 
-import { br2nl } from '../../utils'
+import { br2nl, forceReloadWindow } from '../../utils'
 import { songInfo } from '../../services/info'
 import { artistStore, albumStore, songStore } from '../../stores'
-import config from '../../config'
 
 import soundBar from '../shared/sound-bar.vue'
 import typeahead from '../shared/typeahead.vue'
@@ -99,6 +100,7 @@ export default {
       songs: [],
       currentView: '',
       loading: false,
+      needsReload: false,
 
       artistState: artistStore.state,
       artistTypeaheadOptions: {
@@ -145,7 +147,9 @@ export default {
      * @return {boolean}
      */
     bySameArtist () {
-      return every(this.songs, song => song.artist.id === this.songs[0].artist.id)
+      return every(this.songs, song => {
+        song.artist.id === this.songs[0].artist.id
+      })
     },
 
     /**
@@ -154,7 +158,9 @@ export default {
      * @return {boolean}
      */
     inSameAlbum () {
-      return every(this.songs, song => song.album.id === this.songs[0].album.id)
+      return every(this.songs, song => {
+        song.album.id === this.songs[0].album.id
+      })
     },
 
     /**
@@ -163,7 +169,7 @@ export default {
      * @return {string}
      */
     coverUrl () {
-      return this.inSameAlbum ? this.songs[0].album.cover : config.unknownCover
+      return this.inSameAlbum ? this.songs[0].album.cover : '/public/img/covers/unknown-album.png'
     },
 
     /**
@@ -172,15 +178,11 @@ export default {
      * @return {Number}
      */
     compilationState () {
-      const albums = this.songs.reduce((acc, song) => {
-        return union(acc, [song.album])
-      }, [])
+      const contributedSongs = filter(this.songs, song => song.contributing_artist_id)
 
-      const compiledAlbums = filter(albums, album => album.is_compilation)
-
-      if (!compiledAlbums.length) {
+      if (!contributedSongs.length) {
         this.formData.compilationState = COMPILATION_STATES.NONE
-      } else if (compiledAlbums.length === albums.length) {
+      } else if (contributedSongs.length === this.songs.length) {
         this.formData.compilationState = COMPILATION_STATES.ALL
       } else {
         this.formData.compilationState = COMPILATION_STATES.SOME
@@ -226,10 +228,11 @@ export default {
   },
 
   methods: {
-    async open (songs) {
+    open (songs) {
       this.shown = true
       this.songs = songs
       this.currentView = 'details'
+      this.needsReload = false
 
       if (this.editSingle) {
         this.formData.title = this.songs[0].title
@@ -241,14 +244,15 @@ export default {
         if (!this.songs[0].infoRetrieved) {
           this.loading = true
 
-          await songInfo.fetch(this.songs[0])
-          this.loading = false
-          this.formData.lyrics = br2nl(this.songs[0].lyrics)
-          this.formData.track = this.songs[0].track || ''
-          this.initCompilationStateCheckbox()
+          songInfo.fetch(this.songs[0]).then(r => {
+            this.loading = false
+            this.formData.lyrics = br2nl(this.songs[0].lyrics)
+            this.formData.track = this.songs[0].track
+            this.initCompilationStateCheckbox()
+          })
         } else {
           this.formData.lyrics = br2nl(this.songs[0].lyrics)
-          this.formData.track = this.songs[0].track || ''
+          this.formData.track = this.songs[0].track
           this.initCompilationStateCheckbox()
         }
       } else {
@@ -293,6 +297,7 @@ export default {
      */
     changeCompilationState (e) {
       this.formData.compilationState = e.target.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE
+      this.needsReload = true
     },
 
     /**
@@ -305,21 +310,22 @@ export default {
     /**
      * Submit the form.
      */
-    async submit () {
+    submit () {
       this.loading = true
 
-      try {
-        await songStore.update(this.songs, this.formData)
-        this.close()
-      } finally {
+      songStore.update(this.songs, this.formData).then(r => {
         this.loading = false
-      }
+        this.close()
+        this.needsReload && forceReloadWindow()
+      }).catch(r => {
+        this.loading = false
+      })
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

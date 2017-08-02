@@ -20,8 +20,8 @@
         <div class="progress" id="progressPane">
           <h3 class="title">{{ song.title }}</h3>
           <p class="meta">
-            <a class="artist" :href="`/#!/artist/${song.artist.id}`">{{ song.artist.name }}</a> –
-            <a class="album" :href="`/#!/album/${song.album.id}`">{{ song.album.name }}</a>
+            <a class="artist" :href="'/#!/artist/'+song.artist.id">{{ song.artist.name }}</a> –
+            <a class="album" :href="'/#!/album/'+song.album.id">{{ song.album.name }}</a>
           </p>
 
           <div class="plyr">
@@ -128,7 +128,11 @@ export default {
      * If the current song is the stub, just play the first song in the queue.
      */
     resume () {
-      this.song.id ? playback.resume() : playback.playFirstInQueue()
+      if (!this.song.id) {
+        return playback.playFirstInQueue()
+      }
+
+      playback.resume()
     },
 
     /**
@@ -149,7 +153,11 @@ export default {
      * Like the current song.
      */
     like () {
-      this.song.id && favoriteStore.toggleOne(this.song)
+      if (!this.song.id) {
+        return
+      }
+
+      favoriteStore.toggleOne(this.song)
     },
 
     /**
@@ -184,13 +192,17 @@ export default {
        */
       'main-content-view:load': view => {
         this.viewingQueue = view === 'queue'
+      },
+
+      'koel:teardown': () => {
+        this.song = songStore.stub
       }
     })
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 
@@ -368,7 +380,7 @@ export default {
     flex: 0 0 $footerHeight;
     height: $footerHeight;
     background: url(/public/img/covers/unknown-album.png);
-    background-size: cover;
+    background-size: $footerHeight;
     position: relative;
   }
 

@@ -21,7 +21,8 @@
 </template>
 
 <script>
-import { filterBy, $ } from '../../utils'
+import $ from 'jquery'
+import { filterBy } from '../../utils'
 
 export default {
   props: ['options', 'value', 'items'],
@@ -45,16 +46,10 @@ export default {
      * Navigate down the result list.
      */
     down (e) {
-      const selected = this.$el.querySelector('.result li.selected')
+      const selected = $(this.$el).find('.result li.selected')
 
-      if (!selected || !selected.nextElementSibling) {
-        // No item selected, or we're at the end of the list.
-        // Select the first item now.
-        $.addClass(this.$el.querySelector('.result li:first-child'), 'selected')
-        selected && $.removeClass(selected, 'selected')
-      } else {
-        $.removeClass(selected, 'selected')
-        $.addClass(selected.nextElementSibling, 'selected')
+      if (!selected.length || !selected.removeClass('selected').next('li').addClass('selected').length) {
+        $(this.$el).find('.result li:first').addClass('selected')
       }
 
       this.scrollSelectedIntoView(false)
@@ -65,14 +60,10 @@ export default {
      * Navigate up the result list.
      */
     up (e) {
-      const selected = this.$el.querySelector('.result li.selected')
+      const selected = $(this.$el).find('.result li.selected')
 
-      if (!selected || !selected.previousElementSibling) {
-        $.addClass(this.$el.querySelector('.result li:last-child'), 'selected')
-        selected && $.removeClass(selected, 'selected')
-      } else {
-        $.removeClass(selected, 'selected')
-        $.addClass(selected.previousElementSibling, 'selected')
+      if (!selected.length || !selected.removeClass('selected').prev('li').addClass('selected').length) {
+        $(this.$el).find('.result li:last').addClass('selected')
       }
 
       this.scrollSelectedIntoView(true)
@@ -108,6 +99,7 @@ export default {
       // Hide the typeahead results and reset the value if ESC is pressed.
       if (e.keyCode === 27) {
         this.showingResult = false
+
         return
       }
 
@@ -116,17 +108,16 @@ export default {
     },
 
     resultClick (e) {
-      const selected = this.$el.querySelector('.result li.selected')
-      $.removeClass(selected, 'selected')
-      $.addClass(e.target, 'selected')
+      $(this.$el).find('.result li.selected').removeClass('selected')
+      $(e.target).addClass('selected')
 
       this.apply()
       this.showingResult = false
     },
 
     apply () {
-      const selected = this.$el.querySelector('.result li.selected')
-      this.mutatedValue = (selected && selected.innerText.trim()) || this.mutatedValue
+      this.mutatedValue = $(this.$el).find('.result li.selected').text().trim() || this.mutatedValue
+      // In Vue 2.0, we can use v-model on custom components like this.
       this.$emit('input', this.mutatedValue)
     },
 
@@ -136,7 +127,7 @@ export default {
      * @param  {boolean} alignTop Whether the item should be aligned to top of its container.
      */
     scrollSelectedIntoView (alignTop) {
-      const elem = this.$el.querySelector('.result li.selected')
+      const elem = $(this.$el).find('.result li.selected')[0]
       if (!elem) {
         return
       }
@@ -156,7 +147,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import   "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

@@ -2,26 +2,26 @@
   <section id="artistWrapper">
     <h1 class="heading">
       <span class="overview">
-        <img :src="image" width="64" height="64" class="cover">
+        <img :src="artist.image" width="64" height="64" class="cover">
         {{ artist.name }}
         <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-        <span class="meta" v-show="artist.songs.length">
+        <span class="meta" v-show="meta.songCount">
           {{ artist.albums.length | pluralize('album') }}
           •
-          {{ artist.songs.length | pluralize('song') }}
+          {{ meta.songCount | pluralize('song') }}
           •
-          {{ fmtLength }}
+          {{ meta.totalLength }}
 
           <template v-if="sharedState.useLastfm">
             •
-            <a class="info" href @click.prevent="showInfo" title="View artist's extra information">Info</a>
+            <a class="info" href @click.prevent="showInfo" title="View artist's extra information">详细信息</a>
           </template>
 
           <template v-if="sharedState.allowDownload">
             •
             <a class="download" href @click.prevent="download" title="Download all songs by this artist">
-              Download All
+              下载全部
             </a>
           </template>
         </span>
@@ -36,13 +36,13 @@
       />
     </h1>
 
-    <song-list :items="artist.songs" type="artist" ref="songList"/>
+    <song-list :items="artist.songs" type="artist"/>
 
     <section class="info-wrapper" v-if="sharedState.useLastfm && info.showing">
       <a href class="close" @click.prevent="info.showing = false"><i class="fa fa-times"></i></a>
       <div class="inner">
         <div class="loading" v-if="info.loading"><sound-bar/></div>
-        <artist-info :artist="artist" mode="full" v-else/>
+        <artist-info :artist="artist" :mode="'full'" v-else/>
       </div>
     </section>
   </section>
@@ -54,13 +54,12 @@ import { sharedStore, artistStore } from '../../../stores'
 import { playback, download, artistInfo as artistInfoService } from '../../../services'
 import router from '../../../router'
 import hasSongList from '../../../mixins/has-song-list'
-import artistAttributes from '../../../mixins/artist-attributes'
 import artistInfo from '../extra/artist-info.vue'
 import soundBar from '../../shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--artist',
-  mixins: [hasSongList, artistAttributes],
+  mixins: [hasSongList],
   components: { artistInfo, soundBar },
   filters: { pluralize },
 
@@ -101,8 +100,6 @@ export default {
       if (view === 'artist') {
         this.info.showing = false
         this.artist = artist
-        // #530
-        this.$nextTick(() => this.$refs.songList.sort())
       }
     })
   },
@@ -110,9 +107,8 @@ export default {
   methods: {
     /**
      * Shuffle the songs by the current artist.
-     * Overriding the mixin.
      */
-    shuffleAll () {
+    shuffle () {
       playback.queueAndPlay(this.artist.songs, true)
     },
 
@@ -123,12 +119,13 @@ export default {
       download.fromArtist(this.artist)
     },
 
-    async showInfo () {
+    showInfo () {
       this.info.showing = true
       if (!this.artist.info) {
         this.info.loading = true
-        await artistInfoService.fetch(this.artist)
-        this.info.loading = false
+        artistInfoService.fetch(this.artist).then(() => {
+          this.info.loading = false
+        })
       } else {
         this.info.loading = false
       }
@@ -137,7 +134,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

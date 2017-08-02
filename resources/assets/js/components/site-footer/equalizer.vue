@@ -9,7 +9,13 @@
     </div>
     <div class="bands">
       <span class="band preamp">
-        <span class="slider"></span>
+        <input
+          type="range"
+          min="-20"
+          max="20"
+          step="0.01"
+          data-orientation="vertical"
+          v-model="preampGainValue">
         <label>Preamp</label>
       </span>
 
@@ -20,7 +26,13 @@
       </span>
 
       <span class="band amp" v-for="band in bands">
-        <span class="slider"></span>
+        <input
+          type="range"
+          min="-20"
+          max="20"
+          step="0.01"
+          data-orientation="vertical"
+          :value="band.filter.gain.value">
         <label>{{ band.label }}</label>
       </span>
     </div>
@@ -28,15 +40,18 @@
 </template>
 
 <script>
-import { map, cloneDeep, each } from 'lodash'
-import nouislider from 'nouislider'
+import { map, cloneDeep } from 'lodash'
+import $ from 'jquery'
+// eslint-disable-next-line no-unused-vars
+import rangeslider from 'rangeslider.js'
 
-import { isAudioContextSupported, event, $ } from '../../utils'
+import { isAudioContextSupported, event } from '../../utils'
 import { equalizerStore, preferenceStore as preferences } from '../../stores'
 
 export default {
   data () {
     return {
+      idx: 0,
       bands: [],
       preampGainValue: 0,
       selectedPresetIndex: -1
@@ -75,7 +90,8 @@ export default {
   methods: {
     /**
      * Init the equalizer.
-     * @param  {Element} player The audio player's node.
+     *
+     * @param  {Element} player The audio player's DOM.
      */
     init (player) {
       const settings = equalizerStore.get()
@@ -97,8 +113,8 @@ export default {
       let prevFilter = null
 
       // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
-      const frequencies = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000]
-      each(frequencies, (frequency, i) => {
+      const freqs = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000]
+      freqs.forEach((f, i) => {
         const filter = context.createBiquadFilter()
 
         if (i === 0) {
@@ -111,61 +127,61 @@ export default {
 
         filter.gain.value = settings.gains[i] ? settings.gains[i] : 0
         filter.Q.value = 1
-        filter.frequency.value = frequency
+        filter.frequency.value = f
 
         prevFilter ? prevFilter.connect(filter) : this.preampGainNode.connect(filter)
         prevFilter = filter
 
         this.bands.push({
           filter,
-          label: (frequency + '').replace('000', 'K')
+          label: (f + '').replace('000', 'K')
         })
       })
 
       prevFilter.connect(context.destination)
 
-      this.$nextTick(this.createSliders)
-    },
-
-    /**
-     * Create the UI sliders for both the preamp and the normal bands.
-     */
-    createSliders () {
-      const config = equalizerStore.get()
-      each(Array.from(document.querySelectorAll('#equalizer .slider')), (el, i) => {
-        nouislider.create(el, {
-          connect: [false, true],
-          // the first element is the preamp. The rest are gains.
-          start: i === 0 ? config.preamp : config.gains[i - 1],
-          range: { min: -20, max: 20 },
-          orientation: 'vertical',
-          direction: 'rtl'
-        })
-
-        /**
-         * Update the audio effect upon sliding / tapping.
-         */
-        el.noUiSlider.on('slide', (values, handle) => {
-          const value = values[handle]
-          if (el.parentNode.matches('.preamp')) {
-            this.changePreampGain(value)
-          } else {
-            this.changeFilterGain(this.bands[i - 1].filter, value)
-          }
-        })
-
-        /**
-         * Save the equalizer values after the change is done.
-         */
-        el.noUiSlider.on('change', () => {
-          // User has customized the equalizer. No preset should be selected.
-          this.selectedPresetIndex = -1
-          this.save()
-        })
-      })
+      this.$nextTick(this.createRangeSliders)
 
       // Now we set this value to trigger the audio processing.
       this.selectedPresetIndex = preferences.selectedPreset
+    },
+
+    /**
+     * Create the UI slider for both the preamp and the normal bands using rangeslider.js.
+     */
+    createRangeSliders () {
+      $('#equalizer input[type="range"]').each((i, el) => {
+        $(el).rangeslider({
+          /**
+           * Force the polyfill and its styles on all browsers.
+           *
+           * @type {Boolean}
+           */
+          polyfill: false,
+
+          /**
+           * Change the gain/preamp value when the user drags the sliders.
+           *
+           * @param  {Float} position
+           * @param  {Float} value
+           */
+          onSlide: (position, value) => {
+            if ($(el).parents('.band').is('.preamp')) {
+              this.changePreampGain(value)
+            } else {
+              this.changeFilterGain(this.bands[i - 1].filter, value)
+            }
+          },
+
+          /**
+           * Save the settings and set the preset index to -1 (which is None) on slideEnd.
+           */
+          onSlideEnd: () => {
+            this.selectedPresetIndex = -1
+            this.save()
+          }
+        })
+      })
     },
 
     /**
@@ -192,17 +208,19 @@ export default {
      * Load a preset when the user select it from the dropdown.
      */
     loadPreset (preset) {
-      each(Array.from(document.querySelectorAll('#equalizer .slider')), (el, i) => {
+      $('#equalizer input[type=range]').each((i, input) => {
         // We treat our preamp slider differently.
-        if ($.is(el.parentNode, '.preamp')) {
+        if ($(input).parents('.band').is('.preamp')) {
           this.changePreampGain(preset.preamp)
-          // Update the slider values into GUI.
-          el.noUiSlider.set(preset.preamp)
         } else {
           this.changeFilterGain(this.bands[i - 1].filter, preset.gains[i - 1])
-          // Update the slider values into GUI.
-          el.noUiSlider.set(preset.gains[i - 1])
+          input.value = preset.gains[i - 1]
         }
+      })
+
+      this.$nextTick(() => {
+        // Update the slider values into GUI.
+        $('#equalizer input[type="range"]').rangeslider('update', true)
       })
 
       this.save()
@@ -217,12 +235,16 @@ export default {
   },
 
   mounted () {
-    event.on('equalizer:init', player => isAudioContextSupported() && this.init(player))
+    event.on('equalizer:init', player => {
+      if (isAudioContextSupported()) {
+        this.init(player)
+      }
+    })
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 
@@ -300,10 +322,6 @@ export default {
       align-items: center;
     }
 
-    .slider {
-      height: 100px;
-    }
-
     .indicators {
       height: 100px;
       width: 20px;
@@ -329,56 +347,49 @@ export default {
     }
   }
 
-  .noUi {
-    &-connect {
-      background: none;
-      box-shadow: none;
-      &::after {
-        content: " ";
-        position: absolute;
-        width: 2px;
-        height: 100%;
-        background: #333;
-        top: 0;
-        left: 7px;
-      }
-    }
+  /**
+   * The range slider styles
+   */
+  .rangeslider {
+    background: transparent;
+    box-shadow: none;
 
-    &-target {
-      background: transparent;
-      border-radius: 0;
-      border: 0;
-      box-shadow: none;
+    &--vertical {
+      min-height: 100px;
       width: 16px;
 
-      &::after {
+      &::before {
         content: " ";
         position: absolute;
-        width: 2px;
-        height: 100%;
-        background: #fff;
-        top: 0;
         left: 7px;
+        width: 2px;
+        background: rgba(255, 255, 255, 0.2);
+        z-index: 1;
+        height: 100%;
+        pointer-events: none;
       }
-    }
 
-    &-handle {
-      border: 0;
-      border-radius: 0;
-      box-shadow: none;
-      cursor: pointer;
-
-      &::before, &::after {
-        display: none;
+      .rangeslider__fill {
+        width: 2px;
+        background: #fff;
+        position: absolute;
+        left: 7px;
+        box-shadow: none;
+        border-radius: 0;
       }
-    }
 
-    &-vertical {
-      .noUi-handle {
-        width: 16px;
-        height: 2px;
+      .rangeslider__handle {
         left: 0;
-        top: 0;
+        background: #fff;
+        border: 0;
+        height: 2px;
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+
+        &::after {
+          display: none;
+        }
       }
     }
   }

@@ -1,10 +1,10 @@
 <template>
   <span class="view-modes">
     <a class="thumbnails" :class="{ active: mutatedMode === 'thumbnails' }"
-      title="View as thumbnails"
+      title="以缩略图查看"
       @click.prevent="setMode('thumbnails')"><i class="fa fa-th-large"></i></a>
     <a class="list" :class="{ active: mutatedMode === 'list' }"
-      title="View as list"
+      title="以列表查看"
       @click.prevent="setMode('list')"><i class="fa fa-list"></i></a>
   </span>
 </template>
@@ -59,7 +59,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass" scoped>
 @import "../../../sass/partials/_vars.scss";
 @import "../../../sass/partials/_mixins.scss";
 

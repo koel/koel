@@ -30,7 +30,7 @@ export function forceReloadWindow () {
  * @param  {String}  type
  * @param  {Boolean} dismissable
  */
-export function showOverlay (message = 'Just a little patience…', type = 'loading', dismissable = false) {
+export function showOverlay (message = '请稍等一小会…', type = 'loading', dismissable = false) {
   event.emit('overlay:show', { message, type, dismissable })
 }
 
@@ -48,7 +48,7 @@ export function hideOverlay () {
  */
 export function copyText (txt) {
   const copyArea = document.querySelector('#copyArea')
-  copyArea.style.top = `${window.pageYOffset || document.documentElement.scrollTop}px`
+  copyArea.style.top = (window.pageYOffset || document.documentElement.scrollTop) + 'px'
   copyArea.value = txt
   select(copyArea)
   document.execCommand('copy')

@@ -1,14 +1,14 @@
 <template>
   <section id="artistsWrapper">
     <h1 class="heading">
-      <span>Artists</span>
+      <span>歌手</span>
       <view-mode-switch :mode="viewMode" for="artists"/>
     </h1>
 
-    <div class="artists main-scroll-wrap" :class="`as-${viewMode}`" @scroll="scrolling">
+    <div class="artists main-scroll-wrap" :class="'as-'+viewMode" @scroll="scrolling">
       <artist-item v-for="item in displayedItems" :artist="item"/>
       <span class="item filler" v-for="n in 6"/>
-      <to-top-button/>
+      <to-top-button :showing="showBackToTop"/>
     </div>
   </section>
 </template>
@@ -57,6 +57,11 @@ export default {
        */
       'koel:ready': () => this.displayMore(),
 
+      'koel:teardown': () => {
+        this.q = ''
+        this.numOfItems = 9
+      },
+
       'filter:changed': q => {
         this.q = q
       }
@@ -65,7 +70,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 

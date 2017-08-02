@@ -7,7 +7,7 @@
     <div class="main-scroll-wrap" @scroll="scrolling" ref="wrapper">
       <div class="two-cols">
         <section v-show="top.songs.length">
-          <h1>Most Played</h1>
+          <h1>经常播放</h1>
 
           <ol class="top-song-list">
             <li v-for="song in top.songs"
@@ -18,7 +18,7 @@
         </section>
 
         <section class="recent">
-          <h1>Recently Played</h1>
+          <h1>最近播放</h1>
 
           <ol class="recent-song-list" v-show="recentSongs.length">
             <li v-for="song in recentSongs"
@@ -28,14 +28,13 @@
           </ol>
 
           <p class="none" v-show="!recentSongs.length">
-            Your recently played songs will be displayed here.<br />
-            Start listening!
+	    最近添加的歌曲将显示在这里.<br />
           </p>
         </section>
       </div>
 
       <section class="recently-added" v-show="showRecentlyAddedSection">
-        <h1>Recently Added</h1>
+        <h1>最近添加</h1>
 
         <div class="two-cols">
           <div class="wrapper as-list">
@@ -51,16 +50,16 @@
       </section>
 
       <section class="top-artists" v-show="top.artists.length">
-        <h1>Top Artists</h1>
+        <h1>猜你喜欢 - 艺术家</h1>
 
-        <div class="wrapper" :class="`as-${preferences.artistsViewMode}`">
+        <div class="wrapper" :class="'as-'+preferences.artistsViewMode">
           <artist-item v-for="artist in top.artists" :artist="artist"/>
           <span class="item filler" v-for="n in 3"/>
         </div>
       </section>
 
-      <section class="top-albums" :class="`as-${preferences.albumsViewMode}`" v-show="top.albums.length">
-        <h1>Top Albums</h1>
+      <section class="top-albums" :class="'as-'+preferences.albumsViewMode" v-show="top.albums.length">
+        <h1>猜你喜欢 - 专辑</h1>
 
         <div class="wrapper">
           <album-item v-for="album in top.albums" :album="album"/>
@@ -68,7 +67,7 @@
         </div>
       </section>
 
-      <to-top-button/>
+      <to-top-button :showing="showBackToTop"/>
     </div>
   </section>
 </template>
@@ -140,7 +139,7 @@ export default {
       this.top.artists = artistStore.getMostPlayed(6)
       this.recentlyAdded.albums = albumStore.getRecentlyAdded(6)
       this.recentlyAdded.songs = songStore.getRecentlyAdded(10)
-      this.recentSongs = songStore.recentlyPlayed
+      this.recentSongs = songStore.getRecent(7)
     }
   },
 
@@ -154,7 +153,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="sass">
 @import "../../../../sass/partials/_vars.scss";
 @import "../../../../sass/partials/_mixins.scss";
 
