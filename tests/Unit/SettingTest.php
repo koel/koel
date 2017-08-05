@@ -53,6 +53,15 @@ class SettingTest extends TestCase
     }
 
     /** @test */
+    public function existing_settings_should_be_updated()
+    {
+        Setting::set('foo', 'bar');
+        Setting::set('foo', 'baz');
+
+        $this->assertEquals('baz', Setting::get('foo'));
+    }
+
+    /** @test */
     public function it_gets_the_setting_value_in_an_unserialized_format()
     {
         // Given a setting in the database

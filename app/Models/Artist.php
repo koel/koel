@@ -6,7 +6,10 @@ use App\Facades\Lastfm;
 use App\Facades\Util;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Log;
 
 /**
@@ -15,7 +18,7 @@ use Log;
  * @property string image
  * @property bool   is_unknown
  * @property bool   is_various
- * @property \Illuminate\Database\Eloquent\Collection songs
+ * @property Collection songs
  */
 class Artist extends Model
 {
@@ -30,21 +33,42 @@ class Artist extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
+    /**
+     * An artist can have many albums.
+     *
+     * @return HasMany
+     */
     public function albums()
     {
         return $this->hasMany(Album::class);
     }
 
+    /**
+     * An artist can have many songs.
+     * Unless he is Rick Astley.
+     *
+     * @return HasManyThrough
+     */
     public function songs()
     {
         return $this->hasManyThrough(Song::class, Album::class);
     }
 
+    /**
+     * Indicate if the artist is unknown.
+     *
+     * @return bool
+     */
     public function getIsUnknownAttribute()
     {
         return $this->id === self::UNKNOWN_ID;
     }
 
+    /**
+     * Indicate if the artist is the special "Various Artists"
+     *
+     * @return bool
+     */
     public function getIsVariousAttribute()
     {
         return $this->id === self::VARIOUS_ID;

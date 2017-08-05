@@ -14,7 +14,8 @@ class PlaylistTest extends TestCase
         $this->createSampleMediaSet();
     }
 
-    public function testCreatePlaylist()
+    /** @test */
+    public function user_can_create_a_playlist()
     {
         $user = factory(User::class)->create();
 
@@ -47,7 +48,8 @@ class PlaylistTest extends TestCase
             ]);
     }
 
-    public function testUpdatePlaylistName()
+    /** @test */
+    public function user_can_update_a_playlists_name()
     {
         $user = factory(User::class)->create();
 
@@ -67,7 +69,8 @@ class PlaylistTest extends TestCase
             ->seeStatusCode(403);
     }
 
-    public function testSyncPlaylist()
+    /** @test */
+    public function playlists_can_be_synced()
     {
         $user = factory(User::class)->create();
 
@@ -103,7 +106,8 @@ class PlaylistTest extends TestCase
         ]);
     }
 
-    public function testDeletePlaylist()
+    /** @test */
+    public function user_can_delete_a_playlist()
     {
         $user = factory(User::class)->create();
 

@@ -16,7 +16,8 @@ class S3Test extends TestCase
         $this->disableMiddlewareForAllTests();
     }
 
-    public function testPut()
+    /** @test */
+    public function a_song_can_be_added()
     {
         $this->post('api/os/s3/song', [
             'bucket' => 'koel',
@@ -32,7 +33,8 @@ class S3Test extends TestCase
         ])->seeInDatabase('songs', ['path' => 's3://koel/sample.mp3']);
     }
 
-    public function testRemove()
+    /** @test */
+    public function a_song_can_be_removed()
     {
         $this->expectsEvents(LibraryChanged::class);
         $this->post('api/os/s3/song', [

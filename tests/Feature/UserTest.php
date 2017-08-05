@@ -6,7 +6,8 @@ use App\Models\User;
 
 class UserTest extends TestCase
 {
-    public function testCreateUser()
+    /** @test */
+    public function admin_can_create_a_user()
     {
         // Non-admins can't do shit
         $this->postAsUser('api/user', [
@@ -26,7 +27,8 @@ class UserTest extends TestCase
         $this->seeInDatabase('users', ['name' => 'Foo']);
     }
 
-    public function testUpdateUser()
+    /** @test */
+    public function admin_can_update_a_user()
     {
         $user = factory(User::class)->create();
 
@@ -39,7 +41,8 @@ class UserTest extends TestCase
         $this->seeInDatabase('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
     }
 
-    public function testDeleteUser()
+    /** @test */
+    public function admin_can_delete_a_user()
     {
         $user = factory(User::class)->create();
         $admin = factory(User::class, 'admin')->create();
@@ -53,7 +56,8 @@ class UserTest extends TestCase
             ->seeInDatabase('users', ['id' => $admin->id]);
     }
 
-    public function testUserPreferences()
+    /** @test */
+    public function user_can_update_their_preferences()
     {
         $user = factory(User::class)->create();
         $this->assertNull($user->getPreference('foo'));
@@ -63,16 +67,5 @@ class UserTest extends TestCase
 
         $user->deletePreference('foo');
         $this->assertNull($user->getPreference('foo'));
-    }
-
-    public function testHidingUserPreferences()
-    {
-        $user = factory(User::class)->create([
-            'preferences' => [
-                'lastfm_session_key' => '123456',
-            ],
-        ]);
-
-        $this->assertEquals('hidden', $user->preferences['lastfm_session_key']);
     }
 }

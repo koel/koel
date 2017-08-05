@@ -9,7 +9,8 @@ class ProfileTest extends TestCase
 {
     use WithoutMiddleware;
 
-    public function testUpdate()
+    /** @test */
+    public function user_can_update_his_profile()
     {
         $user = factory(User::class)->create();
         $this->putAsUser('api/me', ['name' => 'Foo', 'email' => 'bar@baz.com'], $user);

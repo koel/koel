@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\CanFilterByUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int   user_id
@@ -22,11 +24,21 @@ class Playlist extends Model
         'user_id' => 'int',
     ];
 
+    /**
+     * A playlist can have many songs.
+     *
+     * @return BelongsToMany
+     */
     public function songs()
     {
         return $this->belongsToMany(Song::class);
     }
 
+    /**
+     * A playlist belongs to a user.
+     *
+     * @return BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo(User::class);

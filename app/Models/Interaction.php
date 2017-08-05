@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Events\SongLikeToggled;
 use App\Traits\CanFilterByUser;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property bool  liked
@@ -26,11 +27,21 @@ class Interaction extends Model
 
     protected $hidden = ['id', 'user_id', 'created_at', 'updated_at'];
 
+    /**
+     * An interaction belongs to a user.
+     *
+     * @return BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * An interaction is associated with a song.
+     *
+     * @return BelongsTo
+     */
     public function song()
     {
         return $this->belongsTo(Song::class);

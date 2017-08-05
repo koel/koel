@@ -7,6 +7,8 @@ use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Log;
 
 /**
@@ -33,16 +35,31 @@ class Album extends Model
     protected $casts = ['artist_id' => 'integer'];
     protected $appends = ['is_compilation'];
 
+    /**
+     * An album belongs to an artist.
+     *
+     * @return BelongsTo
+     */
     public function artist()
     {
         return $this->belongsTo(Artist::class);
     }
 
+    /**
+     * An album can contain many songs.
+     *
+     * @return HasMany
+     */
     public function songs()
     {
         return $this->hasMany(Song::class);
     }
 
+    /**
+     * Indicate if the album is unknown.
+     *
+     * @return bool
+     */
     public function getIsUnknownAttribute()
     {
         return $this->id === self::UNKNOWN_ID;
@@ -166,11 +183,23 @@ class Album extends Model
         return app()->publicPath().'/public/img/covers/'.uniqid('', true).".$extension";
     }
 
+    /**
+     * Set the album cover.
+     *
+     * @param string $value
+     */
     public function setCoverAttribute($value)
     {
         $this->attributes['cover'] = $value ?: self::UNKNOWN_COVER;
     }
 
+    /**
+     * Get the album cover.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
     public function getCoverAttribute($value)
     {
         return app()->staticUrl('public/img/covers/'.($value ?: self::UNKNOWN_COVER));

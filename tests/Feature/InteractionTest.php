@@ -17,7 +17,8 @@ class InteractionTest extends TestCase
         $this->createSampleMediaSet();
     }
 
-    public function testPlayCountRegister()
+    /** @test */
+    public function play_count_is_increased()
     {
         $this->withoutEvents();
         $user = factory(User::class)->create();
@@ -41,7 +42,8 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    public function testLikeRegister()
+    /** @test */
+    public function user_can_like_and_unlike_a_song()
     {
         $this->expectsEvents(SongLikeToggled::class);
 
@@ -66,7 +68,8 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    public function testBatchLikeAndUnlike()
+    /** @test */
+    public function user_can_like_and_unlike_songs_in_batch()
     {
         $this->expectsEvents(SongLikeToggled::class);
 

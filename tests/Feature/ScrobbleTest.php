@@ -11,7 +11,14 @@ class ScrobbleTest extends TestCase
 {
     use WithoutMiddleware;
 
-    public function testScrobble()
+    protected function tearDown()
+    {
+        m::close();
+        parent::tearDown();
+    }
+
+    /** @test */
+    public function a_song_can_be_scrobbed_via_lastfm()
     {
         $this->withoutEvents();
         $this->createSampleMediaSet();

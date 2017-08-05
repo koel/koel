@@ -24,6 +24,12 @@ class LastfmTest extends TestCase
 {
     use WithoutMiddleware;
 
+    protected function tearDown()
+    {
+        m::close();
+        parent::tearDown();
+    }
+
     public function testGetSessionKey()
     {
         $client = m::mock(Client::class, [
@@ -35,7 +41,8 @@ class LastfmTest extends TestCase
         $this->assertEquals('foo', $api->getSessionKey('bar'));
     }
 
-    public function testSetSessionKey()
+    /** @test */
+    public function session_key_can_be_set()
     {
         $user = factory(User::class)->create();
         $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user);
@@ -43,7 +50,8 @@ class LastfmTest extends TestCase
         $this->assertEquals('foo', $user->lastfm_session_key);
     }
 
-    public function testControllerConnect()
+    /** @test */
+    public function user_can_connect_to_lastfm()
     {
         $redirector = m::mock(Redirector::class);
         $redirector->shouldReceive('to')->once();
@@ -57,7 +65,8 @@ class LastfmTest extends TestCase
         (new LastfmController($guard))->connect($redirector, new Lastfm(), $auth);
     }
 
-    public function testControllerCallback()
+    /** @test */
+    public function lastfm_session_key_can_be_retrieved_and_stored()
     {
         $request = m::mock(Request::class);
         $request->token = 'foo';
@@ -71,7 +80,8 @@ class LastfmTest extends TestCase
         $this->assertEquals('bar', $user->lastfm_session_key);
     }
 
-    public function testControllerDisconnect()
+    /** @test */
+    public function user_can_disconnect_from_lastfm()
     {
         $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
         $this->deleteAsUser('api/lastfm/disconnect', [], $user);
@@ -79,7 +89,8 @@ class LastfmTest extends TestCase
         $this->assertNull($user->lastfm_session_key);
     }
 
-    public function testLoveTrack()
+    /** @test */
+    public function user_can_love_a_track_on_lastfm()
     {
         $this->withoutEvents();
         $this->createSampleMediaSet();
@@ -98,7 +109,8 @@ class LastfmTest extends TestCase
         (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction, $user));
     }
 
-    public function testUpdateNowPlaying()
+    /** @test */
+    public function user_now_playing_status_can_be_updated_to_lastfm()
     {
         $this->withoutEvents();
         $this->createSampleMediaSet();
