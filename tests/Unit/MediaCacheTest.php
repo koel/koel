@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Song;
 use Cache;
 use MediaCache;
@@ -10,13 +12,16 @@ use Tests\TestCase;
 class MediaCacheTest extends TestCase
 {
     /** @test */
-    public function it_queries_fresh_data_from_database_if_a_cache_is_not_found()
+    public function it_queries_fresh_data_from_database_or_use_the_cache()
     {
-        Cache::shouldReceive('get')->andReturnNull();
-        Cache::shouldReceive('forever')->once();
-
         // Given a database with artists, albums, and songs
         factory(Song::class, 5)->create();
+
+        Cache::shouldReceive('rememberForever')->andReturn([
+            'albums' => Album::orderBy('name')->get(),
+            'artists' => Artist::orderBy('name')->get(),
+            'songs' => Song::all(),
+        ]);
 
         // When I get data from the MediaCache service
         $data = MediaCache::get();
@@ -31,7 +36,7 @@ class MediaCacheTest extends TestCase
     public function it_get_the_cached_data_if_found()
     {
         // Given there are media data cached
-        Cache::shouldReceive('get')->andReturn('dummy');
+        Cache::shouldReceive('rememberForever')->andReturn('dummy');
 
         // And koel.cache_media configuration is TRUE
         config(['koel.cache_media' => true]);
@@ -44,24 +49,9 @@ class MediaCacheTest extends TestCase
     }
 
     /** @test */
-    public function it_caches_queried_data_if_cache_media_is_configured_to_true()
-    {
-        Cache::shouldReceive('forever')->once();
-        Cache::shouldReceive('get')->once()->andReturnNull();
-
-        // Given koel.cache_media configuration is TRUE
-        config(['koel.cache_media' => true]);
-
-        // When I get data from the MediaCache service
-        MediaCache::get();
-
-        // Then I see the cache-related methods being called
-    }
-
-    /** @test */
     public function it_does_not_cache_queried_data_if_cache_media_is_configured_to_false()
     {
-        Cache::shouldReceive('forever')->never();
+        Cache::shouldReceive('rememberForever')->never();
 
         // Given koel.cache_media configuration is FALSE
         config(['koel.cache_media' => false]);

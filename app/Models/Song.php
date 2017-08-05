@@ -281,28 +281,23 @@ class Song extends Model
      */
     public function getObjectStoragePublicUrl(AwsClient $s3 = null)
     {
-        // If we have a cached version, just return it.
-        if ($cached = Cache::get("OSUrl/{$this->id}")) {
-            return $cached;
-        }
+        return Cache::remember("OSUrl/{$this->id}", 60, function () use ($s3) {
+            if (!$s3) {
+                $s3 = AWS::createClient('s3');
+            }
 
-        // Otherwise, we query S3 for the presigned request.
-        if (!$s3) {
-            $s3 = AWS::createClient('s3');
-        }
+            $cmd = $s3->getCommand('GetObject', [
+                'Bucket' => $this->s3_params['bucket'],
+                'Key' => $this->s3_params['key'],
+            ]);
 
-        $cmd = $s3->getCommand('GetObject', [
-            'Bucket' => $this->s3_params['bucket'],
-            'Key' => $this->s3_params['key'],
-        ]);
+            // Here we specify that the request is valid for 1 hour.
+            // We'll also cache the public URL for future reuse.
+            $request = $s3->createPresignedRequest($cmd, '+1 hour');
+            $url = (string) $request->getUri();
 
-        // Here we specify that the request is valid for 1 hour.
-        // We'll also cache the public URL for future reuse.
-        $request = $s3->createPresignedRequest($cmd, '+1 hour');
-        $url = (string) $request->getUri();
-        Cache::put("OSUrl/{$this->id}", $url, 60);
-
-        return $url;
+            return $url;
+        });
     }
 
     /**

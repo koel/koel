@@ -29,8 +29,7 @@ class SongTest extends TestCase
             ]),
         ]);
 
-        Cache::shouldReceive('get')->once()->with("OSUrl/{$song->id}");
-        Cache::shouldReceive('put')->once()->with("OSUrl/{$song->id}", $mockedURL, 60);
+        Cache::shouldReceive('remember')->andReturn($mockedURL);
         $url = $song->getObjectStoragePublicUrl($client);
 
         // Then I should receive the correct S3 public URL

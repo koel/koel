@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Cache;
 use Exception;
 use GuzzleHttp\Client;
 use Log;
@@ -50,35 +51,33 @@ class iTunes
     public function getTrackUrl($term, $album = '', $artist = '')
     {
         try {
-            $cacheKey = md5("itunes_track_url_{$term}{$album}{$artist}");
-            if (!$trackUrl = cache($cacheKey)) {
-                $params = [
-                    'term' => $term.($album ? ' '.$album : '').($artist ? ' '.$artist : ''),
-                    'media' => 'music',
-                    'entity' => 'song',
-                    'limit' => 1,
-                ];
+            return Cache::remember(md5("itunes_track_url_{$term}{$album}{$artist}"), 24 * 60 * 7, 
+                function () use ($term, $album, $artist) {
+                    $params = [
+                        'term' => $term.($album ? " $album" : '').($artist ? " $artist" : ''),
+                        'media' => 'music',
+                        'entity' => 'song',
+                        'limit' => 1,
+                    ];
 
-                $response = (string) $this->client->get($this->endPoint, ['query' => $params])->getBody();
-                $response = json_decode($response);
+                    $response = (string) $this->client->get($this->endPoint, ['query' => $params])->getBody();
+                    $response = json_decode($response);
 
-                if (!$response->resultCount) {
-                    return false;
+                    if (!$response->resultCount) {
+                        return false;
+                    }
+
+                    $trackUrl = $response->results[0]->trackViewUrl;
+
+                    if (parse_url($trackUrl, PHP_URL_QUERY)) {
+                        $trackUrl .= '&at='.config('koel.itunes.affiliate_id');
+                    } else {
+                        $trackUrl .= '?at='.config('koel.itunes.affiliate_id');
+                    }
+
+                    return $trackUrl;
                 }
-
-                $trackUrl = $response->results[0]->trackViewUrl;
-
-                // Returns a string if the URL has parameters or NULL if not
-                if (parse_url($trackUrl, PHP_URL_QUERY)) {
-                    $trackUrl .= '&at='.config('koel.itunes.affiliate_id');
-                } else {
-                    $trackUrl .= '?at='.config('koel.itunes.affiliate_id');
-                }
-
-                cache([$cacheKey => $trackUrl], 24 * 60 * 7);
-            }
-
-            return $trackUrl;
+            );
         } catch (Exception $e) {
             Log::error($e);
 

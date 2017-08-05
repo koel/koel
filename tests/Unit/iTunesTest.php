@@ -10,6 +10,12 @@ use Tests\TestCase;
 
 class iTunesTest extends TestCase
 {
+    public function tearDown()
+    {
+        m::close();
+        parent::tearDown();
+    }
+
     /** @test */
     public function it_can_be_instantiated()
     {
