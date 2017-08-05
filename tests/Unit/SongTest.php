@@ -26,6 +26,7 @@ class SongTest extends TestCase
         // Then the song is retrieved
         $this->assertEquals($song->id, $retrieved->id);
     }
+
     /** @test */
     public function its_lyrics_has_all_new_line_characters_replace_by_br_tags()
     {

@@ -332,7 +332,7 @@ class Song extends Model
      * Some songs don't have a title.
      * Fall back to the file name (without extension) for such.
      *
-     * @param  string $value
+     * @param string $value
      *
      * @return string
      */

@@ -144,8 +144,8 @@ class Album extends Model
      * Write a cover image file with binary data and update the Album with the new cover file.
      *
      * @param string $binaryData
-     * @param string $extension     The file extension
-     * @param string $destination   The destination path. Automatically generated if empty.
+     * @param string $extension   The file extension
+     * @param string $destination The destination path. Automatically generated if empty.
      */
     public function writeCoverFile($binaryData, $extension, $destination = '')
     {
@@ -159,8 +159,8 @@ class Album extends Model
     /**
      * Copy a cover file from an existing image on the system.
      *
-     * @param string $source        The original image's full path.
-     * @param string $destination   The destination path. Automatically generated if empty.
+     * @param string $source      The original image's full path.
+     * @param string $destination The destination path. Automatically generated if empty.
      */
     public function copyCoverFile($source, $destination = '')
     {
