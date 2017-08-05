@@ -8,13 +8,9 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use Download;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\BrowserKitTestCase;
 
-class DownloadTest extends BrowserKitTestCase
+class DownloadTest extends TestCase
 {
-    use DatabaseTransactions;
-
     public function setUp()
     {
         parent::setUp();

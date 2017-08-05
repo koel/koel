@@ -5,13 +5,11 @@ namespace Tests\Feature;
 use App\Events\SongLikeToggled;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\BrowserKitTestCase;
 
-class InteractionTest extends BrowserKitTestCase
+class InteractionTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function setUp()
     {

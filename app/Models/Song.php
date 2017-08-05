@@ -7,7 +7,11 @@ use App\Traits\SupportsDeleteWhereIDsNotIn;
 use AWS;
 use Aws\AwsClient;
 use Cache;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Lastfm;
 use YouTube;
 
@@ -55,16 +59,31 @@ class Song extends Model
      */
     public $incrementing = false;
 
+    /**
+     * A song belongs to an artist.
+     *
+     * @return BelongsTo
+     */
     public function artist()
     {
         return $this->belongsTo(Artist::class);
     }
 
+    /**
+     * A song belongs to a album.
+     *
+     * @return BelongsTo
+     */
     public function album()
     {
         return $this->belongsTo(Album::class);
     }
 
+    /**
+     * A song can belong to many playlists.
+     *
+     * @return BelongsToMany
+     */
     public function playlists()
     {
         return $this->belongsToMany(Playlist::class);
@@ -130,7 +149,7 @@ class Song extends Model
         /*
          * A collection of the updated songs.
          *
-         * @var \Illuminate\Support\Collection
+         * @var Collection
          */
         $updatedSongs = collect();
 
@@ -222,10 +241,10 @@ class Song extends Model
     /**
      * Scope a query to only include songs in a given directory.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string                                $path  Full path of the directory
+     * @param Builder $query
+     * @param string  $path  Full path of the directory
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeInDirectory($query, $path)
     {
@@ -241,7 +260,7 @@ class Song extends Model
      * @param User $user
      * @param bool $toArray
      *
-     * @return \Illuminate\Database\Eloquent\Collection|array
+     * @return Collection|array
      */
     public static function getFavorites(User $user, $toArray = false)
     {
@@ -302,7 +321,7 @@ class Song extends Model
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
      *
-     * @param $value
+     * @param string $value
      */
     public function setTitleAttribute($value)
     {
@@ -313,7 +332,7 @@ class Song extends Model
      * Some songs don't have a title.
      * Fall back to the file name (without extension) for such.
      *
-     * @param  $value
+     * @param  string $value
      *
      * @return string
      */
@@ -353,6 +372,11 @@ class Song extends Model
         return compact('bucket', 'key');
     }
 
+    /**
+     * Return the ID of the song when it's converted to string.
+     *
+     * @return string
+     */
     public function __toString()
     {
         return $this->id;

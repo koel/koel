@@ -9,14 +9,12 @@ use App\Models\Artist;
 use App\Models\File;
 use App\Models\Song;
 use App\Services\Media;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
 
-class MediaTest extends BrowserKitTestCase
+class MediaTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function testSync()
     {

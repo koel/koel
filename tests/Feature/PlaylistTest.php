@@ -5,13 +5,9 @@ namespace Tests\Feature;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\BrowserKitTestCase;
 
-class PlaylistTest extends BrowserKitTestCase
+class PlaylistTest extends TestCase
 {
-    use DatabaseTransactions;
-
     public function setUp()
     {
         parent::setUp();

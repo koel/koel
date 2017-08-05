@@ -14,17 +14,15 @@ use App\Services\Lastfm;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
 use Tymon\JWTAuth\JWTAuth;
 
-class LastfmTest extends BrowserKitTestCase
+class LastfmTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function testGetSessionKey()
     {

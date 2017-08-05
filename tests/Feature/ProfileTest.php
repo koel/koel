@@ -3,13 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\BrowserKitTestCase;
 
-class ProfileTest extends BrowserKitTestCase
+class ProfileTest extends TestCase
 {
-    use WithoutMiddleware, DatabaseTransactions;
+    use WithoutMiddleware;
 
     public function testUpdate()
     {

@@ -6,15 +6,13 @@ use App\Models\Song;
 use App\Services\YouTube;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
 use YouTube as YouTubeFacade;
 
-class YouTubeTest extends BrowserKitTestCase
+class YouTubeTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function testSearch()
     {

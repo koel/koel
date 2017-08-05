@@ -7,17 +7,11 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
-use Aws\AwsClient;
-use Cache;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Mockery as m;
-use Tests\BrowserKitTestCase;
 
-class SongTest extends BrowserKitTestCase
+class SongTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function setUp()
     {

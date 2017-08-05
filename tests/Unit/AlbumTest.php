@@ -2,17 +2,13 @@
 
 namespace Tests\Unit;
 
-use App\Facades\Lastfm;
 use App\Models\Album;
 use App\Models\Artist;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use org\bovigo\vfs\vfsStream;
 use Tests\TestCase;
 
 class AlbumTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /** @test */
     public function it_can_be_instantiated()
     {
@@ -118,24 +114,5 @@ class AlbumTest extends TestCase
 
         // And the album's cover attribute is updated
         $this->assertEquals('http://localhost/public/img/covers/bar.jpg', Album::find($album->id)->cover);
-    }
-
-    /** @test */
-    public function extra_info_can_be_retrieved_for_an_album()
-    {
-        // Given there's an album
-        /** @var Album $album */
-        $album = factory(Album::class)->create();
-
-        // When I get the extra info for the album
-        Lastfm::shouldReceive('getAlbumInfo')
-            ->once()
-            ->with($album->name, $album->artist->name)
-            ->andReturn(['foo' => 'bar']);
-
-        $info = $album->getInfo();
-
-        // Then I receive the extra info
-        $this->assertEquals(['foo' => 'bar'], $info);
     }
 }

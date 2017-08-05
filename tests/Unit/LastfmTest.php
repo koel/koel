@@ -9,12 +9,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Mockery as m;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LastfmTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /** @test */
     public function it_builds_lastfm_compatible_api_parameters()
     {

@@ -4,14 +4,11 @@ namespace Tests\Unit;
 
 use App\Models\Song;
 use Cache;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use MediaCache;
 use Tests\TestCase;
 
 class MediaCacheTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /** @test */
     public function it_queries_fresh_data_from_database_if_a_cache_is_not_found()
     {

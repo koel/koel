@@ -1,17 +1,19 @@
 <?php
 
-namespace Tests;
+namespace Tests\Feature;
 
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use JWTAuth;
-use Laravel\BrowserKitTesting\TestCase as BaseBrowserKitTestCase;
+use Laravel\BrowserKitTesting\DatabaseTransactions;
+use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
+use Tests\CreatesApplication;
 
-abstract class BrowserKitTestCase extends BaseBrowserKitTestCase
+abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication;
+    use CreatesApplication, DatabaseTransactions;
 
     public function setUp()
     {

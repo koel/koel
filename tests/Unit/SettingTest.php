@@ -4,13 +4,9 @@ namespace Tests\Unit;
 
 use App\Models\Setting;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class SettingTest extends TestCase
 {
-    use DatabaseMigrations, DatabaseTransactions;
-
     /** @test */
     public function it_can_be_instantiated()
     {

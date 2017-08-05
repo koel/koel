@@ -5,14 +5,12 @@ namespace Tests\Feature;
 use App\Services\RESTfulService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
 
-class RESTfulAPIServiceTest extends BrowserKitTestCase
+class RESTfulAPIServiceTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function testUrlConstruction()
     {

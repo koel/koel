@@ -3,13 +3,12 @@
 namespace Tests\Feature\ObjectStorage;
 
 use App\Events\LibraryChanged;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\BrowserKitTestCase;
+use Tests\Feature\TestCase;
 
-class S3Test extends BrowserKitTestCase
+class S3Test extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function setUp()
     {

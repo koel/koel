@@ -4,14 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Setting;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Media;
-use Tests\BrowserKitTestCase;
 
-class SettingTest extends BrowserKitTestCase
+class SettingTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function testSetSingleKeyValue()
     {
