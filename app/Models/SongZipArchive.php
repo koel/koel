@@ -123,4 +123,12 @@ class SongZipArchive
     {
         return $this->path;
     }
+
+    /**
+     * @return ZipArchive
+     */
+    public function getArchive()
+    {
+        return $this->archive;
+    }
 }
