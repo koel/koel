@@ -12,9 +12,9 @@ class MediaCache
     protected $keyName = 'media_cache';
 
     /**
-     * Get media data. 
+     * Get media data.
      * If caching is enabled, the data will be retrieved from the cache.
-     * 
+     *
      * @return array
      */
     public function get()
