@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -48,11 +49,21 @@ class User extends Authenticatable
      */
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at'];
 
+    /**
+     * A user can have many playlists.
+     *
+     * @return HasMany
+     */
     public function playlists()
     {
         return $this->hasMany(Playlist::class);
     }
 
+    /**
+     * A user can make multiple interactions.
+     *
+     * @return HasMany
+     */
     public function interactions()
     {
         return $this->hasMany(Interaction::class);
