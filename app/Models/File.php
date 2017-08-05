@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Cache;
 use Exception;
 use getID3;
 use getid3_lib;
@@ -363,31 +364,26 @@ class File
     private function getCoverFileUnderSameDirectory()
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        $cacheKey = md5($this->path.'_cover');
+        return Cache::remember(md5($this->path.'_cover'), 24 * 60, function () {
+            $matches = array_keys(iterator_to_array(
+                Finder::create()
+                    ->depth(0)
+                    ->ignoreUnreadableDirs()
+                    ->files()
+                    ->followLinks()
+                    ->name('/(cov|fold)er\.(jpe?g|png)$/i')
+                    ->in(dirname($this->path))
+                )
+            );
 
-        if (!is_null($cover = cache($cacheKey))) {
+            $cover = $matches ? $matches[0] : false;
+            // Even if a file is found, make sure it's a real image.
+            if ($cover && exif_imagetype($cover) === false) {
+                $cover = false;
+            }
+
             return $cover;
-        }
-
-        $matches = array_keys(iterator_to_array(
-            Finder::create()
-                ->depth(0)
-                ->ignoreUnreadableDirs()
-                ->files()
-                ->followLinks()
-                ->name('/(cov|fold)er\.(jpe?g|png)$/i')
-                ->in(dirname($this->path))
-        ));
-
-        $cover = $matches ? $matches[0] : false;
-        // Even if a file is found, make sure it's a real image.
-        if ($cover && exif_imagetype($cover) === false) {
-            $cover = false;
-        }
-
-        cache([$cacheKey => $cover], 24 * 60);
-
-        return $cover;
+        });
     }
 
     /**
