@@ -11,19 +11,21 @@ class MediaCache
 {
     protected $keyName = 'media_cache';
 
+    /**
+     * Get media data. 
+     * If caching is enabled, the data will be retrieved from the cache.
+     * 
+     * @return array
+     */
     public function get()
     {
         if (!config('koel.cache_media')) {
             return $this->query();
         }
 
-        $data = Cache::get($this->keyName);
-        if (!$data) {
-            $data = $this->query();
-            Cache::forever($this->keyName, $data);
-        }
-
-        return $data;
+        return Cache::rememberForever($this->keyName, function () {
+            return $this->query();
+        });
     }
 
     /**
@@ -40,6 +42,9 @@ class MediaCache
         ];
     }
 
+    /**
+     * Clear the media cache.
+     */
     public function clear()
     {
         Cache::forget($this->keyName);
