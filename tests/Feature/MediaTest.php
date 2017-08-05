@@ -149,18 +149,21 @@ class MediaTest extends TestCase
     /** @test */
     public function all_tags_are_catered_for_if_syncing_new_file()
     {
+        // First we sync the test directory to get the data
         $media = new Media();
         $media->sync($this->mediaPath);
+
+        // Now delete the first song.
         $song = Song::orderBy('id')->first();
         $song->delete();
 
-        // Selectively sync only one tag,
-        // but we still expect the whole song to be added back with all info
+        // Selectively sync only one tag
         $media->sync($this->mediaPath, ['track'], true);
 
-        $addedSong = Song::findOrFail($song)->toArray();
-        array_forget($addedSong, 'created_at');
+        // but we still expect the whole song to be added back with all info
+        $addedSong = Song::findOrFail($song->id)->toArray();
         $song = $song->toArray();
+        array_forget($addedSong, 'created_at');
         array_forget($song, 'created_at');
         $this->assertEquals($song, $addedSong);
     }
