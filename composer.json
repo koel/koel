@@ -40,7 +40,6 @@
     "autoload-dev": {
         "classmap": [
             "tests/TestCase.php",
-            "tests/BrowserKitTestCase.php",
             "tests/e2e"
         ]
     },
