@@ -46,7 +46,7 @@ class SongZipArchiveTest extends TestCase
             ]),
             factory(Song::class)->create([
                 'path' => realpath(__DIR__.'/../songs/lorem.mp3'),
-            ])
+            ]),
         ]);
 
         // When I add the songs into the archive

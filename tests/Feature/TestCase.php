@@ -21,7 +21,7 @@ abstract class TestCase extends BaseTestCase
         $this->prepareForTests();
     }
 
-        /**
+    /**
      * Create a sample media set, with a complete artist+album+song trio.
      */
     protected function createSampleMediaSet()

@@ -65,7 +65,7 @@ class Artist extends Model
     }
 
     /**
-     * Indicate if the artist is the special "Various Artists"
+     * Indicate if the artist is the special "Various Artists".
      *
      * @return bool
      */
@@ -149,8 +149,8 @@ class Artist extends Model
      * Write an artist image file with binary data and update the Artist with the new cover file.
      *
      * @param string $binaryData
-     * @param string $extension     The file extension
-     * @param string $destination   The destination path. Automatically generated if empty.
+     * @param string $extension   The file extension
+     * @param string $destination The destination path. Automatically generated if empty.
      */
     public function writeImageFile($binaryData, $extension, $destination = '')
     {
