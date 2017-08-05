@@ -51,7 +51,7 @@ class iTunes
     public function getTrackUrl($term, $album = '', $artist = '')
     {
         try {
-            return Cache::remember(md5("itunes_track_url_{$term}{$album}{$artist}"), 24 * 60 * 7, 
+            return Cache::remember(md5("itunes_track_url_{$term}{$album}{$artist}"), 24 * 60 * 7,
                 function () use ($term, $album, $artist) {
                     $params = [
                         'term' => $term.($album ? " $album" : '').($artist ? " $artist" : ''),
