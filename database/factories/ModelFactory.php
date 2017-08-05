@@ -61,3 +61,10 @@ $factory->define(\App\Models\Interaction::class, function ($faker) {
         'play_count' => $faker->randomNumber,
     ];
 });
+
+$factory->define(\App\Models\Setting::class, function ($faker) {
+    return [
+        'key' => $faker->slug,
+        'value' => $faker->name,
+    ];
+});
