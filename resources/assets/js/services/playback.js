@@ -30,15 +30,17 @@ export const playback = {
     this.audio = document.querySelector('audio')
     this.volumeInput = document.getElementById('volumeRange')
 
+    const player = document.querySelector('.plyr')
+
     /**
      * Listen to 'error' event on the audio player and play the next song if any.
      */
-    document.querySelector('.plyr').addEventListener('error', () => this.playNext(), true)
+    player.addEventListener('error', () => this.playNext(), true)
 
     /**
      * Listen to 'ended' event on the audio player and play the next song in the queue.
      */
-    document.querySelector('.plyr').addEventListener('ended', e => {
+    player.addEventListener('ended', e => {
       if (sharedStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
         songStore.scrobble(queueStore.current)
       }
@@ -49,7 +51,7 @@ export const playback = {
     /**
      * Attempt to preload the next song.
      */
-    document.querySelector('.plyr').addEventListener('canplaythrough', e => {
+    player.addEventListener('canplaythrough', e => {
       const nextSong = queueStore.next
       if (!nextSong || nextSong.preloaded || (isMobile.any && preferences.transcodeOnMobile)) {
         // Don't preload if
@@ -64,6 +66,18 @@ export const playback = {
       audio.setAttribute('preload', 'auto')
       audio.load()
       nextSong.preloaded = true
+    })
+
+    player.addEventListener('timeupdate', e => {
+      const song = queueStore.current
+
+      if (this.player.media.currentTime > 10 && !song.registeredPlayCount) {
+        // After 10 seconds, register a play count and add it into "recently played" list
+        songStore.addRecentlyPlayed(song)
+        songStore.registerPlay(song)
+
+        song.registeredPlayCount = true
+      }
     })
 
     /**
@@ -113,9 +127,6 @@ export const playback = {
     // Set the song as the current song
     queueStore.current = song
 
-    // Add it into the "recently played" list
-    songStore.addRecentlyPlayed(song)
-
     // Manually set the `src` attribute of the audio to prevent plyr from resetting
     // the audio media object and cause our equalizer to malfunction.
     this.player.media.src = songStore.getSourceUrl(song)
@@ -128,22 +139,11 @@ export const playback = {
   },
 
   /**
-   * Restart playing a song.
+   * Show the "now playing" notification for a song.
+   *
+   * @param  {Object} song 
    */
-  restart () {
-    const song = queueStore.current
-
-    // Record the UNIX timestamp the song start playing, for scrobbling purpose
-    song.playStartTime = Math.floor(Date.now() / 1000)
-
-    event.emit('song:played', song)
-
-    this.player.restart()
-    this.player.play()
-
-    // Register the play to the server
-    songStore.registerPlay(song)
-
+  showNotification (song) {
     // Show the notification if we're allowed to
     if (!window.Notification || !preferences.notify) {
       return
@@ -175,6 +175,25 @@ export const playback = {
         ]
       })
     }
+  },
+
+  /**
+   * Restart playing a song.
+   */
+  restart () {
+    const song = queueStore.current
+
+    this.showNotification(song)
+
+    // Record the UNIX timestamp the song start playing, for scrobbling purpose
+    song.playStartTime = Math.floor(Date.now() / 1000)
+
+    song.registeredPlayCount = false
+
+    event.emit('song:played', song)
+
+    this.player.restart()
+    this.player.play()
   },
 
   /**

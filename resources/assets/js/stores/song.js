@@ -191,11 +191,10 @@ export const songStore = {
   /**
    * Add a song into the "recently played" list.
    *
-   * @param {Object}
+   * @param {Object} song
    */
   addRecentlyPlayed (song) {
-    // First we make sure that there's no duplicate.
-    this.state.recentlyPlayed = without(this.state.recentlyPlayed, song)
+    remove(this.state.recentlyPlayed, s => s.id === song.id)
 
     // Then we prepend the song into the list.
     this.state.recentlyPlayed.unshift(song)
