@@ -21,10 +21,10 @@ Route::group(['namespace' => 'API'], function () {
         Route::put('songs', 'SongController@update');
 
         // Interaction routes
-        Route::post('interaction/play', 'InteractionController@play');
-        Route::post('interaction/like', 'InteractionController@like');
-        Route::post('interaction/batch/like', 'InteractionController@batchLike');
-        Route::post('interaction/batch/unlike', 'InteractionController@batchUnlike');
+        Route::post('interaction/play', 'Interaction\PlayCountController@store');
+        Route::post('interaction/like', 'Interaction\LikeController@store');
+        Route::post('interaction/batch/like', 'Interaction\BatchLikeController@store');
+        Route::post('interaction/batch/unlike', 'Interaction\BatchLikeController@destroy');
 
         // Playlist routes
         Route::resource('playlist', 'PlaylistController');
@@ -59,8 +59,8 @@ Route::group(['namespace' => 'API'], function () {
 
         // Info routes
         if (Lastfm::used()) {
-            Route::get('album/{album}/info', 'AlbumController@getInfo');
-            Route::get('artist/{artist}/info', 'ArtistController@getInfo');
+            Route::get('album/{album}/info', 'AlbumInfoController@show');
+            Route::get('artist/{artist}/info', 'ArtistInfoController@show');
         }
 
         // iTunes routes

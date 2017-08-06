@@ -62,6 +62,8 @@ class SongTest extends TestCase
     /** @test */
     public function it_does_not_scrobble_if_the_user_is_not_connected_to_lastfm()
     {
+                Lastfm::shouldNotReceive('scrobble');
+
         // Given there's a song
         /** @var Song $song */
         $song = factory(Song::class)->create();
@@ -72,11 +74,10 @@ class SongTest extends TestCase
         $user->setPreference('lastfm_session_key', false);
 
         // When I call the scrobble method
-        Lastfm::shouldNotReceive('scrobble');
 
         $song->scrobble($user, time());
 
-        // The the song shouldn't be scrobbled
+        // Then the song shouldn't be scrobbled
     }
 
     /** @test */
