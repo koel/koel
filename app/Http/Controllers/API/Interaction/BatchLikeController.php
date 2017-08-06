@@ -15,7 +15,7 @@ class BatchLikeController extends Controller
      *
      * @return JsonResponse
      */
-    function store(BatchInteractionRequest $request)
+    public function store(BatchInteractionRequest $request)
     {
         return response()->json(Interaction::batchLike((array) $request->songs, $request->user()));
     }
