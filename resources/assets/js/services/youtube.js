@@ -28,10 +28,13 @@ export const youtube = {
   /**
    * Play a YouTube video.
    *
-   * @param  {string} id The video ID
+   * @param  {Object} vide The video object
    */
-  play (id) {
-    event.emit('youtube:play', id)
+  play (video) {
+    event.emit('youtube:play', {
+      id: video.id.videoId,
+      title: video.snippet.title
+    })
     router.go('youtube')
   }
 }
