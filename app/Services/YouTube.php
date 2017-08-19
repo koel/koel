@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Cache;
 use App\Models\Song;
 use GuzzleHttp\Client;
 
@@ -74,16 +75,8 @@ class YouTube extends RESTfulService
             urlencode($q)
         );
 
-        $cacheKey = md5("youtube_$uri");
-        if ($response = cache($cacheKey)) {
-            return $response;
-        }
-
-        if ($response = $this->get($uri)) {
-            // Cache the result for 7 days
-            cache([$cacheKey => $response], 60 * 24 * 7);
-        }
-
-        return $response;
+        return Cache::remember(md5("youtube_$uri"), 60 * 24 * 7, function () use ($uri) {
+            return $this->get($uri);
+        });
     }
 }
