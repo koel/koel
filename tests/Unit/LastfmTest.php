@@ -137,7 +137,7 @@ class LastfmTest extends TestCase
         $album = factory(Album::class)->create();
 
         // When I request the service for the album's info
-         $client = m::mock(Client::class, [
+        $client = m::mock(Client::class, [
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../blobs/lastfm/album-notfound.xml')),
         ]);
 
