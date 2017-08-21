@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Cache;
 use App\Models\Song;
+use Cache;
 use GuzzleHttp\Client;
 
 class YouTube extends RESTfulService
