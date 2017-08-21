@@ -63,8 +63,6 @@ export default {
   },
 
   methods: {
-    noop () {},
-
     /**
      * Play the song right away.
      */
