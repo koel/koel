@@ -57,6 +57,10 @@ class Media
             set_time_limit(config('koel.sync.timeout'));
         }
 
+        if (config('koel.memory_limit')) {
+            ini_set('memory_limit', config('koel.memory_limit').'M');
+        }
+
         $mediaPath = $mediaPath ?: Setting::get('media_path');
         $this->setTags($tags);
 
