@@ -51,7 +51,7 @@ export default {
 
     /**
      * Determine if the current song is being played (or paused).
-     * @return {Bool}
+     * @return {Boolean}
      */
     playing () {
       return this.song.playbackState === 'playing' || this.song.playbackState === 'paused'
