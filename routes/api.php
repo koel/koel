@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
+use Illuminate\Http\Request;
+
 Route::group(['namespace' => 'API'], function () {
     Route::post('me', 'AuthController@login');
     Route::delete('me', 'AuthController@logout');
@@ -7,6 +10,19 @@ Route::group(['namespace' => 'API'], function () {
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::get('/', function () {
             // Just acting as a ping service.
+        });
+
+        Route::post('broadcasting/auth', function (Request $request) {
+            $pusher = new Pusher(
+                config('broadcasting.connections.pusher.key'),
+                config('broadcasting.connections.pusher.secret'),
+                config('broadcasting.connections.pusher.app_id'),
+                [
+                    'cluster' => config('broadcasting.connections.pusher.options.cluster'),
+                    'encrypted' => true,
+                ]
+            );
+            return $pusher->socket_auth($request->channel_name, $request->socket_id);
         });
 
         Route::get('data', 'DataController@index');
