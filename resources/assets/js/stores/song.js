@@ -325,5 +325,28 @@ export const songStore = {
    */
   getRecentlyAdded (n = 10) {
     return take(orderBy(this.all, 'created_at', 'desc'), n)
+  },
+
+  /**
+   * Generate simplified song data to broadcast.
+   * @param  {Object} song
+   * @return {Object}
+   */
+  generateDataToBroadcast (song) {
+    return {
+      song: {
+        id: song.id,
+        title: song.title,
+        liked: song.liked,
+        playbackState: song.playbackState,
+        album: {
+          name: song.album.name,
+          cover: song.album.cover
+        },
+        artist: {
+          name: song.artist.name
+        }
+      }
+    }
   }
 }

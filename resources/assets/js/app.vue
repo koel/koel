@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="main" tabindex="0" v-show="authenticated"
+    <div id="main" tabindex="0" v-if="authenticated"
       @keydown.space="togglePlayback"
       @keydown.j = "playNext"
       @keydown.k = "playPrev"
@@ -77,6 +77,7 @@ export default {
   methods: {
     async init () {
       showOverlay()
+      socket.init()
 
       // Make the most important HTTP request to get all necessary data from the server.
       // Afterwards, init all mandatory stores and services.
@@ -99,6 +100,8 @@ export default {
           return 'You asked Koel to confirm before closing, so here it is.'
         }
 
+        this.subscribeToRemoteController()
+
         // Let all other components know we're ready.
         event.emit('koel:ready')
       } catch (err) {
@@ -112,7 +115,7 @@ export default {
      * @param {Object} e The keydown event
      */
     togglePlayback (e) {
-      if ($.is(e.target, 'input,textarea,button,select')) {
+      if (e && $.is(e.target, 'input,textarea,button,select')) {
         return true
       }
 
@@ -120,7 +123,7 @@ export default {
       const play = document.querySelector('#mainFooter .play')
       play ? play.click() : document.querySelector('#mainFooter .pause').click()
 
-      e.preventDefault()
+      e && e.preventDefault()
     },
 
     /**
@@ -178,6 +181,12 @@ export default {
           }
         })
       }
+    },
+
+    subscribeToRemoteController () {
+      socket.listen('playback:toggle', () => this.togglePlayback())
+        .listen('playback:next', () => playback.playNext())
+        .listen('playback:prev', () => playback.playPrev())
     }
   },
 
@@ -197,6 +206,13 @@ export default {
        * @param {Array.<Object>} An array of songs to edit
        */
       'songs:edit': songs => this.$refs.editSongsForm.open(songs),
+
+      /**
+       * Enable the remote controller mode.
+       */
+      'remote-controller:enable': () => {
+        this.inRemoteControllerMode = true
+      },
 
       /**
        * Log the current user out and reset the application state.
@@ -238,6 +254,15 @@ Vue.directive('koel-clickaway', clickawayDirective)
 @import "resources/assets/sass/partials/_mixins.scss";
 @import "resources/assets/sass/partials/_shared.scss";
 
+body, html {
+  background: $colorMainBgr;
+  color: $colorMainText;
+  font-family: $fontFamily;
+  font-size: 13px;
+  line-height: 1.5rem;
+  font-weight: $fontWeight_Thin;
+}
+
 #dragGhost {
   position: absolute;
   display: inline-block;
@@ -276,15 +301,6 @@ Vue.directive('koel-clickaway', clickawayDirective)
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-
-  background: $colorMainBgr;
-  color: $colorMainText;
-
-  font-family: $fontFamily;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  font-weight: $fontWeight_Thin;
-
   padding-bottom: $footerHeight;
 }
 

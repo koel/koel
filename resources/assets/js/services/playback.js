@@ -5,6 +5,7 @@ import isMobile from 'ismobilejs'
 
 import { event, isMediaSessionSupported } from '../utils'
 import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '../stores'
+import { socket } from '../services'
 import config from '../config'
 import router from '../router'
 
@@ -191,6 +192,8 @@ export const playback = {
     song.registeredPlayCount = false
 
     event.emit('song:played', song)
+
+    socket.broadcast('song:played', songStore.generateDataToBroadcast(song))
 
     this.player.restart()
     this.player.play()
