@@ -1,7 +1,7 @@
 import isMobile from 'ismobilejs'
 import { each } from 'lodash'
 
-import { loadMainView } from './utils'
+import { loadMainView, event } from './utils'
 import { artistStore, albumStore, songStore, queueStore, playlistStore, userStore } from './stores'
 import { playback } from './services'
 
@@ -83,6 +83,10 @@ export default {
 
     '/youtube' () {
       loadMainView('youtubePlayer')
+    },
+
+    '/remote' () {
+      event.emit('remote-controller:enable')
     }
   },
 

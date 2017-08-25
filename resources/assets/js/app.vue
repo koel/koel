@@ -16,6 +16,8 @@
       <edit-songs-form ref="editSongsForm"/>
     </div>
 
+    <remote-controller v-if="authenticated && inRemoteControllerMode"/>
+
     <div class="login-wrapper" v-if="!authenticated">
       <login-form/>
     </div>
@@ -31,19 +33,21 @@ import mainWrapper from './components/main-wrapper/index.vue'
 import overlay from './components/shared/overlay.vue'
 import loginForm from './components/auth/login-form.vue'
 import editSongsForm from './components/modals/edit-songs-form.vue'
+import remoteController from './components/remote-controller.vue'
 
 import { event, showOverlay, hideOverlay, forceReloadWindow, $ } from './utils'
 import { sharedStore, userStore, preferenceStore as preferences } from './stores'
-import { playback, ls } from './services'
+import { playback, ls, socket } from './services'
 import { focusDirective, clickawayDirective } from './directives'
 import router from './router'
 
 export default {
-  components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
+  components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm, remoteController },
 
   data () {
     return {
-      authenticated: false
+      authenticated: false,
+      inRemoteControllerMode: false
     }
   },
 
