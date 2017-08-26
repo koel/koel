@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use Illuminate\Http\Request;
 
 Route::group(['namespace' => 'API'], function () {
@@ -22,6 +21,7 @@ Route::group(['namespace' => 'API'], function () {
                     'encrypted' => true,
                 ]
             );
+
             return $pusher->socket_auth($request->channel_name, $request->socket_id);
         });
 
