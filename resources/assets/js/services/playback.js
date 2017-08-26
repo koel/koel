@@ -101,6 +101,18 @@ export const playback = {
       navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
     }
 
+    socket.listen('playback:toggle', () => this.toggle())
+      .listen('playback:next', () => this.playNext())
+      .listen('playback:prev', () => this.playPrev())
+      .listen('song:getcurrent', () => {
+        socket.broadcast(
+          'song:current', 
+          queueStore.current 
+            ? songStore.generateDataToBroadcast(queueStore.current) 
+            : { song: null }
+        )
+      })
+
     this.initialized = true
   },
 
@@ -338,6 +350,23 @@ export const playback = {
     this.player.play()
     queueStore.current.playbackState = 'playing'
     event.emit('song:played', queueStore.current)
+  },
+
+  /**
+   * Toggle playback.
+   */
+  toggle () {
+    if (!queueStore.current) {
+      this.playFirstInQueue()
+      return
+    }
+
+    if (queueStore.current.playbackState !== 'playing') {
+      this.resume()
+      return
+    }
+
+    this.pause()
   },
 
   /**

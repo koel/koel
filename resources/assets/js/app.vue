@@ -100,8 +100,6 @@ export default {
           return 'You asked Koel to confirm before closing, so here it is.'
         }
 
-        this.subscribeToRemoteController()
-
         // Let all other components know we're ready.
         event.emit('koel:ready')
       } catch (err) {
@@ -181,12 +179,6 @@ export default {
           }
         })
       }
-    },
-
-    subscribeToRemoteController () {
-      socket.listen('playback:toggle', () => this.togglePlayback())
-        .listen('playback:next', () => playback.playNext())
-        .listen('playback:prev', () => playback.playPrev())
     }
   },
 
