@@ -77,7 +77,7 @@ export default {
   methods: {
     async init () {
       showOverlay()
-      socket.init()
+      await socket.init()
 
       // Make the most important HTTP request to get all necessary data from the server.
       // Afterwards, init all mandatory stores and services.
