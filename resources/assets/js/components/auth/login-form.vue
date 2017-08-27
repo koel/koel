@@ -27,7 +27,7 @@ export default {
         // Reset the password so that the next login will have this field empty.
         this.password = ''
 
-        this.$emit('loggedin', data)
+        this.$emit('loggedin')
       } catch (err) {
         this.failed = true
       }
