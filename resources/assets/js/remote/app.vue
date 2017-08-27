@@ -7,9 +7,7 @@
         <i class="fa fa-angle-down"></i>
       </p>
       <div class="details" v-if="song">
-        <div class="cover">
-          <img :src="song.album.cover" alt="song.album.cover">
-        </div>
+        <div class="cover" :style="{ backgroundImage: 'url('+song.album.cover+')' }"></div>
         <div class="info">
           <div class="wrap">
             <p class="title text">{{ song.title }}</p>
@@ -219,16 +217,13 @@
 
       .cover {
         margin: 0 auto;
-        width: calc(70vw);
-        height: calc(70vw);
+        width: calc(70vw + 4px);
+        height: calc(70vw + 4px);
         border-radius: 50%;
         border: 2px solid #fff;
-        overflow: hidden;
-        
-        img {
-          width: calc(70vw);
-          height: auto;
-        }
+        background-position: center center;
+        background-size: cover;
+        background-color: #2d2f2f;
       }
 
       .text {
