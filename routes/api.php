@@ -48,6 +48,7 @@ Route::group(['namespace' => 'API'], function () {
 
         // User and user profile routes
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
+        Route::get('me', 'ProfileController@show');
         Route::put('me', 'ProfileController@update');
 
         // Last.fm-related routes

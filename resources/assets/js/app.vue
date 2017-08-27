@@ -16,10 +16,8 @@
       <edit-songs-form ref="editSongsForm"/>
     </div>
 
-    <remote-controller v-if="authenticated && inRemoteControllerMode"/>
-
-    <div class="login-wrapper" v-if="!authenticated">
-      <login-form/>
+    <div class="login-wrapper" v-else>
+      <login-form @loggedin="onUserLoggedIn"/>
     </div>
   </div>
 </template>
@@ -33,21 +31,19 @@ import mainWrapper from './components/main-wrapper/index.vue'
 import overlay from './components/shared/overlay.vue'
 import loginForm from './components/auth/login-form.vue'
 import editSongsForm from './components/modals/edit-songs-form.vue'
-import remoteController from './components/remote-controller.vue'
 
 import { event, showOverlay, hideOverlay, forceReloadWindow, $ } from './utils'
-import { sharedStore, userStore, preferenceStore as preferences } from './stores'
+import { sharedStore, userStore, favoriteStore, queueStore, preferenceStore as preferences } from './stores'
 import { playback, ls, socket } from './services'
 import { focusDirective, clickawayDirective } from './directives'
 import router from './router'
 
 export default {
-  components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm, remoteController },
+  components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
 
   data () {
     return {
-      authenticated: false,
-      inRemoteControllerMode: false
+      authenticated: false
     }
   },
 
@@ -99,6 +95,8 @@ export default {
           // starting from Chrome 51.
           return 'You asked Koel to confirm before closing, so here it is.'
         }
+
+        this.subscribeToBroadcastedEvents()
 
         // Let all other components know we're ready.
         event.emit('koel:ready')
@@ -179,32 +177,34 @@ export default {
           }
         })
       }
+    },
+
+    /**
+     * When the user logs in, set the whole app to be "authenticated" and initialize it.
+     */
+    onUserLoggedIn () {
+      this.authenticated = true
+      this.init()
+    },
+
+    /**
+     * Subscribes to the events broadcasted e.g. from the remote controller.
+     */
+    subscribeToBroadcastedEvents () {
+      socket.listen('favorite:toggle', () => {
+        queueStore.current && favoriteStore.toggleOne(queueStore.current)
+      })
     }
   },
 
   created () {
     event.on({
       /**
-       * When the user logs in, set the whole app to be "authenticated" and initialize it.
-       */
-      'user:loggedin': () => {
-        this.authenticated = true
-        this.init()
-      },
-
-      /**
        * Shows the "Edit Song" form.
        *
        * @param {Array.<Object>} An array of songs to edit
        */
       'songs:edit': songs => this.$refs.editSongsForm.open(songs),
-
-      /**
-       * Enable the remote controller mode.
-       */
-      'remote-controller:enable': () => {
-        this.inRemoteControllerMode = true
-      },
 
       /**
        * Log the current user out and reset the application state.
@@ -245,15 +245,6 @@ Vue.directive('koel-clickaway', clickawayDirective)
 @import "resources/assets/sass/partials/_vars.scss";
 @import "resources/assets/sass/partials/_mixins.scss";
 @import "resources/assets/sass/partials/_shared.scss";
-
-body, html {
-  background: $colorMainBgr;
-  color: $colorMainText;
-  font-family: $fontFamily;
-  font-size: 13px;
-  line-height: 1.5rem;
-  font-weight: $fontWeight_Thin;
-}
 
 #dragGhost {
   position: absolute;

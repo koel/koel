@@ -123,6 +123,17 @@ export const userStore = {
   },
 
   /**
+   * Get the current user's profile.
+   */
+  getProfile () {
+    return new Promise((resolve, reject) => {
+      http.get('me', ({ data }) => {
+        resolve(data)
+      }, error => reject(error))
+    })
+  },
+
+  /**
    * Update the current user's profile.
    *
    * @param  {string} password Can be an empty string if the user is not changing his password.

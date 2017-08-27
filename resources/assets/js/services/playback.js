@@ -106,9 +106,9 @@ export const playback = {
       .listen('playback:prev', () => this.playPrev())
       .listen('song:getcurrent', () => {
         socket.broadcast(
-          'song:current', 
+          'song', 
           queueStore.current 
-            ? songStore.generateDataToBroadcast(queueStore.current) 
+            ? songStore.generateDataToBroadcast(queueStore.current)
             : { song: null }
         )
       })
@@ -205,7 +205,7 @@ export const playback = {
 
     event.emit('song:played', song)
 
-    socket.broadcast('song:played', songStore.generateDataToBroadcast(song))
+    socket.broadcast('song', songStore.generateDataToBroadcast(song))
 
     this.player.restart()
     this.player.play()
@@ -333,6 +333,8 @@ export const playback = {
     if (queueStore.current) {
       queueStore.current.playbackState = 'stopped'
     }
+
+    socket.broadcast('playback:stopped')
   },
 
   /**
@@ -341,6 +343,7 @@ export const playback = {
   pause () {
     this.player.pause()
     queueStore.current.playbackState = 'paused'
+    socket.broadcast('song', songStore.generateDataToBroadcast(queueStore.current))
   },
 
   /**
@@ -350,6 +353,7 @@ export const playback = {
     this.player.play()
     queueStore.current.playbackState = 'playing'
     event.emit('song:played', queueStore.current)
+    socket.broadcast('song', songStore.generateDataToBroadcast(queueStore.current))
   },
 
   /**

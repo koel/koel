@@ -1,54 +1,92 @@
 <template>
-  <div id="remoteController">
-    <p class="collapse">
-      <i class="fa fa-angle-down"></i>
-    </p>
-    <div class="details" v-if="song">
-      <div class="translucent" :style="{ backgroundImage: 'url('+song.album.cover+')' }"></div>
-      <div class="cover">
-        <img :src="song.album.cover" alt="song.album.cover">
-      </div>
-      <div class="info">
-        <div class="wrap">
-          <p class="title text">{{ song.title }}</p>
-          <p class="artist text">{{ song.artist.name }}</p>
-          <p class="album text">{{ song.album.name }}</p>
+  <div id="app">
+    <div id="remoteController" v-if="authenticated">
+      <p class="collapse">
+        <i class="fa fa-angle-down"></i>
+      </p>
+      <div class="details" v-if="song">
+        <div class="translucent" :style="{ backgroundImage: 'url('+song.album.cover+')' }"></div>
+        <div class="cover">
+          <img :src="song.album.cover" alt="song.album.cover">
+        </div>
+        <div class="info">
+          <div class="wrap">
+            <p class="title text">{{ song.title }}</p>
+            <p class="artist text">{{ song.artist.name }}</p>
+            <p class="album text">{{ song.album.name }}</p>
+          </div>
         </div>
       </div>
+      <footer>
+        <a class="favorite" @click.prevent="toggleFavorite">
+          <i class="fa fa-heart yep" v-if="song && song.liked"></i>
+          <i class="fa fa-heart-o" v-else></i>
+        </a>
+        <a class="prev" @click="playPrev">
+          <i class="fa fa-step-backward"></i>
+        </a>
+        <a class="play-pause" @click.prevent="togglePlayback">
+          <i class="fa fa-pause" v-if="playing"></i>
+          <i class="fa fa-play" v-else></i>
+        </a>
+        <a class="next" @click="playNext">
+          <i class="fa fa-step-forward"></i>
+        </a>
+        <a class="volume">
+          <i class="fa fa-volume-up"></i>
+        </a>
+      </footer>
     </div>
-    <footer>
-      <a class="favorite" @click.prevent="toggleFavorite">
-        <i class="fa fa-heart yep" v-if="song && song.liked"></i>
-        <i class="fa fa-heart-o" v-else></i>
-      </a>
-      <a class="prev" @click="playPrev">
-        <i class="fa fa-step-backward"></i>
-      </a>
-      <a class="play-pause" @click.prevent="togglePlayback">
-        <i class="fa fa-pause" v-if="playing"></i>
-        <i class="fa fa-play" v-else></i>
-      </a>
-      <a class="next" @click="playNext">
-        <i class="fa fa-step-forward"></i>
-      </a>
-      <a class="volume">
-        <i class="fa fa-volume-up"></i>
-      </a>
-    </footer>
+
+    <div class="login-wrapper" v-else>
+      <login-form @loggedin="onUserLoggedIn"/>
+    </div>
   </div>
 </template>
 
 <script>
-  import { socket } from '../services'
+  import { socket, ls } from '../services'
+  import { userStore } from '../stores'
+  import loginForm from '../components/auth/login-form.vue'
 
   export default {
+    components: { loginForm },
+
     data () {
       return {
-        song: null
+        authenticated: false,
+        song: null,
+        lastActiveTime: new Date().getTime()
       }
     },
 
     methods: {
+      onUserLoggedIn () {
+        this.authenticated = true
+        this.init()
+      },
+
+      async init() {
+        try {
+          const user = await userStore.getProfile()
+          userStore.init([], user)
+
+          await socket.init()
+
+          socket.listen('song', ({ song }) => {
+            this.song = song
+          }).listen('playback:stopped', () => {
+            if (this.song) {
+              this.song.playbackState = 'stopped'
+            }
+          })
+
+          this.getStatus()
+        } catch (e) {
+          this.authenticated = false
+        }
+      },
+
       toggleFavorite () {
         if (!this.song) {
           return;
@@ -76,6 +114,19 @@
 
       getStatus() {
         socket.broadcast('song:getcurrent')
+      },
+
+      /**
+       * As iOS will put a web app into standby/sleep mode (and halt all JS execution), 
+       * this method will keep track of the last active time and keep the status always fresh.
+       */
+      handleStandingBy () {
+        const now = new Date().getTime()
+        if (now - this.lastActiveTime > 1000) {
+          this.getStatus()
+        }
+        this.lastActiveTime = now
+        window.setTimeout(this.handleStandingBy, 500)
       }
     },
 
@@ -85,32 +136,41 @@
       }
     },
 
-    mounted () {
-      socket.listen('song:played', ({ song }) => {
-        this.song = song
-      }).listen('song:current', ({ song }) => {
-        console.log('receiving')
-        this.song = song
-      })
+    created () {
+      this.handleStandingBy()
+    },
 
-      this.getStatus()
+    mounted () {
+      // The app has just been initialized, check if we can get the user data with an already existing token
+      const token = ls.get('jwt-token')
+      if (token) {
+        this.authenticated = true
+        this.init()
+      }
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import "resources/assets/sass/partials/_vars.scss";
   @import "resources/assets/sass/partials/_mixins.scss";
   @import "resources/assets/sass/partials/_shared.scss";
 
-  #remoteController {
-    background: $colorMainBgr;
-    position: fixed;
-    z-index: 9999;
-    width: 100vw;
+  #app {
     height: 100%;
-    top: 0;
-    left: 0;
+    background: $colorMainBgr;
+
+    .login-wrapper {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+
+      @include vertical-center();
+    }
+  }
+
+  #remoteController {
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -238,5 +298,5 @@
         }
       }
     }
-  }
+  } 
 </style>

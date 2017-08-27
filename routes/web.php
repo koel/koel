@@ -8,3 +8,7 @@ Route::get('/', function () {
 Route::get('/♫', function () {
     return redirect('/');
 });
+
+Route::get('/remote', function () {
+    return view('remote');
+});

@@ -22,6 +22,8 @@ if (mix.config.hmr) {
 
 mix.js('resources/assets/js/app.js', 'public/js')
   .sass('resources/assets/sass/app.scss', 'public/css')
+  .js('resources/assets/js/remote/app.js', 'public/js/remote')
+  .sass('resources/assets/sass/remote.scss', 'public/css')
 
 if (mix.config.inProduction) {
   mix.version()

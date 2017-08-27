@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { playback } from '../../services'
+import { playback, socket } from '../../services'
 import { isAudioContextSupported, event } from '../../utils'
 import { songStore, favoriteStore, preferenceStore } from '../../stores'
 
@@ -149,7 +149,10 @@ export default {
      * Like the current song.
      */
     like () {
-      this.song.id && favoriteStore.toggleOne(this.song)
+      if (this.song.id) {
+        favoriteStore.toggleOne(this.song) 
+        socket.broadcast('song', songStore.generateDataToBroadcast(this.song))
+      }
     },
 
     /**
