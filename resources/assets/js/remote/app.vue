@@ -1,11 +1,12 @@
 <template>
   <div id="app">
-    <div id="remoteController" v-if="authenticated">
+    <div class="translucent" v-if="song" :style="{ backgroundImage: 'url('+song.album.cover+')' }">
+    </div>
+    <div id="main" v-if="authenticated">
       <p class="collapse">
         <i class="fa fa-angle-down"></i>
       </p>
       <div class="details" v-if="song">
-        <div class="translucent" :style="{ backgroundImage: 'url('+song.album.cover+')' }"></div>
         <div class="cover">
           <img :src="song.album.cover" alt="song.album.cover">
         </div>
@@ -167,14 +168,34 @@
 
       @include vertical-center();
     }
+
+    .translucent {
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      filter: blur(20px);
+      opacity: .3;
+      z-index: 0; 
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000;
+      pointer-events: none;
+    }
   }
 
-  #remoteController {
+  #main {
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
+    z-index: 1;
+    position: relative;
 
     .collapse {
       height: 12vmin;
@@ -187,11 +208,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: space-around;
 
       .info {
         width: 100%;
-        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
@@ -238,24 +258,6 @@
         font-weight: 100;
         opacity: .5;
       }
-    }
-
-    .translucent {
-      position: absolute;
-      top: -20px;
-      left: -20px;
-      right: -20px;
-      bottom: -20px;
-      filter: blur(20px);
-      opacity: .3;
-      z-index: -1;
-      overflow: hidden;
-      background-size: cover;
-      background-position: center;
-      transform: translateZ(0);
-      backface-visibility: hidden;
-      perspective: 1000;
-      pointer-events: none;
     }
 
     footer {
