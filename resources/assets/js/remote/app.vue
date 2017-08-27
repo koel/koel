@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ 'standalone' : inStandAloneMode }">
     <div class="translucent" v-if="song" :style="{ backgroundImage: 'url('+song.album.cover+')' }">
     </div>
     <div id="main" v-if="authenticated">
@@ -55,7 +55,8 @@
       return {
         authenticated: false,
         song: null,
-        lastActiveTime: new Date().getTime()
+        lastActiveTime: new Date().getTime(),
+        inStandAloneMode: false
       }
     },
 
@@ -82,6 +83,7 @@
 
           this.getStatus()
         } catch (e) {
+          console.log(e)
           this.authenticated = false
         }
       },
@@ -136,6 +138,7 @@
 
     created () {
       window.setInterval(this.heartbeat, 500)
+      this.inStandAloneMode = window.navigator.standalone
     },
 
     mounted () {
@@ -294,5 +297,22 @@
         }
       }
     }
-  } 
+  }
+
+  #app.standalone {
+    padding-top: 20px;
+
+    #main {
+      .details {
+        .cover {
+          width: calc(80vw - 4px);
+          height: calc(80vw - 4px);
+        }
+      }
+
+      .footer {
+        height: 20vh;
+      }
+    }
+  }
 </style>
