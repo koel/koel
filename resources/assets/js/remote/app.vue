@@ -119,13 +119,12 @@
        * As iOS will put a web app into standby/sleep mode (and halt all JS execution), 
        * this method will keep track of the last active time and keep the status always fresh.
        */
-      handleStandingBy () {
+      heartbeat () {
         const now = new Date().getTime()
-        if (now - this.lastActiveTime > 1000) {
+        if (now - this.lastActiveTime > 2000) {
           this.getStatus()
         }
         this.lastActiveTime = now
-        window.setTimeout(this.handleStandingBy, 500)
       }
     },
 
@@ -136,7 +135,7 @@
     },
 
     created () {
-      this.handleStandingBy()
+      window.setInterval(this.heartbeat, 500)
     },
 
     mounted () {
