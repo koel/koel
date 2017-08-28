@@ -62,7 +62,7 @@ class SongTest extends TestCase
     /** @test */
     public function it_does_not_scrobble_if_the_user_is_not_connected_to_lastfm()
     {
-        Lastfm::shouldNotReceive('scrobble');
+        Lastfm::shouldReceive('scrobble')->times(0);
 
         // Given there's a song
         /** @var Song $song */
