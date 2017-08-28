@@ -1,41 +1,49 @@
 <template>
   <div id="app" :class="{ 'standalone' : inStandAloneMode }">
-    <div class="translucent" v-if="song" :style="{ backgroundImage: 'url('+song.album.cover+')' }">
-    </div>
-    <div id="main" v-if="authenticated">
-      <p class="collapse">
-        <i class="fa fa-angle-down"></i>
-      </p>
-      <div class="details" v-if="song">
-        <div class="cover" :style="{ backgroundImage: 'url('+song.album.cover+')' }"></div>
-        <div class="info">
-          <div class="wrap">
-            <p class="title text">{{ song.title }}</p>
-            <p class="artist text">{{ song.artist.name }}</p>
-            <p class="album text">{{ song.album.name }}</p>
+    <template v-if="authenticated">
+      <div class="translucent" v-if="song" :style="{ backgroundImage: 'url('+song.album.cover+')' }">
+      </div>
+      <div id="main">
+        <p class="collapse">
+          <i class="fa fa-angle-down"></i>
+        </p>
+        <template v-if="connected">
+          <div class="details" v-if="song">
+            <div class="cover" :style="{ backgroundImage: 'url('+song.album.cover+')' }"></div>
+            <div class="info">
+              <div class="wrap">
+                <p class="title text">{{ song.title }}</p>
+                <p class="artist text">{{ song.artist.name }}</p>
+                <p class="album text">{{ song.album.name }}</p>
+              </div>
+            </div>
           </div>
+          <footer>
+            <a class="favorite" @click.prevent="toggleFavorite">
+              <i class="fa fa-heart yep" v-if="song && song.liked"></i>
+              <i class="fa fa-heart-o" v-else></i>
+            </a>
+            <a class="prev" @click="playPrev">
+              <i class="fa fa-step-backward"></i>
+            </a>
+            <a class="play-pause" @click.prevent="togglePlayback">
+              <i class="fa fa-pause" v-if="playing"></i>
+              <i class="fa fa-play" v-else></i>
+            </a>
+            <a class="next" @click="playNext">
+              <i class="fa fa-step-forward"></i>
+            </a>
+            <a class="volume">
+              <i class="fa fa-volume-up"></i>
+            </a>
+          </footer>
+        </template>
+        <div v-else class="loader">
+          <p><span>Searching for Koel…</span></p>
+          <div class="signal"></div>
         </div>
       </div>
-      <footer>
-        <a class="favorite" @click.prevent="toggleFavorite">
-          <i class="fa fa-heart yep" v-if="song && song.liked"></i>
-          <i class="fa fa-heart-o" v-else></i>
-        </a>
-        <a class="prev" @click="playPrev">
-          <i class="fa fa-step-backward"></i>
-        </a>
-        <a class="play-pause" @click.prevent="togglePlayback">
-          <i class="fa fa-pause" v-if="playing"></i>
-          <i class="fa fa-play" v-else></i>
-        </a>
-        <a class="next" @click="playNext">
-          <i class="fa fa-step-forward"></i>
-        </a>
-        <a class="volume">
-          <i class="fa fa-volume-up"></i>
-        </a>
-      </footer>
-    </div>
+    </template>
 
     <div class="login-wrapper" v-else>
       <login-form @loggedin="onUserLoggedIn"/>
@@ -56,7 +64,8 @@
         authenticated: false,
         song: null,
         lastActiveTime: new Date().getTime(),
-        inStandAloneMode: false
+        inStandAloneMode: false,
+        connected: false
       }
     },
 
@@ -74,6 +83,7 @@
           await socket.init()
 
           socket.listen('song', ({ song }) => {
+            this.connected = true
             this.song = song
           }).listen('playback:stopped', () => {
             if (this.song) {
@@ -185,6 +195,51 @@
       backface-visibility: hidden;
       perspective: 1000;
       pointer-events: none;
+    }
+
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      position: relative;
+
+      p {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 0;
+        left: 0;
+        padding-bottom: 40px;
+      }
+
+      .signal {
+        border: 1px solid $colorOrange;
+        border-radius: 50%;
+        height: 0;
+        opacity: 0;
+        width: 50vw;
+        animation: pulsate 1.5s ease-out;
+        animation-iteration-count: infinite;
+        transform: translate(-50%, -50%);
+      }
+
+      @keyframes pulsate {
+        0% {
+          transform:scale(.1);
+          opacity: 0.0;
+        }
+        50% {
+          opacity:1;
+        }
+        100% {
+          transform:scale(1.2);
+          opacity:0;
+        }
+      }
     }
   }
 
