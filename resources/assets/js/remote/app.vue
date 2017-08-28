@@ -18,6 +18,9 @@
               </div>
             </div>
           </div>
+          <p class="none" v-else>
+            No song is playing.
+          </p>
           <footer>
             <a class="favorite" @click.prevent="toggleFavorite">
               <i class="fa fa-heart yep" v-if="song && song.liked"></i>
