@@ -78,7 +78,7 @@
         this.init()
       },
 
-      async init() {
+      async init () {
         try {
           const user = await userStore.getProfile()
           userStore.init([], user)
@@ -102,7 +102,7 @@
 
       toggleFavorite () {
         if (!this.song) {
-          return;
+          return
         }
 
         this.song.liked = !this.song.liked
@@ -125,12 +125,12 @@
         socket.broadcast('playback:prev')
       },
 
-      getStatus() {
+      getStatus () {
         socket.broadcast('song:getcurrent')
       },
 
       /**
-       * As iOS will put a web app into standby/sleep mode (and halt all JS execution), 
+       * As iOS will put a web app into standby/sleep mode (and halt all JS execution),
        * this method will keep track of the last active time and keep the status always fresh.
        */
       heartbeat () {

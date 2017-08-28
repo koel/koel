@@ -150,7 +150,7 @@ export default {
      */
     like () {
       if (this.song.id) {
-        favoriteStore.toggleOne(this.song) 
+        favoriteStore.toggleOne(this.song)
         socket.broadcast('song', songStore.generateDataToBroadcast(this.song))
       }
     },

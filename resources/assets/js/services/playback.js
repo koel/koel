@@ -106,8 +106,8 @@ export const playback = {
       .listen('playback:prev', () => this.playPrev())
       .listen('song:getcurrent', () => {
         socket.broadcast(
-          'song', 
-          queueStore.current 
+          'song',
+          queueStore.current
             ? songStore.generateDataToBroadcast(queueStore.current)
             : { song: null }
         )
@@ -154,7 +154,7 @@ export const playback = {
   /**
    * Show the "now playing" notification for a song.
    *
-   * @param  {Object} song 
+   * @param  {Object} song
    */
   showNotification (song) {
     // Show the notification if we're allowed to
