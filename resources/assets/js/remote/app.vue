@@ -91,9 +91,8 @@
             }
           })
 
-          this.getStatus()
+          this.scan()
         } catch (e) {
-          console.log(e)
           this.authenticated = false
         }
       },
@@ -137,6 +136,16 @@
           this.getStatus()
         }
         this.lastActiveTime = now
+      },
+
+      /**
+       * Scan for an active (desktop) Koel instance.
+       */
+      scan () {
+        if (!this.connected) {
+          this.getStatus()
+          window.setTimeout(this.scan, 1000)
+        }
       }
     },
 
