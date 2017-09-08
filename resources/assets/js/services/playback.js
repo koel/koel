@@ -81,13 +81,6 @@ export const playback = {
       }
     })
 
-    /**
-     * Listen to 'input' event on the volume range control.
-     * When user drags the volume control, this event will be triggered, and we
-     * update the volume on the plyr object.
-     */
-    this.volumeInput.addEventListener('input', e => this.setVolume(e.target.value))
-
     // On init, set the volume to the value found in the local storage.
     this.setVolume(preferences.volume)
 
@@ -104,6 +97,11 @@ export const playback = {
     socket.listen('playback:toggle', () => this.toggle())
       .listen('playback:next', () => this.playNext())
       .listen('playback:prev', () => this.playPrev())
+      .listen('status:get', () => {
+        const data = queueStore.current ? songStore.generateDataToBroadcast(queueStore.current) : {}
+        data.volume = this.volumeInput.value
+        socket.broadcast('status', data)
+      })
       .listen('song:getcurrent', () => {
         socket.broadcast(
           'song',
@@ -112,6 +110,7 @@ export const playback = {
             : { song: null }
         )
       })
+      .listen('volume:set', ({ volume }) => this.setVolume(volume))
 
     this.initialized = true
   },

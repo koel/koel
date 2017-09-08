@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="{ 'standalone' : inStandAloneMode }">
+  <div id="app" :class="{ 'standalone' : inStandaloneMode }">
     <template v-if="authenticated">
       <div class="translucent" v-if="song" :style="{ backgroundImage: 'url('+song.album.cover+')' }">
       </div>
@@ -33,12 +33,16 @@
               <i class="fa fa-pause" v-if="playing"></i>
               <i class="fa fa-play" v-else></i>
             </a>
-            <a class="next" @click="playNext">
+            <a class="next" @click.prevent="playNext">
               <i class="fa fa-step-forward"></i>
             </a>
-            <a class="volume">
-              <i class="fa fa-volume-up"></i>
-            </a>
+            <span class="volume">
+              <span id="volumeSlider" v-show="showingVolumeSlider"></span>
+              <span class="icon" @click.prevent="toggleVolumeSlider">
+                <i class="fa fa-volume-off" v-if="muted"></i>
+                <i class="fa fa-volume-up" v-else></i>
+              </span>
+            </span>
           </footer>
         </template>
         <div v-else class="loader">
@@ -55,9 +59,12 @@
 </template>
 
 <script>
+  import nouislider from 'nouislider'
   import { socket, ls } from '../services'
   import { userStore } from '../stores'
   import loginForm from '../components/auth/login-form.vue'
+
+  let volumeSlider
 
   export default {
     components: { loginForm },
@@ -67,8 +74,34 @@
         authenticated: false,
         song: null,
         lastActiveTime: new Date().getTime(),
-        inStandAloneMode: false,
-        connected: false
+        inStandaloneMode: false,
+        connected: false,
+        muted: false,
+        showingVolumeSlider: false
+      }
+    },
+
+    watch: {
+      connected () {
+        this.$nextTick(() => {
+          volumeSlider = document.getElementById('volumeSlider')
+          nouislider.create(volumeSlider, {
+            orientation: 'vertical',
+            connect: [true, false],
+            start: this.volume,
+            range: { min: 0, max: 10 },
+            direction: 'rtl'
+          })
+          volumeSlider.noUiSlider.on('change', (values, handle) => {
+            const volume = parseFloat(values[handle])
+            this.muted = !volume
+            socket.broadcast('volume:set', { volume })
+          })
+        })
+      },
+
+      volume (value) {
+        volumeSlider.noUiSlider.set(value)
       }
     },
 
@@ -86,18 +119,27 @@
           await socket.init()
 
           socket.listen('song', ({ song }) => {
-            this.connected = true
             this.song = song
           }).listen('playback:stopped', () => {
             if (this.song) {
               this.song.playbackState = 'stopped'
             }
+          }).listen('status', ({ song, volume }) => {
+            this.song = song
+            this.volume = volume
+            this.connected = true
+          }).listen('volume:changed', volume => {
+            volumeSlider.noUiSlider.set(volume)
           })
 
           this.scan()
         } catch (e) {
           this.authenticated = false
         }
+      },
+
+      toggleVolumeSlider () {
+        this.showingVolumeSlider = !this.showingVolumeSlider
       },
 
       toggleFavorite () {
@@ -126,7 +168,7 @@
       },
 
       getStatus () {
-        socket.broadcast('song:getcurrent')
+        socket.broadcast('status:get')
       },
 
       /**
@@ -160,7 +202,7 @@
 
     created () {
       window.setInterval(this.heartbeat, 500)
-      this.inStandAloneMode = window.navigator.standalone
+      this.inStandaloneMode = window.navigator.standalone
     },
 
     mounted () {
@@ -381,5 +423,56 @@
         height: 20vh;
       }
     }
+  }
+
+  .volume {
+    position: relative;
+
+    .icon {
+      width: 20px;
+      display: inline-block;
+      text-align: center;
+    }
+  }
+
+  #volumeSlider {
+    height: 80px;
+    position: absolute;
+    bottom: calc(50% + 26px);
+  }
+
+  .noUi-target {
+    background: #fff;
+    border-radius: 4px;
+    border: 0;
+    box-shadow: none;
+    left: 7px;
+  }
+
+  .noUi-base {
+    height: calc(100% - 16px);
+    border-radius: 4px;
+  }
+
+  .noUi-vertical {
+    width: 8px;
+  }
+
+  .noUi-vertical .noUi-handle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 0;
+    left: -4px;
+    top: 0;
+
+    &::after, &::before {
+      display: none;
+    }
+  }
+
+  .noUi-connect {
+    background: transparent;
+    box-shadow: none;
   }
 </style>
