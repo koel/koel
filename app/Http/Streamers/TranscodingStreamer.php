@@ -35,7 +35,7 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
         $ffmpeg = config('koel.streaming.ffmpeg_path');
         abort_unless(is_executable($ffmpeg), 500, 'Transcoding requires valid ffmpeg settings.');
 
-        $bitRate = filter_var($this->bitRate, FILTER_SANITIZE_NUMBER_INT);
+        //$bitRate = filter_var($this->bitRate, FILTER_SANITIZE_NUMBER_INT);
 
         // Since we can't really know the content length of a file while it's still being transcoded,
         // "calculating" it (like below) will be much likely to result in net::ERR_CONTENT_LENGTH_MISMATCH errors.
