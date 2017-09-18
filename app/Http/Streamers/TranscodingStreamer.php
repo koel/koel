@@ -51,7 +51,7 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
         $args = [
             '-i '.escapeshellarg($this->song->path),
             '-map 0:0',
-			'-b 320',
+            '-b 320',
             '-f mp3',
             '-',
         ];
