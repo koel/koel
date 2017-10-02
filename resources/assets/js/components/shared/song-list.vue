@@ -72,7 +72,6 @@ export default {
         return ['allSongs', 'queue', 'playlist', 'favorites', 'artist', 'album'].indexOf(value) !== -1
       }
     },
-    playlist: Object,
     sortable: {
       type: Boolean,
       default: true
