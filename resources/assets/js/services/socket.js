@@ -1,3 +1,4 @@
+import process from 'process'
 import Pusher from 'pusher-js'
 
 import { userStore } from '../stores'
