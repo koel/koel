@@ -15,7 +15,7 @@
 
     <div class="main-scroll-wrap">
       <div class="users">
-        <user-item v-for="user in state.users" :user="user" @editUser="editUser"/>
+        <user-item v-for="user in state.users" :user="user" @editUser="editUser" :key="user.id"/>
         <article class="user-item" v-for="n in 6"/>
       </div>
     </div>
