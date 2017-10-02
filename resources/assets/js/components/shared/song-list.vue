@@ -40,7 +40,7 @@
       :items="filteredItems"
       item-height="35"
       :renderers="renderers"
-      key-field="song"
+      key-field="song.id"
     />
 
     <song-menu ref="contextMenu" :songs="selectedSongs"/>
