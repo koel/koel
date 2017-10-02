@@ -2,7 +2,7 @@
   <div>
     <input type="text"
       :placeholder="options.placeholder || 'No change'"
-      v-model="value"
+      v-model="mutatedValue"
       @keydown.down.prevent="down"
       @keydown.up.prevent="up"
       @keydown.enter.prevent.stop="enter"
@@ -29,14 +29,15 @@ export default {
     items: {
       type: Array,
       required: true
-    }
+    },
+    value: String
   },
 
   data () {
     return {
       filter: '',
       showingResult: false,
-      value: ''
+      mutatedValue: this.value
     }
   },
 
@@ -90,7 +91,7 @@ export default {
      */
     enter () {
       this.apply()
-      this.showingResult = false
+      this.hideResults()
     },
 
     keyup (e) {
@@ -113,11 +114,12 @@ export default {
 
       // Hide the typeahead results and reset the value if ESC is pressed.
       if (e.keyCode === 27) {
-        this.showingResult = false
+        this.mutatedValue = this.value
+        this.hideResults()
         return
       }
 
-      this.filter = this.value
+      this.filter = this.mutatedValue
       this.showingResult = true
     },
 
@@ -126,14 +128,13 @@ export default {
       $.removeClass(selected, 'selected')
       $.addClass(e.target, 'selected')
 
-      this.apply()
-      this.showingResult = false
+      this.enter()
     },
 
     apply () {
       const selected = this.$el.querySelector('.result li.selected')
-      this.value = (selected && selected.innerText.trim()) || this.value
-      this.$emit('input', this.value)
+      this.mutatedValue = (selected && selected.innerText.trim()) || this.mutatedValue
+      this.$emit('input', this.mutatedValue)
     },
 
     /**
