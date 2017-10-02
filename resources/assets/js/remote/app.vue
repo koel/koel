@@ -198,13 +198,13 @@
             this.getStatus()
             this.retries++
             window.setTimeout(this.scan, 1000)
-          } 
+          }
         } else {
           this.retries = 0
         }
       },
 
-      rescan() {
+      rescan () {
         this.retries = 0
         this.scan()
       }
