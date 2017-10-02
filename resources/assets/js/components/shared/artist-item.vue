@@ -35,7 +35,12 @@ import artistAttributes from '../../mixins/artist-attributes'
 
 export default {
   name: 'shared--artist-item',
-  props: ['artist'],
+  props: {
+    artist: {
+      type: Object,
+      required: true
+    }
+  },
   filters: { pluralize },
   mixins: [artistAttributes],
 

@@ -44,7 +44,10 @@ import addToMenu from './add-to-menu.vue'
 
 export default {
   name: 'shared--song-list-controls',
-  props: ['config', 'selectedSongs'],
+  props: {
+    config: Object,
+    selectedSongs: Array
+  },
 
   components: { addToMenu },
 

@@ -34,7 +34,17 @@ import songMenuMethods from '../../mixins/song-menu-methods'
 
 export default {
   name: 'shared--add-to-menu',
-  props: ['songs', 'showing', 'config'],
+  props: {
+    songs: {
+      type: Array,
+      required: true
+    },
+    showing: {
+      type: Boolean,
+      default: false
+    },
+    config: Object
+  },
   mixins: [songMenuMethods],
   filters: { pluralize },
 

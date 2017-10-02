@@ -43,7 +43,12 @@ import albumAttributes from '../../mixins/album-attributes'
 
 export default {
   name: 'shared--album-item',
-  props: ['album'],
+  props: {
+    album: {
+      type: Object,
+      required: true
+    }
+  },
   filters: { pluralize },
   mixins: [albumAttributes],
 

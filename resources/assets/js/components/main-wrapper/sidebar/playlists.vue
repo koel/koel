@@ -33,7 +33,6 @@ import playlistItem from './playlist-item.vue'
 
 export default {
   name: 'sidebar--playlists',
-  props: ['currentView'],
   components: { playlistItem },
 
   data () {

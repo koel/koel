@@ -40,7 +40,12 @@ import router from '../../router'
 
 export default {
   name: 'song-menu',
-  props: ['songs'],
+  props: {
+    songs: {
+      type: Array,
+      required: true
+    }
+  },
   mixins: [songMenuMethods],
 
   data () {

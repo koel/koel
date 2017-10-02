@@ -32,7 +32,14 @@
 import { playback } from '../../../services'
 
 export default {
-  props: ['artist', 'mode'],
+  props: {
+    artist: Object,
+    mode: {
+      type: String,
+      default: 'sidebar',
+      validator: value => ['sidebar', 'full'].indexOf(value) !== -1
+    }
+  },
 
   data () {
     return {

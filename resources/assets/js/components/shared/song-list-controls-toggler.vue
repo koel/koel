@@ -10,7 +10,12 @@ import isMobile from 'ismobilejs'
 
 export default {
   name: 'shared--song-list-controls-toggler',
-  props: ['showingControls'],
+  props: {
+    showingControls: {
+      type: Boolean,
+      default: true
+    }
+  },
 
   data () {
     return {

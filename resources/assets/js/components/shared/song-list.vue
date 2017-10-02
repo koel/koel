@@ -60,7 +60,25 @@ import songMenu from './song-menu.vue'
 
 export default {
   name: 'song-list',
-  props: ['items', 'type', 'playlist', 'sortable'],
+  props: {
+    items: {
+      type: Array,
+      required: true
+    },
+    type: {
+      type: String,
+      default: 'allSongs',
+      validator: value => {
+        return ['allSongs', 'queue', 'playlist', 'favorites', 'artist', 'album'].indexOf(value) !== -1
+      }
+    },
+    playlist: Object,
+    sortable: {
+      type: Boolean,
+      default: true
+    }
+  },
+
   components: { songItem, songMenu },
 
   data () {

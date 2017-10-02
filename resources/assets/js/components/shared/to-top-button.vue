@@ -12,7 +12,6 @@
 import { $ } from '../../utils'
 
 export default {
-  props: ['el'],
   data () {
     return {
       showing: false

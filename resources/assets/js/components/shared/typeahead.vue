@@ -2,7 +2,7 @@
   <div>
     <input type="text"
       :placeholder="options.placeholder || 'No change'"
-      v-model="mutatedValue"
+      v-model="value"
       @keydown.down.prevent="down"
       @keydown.up.prevent="up"
       @keydown.enter.prevent.stop="enter"
@@ -24,13 +24,19 @@
 import { filterBy, $ } from '../../utils'
 
 export default {
-  props: ['options', 'value', 'items'],
+  props: {
+    options: Object,
+    items: {
+      type: Array,
+      required: true
+    }
+  },
 
   data () {
     return {
       filter: '',
       showingResult: false,
-      mutatedValue: this.value
+      value: ''
     }
   },
 
@@ -111,7 +117,7 @@ export default {
         return
       }
 
-      this.filter = this.mutatedValue
+      this.filter = this.value
       this.showingResult = true
     },
 
@@ -126,8 +132,8 @@ export default {
 
     apply () {
       const selected = this.$el.querySelector('.result li.selected')
-      this.mutatedValue = (selected && selected.innerText.trim()) || this.mutatedValue
-      this.$emit('input', this.mutatedValue)
+      this.value = (selected && selected.innerText.trim()) || this.value
+      this.$emit('input', this.value)
     },
 
     /**

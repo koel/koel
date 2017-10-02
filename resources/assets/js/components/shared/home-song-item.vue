@@ -27,7 +27,16 @@ import { playback } from '../../services'
 
 export default {
   name: 'shared--home-song-item',
-  props: ['song', 'topPlayCount'],
+  props: {
+    song: {
+      type: Object,
+      required: true
+    },
+    topPlayCount: {
+      type: Number,
+      default: 1
+    }
+  },
   filters: { pluralize },
 
   computed: {

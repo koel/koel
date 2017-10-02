@@ -28,7 +28,12 @@ import router from '../../router'
 import { alerts } from '../../utils'
 
 export default {
-  props: ['user'],
+  props: {
+    user: {
+      type: Object,
+      required: true
+    }
+  },
 
   data () {
     return {

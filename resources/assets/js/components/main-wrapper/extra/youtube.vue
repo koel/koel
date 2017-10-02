@@ -23,7 +23,12 @@ import { youtube as youtubeService } from '../../../services'
 
 export default {
   name: 'main-wrapper--extra--youtube',
-  props: ['song'],
+  props: {
+    song: {
+      type: Object,
+      required: true
+    }
+  },
 
   data () {
     return {
