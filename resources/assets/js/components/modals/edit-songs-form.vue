@@ -1,5 +1,5 @@
 <template>
-  <div id="editSongsOverlay" v-if="shown" class="overlay">
+  <div id="editSongsOverlay" v-show="shown" class="overlay">
     <sound-bar v-if="loading"></sound-bar>
     <form v-else @submit.prevent="submit">
       <header>
@@ -98,7 +98,7 @@ export default {
       shown: false,
       songs: [],
       currentView: '',
-      loading: false,
+      loading: true,
 
       artistState: artistStore.state,
       artistTypeaheadOptions: {
