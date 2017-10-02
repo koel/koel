@@ -15,9 +15,9 @@
               </div>
             </div>
           </div>
-          <p class="none" v-else>
-            No song is playing.
-          </p>
+          <div class="none" v-else>
+            <p>No song is playing.</p>
+          </div>
           <footer>
             <a class="favorite" @click.prevent="toggleFavorite">
               <i class="fa fa-heart yep" v-if="song && song.liked"></i>
@@ -331,13 +331,15 @@
     z-index: 1;
     position: relative;
 
-    .details {
+    .none, .details {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-around;
+    }
 
+    .details {
       .info {
         width: 100%;
         display: flex;
