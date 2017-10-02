@@ -38,7 +38,7 @@ export default {
 
     /**
      * Set the volume.
-     * 
+     *
      * @param {Event} e
      */
     setVolume (e) {
