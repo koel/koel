@@ -1,4 +1,3 @@
-import process from 'process'
 import Pusher from 'pusher-js'
 
 import { userStore } from '../stores'
@@ -10,18 +9,18 @@ export const socket = {
 
   async init () {
     return new Promise((resolve, reject) => {
-      if (!process.env.PUSHER_APP_KEY) {
+      if (!window.PUSHER_APP_KEY) {
         return resolve()
       }
 
-      this.pusher = new Pusher(process.env.PUSHER_APP_KEY, {
+      this.pusher = new Pusher(window.PUSHER_APP_KEY, {
         authEndpoint: '/api/broadcasting/auth',
         auth: {
           headers: {
             Authorization: `Bearer ${ls.get('jwt-token')}`
           }
         },
-        cluster: process.env.PUSHER_APP_CLUSTER,
+        cluster: window.PUSHER_APP_CLUSTER,
         encrypted: true
       })
 

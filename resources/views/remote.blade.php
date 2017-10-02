@@ -24,6 +24,7 @@
     <div id="app"></div>
 
     <noscript>It may sound funny, but Koel requires JavaScript to sing. Please enable it.</noscript>
+    @include('client-js-vars')
     <script src="{{ App::rev('/js/remote/app.js') }}"></script>
 </body>
 </html>
