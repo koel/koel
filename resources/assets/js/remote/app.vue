@@ -4,9 +4,6 @@
       <div class="translucent" v-if="song" :style="{ backgroundImage: 'url('+song.album.cover+')' }">
       </div>
       <div id="main">
-        <p class="collapse">
-          <i class="fa fa-angle-down"></i>
-        </p>
         <template v-if="connected">
           <div class="details" v-if="song">
             <div class="cover" :style="{ backgroundImage: 'url('+song.album.cover+')' }"></div>
@@ -46,8 +43,15 @@
           </footer>
         </template>
         <div v-else class="loader">
-          <p><span>Searching for Koel…</span></p>
-          <div class="signal"></div>
+          <div v-if="!maxRetriesReached">
+            <p><span>Searching for Koel…</span></p>
+            <div class="signal"></div>
+          </div>
+          <div v-else>
+            <p>No active Koel instance found. 
+              <a @click.prevent="rescan" class="rescan">Rescan</a>
+            </p>
+          </div>
         </div>
       </div>
     </template>
@@ -65,6 +69,7 @@
   import loginForm from '../components/auth/login-form.vue'
 
   let volumeSlider
+  const MAX_RETRIES = 10
 
   export default {
     components: { loginForm },
@@ -77,7 +82,8 @@
         inStandaloneMode: false,
         connected: false,
         muted: false,
-        showingVolumeSlider: false
+        showingVolumeSlider: false,
+        retries: 0
       }
     },
 
@@ -188,15 +194,29 @@
        */
       scan () {
         if (!this.connected) {
-          this.getStatus()
-          window.setTimeout(this.scan, 1000)
+          if (!this.maxRetriesReached) {
+            this.getStatus()
+            this.retries++
+            window.setTimeout(this.scan, 1000)
+          } 
+        } else {
+          this.retries = 0
         }
+      },
+
+      rescan() {
+        this.retries = 0
+        this.scan()
       }
     },
 
     computed: {
       playing () {
         return this.song && this.song.playbackState === 'playing'
+      },
+
+      maxRetriesReached () {
+        return this.retries >= MAX_RETRIES
       }
     },
 
@@ -281,6 +301,11 @@
         transform: translate(-50%, -50%);
       }
 
+      .rescan {
+        margin-left: 5px;
+        color: $colorOrange;
+      }
+
       @keyframes pulsate {
         0% {
           transform:scale(.1);
@@ -305,12 +330,6 @@
     text-align: center;
     z-index: 1;
     position: relative;
-
-    .collapse {
-      height: 12vmin;
-      line-height: 12vmin;
-      font-size: 5vmin;
-    }
 
     .details {
       flex: 1;
