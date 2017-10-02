@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { filterBy, $ } from '../../utils'
+import { filterBy, $ } from '@/utils'
 
 export default {
   props: {

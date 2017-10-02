@@ -3,9 +3,9 @@ import md5 from 'blueimp-md5'
 import Vue from 'vue'
 import NProgress from 'nprogress'
 
-import { http } from '../services'
-import { alerts } from '../utils'
-import stub from '../stubs/user'
+import { http } from '@/services'
+import { alerts } from '@/utils'
+import stub from '@/stubs/user'
 
 export const userStore = {
   stub,

@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { playback } from '../../../services'
+import { playback } from '@/services'
 
 export default {
   props: {

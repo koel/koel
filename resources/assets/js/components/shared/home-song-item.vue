@@ -21,9 +21,9 @@
 </template>
 
 <script>
-import { pluralize } from '../../utils'
-import { queueStore } from '../../stores'
-import { playback } from '../../services'
+import { pluralize } from '@/utils'
+import { queueStore } from '@/stores'
+import { playback } from '@/services'
 
 export default {
   name: 'shared--home-song-item',

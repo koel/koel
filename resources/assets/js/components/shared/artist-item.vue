@@ -28,10 +28,10 @@
 </template>
 
 <script>
-import { pluralize } from '../../utils'
-import { artistStore, queueStore, sharedStore } from '../../stores'
-import { playback, download } from '../../services'
-import artistAttributes from '../../mixins/artist-attributes'
+import { pluralize } from '@/utils'
+import { artistStore, queueStore, sharedStore } from '@/stores'
+import { playback, download } from '@/services'
+import artistAttributes from '@/mixins/artist-attributes'
 
 export default {
   name: 'shared--artist-item',

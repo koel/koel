@@ -17,6 +17,12 @@
     "presets": [
       "es2015",
       "stage-0"
+    ],
+    "plugins": [
+      ["babel-plugin-root-import", {
+        "rootPathSuffix": "resources/assets/js",
+        "rootPathPrefix": "@"
+      }]
     ]
   },
   "eslintConfig": {
@@ -49,6 +55,7 @@
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.2",
+    "babel-plugin-root-import": "^5.1.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-stage-0": "^6.24.1",

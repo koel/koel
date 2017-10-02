@@ -64,9 +64,9 @@
 
 <script>
   import nouislider from 'nouislider'
-  import { socket, ls } from '../services'
-  import { userStore } from '../stores'
-  import loginForm from '../components/auth/login-form.vue'
+  import { socket, ls } from '@/services'
+  import { userStore } from '@/stores'
+  import loginForm from '@/components/auth/login-form.vue'
 
   let volumeSlider
   const MAX_RETRIES = 10

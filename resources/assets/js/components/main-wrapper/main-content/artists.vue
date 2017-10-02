@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import { filterBy, limitBy, event } from '../../../utils'
-import { artistStore } from '../../../stores'
+import { filterBy, limitBy, event } from '@/utils'
+import { artistStore } from '@/stores'
 
-import artistItem from '../../shared/artist-item.vue'
-import viewModeSwitch from '../../shared/view-mode-switch.vue'
-import infiniteScroll from '../../../mixins/infinite-scroll'
+import artistItem from '@/components/shared/artist-item.vue'
+import viewModeSwitch from '@/components/shared/view-mode-switch.vue'
+import infiniteScroll from '@/mixins/infinite-scroll'
 
 export default {
   mixins: [infiniteScroll],

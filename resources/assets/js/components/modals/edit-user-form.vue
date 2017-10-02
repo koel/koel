@@ -32,7 +32,7 @@
 <script>
 import { clone } from 'lodash'
 import soundBar from '../shared/sound-bar.vue'
-import { userStore } from '../../stores'
+import { userStore } from '@/stores'
 
 export default {
   name: 'modals--edit-user-form',

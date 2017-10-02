@@ -1,6 +1,6 @@
 import './static-loader'
 import Vue from 'vue'
-import { http } from '../services'
+import { http } from '@/services'
 import App from './app.vue'
 
 new Vue({

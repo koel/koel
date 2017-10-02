@@ -1,6 +1,6 @@
 import Pusher from 'pusher-js'
 
-import { userStore } from '../stores'
+import { userStore } from '@/stores'
 import { ls } from '.'
 
 export const socket = {

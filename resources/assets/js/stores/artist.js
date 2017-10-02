@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
 
-import stub from '../stubs/artist'
+import stub from '@/stubs/artist'
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2

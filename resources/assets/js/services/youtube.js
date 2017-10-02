@@ -1,6 +1,6 @@
 import { http } from '.'
-import { event } from '../utils'
-import router from '../router'
+import { event } from '@/utils'
+import router from '@/router'
 
 export const youtube = {
   /**

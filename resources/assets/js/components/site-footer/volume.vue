@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { playback, socket } from '../../services'
+import { playback, socket } from '@/services'
 
 export default {
   data () {

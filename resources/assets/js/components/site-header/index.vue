@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import config from '../../config'
-import { event } from '../../utils'
+import config from '@/config'
+import { event } from '@/utils'
 import searchForm from './search-form.vue'
 import userBadge from './user-badge.vue'
 

@@ -1,7 +1,7 @@
 import { extend, has, each } from 'lodash'
 
 import { userStore } from '.'
-import { ls } from '../services'
+import { ls } from '@/services'
 
 export const preferenceStore = {
   storeKey: '',

@@ -3,11 +3,11 @@ import plyr from 'plyr'
 import Vue from 'vue'
 import isMobile from 'ismobilejs'
 
-import { event, isMediaSessionSupported } from '../utils'
-import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '../stores'
-import { socket } from '../services'
-import config from '../config'
-import router from '../router'
+import { event, isMediaSessionSupported } from '@/utils'
+import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '@/stores'
+import { socket } from '@/services'
+import config from '@/config'
+import router from '@/router'
 
 export const playback = {
   player: null,

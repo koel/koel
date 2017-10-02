@@ -12,8 +12,8 @@
 <script>
 import isMobile from 'ismobilejs'
 
-import { event } from '../../utils'
-import { preferenceStore as preferences } from '../../stores'
+import { event } from '@/utils'
+import { preferenceStore as preferences } from '@/stores'
 
 export default {
   props: {

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { userStore } from '../../stores'
+import { userStore } from '@/stores'
 
 export default {
   data () {

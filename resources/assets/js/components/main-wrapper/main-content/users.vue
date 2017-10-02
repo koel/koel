@@ -28,10 +28,10 @@
 <script>
 import isMobile from 'ismobilejs'
 
-import { userStore } from '../../../stores'
-import userItem from '../../shared/user-item.vue'
-import editUserForm from '../../modals/edit-user-form.vue'
-import addUserForm from '../../modals/add-user-form.vue'
+import { userStore } from '@/stores'
+import userItem from '@/components/shared/user-item.vue'
+import editUserForm from '@/components/modals/edit-user-form.vue'
+import addUserForm from '@/components/modals/add-user-form.vue'
 
 export default {
   components: { userItem, editUserForm, addUserForm },

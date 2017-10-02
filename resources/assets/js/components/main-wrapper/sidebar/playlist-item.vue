@@ -21,8 +21,8 @@
 </template>
 
 <script>
-import { event, $ } from '../../../utils'
-import { songStore, playlistStore, favoriteStore } from '../../../stores'
+import { event, $ } from '@/utils'
+import { songStore, playlistStore, favoriteStore } from '@/stores'
 
 export default {
   props: {

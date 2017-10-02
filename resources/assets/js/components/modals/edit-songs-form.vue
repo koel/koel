@@ -76,10 +76,10 @@
 <script>
 import { every, filter, union } from 'lodash'
 
-import { br2nl } from '../../utils'
-import { songInfo } from '../../services/info'
-import { artistStore, albumStore, songStore } from '../../stores'
-import config from '../../config'
+import { br2nl } from '@/utils'
+import { songInfo } from '@/services/info'
+import { artistStore, albumStore, songStore } from '@/stores'
+import config from '@/config'
 
 import soundBar from '../shared/sound-bar.vue'
 import typeahead from '../shared/typeahead.vue'

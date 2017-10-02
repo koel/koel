@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import { userStore } from '../../stores'
-import router from '../../router'
-import { alerts } from '../../utils'
+import { userStore } from '@/stores'
+import router from '@/router'
+import { alerts } from '@/utils'
 
 export default {
   props: {

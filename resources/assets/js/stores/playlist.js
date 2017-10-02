@@ -1,9 +1,9 @@
 import { each, find, map, difference, union } from 'lodash'
 import NProgress from 'nprogress'
 
-import stub from '../stubs/playlist'
-import { http } from '../services'
-import { alerts, pluralize } from '../utils'
+import stub from '@/stubs/playlist'
+import { http } from '@/services'
+import { alerts, pluralize } from '@/utils'
 import { songStore } from '.'
 
 export const playlistStore = {

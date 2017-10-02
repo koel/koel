@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import { songStore, queueStore, sharedStore } from '../../stores'
-import { ls, playback } from '../../services'
+import { songStore, queueStore, sharedStore } from '@/stores'
+import { ls, playback } from '@/services'
 
 export default {
   name: 'shared--track-list-item',

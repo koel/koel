@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { youtube as youtubeService } from '../../../services'
+import { youtube as youtubeService } from '@/services'
 
 export default {
   name: 'main-wrapper--extra--youtube',

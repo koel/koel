@@ -38,9 +38,9 @@
 </template>
 
 <script>
-import { sharedStore } from '../../../stores'
-import { playback, ls } from '../../../services'
-import trackListItem from '../../shared/track-list-item.vue'
+import { sharedStore } from '@/stores'
+import { playback, ls } from '@/services'
+import trackListItem from '@/components/shared/track-list-item.vue'
 
 export default {
   props: {

@@ -36,10 +36,10 @@
 </template>
 
 <script>
-import { pluralize } from '../../utils'
-import { queueStore, artistStore, sharedStore } from '../../stores'
-import { playback, download } from '../../services'
-import albumAttributes from '../../mixins/album-attributes'
+import { pluralize } from '@/utils'
+import { queueStore, artistStore, sharedStore } from '@/stores'
+import { playback, download } from '@/services'
+import albumAttributes from '@/mixins/album-attributes'
 
 export default {
   name: 'shared--album-item',

@@ -1,4 +1,4 @@
-import { secondsToHis } from '../utils'
+import { secondsToHis } from '@/utils'
 
 export default {
   computed: {

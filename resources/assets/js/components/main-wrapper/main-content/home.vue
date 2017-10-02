@@ -78,13 +78,13 @@
 <script>
 import { sample } from 'lodash'
 
-import { event } from '../../../utils'
-import { songStore, albumStore, artistStore, userStore, preferenceStore } from '../../../stores'
-import infiniteScroll from '../../../mixins/infinite-scroll'
+import { event } from '@/utils'
+import { songStore, albumStore, artistStore, userStore, preferenceStore } from '@/stores'
+import infiniteScroll from '@/mixins/infinite-scroll'
 
-import albumItem from '../../shared/album-item.vue'
-import artistItem from '../../shared/artist-item.vue'
-import songItem from '../../shared/home-song-item.vue'
+import albumItem from '@/components/shared/album-item.vue'
+import artistItem from '@/components/shared/artist-item.vue'
+import songItem from '@/components/shared/home-song-item.vue'
 
 export default {
   components: { albumItem, artistItem, songItem },

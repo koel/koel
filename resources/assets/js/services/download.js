@@ -1,6 +1,6 @@
 import { reduce } from 'lodash'
 
-import { playlistStore, favoriteStore } from '../stores'
+import { playlistStore, favoriteStore } from '@/stores'
 import { ls } from '.'
 
 export const download = {

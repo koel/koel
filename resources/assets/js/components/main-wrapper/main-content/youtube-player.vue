@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import { event } from '../../../utils'
-import { playback } from '../../../services'
+import { event } from '@/utils'
+import { playback } from '@/services'
 import YouTubePlayer from 'youtube-player'
 
 let player

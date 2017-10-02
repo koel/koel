@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { $ } from '../../utils'
+import { $ } from '@/utils'
 
 export default {
   data () {

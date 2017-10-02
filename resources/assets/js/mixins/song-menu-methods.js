@@ -1,6 +1,6 @@
 import { each } from 'lodash'
 
-import { queueStore, playlistStore, favoriteStore } from '../stores'
+import { queueStore, playlistStore, favoriteStore } from '@/stores'
 
 /**
  * Includes the methods triggerable on a song (context) menu.

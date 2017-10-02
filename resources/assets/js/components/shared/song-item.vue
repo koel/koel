@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import { playback } from '../../services'
-import { queueStore } from '../../stores'
+import { playback } from '@/services'
+import { queueStore } from '@/stores'
 import $v from 'vuequery'
 
 export default {

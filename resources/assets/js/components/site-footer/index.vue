@@ -59,9 +59,9 @@
 </template>
 
 <script>
-import { playback, socket } from '../../services'
-import { isAudioContextSupported, event } from '../../utils'
-import { songStore, favoriteStore, preferenceStore } from '../../stores'
+import { playback, socket } from '@/services'
+import { isAudioContextSupported, event } from '@/utils'
+import { songStore, favoriteStore, preferenceStore } from '@/stores'
 
 import soundBar from '../shared/sound-bar.vue'
 import equalizer from './equalizer.vue'
