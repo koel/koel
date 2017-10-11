@@ -1,10 +1,10 @@
-import './static-loader'
-import Vue from 'vue'
-import App from './app.vue'
-import { event } from './utils'
-import { http } from './services'
-import { VirtualScroller } from 'vue-virtual-scroller/dist/vue-virtual-scroller'
-Vue.component('virtual-scroller', VirtualScroller)
+import "./static-loader";
+import Vue from "vue";
+import App from "./app.vue";
+import { event } from "./utils";
+import { http } from "./services";
+import { VirtualScroller } from "vue-virtual-scroller/dist/vue-virtual-scroller";
+Vue.component("virtual-scroller", VirtualScroller);
 
 /**
  * For Ancelot, the ancient cross of war
@@ -13,10 +13,10 @@ Vue.component('virtual-scroller', VirtualScroller)
  * in this dawn of victory
  */
 new Vue({
-  el: '#app',
+  el: "#app",
   render: h => h(App),
-  created () {
-    event.init()
-    http.init()
+  created() {
+    event.init();
+    http.init();
   }
-})
+});

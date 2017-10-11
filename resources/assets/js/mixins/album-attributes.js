@@ -1,15 +1,15 @@
-import { secondsToHis } from '@/utils'
+import { secondsToHis } from "@/utils";
 
 export default {
   computed: {
-    length () {
+    length() {
       return this.album.songs.reduce((acc, song) => {
-        return acc + song.length
-      }, 0)
+        return acc + song.length;
+      }, 0);
     },
 
-    fmtLength () {
-      return secondsToHis(this.length)
+    fmtLength() {
+      return secondsToHis(this.length);
     }
   }
-}
+};

@@ -1,51 +1,52 @@
-import isMobile from 'ismobilejs'
-import Vue from 'vue'
-import { each } from 'lodash'
+import isMobile from "ismobilejs";
+import Vue from "vue";
+import { each } from "lodash";
 
 /**
  * Check if AudioContext is supported by the current browser.
  *
  * @return {Boolean}
  */
-export function isAudioContextSupported () {
+export function isAudioContextSupported() {
   // Apple device just doesn't love AudioContext that much.
   if (isMobile.apple.device) {
-    return false
+    return false;
   }
 
-  const AudioContext = (window.AudioContext ||
+  const AudioContext =
+    window.AudioContext ||
     window.webkitAudioContext ||
     window.mozAudioContext ||
     window.oAudioContext ||
-    window.msAudioContext)
+    window.msAudioContext;
 
   if (!AudioContext) {
-    return false
+    return false;
   }
 
   // Safari (MacOS & iOS alike) has webkitAudioContext, but is buggy.
   // @link http://caniuse.com/#search=audiocontext
-  if (!(new AudioContext()).createMediaElementSource) {
-    return false
+  if (!new AudioContext().createMediaElementSource) {
+    return false;
   }
 
-  return true
+  return true;
 }
 
 /**
  * Checks if HTML5 clipboard can be used.
  * @return {Boolean}
  */
-export function isClipboardSupported () {
-  return 'execCommand' in document
+export function isClipboardSupported() {
+  return "execCommand" in document;
 }
 
 /**
  * Checks if Media Session API is supported.
  * @return {Boolean}
  */
-export function isMediaSessionSupported () {
-  return 'mediaSession' in navigator
+export function isMediaSessionSupported() {
+  return "mediaSession" in navigator;
 }
 
 /**
@@ -56,28 +57,30 @@ export function isMediaSessionSupported () {
 const event = {
   bus: null,
 
-  init () {
+  init() {
     if (!this.bus) {
-      this.bus = new Vue()
+      this.bus = new Vue();
     }
 
-    return this
+    return this;
   },
 
-  emit (name, ...args) {
-    this.bus.$emit(name, ...args)
-    return this
+  emit(name, ...args) {
+    this.bus.$emit(name, ...args);
+    return this;
   },
 
-  on () {
+  on() {
     if (arguments.length === 2) {
-      this.bus.$on(arguments[0], arguments[1])
+      this.bus.$on(arguments[0], arguments[1]);
     } else {
-      each(Object.keys(arguments[0]), key => this.bus.$on(key, arguments[0][key]))
+      each(Object.keys(arguments[0]), key =>
+        this.bus.$on(key, arguments[0][key])
+      );
     }
 
-    return this
+    return this;
   }
-}
+};
 
-export { event }
+export { event };

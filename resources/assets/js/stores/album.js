@@ -1,10 +1,10 @@
 /*eslint camelcase: ["error", {properties: "never"}]*/
 
-import Vue from 'vue'
-import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
+import Vue from "vue";
+import { reduce, each, union, difference, take, filter, orderBy } from "lodash";
 
-import stub from '@/stubs/album'
-import { artistStore } from '.'
+import stub from "@/stubs/album";
+import { artistStore } from ".";
 
 export const albumStore = {
   stub,
@@ -19,24 +19,24 @@ export const albumStore = {
    *
    * @param  {Array.<Object>} albums The array of album objects
    */
-  init (albums) {
+  init(albums) {
     // Traverse through the artists array and add their albums into our master album list.
-    this.all = albums
-    each(this.all, album => this.setupAlbum(album))
+    this.all = albums;
+    each(this.all, album => this.setupAlbum(album));
   },
 
-  setupAlbum (album) {
-    const artist = artistStore.byId(album.artist_id)
-    artist.albums = union(artist.albums, [album])
+  setupAlbum(album) {
+    const artist = artistStore.byId(album.artist_id);
+    artist.albums = union(artist.albums, [album]);
 
-    Vue.set(album, 'artist', artist)
-    Vue.set(album, 'info', null)
-    Vue.set(album, 'songs', [])
-    Vue.set(album, 'playCount', 0)
+    Vue.set(album, "artist", artist);
+    Vue.set(album, "info", null);
+    Vue.set(album, "songs", []);
+    Vue.set(album, "playCount", 0);
 
-    this.cache[album.id] = album
+    this.cache[album.id] = album;
 
-    return album
+    return album;
   },
 
   /**
@@ -44,8 +44,8 @@ export const albumStore = {
    *
    * @return {Array.<Object>}
    */
-  get all () {
-    return this.state.albums
+  get all() {
+    return this.state.albums;
   },
 
   /**
@@ -53,12 +53,12 @@ export const albumStore = {
    *
    * @param  {Array.<Object>} value
    */
-  set all (value) {
-    this.state.albums = value
+  set all(value) {
+    this.state.albums = value;
   },
 
-  byId (id) {
-    return this.cache[id]
+  byId(id) {
+    return this.cache[id];
   },
 
   /**
@@ -66,31 +66,35 @@ export const albumStore = {
    *
    * @param  {Array.<Object>|Object} albums
    */
-  add (albums) {
-    albums = [].concat(albums)
+  add(albums) {
+    albums = [].concat(albums);
     each(albums, album => {
-      this.setupAlbum(album, album.artist)
-      album.playCount = reduce(album.songs, (count, song) => count + song.playCount, 0)
-    })
+      this.setupAlbum(album, album.artist);
+      album.playCount = reduce(
+        album.songs,
+        (count, song) => count + song.playCount,
+        0
+      );
+    });
 
-    this.all = union(this.all, albums)
+    this.all = union(this.all, albums);
   },
 
-  purify () {
-    this.compact()
+  purify() {
+    this.compact();
   },
 
   /**
    * Remove empty albums from the store.
    */
-  compact () {
-    const emptyAlbums = filter(this.all, album => album.songs.length === 0)
+  compact() {
+    const emptyAlbums = filter(this.all, album => album.songs.length === 0);
     if (!emptyAlbums.length) {
-      return
+      return;
     }
 
-    this.all = difference(this.all, emptyAlbums)
-    each(emptyAlbums, album => delete this.cache[album.id])
+    this.all = difference(this.all, emptyAlbums);
+    each(emptyAlbums, album => delete this.cache[album.id]);
   },
 
   /**
@@ -100,10 +104,13 @@ export const albumStore = {
    *
    * @return {Array.<Object>}
    */
-  getMostPlayed (n = 6) {
+  getMostPlayed(n = 6) {
     // Only non-unknown albums with actually play count are applicable.
-    const applicable = filter(this.all, album => album.playCount && album.id !== 1)
-    return take(orderBy(applicable, 'playCount', 'desc'), n)
+    const applicable = filter(
+      this.all,
+      album => album.playCount && album.id !== 1
+    );
+    return take(orderBy(applicable, "playCount", "desc"), n);
   },
 
   /**
@@ -113,8 +120,8 @@ export const albumStore = {
    *
    * @return {Array.<Object>}
    */
-  getRecentlyAdded (n = 6) {
-    const applicable = filter(this.all, album => album.id !== 1)
-    return take(orderBy(applicable, 'created_at', 'desc'), n)
+  getRecentlyAdded(n = 6) {
+    const applicable = filter(this.all, album => album.id !== 1);
+    return take(orderBy(applicable, "created_at", "desc"), n);
   }
-}
+};

@@ -1,6 +1,6 @@
-import { http } from '.'
-import { event } from '@/utils'
-import router from '@/router'
+import { http } from ".";
+import { event } from "@/utils";
+import router from "@/router";
 
 export const youtube = {
   /**
@@ -8,21 +8,23 @@ export const youtube = {
    *
    * @param  {Object}   song
    */
-  searchVideosRelatedToSong (song) {
+  searchVideosRelatedToSong(song) {
     if (!song.youtube) {
-      song.youtube = {}
+      song.youtube = {};
     }
 
-    const pageToken = song.youtube.nextPageToken || ''
+    const pageToken = song.youtube.nextPageToken || "";
     return new Promise((resolve, reject) => {
-      http.get(`youtube/search/song/${song.id}?pageToken=${pageToken}`,
-        ({ data: { nextPageToken, items }}) => {
-          song.youtube.nextPageToken = nextPageToken
-          song.youtube.items.push(...items)
-          resolve()
-        }, error => reject(error)
-      )
-    })
+      http.get(
+        `youtube/search/song/${song.id}?pageToken=${pageToken}`,
+        ({ data: { nextPageToken, items } }) => {
+          song.youtube.nextPageToken = nextPageToken;
+          song.youtube.items.push(...items);
+          resolve();
+        },
+        error => reject(error)
+      );
+    });
   },
 
   /**
@@ -30,11 +32,11 @@ export const youtube = {
    *
    * @param  {Object} vide The video object
    */
-  play (video) {
-    event.emit('youtube:play', {
+  play(video) {
+    event.emit("youtube:play", {
       id: video.id.videoId,
       title: video.snippet.title
-    })
-    router.go('youtube')
+    });
+    router.go("youtube");
   }
-}
+};

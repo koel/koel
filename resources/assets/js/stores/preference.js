@@ -1,15 +1,15 @@
-import { extend, has, each } from 'lodash'
+import { extend, has, each } from "lodash";
 
-import { userStore } from '.'
-import { ls } from '@/services'
+import { userStore } from ".";
+import { ls } from "@/services";
 
 export const preferenceStore = {
-  storeKey: '',
+  storeKey: "",
 
   state: {
     volume: 7,
     notify: true,
-    repeatMode: 'NO_REPEAT',
+    repeatMode: "NO_REPEAT",
     showExtraPanel: true,
     confirmClosing: false,
     equalizer: {
@@ -27,39 +27,39 @@ export const preferenceStore = {
    *
    * @param  {Object} user The user whose preferences we are managing.
    */
-  init (user = null) {
+  init(user = null) {
     if (!user) {
-      user = userStore.current
+      user = userStore.current;
     }
 
-    this.storeKey = `preferences_${user.id}`
-    extend(this.state, ls.get(this.storeKey, this.state))
-    this.setupProxy()
+    this.storeKey = `preferences_${user.id}`;
+    extend(this.state, ls.get(this.storeKey, this.state));
+    this.setupProxy();
   },
 
   /**
    * Proxy the state properties, so that each can be directly accessed using the key.
    */
-  setupProxy () {
+  setupProxy() {
     each(Object.keys(this.state), key => {
       Object.defineProperty(this, key, {
         get: () => this.get(key),
         set: value => this.set(key, value),
         configurable: true
-      })
-    })
+      });
+    });
   },
 
-  set (key, val) {
-    this.state[key] = val
-    this.save()
+  set(key, val) {
+    this.state[key] = val;
+    this.save();
   },
 
-  get (key) {
-    return has(this.state, key) ? this.state[key] : null
+  get(key) {
+    return has(this.state, key) ? this.state[key] : null;
   },
 
-  save () {
-    ls.set(this.storeKey, this.state)
+  save() {
+    ls.set(this.storeKey, this.state);
   }
-}
+};
