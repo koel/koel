@@ -45,7 +45,7 @@
     "plyr": "1.5.x",
     "select": "^1.0.6",
     "slugify": "^1.0.2",
-    "vue": "^2.1.9",
+    "vue": "^2.5.0",
     "vue-virtual-scroller": "^0.5.0",
     "vuequery": "^1.0.0",
     "youtube-player": "^3.0.4"
@@ -77,7 +77,7 @@
     "sass-loader": "^6.0.6",
     "sinon": "^1.17.2",
     "vue-loader": "^13.0.5",
-    "vue-template-compiler": "^2.4.4",
+    "vue-template-compiler": "^2.5.0",
     "webpack": "^3.6.0"
   },
   "scripts": {
