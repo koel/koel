@@ -8,7 +8,7 @@
 export default {
   computed:{
     url(){
-      return `${document.location.pathname}/public/img/bars.gif`
+      return `${document.location.pathname}public/img/bars.gif`
     }
   }
   // Since we don't have anything here, let us sing a song instead.
