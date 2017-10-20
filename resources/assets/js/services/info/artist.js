@@ -1,4 +1,4 @@
-import { http } from '..'
+import { http } from "..";
 
 export const artistInfo = {
   /**
@@ -6,18 +6,22 @@ export const artistInfo = {
    *
    * @param  {Object}  artist
    */
-  fetch (artist) {
+  fetch(artist) {
     return new Promise((resolve, reject) => {
       if (artist.info) {
-        resolve(artist)
-        return
+        resolve(artist);
+        return;
       }
 
-      http.get(`artist/${artist.id}/info`, ({ data }) => {
-        data && this.merge(artist, data)
-        resolve(artist)
-      }, error => reject(error))
-    })
+      http.get(
+        `artist/${artist.id}/info`,
+        ({ data }) => {
+          data && this.merge(artist, data);
+          resolve(artist);
+        },
+        error => reject(error)
+      );
+    });
   },
 
   /**
@@ -26,17 +30,17 @@ export const artistInfo = {
    * @param  {Object} artist
    * @param  {Object} info
    */
-  merge (artist, info) {
+  merge(artist, info) {
     // If the artist image is not in a nice form, discard.
-    if (typeof info.image !== 'string') {
-      info.image = null
+    if (typeof info.image !== "string") {
+      info.image = null;
     }
 
     // Set the artist image on the client side to the retrieved image from server.
     if (info.image) {
-      artist.image = info.image
+      artist.image = info.image;
     }
 
-    artist.info = info
+    artist.info = info;
   }
-}
+};

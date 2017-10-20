@@ -1,4 +1,4 @@
-import toTopButton from '@/components/shared/to-top-button.vue'
+import toTopButton from "@/components/shared/to-top-button.vue";
 
 /**
  * Add a "infinite scroll" functionality to any component using this mixin.
@@ -8,27 +8,27 @@ import toTopButton from '@/components/shared/to-top-button.vue'
 export default {
   components: { toTopButton },
 
-  data () {
+  data() {
     return {
       numOfItems: 30, // Number of currently loaded and displayed items
-      perPage: 30  // Number of items to be loaded per "page"
-    }
+      perPage: 30 // Number of items to be loaded per "page"
+    };
   },
 
   methods: {
-    scrolling ({ target: { scrollTop, clientHeight, scrollHeight }}) {
+    scrolling({ target: { scrollTop, clientHeight, scrollHeight } }) {
       // Here we check if the user has scrolled to the end of the wrapper (or 32px to the end).
       // If that's true, load more items.
       if (scrollTop + clientHeight >= scrollHeight - 32) {
-        this.displayMore()
+        this.displayMore();
       }
     },
 
     /**
      * Load and display more items into the scrollable area.
      */
-    displayMore () {
-      this.numOfItems += this.perPage
+    displayMore() {
+      this.numOfItems += this.perPage;
     }
   }
-}
+};

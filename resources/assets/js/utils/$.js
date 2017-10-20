@@ -3,52 +3,59 @@
  * @type {Object}
  */
 export const $ = {
-  is (el, selector) {
+  is(el, selector) {
     return (el.matches ||
       el.matchesSelector ||
       el.msMatchesSelector ||
       el.mozMatchesSelector ||
       el.webkitMatchesSelector ||
-      el.oMatchesSelector).call(el, selector)
+      el.oMatchesSelector
+    ).call(el, selector);
   },
 
-  addClass (el, className) {
+  addClass(el, className) {
     if (!el) {
-      return
+      return;
     }
 
     if (el.classList) {
-      el.classList.add(className)
+      el.classList.add(className);
     } else {
-      el.className += ` ${className}`
+      el.className += ` ${className}`;
     }
   },
 
-  removeClass (el, className) {
+  removeClass(el, className) {
     if (!el) {
-      return
+      return;
     }
 
     if (el.classList) {
-      el.classList.remove(className)
+      el.classList.remove(className);
     } else {
-      el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ')
+      el.className = el.className.replace(
+        new RegExp(
+          "(^|\\b)" + className.split(" ").join("|") + "(\\b|$)",
+          "gi"
+        ),
+        " "
+      );
     }
   },
 
-  scrollTo (el, to, duration, cb = null) {
+  scrollTo(el, to, duration, cb = null) {
     if (duration <= 0 || !el) {
-      return
+      return;
     }
-    const difference = to - el.scrollTop
-    const perTick = difference / duration * 10
+    const difference = to - el.scrollTop;
+    const perTick = difference / duration * 10;
     window.setTimeout(() => {
-      el.scrollTop = el.scrollTop + perTick
+      el.scrollTop = el.scrollTop + perTick;
       if (el.scrollTop === to) {
-        cb && cb()
-        return
+        cb && cb();
+        return;
       }
-      this.scrollTo(el, to, duration - 10)
-    }, 10)
+      this.scrollTo(el, to, duration - 10);
+    }, 10);
   }
-}
+};

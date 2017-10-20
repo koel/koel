@@ -1,15 +1,15 @@
-import localStore from 'local-storage'
+import localStore from "local-storage";
 
 export const ls = {
-  get (key, defaultVal = null) {
-    return localStore(key) || defaultVal
+  get(key, defaultVal = null) {
+    return localStore(key) || defaultVal;
   },
 
-  set (key, val) {
-    return localStore(key, val)
+  set(key, val) {
+    return localStore(key, val);
   },
 
-  remove (key) {
-    return localStore.remove(key)
+  remove(key) {
+    return localStore.remove(key);
   }
-}
+};

@@ -1,4 +1,14 @@
-import { head, last, each, includes, union, difference, map, shuffle as _shuffle, first } from 'lodash'
+import {
+  head,
+  last,
+  each,
+  includes,
+  union,
+  difference,
+  map,
+  shuffle as _shuffle,
+  first
+} from "lodash";
 
 export const queueStore = {
   state: {
@@ -6,7 +16,7 @@ export const queueStore = {
     current: null
   },
 
-  init () {
+  init() {
     // We don't have anything to do here yet.
     // How about another song then?
     //
@@ -36,8 +46,8 @@ export const queueStore = {
    *
    * @return {Array.<Object>}
    */
-  get all () {
-    return this.state.songs
+  get all() {
+    return this.state.songs;
   },
 
   /**
@@ -45,8 +55,8 @@ export const queueStore = {
    *
    * @param {Array.<Object>}
    */
-  set all (songs) {
-    this.state.songs = songs
+  set all(songs) {
+    this.state.songs = songs;
   },
 
   /**
@@ -54,8 +64,8 @@ export const queueStore = {
    *
    * @return {?Object}
    */
-  get first () {
-    return head(this.all)
+  get first() {
+    return head(this.all);
   },
 
   /**
@@ -63,8 +73,8 @@ export const queueStore = {
    *
    * @return {?Object}
    */
-  get last () {
-    return last(this.all)
+  get last() {
+    return last(this.all);
   },
 
   /**
@@ -74,8 +84,8 @@ export const queueStore = {
    *
    * @return {Boolean}
    */
-  contains (song) {
-    return includes(this.all, song)
+  contains(song) {
+    return includes(this.all, song);
   },
 
   /**
@@ -86,13 +96,13 @@ export const queueStore = {
    * @param {Boolean}         replace Whether to replace the current queue
    * @param {Boolean}         toTop   Whether to prepend or append to the queue
    */
-  queue (songs, replace = false, toTop = false) {
-    songs = [].concat(songs)
+  queue(songs, replace = false, toTop = false) {
+    songs = [].concat(songs);
 
     if (replace) {
-      this.all = songs
+      this.all = songs;
     } else {
-      this.all = toTop ? union(songs, this.all) : union(this.all, songs)
+      this.all = toTop ? union(songs, this.all) : union(this.all, songs);
     }
   },
 
@@ -101,18 +111,18 @@ export const queueStore = {
    *
    * @param  {Array.<Object>|Object} songs
    */
-  queueAfterCurrent (songs) {
-    songs = [].concat(songs)
+  queueAfterCurrent(songs) {
+    songs = [].concat(songs);
 
     if (!this.current || !this.all.length) {
-      return this.queue(songs)
+      return this.queue(songs);
     }
 
     // First we unqueue the songs to make sure there are no duplicates.
-    this.unqueue(songs)
+    this.unqueue(songs);
 
-    const head = this.all.splice(0, this.indexOf(this.current) + 1)
-    this.all = head.concat(songs, this.all)
+    const head = this.all.splice(0, this.indexOf(this.current) + 1);
+    this.all = head.concat(songs, this.all);
   },
 
   /**
@@ -120,8 +130,8 @@ export const queueStore = {
    *
    * @param  {Object|String|Array.<Object>} songs The song(s) to unqueue
    */
-  unqueue (songs) {
-    this.all = difference(this.all, [].concat(songs))
+  unqueue(songs) {
+    this.all = difference(this.all, [].concat(songs));
   },
 
   /**
@@ -130,20 +140,20 @@ export const queueStore = {
    * @param  {Array.<Object>} songs  Songs to move
    * @param  {Object}     target The target song object
    */
-  move (songs, target) {
-    const $targetIndex = this.indexOf(target)
+  move(songs, target) {
+    const $targetIndex = this.indexOf(target);
 
     each(songs, song => {
-      this.all.splice(this.indexOf(song), 1)
-      this.all.splice($targetIndex, 0, song)
-    })
+      this.all.splice(this.indexOf(song), 1);
+      this.all.splice($targetIndex, 0, song);
+    });
   },
 
   /**
    * Clear the current queue.
    */
-  clear () {
-    this.all = []
+  clear() {
+    this.all = [];
   },
 
   /**
@@ -153,8 +163,8 @@ export const queueStore = {
    *
    * @return {?Integer}
    */
-  indexOf (song) {
-    return this.all.indexOf(song)
+  indexOf(song) {
+    return this.all.indexOf(song);
   },
 
   /**
@@ -162,14 +172,14 @@ export const queueStore = {
    *
    * @return {?Object}
    */
-  get next () {
+  get next() {
     if (!this.current) {
-      return first(this.all)
+      return first(this.all);
     }
 
-    const index = map(this.all, 'id').indexOf(this.current.id) + 1
+    const index = map(this.all, "id").indexOf(this.current.id) + 1;
 
-    return index >= this.all.length ? null : this.all[index]
+    return index >= this.all.length ? null : this.all[index];
   },
 
   /**
@@ -177,14 +187,14 @@ export const queueStore = {
    *
    * @return {?Object}
    */
-  get previous () {
+  get previous() {
     if (!this.current) {
-      return last(this.all)
+      return last(this.all);
     }
 
-    const index = map(this.all, 'id').indexOf(this.current.id) - 1
+    const index = map(this.all, "id").indexOf(this.current.id) - 1;
 
-    return index < 0 ? null : this.all[index]
+    return index < 0 ? null : this.all[index];
   },
 
   /**
@@ -192,8 +202,8 @@ export const queueStore = {
    *
    * @return {Object}
    */
-  get current () {
-    return this.state.current
+  get current() {
+    return this.state.current;
   },
 
   /**
@@ -203,9 +213,9 @@ export const queueStore = {
    *
    * @return {Object} The queued song.
    */
-  set current (song) {
-    this.state.current = song
-    return this.state.current
+  set current(song) {
+    this.state.current = song;
+    return this.state.current;
   },
 
   /**
@@ -213,8 +223,8 @@ export const queueStore = {
    *
    * @return {Array.<Object>} The shuffled array of song objects
    */
-  shuffle () {
-    this.all = _shuffle(this.all)
-    return this.all
+  shuffle() {
+    this.all = _shuffle(this.all);
+    return this.all;
   }
-}
+};

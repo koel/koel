@@ -1,12 +1,12 @@
 /*eslint camelcase: ["error", {properties: "never"}]*/
 
-import Vue from 'vue'
-import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
+import Vue from "vue";
+import { reduce, each, union, difference, take, filter, orderBy } from "lodash";
 
-import stub from '@/stubs/artist'
+import stub from "@/stubs/artist";
 
-const UNKNOWN_ARTIST_ID = 1
-const VARIOUS_ARTISTS_ID = 2
+const UNKNOWN_ARTIST_ID = 1;
+const VARIOUS_ARTISTS_ID = 2;
 
 export const artistStore = {
   stub,
@@ -21,11 +21,11 @@ export const artistStore = {
    *
    * @param  {Array.<Object>} artists The array of artists we got from the server.
    */
-  init (artists) {
-    this.all = artists
+  init(artists) {
+    this.all = artists;
 
     // Traverse through artists array to get the cover and number of songs for each.
-    each(this.all, artist => this.setupArtist(artist))
+    each(this.all, artist => this.setupArtist(artist));
   },
 
   /**
@@ -33,15 +33,15 @@ export const artistStore = {
    *
    * @param  {Object} artist
    */
-  setupArtist (artist) {
-    Vue.set(artist, 'playCount', 0)
-    Vue.set(artist, 'info', null)
-    Vue.set(artist, 'albums', [])
-    Vue.set(artist, 'songs', [])
+  setupArtist(artist) {
+    Vue.set(artist, "playCount", 0);
+    Vue.set(artist, "info", null);
+    Vue.set(artist, "albums", []);
+    Vue.set(artist, "songs", []);
 
-    this.cache[artist.id] = artist
+    this.cache[artist.id] = artist;
 
-    return artist
+    return artist;
   },
 
   /**
@@ -49,8 +49,8 @@ export const artistStore = {
    *
    * @return {Array.<Object>}
    */
-  get all () {
-    return this.state.artists
+  get all() {
+    return this.state.artists;
   },
 
   /**
@@ -58,8 +58,8 @@ export const artistStore = {
    *
    * @param  {Array.<Object>} value
    */
-  set all (value) {
-    this.state.artists = value
+  set all(value) {
+    this.state.artists = value;
   },
 
   /**
@@ -67,8 +67,8 @@ export const artistStore = {
    *
    * @param  {Number} id
    */
-  byId (id) {
-    return this.cache[id]
+  byId(id) {
+    return this.cache[id];
   },
 
   /**
@@ -76,31 +76,35 @@ export const artistStore = {
    *
    * @param  {Array.<Object>|Object} artists
    */
-  add (artists) {
-    artists = [].concat(artists)
+  add(artists) {
+    artists = [].concat(artists);
     each(artists, artist => {
-      this.setupArtist(artist)
-      artist.playCount = reduce(artist.songs, (count, song) => count + song.playCount, 0)
-    })
+      this.setupArtist(artist);
+      artist.playCount = reduce(
+        artist.songs,
+        (count, song) => count + song.playCount,
+        0
+      );
+    });
 
-    this.all = union(this.all, artists)
+    this.all = union(this.all, artists);
   },
 
-  purify () {
-    this.compact()
+  purify() {
+    this.compact();
   },
 
   /**
    * Remove empty artists from the store.
    */
-  compact () {
-    const emptyArtists = filter(this.all, artist => artist.songs.length === 0)
+  compact() {
+    const emptyArtists = filter(this.all, artist => artist.songs.length === 0);
     if (!emptyArtists.length) {
-      return
+      return;
     }
 
-    this.all = difference(this.all, emptyArtists)
-    each(emptyArtists, artist => delete this.cache[artist.id])
+    this.all = difference(this.all, emptyArtists);
+    each(emptyArtists, artist => delete this.cache[artist.id]);
   },
 
   /**
@@ -110,8 +114,8 @@ export const artistStore = {
    *
    * @return {Boolean}
    */
-  isVariousArtists (artist) {
-    return artist.id === VARIOUS_ARTISTS_ID
+  isVariousArtists(artist) {
+    return artist.id === VARIOUS_ARTISTS_ID;
   },
 
   /**
@@ -121,8 +125,8 @@ export const artistStore = {
    *
    * @return {Boolean}
    */
-  isUnknownArtist (artist) {
-    return artist.id === UNKNOWN_ARTIST_ID
+  isUnknownArtist(artist) {
+    return artist.id === UNKNOWN_ARTIST_ID;
   },
 
   /**
@@ -132,8 +136,8 @@ export const artistStore = {
    *
    * @return {Array.<Object>}
    */
-  getSongsByArtist (artist) {
-    return artist.songs
+  getSongsByArtist(artist) {
+    return artist.songs;
   },
 
   /**
@@ -143,15 +147,17 @@ export const artistStore = {
    *
    * @return {Array.<Object>}
    */
-  getMostPlayed (n = 6) {
+  getMostPlayed(n = 6) {
     // Only non-unknown artists with actually play count are applicable.
     // Also, "Various Artists" doesn't count.
     const applicable = filter(this.all, artist => {
-      return artist.playCount &&
+      return (
+        artist.playCount &&
         !this.isUnknownArtist(artist) &&
         !this.isVariousArtists(artist)
-    })
+      );
+    });
 
-    return take(orderBy(applicable, 'playCount', 'desc'), n)
+    return take(orderBy(applicable, "playCount", "desc"), n);
   }
-}
+};

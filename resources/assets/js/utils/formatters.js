@@ -2,28 +2,28 @@
  * Convert a duration in seconds into H:i:s format.
  * If H is 0, it will be ommited.
  */
-export function secondsToHis (d) {
-  d = ~~d
+export function secondsToHis(d) {
+  d = ~~d;
 
-  let s = d % 60
+  let s = d % 60;
 
   if (s < 10) {
-    s = '0' + s
+    s = "0" + s;
   }
 
-  let i = Math.floor((d / 60) % 60)
+  let i = Math.floor((d / 60) % 60);
 
   if (i < 10) {
-    i = '0' + i
+    i = "0" + i;
   }
 
-  let h = Math.floor(d / 3600)
+  let h = Math.floor(d / 3600);
 
   if (h < 10) {
-    h = '0' + h
+    h = "0" + h;
   }
 
-  return (h === '00' ? '' : h + ':') + i + ':' + s
+  return (h === "00" ? "" : h + ":") + i + ":" + s;
 }
 
 /**
@@ -33,8 +33,11 @@ export function secondsToHis (d) {
  *
  * @return {Array.<String>}
  */
-export function parseValidationError (error) {
-  return Object.keys(error).reduce((messages, field) => messages.concat(error[field]), [])
+export function parseValidationError(error) {
+  return Object.keys(error).reduce(
+    (messages, field) => messages.concat(error[field]),
+    []
+  );
 }
 
 /**
@@ -44,6 +47,6 @@ export function parseValidationError (error) {
  *
  * @return {string}
  */
-export function br2nl (str) {
-  return str.replace(/<br\s*[\/]?>/gi, '\n')
+export function br2nl(str) {
+  return str.replace(/<br\s*[\/]?>/gi, "\n");
 }
