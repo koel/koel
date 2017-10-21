@@ -382,16 +382,14 @@ export default {
         rowVm.item.selected = true
       }
 
-      this.$nextTick(() => {
-        const songIds = this.selectedSongs.map(song => song.id)
-        event.dataTransfer.setData('application/x-koel.text+plain', songIds)
-        event.dataTransfer.effectAllowed = 'move'
+      const songIds = this.selectedSongs.map(song => song.id)
+      event.dataTransfer.setData('fuck', songIds)
+      event.dataTransfer.effectAllowed = 'move'
 
-        // Set a fancy drop image using our ghost element.
-        const ghost = document.getElementById('dragGhost')
-        ghost.innerText = `${pluralize(songIds.length, 'song')}`
-        event.dataTransfer.setDragImage(ghost, 0, 0)
-      })
+      // Set a fancy drop image using our ghost element.
+      const ghost = document.getElementById('dragGhost')
+      ghost.innerText = `${pluralize(songIds.length, 'song')}`
+      event.dataTransfer.setDragImage(ghost, 0, 0)
     },
 
     /**
