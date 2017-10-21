@@ -1,5 +1,5 @@
 <template>
-  <div id="editSongsOverlay" v-show="shown" class="overlay">
+  <div id="editSongsOverlay" v-if="shown" class="overlay">
     <sound-bar v-if="loading"></sound-bar>
     <form v-else @submit.prevent="submit">
       <header>
