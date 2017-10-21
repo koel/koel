@@ -383,7 +383,6 @@ export default {
       }
 
       const songIds = this.selectedSongs.map(song => song.id)
-      event.dataTransfer.setData('fuck', songIds)
       event.dataTransfer.effectAllowed = 'move'
 
       // Set a fancy drop image using our ghost element.
