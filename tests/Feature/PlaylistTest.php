@@ -5,20 +5,17 @@ namespace Tests\Feature;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\BrowserKitTestCase;
 
-class PlaylistTest extends BrowserKitTestCase
+class PlaylistTest extends TestCase
 {
-    use DatabaseTransactions;
-
     public function setUp()
     {
         parent::setUp();
         $this->createSampleMediaSet();
     }
 
-    public function testCreatePlaylist()
+    /** @test */
+    public function user_can_create_a_playlist()
     {
         $user = factory(User::class)->create();
 
@@ -51,7 +48,8 @@ class PlaylistTest extends BrowserKitTestCase
             ]);
     }
 
-    public function testUpdatePlaylistName()
+    /** @test */
+    public function user_can_update_a_playlists_name()
     {
         $user = factory(User::class)->create();
 
@@ -71,7 +69,8 @@ class PlaylistTest extends BrowserKitTestCase
             ->seeStatusCode(403);
     }
 
-    public function testSyncPlaylist()
+    /** @test */
+    public function playlists_can_be_synced()
     {
         $user = factory(User::class)->create();
 
@@ -107,7 +106,8 @@ class PlaylistTest extends BrowserKitTestCase
         ]);
     }
 
-    public function testDeletePlaylist()
+    /** @test */
+    public function user_can_delete_a_playlist()
     {
         $user = factory(User::class)->create();
 

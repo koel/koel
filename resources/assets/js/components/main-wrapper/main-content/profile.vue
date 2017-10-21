@@ -111,9 +111,9 @@
 
 <script>
 import { each } from 'lodash'
-import { userStore, preferenceStore, sharedStore } from '../../../stores'
-import { forceReloadWindow, $ } from '../../../utils'
-import { http, ls } from '../../../services'
+import { userStore, preferenceStore, sharedStore } from '@/stores'
+import { forceReloadWindow, $ } from '@/utils'
+import { http, ls } from '@/services'
 
 export default {
   data () {

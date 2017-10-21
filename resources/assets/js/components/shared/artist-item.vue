@@ -28,14 +28,19 @@
 </template>
 
 <script>
-import { pluralize } from '../../utils'
-import { artistStore, queueStore, sharedStore } from '../../stores'
-import { playback, download } from '../../services'
-import artistAttributes from '../../mixins/artist-attributes'
+import { pluralize } from '@/utils'
+import { artistStore, queueStore, sharedStore } from '@/stores'
+import { playback, download } from '@/services'
+import artistAttributes from '@/mixins/artist-attributes'
 
 export default {
   name: 'shared--artist-item',
-  props: ['artist'],
+  props: {
+    artist: {
+      type: Object,
+      required: true
+    }
+  },
   filters: { pluralize },
   mixins: [artistAttributes],
 

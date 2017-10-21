@@ -14,7 +14,7 @@
 import isMobile from 'ismobilejs'
 import { debounce } from 'lodash'
 
-import { event } from '../../utils'
+import { event } from '@/utils'
 
 export default {
   name: 'site-header--search-form',

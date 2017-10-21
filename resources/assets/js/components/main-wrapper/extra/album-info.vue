@@ -38,12 +38,19 @@
 </template>
 
 <script>
-import { sharedStore } from '../../../stores'
-import { playback, ls } from '../../../services'
-import trackListItem from '../../shared/track-list-item.vue'
+import { sharedStore } from '@/stores'
+import { playback, ls } from '@/services'
+import trackListItem from '@/components/shared/track-list-item.vue'
 
 export default {
-  props: ['album', 'mode'],
+  props: {
+    album: Object,
+    mode: {
+      type: String,
+      default: 'sidebar',
+      validator: value => ['sidebar', 'full'].indexOf(value) !== -1
+    }
+  },
   components: { trackListItem },
 
   data () {

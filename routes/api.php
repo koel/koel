@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+
 Route::group(['namespace' => 'API'], function () {
     Route::post('me', 'AuthController@login');
     Route::delete('me', 'AuthController@logout');
@@ -7,6 +9,20 @@ Route::group(['namespace' => 'API'], function () {
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::get('/', function () {
             // Just acting as a ping service.
+        });
+
+        Route::post('broadcasting/auth', function (Request $request) {
+            $pusher = new Pusher(
+                config('broadcasting.connections.pusher.key'),
+                config('broadcasting.connections.pusher.secret'),
+                config('broadcasting.connections.pusher.app_id'),
+                [
+                    'cluster' => config('broadcasting.connections.pusher.options.cluster'),
+                    'encrypted' => true,
+                ]
+            );
+
+            return $pusher->socket_auth($request->channel_name, $request->socket_id);
         });
 
         Route::get('data', 'DataController@index');
@@ -21,10 +37,10 @@ Route::group(['namespace' => 'API'], function () {
         Route::put('songs', 'SongController@update');
 
         // Interaction routes
-        Route::post('interaction/play', 'InteractionController@play');
-        Route::post('interaction/like', 'InteractionController@like');
-        Route::post('interaction/batch/like', 'InteractionController@batchLike');
-        Route::post('interaction/batch/unlike', 'InteractionController@batchUnlike');
+        Route::post('interaction/play', 'Interaction\PlayCountController@store');
+        Route::post('interaction/like', 'Interaction\LikeController@store');
+        Route::post('interaction/batch/like', 'Interaction\BatchLikeController@store');
+        Route::post('interaction/batch/unlike', 'Interaction\BatchLikeController@destroy');
 
         // Playlist routes
         Route::resource('playlist', 'PlaylistController');
@@ -32,6 +48,7 @@ Route::group(['namespace' => 'API'], function () {
 
         // User and user profile routes
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
+        Route::get('me', 'ProfileController@show');
         Route::put('me', 'ProfileController@update');
 
         // Last.fm-related routes
@@ -59,8 +76,8 @@ Route::group(['namespace' => 'API'], function () {
 
         // Info routes
         if (Lastfm::used()) {
-            Route::get('album/{album}/info', 'AlbumController@getInfo');
-            Route::get('artist/{artist}/info', 'ArtistController@getInfo');
+            Route::get('album/{album}/info', 'AlbumInfoController@show');
+            Route::get('artist/{artist}/info', 'ArtistInfoController@show');
         }
 
         // iTunes routes

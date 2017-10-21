@@ -92,19 +92,31 @@ class Lastfm extends RESTfulService
                 return false;
             }
 
-            return [
-                'url' => array_get($artist, 'url'),
-                'image' => count($artist['image']) > 3 ? $artist['image'][3] : $artist['image'][0],
-                'bio' => [
-                    'summary' => $this->formatText(array_get($artist, 'bio.summary')),
-                    'full' => $this->formatText(array_get($artist, 'bio.content')),
-                ],
-            ];
+            return $this->buildArtistInfo($artist);
         } catch (Exception $e) {
             Log::error($e);
 
             return false;
         }
+    }
+
+    /**
+     * Build a Koel-usable array of artist information using the data from Last.fm.
+     *
+     * @param array $lastfmArtist
+     *
+     * @return array
+     */
+    private function buildArtistInfo(array $lastfmArtist)
+    {
+        return [
+            'url' => array_get($lastfmArtist, 'url'),
+            'image' => count($lastfmArtist['image']) > 3 ? $lastfmArtist['image'][3] : $lastfmArtist['image'][0],
+            'bio' => [
+                'summary' => $this->formatText(array_get($lastfmArtist, 'bio.summary')),
+                'full' => $this->formatText(array_get($lastfmArtist, 'bio.content')),
+            ],
+        ];
     }
 
     /**
@@ -141,26 +153,38 @@ class Lastfm extends RESTfulService
                 return false;
             }
 
-            return [
-                'url' => array_get($album, 'url'),
-                'image' => count($album['image']) > 3 ? $album['image'][3] : $album['image'][0],
-                'wiki' => [
-                    'summary' => $this->formatText(array_get($album, 'wiki.summary')),
-                    'full' => $this->formatText(array_get($album, 'wiki.content')),
-                ],
-                'tracks' => array_map(function ($track) {
-                    return [
-                        'title' => $track['name'],
-                        'length' => (int) $track['duration'],
-                        'url' => $track['url'],
-                    ];
-                }, array_get($album, 'tracks.track', [])),
-            ];
+            return $this->buildAlbumInfo($album);
         } catch (Exception $e) {
             Log::error($e);
 
             return false;
         }
+    }
+
+    /**
+     * Build a Koel-usable array of album information using the data from Last.fm.
+     *
+     * @param array $lastfmAlbum
+     *
+     * @return array
+     */
+    private function buildAlbumInfo(array $lastfmAlbum)
+    {
+        return [
+            'url' => array_get($lastfmAlbum, 'url'),
+            'image' => count($lastfmAlbum['image']) > 3 ? $lastfmAlbum['image'][3] : $lastfmAlbum['image'][0],
+            'wiki' => [
+                'summary' => $this->formatText(array_get($lastfmAlbum, 'wiki.summary')),
+                'full' => $this->formatText(array_get($lastfmAlbum, 'wiki.content')),
+            ],
+            'tracks' => array_map(function ($track) {
+                return [
+                    'title' => $track['name'],
+                    'length' => (int) $track['duration'],
+                    'url' => $track['url'],
+                ];
+            }, array_get($lastfmAlbum, 'tracks.track', [])),
+        ];
     }
 
     /**
@@ -180,9 +204,7 @@ class Lastfm extends RESTfulService
         ], true);
 
         try {
-            $response = $this->get("/?$query", [], false);
-
-            return (string) $response->session->key;
+            return (string) $this->get("/?$query", [], false)->session->key;
         } catch (Exception $e) {
             Log::error($e);
 
@@ -289,19 +311,15 @@ class Lastfm extends RESTfulService
     public function buildAuthCallParams(array $params, $toString = false)
     {
         $params['api_key'] = $this->getKey();
-
         ksort($params);
 
         // Generate the API signature.
         // @link http://www.last.fm/api/webauth#6
         $str = '';
-
         foreach ($params as $name => $value) {
             $str .= $name.$value;
         }
-
         $str .= $this->getSecret();
-
         $params['api_sig'] = md5($str);
 
         if (!$toString) {

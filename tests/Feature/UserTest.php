@@ -3,14 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\BrowserKitTestCase;
 
-class UserTest extends BrowserKitTestCase
+class UserTest extends TestCase
 {
-    use DatabaseTransactions;
-
-    public function testCreateUser()
+    /** @test */
+    public function admin_can_create_a_user()
     {
         // Non-admins can't do shit
         $this->postAsUser('api/user', [
@@ -30,7 +27,8 @@ class UserTest extends BrowserKitTestCase
         $this->seeInDatabase('users', ['name' => 'Foo']);
     }
 
-    public function testUpdateUser()
+    /** @test */
+    public function admin_can_update_a_user()
     {
         $user = factory(User::class)->create();
 
@@ -43,7 +41,8 @@ class UserTest extends BrowserKitTestCase
         $this->seeInDatabase('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
     }
 
-    public function testDeleteUser()
+    /** @test */
+    public function admin_can_delete_a_user()
     {
         $user = factory(User::class)->create();
         $admin = factory(User::class, 'admin')->create();
@@ -57,7 +56,8 @@ class UserTest extends BrowserKitTestCase
             ->seeInDatabase('users', ['id' => $admin->id]);
     }
 
-    public function testUserPreferences()
+    /** @test */
+    public function user_can_update_their_preferences()
     {
         $user = factory(User::class)->create();
         $this->assertNull($user->getPreference('foo'));

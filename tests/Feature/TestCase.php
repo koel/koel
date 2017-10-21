@@ -1,68 +1,24 @@
 <?php
 
-namespace Tests;
+namespace Tests\Feature;
 
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Support\Facades\Artisan;
 use JWTAuth;
-use Laravel\BrowserKitTesting\TestCase as BaseBrowserKitTestCase;
+use Laravel\BrowserKitTesting\DatabaseTransactions;
+use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
+use Tests\CreatesApplication;
 
-abstract class BrowserKitTestCase extends BaseBrowserKitTestCase
+abstract class TestCase extends BaseTestCase
 {
-    protected $mediaPath;
-    protected $coverPath;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->mediaPath = __DIR__.'/songs';
-    }
+    use CreatesApplication, DatabaseTransactions;
 
     public function setUp()
     {
         parent::setUp();
         $this->prepareForTests();
-    }
-
-    /**
-     * The base URL to use while testing the application.
-     *
-     * @var string
-     */
-    protected $baseUrl = 'http://localhost';
-
-    /**
-     * Creates the application.
-     *
-     * @return \Illuminate\Foundation\Application
-     */
-    public function createApplication()
-    {
-        $app = require __DIR__.'/../bootstrap/app.php';
-
-        $app->make(Kernel::class)->bootstrap();
-
-        $this->coverPath = $app->basePath().'/public/img/covers';
-
-        return $app;
-    }
-
-    private function prepareForTests()
-    {
-        Artisan::call('migrate');
-
-        if (!User::all()->count()) {
-            Artisan::call('db:seed');
-        }
-
-        if (!file_exists($this->coverPath)) {
-            mkdir($this->coverPath, 0777, true);
-        }
     }
 
     /**

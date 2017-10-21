@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import { event } from '../../../utils'
-import { albumStore, sharedStore } from '../../../stores'
+import { event } from '@/utils'
+import { albumStore, sharedStore } from '@/stores'
 
 import albums from './albums.vue'
 import album from './album.vue'
@@ -114,6 +114,9 @@ export default {
 
     span:first-child {
       flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .meta {

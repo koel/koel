@@ -37,9 +37,9 @@
 <script>
 import isMobile from 'ismobilejs'
 
-import { event, $ } from '../../../utils'
-import { sharedStore, songStore, preferenceStore as preferences } from '../../../stores'
-import { songInfo } from '../../../services'
+import { event, $ } from '@/utils'
+import { sharedStore, songStore, preferenceStore as preferences } from '@/stores'
+import { songInfo } from '@/services'
 
 import lyrics from './lyrics.vue'
 import artistInfo from './artist-info.vue'

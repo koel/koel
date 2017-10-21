@@ -5,10 +5,10 @@
 import { assignIn } from 'lodash'
 import isMobile from 'ismobilejs'
 
-import { playback } from '../services'
-import songList from '../components/shared/song-list.vue'
-import songListControls from '../components/shared/song-list-controls.vue'
-import controlsToggler from '../components/shared/song-list-controls-toggler.vue'
+import { playback } from '@/services'
+import songList from '@/components/shared/song-list.vue'
+import songListControls from '@/components/shared/song-list-controls.vue'
+import controlsToggler from '@/components/shared/song-list-controls-toggler.vue'
 
 export default {
   components: { songList, songListControls, controlsToggler },

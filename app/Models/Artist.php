@@ -6,13 +6,19 @@ use App\Facades\Lastfm;
 use App\Facades\Util;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Log;
 
 /**
  * @property int    id      The model ID
  * @property string name    The artist name
  * @property string image
+ * @property bool   is_unknown
+ * @property bool   is_various
+ * @property Collection songs
  */
 class Artist extends Model
 {
@@ -27,22 +33,43 @@ class Artist extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
+    /**
+     * An artist can have many albums.
+     *
+     * @return HasMany
+     */
     public function albums()
     {
         return $this->hasMany(Album::class);
     }
 
+    /**
+     * An artist can have many songs.
+     * Unless he is Rick Astley.
+     *
+     * @return HasManyThrough
+     */
     public function songs()
     {
         return $this->hasManyThrough(Song::class, Album::class);
     }
 
-    public function isUnknown()
+    /**
+     * Indicate if the artist is unknown.
+     *
+     * @return bool
+     */
+    public function getIsUnknownAttribute()
     {
         return $this->id === self::UNKNOWN_ID;
     }
 
-    public function isVarious()
+    /**
+     * Indicate if the artist is the special "Various Artists".
+     *
+     * @return bool
+     */
+    public function getIsVariousAttribute()
     {
         return $this->id === self::VARIOUS_ID;
     }
@@ -52,7 +79,7 @@ class Artist extends Model
      *
      * @return Artist
      */
-    public static function getVarious()
+    public static function getVariousArtist()
     {
         return self::find(self::VARIOUS_ID);
     }
@@ -97,25 +124,18 @@ class Artist extends Model
      */
     public function getInfo()
     {
-        if ($this->isUnknown()) {
+        if ($this->is_unknown) {
             return false;
         }
 
         $info = Lastfm::getArtistInfo($this->name);
+        $image = array_get($info, 'image');
 
         // If our current artist has no image, and Last.fm has one, copy the image for our local use.
-        if (!$this->image &&
-            is_string($image = array_get($info, 'image')) &&
-            ini_get('allow_url_fopen')
-        ) {
+        if (!$this->image && is_string($image) && ini_get('allow_url_fopen')) {
             try {
                 $extension = explode('.', $image);
-                $fileName = uniqid().'.'.trim(strtolower(last($extension)), '. ');
-                $coverPath = app()->publicPath().'/public/img/artists/'.$fileName;
-
-                file_put_contents($coverPath, file_get_contents($image));
-
-                $this->update(['image' => $fileName]);
+                $this->writeImageFile(file_get_contents($image), last($extension));
                 $info['image'] = $this->image;
             } catch (Exception $e) {
                 Log::error($e);
@@ -126,13 +146,31 @@ class Artist extends Model
     }
 
     /**
-     * Get songs *contributed* (in compilation albums) by the artist.
+     * Write an artist image file with binary data and update the Artist with the new cover file.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param string $binaryData
+     * @param string $extension   The file extension
+     * @param string $destination The destination path. Automatically generated if empty.
      */
-    public function getContributedSongs()
+    public function writeImageFile($binaryData, $extension, $destination = '')
     {
-        return Song::whereContributingArtistId($this->id)->get();
+        $extension = trim(strtolower($extension), '. ');
+        $destination = $destination ?: $this->generateRandomImagePath($extension);
+        file_put_contents($destination, $binaryData);
+
+        $this->update(['image' => basename($destination)]);
+    }
+
+    /**
+     * Generate a random path for the artist's image.
+     *
+     * @param string $extension The extension of the cover (without dot)
+     *
+     * @return string
+     */
+    private function generateRandomImagePath($extension)
+    {
+        return app()->publicPath().'/public/img/artists/'.uniqid('', true).".$extension";
     }
 
     /**

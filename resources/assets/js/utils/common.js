@@ -2,7 +2,7 @@
  * Other common methods.
  */
 import select from 'select'
-import { event } from '../utils'
+import { event } from '@/utils'
 
 /**
  * Load (display) a main panel (view).

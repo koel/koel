@@ -21,10 +21,17 @@
 </template>
 
 <script>
-import { filterBy, $ } from '../../utils'
+import { filterBy, $ } from '@/utils'
 
 export default {
-  props: ['options', 'value', 'items'],
+  props: {
+    options: Object,
+    items: {
+      type: Array,
+      required: true
+    },
+    value: String
+  },
 
   data () {
     return {
@@ -84,7 +91,7 @@ export default {
      */
     enter () {
       this.apply()
-      this.showingResult = false
+      this.hideResults()
     },
 
     keyup (e) {
@@ -107,7 +114,8 @@ export default {
 
       // Hide the typeahead results and reset the value if ESC is pressed.
       if (e.keyCode === 27) {
-        this.showingResult = false
+        this.mutatedValue = this.value
+        this.hideResults()
         return
       }
 
@@ -120,8 +128,7 @@ export default {
       $.removeClass(selected, 'selected')
       $.addClass(e.target, 'selected')
 
-      this.apply()
-      this.showingResult = false
+      this.enter()
     },
 
     apply () {

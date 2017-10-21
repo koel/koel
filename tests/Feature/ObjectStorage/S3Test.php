@@ -3,21 +3,21 @@
 namespace Tests\Feature\ObjectStorage;
 
 use App\Events\LibraryChanged;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\BrowserKitTestCase;
+use Tests\Feature\TestCase;
 
-class S3Test extends BrowserKitTestCase
+class S3Test extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function setUp()
     {
         parent::setUp();
-        $this->withoutMiddleware();
+        $this->disableMiddlewareForAllTests();
     }
 
-    public function testPut()
+    /** @test */
+    public function a_song_can_be_added()
     {
         $this->post('api/os/s3/song', [
             'bucket' => 'koel',
@@ -33,7 +33,8 @@ class S3Test extends BrowserKitTestCase
         ])->seeInDatabase('songs', ['path' => 's3://koel/sample.mp3']);
     }
 
-    public function testRemove()
+    /** @test */
+    public function a_song_can_be_removed()
     {
         $this->expectsEvents(LibraryChanged::class);
         $this->post('api/os/s3/song', [

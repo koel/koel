@@ -23,13 +23,20 @@ branches:
 
 install:
   - . $HOME/.nvm/nvm.sh
-  - nvm install stable
-  - nvm use stable
+  - nvm install 6.10.3
+  - nvm use 6.10.3
   - npm install -g yarn
   - yarn
   - composer self-update
   - composer install --prefer-dist --no-interaction
 
 script:
-  - phpunit
+  - vendor/bin/phpunit
   - yarn test
+
+addons:
+  code_climate:
+    repo_token: e74dc85a4eeb025a067bde238175f44d9f6a9e544278c4c096a46b8467c5fb9f
+
+after_success:
+  - vendor/bin/test-reporter

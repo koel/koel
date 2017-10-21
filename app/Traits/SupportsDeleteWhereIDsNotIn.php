@@ -56,8 +56,9 @@ trait SupportsDeleteWhereIDsNotIn
     public static function deleteByChunk(array $ids, $key = 'id', $chunkSize = 65535)
     {
         DB::beginTransaction();
+
         try {
-            foreach (array_chunk($ids, 65535) as $chunk) {
+            foreach (array_chunk($ids, $chunkSize) as $chunk) {
                 static::whereIn($key, $chunk)->delete();
             }
             DB::commit();

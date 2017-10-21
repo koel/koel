@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Song;
+use Cache;
 use GuzzleHttp\Client;
 
 class YouTube extends RESTfulService
@@ -46,8 +47,8 @@ class YouTube extends RESTfulService
         $q = $song->title;
 
         // If the artist is worth noticing, include them into the search.
-        if (!$song->artist->isUnknown() && !$song->artist->isVarious()) {
-            $q .= ' '.$song->artist->name;
+        if (!$song->artist->is_unknown && !$song->artist->is_various) {
+            $q .= " {$song->artist->name}";
         }
 
         return $this->search($q, $pageToken);
@@ -74,16 +75,8 @@ class YouTube extends RESTfulService
             urlencode($q)
         );
 
-        $cacheKey = md5("youtube_$uri");
-        if ($response = cache($cacheKey)) {
-            return $response;
-        }
-
-        if ($response = $this->get($uri)) {
-            // Cache the result for 7 days
-            cache([$cacheKey => $response], 60 * 24 * 7);
-        }
-
-        return $response;
+        return Cache::remember(md5("youtube_$uri"), 60 * 24 * 7, function () use ($uri) {
+            return $this->get($uri);
+        });
     }
 }

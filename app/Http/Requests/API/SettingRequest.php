@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests\API;
 
+/**
+ * @property string media_path
+ */
 class SettingRequest extends Request
 {
     /**

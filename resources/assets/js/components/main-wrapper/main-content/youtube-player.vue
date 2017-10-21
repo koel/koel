@@ -1,6 +1,6 @@
 <template>
   <section id="youtubeWrapper">
-    <h1 class="heading"><span>YouTube Video</span></h1>
+    <h1 class="heading"><span>{{ title }}</span></h1>
     <div id="player">
       <p class="none">Your YouTube video will be played here.<br/>
       You can start a video playback from the right sidebar. When a song is playing, that is.<br>
@@ -11,14 +11,20 @@
 </template>
 
 <script>
-import { event } from '../../../utils'
-import { playback } from '../../../services'
+import { event } from '@/utils'
+import { playback } from '@/services'
 import YouTubePlayer from 'youtube-player'
 
 let player
 
 export default {
   name: 'main-wrapper--main-content--youtube-player',
+
+  data () {
+    return {
+      title: 'YouTube Video'
+    }
+  },
 
   methods: {
     /**
@@ -41,7 +47,8 @@ export default {
 
   created () {
     event.on({
-      'youtube:play': id => {
+      'youtube:play': ({ id, title }) => {
+        this.title = title
         this.initPlayer()
         player.loadVideoById(id)
         player.playVideo()

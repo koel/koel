@@ -6,7 +6,7 @@
     </h1>
 
     <div class="artists main-scroll-wrap" :class="`as-${viewMode}`" @scroll="scrolling">
-      <artist-item v-for="item in displayedItems" :artist="item"/>
+      <artist-item v-for="item in displayedItems" :artist="item" :key="item.id"/>
       <span class="item filler" v-for="n in 6"/>
       <to-top-button/>
     </div>
@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import { filterBy, limitBy, event } from '../../../utils'
-import { artistStore } from '../../../stores'
+import { filterBy, limitBy, event } from '@/utils'
+import { artistStore } from '@/stores'
 
-import artistItem from '../../shared/artist-item.vue'
-import viewModeSwitch from '../../shared/view-mode-switch.vue'
-import infiniteScroll from '../../../mixins/infinite-scroll'
+import artistItem from '@/components/shared/artist-item.vue'
+import viewModeSwitch from '@/components/shared/view-mode-switch.vue'
+import infiniteScroll from '@/mixins/infinite-scroll'
 
 export default {
   mixins: [infiniteScroll],

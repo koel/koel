@@ -1,5 +1,5 @@
 <template>
-  <div id="editSongsOverlay" v-if="shown" class="overlay">
+  <div id="editSongsOverlay" v-show="shown" class="overlay">
     <sound-bar v-if="loading"></sound-bar>
     <form v-else @submit.prevent="submit">
       <header>
@@ -76,10 +76,10 @@
 <script>
 import { every, filter, union } from 'lodash'
 
-import { br2nl } from '../../utils'
-import { songInfo } from '../../services/info'
-import { artistStore, albumStore, songStore } from '../../stores'
-import config from '../../config'
+import { br2nl } from '@/utils'
+import { songInfo } from '@/services/info'
+import { artistStore, albumStore, songStore } from '@/stores'
+import config from '@/config'
 
 import soundBar from '../shared/sound-bar.vue'
 import typeahead from '../shared/typeahead.vue'
@@ -98,7 +98,7 @@ export default {
       shown: false,
       songs: [],
       currentView: '',
-      loading: false,
+      loading: true,
 
       artistState: artistStore.state,
       artistTypeaheadOptions: {

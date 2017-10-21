@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Song;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use YouTube;
 
@@ -14,7 +15,7 @@ class YouTubeController extends Controller
      * @param Request $request
      * @param Song    $song
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function searchVideosRelatedToSong(Request $request, Song $song)
     {

@@ -9,10 +9,9 @@
 </template>
 
 <script>
-import { $ } from '../../utils'
+import { $ } from '@/utils'
 
 export default {
-  props: ['el'],
   data () {
     return {
       showing: false

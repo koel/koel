@@ -44,59 +44,61 @@ class Media
     /**
      * Sync the media. Oh sync the media.
      *
-     * @param string|null $path
+     * @param string|null $mediaPath
      * @param array       $tags        The tags to sync.
      *                                 Only taken into account for existing records.
      *                                 New records will have all tags synced in regardless.
      * @param bool        $force       Whether to force syncing even unchanged files
      * @param SyncMedia   $syncCommand The SyncMedia command object, to log to console if executed by artisan.
      */
-    public function sync($path = null, $tags = [], $force = false, SyncMedia $syncCommand = null)
+    public function sync($mediaPath = null, $tags = [], $force = false, SyncMedia $syncCommand = null)
     {
         if (!app()->runningInConsole()) {
             set_time_limit(config('koel.sync.timeout'));
         }
 
-        $path = $path ?: Setting::get('media_path');
+        if (config('koel.memory_limit')) {
+            ini_set('memory_limit', config('koel.memory_limit').'M');
+        }
+
+        $mediaPath = $mediaPath ?: Setting::get('media_path');
         $this->setTags($tags);
 
         $results = [
-            'good' => [], // Updated or added files
-            'bad' => [], // Bad files
-            'ugly' => [], // Unmodified files
+            'success' => [],
+            'bad_files' => [],
+            'unmodified' => [],
         ];
 
         $getID3 = new getID3();
+        $songPaths = $this->gatherFiles($mediaPath);
+        $syncCommand && $syncCommand->createProgressBar(count($songPaths));
 
-        $files = $this->gatherFiles($path);
+        foreach ($songPaths as $path) {
+            $file = new File($path, $getID3);
 
-        if ($syncCommand) {
-            $syncCommand->createProgressBar(count($files));
-        }
-
-        foreach ($files as $file) {
-            $file = new File($file, $getID3);
-
-            $song = $file->sync($this->tags, $force);
-
-            if ($song === true) {
-                $results['ugly'][] = $file;
-            } elseif ($song === false) {
-                $results['bad'][] = $file;
-            } else {
-                $results['good'][] = $file;
+            switch ($result = $file->sync($this->tags, $force)) {
+                case File::SYNC_RESULT_SUCCESS:
+                    $results['success'][] = $file;
+                    break;
+                case File::SYNC_RESULT_UNMODIFIED:
+                    $results['unmodified'][] = $file;
+                    break;
+                default:
+                    $results['bad_files'][] = $file;
+                    break;
             }
 
             if ($syncCommand) {
                 $syncCommand->updateProgressBar();
-                $syncCommand->logToConsole($file->getPath(), $song, $file->getSyncError());
+                $syncCommand->logToConsole($file->getPath(), $result, $file->getSyncError());
             }
         }
 
         // Delete non-existing songs.
-        $hashes = array_map(function ($f) {
-            return self::getHash($f->getPath());
-        }, array_merge($results['ugly'], $results['good']));
+        $hashes = array_map(function (File $file) {
+            return self::getHash($file->getPath());
+        }, array_merge($results['unmodified'], $results['success']));
 
         Song::deleteWhereIDsNotIn($hashes);
 
@@ -127,50 +129,61 @@ class Media
     /**
      * Sync media using a watch record.
      *
-     * @param WatchRecordInterface $record      The watch record.
-     * @param SyncMedia|null       $syncCommand The SyncMedia command object, to log to console if executed by artisan.
+     * @param WatchRecordInterface $record The watch record.
      */
-    public function syncByWatchRecord(WatchRecordInterface $record, SyncMedia $syncCommand = null)
+    public function syncByWatchRecord(WatchRecordInterface $record)
     {
         Log::info("New watch record received: '$record'");
+        $record->isFile() ? $this->syncFileRecord($record) : $this->syncDirectoryRecord($record);
+    }
+
+    /**
+     * Sync a file's watch record.
+     *
+     * @param WatchRecordInterface $record
+     */
+    private function syncFileRecord(WatchRecordInterface $record)
+    {
         $path = $record->getPath();
+        Log::info("'$path' is a file.");
 
-        if ($record->isFile()) {
-            Log::info("'$path' is a file.");
-
-            // If the file has been deleted...
-            if ($record->isDeleted()) {
-                // ...and it has a record in our database, remove it.
-                if ($song = Song::byPath($path)) {
-                    $song->delete();
-
-                    Log::info("$path deleted.");
-
-                    event(new LibraryChanged());
-                } else {
-                    Log::info("$path doesn't exist in our database--skipping.");
-                }
-            }
-            // Otherwise, it's a new or changed file. Try to sync it in.
-            // File format etc. will be handled by File::sync().
-            elseif ($record->isNewOrModified()) {
-                $result = (new File($path))->sync($this->tags);
-
-                Log::info($result instanceof Song ? "Synchronized $path" : "Invalid file $path");
+        // If the file has been deleted...
+        if ($record->isDeleted()) {
+            // ...and it has a record in our database, remove it.
+            if ($song = Song::byPath($path)) {
+                $song->delete();
+                Log::info("$path deleted.");
 
                 event(new LibraryChanged());
+            } else {
+                Log::info("$path doesn't exist in our database--skipping.");
             }
-
-            return;
         }
+        // Otherwise, it's a new or changed file. Try to sync it in.
+        // File format etc. will be handled by File::sync().
+        elseif ($record->isNewOrModified()) {
+            $result = (new File($path))->sync($this->tags);
+            Log::info($result === File::SYNC_RESULT_SUCCESS ? "Synchronized $path" : "Invalid file $path");
 
-        // Record is a directory.
+            event(new LibraryChanged());
+        }
+    }
+
+    /**
+     * Sync a directory's watch record.
+     *
+     * @param WatchRecordInterface $record
+     */
+    private function syncDirectoryRecord(WatchRecordInterface $record)
+    {
+        $path = $record->getPath();
         Log::info("'$path' is a directory.");
 
         if ($record->isDeleted()) {
             // The directory is removed. We remove all songs in it.
             if ($count = Song::inDirectory($path)->delete()) {
                 Log::info("Deleted $count song(s) under $path");
+
                 event(new LibraryChanged());
             } else {
                 Log::info("$path is empty--no action needed.");
@@ -179,10 +192,9 @@ class Media
             foreach ($this->gatherFiles($path) as $file) {
                 (new File($file))->sync($this->tags);
             }
+            Log::info("Synced all song(s) under $path");
 
             event(new LibraryChanged());
-
-            Log::info("Synced all song(s) under $path");
         }
     }
 

@@ -4,6 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Models\Playlist;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PlaylistController extends Controller
@@ -11,7 +14,7 @@ class PlaylistController extends Controller
     /**
      * Gets all playlists by the current user.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index()
     {
@@ -23,7 +26,7 @@ class PlaylistController extends Controller
      *
      * @param PlaylistStoreRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(PlaylistStoreRequest $request)
     {
@@ -38,12 +41,12 @@ class PlaylistController extends Controller
     /**
      * Rename a playlist.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Playlist                 $playlist
+     * @param Request  $request
+     * @param Playlist $playlist
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, Playlist $playlist)
     {
@@ -58,12 +61,12 @@ class PlaylistController extends Controller
      * Sync a playlist with songs.
      * Any songs that are not populated here will be removed from the playlist.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Playlist                 $playlist
+     * @param Request  $request
+     * @param Playlist $playlist
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function sync(Request $request, Playlist $playlist)
     {
@@ -79,10 +82,10 @@ class PlaylistController extends Controller
      *
      * @param Playlist $playlist
      *
-     * @throws \Exception
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws Exception
+     * @throws AuthorizationException
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Playlist $playlist)
     {

@@ -2,10 +2,14 @@
 
 namespace App\Listeners;
 
+use Illuminate\Events\Dispatcher;
+
 class JWTEventListener
 {
     /**
      * Handle user login events.
+     *
+     * @param Dispatcher $event
      */
     public function onValidUser($event)
     {
@@ -15,7 +19,7 @@ class JWTEventListener
     /**
      * Register the listeners for the subscriber.
      *
-     * @param Illuminate\Events\Dispatcher $events
+     * @param Dispatcher $events
      */
     public function subscribe($events)
     {

@@ -26,13 +26,18 @@
 </template>
 
 <script>
-import { playback } from '../../services'
-import { queueStore } from '../../stores'
+import { playback } from '@/services'
+import { queueStore } from '@/stores'
 import $v from 'vuequery'
 
 export default {
-  props: ['item'],
   name: 'song-item',
+  props: {
+    item: {
+      type: Object,
+      required: true
+    }
+  },
 
   data () {
     return {
@@ -51,7 +56,7 @@ export default {
 
     /**
      * Determine if the current song is being played (or paused).
-     * @return {Bool}
+     * @return {Boolean}
      */
     playing () {
       return this.song.playbackState === 'playing' || this.song.playbackState === 'paused'
@@ -63,8 +68,6 @@ export default {
   },
 
   methods: {
-    noop () {},
-
     /**
      * Play the song right away.
      */

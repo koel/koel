@@ -40,7 +40,7 @@
       :items="filteredItems"
       item-height="35"
       :renderers="renderers"
-      key-field="song"
+      key-field="song.id"
     />
 
     <song-menu ref="contextMenu" :songs="selectedSongs"/>
@@ -51,16 +51,33 @@
 import isMobile from 'ismobilejs'
 import { each } from 'lodash'
 
-import { filterBy, orderBy, event, pluralize, $ } from '../../utils'
-import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores'
-import { playback } from '../../services'
-import router from '../../router'
+import { filterBy, orderBy, event, pluralize, $ } from '@/utils'
+import { playlistStore, queueStore, songStore, favoriteStore } from '@/stores'
+import { playback } from '@/services'
+import router from '@/router'
 import songItem from './song-item.vue'
 import songMenu from './song-menu.vue'
 
 export default {
   name: 'song-list',
-  props: ['items', 'type', 'playlist', 'sortable'],
+  props: {
+    items: {
+      type: Array,
+      required: true
+    },
+    type: {
+      type: String,
+      default: 'allSongs',
+      validator: value => {
+        return ['allSongs', 'queue', 'playlist', 'favorites', 'artist', 'album'].indexOf(value) !== -1
+      }
+    },
+    sortable: {
+      type: Boolean,
+      default: true
+    }
+  },
+
   components: { songItem, songMenu },
 
   data () {

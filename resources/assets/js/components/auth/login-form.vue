@@ -7,8 +7,7 @@
 </template>
 
 <script>
-import { userStore } from '../../stores'
-import { event } from '../../utils'
+import { userStore } from '@/stores'
 
 export default {
   data () {
@@ -28,7 +27,7 @@ export default {
         // Reset the password so that the next login will have this field empty.
         this.password = ''
 
-        event.emit('user:loggedin')
+        this.$emit('loggedin')
       } catch (err) {
         this.failed = true
       }

@@ -3,9 +3,9 @@ import md5 from 'blueimp-md5'
 import Vue from 'vue'
 import NProgress from 'nprogress'
 
-import { http } from '../services'
-import { alerts } from '../utils'
-import stub from '../stubs/user'
+import { http } from '@/services'
+import { alerts } from '@/utils'
+import stub from '@/stubs/user'
 
 export const userStore = {
   stub,
@@ -117,6 +117,17 @@ export const userStore = {
   logout () {
     return new Promise((resolve, reject) => {
       http.delete('me', {}, ({ data }) => {
+        resolve(data)
+      }, error => reject(error))
+    })
+  },
+
+  /**
+   * Get the current user's profile.
+   */
+  getProfile () {
+    return new Promise((resolve, reject) => {
+      http.get('me', ({ data }) => {
         resolve(data)
       }, error => reject(error))
     })

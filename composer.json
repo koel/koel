@@ -11,7 +11,7 @@
         "guzzlehttp/guzzle": "^6.1",
         "tymon/jwt-auth": "^0.5.6",
         "aws/aws-sdk-php-laravel": "^3.1",
-        "pusher/pusher-php-server": "^2.2",
+        "pusher/pusher-php-server": "^2.6",
         "predis/predis": "~1.0",
         "doctrine/dbal": "^2.5"
     },
@@ -24,7 +24,9 @@
         "facebook/webdriver": "^1.2",
         "barryvdh/laravel-ide-helper": "^2.1",
         "laravel/tinker": "^1.0",
-        "laravel/browser-kit-testing": "^1.0"
+        "laravel/browser-kit-testing": "^1.0",
+        "codeclimate/php-test-reporter": "^0.4.4",
+        "mikey179/vfsStream": "^1.6"
     },
     "autoload": {
         "classmap": [
@@ -38,7 +40,6 @@
     "autoload-dev": {
         "classmap": [
             "tests/TestCase.php",
-            "tests/BrowserKitTestCase.php",
             "tests/e2e"
         ]
     },
@@ -64,6 +65,9 @@
         ]
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "platform": {
+          "php": "5.6.31"
+        }
     }
 }

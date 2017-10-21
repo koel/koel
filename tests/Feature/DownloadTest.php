@@ -8,20 +8,17 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use Download;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\BrowserKitTestCase;
 
-class DownloadTest extends BrowserKitTestCase
+class DownloadTest extends TestCase
 {
-    use DatabaseTransactions;
-
     public function setUp()
     {
         parent::setUp();
         $this->createSampleMediaSet();
     }
 
-    public function testOneSong()
+    /** @test */
+    public function a_single_song_can_be_downloaded()
     {
         $song = Song::first();
         Download::shouldReceive('from')
@@ -32,7 +29,8 @@ class DownloadTest extends BrowserKitTestCase
             ->seeStatusCode(200);
     }
 
-    public function testMultipleSongs()
+    /** @test */
+    public function multiple_songs_can_be_downloaded()
     {
         $songs = Song::take(2)->get();
         Download::shouldReceive('from')
@@ -43,7 +41,8 @@ class DownloadTest extends BrowserKitTestCase
             ->seeStatusCode(200);
     }
 
-    public function testAlbum()
+    /** @test */
+    public function a_whole_album_can_be_downloaded()
     {
         $album = Album::first();
 
@@ -55,7 +54,8 @@ class DownloadTest extends BrowserKitTestCase
             ->seeStatusCode(200);
     }
 
-    public function testArtist()
+    /** @test */
+    public function a_whole_artists_biography_can_be_downloaded()
     {
         $artist = Artist::first();
 
@@ -67,7 +67,8 @@ class DownloadTest extends BrowserKitTestCase
             ->seeStatusCode(200);
     }
 
-    public function testPlaylist()
+    /** @test */
+    public function a_whole_playlist_can_be_downloaded()
     {
         $user = factory(User::class)->create();
 
@@ -86,7 +87,8 @@ class DownloadTest extends BrowserKitTestCase
             ->seeStatusCode(200);
     }
 
-    public function testFavorites()
+    /** @test */
+    public function all_favorite_songs_can_be_downloaded()
     {
         Download::shouldReceive('from')
             ->once()

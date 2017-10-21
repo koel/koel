@@ -1,6 +1,6 @@
-import { http } from '../services'
-import { alerts } from '../utils'
-import stub from '../stubs/settings'
+import { http } from '@/services'
+import { alerts } from '@/utils'
+import stub from '@/stubs/settings'
 
 export const settingStore = {
   stub,

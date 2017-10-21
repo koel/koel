@@ -5,13 +5,11 @@ namespace Tests\Feature;
 use App\Events\SongLikeToggled;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\BrowserKitTestCase;
 
-class InteractionTest extends BrowserKitTestCase
+class InteractionTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function setUp()
     {
@@ -19,7 +17,8 @@ class InteractionTest extends BrowserKitTestCase
         $this->createSampleMediaSet();
     }
 
-    public function testPlayCountRegister()
+    /** @test */
+    public function play_count_is_increased()
     {
         $this->withoutEvents();
         $user = factory(User::class)->create();
@@ -43,7 +42,8 @@ class InteractionTest extends BrowserKitTestCase
         ]);
     }
 
-    public function testLikeRegister()
+    /** @test */
+    public function user_can_like_and_unlike_a_song()
     {
         $this->expectsEvents(SongLikeToggled::class);
 
@@ -68,7 +68,8 @@ class InteractionTest extends BrowserKitTestCase
         ]);
     }
 
-    public function testBatchLikeAndUnlike()
+    /** @test */
+    public function user_can_like_and_unlike_songs_in_batch()
     {
         $this->expectsEvents(SongLikeToggled::class);
 

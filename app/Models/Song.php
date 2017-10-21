@@ -7,7 +7,11 @@ use App\Traits\SupportsDeleteWhereIDsNotIn;
 use AWS;
 use Aws\AwsClient;
 use Cache;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Lastfm;
 use YouTube;
 
@@ -22,6 +26,7 @@ use YouTube;
  * @property int    track
  * @property int    album_id
  * @property int    id
+ * @property int    artist_id
  */
 class Song extends Model
 {
@@ -54,16 +59,31 @@ class Song extends Model
      */
     public $incrementing = false;
 
+    /**
+     * A song belongs to an artist.
+     *
+     * @return BelongsTo
+     */
     public function artist()
     {
         return $this->belongsTo(Artist::class);
     }
 
+    /**
+     * A song belongs to a album.
+     *
+     * @return BelongsTo
+     */
     public function album()
     {
         return $this->belongsTo(Album::class);
     }
 
+    /**
+     * A song can belong to many playlists.
+     *
+     * @return BelongsToMany
+     */
     public function playlists()
     {
         return $this->belongsToMany(Playlist::class);
@@ -80,7 +100,7 @@ class Song extends Model
     public function scrobble(User $user, $timestamp)
     {
         // Don't scrobble the unknown guys. No one knows them.
-        if ($this->artist->isUnknown()) {
+        if ($this->artist->is_unknown) {
             return false;
         }
 
@@ -129,7 +149,7 @@ class Song extends Model
         /*
          * A collection of the updated songs.
          *
-         * @var \Illuminate\Support\Collection
+         * @var Collection
          */
         $updatedSongs = collect();
 
@@ -221,10 +241,10 @@ class Song extends Model
     /**
      * Scope a query to only include songs in a given directory.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string                                $path  Full path of the directory
+     * @param Builder $query
+     * @param string  $path  Full path of the directory
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeInDirectory($query, $path)
     {
@@ -240,7 +260,7 @@ class Song extends Model
      * @param User $user
      * @param bool $toArray
      *
-     * @return \Illuminate\Database\Eloquent\Collection|array
+     * @return Collection|array
      */
     public static function getFavorites(User $user, $toArray = false)
     {
@@ -261,28 +281,23 @@ class Song extends Model
      */
     public function getObjectStoragePublicUrl(AwsClient $s3 = null)
     {
-        // If we have a cached version, just return it.
-        if ($cached = Cache::get("OSUrl/{$this->id}")) {
-            return $cached;
-        }
+        return Cache::remember("OSUrl/{$this->id}", 60, function () use ($s3) {
+            if (!$s3) {
+                $s3 = AWS::createClient('s3');
+            }
 
-        // Otherwise, we query S3 for the presigned request.
-        if (!$s3) {
-            $s3 = AWS::createClient('s3');
-        }
+            $cmd = $s3->getCommand('GetObject', [
+                'Bucket' => $this->s3_params['bucket'],
+                'Key' => $this->s3_params['key'],
+            ]);
 
-        $cmd = $s3->getCommand('GetObject', [
-            'Bucket' => $this->s3_params['bucket'],
-            'Key' => $this->s3_params['key'],
-        ]);
+            // Here we specify that the request is valid for 1 hour.
+            // We'll also cache the public URL for future reuse.
+            $request = $s3->createPresignedRequest($cmd, '+1 hour');
+            $url = (string) $request->getUri();
 
-        // Here we specify that the request is valid for 1 hour.
-        // We'll also cache the public URL for future reuse.
-        $request = $s3->createPresignedRequest($cmd, '+1 hour');
-        $url = (string) $request->getUri();
-        Cache::put("OSUrl/{$this->id}", $url, 60);
-
-        return $url;
+            return $url;
+        });
     }
 
     /**
@@ -290,7 +305,7 @@ class Song extends Model
      *
      * @param string $youTubePageToken The YouTube page token, for pagination purpose.
      *
-     * @return @return object|false
+     * @return false|object
      */
     public function getRelatedYouTubeVideos($youTubePageToken = '')
     {
@@ -301,7 +316,7 @@ class Song extends Model
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
      *
-     * @param $value
+     * @param string $value
      */
     public function setTitleAttribute($value)
     {
@@ -312,7 +327,7 @@ class Song extends Model
      * Some songs don't have a title.
      * Fall back to the file name (without extension) for such.
      *
-     * @param  $value
+     * @param string $value
      *
      * @return string
      */
@@ -337,16 +352,6 @@ class Song extends Model
     }
 
     /**
-     * Determine if the song is an AWS S3 Object.
-     *
-     * @return bool
-     */
-    public function isS3ObjectAttribute()
-    {
-        return starts_with($this->path, 's3://');
-    }
-
-    /**
      * Get the bucket and key name of an S3 object.
      *
      * @return bool|array
@@ -360,5 +365,15 @@ class Song extends Model
         list($bucket, $key) = explode('/', $matches[1], 2);
 
         return compact('bucket', 'key');
+    }
+
+    /**
+     * Return the ID of the song when it's converted to string.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->id;
     }
 }

@@ -4,8 +4,13 @@
 }
 
 body, html {
-  overflow: hidden;
+  background: $colorMainBgr;
+  color: $colorMainText;
+  font-family: $fontFamily;
   font-size: $fontSize;
+  line-height: 1.5rem;
+  font-weight: $fontWeight_Thin;
+  overflow: hidden;
 }
 
 input, select, button, textarea, .btn {

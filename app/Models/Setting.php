@@ -59,6 +59,13 @@ class Setting extends Model
         $this->attributes['value'] = serialize($value);
     }
 
+    /**
+     * Get the unserialized setting value.
+     *
+     * @param mixed $value
+     *
+     * @return mixed
+     */
     public function getValueAttribute($value)
     {
         return unserialize($value);

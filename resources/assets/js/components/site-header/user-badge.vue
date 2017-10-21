@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import { userStore } from '../../stores'
-import { event } from '../../utils'
+import { userStore } from '@/stores'
+import { event } from '@/utils'
 
 export default {
   name: 'site-header--user-badge',

@@ -2,7 +2,7 @@
   <div id="youtube-extra-wrapper">
     <template v-if="videos && videos.length">
       <a class="video" v-for="video in videos" :href="`https://youtu.be/${video.id.videoId}`"
-        @click.prevent="playYouTube(video.id.videoId)">
+        @click.prevent="play(video)">
         <div class="thumb">
           <img :src="video.snippet.thumbnails.default.url" width="90">
         </div>
@@ -19,11 +19,16 @@
 </template>
 
 <script>
-import { youtube as youtubeService } from '../../../services'
+import { youtube as youtubeService } from '@/services'
 
 export default {
   name: 'main-wrapper--extra--youtube',
-  props: ['song'],
+  props: {
+    song: {
+      type: Object,
+      required: true
+    }
+  },
 
   data () {
     return {
@@ -39,8 +44,8 @@ export default {
   },
 
   methods: {
-    playYouTube (id) {
-      youtubeService.play(id)
+    play (video) {
+      youtubeService.play(video)
     },
 
     /**

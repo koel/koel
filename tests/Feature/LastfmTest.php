@@ -14,111 +14,20 @@ use App\Services\Lastfm;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
 use Tymon\JWTAuth\JWTAuth;
 
-class LastfmTest extends BrowserKitTestCase
+class LastfmTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
-    public function testGetArtistInfo()
+    protected function tearDown()
     {
-        $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/artist.xml')),
-        ]);
-
-        $api = new Lastfm(null, null, $client);
-
-        $this->assertEquals([
-            'url' => 'http://www.last.fm/music/Kamelot',
-            'image' => 'http://foo.bar/extralarge.jpg',
-            'bio' => [
-                'summary' => 'Quisque ut nisi.',
-                'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.',
-            ],
-        ], $api->getArtistInfo('foo'));
-
-        // Is it cached?
-        $this->assertNotNull(cache(md5('lastfm_artist_foo')));
-    }
-
-    public function testGetArtistInfoFailed()
-    {
-        $client = m::mock(Client::class, [
-            'get' => new Response(400, [], file_get_contents(__DIR__.'../../blobs/lastfm/artist-notfound.xml')),
-        ]);
-
-        $api = new Lastfm(null, null, $client);
-
-        $this->assertFalse($api->getArtistInfo('foo'));
-    }
-
-    public function testGetAlbumInfo()
-    {
-        $client = m::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/album.xml')),
-        ]);
-
-        $api = new Lastfm(null, null, $client);
-
-        $this->assertEquals([
-            'url' => 'http://www.last.fm/music/Kamelot/Epica',
-            'image' => 'http://foo.bar/extralarge.jpg',
-            'tracks' => [
-                [
-                    'title' => 'Track 1',
-                    'url' => 'http://foo/track1',
-                    'length' => 100,
-                ],
-                [
-                    'title' => 'Track 2',
-                    'url' => 'http://foo/track2',
-                    'length' => 150,
-                ],
-            ],
-            'wiki' => [
-                'summary' => 'Quisque ut nisi.',
-                'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.',
-            ],
-        ], $api->getAlbumInfo('foo', 'bar'));
-
-        // Is it cached?
-        $this->assertNotNull(cache(md5('lastfm_album_foo_bar')));
-    }
-
-    public function testGetAlbumInfoFailed()
-    {
-        $client = m::mock(Client::class, [
-            'get' => new Response(400, [], file_get_contents(__DIR__.'../../blobs/lastfm/album-notfound.xml')),
-        ]);
-
-        $api = new Lastfm(null, null, $client);
-
-        $this->assertFalse($api->getAlbumInfo('foo', 'bar'));
-    }
-
-    public function testBuildAuthCallParams()
-    {
-        $api = new Lastfm('key', 'secret');
-        $params = [
-            'qux' => '安',
-            'bar' => 'baz',
-        ];
-
-        $this->assertEquals([
-            'api_key' => 'key',
-            'bar' => 'baz',
-            'qux' => '安',
-            'api_sig' => '7f21233b54edea994aa0f23cf55f18a2',
-        ], $api->buildAuthCallParams($params));
-
-        $this->assertEquals('api_key=key&bar=baz&qux=安&api_sig=7f21233b54edea994aa0f23cf55f18a2',
-            $api->buildAuthCallParams($params, true));
+        m::close();
+        parent::tearDown();
     }
 
     public function testGetSessionKey()
@@ -132,7 +41,8 @@ class LastfmTest extends BrowserKitTestCase
         $this->assertEquals('foo', $api->getSessionKey('bar'));
     }
 
-    public function testSetSessionKey()
+    /** @test */
+    public function session_key_can_be_set()
     {
         $user = factory(User::class)->create();
         $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user);
@@ -140,7 +50,8 @@ class LastfmTest extends BrowserKitTestCase
         $this->assertEquals('foo', $user->lastfm_session_key);
     }
 
-    public function testControllerConnect()
+    /** @test */
+    public function user_can_connect_to_lastfm()
     {
         $redirector = m::mock(Redirector::class);
         $redirector->shouldReceive('to')->once();
@@ -154,7 +65,8 @@ class LastfmTest extends BrowserKitTestCase
         (new LastfmController($guard))->connect($redirector, new Lastfm(), $auth);
     }
 
-    public function testControllerCallback()
+    /** @test */
+    public function lastfm_session_key_can_be_retrieved_and_stored()
     {
         $request = m::mock(Request::class);
         $request->token = 'foo';
@@ -168,7 +80,8 @@ class LastfmTest extends BrowserKitTestCase
         $this->assertEquals('bar', $user->lastfm_session_key);
     }
 
-    public function testControllerDisconnect()
+    /** @test */
+    public function user_can_disconnect_from_lastfm()
     {
         $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
         $this->deleteAsUser('api/lastfm/disconnect', [], $user);
@@ -176,7 +89,8 @@ class LastfmTest extends BrowserKitTestCase
         $this->assertNull($user->lastfm_session_key);
     }
 
-    public function testLoveTrack()
+    /** @test */
+    public function user_can_love_a_track_on_lastfm()
     {
         $this->withoutEvents();
         $this->createSampleMediaSet();
@@ -195,7 +109,8 @@ class LastfmTest extends BrowserKitTestCase
         (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction, $user));
     }
 
-    public function testUpdateNowPlaying()
+    /** @test */
+    public function user_now_playing_status_can_be_updated_to_lastfm()
     {
         $this->withoutEvents();
         $this->createSampleMediaSet();

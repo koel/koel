@@ -3,15 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\BrowserKitTestCase;
 
-class ProfileTest extends BrowserKitTestCase
+class ProfileTest extends TestCase
 {
-    use WithoutMiddleware, DatabaseTransactions;
+    use WithoutMiddleware;
 
-    public function testUpdate()
+    /** @test */
+    public function user_can_update_his_profile()
     {
         $user = factory(User::class)->create();
         $this->putAsUser('api/me', ['name' => 'Foo', 'email' => 'bar@baz.com'], $user);

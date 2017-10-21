@@ -7,17 +7,11 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
-use Aws\AwsClient;
-use Cache;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Mockery as m;
-use Tests\BrowserKitTestCase;
 
-class SongTest extends BrowserKitTestCase
+class SongTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function setUp()
     {
@@ -201,6 +195,7 @@ class SongTest extends BrowserKitTestCase
                     'compilationState' => 2,
                 ],
             ], $user)
+//            ->seeText('jaja')
             ->seeStatusCode(200);
 
         $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'Two by Two')->first();
@@ -302,24 +297,6 @@ class SongTest extends BrowserKitTestCase
             'album_id' => $album->id,
             'lyrics' => 'Thor! Nanananananana Batman.', // haha
         ]);
-    }
-
-    public function testGetObjectStoragePublicUrl()
-    {
-        $song = Song::first();
-        $song->path = 's3://foo/bar.mp3';
-        $fakeUrl = 'http://aws.com/foo/bar.mp3';
-
-        $client = m::mock(AwsClient::class, [
-            'getCommand' => null,
-            'createPresignedRequest' => m::mock(Request::class, [
-                'getUri' => $fakeUrl,
-            ]),
-        ]);
-
-        Cache::shouldReceive('get')->once()->with("OSUrl/{$song->id}");
-        Cache::shouldReceive('put')->once()->with("OSUrl/{$song->id}", $fakeUrl, 60);
-        $this->assertEquals($fakeUrl, $song->getObjectStoragePublicUrl($client));
     }
 
     public function testDeletingByChunk()

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API\Download;
 
 use App\Models\Artist;
 use Download;
+use Exception;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ArtistController extends Controller
 {
@@ -14,9 +16,9 @@ class ArtistController extends Controller
      *
      * @param Artist $artist
      *
-     * @throws \Exception
+     * @throws Exception
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function download(Artist $artist)
     {

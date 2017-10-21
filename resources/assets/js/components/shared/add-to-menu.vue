@@ -27,14 +27,24 @@
 </template>
 
 <script>
-import { pluralize } from '../../utils'
-import { playlistStore } from '../../stores'
-import router from '../../router'
-import songMenuMethods from '../../mixins/song-menu-methods'
+import { pluralize } from '@/utils'
+import { playlistStore } from '@/stores'
+import router from '@/router'
+import songMenuMethods from '@/mixins/song-menu-methods'
 
 export default {
   name: 'shared--add-to-menu',
-  props: ['songs', 'showing', 'config'],
+  props: {
+    songs: {
+      type: Array,
+      required: true
+    },
+    showing: {
+      type: Boolean,
+      default: false
+    },
+    config: Object
+  },
   mixins: [songMenuMethods],
   filters: { pluralize },
 

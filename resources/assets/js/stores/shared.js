@@ -1,7 +1,7 @@
 import { assign } from 'lodash'
 import isMobile from 'ismobilejs'
 
-import { http } from '../services'
+import { http } from '@/services'
 import { userStore, preferenceStore, artistStore, albumStore, songStore, playlistStore, queueStore, settingStore } from '.'
 
 export const sharedStore = {

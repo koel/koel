@@ -2,12 +2,15 @@
   <span class="volume control" id="volume">
     <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"/>
     <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"/>
-    <input type="range" id="volumeRange" max="10" step="0.1" @change="muted = false" class="plyr__volume">
+    <input type="range" id="volumeRange" max="10" step="0.1" 
+      @change="broadcastVolume" class="plyr__volume"
+      @input="setVolume"
+    >
   </span>
 </template>
 
 <script>
-import { playback } from '../../services'
+import { playback, socket } from '@/services'
 
 export default {
   data () {
@@ -31,6 +34,25 @@ export default {
     unmute () {
       this.muted = false
       return playback.unmute()
+    },
+
+    /**
+     * Set the volume.
+     *
+     * @param {Event} e
+     */
+    setVolume (e) {
+      playback.setVolume(e.target.value)
+      this.muted = e.target.value === 0
+    },
+
+    /**
+     * Broadcast the volume changed event to remote controller.
+     *
+     * @param  {Event} e
+     */
+    broadcastVolume (e) {
+      socket.broadcast('volume:changed', e.target.value)
     }
   }
 }

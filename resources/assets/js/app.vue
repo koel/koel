@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="main" tabindex="0" v-show="authenticated"
+    <div id="main" tabindex="0" v-if="authenticated"
       @keydown.space="togglePlayback"
       @keydown.j = "playNext"
       @keydown.k = "playPrev"
@@ -16,8 +16,8 @@
       <edit-songs-form ref="editSongsForm"/>
     </div>
 
-    <div class="login-wrapper" v-if="!authenticated">
-      <login-form/>
+    <div class="login-wrapper" v-else>
+      <login-form @loggedin="onUserLoggedIn"/>
     </div>
   </div>
 </template>
@@ -33,8 +33,8 @@ import loginForm from './components/auth/login-form.vue'
 import editSongsForm from './components/modals/edit-songs-form.vue'
 
 import { event, showOverlay, hideOverlay, forceReloadWindow, $ } from './utils'
-import { sharedStore, userStore, preferenceStore as preferences } from './stores'
-import { playback, ls } from './services'
+import { sharedStore, userStore, favoriteStore, queueStore, preferenceStore as preferences } from './stores'
+import { playback, ls, socket } from './services'
 import { focusDirective, clickawayDirective } from './directives'
 import router from './router'
 
@@ -73,6 +73,7 @@ export default {
   methods: {
     async init () {
       showOverlay()
+      await socket.init()
 
       // Make the most important HTTP request to get all necessary data from the server.
       // Afterwards, init all mandatory stores and services.
@@ -95,6 +96,8 @@ export default {
           return 'You asked Koel to confirm before closing, so here it is.'
         }
 
+        this.subscribeToBroadcastedEvents()
+
         // Let all other components know we're ready.
         event.emit('koel:ready')
       } catch (err) {
@@ -108,7 +111,7 @@ export default {
      * @param {Object} e The keydown event
      */
     togglePlayback (e) {
-      if ($.is(e.target, 'input,textarea,button,select')) {
+      if (e && $.is(e.target, 'input,textarea,button,select')) {
         return true
       }
 
@@ -116,7 +119,7 @@ export default {
       const play = document.querySelector('#mainFooter .play')
       play ? play.click() : document.querySelector('#mainFooter .pause').click()
 
-      e.preventDefault()
+      e && e.preventDefault()
     },
 
     /**
@@ -174,19 +177,28 @@ export default {
           }
         })
       }
+    },
+
+    /**
+     * When the user logs in, set the whole app to be "authenticated" and initialize it.
+     */
+    onUserLoggedIn () {
+      this.authenticated = true
+      this.init()
+    },
+
+    /**
+     * Subscribes to the events broadcasted e.g. from the remote controller.
+     */
+    subscribeToBroadcastedEvents () {
+      socket.listen('favorite:toggle', () => {
+        queueStore.current && favoriteStore.toggleOne(queueStore.current)
+      })
     }
   },
 
   created () {
     event.on({
-      /**
-       * When the user logs in, set the whole app to be "authenticated" and initialize it.
-       */
-      'user:loggedin': () => {
-        this.authenticated = true
-        this.init()
-      },
-
       /**
        * Shows the "Edit Song" form.
        *
@@ -272,15 +284,6 @@ Vue.directive('koel-clickaway', clickawayDirective)
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-
-  background: $colorMainBgr;
-  color: $colorMainText;
-
-  font-family: $fontFamily;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  font-weight: $fontWeight_Thin;
-
   padding-bottom: $footerHeight;
 }
 

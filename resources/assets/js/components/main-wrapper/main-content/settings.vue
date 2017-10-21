@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import { settingStore, sharedStore } from '../../../stores'
-import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay, alerts } from '../../../utils'
-import router from '../../../router'
+import { settingStore, sharedStore } from '@/stores'
+import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay, alerts } from '@/utils'
+import router from '@/router'
 
 export default {
   data () {
@@ -73,8 +73,8 @@ export default {
       } catch (err) {
         let msg = 'Unknown error.'
 
-        if (err.status === 422) {
-          msg = parseValidationError(err.responseJSON)[0]
+        if (err.response.status === 422) {
+          msg = parseValidationError(err.response.data)[0]
         }
 
         hideOverlay()

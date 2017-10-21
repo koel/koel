@@ -9,16 +9,21 @@ use App\Models\Artist;
 use App\Models\File;
 use App\Models\Song;
 use App\Services\Media;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
 
-class MediaTest extends BrowserKitTestCase
+class MediaTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
-    public function testSync()
+    protected function tearDown()
+    {
+        m::close();
+        parent::tearDown();
+    }
+
+    /** @test */
+    public function songs_can_be_synced()
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -80,7 +85,8 @@ class MediaTest extends BrowserKitTestCase
         $this->assertEquals($currentCover, Album::find($album->id)->cover);
     }
 
-    public function testForceSync()
+    /** @test */
+    public function songs_can_be_force_synced()
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -114,7 +120,8 @@ class MediaTest extends BrowserKitTestCase
         $this->assertEquals($originalLyrics, $song->lyrics);
     }
 
-    public function testSyncSelectiveTags()
+    /** @test */
+    public function songs_can_be_synced_with_selectively_tags()
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -139,25 +146,30 @@ class MediaTest extends BrowserKitTestCase
         $this->assertEquals('Booom Wroooom', $song->lyrics);
     }
 
-    public function testAlwaysSyncAllTagsIfFileIsNew()
+    /** @test */
+    public function all_tags_are_catered_for_if_syncing_new_file()
     {
+        // First we sync the test directory to get the data
         $media = new Media();
         $media->sync($this->mediaPath);
+
+        // Now delete the first song.
         $song = Song::orderBy('id')->first();
         $song->delete();
 
-        // Selectively sync only one tag,
-        // but we still expect the whole song to be added back with all info
+        // Selectively sync only one tag
         $media->sync($this->mediaPath, ['track'], true);
-        $this->seeInDatabase('songs', [
-            'id' => $song->id,
-            'lyrics' => $song->lyrics,
-            'title' => $song->title,
-            'track' => $song->track,
-        ]);
+
+        // but we still expect the whole song to be added back with all info
+        $addedSong = Song::findOrFail($song->id)->toArray();
+        $song = $song->toArray();
+        array_forget($addedSong, 'created_at');
+        array_forget($song, 'created_at');
+        $this->assertEquals($song, $addedSong);
     }
 
-    public function testWatchSingleFileAdded()
+    /** @test */
+    public function added_song_is_synced_when_watching()
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -168,7 +180,8 @@ class MediaTest extends BrowserKitTestCase
         $this->seeInDatabase('songs', ['path' => $path]);
     }
 
-    public function testWatchSingleFileDeleted()
+    /** @test */
+    public function deleted_song_is_synced_when_watching()
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -180,7 +193,8 @@ class MediaTest extends BrowserKitTestCase
         $this->notSeeInDatabase('songs', ['id' => $song->id]);
     }
 
-    public function testWatchDirectoryDeleted()
+    /** @test */
+    public function deleted_directory_is_synced_when_watching()
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -194,7 +208,8 @@ class MediaTest extends BrowserKitTestCase
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
     }
 
-    public function testHtmlEntitiesInTags()
+    /** @test */
+    public function html_entities_in_tags_are_recognized_and_saved_properly()
     {
         $getID3 = m::mock(getID3::class, [
             'analyze' => [
@@ -217,7 +232,8 @@ class MediaTest extends BrowserKitTestCase
         $this->assertEquals('水谷広実', $info['title']);
     }
 
-    public function testDotDirectories()
+    /** @test */
+    public function hidden_files_can_optionally_be_ignored_when_syncing()
     {
         config(['koel.ignore_dot_files' => false]);
         $media = new Media();

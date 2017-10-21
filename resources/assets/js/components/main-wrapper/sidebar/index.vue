@@ -58,8 +58,8 @@
 <script>
 import isMobile from 'ismobilejs'
 
-import { event, $ } from '../../../utils'
-import { sharedStore, userStore, songStore, queueStore } from '../../../stores'
+import { event, $ } from '@/utils'
+import { sharedStore, userStore, songStore, queueStore } from '@/stores'
 import playlists from './playlists.vue'
 
 export default {

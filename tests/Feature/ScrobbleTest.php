@@ -4,16 +4,21 @@ namespace Tests\Feature;
 
 use App\Models\Song;
 use App\Services\Lastfm;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
-use Tests\BrowserKitTestCase;
 
-class ScrobbleTest extends BrowserKitTestCase
+class ScrobbleTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use WithoutMiddleware;
 
-    public function testScrobble()
+    protected function tearDown()
+    {
+        m::close();
+        parent::tearDown();
+    }
+
+    /** @test */
+    public function a_song_can_be_scrobbed_via_lastfm()
     {
         $this->withoutEvents();
         $this->createSampleMediaSet();

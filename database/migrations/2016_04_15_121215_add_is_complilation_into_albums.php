@@ -24,8 +24,5 @@ class AddIsComplilationIntoAlbums extends Migration
      */
     public function down()
     {
-        Schema::table('albums', function (Blueprint $table) {
-            $table->dropColumn('is_compilation');
-        });
     }
 }

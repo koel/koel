@@ -42,11 +42,11 @@
 </template>
 
 <script>
-import { pluralize, event, alerts } from '../../../utils'
-import { playlistStore, sharedStore } from '../../../stores'
-import { playback, download } from '../../../services'
-import router from '../../../router'
-import hasSongList from '../../../mixins/has-song-list'
+import { pluralize, event, alerts } from '@/utils'
+import { playlistStore, sharedStore } from '@/stores'
+import { playback, download } from '@/services'
+import router from '@/router'
+import hasSongList from '@/mixins/has-song-list'
 
 export default {
   name: 'main-wrapper--main-content--playlist',

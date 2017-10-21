@@ -1,8 +1,8 @@
 import axios from 'axios'
 import NProgress from 'nprogress'
 
-import { event } from '../utils'
-import { ls } from '../services'
+import { event } from '@/utils'
+import { ls } from '@/services'
 
 /**
  * Responsible for all HTTP requests.
