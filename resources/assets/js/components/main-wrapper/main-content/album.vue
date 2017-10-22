@@ -8,7 +8,7 @@
 
         <span class="meta" v-show="album.songs.length">
           by
-          <a class="artist" v-if="isNormalArtist" :href="`/#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
+          <a class="artist" v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
           {{ album.songs.length | pluralize('song') }}

@@ -1,11 +1,16 @@
 <template>
   <div class="bars">
-    <img src="/public/img/bars.gif" alt="Sound bars" height="13" width="auto">
+    <img :src="url" alt="Sound bars" height="13" width="auto">
   </div>
 </template>
 
 <script>
 export default {
+  computed:{
+    url(){
+      return `${document.location.pathname}public/img/bars.gif`
+    }
+  }
   // Since we don't have anything here, let us sing a song instead.
   //
   // "The House Of The Rising Sun"

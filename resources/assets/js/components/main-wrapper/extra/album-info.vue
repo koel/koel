@@ -80,7 +80,7 @@ export default {
     },
 
     iTunesUrl () {
-      return `/api/itunes/album/${this.album.id}&jwt-token=${ls.get('jwt-token')}`
+      return `${document.location.pathname}api/itunes/album/${this.album.id}&jwt-token=${ls.get('jwt-token')}`
     }
   },
 
