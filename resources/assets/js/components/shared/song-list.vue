@@ -384,6 +384,7 @@ export default {
 
       const songIds = this.selectedSongs.map(song => song.id)
       event.dataTransfer.effectAllowed = 'move'
+      event.dataTransfer.setData('application/x-koel.text+plain', songIds)
 
       // Set a fancy drop image using our ghost element.
       const ghost = document.getElementById('dragGhost')
