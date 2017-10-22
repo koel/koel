@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use DB;
+use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
@@ -20,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         // Enable on delete cascade for sqlite connections
-        if (DB::connection() instanceof \Illuminate\Database\SQLiteConnection) {
+        if (DB::connection() instanceof SQLiteConnection) {
             DB::statement(DB::raw('PRAGMA foreign_keys = ON'));
         }
 
