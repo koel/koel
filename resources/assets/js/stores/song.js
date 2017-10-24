@@ -283,7 +283,7 @@ export const songStore = {
    * @return {string}
    */
   getShareableUrl (song) {
-    return `${window.location.origin}/#!/song/${song.id}`
+    return `${window.location.origin}#!/song/${song.id}`
   },
 
   /**

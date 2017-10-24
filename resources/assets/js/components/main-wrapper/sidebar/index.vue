@@ -5,27 +5,27 @@
 
       <ul class="menu">
         <li>
-          <a :class="['home', currentView == 'home' ? 'active' : '']" href="/#!/home">Home</a>
+          <a :class="['home', currentView == 'home' ? 'active' : '']" href="#!/home">Home</a>
         </li>
         <li>
           <a :class="['queue', currentView == 'queue' ? 'active' : '']"
-            href="/#!/queue"
+            href="#!/queue"
             @dragleave="removeDroppableState"
             @dragenter.prevent="allowDrop"
             @dragover.prevent
             @drop.stop.prevent="handleDrop">Current Queue</a>
         </li>
         <li>
-          <a :class="['songs', currentView == 'songs' ? 'active' : '']" href="/#!/songs">All Songs</a>
+          <a :class="['songs', currentView == 'songs' ? 'active' : '']" href="#!/songs">All Songs</a>
         </li>
         <li>
-          <a :class="['albums', currentView == 'albums' ? 'active' : '']" href="/#!/albums">Albums</a>
+          <a :class="['albums', currentView == 'albums' ? 'active' : '']" href="#!/albums">Albums</a>
         </li>
         <li>
-          <a :class="['artists', currentView == 'artists' ? 'active' : '']" href="/#!/artists">Artists</a>
+          <a :class="['artists', currentView == 'artists' ? 'active' : '']" href="#!/artists">Artists</a>
         </li>
         <li v-if="sharedState.useYouTube">
-          <a :class="['youtube', currentView == 'youtubePlayer' ? 'active' : '']" href="/#!/youtube">YouTube Video</a>
+          <a :class="['youtube', currentView == 'youtubePlayer' ? 'active' : '']" href="#!/youtube">YouTube Video</a>
         </li>
       </ul>
     </section>
@@ -37,10 +37,10 @@
 
       <ul class="menu">
         <li>
-          <a :class="['settings', currentView == 'settings' ? 'active' : '']" href="/#!/settings">Settings</a>
+          <a :class="['settings', currentView == 'settings' ? 'active' : '']" href="#!/settings">Settings</a>
         </li>
         <li>
-          <a :class="['users', currentView == 'users' ? 'active' : '']" href="/#!/users">Users</a>
+          <a :class="['users', currentView == 'users' ? 'active' : '']" href="#!/users">Users</a>
         </li>
       </ul>
     </section>

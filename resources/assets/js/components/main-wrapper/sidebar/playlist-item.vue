@@ -55,7 +55,7 @@ export default {
     },
 
     playlistUrl () {
-      return this.isFavorites ? '/#!/favorites' : `/#!/playlist/${this.playlist.id}`
+      return this.isFavorites ? '#!/favorites' : `#!/playlist/${this.playlist.id}`
     }
   },
 
