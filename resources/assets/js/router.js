@@ -121,6 +121,6 @@ export default {
     }
 
     path = path.substring(1, path.length)
-    document.location.href = `${document.location.origin}${path}`
+    document.location.href = `${document.location.origin}${document.location.pathname}${path}`
   }
 }
