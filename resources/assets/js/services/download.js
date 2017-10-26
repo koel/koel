@@ -71,7 +71,7 @@ export const download = {
     const sep = uri.indexOf('?') === -1 ? '?' : '&'
     const iframe = document.createElement('iframe')
     iframe.style.display = 'none'
-    iframe.setAttribute('src', `/api/download/${uri}${sep}jwt-token=${ls.get('jwt-token')}`)
+    iframe.setAttribute('src', `${window.BASE_URL}api/download/${uri}${sep}jwt-token=${ls.get('jwt-token')}`)
     document.body.appendChild(iframe)
   }
 }

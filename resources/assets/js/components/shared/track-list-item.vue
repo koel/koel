@@ -52,7 +52,7 @@ export default {
     },
 
     iTunesUrl () {
-      return `/api/itunes/song/${this.album.id}?q=${encodeURIComponent(this.track.title)}&jwt-token=${ls.get('jwt-token')}`
+      return `${window.BASE_URL}api/itunes/song/${this.album.id}?q=${encodeURIComponent(this.track.title)}&jwt-token=${ls.get('jwt-token')}`
     }
   },
 

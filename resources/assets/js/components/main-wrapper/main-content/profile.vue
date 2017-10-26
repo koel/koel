@@ -162,7 +162,7 @@ export default {
      */
     connectToLastfm () {
       window.open(
-        `/api/lastfm/connect?jwt-token=${ls.get('jwt-token')}`,
+        `${window.BASE_URL}api/lastfm/connect?jwt-token=${ls.get('jwt-token')}`,
         '_blank',
         'toolbar=no,titlebar=no,location=no,width=1024,height=640'
       )

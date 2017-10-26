@@ -20,8 +20,8 @@
         <div class="progress" id="progressPane">
           <h3 class="title">{{ song.title }}</h3>
           <p class="meta">
-            <a class="artist" :href="`/#!/artist/${song.artist.id}`">{{ song.artist.name }}</a> –
-            <a class="album" :href="`/#!/album/${song.album.id}`">{{ song.album.name }}</a>
+            <a class="artist" :href="`#!/artist/${song.artist.id}`">{{ song.artist.name }}</a> –
+            <a class="album" :href="`#!/album/${song.album.id}`">{{ song.album.name }}</a>
           </p>
 
           <div class="plyr">
@@ -45,7 +45,7 @@
             v-if="useEqualizer"
             @click="showEqualizer = !showEqualizer"
             :class="{ active: showEqualizer }"/>
-          <a v-else class="queue control" :class="{ active: viewingQueue }" href="/#!/queue">
+          <a v-else class="queue control" :class="{ active: viewingQueue }" href="#!/queue">
             <i class="fa fa-list-ol"></i>
           </a>
           <span class="repeat control" :class="prefs.repeatMode" @click.prevent="changeRepeatMode">
@@ -370,7 +370,7 @@ export default {
   .album-thumb {
     flex: 0 0 $footerHeight;
     height: $footerHeight;
-    background: url(/public/img/covers/unknown-album.png);
+    background: url(../../../img/covers/unknown-album.png);
     background-size: cover;
     position: relative;
   }

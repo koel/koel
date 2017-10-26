@@ -33,7 +33,7 @@ export const http = {
    * Init the service.
    */
   init () {
-    axios.defaults.baseURL = '/api'
+    axios.defaults.baseURL = `${window.BASE_URL}api`
 
     // Intercept the request to make sure the token is injected into the header.
     axios.interceptors.request.use(config => {
