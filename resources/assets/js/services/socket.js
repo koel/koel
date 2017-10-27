@@ -14,7 +14,7 @@ export const socket = {
       }
 
       this.pusher = new Pusher(window.PUSHER_APP_KEY, {
-        authEndpoint: '${window.BASE_URL}api/broadcasting/auth',
+        authEndpoint: `${window.BASE_URL}api/broadcasting/auth`,
         auth: {
           headers: {
             Authorization: `Bearer ${ls.get('jwt-token')}`
