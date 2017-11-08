@@ -32,7 +32,7 @@ class FileTest extends TestCase
             'compilation' => false,
             'title' => 'Amet',
             'track' => 5,
-            'lyrics' => '',
+            'lyrics' => "Foo\rbar",
             'cover' => [
                 'data' => file_get_contents(__DIR__.'/../blobs/cover.png'),
                 'image_mime' => 'image/png',

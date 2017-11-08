@@ -163,8 +163,9 @@ class File
             $title = array_get($comments, 'title', [''])[0];
         }
 
-        if (!$lyrics = array_get($info, 'tags.id3v2.unsynchronised_lyric', [null])[0]) {
-            $lyrics = array_get($comments, 'unsynchronised_lyric', [''])[0];
+        // yes, this tag name is mispelled…
+        if (!$lyrics = array_get($info, 'tags.id3v2.unsychronised_lyric', [null])[0]) {
+            $lyrics = array_get($comments, 'unsychronised_lyric', [''])[0];
         }
 
         // Fixes #323, where tag names can be htmlentities()'ed
