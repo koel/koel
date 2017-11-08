@@ -85,7 +85,7 @@ class SongZipArchive
             // The following several lines are to make sure each file name is unique.
             $name = basename($path);
             if (array_key_exists($name, $this->fileNames)) {
-                ++$this->fileNames[$name];
+                $this->fileNames[$name]++;
                 $parts = explode('.', $name);
                 $ext = $parts[count($parts) - 1];
                 $parts[count($parts) - 1] = $this->fileNames[$name].".$ext";
