@@ -133,7 +133,7 @@ class File
             'artist' => '',
             'album' => '',
             'compilation' => false,
-            'title' => '',
+            'title' => basename($this->path, '.'.pathinfo($this->path, PATHINFO_EXTENSION)), // default to be file name
             'length' => $info['playtime_seconds'],
             'track' => (int) $track,
             'lyrics' => '',
@@ -168,7 +168,9 @@ class File
         }
 
         // Fixes #323, where tag names can be htmlentities()'ed
-        $props['title'] = html_entity_decode(trim($title));
+        if ($title) {
+            $props['title'] = html_entity_decode(trim($title));
+        }
         $props['album'] = html_entity_decode(trim($album));
         $props['artist'] = html_entity_decode(trim($artist));
         $props['albumartist'] = html_entity_decode(trim($albumArtist));
