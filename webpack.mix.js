@@ -23,6 +23,12 @@ if (mix.config.hmr) {
 }
 
 mix.js('resources/assets/js/app.js', 'public/js')
+  .webpackConfig({
+    output: {
+      chunkFilename: 'js/chunks/[name].chunk.js',
+      publicPath: '/public/'
+    }
+  })
   .sass('resources/assets/sass/app.scss', 'public/css')
   .js('resources/assets/js/remote/app.js', 'public/js/remote')
   .sass('resources/assets/sass/remote.scss', 'public/css')
