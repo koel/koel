@@ -19,10 +19,13 @@
       "stage-0"
     ],
     "plugins": [
-      ["babel-plugin-root-import", {
-        "rootPathSuffix": "resources/assets/js",
-        "rootPathPrefix": "@"
-      }]
+      [
+        "babel-plugin-root-import",
+        {
+          "rootPathSuffix": "resources/assets/js",
+          "rootPathPrefix": "@"
+        }
+      ]
     ]
   },
   "eslintConfig": {
@@ -78,7 +81,8 @@
     "sinon": "^1.17.2",
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.5.0",
-    "webpack": "^3.6.0"
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.3"
   },
   "scripts": {
     "postinstall": "yarn production",
