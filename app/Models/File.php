@@ -136,6 +136,7 @@ class File
             'title' => basename($this->path, '.'.pathinfo($this->path, PATHINFO_EXTENSION)), // default to be file name
             'length' => $info['playtime_seconds'],
             'track' => (int) $track,
+            'disc' => (int) array_get($info, 'comments.part_of_a_set.0', 1),
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
             'path' => $this->path,
