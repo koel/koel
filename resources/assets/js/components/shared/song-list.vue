@@ -199,9 +199,20 @@ export default {
         this.order *= -1
       }
 
+      let sortKeys = [];
+      let orders = [];
+      if(this.type === 'album'){
+        // set default sort to track if album view
+        this.sortKey = this.sortKey ? this.sortKey : 'song.track';
+        sortKeys.push('song.disc')
+        orders.push('desc')
+      }
+
       this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.name'
       this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.artist.name'
-      this.songRows = orderBy(this.songRows, this.sortKey, this.order)
+      sortKeys.push(this.sortKey)
+      orders.push(this.order)
+      this.songRows = orderBy(this.songRows, sortKeys, orders)
     },
 
     /**
