@@ -132,7 +132,6 @@ return [
 
     'memory_limit' => env('MEMORY_LIMIT'),
 
-
     'misc' => [
         'home_url' => 'https://koel.phanan.net/',
         'docs_url' => 'https://koel.phanan.net/docs',

@@ -125,7 +125,7 @@ class File
             'comments.track_number',
         ];
 
-        for ($i = 0; $i < count($trackIndices) && $track === 0; ++$i) {
+        for ($i = 0; $i < count($trackIndices) && $track === 0; $i++) {
             $track = array_get($info, $trackIndices[$i], [0])[0];
         }
 
