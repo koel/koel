@@ -14,7 +14,7 @@ class AddDiscIntoSongs extends Migration
     public function up()
     {
         Schema::table('songs', function (Blueprint $table) {
-            $table->integer('disc')->after('track')->default(1)->nullable();
+            $table->integer('disc')->after('track')->default(1);
         });
     }
 
