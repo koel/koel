@@ -65,7 +65,7 @@ class Interaction extends Model
                 $interaction->liked = false;
             }
 
-            ++$interaction->play_count;
+            $interaction->play_count++;
             $interaction->save();
         });
     }

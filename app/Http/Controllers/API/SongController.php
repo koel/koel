@@ -100,7 +100,7 @@ class SongController extends Controller
     /**
      * Upload a song file.
      *
-     * @param  SongStoreRequest $request
+     * @param SongStoreRequest $request
      *
      * @return JsonResponse
      */
