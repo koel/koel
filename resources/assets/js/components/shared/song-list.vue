@@ -199,8 +199,8 @@ export default {
         this.order *= -1
       }
 
-      let sortKeys = [];
-      let orders = [];
+      const sortKeys = [];
+      const orders = [];
       if(this.type === 'album'){
         // set default sort to track if album view
         this.sortKey = this.sortKey ? this.sortKey : 'song.track';
