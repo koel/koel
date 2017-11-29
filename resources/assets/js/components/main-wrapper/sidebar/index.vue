@@ -39,6 +39,12 @@
         <li>
           <a :class="['settings', currentView == 'settings' ? 'active' : '']" href="/#!/settings">Settings</a>
         </li>
+        <li v-if="canUpload">
+          <a :class="['upload', currentView == 'upload' ? 'active' : '']" href="/#!/upload">
+            Upload
+            <i class="fa fa-circle-o-notch fa-spin indicator" v-if="uploading"></i>
+          </a>
+        </li>
         <li>
           <a :class="['users', currentView == 'users' ? 'active' : '']" href="/#!/users">Users</a>
         </li>
@@ -59,7 +65,7 @@
 import isMobile from 'ismobilejs'
 
 import { event, $ } from '@/utils'
-import { sharedStore, userStore, songStore, queueStore } from '@/stores'
+import { sharedStore, userStore, songStore, queueStore, settingStore } from '@/stores'
 import playlists from './playlists.vue'
 
 export default {
@@ -70,7 +76,9 @@ export default {
       currentView: 'home',
       user: userStore.state,
       showing: !isMobile.phone,
-      sharedState: sharedStore.state
+      sharedState: sharedStore.state,
+      canUpload: false,
+      uploading: false
     }
   },
 
@@ -145,6 +153,15 @@ export default {
     event.on('sidebar:toggle', () => {
       this.showing = !this.showing
     })
+
+    event.on('koel:ready', () => {
+      // Now we can determine if the current user can upload songs
+      this.canUpload = !!(userStore.current.is_admin && settingStore.all.media_path)
+    })
+
+    event.on('upload:status', status => {
+      this.uploading = status
+    })
   }
 }
 </script>
@@ -195,7 +212,7 @@ export default {
       display: block;
       height: 36px;
       line-height: 36px;
-      padding: 0 12px 0 16px;
+      padding: 0 16px;
       border-left: 4px solid transparent;
 
       &.active, &:hover {
@@ -249,6 +266,15 @@ export default {
 
       &.users::before {
         content: "\f0c0";
+      }
+
+      &.upload::before {
+        content: "\f093";
+      }
+
+      &.upload .indicator {
+        float: right;
+        margin-top: 11px;
       }
     }
   }

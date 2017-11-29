@@ -14,6 +14,7 @@
     <favorites v-show="view === 'favorites'"/>
     <profile v-show="view === 'profile'"/>
     <youtube-player v-if="sharedState.useYouTube" v-show="view === 'youtubePlayer'"/>
+    <upload  v-show="view === 'upload'"/>
   </section>
 </template>
 
@@ -37,7 +38,9 @@ import youtubePlayer from './youtube-player.vue'
 
 export default {
   components: { albums, album, artists, artist, songs, settings,
-    users, home, queue, playlist, favorites, profile, youtubePlayer },
+    users, home, queue, playlist, favorites, profile, youtubePlayer,
+    upload: () => import(/* webpackChunkName: 'upload' */ './upload.vue')
+  },
 
   data () {
     return {

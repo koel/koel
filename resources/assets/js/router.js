@@ -83,6 +83,10 @@ export default {
 
     '/youtube' () {
       loadMainView('youtubePlayer')
+    },
+
+    '/upload' () {
+      loadMainView('upload')
     }
   },
 

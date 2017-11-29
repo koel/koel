@@ -35,6 +35,7 @@ Route::group(['namespace' => 'API'], function () {
         ]);
         Route::get('{song}/info', 'SongController@show');
         Route::put('songs', 'SongController@update');
+        Route::post('songs', 'SongController@store');
 
         // Interaction routes
         Route::post('interaction/play', 'Interaction\PlayCountController@store');

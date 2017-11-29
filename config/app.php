@@ -214,6 +214,7 @@ return [
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'AWS' => Aws\Laravel\AwsFacade::class,
         'iTunes' => App\Facades\iTunes::class,
+        'Upload' => App\Facades\Upload::class,
 
     ],
 

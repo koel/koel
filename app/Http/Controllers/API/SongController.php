@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\SongStoreRequest;
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Models\Song;
 use App\Services\Streamers\PHPStreamer;
@@ -13,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Upload;
 
 class SongController extends Controller
 {
@@ -93,5 +95,17 @@ class SongController extends Controller
     public function update(SongUpdateRequest $request)
     {
         return response()->json(Song::updateInfo($request->songs, $request->data));
+    }
+
+    /**
+     * Upload a song file.
+     *
+     * @param  SongStoreRequest $request
+     *
+     * @return JsonResponse
+     */
+    public function store(SongStoreRequest $request)
+    {
+        Upload::upload($request->file);
     }
 }
