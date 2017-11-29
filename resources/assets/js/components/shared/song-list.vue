@@ -49,7 +49,7 @@
 
 <script>
 import isMobile from 'ismobilejs'
-import { each } from 'lodash'
+import { each, orderBy as _orderBy } from 'lodash'
 
 import { filterBy, orderBy, event, pluralize, $ } from '@/utils'
 import { playlistStore, queueStore, songStore, favoriteStore } from '@/stores'
@@ -199,20 +199,18 @@ export default {
         this.order *= -1
       }
 
-      const sortKeys = [];
-      const orders = [];
-      if(this.type === 'album'){
-        // set default sort to track if album view
-        this.sortKey = this.sortKey ? this.sortKey : 'song.track';
-        sortKeys.push('song.disc')
-        orders.push('desc')
+      if (this.type === 'album') {
+        this.sortKey = this.sortKey ? this.sortKey : ['song.track']
       }
 
       this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.name'
       this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.artist.name'
-      sortKeys.push(this.sortKey)
-      orders.push(this.order)
-      this.songRows = orderBy(this.songRows, sortKeys, orders)
+
+      this.songRows = orderBy(this.songRows, this.sortKey, this.order)
+
+      if (this.type === 'album') {
+        this.songRows = _orderBy(this.songRows, 'song.disc')
+      }
     },
 
     /**
