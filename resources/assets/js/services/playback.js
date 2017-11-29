@@ -418,7 +418,7 @@ export const playback = {
   playAllByArtist ({ songs }, shuffled = true) {
     shuffled
       ? this.queueAndPlay(songs, true)
-      : this.queueAndPlay(orderBy(songs, 'album_id', 'track'))
+      : this.queueAndPlay(orderBy(songs, ['album_id', 'disc', 'track']))
   },
 
   /**
@@ -430,6 +430,6 @@ export const playback = {
   playAllInAlbum ({ songs }, shuffled = true) {
     shuffled
       ? this.queueAndPlay(songs, true)
-      : this.queueAndPlay(orderBy(songs, 'track'))
+      : this.queueAndPlay(orderBy(songs, ['disc', 'track']))
   }
 }

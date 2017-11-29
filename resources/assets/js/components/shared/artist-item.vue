@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { orderBy } from 'lodash'
 import { pluralize } from '@/utils'
 import { artistStore, queueStore, sharedStore } from '@/stores'
 import { playback, download } from '@/services'
@@ -68,7 +69,7 @@ export default {
      */
     play (e) {
       if (e.metaKey || e.ctrlKey) {
-        queueStore.queue(this.artist.songs)
+        queueStore.queue(orderBy(this.artist.songs, ['album_id', 'disc', 'track']))
       } else {
         playback.playAllByArtist(this.artist, false)
       }
