@@ -28,6 +28,7 @@ class Media
         'title',
         'length',
         'track',
+        'disc',
         'lyrics',
         'cover',
         'mtime',
