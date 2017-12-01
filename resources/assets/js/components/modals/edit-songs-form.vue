@@ -247,6 +247,7 @@ export default {
           this.formData.track = this.songs[0].track || ''
           this.initCompilationStateCheckbox()
         } else {
+          this.loading = false
           this.formData.lyrics = br2nl(this.songs[0].lyrics)
           this.formData.track = this.songs[0].track || ''
           this.initCompilationStateCheckbox()
