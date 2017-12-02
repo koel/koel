@@ -45,6 +45,7 @@ Route::group(['namespace' => 'API'], function () {
         // Playlist routes
         Route::resource('playlist', 'PlaylistController');
         Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
+        Route::get('playlist/{playlist}/songs', 'PlaylistController@getSongs')->where(['playlist' => '\d+']);
 
         // User and user profile routes
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);

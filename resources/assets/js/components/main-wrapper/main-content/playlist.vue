@@ -1,43 +1,45 @@
 <template>
   <section id="playlistWrapper">
-    <h1 class="heading">
-      <span>{{ playlist.name }}
-        <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+    <template v-if="playlist.populated">
+      <h1 class="heading">
+        <span>{{ playlist.name }}
+          <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-        <span class="meta" v-show="meta.songCount">
-          {{ meta.songCount | pluralize('song') }}
-          •
-          {{ meta.totalLength }}
-          <template v-if="sharedState.allowDownload && playlist.songs.length">
+          <span class="meta" v-show="meta.songCount">
+            {{ meta.songCount | pluralize('song') }}
             •
-            <a href @click.prevent="download" title="Download all songs in playlist">
-              Download All
-            </a>
-          </template>
+            {{ meta.totalLength }}
+            <template v-if="sharedState.allowDownload && playlist.songs.length">
+              •
+              <a href @click.prevent="download" title="Download all songs in playlist">
+                Download All
+              </a>
+            </template>
+          </span>
         </span>
-      </span>
 
-      <song-list-controls
-        v-show="!isPhone || showingControls"
-        @shuffleAll="shuffleAll"
-        @shuffleSelected="shuffleSelected"
-        @deletePlaylist="confirmDelete"
-        :config="songListControlConfig"
-        :selectedSongs="selectedSongs"
+        <song-list-controls
+          v-show="!isPhone || showingControls"
+          @shuffleAll="shuffleAll"
+          @shuffleSelected="shuffleSelected"
+          @deletePlaylist="confirmDelete"
+          :config="songListControlConfig"
+          :selectedSongs="selectedSongs"
+        />
+      </h1>
+
+      <song-list v-show="playlist.songs.length"
+        :items="playlist.songs"
+        :playlist="playlist"
+        type="playlist"
+        ref="songList"
       />
-    </h1>
 
-    <song-list v-show="playlist.songs.length"
-      :items="playlist.songs"
-      :playlist="playlist"
-      type="playlist"
-      ref="songList"
-    />
-
-    <div v-show="!playlist.songs.length" class="none">
-      The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar,
-      or use the &quot;Add To…&quot; button.
-    </div>
+      <div v-show="!playlist.songs.length" class="none">
+        The playlist is currently empty. You can fill it up by dragging songs into its name in the sidebar,
+        or use the &quot;Add To…&quot; button.
+      </div>
+    </template>
   </section>
 </template>
 
@@ -71,11 +73,19 @@ export default {
      * @param {String} view   The view's name.
      * @param {Object} playlist
      */
-    event.on('main-content-view:load', (view, playlist) => {
-      if (view === 'playlist') {
+    event.on('main-content-view:load', async (view, playlist) => {
+      if (view !== 'playlist') {
+        return
+      }
+
+      if (typeof playlist.populated === 'undefined') {
+        // playlistStore.populateContent(this.playlist)
+        await playlistStore.fetchSongs(playlist)
+        playlist.populated = true
         this.playlist = playlist
-        // #530
         this.$nextTick(() => this.$refs.songList.sort())
+      } else {
+        this.playlist = playlist
       }
     })
   },

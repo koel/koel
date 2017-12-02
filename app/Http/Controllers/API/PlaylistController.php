@@ -78,6 +78,21 @@ class PlaylistController extends Controller
     }
 
     /**
+     * Get a playlist's all songs.
+     *
+     * @param  Request  $request
+     * @param  Playlist $playlist
+
+     * @return JsonResponse
+     */
+    public function getSongs(Request $request, Playlist $playlist)
+    {
+        $this->authorize('owner', $playlist);
+
+        return response()->json($playlist->songs->pluck('id'));
+    }
+
+    /**
      * Delete a playlist.
      *
      * @param Playlist $playlist

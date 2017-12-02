@@ -25,16 +25,9 @@ class DataController extends Controller
      */
     public function index(Request $request)
     {
-        $playlists = Playlist::byCurrentUser()->orderBy('name')->with('songs')->get()->toArray();
-
-        // We don't need full song data, just ID's
-        foreach ($playlists as &$playlist) {
-            $playlist['songs'] = array_pluck($playlist['songs'], 'id');
-        }
-
         return response()->json(MediaCache::get() + [
             'settings' => $request->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
-            'playlists' => $playlists,
+            'playlists' => Playlist::byCurrentUser()->orderBy('name')->get()->toArray(),
             'interactions' => Interaction::byCurrentUser()->get(),
             'users' => $request->user()->is_admin ? User::all() : [],
             'currentUser' => $request->user(),

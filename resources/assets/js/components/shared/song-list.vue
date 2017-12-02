@@ -100,17 +100,7 @@ export default {
      * Watch the items.
      */
     items () {
-      if (this.sortable === false) {
-        this.sortKey = ''
-      }
-
-      // Update the song count and duration status on parent.
-      this.$parent.updateMeta({
-        songCount: this.items.length,
-        totalLength: songStore.getLength(this.items, true)
-      })
-
-      this.generateSongRows()
+      this.render()
     },
 
     selectedSongs (val) {
@@ -163,6 +153,20 @@ export default {
   },
 
   methods: {
+    render () {
+      if (this.sortable === false) {
+        this.sortKey = ''
+      }
+
+      // Update the song count and duration status on parent.
+      this.$parent.updateMeta({
+        songCount: this.items.length,
+        totalLength: songStore.getLength(this.items, true)
+      })
+
+      this.generateSongRows()
+    },
+
     /**
      * Generate an array of "song row" or "song wrapper" objects. Since song objects themselves are
      * shared by all song lists, we can't use them directly to determine their selection status
@@ -453,6 +457,12 @@ export default {
       }
 
       this.$nextTick(() => this.$refs.contextMenu.open(event.pageY, event.pageX))
+    }
+  },
+
+  mounted () {
+    if (this.items) {
+      this.render()
     }
   },
 
