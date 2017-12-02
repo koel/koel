@@ -1,4 +1,4 @@
-import { each, find, map, difference, union } from 'lodash'
+import { find, map, difference, union } from 'lodash'
 import NProgress from 'nprogress'
 
 import stub from '@/stubs/playlist'
