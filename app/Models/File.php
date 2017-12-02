@@ -180,9 +180,9 @@ class File
         // A "compilation" property can be determined by:
         // - "part_of_a_compilation" tag (used by iTunes), or
         // - "albumartist" (used by non-retarded applications).
-        $props['compilation'] = (bool) (
-            array_get($comments, 'part_of_a_compilation', [false])[0] || $props['albumartist']
-        );
+        // Also, the latter is only valid if the value is NOT the same as "artist".
+        $props['compilation'] = array_get($comments, 'part_of_a_compilation', [false])[0]
+            || ($props['albumartist'] && $props['artist'] !== $props['albumartist']);
 
         return $props;
     }
