@@ -80,9 +80,9 @@ class PlaylistController extends Controller
     /**
      * Get a playlist's all songs.
      *
-     * @param  Request  $request
-     * @param  Playlist $playlist
-
+     * @param Request  $request
+     * @param Playlist $playlist
+     *
      * @return JsonResponse
      */
     public function getSongs(Request $request, Playlist $playlist)
