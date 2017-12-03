@@ -10,10 +10,6 @@
 
 For system requirements, installation/upgrade guides, troubleshooting etc., head over to the [Official Documentation](http://koel.phanan.net/docs).
 
-## Native App
-
-An [electron](http://electron.atom.io/)-based desktop client, in its early days, is also available [here](https://github.com/phanan/koel-app).
-
 ## Backers
 
 Support us with a monthly donation and help us continue our activities. [[Become a backer](https://opencollective.com/koel#backer)]
