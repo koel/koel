@@ -13,7 +13,8 @@
         "aws/aws-sdk-php-laravel": "^3.1",
         "pusher/pusher-php-server": "^2.6",
         "predis/predis": "~1.0",
-        "doctrine/dbal": "^2.5"
+        "doctrine/dbal": "^2.5",
+        "jackiedo/dotenv-editor": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

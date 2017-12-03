@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class GenerateJWTSecret extends Command
 {
@@ -26,19 +27,15 @@ class GenerateJWTSecret extends Command
      *
      * @throws \RuntimeException
      */
-    public function fire()
+    public function handle()
     {
-        $key = Str::random(32);
+        if (config('jwt.secret')) {
+            $this->comment('JWT secret exists -- skipping');
 
-        $path = base_path('.env');
-        $content = file_get_contents($path);
-
-        if (strpos($content, 'JWT_SECRET=') !== false) {
-            file_put_contents($path, str_replace('JWT_SECRET=', "JWT_SECRET=$key", $content));
-        } else {
-            file_put_contents($path, $content.PHP_EOL."JWT_SECRET=$key");
+            return;
         }
 
-        $this->info('JWT secret key generated. Look for `JWT_SECRET` in .env.');
+        $this->info('Generating JWT secret');
+        DotenvEditor::setKey('JWT_SECRET', Str::random(32))->save();
     }
 }

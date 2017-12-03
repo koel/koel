@@ -156,7 +156,7 @@ return [
         App\Providers\DownloadServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\iTunesServiceProvider::class,
-
+        Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
     ],
 
     /*
@@ -203,6 +203,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
 
         'Media' => App\Facades\Media::class,
         'MediaCache' => App\Facades\MediaCache::class,
