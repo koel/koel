@@ -46,9 +46,17 @@ class SyncMedia extends Command
     public function handle()
     {
         if (!Setting::get('media_path')) {
-            $this->error("Media path hasn't been configured. Exiting.");
+            $this->warn("Media path hasn't been configured. Let's set it up.");
+            while (true) {
+                $path = $this->ask('Absolute path to your media directory:');
 
-            return;
+                if (is_dir($path) && is_readable($path)) {
+                    Setting::set('media_path', $path);
+                    break;
+                }
+
+                $this->error('The path does not exist or not readable. Try again.');
+            }
         }
 
         if (!$record = $this->argument('record')) {
