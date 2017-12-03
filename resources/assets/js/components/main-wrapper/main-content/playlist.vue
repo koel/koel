@@ -79,7 +79,6 @@ export default {
       }
 
       if (typeof playlist.populated === 'undefined') {
-        // playlistStore.populateContent(this.playlist)
         await playlistStore.fetchSongs(playlist)
         playlist.populated = true
         this.playlist = playlist
