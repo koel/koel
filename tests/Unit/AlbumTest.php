@@ -18,7 +18,7 @@ class AlbumTest extends TestCase
     /** @test */
     public function exist_album_can_be_retrieved_using_artist_and_name()
     {
-        // Given there's an exist album from an artist
+        // Given there's an existing album from an artist
         /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
         /** @var Album $album */
