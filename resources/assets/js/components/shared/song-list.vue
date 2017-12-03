@@ -75,6 +75,9 @@ export default {
     sortable: {
       type: Boolean,
       default: true
+    },
+    playlist: {
+      type: Object
     }
   },
 
