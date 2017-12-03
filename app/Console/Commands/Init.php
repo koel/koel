@@ -108,7 +108,7 @@ class Init extends Command
             'DB_PORT' => '',
             'DB_DATABASE' => '',
             'DB_USERNAME' => '',
-            'DB_PASSWORD' => ''
+            'DB_PASSWORD' => '',
         ];
 
         $config['DB_CONNECTION'] = $this->choice(
@@ -117,7 +117,7 @@ class Init extends Command
                 'mysql' => 'MySQL/MariaDB',
                 'pqsql' => 'PostgreSQL',
                 'sqlsrv' => 'SQL Server',
-                'sqlite-e2e' => 'SQLite'
+                'sqlite-e2e' => 'SQLite',
             ],
             'mysql'
         );
@@ -153,7 +153,7 @@ class Init extends Command
     private function setUpAdminAccount()
     {
         $this->info("Let's create the admin account.");
-        $name = $this->ask("Your name");
+        $name = $this->ask('Your name');
         $email = $this->ask('Your email address');
         $passwordConfirmed = false;
         while (!$passwordConfirmed) {
@@ -189,6 +189,7 @@ class Init extends Command
 
             if (is_dir($path) && is_readable($path)) {
                 Setting::set('media_path', $path);
+
                 return;
             }
 
