@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |----------------------------------------------------------------------
@@ -22,6 +22,6 @@ return array(
     | path from root folder of project application.
     */
 
-    'backupPath' => base_path('storage/dotenv-editor/backups/')
+    'backupPath' => base_path('storage/dotenv-editor/backups/'),
 
-);
+];
