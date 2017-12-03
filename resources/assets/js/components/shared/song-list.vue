@@ -40,7 +40,7 @@
       :items="filteredItems"
       item-height="35"
       :renderers="renderers"
-      key-field="song"
+      key-field="song.id"
     />
 
     <song-menu ref="contextMenu" :songs="selectedSongs"/>
@@ -49,18 +49,35 @@
 
 <script>
 import isMobile from 'ismobilejs'
-import { each } from 'lodash'
+import { each, orderBy as _orderBy } from 'lodash'
 
-import { filterBy, orderBy, event, pluralize, $ } from '../../utils'
-import { playlistStore, queueStore, songStore, favoriteStore } from '../../stores'
-import { playback } from '../../services'
-import router from '../../router'
+import { filterBy, orderBy, event, pluralize, $ } from '@/utils'
+import { playlistStore, queueStore, songStore, favoriteStore } from '@/stores'
+import { playback } from '@/services'
+import router from '@/router'
 import songItem from './song-item.vue'
 import songMenu from './song-menu.vue'
 
 export default {
   name: 'song-list',
-  props: ['items', 'type', 'playlist', 'sortable'],
+  props: {
+    items: {
+      type: Array,
+      required: true
+    },
+    type: {
+      type: String,
+      default: 'allSongs',
+      validator: value => {
+        return ['allSongs', 'queue', 'playlist', 'favorites', 'artist', 'album'].indexOf(value) !== -1
+      }
+    },
+    sortable: {
+      type: Boolean,
+      default: true
+    }
+  },
+
   components: { songItem, songMenu },
 
   data () {
@@ -83,17 +100,7 @@ export default {
      * Watch the items.
      */
     items () {
-      if (this.sortable === false) {
-        this.sortKey = ''
-      }
-
-      // Update the song count and duration status on parent.
-      this.$parent.updateMeta({
-        songCount: this.items.length,
-        totalLength: songStore.getLength(this.items, true)
-      })
-
-      this.generateSongRows()
+      this.render()
     },
 
     selectedSongs (val) {
@@ -146,6 +153,20 @@ export default {
   },
 
   methods: {
+    render () {
+      if (this.sortable === false) {
+        this.sortKey = ''
+      }
+
+      // Update the song count and duration status on parent.
+      this.$parent.updateMeta({
+        songCount: this.items.length,
+        totalLength: songStore.getLength(this.items, true)
+      })
+
+      this.generateSongRows()
+    },
+
     /**
      * Generate an array of "song row" or "song wrapper" objects. Since song objects themselves are
      * shared by all song lists, we can't use them directly to determine their selection status
@@ -182,9 +203,18 @@ export default {
         this.order *= -1
       }
 
+      if (this.type === 'album') {
+        this.sortKey = this.sortKey ? this.sortKey : ['song.track']
+      }
+
       this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.name'
       this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.artist.name'
+
       this.songRows = orderBy(this.songRows, this.sortKey, this.order)
+
+      if (this.type === 'album') {
+        this.songRows = _orderBy(this.songRows, 'song.disc')
+      }
     },
 
     /**
@@ -365,16 +395,14 @@ export default {
         rowVm.item.selected = true
       }
 
-      this.$nextTick(() => {
-        const songIds = this.selectedSongs.map(song => song.id)
-        event.dataTransfer.setData('application/x-koel.text+plain', songIds)
-        event.dataTransfer.effectAllowed = 'move'
+      const songIds = this.selectedSongs.map(song => song.id)
+      event.dataTransfer.effectAllowed = 'move'
+      event.dataTransfer.setData('application/x-koel.text+plain', songIds)
 
-        // Set a fancy drop image using our ghost element.
-        const ghost = document.getElementById('dragGhost')
-        ghost.innerText = `${pluralize(songIds.length, 'song')}`
-        event.dataTransfer.setDragImage(ghost, 0, 0)
-      })
+      // Set a fancy drop image using our ghost element.
+      const ghost = document.getElementById('dragGhost')
+      ghost.innerText = `${pluralize(songIds.length, 'song')}`
+      event.dataTransfer.setDragImage(ghost, 0, 0)
     },
 
     /**
@@ -438,6 +466,12 @@ export default {
       }
 
       this.$nextTick(() => this.$refs.contextMenu.open(event.pageY, event.pageX))
+    }
+  },
+
+  mounted () {
+    if (this.items) {
+      this.render()
     }
   },
 

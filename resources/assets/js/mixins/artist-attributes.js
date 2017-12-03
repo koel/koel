@@ -1,5 +1,5 @@
-import { secondsToHis } from '../utils'
-import config from '../config'
+import { secondsToHis } from '@/utils'
+import config from '@/config'
 
 export default {
   computed: {

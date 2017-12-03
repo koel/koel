@@ -1,9 +1,9 @@
-import { each, find, map, difference, union } from 'lodash'
+import { find, map, difference, union } from 'lodash'
 import NProgress from 'nprogress'
 
-import stub from '../stubs/playlist'
-import { http } from '../services'
-import { alerts, pluralize } from '../utils'
+import stub from '@/stubs/playlist'
+import { http } from '@/services'
+import { alerts, pluralize } from '@/utils'
 import { songStore } from '.'
 
 export const playlistStore = {
@@ -15,7 +15,6 @@ export const playlistStore = {
 
   init (playlists) {
     this.all = playlists
-    each(this.all, this.objectifySongs)
   },
 
   /**
@@ -37,6 +36,22 @@ export const playlistStore = {
   },
 
   /**
+   * Fetch the songs for a playlist.
+   *
+   * @param  {Object} playlist
+   */
+  fetchSongs (playlist) {
+    NProgress.start()
+
+    return new Promise((resolve, reject) => {
+      http.get(`playlist/${playlist.id}/songs`, ({ data }) => {
+        playlist.songs = songStore.byIds(data)
+        resolve(playlist)
+      }, error => reject(error))
+    })
+  },
+
+  /**
    * Find a playlist by its ID
    *
    * @param  {Number} id
@@ -48,12 +63,12 @@ export const playlistStore = {
   },
 
   /**
-   * Objectify all songs in the playlist.
+   * Populate the playlist content by "objectifying" all songs in the playlist.
    * (Initially, a playlist only contain the song IDs).
    *
    * @param  {Object} playlist
    */
-  objectifySongs (playlist) {
+  populateContent (playlist) {
     playlist.songs = songStore.byIds(playlist.songs)
   },
 
@@ -103,7 +118,7 @@ export const playlistStore = {
     return new Promise((resolve, reject) => {
       http.post('playlist', { name, songs }, ({ data: playlist }) => {
         playlist.songs = songs
-        this.objectifySongs(playlist)
+        this.populateContent(playlist)
         this.add(playlist)
         alerts.success(`Created playlist &quot;${playlist.name}&quot;.`)
         resolve(playlist)

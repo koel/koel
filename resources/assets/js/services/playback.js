@@ -3,11 +3,11 @@ import plyr from 'plyr'
 import Vue from 'vue'
 import isMobile from 'ismobilejs'
 
-import { event, isMediaSessionSupported } from '../utils'
-import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '../stores'
-import { socket } from '../services'
-import config from '../config'
-import router from '../router'
+import { event, isMediaSessionSupported } from '@/utils'
+import { queueStore, sharedStore, userStore, songStore, preferenceStore as preferences } from '@/stores'
+import { socket } from '@/services'
+import config from '@/config'
+import router from '@/router'
 
 export const playback = {
   player: null,
@@ -418,7 +418,7 @@ export const playback = {
   playAllByArtist ({ songs }, shuffled = true) {
     shuffled
       ? this.queueAndPlay(songs, true)
-      : this.queueAndPlay(orderBy(songs, 'album_id', 'track'))
+      : this.queueAndPlay(orderBy(songs, ['album_id', 'disc', 'track']))
   },
 
   /**
@@ -430,6 +430,6 @@ export const playback = {
   playAllInAlbum ({ songs }, shuffled = true) {
     shuffled
       ? this.queueAndPlay(songs, true)
-      : this.queueAndPlay(orderBy(songs, 'track'))
+      : this.queueAndPlay(orderBy(songs, ['disc', 'track']))
   }
 }

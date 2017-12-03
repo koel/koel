@@ -1,0 +1,6 @@
+{
+  "ignore": [
+    "tests/*",
+    "database/migrations/*"
+  ]
+}

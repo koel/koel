@@ -21,11 +21,21 @@
 </template>
 
 <script>
-import { event, $ } from '../../../utils'
-import { songStore, playlistStore, favoriteStore } from '../../../stores'
+import { event, $ } from '@/utils'
+import { songStore, playlistStore, favoriteStore } from '@/stores'
 
 export default {
-  props: ['playlist', 'type'],
+  props: {
+    playlist: {
+      type: Object,
+      required: true
+    },
+    type: {
+      type: String,
+      default: 'playlist',
+      validator: value => ['playlist', 'favorites'].indexOf(value) !== -1
+    }
+  },
 
   data () {
     return {
@@ -45,7 +55,7 @@ export default {
     },
 
     playlistUrl () {
-      return this.isFavorites ? '/#!/favorites' : `/#!/playlist/${this.playlist.id}`
+      return this.isFavorites ? '#!/favorites' : `#!/playlist/${this.playlist.id}`
     }
   },
 

@@ -121,4 +121,20 @@ class PlaylistTest extends TestCase
         $this->deleteAsUser("api/playlist/{$playlist->id}", [], $user)
             ->notSeeInDatabase('playlists', ['id' => $playlist->id]);
     }
+
+    /** @test */
+    public function playlist_content_can_be_retrieved()
+    {
+        $user = factory(User::class)->create();
+
+        $playlist = factory(Playlist::class)->create([
+            'user_id' => $user->id,
+        ]);
+
+        $songs = factory(Song::class, 2)->create();
+        $playlist->songs()->saveMany($songs);
+
+        $this->getAsUser("api/playlist/{$playlist->id}/songs", $user)
+            ->seeJson($songs->pluck('id')->all());
+    }
 }

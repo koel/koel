@@ -1,6 +1,8 @@
 const mix = require('laravel-mix')
 const fs = require('fs')
 
+mix.setResourceRoot('./public/')
+
 mix.config.detectHotReloading()
 if (mix.config.hmr) {
   // There's a bug with Mix/copy plugin which prevents HMR from working:

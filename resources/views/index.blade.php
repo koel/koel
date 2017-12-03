@@ -11,6 +11,7 @@
     <meta name="theme-color" content="#282828">
     <meta name="msapplication-navbutton-color" content="#282828">
 
+    <base href="{{ asset('') }}">
     <link rel="manifest" href="{{ App::staticUrl('public/manifest.json') }}" />
     <meta name="msapplication-config" content="{{ App::staticUrl('public/browserconfig.xml') }}" />
     <link rel="icon" type="image/x-icon" href="{{ App::staticUrl('public/img/favicon.ico') }}" />
@@ -23,6 +24,7 @@
     <div id="app"></div>
 
     <noscript>It may sound funny, but Koel requires JavaScript to sing. Please enable it.</noscript>
+    @include('client-js-vars')
     <script src="{{ App::rev('/js/app.js') }}"></script>
 </body>
 </html>

@@ -32,15 +32,20 @@
 <script>
 import { each } from 'lodash'
 
-import songMenuMethods from '../../mixins/song-menu-methods'
-import { event, isClipboardSupported, copyText } from '../../utils'
-import { sharedStore, songStore, queueStore, userStore, playlistStore } from '../../stores'
-import { playback, download } from '../../services'
-import router from '../../router'
+import songMenuMethods from '@/mixins/song-menu-methods'
+import { event, isClipboardSupported, copyText } from '@/utils'
+import { sharedStore, songStore, queueStore, userStore, playlistStore } from '@/stores'
+import { playback, download } from '@/services'
+import router from '@/router'
 
 export default {
   name: 'song-menu',
-  props: ['songs'],
+  props: {
+    songs: {
+      type: Array,
+      required: true
+    }
+  },
   mixins: [songMenuMethods],
 
   data () {

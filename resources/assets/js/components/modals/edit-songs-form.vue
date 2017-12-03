@@ -76,10 +76,10 @@
 <script>
 import { every, filter, union } from 'lodash'
 
-import { br2nl } from '../../utils'
-import { songInfo } from '../../services/info'
-import { artistStore, albumStore, songStore } from '../../stores'
-import config from '../../config'
+import { br2nl } from '@/utils'
+import { songInfo } from '@/services/info'
+import { artistStore, albumStore, songStore } from '@/stores'
+import config from '@/config'
 
 import soundBar from '../shared/sound-bar.vue'
 import typeahead from '../shared/typeahead.vue'
@@ -98,7 +98,7 @@ export default {
       shown: false,
       songs: [],
       currentView: '',
-      loading: false,
+      loading: true,
 
       artistState: artistStore.state,
       artistTypeaheadOptions: {
@@ -247,6 +247,7 @@ export default {
           this.formData.track = this.songs[0].track || ''
           this.initCompilationStateCheckbox()
         } else {
+          this.loading = false
           this.formData.lyrics = br2nl(this.songs[0].lyrics)
           this.formData.track = this.songs[0].track || ''
           this.initCompilationStateCheckbox()

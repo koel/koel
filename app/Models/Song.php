@@ -24,6 +24,7 @@ use YouTube;
  * @property float  length
  * @property string lyrics
  * @property int    track
+ * @property int    disc
  * @property int    album_id
  * @property int    id
  * @property int    artist_id
@@ -50,6 +51,7 @@ class Song extends Model
         'length' => 'float',
         'mtime' => 'int',
         'track' => 'int',
+        'disc' => 'int',
     ];
 
     /**

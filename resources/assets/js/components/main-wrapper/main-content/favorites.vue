@@ -37,10 +37,10 @@
 </template>
 
 <script>
-import { pluralize } from '../../../utils'
-import { favoriteStore, sharedStore } from '../../../stores'
-import { download } from '../../../services'
-import hasSongList from '../../../mixins/has-song-list'
+import { pluralize } from '@/utils'
+import { favoriteStore, sharedStore } from '@/stores'
+import { download } from '@/services'
+import hasSongList from '@/mixins/has-song-list'
 
 export default {
   name: 'main-wrapper--main-content--favorites',

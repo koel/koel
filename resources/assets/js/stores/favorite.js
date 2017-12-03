@@ -1,8 +1,8 @@
 import { each, map, difference, union } from 'lodash'
 import NProgress from 'nprogress'
 
-import { http } from '../services'
-import { alerts, pluralize } from '../utils'
+import { http } from '@/services'
+import { alerts, pluralize } from '@/utils'
 
 export const favoriteStore = {
   state: {

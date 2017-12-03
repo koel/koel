@@ -7,9 +7,9 @@
     </span>
     <footer>
       <div class="info">
-        <a class="name" :href="`/#!/album/${album.id}`">{{ album.name }}</a>
+        <a class="name" :href="`#!/album/${album.id}`">{{ album.name }}</a>
         <span class="sep">by</span>
-        <a class="artist" v-if="isNormalArtist" :href="`/#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
+        <a class="artist" v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
         <span class="artist nope" v-else>{{ album.artist.name }}</span>
       </div>
       <p class="meta">
@@ -36,14 +36,20 @@
 </template>
 
 <script>
-import { pluralize } from '../../utils'
-import { queueStore, artistStore, sharedStore } from '../../stores'
-import { playback, download } from '../../services'
-import albumAttributes from '../../mixins/album-attributes'
+import { orderBy } from 'lodash'
+import { pluralize } from '@/utils'
+import { queueStore, artistStore, sharedStore } from '@/stores'
+import { playback, download } from '@/services'
+import albumAttributes from '@/mixins/album-attributes'
 
 export default {
   name: 'shared--album-item',
-  props: ['album'],
+  props: {
+    album: {
+      type: Object,
+      required: true
+    }
+  },
   filters: { pluralize },
   mixins: [albumAttributes],
 
@@ -67,7 +73,7 @@ export default {
      */
     play (e) {
       if (e.metaKey || e.ctrlKey) {
-        queueStore.queue(this.album.songs)
+        queueStore.queue(orderBy(this.album.songs, ['disc', 'track']))
       } else {
         playback.playAllInAlbum(this.album, false)
       }

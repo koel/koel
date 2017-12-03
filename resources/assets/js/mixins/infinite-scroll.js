@@ -1,4 +1,4 @@
-import toTopButton from '../components/shared/to-top-button.vue'
+import toTopButton from '@/components/shared/to-top-button.vue'
 
 /**
  * Add a "infinite scroll" functionality to any component using this mixin.

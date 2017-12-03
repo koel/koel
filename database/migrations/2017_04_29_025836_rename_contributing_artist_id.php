@@ -13,7 +13,9 @@ class RenameContributingArtistId extends Migration
     public function up()
     {
         Schema::table('songs', function ($table) {
+            $table->dropForeign(['contributing_artist_id']);
             $table->renameColumn('contributing_artist_id', 'artist_id');
+            $table->foreign('artist_id')->references('id')->on('artists')->onDelete('cascade');
         });
     }
 
@@ -25,7 +27,9 @@ class RenameContributingArtistId extends Migration
     public function down()
     {
         Schema::table('songs', function ($table) {
+            $table->dropForeign(['contributing_artist_id']);
             $table->renameColumn('artist_id', 'contributing_artist_id');
+            $table->foreign('artist_id')->references('id')->on('artists')->onDelete('cascade');
         });
     }
 }

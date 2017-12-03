@@ -16,12 +16,25 @@
 </template>
 
 <script>
-import { songStore, queueStore, sharedStore } from '../../stores'
-import { ls, playback } from '../../services'
+import { songStore, queueStore, sharedStore } from '@/stores'
+import { ls, playback } from '@/services'
 
 export default {
   name: 'shared--track-list-item',
-  props: ['album', 'track', 'index'],
+  props: {
+    album: {
+      type: Object,
+      required: true
+    },
+    track: {
+      type: Object,
+      required: true
+    },
+    index: {
+      type: Number,
+      required: true
+    }
+  },
 
   data () {
     return {
@@ -39,7 +52,7 @@ export default {
     },
 
     iTunesUrl () {
-      return `/api/itunes/song/${this.album.id}?q=${encodeURIComponent(this.track.title)}&jwt-token=${ls.get('jwt-token')}`
+      return `${window.BASE_URL}api/itunes/song/${this.album.id}?q=${encodeURIComponent(this.track.title)}&jwt-token=${ls.get('jwt-token')}`
     }
   },
 

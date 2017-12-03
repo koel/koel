@@ -125,7 +125,7 @@ class File
             'comments.track_number',
         ];
 
-        for ($i = 0; $i < count($trackIndices) && $track === 0; ++$i) {
+        for ($i = 0; $i < count($trackIndices) && $track === 0; $i++) {
             $track = array_get($info, $trackIndices[$i], [0])[0];
         }
 
@@ -133,9 +133,10 @@ class File
             'artist' => '',
             'album' => '',
             'compilation' => false,
-            'title' => '',
+            'title' => basename($this->path, '.'.pathinfo($this->path, PATHINFO_EXTENSION)), // default to be file name
             'length' => $info['playtime_seconds'],
             'track' => (int) $track,
+            'disc' => (int) array_get($info, 'comments.part_of_a_set.0', 1),
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
             'path' => $this->path,
@@ -163,12 +164,15 @@ class File
             $title = array_get($comments, 'title', [''])[0];
         }
 
-        if (!$lyrics = array_get($info, 'tags.id3v2.unsynchronised_lyric', [null])[0]) {
-            $lyrics = array_get($comments, 'unsynchronised_lyric', [''])[0];
+        // yes, this tag name is mispelled…
+        if (!$lyrics = array_get($info, 'tags.id3v2.unsychronised_lyric', [null])[0]) {
+            $lyrics = array_get($comments, 'unsychronised_lyric', [''])[0];
         }
 
         // Fixes #323, where tag names can be htmlentities()'ed
-        $props['title'] = html_entity_decode(trim($title));
+        if ($title) {
+            $props['title'] = html_entity_decode(trim($title));
+        }
         $props['album'] = html_entity_decode(trim($album));
         $props['artist'] = html_entity_decode(trim($artist));
         $props['albumartist'] = html_entity_decode(trim($albumArtist));
@@ -177,9 +181,9 @@ class File
         // A "compilation" property can be determined by:
         // - "part_of_a_compilation" tag (used by iTunes), or
         // - "albumartist" (used by non-retarded applications).
-        $props['compilation'] = (bool) (
-            array_get($comments, 'part_of_a_compilation', [false])[0] || $props['albumartist']
-        );
+        // Also, the latter is only valid if the value is NOT the same as "artist".
+        $props['compilation'] = array_get($comments, 'part_of_a_compilation', [false])[0]
+            || ($props['albumartist'] && $props['artist'] !== $props['albumartist']);
 
         return $props;
     }

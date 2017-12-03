@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import { event } from '../../../utils'
-import { albumStore, sharedStore } from '../../../stores'
+import { event } from '@/utils'
+import { albumStore, sharedStore } from '@/stores'
 
 import albums from './albums.vue'
 import album from './album.vue'

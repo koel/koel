@@ -31,8 +31,8 @@
 import { map, cloneDeep, each } from 'lodash'
 import nouislider from 'nouislider'
 
-import { isAudioContextSupported, event, $ } from '../../utils'
-import { equalizerStore, preferenceStore as preferences } from '../../stores'
+import { isAudioContextSupported, event, $ } from '@/utils'
+import { equalizerStore, preferenceStore as preferences } from '@/stores'
 
 export default {
   data () {

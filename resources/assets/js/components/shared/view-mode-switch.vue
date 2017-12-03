@@ -12,11 +12,22 @@
 <script>
 import isMobile from 'ismobilejs'
 
-import { event } from '../../utils'
-import { preferenceStore as preferences } from '../../stores'
+import { event } from '@/utils'
+import { preferenceStore as preferences } from '@/stores'
 
 export default {
-  props: ['mode', 'for'],
+  props: {
+    mode: {
+      type: String,
+      default: 'thumbnails',
+      validator: value => ['thumbnails', 'list'].indexOf(value) !== -1
+    },
+    for: {
+      type: String,
+      required: true,
+      validator: value => ['albums', 'artists'].indexOf(value) !== -1
+    }
+  },
 
   data () {
     return {

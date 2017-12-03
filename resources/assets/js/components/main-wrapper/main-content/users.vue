@@ -15,7 +15,7 @@
 
     <div class="main-scroll-wrap">
       <div class="users">
-        <user-item v-for="user in state.users" :user="user" @editUser="editUser"/>
+        <user-item v-for="user in state.users" :user="user" @editUser="editUser" :key="user.id"/>
         <article class="user-item" v-for="n in 6"/>
       </div>
     </div>
@@ -28,10 +28,10 @@
 <script>
 import isMobile from 'ismobilejs'
 
-import { userStore } from '../../../stores'
-import userItem from '../../shared/user-item.vue'
-import editUserForm from '../../modals/edit-user-form.vue'
-import addUserForm from '../../modals/add-user-form.vue'
+import { userStore } from '@/stores'
+import userItem from '@/components/shared/user-item.vue'
+import editUserForm from '@/components/modals/edit-user-form.vue'
+import addUserForm from '@/components/modals/add-user-form.vue'
 
 export default {
   components: { userItem, editUserForm, addUserForm },

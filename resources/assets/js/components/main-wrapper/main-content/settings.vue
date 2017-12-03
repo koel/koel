@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import { settingStore, sharedStore } from '../../../stores'
-import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay, alerts } from '../../../utils'
-import router from '../../../router'
+import { settingStore, sharedStore } from '@/stores'
+import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay, alerts } from '@/utils'
+import router from '@/router'
 
 export default {
   data () {

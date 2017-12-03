@@ -16,7 +16,11 @@
 
     <ul class="menu">
       <playlist-item type="favorites" :playlist="{ name: 'Favorites', songs: favoriteState.songs }"/>
-      <playlist-item v-for="playlist in playlistState.playlists" type="playlist" :playlist="playlist"/>
+      <playlist-item 
+        v-for="playlist in playlistState.playlists" 
+        type="playlist" 
+        :playlist="playlist"
+        :key="playlist.id"/>
     </ul>
   </section>
 </template>
@@ -29,7 +33,6 @@ import playlistItem from './playlist-item.vue'
 
 export default {
   name: 'sidebar--playlists',
-  props: ['currentView'],
   components: { playlistItem },
 
   data () {

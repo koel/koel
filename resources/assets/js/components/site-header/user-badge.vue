@@ -1,6 +1,6 @@
 <template>
   <span class="profile" id="userBadge">
-    <a class="view-profile control" href="/#!/profile">
+    <a class="view-profile control" href="#!/profile">
       <img class="avatar" :src="state.current.avatar" alt="Avatar"/>
       <span class="name">{{ state.current.name }}</span>
     </a>
@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import { userStore } from '../../stores'
-import { event } from '../../utils'
+import { userStore } from '@/stores'
+import { event } from '@/utils'
 
 export default {
   name: 'site-header--user-badge',

@@ -13,7 +13,7 @@
       <span v-if="showPlayCount" :style="{ width: song.playCount*100/topPlayCount+'%' }" class="play-count"/>
       {{ song.title }}
       <span class="by">
-        <a :href="`/#!/artist/${song.artist.id}`">{{ song.artist.name }}</a>
+        <a :href="`#!/artist/${song.artist.id}`">{{ song.artist.name }}</a>
         <template v-if="showPlayCount">- {{ song.playCount | pluralize('play') }}</template>
       </span>
     </span>
@@ -21,13 +21,22 @@
 </template>
 
 <script>
-import { pluralize } from '../../utils'
-import { queueStore } from '../../stores'
-import { playback } from '../../services'
+import { pluralize } from '@/utils'
+import { queueStore } from '@/stores'
+import { playback } from '@/services'
 
 export default {
   name: 'shared--home-song-item',
-  props: ['song', 'topPlayCount'],
+  props: {
+    song: {
+      type: Object,
+      required: true
+    },
+    topPlayCount: {
+      type: Number,
+      default: 1
+    }
+  },
   filters: { pluralize },
 
   computed: {

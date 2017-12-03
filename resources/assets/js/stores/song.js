@@ -3,10 +3,10 @@ import slugify from 'slugify'
 import { assign, without, map, take, remove, orderBy, each, unionBy, compact } from 'lodash'
 import isMobile from 'ismobilejs'
 
-import { secondsToHis, alerts, pluralize } from '../utils'
-import { http, ls } from '../services'
+import { secondsToHis, alerts, pluralize } from '@/utils'
+import { http, ls } from '@/services'
 import { sharedStore, favoriteStore, albumStore, artistStore, preferenceStore } from '.'
-import stub from '../stubs/song'
+import stub from '@/stubs/song'
 
 export const songStore = {
   stub,
@@ -283,7 +283,7 @@ export const songStore = {
    * @return {string}
    */
   getShareableUrl (song) {
-    return `${window.location.origin}/#!/song/${song.id}`
+    return `${window.BASE_URL}#!/song/${song.id}`
   },
 
   /**

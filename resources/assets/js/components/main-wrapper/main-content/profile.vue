@@ -111,9 +111,9 @@
 
 <script>
 import { each } from 'lodash'
-import { userStore, preferenceStore, sharedStore } from '../../../stores'
-import { forceReloadWindow, $ } from '../../../utils'
-import { http, ls } from '../../../services'
+import { userStore, preferenceStore, sharedStore } from '@/stores'
+import { forceReloadWindow, $ } from '@/utils'
+import { http, ls } from '@/services'
 
 export default {
   data () {
@@ -162,7 +162,7 @@ export default {
      */
     connectToLastfm () {
       window.open(
-        `/api/lastfm/connect?jwt-token=${ls.get('jwt-token')}`,
+        `${window.BASE_URL}api/lastfm/connect?jwt-token=${ls.get('jwt-token')}`,
         '_blank',
         'toolbar=no,titlebar=no,location=no,width=1024,height=640'
       )
