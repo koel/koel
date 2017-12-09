@@ -1,30 +1,31 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Integration\Models;
 
 use App\Models\Artist;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Lastfm;
 use org\bovigo\vfs\vfsStream;
 use Tests\TestCase;
 
 class ArtistTest extends TestCase
 {
-    use DatabaseTransactions;
-
     /** @test */
-    public function it_can_be_instantiated()
+    public function extra_info_can_be_retrieved_for_an_artist()
     {
-        $this->assertInstanceOf(Artist::class, new Artist());
-    }
+        // Given there's an artist
+        /** @var Artist $artist */
+        $artist = factory(Artist::class)->create();
 
-    /** @test */
-    public function various_artist_can_be_retrieved()
-    {
-        // When I retrieve the Various Artist
-        $artist = Artist::getVariousArtist();
+        // When I get the extra info
+        Lastfm::shouldReceive('getArtistInfo')
+            ->once()
+            ->with($artist->name)
+            ->andReturn(['foo' => 'bar']);
 
-        // Then I received the Various Artist
-        $this->assertTrue($artist->is_various);
+        $info = $artist->getInfo();
+
+        // Then I receive the extra info
+        $this->assertEquals(['foo' => 'bar'], $info);
     }
 
     /** @test */
@@ -94,7 +95,7 @@ class ArtistTest extends TestCase
     public function artists_with_name_in_utf16_encoding_are_retrieved_correctly()
     {
         // Given there's an artist with name in UTF-16 encoding
-        $name = file_get_contents(__DIR__.'../../blobs/utf16');
+        $name = file_get_contents(__DIR__.'../../../blobs/utf16');
         $artist = Artist::get($name);
 
         // When I get the artist using the name

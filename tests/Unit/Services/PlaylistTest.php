@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Services;
 
 use App\Models\Playlist;
 use Tests\TestCase;
