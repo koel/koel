@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\API\Interaction;
+
+use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * @property array songs
+ * @property string song
  */
-class PlaylistStoreRequest extends Request
+class StorePlayCountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +27,7 @@ class PlaylistStoreRequest extends Request
     public function rules()
     {
         return [
-            'name' => 'required',
-            'songs' => 'array',
+            'song' => 'required',
         ];
     }
 }

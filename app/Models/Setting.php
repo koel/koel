@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $key
+ * @property mixed $value
+ */
 class Setting extends Model
 {
     protected $primaryKey = 'key';

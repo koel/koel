@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\SongPlayRequest;
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Models\Song;
 use App\Services\Streamers\PHPStreamer;
@@ -11,7 +12,6 @@ use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 
 class SongController extends Controller
@@ -21,16 +21,16 @@ class SongController extends Controller
      *
      * @link https://github.com/phanan/koel/wiki#streaming-music
      *
-     * @param Request   $request
-     * @param Song      $song      The song to stream.
-     * @param null|bool $transcode Whether to force transcoding the song.
-     *                             If this is omitted, by default Koel will transcode FLAC.
-     * @param null|int  $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
-     *                             Only taken into account if $transcode is truthy.
+     * @param SongPlayRequest $request
+     * @param Song            $song      The song to stream.
+     * @param null|bool       $transcode Whether to force transcoding the song.
+     *                                   If this is omitted, by default Koel will transcode FLAC.
+     * @param null|int        $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
+     *                                   Only taken into account if $transcode is truthy.
      *
      * @return RedirectResponse|Redirector
      */
-    public function play(Request $request, Song $song, $transcode = null, $bitRate = null)
+    public function play(SongPlayRequest $request, Song $song, $transcode = null, $bitRate = null)
     {
         if ($song->s3_params) {
             return (new S3Streamer($song))->stream();

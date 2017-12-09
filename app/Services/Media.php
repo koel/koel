@@ -10,6 +10,7 @@ use App\Models\Artist;
 use App\Models\File;
 use App\Models\Setting;
 use App\Models\Song;
+use Exception;
 use getID3;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Finder\Finder;
@@ -51,6 +52,8 @@ class Media
      *                                 New records will have all tags synced in regardless.
      * @param bool        $force       Whether to force syncing even unchanged files
      * @param SyncMedia   $syncCommand The SyncMedia command object, to log to console if executed by artisan.
+     *
+     * @throws Exception
      */
     public function sync($mediaPath = null, $tags = [], $force = false, SyncMedia $syncCommand = null)
     {
@@ -131,6 +134,8 @@ class Media
      * Sync media using a watch record.
      *
      * @param WatchRecordInterface $record The watch record.
+     *
+     * @throws Exception
      */
     public function syncByWatchRecord(WatchRecordInterface $record)
     {
@@ -142,6 +147,8 @@ class Media
      * Sync a file's watch record.
      *
      * @param WatchRecordInterface $record
+     *
+     * @throws Exception
      */
     private function syncFileRecord(WatchRecordInterface $record)
     {
@@ -230,6 +237,7 @@ class Media
 
     /**
      * Tidy up the library by deleting empty albums and artists.
+     * @throws Exception
      */
     public function tidy()
     {

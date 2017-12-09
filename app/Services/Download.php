@@ -34,7 +34,7 @@ class Download
         } elseif ($mixed instanceof Playlist) {
             return $this->fromPlaylist($mixed);
         } else {
-            throw new Exception('Unsupport download type.');
+            throw new Exception('Unsupported download type.');
         }
     }
 
@@ -71,7 +71,9 @@ class Download
 
         // For those with high-byte characters in names, we copy it into a safe name
         // as a workaround.
-        $newPath = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.utf8_decode(basename($song->path));
+        $newPath = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
+            .DIRECTORY_SEPARATOR
+            .utf8_decode(basename($song->path));
 
         if ($s3Params) {
             // If the file is downloaded from S3, we rename it directly.
@@ -106,16 +108,34 @@ class Download
             ->getPath();
     }
 
+    /**
+     * @param Playlist $playlist
+     *
+     * @return string
+     * @throws Exception
+     */
     protected function fromPlaylist(Playlist $playlist)
     {
         return $this->fromMultipleSongs($playlist->songs);
     }
 
+    /**
+     * @param Album $album
+     *
+     * @return string
+     * @throws Exception
+     */
     protected function fromAlbum(Album $album)
     {
         return $this->fromMultipleSongs($album->songs);
     }
 
+    /**
+     * @param Artist $artist
+     *
+     * @return string
+     * @throws Exception
+     */
     protected function fromArtist(Artist $artist)
     {
         return $this->fromMultipleSongs($artist->songs);

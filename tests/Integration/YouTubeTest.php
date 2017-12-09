@@ -16,7 +16,10 @@ class YouTubeTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function videos_can_be_searched_from_youtube()
     {
         $this->withoutEvents();

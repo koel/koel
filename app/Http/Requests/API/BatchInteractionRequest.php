@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests\API;
 
+/**
+ * @property array songs
+ */
 class BatchInteractionRequest extends Request
 {
     /**

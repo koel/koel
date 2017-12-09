@@ -68,12 +68,8 @@ class iTunes
                     }
 
                     $trackUrl = $response->results[0]->trackViewUrl;
-
-                    if (parse_url($trackUrl, PHP_URL_QUERY)) {
-                        $trackUrl .= '&at='.config('koel.itunes.affiliate_id');
-                    } else {
-                        $trackUrl .= '?at='.config('koel.itunes.affiliate_id');
-                    }
+                    $connector = parse_url($trackUrl, PHP_URL_QUERY) ? '&' : '?';
+                    $trackUrl .= "{$connector}at=".config('koel.itunes.affiliate_id');
 
                     return $trackUrl;
                 }

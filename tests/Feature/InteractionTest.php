@@ -42,7 +42,10 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function user_can_like_and_unlike_a_song()
     {
         $this->expectsEvents(SongLikeToggled::class);
@@ -68,7 +71,10 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function user_can_like_and_unlike_songs_in_batch()
     {
         $this->expectsEvents(SongLikeToggled::class);

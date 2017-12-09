@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Foundation\Http\FormRequest;
+
 /**
- * @property array songs
+ * @property string token
  */
-class PlaylistStoreRequest extends Request
+class LastfmCallbackRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +27,7 @@ class PlaylistStoreRequest extends Request
     public function rules()
     {
         return [
-            'name' => 'required',
-            'songs' => 'array',
+            'token' => 'required',
         ];
     }
 }

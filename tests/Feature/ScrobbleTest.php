@@ -18,7 +18,7 @@ class ScrobbleTest extends TestCase
     }
 
     /** @test */
-    public function a_song_can_be_scrobbed_via_lastfm()
+    public function a_song_can_be_scrobbled_via_lastfm()
     {
         $this->withoutEvents();
         $this->createSampleMediaSet();

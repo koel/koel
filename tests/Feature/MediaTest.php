@@ -9,6 +9,7 @@ use App\Models\Artist;
 use App\Models\File;
 use App\Models\Song;
 use App\Services\Media;
+use getID3;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
 
@@ -22,7 +23,10 @@ class MediaTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function songs_can_be_synced()
     {
         $this->expectsEvents(LibraryChanged::class);
@@ -85,7 +89,10 @@ class MediaTest extends TestCase
         $this->assertEquals($currentCover, Album::find($album->id)->cover);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function songs_can_be_force_synced()
     {
         $this->expectsEvents(LibraryChanged::class);
@@ -120,7 +127,10 @@ class MediaTest extends TestCase
         $this->assertEquals($originalLyrics, $song->lyrics);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function songs_can_be_synced_with_selectively_tags()
     {
         $this->expectsEvents(LibraryChanged::class);
@@ -146,7 +156,10 @@ class MediaTest extends TestCase
         $this->assertEquals('Booom Wroooom', $song->lyrics);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function all_tags_are_catered_for_if_syncing_new_file()
     {
         // First we sync the test directory to get the data
@@ -168,7 +181,10 @@ class MediaTest extends TestCase
         $this->assertEquals($song, $addedSong);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function added_song_is_synced_when_watching()
     {
         $this->expectsEvents(LibraryChanged::class);
@@ -180,7 +196,10 @@ class MediaTest extends TestCase
         $this->seeInDatabase('songs', ['path' => $path]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function deleted_song_is_synced_when_watching()
     {
         $this->expectsEvents(LibraryChanged::class);
@@ -193,7 +212,10 @@ class MediaTest extends TestCase
         $this->notSeeInDatabase('songs', ['id' => $song->id]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function deleted_directory_is_synced_when_watching()
     {
         $this->expectsEvents(LibraryChanged::class);
@@ -232,7 +254,10 @@ class MediaTest extends TestCase
         $this->assertEquals('水谷広実', $info['title']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws \Exception
+     */
     public function hidden_files_can_optionally_be_ignored_when_syncing()
     {
         config(['koel.ignore_dot_files' => false]);

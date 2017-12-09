@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Events\SongLikeToggled;
 use App\Events\SongStartedPlaying;
 use App\Http\Controllers\API\LastfmController;
+use App\Http\Requests\API\LastfmCallbackRequest;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Interaction;
@@ -15,7 +16,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Mockery as m;
 use Tymon\JWTAuth\JWTAuth;
@@ -53,9 +53,11 @@ class LastfmTest extends TestCase
     /** @test */
     public function user_can_connect_to_lastfm()
     {
+        /** @var Redirector|m\MockInterface $redirector */
         $redirector = m::mock(Redirector::class);
         $redirector->shouldReceive('to')->once();
 
+        /** @var Guard|m\MockInterface $guard */
         $guard = m::mock(Guard::class, ['user' => factory(User::class)->create()]);
         $auth = m::mock(JWTAuth::class, [
             'parseToken' => '',
@@ -68,11 +70,14 @@ class LastfmTest extends TestCase
     /** @test */
     public function lastfm_session_key_can_be_retrieved_and_stored()
     {
-        $request = m::mock(Request::class);
+        /** @var LastfmCallbackRequest|m\MockInterface $request */
+        $request = m::mock(LastfmCallbackRequest::class);
         $request->token = 'foo';
+        /** @var Lastfm|m\MockInterface $lastfm */
         $lastfm = m::mock(Lastfm::class, ['getSessionKey' => 'bar']);
 
         $user = factory(User::class)->create();
+        /** @var Guard|m\MockInterface $guard */
         $guard = m::mock(Guard::class, ['user' => $user]);
 
         (new LastfmController($guard))->callback($request, $lastfm);
@@ -102,6 +107,7 @@ class LastfmTest extends TestCase
             'song_id' => Song::first()->id,
         ]);
 
+        /** @var Lastfm|m\MockInterface $lastfm */
         $lastfm = m::mock(Lastfm::class, ['enabled' => true]);
         $lastfm->shouldReceive('toggleLoveTrack')
             ->with($interaction->song->title, $interaction->song->album->artist->name, 'bar', false);
@@ -118,6 +124,7 @@ class LastfmTest extends TestCase
         $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
         $song = Song::first();
 
+        /** @var Lastfm|m\MockInterface $lastfm */
         $lastfm = m::mock(Lastfm::class, ['enabled' => true]);
         $lastfm->shouldReceive('updateNowPlaying')
             ->with($song->album->artist->name, $song->title, $song->album->name, $song->length, 'bar');

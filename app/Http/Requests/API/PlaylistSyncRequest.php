@@ -5,9 +5,9 @@ namespace App\Http\Requests\API;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * @property string q
+ * @property string songs
  */
-class ViewSongRequest extends FormRequest
+class PlaylistSyncRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class ViewSongRequest extends FormRequest
     public function rules()
     {
         return [
-            'q' => 'required',
+            'songs' => 'required',
         ];
     }
 }

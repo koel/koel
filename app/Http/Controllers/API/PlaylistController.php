@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\PlaylistStoreRequest;
+use App\Http\Requests\API\PlaylistSyncRequest;
 use App\Models\Playlist;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -61,14 +62,13 @@ class PlaylistController extends Controller
      * Sync a playlist with songs.
      * Any songs that are not populated here will be removed from the playlist.
      *
-     * @param Request  $request
-     * @param Playlist $playlist
-     *
-     * @throws AuthorizationException
+     * @param PlaylistSyncRequest $request
+     * @param Playlist            $playlist
      *
      * @return JsonResponse
+     * @throws AuthorizationException
      */
-    public function sync(Request $request, Playlist $playlist)
+    public function sync(PlaylistSyncRequest $request, Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
 
@@ -80,12 +80,12 @@ class PlaylistController extends Controller
     /**
      * Get a playlist's all songs.
      *
-     * @param Request  $request
      * @param Playlist $playlist
      *
      * @return JsonResponse
+     * @throws AuthorizationException
      */
-    public function getSongs(Request $request, Playlist $playlist)
+    public function getSongs(Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
 

@@ -17,8 +17,7 @@ class SettingTest extends TestCase
         Media::shouldReceive('sync')->once();
 
         $user = factory(User::class, 'admin')->create();
-        $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user)
-            ->seeStatusCode(200);
+        $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user)->seeStatusCode(200);
 
         $this->assertEquals(__DIR__, Setting::get('media_path'));
     }

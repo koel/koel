@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\LastfmCallbackRequest;
+use App\Http\Requests\API\LastfmSetSessionKeyRequest;
 use App\Services\Lastfm;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Tymon\JWTAuth\JWTAuth;
@@ -60,17 +61,15 @@ class LastfmController extends Controller
     /**
      * Serve the callback request from Last.fm.
      *
-     * @param Request $request
-     * @param Lastfm  $lastfm
+     * @param LastfmCallbackRequest $request
+     * @param Lastfm                $lastfm
      *
      * @return Response
      */
-    public function callback(Request $request, Lastfm $lastfm)
+    public function callback(LastfmCallbackRequest $request, Lastfm $lastfm)
     {
-        abort_unless($token = $request->token, 500, 'Something wrong happened.');
-
         // Get the session key using the obtained token.
-        abort_unless($sessionKey = $lastfm->getSessionKey($token), 500, 'Invalid token key.');
+        abort_unless($sessionKey = $lastfm->getSessionKey($request->token), 500, 'Invalid token key.');
 
         $this->auth->user()->savePreference('lastfm_session_key', $sessionKey);
 
@@ -80,11 +79,11 @@ class LastfmController extends Controller
     /**
      * Set the Last.fm session key of the current user.
      *
-     * @param Request $request
+     * @param LastfmSetSessionKeyRequest $request
      *
      * @return JsonResponse
      */
-    public function setSessionKey(Request $request)
+    public function setSessionKey(LastfmSetSessionKeyRequest $request)
     {
         $this->auth->user()->savePreference('lastfm_session_key', trim($request->key));
 
