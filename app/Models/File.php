@@ -79,9 +79,7 @@ class File
         $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
         $this->setGetID3($getID3);
 
-        // Workaround for #344, where getMTime() fails for certain files with Unicode names
-        // on Windows.
-        // Yes, beloved Windows.
+        // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
         try {
             $this->mtime = $this->splFileInfo->getMTime();
         } catch (Exception $e) {
@@ -147,43 +145,30 @@ class File
             return $props;
         }
 
-        // We prefer id3v2 tags over others.
-        if (!$artist = array_get($info, 'tags.id3v2.artist', [null])[0]) {
-            $artist = array_get($comments, 'artist', [''])[0];
-        }
+        $propertyMap = [
+            'artist' => 'artist',
+            'albumartist' => 'band',
+            'album' => 'album',
+            'title' => 'title',
+            'lyrics' => 'unsychronised_lyric', // this tag name is misspelled
+            'compilation' => 'part_of_a_compilation',
+        ];
 
-        if (!$albumArtist = array_get($info, 'tags.id3v2.band', [null])[0]) {
-            $albumArtist = array_get($comments, 'band', [''])[0];
+        foreach ($propertyMap as $name => $tag) {
+            $props[$name] = array_get($info, "tags.id3v2.$tag", [null])[0] ?: array_get($comments, $tag, [''])[0];
+            // Fixes #323, where tag names can be htmlentities()'ed
+            if (is_string($props[$name]) && $props[$name]) {
+                $props[$name] = trim(html_entity_decode($props[$name]));
+            }
         }
-
-        if (!$album = array_get($info, 'tags.id3v2.album', [null])[0]) {
-            $album = array_get($comments, 'album', [''])[0];
-        }
-
-        if (!$title = array_get($info, 'tags.id3v2.title', [null])[0]) {
-            $title = array_get($comments, 'title', [''])[0];
-        }
-
-        // yes, this tag name is mispelled…
-        if (!$lyrics = array_get($info, 'tags.id3v2.unsychronised_lyric', [null])[0]) {
-            $lyrics = array_get($comments, 'unsychronised_lyric', [''])[0];
-        }
-
-        // Fixes #323, where tag names can be htmlentities()'ed
-        if ($title) {
-            $props['title'] = html_entity_decode(trim($title));
-        }
-        $props['album'] = html_entity_decode(trim($album));
-        $props['artist'] = html_entity_decode(trim($artist));
-        $props['albumartist'] = html_entity_decode(trim($albumArtist));
-        $props['lyrics'] = html_entity_decode(trim($lyrics));
 
         // A "compilation" property can be determined by:
         // - "part_of_a_compilation" tag (used by iTunes), or
         // - "albumartist" (used by non-retarded applications).
         // Also, the latter is only valid if the value is NOT the same as "artist".
-        $props['compilation'] = array_get($comments, 'part_of_a_compilation', [false])[0]
-            || ($props['albumartist'] && $props['artist'] !== $props['albumartist']);
+        if (!$props['compilation']) {
+            $props['compilation'] = $props['albumartist'] && $props['artist'] !== $props['albumartist'];
+        }
 
         return $props;
     }
@@ -257,12 +242,10 @@ class File
 
         $album->has_cover || $this->generateAlbumCover($album, array_get($info, 'cover'));
 
-        $info['album_id'] = $album->id;
-        $info['artist_id'] = $artist->id;
-
-        // Remove these values from the info array, so that we can just use the array as model's input data.
-        array_forget($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
-        $this->song = Song::updateOrCreate(['id' => $this->hash], $info);
+        $data = array_except($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
+        $data['album_id'] = $album->id;
+        $data['artist_id'] = $artist->id;
+        $this->song = Song::updateOrCreate(['id' => $this->hash], $data);
 
         return self::SYNC_RESULT_SUCCESS;
     }
