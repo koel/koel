@@ -237,6 +237,7 @@ class Media
 
     /**
      * Tidy up the library by deleting empty albums and artists.
+     *
      * @throws Exception
      */
     public function tidy()

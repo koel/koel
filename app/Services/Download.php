@@ -111,8 +111,9 @@ class Download
     /**
      * @param Playlist $playlist
      *
-     * @return string
      * @throws Exception
+     *
+     * @return string
      */
     protected function fromPlaylist(Playlist $playlist)
     {
@@ -122,8 +123,9 @@ class Download
     /**
      * @param Album $album
      *
-     * @return string
      * @throws Exception
+     *
+     * @return string
      */
     protected function fromAlbum(Album $album)
     {
@@ -133,8 +135,9 @@ class Download
     /**
      * @param Artist $artist
      *
-     * @return string
      * @throws Exception
+     *
+     * @return string
      */
     protected function fromArtist(Artist $artist)
     {

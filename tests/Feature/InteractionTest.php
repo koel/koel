@@ -44,6 +44,7 @@ class InteractionTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function user_can_like_and_unlike_a_song()
@@ -73,6 +74,7 @@ class InteractionTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function user_can_like_and_unlike_songs_in_batch()

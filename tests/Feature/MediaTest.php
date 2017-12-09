@@ -25,6 +25,7 @@ class MediaTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function songs_can_be_synced()
@@ -91,6 +92,7 @@ class MediaTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function songs_can_be_force_synced()
@@ -129,6 +131,7 @@ class MediaTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function songs_can_be_synced_with_selectively_tags()
@@ -158,6 +161,7 @@ class MediaTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function all_tags_are_catered_for_if_syncing_new_file()
@@ -183,6 +187,7 @@ class MediaTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function added_song_is_synced_when_watching()
@@ -198,6 +203,7 @@ class MediaTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function deleted_song_is_synced_when_watching()
@@ -214,6 +220,7 @@ class MediaTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function deleted_directory_is_synced_when_watching()
@@ -256,6 +263,7 @@ class MediaTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function hidden_files_can_optionally_be_ignored_when_syncing()
