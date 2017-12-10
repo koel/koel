@@ -1,5 +1,3 @@
-require('chai').should()
-
 import { userStore } from '../../stores'
 import data from '../blobs/data'
 

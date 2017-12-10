@@ -1,12 +1,9 @@
-require('chai').should()
-import { cloneDeep, last } from 'lodash'
-
 import { artistStore } from '../../stores'
 import data from '../blobs/data'
 const artists = data.artists
 
 describe('stores/artist', () => {
-  beforeEach(() => artistStore.init(cloneDeep(artists)))
+  beforeEach(() => artistStore.init(_.cloneDeep(artists)))
   afterEach(() => artistStore.state.artists = [])
 
   describe('#init', () => {
@@ -26,7 +23,7 @@ describe('stores/artist', () => {
       artistStore.compact()
       // because we've not processed songs/albums, all artists here have no songs
       // and should be removed after compact()ing
-      artistStore.state.artists.length.should.equal(0)
+      artistStore.state.artists.should.be.empty
     })
   })
 })

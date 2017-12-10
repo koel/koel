@@ -1,5 +1,3 @@
-require('chai').should()
-
 import { queueStore } from '../../stores'
 import data from '../blobs/data'
 
@@ -70,7 +68,7 @@ describe('stores/queue', () => {
   describe('#clear', () => {
     it('correctly clears all songs from queue', () => {
       queueStore.clear()
-      queueStore.state.songs.length.should.equal(0)
+      queueStore.state.songs.should.be.empty
     })
   })
 
@@ -92,8 +90,7 @@ describe('stores/queue', () => {
 
     it('correctly returns null if at end of queue', () => {
       queueStore.current = queueStore.state.songs[queueStore.state.songs.length - 1]
-      var result = queueStore.next === null
-      result.should.be.true
+      ;(queueStore.next === null).should.be.true
     })
   })
 
@@ -104,8 +101,7 @@ describe('stores/queue', () => {
 
     it('correctly returns null if at end of queue', () => {
       queueStore.current = queueStore.state.songs[0]
-      var result = queueStore.previous === null
-      result.should.be.true
+      ;(queueStore.previous === null).should.be.true
     })
   })
 })

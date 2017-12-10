@@ -1,5 +1,3 @@
-require('chai').should()
-
 import localStorage from 'local-storage'
 import { ls } from '../../services'
 
@@ -28,8 +26,7 @@ describe('services/ls', () => {
     it('correctly removes an item from local storage', () => {
       localStorage('foo', 'bar')
       ls.remove('foo')
-      var result = localStorage('foo') === null
-      result.should.be.true
+      ;(localStorage('foo') === null).should.be.true
     })
   })
 })

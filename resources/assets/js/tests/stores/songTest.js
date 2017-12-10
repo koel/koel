@@ -1,6 +1,3 @@
-require('chai').should()
-import { cloneDeep, last } from 'lodash'
-
 import { songStore, albumStore, artistStore, preferenceStore } from '../../stores'
 import data from '../blobs/data'
 

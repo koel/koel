@@ -1,5 +1,3 @@
-require('chai').should()
-
 import { secondsToHis, parseValidationError } from '../../utils'
 
 describe('services/utils', () => {

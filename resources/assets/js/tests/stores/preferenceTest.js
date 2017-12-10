@@ -1,5 +1,3 @@
-require('chai').should()
-
 import localStorage from 'local-storage'
 import { preferenceStore } from '../../stores'
 

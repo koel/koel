@@ -4,12 +4,10 @@ import artist from '@/tests/blobs/artist'
 describe('components/main-wrapper/extra/artist-info', () => {
     it('displays the info as a sidebar by default', () => {
     const wrapper = shallow(ArtistInfo, {
-      propsData: {
-        artist
-      }
+      propsData: { artist }
     })
-    expect(wrapper.findAll('#artistInfo.sidebar')).toHaveLength(1)
-    expect(wrapper.findAll('#artistInfo.full')).toHaveLength(0)
+    wrapper.findAll('#artistInfo.sidebar').should.have.lengthOf(1)
+    wrapper.findAll('#artistInfo.full').should.have.lengthOf(0)
   })
 
   it('can display the info in full mode', () => {
@@ -19,18 +17,16 @@ describe('components/main-wrapper/extra/artist-info', () => {
         mode: 'full'
       }
     })
-    expect(wrapper.findAll('#artistInfo.sidebar')).toHaveLength(0)
-    expect(wrapper.findAll('#artistInfo.full')).toHaveLength(1)
+    wrapper.findAll('#artistInfo.sidebar').should.have.lengthOf(0)
+    wrapper.findAll('#artistInfo.full').should.have.lengthOf(1)
   })
 
   it('triggers showing full bio', () => {
     const wrapper = shallow(ArtistInfo, {
-      propsData: {
-        artist
-      }
+      propsData: { artist }
     })
     wrapper.find('.bio button.more').trigger('click')
-    expect(wrapper.html()).toContain(artist.info.bio.full)
+    wrapper.html().should.contain(artist.info.bio.full)
   })
 
   it('displays a message if the artist has no info', () => {
@@ -41,6 +37,6 @@ describe('components/main-wrapper/extra/artist-info', () => {
         artist: artistWithNoInfo
       }
     })
-    expect(wrapper.html()).toContain('Nothing can be found. This artist is a mystery.')
+    wrapper.html().should.contain('Nothing can be found. This artist is a mystery.')
   })
 })

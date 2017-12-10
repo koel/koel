@@ -9,17 +9,17 @@ import { event } from '@/utils'
 describe('components/main-wrapper/extra/index', () => {
   it('shows by default', () => {
     const wrapper = shallow(ExtraSidebar)
-    expect(wrapper.findAll('#extra.showing')).toHaveLength(1)
+    wrapper.findAll('#extra.showing').should.have.lengthOf(1)
   })
 
   it('has a YouTube tab if using YouTube', () => {
     const wrapper = shallow(ExtraSidebar)
-    expect(wrapper.findAll('.header .youtube')).toHaveLength(0)
+    wrapper.findAll('.header .youtube').should.have.lengthOf(0)
     wrapper.setData({
       sharedState: { useYouTube: true }
     })
-    expect(wrapper.findAll('.header .youtube')).toHaveLength(1)
-    expect(wrapper.contains(YouTube)).toBe(true)
+    wrapper.findAll('.header .youtube').should.have.lengthOf(1)
+    wrapper.contains(YouTube).should.be.true
   })
 
   it('switches pane properly', () => {
@@ -27,7 +27,7 @@ describe('components/main-wrapper/extra/index', () => {
     expect(wrapper.find('.header .active').is('.lyrics')).toBe(true)
     ;['.artist', '.album', '.lyrics'].forEach(selector => {
       wrapper.find(`.header ${selector}`).trigger('click')
-      expect(wrapper.find('.header .active').is(selector)).toBe(true)
+      wrapper.find('.header .active').is(selector).should.be.true
     })
   })
 
@@ -38,7 +38,7 @@ describe('components/main-wrapper/extra/index', () => {
       sharedState: { useYouTube: true }
     })
     ;[ArtistInfo, AlbumInfo, Lyrics, YouTube].forEach(component => {
-      expect(wrapper.contains(component)).toBe(true)
+      wrapper.contains(component).should.be.true
     })
   })
 
@@ -47,6 +47,6 @@ describe('components/main-wrapper/extra/index', () => {
     const wrapper = shallow(ExtraSidebar)
     wrapper.vm.fetchSongInfo = spy
     event.emit('song:played', song)
-    expect(spy.calledWith(song)).toBe(true)
+    spy.calledWith(song).should.be.true
   })
 })

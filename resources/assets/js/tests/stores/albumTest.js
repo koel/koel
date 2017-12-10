@@ -1,6 +1,3 @@
-require('chai').should()
-import { cloneDeep, last } from 'lodash'
-
 import { albumStore, artistStore } from '../../stores'
 import data from '../blobs/data'
 
@@ -8,8 +5,8 @@ const { artists, albums } = data
 
 describe('stores/album', () => {
   beforeEach(() => {
-    artistStore.init(cloneDeep(artists))
-    albumStore.init(cloneDeep(albums))
+    artistStore.init(_.cloneDeep(artists))
+    albumStore.init(_.cloneDeep(albums))
   })
 
   afterEach(() => {
@@ -36,7 +33,7 @@ describe('stores/album', () => {
   describe('#compact', () => {
     it('correctly compacts albums', () => {
       albumStore.compact()
-      albumStore.state.albums.length.should.equal(0)
+      albumStore.state.albums.should.be.empty
     })
   })
 
