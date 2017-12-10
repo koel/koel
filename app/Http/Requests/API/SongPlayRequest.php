@@ -26,8 +26,7 @@ class SongPlayRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'time' => 'required',
-        ];
+    	return [
+    	];
     }
 }
