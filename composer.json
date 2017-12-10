@@ -63,6 +63,9 @@
         ],
         "post-create-project-cmd": [
             "php artisan key:generate"
+        ],
+        "test": [
+            "phpunit"
         ]
     },
     "config": {
