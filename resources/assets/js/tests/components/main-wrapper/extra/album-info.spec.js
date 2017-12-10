@@ -1,7 +1,6 @@
 import AlbumInfo from '@/components/main-wrapper/extra/album-info.vue'
 import TrackListItem from '@/components/shared/track-list-item.vue'
 import album from '@/tests/blobs/album'
-import _ from 'lodash'
 
 describe('components/main-wrapper/extra/album-info', () => {
   it('displays the info as a sidebar by default', () => {
