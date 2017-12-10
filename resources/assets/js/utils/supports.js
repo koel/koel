@@ -53,21 +53,15 @@ export function isMediaSessionSupported () {
  *
  * @type {Object}
  */
-const event = {
-  bus: null,
-
-  init () {
-    if (!this.bus) {
-      this.bus = new Vue()
-    }
-
-    return this
-  },
+class EventBus {
+  constructor () {
+    this.bus = new Vue()
+  }
 
   emit (name, ...args) {
     this.bus.$emit(name, ...args)
     return this
-  },
+  }
 
   on () {
     if (arguments.length === 2) {
@@ -79,5 +73,7 @@ const event = {
     return this
   }
 }
+
+const event = new EventBus()
 
 export { event }
