@@ -2,11 +2,7 @@
 
 namespace Tests\Unit\Models;
 
-use App\Events\SongLikeToggled;
 use App\Models\Interaction;
-use App\Models\Song;
-use App\Models\User;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class InteractionTest extends TestCase
@@ -16,5 +12,4 @@ class InteractionTest extends TestCase
     {
         $this->assertInstanceOf(Interaction::class, new Interaction());
     }
-
 }
