@@ -91,7 +91,7 @@
   "scripts": {
     "postinstall": "yarn production",
     "test:components": "cross-env NODE_ENV=test mocha-webpack --webpack-config webpack.config.js --require resources/assets/js/tests/setup.js --glob *.spec.js resources/assets/js/tests/components --recursive",
-    "test": "eslint resources/assets/js --ext=js,vue && mocha --compilers js:babel-register --require resources/assets/js/tests/helper.js resources/assets/js/tests/**/*Test.js",
+    "test": "eslint resources/assets/js --ext=js,vue && mocha --compilers js:babel-register --require resources/assets/js/tests/setup.js resources/assets/js/tests/**/*Test.js",
     "dev": "yarn development",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
