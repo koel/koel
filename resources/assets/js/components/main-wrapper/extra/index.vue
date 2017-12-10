@@ -3,13 +3,17 @@
     <div class="tabs">
       <div class="header clear">
         <a @click.prevent="currentView = 'lyrics'"
+          class="lyrics"
           :class="{ active: currentView === 'lyrics' }">Lyrics</a>
         <a @click.prevent="currentView = 'artistInfo'"
+          class="artist"
           :class="{ active: currentView === 'artistInfo' }">Artist</a>
         <a @click.prevent="currentView = 'albumInfo'"
+          class="album"
           :class="{ active: currentView === 'albumInfo' }">Album</a>
         <a @click.prevent="currentView = 'youtube'"
           v-if="sharedState.useYouTube"
+          class="youtube"
           :class="{ active: currentView === 'youtube' }"><i class="fa fa-youtube-play"></i></a>
       </div>
 
@@ -94,6 +98,14 @@ export default {
     resetState () {
       this.currentView = 'lyrics'
       this.song = songStore.stub
+    },
+
+    async fetchSongInfo (song) {
+      try {
+        this.song = await songInfo.fetch(song)
+      } catch (err) {
+        this.song = song
+      }
     }
   },
 
@@ -106,9 +118,7 @@ export default {
         }
       },
 
-      'song:played': async song => {
-        this.song = await songInfo.fetch(song)
-      }
+      'song:played': song => this.fetchSongInfo(song)
     })
   }
 }
