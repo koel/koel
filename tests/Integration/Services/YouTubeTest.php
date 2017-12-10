@@ -18,6 +18,7 @@ class YouTubeTest extends TestCase
 
     /**
      * @test
+     *
      * @throws \Exception
      */
     public function videos_can_be_searched_from_youtube()

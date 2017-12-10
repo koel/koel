@@ -65,8 +65,9 @@ class PlaylistController extends Controller
      * @param PlaylistSyncRequest $request
      * @param Playlist            $playlist
      *
-     * @return JsonResponse
      * @throws AuthorizationException
+     *
+     * @return JsonResponse
      */
     public function sync(PlaylistSyncRequest $request, Playlist $playlist)
     {
@@ -82,8 +83,9 @@ class PlaylistController extends Controller
      *
      * @param Playlist $playlist
      *
-     * @return JsonResponse
      * @throws AuthorizationException
+     *
+     * @return JsonResponse
      */
     public function getSongs(Playlist $playlist)
     {

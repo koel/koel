@@ -7,7 +7,6 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use JWTAuth;
 use Log;
-use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
