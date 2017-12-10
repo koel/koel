@@ -3,8 +3,6 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Artist;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use org\bovigo\vfs\vfsStream;
 use Tests\TestCase;
 
 class ArtistTest extends TestCase
