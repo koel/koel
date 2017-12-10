@@ -12,5 +12,4 @@ class UserTest extends TestCase
     {
         $this->assertInstanceOf(User::class, new User());
     }
-
 }

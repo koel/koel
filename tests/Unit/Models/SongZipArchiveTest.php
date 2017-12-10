@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Song;
 use App\Models\SongZipArchive;
 use Tests\TestCase;
 
