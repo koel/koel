@@ -1,6 +1,9 @@
 // setup JSDOM
 require('jsdom-global')()
 
+// make sure polyfill is loaded before generators
+require('babel-polyfill')
+
 // make document and global available globally
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
