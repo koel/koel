@@ -56,8 +56,8 @@ export default {
       try {
         await youtubeService.searchVideosRelatedToSong(this.song)
         this.videos = this.song.youtube.items
-        this.loading = false
       } catch (e) {
+      } finally {
         this.loading = false
       }
     }
