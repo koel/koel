@@ -115,7 +115,7 @@ class Init extends Command
             'Your DB driver of choice',
             [
                 'mysql' => 'MySQL/MariaDB',
-                'pqsql' => 'PostgreSQL',
+                'pgsql' => 'PostgreSQL',
                 'sqlsrv' => 'SQL Server',
                 'sqlite-e2e' => 'SQLite',
             ],
