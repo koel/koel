@@ -53,9 +53,13 @@ export default {
      */
     async loadMore () {
       this.loading = true
-      await youtubeService.searchVideosRelatedToSong(this.song)
-      this.videos = this.song.youtube.items
-      this.loading = false
+      try {
+        await youtubeService.searchVideosRelatedToSong(this.song)
+        this.videos = this.song.youtube.items
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     }
   }
 }
