@@ -10,7 +10,7 @@
           {{ meta.totalLength }}
           <template v-if="sharedState.allowDownload && state.songs.length">
             •
-            <a href @click.prevent="download" title="Download all songs in playlist">
+            <a href @click.prevent="download" class="download" title="Download all songs in playlist">
               Download All
             </a>
           </template>
@@ -28,7 +28,7 @@
 
     <song-list v-show="state.songs.length" :items="state.songs" type="favorites"/>
 
-    <div v-show="!state.songs.length" class="none">
+    <div v-if="!state.songs.length" class="none">
       Start loving!
       Click the <i style="margin: 0 5px" class="fa fa-heart"></i> icon when a song is playing to add it
       to this list.
