@@ -55,7 +55,7 @@ export default {
     })
 
     event.on('filter:changed', q => {
-        this.q = q
+      this.q = q
     })
   }
 }
