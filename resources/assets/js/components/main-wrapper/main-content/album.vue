@@ -132,9 +132,12 @@ export default {
     async showInfo () {
       this.info.showing = true
       if (!this.album.info) {
-        this.info.loading = true
-        await albumInfoService.fetch(this.album)
-        this.info.loading = false
+        try {
+          await albumInfoService.fetch(this.album)
+        } catch (e) {
+        } finally {
+          this.info.loading = false
+        }
       } else {
         this.info.loading = false
       }
