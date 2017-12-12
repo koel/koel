@@ -4,7 +4,7 @@
     <home v-show="view === 'home'"/>
     <queue v-show="view === 'queue'"/>
     <songs v-show="view === 'songs'"/>
-    <albums v-show="view === 'albums'"/>
+    <albums :albums="albums" v-show="view === 'albums'"/>
     <album v-show="view === 'album'"/>
     <artists v-show="view === 'artists'"/>
     <artist v-show="view === 'artist'"/>
@@ -43,7 +43,8 @@ export default {
     return {
       view: 'home', // The default view
       albumCover: null,
-      sharedState: sharedStore.state
+      sharedState: sharedStore.state,
+      albums: []
     }
   },
 
@@ -62,6 +63,10 @@ export default {
        */
       'song:played': song => {
         this.albumCover = song.album.cover === albumStore.stub.cover ? null : song.album.cover
+      },
+
+      'koel:ready': () => {
+        this.albums = albumStore.all
       }
     })
   }

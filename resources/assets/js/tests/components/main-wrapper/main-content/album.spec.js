@@ -1,13 +1,14 @@
-import Album from '@/components/main-wrapper/main-content/album.vue'
+import Component from '@/components/main-wrapper/main-content/album.vue'
 import SongList from '@/components/shared/song-list.vue'
 import SongListControls from '@/components/shared/song-list-controls.vue'
 import { event } from '@/utils'
-import album from '@/tests/blobs/album'
+import factory from '@/tests/factory'
 import Vue from 'vue'
 
 describe('components/main-wrapper/main-content/album', () => {
   it('renders upon receiving event', () => {
-    const wrapper = shallow(Album)
+    const wrapper = shallow(Component)
+    const album = factory('album')
     event.emit('main-content-view:load', 'album', album)
     Vue.nextTick(() => {
       const html = wrapper.html()
@@ -19,9 +20,9 @@ describe('components/main-wrapper/main-content/album', () => {
   })
 
   it('loads info from Last.fm', () => {
-    const wrapper = shallow(Album)
+    const wrapper = shallow(Component)
     wrapper.setData({
-      album,
+      album: factory('album'),
       sharedState: { useLastfm: true }
     })
     const spy = sinon.spy()
@@ -31,9 +32,9 @@ describe('components/main-wrapper/main-content/album', () => {
   })
 
   it('allows downloading', () => {
-    const wrapper = shallow(Album)
+    const wrapper = shallow(Component)
     wrapper.setData({
-      album,
+      album: factory('album'),
       sharedState: { allowDownload: true }
     })
     const spy = sinon.spy()

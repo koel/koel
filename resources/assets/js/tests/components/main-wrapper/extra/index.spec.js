@@ -3,7 +3,7 @@ import ArtistInfo from '@/components/main-wrapper/extra/artist-info.vue'
 import AlbumInfo from '@/components/main-wrapper/extra/album-info.vue'
 import Lyrics from '@/components/main-wrapper/extra/lyrics.vue'
 import YouTube from '@/components/main-wrapper/extra/youtube.vue'
-import song from '@/tests/blobs/song'
+import factory from '@/tests/factory'
 import { event } from '@/utils'
 
 describe('components/main-wrapper/extra/index', () => {
@@ -34,7 +34,7 @@ describe('components/main-wrapper/extra/index', () => {
   it('has proper child components', () => {
     const wrapper = shallow(ExtraSidebar)
     wrapper.setData({
-      song,
+      song: factory('song'),
       sharedState: { useYouTube: true }
     })
     ;[ArtistInfo, AlbumInfo, Lyrics, YouTube].forEach(component => {
@@ -45,6 +45,7 @@ describe('components/main-wrapper/extra/index', () => {
   it('fetch song info when a new song is played', () => {
     const spy = sinon.spy()
     const wrapper = shallow(ExtraSidebar)
+    const song = factory('song')
     wrapper.vm.fetchSongInfo = spy
     event.emit('song:played', song)
     spy.calledWith(song).should.be.true

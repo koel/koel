@@ -1,18 +1,21 @@
 import YouTube from '@/components/main-wrapper/extra/youtube.vue'
-import song from '@/tests/blobs/song'
-import videos from '@/tests/blobs/youtube-videos'
+import factory from '@/tests/factory'
 
 describe('components/main-wrapper/extra/youtube', () => {
   let wrapper
   beforeEach(() => {
     wrapper = shallow(YouTube, {
-      propsData: { song }
+      propsData: {
+        song: factory('song')
+      }
     })
-    wrapper.setData({ videos })
+    wrapper.setData({
+      videos: factory('video', 5)
+    })
   })
 
   it('displays a list of videos', () => {
-    wrapper.findAll('a.video').should.have.lengthOf(2)
+    wrapper.findAll('a.video').should.have.lengthOf(5)
   })
 
   it('loads more videos on demand', () => {

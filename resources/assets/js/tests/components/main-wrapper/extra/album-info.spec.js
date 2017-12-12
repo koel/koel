@@ -1,11 +1,13 @@
 import AlbumInfo from '@/components/main-wrapper/extra/album-info.vue'
 import TrackListItem from '@/components/shared/track-list-item.vue'
-import album from '@/tests/blobs/album'
+import factory from '@/tests/factory'
 
 describe('components/main-wrapper/extra/album-info', () => {
   it('displays the info as a sidebar by default', () => {
     const wrapper = shallow(AlbumInfo, {
-      propsData: { album }
+      propsData: {
+        album: factory('album')
+      }
     })
     wrapper.findAll('#albumInfo.sidebar').should.have.lengthOf(1)
     wrapper.findAll('#albumInfo.full').should.have.lengthOf(0)
@@ -14,7 +16,7 @@ describe('components/main-wrapper/extra/album-info', () => {
   it('can display the info in full mode', () => {
     const wrapper = shallow(AlbumInfo, {
       propsData: {
-        album,
+        album: factory('album'),
         mode: 'full'
       }
     })
@@ -23,6 +25,7 @@ describe('components/main-wrapper/extra/album-info', () => {
   })
 
   it('triggers showing full wiki', () => {
+    const album = factory('album')
     const wrapper = shallow(AlbumInfo, {
       propsData: { album }
     })
@@ -32,17 +35,17 @@ describe('components/main-wrapper/extra/album-info', () => {
 
   it('lists the correct number of tracks', () => {
     const wrapper = mount(AlbumInfo, {
-      propsData: { album }
+      propsData: {
+        album: factory('album')
+      }
     })
     wrapper.findAll(TrackListItem).should.have.lengthOf(2)
   })
 
   it('displays a message if the album has no info', () => {
-    const albumWithNoInfo = _.clone(album)
-    albumWithNoInfo.info = null
     const wrapper = mount(AlbumInfo, {
       propsData: {
-        album: albumWithNoInfo
+        album: factory('album', { info: null })
       }
     })
     wrapper.html().should.contain('No album information found.')

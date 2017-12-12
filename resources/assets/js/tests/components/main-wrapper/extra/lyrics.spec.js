@@ -1,8 +1,9 @@
 import Lyrics from '@/components/main-wrapper/extra/lyrics.vue'
-import song from '@/tests/blobs/song'
+import factory from '@/tests/factory'
 
 describe('components/main-wrapper/extra/lyrics', () => {
   it('displays lyrics if the song has lyrics', () => {
+    const song = factory('song')
     const wrapper = shallow(Lyrics, {
       propsData: { song }
     })
@@ -10,11 +11,9 @@ describe('components/main-wrapper/extra/lyrics', () => {
   })
 
   it('displays a fallback message if the song has no lyrics', () => {
-    const songWithNoLyrics = _.clone(song)
-    songWithNoLyrics.lyrics = null
     const wrapper = shallow(Lyrics, {
       propsData: {
-        song: songWithNoLyrics
+        song: factory('song', { lyrics: '' })
       }
     })
     wrapper.html().should.contain('No lyrics found. Are you not listening to Bach?')

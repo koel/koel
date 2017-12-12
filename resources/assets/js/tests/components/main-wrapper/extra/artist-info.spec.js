@@ -1,10 +1,12 @@
 import ArtistInfo from '@/components/main-wrapper/extra/artist-info.vue'
-import artist from '@/tests/blobs/artist'
+import factory from '@/tests/factory'
 
 describe('components/main-wrapper/extra/artist-info', () => {
     it('displays the info as a sidebar by default', () => {
     const wrapper = shallow(ArtistInfo, {
-      propsData: { artist }
+      propsData: {
+        artist: factory('artist')
+      }
     })
     wrapper.findAll('#artistInfo.sidebar').should.have.lengthOf(1)
     wrapper.findAll('#artistInfo.full').should.have.lengthOf(0)
@@ -13,7 +15,7 @@ describe('components/main-wrapper/extra/artist-info', () => {
   it('can display the info in full mode', () => {
     const wrapper = shallow(ArtistInfo, {
       propsData: {
-        artist,
+        artist: factory('artist'),
         mode: 'full'
       }
     })
@@ -22,6 +24,7 @@ describe('components/main-wrapper/extra/artist-info', () => {
   })
 
   it('triggers showing full bio', () => {
+    const artist = factory('artist')
     const wrapper = shallow(ArtistInfo, {
       propsData: { artist }
     })
@@ -30,11 +33,9 @@ describe('components/main-wrapper/extra/artist-info', () => {
   })
 
   it('displays a message if the artist has no info', () => {
-    const artistWithNoInfo = _.clone(artist)
-    artistWithNoInfo.info = null
     const wrapper = mount(ArtistInfo, {
       propsData: {
-        artist: artistWithNoInfo
+        artist: factory('artist', { info: null })
       }
     })
     wrapper.html().should.contain('Nothing can be found. This artist is a mystery.')

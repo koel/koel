@@ -20,6 +20,7 @@ Object.keys(window).forEach((key) => {
 })
 
 // make common utils available globally as well
+global.faker = require('faker')
 global.expect = require('expect')
 global.sinon = require('sinon')
 global._ = require('lodash')

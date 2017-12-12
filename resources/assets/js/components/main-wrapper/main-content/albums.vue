@@ -24,6 +24,13 @@ export default {
   mixins: [infiniteScroll],
   components: { albumItem, viewModeSwitch },
 
+  props: {
+    albums: {
+      type: Array,
+      required: true
+    }
+  },
+
   data () {
     return {
       perPage: 9,
@@ -36,7 +43,7 @@ export default {
   computed: {
     displayedItems () {
       return limitBy(
-        filterBy(albumStore.all, this.q, 'name', 'artist.name'),
+        filterBy(this.albums, this.q, 'name', 'artist.name'),
         this.numOfItems
       )
     }
@@ -49,15 +56,8 @@ export default {
   },
 
   created () {
-    event.on({
-      /**
-       * When the application is ready, load the first batch of items.
-       */
-      'koel:ready': () => this.displayMore(),
-
-      'filter:changed': q => {
+    event.on('filter:changed', q => {
         this.q = q
-      }
     })
   }
 }
