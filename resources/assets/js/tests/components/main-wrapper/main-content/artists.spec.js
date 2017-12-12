@@ -4,10 +4,9 @@ import factory from '@/tests/factory'
 
 describe('components/main-wrapper/main-content/artists', () => {
   it('displays a list of artists', () => {
-    const wrapper = shallow(Artists, {
-      propsData: {
-        artists: factory('artist', 5)
-      }
+    const wrapper = shallow(Artists)
+    wrapper.setData({
+      artists: factory('artist', 5)
     })
     wrapper.findAll(ArtistItem).should.have.lengthOf(5)
   })

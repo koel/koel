@@ -24,19 +24,13 @@ export default {
   mixins: [infiniteScroll],
   components: { albumItem, viewModeSwitch },
 
-  props: {
-    albums: {
-      type: Array,
-      required: true
-    }
-  },
-
   data () {
     return {
       perPage: 9,
       numOfItems: 9,
       q: '',
-      viewMode: null
+      viewMode: null,
+      albums: []
     }
   },
 
@@ -56,6 +50,10 @@ export default {
   },
 
   created () {
+    event.on('koel:ready', () => {
+      this.albums = albumStore.all
+    })
+
     event.on('filter:changed', q => {
         this.q = q
     })

@@ -25,19 +25,13 @@ export default {
   mixins: [infiniteScroll],
   components: { artistItem, viewModeSwitch },
 
-  props: {
-    artists: {
-      type: Array,
-      required: true
-    }
-  },
-
   data () {
     return {
       perPage: 9,
       numOfItems: 9,
       q: '',
-      viewMode: null
+      viewMode: null,
+      artists: []
     }
   },
 
@@ -57,6 +51,10 @@ export default {
   },
 
   created () {
+    event.on('koel:ready', () => {
+      this.artists = artistStore.all
+    })
+
     event.on({
       'filter:changed': q => {
         this.q = q
