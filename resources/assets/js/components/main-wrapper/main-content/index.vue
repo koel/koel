@@ -6,7 +6,7 @@
     <songs v-show="view === 'songs'"/>
     <albums :albums="albums" v-show="view === 'albums'"/>
     <album v-show="view === 'album'"/>
-    <artists v-show="view === 'artists'"/>
+    <artists :artists="artists" v-show="view === 'artists'"/>
     <artist v-show="view === 'artist'"/>
     <users v-show="view === 'users'"/>
     <settings v-show="view === 'settings'"/>
@@ -19,7 +19,7 @@
 
 <script>
 import { event } from '@/utils'
-import { albumStore, sharedStore } from '@/stores'
+import { albumStore, sharedStore, artistStore } from '@/stores'
 
 import albums from './albums.vue'
 import album from './album.vue'
@@ -44,7 +44,8 @@ export default {
       view: 'home', // The default view
       albumCover: null,
       sharedState: sharedStore.state,
-      albums: []
+      albums: [],
+      artists: []
     }
   },
 
@@ -67,6 +68,7 @@ export default {
 
       'koel:ready': () => {
         this.albums = albumStore.all
+        this.artists = artistStore.all
       }
     })
   }

@@ -23,8 +23,14 @@ import infiniteScroll from '@/mixins/infinite-scroll'
 
 export default {
   mixins: [infiniteScroll],
-
   components: { artistItem, viewModeSwitch },
+
+  props: {
+    artists: {
+      type: Array,
+      required: true
+    }
+  },
 
   data () {
     return {
@@ -38,7 +44,7 @@ export default {
   computed: {
     displayedItems () {
       return limitBy(
-        filterBy(artistStore.all, this.q, 'name'),
+        filterBy(this.artists, this.q, 'name'),
         this.numOfItems
       )
     }
@@ -52,11 +58,6 @@ export default {
 
   created () {
     event.on({
-      /**
-       * When the application is ready, load the first batch of items.
-       */
-      'koel:ready': () => this.displayMore(),
-
       'filter:changed': q => {
         this.q = q
       }

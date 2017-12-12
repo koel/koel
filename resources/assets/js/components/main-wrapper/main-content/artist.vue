@@ -127,8 +127,12 @@ export default {
       this.info.showing = true
       if (!this.artist.info) {
         this.info.loading = true
-        await artistInfoService.fetch(this.artist)
-        this.info.loading = false
+        try {
+          await artistInfoService.fetch(this.artist)
+        } catch (e) {
+        } finally {
+          this.info.loading = false
+        }
       } else {
         this.info.loading = false
       }
