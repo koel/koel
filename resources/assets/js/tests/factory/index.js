@@ -6,6 +6,10 @@ import video from './video'
 const models = { artist, album, song, video }
 
 const factory = (model, count = 1, overrides = {}) => {
+  if (!(model in models)) {
+    throw new Error(`Model \`${model}\` not found`)
+  }
+
   if (typeof count === 'object') {
     return factory(model, 1, count)
   }
