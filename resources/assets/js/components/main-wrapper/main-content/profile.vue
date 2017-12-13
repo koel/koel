@@ -57,6 +57,12 @@
             Convert and play media at 128kbps on mobile
           </label>
         </div>
+        <div class="form-row">
+          <label>
+            <input type="checkbox" name="disableTranscoding" v-model="prefs.disableTranscoding" @change="savePreference">
+            Disable transcoding everywhere
+          </label>
+        </div>
       </div>
 
       <section class="lastfm" >

@@ -268,10 +268,20 @@ export const songStore = {
    * @return {string} The source URL, with JWT token appended.
    */
   getSourceUrl (song) {
-    if (isMobile.any && preferenceStore.transcodeOnMobile) {
-      return `${sharedStore.state.cdnUrl}api/${song.id}/play/1/128?jwt-token=${ls.get('jwt-token')}`
+    const suffix = `?jwt-token=${ls.get('jwt-token')}`
+
+    if (preferenceStore.disableTranscoding) {
+      // Transcoding is disabled. Explicitly request the original file.
+      return `${sharedStore.state.cdnUrl}api/${song.id}/play/0${suffix}`
     }
-    return `${sharedStore.state.cdnUrl}api/${song.id}/play?jwt-token=${ls.get('jwt-token')}`
+
+    // Transcoding is enabled, transcode on mobile based on preference.
+    if (isMobile.any && preferenceStore.transcodeOnMobile) {
+      return `${sharedStore.state.cdnUrl}api/${song.id}/play/1/128${suffix}`
+    }
+
+    // Let the server decide whether transcoding is needed or not.
+    return `${sharedStore.state.cdnUrl}api/${song.id}/play${suffix}`
   },
 
   /**
