@@ -47,7 +47,7 @@ describe('components/main-wrapper/main-content/home', () => {
     const wrapper = shallow(Home)
     const refreshDashboardStub = sinon.stub()
     wrapper.refreshDashboard = refreshDashboardStub
-    event.emit('song:played')
+    event.emit('song:played', factory('song'))
     refreshDashboardStub.should.have.been.called
   })
 })
