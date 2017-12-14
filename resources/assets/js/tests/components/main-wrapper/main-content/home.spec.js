@@ -45,9 +45,9 @@ describe('components/main-wrapper/main-content/home', () => {
 
   it('refreshes when a new song is played', () => {
     const wrapper = shallow(Home)
-    const spy = sinon.spy()
-    wrapper.refreshDashboard = spy
+    const refreshDashboardStub = sinon.stub()
+    wrapper.refreshDashboard = refreshDashboardStub
     event.emit('song:played')
-    spy.should.have.been.called
+    refreshDashboardStub.should.have.been.called
   })
 })

@@ -29,6 +29,8 @@ import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay, aler
 import router from '@/router'
 
 export default {
+  name: 'main-wrapper--main-content--settings',
+
   data () {
     return {
       state: settingStore.state,

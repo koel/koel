@@ -19,9 +19,9 @@ describe('components/main-wrapper/extra/youtube', () => {
   })
 
   it('loads more videos on demand', () => {
-    const spy = sinon.spy()
-    wrapper.vm.loadMore = spy
+    const loadMoreStub = sinon.stub()
+    wrapper.vm.loadMore = loadMoreStub
     wrapper.find('button.more').trigger('click')
-    spy.should.have.been.called
+    loadMoreStub.should.have.been.called
   })
 })

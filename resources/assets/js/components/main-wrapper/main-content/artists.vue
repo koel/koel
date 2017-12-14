@@ -22,6 +22,7 @@ import viewModeSwitch from '@/components/shared/view-mode-switch.vue'
 import infiniteScroll from '@/mixins/infinite-scroll'
 
 export default {
+  name: 'main-wrapper--main-content--artists',
   mixins: [infiniteScroll],
   components: { artistItem, viewModeSwitch },
 

@@ -54,7 +54,6 @@ export const download = {
    */
   fromFavorites () {
     if (!favoriteStore.all.length) {
-      console.warn("You don't like any song? Come on, don't be that grumpy.")
       return
     }
 

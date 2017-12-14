@@ -21,6 +21,7 @@ import viewModeSwitch from '@/components/shared/view-mode-switch.vue'
 import infiniteScroll from '@/mixins/infinite-scroll'
 
 export default {
+  name: 'main-wrapper--main-content--albums',
   mixins: [infiniteScroll],
   components: { albumItem, viewModeSwitch },
 

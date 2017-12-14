@@ -116,6 +116,8 @@ import { forceReloadWindow, $ } from '@/utils'
 import { http, ls } from '@/services'
 
 export default {
+  name: 'main-wrapper--main-content--profile',
+
   data () {
     return {
       state: userStore.state,

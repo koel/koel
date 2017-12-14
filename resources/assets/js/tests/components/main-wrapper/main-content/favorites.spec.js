@@ -34,9 +34,9 @@ describe('components/main-wrapper/main-content/favorites', () => {
       },
       sharedState: { allowDownload: true }
     })
-    const spy = sinon.spy()
-    wrapper.download = spy
+    const downloadStub = sinon.stub()
+    wrapper.download = downloadStub
     wrapper.find('a.download').trigger('click')
-    spy.should.have.been.called
+    downloadStub.should.have.been.called
   })
 })

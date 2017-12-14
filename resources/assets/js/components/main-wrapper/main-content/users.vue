@@ -34,6 +34,7 @@ import editUserForm from '@/components/modals/edit-user-form.vue'
 import addUserForm from '@/components/modals/add-user-form.vue'
 
 export default {
+  name: 'main-wrapper--main-content--users',
   components: { userItem, editUserForm, addUserForm },
 
   data () {

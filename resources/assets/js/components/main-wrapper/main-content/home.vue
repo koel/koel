@@ -87,6 +87,7 @@ import artistItem from '@/components/shared/artist-item.vue'
 import songItem from '@/components/shared/home-song-item.vue'
 
 export default {
+  name: 'main-wrapper--main-content--home',
   components: { albumItem, artistItem, songItem },
   /**
    * Note: We're not really using infinite scrolling here,

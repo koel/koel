@@ -43,11 +43,11 @@ describe('components/main-wrapper/extra/index', () => {
   })
 
   it('fetch song info when a new song is played', () => {
-    const spy = sinon.spy()
     const wrapper = shallow(ExtraSidebar)
+    const fetchSongInfoStub = sinon.stub()
     const song = factory('song')
-    wrapper.vm.fetchSongInfo = spy
+    wrapper.vm.fetchSongInfo = fetchSongInfoStub
     event.emit('song:played', song)
-    spy.calledWith(song).should.be.true
+    fetchSongInfoStub.calledWith(song).should.be.true
   })
 })

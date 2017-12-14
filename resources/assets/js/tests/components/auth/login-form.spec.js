@@ -6,10 +6,10 @@ describe('components/auth/login-form', () => {
   })
 
   it('triggers login method when form is submitted', () => {
-    const spy = sinon.spy()
     const wrapper = shallow(LoginForm)
-    wrapper.vm.login = spy
+    const loginStub = sinon.stub()
+    wrapper.vm.login = loginStub
     wrapper.find('form').trigger('submit')
-    spy.called.should.be.true
+    loginStub.called.should.be.true
   })
 })

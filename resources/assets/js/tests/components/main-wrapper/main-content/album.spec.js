@@ -25,10 +25,10 @@ describe('components/main-wrapper/main-content/album', () => {
       album: factory('album'),
       sharedState: { useLastfm: true }
     })
-    const spy = sinon.spy()
-    wrapper.showInfo = spy
+    const showInfoStub = sinon.stub()
+    wrapper.showInfo = showInfoStub
     wrapper.find('a.info').trigger('click')
-    spy.should.have.been.called
+    showInfoStub.should.have.been.called
   })
 
   it('allows downloading', () => {
@@ -37,9 +37,9 @@ describe('components/main-wrapper/main-content/album', () => {
       album: factory('album'),
       sharedState: { allowDownload: true }
     })
-    const spy = sinon.spy()
-    wrapper.download = spy
+    const downloadStub = sinon.stub()
+    wrapper.download = downloadStub
     wrapper.find('a.download').trigger('click')
-    spy.should.have.been.called
+    downloadStub.should.have.been.called
   })
 })

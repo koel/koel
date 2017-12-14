@@ -1,6 +1,6 @@
 <template>
   <section id="mainContent">
-    <div class="translucent" :style="{ backgroundImage: albumCover ? 'url('+albumCover+')' : 'none' }"></div>
+    <div class="translucent" :style="{ backgroundImage: albumCover ? `url${albumCover}` : 'none' }"></div>
     <home v-show="view === 'home'"/>
     <queue v-show="view === 'queue'"/>
     <songs v-show="view === 'songs'"/>
@@ -43,9 +43,7 @@ export default {
     return {
       view: 'home', // The default view
       albumCover: null,
-      sharedState: sharedStore.state,
-      albums: [],
-      artists: []
+      sharedState: sharedStore.state
     }
   },
 
