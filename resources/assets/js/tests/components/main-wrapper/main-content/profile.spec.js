@@ -45,6 +45,6 @@ describe('components/main-wrapper/main-content/user', () => {
       wrapper.find(`input[name=${key}]`).trigger('click')
       savePrefsStub.called.should.be.true
     })
-    savePrefsStub.restore( )
+    savePrefsStub.restore()
   })
 })
