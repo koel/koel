@@ -68,3 +68,4 @@ Temporary Items
 *.css.map
 
 /database/e2e.sqlite
+.nyc_output
