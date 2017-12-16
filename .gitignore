@@ -69,3 +69,5 @@ Temporary Items
 
 /database/e2e.sqlite
 .nyc_output
+*.swp
+*~
