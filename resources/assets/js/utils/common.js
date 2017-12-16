@@ -19,6 +19,10 @@ export function loadMainView (view, ...args) {
  * This is handy for certain cases, for example Last.fm connect/disconnect.
  */
 export function forceReloadWindow () {
+  if (window.__UNIT_TESTING__) {
+    return
+  }
+
   window.onbeforeunload = function () {}
   window.location.reload()
 }
