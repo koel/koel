@@ -112,6 +112,10 @@ export default {
    * @param  {String} path
    */
   go (path) {
+    if (window.__UNIT_TESTING__) {
+      return
+    }
+
     if (path[0] !== '/') {
       path = `/${path}`
     }
