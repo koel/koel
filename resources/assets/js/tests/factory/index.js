@@ -2,8 +2,10 @@ import artist from './artist'
 import album from './album'
 import song from './song'
 import video from './video'
+import playlist from './playlist'
+import user from './user'
 
-const models = { artist, album, song, video }
+const models = { artist, album, song, video, playlist, user }
 
 const factory = (model, count = 1, overrides = {}) => {
   if (!(model in models)) {
