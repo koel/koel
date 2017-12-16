@@ -24,12 +24,22 @@
 
           <div class="form-row">
             <label for="inputProfilePassword">New Password</label>
-            <input v-model="pwd" name="password" type="password" id="inputProfilePassword" autocomplete="off">
+            <input :class="{ error: validation.error }"
+              v-model="pwd"
+              name="password"
+              type="password"
+              id="inputProfilePassword"
+              autocomplete="off">
           </div>
 
           <div class="form-row">
             <label for="inputProfileConfirmPassword">Confirm Password</label>
-            <input v-model="confirmPwd" name="confirmPassword" type="password" id="inputProfileConfirmPassword" autocomplete="off">
+            <input :class="{ error: validation.error }"
+              v-model="confirmPwd"
+              name="confirmPassword"
+              type="password"
+              id="inputProfileConfirmPassword"
+              autocomplete="off">
           </div>
         </div>
 
@@ -41,19 +51,19 @@
       <div class="preferences">
         <div class="form-row">
           <label>
-            <input type="checkbox" name="notify" v-model="prefs.notify" @change="savePreference">
+            <input type="checkbox" name="notify" v-model="prefs.notify">
             Show “Now Playing” song notification
           </label>
         </div>
         <div class="form-row">
           <label>
-            <input type="checkbox" name="confirmClosing" v-model="prefs.confirmClosing" @change="savePreference">
+            <input type="checkbox" name="confirmClosing" v-model="prefs.confirmClosing">
             Confirm before closing Koel
           </label>
         </div>
         <div class="form-row">
           <label>
-            <input type="checkbox" name="transcodeOnMobile" v-model="prefs.transcodeOnMobile" @change="savePreference">
+            <input type="checkbox" name="transcodeOnMobile" v-model="prefs.transcodeOnMobile">
             Convert and play media at 128kbps on mobile
           </label>
         </div>
@@ -110,9 +120,8 @@
 </template>
 
 <script>
-import { each } from 'lodash'
 import { userStore, preferenceStore, sharedStore } from '@/stores'
-import { forceReloadWindow, $ } from '@/utils'
+import { forceReloadWindow } from '@/utils'
 import { http, ls } from '@/services'
 
 export default {
@@ -125,7 +134,17 @@ export default {
       pwd: '',
       confirmPwd: '',
       prefs: preferenceStore.state,
-      sharedState: sharedStore.state
+      sharedState: sharedStore.state,
+      validation: {
+        error: false
+      }
+    }
+  },
+
+  watch: {
+    prefs: {
+      handler: () => preferenceStore.save(),
+      deep: true
     }
   },
 
@@ -134,27 +153,13 @@ export default {
      * Update the current user's profile.
      */
     async update () {
-      const passwordFields = Array.from(
-        document.querySelectorAll('#inputProfilePassword, #inputProfileConfirmPassword')
-      )
-      // A little validation put in a small place.
-      if ((this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd) {
-        each(passwordFields, el => $.addClass(el, 'error'))
+      this.validation.error = (this.pwd || this.confirmPwd) && this.pwd !== this.confirmPwd
+      if (this.validation.error) {
         return
       }
-
-      each(passwordFields, el => $.removeClass(el, 'error'))
-
       await userStore.updateProfile(this.pwd)
       this.pwd = ''
       this.confirmPwd = ''
-    },
-
-    /**
-     * Save the current user's preference.
-     */
-    savePreference () {
-      this.$nextTick(() => preferenceStore.save())
     },
 
     /**

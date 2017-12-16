@@ -2,6 +2,7 @@ import Component from '@/components/main-wrapper/main-content/artist.vue'
 import SongList from '@/components/shared/song-list.vue'
 import SongListControls from '@/components/shared/song-list-controls.vue'
 import { event } from '@/utils'
+import { download, artistInfo as artistInfoService } from '@/services'
 import factory from '@/tests/factory'
 import Vue from 'vue'
 
@@ -36,14 +37,15 @@ describe('components/main-wrapper/main-content/artist', () => {
 
   it('loads info from Last.fm', () => {
     const wrapper = shallow(Component)
+    artist.info = null
     wrapper.setData({
       artist,
       sharedState: { useLastfm: true }
     })
-    const showInfoStub = sinon.stub()
-    wrapper.showInfo = showInfoStub
+    const stub = sinon.stub(artistInfoService, 'fetch')
     wrapper.find('a.info').trigger('click')
-    showInfoStub.should.have.been.called
+    stub.calledWith(artist).should.be.true
+    stub.restore()
   })
 
   it('allows downloading', () => {
@@ -52,10 +54,9 @@ describe('components/main-wrapper/main-content/artist', () => {
       artist,
       sharedState: { allowDownload: true }
     })
-    const downloadStub = sinon.stub()
-    wrapper.download = downloadStub
+    const downloadStub = sinon.stub(download, 'fromArtist')
     wrapper.find('a.download').trigger('click')
-    downloadStub.should.have.been.called
+    downloadStub.calledWith(artist).should.be.true
+    downloadStub.restore()
   })
 })
-

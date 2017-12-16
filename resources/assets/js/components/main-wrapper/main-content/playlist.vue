@@ -73,16 +73,13 @@ export default {
      * @param {String} view   The view's name.
      * @param {Object} playlist
      */
-    event.on('main-content-view:load', async (view, playlist) => {
+    event.on('main-content-view:load', (view, playlist) => {
       if (view !== 'playlist') {
         return
       }
 
-      if (typeof playlist.populated === 'undefined') {
-        await playlistStore.fetchSongs(playlist)
-        playlist.populated = true
-        this.playlist = playlist
-        this.$nextTick(() => this.$refs.songList.sort())
+      if (typeof this.playlist.populated === 'undefined') {
+        this.populate(playlist)
       } else {
         this.playlist = playlist
       }
@@ -129,6 +126,18 @@ export default {
      */
     download () {
       return download.fromPlaylist(this.playlist)
+    },
+
+    /**
+     * Fetch a playlist's content from the server, populate it, and use it afterwards.
+     *
+     * @param {Object} playlist
+     */
+    async populate (playlist) {
+      await playlistStore.fetchSongs(playlist)
+      playlist.populated = true
+      this.playlist = playlist
+      this.$nextTick(() => this.$refs.songList.sort())
     }
   }
 }

@@ -1,6 +1,7 @@
 import Component from '@/components/main-wrapper/main-content/favorites.vue'
 import SongList from '@/components/shared/song-list.vue'
 import SongListControls from '@/components/shared/song-list-controls.vue'
+import { download } from '@/services'
 import factory from '@/tests/factory'
 
 describe('components/main-wrapper/main-content/favorites', () => {
@@ -34,9 +35,9 @@ describe('components/main-wrapper/main-content/favorites', () => {
       },
       sharedState: { allowDownload: true }
     })
-    const downloadStub = sinon.stub()
-    wrapper.download = downloadStub
+    const downloadStub = sinon.stub(download, 'fromFavorites')
     wrapper.find('a.download').trigger('click')
-    downloadStub.should.have.been.called
+    downloadStub.called.should.be.true
+    downloadStub.restore()
   })
 })

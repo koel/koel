@@ -2,8 +2,8 @@ import Component from '@/components/main-wrapper/main-content/album.vue'
 import SongList from '@/components/shared/song-list.vue'
 import SongListControls from '@/components/shared/song-list-controls.vue'
 import { event } from '@/utils'
+import { download, albumInfo as albumInfoService } from '@/services'
 import factory from '@/tests/factory'
-import Vue from 'vue'
 
 describe('components/main-wrapper/main-content/album', () => {
   it('renders upon receiving event', () => {
@@ -21,25 +21,27 @@ describe('components/main-wrapper/main-content/album', () => {
 
   it('loads info from Last.fm', () => {
     const wrapper = shallow(Component)
+    const album = factory('album', { info: null })
     wrapper.setData({
-      album: factory('album'),
+      album,
       sharedState: { useLastfm: true }
     })
-    const showInfoStub = sinon.stub()
-    wrapper.showInfo = showInfoStub
+    const stub = sinon.stub(albumInfoService, 'fetch')
     wrapper.find('a.info').trigger('click')
-    showInfoStub.should.have.been.called
+    stub.calledWith(album).should.be.true
+    stub.restore()
   })
 
   it('allows downloading', () => {
     const wrapper = shallow(Component)
+    const album = factory('album')
     wrapper.setData({
-      album: factory('album'),
+      album,
       sharedState: { allowDownload: true }
     })
-    const downloadStub = sinon.stub()
-    wrapper.download = downloadStub
+    const downloadStub = sinon.stub(download, 'fromAlbum')
     wrapper.find('a.download').trigger('click')
-    downloadStub.should.have.been.called
+    downloadStub.calledWith(album).should.be.true
+    downloadStub.restore()
   })
 })

@@ -5,6 +5,7 @@ import Lyrics from '@/components/main-wrapper/extra/lyrics.vue'
 import YouTube from '@/components/main-wrapper/extra/youtube.vue'
 import factory from '@/tests/factory'
 import { event } from '@/utils'
+import { songInfo } from '@/services'
 
 describe('components/main-wrapper/extra/index', () => {
   it('shows by default', () => {
@@ -44,10 +45,10 @@ describe('components/main-wrapper/extra/index', () => {
 
   it('fetch song info when a new song is played', () => {
     const wrapper = shallow(ExtraSidebar)
-    const fetchSongInfoStub = sinon.stub()
     const song = factory('song')
-    wrapper.vm.fetchSongInfo = fetchSongInfoStub
+    const fetchSongInfoStub = sinon.stub(songInfo, 'fetch').callsFake(() => song)
     event.emit('song:played', song)
     fetchSongInfoStub.calledWith(song).should.be.true
+    fetchSongInfoStub.restore()
   })
 })
