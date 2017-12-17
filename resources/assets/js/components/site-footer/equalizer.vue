@@ -111,9 +111,9 @@ export default {
           filter.type = 'peaking'
         }
 
-        filter.gain.setTargetAtTime(settings[i] || 0, context.currentTime, .01)
-        filter.Q.setTargetAtTime(1, context.currentTime, .01)
-        filter.frequency.setTargetAtTime(frequency, context.currentTime, .01)
+        filter.gain.setTargetAtTime(settings[i] || 0, context.currentTime, 0.01)
+        filter.Q.setTargetAtTime(1, context.currentTime, 0.01)
+        filter.frequency.setTargetAtTime(frequency, context.currentTime, 0.01)
 
         prevFilter ? prevFilter.connect(filter) : this.preampGainNode.connect(filter)
         prevFilter = filter
@@ -177,7 +177,7 @@ export default {
      */
     changePreampGain (dbValue) {
       this.preampGainValue = dbValue
-      this.preampGainNode.gain.setTargetAtTime(Math.pow(10, dbValue / 20), context.currentTime, .01)
+      this.preampGainNode.gain.setTargetAtTime(Math.pow(10, dbValue / 20), context.currentTime, 0.01)
     },
 
     /**
@@ -187,7 +187,7 @@ export default {
      * @param  {Object} value  Value of the gain, in dB.
      */
     changeFilterGain (filter, value) {
-      filter.gain.setTargetAtTime(value, context.currentTime, .01)
+      filter.gain.setTargetAtTime(value, context.currentTime, 0.01)
     },
 
     /**
