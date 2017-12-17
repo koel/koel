@@ -28,6 +28,8 @@ import router from '@/router'
 import { alerts } from '@/utils'
 
 export default {
+  name: 'shared--user-item',
+
   props: {
     user: {
       type: Object,
