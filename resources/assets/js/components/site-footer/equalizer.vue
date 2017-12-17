@@ -34,6 +34,8 @@ import nouislider from 'nouislider'
 import { isAudioContextSupported, event, $ } from '@/utils'
 import { equalizerStore, preferenceStore as preferences } from '@/stores'
 
+let context
+
 export default {
   data () {
     return {
@@ -86,7 +88,7 @@ export default {
         window.oAudioContext ||
         window.msAudioContext
 
-      const context = new AudioContext()
+      context = new AudioContext()
 
       this.preampGainNode = context.createGain()
       this.changePreampGain(settings.preamp)
@@ -109,9 +111,9 @@ export default {
           filter.type = 'peaking'
         }
 
-        filter.gain.value = settings.gains[i] ? settings.gains[i] : 0
-        filter.Q.value = 1
-        filter.frequency.value = frequency
+        filter.gain.setTargetAtTime(settings[i] || 0, context.currentTime, .01)
+        filter.Q.setTargetAtTime(1, context.currentTime, .01)
+        filter.frequency.setTargetAtTime(frequency, context.currentTime, .01)
 
         prevFilter ? prevFilter.connect(filter) : this.preampGainNode.connect(filter)
         prevFilter = filter
@@ -175,7 +177,7 @@ export default {
      */
     changePreampGain (dbValue) {
       this.preampGainValue = dbValue
-      this.preampGainNode.gain.value = Math.pow(10, dbValue / 20)
+      this.preampGainNode.gain.setTargetAtTime(Math.pow(10, dbValue / 20), context.currentTime, .01)
     },
 
     /**
@@ -185,7 +187,7 @@ export default {
      * @param  {Object} value  Value of the gain, in dB.
      */
     changeFilterGain (filter, value) {
-      filter.gain.value = value
+      filter.gain.setTargetAtTime(value, context.currentTime, .01)
     },
 
     /**
