@@ -80,8 +80,8 @@ export default {
     },
 
     displayNewVersion () {
-      return this.userState.current.is_admin
-        && this.sharedState.currentVersion < this.sharedState.latestVersion
+      return this.userState.current.is_admin &&
+        this.sharedState.currentVersion < this.sharedState.latestVersion
     }
   },
 
