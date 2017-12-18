@@ -32,7 +32,7 @@
 
     <playlists :current-view="currentView"/>
 
-    <section v-if="user.current.is_admin" class="manage">
+    <section v-if="userState.current.is_admin" class="manage">
       <h1>Manage</h1>
 
       <ul class="menu">
@@ -48,7 +48,7 @@
     <a
       :href="latestVersionUrl"
       target="_blank"
-      v-if="user.current.is_admin && sharedState.currentVersion < sharedState.latestVersion"
+      v-if="displayNewVersion"
       class="new-ver">
       Koel version {{ sharedState.latestVersion }} is available!
     </a>
@@ -68,7 +68,7 @@ export default {
   data () {
     return {
       currentView: 'home',
-      user: userStore.state,
+      userState: userStore.state,
       showing: !isMobile.phone,
       sharedState: sharedStore.state
     }
@@ -77,6 +77,11 @@ export default {
   computed: {
     latestVersionUrl () {
       return `https://github.com/phanan/koel/releases/tag/${this.sharedState.latestVersion}`
+    },
+
+    displayNewVersion () {
+      return this.userState.current.is_admin
+        && this.sharedState.currentVersion < this.sharedState.latestVersion
     }
   },
 
