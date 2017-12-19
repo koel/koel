@@ -8,16 +8,14 @@ describe('components/main-wrapper/main-content/user', () => {
   })
 
   it('displays a form to update profile', () => {
-    const wrapper = shallow(Profile)
-    wrapper.contains('form').should.be.true
+    shallow(Profile).contains('form').should.be.true
   })
 
   it('validates password confirmation', () => {
-    const wrapper = shallow(Profile)
-    wrapper.setData({
+    const wrapper = shallow(Profile, { data: {
       pwd: 'foo',
       confirmPwd: 'bar'
-    })
+    }})
     const updateProfileStub = sinon.stub(userStore, 'updateProfile')
     wrapper.find('form').trigger('submit')
     updateProfileStub.called.should.be.false

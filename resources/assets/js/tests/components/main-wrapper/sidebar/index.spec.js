@@ -14,17 +14,15 @@ describe('compoponents/main-wrapper/sidebar/index', () => {
 
   it('displays YouTube menu item if using YouTube', () => {
     sharedStore.state.useYouTube = true
-    const wrapper = shallow(Component)
-    wrapper.contains('a.youtube').should.be.true
+    shallow(Component).contains('a.youtube').should.be.true
   })
 
   it('displays management menu items for admin', () => {
-    const wrapper = shallow(Component)
-    wrapper.setData({
+    const wrapper = shallow(Component, { data: {
       userState: {
         current: factory('user', { is_admin: true })
       }
-    })
+    }})
     ;['settings', 'users'].forEach(item => {
       wrapper.contains(`.menu a.${item}`).should.be.true
     })
@@ -33,12 +31,11 @@ describe('compoponents/main-wrapper/sidebar/index', () => {
   it('displays new version info', () => {
     sharedStore.state.currentVersion = 'v0.0.0'
     sharedStore.state.latestVersion = 'v0.0.1'
-    const wrapper = shallow(Component)
-    wrapper.setData({
+    const wrapper = shallow(Component, { data: {
       userState: {
         current: factory('user', { is_admin: true })
       }
-    })
+    }})
     wrapper.contains('a.new-ver').should.be.true
     wrapper.find('a.new-ver').text().should.contain('Koel version v0.0.1 is available!')
   })

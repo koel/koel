@@ -12,22 +12,20 @@ describe('component/main-wrapper/sidebar/playlist-item', () => {
   })
 
   it('renders a playlist menu item', () => {
-    const wrapper = shallow(Component, {
+    shallow(Component, {
       propsData: { playlist }
-    })
-    wrapper.find('a[href="#!/playlist/99"]').text().should.equal('Foo')
+    }).find('a[href="#!/playlist/99"]').text().should.equal('Foo')
   })
 
   it('renders the Favorites menu item', () => {
-    const wrapper = shallow(Component, {
+    shallow(Component, {
       propsData: {
         playlist: {
           name: 'Favorites'
         },
         type: 'favorites'
       }
-    })
-    wrapper.find('a[href="#!/favorites"]').text().should.equal('Favorites')
+    }).find('a[href="#!/favorites"]').text().should.equal('Favorites')
   })
 
   it('edits a playlist', () => {

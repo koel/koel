@@ -8,8 +8,7 @@ import { userStore } from '@/stores'
 describe('components/main-wrapper/main-content/users', () => {
   it('displays the users', () => {
     userStore.all = factory('user', 10)
-    const wrapper = mount(Component)
-    wrapper.findAll(UserItem).should.have.lengthOf(10)
+    mount(Component).findAll(UserItem).should.have.lengthOf(10)
   })
 
   it('adds new user', () => {

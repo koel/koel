@@ -8,10 +8,10 @@ describe('components/main-wrapper/extra/youtube', () => {
   beforeEach(() => {
     song = factory('song')
     wrapper = shallow(YouTube, {
-      propsData: { song }
-    })
-    wrapper.setData({
-      videos: factory('video', 5)
+      propsData: { song },
+      data: {
+        videos: factory('video', 5)
+      }
     })
   })
 

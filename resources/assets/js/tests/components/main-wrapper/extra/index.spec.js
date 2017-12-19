@@ -9,8 +9,7 @@ import { songInfo } from '@/services'
 
 describe('components/main-wrapper/extra/index', () => {
   it('shows by default', () => {
-    const wrapper = shallow(ExtraSidebar)
-    wrapper.findAll('#extra.showing').should.have.lengthOf(1)
+    shallow(ExtraSidebar).findAll('#extra.showing').should.have.lengthOf(1)
   })
 
   it('has a YouTube tab if using YouTube', () => {
@@ -33,10 +32,11 @@ describe('components/main-wrapper/extra/index', () => {
   })
 
   it('has proper child components', () => {
-    const wrapper = shallow(ExtraSidebar)
-    wrapper.setData({
-      song: factory('song'),
-      sharedState: { useYouTube: true }
+    const wrapper = shallow(ExtraSidebar, {
+      data: {
+        song: factory('song'),
+        sharedState: { useYouTube: true }
+      }
     })
     ;[ArtistInfo, AlbumInfo, Lyrics, YouTube].forEach(component => {
       wrapper.contains(component).should.be.true
@@ -44,7 +44,7 @@ describe('components/main-wrapper/extra/index', () => {
   })
 
   it('fetch song info when a new song is played', () => {
-    const wrapper = shallow(ExtraSidebar)
+    shallow(ExtraSidebar)
     const song = factory('song')
     const fetchSongInfoStub = sinon.stub(songInfo, 'fetch').callsFake(() => song)
     event.emit('song:played', song)

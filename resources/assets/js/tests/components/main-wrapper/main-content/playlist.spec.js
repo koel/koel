@@ -7,15 +7,14 @@ import { playlistStore } from '@/stores'
 describe('components/main-wrapper/main-content/playlist', () => {
   it('renders properly', () => {
     const playlist = factory('playlist', { populated: true })
-    const wrapper = shallow(Component)
-    wrapper.setData({ playlist })
+    const wrapper = shallow(Component, { data: { playlist }})
     wrapper.find('h1.heading').html().should.contain(playlist.name)
     wrapper.contains(SongList).should.be.true
   })
 
   it('fetch and populate playlist content on demand', () => {
     const playlist = factory('playlist', { songs: [] })
-    const wrapper = shallow(Component)
+    shallow(Component)
     const fetchSongsStub = sinon.stub(playlistStore, 'fetchSongs')
     event.emit('main-content-view:load', 'playlist', playlist)
     fetchSongsStub.calledWith(playlist).should.be.true
@@ -23,13 +22,12 @@ describe('components/main-wrapper/main-content/playlist', () => {
   })
 
   it('displays a fallback message if the playlist is empty', () => {
-    const wrapper = shallow(Component)
-    const playlist = factory('playlist', {
-      populated: true,
-      songs: []
-    })
-    wrapper.setData({ playlist })
-    wrapper.contains('div.none').should.be.true
+    shallow(Component, { data: {
+      playlist: factory('playlist', {
+        populated: true,
+        songs: []
+      })
+    }}).contains('div.none').should.be.true
   })
 
   it('confirms deleting if the playlist is not empty', () => {

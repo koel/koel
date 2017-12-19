@@ -36,12 +36,11 @@ describe('components/main-wrapper/main-content/artist', () => {
   })
 
   it('loads info from Last.fm', () => {
-    const wrapper = shallow(Component)
     artist.info = null
-    wrapper.setData({
+    const wrapper = shallow(Component, { data: {
       artist,
       sharedState: { useLastfm: true }
-    })
+    }})
     const stub = sinon.stub(artistInfoService, 'fetch')
     wrapper.find('a.info').trigger('click')
     stub.calledWith(artist).should.be.true
@@ -49,11 +48,10 @@ describe('components/main-wrapper/main-content/artist', () => {
   })
 
   it('allows downloading', () => {
-    const wrapper = shallow(Component)
-    wrapper.setData({
+    const wrapper = shallow(Component, { data: {
       artist,
       sharedState: { allowDownload: true }
-    })
+    }})
     const downloadStub = sinon.stub(download, 'fromArtist')
     wrapper.find('a.download').trigger('click')
     downloadStub.calledWith(artist).should.be.true

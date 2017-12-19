@@ -20,11 +20,12 @@ describe('components/main-wrapper/main-content/album', () => {
   })
 
   it('loads info from Last.fm', () => {
-    const wrapper = shallow(Component)
     const album = factory('album', { info: null })
-    wrapper.setData({
-      album,
-      sharedState: { useLastfm: true }
+    const wrapper = shallow(Component, {
+      data: {
+        album,
+        sharedState: { useLastfm: true }
+      }
     })
     const stub = sinon.stub(albumInfoService, 'fetch')
     wrapper.find('a.info').trigger('click')
@@ -33,11 +34,12 @@ describe('components/main-wrapper/main-content/album', () => {
   })
 
   it('allows downloading', () => {
-    const wrapper = shallow(Component)
     const album = factory('album')
-    wrapper.setData({
-      album,
-      sharedState: { allowDownload: true }
+    const wrapper = shallow(Component, {
+      data: {
+        album,
+        sharedState: { allowDownload: true }
+      }
     })
     const downloadStub = sinon.stub(download, 'fromAlbum')
     wrapper.find('a.download').trigger('click')

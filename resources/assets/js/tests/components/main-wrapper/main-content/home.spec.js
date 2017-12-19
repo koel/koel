@@ -28,8 +28,7 @@ describe('components/main-wrapper/main-content/home', () => {
   })
 
   it('displays all sections', () => {
-    const wrapper = mount(Home)
-    wrapper.setData(data)
+    const wrapper = mount(Home, { data })
 
     wrapper.find('h1.heading span').text().should.not.be.empty
     wrapper.find('.top-song-list').findAll(HomeSongItem).should.have.lengthOf(4)

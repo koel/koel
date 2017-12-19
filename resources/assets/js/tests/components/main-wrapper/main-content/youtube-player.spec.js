@@ -3,7 +3,6 @@ import { event } from '@/utils'
 
 describe('components/main-wrapper/main-content/youtube-player', () => {
   it('renders properly', () => {
-    const wrapper = mount(Component)
-    wrapper.find('h1.heading').text().should.contain('YouTube Video')
+    mount(Component).find('h1.heading').text().should.contain('YouTube Video')
   })
 })
