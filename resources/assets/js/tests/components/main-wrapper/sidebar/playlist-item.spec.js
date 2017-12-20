@@ -37,4 +37,15 @@ describe('component/main-wrapper/sidebar/playlist-item', () => {
     wrapper.find('input[type=text]').trigger('blur')
     updateStub.calledWith(playlist).should.be.true
   })
+
+  it("doesn't allow editing Favorites item", () => {
+    const wrapper = shallow(Component, {
+      propsData: {
+        playlist: { name: 'Favorites' },
+        type: 'favorites'
+      }
+    })
+    wrapper.find('li.favorites').trigger('dblclick')
+    wrapper.contains('input[type=text]').should.be.false
+  })
 })
