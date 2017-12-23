@@ -25,6 +25,7 @@ import { event, $ } from '@/utils'
 import { songStore, playlistStore, favoriteStore } from '@/stores'
 
 export default {
+  name: 'sidebar--playlist-item',
   props: {
     playlist: {
       type: Object,
