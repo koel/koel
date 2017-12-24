@@ -4,7 +4,10 @@ import crypto from 'crypto'
 
 export default () => {
   const artist = factory('artist')
-  const album = factory('album')
+  const album = factory('album', {
+    artist,
+    artist_id: artist.id
+  })
 
   return {
     artist,
