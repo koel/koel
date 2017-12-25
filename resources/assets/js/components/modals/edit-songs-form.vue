@@ -19,8 +19,11 @@
         <div class="tabs tabs-white">
           <div class="header clear">
             <a @click.prevent="currentView = 'details'"
+              class="tab-details"
               :class="{ active: currentView === 'details' }">Details</a>
-            <a @click.prevent="currentView = 'lyrics'" v-show="editSingle"
+            <a @click.prevent="currentView = 'lyrics'"
+              v-if="editSingle"
+              class="tab-lyrics"
               :class="{ active: currentView === 'lyrics' }">Lyrics</a>
           </div>
 
@@ -56,9 +59,9 @@
                 title="Empty or a number">
               </div>
             </div>
-            <div v-show="currentView === 'lyrics' && editSingle">
+            <div v-if="editSingle" v-show="currentView === 'lyrics'">
               <div class="form-row">
-                <textarea v-model="formData.lyrics"/>
+                <textarea name="lyrics" v-model="formData.lyrics"/>
               </div>
             </div>
           </div>
@@ -103,13 +106,15 @@ export default {
       artistState: artistStore.state,
       artistTypeaheadOptions: {
         displayKey: 'name',
-        filterKey: 'name'
+        filterKey: 'name',
+        name: 'artist'
       },
 
       albumState: albumStore.state,
       albumTypeaheadOptions: {
         displayKey: 'name',
-        filterKey: 'name'
+        filterKey: 'name',
+        name: 'album'
       },
 
       /**
@@ -228,7 +233,7 @@ export default {
   methods: {
     async open (songs) {
       this.shown = true
-      this.songs = songs
+      this.songs = [].concat(songs)
       this.currentView = 'details'
 
       if (this.editSingle) {

@@ -45,5 +45,5 @@ export function parseValidationError (error) {
  * @return {string}
  */
 export function br2nl (str) {
-  return str.replace(/<br\s*[\/]?>/gi, '\n')
+  return str ? str.replace(/<br\s*[\/]?>/gi, '\n') : ''
 }

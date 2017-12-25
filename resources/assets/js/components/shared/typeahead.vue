@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input type="text"
+    <input type="text" :name="options.name"
       :placeholder="options.placeholder || 'No change'"
       v-model="mutatedValue"
       @keydown.down.prevent="down"
