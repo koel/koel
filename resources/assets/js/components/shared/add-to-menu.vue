@@ -3,26 +3,32 @@
     <p>Add {{ songs.length | pluralize('song') }} to</p>
 
     <ul>
-      <li class="after-current" @click="queueSongsAfterCurrent">After Current Song</li>
-      <li class="bottom-queue" @click="queueSongsToBottom">Bottom of Queue</li>
-      <li class="top-queue" @click="queueSongsToTop">Top of Queue</li>
+      <template v-if="config.queue">
+        <li class="after-current" @click="queueSongsAfterCurrent">After Current Song</li>
+        <li class="bottom-queue" @click="queueSongsToBottom">Bottom of Queue</li>
+        <li class="top-queue" @click="queueSongsToTop">Top of Queue</li>
+      </template>
       <li class="favorites" v-if="config.favorites" @click="addSongsToFavorite">Favorites</li>
-      <li class="playlist" v-for="playlist in playlistState.playlists"
-        @click="addSongsToExistingPlaylist(playlist)">{{ playlist.name }}</li>
+      <template v-if="config.playlists">
+        <li class="playlist" v-for="playlist in playlistState.playlists"
+          @click="addSongsToExistingPlaylist(playlist)">{{ playlist.name }}</li>
+      </template>
     </ul>
 
-    <p>or create a new playlist</p>
+    <template v-if="config.newPlaylist">
+      <p>or create a new playlist</p>
 
-    <form class="form-save form-simple" @submit.prevent="createNewPlaylistFromSongs">
-      <input type="text"
-        @keyup.esc.prevent="close"
-        v-model="newPlaylistName"
-        placeholder="Playlist name"
-        required>
-      <button type="submit">
-        <i class="fa fa-save"></i>
-      </button>
-    </form>
+      <form class="form-save form-simple form-new-playlist" @submit.prevent="createNewPlaylistFromSongs">
+        <input type="text"
+          @keyup.esc.prevent="close"
+          v-model="newPlaylistName"
+          placeholder="Playlist name"
+          required>
+        <button type="submit">
+          <i class="fa fa-save"></i>
+        </button>
+      </form>
+    </template>
   </div>
 </template>
 
