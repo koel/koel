@@ -1,7 +1,7 @@
 <template>
   <article class="item" v-if="album.songs.length" draggable="true" @dragstart="dragStart">
     <span class="cover" :style="{ backgroundImage: `url(${album.cover})` }">
-      <a class="control" @click.prevent="play">
+      <a class="control control-play" @click.prevent="play">
         <i class="fa fa-play"></i>
       </a>
     </span>
