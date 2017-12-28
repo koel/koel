@@ -1,8 +1,8 @@
 import md5 from 'blueimp-md5'
-import factory from '.'
+import factory from 'factoria'
 import crypto from 'crypto'
 
-export default () => {
+export default faker => {
   const artist = factory('artist')
   const album = factory('album', {
     artist,

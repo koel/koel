@@ -1,4 +1,4 @@
-export default () => ({
+export default faker => ({
   id: faker.random.number(),
   name: faker.name.findName(),
   info: {

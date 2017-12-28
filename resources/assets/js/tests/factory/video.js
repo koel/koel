@@ -1,4 +1,4 @@
-export default () => ({
+export default faker => ({
   id: {
     videoId: faker.random.alphaNumeric()
   },

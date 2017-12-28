@@ -8,7 +8,6 @@ require('chai').should()
 
 // make common utils available globally as well
 global.Vue = require('vue')
-global.faker = require('faker')
 global.expect = require('expect')
 global.sinon = require('sinon')
 global._ = require('lodash')

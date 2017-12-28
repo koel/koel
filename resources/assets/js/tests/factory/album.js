@@ -1,6 +1,6 @@
-import factory from '.'
+import factory from 'factoria'
 
-export default () => {
+export default faker => {
   const artist = factory('artist')
 
   return {
