@@ -22,8 +22,7 @@ describe('components/shared/album-item', () => {
 
   it('plays if clicked', () => {
     const playStub = sinon.stub(playback, 'playAllInAlbum')
-    const wrapper = shallow(Component, { propsData: { album }})
-    wrapper.find('.control-play').trigger('click')
+    shallow(Component, { propsData: { album }}).find('.control-play').trigger('click')
     playStub.calledWith(album, false).should.be.true
     playStub.restore()
   })
@@ -40,8 +39,7 @@ describe('components/shared/album-item', () => {
 
   it('shuffles', () => {
     const playStub = sinon.stub(playback, 'playAllInAlbum')
-    const wrapper = shallow(Component, { propsData: { album }})
-    wrapper.find('.shuffle-album').trigger('click')
+    shallow(Component, { propsData: { album }}).find('.shuffle-album').trigger('click')
     playStub.calledWith(album, true).should.be.true
     playStub.restore()
   })
@@ -49,8 +47,7 @@ describe('components/shared/album-item', () => {
   it('downloads', () => {
     sharedStore.state = { allowDownload: true }
     const downloadStub = sinon.stub(download, 'fromAlbum')
-    const wrapper = shallow(Component, { propsData: { album }})
-    wrapper.find('.download-album').trigger('click')
+    shallow(Component, { propsData: { album }}).find('.download-album').trigger('click')
     downloadStub.calledWith(album).should.be.true
     downloadStub.restore()
   })
