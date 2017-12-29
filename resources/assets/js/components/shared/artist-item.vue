@@ -1,7 +1,7 @@
 <template>
   <article class="item" v-if="showing" draggable="true" @dragstart="dragStart">
     <span class="cover" :style="{ backgroundImage: `url(${image})` }">
-      <a class="control" @click.prevent="play">
+      <a class="control control-play" @click.prevent="play">
         <i class="fa fa-play"></i>
       </a>
     </span>
@@ -18,7 +18,10 @@
           {{ artist.playCount | pluralize('play') }}
         </span>
         <span class="right">
-          <a href @click.prevent="download" v-if="sharedState.allowDownload" title="Download all songs by artist">
+          <a href @click.prevent="shuffle" title="Shuffle" class="shuffle-artist">
+            <i class="fa fa-random"></i>
+          </a>
+          <a href @click.prevent="download" v-if="sharedState.allowDownload" title="Download all songs by artist" class="download-artist">
             <i class="fa fa-download"></i>
           </a>
         </span>
@@ -74,6 +77,14 @@ export default {
         playback.playAllByArtist(this.artist, false)
       }
     },
+
+    /**
+     * Shuffle all songs by the artist.
+     */
+    shuffle () {
+      playback.playAllByArtist(this.artist, true)
+    },
+
 
     /**
      * Download all songs by artist.
