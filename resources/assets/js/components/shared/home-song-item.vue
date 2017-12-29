@@ -53,7 +53,7 @@ export default {
 
     changeSongState () {
       if (this.song.playbackState === 'stopped') {
-        this.play(this.song)
+        this.play()
       } else if (this.song.playbackState === 'paused') {
         playback.resume()
       } else {
