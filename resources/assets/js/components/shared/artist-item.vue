@@ -85,7 +85,6 @@ export default {
       playback.playAllByArtist(this.artist, true)
     },
 
-
     /**
      * Download all songs by artist.
      */
