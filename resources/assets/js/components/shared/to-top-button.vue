@@ -27,7 +27,7 @@ export default {
   },
 
   mounted () {
-    this.$el.parentNode.addEventListener('scroll', e => {
+    this.$el.parentNode && this.$el.parentNode.addEventListener('scroll', e => {
       this.showing = e.target.scrollTop > 64
     })
   }
