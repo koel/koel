@@ -67,18 +67,17 @@ describe('components/shared/song-item', () => {
     const playStub = sinon.stub(playback, 'play')
     const resumeStub = sinon.stub(playback, 'resume') 
     const pauseStub = sinon.stub(playback, 'pause')
-    let wrapper = shallow(Component, { propsData: { item }})
-    wrapper.find('.play').trigger('click')
+    const playControl = shallow(Component, { propsData: { item }}).find('.play')
+
+    playControl.trigger('click')
     playStub.called.should.be.true 
 
     song.playbackState = 'playing'
-    wrapper = shallow(Component, { propsData: { item }})
-    wrapper.find('.play').trigger('click')
+    playControl.trigger('click')
     pauseStub.called.should.be.true 
 
     song.playbackState = 'paused'
-    wrapper = shallow(Component, { propsData: { item }})
-    wrapper.find('.play').trigger('click')
+    playControl.trigger('click')
     resumeStub.called.should.be.true 
 
     playStub.restore()
