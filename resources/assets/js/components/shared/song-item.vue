@@ -28,7 +28,9 @@
 <script>
 import { playback } from '@/services'
 import { queueStore } from '@/stores'
-import $v from 'vuequery'
+import $ from 'vuequery'
+
+let parentSongList
 
 export default {
   name: 'song-item',
@@ -36,12 +38,6 @@ export default {
     item: {
       type: Object,
       required: true
-    }
-  },
-
-  data () {
-    return {
-      parentSongList: null
     }
   },
 
@@ -63,8 +59,8 @@ export default {
     }
   },
 
-  created () {
-    this.parentSongList = $v(this).closest('song-list').vm
+  mounted () {
+    parentSongList = window.__UNIT_TESTING__ || $(this).closest('song-list').vm
   },
 
   methods: {
@@ -98,7 +94,7 @@ export default {
      * @param  {Event} event
      */
     clicked (event) {
-      this.parentSongList.rowClicked(this, event)
+      parentSongList.rowClicked(this, event)
     },
 
     /**
@@ -106,7 +102,7 @@ export default {
      * @param  {Event} event
      */
     dragStart (event) {
-      this.parentSongList.dragStart(this, event)
+      parentSongList.dragStart(this, event)
     },
 
     /**
@@ -114,7 +110,7 @@ export default {
      * @param  {Event} event
      */
     dragLeave (event) {
-      this.parentSongList.removeDroppableState(event)
+      parentSongList.removeDroppableState(event)
     },
 
     /**
@@ -122,7 +118,7 @@ export default {
      * @param {Event} event The dragover event.
      */
     dragEnter (event) {
-      this.parentSongList.allowDrop(event)
+      parentSongList.allowDrop(event)
     },
 
     /**
@@ -130,7 +126,7 @@ export default {
      * @param  {Event} event
      */
     drop (event) {
-      this.parentSongList.handleDrop(this, event)
+      parentSongList.handleDrop(this, event)
     },
 
     /**
@@ -138,7 +134,7 @@ export default {
      * @param  {Event} event
      */
     contextMenu (event) {
-      this.parentSongList.openContextMenu(this, event)
+      parentSongList.openContextMenu(this, event)
     }
   }
 }
