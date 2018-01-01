@@ -1,16 +1,16 @@
 <template>
-  <div id="overlay" v-show="state.showing" class="overlay" :class="state.type">
+  <div id="overlay" v-if="state.showing" class="overlay" :class="state.type">
     <div class="display">
-      <sound-bar v-show="state.type === 'loading'"/>
+      <sound-bar v-if="state.type === 'loading'"/>
       <i class="fa fa-exclamation-circle" v-show="state.type === 'error'"/>
       <i class="fa fa-exclamation-triangle" v-show="state.type === 'warning'"/>
       <i class="fa fa-info-circle" v-show="state.type === 'info'"/>
       <i class="fa fa-check-circle" v-show="state.type === 'success'"/>
 
-      <span v-html="state.message"/>
+      <span class="message" v-html="state.message"/>
     </div>
 
-    <button v-show="state.dismissable" @click.prevent="state.showing = false">Close</button>
+    <button class="btn-dismiss" v-if="state.dismissable" @click.prevent="state.showing = false">Close</button>
   </div>
 </template>
 
@@ -58,16 +58,6 @@ export default {
      */
     hide () {
       this.state.showing = false
-    },
-
-    /**
-     * Set the overlay to be dismissable (or not).
-     * A Close button will be shown/hidden correspondingly.
-     *
-     * @param {Boolean} dismissable
-     */
-    setDimissable (dismissable = true) {
-      this.state.dismissable = dismissable
     }
   },
 
