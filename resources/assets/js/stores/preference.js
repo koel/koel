@@ -19,6 +19,7 @@ export const preferenceStore = {
     artistsViewMode: null,
     albumsViewMode: null,
     selectedPreset: -1,
+    disableTranscoding: false,
     transcodeOnMobile: false
   },
 
