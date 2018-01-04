@@ -46,7 +46,10 @@ export default {
   name: 'shared--song-list-controls',
   props: {
     config: Object,
-    selectedSongs: Array
+    selectedSongs: {
+      type: Array,
+      default: []
+    }
   },
 
   components: { addToMenu },
