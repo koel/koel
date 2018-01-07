@@ -112,14 +112,7 @@ export default {
   computed: {
     filteredItems () {
       const { keywords, fields } = this.extractSearchData(this.q)
-      if (!keywords) {
-        return this.songRows
-      }
-      return filterBy(
-        this.songRows,
-        keywords,
-        ...(fields.length ? fields : ['song.title', 'song.album.name', 'song.artist.name'])
-      )
+      return keywords ? filterBy(this.songRows, keywords, ...fields) : this.songRows
     },
 
     /**
@@ -253,8 +246,6 @@ export default {
           // Play the first song selected if we're in Queue screen.
           playback.play(this.selectedSongs[0])
           break
-        case 'favorites':
-        case 'playlist':
         default:
           //
           // --------------------------------------------------------------------
@@ -264,19 +255,15 @@ export default {
           //  • Shift+Enter: Queues song to top
           //  • Cmd/Ctrl+Enter: Queues song to bottom and play the first selected song
           //  • Cmd/Ctrl+Shift+Enter: Queue songs to top and play the first queued song
-          //
-          // Also, if there's only one song selected, play it right away.
           // --------------------------------------------------------------------
           //
           queueStore.queue(this.selectedSongs, false, event.shiftKey)
 
-          this.$nextTick(() => {
-            router.go('queue')
+          if (event.ctrlKey || event.metaKey) {
+            playback.play(this.selectedSongs[0])
+          }
 
-            if (event.ctrlKey || event.metaKey || this.selectedSongs.length === 1) {
-              playback.play(this.selectedSongs[0])
-            }
-          })
+          router.go('queue')
 
           break
       }
@@ -477,7 +464,10 @@ export default {
           })
         }
       }
-      return { keywords, fields }
+      return {
+        keywords,
+        fields: fields.length ? fields : ['song.title', 'song.album.name', 'song.artist.name']
+      }
     }
   },
 
