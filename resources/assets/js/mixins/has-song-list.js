@@ -9,6 +9,7 @@ import { playback } from '@/services'
 import songList from '@/components/shared/song-list.vue'
 import songListControls from '@/components/shared/song-list-controls.vue'
 import controlsToggler from '@/components/shared/song-list-controls-toggler.vue'
+import { event } from '@/utils'
 
 export default {
   components: { songList, songListControls, controlsToggler },
@@ -28,14 +29,6 @@ export default {
   },
 
   methods: {
-    setSelectedSongs (songs) {
-      this.selectedSongs = songs
-    },
-
-    updateMeta (meta) {
-      assignIn(this.meta, meta)
-    },
-
     shuffleAll () {
       playback.queueAndPlay(this.state.songs, true)
     },
@@ -47,5 +40,19 @@ export default {
     toggleControls () {
       this.showingControls = !this.showingControls
     }
+  },
+
+  created () {
+    event.on({
+      updateMeta: (meta, target) => {
+        target === this && assignIn(this.meta, meta)
+      },
+
+      setSelectedSongs: (songs, target) => {
+        if (target === this) {
+          this.selectedSongs = songs
+        }
+      }
+    })
   }
 }

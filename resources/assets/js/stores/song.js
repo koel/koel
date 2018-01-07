@@ -101,10 +101,14 @@ export const songStore = {
    *
    * @return {Float|String}
    */
-  getLength (songs, toHis) {
+  getLength (songs, toHis = false) {
     const duration = songs.reduce((length, song) => length + song.length, 0)
 
     return toHis ? secondsToHis(duration) : duration
+  },
+
+  getFormattedLength (songs) {
+    return this.getLength(songs, true)
   },
 
   /**

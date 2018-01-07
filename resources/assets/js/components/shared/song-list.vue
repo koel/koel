@@ -49,7 +49,7 @@
 
 <script>
 import isMobile from 'ismobilejs'
-import { each, orderBy as _orderBy } from 'lodash'
+import { each } from 'lodash'
 
 import { filterBy, orderBy, event, pluralize, $ } from '@/utils'
 import { playlistStore, queueStore, songStore, favoriteStore } from '@/stores'
@@ -68,9 +68,7 @@ export default {
     type: {
       type: String,
       default: 'allSongs',
-      validator: value => {
-        return ['allSongs', 'queue', 'playlist', 'favorites', 'artist', 'album'].indexOf(value) !== -1
-      }
+      validator: value => ['allSongs', 'queue', 'playlist', 'favorites', 'artist', 'album'].includes(value)
     },
     sortable: {
       type: Boolean,
@@ -91,7 +89,7 @@ export default {
       lastSelectedRow: null,
       q: '', // The filter query
       sortKey: '',
-      order: 1,
+      order: -1,
       sortingByAlbum: false,
       sortingByArtist: false,
       songRows: []
@@ -107,33 +105,19 @@ export default {
     },
 
     selectedSongs (val) {
-      this.$parent.setSelectedSongs(val)
+      event.emit('setSelectedSongs', val, this.$parent)
     }
   },
 
   computed: {
     filteredItems () {
-      // Allow searching specifically in title, album, and artist
-      const re = /in:(title|album|artist)/ig
-      const fields = []
-      const matches = this.q.match(re)
-      if (matches) {
-        this.q = this.q.replace(re, '').trim()
-        if (!this.q) {
-          return this.songRows
-        }
-        matches.forEach(match => {
-          let field = match.split(':')[1].toLowerCase()
-          if (field !== 'title') {
-            field = `${field}.name`
-          }
-          fields.push(`song.${field}`)
-        })
+      const { keywords, fields } = this.extractSearchData(this.q)
+      if (!keywords) {
+        return this.songRows
       }
-
       return filterBy(
         this.songRows,
-        this.q,
+        keywords,
         ...(fields.length ? fields : ['song.title', 'song.album.name', 'song.artist.name'])
       )
     },
@@ -162,10 +146,10 @@ export default {
       }
 
       // Update the song count and duration status on parent.
-      this.$parent.updateMeta({
+      event.emit('updateMeta', {
         songCount: this.items.length,
-        totalLength: songStore.getLength(this.items, true)
-      })
+        totalLength: songStore.getFormattedLength(this.items)
+      }, this.$parent) 
 
       this.generateSongRows()
     },
@@ -185,7 +169,7 @@ export default {
       this.songRows = this.items.map(song => {
         return {
           song,
-          selected: selectedSongIds.indexOf(song.id) > -1,
+          selected: selectedSongIds.includes(song.id),
           type: 'song'
         }
       })
@@ -197,6 +181,7 @@ export default {
      * @param  {String} key The sort key. Can be 'title', 'album', 'artist', or 'length'
      */
     sort (key = null) {
+      // there are certain cirscumstances where sorting is simply disallowed, e.g. in Queue
       if (this.sortable === false) {
         return
       }
@@ -206,18 +191,20 @@ export default {
         this.order *= -1
       }
 
+      // if this is an album's song list, default to sorting by track number
+      // and additionally sort by disc number
       if (this.type === 'album') {
         this.sortKey = this.sortKey ? this.sortKey : ['song.track']
+        this.sortKey = [].concat(this.sortKey)
+        if (!this.sortKey.includes('song.disc')) {
+          this.sortKey.push('song.disc')
+        }
       }
 
-      this.sortingByAlbum = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.name'
-      this.sortingByArtist = Array.isArray(this.sortKey) && this.sortKey[0] === 'song.album.artist.name'
+      this.sortingByAlbum = this.sortKey[0] === 'song.album.name'
+      this.sortingByArtist = this.sortKey[0] === 'song.album.artist.name'
 
       this.songRows = orderBy(this.songRows, this.sortKey, this.order)
-
-      if (this.type === 'album') {
-        this.songRows = _orderBy(this.songRows, 'song.disc')
-      }
     },
 
     /**
@@ -469,6 +456,28 @@ export default {
       }
 
       this.$nextTick(() => this.$refs.contextMenu.open(event.pageY, event.pageX))
+    },
+
+    /**
+     * Extract the search data from a search query.
+     * @param {String} q
+     * @return { Object } A { keywords, fields } object
+     */
+    extractSearchData (q) {
+      const re = /in:(title|album|artist)/ig
+      const fields = []
+      const matches = q.match(re)
+      let keywords = q
+      if (matches) {
+        keywords = q.replace(re, '').trim()
+        if (keywords) {
+          matches.forEach(match => {
+            const field = match.split(':')[1].toLowerCase()
+            fields.push(field === 'title' ? `song.${field}` : `song.${field}.name`)
+          })
+        }
+      }
+      return { keywords, fields } 
     }
   },
 
