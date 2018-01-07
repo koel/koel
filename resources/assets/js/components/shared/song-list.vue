@@ -149,7 +149,7 @@ export default {
       event.emit('updateMeta', {
         songCount: this.items.length,
         totalLength: songStore.getFormattedLength(this.items)
-      }, this.$parent) 
+      }, this.$parent)
 
       this.generateSongRows()
     },
@@ -477,7 +477,7 @@ export default {
           })
         }
       }
-      return { keywords, fields } 
+      return { keywords, fields }
     }
   },
 
