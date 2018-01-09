@@ -30,14 +30,18 @@ import { playback } from '@/services'
 import { queueStore } from '@/stores'
 import $ from 'vuequery'
 
-let parentSongList
-
 export default {
   name: 'song-item',
   props: {
     item: {
       type: Object,
       required: true
+    }
+  },
+
+  data () {
+    return {
+      parentSongList: null
     }
   },
 
@@ -60,7 +64,7 @@ export default {
   },
 
   mounted () {
-    parentSongList = window.__UNIT_TESTING__ || $(this).closest('song-list').vm
+    this.parentSongList = window.__UNIT_TESTING__ || $(this).closest('song-list').vm
   },
 
   methods: {
@@ -94,7 +98,7 @@ export default {
      * @param  {Event} event
      */
     clicked (event) {
-      parentSongList.rowClicked(this, event)
+      this.parentSongList.rowClicked(this, event)
     },
 
     /**
@@ -102,7 +106,7 @@ export default {
      * @param  {Event} event
      */
     dragStart (event) {
-      parentSongList.dragStart(this, event)
+      this.parentSongList.dragStart(this, event)
     },
 
     /**
@@ -110,7 +114,7 @@ export default {
      * @param  {Event} event
      */
     dragLeave (event) {
-      parentSongList.removeDroppableState(event)
+      this.parentSongList.removeDroppableState(event)
     },
 
     /**
@@ -118,7 +122,7 @@ export default {
      * @param {Event} event The dragover event.
      */
     dragEnter (event) {
-      parentSongList.allowDrop(event)
+      this.parentSongList.allowDrop(event)
     },
 
     /**
@@ -126,7 +130,7 @@ export default {
      * @param  {Event} event
      */
     drop (event) {
-      parentSongList.handleDrop(this, event)
+      this.parentSongList.handleDrop(this, event)
     },
 
     /**
@@ -134,7 +138,7 @@ export default {
      * @param  {Event} event
      */
     contextMenu (event) {
-      parentSongList.openContextMenu(this, event)
+      this.parentSongList.openContextMenu(this, event)
     }
   }
 }
