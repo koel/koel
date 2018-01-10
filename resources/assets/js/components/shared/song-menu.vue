@@ -1,31 +1,28 @@
 <template>
-  <ul ref="menu" class="menu song-menu" v-show="shown" tabindex="-1" @contextmenu.prevent
-    @blur="close"
-    :style="{ top: top+'px', left: left+'px' }"
+  <ul ref="menu" class="menu song-menu" v-show="shown" tabindex="-1" @contextmenu.prevent @blur="close" :style="{ top: `${top}px`, left: `${left}px` }"
   >
     <template v-show="onlyOneSongSelected">
-      <li @click="doPlayback">
-        <span v-show="!firstSongPlaying">Play</span>
-        <span v-show="firstSongPlaying">Pause</span>
+      <li class="playback" @click.stop.prevent="doPlayback">
+        <span v-if="firstSongPlaying">Pause</span>
+        <span v-else>Play</span>
       </li>
-      <li @click="viewAlbumDetails(songs[0].album)">Go to Album</li>
-      <li @click="viewArtistDetails(songs[0].artist)">Go to Artist</li>
+      <li class="go-to-album" @click="viewAlbumDetails(songs[0].album)">Go to Album</li>
+      <li class="go-to-artist" @click="viewArtistDetails(songs[0].artist)">Go to Artist</li>
     </template>
     <li class="has-sub">Add To
-      <ul class="menu submenu">
-        <li @click="queueSongsAfterCurrent">After Current Song</li>
-        <li @click="queueSongsToBottom">Bottom of Queue</li>
-        <li @click="queueSongsToTop">Top of Queue</li>
+      <ul class="menu submenu menu-add-to">
+        <li class="after-current" @click="queueSongsAfterCurrent">After Current Song</li>
+        <li class="bottom-queue" @click="queueSongsToBottom">Bottom of Queue</li>
+        <li class="top-queue" @click="queueSongsToTop">Top of Queue</li>
         <li class="separator"></li>
-        <li @click="addSongsToFavorite">Favorites</li>
-        <li class="separator" v-show="playlistState.playlists.length"></li>
-        <li v-for="p in playlistState.playlists" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
+        <li class="favorite" @click="addSongsToFavorite">Favorites</li>
+        <li class="separator" v-if="playlistState.playlists.length"></li>
+        <li class="playlist" v-for="p in playlistState.playlists" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
       </ul>
     </li>
-    <li v-show="isAdmin" @click="openEditForm">Edit</li>
-    <li v-show="sharedState.allowDownload" @click="download">Download</li>
-    <!-- somehow v-if doesn't work here -->
-    <li v-show="copyable && onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
+    <li class="open-edit-form" v-if="isAdmin" @click="openEditForm">Edit</li>
+    <li class="download" v-if="sharedState.allowDownload" @click="download">Download</li>
+    <li class="copy-url" v-if="copyable && onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
   </ul>
 </template>
 
