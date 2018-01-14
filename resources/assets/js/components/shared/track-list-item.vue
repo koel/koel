@@ -1,10 +1,10 @@
 <template>
-  <li :class="{ available: correspondingSong }" :title="tooltip" @click="play">
+  <li :class="{ available: song }" :title="tooltip" @click="play">
     <span class="no">{{ index + 1 }}</span>
     <span class="title">{{ track.title }}</span>
     <a
       :href="iTunesUrl"
-      v-if="useiTunes && !correspondingSong"
+      v-if="useiTunes && !song"
       target="_blank"
       class="view-on-itunes"
       title="View on iTunes"
@@ -43,12 +43,12 @@ export default {
   },
 
   computed: {
-    correspondingSong () {
+    song () {
       return songStore.guess(this.track.title, this.album)
     },
 
     tooltip () {
-      return this.correspondingSong ? 'Click to play' : ''
+      return this.song ? 'Click to play' : ''
     },
 
     iTunesUrl () {
@@ -58,9 +58,9 @@ export default {
 
   methods: {
     play () {
-      if (this.correspondingSong) {
-        queueStore.contains(this.correspondingSong) || queueStore.queueAfterCurrent(this.correspondingSong)
-        playback.play(this.correspondingSong)
+      if (this.song) {
+        queueStore.contains(this.song) || queueStore.queueAfterCurrent(this.song)
+        playback.play(this.song)
       }
     }
   }
