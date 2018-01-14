@@ -20,12 +20,12 @@ export default {
     mode: {
       type: String,
       default: 'thumbnails',
-      validator: value => ['thumbnails', 'list'].indexOf(value) !== -1
+      validator: value => ['thumbnails', 'list'].includes(value)
     },
     for: {
       type: String,
       required: true,
-      validator: value => ['albums', 'artists'].indexOf(value) !== -1
+      validator: value => ['albums', 'artists'].includes(value)
     }
   },
 
@@ -49,7 +49,7 @@ export default {
   methods: {
     setMode (mode) {
       preferences[this.preferenceKey] = this.mutatedMode = mode
-      this.$parent.changeViewMode(mode)
+      this.$emit('viewModeChanged', mode)
     }
   },
 
