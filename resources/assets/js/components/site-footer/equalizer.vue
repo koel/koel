@@ -63,9 +63,7 @@ export default {
      * @param {Number} val
      */
     selectedPresetIndex (val) {
-      /**
-       * Save the selected preset (index) into local storage every time the value's changed.
-       */
+      // Save the selected preset (index) every time the value's changed.
       preferences.selectedPreset = val
 
       if (~~val !== -1) {

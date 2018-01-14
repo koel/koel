@@ -1,7 +1,7 @@
 <template>
   <span class="volume control" id="volume">
-    <i class="fa fa-volume-up" @click.prevent="mute" v-show="!muted"/>
-    <i class="fa fa-volume-off" @click.prevent="unmute" v-show="muted"/>
+    <i class="fa fa-volume-off unmute" @click.prevent="unmute" v-if="muted"/>
+    <i class="fa fa-volume-up mute" @click.prevent="mute" v-else/>
     <input type="range" id="volumeRange" max="10" step="0.1" 
       @change="broadcastVolume" class="plyr__volume"
       @input="setVolume"
@@ -25,7 +25,7 @@ export default {
      */
     mute () {
       this.muted = true
-      return playback.mute()
+      playback.mute()
     },
 
     /**
@@ -33,7 +33,7 @@ export default {
      */
     unmute () {
       this.muted = false
-      return playback.unmute()
+      playback.unmute()
     },
 
     /**
@@ -42,8 +42,9 @@ export default {
      * @param {Event} e
      */
     setVolume (e) {
-      playback.setVolume(e.target.value)
-      this.muted = e.target.value === 0
+      const volume = parseFloat(e.target.value)
+      playback.setVolume(volume)
+      this.muted = volume === 0
     },
 
     /**
@@ -52,7 +53,7 @@ export default {
      * @param  {Event} e
      */
     broadcastVolume (e) {
-      socket.broadcast('volume:changed', e.target.value)
+      socket.broadcast('volume:changed', parseFloat(e.target.value))
     }
   }
 }
