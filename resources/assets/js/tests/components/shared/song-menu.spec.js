@@ -95,7 +95,7 @@ describe('components/shared/song-menu', () => {
   })
 
   it('copies URL', () => {
-    const getUrlStub = sinon.stub('getShareableUrl')
+    const getUrlStub = sinon.stub(songStore, 'getShareableUrl')
     const song = factory('song')
     const wrapper = shallow(Component, { 
       propsData: { songs: [song] },
