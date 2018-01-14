@@ -67,10 +67,12 @@ export default {
      * Kill off the freaking user.
      */
     del () {
-      alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, async () => {
-        userStore.destroy(this.user)
-        this.$destroy()
-      })
+      alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, this.doDelete)
+    },
+
+    doDelete () {
+      userStore.destroy(this.user)
+      this.$destroy()
     }
   }
 }
