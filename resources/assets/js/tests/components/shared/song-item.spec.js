@@ -38,7 +38,7 @@ describe('components/shared/song-item', () => {
     const queueStub = sinon.stub(queueStore, 'queueAfterCurrent')
     const playStub = sinon.stub(playback, 'play')
     const wrapper = shallow(Component, { propsData: { item }})
-    wrapper.find('tr').trigger('dblclick')
+    wrapper.dblclick('tr')
     containsStub.calledWith(song).should.be.true
     queueStub.calledWith(song).should.be.true
     playStub.calledWith(song).should.be.true
@@ -53,7 +53,7 @@ describe('components/shared/song-item', () => {
     const queueStub = sinon.stub(queueStore, 'queueAfterCurrent')
     const playStub = sinon.stub(playback, 'play')
     const wrapper = shallow(Component, { propsData: { item }})
-    wrapper.find('tr').trigger('dblclick')
+    wrapper.dblclick('tr')
     containsStub.calledWith(song).should.be.true
     queueStub.calledWith(song).should.be.false
     playStub.calledWith(song).should.be.true
@@ -69,15 +69,15 @@ describe('components/shared/song-item', () => {
     const pauseStub = sinon.stub(playback, 'pause')
     const playControl = shallow(Component, { propsData: { item }}).find('.play')
 
-    playControl.trigger('click')
+    playControl.click()
     playStub.called.should.be.true 
 
     song.playbackState = 'playing'
-    playControl.trigger('click')
+    playControl.click()
     pauseStub.called.should.be.true 
 
     song.playbackState = 'paused'
-    playControl.trigger('click')
+    playControl.click()
     resumeStub.called.should.be.true 
 
     playStub.restore()

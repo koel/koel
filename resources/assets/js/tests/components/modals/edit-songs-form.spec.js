@@ -18,7 +18,7 @@ describe('components/modals/edit-songs-form', () => {
   it('opens', async done => {
     const wrapper = shallow(Component)
     await wrapper.vm.open(factory('song', 3))
-    wrapper.contains('form').should.be.true
+    wrapper.has('form').should.be.true
     done()
   })
 
@@ -32,13 +32,13 @@ describe('components/modals/edit-songs-form', () => {
     metaHtml.should.contain(song.album.name)
     metaHtml.should.contain(song.artist.name)
 
-    wrapper.find('input[name=title]').element.value.should.equal(song.title)
-    wrapper.find('input[name=album]').element.value.should.equal(song.album.name)
-    wrapper.find('input[name=artist]').element.value.should.equal(song.artist.name)
-    wrapper.find('input[name=track]').element.value.should.equal(song.track.toString())
+    wrapper.find('input[name=title]').value.should.equal(song.title)
+    wrapper.find('input[name=album]').value.should.equal(song.album.name)
+    wrapper.find('input[name=artist]').value.should.equal(song.artist.name)
+    wrapper.find('input[name=track]').value.should.equal(song.track.toString())
 
-    wrapper.find('.tabs .tab-lyrics').trigger('click')
-    wrapper.find('textarea[name=lyrics]').element.value.should.equal(song.lyrics)
+    wrapper.click('.tabs .tab-lyrics')
+    wrapper.find('textarea[name=lyrics]').value.should.equal(song.lyrics)
 
     done()
   })
@@ -52,9 +52,9 @@ describe('components/modals/edit-songs-form', () => {
     metaHtml.should.contain('Mixed Artists')
     metaHtml.should.contain('Mixed Albums')
 
-    wrapper.find('input[name=artist]').element.value.should.be.empty
-    wrapper.find('input[name=album]').element.value.should.be.empty
-    wrapper.contains('.tabs .tab-lyrics').should.be.false
+    wrapper.find('input[name=artist]').value.should.be.empty
+    wrapper.find('input[name=album]').value.should.be.empty
+    wrapper.has('.tabs .tab-lyrics').should.be.false
 
     done()
   })
@@ -73,9 +73,9 @@ describe('components/modals/edit-songs-form', () => {
     metaHtml.should.contain(artist.name)
     metaHtml.should.contain('Mixed Albums')
 
-    wrapper.find('input[name=artist]').element.value.should.equal(artist.name)
-    wrapper.find('input[name=album]').element.value.should.be.empty
-    wrapper.contains('.tabs .tab-lyrics').should.be.false
+    wrapper.find('input[name=artist]').value.should.equal(artist.name)
+    wrapper.find('input[name=album]').value.should.be.empty
+    wrapper.has('.tabs .tab-lyrics').should.be.false
 
     done()
   })
@@ -96,9 +96,9 @@ describe('components/modals/edit-songs-form', () => {
     metaHtml.should.contain(album.name)
     metaHtml.should.contain(album.artist.name)
 
-    wrapper.find('input[name=artist]').element.value.should.equal(album.artist.name)
-    wrapper.find('input[name=album]').element.value.should.equal(album.name)
-    wrapper.contains('.tabs .tab-lyrics').should.be.false
+    wrapper.find('input[name=artist]').value.should.equal(album.artist.name)
+    wrapper.find('input[name=album]').value.should.equal(album.name)
+    wrapper.has('.tabs .tab-lyrics').should.be.false
 
     done()
   })
@@ -110,7 +110,7 @@ describe('components/modals/edit-songs-form', () => {
     const formData = { foo: 'bar' }
     await wrapper.vm.open(songs)
     wrapper.setData({ formData })
-    wrapper.find('form').trigger('submit')
+    wrapper.submit('form')
     updateStub.calledWith(songs, formData).should.be.true
 
     done()
@@ -120,7 +120,7 @@ describe('components/modals/edit-songs-form', () => {
     const wrapper = shallow(Component)
     await wrapper.vm.open(factory('song', 3))
     await wrapper.vm.close()
-    wrapper.contains('form').should.be.false
+    wrapper.has('form').should.be.false
     done()
   })
 })

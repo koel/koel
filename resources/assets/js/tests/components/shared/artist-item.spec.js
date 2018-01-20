@@ -16,7 +16,7 @@ describe('components/shared/artist-item', () => {
 
   it('renders properly', () => {
     const wrapper = shallow(Component, { propsData: { artist }})
-    wrapper.contains('span.cover').should.be.true
+    wrapper.has('span.cover').should.be.true
     const html = wrapper.html()
     html.should.contain('4 albums')
     html.should.contain('16 songs')
@@ -25,7 +25,7 @@ describe('components/shared/artist-item', () => {
 
   it('plays if clicked', () => {
     const playStub = sinon.stub(playback, 'playAllByArtist')
-    shallow(Component, { propsData: { artist }}).find('.control-play').trigger('click')
+    shallow(Component, { propsData: { artist }}).click('.control-play')
     playStub.calledWith(artist, false).should.be.true
     playStub.restore()
   })
@@ -33,16 +33,16 @@ describe('components/shared/artist-item', () => {
   it('queues if ctrl/meta clicked', () => {
     const queueStub = sinon.stub(queueStore, 'queue')
     const wrapper = shallow(Component, { propsData: { artist }})
-    wrapper.find('.control-play').trigger('click', { metaKey: true })
+    wrapper.click('.control-play', { metaKey: true })
     queueStub.called.should.be.true
-    wrapper.find('.control-play').trigger('click', { ctrlKey: true })
+    wrapper.click('.control-play', { ctrlKey: true })
     queueStub.called.should.be.true
     queueStub.restore()
   })
 
   it('shuffles', () => {
     const playStub = sinon.stub(playback, 'playAllByArtist')
-    shallow(Component, { propsData: { artist }}).find('.shuffle-artist').trigger('click')
+    shallow(Component, { propsData: { artist }}).click('.shuffle-artist')
     playStub.calledWith(artist, true).should.be.true
     playStub.restore()
   })
@@ -50,7 +50,7 @@ describe('components/shared/artist-item', () => {
   it('downloads', () => {
     sharedStore.state = { allowDownload: true }
     const downloadStub = sinon.stub(download, 'fromArtist')
-    shallow(Component, { propsData: { artist }}).find('.download-artist').trigger('click')
+    shallow(Component, { propsData: { artist }}).click('.download-artist')
     downloadStub.calledWith(artist).should.be.true
     downloadStub.restore()
   })

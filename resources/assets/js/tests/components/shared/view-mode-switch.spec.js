@@ -6,9 +6,7 @@ describe('components/shared/view-mode-switch', () => {
       mode: 'list',
       for: 'albums'
     }})
-    wrapper.find('a.thumbnails').trigger('click')
-    wrapper.emitted().viewModeChanged[0].should.eql(['thumbnails'])
-    wrapper.find('a.list').trigger('click')
-    wrapper.emitted().viewModeChanged[1].should.eql(['list'])
+    wrapper.click('a.thumbnails').hasEmitted('viewModeChanged', 'thumbnails').should.be.true
+    wrapper.click('a.list').hasEmitted('viewModeChanged', 'list').should.be.true
   })
 })

@@ -11,8 +11,7 @@ describe('components/main-wrapper/main-content/favorites', () => {
         songs: factory('song', 5)
       }
     }})
-    wrapper.contains(SongList).should.be.true
-    wrapper.contains(SongListControls).should.be.true
+    wrapper.hasAll(SongList, SongListControls).should.be.true
     wrapper.findAll('div.none').should.have.lengthOf(0)
   })
 
@@ -31,7 +30,7 @@ describe('components/main-wrapper/main-content/favorites', () => {
         songs: factory('song', 5)
       },
       sharedState: { allowDownload: true }
-    }}).find('a.download').trigger('click')
+    }}).click('a.download')
     downloadStub.called.should.be.true
     downloadStub.restore()
   })

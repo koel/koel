@@ -14,7 +14,7 @@ describe('components/shared/album-item', () => {
 
   it('renders properly', () => {
     const wrapper = shallow(Component, { propsData: { album }})
-    wrapper.contains('span.cover').should.be.true
+    wrapper.has('span.cover').should.be.true
     const html = wrapper.html()
     html.should.contain(album.name)
     html.should.contain('10 songs')
@@ -22,7 +22,7 @@ describe('components/shared/album-item', () => {
 
   it('plays if clicked', () => {
     const playStub = sinon.stub(playback, 'playAllInAlbum')
-    shallow(Component, { propsData: { album }}).find('.control-play').trigger('click')
+    shallow(Component, { propsData: { album }}).click('.control-play')
     playStub.calledWith(album, false).should.be.true
     playStub.restore()
   })
@@ -30,16 +30,16 @@ describe('components/shared/album-item', () => {
   it('queues if ctrl/meta clicked', () => {
     const queueStub = sinon.stub(queueStore, 'queue')
     const wrapper = shallow(Component, { propsData: { album }})
-    wrapper.find('.control-play').trigger('click', { metaKey: true })
+    wrapper.click('.control-play', { metaKey: true })
     queueStub.called.should.be.true
-    wrapper.find('.control-play').trigger('click', { ctrlKey: true })
+    wrapper.click('.control-play', { ctrlKey: true })
     queueStub.called.should.be.true
     queueStub.restore()
   })
 
   it('shuffles', () => {
     const playStub = sinon.stub(playback, 'playAllInAlbum')
-    shallow(Component, { propsData: { album }}).find('.shuffle-album').trigger('click')
+    shallow(Component, { propsData: { album }}).click('.shuffle-album')
     playStub.calledWith(album, true).should.be.true
     playStub.restore()
   })
@@ -47,7 +47,7 @@ describe('components/shared/album-item', () => {
   it('downloads', () => {
     sharedStore.state = { allowDownload: true }
     const downloadStub = sinon.stub(download, 'fromAlbum')
-    shallow(Component, { propsData: { album }}).find('.download-album').trigger('click')
+    shallow(Component, { propsData: { album }}).click('.download-album')
     downloadStub.calledWith(album).should.be.true
     downloadStub.restore()
   })

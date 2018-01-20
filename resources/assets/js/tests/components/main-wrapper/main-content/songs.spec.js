@@ -8,6 +8,6 @@ describe('components/main-wrapper/main-content/settings', () => {
     songStore.all = factory('song', 10)
     const wrapper = shallow(Component)
     wrapper.find('h1.heading').text().should.contain('All Songs')
-    wrapper.contains(SongList).should.be.true
+    wrapper.has(SongList).should.be.true
   })
 })

@@ -51,7 +51,7 @@ describe('components/shared/song-list', () => {
       '.time': 'song.length'
     }
     for (let selector in provider) {
-      wrapper.find(`.song-list-header ${selector}`).trigger('click')
+      wrapper.click(`.song-list-header ${selector}`)
       sortStub.calledWith(provider[selector]).should.be.true
     }
   })
@@ -63,42 +63,42 @@ describe('components/shared/song-list', () => {
     }})
     
     // track number
-    wrapper.find('.song-list-header .track-number').trigger('click')
+    wrapper.click('.song-list-header .track-number')
     for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
       (wrapper.vm.songRows[i].song.track >= wrapper.vm.songRows[i - 1].song.track).should.be.true
     }
     // second sort should be descending
-    wrapper.find('.song-list-header .track-number').trigger('click')
+    wrapper.click('.song-list-header .track-number')
     for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
       (wrapper.vm.songRows[i].song.track <= wrapper.vm.songRows[i - 1].song.track).should.be.true
     }
     
-    // track number
-    wrapper.find('.song-list-header .title').trigger('click')
+    // title
+    wrapper.click('.song-list-header .title')
     for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
       (wrapper.vm.songRows[i].song.title >= wrapper.vm.songRows[i - 1].song.title).should.be.true
     }
-    wrapper.find('.song-list-header .title').trigger('click')
+    wrapper.click('.song-list-header .title')
     for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
       (wrapper.vm.songRows[i].song.title <= wrapper.vm.songRows[i - 1].song.title).should.be.true
     }
 
     // artist
-    wrapper.find('.song-list-header .artist').trigger('click')
+    wrapper.click('.song-list-header .artist')
     for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
       (wrapper.vm.songRows[i].song.album.artist.name >= wrapper.vm.songRows[i - 1].song.album.artist.name).should.be.true
     }
-    wrapper.find('.song-list-header .artist').trigger('click')
+    wrapper.click('.song-list-header .artist')
     for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
       (wrapper.vm.songRows[i].song.album.artist.name <= wrapper.vm.songRows[i - 1].song.album.artist.name).should.be.true
     }
     
     // album
-    wrapper.find('.song-list-header .album').trigger('click')
+    wrapper.click('.song-list-header .album')
     for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
       (wrapper.vm.songRows[i].song.album.name >= wrapper.vm.songRows[i - 1].song.album.name).should.be.true
     }
-    wrapper.find('.song-list-header .album').trigger('click')
+    wrapper.click('.song-list-header .album')
     for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
       (wrapper.vm.songRows[i].song.album.name <= wrapper.vm.songRows[i - 1].song.album.name).should.be.true
     }

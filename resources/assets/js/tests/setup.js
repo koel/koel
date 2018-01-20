@@ -6,12 +6,11 @@ require('babel-polyfill')
 
 require('chai').should()
 
+require('vue-test-helpers')()
+
 // make common utils available globally as well
 global.Vue = require('vue')
 global.expect = require('expect')
 global.sinon = require('sinon')
 global._ = require('lodash')
-const testUtils = require('vue-test-utils')
-global.shallow = testUtils.shallow
-global.mount = testUtils.mount
 window.__UNIT_TESTING__ = true

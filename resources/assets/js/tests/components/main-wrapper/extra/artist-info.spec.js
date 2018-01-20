@@ -28,7 +28,7 @@ describe('components/main-wrapper/extra/artist-info', () => {
     const wrapper = shallow(ArtistInfo, {
       propsData: { artist }
     })
-    wrapper.find('.bio button.more').trigger('click')
+    wrapper.click('.bio button.more')
     wrapper.html().should.contain(artist.info.bio.full)
   })
 

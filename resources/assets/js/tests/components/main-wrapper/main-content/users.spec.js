@@ -15,8 +15,8 @@ describe('components/main-wrapper/main-content/users', () => {
     userStore.all = factory('user', 10)
     const wrapper = mount(Component)
     const openStub = sinon.stub(wrapper.vm.$refs.addUserForm, 'open')
-    wrapper.contains(AddUserForm).should.be.true
-    wrapper.find('.btn-add').trigger('click')
+    wrapper.has(AddUserForm).should.be.true
+    wrapper.click('.btn-add')
     openStub.called.should.be.true
     openStub.restore()
   })
@@ -25,8 +25,8 @@ describe('components/main-wrapper/main-content/users', () => {
     userStore.all = factory('user', 10)
     const wrapper = mount(Component)
     const editStub = sinon.stub(wrapper.vm.$refs.editUserForm, 'open')
-    wrapper.contains(EditUserForm).should.be.true
-    wrapper.findAll('.btn-edit').at(0).trigger('click')
+    wrapper.has(EditUserForm).should.be.true
+    wrapper.click('.btn-edit')
     editStub.calledWith(userStore.all[0]).should.be.true
     editStub.restore()
   })

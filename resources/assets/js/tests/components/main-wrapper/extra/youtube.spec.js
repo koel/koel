@@ -21,7 +21,7 @@ describe('components/main-wrapper/extra/youtube', () => {
 
   it('loads more videos on demand', () => {
     const stub = sinon.stub(youtubeService, 'searchVideosRelatedToSong')
-    wrapper.find('button.more').trigger('click')
+    wrapper.click('button.more')
     stub.calledWith(song).should.be.true
     stub.restore()
   })

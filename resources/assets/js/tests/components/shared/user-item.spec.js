@@ -22,34 +22,34 @@ describe('components/shared/user-item', () => {
     html.should.contain(user.avatar)
     html.should.contain(user.name)
     wrapper.find('.btn-edit').text().should.equal('Edit')
-    wrapper.contains('.btn-delete').should.be.true
+    wrapper.has('.btn-delete').should.be.true
   })
 
   it('has different behaviors if current user', () => {
     userStore.current.id = user.id
     const wrapper = shallow(Component, { propsData: { user }})
-    wrapper.contains('.btn-delete').should.be.false
+    wrapper.has('.btn-delete').should.be.false
     wrapper.find('.btn-edit').text().should.equal('Update Profile')
   })
 
   it('redirects to update profile if attempt to edit current user', () => {
     const goStub = sinon.stub(router, 'go')
     userStore.current.id = user.id
-    shallow(Component, { propsData: { user }}).find('.btn-edit').trigger('click')
+    shallow(Component, { propsData: { user }}).click('.btn-edit')
     goStub.calledWith('profile').should.be.true
     goStub.restore()
   })
 
   it('edits user', () => {
-    const wrapper = shallow(Component, { propsData: { user }})
-    wrapper.find('.btn-edit').trigger('click')
-    wrapper.emitted().editUser[0].should.eql([user])
+    shallow(Component, { propsData: { 
+      user 
+    }}).click('.btn-edit').hasEmitted('editUser', user).should.be.true
   })
 
   it('triggers deleting user', () => {
     const confirmStub = sinon.stub(alerts, 'confirm')
     const wrapper = shallow(Component, { propsData: { user }})
-    wrapper.find('.btn-delete').trigger('click')
+    wrapper.click('.btn-delete')
     confirmStub.calledWith(
       `You’re about to unperson ${user.name}. Are you sure?`,
       wrapper.vm.doDelete

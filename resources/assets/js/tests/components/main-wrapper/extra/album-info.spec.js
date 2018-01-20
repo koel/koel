@@ -29,7 +29,7 @@ describe('components/main-wrapper/extra/album-info', () => {
     const wrapper = shallow(AlbumInfo, {
       propsData: { album }
     })
-    wrapper.find('.wiki button.more').trigger('click')
+    wrapper.click('.wiki button.more')
     wrapper.html().should.contain(album.info.wiki.full)
   })
 

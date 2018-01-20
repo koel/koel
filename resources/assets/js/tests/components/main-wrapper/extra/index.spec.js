@@ -19,14 +19,14 @@ describe('components/main-wrapper/extra/index', () => {
       sharedState: { useYouTube: true }
     })
     wrapper.findAll('.header .youtube').should.have.lengthOf(1)
-    wrapper.contains(YouTube).should.be.true
+    wrapper.has(YouTube).should.be.true
   })
 
   it('switches pane properly', () => {
     const wrapper = shallow(ExtraSidebar)
     expect(wrapper.find('.header .active').is('.lyrics')).toBe(true)
     ;['.artist', '.album', '.lyrics'].forEach(selector => {
-      wrapper.find(`.header ${selector}`).trigger('click')
+      wrapper.click(`.header ${selector}`)
       wrapper.find('.header .active').is(selector).should.be.true
     })
   })
@@ -39,7 +39,7 @@ describe('components/main-wrapper/extra/index', () => {
       }
     })
     ;[ArtistInfo, AlbumInfo, Lyrics, YouTube].forEach(component => {
-      wrapper.contains(component).should.be.true
+      wrapper.has(component).should.be.true
     })
   })
 

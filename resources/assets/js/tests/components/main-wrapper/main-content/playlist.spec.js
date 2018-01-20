@@ -9,7 +9,7 @@ describe('components/main-wrapper/main-content/playlist', () => {
     const playlist = factory('playlist', { populated: true })
     const wrapper = shallow(Component, { data: { playlist }})
     wrapper.find('h1.heading').html().should.contain(playlist.name)
-    wrapper.contains(SongList).should.be.true
+    wrapper.has(SongList).should.be.true
   })
 
   it('fetch and populate playlist content on demand', () => {
@@ -27,7 +27,7 @@ describe('components/main-wrapper/main-content/playlist', () => {
         populated: true,
         songs: []
       })
-    }}).contains('div.none').should.be.true
+    }}).has('div.none').should.be.true
   })
 
   it('confirms deleting if the playlist is not empty', () => {
@@ -38,7 +38,7 @@ describe('components/main-wrapper/main-content/playlist', () => {
     })
     wrapper.setData({ playlist })
     const confirmStub = sinon.stub(alerts, 'confirm')
-    wrapper.find('.btn-delete-playlist').trigger('click')
+    wrapper.click('.btn-delete-playlist')
     confirmStub.calledWith('Are you sure? This is a one-way street!', wrapper.vm.del).should.be.true
     confirmStub.restore()
   })
@@ -52,7 +52,7 @@ describe('components/main-wrapper/main-content/playlist', () => {
     wrapper.setData({ playlist })
     const confirmStub = sinon.stub(alerts, 'confirm')
     const deleteStub = sinon.stub(playlistStore, 'delete')
-    wrapper.find('.btn-delete-playlist').trigger('click')
+    wrapper.click('.btn-delete-playlist')
     confirmStub.called.should.be.false
     deleteStub.calledWith(playlist).should.be.true
     confirmStub.restore()

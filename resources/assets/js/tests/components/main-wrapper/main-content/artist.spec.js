@@ -30,8 +30,7 @@ describe('components/main-wrapper/main-content/artist', () => {
       const html = wrapper.html()
       html.should.contain(artist.name)
       html.should.contain('1 album')
-      wrapper.contains(SongList).should.be.true
-      wrapper.contains(SongListControls).should.be.true
+      wrapper.hasAll(SongList, SongListControls).should.be.true
     })
   })
 
@@ -42,7 +41,7 @@ describe('components/main-wrapper/main-content/artist', () => {
       sharedState: { useLastfm: true }
     }})
     const stub = sinon.stub(artistInfoService, 'fetch')
-    wrapper.find('a.info').trigger('click')
+    wrapper.click('a.info')
     stub.calledWith(artist).should.be.true
     stub.restore()
   })
@@ -53,7 +52,7 @@ describe('components/main-wrapper/main-content/artist', () => {
       sharedState: { allowDownload: true }
     }})
     const downloadStub = sinon.stub(download, 'fromArtist')
-    wrapper.find('a.download').trigger('click')
+    wrapper.click('a.download')
     downloadStub.calledWith(artist).should.be.true
     downloadStub.restore()
   })

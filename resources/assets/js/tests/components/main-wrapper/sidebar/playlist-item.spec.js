@@ -33,8 +33,8 @@ describe('component/main-wrapper/sidebar/playlist-item', () => {
     const wrapper = shallow(Component, {
       propsData: { playlist }
     })
-    wrapper.find('li.playlist').trigger('dblclick')
-    wrapper.find('input[type=text]').trigger('blur')
+    wrapper.dblclick('li.playlist')
+    wrapper.blur('input[type=text]')
     updateStub.calledWith(playlist).should.be.true
   })
 
@@ -45,7 +45,7 @@ describe('component/main-wrapper/sidebar/playlist-item', () => {
         type: 'favorites'
       }
     })
-    wrapper.find('li.favorites').trigger('dblclick')
-    wrapper.contains('input[type=text]').should.be.false
+    wrapper.dblclick('li.favorites')
+    wrapper.has('input[type=text]').should.be.false
   })
 })

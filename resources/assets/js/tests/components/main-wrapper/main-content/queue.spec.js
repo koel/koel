@@ -10,7 +10,7 @@ describe('components/main-wrapper/main-content/queue', () => {
       state: { songs: factory('song', 10) }
     }})
     wrapper.find('h1.heading').text().should.contain('Current Queue')
-    wrapper.contains(SongList).should.be.true
+    wrapper.has(SongList).should.be.true
   })
 
   it('prompts to shuffle all songs if there are songs and current queue is empty', () => {
@@ -26,7 +26,7 @@ describe('components/main-wrapper/main-content/queue', () => {
       state: {
         songs: []
       }
-    }}).contains('a.start').should.be.false
+    }}).has('a.start').should.be.false
   })
 
   it('shuffles all songs in the queue if any', () => {
@@ -34,7 +34,7 @@ describe('components/main-wrapper/main-content/queue', () => {
     const songs = factory('song', 10)
     mount(Component, { data: {
       state: { songs }
-    }}).find('button.btn-shuffle-all').trigger('click')
+    }}).click('button.btn-shuffle-all')
     stub.calledWith(songs).should.be.true
     stub.restore()
   })
@@ -46,7 +46,7 @@ describe('components/main-wrapper/main-content/queue', () => {
       state: {
         songs: []
       }
-    }}).find('button.btn-shuffle-all').trigger('click')
+    }}).click('button.btn-shuffle-all')
     stub.calledWith(songStore.all).should.be.true
     stub.restore()
   })
@@ -57,7 +57,7 @@ describe('components/main-wrapper/main-content/queue', () => {
     wrapper.setData({
       state: { songs: factory('song', 10) }
     })
-    wrapper.find('button.btn-clear-queue').trigger('click')
+    wrapper.click('button.btn-clear-queue')
     stub.called.should.be.true
     stub.restore()
   })

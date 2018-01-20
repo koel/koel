@@ -18,7 +18,7 @@ describe('components/main-wrapper/main-content/settings', () => {
   it('warns if changing a non-empty media path', () => {
     sharedStore.state.originalMediaPath = '/bar'
     const stub = sinon.stub(alerts, 'confirm')
-    shallow(Component).find('form').trigger('submit')
+    shallow(Component).submit('form')
     stub.called.should.be.true
     stub.restore()
   })
@@ -27,7 +27,7 @@ describe('components/main-wrapper/main-content/settings', () => {
     sharedStore.state.originalMediaPath = ''
     const confirmStub = sinon.stub(alerts, 'confirm')
     const updateStub = sinon.stub(settingStore, 'update')
-    shallow(Component).find('form').trigger('submit')
+    shallow(Component).submit('form')
     confirmStub.called.should.be.false
     updateStub.called.should.be.true
     confirmStub.restore()

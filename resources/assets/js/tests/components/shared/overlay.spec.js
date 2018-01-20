@@ -5,8 +5,8 @@ describe('components/shared/overlay', () => {
   it('shows with default options', async done => {
     const wrapper = mount(Component)
     await wrapper.vm.show()
-    wrapper.contains(SoundBar).should.be.true
-    wrapper.contains('button.btn-dismiss').should.be.false
+    wrapper.has(SoundBar).should.be.true
+    wrapper.has('button.btn-dismiss').should.be.false
     done()
   })
 
@@ -17,8 +17,8 @@ describe('components/shared/overlay', () => {
       type: 'warning',
       message: 'Foo'
     })
-    wrapper.contains(SoundBar).should.be.false
-    wrapper.contains('button.btn-dismiss').should.be.true
+    wrapper.has(SoundBar).should.be.false
+    wrapper.has('button.btn-dismiss').should.be.true
     wrapper.find('span.message').html().should.contain('Foo')
     done()
   })
@@ -26,18 +26,18 @@ describe('components/shared/overlay', () => {
   it('hides', async done => {
     const wrapper = mount(Component)
     await wrapper.vm.show()
-    wrapper.contains('.display').should.be.true
+    wrapper.has('.display').should.be.true
     await wrapper.vm.hide()
-    wrapper.contains('.display').should.be.false
+    wrapper.has('.display').should.be.false
     done()
   })
 
   it('dismisses', async done => {
     const wrapper = mount(Component)
     await wrapper.vm.show({ dismissable: true })
-    wrapper.contains('.display').should.be.true
-    wrapper.find('button.btn-dismiss').trigger('click')
-    wrapper.contains('.display').should.be.false
+    wrapper.has('.display').should.be.true
+    wrapper.click('button.btn-dismiss')
+    wrapper.has('.display').should.be.false
     done()
   })
 })

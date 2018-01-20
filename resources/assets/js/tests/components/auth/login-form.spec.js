@@ -9,7 +9,7 @@ describe('components/auth/login-form', () => {
   it('triggers login when form is submitted', () => {
     const wrapper = shallow(LoginForm)
     const loginStub = sinon.stub(userStore, 'login')
-    wrapper.find('form').trigger('submit')
+    wrapper.submit('form')
     loginStub.calledWith(wrapper.vm.email, wrapper.vm.password).should.be.true
     loginStub.restore()
   })

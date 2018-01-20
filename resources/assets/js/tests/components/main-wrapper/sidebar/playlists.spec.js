@@ -11,8 +11,4 @@ describe('compopents/main-wrapper/main-content/sidebar/playlist', () => {
     }})
     wrapper.findAll(PlaylistItem).should.have.lengthOf(6) // favorites + 5 playlists
   })
-
-  it('adds a new playlist', () => {
-    const wrapper = mount(Component)
-  })
 })

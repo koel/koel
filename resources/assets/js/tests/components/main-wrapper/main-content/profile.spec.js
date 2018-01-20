@@ -8,7 +8,7 @@ describe('components/main-wrapper/main-content/user', () => {
   })
 
   it('displays a form to update profile', () => {
-    shallow(Profile).contains('form').should.be.true
+    shallow(Profile).has('form').should.be.true
   })
 
   it('validates password confirmation', () => {
@@ -17,12 +17,12 @@ describe('components/main-wrapper/main-content/user', () => {
       confirmPwd: 'bar'
     }})
     const updateProfileStub = sinon.stub(userStore, 'updateProfile')
-    wrapper.find('form').trigger('submit')
+    wrapper.submit('form')
     updateProfileStub.called.should.be.false
     wrapper.setData({
       confirmPwd: 'foo'
     })
-    wrapper.find('form').trigger('submit')
+    wrapper.submit('form')
     updateProfileStub.called.should.be.true
     updateProfileStub.restore()
   })
@@ -30,7 +30,7 @@ describe('components/main-wrapper/main-content/user', () => {
   it('updates profile with password fields left empty', () => {
     const wrapper = shallow(Profile)
     const updateProfileStub = sinon.stub(userStore, 'updateProfile')
-    wrapper.find('form').trigger('submit')
+    wrapper.submit('form')
     updateProfileStub.called.should.be.true
     updateProfileStub.restore()
   })
@@ -40,7 +40,7 @@ describe('components/main-wrapper/main-content/user', () => {
     const savePrefsStub = sinon.spy(preferenceStore, 'save')
     wrapper.setData({ prefs: preferenceStore.state })
     ;['notify', 'confirmClosing', 'transcodeOnMobile'].forEach(key => {
-      wrapper.find(`input[name=${key}]`).trigger('click')
+      wrapper.submit(`input[name=${key}]`)
       savePrefsStub.called.should.be.true
     })
     savePrefsStub.restore()

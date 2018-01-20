@@ -52,7 +52,7 @@ describe('componnents/shared/track-list-item', () => {
       track,
       album,
       index: 1
-    }}).find('li').trigger('click')
+    }}).click('li')
 
     containsStub.calledWith(song).should.be.true
     queueStub.calledWith(song).should.be.true

@@ -14,8 +14,7 @@ describe('components/main-wrapper/main-content/album', () => {
       const html = wrapper.html()
       html.should.contain(album.name)
       html.should.contain(album.artist.name)
-      wrapper.contains(SongList).should.be.true
-      wrapper.contains(SongListControls).should.be.true
+      wrapper.hasAll(SongList, SongListControls).should.be.true
     })
   })
 
@@ -28,7 +27,7 @@ describe('components/main-wrapper/main-content/album', () => {
       }
     })
     const stub = sinon.stub(albumInfoService, 'fetch')
-    wrapper.find('a.info').trigger('click')
+    wrapper.click('a.info')
     stub.calledWith(album).should.be.true
     stub.restore()
   })
@@ -42,7 +41,7 @@ describe('components/main-wrapper/main-content/album', () => {
       }
     })
     const downloadStub = sinon.stub(download, 'fromAlbum')
-    wrapper.find('a.download').trigger('click')
+    wrapper.click('a.download')
     downloadStub.calledWith(album).should.be.true
     downloadStub.restore()
   })

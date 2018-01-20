@@ -12,7 +12,6 @@ describe('components/shared/song-menu', () => {
   })
 
   it('renders properly', () => {
-    const wrapper = shallow(Component, { propsData: { songs }})      
     const selectors = [
       '.playback',
       '.go-to-album',
@@ -22,9 +21,7 @@ describe('components/shared/song-menu', () => {
       '.top-queue',
       '.favorite'
     ]
-    selectors.forEach(selector => {
-      wrapper.contains(selector).should.be.true
-    })
+    shallow(Component, { propsData: { songs }}).hasAll(...selectors).should.be.true
   })
 
   it('plays and pauses', () => {
@@ -32,33 +29,29 @@ describe('components/shared/song-menu', () => {
   })
 
   it('queues songs after current', () => {
-    const wrapper = shallow(Component, { propsData: { songs }})      
     const queueStub = sinon.stub(queueStore, 'queueAfterCurrent')
-    wrapper.find('.after-current').trigger('click')
+    shallow(Component, { propsData: { songs }}).click('.after-current')
     queueStub.calledWith(songs).should.be.true
     queueStub.restore()
   })
 
   it('queues songs to bottom', () => {
-    const wrapper = shallow(Component, { propsData: { songs }})      
     const queueStub = sinon.stub(queueStore, 'queue')
-    wrapper.find('.bottom-queue').trigger('click')
+    shallow(Component, { propsData: { songs }}).click('.bottom-queue')
     queueStub.calledWith(songs).should.be.true
     queueStub.restore()
   })
 
   it('queues songs to top', () => {
-    const wrapper = shallow(Component, { propsData: { songs }})      
     const queueStub = sinon.stub(queueStore, 'queue')
-    wrapper.find('.top-queue').trigger('click')
+    shallow(Component, { propsData: { songs }}).click('.top-queue')
     queueStub.calledWith(songs, false, true).should.be.true
     queueStub.restore()
   })
   
   it('adds songs to favorite', () => {
-    const wrapper = shallow(Component, { propsData: { songs }})      
     const likeStub = sinon.stub(favoriteStore, 'like')
-    wrapper.find('.favorite').trigger('click')
+    shallow(Component, { propsData: { songs }}).click('.favorite')
     likeStub.calledWith(songs).should.be.true
     likeStub.restore()
   })
@@ -71,7 +64,7 @@ describe('components/shared/song-menu', () => {
     playlistStore.all.forEach(playlist => {
       html.should.contain(playlist.name) 
     })
-    wrapper.find('.playlist').trigger('click')
+    wrapper.click('.playlist')
     addStub.calledWith(playlistStore.all[0], songs).should.be.true
     addStub.restore()
   })
@@ -80,7 +73,7 @@ describe('components/shared/song-menu', () => {
     const emitStub = sinon.stub(event, 'emit')
     userStore.current.is_admin = true
     const wrapper = shallow(Component, { propsData: { songs }})      
-    wrapper.find('.open-edit-form').trigger('click')
+    wrapper.click('.open-edit-form')
     emitStub.calledWith('songs:edit', songs).should.be.true
     emitStub.restore()
   })
@@ -89,7 +82,7 @@ describe('components/shared/song-menu', () => {
     const downloadStub = sinon.stub(download, 'fromSongs')
     sharedStore.state.allowDownload = true
     const wrapper = shallow(Component, { propsData: { songs }})      
-    wrapper.find('.download').trigger('click')
+    wrapper.click('.download')
     downloadStub.calledWith(songs).should.be.true
     downloadStub.restore()
   })
@@ -103,7 +96,7 @@ describe('components/shared/song-menu', () => {
         copyable: true
       }
     })
-    wrapper.find('.copy-url').trigger('click')
+    wrapper.click('.copy-url')
     getUrlStub.calledWith(song).should.be.true
   })
 })

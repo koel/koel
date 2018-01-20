@@ -25,39 +25,33 @@ describe('components/shared/add-to-menu', () => {
     playlistStore.all = factory('playlist', 10)
     const wrapper = initComponent()
     wrapper.html().should.contain('Add 5 songs to')
-    wrapper.contains('li.after-current').should.be.true
-    wrapper.contains('li.bottom-queue').should.be.true
-    wrapper.contains('li.top-queue').should.be.true
-    wrapper.contains('li.favorites').should.be.true
+    wrapper.hasAll('li.after-current', 'li.bottom-queue', 'li.top-queue', 'li.favorites', 'form.form-new-playlist').should.be.true
     wrapper.findAll('li.playlist').should.have.lengthOf(10)
-    wrapper.contains('form.form-new-playlist').should.be.true
   })
 
   it('supports different configurations', () => {
     // add to queue
     let wrapper = initComponent({ queue: false })
-    wrapper.contains('li.after-current').should.be.false
-    wrapper.contains('li.bottom-queue').should.be.false
-    wrapper.contains('li.top-queue').should.be.false
+    wrapper.hasNone('li.after-current', 'li.bottom-queue', 'li.top-queue').should.be.true
 
     // add to favorites
     wrapper = initComponent({ favorites: false })
-    wrapper.contains('li.favorites').should.be.false
+    wrapper.has('li.favorites').should.be.false
 
     // add to playlists
     wrapper = initComponent({ playlists: false })
-    wrapper.contains('li.playlist').should.be.false
+    wrapper.has('li.playlist').should.be.false
 
     // add to a new playlist
     wrapper = initComponent({ newPlaylist: false })
-    wrapper.contains('form.form-new-playlist').should.be.false
+    wrapper.has('form.form-new-playlist').should.be.false
   })
 
   it('queue songs after current', () => {
     const wrapper = initComponent()
     const queueStub = sinon.stub(queueStore, 'queueAfterCurrent')
     const closeStub = sinon.stub(wrapper.vm, 'close')
-    wrapper.find('li.after-current').trigger('click')
+    wrapper.click('li.after-current')
     queueStub.calledWith(songs).should.be.true
     closeStub.called.should.be.true
     queueStub.restore()
@@ -68,7 +62,7 @@ describe('components/shared/add-to-menu', () => {
     const wrapper = initComponent()
     const queueStub = sinon.stub(queueStore, 'queue')
     const closeStub = sinon.stub(wrapper.vm, 'close')
-    wrapper.find('li.bottom-queue').trigger('click')
+    wrapper.click('li.bottom-queue')
     queueStub.calledWith(songs).should.be.true
     closeStub.called.should.be.true
     queueStub.restore()
@@ -79,7 +73,7 @@ describe('components/shared/add-to-menu', () => {
     const wrapper = initComponent()
     const queueStub = sinon.stub(queueStore, 'queue')
     const closeStub = sinon.stub(wrapper.vm, 'close')
-    wrapper.find('li.top-queue').trigger('click')
+    wrapper.click('li.top-queue')
     queueStub.calledWith(songs, false, true).should.be.true
     closeStub.called.should.be.true
     queueStub.restore()
@@ -90,7 +84,7 @@ describe('components/shared/add-to-menu', () => {
     const wrapper = initComponent()
     const likeStub = sinon.stub(favoriteStore, 'like')
     const closeStub = sinon.stub(wrapper.vm, 'close')
-    wrapper.find('li.favorites').trigger('click')
+    wrapper.click('li.favorites')
     likeStub.calledWith(songs).should.be.true
     closeStub.called.should.be.true
     likeStub.restore()
@@ -103,7 +97,7 @@ describe('components/shared/add-to-menu', () => {
     const wrapper = initComponent()
     const addSongsStub = sinon.stub(playlistStore, 'addSongs')
     const closeStub = sinon.stub(wrapper.vm, 'close')
-    wrapper.findAll('li.playlist').at(1).trigger('click')
+    wrapper.findAll('li.playlist').at(1).click()
     addSongsStub.calledWith(playlists[1], songs).should.be.true
     closeStub.called.should.be.true
     addSongsStub.restore()
@@ -119,7 +113,7 @@ describe('components/shared/add-to-menu', () => {
     const wrapper = initComponent()
     const closeStub = sinon.stub(wrapper.vm, 'close')
     wrapper.setData({ newPlaylistName: 'Foo' })
-    await wrapper.find('form.form-new-playlist').trigger('submit')
+    await wrapper.submit('form.form-new-playlist')
     storeStub.calledWith('Foo', songs).should.be.true
     closeStub.restore()
     done()

@@ -7,10 +7,9 @@ describe('components/modals/edit-user-form', () => {
     const user = factory('user')
     const wrapper = shallow(Component)
     await wrapper.vm.open(user)
-    wrapper.contains('form.user-edit').should.be.true
-    wrapper.find('input[name=name]').element.value.should.equal(user.name)
-    wrapper.find('input[name=email]').element.value.should.equal(user.email)
-
+    wrapper.has('form.user-edit').should.be.true
+    wrapper.find('input[name=name]').value.should.equal(user.name)
+    wrapper.find('input[name=email]').value.should.equal(user.email)
     done()
   })
 
@@ -19,10 +18,9 @@ describe('components/modals/edit-user-form', () => {
     const updateStub = sinon.stub(userStore, 'update')
     const wrapper = shallow(Component)
     await wrapper.vm.open(user)
-    wrapper.find('form').trigger('submit')
+    wrapper.submit('form')
     updateStub.calledWith(user, user.name, user.email, user.password).should.be.true
     updateStub.restore()
-
     done()
   })
 
@@ -31,12 +29,11 @@ describe('components/modals/edit-user-form', () => {
     const updateStub = sinon.stub(userStore, 'update')
     const wrapper = shallow(Component)
     await wrapper.vm.open(user)
-    wrapper.contains('form.user-edit').should.be.true
-    wrapper.find('.btn-cancel').trigger('click')
-    wrapper.contains('form.user-edit').should.be.false
+    wrapper.has('form.user-edit').should.be.true
+    wrapper.click('.btn-cancel')
+    wrapper.has('form.user-edit').should.be.false
     updateStub.called.should.be.false
     updateStub.restore()
-
     done()
   })
 })

@@ -6,7 +6,7 @@ describe('components/modals/add-user-form', () => {
   it('opens', async done => {
     const wrapper = shallow(Component)
     await wrapper.vm.open()
-    wrapper.contains('form.user-add').should.be.true
+    wrapper.has('form.user-add').should.be.true
     done()
   })
 
@@ -16,7 +16,7 @@ describe('components/modals/add-user-form', () => {
     const wrapper = shallow(Component)
     await wrapper.vm.open()
     wrapper.setData({ newUser })
-    wrapper.find('form.user-add').trigger('submit')
+    wrapper.submit('form.user-add')
     storeStub.calledWith(newUser.name, newUser.email, newUser.password).should.be.true
     storeStub.restore()
     done()
@@ -25,9 +25,9 @@ describe('components/modals/add-user-form', () => {
   it('cancels', async done => {
     const wrapper = shallow(Component)
     await wrapper.vm.open()
-    wrapper.contains('form.user-add').should.be.true
+    wrapper.has('form.user-add').should.be.true
     await wrapper.vm.cancel()
-    wrapper.contains('form.user-add').should.be.false
+    wrapper.has('form.user-add').should.be.false
     done()
   })
 })
