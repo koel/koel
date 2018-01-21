@@ -8,6 +8,9 @@ import factory from '@/tests/factory'
 describe('components/main-wrapper/main-content/album', () => {
   it('renders upon receiving event', () => {
     const wrapper = shallow(Component)
+    // stub the $nextTick so that the sort() method is not called
+    // on non-existing $refs.songList
+    const nextTickStub = sinon.stub(wrapper.vm, '$nextTick')
     const album = factory('album')
     event.emit('main-content-view:load', 'album', album)
     Vue.nextTick(() => {
@@ -15,6 +18,8 @@ describe('components/main-wrapper/main-content/album', () => {
       html.should.contain(album.name)
       html.should.contain(album.artist.name)
       wrapper.hasAll(SongList, SongListControls).should.be.true
+
+      nextTickStub.restore()
     })
   })
 

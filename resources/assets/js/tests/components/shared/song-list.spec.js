@@ -56,54 +56,6 @@ describe('components/shared/song-list', () => {
     }
   })
 
-  it('sorts', () => {
-    const wrapper = mount(Component, { propsData: {
-      items: songs,
-      type: 'allSongs'
-    }})
-    
-    // track number
-    wrapper.click('.song-list-header .track-number')
-    for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
-      (wrapper.vm.songRows[i].song.track >= wrapper.vm.songRows[i - 1].song.track).should.be.true
-    }
-    // second sort should be descending
-    wrapper.click('.song-list-header .track-number')
-    for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
-      (wrapper.vm.songRows[i].song.track <= wrapper.vm.songRows[i - 1].song.track).should.be.true
-    }
-    
-    // title
-    wrapper.click('.song-list-header .title')
-    for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
-      (wrapper.vm.songRows[i].song.title >= wrapper.vm.songRows[i - 1].song.title).should.be.true
-    }
-    wrapper.click('.song-list-header .title')
-    for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
-      (wrapper.vm.songRows[i].song.title <= wrapper.vm.songRows[i - 1].song.title).should.be.true
-    }
-
-    // artist
-    wrapper.click('.song-list-header .artist')
-    for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
-      (wrapper.vm.songRows[i].song.album.artist.name >= wrapper.vm.songRows[i - 1].song.album.artist.name).should.be.true
-    }
-    wrapper.click('.song-list-header .artist')
-    for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
-      (wrapper.vm.songRows[i].song.album.artist.name <= wrapper.vm.songRows[i - 1].song.album.artist.name).should.be.true
-    }
-    
-    // album
-    wrapper.click('.song-list-header .album')
-    for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
-      (wrapper.vm.songRows[i].song.album.name >= wrapper.vm.songRows[i - 1].song.album.name).should.be.true
-    }
-    wrapper.click('.song-list-header .album')
-    for (let i = 1, j = wrapper.vm.songRows.length; i < j; ++i) {
-      (wrapper.vm.songRows[i].song.album.name <= wrapper.vm.songRows[i - 1].song.album.name).should.be.true
-    }
-  })
-
   it('takes disc into account when sort an album song list', () => {
     const wrapper = mount(Component, { propsData: {
       items: songs,
