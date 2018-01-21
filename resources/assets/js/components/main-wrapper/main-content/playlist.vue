@@ -137,7 +137,7 @@ export default {
       await playlistStore.fetchSongs(playlist)
       playlist.populated = true
       this.playlist = playlist
-      this.$nextTick(() => this.$refs.songList.sort())
+      this.$nextTick(() => this.$refs.songList && this.$refs.songList.sort())
     }
   }
 }

@@ -108,7 +108,7 @@ export default {
         this.info.showing = false
         this.album = album
         // #530
-        this.$nextTick(() => this.$refs.songList.sort())
+        this.$nextTick(() => this.$refs.songList && this.$refs.songList.sort())
       }
     })
   },
