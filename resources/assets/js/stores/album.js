@@ -67,7 +67,7 @@ export const albumStore = {
    * @param  {Array.<Object>|Object} albums
    */
   add (albums) {
-    [].concat(albums).forEach(album => { 
+    [].concat(albums).forEach(album => {
       this.setupAlbum(album, album.artist)
       album.playCount = album.songs.reduce((count, song) => count + song.playCount, 0)
     })

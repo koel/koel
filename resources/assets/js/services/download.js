@@ -46,7 +46,7 @@ export const download = {
    * Download all favorite songs.
    */
   fromFavorites () {
-    return  favoriteStore.all.length ? this.trigger('favorites') : null
+    return favoriteStore.all.length ? this.trigger('favorites') : null
   },
 
   /**
@@ -56,7 +56,7 @@ export const download = {
    *            artist, playlist, or album.
    */
   trigger (uri) {
-    const sep = uri.indexOf('?') === -1 ? '?' : '&'
+    const sep = uri.includes('?') ? '&' : '?'
     const iframe = document.createElement('iframe')
     iframe.style.display = 'none'
     iframe.setAttribute('src', `${window.BASE_URL}api/download/${uri}${sep}jwt-token=${ls.get('jwt-token')}`)

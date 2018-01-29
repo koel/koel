@@ -31,7 +31,7 @@
 
 <script>
 import { clone } from 'lodash'
-import soundBar from '../shared/sound-bar.vue'
+import soundBar from '@/components/shared/sound-bar.vue'
 import { userStore } from '@/stores'
 
 export default {

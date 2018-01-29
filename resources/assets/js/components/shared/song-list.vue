@@ -49,7 +49,6 @@
 
 <script>
 import isMobile from 'ismobilejs'
-import { each } from 'lodash'
 
 import { filterBy, orderBy, event, pluralize, $ } from '@/utils'
 import { playlistStore, queueStore, songStore, favoriteStore } from '@/stores'
@@ -286,7 +285,7 @@ export default {
      * Select all (filtered) rows in the current list.
      */
     selectAllRows () {
-      each(this.filteredItems, row => {
+      this.filteredItems.forEach(row => {
         row.selected = true
       })
     },
@@ -352,7 +351,7 @@ export default {
      * Clear the current selection on this song list.
      */
     clearSelection () {
-      each(this.filteredItems, row => {
+      this.filteredItems.forEach(row => {
         row.selected = false
       })
     },

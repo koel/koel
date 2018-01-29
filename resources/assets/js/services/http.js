@@ -9,8 +9,7 @@ import { ls } from '@/services'
  */
 export const http = {
   request (method, url, data, successCb = null, errorCb = null) {
-    method = method.toLowerCase()
-    axios.request({ url, data, method }).then(successCb).catch(errorCb)
+    axios.request({ url, data, method: method.toLowerCase() }).then(successCb).catch(errorCb)
   },
 
   get (url, successCb = null, errorCb = null) {

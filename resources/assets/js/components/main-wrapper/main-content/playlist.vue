@@ -144,8 +144,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../../../sass/partials/_vars.scss";
-@import "../../../../sass/partials/_mixins.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
 
 #playlistWrapper {
   button.play-shuffle, button.del {

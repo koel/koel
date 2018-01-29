@@ -1,4 +1,4 @@
-import { each, isObject, isNumber, get } from 'lodash'
+import { isObject, isNumber, get } from 'lodash'
 
 export function orderBy (arr, sortKey, reverse) {
   if (!sortKey) {
@@ -63,9 +63,9 @@ export function filterBy (arr, search, ...keys) {
 
   const res = []
 
-  each(arr, item => {
-    each(keys, key => {
-      if (`${get(item, key)}`.toLowerCase().indexOf(search) !== -1) {
+  arr.forEach(item => {
+    keys.forEach(key => {
+      if (`${get(item, key)}`.toLowerCase().includes(search)) {
         res.push(item)
         return false
       }

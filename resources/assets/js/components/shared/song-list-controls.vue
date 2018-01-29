@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import { assign } from 'lodash'
 import addToMenu from './add-to-menu.vue'
 
 export default {
@@ -83,7 +82,7 @@ export default {
   },
 
   mounted () {
-    assign(this.fullConfig, this.config)
+    this.fullConfig = Object.assign(this.fullConfig, this.config)
   },
 
   methods: {

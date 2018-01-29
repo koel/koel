@@ -34,7 +34,7 @@ export default {
     type: {
       type: String,
       default: 'playlist',
-      validator: value => ['playlist', 'favorites'].indexOf(value) !== -1
+      validator: value => ['playlist', 'favorites'].includes(value)
     }
   },
 
@@ -167,8 +167,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../../../sass/partials/_vars.scss";
-@import "../../../../sass/partials/_mixins.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
 
 .playlist {
   user-select: none;

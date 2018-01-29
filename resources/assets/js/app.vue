@@ -67,7 +67,7 @@ export default {
 
     // Add an ugly mac/non-mac class for OS-targeting styles.
     // I'm crying inside.
-    $.addClass(document.documentElement, navigator.userAgent.indexOf('Mac') !== -1 ? 'mac' : 'non-mac')
+    $.addClass(document.documentElement, navigator.userAgent.includes('Mac') ? 'mac' : 'non-mac')
   },
 
   methods: {

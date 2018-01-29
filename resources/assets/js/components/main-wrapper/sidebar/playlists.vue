@@ -16,9 +16,9 @@
 
     <ul class="menu">
       <playlist-item type="favorites" :playlist="{ name: 'Favorites', songs: favoriteState.songs }"/>
-      <playlist-item 
-        v-for="playlist in playlistState.playlists" 
-        type="playlist" 
+      <playlist-item
+        v-for="playlist in playlistState.playlists"
+        type="playlist"
         :playlist="playlist"
         :key="playlist.id"/>
     </ul>
@@ -61,8 +61,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../../../sass/partials/_vars.scss";
-@import "../../../../sass/partials/_mixins.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
 
 #playlists {
   .control.create {

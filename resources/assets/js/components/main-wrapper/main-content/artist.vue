@@ -49,14 +49,14 @@
 </template>
 
 <script>
-import { pluralize, event } from '../../../utils'
-import { sharedStore, artistStore } from '../../../stores'
-import { playback, download, artistInfo as artistInfoService } from '../../../services'
-import router from '../../../router'
-import hasSongList from '../../../mixins/has-song-list'
-import artistAttributes from '../../../mixins/artist-attributes'
-import artistInfo from '../extra/artist-info.vue'
-import soundBar from '../../shared/sound-bar.vue'
+import { pluralize, event } from '@/utils'
+import { sharedStore, artistStore } from '@/stores'
+import { playback, download, artistInfo as artistInfoService } from '@/services'
+import router from '@/router'
+import hasSongList from '@/mixins/has-song-list'
+import artistAttributes from '@/mixins/artist-attributes'
+import artistInfo from '@/components/main-wrapper/extra/artist-info.vue'
+import soundBar from '@/components/shared/sound-bar.vue'
 
 export default {
   name: 'main-wrapper--main-content--artist',
@@ -142,8 +142,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../../../sass/partials/_vars.scss";
-@import "../../../../sass/partials/_mixins.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
 
 #artistWrapper {
   button.play-shuffle {

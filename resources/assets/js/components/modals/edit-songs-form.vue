@@ -84,8 +84,8 @@ import { songInfo } from '@/services/info'
 import { artistStore, albumStore, songStore } from '@/stores'
 import config from '@/config'
 
-import soundBar from '../shared/sound-bar.vue'
-import typeahead from '../shared/typeahead.vue'
+import soundBar from '@/components/shared/sound-bar.vue'
+import typeahead from '@/components/shared/typeahead.vue'
 
 const COMPILATION_STATES = {
   NONE: 0, // No songs belong to a compilation album

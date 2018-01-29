@@ -48,7 +48,7 @@ export default {
     mode: {
       type: String,
       default: 'sidebar',
-      validator: value => ['sidebar', 'full'].indexOf(value) !== -1
+      validator: value => ['sidebar', 'full'].includes(value)
     }
   },
   components: { trackListItem },
@@ -96,8 +96,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../../../sass/partials/_vars.scss";
-@import "../../../../sass/partials/_mixins.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
 
 #albumInfo {
   @include artist-album-info();

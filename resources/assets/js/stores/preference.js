@@ -26,7 +26,7 @@ export const preferenceStore = {
    * @param  {Object} user The user whose preferences we are managing.
    */
   init (user = null) {
-    user = user ||userStore.current
+    user = user || userStore.current
     this.storeKey = `preferences_${user.id}`
     this.state = Object.assign(this.state, ls.get(this.storeKey, this.state))
     this.setupProxy()

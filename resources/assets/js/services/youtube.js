@@ -10,8 +10,8 @@ export const youtube = {
    */
   searchVideosRelatedToSong (song) {
     song.youtube = song.youtube || {}
-
     const pageToken = song.youtube.nextPageToken || ''
+
     return new Promise((resolve, reject) => {
       http.get(`youtube/search/song/${song.id}?pageToken=${pageToken}`,
         ({ data: { nextPageToken, items }}) => {

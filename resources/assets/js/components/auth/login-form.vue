@@ -37,9 +37,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../../sass/partials/_vars.scss";
-@import "../../../sass/partials/_mixins.scss";
-@import "../../../sass/partials/_shared.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
+@import "~#/partials/_shared.scss";
 
 /**
  * I like to move it move it
