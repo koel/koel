@@ -1,5 +1,3 @@
-import { each } from 'lodash'
-
 import { queueStore, playlistStore, favoriteStore } from '@/stores'
 
 /**
@@ -24,7 +22,7 @@ export default {
      * Close all submenus.
      */
     close () {
-      each(Array.from(this.$el.querySelectorAll('.submenu')), el => {
+      Array.from(this.$el.querySelectorAll('.submenu')).forEach(el => {
         el.style.display = 'none'
       })
       this.shown = false

@@ -1,5 +1,3 @@
-import { find } from 'lodash'
-
 import { preferenceStore } from '.'
 
 export const equalizerStore = {
@@ -91,7 +89,7 @@ export const equalizerStore = {
   ],
 
   getPresetById (id) {
-    return find(this.presets, { id })
+    return this.presets.find(preset => preset.id === id)
   },
 
   /**

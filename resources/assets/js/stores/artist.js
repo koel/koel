@@ -1,7 +1,7 @@
 /*eslint camelcase: ["error", {properties: "never"}]*/
 
 import Vue from 'vue'
-import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
+import { union, difference, take, orderBy } from 'lodash'
 
 import stub from '@/stubs/artist'
 
@@ -25,7 +25,7 @@ export const artistStore = {
     this.all = artists
 
     // Traverse through artists array to get the cover and number of songs for each.
-    each(this.all, artist => this.setupArtist(artist))
+    this.all.forEach(artist => this.setupArtist(artist))
   },
 
   /**
@@ -77,10 +77,9 @@ export const artistStore = {
    * @param  {Array.<Object>|Object} artists
    */
   add (artists) {
-    artists = [].concat(artists)
-    each(artists, artist => {
+    [].concat(artists).forEach(artist => {
       this.setupArtist(artist)
-      artist.playCount = reduce(artist.songs, (count, song) => count + song.playCount, 0)
+      artist.playCount = artist.songs.reduce((count, song) => count + song.playCount, 0)
     })
 
     this.all = union(this.all, artists)
@@ -94,13 +93,13 @@ export const artistStore = {
    * Remove empty artists from the store.
    */
   compact () {
-    const emptyArtists = filter(this.all, artist => artist.songs.length === 0)
+    const emptyArtists = this.all.filter(artist => artist.songs.length === 0)
     if (!emptyArtists.length) {
       return
     }
 
     this.all = difference(this.all, emptyArtists)
-    each(emptyArtists, artist => delete this.cache[artist.id])
+    emptyArtists.forEach(artist => delete this.cache[artist.id])
   },
 
   /**
@@ -146,7 +145,7 @@ export const artistStore = {
   getMostPlayed (n = 6) {
     // Only non-unknown artists with actually play count are applicable.
     // Also, "Various Artists" doesn't count.
-    const applicable = filter(this.all, artist => {
+    const applicable = this.all.filter(artist => {
       return artist.playCount &&
         !this.isUnknownArtist(artist) &&
         !this.isVariousArtists(artist)

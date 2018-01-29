@@ -1,4 +1,4 @@
-import { each, find, without } from 'lodash'
+import { without } from 'lodash'
 import md5 from 'blueimp-md5'
 import Vue from 'vue'
 import NProgress from 'nprogress'
@@ -26,7 +26,7 @@ export const userStore = {
     this.current = currentUser
 
     // Set the avatar for each of the users…
-    each(this.all, this.setAvatar)
+    this.all.forEach(user => this.setAvatar(user))
 
     // …and the current user as well.
     this.setAvatar()
@@ -58,7 +58,7 @@ export const userStore = {
    * @return {Object}
    */
   byId (id) {
-    return find(this.all, { id })
+    return this.all.find(user => user.id === id)
   },
 
   /**
@@ -88,10 +88,7 @@ export const userStore = {
    * @param {?Object} user The user. If null, the current user.
    */
   setAvatar (user = null) {
-    if (!user) {
-      user = this.current
-    }
-
+    user = user || this.current
     Vue.set(user, 'avatar', `https://www.gravatar.com/avatar/${md5(user.email)}?s=256`)
   },
 

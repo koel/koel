@@ -1,7 +1,7 @@
 /*eslint camelcase: ["error", {properties: "never"}]*/
 
 import Vue from 'vue'
-import { reduce, each, union, difference, take, filter, orderBy } from 'lodash'
+import { union, difference, take, orderBy } from 'lodash'
 
 import stub from '@/stubs/album'
 import { artistStore } from '.'
@@ -22,7 +22,7 @@ export const albumStore = {
   init (albums) {
     // Traverse through the artists array and add their albums into our master album list.
     this.all = albums
-    each(this.all, album => this.setupAlbum(album))
+    this.all.forEach(album => this.setupAlbum(album))
   },
 
   setupAlbum (album) {
@@ -67,10 +67,9 @@ export const albumStore = {
    * @param  {Array.<Object>|Object} albums
    */
   add (albums) {
-    albums = [].concat(albums)
-    each(albums, album => {
+    [].concat(albums).forEach(album => { 
       this.setupAlbum(album, album.artist)
-      album.playCount = reduce(album.songs, (count, song) => count + song.playCount, 0)
+      album.playCount = album.songs.reduce((count, song) => count + song.playCount, 0)
     })
 
     this.all = union(this.all, albums)
@@ -84,13 +83,13 @@ export const albumStore = {
    * Remove empty albums from the store.
    */
   compact () {
-    const emptyAlbums = filter(this.all, album => album.songs.length === 0)
+    const emptyAlbums = this.all.filter(album => album.songs.length === 0)
     if (!emptyAlbums.length) {
       return
     }
 
     this.all = difference(this.all, emptyAlbums)
-    each(emptyAlbums, album => delete this.cache[album.id])
+    emptyAlbums.forEach(album => delete this.cache[album.id])
   },
 
   /**
@@ -102,7 +101,7 @@ export const albumStore = {
    */
   getMostPlayed (n = 6) {
     // Only non-unknown albums with actually play count are applicable.
-    const applicable = filter(this.all, album => album.playCount && album.id !== 1)
+    const applicable = this.all.filter(album => album.playCount && album.id !== 1)
     return take(orderBy(applicable, 'playCount', 'desc'), n)
   },
 
@@ -114,7 +113,7 @@ export const albumStore = {
    * @return {Array.<Object>}
    */
   getRecentlyAdded (n = 6) {
-    const applicable = filter(this.all, album => album.id !== 1)
+    const applicable = this.all.filter(album => album.id !== 1)
     return take(orderBy(applicable, 'created_at', 'desc'), n)
   }
 }

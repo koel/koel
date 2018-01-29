@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import slugify from 'slugify'
-import { assign, without, map, take, remove, orderBy, each, unionBy, compact } from 'lodash'
+import { without, take, remove, orderBy, unionBy, compact } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { secondsToHis, alerts, pluralize } from '@/utils'
@@ -36,7 +36,7 @@ export const songStore = {
    */
   init (songs) {
     this.all = songs
-    each(this.all, song => this.setupSong(song))
+    this.all.forEach(song => this.setupSong(song))
     this.state.recentlyPlayed = this.gatherRecentlyPlayedFromLocalStorage()
   },
 
@@ -77,7 +77,7 @@ export const songStore = {
   initInteractions (interactions) {
     favoriteStore.clear()
 
-    each(interactions, interaction => {
+    interactions.forEach(interaction => {
       const song = this.byId(interaction.song_id)
 
       if (!song) {
@@ -163,7 +163,7 @@ export const songStore = {
   guess (title, album) {
     title = slugify(title.toLowerCase())
     let found = false
-    each(album.songs, song => {
+    album.songs.forEach(song => {
       if (slugify(song.title.toLowerCase()) === title) {
         found = song
       }
@@ -205,7 +205,7 @@ export const songStore = {
     // Only take first 7 songs
     this.state.recentlyPlayed.splice(7)
     // Save to local storage as well
-    preferenceStore.set('recent-songs', map(this.state.recentlyPlayed, 'id'))
+    preferenceStore.set('recent-songs', this.state.recentlyPlayed.map(song => song.id))
   },
 
   /**
@@ -231,14 +231,14 @@ export const songStore = {
     return new Promise((resolve, reject) => {
       http.put('songs', {
         data,
-        songs: map(songs, 'id')
+        songs: songs.map(song => song.id)
       }, ({ data: { songs, artists, albums }}) => {
         // Add the artist and album into stores if they're new
-        each(artists, artist => !artistStore.byId(artist.id) && artistStore.add(artist))
-        each(albums, album => !albumStore.byId(album.id) && albumStore.add(album))
+        artists.forEach(artist => !artistStore.byId(artist.id) && artistStore.add(artist))
+        albums.forEach(album => !albumStore.byId(album.id) && albumStore.add(album))
 
-        each(songs, song => {
-          const originalSong = this.byId(song.id)
+        songs.forEach(song => {
+          let originalSong = this.byId(song.id)
 
           if (originalSong.album_id !== song.album_id) {
             // album has been changed. Remove the song from its old album.
@@ -250,7 +250,7 @@ export const songStore = {
             originalSong.artist.songs = without(originalSong.artist.songs, originalSong)
           }
 
-          assign(originalSong, song)
+          originalSong = Object.assign(originalSong, song)
           // re-setup the song
           this.setupSong(originalSong)
         })

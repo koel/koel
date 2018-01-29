@@ -1,5 +1,3 @@
-import { reduce } from 'lodash'
-
 import { playlistStore, favoriteStore } from '@/stores'
 import { ls } from '.'
 
@@ -10,8 +8,7 @@ export const download = {
    * @param {Array.<Object>|Object} songs
    */
   fromSongs (songs) {
-    songs = [].concat(songs)
-    const query = reduce(songs, (q, song) => `songs[]=${song.id}&${q}`, '')
+    const query = [].concat(songs).reduce((q, song) => `songs[]=${song.id}&${q}`, '')
     return this.trigger(`songs?${query}`)
   },
 
@@ -42,22 +39,14 @@ export const download = {
    * @param {Object} playlist
    */
   fromPlaylist (playlist) {
-    if (!playlistStore.getSongs(playlist).length) {
-      return
-    }
-
-    return this.trigger(`playlist/${playlist.id}`)
+    return playlistStore.getSongs(playlist).length ? this.trigger(`playlist/${playlist.id}`) : null
   },
 
   /**
    * Download all favorite songs.
    */
   fromFavorites () {
-    if (!favoriteStore.all.length) {
-      return
-    }
-
-    return this.trigger('favorites')
+    return  favoriteStore.all.length ? this.trigger('favorites') : null
   },
 
   /**

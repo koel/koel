@@ -10,8 +10,6 @@ export const clickawayDirective = {
       return
     }
 
-    document.addEventListener('click', e => {
-      el.contains(e.target) || value()
-    })
+    document.addEventListener('click', e => el.contains(e.target) || value())
   }
 }

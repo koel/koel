@@ -4,9 +4,7 @@ import config from '@/config'
 export default {
   computed: {
     length () {
-      return this.artist.songs.reduce((acc, song) => {
-        return acc + song.length
-      }, 0)
+      return this.artist.songs.reduce((acc, song) => acc + song.length, 0)
     },
 
     fmtLength () {

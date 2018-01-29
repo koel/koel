@@ -1,4 +1,4 @@
-import { head, last, each, includes, union, difference, map, shuffle as _shuffle, first } from 'lodash'
+import { union, difference, shuffle } from 'lodash'
 
 export const queueStore = {
   state: {
@@ -55,7 +55,7 @@ export const queueStore = {
    * @return {?Object}
    */
   get first () {
-    return head(this.all)
+    return this.all[0]
   },
 
   /**
@@ -64,7 +64,7 @@ export const queueStore = {
    * @return {?Object}
    */
   get last () {
-    return last(this.all)
+    return this.all[this.all.length - 1]
   },
 
   /**
@@ -75,7 +75,7 @@ export const queueStore = {
    * @return {Boolean}
    */
   contains (song) {
-    return includes(this.all, song)
+    return this.all.includes(song)
   },
 
   /**
@@ -131,11 +131,11 @@ export const queueStore = {
    * @param  {Object}     target The target song object
    */
   move (songs, target) {
-    const $targetIndex = this.indexOf(target)
+    const targetIndex = this.indexOf(target)
 
-    each(songs, song => {
+    songs.forEach(song => {
       this.all.splice(this.indexOf(song), 1)
-      this.all.splice($targetIndex, 0, song)
+      this.all.splice(targetIndex, 0, song)
     })
   },
 
@@ -164,10 +164,10 @@ export const queueStore = {
    */
   get next () {
     if (!this.current) {
-      return first(this.all)
+      return this.first
     }
 
-    const index = map(this.all, 'id').indexOf(this.current.id) + 1
+    const index = this.all.map(song => song.id).indexOf(this.current.id) + 1
 
     return index >= this.all.length ? null : this.all[index]
   },
@@ -179,10 +179,10 @@ export const queueStore = {
    */
   get previous () {
     if (!this.current) {
-      return last(this.all)
+      return this.last
     }
 
-    const index = map(this.all, 'id').indexOf(this.current.id) - 1
+    const index = this.all.map(song => song.id).indexOf(this.current.id) - 1
 
     return index < 0 ? null : this.all[index]
   },
@@ -214,7 +214,7 @@ export const queueStore = {
    * @return {Array.<Object>} The shuffled array of song objects
    */
   shuffle () {
-    this.all = _shuffle(this.all)
+    this.all = shuffle(this.all)
     return this.all
   }
 }

@@ -1,4 +1,4 @@
-import { find, map, difference, union } from 'lodash'
+import { difference, union } from 'lodash'
 import NProgress from 'nprogress'
 
 import stub from '@/stubs/playlist'
@@ -59,7 +59,7 @@ export const playlistStore = {
    * @return {Object}
    */
   byId (id) {
-    return find(this.all, { id })
+    return this.all.find(song => song.id === id)
   },
 
   /**
@@ -110,7 +110,7 @@ export const playlistStore = {
   store (name, songs = []) {
     if (songs.length) {
       // Extract the IDs from the song objects.
-      songs = map(songs, 'id')
+      songs = songs.map(song => song.id)
     }
 
     NProgress.start()
@@ -161,7 +161,7 @@ export const playlistStore = {
 
       NProgress.start()
 
-      http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
+      http.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) }, () => {
         alerts.success(`Added ${pluralize(songs.length, 'song')} into &quot;${playlist.name}&quot;.`)
         resolve(playlist)
       }, error => reject(error))
@@ -180,7 +180,7 @@ export const playlistStore = {
     playlist.songs = difference(playlist.songs, songs)
 
     return new Promise((resolve, reject) => {
-      http.put(`playlist/${playlist.id}/sync`, { songs: map(playlist.songs, 'id') }, () => {
+      http.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) }, () => {
         alerts.success(`Removed ${pluralize(songs.length, 'song')} from &quot;${playlist.name}&quot;.`)
         resolve(playlist)
       }, error => reject(error))

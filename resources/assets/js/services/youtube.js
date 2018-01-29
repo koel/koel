@@ -9,9 +9,7 @@ export const youtube = {
    * @param  {Object}   song
    */
   searchVideosRelatedToSong (song) {
-    if (!song.youtube) {
-      song.youtube = {}
-    }
+    song.youtube = song.youtube || {}
 
     const pageToken = song.youtube.nextPageToken || ''
     return new Promise((resolve, reject) => {

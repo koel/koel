@@ -1,5 +1,3 @@
-import { each } from 'lodash'
-
 import { secondsToHis } from '@/utils'
 import { http } from '..'
 
@@ -31,7 +29,7 @@ export const albumInfo = {
    */
   merge (album, info) {
     // Convert the duration into i:s
-    info.tracks && each(info.tracks, track => {
+    info.tracks && info.tracks.forEach(track => {
       track.fmtLength = secondsToHis(track.length)
     })
 

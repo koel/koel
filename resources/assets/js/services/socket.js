@@ -25,12 +25,8 @@ export const socket = {
       })
 
       this.channel = this.pusher.subscribe('private-koel')
-      this.channel.bind('pusher:subscription_succeeded', () => {
-        return resolve()
-      })
-      this.channel.bind('pusher:subscription_error', () => {
-        return resolve()
-      })
+      this.channel.bind('pusher:subscription_succeeded', () => resolve())
+      this.channel.bind('pusher:subscription_error', () => resolve())
     })
   },
 

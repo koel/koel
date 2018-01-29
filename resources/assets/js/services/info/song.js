@@ -10,7 +10,6 @@ export const songInfo = {
    */
   fetch (song) {
     return new Promise((resolve, reject) => {
-      // Check if the song's info has been retrieved before.
       if (song.infoRetrieved) {
         resolve(song)
         return

@@ -1,5 +1,3 @@
-import { extend, has, each } from 'lodash'
-
 import { userStore } from '.'
 import { ls } from '@/services'
 
@@ -28,12 +26,9 @@ export const preferenceStore = {
    * @param  {Object} user The user whose preferences we are managing.
    */
   init (user = null) {
-    if (!user) {
-      user = userStore.current
-    }
-
+    user = user ||userStore.current
     this.storeKey = `preferences_${user.id}`
-    extend(this.state, ls.get(this.storeKey, this.state))
+    this.state = Object.assign(this.state, ls.get(this.storeKey, this.state))
     this.setupProxy()
   },
 
@@ -41,7 +36,7 @@ export const preferenceStore = {
    * Proxy the state properties, so that each can be directly accessed using the key.
    */
   setupProxy () {
-    each(Object.keys(this.state), key => {
+    Object.keys(this.state).forEach(key => {
       Object.defineProperty(this, key, {
         get: () => this.get(key),
         set: value => this.set(key, value),
@@ -56,7 +51,7 @@ export const preferenceStore = {
   },
 
   get (key) {
-    return has(this.state, key) ? this.state[key] : null
+    return this.state.hasOwnProperty(key) ? this.state[key] : null
   },
 
   save () {

@@ -1,4 +1,4 @@
-import { each, map, difference, union } from 'lodash'
+import { difference, union } from 'lodash'
 import NProgress from 'nprogress'
 
 import { http } from '@/services'
@@ -84,15 +84,13 @@ export const favoriteStore = {
   like (songs) {
     // Don't wait for the HTTP response to update the status, just set them to Liked right away.
     // This may cause a minor problem if the request fails somehow, but do we care?
-    each(songs, song => {
-      song.liked = true
-    })
+    songs.forEach(song => { song.liked = true })
     this.add(songs)
 
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/batch/like', { songs: map(songs, 'id') }, ({ data }) => {
+      http.post('interaction/batch/like', { songs: songs.map(song => song.id) }, ({ data }) => {
         alerts.success(`Added ${pluralize(songs.length, 'song')} into Favorites.`)
         resolve(data)
       }, error => reject(error))
@@ -105,15 +103,13 @@ export const favoriteStore = {
    * @param {Array.<Object>}  songs
    */
   unlike (songs) {
-    each(songs, song => {
-      song.liked = false
-    })
+    songs.forEach(song => { song.liked = false })
     this.remove(songs)
 
     NProgress.start()
 
     return new Promise((resolve, reject) => {
-      http.post('interaction/batch/unlike', { songs: map(songs, 'id') }, ({ data }) => {
+      http.post('interaction/batch/unlike', { songs: songs.map(song => song.id) }, ({ data }) => {
         alerts.success(`Removed ${pluralize(songs.length, 'song')} from Favorites.`)
         resolve(data)
       }, error => reject(error))
