@@ -194,8 +194,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../../sass/partials/_vars.scss";
-@import "../../../sass/partials/_mixins.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
 
 @mixin hasSoftGradientOnTop($startColor) {
   position: relative;
@@ -370,7 +370,7 @@ export default {
   .album-thumb {
     flex: 0 0 $footerHeight;
     height: $footerHeight;
-    background: url(../../../img/covers/unknown-album.png);
+    background: url("~#/../img/covers/unknown-album.png");
     background-size: cover;
     position: relative;
   }

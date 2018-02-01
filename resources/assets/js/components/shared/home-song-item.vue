@@ -34,7 +34,7 @@ export default {
     },
     topPlayCount: {
       type: Number,
-      default: 1
+      default: 0
     }
   },
   filters: { pluralize },
@@ -65,8 +65,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../../sass/partials/_vars.scss";
-@import "../../../sass/partials/_mixins.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
 
 .song-item-home {
   display: flex;

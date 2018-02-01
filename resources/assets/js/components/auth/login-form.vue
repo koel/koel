@@ -80,7 +80,7 @@ form {
   &::before {
     content: " ";
     display: block;
-    background: url(../../../img/logo.svg) center top no-repeat;
+    background: url(~#/../img/logo.svg) center top no-repeat;
     background-size: 156px;
     height: 172px;
   }

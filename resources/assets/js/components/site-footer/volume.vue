@@ -2,7 +2,7 @@
   <span class="volume control" id="volume">
     <i class="fa fa-volume-off unmute" @click.prevent="unmute" v-if="muted"/>
     <i class="fa fa-volume-up mute" @click.prevent="mute" v-else/>
-    <input type="range" id="volumeRange" max="10" step="0.1" 
+    <input type="range" id="volumeRange" max="10" step="0.1"
       @change="broadcastVolume" class="plyr__volume"
       @input="setVolume"
     >
@@ -60,8 +60,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../../sass/partials/_vars.scss";
-@import "../../../sass/partials/_mixins.scss";
+@import "~#/partials/_vars.scss";
+@import "~#/partials/_mixins.scss";
 
 #volume {
   @include vertical-center();
