@@ -1,0 +1,3 @@
+[submodule "resources/assets"]
+	path = resources/assets
+	url = git@github.com:koel/core.git

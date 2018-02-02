@@ -3,7 +3,8 @@ const webpack = require('webpack')
 
 module.exports = {
   externals: {
-    electron: 'electron'
+    electron: 'electron',
+    'vue-electron': 'vue-electron'
   },
   resolve: {
     alias: {
