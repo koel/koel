@@ -222,6 +222,8 @@ export default {
         width: 24px;
         display: inline-block;
         font-family: FontAwesome;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       &.home::before {
