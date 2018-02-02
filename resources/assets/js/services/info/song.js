@@ -4,7 +4,7 @@ import { http, albumInfo, artistInfo } from '..'
 
 export const songInfo = {
   /**
-   * Get extra song information (lyrics, artist info, album info).
+   * Get extra song information (lyrics, artist info, album info, similar).
    *
    * @param  {Object}   song
    */
@@ -15,8 +15,9 @@ export const songInfo = {
         return
       }
 
-      http.get(`${song.id}/info`, ({ data: { artist_info, album_info, youtube, lyrics }}) => {
+      http.get(`${song.id}/info`, ({ data: { artist_info, album_info, youtube, lyrics, similar}}) => {
         song.lyrics = lyrics
+        song.similar = similar
         artist_info && artistInfo.merge(song.artist, artist_info)
         album_info && albumInfo.merge(song.album, album_info)
         song.youtube = youtube

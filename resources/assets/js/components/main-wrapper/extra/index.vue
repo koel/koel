@@ -11,6 +11,9 @@
         <a @click.prevent="currentView = 'albumInfo'"
           class="album"
           :class="{ active: currentView === 'albumInfo' }">Album</a>
+        <a @click.prevent="currentView = 'similar'"
+          class="similar"
+          :class="{ active: currentView === 'similar' }">Similar</a>
         <a @click.prevent="currentView = 'youtube'"
           v-if="sharedState.useYouTube"
           class="youtube"
@@ -29,6 +32,11 @@
           mode="sidebar"
           ref="album-info"
           v-show="currentView === 'albumInfo'"/>
+        <similar v-if="song.similar"
+          :song="song"
+          mode="similar"
+          ref="similar"
+          v-show="currentView === 'similar'"/>
         <youtube v-if="sharedState.useYouTube"
           :song="song" :youtube="song.youtube"
           ref="youtube"
@@ -48,11 +56,12 @@ import { songInfo } from '@/services'
 import lyrics from './lyrics.vue'
 import artistInfo from './artist-info.vue'
 import albumInfo from './album-info.vue'
+import similar from './similar.vue'
 import youtube from './youtube.vue'
 
 export default {
   name: 'main-wrapper--extra--index',
-  components: { lyrics, artistInfo, albumInfo, youtube },
+  components: { lyrics, artistInfo, albumInfo, similar, youtube },
 
   data () {
     return {
