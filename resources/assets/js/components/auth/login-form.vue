@@ -1,5 +1,8 @@
 <template>
   <form @submit.prevent="login" :class="{ error: failed }">
+    <div class="logo">
+      <img src="~#/../img/logo.svg" width="156" height="auto">
+    </div>
     <input v-model="email" type="email" placeholder="Email Address" autofocus required>
     <input v-model="password" type="password" placeholder="Password" required>
     <button type="submit">Log In</button>
@@ -77,12 +80,8 @@ form {
     animation: shake .5s;
   }
 
-  &::before {
-    content: " ";
-    display: block;
-    background: url(~#/../img/logo.svg) center top no-repeat;
-    background-size: 156px;
-    height: 172px;
+  .logo {
+    text-align: center;
   }
 
   @media only screen and (max-width : 414px) {

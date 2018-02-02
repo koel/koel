@@ -1,12 +1,21 @@
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
+  externals: {
+    electron: 'electron'
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'resources/assets/js'),
       '#': path.resolve(__dirname, 'resources/assets/sass')
     }
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      KOEL_ENV: '"web"'
+    })
+  ],
   module: {
     rules: [
       {

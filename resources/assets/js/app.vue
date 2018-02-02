@@ -38,6 +38,11 @@ import { playback, ls, socket } from './services'
 import { focusDirective, clickawayDirective } from './directives'
 import router from './router'
 
+let ipc
+if (KOEL_ENV === 'app') {
+  ipc = require('electron').ipcRenderer
+}
+
 export default {
   components: { siteHeader, siteFooter, mainWrapper, overlay, loginForm, editSongsForm },
 
@@ -194,6 +199,26 @@ export default {
       socket.listen('favorite:toggle', () => {
         queueStore.current && favoriteStore.toggleOne(queueStore.current)
       })
+    },
+
+    listenToGlobalShortcuts () {
+      ipc.on('shortcut', (e, msg) => {
+        switch (msg) {
+          case 'MediaNextTrack':
+            playback.playNext()
+            break
+          case 'MediaPreviousTrack':
+            playback.playPrev()
+            break
+          case 'MediaStop':
+            playback.stop()
+            break
+          case 'MediaPlayPause':
+            const play = document.querySelector('#mainFooter .play')
+            play ? play.click() : document.querySelector('#mainFooter .pause').click()
+            break
+        }
+      })
     }
   },
 
@@ -215,11 +240,9 @@ export default {
         forceReloadWindow()
       },
 
-      /**
-       * Init our basic, custom router on ready to determine app state.
-       */
       'koel:ready': () => {
         router.init()
+        KOEL_ENV === 'app' && this.listenToGlobalShortcuts()
       }
     })
   }
@@ -242,6 +265,7 @@ Vue.directive('koel-clickaway', clickawayDirective)
 </script>
 
 <style lang="scss">
+@import "~#/app.scss";
 @import "~#/partials/_vars.scss";
 @import "~#/partials/_mixins.scss";
 @import "~#/partials/_shared.scss";

@@ -1,8 +1,8 @@
 const mix = require('laravel-mix')
 const fs = require('fs')
-const resolve = require('./webpack.config.js').resolve
+const { externals, resolve, plugins } = require('./webpack.config.js')
 
-mix.webpackConfig({ resolve })
+mix.webpackConfig({ externals, resolve, plugins })
 mix.setResourceRoot('./public/')
 
 mix.config.detectHotReloading()
