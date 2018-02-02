@@ -188,6 +188,69 @@ class Lastfm extends RESTfulService
     }
 
     /**
+     * Get a list of similar tracks
+     *
+     * @param string $name       Name of the track
+     * @param string $artistName Name of the artist
+     *
+     * @return array|false
+     */
+    public function getSimilar($name, $artistName)
+    {
+        if (!$this->enabled()) {
+            return false;
+        }
+
+        $name = urlencode($name);
+        $artistName = urlencode($artistName);
+
+        try {
+            $cacheKey = md5("lastfm_similar_{$name}_{$artistName}");
+
+            if ($response = cache($cacheKey)) {
+                $response = simplexml_load_string($response);
+            } else {
+                if ($response = $this->get("?method=track.getSimilar&autocorrect=1&limit=25&track=$name&artist=$artistName")) {
+                    cache([$cacheKey => $response->asXML()], 24 * 60 * 7);
+                }
+            }
+
+            $response = json_decode(json_encode($response), true);
+
+            if (!$response || !$similartracks = array_get($response, 'similartracks')) {
+                return false;
+            }
+
+            return $this->buildGetSimilar($similartracks);
+        } catch (Exception $e) {
+            Log::error($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Build a Koel-usable array of similar tracks using the data from Last.fm.
+     *
+     * @param array $lastfSimilar
+     *
+     * @return array
+     */
+    private function buildGetSimilar(array $lastfmSimilar)
+    {
+        array_shift($lastfmSimilar);
+        return [
+            'tracks' => array_map(function ($track) {
+                return [
+                    'title' => $track['name'],
+                    'artist' => array_get($track, 'artist.name'),
+                    'url' => $track['url'],
+                ];
+            }, array_shift($lastfmSimilar)),
+        ];
+    }
+
+    /**
      * Get Last.fm's session key for the authenticated user using a token.
      *
      * @param string $token The token after successfully connecting to Last.fm
