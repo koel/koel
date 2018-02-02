@@ -315,6 +315,19 @@ class Song extends Model
     }
 
     /**
+     * Get the Lastfm songs related to this song.
+     *
+     * @return array|false
+     */
+    public function getSimilar()
+    {
+        if ($this->artist->is_unknown) {
+            return false;
+        }
+        return Lastfm::getSimilar($this->title, $this->artist->name);
+    }
+
+    /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
      *
