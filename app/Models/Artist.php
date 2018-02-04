@@ -19,6 +19,7 @@ use Log;
  * @property bool   is_unknown
  * @property bool   is_various
  * @property Collection songs
+ * @property bool   has_image
  */
 class Artist extends Model
 {
@@ -132,7 +133,7 @@ class Artist extends Model
         $image = array_get($info, 'image');
 
         // If our current artist has no image, and Last.fm has one, copy the image for our local use.
-        if (!$this->image && is_string($image) && ini_get('allow_url_fopen')) {
+        if (!$this->has_image && is_string($image) && ini_get('allow_url_fopen')) {
             try {
                 $extension = explode('.', $image);
                 $this->writeImageFile(file_get_contents($image), last($extension));
@@ -182,6 +183,19 @@ class Artist extends Model
      */
     public function getImageAttribute($value)
     {
-        return  $value ? app()->staticUrl("public/img/artists/$value") : null;
+        return $value ? app()->staticUrl("public/img/artists/$value") : null;
+    }
+
+    public function getHasImageAttribute()
+    {
+        if (!$this->attributes['image']) {
+            return false;
+        }
+
+        if (!file_exists(public_path("public/img/artists/{$this->attributes['image']}"))) {
+            return false;
+        }
+
+        return true;
     }
 }
