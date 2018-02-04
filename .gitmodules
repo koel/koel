@@ -1,3 +1,3 @@
 [submodule "resources/assets"]
 	path = resources/assets
-	url = https://github.com/phanan/koel.git
+	url = https://github.com/koel/core.git
