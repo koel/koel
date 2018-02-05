@@ -188,11 +188,13 @@ class Artist extends Model
 
     public function getHasImageAttribute()
     {
-        if (!$this->attributes['image']) {
+        $image = array_get($this->attributes, 'image');
+
+        if (!$image) {
             return false;
         }
 
-        if (!file_exists(public_path("public/img/artists/{$this->attributes['image']}"))) {
+        if (!file_exists(public_path("public/img/artists/$image"))) {
             return false;
         }
 

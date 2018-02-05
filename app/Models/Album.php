@@ -212,15 +212,17 @@ class Album extends Model
      */
     public function getHasCoverAttribute()
     {
-        if (!$this->attributes['cover']) {
+        $cover = array_get($this->attributes, 'cover');
+
+        if (!$cover) {
             return false;
         }
 
-        if ($this->attributes['cover'] === self::UNKNOWN_COVER) {
+        if ($cover === self::UNKNOWN_COVER) {
             return false;
         }
 
-        return file_exists(public_path("/public/img/covers/{$this->attributes['cover']}"));
+        return file_exists(public_path("/public/img/covers/$cover"));
     }
 
     /**
