@@ -7135,6 +7135,10 @@ sister@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/sister/-/sister-3.0.0.tgz#88eb57047cb283da1e070b1a7cae8212f3bcb2db"
 
+sketch-js@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/sketch-js/-/sketch-js-1.1.3.tgz#ca692351315f417b25be9fa826866f56827ad85e"
+
 slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
