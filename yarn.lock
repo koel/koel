@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@phanan/vuebus@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@phanan/vuebus/-/vuebus-1.0.0.tgz#3d347736620bc6d070b6fd2d1eacfc3cd8e1bea4"
+
 "@types/node@*":
   version "8.0.57"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.57.tgz#e5d8b4dc112763e35cfc51988f4f38da3c486d99"

@@ -27,6 +27,7 @@
     }
   },
   "dependencies": {
+    "@phanan/vuebus": "^1.0.0",
     "alertify.js": "^1.0.12",
     "axios": "^0.15.3",
     "blueimp-md5": "^2.3.0",
