@@ -150,7 +150,7 @@ class File
             'albumartist' => 'band',
             'album' => 'album',
             'title' => 'title',
-            'lyrics' => 'unsynchronised_lyric',
+            'lyrics' => 'unsychronised_lyric', // this tag name is mispelled by getID3
             'compilation' => 'part_of_a_compilation',
         ];
 
