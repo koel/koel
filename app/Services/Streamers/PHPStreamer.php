@@ -46,12 +46,17 @@ class PHPStreamer extends Streamer implements StreamerInterface
 
             if ($range[0] === '') {
                 // First number missing, return last $range[1] bytes
-                $end = $fileSize - 1;
-                $start = $end - (int) $range[0];
+                $start = $end = $fileSize - 1;
             } elseif ($range[1] === '') {
-                // Second number missing, return from byte $range[0] to end
-                $start = (int) $range[0];
-                $end = $fileSize - 1;
+                if ($range[0] === 0) {
+                    $start = 0;
+                    $end = $fileSize - 1;
+                    $partial = false;
+                } else {
+                    // Second number missing, return from byte $range[0] to end
+                    $start = (int) $range[0];
+                    $end = $fileSize - 1;
+                }
             } else {
                 // Both numbers present, return specific range
                 $start = (int) $range[0];
