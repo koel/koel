@@ -73,7 +73,7 @@ class PHPStreamer extends Streamer implements StreamerInterface
         // Send standard headers
         header("Content-Type: {$this->contentType}");
         header("Content-Length: $length");
-        header('Last-Modified: Sat, 26 Jul 1997 00:00:00 GMT'); // leverage browser caching
+        header('Last-Modified: '.gmdate('D, d M Y H:i:s T', filemtime($this->song->path)));
         header('Content-Disposition: attachment; filename="'.basename($this->song->path).'"');
         header('Accept-Ranges: bytes');
 
