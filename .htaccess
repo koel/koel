@@ -29,10 +29,24 @@
 </IfModule>
 
 <IfModule mod_expires.c>
-  # Cache the audio files for 1 year.
+  # Cache the audio and other static files.
   # It's up to the browser to respect this.
   ExpiresActive On
-  ExpiresByType audio/(mpe?g3?|ogg|aac) "access plus 1 year"
+
+  ExpiresByType audio/mp3 "access plus 1 year"
+  ExpiresByType audio/mpg "access plus 1 year"
+  ExpiresByType audio/mpeg "access plus 1 year"
+  ExpiresByType audio/ogg "access plus 1 year"
+  ExpiresByType audio/aac "access plus 1 year"
+  ExpiresByType audio/m4a "access plus 1 year"
+
+  ExpiresByType image/gif "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+
+  ExpiresByType font/ttf "access plus 1 month"
+  ExpiresByType font/woff "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
 </IfModule>
 
 <IfModule mod_deflate.c>
