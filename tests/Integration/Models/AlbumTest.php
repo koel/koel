@@ -38,10 +38,11 @@ class AlbumTest extends TestCase
         /** @var Album $album */
         $album = factory(Album::class)->create([
             'artist_id' => $artist->id,
+            'year' => 2015,
         ]);
 
         // When I try to get the album by artist and name
-        $gottenAlbum = Album::get($artist, $album->name);
+        $gottenAlbum = Album::get($artist, $album->name, 2015);
 
         // Then I get the album
         $this->assertSame($album->id, $gottenAlbum->id);
@@ -58,7 +59,7 @@ class AlbumTest extends TestCase
         $this->assertNull(Album::whereArtistIdAndName($artist->id, $name)->first());
 
         // When I try to get the album by such artist and name
-        $album = Album::get($artist, $name);
+        $album = Album::get($artist, $name, 2015);
 
         // Then I get the new album
         $this->assertNotNull($album);
@@ -71,7 +72,7 @@ class AlbumTest extends TestCase
         $name = '';
 
         // When we create such an album
-        $album = Album::get(factory(Artist::class)->create(), $name);
+        $album = Album::get(factory(Artist::class)->create(), $name, 2015);
 
         // Then the album's name is "Unknown Album"
         $this->assertEquals('Unknown Album', $album->name);
@@ -84,7 +85,7 @@ class AlbumTest extends TestCase
         $isCompilation = true;
 
         // When the album is created
-        $album = Album::get(factory(Artist::class)->create(), 'Foo', $isCompilation);
+        $album = Album::get(factory(Artist::class)->create(), 'Foo', 2015, $isCompilation);
 
         // Then its artist is Various Artist
         $this->assertTrue($album->artist->is_various);
