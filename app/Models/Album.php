@@ -72,10 +72,10 @@ class Album extends Model
     /**
      * Get an album using some provided information.
      *
-     * @param Artist  $artist
-     * @param string  $name
-     * @param integer $year
-     * @param bool    $isCompilation
+     * @param Artist $artist
+     * @param string $name
+     * @param int    $year
+     * @param bool   $isCompilation
      *
      * @return self
      */
