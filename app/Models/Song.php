@@ -170,6 +170,7 @@ class Song extends Model
                 trim($data['artistName']) ?: $song->artist->name,
                 $single ? trim($data['lyrics']) : $song->lyrics,
                 $single ? (int) $data['track'] : $song->track,
+                $song->album->year,
                 (int) $data['compilationState']
             ));
         }
@@ -194,11 +195,12 @@ class Song extends Model
      * @param string $artistName
      * @param string $lyrics
      * @param int    $track
+     * @param int    $year
      * @param int    $compilationState
      *
      * @return self
      */
-    public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $compilationState)
+    public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $year, $compilationState)
     {
         if ($artistName === Artist::VARIOUS_NAME) {
             // If the artist name is "Various Artists", it's a compilation song no matter what.
@@ -221,7 +223,7 @@ class Song extends Model
                 break;
         }
 
-        $album = Album::get($artist, $albumName, $isCompilation);
+        $album = Album::get($artist, $albumName, $year, $isCompilation);
 
         $this->artist_id = $artist->id;
         $this->album_id = $album->id;

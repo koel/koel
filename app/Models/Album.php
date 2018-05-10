@@ -19,6 +19,7 @@ use Log;
  * @property bool   is_compilation  If the album is a compilation from multiple artists
  * @property Artist artist          The album's artist
  * @property int    artist_id
+ * @property int    year
  * @property Collection  songs
  * @property bool   is_unknown
  */
@@ -32,7 +33,10 @@ class Album extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
-    protected $casts = ['artist_id' => 'integer'];
+    protected $casts = [
+        'artist_id' => 'integer',
+        'year' => 'integer',
+    ];
     protected $appends = ['is_compilation'];
 
     /**
@@ -68,13 +72,14 @@ class Album extends Model
     /**
      * Get an album using some provided information.
      *
-     * @param Artist $artist
-     * @param string $name
-     * @param bool   $isCompilation
+     * @param Artist  $artist
+     * @param string  $name
+     * @param integer $year
+     * @param bool    $isCompilation
      *
      * @return self
      */
-    public static function get(Artist $artist, $name, $isCompilation = false)
+    public static function get(Artist $artist, $name, $year, $isCompilation = false)
     {
         // If this is a compilation album, its artist must be "Various Artists"
         if ($isCompilation) {
@@ -84,6 +89,7 @@ class Album extends Model
         return self::firstOrCreate([
             'artist_id' => $artist->id,
             'name' => $name ?: self::UNKNOWN_NAME,
+            'year' => $year,
         ]);
     }
 

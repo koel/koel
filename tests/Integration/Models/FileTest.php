@@ -20,6 +20,7 @@ class FileTest extends TestCase
             'title' => 'Amet',
             'track' => 5,
             'disc' => 3,
+            'year' => 2015,
             'lyrics' => "Foo\rbar",
             'cover' => [
                 'data' => file_get_contents(__DIR__.'/../../blobs/cover.png'),

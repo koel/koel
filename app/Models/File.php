@@ -127,6 +127,17 @@ class File
             $track = array_get($info, $trackIndices[$i], [0])[0];
         }
 
+        $year = 0;
+
+        // Apparently year can be stored with different indices as the following.
+        $yearIndices = [
+            'comments.year',
+        ];
+
+        for ($i = 0; $i < count($yearIndices) && $year === 0; $i++) {
+            $year = array_get($info, $yearIndices[$i], [0])[0];
+        }
+
         $props = [
             'artist' => '',
             'album' => '',
@@ -135,6 +146,7 @@ class File
             'length' => $info['playtime_seconds'],
             'track' => (int) $track,
             'disc' => (int) array_get($info, 'comments.part_of_a_set.0', 1),
+            'year' => (int) $year,
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
             'path' => $this->path,
@@ -229,7 +241,7 @@ class File
             if (isset($info['album'])) {
                 $album = $changeCompilationAlbumOnly
                     ? $this->song->album
-                    : Album::get($artist, $info['album'], $isCompilation);
+                    : Album::get($artist, $info['album'], $info['year'], $isCompilation);
             } else {
                 $album = $this->song->album;
             }
@@ -237,14 +249,15 @@ class File
             // The file is newly added.
             $isCompilation = (bool) array_get($info, 'compilation');
             $artist = Artist::get($info['artist']);
-            $album = Album::get($artist, $info['album'], $isCompilation);
+            $album = Album::get($artist, $info['album'], $info['year'], $isCompilation);
         }
 
         $album->has_cover || $this->generateAlbumCover($album, array_get($info, 'cover'));
 
-        $data = array_except($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
+        $data = array_except($info, ['artist', 'albumartist', 'album', 'cover', 'year', 'compilation']);
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
+
         $this->song = Song::updateOrCreate(['id' => $this->hash], $data);
 
         return self::SYNC_RESULT_SUCCESS;

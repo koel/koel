@@ -26,6 +26,7 @@ class Media
     protected $allTags = [
         'artist',
         'album',
+        'year',
         'title',
         'length',
         'track',
