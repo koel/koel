@@ -2,6 +2,9 @@ language: php
 
 php:
   - 7.0
+  - 7.1
+  - 7.2
+  - nightly
 
 env:
   APP_ENV: testing
