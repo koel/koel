@@ -45,6 +45,7 @@ class SongController extends Controller
             'lyrics' => array_get($tags, 'lyrics', '') ?: '',
             'mtime' => time(),
         ]);
+        event(new LibraryChanged());
 
         return response()->json($song);
     }
