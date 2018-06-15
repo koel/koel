@@ -40,9 +40,9 @@ class SongController extends Controller
             'album_id' => $album->id,
             'artist_id' => $artist->id,
             'title' => trim(array_get($tags, 'title', '')),
-            'length' => array_get($tags, 'duration', 0),
+            'length' => array_get($tags, 'duration', 0) ?: 0,
             'track' => (int) array_get($tags, 'track'),
-            'lyrics' => array_get($tags, 'lyrics', ''),
+            'lyrics' => array_get($tags, 'lyrics', '') ?: '',
             'mtime' => time(),
         ]);
 
