@@ -28,7 +28,7 @@ class SongController extends Controller
         $tags = $request->tags;
         $artist = Artist::get(array_get($tags, 'artist'));
 
-        $compilation = (bool) trim(array_get($tags, 'albumartist'));
+        $compilation = (bool) trim(array_get($tags, 'compilation'));
         $album = Album::get($artist, array_get($tags, 'album'), $compilation);
 
         if ($cover = array_get($tags, 'cover')) {
