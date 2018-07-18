@@ -26,10 +26,10 @@ class SongController extends Controller
         $path = "s3://{$request->bucket}/{$request->key}";
         $tags = $request->tags;
         $artist_tag = trim(array_get($tags, 'artist'));
-        $albumartist_tag = trim(array_get($tags, 'albumartist'));
-        $compilation_tag = trim(array_get($tags, 'part_of_a_compilation'));
         $is_compilation = false;
-        if ($compilation_tag || $albumartist_tag !== $artist_tag) {
+        if (trim(array_get($tags, 'part_of_a_compilation')) || 
+            trim(array_get($tags, 'albumartist')) !== $artist_tag) 
+        {
             $is_compilation = true;
         }
         $artist = Artist::get($artist_tag);
