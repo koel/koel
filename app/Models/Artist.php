@@ -119,34 +119,6 @@ class Artist extends Model
     }
 
     /**
-     * Get extra information about the artist from Last.fm.
-     *
-     * @return array|false
-     */
-    public function getInfo()
-    {
-        if ($this->is_unknown) {
-            return false;
-        }
-
-        $info = Lastfm::getArtistInfo($this->name);
-        $image = array_get($info, 'image');
-
-        // If our current artist has no image, and Last.fm has one, copy the image for our local use.
-        if (!$this->has_image && is_string($image) && ini_get('allow_url_fopen')) {
-            try {
-                $extension = explode('.', $image);
-                $this->writeImageFile(file_get_contents($image), last($extension));
-                $info['image'] = $this->image;
-            } catch (Exception $e) {
-                Log::error($e);
-            }
-        }
-
-        return $info;
-    }
-
-    /**
      * Write an artist image file with binary data and update the Artist with the new cover file.
      *
      * @param string $binaryData

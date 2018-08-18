@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use Log;
 
-class Lastfm extends RESTfulService
+class LastfmService extends RESTfulService
 {
     /**
      * Specify the response format, since Last.fm only returns XML.

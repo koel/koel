@@ -65,7 +65,7 @@
       "php artisan key:generate"
     ],
     "test": [
-      "phpunit"
+      "phpunit --colors=always"
     ]
   },
   "config": {

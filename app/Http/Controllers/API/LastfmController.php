@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\LastfmCallbackRequest;
 use App\Http\Requests\API\LastfmSetSessionKeyRequest;
-use App\Services\Lastfm;
+use App\Services\LastfmService;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -34,13 +34,13 @@ class LastfmController extends Controller
     /**
      * Connect the current user to Last.fm.
      *
-     * @param Redirector $redirector
-     * @param Lastfm     $lastfm
-     * @param JWTAuth    $auth
+     * @param Redirector    $redirector
+     * @param LastfmService $lastfm
+     * @param JWTAuth       $auth
      *
      * @return Redirector|RedirectResponse
      */
-    public function connect(Redirector $redirector, Lastfm $lastfm, JWTAuth $auth = null)
+    public function connect(Redirector $redirector, LastfmService $lastfm, JWTAuth $auth = null)
     {
         abort_unless($lastfm->enabled(), 401, 'Koel is not configured to use with Last.fm yet.');
 
@@ -62,11 +62,11 @@ class LastfmController extends Controller
      * Serve the callback request from Last.fm.
      *
      * @param LastfmCallbackRequest $request
-     * @param Lastfm                $lastfm
+     * @param LastfmService         $lastfm
      *
      * @return Response
      */
-    public function callback(LastfmCallbackRequest $request, Lastfm $lastfm)
+    public function callback(LastfmCallbackRequest $request, LastfmService $lastfm)
     {
         // Get the session key using the obtained token.
         abort_unless($sessionKey = $lastfm->getSessionKey($request->token), 500, 'Invalid token key.');

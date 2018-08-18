@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Lastfm;
+use App\Services\LastfmService;
 use Illuminate\Support\ServiceProvider;
 
 class LastfmServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class LastfmServiceProvider extends ServiceProvider
     public function register()
     {
         app()->singleton('Lastfm', function () {
-            return new Lastfm();
+            return new LastfmService();
         });
     }
 }

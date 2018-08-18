@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\SongPlayRequest;
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Models\Song;
+use App\Services\MediaInformationService;
 use App\Services\Streamers\PHPStreamer;
 use App\Services\Streamers\S3Streamer;
 use App\Services\Streamers\TranscodingStreamer;
@@ -16,6 +17,13 @@ use Illuminate\Routing\Redirector;
 
 class SongController extends Controller
 {
+    private $mediaInformationService;
+
+    public function __construct(MediaInformationService $mediaInformationService)
+    {
+        $this->mediaInformationService = $mediaInformationService;
+    }
+
     /**
      * Play/stream a song.
      *
@@ -64,23 +72,6 @@ class SongController extends Controller
         }
 
         $streamer->stream();
-    }
-
-    /**
-     * Get extra information about a song via Last.fm.
-     *
-     * @param Song $song
-     *
-     * @return JsonResponse
-     */
-    public function show(Song $song)
-    {
-        return response()->json([
-            'lyrics' => $song->lyrics,
-            'album_info' => $song->album->getInfo(),
-            'artist_info' => $song->artist->getInfo(),
-            'youtube' => $song->getRelatedYouTubeVideos(),
-        ]);
     }
 
     /**

@@ -4,23 +4,23 @@ namespace App\Listeners;
 
 use App\Events\SongStartedPlaying;
 use App\Models\Album;
-use App\Services\Lastfm;
+use App\Services\LastfmService;
 
 class UpdateLastfmNowPlaying
 {
     /**
      * The Last.fm service instance.
      *
-     * @var Lastfm
+     * @var LastfmService
      */
     protected $lastfm;
 
     /**
      * Create the event listener.
      *
-     * @param Lastfm $lastfm
+     * @param LastfmService $lastfm
      */
-    public function __construct(Lastfm $lastfm)
+    public function __construct(LastfmService $lastfm)
     {
         $this->lastfm = $lastfm;
     }

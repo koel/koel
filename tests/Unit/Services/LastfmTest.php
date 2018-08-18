@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\Lastfm;
+use App\Services\LastfmService;
 use Tests\TestCase;
 
 class LastfmTest extends TestCase
@@ -11,7 +11,7 @@ class LastfmTest extends TestCase
     public function it_builds_lastfm_compatible_api_parameters()
     {
         // Given there are raw parameters
-        $api = new Lastfm('key', 'secret');
+        $api = new LastfmService('key', 'secret');
         $params = [
             'qux' => '安',
             'bar' => 'baz',

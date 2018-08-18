@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\MediaInformation;
 
 use App\Models\Album;
 use Illuminate\Http\JsonResponse;
 
-class AlbumInfoController extends Controller
+class AlbumController extends Controller
 {
     /**
      * Get extra information about an album via Last.fm.
@@ -16,6 +16,6 @@ class AlbumInfoController extends Controller
      */
     public function show(Album $album)
     {
-        return response()->json($album->getInfo());
+        return response()->json($this->mediaInformationService->getAlbumInformation($album));
     }
 }

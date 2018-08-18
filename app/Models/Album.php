@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use App\Facades\Lastfm;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Log;
 
 /**
  * @property string cover           The path to the album's cover
@@ -85,35 +82,6 @@ class Album extends Model
             'artist_id' => $artist->id,
             'name' => $name ?: self::UNKNOWN_NAME,
         ]);
-    }
-
-    /**
-     * Get extra information about the album from Last.fm.
-     *
-     * @return array|false
-     */
-    public function getInfo()
-    {
-        if ($this->is_unknown) {
-            return false;
-        }
-
-        $info = Lastfm::getAlbumInfo($this->name, $this->artist->name);
-        $image = array_get($info, 'image');
-
-        // If our current album has no cover, and Last.fm has one, why don't we steal it?
-        // Great artists steal for their great albums!
-        if (!$this->has_cover && is_string($image) && ini_get('allow_url_fopen')) {
-            try {
-                $extension = explode('.', $image);
-                $this->writeCoverFile(file_get_contents($image), last($extension));
-                $info['cover'] = $this->cover;
-            } catch (Exception $e) {
-                Log::error($e);
-            }
-        }
-
-        return $info;
     }
 
     /**

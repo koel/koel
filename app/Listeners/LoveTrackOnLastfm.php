@@ -3,23 +3,23 @@
 namespace App\Listeners;
 
 use App\Events\SongLikeToggled;
-use App\Services\Lastfm;
+use App\Services\LastfmService;
 
 class LoveTrackOnLastfm
 {
     /**
      * The Last.fm service instance, which is DI'ed into our listener.
      *
-     * @var Lastfm
+     * @var LastfmService
      */
     protected $lastfm;
 
     /**
      * Create the event listener.
      *
-     * @param Lastfm $lastfm
+     * @param LastfmService $lastfm
      */
-    public function __construct(Lastfm $lastfm)
+    public function __construct(LastfmService $lastfm)
     {
         $this->lastfm = $lastfm;
     }

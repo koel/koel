@@ -4,7 +4,7 @@ namespace Tests\Integration\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\Lastfm;
+use App\Services\LastfmService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Mockery as m;
@@ -34,7 +34,7 @@ class LastfmTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist.xml')),
         ]);
 
-        $api = new Lastfm(null, null, $client);
+        $api = new LastfmService(null, null, $client);
         $info = $api->getArtistInfo($artist->name);
 
         // Then I see the info when the request is the successful
@@ -63,7 +63,7 @@ class LastfmTest extends TestCase
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist-notfound.xml')),
         ]);
 
-        $api = new Lastfm(null, null, $client);
+        $api = new LastfmService(null, null, $client);
         $result = $api->getArtistInfo($artist->name);
 
         // Then I receive boolean false
@@ -89,7 +89,7 @@ class LastfmTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album.xml')),
         ]);
 
-        $api = new Lastfm(null, null, $client);
+        $api = new LastfmService(null, null, $client);
         $info = $api->getAlbumInfo($album->name, $album->artist->name);
 
         // Then I get the album's info
@@ -129,7 +129,7 @@ class LastfmTest extends TestCase
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album-notfound.xml')),
         ]);
 
-        $api = new Lastfm(null, null, $client);
+        $api = new LastfmService(null, null, $client);
         $result = $api->getAlbumInfo($album->name, $album->artist->name);
 
         // Then I receive a boolean false

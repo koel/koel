@@ -33,7 +33,6 @@ Route::group(['namespace' => 'API'], function () {
         Route::post('{song}/scrobble/{timestamp}', 'ScrobbleController@store')->where([
             'timestamp' => '\d+',
         ]);
-        Route::get('{song}/info', 'SongController@show');
         Route::put('songs', 'SongController@update');
 
         // Interaction routes
@@ -76,10 +75,12 @@ Route::group(['namespace' => 'API'], function () {
         });
 
         // Info routes
-        if (Lastfm::used()) {
-            Route::get('album/{album}/info', 'AlbumInfoController@show');
-            Route::get('artist/{artist}/info', 'ArtistInfoController@show');
-        }
+        Route::group(['namespace' => 'MediaInformation'], function () {
+            Route::get('album/{album}/info', 'AlbumController@show');
+            Route::get('artist/{artist}/info', 'ArtistController@show');
+            Route::get('{song}/info', 'SongController@show'); // backward compat
+            Route::get('song/{song}/info', 'SongController@show');
+        });
 
         // iTunes routes
         if (iTunes::used()) {
