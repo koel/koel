@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Download;
+use App\Services\DownloadService;
 use Illuminate\Support\ServiceProvider;
 
 class DownloadServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class DownloadServiceProvider extends ServiceProvider
     public function register()
     {
         app()->singleton('Download', function () {
-            return new Download();
+            return new DownloadService();
         });
     }
 }

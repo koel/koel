@@ -10,7 +10,7 @@ use App\Models\SongZipArchive;
 use Illuminate\Database\Eloquent\Collection;
 use InvalidArgumentException;
 
-class Download
+class DownloadService
 {
     /**
      * Generic method to generate a download archive from various source types.

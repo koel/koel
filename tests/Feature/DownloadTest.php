@@ -7,13 +7,13 @@ use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use App\Services\Download;
+use App\Services\DownloadService;
 use Mockery\MockInterface;
 
 class DownloadTest extends TestCase
 {
     /**
-     * @var MockInterface|Download
+     * @var MockInterface|DownloadService
      */
     private $downloadService;
 
@@ -21,7 +21,7 @@ class DownloadTest extends TestCase
     {
         parent::setUp();
         $this->createSampleMediaSet();
-        $this->downloadService = $this->mockIocDependency(Download::class);
+        $this->downloadService = $this->mockIocDependency(DownloadService::class);
     }
 
     /** @test */
