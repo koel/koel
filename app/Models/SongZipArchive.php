@@ -6,6 +6,7 @@ use App\Facades\Download;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use ZipArchive;
 
 class SongZipArchive
@@ -33,22 +34,26 @@ class SongZipArchive
     /**
      * @param string $path
      *
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function __construct($path = '')
     {
         if (!class_exists('ZipArchive')) {
-            throw new Exception('Downloading multiple files requires ZipArchive module.');
+            throw new RuntimeException('Downloading multiple files requires ZipArchive module.');
         }
 
-        // We use system's temp dir instead of storage_path() here, so that the generated files
-        // can be cleaned up automatically after server reboot.
-        $this->path = $path ?: $path = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'koel-download-'.uniqid().'.zip';
+        if ($path) {
+            $this->path = $path;
+        } else {
+            // We use system's temp dir instead of storage_path() here, so that the generated files
+            // can be cleaned up automatically after server reboot.
+            $this->path = sprintf('%s%skoel-download-%s.zip', sys_get_temp_dir(), DIRECTORY_SEPARATOR, uniqid());
+        }
 
         $this->archive = new ZipArchive();
 
         if ($this->archive->open($this->path, ZipArchive::CREATE) !== true) {
-            throw new Exception('Cannot create zip file.');
+            throw new RuntimeException('Cannot create zip file.');
         }
     }
 
@@ -61,9 +66,7 @@ class SongZipArchive
      */
     public function addSongs(Collection $songs)
     {
-        $songs->each(function ($song) {
-            $this->addSong($song);
-        });
+        $songs->each([$this, 'addSong']);
 
         return $this;
     }

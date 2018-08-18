@@ -7,8 +7,8 @@ use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\SongZipArchive;
-use Exception;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
+use InvalidArgumentException;
 
 class Download
 {
@@ -17,25 +17,26 @@ class Download
      *
      * @param Song|Collection<Song>|Album|Artist|Playlist $mixed
      *
-     * @throws Exception
+     * @throws InvalidArgumentException
      *
      * @return string Full path to the generated archive
      */
     public function from($mixed)
     {
-        if ($mixed instanceof Song) {
-            return $this->fromSong($mixed);
-        } elseif ($mixed instanceof Collection) {
-            return $this->fromMultipleSongs($mixed);
-        } elseif ($mixed instanceof Album) {
-            return $this->fromAlbum($mixed);
-        } elseif ($mixed instanceof Artist) {
-            return $this->fromArtist($mixed);
-        } elseif ($mixed instanceof Playlist) {
-            return $this->fromPlaylist($mixed);
-        } else {
-            throw new Exception('Unsupported download type.');
+        switch (get_class($mixed)) {
+            case Song::class:
+                return $this->fromSong($mixed);
+            case Collection::class:
+                return $this->fromMultipleSongs($mixed);
+            case Album::class:
+                return $this->fromAlbum($mixed);
+            case Artist::class:
+                return $this->fromArtist($mixed);
+            case Playlist::class:
+                return $this->fromPlaylist($mixed);
         }
+
+        throw new InvalidArgumentException('Unsupported download type.');
     }
 
     /**
@@ -50,49 +51,28 @@ class Download
         if ($s3Params = $song->s3_params) {
             // The song is hosted on Amazon S3.
             // We download it back to our local server first.
-            $localPath = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.basename($s3Params['key']);
             $url = $song->getObjectStoragePublicUrl();
 
             abort_unless($url, 404);
+
+            $localPath = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename($s3Params['key']);
 
             // The following function require allow_url_fopen to be ON.
             // We're just assuming that to be the case here.
             copy($url, $localPath);
         } else {
             // The song is hosted locally. Make sure the file exists.
-            abort_unless(file_exists($song->path), 404);
             $localPath = $song->path;
+            abort_unless(file_exists($localPath), 404);
         }
 
-        // The BinaryFileResponse factory only accept ASCII-only file names.
-        if (ctype_print($localPath)) {
-            return $localPath;
-        }
-
-        // For those with high-byte characters in names, we copy it into a safe name
-        // as a workaround.
-        $newPath = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
-            .DIRECTORY_SEPARATOR
-            .utf8_decode(basename($song->path));
-
-        if ($s3Params) {
-            // If the file is downloaded from S3, we rename it directly.
-            // This will save us some disk space.
-            rename($localPath, $newPath);
-        } else {
-            // Else we copy it to another file to not mess up the original one.
-            copy($localPath, $newPath);
-        }
-
-        return $newPath;
+        return $localPath;
     }
 
     /**
      * Generate a downloadable path of multiple songs in zip format.
      *
      * @param Collection $songs
-     *
-     * @throws Exception
      *
      * @return string
      */
@@ -111,8 +91,6 @@ class Download
     /**
      * @param Playlist $playlist
      *
-     * @throws Exception
-     *
      * @return string
      */
     protected function fromPlaylist(Playlist $playlist)
@@ -123,8 +101,6 @@ class Download
     /**
      * @param Album $album
      *
-     * @throws Exception
-     *
      * @return string
      */
     protected function fromAlbum(Album $album)
@@ -134,8 +110,6 @@ class Download
 
     /**
      * @param Artist $artist
-     *
-     * @throws Exception
      *
      * @return string
      */
