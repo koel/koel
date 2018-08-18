@@ -4,7 +4,6 @@ namespace Tests\Integration\Models;
 
 use App\Models\Album;
 use App\Models\Artist;
-use Lastfm;
 use org\bovigo\vfs\vfsStream;
 use Tests\TestCase;
 
@@ -13,7 +12,6 @@ class AlbumTest extends TestCase
     /** @test */
     public function extra_info_can_be_retrieved_for_an_album()
     {
-
     }
 
     /** @test */

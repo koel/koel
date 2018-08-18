@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use App\Facades\Lastfm;
 use App\Facades\Util;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Log;
 
 /**
  * @property int    id      The model ID

@@ -88,10 +88,10 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Mock an IOC dependency, for example an injected service in controllers
+     * Mock an IOC dependency, for example an injected service in controllers.
      *
      * @param string $abstract
-     * @param array $args
+     * @param array  $args
      *
      * @return m\MockInterface
      */

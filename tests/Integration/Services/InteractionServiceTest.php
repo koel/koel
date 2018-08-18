@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Integration\Services;
 
 use App\Events\SongLikeToggled;

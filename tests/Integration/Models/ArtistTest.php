@@ -3,7 +3,6 @@
 namespace Tests\Integration\Models;
 
 use App\Models\Artist;
-use Lastfm;
 use org\bovigo\vfs\vfsStream;
 use Tests\TestCase;
 
