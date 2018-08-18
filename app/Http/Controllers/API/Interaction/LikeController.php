@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\Interaction;
 
 use App\Http\Requests\API\SongLikeRequest;
-use App\Models\Interaction;
 use Illuminate\Http\JsonResponse;
 
 class LikeController extends Controller
@@ -17,6 +16,6 @@ class LikeController extends Controller
      */
     public function store(SongLikeRequest $request)
     {
-        return response()->json(Interaction::toggleLike($request->song, $request->user()));
+        return response()->json($this->interactionService->toggleLike($request->song, $request->user()));
     }
 }

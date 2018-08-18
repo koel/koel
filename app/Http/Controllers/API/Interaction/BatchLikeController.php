@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\Interaction;
 
 use App\Http\Requests\API\BatchInteractionRequest;
-use App\Models\Interaction;
 use Illuminate\Http\JsonResponse;
 
 class BatchLikeController extends Controller
@@ -17,7 +16,9 @@ class BatchLikeController extends Controller
      */
     public function store(BatchInteractionRequest $request)
     {
-        return response()->json(Interaction::batchLike((array) $request->songs, $request->user()));
+        $interactions = $this->interactionService->batchLike((array) $request->songs, $request->user());
+
+        return response()->json($interactions);
     }
 
     /**
@@ -29,6 +30,8 @@ class BatchLikeController extends Controller
      */
     public function destroy(BatchInteractionRequest $request)
     {
-        return response()->json(Interaction::batchUnlike((array) $request->songs, $request->user()));
+        $this->interactionService->batchUnlike((array) $request->songs, $request->user());
+
+        return response()->json();
     }
 }
