@@ -4,8 +4,6 @@ namespace App\Http\Controllers\API\Download;
 
 use App\Http\Requests\API\Download\Request;
 use App\Models\Song;
-use Download;
-use Exception;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FavoritesController extends Controller
@@ -15,12 +13,12 @@ class FavoritesController extends Controller
      *
      * @param Request $request
      *
-     * @throws Exception
-     *
      * @return BinaryFileResponse
      */
-    public function download(Request $request)
+    public function show(Request $request)
     {
-        return response()->download(Download::from(Song::getFavorites($request->user())));
+        $songs = Song::getFavorites($request->user());
+
+        return response()->download($this->downloadService->from($songs));
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\API\Download;
 
 use App\Models\Playlist;
-use Download;
-use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -16,14 +14,13 @@ class PlaylistController extends Controller
      * @param Playlist $playlist
      *
      * @throws AuthorizationException
-     * @throws Exception
      *
      * @return BinaryFileResponse
      */
-    public function download(Playlist $playlist)
+    public function show(Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
 
-        return response()->download(Download::from($playlist));
+        return response()->download($this->downloadService->from($playlist));
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\API\Download;
 
 use App\Models\Artist;
-use Download;
-use Exception;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ArtistController extends Controller
@@ -16,12 +14,10 @@ class ArtistController extends Controller
      *
      * @param Artist $artist
      *
-     * @throws Exception
-     *
      * @return BinaryFileResponse
      */
-    public function download(Artist $artist)
+    public function show(Artist $artist)
     {
-        return response()->download(Download::from($artist));
+        return response()->download($this->downloadService->from($artist));
     }
 }

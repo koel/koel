@@ -68,11 +68,11 @@ Route::group(['namespace' => 'API'], function () {
 
         // Download routes
         Route::group(['prefix' => 'download', 'namespace' => 'Download'], function () {
-            Route::get('songs', 'SongController@download');
-            Route::get('album/{album}', 'AlbumController@download');
-            Route::get('artist/{artist}', 'ArtistController@download');
-            Route::get('playlist/{playlist}', 'PlaylistController@download');
-            Route::get('favorites', 'FavoritesController@download');
+            Route::get('songs', 'SongController@show');
+            Route::get('album/{album}', 'AlbumController@show');
+            Route::get('artist/{artist}', 'ArtistController@show');
+            Route::get('playlist/{playlist}', 'PlaylistController@show');
+            Route::get('favorites', 'FavoritesController@show');
         });
 
         // Info routes

@@ -7,38 +7,48 @@ use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use Download;
+use App\Services\Download;
+use Mockery\MockInterface;
 
 class DownloadTest extends TestCase
 {
+    /**
+     * @var MockInterface|Download
+     */
+    private $downloadService;
+
     public function setUp()
     {
         parent::setUp();
         $this->createSampleMediaSet();
+        $this->downloadService = $this->mockIocDependency(Download::class);
     }
 
     /** @test */
     public function a_single_song_can_be_downloaded()
     {
         $song = Song::first();
-        Download::shouldReceive('from')
+        $this->downloadService
+            ->shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser("api/download/songs?songs[]={$song->id}")
-            ->seeStatusCode(200);
+            ->assertResponseOk();
     }
 
     /** @test */
     public function multiple_songs_can_be_downloaded()
     {
         $songs = Song::take(2)->get();
-        Download::shouldReceive('from')
+
+        $this->downloadService
+            ->shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3'); // should be a zip file, but we're testing here…
 
         $this->getAsUser("api/download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}")
-            ->seeStatusCode(200);
+            ->assertResponseOk();
     }
 
     /** @test */
@@ -46,12 +56,13 @@ class DownloadTest extends TestCase
     {
         $album = Album::first();
 
-        Download::shouldReceive('from')
+        $this->downloadService
+            ->shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser("api/download/album/{$album->id}")
-            ->seeStatusCode(200);
+            ->assertResponseOk();
     }
 
     /** @test */
@@ -59,12 +70,13 @@ class DownloadTest extends TestCase
     {
         $artist = Artist::first();
 
-        Download::shouldReceive('from')
+        $this->downloadService
+            ->shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser("api/download/artist/{$artist->id}")
-            ->seeStatusCode(200);
+            ->assertResponseOk();
     }
 
     /** @test */
@@ -77,20 +89,22 @@ class DownloadTest extends TestCase
         ]);
 
         $this->getAsUser("api/download/playlist/{$playlist->id}")
-            ->seeStatusCode(403);
+            ->assertResponseStatus(403);
 
-        Download::shouldReceive('from')
+        $this->downloadService
+            ->shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser("api/download/playlist/{$playlist->id}", $user)
-            ->seeStatusCode(200);
+            ->assertResponseOk();
     }
 
     /** @test */
     public function all_favorite_songs_can_be_downloaded()
     {
-        Download::shouldReceive('from')
+        $this->downloadService
+            ->shouldReceive('from')
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 

@@ -9,6 +9,7 @@ use App\Models\User;
 use JWTAuth;
 use Laravel\BrowserKitTesting\DatabaseTransactions;
 use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
+use Mockery as m;
 use Tests\CreatesApplication;
 
 abstract class TestCase extends BaseTestCase
@@ -84,5 +85,20 @@ abstract class TestCase extends BaseTestCase
         return $this->put($url, $data, [
             'Authorization' => 'Bearer '.JWTAuth::fromUser($user),
         ]);
+    }
+
+    /**
+     * Mock an IOC dependency, for example an injected service in controllers
+     *
+     * @param string $abstract
+     * @param array $args
+     *
+     * @return m\MockInterface
+     */
+    protected function mockIocDependency($abstract, ...$args)
+    {
+        return tap(m::mock($abstract, ...$args), function ($mocked) use ($abstract) {
+            $this->instance($abstract, $mocked);
+        });
     }
 }
