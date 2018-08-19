@@ -4,29 +4,21 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
+use Jackiedo\DotenvEditor\DotenvEditor;
 
-class GenerateJWTSecret extends Command
+class GenerateJwtSecretCommand extends Command
 {
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
     protected $name = 'koel:generate-jwt-secret';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Set the JWTAuth secret key used to sign the tokens';
+    private $dotenvEditor;
 
-    /**
-     * Execute the console command.
-     *
-     * @throws \RuntimeException
-     */
+    public function __construct(DotenvEditor $dotenvEditor)
+    {
+        parent::__construct();
+
+        $this->dotenvEditor = $dotenvEditor;
+    }
+
     public function handle()
     {
         if (config('jwt.secret')) {
@@ -36,6 +28,6 @@ class GenerateJWTSecret extends Command
         }
 
         $this->info('Generating JWT secret');
-        DotenvEditor::setKey('JWT_SECRET', Str::random(32))->save();
+        $this->dotenvEditor->setKey('JWT_SECRET', Str::random(32))->save();
     }
 }
