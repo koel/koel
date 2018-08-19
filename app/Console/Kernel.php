@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\SyncMediaCommand::class,
-        Commands\Init::class,
+        Commands\InitCommand::class,
         Commands\GenerateJwtSecretCommand::class,
     ];
 

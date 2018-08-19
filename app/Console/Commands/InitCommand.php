@@ -5,24 +5,39 @@ namespace App\Console\Commands;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\MediaCacheService;
-use DB;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Hash;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
+use Illuminate\Contracts\Console\Kernel as Artisan;
+use Illuminate\Contracts\Hashing\Hasher	as Hash;
+use Illuminate\Database\DatabaseManager as DB;
+use Jackiedo\DotenvEditor\DotenvEditor;
 
-class Init extends Command
+class InitCommand extends Command
 {
     protected $signature = 'koel:init';
     protected $description = 'Install or upgrade Koel';
-    private $mediaCacheService;
 
-    public function __construct(MediaCacheService $mediaCacheService)
+    private $mediaCacheService;
+    private $artisan;
+    private $dotenvEditor;
+    private $hash;
+    private $db;
+
+    public function __construct(
+        MediaCacheService $mediaCacheService,
+        Artisan $artisan,
+        Hash $hash,
+        DotenvEditor $dotenvEditor,
+        DB $db
+    )
     {
         parent::__construct();
 
         $this->mediaCacheService = $mediaCacheService;
+        $this->artisan = $artisan;
+        $this->dotenvEditor = $dotenvEditor;
+        $this->hash = $hash;
+        $this->db = $db;
     }
 
     /**
@@ -38,24 +53,25 @@ class Init extends Command
 
         if (!config('app.key')) {
             $this->info('Generating app key');
-            Artisan::call('key:generate');
+            $this->artisan->call('key:generate');
         } else {
             $this->comment('App key exists -- skipping');
         }
 
         if (!config('jwt.secret')) {
             $this->info('Generating JWT secret');
-            Artisan::call('koel:generate-jwt-secret');
+            $this->artisan->call('koel:generate-jwt-secret');
         } else {
             $this->comment('JWT secret exists -- skipping');
         }
 
         $dbSetUp = false;
+
         while (!$dbSetUp) {
             try {
                 // Make sure the config cache is cleared before another attempt.
-                Artisan::call('config:clear');
-                DB::reconnect()->getPdo();
+                $this->artisan->call('config:clear');
+                $this->db->reconnect()->getPdo();
                 $dbSetUp = true;
             } catch (Exception $e) {
                 $this->error($e->getMessage());
@@ -65,7 +81,7 @@ class Init extends Command
         }
 
         $this->info('Migrating database');
-        Artisan::call('migrate', ['--force' => true]);
+        $this->artisan->call('migrate', ['--force' => true]);
 
         // Clean the media cache, just in case we did any media-related migration
         $this->mediaCacheService->clear();
@@ -73,7 +89,7 @@ class Init extends Command
         if (!User::count()) {
             $this->setUpAdminAccount();
             $this->info('Seeding initial data');
-            Artisan::call('db:seed', ['--force' => true]);
+            $this->artisan->call('db:seed', ['--force' => true]);
         } else {
             $this->comment('Data seeded -- skipping');
         }
@@ -86,9 +102,11 @@ class Init extends Command
         system('yarn install');
 
         $this->comment(PHP_EOL.'🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
+
         if (Setting::get('media_path')) {
             $this->comment('You can also scan for media with `php artisan koel:sync`.');
         }
+
         $this->comment('Again, for more configuration guidance, refer to');
         $this->info('📙  '.config('koel.misc.docs_url'));
         $this->comment('or open the .env file in the root installation folder.');
@@ -119,6 +137,7 @@ class Init extends Command
             ],
             'mysql'
         );
+        
         if ($config['DB_CONNECTION'] === 'sqlite-e2e') {
             $config['DB_DATABASE'] = $this->ask('Absolute path to the DB file');
         } else {
@@ -130,9 +149,10 @@ class Init extends Command
         }
 
         foreach ($config as $key => $value) {
-            DotenvEditor::setKey($key, $value);
+            $this->dotenvEditor->setKey($key, $value);
         }
-        DotenvEditor::save();
+
+        $this->dotenvEditor->save();
 
         // Set the config so that the next DB attempt uses refreshed credentials
         config([
@@ -154,9 +174,11 @@ class Init extends Command
         $name = $this->ask('Your name');
         $email = $this->ask('Your email address');
         $passwordConfirmed = false;
+
         while (!$passwordConfirmed) {
             $password = $this->secret('Your desired password');
             $confirmation = $this->secret('Again, just to make sure');
+
             if ($confirmation !== $password) {
                 $this->error('That doesn\'t match. Let\'s try again.');
             } else {
@@ -167,7 +189,7 @@ class Init extends Command
         User::create([
             'name' => $name,
             'email' => $email,
-            'password' => Hash::make($password),
+            'password' => $this->hash->make($password),
             'is_admin' => true,
         ]);
     }
@@ -181,6 +203,7 @@ class Init extends Command
 
         while (true) {
             $path = $this->ask('Media path', false);
+
             if ($path === false) {
                 return;
             }
