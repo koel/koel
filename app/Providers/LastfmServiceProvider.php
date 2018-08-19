@@ -25,7 +25,7 @@ class LastfmServiceProvider extends ServiceProvider
     public function register()
     {
         app()->singleton('Lastfm', function () {
-            return new LastfmService();
+            return app()->make(LastfmService::class);
         });
     }
 }

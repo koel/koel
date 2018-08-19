@@ -10,6 +10,7 @@ use Exception;
 use JWTAuth;
 use Laravel\BrowserKitTesting\DatabaseTransactions;
 use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
+use Mockery;
 use Tests\CreatesApplication;
 use Tests\Traits\InteractsWithIoc;
 
@@ -88,5 +89,11 @@ abstract class TestCase extends BaseTestCase
         return $this->put($url, $data, [
             'Authorization' => 'Bearer '.JWTAuth::fromUser($user),
         ]);
+    }
+
+    protected function tearDown()
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 }

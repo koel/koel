@@ -3,11 +3,9 @@
 namespace App\Services;
 
 use Exception;
-use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Cache;
 use Log;
 
-class LastfmService extends RESTfulService
+class LastfmService extends ApiClient implements ApiConsumerInterface
 {
     /**
      * Specify the response format, since Last.fm only returns XML.
@@ -24,30 +22,13 @@ class LastfmService extends RESTfulService
     protected $keyParam = 'api_key';
 
     /**
-     * Construct an instance of Lastfm service.
-     *
-     * @param string $key    Last.fm API key.
-     * @param string $secret Last.fm API shared secret.
-     * @param Client $client The Guzzle HTTP client.
-     */
-    public function __construct($key = null, $secret = null, Client $client = null)
-    {
-        parent::__construct(
-            $key ?: config('koel.lastfm.key'),
-            $secret ?: config('koel.lastfm.secret'),
-            'https://ws.audioscrobbler.com/2.0',
-            $client ?: new Client()
-        );
-    }
-
-    /**
      * Determine if our application is using Last.fm.
      *
      * @return bool
      */
     public function used()
     {
-        return config('koel.lastfm.key') && config('koel.lastfm.secret');
+        return $this->getKey();
     }
 
     /**
@@ -67,7 +48,7 @@ class LastfmService extends RESTfulService
      *
      * @return array|false
      */
-    public function getArtistInfo($name)
+    public function getArtistInformation($name)
     {
         if (!$this->enabled()) {
             return false;
@@ -92,7 +73,7 @@ class LastfmService extends RESTfulService
                 return false;
             }
 
-            return $this->buildArtistInfo($artist);
+            return $this->buildArtistInformation($artist);
         } catch (Exception $e) {
             Log::error($e);
 
@@ -107,7 +88,7 @@ class LastfmService extends RESTfulService
      *
      * @return array
      */
-    private function buildArtistInfo(array $lastfmArtist)
+    private function buildArtistInformation(array $lastfmArtist)
     {
         return [
             'url' => array_get($lastfmArtist, 'url'),
@@ -127,7 +108,7 @@ class LastfmService extends RESTfulService
      *
      * @return array|false
      */
-    public function getAlbumInfo($name, $artistName)
+    public function getAlbumInformation($name, $artistName)
     {
         if (!$this->enabled()) {
             return false;
@@ -153,7 +134,7 @@ class LastfmService extends RESTfulService
                 return false;
             }
 
-            return $this->buildAlbumInfo($album);
+            return $this->buildAlbumInformation($album);
         } catch (Exception $e) {
             Log::error($e);
 
@@ -168,7 +149,7 @@ class LastfmService extends RESTfulService
      *
      * @return array
      */
-    private function buildAlbumInfo(array $lastfmAlbum)
+    private function buildAlbumInformation(array $lastfmAlbum)
     {
         return [
             'url' => array_get($lastfmAlbum, 'url'),
@@ -348,5 +329,20 @@ class LastfmService extends RESTfulService
         }
 
         return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($str)))));
+    }
+
+    public function getKey()
+    {
+        return config('koel.lastfm.key');
+    }
+
+    public function getEndpoint()
+    {
+        return config('koel.lastfm.endpoint');
+    }
+
+    public function getSecret()
+    {
+        return config('koel.lastfm.secret');
     }
 }

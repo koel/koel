@@ -44,7 +44,7 @@ class MediaInformationServiceTest extends TestCase
         $album = factory(Album::class)->create();
 
         $this->lastFmService
-            ->shouldReceive('getAlbumInfo')
+            ->shouldReceive('getAlbumInformation')
             ->once()
             ->with($album->name, $album->artist->name)
             ->andReturn(['foo' => 'bar']);
@@ -68,7 +68,7 @@ class MediaInformationServiceTest extends TestCase
         $artist = factory(Artist::class)->create();
 
         $this->lastFmService
-            ->shouldReceive('getArtistInfo')
+            ->shouldReceive('getArtistInformation')
             ->once()
             ->with($artist->name)
             ->andReturn(['foo' => 'bar']);

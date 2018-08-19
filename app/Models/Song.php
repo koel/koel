@@ -266,6 +266,7 @@ class Song extends Model
      */
     public static function getFavorites(User $user, $toArray = false)
     {
+        /** @var Collection $songs */
         $songs = Interaction::whereUserIdAndLike($user->id, true)
             ->with('song')
             ->get()
@@ -300,18 +301,6 @@ class Song extends Model
 
             return $url;
         });
-    }
-
-    /**
-     * Get the YouTube videos related to this song.
-     *
-     * @param string $youTubePageToken The YouTube page token, for pagination purpose.
-     *
-     * @return false|object
-     */
-    public function getRelatedYouTubeVideos($youTubePageToken = '')
-    {
-        return YouTube::searchVideosRelatedToSong($this, $youTubePageToken);
     }
 
     /**

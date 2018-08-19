@@ -7,25 +7,16 @@ use GuzzleHttp\Exception\ClientException;
 use InvalidArgumentException;
 
 /**
- * Class RESTfulService.
- *
- * @method object get($uri)
+ * @method object get($uri, ...$args)
  * @method object post($uri, ...$data)
  * @method object put($uri, ...$data)
  * @method object patch($uri, ...$data)
  * @method object head($uri, ...$data)
  * @method object delete($uri)
  */
-class RESTfulService
+abstract class ApiClient
 {
     protected $responseFormat = 'json';
-
-    /**
-     * The API endpoint.
-     *
-     * @var string
-     */
-    protected $endpoint;
 
     /**
      * The GuzzleHttp client to talk to the API.
@@ -33,13 +24,6 @@ class RESTfulService
      * @var Client;
      */
     protected $client;
-
-    /**
-     * The API key.
-     *
-     * @var string
-     */
-    protected $key;
 
     /**
      * The query parameter name for the key.
@@ -50,19 +34,9 @@ class RESTfulService
      */
     protected $keyParam = 'key';
 
-    /**
-     * The API secret.
-     *
-     * @var string
-     */
-    protected $secret;
-
-    public function __construct($key, $secret, $endpoint, Client $client)
+    public function __construct(Client $client)
     {
-        $this->setKey($key);
-        $this->setSecret($secret);
-        $this->setEndpoint($endpoint);
-        $this->setClient($client);
+        $this->client = $client;
     }
 
     /**
@@ -80,7 +54,7 @@ class RESTfulService
     public function request($verb, $uri, $appendKey = true, array $params = [])
     {
         try {
-            $body = (string) $this->getClient()
+            $body = (string)$this->getClient()
                 ->$verb($this->buildUrl($uri, $appendKey), ['form_params' => $params])
                 ->getBody();
 
@@ -104,7 +78,7 @@ class RESTfulService
      * @param string $method The HTTP method
      * @param array  $args   An array of parameters
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return object
      */
@@ -136,14 +110,14 @@ class RESTfulService
                 $uri = "/$uri";
             }
 
-            $uri = $this->endpoint.$uri;
+            $uri = $this->getEndpoint() . $uri;
         }
 
         if ($appendKey) {
             if (parse_url($uri, PHP_URL_QUERY)) {
-                $uri .= "&{$this->keyParam}=".$this->getKey();
+                $uri .= "&{$this->keyParam}=" . $this->getKey();
             } else {
-                $uri .= "?{$this->keyParam}=".$this->getKey();
+                $uri .= "?{$this->keyParam}=" . $this->getKey();
             }
         }
 
@@ -158,59 +132,9 @@ class RESTfulService
         return $this->client;
     }
 
-    /**
-     * @param Client $client
-     */
-    public function setClient($client)
-    {
-        $this->client = $client;
-    }
+    abstract public function getKey();
 
-    /**
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
+    abstract public function getSecret();
 
-    /**
-     * @param string $key
-     */
-    public function setKey($key)
-    {
-        $this->key = $key;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSecret()
-    {
-        return $this->secret;
-    }
-
-    /**
-     * @param string $secret
-     */
-    public function setSecret($secret)
-    {
-        $this->secret = $secret;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEndpoint()
-    {
-        return $this->endpoint;
-    }
-
-    /**
-     * @param string $endpoint
-     */
-    public function setEndpoint($endpoint)
-    {
-        $this->endpoint = $endpoint;
-    }
+    abstract public function getEndpoint();
 }

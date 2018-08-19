@@ -87,25 +87,6 @@ class SongTest extends TestCase
     }
 
     /** @test */
-    public function it_gets_related_youtube_videos()
-    {
-        // Given there's a song
-        /** @var Song $song */
-        $song = factory(Song::class)->create();
-
-        // When I get is related YouTube videos
-        YouTube::shouldReceive('searchVideosRelatedToSong')
-            ->once()
-            ->with($song, 'foo')
-            ->andReturn(['bar' => 'baz']);
-
-        $videos = $song->getRelatedYouTubeVideos('foo');
-
-        // Then I see the related YouTube videos returned
-        $this->assertEquals(['bar' => 'baz'], $videos);
-    }
-
-    /** @test */
     public function it_can_be_retrieved_using_its_path()
     {
         // Given a song with a path

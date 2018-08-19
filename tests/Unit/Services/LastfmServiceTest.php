@@ -3,23 +3,28 @@
 namespace Tests\Unit\Services;
 
 use App\Services\LastfmService;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
-class LastfmTest extends TestCase
+class LastfmServiceTest extends TestCase
 {
     /** @test */
-    public function it_builds_lastfm_compatible_api_parameters()
+    public function testBuildAuthCallParams()
     {
-        // Given there are raw parameters
-        $api = new LastfmService('key', 'secret');
+        /** @var LastfmService|MockInterface $lastfm */
+        $lastfm = Mockery::mock(LastfmService::class)->makePartial();
+        $lastfm->shouldReceive('getKey')->andReturn('key');
+        $lastfm->shouldReceive('getSecret')->andReturn('secret');
+
         $params = [
             'qux' => '安',
             'bar' => 'baz',
         ];
 
         // When I build Last.fm-compatible API parameters using the raw parameters
-        $builtParams = $api->buildAuthCallParams($params);
-        $builtParamsAsString = $api->buildAuthCallParams($params, true);
+        $builtParams = $lastfm->buildAuthCallParams($params);
+        $builtParamsAsString = $lastfm->buildAuthCallParams($params, true);
 
         // Then I receive the Last.fm-compatible API parameters
         $this->assertEquals([

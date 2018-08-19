@@ -29,12 +29,15 @@ class MediaInformationService
             return false;
         }
 
-        $info = $this->lastfmService->getAlbumInfo($album->name, $album->artist->name);
-        event(new AlbumInformationFetched($album, $info));
+        $info = $this->lastfmService->getAlbumInformation($album->name, $album->artist->name);
 
-        // The album may have been updated.
-        $album->refresh();
-        $info['cover'] = $album->cover;
+        if ($info) {
+            event(new AlbumInformationFetched($album, $info));
+
+            // The album may have been updated.
+            $album->refresh();
+            $info['cover'] = $album->cover;
+        }
 
         return $info;
     }
@@ -52,12 +55,15 @@ class MediaInformationService
             return false;
         }
 
-        $info = $this->lastfmService->getArtistInfo($artist->name);
-        event(new ArtistInformationFetched($artist, $info));
+        $info = $this->lastfmService->getArtistInformation($artist->name);
 
-        // The artist may have been updated.
-        $artist->refresh();
-        $info['image'] = $artist->image;
+        if ($info) {
+            event(new ArtistInformationFetched($artist, $info));
+
+            // The artist may have been updated.
+            $artist->refresh();
+            $info['image'] = $artist->image;
+        }
 
         return $info;
     }

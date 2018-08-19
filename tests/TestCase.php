@@ -4,6 +4,7 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Mockery;
 use Tests\Traits\InteractsWithIoc;
 
 abstract class TestCase extends BaseTestCase
@@ -14,5 +15,11 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         $this->prepareForTests();
+    }
+
+    protected function tearDown()
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 }

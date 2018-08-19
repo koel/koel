@@ -15,7 +15,9 @@
     "predis/predis": "~1.0",
     "doctrine/dbal": "^2.5",
     "jackiedo/dotenv-editor": "^1.0",
-    "ext-exif": "*"
+    "ext-exif": "*",
+    "ext-json": "*",
+    "ext-SimpleXML": "*"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

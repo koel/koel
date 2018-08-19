@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\YouTube;
+use App\Services\YouTubeService;
 use Illuminate\Support\ServiceProvider;
 
 class YouTubeServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class YouTubeServiceProvider extends ServiceProvider
     public function register()
     {
         app()->singleton('YouTube', function () {
-            return new YouTube();
+            return app()->make(YouTubeService::class);
         });
     }
 }

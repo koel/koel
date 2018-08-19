@@ -58,6 +58,7 @@ return [
 
     'youtube' => [
         'key' => env('YOUTUBE_API_KEY'),
+        'endpoint' => 'https://www.googleapis.com/youtube/v3',
     ],
 
     /*
@@ -72,6 +73,7 @@ return [
     'lastfm' => [
         'key' => env('LASTFM_API_KEY'),
         'secret' => env('LASTFM_API_SECRET'),
+        'endpoint' => 'https://ws.audioscrobbler.com/2.0',
     ],
 
     /*

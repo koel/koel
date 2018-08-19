@@ -4,26 +4,9 @@ namespace App\Services;
 
 use App\Models\Song;
 use Cache;
-use GuzzleHttp\Client;
 
-class YouTube extends RESTfulService
+class YouTubeService extends ApiClient implements ApiConsumerInterface
 {
-    /**
-     * Construct an instance of YouTube service.
-     *
-     * @param string      $key    The YouTube API key
-     * @param Client|null $client The Guzzle HTTP client
-     */
-    public function __construct($key = null, Client $client = null)
-    {
-        parent::__construct(
-            $key ?: config('koel.youtube.key'),
-            null,
-            'https://www.googleapis.com/youtube/v3',
-            $client ?: new Client()
-        );
-    }
-
     /**
      * Determine if our application is using YouTube.
      *
@@ -31,7 +14,7 @@ class YouTube extends RESTfulService
      */
     public function enabled()
     {
-        return (bool) config('koel.youtube.key');
+        return (bool) $this->getKey();
     }
 
     /**
@@ -78,5 +61,23 @@ class YouTube extends RESTfulService
         return Cache::remember(md5("youtube_$uri"), 60 * 24 * 7, function () use ($uri) {
             return $this->get($uri);
         });
+    }
+
+    /** @return string */
+    public function getEndpoint()
+    {
+        return config('koel.youtube.endpoint');
+    }
+
+    /** @return string */
+    public function getKey()
+    {
+        return config('koel.youtube.key');
+    }
+
+    /** @return string|null */
+    public function getSecret()
+    {
+        return null;
     }
 }

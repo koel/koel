@@ -5,39 +5,32 @@ namespace Tests\Integration\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\LastfmService;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Mockery as m;
 use Tests\TestCase;
 
-class LastfmTest extends TestCase
+class LastfmServiceTest extends TestCase
 {
-    protected function tearDown()
-    {
-        m::close();
-        parent::tearDown();
-    }
-
     /**
-     * @test
-     *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function it_returns_artist_info_if_artist_is_found_on_lastfm()
+    public function testGetArtistInformation()
     {
-        // Given an artist that exists on Last.fm
         /** @var Artist $artist */
-        $artist = factory(Artist::class)->create(['name' => 'foo']);
+        $artist = factory(Artist::class)->make(['name' => 'foo']);
 
-        // When I request the service for the artist's info
+        /** @var Client $client */
         $client = m::mock(Client::class, [
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist.xml')),
         ]);
 
-        $api = new LastfmService(null, null, $client);
-        $info = $api->getArtistInfo($artist->name);
+        $api = new LastfmService($client);
+        $info = $api->getArtistInformation($artist->name
 
-        // Then I see the info when the request is the successful
+        );
+
         $this->assertEquals([
             'url' => 'http://www.last.fm/music/Kamelot',
             'image' => 'http://foo.bar/extralarge.jpg',
@@ -51,46 +44,40 @@ class LastfmTest extends TestCase
         $this->assertNotNull(cache('0aff3bc1259154f0e9db860026cda7a6'));
     }
 
-    /** @test */
-    public function it_returns_false_if_artist_info_is_not_found_on_lastfm()
+    public function testGetArtistInformationForNonExistentArtist()
     {
-        // Given an artist that doesn't exist on Last.fm
         /** @var Artist $artist */
-        $artist = factory(Artist::class)->create();
+        $artist = factory(Artist::class)->make();
 
-        // When I request the service for the artist info
+        /** @var Client $client */
         $client = m::mock(Client::class, [
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist-notfound.xml')),
         ]);
 
-        $api = new LastfmService(null, null, $client);
-        $result = $api->getArtistInfo($artist->name);
+        $api = new LastfmService($client);
+        $result = $api->getArtistInformation($artist->name);
 
-        // Then I receive boolean false
         $this->assertFalse($result);
     }
 
     /**
-     * @test
-     *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function it_returns_album_info_if_album_is_found_on_lastfm()
+    public function testGetAlbumInformation()
     {
-        // Given an album that exists on Last.fm
         /** @var Album $album */
         $album = factory(Album::class)->create([
             'artist_id' => factory(Artist::class)->create(['name' => 'bar'])->id,
             'name' => 'foo',
         ]);
 
-        // When I request the service for the album's info
+        /** @var Client $client */
         $client = m::mock(Client::class, [
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album.xml')),
         ]);
 
-        $api = new LastfmService(null, null, $client);
-        $info = $api->getAlbumInfo($album->name, $album->artist->name);
+        $api = new LastfmService($client);
+        $info = $api->getAlbumInformation($album->name, $album->artist->name);
 
         // Then I get the album's info
         $this->assertEquals([
@@ -114,25 +101,22 @@ class LastfmTest extends TestCase
             ],
         ], $info);
 
-        // And the response is cached
         $this->assertNotNull(cache('fca889d13b3222589d7d020669cc5a38'));
     }
 
-    /** @test */
-    public function it_returns_false_if_album_info_is_not_found_on_lastfm()
+    public function testGetAlbumInformationForNonExistentAlbum()
     {
-        // Given there's an album which doesn't exist on Last.fm
+        /** @var Album $album */
         $album = factory(Album::class)->create();
 
-        // When I request the service for the album's info
+        /** @var Client $client */
         $client = m::mock(Client::class, [
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album-notfound.xml')),
         ]);
 
-        $api = new LastfmService(null, null, $client);
-        $result = $api->getAlbumInfo($album->name, $album->artist->name);
+        $api = new LastfmService($client);
+        $result = $api->getAlbumInformation($album->name, $album->artist->name);
 
-        // Then I receive a boolean false
         $this->assertFalse($result);
     }
 }
