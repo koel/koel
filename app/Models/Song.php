@@ -91,35 +91,6 @@ class Song extends Model
     }
 
     /**
-     * Scrobble the song using Last.fm service.
-     *
-     * @param User   $user
-     * @param string $timestamp The UNIX timestamp in which the song started playing.
-     *
-     * @return mixed
-     */
-    public function scrobble(User $user, $timestamp)
-    {
-        // Don't scrobble the unknown guys. No one knows them.
-        if ($this->artist->is_unknown) {
-            return false;
-        }
-
-        // If the current user hasn't connected to Last.fm, don't do shit.
-        if (!$user->connectedToLastfm()) {
-            return false;
-        }
-
-        return Lastfm::scrobble(
-            $this->artist->name,
-            $this->title,
-            $timestamp,
-            $this->album->name === Album::UNKNOWN_NAME ? '' : $this->album->name,
-            $user->lastfm_session_key
-        );
-    }
-
-    /**
      * Get a Song record using its path.
      *
      * @param string $path

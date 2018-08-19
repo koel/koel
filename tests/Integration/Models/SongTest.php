@@ -42,50 +42,6 @@ class SongTest extends TestCase
     }
 
     /** @test */
-    public function it_scrobbles_if_the_user_is_connected_to_lastfm()
-    {
-        // Given there's a song
-        /** @var Song $song */
-        $song = factory(Song::class)->create();
-
-        // And a user who's connected to lastfm
-        /** @var User $user */
-        $user = factory(User::class)->create();
-        $user->setPreference('lastfm_session_key', 'foo');
-
-        // When I call the scrobble method
-        $time = time();
-        Lastfm::shouldReceive('scrobble')
-            ->once()
-            ->with($song->artist->name, $song->title, $time, $song->album->name, 'foo');
-
-        $song->scrobble($user, $time);
-
-        // Then I see the song is scrobbled
-    }
-
-    /** @test */
-    public function it_does_not_scrobble_if_the_user_is_not_connected_to_lastfm()
-    {
-        Lastfm::shouldReceive('scrobble')->times(0);
-
-        // Given there's a song
-        /** @var Song $song */
-        $song = factory(Song::class)->create();
-
-        // And a user who is not connected to lastfm
-        /** @var User $user */
-        $user = factory(User::class)->create();
-        $user->setPreference('lastfm_session_key', false);
-
-        // When I call the scrobble method
-
-        $song->scrobble($user, time());
-
-        // Then the song shouldn't be scrobbled
-    }
-
-    /** @test */
     public function it_can_be_retrieved_using_its_path()
     {
         // Given a song with a path
