@@ -13,7 +13,6 @@ class ConcreteApiClient extends ApiClient
 
     public function getSecret()
     {
-        return null;
     }
 
     public function getEndpoint()

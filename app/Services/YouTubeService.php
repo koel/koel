@@ -78,6 +78,5 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
     /** @return string|null */
     public function getSecret()
     {
-        return null;
     }
 }

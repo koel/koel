@@ -54,7 +54,7 @@ abstract class ApiClient
     public function request($verb, $uri, $appendKey = true, array $params = [])
     {
         try {
-            $body = (string)$this->getClient()
+            $body = (string) $this->getClient()
                 ->$verb($this->buildUrl($uri, $appendKey), ['form_params' => $params])
                 ->getBody();
 
@@ -110,14 +110,14 @@ abstract class ApiClient
                 $uri = "/$uri";
             }
 
-            $uri = $this->getEndpoint() . $uri;
+            $uri = $this->getEndpoint().$uri;
         }
 
         if ($appendKey) {
             if (parse_url($uri, PHP_URL_QUERY)) {
-                $uri .= "&{$this->keyParam}=" . $this->getKey();
+                $uri .= "&{$this->keyParam}=".$this->getKey();
             } else {
-                $uri .= "?{$this->keyParam}=" . $this->getKey();
+                $uri .= "?{$this->keyParam}=".$this->getKey();
             }
         }
 
