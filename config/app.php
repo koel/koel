@@ -206,7 +206,6 @@ return [
         'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
 
         'Media' => App\Facades\Media::class,
-        'MediaCache' => App\Facades\MediaCache::class,
         'Util' => App\Facades\Util::class,
         'Lastfm' => App\Facades\Lastfm::class,
         'YouTube' => App\Facades\YouTube::class,

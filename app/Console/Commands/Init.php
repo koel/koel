@@ -4,29 +4,26 @@ namespace App\Console\Commands;
 
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\MediaCacheService;
 use DB;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
-use MediaCache;
 
 class Init extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'koel:init';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Install or upgrade Koel';
+    private $mediaCacheService;
+
+    public function __construct(MediaCacheService $mediaCacheService)
+    {
+        parent::__construct();
+
+        $this->mediaCacheService = $mediaCacheService;
+    }
 
     /**
      * Execute the console command.
@@ -69,8 +66,9 @@ class Init extends Command
 
         $this->info('Migrating database');
         Artisan::call('migrate', ['--force' => true]);
+
         // Clean the media cache, just in case we did any media-related migration
-        MediaCache::clear();
+        $this->mediaCacheService->clear();
 
         if (!User::count()) {
             $this->setUpAdminAccount();

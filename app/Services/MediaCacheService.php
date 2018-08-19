@@ -5,11 +5,17 @@ namespace App\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use Cache;
+use Illuminate\Cache\Repository as Cache;
 
-class MediaCache
+class MediaCacheService
 {
-    protected $keyName = 'media_cache';
+    private $cache;
+    private $keyName = 'media_cache';
+
+    public function __construct(Cache $cache)
+    {
+        $this->cache = $cache;
+    }
 
     /**
      * Get media data.
@@ -23,7 +29,7 @@ class MediaCache
             return $this->query();
         }
 
-        return Cache::rememberForever($this->keyName, function () {
+        return $this->cache->rememberForever($this->keyName, function () {
             return $this->query();
         });
     }
@@ -47,6 +53,6 @@ class MediaCache
      */
     public function clear()
     {
-        Cache::forget($this->keyName);
+        $this->cache->forget($this->keyName);
     }
 }

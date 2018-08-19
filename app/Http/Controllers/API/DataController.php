@@ -9,29 +9,29 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\iTunesService;
 use App\Services\LastfmService;
+use App\Services\MediaCacheService;
 use App\Services\YouTubeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use iTunes;
-use Lastfm;
-use MediaCache;
-use YouTube;
 
 class DataController extends Controller
 {
     private $lastfmService;
     private $youTubeService;
     private $iTunesService;
+    private $mediaCacheService;
 
     public function __construct(
         LastfmService $lastfmService,
         YouTubeService $youTubeService,
-        iTunesService $iTunesService
+        iTunesService $iTunesService,
+        MediaCacheService $mediaCacheService
     )
     {
         $this->lastfmService = $lastfmService;
         $this->youTubeService = $youTubeService;
         $this->iTunesService = $iTunesService;
+        $this->mediaCacheService = $mediaCacheService;
     }
 
     /**
@@ -43,7 +43,7 @@ class DataController extends Controller
      */
     public function index(Request $request)
     {
-        return response()->json(MediaCache::get() + [
+        return response()->json($this->mediaCacheService->get() + [
             'settings' => $request->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
             'playlists' => Playlist::byCurrentUser()->orderBy('name')->get()->toArray(),
             'interactions' => Interaction::byCurrentUser()->get(),

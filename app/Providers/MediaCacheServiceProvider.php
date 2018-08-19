@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\MediaCache;
+use App\Services\MediaCacheService;
 use Illuminate\Support\ServiceProvider;
 
 class MediaCacheServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class MediaCacheServiceProvider extends ServiceProvider
     public function register()
     {
         app()->singleton('MediaCache', function () {
-            return new MediaCache();
+            return new MediaCacheService();
         });
     }
 }
