@@ -26,8 +26,7 @@ class DataController extends Controller
         YouTubeService $youTubeService,
         iTunesService $iTunesService,
         MediaCacheService $mediaCacheService
-    )
-    {
+    ) {
         $this->lastfmService = $lastfmService;
         $this->youTubeService = $youTubeService;
         $this->iTunesService = $iTunesService;

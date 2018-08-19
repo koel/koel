@@ -65,6 +65,7 @@ class SyncMediaCommand extends Command
 
     /**
      * Sync all files in the configured media path.
+     *
      * @throws Exception
      */
     protected function syncAll()
@@ -97,6 +98,7 @@ class SyncMediaCommand extends Command
      *                       - "MOVED_TO /var/www/media/new_dir"
      *
      * @link http://man7.org/linux/man-pages/man1/inotifywait.1.html
+     *
      * @throws Exception
      */
     public function syngle($record)

@@ -62,12 +62,10 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
 
     public function getKey()
     {
-        return null;
     }
 
     public function getSecret()
     {
-        return null;
     }
 
     public function getEndpoint()
