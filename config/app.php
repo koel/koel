@@ -151,7 +151,6 @@ return [
         App\Providers\MediaServiceProvider::class,
         App\Providers\MediaCacheServiceProvider::class,
         App\Providers\UtilServiceProvider::class,
-        App\Providers\LastfmServiceProvider::class,
         App\Providers\YouTubeServiceProvider::class,
         App\Providers\DownloadServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
@@ -206,7 +205,6 @@ return [
         'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
 
         'Util' => App\Facades\Util::class,
-        'Lastfm' => App\Facades\Lastfm::class,
         'YouTube' => App\Facades\YouTube::class,
         'Download' => App\Facades\Download::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
