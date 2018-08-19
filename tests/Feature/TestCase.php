@@ -25,6 +25,7 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Create a sample media set, with a complete artist+album+song trio.
+     *
      * @throws Exception
      */
     protected function createSampleMediaSet()
