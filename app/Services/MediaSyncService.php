@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Console\Commands\SyncMedia;
+use App\Console\Commands\SyncMediaCommand;
 use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
@@ -16,7 +16,7 @@ use getid3_exception;
 use Log;
 use Symfony\Component\Finder\Finder;
 
-class MediaService
+class MediaSyncService
 {
     /**
      * All applicable tags in a media file that we cater for.
@@ -54,16 +54,16 @@ class MediaService
     /**
      * Sync the media. Oh sync the media.
      *
-     * @param string|null $mediaPath
-     * @param array       $tags        The tags to sync.
+     * @param string|null      $mediaPath
+     * @param array            $tags        The tags to sync.
      *                                 Only taken into account for existing records.
      *                                 New records will have all tags synced in regardless.
-     * @param bool        $force       Whether to force syncing even unchanged files
-     * @param SyncMedia   $syncCommand The SyncMedia command object, to log to console if executed by artisan.
+     * @param bool             $force       Whether to force syncing even unchanged files
+     * @param SyncMediaCommand $syncCommand The SyncMedia command object, to log to console if executed by artisan.
      *
      * @throws Exception
      */
-    public function sync($mediaPath = null, $tags = [], $force = false, SyncMedia $syncCommand = null)
+    public function sync($mediaPath = null, $tags = [], $force = false, SyncMediaCommand $syncCommand = null)
     {
         if (!app()->runningInConsole()) {
             set_time_limit(config('koel.sync.timeout'));
@@ -109,7 +109,7 @@ class MediaService
 
         // Delete non-existing songs.
         $hashes = array_map(function (File $file) {
-            return self::getHash($file->getPath());
+            return self::getFileHash($file->getPath());
         }, array_merge($results['unmodified'], $results['success']));
 
         Song::deleteWhereIDsNotIn($hashes);
@@ -240,7 +240,7 @@ class MediaService
      *
      * @return string
      */
-    public function getHash($path)
+    public function getFileHash($path)
     {
         return File::getHash($path);
     }

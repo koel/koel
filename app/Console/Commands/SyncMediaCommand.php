@@ -5,41 +5,38 @@ namespace App\Console\Commands;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\File;
 use App\Models\Setting;
+use App\Services\MediaSyncService;
+use Exception;
 use Illuminate\Console\Command;
-use Media;
+use Symfony\Component\Console\Helper\ProgressBar;
 
-class SyncMedia extends Command
+class SyncMediaCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'koel:sync
         {record? : A single watch record. Consult Wiki for more info.}
         {--tags= : The comma-separated tags to sync into the database}
         {--force : Force re-syncing even unchanged files}';
 
-    protected $ignored = 0;
-    protected $invalid = 0;
-    protected $synced = 0;
-
-    /**
-     * The progress bar.
-     *
-     * @var \Symfony\Component\Console\Helper\ProgressBar
-     */
-    protected $bar;
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Sync songs found in configured directory against the database.';
 
+    private $ignored = 0;
+    private $invalid = 0;
+    private $synced = 0;
+    private $mediaSyncService;
+
     /**
-     * Execute the console command.
+     * @var ProgressBar
+     */
+    private $progressBar;
+
+    public function __construct(MediaSyncService $mediaSyncService)
+    {
+        parent::__construct();
+        $this->mediaSyncService = $mediaSyncService;
+    }
+
+    /**
+     * @throws Exception
      */
     public function handle()
     {
@@ -68,6 +65,7 @@ class SyncMedia extends Command
 
     /**
      * Sync all files in the configured media path.
+     * @throws Exception
      */
     protected function syncAll()
     {
@@ -78,7 +76,7 @@ class SyncMedia extends Command
         // New records will have every applicable field sync'ed in.
         $tags = $this->option('tags') ? explode(',', $this->option('tags')) : [];
 
-        Media::sync(null, $tags, $this->option('force'), $this);
+        $this->mediaSyncService->sync(null, $tags, $this->option('force'), $this);
 
         $this->output->writeln(
             PHP_EOL.PHP_EOL
@@ -99,10 +97,11 @@ class SyncMedia extends Command
      *                       - "MOVED_TO /var/www/media/new_dir"
      *
      * @link http://man7.org/linux/man-pages/man1/inotifywait.1.html
+     * @throws Exception
      */
     public function syngle($record)
     {
-        Media::syncByWatchRecord(new InotifyWatchRecord($record), $this);
+        $this->mediaSyncService->syncByWatchRecord(new InotifyWatchRecord($record));
     }
 
     /**
@@ -144,7 +143,7 @@ class SyncMedia extends Command
      */
     public function createProgressBar($max)
     {
-        $this->bar = $this->getOutput()->createProgressBar($max);
+        $this->progressBar = $this->getOutput()->createProgressBar($max);
     }
 
     /**
@@ -152,6 +151,6 @@ class SyncMedia extends Command
      */
     public function updateProgressBar()
     {
-        $this->bar->advance();
+        $this->progressBar->advance();
     }
 }

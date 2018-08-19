@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Facades\Media;
 use App\Http\Requests\API\SettingRequest;
 use App\Models\Setting;
+use App\Services\MediaSyncService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class SettingController extends Controller
 {
+    private $mediaSyncService;
+
+    public function __construct(MediaSyncService $mediaSyncService)
+    {
+        $this->mediaSyncService = $mediaSyncService;
+    }
+
     /**
      * Save the application settings.
      *
      * @param SettingRequest $request
      *
      * @return JsonResponse
+     * @throws Exception
      */
     public function store(SettingRequest $request)
     {
@@ -23,7 +32,7 @@ class SettingController extends Controller
 
         // In a next version we should opt for a "MediaPathChanged" event,
         // but let's just do this async now.
-        Media::sync();
+        $this->mediaSyncService->sync();
 
         return response()->json();
     }

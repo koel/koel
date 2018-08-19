@@ -205,7 +205,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
 
-        'Media' => App\Facades\Media::class,
         'Util' => App\Facades\Util::class,
         'Lastfm' => App\Facades\Lastfm::class,
         'YouTube' => App\Facades\YouTube::class,

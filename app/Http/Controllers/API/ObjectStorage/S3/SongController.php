@@ -9,17 +9,19 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Services\MediaMetadataService;
+use App\Services\MediaSyncService;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Media;
 
 class SongController extends Controller
 {
     private $mediaMetadataService;
+    private $mediaSyncService;
 
-    public function __construct(MediaMetadataService $mediaMetadataService)
+    public function __construct(MediaMetadataService $mediaMetadataService, MediaSyncService $mediaSyncService)
     {
         $this->mediaMetadataService = $mediaMetadataService;
+        $this->mediaSyncService = $mediaSyncService;
     }
 
     /**
@@ -43,7 +45,7 @@ class SongController extends Controller
             $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data']), $cover['extension']);
         }
 
-        $song = Song::updateOrCreate(['id' => Media::getHash($path)], [
+        $song = Song::updateOrCreate(['id' => $this->mediaSyncService->getFileHash($path)], [
             'path' => $path,
             'album_id' => $album->id,
             'artist_id' => $artist->id,
@@ -53,6 +55,7 @@ class SongController extends Controller
             'lyrics' => array_get($tags, 'lyrics', '') ?: '',
             'mtime' => time(),
         ]);
+
         event(new LibraryChanged());
 
         return response()->json($song);

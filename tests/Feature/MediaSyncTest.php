@@ -8,7 +8,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\File;
 use App\Models\Song;
-use App\Services\MediaService;
+use App\Services\MediaSyncService;
 use Exception;
 use getID3;
 use getid3_exception;
@@ -19,14 +19,14 @@ class MediaSyncTest extends TestCase
 {
     use WithoutMiddleware;
 
-    /** @var MediaService */
+    /** @var MediaSyncService */
     private $mediaService;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->mediaService = app(MediaService::class);
+        $this->mediaService = app(MediaSyncService::class);
     }
 
     protected function tearDown()

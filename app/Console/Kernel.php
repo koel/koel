@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\SyncMedia::class,
+        Commands\SyncMediaCommand::class,
         Commands\Init::class,
         Commands\GenerateJWTSecret::class,
     ];
