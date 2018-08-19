@@ -73,7 +73,7 @@ class MediaMetadataService
     /**
      * Write an artist image file with binary data and update the Artist with the new image attribute.
      *
-     * @param Artist  $artist
+     * @param Artist $artist
      * @param string $binaryData
      * @param string $extension   The file extension
      * @param string $destination The destination path. Automatically generated if empty.

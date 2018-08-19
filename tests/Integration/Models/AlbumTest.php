@@ -4,7 +4,6 @@ namespace Tests\Integration\Models;
 
 use App\Models\Album;
 use App\Models\Artist;
-use org\bovigo\vfs\vfsStream;
 use Tests\TestCase;
 
 class AlbumTest extends TestCase
@@ -74,5 +73,4 @@ class AlbumTest extends TestCase
         // Then its artist is Various Artist
         $this->assertTrue($album->artist->is_various);
     }
-
 }

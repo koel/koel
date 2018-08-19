@@ -77,8 +77,8 @@ class File
      * Construct our File object.
      * Upon construction, we'll set the path, hash, and associated Song object (if any).
      *
-     * @param string|SplFileInfo        $path   Either the file's path, or a SplFileInfo object
-     * @param getID3|null               $getID3 A getID3 object
+     * @param string|SplFileInfo        $path                 Either the file's path, or a SplFileInfo object
+     * @param getID3|null               $getID3               A getID3 object
      * @param MediaMetadataService|null $mediaMetadataService
      *
      * @throws getid3_exception
