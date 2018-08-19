@@ -12,10 +12,11 @@ use App\Models\Setting;
 use App\Models\Song;
 use Exception;
 use getID3;
-use Illuminate\Support\Facades\Log;
+use getid3_exception;
+use Log;
 use Symfony\Component\Finder\Finder;
 
-class Media
+class MediaService
 {
     /**
      * All applicable tags in a media file that we cater for.
@@ -35,6 +36,13 @@ class Media
         'mtime',
         'compilation',
     ];
+
+    private $mediaMetadataService;
+
+    public function __construct(MediaMetadataService $mediaMetadataService)
+    {
+        $this->mediaMetadataService = $mediaMetadataService;
+    }
 
     /**
      * Tags to be synced.
@@ -79,7 +87,7 @@ class Media
         $syncCommand && $syncCommand->createProgressBar(count($songPaths));
 
         foreach ($songPaths as $path) {
-            $file = new File($path, $getID3);
+            $file = new File($path, $getID3, $this->mediaMetadataService);
 
             switch ($result = $file->sync($this->tags, $force)) {
                 case File::SYNC_RESULT_SUCCESS:
@@ -181,6 +189,8 @@ class Media
      * Sync a directory's watch record.
      *
      * @param WatchRecordInterface $record
+     *
+     * @throws getid3_exception
      */
     private function syncDirectoryRecord(WatchRecordInterface $record)
     {

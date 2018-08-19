@@ -8,14 +8,26 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\File;
 use App\Models\Song;
-use App\Services\Media;
+use App\Services\MediaService;
+use Exception;
 use getID3;
+use getid3_exception;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
 
-class MediaTest extends TestCase
+class MediaSyncTest extends TestCase
 {
     use WithoutMiddleware;
+
+    /** @var MediaService */
+    private $mediaService;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->mediaService = app(MediaService::class);
+    }
 
     protected function tearDown()
     {
@@ -26,14 +38,13 @@ class MediaTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function songs_can_be_synced()
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        $media = new Media();
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
 
         // Standard mp3 files under root path should be recognized
         $this->seeInDatabase('songs', [
@@ -82,7 +93,7 @@ class MediaTest extends TestCase
 
         // Modified file should be recognized
         touch($song->path, $time = time());
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
         $song = Song::find($song->id);
         $this->assertEquals($time, $song->mtime);
 
@@ -93,14 +104,13 @@ class MediaTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function songs_can_be_force_synced()
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        $media = new Media();
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
 
         // Make some modification to the records
         $song = Song::orderBy('id', 'desc')->first();
@@ -113,7 +123,7 @@ class MediaTest extends TestCase
         ]);
 
         // Resync without forcing
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
 
         // Validate that the changes are not lost
         $song = Song::orderBy('id', 'desc')->first();
@@ -121,7 +131,7 @@ class MediaTest extends TestCase
         $this->assertEquals('Booom Wroooom', $song->lyrics);
 
         // Resync with force
-        $media->sync($this->mediaPath, [], true);
+        $this->mediaService->sync($this->mediaPath, [], true);
 
         // All is lost.
         $song = Song::orderBy('id', 'desc')->first();
@@ -132,14 +142,13 @@ class MediaTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function songs_can_be_synced_with_selectively_tags()
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        $media = new Media();
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
 
         // Make some modification to the records
         $song = Song::orderBy('id', 'desc')->first();
@@ -151,7 +160,7 @@ class MediaTest extends TestCase
         ]);
 
         // Sync only the selective tags
-        $media->sync($this->mediaPath, ['title'], true);
+        $this->mediaService->sync($this->mediaPath, ['title'], true);
 
         // Validate that the specified tags are changed, other remains the same
         $song = Song::orderBy('id', 'desc')->first();
@@ -162,20 +171,19 @@ class MediaTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function all_tags_are_catered_for_if_syncing_new_file()
     {
         // First we sync the test directory to get the data
-        $media = new Media();
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
 
         // Now delete the first song.
         $song = Song::orderBy('id')->first();
         $song->delete();
 
         // Selectively sync only one tag
-        $media->sync($this->mediaPath, ['track'], true);
+        $this->mediaService->sync($this->mediaPath, ['track'], true);
 
         // but we still expect the whole song to be added back with all info
         $addedSong = Song::findOrFail($song->id)->toArray();
@@ -188,7 +196,7 @@ class MediaTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function added_song_is_synced_when_watching()
     {
@@ -196,7 +204,7 @@ class MediaTest extends TestCase
 
         $path = $this->mediaPath.'/blank.mp3';
 
-        (new Media())->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
+        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
 
         $this->seeInDatabase('songs', ['path' => $path]);
     }
@@ -204,7 +212,7 @@ class MediaTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function deleted_song_is_synced_when_watching()
     {
@@ -213,7 +221,7 @@ class MediaTest extends TestCase
         $this->createSampleMediaSet();
         $song = Song::orderBy('id', 'desc')->first();
 
-        (new Media())->syncByWatchRecord(new InotifyWatchRecord("DELETE {$song->path}"));
+        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("DELETE {$song->path}"));
 
         $this->notSeeInDatabase('songs', ['id' => $song->id]);
     }
@@ -221,23 +229,26 @@ class MediaTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function deleted_directory_is_synced_when_watching()
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        $media = new Media();
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
 
-        $media->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR {$this->mediaPath}/subdir"));
+        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR {$this->mediaPath}/subdir"));
 
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/sic.mp3']);
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @throws getid3_exception
+     */
     public function html_entities_in_tags_are_recognized_and_saved_properly()
     {
         $getID3 = m::mock(getID3::class, [
@@ -264,17 +275,16 @@ class MediaTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function hidden_files_can_optionally_be_ignored_when_syncing()
     {
         config(['koel.ignore_dot_files' => false]);
-        $media = new Media();
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
         $this->seeInDatabase('albums', ['name' => 'Hidden Album']);
 
         config(['koel.ignore_dot_files' => true]);
-        $media->sync($this->mediaPath);
+        $this->mediaService->sync($this->mediaPath);
         $this->notSeeInDatabase('albums', ['name' => 'Hidden Album']);
     }
 }

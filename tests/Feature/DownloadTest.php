@@ -8,6 +8,7 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\DownloadService;
+use Exception;
 use Mockery\MockInterface;
 
 class DownloadTest extends TestCase
@@ -17,6 +18,9 @@ class DownloadTest extends TestCase
      */
     private $downloadService;
 
+    /**
+     * @throws Exception
+     */
     public function setUp()
     {
         parent::setUp();

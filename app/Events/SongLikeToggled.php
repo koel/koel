@@ -35,14 +35,4 @@ class SongLikeToggled extends Event
         $this->interaction = $interaction;
         $this->user = $user ?: auth()->user();
     }
-
-    /**
-     * Get the channels the event should be broadcast on.
-     *
-     * @return array
-     */
-    public function broadcastOn()
-    {
-        return [];
-    }
 }

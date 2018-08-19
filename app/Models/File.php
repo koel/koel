@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Services\MediaMetadataService;
 use Cache;
 use Exception;
 use getID3;
+use getid3_exception;
 use getid3_lib;
-use Illuminate\Support\Facades\Log;
-use Media;
+use InvalidArgumentException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -43,6 +44,11 @@ class File
     protected $getID3;
 
     /**
+     * @var MediaMetadataService
+     */
+    private $mediaMetadataService;
+
+    /**
      * The SplFileInfo object of the file.
      *
      * @var SplFileInfo
@@ -71,13 +77,17 @@ class File
      * Construct our File object.
      * Upon construction, we'll set the path, hash, and associated Song object (if any).
      *
-     * @param string|SplFileInfo $path   Either the file's path, or a SplFileInfo object
-     * @param getID3             $getID3 A getID3 object for DI (and better performance)
+     * @param string|SplFileInfo        $path   Either the file's path, or a SplFileInfo object
+     * @param getID3|null               $getID3 A getID3 object
+     * @param MediaMetadataService|null $mediaMetadataService
+     *
+     * @throws getid3_exception
      */
-    public function __construct($path, $getID3 = null)
+    public function __construct($path, getID3 $getID3 = null, MediaMetadataService $mediaMetadataService = null)
     {
         $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
         $this->setGetID3($getID3);
+        $this->setMediaMetadataService($mediaMetadataService);
 
         // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
         try {
@@ -260,18 +270,17 @@ class File
     {
         // If the album has no cover, we try to get the cover image from existing tag data
         if ($coverData) {
-            try {
-                $album->generateCover($coverData);
+            $extension = explode('/', $coverData['image_mime']);
+            $extension = empty($extension[1]) ? 'png' : $extension[1];
 
-                return;
-            } catch (Exception $e) {
-                Log::error($e);
-            }
+            $this->mediaMetadataService->writeAlbumCover($album, $coverData['data'], $extension);
+
+            return;
         }
 
         // Or, if there's a cover image under the same directory, use it.
         if ($cover = $this->getCoverFileUnderSameDirectory()) {
-            $album->copyCoverFile($cover);
+            $this->mediaMetadataService->copyAlbumCover($album, $cover);
         }
     }
 
@@ -325,8 +334,10 @@ class File
 
     /**
      * @param getID3 $getID3
+     *
+     * @throws getid3_exception
      */
-    public function setGetID3($getID3 = null)
+    public function setGetID3(getID3 $getID3 = null)
     {
         $this->getID3 = $getID3 ?: new getID3();
     }
@@ -344,7 +355,7 @@ class File
      * Some albums have its own cover image under the same directory as cover|folder.jpg/png.
      * We'll check if such a cover file is found, and use it if positive.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return string|false The cover file's full path, or false if none found
      */
@@ -364,6 +375,7 @@ class File
             );
 
             $cover = $matches ? $matches[0] : false;
+
             // Even if a file is found, make sure it's a real image.
             if ($cover && exif_imagetype($cover) === false) {
                 $cover = false;
@@ -383,5 +395,10 @@ class File
     public static function getHash($path)
     {
         return md5(config('app.key').$path);
+    }
+
+    private function setMediaMetadataService(MediaMetadataService $mediaMetadataService = null)
+    {
+        $this->mediaMetadataService = $mediaMetadataService ?: app(MediaMetadataService::class);
     }
 }

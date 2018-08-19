@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Media;
+use App\Services\MediaService;
 use Illuminate\Support\ServiceProvider;
 
 class MediaServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class MediaServiceProvider extends ServiceProvider
     public function register()
     {
         app()->singleton('Media', function () {
-            return new Media();
+            return app()->make(MediaService::class);
         });
     }
 }

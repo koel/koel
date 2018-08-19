@@ -2,6 +2,17 @@
 
 namespace App\Providers;
 
+use App\Events\AlbumInformationFetched;
+use App\Events\ArtistInformationFetched;
+use App\Events\LibraryChanged;
+use App\Events\SongLikeToggled;
+use App\Events\SongStartedPlaying;
+use App\Listeners\ClearMediaCache;
+use App\Listeners\DownloadAlbumCover;
+use App\Listeners\DownloadArtistImage;
+use App\Listeners\LoveTrackOnLastfm;
+use App\Listeners\TidyLibrary;
+use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Album;
 use App\Models\File;
 use App\Models\Song;
@@ -16,17 +27,25 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\SongLikeToggled' => [
-            'App\Listeners\LoveTrackOnLastfm',
+        SongLikeToggled::class => [
+            LoveTrackOnLastfm::class,
         ],
 
-        'App\Events\SongStartedPlaying' => [
-            'App\Listeners\UpdateLastfmNowPlaying',
+        SongStartedPlaying::class => [
+            UpdateLastfmNowPlaying::class,
         ],
 
-        'App\Events\LibraryChanged' => [
-            'App\Listeners\TidyLibrary',
-            'App\Listeners\ClearMediaCache',
+        LibraryChanged::class => [
+            TidyLibrary::class,
+            ClearMediaCache::class,
+        ],
+
+        AlbumInformationFetched::class => [
+            DownloadAlbumCover::class,
+        ],
+
+        ArtistInformationFetched::class => [
+            DownloadArtistImage::class,
         ],
     ];
 

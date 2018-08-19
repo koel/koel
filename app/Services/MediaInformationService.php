@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Events\AlbumInformationFetched;
+use App\Events\ArtistInformationFetched;
 use App\Models\Album;
 use App\Models\Artist;
-use Exception;
-use Log;
 
 class MediaInformationService
 {
@@ -30,18 +30,11 @@ class MediaInformationService
         }
 
         $info = $this->lastfmService->getAlbumInfo($album->name, $album->artist->name);
-        $image = array_get($info, 'image');
+        event(new AlbumInformationFetched($album, $info));
 
-        // If our current album has no cover, and Last.fm has one, why don't we steal it?
-        if (!$album->has_cover && is_string($image) && ini_get('allow_url_fopen')) {
-            try {
-                $extension = explode('.', $image);
-                $album->writeCoverFile(file_get_contents($image), last($extension));
-                $info['cover'] = $album->cover;
-            } catch (Exception $e) {
-                Log::error($e);
-            }
-        }
+        // The album may have been updated.
+        $album->refresh();
+        $info['cover'] = $album->cover;
 
         return $info;
     }
@@ -60,18 +53,11 @@ class MediaInformationService
         }
 
         $info = $this->lastfmService->getArtistInfo($artist->name);
-        $image = array_get($info, 'image');
+        event(new ArtistInformationFetched($artist, $info));
 
-        // If our current artist has no image, and Last.fm has one, copy the image for our local use.
-        if (!$artist->has_image && is_string($image) && ini_get('allow_url_fopen')) {
-            try {
-                $extension = explode('.', $image);
-                $artist->writeImageFile(file_get_contents($image), last($extension));
-                $info['image'] = $artist->image;
-            } catch (Exception $e) {
-                Log::error($e);
-            }
-        }
+        // The artist may have been updated.
+        $artist->refresh();
+        $info['image'] = $artist->image;
 
         return $info;
     }

@@ -8,12 +8,20 @@ use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Services\MediaMetadataService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Media;
 
 class SongController extends Controller
 {
+    private $mediaMetadataService;
+
+    public function __construct(MediaMetadataService $mediaMetadataService)
+    {
+        $this->mediaMetadataService = $mediaMetadataService;
+    }
+
     /**
      * Store a new song or update an existing one with data from AWS.
      *
@@ -32,7 +40,7 @@ class SongController extends Controller
         $album = Album::get($artist, array_get($tags, 'album'), $compilation);
 
         if ($cover = array_get($tags, 'cover')) {
-            $album->writeCoverFile(base64_decode($cover['data']), $cover['extension']);
+            $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data']), $cover['extension']);
         }
 
         $song = Song::updateOrCreate(['id' => Media::getHash($path)], [

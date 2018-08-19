@@ -52,26 +52,6 @@ class ArtistTest extends TestCase
     }
 
     /** @test */
-    public function it_can_write_an_image_file_and_update_itself_with_the_image()
-    {
-        // Given there's an artist and an image file content
-        /** @var Artist $artist */
-        $artist = factory(Artist::class)->create();
-        $imageContent = 'dummy';
-        $root = vfsStream::setup('home');
-        $imagePath = vfsStream::url('home/foo.jpg');
-
-        // When I call the method to write the image file
-        $artist->writeImageFile($imageContent, 'jpg', $imagePath);
-
-        // Then I see the image file is generated
-        $this->assertTrue($root->hasChild('foo.jpg'));
-
-        // And the artist's image attribute is updated
-        $this->assertEquals('http://localhost/public/img/artists/foo.jpg', Artist::find($artist->id)->image);
-    }
-
-    /** @test */
     public function artists_with_name_in_utf16_encoding_are_retrieved_correctly()
     {
         // Given there's an artist with name in UTF-16 encoding

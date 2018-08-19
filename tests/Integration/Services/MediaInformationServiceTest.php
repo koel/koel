@@ -2,10 +2,13 @@
 
 namespace Tests\Integration\Services;
 
+use App\Events\AlbumInformationFetched;
+use App\Events\ArtistInformationFetched;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\LastfmService;
 use App\Services\MediaInformationService;
+use Exception;
 use Mockery as m;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -30,9 +33,13 @@ class MediaInformationServiceTest extends TestCase
         $this->mediaInformationService = new MediaInformationService($this->lastFmService);
     }
 
-    /** @test */
-    public function it_gets_album_information()
+    /**
+     * @throws Exception
+     */
+    public function testGetAlbumInformation()
     {
+        $this->expectsEvents(AlbumInformationFetched::class);
+
         /** @var Album $album */
         $album = factory(Album::class)->create();
 
@@ -44,12 +51,19 @@ class MediaInformationServiceTest extends TestCase
 
         $info = $this->mediaInformationService->getAlbumInformation($album);
 
-        self::assertEquals(['foo' => 'bar'], $info);
+        self::assertEquals([
+            'foo' => 'bar',
+            'cover' => $album->cover,
+        ], $info);
     }
 
-    /** @test */
-    public function it_gets_artist_information()
+    /**
+     * @throws Exception
+     */
+    public function testGetArtistInformation()
     {
+        $this->expectsEvents(ArtistInformationFetched::class);
+
         /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
 
@@ -61,6 +75,9 @@ class MediaInformationServiceTest extends TestCase
 
         $info = $this->mediaInformationService->getArtistInformation($artist);
 
-        self::assertEquals(['foo' => 'bar'], $info);
+        self::assertEquals([
+            'foo' => 'bar',
+            'image' => $artist->image,
+        ], $info);
     }
 }
