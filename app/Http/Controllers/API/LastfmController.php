@@ -28,9 +28,9 @@ class LastfmController extends Controller
     /**
      * Connect the current user to Last.fm.
      *
-     * @return RedirectResponse
-     *
      * @throws JWTException
+     *
+     * @return RedirectResponse
      */
     public function connect()
     {
