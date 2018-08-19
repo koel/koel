@@ -3,10 +3,8 @@
 namespace Tests\Integration\Models;
 
 use App\Models\Song;
-use App\Models\User;
 use Aws\AwsClient;
 use Cache;
-use Lastfm;
 use Mockery as m;
 use Tests\TestCase;
 
