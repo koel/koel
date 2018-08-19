@@ -115,6 +115,7 @@ return [
     'itunes' => [
         'enabled' => env('USE_ITUNES', true),
         'affiliate_id' => '1000lsGu',
+        'endpoint' => 'https://itunes.apple.com/search',
     ],
 
     'cache_media' => env('CACHE_MEDIA', true),

@@ -4,31 +4,10 @@ namespace App\Services;
 
 use Cache;
 use Exception;
-use GuzzleHttp\Client;
 use Log;
 
-class iTunes
+class iTunesService extends ApiClient implements ApiConsumerInterface
 {
-    /**
-     * @var Client
-     */
-    protected $client;
-
-    /**
-     * @var string
-     */
-    protected $endPoint = 'https://itunes.apple.com/search';
-
-    /**
-     * iTunes constructor.
-     *
-     * @param Client|null $client
-     */
-    public function __construct(Client $client = null)
-    {
-        $this->client = $client ?: new Client();
-    }
-
     /**
      * Determines whether to use iTunes services.
      *
@@ -60,7 +39,7 @@ class iTunes
                         'limit' => 1,
                     ];
 
-                    $response = (string) $this->client->get($this->endPoint, ['query' => $params])->getBody();
+                    $response = (string) $this->client->get($this->getEndpoint(), ['query' => $params])->getBody();
                     $response = json_decode($response);
 
                     if (!$response->resultCount) {
@@ -79,5 +58,20 @@ class iTunes
 
             return false;
         }
+    }
+
+    public function getKey()
+    {
+        return null;
+    }
+
+    public function getSecret()
+    {
+        return null;
+    }
+
+    public function getEndpoint()
+    {
+        return config('koel.itunes.endpoint');
     }
 }
