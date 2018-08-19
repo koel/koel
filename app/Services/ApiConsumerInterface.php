@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-
 interface ApiConsumerInterface
 {
     /** @return string */

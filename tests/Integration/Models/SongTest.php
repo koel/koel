@@ -9,7 +9,6 @@ use Cache;
 use Lastfm;
 use Mockery as m;
 use Tests\TestCase;
-use YouTube;
 
 class SongTest extends TestCase
 {
