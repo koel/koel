@@ -29,8 +29,7 @@ class InitCommand extends Command
         Hash $hash,
         DotenvEditor $dotenvEditor,
         DB $db
-    )
-    {
+    ) {
         parent::__construct();
 
         $this->mediaCacheService = $mediaCacheService;
@@ -137,7 +136,7 @@ class InitCommand extends Command
             ],
             'mysql'
         );
-        
+
         if ($config['DB_CONNECTION'] === 'sqlite-e2e') {
             $config['DB_DATABASE'] = $this->ask('Absolute path to the DB file');
         } else {
