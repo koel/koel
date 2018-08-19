@@ -9,52 +9,42 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
-use Illuminate\Routing\Redirector;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
 
 class LastfmController extends Controller
 {
-    /*
-     * The Guard implementation.
-     *
-     * @var Guard
-     */
     protected $auth;
+    private $lastfmService;
+    private $jwtAuth;
 
-    /**
-     * Construct the controller and inject the current auth.
-     *
-     * @param Guard $auth
-     */
-    public function __construct(Guard $auth)
+    public function __construct(Guard $auth, LastfmService $lastfmService, JWTAuth $jwtAuth)
     {
         $this->auth = $auth;
+        $this->lastfmService = $lastfmService;
+        $this->jwtAuth = $jwtAuth;
     }
 
     /**
      * Connect the current user to Last.fm.
      *
-     * @param Redirector    $redirector
-     * @param LastfmService $lastfm
-     * @param JWTAuth       $auth
+     * @return RedirectResponse
      *
-     * @return Redirector|RedirectResponse
+     * @throws JWTException
      */
-    public function connect(Redirector $redirector, LastfmService $lastfm, JWTAuth $auth = null)
+    public function connect()
     {
-        abort_unless($lastfm->enabled(), 401, 'Koel is not configured to use with Last.fm yet.');
-
-        $auth = $auth ?: $this->app['tymon.jwt.auth'];
+        abort_unless($this->lastfmService->enabled(), 401, 'Koel is not configured to use with Last.fm yet.');
 
         // A workaround to make sure Tymon's JWTAuth get the correct token via our custom
         // "jwt-token" query string instead of the default "token".
         // This is due to the problem that Last.fm returns the token via "token" as well.
-        $auth->parseToken('', '', 'jwt-token');
+        $this->jwtAuth->parseToken('', '', 'jwt-token');
 
-        return $redirector->to(
+        return redirect(
             'https://www.last.fm/api/auth/?api_key='
-            .$lastfm->getKey()
-            .'&cb='.urlencode(route('lastfm.callback').'?jwt-token='.$auth->getToken())
+            .$this->lastfmService->getKey()
+            .'&cb='.urlencode(route('lastfm.callback').'?jwt-token='.$this->jwtAuth->getToken())
         );
     }
 
@@ -62,14 +52,14 @@ class LastfmController extends Controller
      * Serve the callback request from Last.fm.
      *
      * @param LastfmCallbackRequest $request
-     * @param LastfmService         $lastfm
      *
      * @return Response
      */
-    public function callback(LastfmCallbackRequest $request, LastfmService $lastfm)
+    public function callback(LastfmCallbackRequest $request)
     {
-        // Get the session key using the obtained token.
-        abort_unless($sessionKey = $lastfm->getSessionKey($request->token), 500, 'Invalid token key.');
+        $sessionKey = $this->lastfmService->getSessionKey($request->token);
+
+        abort_unless($sessionKey, 500, 'Invalid token key.');
 
         $this->auth->user()->savePreference('lastfm_session_key', $sessionKey);
 
