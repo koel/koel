@@ -119,7 +119,7 @@ class InteractionService
     {
         return $this->interaction->where([
             'user_id' => $user->id,
-            'like' => true
+            'like' => true,
         ])
             ->with('song')
             ->get()
