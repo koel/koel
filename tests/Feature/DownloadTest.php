@@ -32,6 +32,7 @@ class DownloadTest extends TestCase
     public function a_single_song_can_be_downloaded()
     {
         $song = Song::first();
+        
         $this->downloadService
             ->shouldReceive('from')
             ->once()

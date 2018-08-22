@@ -3,13 +3,20 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\ProfileUpdateRequest;
-use Hash;
+use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use RuntimeException;
 
 class ProfileController extends Controller
 {
+    private $hash;
+
+    public function __construct(Hash $hash)
+    {
+        $this->hash = $hash;
+    }
+
     /**
      * Get the current user's profile.
      *
@@ -36,7 +43,7 @@ class ProfileController extends Controller
         $data = $request->only('name', 'email');
 
         if ($request->password) {
-            $data['password'] = Hash::make($request->password);
+            $data['password'] = $this->hash->make($request->password);
         }
 
         return response()->json($request->user()->update($data));
