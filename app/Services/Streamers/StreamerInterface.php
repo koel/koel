@@ -2,10 +2,10 @@
 
 namespace App\Services\Streamers;
 
+use App\Models\Song;
+
 interface StreamerInterface
 {
-    /**
-     * Stream the current song.
-     */
+    public function setSong(Song $song);
     public function stream();
 }

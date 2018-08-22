@@ -16,6 +16,7 @@
     "doctrine/dbal": "^2.5",
     "jackiedo/dotenv-editor": "^1.0",
     "ext-exif": "*",
+    "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-SimpleXML": "*"
   },

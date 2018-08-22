@@ -2,9 +2,7 @@
 
 namespace App\Services\Streamers;
 
-use App\Models\Song;
-
-class TranscodingStreamer extends Streamer implements StreamerInterface
+class TranscodingStreamer extends Streamer implements TranscodingStreamerInterface
 {
     /**
      * Bit rate the stream should be transcoded at.
@@ -19,13 +17,6 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
      * @var int
      */
     private $startTime;
-
-    public function __construct(Song $song, $bitRate, $startTime = 0)
-    {
-        parent::__construct($song);
-        $this->bitRate = $bitRate;
-        $this->startTime = $startTime;
-    }
 
     /**
      * On-the-fly stream the current song while transcoding.
@@ -54,5 +45,15 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
         }
 
         passthru("$ffmpeg ".implode($args, ' '));
+    }
+
+    public function setBitRate($bitRate)
+    {
+        $this->bitRate = $bitRate;
+    }
+
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
     }
 }

@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use DB;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Tinker\TinkerServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,8 +41,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         if (!$this->app->environment('production')) {
-            $this->app->register('Laravel\Tinker\TinkerServiceProvider');
-            $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
+            $this->app->register(TinkerServiceProvider::class);
+            $this->app->register(IdeHelperServiceProvider::class);
         }
     }
 }

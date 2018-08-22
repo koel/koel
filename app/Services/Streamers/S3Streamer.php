@@ -2,7 +2,7 @@
 
 namespace App\Services\Streamers;
 
-class S3Streamer extends Streamer implements StreamerInterface
+class S3Streamer extends Streamer implements ObjectStorageStreamerInterface
 {
     /**
      * Stream the current song through S3.

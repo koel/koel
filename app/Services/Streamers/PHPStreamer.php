@@ -2,7 +2,7 @@
 
 namespace App\Services\Streamers;
 
-class PHPStreamer extends Streamer implements StreamerInterface
+class PHPStreamer extends Streamer implements DirectStreamerInterface
 {
     /**
      * Stream the current song using the most basic PHP method: readfile()

@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Factories\StreamerFactory;
 use App\Http\Requests\API\SongPlayRequest;
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Models\Song;
 use App\Services\MediaInformationService;
-use App\Services\Streamers\PHPStreamer;
-use App\Services\Streamers\S3Streamer;
-use App\Services\Streamers\TranscodingStreamer;
-use App\Services\Streamers\XAccelRedirectStreamer;
-use App\Services\Streamers\XSendFileStreamer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -18,10 +14,12 @@ use Illuminate\Routing\Redirector;
 class SongController extends Controller
 {
     private $mediaInformationService;
+    private $streamerFactory;
 
-    public function __construct(MediaInformationService $mediaInformationService)
+    public function __construct(MediaInformationService $mediaInformationService, StreamerFactory $streamerFactory)
     {
         $this->mediaInformationService = $mediaInformationService;
+        $this->streamerFactory = $streamerFactory;
     }
 
     /**
@@ -40,38 +38,9 @@ class SongController extends Controller
      */
     public function play(SongPlayRequest $request, Song $song, $transcode = null, $bitRate = null)
     {
-        if ($song->s3_params) {
-            return (new S3Streamer($song))->stream();
-        }
-
-        // If `transcode` parameter isn't passed, the default is to only transcode FLAC.
-        if ($transcode === null && ends_with(mime_content_type($song->path), 'flac')) {
-            $transcode = true;
-        }
-
-        $streamer = null;
-
-        if ($transcode) {
-            $streamer = new TranscodingStreamer(
-                $song,
-                $bitRate ?: config('koel.streaming.bitrate'),
-                floatval($request->time)
-            );
-        } else {
-            switch (config('koel.streaming.method')) {
-                case 'x-sendfile':
-                    $streamer = new XSendFileStreamer($song);
-                    break;
-                case 'x-accel-redirect':
-                    $streamer = new XAccelRedirectStreamer($song);
-                    break;
-                default:
-                    $streamer = new PHPStreamer($song);
-                    break;
-            }
-        }
-
-        $streamer->stream();
+        return $this->streamerFactory
+            ->createStreamer($song, $transcode, $bitRate, floatval($request->time))
+            ->stream();
     }
 
     /**

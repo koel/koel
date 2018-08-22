@@ -140,6 +140,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Aws\Laravel\AwsServiceProvider::class,
+        Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -154,7 +155,7 @@ return [
         App\Providers\DownloadServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\iTunesServiceProvider::class,
-        Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
+        App\Providers\StreamerServiceProvider::class,
     ],
 
     /*
