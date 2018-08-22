@@ -6,13 +6,20 @@ use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
 use App\Models\User;
 use Exception;
-use Hash;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
 class UserController extends Controller
 {
+    private $hash;
+
+    public function __construct(Hash $hash)
+    {
+        $this->hash = $hash;
+    }
+
     /**
      * Create a new user.
      *
@@ -27,7 +34,7 @@ class UserController extends Controller
         return response()->json(User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $this->hash->make($request->password),
         ]));
     }
 
@@ -46,7 +53,7 @@ class UserController extends Controller
         $data = $request->only('name', 'email');
 
         if ($request->password) {
-            $data['password'] = Hash::make($request->password);
+            $data['password'] = $this->hash->make($request->password);
         }
 
         return response()->json($user->update($data));
