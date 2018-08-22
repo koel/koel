@@ -18,19 +18,17 @@ class StreamerFactory
         DirectStreamerInterface $directStreamer,
         TranscodingStreamerInterface $transcodingStreamer,
         ObjectStorageStreamerInterface $objectStorageStreamer
-    )
-    {
+    ) {
         $this->directStreamer = $directStreamer;
         $this->transcodingStreamer = $transcodingStreamer;
         $this->objectStorageStreamer = $objectStorageStreamer;
     }
 
     /**
-     * @param Song         $song
-     *
-     * @param boolean|null $transcode
-     * @param int|null     $bitRate
-     * @param int          $startTime
+     * @param Song      $song
+     * @param bool|null $transcode
+     * @param int|null  $bitRate
+     * @param int       $startTime
      *
      * @return StreamerInterface
      */
