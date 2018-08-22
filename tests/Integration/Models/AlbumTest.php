@@ -9,11 +9,6 @@ use Tests\TestCase;
 class AlbumTest extends TestCase
 {
     /** @test */
-    public function extra_info_can_be_retrieved_for_an_album()
-    {
-    }
-
-    /** @test */
     public function exist_album_can_be_retrieved_using_artist_and_name()
     {
         // Given there's an existing album from an artist
