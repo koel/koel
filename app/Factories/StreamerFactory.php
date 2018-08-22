@@ -7,21 +7,25 @@ use App\Services\Streamers\DirectStreamerInterface;
 use App\Services\Streamers\ObjectStorageStreamerInterface;
 use App\Services\Streamers\StreamerInterface;
 use App\Services\Streamers\TranscodingStreamerInterface;
+use App\Services\TranscodingService;
 
 class StreamerFactory
 {
     private $directStreamer;
     private $transcodingStreamer;
     private $objectStorageStreamer;
+    private $transcodingService;
 
     public function __construct(
         DirectStreamerInterface $directStreamer,
         TranscodingStreamerInterface $transcodingStreamer,
-        ObjectStorageStreamerInterface $objectStorageStreamer
+        ObjectStorageStreamerInterface $objectStorageStreamer,
+        TranscodingService $transcodingService
     ) {
         $this->directStreamer = $directStreamer;
         $this->transcodingStreamer = $transcodingStreamer;
         $this->objectStorageStreamer = $objectStorageStreamer;
+        $this->transcodingService = $transcodingService;
     }
 
     /**
@@ -40,8 +44,7 @@ class StreamerFactory
             return $this->objectStorageStreamer;
         }
 
-        // If `transcode` parameter isn't passed, the default is to only transcode FLAC.
-        if ($transcode === null && ends_with(mime_content_type($song->path), 'flac')) {
+        if ($transcode === null && $this->transcodingService->songShouldBeTranscoded($song)) {
             $transcode = true;
         }
 
