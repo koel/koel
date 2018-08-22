@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Events\SongLikeToggled;
 use App\Models\Interaction;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class InteractionService
 {
@@ -105,5 +106,23 @@ class InteractionService
                 event(new SongLikeToggled($interaction));
             }
         );
+    }
+
+    /**
+     * Get all songs favorited by a user.
+     *
+     * @param User $user
+     *
+     * @return Collection
+     */
+    public function getUserFavorites(User $user)
+    {
+        return $this->interaction->where([
+            'user_id' => $user->id,
+            'like' => true
+        ])
+            ->with('song')
+            ->get()
+            ->pluck('song');
     }
 }

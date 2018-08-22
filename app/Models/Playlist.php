@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * @property int   user_id
+ * @property int        user_id
  * @property Collection songs
+ * @property int       id
  */
 class Playlist extends Model
 {
