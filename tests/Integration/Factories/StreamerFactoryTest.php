@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Services\Streamers {
-    function file_exists() {
+    function file_exists()
+    {
         return true;
     }
 }
@@ -75,7 +76,7 @@ namespace Tests\Integration\Factories {
          * @dataProvider provideStreamingConfigData
          *
          * @param string|null $config
-         * @param string $expectedClass
+         * @param string      $expectedClass
          */
         public function testCreatePHPStreamer($config, $expectedClass)
         {
