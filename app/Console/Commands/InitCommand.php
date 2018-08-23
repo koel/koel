@@ -39,66 +39,19 @@ class InitCommand extends Command
         $this->db = $db;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
         $this->comment('Attempting to install or upgrade Koel.');
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
         $this->info('📙  '.config('koel.misc.docs_url').PHP_EOL);
 
-        if (!config('app.key')) {
-            $this->info('Generating app key');
-            $this->artisan->call('key:generate');
-        } else {
-            $this->comment('App key exists -- skipping');
-        }
-
-        if (!config('jwt.secret')) {
-            $this->info('Generating JWT secret');
-            $this->artisan->call('koel:generate-jwt-secret');
-        } else {
-            $this->comment('JWT secret exists -- skipping');
-        }
-
-        $dbSetUp = false;
-
-        while (!$dbSetUp) {
-            try {
-                // Make sure the config cache is cleared before another attempt.
-                $this->artisan->call('config:clear');
-                $this->db->reconnect()->getPdo();
-                $dbSetUp = true;
-            } catch (Exception $e) {
-                $this->error($e->getMessage());
-                $this->warn(PHP_EOL.'Koel cannot connect to the database. Let\'s set it up.');
-                $this->setUpDatabase();
-            }
-        }
-
-        $this->info('Migrating database');
-        $this->artisan->call('migrate', ['--force' => true]);
-
-        // Clean the media cache, just in case we did any media-related migration
-        $this->mediaCacheService->clear();
-
-        if (!User::count()) {
-            $this->setUpAdminAccount();
-            $this->info('Seeding initial data');
-            $this->artisan->call('db:seed', ['--force' => true]);
-        } else {
-            $this->comment('Data seeded -- skipping');
-        }
-
-        if (!Setting::get('media_path')) {
-            $this->setMediaPath();
-        }
-
-        $this->info('Compiling front-end stuff');
-        system('yarn install');
+        $this->maybeGenerateAppKey();
+        $this->maybeGenerateJwtSecret();
+        $this->maybeSetUpDatabase();
+        $this->migrateDatabase();
+        $this->maybeSeedDatabase();
+        $this->maybeSetMediaPath();
+        $this->compileFrontEndAssets();
 
         $this->comment(PHP_EOL.'🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
 
@@ -164,9 +117,6 @@ class InitCommand extends Command
         ]);
     }
 
-    /**
-     * Set up the admin account.
-     */
     private function setUpAdminAccount()
     {
         $this->info("Let's create the admin account.");
@@ -193,11 +143,12 @@ class InitCommand extends Command
         ]);
     }
 
-    /**
-     * Set the media path via the console.
-     */
-    private function setMediaPath()
+    private function maybeSetMediaPath()
     {
+        if (!Setting::get('media_path')) {
+            return;
+        }
+
         $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.');
 
         while (true) {
@@ -215,5 +166,69 @@ class InitCommand extends Command
 
             $this->error('The path does not exist or not readable. Try again.');
         }
+    }
+
+    private function maybeGenerateAppKey()
+    {
+        if (!config('app.key')) {
+            $this->info('Generating app key');
+            $this->artisan->call('key:generate');
+        } else {
+            $this->comment('App key exists -- skipping');
+        }
+    }
+
+    private function maybeGenerateJwtSecret()
+    {
+        if (!config('jwt.secret')) {
+            $this->info('Generating JWT secret');
+            $this->artisan->call('koel:generate-jwt-secret');
+        } else {
+            $this->comment('JWT secret exists -- skipping');
+        }
+    }
+
+    private function maybeSeedDatabase()
+    {
+        if (!User::count()) {
+            $this->setUpAdminAccount();
+            $this->info('Seeding initial data');
+            $this->artisan->call('db:seed', ['--force' => true]);
+        } else {
+            $this->comment('Data seeded -- skipping');
+        }
+    }
+
+    private function maybeSetUpDatabase()
+    {
+        $dbSetUp = false;
+
+        while (!$dbSetUp) {
+            try {
+                // Make sure the config cache is cleared before another attempt.
+                $this->artisan->call('config:clear');
+                $this->db->reconnect()->getPdo();
+                $dbSetUp = true;
+            } catch (Exception $e) {
+                $this->error($e->getMessage());
+                $this->warn(PHP_EOL . 'Koel cannot connect to the database. Let\'s set it up.');
+                $this->setUpDatabase();
+            }
+        }
+    }
+
+    private function migrateDatabase()
+    {
+        $this->info('Migrating database');
+        $this->artisan->call('migrate', ['--force' => true]);
+
+        // Clear the media cache, just in case we did any media-related migration
+        $this->mediaCacheService->clear();
+    }
+
+    private function compileFrontEndAssets()
+    {
+        $this->info('Compiling front-end stuff');
+        system('yarn install');
     }
 }

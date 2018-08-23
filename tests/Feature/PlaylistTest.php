@@ -5,9 +5,13 @@ namespace Tests\Feature;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
+use Exception;
 
 class PlaylistTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function setUp()
     {
         parent::setUp();

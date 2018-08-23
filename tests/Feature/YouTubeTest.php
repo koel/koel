@@ -7,7 +7,6 @@ use App\Services\YouTubeService;
 use Exception;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery\MockInterface;
-use YouTube;
 
 class YouTubeTest extends TestCase
 {
