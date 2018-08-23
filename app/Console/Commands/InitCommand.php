@@ -211,7 +211,7 @@ class InitCommand extends Command
                 $dbSetUp = true;
             } catch (Exception $e) {
                 $this->error($e->getMessage());
-                $this->warn(PHP_EOL . 'Koel cannot connect to the database. Let\'s set it up.');
+                $this->warn(PHP_EOL.'Koel cannot connect to the database. Let\'s set it up.');
                 $this->setUpDatabase();
             }
         }
