@@ -17,7 +17,7 @@ trait InteractsWithIoc
      */
     protected function mockIocDependency($abstract, ...$args)
     {
-        return tap(Mockery::mock($abstract, ...$args), function ($mocked) use ($abstract) {
+        return tap(Mockery::mock($abstract, ...$args), static function ($mocked) use ($abstract) {
             app()->instance($abstract, $mocked);
         });
     }
