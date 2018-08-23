@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Services\Streamers {
-    function file_exists() {
+    function file_exists()
+    {
         return true;
     }
 }
