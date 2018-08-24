@@ -5,12 +5,13 @@ namespace Tests\Feature;
 use App\Events\SongLikeToggled;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Exception;
 
 class InteractionTest extends TestCase
 {
-    use WithoutMiddleware;
-
+    /**
+     * @throws Exception
+     */
     public function setUp()
     {
         parent::setUp();
@@ -45,7 +46,7 @@ class InteractionTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function user_can_like_and_unlike_a_song()
     {
@@ -75,7 +76,7 @@ class InteractionTest extends TestCase
     /**
      * @test
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function user_can_like_and_unlike_songs_in_batch()
     {

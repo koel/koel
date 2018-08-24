@@ -59,53 +59,34 @@ class Song extends Model
      */
     public $incrementing = false;
 
-    /**
-     * A song belongs to an artist.
-     *
-     * @return BelongsTo
-     */
-    public function artist()
+    public function artist(): BelongsTo
     {
         return $this->belongsTo(Artist::class);
     }
 
-    /**
-     * A song belongs to a album.
-     *
-     * @return BelongsTo
-     */
-    public function album()
+    public function album(): BelongsTo
     {
         return $this->belongsTo(Album::class);
     }
 
-    /**
-     * A song can belong to many playlists.
-     *
-     * @return BelongsToMany
-     */
-    public function playlists()
+    public function playlists(): BelongsToMany
     {
         return $this->belongsToMany(Playlist::class);
     }
 
     /**
      * Get a Song record using its path.
-     *
-     * @param string $path
-     *
-     * @return Song|null
      */
-    public static function byPath($path)
+    public static function byPath(string $path): ?self
     {
-        return self::find(File::getHash($path));
+        return static::find(File::getHash($path));
     }
 
     /**
      * Update song info.
      *
-     * @param array $ids
-     * @param array $data The data array, with these supported fields:
+     * @param string[] $ids
+     * @param string[] $data The data array, with these supported fields:
      *                    - title
      *                    - artistName
      *                    - albumName
@@ -115,7 +96,7 @@ class Song extends Model
      *
      * @return array
      */
-    public static function updateInfo($ids, $data)
+    public static function updateInfo(array $ids, array $data): array
     {
         /*
          * A collection of the updated songs.
@@ -155,20 +136,14 @@ class Song extends Model
         ];
     }
 
-    /**
-     * Update a single song's info.
-     *
-     * @param string $title
-     * @param string $albumName
-     * @param string $artistName
-     * @param string $lyrics
-     * @param int    $track
-     * @param int    $compilationState
-     *
-     * @return self
-     */
-    public function updateSingle($title, $albumName, $artistName, $lyrics, $track, $compilationState)
-    {
+    public function updateSingle(
+        string $title,
+        string $albumName,
+        string $artistName,
+        string $lyrics,
+        int $track,
+        int $compilationState
+    ): self {
         if ($artistName === Artist::VARIOUS_NAME) {
             // If the artist name is "Various Artists", it's a compilation song no matter what.
             $compilationState = 1;
@@ -211,13 +186,8 @@ class Song extends Model
 
     /**
      * Scope a query to only include songs in a given directory.
-     *
-     * @param Builder $query
-     * @param string  $path  Full path of the directory
-     *
-     * @return Builder
      */
-    public function scopeInDirectory($query, $path)
+    public function scopeInDirectory(Builder $query, string $path): Builder
     {
         // Make sure the path ends with a directory separator.
         $path = rtrim(trim($path), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
@@ -226,34 +196,11 @@ class Song extends Model
     }
 
     /**
-     * Get all songs favored by a user.
-     *
-     * @param User $user
-     * @param bool $toArray
-     *
-     * @return Collection|array
-     */
-    public static function getFavorites(User $user, $toArray = false)
-    {
-        /** @var Collection $songs */
-        $songs = Interaction::whereUserIdAndLike($user->id, true)
-            ->with('song')
-            ->get()
-            ->pluck('song');
-
-        return $toArray ? $songs->toArray() : $songs;
-    }
-
-    /**
      * Get the song's Object Storage url for streaming or downloading.
-     *
-     * @param AwsClient $s3
-     *
-     * @return string
      */
-    public function getObjectStoragePublicUrl(AwsClient $s3 = null)
+    public function getObjectStoragePublicUrl(AwsClient $s3 = null): string
     {
-        return Cache::remember("OSUrl/{$this->id}", 60, function () use ($s3) {
+        return Cache::remember("OSUrl/{$this->id}", 60, static function () use ($s3) {
             if (!$s3) {
                 $s3 = AWS::createClient('s3');
             }
@@ -275,10 +222,8 @@ class Song extends Model
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
-     *
-     * @param string $value
      */
-    public function setTitleAttribute($value)
+    public function setTitleAttribute(string $value): void
     {
         $this->attributes['title'] = html_entity_decode($value);
     }
@@ -286,24 +231,16 @@ class Song extends Model
     /**
      * Some songs don't have a title.
      * Fall back to the file name (without extension) for such.
-     *
-     * @param string $value
-     *
-     * @return string
      */
-    public function getTitleAttribute($value)
+    public function getTitleAttribute(?string $value): string
     {
         return $value ?: pathinfo($this->path, PATHINFO_FILENAME);
     }
 
     /**
      * Prepare the lyrics for displaying.
-     *
-     * @param $value
-     *
-     * @return string
      */
-    public function getLyricsAttribute($value)
+    public function getLyricsAttribute(string $value): string
     {
         // We don't use nl2br() here, because the function actually preserves line breaks -
         // it just _appends_ a "<br />" after each of them. This would cause our client
@@ -314,12 +251,12 @@ class Song extends Model
     /**
      * Get the bucket and key name of an S3 object.
      *
-     * @return bool|array
+     * @return string[]|null
      */
-    public function getS3ParamsAttribute()
+    public function getS3ParamsAttribute(): ?array
     {
         if (!preg_match('/^s3:\\/\\/(.*)/', $this->path, $matches)) {
-            return false;
+            return null;
         }
 
         list($bucket, $key) = explode('/', $matches[1], 2);
@@ -329,8 +266,6 @@ class Song extends Model
 
     /**
      * Return the ID of the song when it's converted to string.
-     *
-     * @return string
      */
     public function __toString()
     {

@@ -9,8 +9,9 @@ use Illuminate\Cache\Repository as Cache;
 
 class MediaCacheService
 {
+    private const CACHE_KEY = 'media_cache';
+
     private $cache;
-    private $keyName = 'media_cache';
 
     public function __construct(Cache $cache)
     {
@@ -21,15 +22,15 @@ class MediaCacheService
      * Get media data.
      * If caching is enabled, the data will be retrieved from the cache.
      *
-     * @return array
+     * @return mixed[]
      */
-    public function get()
+    public function get(): array
     {
         if (!config('koel.cache_media')) {
             return $this->query();
         }
 
-        return $this->cache->rememberForever($this->keyName, function () {
+        return $this->cache->rememberForever(self::CACHE_KEY, function () {
             return $this->query();
         });
     }
@@ -37,9 +38,9 @@ class MediaCacheService
     /**
      * Query fresh data from the database.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function query()
+    private function query(): array
     {
         return [
             'albums' => Album::orderBy('name')->get(),
@@ -51,8 +52,8 @@ class MediaCacheService
     /**
      * Clear the media cache.
      */
-    public function clear()
+    public function clear(): void
     {
-        $this->cache->forget($this->keyName);
+        $this->cache->forget(self::CACHE_KEY);
     }
 }

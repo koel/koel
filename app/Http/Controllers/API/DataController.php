@@ -36,8 +36,6 @@ class DataController extends Controller
     /**
      * Get a set of application data.
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function index(Request $request)

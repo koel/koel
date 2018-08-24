@@ -7,8 +7,8 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use Exception;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use JWTAuth;
-use Laravel\BrowserKitTesting\DatabaseTransactions;
 use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
 use Mockery;
 use Tests\CreatesApplication;
@@ -93,9 +93,9 @@ abstract class TestCase extends BaseTestCase
 
     protected function tearDown()
     {
-        $this->addToAssertionCount(
-            Mockery::getContainer()->mockery_getExpectationCount()
-        );
+        if ($container = Mockery::getContainer()) {
+            $this->addToAssertionCount($container->mockery_getExpectationCount());
+        }
 
         Mockery::close();
         parent::tearDown();

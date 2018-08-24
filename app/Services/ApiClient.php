@@ -5,6 +5,7 @@ namespace App\Services;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use InvalidArgumentException;
+use SimpleXMLElement;
 
 /**
  * @method object get($uri, ...$args)
@@ -20,8 +21,6 @@ abstract class ApiClient
 
     /**
      * The GuzzleHttp client to talk to the API.
-     *
-     * @var Client;
      */
     protected $client;
 
@@ -42,20 +41,20 @@ abstract class ApiClient
     /**
      * Make a request to the API.
      *
-     * @param string $verb      The HTTP verb
-     * @param string $uri       The API URI (segment)
-     * @param bool   $appendKey Whether to automatically append the API key into the URI.
+     * @param string  $method    The HTTP method
+     * @param string  $uri       The API URI (segment)
+     * @param bool    $appendKey Whether to automatically append the API key into the URI.
      *                          While it's usually the case, some services (like Last.fm) requires
      *                          an "API signature" of the request. Appending an API key will break the request.
-     * @param array  $params    An array of parameters
+     * @param mixed[] $params    An array of parameters
      *
-     * @return object|string
+     * @return mixed|SimpleXMLElement|null
      */
-    public function request($verb, $uri, $appendKey = true, array $params = [])
+    public function request(string $method, string $uri, bool $appendKey = true, array $params = [])
     {
         try {
             $body = (string) $this->getClient()
-                ->$verb($this->buildUrl($uri, $appendKey), ['form_params' => $params])
+                ->$method($this->buildUrl($uri, $appendKey), ['form_params' => $params])
                 ->getBody();
 
             if ($this->responseFormat === 'json') {
@@ -68,21 +67,21 @@ abstract class ApiClient
 
             return $body;
         } catch (ClientException $e) {
-            return false;
+            return null;
         }
     }
 
     /**
      * Make an HTTP call to the external resource.
      *
-     * @param string $method The HTTP method
-     * @param array  $args   An array of parameters
+     * @param string  $method The HTTP method
+     * @param mixed[] $args   An array of parameters
      *
+     * @return mixed|null|SimpleXMLElement
      * @throws InvalidArgumentException
      *
-     * @return object
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         if (count($args) < 1) {
             throw new InvalidArgumentException('Magic request methods require a URI and optional options array');
@@ -98,12 +97,9 @@ abstract class ApiClient
     /**
      * Turn a URI segment into a full API URL.
      *
-     * @param string $uri
      * @param bool   $appendKey Whether to automatically append the API key into the URL.
-     *
-     * @return string
      */
-    public function buildUrl($uri, $appendKey = true)
+    public function buildUrl(string $uri, bool $appendKey = true): string
     {
         if (!starts_with($uri, ['http://', 'https://'])) {
             if ($uri[0] !== '/') {
@@ -124,17 +120,14 @@ abstract class ApiClient
         return $uri;
     }
 
-    /**
-     * @return Client
-     */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
 
-    abstract public function getKey();
+    abstract public function getKey(): ?string;
 
-    abstract public function getSecret();
+    abstract public function getSecret(): ?string;
 
-    abstract public function getEndpoint();
+    abstract public function getEndpoint(): string;
 }

@@ -22,7 +22,7 @@ class Streamer
         @error_reporting(0);
     }
 
-    public function setSong(Song $song)
+    public function setSong(Song $song): void
     {
         $this->song = $song;
 

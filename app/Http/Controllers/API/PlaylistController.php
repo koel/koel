@@ -25,8 +25,6 @@ class PlaylistController extends Controller
     /**
      * Create a new playlist.
      *
-     * @param PlaylistStoreRequest $request
-     *
      * @return JsonResponse
      */
     public function store(PlaylistStoreRequest $request)
@@ -41,9 +39,6 @@ class PlaylistController extends Controller
 
     /**
      * Rename a playlist.
-     *
-     * @param Request  $request
-     * @param Playlist $playlist
      *
      * @throws AuthorizationException
      *
@@ -62,9 +57,6 @@ class PlaylistController extends Controller
      * Sync a playlist with songs.
      * Any songs that are not populated here will be removed from the playlist.
      *
-     * @param PlaylistSyncRequest $request
-     * @param Playlist            $playlist
-     *
      * @throws AuthorizationException
      *
      * @return JsonResponse
@@ -81,8 +73,6 @@ class PlaylistController extends Controller
     /**
      * Get a playlist's all songs.
      *
-     * @param Playlist $playlist
-     *
      * @throws AuthorizationException
      *
      * @return JsonResponse
@@ -96,8 +86,6 @@ class PlaylistController extends Controller
 
     /**
      * Delete a playlist.
-     *
-     * @param Playlist $playlist
      *
      * @throws Exception
      * @throws AuthorizationException

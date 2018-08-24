@@ -10,10 +10,8 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
 {
     /**
      * Determines whether to use iTunes services.
-     *
-     * @return bool
      */
-    public function used()
+    public function used(): bool
     {
         return (bool) config('koel.itunes.enabled');
     }
@@ -27,7 +25,7 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
      *
      * @return string|false
      */
-    public function getTrackUrl($term, $album = '', $artist = '')
+    public function getTrackUrl(string $term, string $album = '', string $artist = ''): ?string
     {
         try {
             return Cache::remember(md5("itunes_track_url_{$term}{$album}{$artist}"), 24 * 60 * 7,
@@ -39,11 +37,12 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
                         'limit' => 1,
                     ];
 
-                    $response = (string) $this->client->get($this->getEndpoint(), ['query' => $params])->getBody();
-                    $response = json_decode($response);
+                    $response = json_decode(
+                        $this->getClient()->get($this->getEndpoint(), ['query' => $params])->getBody()
+                    );
 
                     if (!$response->resultCount) {
-                        return false;
+                        return null;
                     }
 
                     $trackUrl = $response->results[0]->trackViewUrl;
@@ -56,19 +55,21 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
         } catch (Exception $e) {
             Log::error($e);
 
-            return false;
+            return null;
         }
     }
 
-    public function getKey()
+    public function getKey(): ?string
     {
+        return null;
     }
 
-    public function getSecret()
+    public function getSecret(): ?string
     {
+        return null;
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return config('koel.itunes.endpoint');
     }

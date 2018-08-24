@@ -14,6 +14,7 @@ use Exception;
 use getID3;
 use getid3_exception;
 use Log;
+use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class MediaSyncService
@@ -24,7 +25,7 @@ class MediaSyncService
      *
      * @var array
      */
-    protected $allTags = [
+    private const APPLICABLE_TAGS = [
         'artist',
         'album',
         'title',
@@ -54,8 +55,7 @@ class MediaSyncService
     /**
      * Sync the media. Oh sync the media.
      *
-     * @param string|null      $mediaPath
-     * @param array            $tags        The tags to sync.
+     * @param string[]         $tags        The tags to sync.
      *                                      Only taken into account for existing records.
      *                                      New records will have all tags synced in regardless.
      * @param bool             $force       Whether to force syncing even unchanged files
@@ -63,8 +63,12 @@ class MediaSyncService
      *
      * @throws Exception
      */
-    public function sync($mediaPath = null, $tags = [], $force = false, SyncMediaCommand $syncCommand = null)
-    {
+    public function sync(
+        ?string $mediaPath = null,
+        array $tags = [],
+        bool $force = false,
+        SyncMediaCommand $syncCommand = null
+    ): void {
         if (!app()->runningInConsole()) {
             set_time_limit(config('koel.sync.timeout'));
         }
@@ -102,8 +106,8 @@ class MediaSyncService
             }
 
             if ($syncCommand) {
-                $syncCommand->updateProgressBar();
-                $syncCommand->logToConsole($file->getPath(), $result, $file->getSyncError());
+                $syncCommand->advanceProgressBar();
+                $syncCommand->logSyncStatusToConsole($file->getPath(), $result, $file->getSyncError());
             }
         }
 
@@ -123,9 +127,9 @@ class MediaSyncService
      *
      * @param string $path The directory's full path
      *
-     * @return array An array of SplFileInfo objects
+     * @return SplFileInfo[]
      */
-    public function gatherFiles($path)
+    public function gatherFiles(string $path): array
     {
         return iterator_to_array(
             Finder::create()
@@ -141,11 +145,9 @@ class MediaSyncService
     /**
      * Sync media using a watch record.
      *
-     * @param WatchRecordInterface $record The watch record.
-     *
      * @throws Exception
      */
-    public function syncByWatchRecord(WatchRecordInterface $record)
+    public function syncByWatchRecord(WatchRecordInterface $record): void
     {
         Log::info("New watch record received: '$record'");
         $record->isFile() ? $this->syncFileRecord($record) : $this->syncDirectoryRecord($record);
@@ -154,11 +156,9 @@ class MediaSyncService
     /**
      * Sync a file's watch record.
      *
-     * @param WatchRecordInterface $record
-     *
      * @throws Exception
      */
-    private function syncFileRecord(WatchRecordInterface $record)
+    private function syncFileRecord(WatchRecordInterface $record): void
     {
         $path = $record->getPath();
         Log::info("'$path' is a file.");
@@ -188,11 +188,9 @@ class MediaSyncService
     /**
      * Sync a directory's watch record.
      *
-     * @param WatchRecordInterface $record
-     *
      * @throws getid3_exception
      */
-    private function syncDirectoryRecord(WatchRecordInterface $record)
+    private function syncDirectoryRecord(WatchRecordInterface $record): void
     {
         $path = $record->getPath();
         Log::info("'$path' is a directory.");
@@ -221,11 +219,11 @@ class MediaSyncService
      * If the input array is empty or contains only invalid items, we use all tags.
      * Otherwise, we only use the valid items in it.
      *
-     * @param array $tags
+     * @param string[] $tags
      */
-    public function setTags($tags = [])
+    public function setTags(array $tags = []): void
     {
-        $this->tags = array_intersect((array) $tags, $this->allTags) ?: $this->allTags;
+        $this->tags = array_intersect((array) $tags, self::APPLICABLE_TAGS) ?: self::APPLICABLE_TAGS;
 
         // We always keep track of mtime.
         if (!in_array('mtime', $this->tags, true)) {
@@ -235,12 +233,8 @@ class MediaSyncService
 
     /**
      * Generate a unique hash for a file path.
-     *
-     * @param $path
-     *
-     * @return string
      */
-    public function getFileHash($path)
+    public function getFileHash(string $path): string
     {
         return File::getHash($path);
     }
@@ -250,7 +244,7 @@ class MediaSyncService
      *
      * @throws Exception
      */
-    public function tidy()
+    public function tidy(): void
     {
         $inUseAlbums = Song::select('album_id')
             ->groupBy('album_id')

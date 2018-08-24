@@ -18,18 +18,15 @@ class AlbumInformationFetched extends Event
         $this->information = $information;
     }
 
-    /**
-     * @return Album
-     */
-    public function getAlbum()
+    public function getAlbum(): Album
     {
         return $this->album;
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
-    public function getInformation()
+    public function getInformation(): array
     {
         return $this->information;
     }

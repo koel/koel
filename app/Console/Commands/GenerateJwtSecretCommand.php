@@ -19,7 +19,7 @@ class GenerateJwtSecretCommand extends Command
         $this->dotenvEditor = $dotenvEditor;
     }
 
-    public function handle()
+    public function handle(): void
     {
         if (config('jwt.secret')) {
             $this->comment('JWT secret exists -- skipping');

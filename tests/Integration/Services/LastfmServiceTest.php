@@ -55,9 +55,8 @@ class LastfmServiceTest extends TestCase
         ]);
 
         $api = new LastfmService($client);
-        $result = $api->getArtistInformation($artist->name);
 
-        $this->assertFalse($result);
+        $this->assertNull($api->getArtistInformation($artist->name));
     }
 
     /**
@@ -115,8 +114,7 @@ class LastfmServiceTest extends TestCase
         ]);
 
         $api = new LastfmService($client);
-        $result = $api->getAlbumInformation($album->name, $album->artist->name);
 
-        $this->assertFalse($result);
+        $this->assertNull($api->getAlbumInformation($album->name, $album->artist->name));
     }
 }

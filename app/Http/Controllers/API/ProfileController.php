@@ -20,8 +20,6 @@ class ProfileController extends Controller
     /**
      * Get the current user's profile.
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function show(Request $request)
@@ -31,8 +29,6 @@ class ProfileController extends Controller
 
     /**
      * Update the current user's profile.
-     *
-     * @param ProfileUpdateRequest $request
      *
      * @throws RuntimeException
      *

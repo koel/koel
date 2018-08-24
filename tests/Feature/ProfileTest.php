@@ -4,13 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery\MockInterface;
 
 class ProfileTest extends TestCase
 {
-    use WithoutMiddleware;
-
     /** @var MockInterface */
     private $hash;
 

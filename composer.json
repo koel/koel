@@ -6,7 +6,7 @@
   "type": "project",
   "require": {
     "php": ">=5.6.4",
-    "laravel/framework": "5.4.*",
+    "laravel/framework": "5.5.*",
     "james-heinrich/getid3": "^1.9",
     "guzzlehttp/guzzle": "^6.1",
     "tymon/jwt-auth": "^0.5.6",
@@ -21,15 +21,16 @@
     "ext-SimpleXML": "*"
   },
   "require-dev": {
+    "filp/whoops": "~2.0",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "~1.0",
-    "phpunit/phpunit": "~5.7",
-    "symfony/css-selector": "2.8.*|3.0.*",
+    "phpunit/phpunit": "~6.0",
+    "symfony/css-selector": "~3.1",
     "symfony/dom-crawler": "^3.2",
     "facebook/webdriver": "^1.2",
     "barryvdh/laravel-ide-helper": "^2.1",
     "laravel/tinker": "^1.0",
-    "laravel/browser-kit-testing": "^1.0",
+    "laravel/browser-kit-testing": "^2.0",
     "codeclimate/php-test-reporter": "^0.4.4",
     "mikey179/vfsStream": "^1.6"
   },
@@ -49,6 +50,10 @@
     ]
   },
   "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover"
+    ],
     "post-install-cmd": [
       "php artisan clear-compiled",
       "php artisan optimize",
@@ -74,8 +79,6 @@
   },
   "config": {
     "preferred-install": "dist",
-    "platform": {
-      "php": "5.6.31"
-    }
+    "optimize-autoloader": true
   }
 }

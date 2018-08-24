@@ -27,8 +27,6 @@ class SongController extends Controller
     /**
      * Store a new song or update an existing one with data from AWS.
      *
-     * @param PutSongRequest $request
-     *
      * @return JsonResponse
      */
     public function put(PutSongRequest $request)
@@ -63,8 +61,6 @@ class SongController extends Controller
 
     /**
      * Remove a song whose info matches with data sent from AWS.
-     *
-     * @param RemoveSongRequest $request
      *
      * @throws Exception
      *

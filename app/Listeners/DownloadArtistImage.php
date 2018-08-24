@@ -14,14 +14,14 @@ class DownloadArtistImage
         $this->mediaMetadataService = $mediaMetadataService;
     }
 
-    public function handle(ArtistInformationFetched $event)
+    public function handle(ArtistInformationFetched $event): void
     {
         $info = $event->getInformation();
         $artist = $event->getArtist();
 
         $image = array_get($info, 'image');
 
-        // If our current album has no cover, and Last.fm has one, why don't we steal it?
+        // If our artist has no image, and Last.fm has one, we steal it?
         if (!$artist->has_image && is_string($image) && ini_get('allow_url_fopen')) {
             $this->mediaMetadataService->downloadArtistImage($artist, $image);
         }

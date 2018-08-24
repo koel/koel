@@ -18,12 +18,9 @@ class PlaylistTest extends TestCase
         $this->createSampleMediaSet();
     }
 
-    /** @test */
-    public function user_can_create_a_playlist()
+    public function testCreatingPlaylist()
     {
         $user = factory(User::class)->create();
-
-        // Let's create a playlist with 3 songs
         $songs = Song::orderBy('id')->take(3)->get();
 
         $this->postAsUser('api/playlist', [

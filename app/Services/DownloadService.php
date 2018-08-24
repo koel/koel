@@ -21,7 +21,7 @@ class DownloadService
      *
      * @return string Full path to the generated archive
      */
-    public function from($mixed)
+    public function from($mixed): string
     {
         switch (get_class($mixed)) {
             case Song::class:
@@ -39,14 +39,7 @@ class DownloadService
         throw new InvalidArgumentException('Unsupported download type.');
     }
 
-    /**
-     * Generate the downloadable path for a song.
-     *
-     * @param Song $song
-     *
-     * @return string
-     */
-    public function fromSong(Song $song)
+    public function fromSong(Song $song): string
     {
         if ($s3Params = $song->s3_params) {
             // The song is hosted on Amazon S3.
@@ -69,14 +62,7 @@ class DownloadService
         return $localPath;
     }
 
-    /**
-     * Generate a downloadable path of multiple songs in zip format.
-     *
-     * @param Collection $songs
-     *
-     * @return string
-     */
-    protected function fromMultipleSongs(Collection $songs)
+    protected function fromMultipleSongs(Collection $songs): string
     {
         if ($songs->count() === 1) {
             return $this->fromSong($songs->first());
@@ -88,32 +74,17 @@ class DownloadService
             ->getPath();
     }
 
-    /**
-     * @param Playlist $playlist
-     *
-     * @return string
-     */
-    protected function fromPlaylist(Playlist $playlist)
+    protected function fromPlaylist(Playlist $playlist): string
     {
         return $this->fromMultipleSongs($playlist->songs);
     }
 
-    /**
-     * @param Album $album
-     *
-     * @return string
-     */
-    protected function fromAlbum(Album $album)
+    protected function fromAlbum(Album $album): string
     {
         return $this->fromMultipleSongs($album->songs);
     }
 
-    /**
-     * @param Artist $artist
-     *
-     * @return string
-     */
-    protected function fromArtist(Artist $artist)
+    protected function fromArtist(Artist $artist): string
     {
         return $this->fromMultipleSongs($artist->songs);
     }

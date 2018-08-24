@@ -50,13 +50,13 @@ class MediaCacheServiceTest extends TestCase
 
     public function testGetIfCacheIsAvailable()
     {
-        $this->cache->shouldReceive('rememberForever')->andReturn('dummy');
+        $this->cache->shouldReceive('rememberForever')->andReturn(['dummy']);
 
         config(['koel.cache_media' => true]);
 
         $data = $this->mediaCacheService->get();
 
-        $this->assertEquals('dummy', $data);
+        $this->assertEquals(['dummy'], $data);
     }
 
     public function testCacheDisabled()

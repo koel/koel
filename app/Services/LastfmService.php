@@ -23,20 +23,16 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
 
     /**
      * Determine if our application is using Last.fm.
-     *
-     * @return bool
      */
-    public function used()
+    public function used(): bool
     {
         return $this->getKey();
     }
 
     /**
      * Determine if Last.fm integration is enabled.
-     *
-     * @return bool
      */
-    public function enabled()
+    public function enabled(): bool
     {
         return $this->getKey() && $this->getSecret();
     }
@@ -46,12 +42,12 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      *
      * @param $name string Name of the artist
      *
-     * @return array|false
+     * @return mixed[]|null
      */
-    public function getArtistInformation($name)
+    public function getArtistInformation(string $name): ?array
     {
         if (!$this->enabled()) {
-            return false;
+            return null;
         }
 
         $name = urlencode($name);
@@ -70,32 +66,32 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
             $response = json_decode(json_encode($response), true);
 
             if (!$response || !$artist = array_get($response, 'artist')) {
-                return false;
+                return null;
             }
 
             return $this->buildArtistInformation($artist);
         } catch (Exception $e) {
             Log::error($e);
 
-            return false;
+            return null;
         }
     }
 
     /**
      * Build a Koel-usable array of artist information using the data from Last.fm.
      *
-     * @param array $lastfmArtist
+     * @param mixed[] $artistData
      *
-     * @return array
+     * @return mixed[]
      */
-    private function buildArtistInformation(array $lastfmArtist)
+    private function buildArtistInformation(array $artistData): array
     {
         return [
-            'url' => array_get($lastfmArtist, 'url'),
-            'image' => count($lastfmArtist['image']) > 3 ? $lastfmArtist['image'][3] : $lastfmArtist['image'][0],
+            'url' => array_get($artistData, 'url'),
+            'image' => count($artistData['image']) > 3 ? $artistData['image'][3] : $artistData['image'][0],
             'bio' => [
-                'summary' => $this->formatText(array_get($lastfmArtist, 'bio.summary')),
-                'full' => $this->formatText(array_get($lastfmArtist, 'bio.content')),
+                'summary' => $this->formatText(array_get($artistData, 'bio.summary')),
+                'full' => $this->formatText(array_get($artistData, 'bio.content')),
             ],
         ];
     }
@@ -103,27 +99,24 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
     /**
      * Get information about an album.
      *
-     * @param string $name       Name of the album
-     * @param string $artistName Name of the artist
-     *
-     * @return array|false
+     * @return mixed[]|null
      */
-    public function getAlbumInformation($name, $artistName)
+    public function getAlbumInformation(string $albumName, string $artistName): ?array
     {
         if (!$this->enabled()) {
-            return false;
+            return null;
         }
 
-        $name = urlencode($name);
+        $albumName = urlencode($albumName);
         $artistName = urlencode($artistName);
 
         try {
-            $cacheKey = md5("lastfm_album_{$name}_{$artistName}");
+            $cacheKey = md5("lastfm_album_{$albumName}_{$artistName}");
 
             if ($response = cache($cacheKey)) {
                 $response = simplexml_load_string($response);
             } else {
-                if ($response = $this->get("?method=album.getInfo&autocorrect=1&album=$name&artist=$artistName")) {
+                if ($response = $this->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName")) {
                     cache([$cacheKey => $response->asXML()], 24 * 60 * 7);
                 }
             }
@@ -131,32 +124,32 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
             $response = json_decode(json_encode($response), true);
 
             if (!$response || !$album = array_get($response, 'album')) {
-                return false;
+                return null;
             }
 
             return $this->buildAlbumInformation($album);
         } catch (Exception $e) {
             Log::error($e);
 
-            return false;
+            return null;
         }
     }
 
     /**
      * Build a Koel-usable array of album information using the data from Last.fm.
      *
-     * @param array $lastfmAlbum
+     * @param mixed[] $albumData
      *
-     * @return array
+     * @return mixed[]
      */
-    private function buildAlbumInformation(array $lastfmAlbum)
+    private function buildAlbumInformation(array $albumData): array
     {
         return [
-            'url' => array_get($lastfmAlbum, 'url'),
-            'image' => count($lastfmAlbum['image']) > 3 ? $lastfmAlbum['image'][3] : $lastfmAlbum['image'][0],
+            'url' => array_get($albumData, 'url'),
+            'image' => count($albumData['image']) > 3 ? $albumData['image'][3] : $albumData['image'][0],
             'wiki' => [
-                'summary' => $this->formatText(array_get($lastfmAlbum, 'wiki.summary')),
-                'full' => $this->formatText(array_get($lastfmAlbum, 'wiki.content')),
+                'summary' => $this->formatText(array_get($albumData, 'wiki.summary')),
+                'full' => $this->formatText(array_get($albumData, 'wiki.content')),
             ],
             'tracks' => array_map(function ($track) {
                 return [
@@ -164,7 +157,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
                     'length' => (int) $track['duration'],
                     'url' => $track['url'],
                 ];
-            }, array_get($lastfmAlbum, 'tracks.track', [])),
+            }, array_get($albumData, 'tracks.track', [])),
         ];
     }
 
@@ -174,10 +167,8 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @param string $token The token after successfully connecting to Last.fm
      *
      * @link http://www.last.fm/api/webauth#4
-     *
-     * @return string The token key
      */
-    public function getSessionKey($token)
+    public function getSessionKey(string $token): ?string
     {
         $query = $this->buildAuthCallParams([
             'method' => 'auth.getSession',
@@ -189,7 +180,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         } catch (Exception $e) {
             Log::error($e);
 
-            return false;
+            return null;
         }
     }
 
@@ -201,10 +192,8 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @param string|int $timestamp The UNIX timestamp
      * @param string     $album     The album name
      * @param string     $sk        The session key
-     *
-     * @return bool
      */
-    public function scrobble($artist, $track, $timestamp, $album, $sk)
+    public function scrobble(string $artist, string $track, int $timestamp, string $album, string $sk): void
     {
         $params = compact('artist', 'track', 'timestamp', 'sk');
 
@@ -215,11 +204,9 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         $params['method'] = 'track.scrobble';
 
         try {
-            return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
+            $this->post('/', $this->buildAuthCallParams($params), false);
         } catch (Exception $e) {
             Log::error($e);
-
-            return false;
         }
     }
 
@@ -230,20 +217,16 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @param string $artist The artist's name
      * @param string $sk     The session key
      * @param bool   $love   Whether to love or unlove. Such cheesy terms... urrgggh
-     *
-     * @return bool
      */
-    public function toggleLoveTrack($track, $artist, $sk, $love = true)
+    public function toggleLoveTrack(string $track, string $artist, string $sk, ?bool $love = true): void
     {
         $params = compact('track', 'artist', 'sk');
         $params['method'] = $love ? 'track.love' : 'track.unlove';
 
         try {
-            return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
+            $this->post('/', $this->buildAuthCallParams($params), false);
         } catch (Exception $e) {
             Log::error($e);
-
-            return false;
         }
     }
 
@@ -255,10 +238,8 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @param string    $album    Name of the album
      * @param int|float $duration Duration of the track, in seconds
      * @param string    $sk       The session key
-     *
-     * @return bool
      */
-    public function updateNowPlaying($artist, $track, $album, $duration, $sk)
+    public function updateNowPlaying(string $artist, string $track, string $album, float $duration, string $sk): void
     {
         $params = compact('artist', 'track', 'duration', 'sk');
         $params['method'] = 'track.updateNowPlaying';
@@ -268,11 +249,9 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         }
 
         try {
-            return (bool) $this->post('/', $this->buildAuthCallParams($params), false);
+            $this->post('/', $this->buildAuthCallParams($params), false);
         } catch (Exception $e) {
             Log::error($e);
-
-            return false;
         }
     }
 
@@ -289,7 +268,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      *
      * @return array|string
      */
-    public function buildAuthCallParams(array $params, $toString = false)
+    public function buildAuthCallParams(array $params, bool $toString = false)
     {
         $params['api_key'] = $this->getKey();
         ksort($params);
@@ -297,9 +276,11 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         // Generate the API signature.
         // @link http://www.last.fm/api/webauth#6
         $str = '';
+
         foreach ($params as $name => $value) {
             $str .= $name.$value;
         }
+
         $str .= $this->getSecret();
         $params['api_sig'] = md5($str);
 
@@ -317,12 +298,8 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
 
     /**
      * Correctly format a string returned by Last.fm.
-     *
-     * @param string $str
-     *
-     * @return string
      */
-    protected function formatText($str)
+    protected function formatText(string $str): string
     {
         if (!$str) {
             return '';
@@ -331,17 +308,17 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($str)))));
     }
 
-    public function getKey()
+    public function getKey(): string
     {
         return config('koel.lastfm.key');
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return config('koel.lastfm.endpoint');
     }
 
-    public function getSecret()
+    public function getSecret(): string
     {
         return config('koel.lastfm.secret');
     }

@@ -14,14 +14,11 @@ class SongController extends Controller
     public function __construct(MediaInformationService $mediaInformationService, YouTubeService $youTubeService)
     {
         parent::__construct($mediaInformationService);
-
         $this->youTubeService = $youTubeService;
     }
 
     /**
      * Get extra information about a song.
-     *
-     * @param Song $song
      *
      * @return JsonResponse
      */

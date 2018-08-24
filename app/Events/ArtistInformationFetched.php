@@ -18,18 +18,15 @@ class ArtistInformationFetched
         $this->information = $information;
     }
 
-    /**
-     * @return Artist
-     */
-    public function getArtist()
+    public function getArtist(): Artist
     {
         return $this->artist;
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
-    public function getInformation()
+    public function getInformation(): array
     {
         return $this->information;
     }

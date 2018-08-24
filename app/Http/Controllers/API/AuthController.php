@@ -13,8 +13,6 @@ class AuthController extends Controller
     /**
      * Log a user in.
      *
-     * @param UserLoginRequest $request
-     *
      * @return JsonResponse
      */
     public function login(UserLoginRequest $request)

@@ -19,14 +19,12 @@ class MediaInformationService
     /**
      * Get extra information about an album from Last.fm.
      *
-     * @param Album $album
-     *
-     * @return array|false The album info in an array format, or false on failure.
+     * @return array|null The album info in an array format, or null on failure.
      */
-    public function getAlbumInformation(Album $album)
+    public function getAlbumInformation(Album $album): ?array
     {
         if ($album->is_unknown) {
-            return false;
+            return null;
         }
 
         $info = $this->lastfmService->getAlbumInformation($album->name, $album->artist->name);
@@ -45,14 +43,12 @@ class MediaInformationService
     /**
      * Get extra information about an artist from Last.fm.
      *
-     * @param Artist $artist
-     *
-     * @return array|false The artist info in an array format, or false on failure.
+     * @return array|null The artist info in an array format, or null on failure.
      */
-    public function getArtistInformation(Artist $artist)
+    public function getArtistInformation(Artist $artist): ?array
     {
         if ($artist->is_unknown) {
-            return false;
+            return null;
         }
 
         $info = $this->lastfmService->getArtistInformation($artist->name);

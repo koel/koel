@@ -13,11 +13,7 @@ class ClearMediaCache
         $this->mediaCacheService = $mediaCacheService;
     }
 
-    /**
-     * Fired every time a LibraryChanged event is triggered.
-     * Clears the media cache.
-     */
-    public function handle()
+    public function handle(): void
     {
         $this->mediaCacheService->clear();
     }

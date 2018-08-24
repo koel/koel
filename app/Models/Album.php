@@ -32,86 +32,49 @@ class Album extends Model
     protected $casts = ['artist_id' => 'integer'];
     protected $appends = ['is_compilation'];
 
-    /**
-     * An album belongs to an artist.
-     *
-     * @return BelongsTo
-     */
-    public function artist()
+    public function artist(): BelongsTo
     {
         return $this->belongsTo(Artist::class);
     }
 
-    /**
-     * An album can contain many songs.
-     *
-     * @return HasMany
-     */
-    public function songs()
+    public function songs(): HasMany
     {
         return $this->hasMany(Song::class);
     }
 
-    /**
-     * Indicate if the album is unknown.
-     *
-     * @return bool
-     */
-    public function getIsUnknownAttribute()
+    public function getIsUnknownAttribute(): bool
     {
         return $this->id === self::UNKNOWN_ID;
     }
 
     /**
      * Get an album using some provided information.
-     *
-     * @param Artist $artist
-     * @param string $name
-     * @param bool   $isCompilation
-     *
-     * @return self
+     * If such is not found, a new album will be created using the information.
      */
-    public static function get(Artist $artist, $name, $isCompilation = false)
+    public static function get(Artist $artist, string $name, bool $isCompilation = false): self
     {
         // If this is a compilation album, its artist must be "Various Artists"
         if ($isCompilation) {
             $artist = Artist::getVariousArtist();
         }
 
-        return self::firstOrCreate([
+        return static::firstOrCreate([
             'artist_id' => $artist->id,
             'name' => $name ?: self::UNKNOWN_NAME,
         ]);
     }
 
-    /**
-     * Set the album cover.
-     *
-     * @param string $value
-     */
-    public function setCoverAttribute($value)
+    public function setCoverAttribute(?string $value): void
     {
         $this->attributes['cover'] = $value ?: self::UNKNOWN_COVER;
     }
 
-    /**
-     * Get the album cover.
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function getCoverAttribute($value)
+    public function getCoverAttribute(?string $value): string
     {
         return app()->staticUrl('public/img/covers/'.($value ?: self::UNKNOWN_COVER));
     }
 
-    /**
-     * Determine if the current album has a cover.
-     *
-     * @return bool
-     */
-    public function getHasCoverAttribute()
+    public function getHasCoverAttribute(): bool
     {
         $cover = array_get($this->attributes, 'cover');
 
@@ -129,22 +92,13 @@ class Album extends Model
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
-     *
-     * @param $value
-     *
-     * @return string
      */
-    public function getNameAttribute($value)
+    public function getNameAttribute(string $value): string
     {
         return html_entity_decode($value);
     }
 
-    /**
-     * Determine if the album is a compilation.
-     *
-     * @return bool
-     */
-    public function getIsCompilationAttribute()
+    public function getIsCompilationAttribute(): bool
     {
         return $this->artist_id === Artist::VARIOUS_ID;
     }

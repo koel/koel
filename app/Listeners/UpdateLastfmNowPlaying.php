@@ -8,29 +8,14 @@ use App\Services\LastfmService;
 
 class UpdateLastfmNowPlaying
 {
-    /**
-     * The Last.fm service instance.
-     *
-     * @var LastfmService
-     */
     protected $lastfm;
 
-    /**
-     * Create the event listener.
-     *
-     * @param LastfmService $lastfm
-     */
     public function __construct(LastfmService $lastfm)
     {
         $this->lastfm = $lastfm;
     }
 
-    /**
-     * Handle the event.
-     *
-     * @param SongStartedPlaying $event
-     */
-    public function handle(SongStartedPlaying $event)
+    public function handle(SongStartedPlaying $event): void
     {
         if (!$this->lastfm->enabled() ||
             !($sessionKey = $event->user->lastfm_session_key) ||
