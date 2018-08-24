@@ -14,14 +14,14 @@ class TranscodingStreamer extends Streamer implements TranscodingStreamerInterfa
     /**
      * Time point to start transcoding from.
      *
-     * @var int
+     * @var float
      */
     private $startTime;
 
     /**
      * On-the-fly stream the current song while transcoding.
      */
-    public function stream()
+    public function stream(): void
     {
         $ffmpeg = config('koel.streaming.ffmpeg_path');
         abort_unless(is_executable($ffmpeg), 500, 'Transcoding requires valid ffmpeg settings.');
@@ -47,12 +47,12 @@ class TranscodingStreamer extends Streamer implements TranscodingStreamerInterfa
         passthru("$ffmpeg ".implode($args, ' '));
     }
 
-    public function setBitRate($bitRate)
+    public function setBitRate(int $bitRate): void
     {
         $this->bitRate = $bitRate;
     }
 
-    public function setStartTime($startTime)
+    public function setStartTime(float $startTime): void
     {
         $this->startTime = $startTime;
     }

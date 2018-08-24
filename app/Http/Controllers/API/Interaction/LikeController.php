@@ -10,8 +10,6 @@ class LikeController extends Controller
     /**
      * Like or unlike a song as the currently authenticated user.
      *
-     * @param SongLikeRequest $request
-     *
      * @return JsonResponse
      */
     public function store(SongLikeRequest $request)

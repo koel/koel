@@ -11,11 +11,8 @@ class MediaMetadataService
 {
     /**
      * Download a copy of the album cover.
-     *
-     * @param Album  $album
-     * @param string $imageUrl
      */
-    public function downloadAlbumCover(Album $album, $imageUrl)
+    public function downloadAlbumCover(Album $album, string $imageUrl): void
     {
         $extension = explode('.', $imageUrl);
         $this->writeAlbumCover($album, file_get_contents($imageUrl), last($extension));
@@ -24,11 +21,10 @@ class MediaMetadataService
     /**
      * Copy a cover file from an existing image on the system.
      *
-     * @param Album  $album
      * @param string $source      The original image's full path.
      * @param string $destination The destination path. Automatically generated if empty.
      */
-    public function copyAlbumCover(Album $album, $source, $destination = '')
+    public function copyAlbumCover(Album $album, string $source, string $destination = ''): void
     {
         $extension = pathinfo($source, PATHINFO_EXTENSION);
         $destination = $destination ?: $this->generateAlbumCoverPath($extension);
@@ -40,12 +36,9 @@ class MediaMetadataService
     /**
      * Write an album cover image file with binary data and update the Album with the new cover attribute.
      *
-     * @param Album  $album
-     * @param string $binaryData
-     * @param string $extension   The file extension
      * @param string $destination The destination path. Automatically generated if empty.
      */
-    public function writeAlbumCover(Album $album, $binaryData, $extension, $destination = '')
+    public function writeAlbumCover(Album $album, string $binaryData, string $extension, string $destination = ''): void
     {
         try {
             $extension = trim(strtolower($extension), '. ');
@@ -60,11 +53,8 @@ class MediaMetadataService
 
     /**
      * Download a copy of the artist image.
-     *
-     * @param Artist $artist
-     * @param string $imageUrl
      */
-    public function downloadArtistImage(Artist $artist, $imageUrl)
+    public function downloadArtistImage(Artist $artist, string $imageUrl): void
     {
         $extension = explode('.', $imageUrl);
         $this->writeArtistImage($artist, file_get_contents($imageUrl), last($extension));
@@ -73,13 +63,14 @@ class MediaMetadataService
     /**
      * Write an artist image file with binary data and update the Artist with the new image attribute.
      *
-     * @param Artist $artist
-     * @param string $binaryData
-     * @param string $extension   The file extension
      * @param string $destination The destination path. Automatically generated if empty.
      */
-    public function writeArtistImage(Artist $artist, $binaryData, $extension, $destination = '')
-    {
+    public function writeArtistImage(
+        Artist $artist,
+        string $binaryData,
+        string $extension,
+        string $destination = ''
+    ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
             $destination = $destination ?: $this->generateArtistImagePath($extension);
@@ -95,10 +86,8 @@ class MediaMetadataService
      * Generate a random path for an album cover image.
      *
      * @param string $extension The extension of the cover (without dot)
-     *
-     * @return string
      */
-    private function generateAlbumCoverPath($extension)
+    private function generateAlbumCoverPath($extension): string
     {
         return sprintf('%s/public/img/covers/%s.%s', app()->publicPath(), uniqid('', true), $extension);
     }
@@ -107,10 +96,8 @@ class MediaMetadataService
      * Generate a random path for an artist image.
      *
      * @param string $extension The extension of the cover (without dot)
-     *
-     * @return string
      */
-    private function generateArtistImagePath($extension)
+    private function generateArtistImagePath($extension): string
     {
         return sprintf('%s/public/img/artists/%s.%s', app()->publicPath(), uniqid('', true), $extension);
     }

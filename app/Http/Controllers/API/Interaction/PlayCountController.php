@@ -11,8 +11,6 @@ class PlayCountController extends Controller
     /**
      * Increase a song's play count as the currently authenticated user.
      *
-     * @param StorePlayCountRequest $request
-     *
      * @return JsonResponse
      */
     public function store(StorePlayCountRequest $request)

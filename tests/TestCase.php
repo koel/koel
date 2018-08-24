@@ -19,12 +19,11 @@ abstract class TestCase extends BaseTestCase
 
     protected function tearDown()
     {
-        $this->addToAssertionCount(
-            Mockery::getContainer()->mockery_getExpectationCount()
-        );
+        if ($container = Mockery::getContainer()) {
+            $this->addToAssertionCount($container->mockery_getExpectationCount());
+        }
 
         Mockery::close();
-
         parent::tearDown();
     }
 }

@@ -10,8 +10,6 @@ class ArtistController extends Controller
     /**
      * Get extra information about an artist via Last.fm.
      *
-     * @param Artist $artist
-     *
      * @return JsonResponse
      */
     public function show(Artist $artist)

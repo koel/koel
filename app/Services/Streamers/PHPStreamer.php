@@ -8,7 +8,7 @@ class PHPStreamer extends Streamer implements DirectStreamerInterface
      * Stream the current song using the most basic PHP method: readfile()
      * Credits: DaveRandom @ http://stackoverflow.com/a/4451376/794641.
      */
-    public function stream()
+    public function stream(): void
     {
         // Get the 'Range' header if one was sent
         if (array_key_exists('HTTP_RANGE', $_SERVER)) {

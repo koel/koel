@@ -3,16 +3,11 @@
 namespace App\Http\Controllers\API\Interaction;
 
 use App\Http\Requests\API\BatchInteractionRequest;
-use Illuminate\Http\JsonResponse;
 
 class BatchLikeController extends Controller
 {
     /**
      * Like several songs at once as the currently authenticated user.
-     *
-     * @param BatchInteractionRequest $request
-     *
-     * @return JsonResponse
      */
     public function store(BatchInteractionRequest $request)
     {
@@ -23,10 +18,6 @@ class BatchLikeController extends Controller
 
     /**
      * Unlike several songs at once as the currently authenticated user.
-     *
-     * @param BatchInteractionRequest $request
-     *
-     * @return JsonResponse
      */
     public function destroy(BatchInteractionRequest $request)
     {

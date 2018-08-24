@@ -9,10 +9,8 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
 {
     /**
      * Determine if our application is using YouTube.
-     *
-     * @return bool
      */
-    public function enabled()
+    public function enabled(): bool
     {
         return (bool) $this->getKey();
     }
@@ -20,12 +18,9 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
     /**
      * Search for YouTube videos related to a song.
      *
-     * @param Song   $song
-     * @param string $pageToken
-     *
-     * @return object|false
+     * @return mixed|null
      */
-    public function searchVideosRelatedToSong(Song $song, $pageToken = '')
+    public function searchVideosRelatedToSong(Song $song, string $pageToken = '')
     {
         $q = $song->title;
 
@@ -44,12 +39,12 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
      * @param string $pageToken YouTube page token (e.g. for next/previous page)
      * @param int    $perPage   Number of results per page
      *
-     * @return object|false
+     * @return mixed|null
      */
-    public function search($q, $pageToken = '', $perPage = 10)
+    public function search(string $q, string $pageToken = '', int $perPage = 10)
     {
         if (!$this->enabled()) {
-            return false;
+            return null;
         }
 
         $uri = sprintf('search?part=snippet&type=video&maxResults=%s&pageToken=%s&q=%s',
@@ -63,20 +58,18 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
         });
     }
 
-    /** @return string */
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return config('koel.youtube.endpoint');
     }
 
-    /** @return string */
-    public function getKey()
+    public function getKey(): string
     {
         return config('koel.youtube.key');
     }
 
-    /** @return string|null */
-    public function getSecret()
+    public function getSecret(): ?string
     {
+        return null;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Libraries\WatchRecord;
 
-class WatchRecord
+abstract class WatchRecord implements WatchRecordInterface
 {
     /**
      * Array of the occurred events.
@@ -28,53 +28,29 @@ class WatchRecord
     protected $input;
 
     /**
-     * WatchRecord constructor.
-     *
      * @param $input string The output from a watcher command (which is an input for our script)
      */
-    public function __construct($input)
+    public function __construct(string $input)
     {
         $this->input = $input;
     }
 
-    /**
-     * Determine if the object is a directory.
-     *
-     * @return bool
-     */
-    public function isDirectory()
-    {
-        return true;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * Determine if the object is a file.
-     *
-     * @return bool
-     */
-    public function isFile()
+    public function isFile(): bool
     {
         return !$this->isDirectory();
     }
 
     /**
      * Check if a given event name exists in the event array.
-     *
-     * @param $event string
-     *
-     * @return bool
      */
-    protected function eventExists($event)
+    protected function eventExists(string $event): bool
     {
         return in_array($event, $this->events, true);
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
     }
 
     public function __toString()

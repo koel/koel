@@ -6,14 +6,11 @@ use App\Models\User;
 use App\Services\LastfmService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery as m;
 use Tymon\JWTAuth\JWTAuth;
 
 class LastfmTest extends TestCase
 {
-    use WithoutMiddleware;
-
     public function testGetSessionKey()
     {
         /** @var Client $client */
@@ -21,15 +18,17 @@ class LastfmTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/session-key.xml')),
         ]);
 
-        $this->assertEquals('foo', (new LastfmService($client))->getSessionKey('bar'));
+        self::assertEquals('foo', (new LastfmService($client))->getSessionKey('bar'));
     }
 
     public function testSetSessionKey()
     {
         $user = factory(User::class)->create();
-        $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user);
+        $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user)
+            ->assertResponseOk();
+
         $user = User::find($user->id);
-        $this->assertEquals('foo', $user->lastfm_session_key);
+        self::assertEquals('foo', $user->lastfm_session_key);
     }
 
     public function testConnectToLastfm()

@@ -72,3 +72,5 @@ Temporary Items
 *.swp
 *.swo
 *~
+
+/log

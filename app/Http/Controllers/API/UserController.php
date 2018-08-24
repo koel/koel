@@ -23,8 +23,6 @@ class UserController extends Controller
     /**
      * Create a new user.
      *
-     * @param UserStoreRequest $request
-     *
      * @throws RuntimeException
      *
      * @return JsonResponse
@@ -40,9 +38,6 @@ class UserController extends Controller
 
     /**
      * Update a user.
-     *
-     * @param UserUpdateRequest $request
-     * @param User              $user
      *
      * @throws RuntimeException
      *
@@ -61,8 +56,6 @@ class UserController extends Controller
 
     /**
      * Delete a user.
-     *
-     * @param User $user
      *
      * @throws Exception
      * @throws AuthorizationException

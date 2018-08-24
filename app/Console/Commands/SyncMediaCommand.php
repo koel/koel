@@ -38,7 +38,7 @@ class SyncMediaCommand extends Command
     /**
      * @throws Exception
      */
-    public function handle()
+    public function handle(): void
     {
         if (!Setting::get('media_path')) {
             $this->warn("Media path hasn't been configured. Let's set it up.");
@@ -68,7 +68,7 @@ class SyncMediaCommand extends Command
      *
      * @throws Exception
      */
-    protected function syncAll()
+    protected function syncAll(): void
     {
         $this->info('Koel syncing started.'.PHP_EOL);
 
@@ -101,19 +101,15 @@ class SyncMediaCommand extends Command
      *
      * @throws Exception
      */
-    public function syngle($record)
+    public function syngle(string $record): void
     {
         $this->mediaSyncService->syncByWatchRecord(new InotifyWatchRecord($record));
     }
 
     /**
      * Log a song's sync status to console.
-     *
-     * @param string $path
-     * @param int    $result
-     * @param string $reason
      */
-    public function logToConsole($path, $result, $reason = '')
+    public function logSyncStatusToConsole(string $path, int $result, string $reason = ''): void
     {
         $name = basename($path);
 
@@ -138,20 +134,12 @@ class SyncMediaCommand extends Command
         }
     }
 
-    /**
-     * Create a progress bar.
-     *
-     * @param int $max Max steps
-     */
-    public function createProgressBar($max)
+    public function createProgressBar(int $max): void
     {
         $this->progressBar = $this->getOutput()->createProgressBar($max);
     }
 
-    /**
-     * Update the progress bar (advance by 1 step).
-     */
-    public function updateProgressBar()
+    public function advanceProgressBar()
     {
         $this->progressBar->advance();
     }

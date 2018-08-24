@@ -19,9 +19,6 @@ class YouTubeController extends Controller
     /**
      * Search for YouTube videos related to a song (using its title and artist name).
      *
-     * @param YouTubeSearchRequest $request
-     * @param Song                 $song
-     *
      * @return JsonResponse
      */
     public function searchVideosRelatedToSong(YouTubeSearchRequest $request, Song $song)

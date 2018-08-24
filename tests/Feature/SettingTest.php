@@ -5,13 +5,10 @@ namespace Tests\Feature;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\MediaSyncService;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery\MockInterface;
 
 class SettingTest extends TestCase
 {
-    use WithoutMiddleware;
-
     /** @var MockInterface */
     private $mediaSyncService;
 
@@ -26,8 +23,9 @@ class SettingTest extends TestCase
         $this->mediaSyncService->shouldReceive('sync')->once();
 
         $user = factory(User::class, 'admin')->create();
-        $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user)->seeStatusCode(200);
+        file_put_contents('log', $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user)
+            ->response->content());
 
-        $this->assertEquals(__DIR__, Setting::get('media_path'));
+        self::assertEquals(__DIR__, Setting::get('media_path'));
     }
 }

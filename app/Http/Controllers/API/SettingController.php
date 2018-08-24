@@ -20,8 +20,6 @@ class SettingController extends Controller
     /**
      * Save the application settings.
      *
-     * @param SettingRequest $request
-     *
      * @throws Exception
      *
      * @return JsonResponse

@@ -18,29 +18,17 @@ class Playlist extends Model
     use CanFilterByUser;
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
-
     protected $guarded = ['id'];
-
     protected $casts = [
         'user_id' => 'int',
     ];
 
-    /**
-     * A playlist can have many songs.
-     *
-     * @return BelongsToMany
-     */
-    public function songs()
+    public function songs(): BelongsToMany
     {
         return $this->belongsToMany(Song::class);
     }
 
-    /**
-     * A playlist belongs to a user.
-     *
-     * @return BelongsTo
-     */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

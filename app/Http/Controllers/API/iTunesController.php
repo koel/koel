@@ -19,9 +19,6 @@ class iTunesController extends Controller
     /**
      * View a song on iTunes store.
      *
-     * @param ViewSongOnITunesRequest $request
-     * @param Album                   $album
-     *
      * @return RedirectResponse
      */
     public function viewSong(ViewSongOnITunesRequest $request, Album $album)

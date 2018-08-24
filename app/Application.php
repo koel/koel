@@ -35,14 +35,9 @@ class Application extends IlluminateApplication
      * Loads a revision'ed asset file, making use of gulp-rev
      * This is a copycat of L5's Elixir, but catered to our directory structure.
      *
-     * @param string $file
-     * @param string $manifestFile
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return string
+     * @throws InvalidArgumentException
      */
-    public function rev($file, $manifestFile = null)
+    public function rev(string $file, string $manifestFile = null): string
     {
         static $manifest = null;
 
@@ -67,10 +62,8 @@ class Application extends IlluminateApplication
      * Otherwise, just use a full URL to the asset.
      *
      * @param string $name The additional resource name/path.
-     *
-     * @return string
      */
-    public function staticUrl($name = null)
+    public function staticUrl(?string $name = null): string
     {
         $cdnUrl = trim(config('koel.cdn.url'), '/ ');
 
@@ -79,23 +72,16 @@ class Application extends IlluminateApplication
 
     /**
      * Get the latest version number of Koel from GitHub.
-     *
-     * @param Client $client
-     *
-     * @return string
      */
-    public function getLatestVersion(Client $client = null)
+    public function getLatestVersion(Client $client = null): string
     {
-        return Cache::remember('latestKoelVersion', 1 * 24 * 60, function () use ($client) {
+        return Cache::remember('latestKoelVersion', 1 * 24 * 60, static function () use ($client) {
             $client = $client ?: new Client();
 
             try {
-                $v = json_decode(
-                    $client->get('https://api.github.com/repos/phanan/koel/tags')
-                        ->getBody()
+                return json_decode(
+                    $client->get('https://api.github.com/repos/phanan/koel/tags')->getBody()
                 )[0]->name;
-
-                return $v;
             } catch (Exception $e) {
                 Log::error($e);
 

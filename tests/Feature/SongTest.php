@@ -8,12 +8,9 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use Exception;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class SongTest extends TestCase
 {
-    use WithoutMiddleware;
-
     /**
      * @throws Exception
      */

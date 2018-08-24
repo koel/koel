@@ -10,8 +10,6 @@ class AlbumController extends Controller
     /**
      * Get extra information about an album via Last.fm.
      *
-     * @param Album $album
-     *
      * @return JsonResponse
      */
     public function show(Album $album)

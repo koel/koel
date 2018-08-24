@@ -31,15 +31,11 @@ class File
 
     /**
      * The file's path.
-     *
-     * @var string
      */
     protected $path;
 
     /**
      * The getID3 object, for ID3 tag reading.
-     *
-     * @var getID3
      */
     protected $getID3;
 
@@ -105,10 +101,8 @@ class File
 
     /**
      * Get all applicable ID3 info from the file.
-     *
-     * @return array
      */
-    public function getInfo()
+    public function getInfo(): array
     {
         $info = $this->getID3->analyze($this->path);
 
@@ -186,14 +180,14 @@ class File
     /**
      * Sync the song with all available media info against the database.
      *
-     * @param array $tags  The (selective) tags to sync (if the song exists)
+     * @param string[] $tags  The (selective) tags to sync (if the song exists)
      * @param bool  $force Whether to force syncing, even if the file is unchanged
      *
      * @return bool|Song A Song object on success,
      *                   true if file exists but is unmodified,
      *                   or false on an error.
      */
-    public function sync($tags, $force = false)
+    public function sync(array $tags, bool $force = false)
     {
         // If the file is not new or changed and we're not forcing update, don't do anything.
         if (!$this->isNewOrChanged() && !$force) {
@@ -263,10 +257,9 @@ class File
     /**
      * Try to generate a cover for an album based on extracted data, or use the cover file under the directory.
      *
-     * @param Album $album
-     * @param $coverData
+     * @param mixed[]|null $coverData
      */
-    private function generateAlbumCover(Album $album, $coverData)
+    private function generateAlbumCover(Album $album, ?array $coverData): void
     {
         // If the album has no cover, we try to get the cover image from existing tag data
         if ($coverData) {
@@ -286,66 +279,50 @@ class File
 
     /**
      * Determine if the file is new (its Song record can't be found in the database).
-     *
-     * @return bool
      */
-    public function isNew()
+    public function isNew(): bool
     {
         return !$this->song;
     }
 
     /**
      * Determine if the file is changed (its Song record is found, but the timestamp is different).
-     *
-     * @return bool
      */
-    public function isChanged()
+    public function isChanged(): bool
     {
         return !$this->isNew() && $this->song->mtime !== $this->mtime;
     }
 
     /**
      * Determine if the file is new or changed.
-     *
-     * @return bool
      */
-    public function isNewOrChanged()
+    public function isNewOrChanged(): bool
     {
         return $this->isNew() || $this->isChanged();
     }
 
-    /**
-     * @return getID3
-     */
-    public function getGetID3()
+    public function getGetID3(): getID3
     {
         return $this->getID3;
     }
 
     /**
      * Get the last parsing error's text.
-     *
-     * @return string
      */
-    public function getSyncError()
+    public function getSyncError(): string
     {
         return $this->syncError;
     }
 
     /**
-     * @param getID3 $getID3
-     *
      * @throws getid3_exception
      */
-    public function setGetID3(getID3 $getID3 = null)
+    public function setGetID3(?getID3 $getID3 = null): void
     {
         $this->getID3 = $getID3 ?: new getID3();
     }
 
-    /**
-     * @return string
-     */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -356,10 +333,8 @@ class File
      * We'll check if such a cover file is found, and use it if positive.
      *
      * @throws InvalidArgumentException
-     *
-     * @return string|false The cover file's full path, or false if none found
      */
-    private function getCoverFileUnderSameDirectory()
+    private function getCoverFileUnderSameDirectory(): ?string
     {
         // As directory scanning can be expensive, we cache and reuse the result.
         return Cache::remember(md5($this->path.'_cover'), 24 * 60, function () {
@@ -374,11 +349,11 @@ class File
                 )
             );
 
-            $cover = $matches ? $matches[0] : false;
+            $cover = $matches ? $matches[0] : null;
 
             // Even if a file is found, make sure it's a real image.
             if ($cover && exif_imagetype($cover) === false) {
-                $cover = false;
+                $cover = null;
             }
 
             return $cover;
@@ -387,17 +362,13 @@ class File
 
     /**
      * Get a unique hash from a file path.
-     *
-     * @param string $path
-     *
-     * @return string
      */
-    public static function getHash($path)
+    public static function getHash(string $path): string
     {
         return md5(config('app.key').$path);
     }
 
-    private function setMediaMetadataService(MediaMetadataService $mediaMetadataService = null)
+    private function setMediaMetadataService(MediaMetadataService $mediaMetadataService = null): void
     {
         $this->mediaMetadataService = $mediaMetadataService ?: app(MediaMetadataService::class);
     }

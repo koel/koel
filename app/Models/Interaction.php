@@ -21,27 +21,15 @@ class Interaction extends Model
         'liked' => 'boolean',
         'play_count' => 'integer',
     ];
-
     protected $guarded = ['id'];
-
     protected $hidden = ['id', 'user_id', 'created_at', 'updated_at'];
 
-    /**
-     * An interaction belongs to a user.
-     *
-     * @return BelongsTo
-     */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * An interaction is associated with a song.
-     *
-     * @return BelongsTo
-     */
-    public function song()
+    public function song(): BelongsTo
     {
         return $this->belongsTo(Song::class);
     }

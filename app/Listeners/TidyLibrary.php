@@ -15,9 +15,6 @@ class TidyLibrary
     }
 
     /**
-     * Fired every time a LibraryChanged event is triggered.
-     * Tidies up our lib.
-     *
      * @throws Exception
      */
     public function handle()

@@ -59,12 +59,8 @@ class SongZipArchive
 
     /**
      * Add multiple songs into the archive.
-     *
-     * @param Collection $songs
-     *
-     * @return $this
      */
-    public function addSongs(Collection $songs)
+    public function addSongs(Collection $songs): self
     {
         $songs->each([$this, 'addSong']);
 
@@ -73,12 +69,8 @@ class SongZipArchive
 
     /**
      * Add a single song into the archive.
-     *
-     * @param Song $song
-     *
-     * @return $this
      */
-    public function addSong(Song $song)
+    public function addSong(Song $song): self
     {
         try {
             $path = Download::fromSong($song);
@@ -107,10 +99,8 @@ class SongZipArchive
 
     /**
      * Finish (close) the archive.
-     *
-     * @return $this
      */
-    public function finish()
+    public function finish(): self
     {
         $this->archive->close();
 
@@ -119,18 +109,13 @@ class SongZipArchive
 
     /**
      * Get the path to the archive.
-     *
-     * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @return ZipArchive
-     */
-    public function getArchive()
+    public function getArchive(): ZipArchive
     {
         return $this->archive;
     }

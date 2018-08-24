@@ -28,15 +28,11 @@ class StreamerFactory
         $this->transcodingService = $transcodingService;
     }
 
-    /**
-     * @param Song      $song
-     * @param bool|null $transcode
-     * @param int|null  $bitRate
-     * @param int       $startTime
-     *
-     * @return StreamerInterface
-     */
-    public function createStreamer(Song $song, $transcode = null, $bitRate = null, $startTime = 0)
+    public function createStreamer(
+        Song $song,
+        ?bool $transcode = null,
+        ?int $bitRate = null,
+        float $startTime = 0): StreamerInterface
     {
         if ($song->s3_params) {
             $this->objectStorageStreamer->setSong($song);

@@ -28,15 +28,9 @@ class Artist extends Model
     const VARIOUS_NAME = 'Various Artists';
 
     protected $guarded = ['id'];
-
     protected $hidden = ['created_at', 'updated_at'];
 
-    /**
-     * An artist can have many albums.
-     *
-     * @return HasMany
-     */
-    public function albums()
+    public function albums(): HasMany
     {
         return $this->hasMany(Album::class);
     }
@@ -44,53 +38,32 @@ class Artist extends Model
     /**
      * An artist can have many songs.
      * Unless he is Rick Astley.
-     *
-     * @return HasManyThrough
      */
-    public function songs()
+    public function songs(): HasManyThrough
     {
         return $this->hasManyThrough(Song::class, Album::class);
     }
 
-    /**
-     * Indicate if the artist is unknown.
-     *
-     * @return bool
-     */
-    public function getIsUnknownAttribute()
+    public function getIsUnknownAttribute(): bool
     {
         return $this->id === self::UNKNOWN_ID;
     }
 
-    /**
-     * Indicate if the artist is the special "Various Artists".
-     *
-     * @return bool
-     */
-    public function getIsVariousAttribute()
+    public function getIsVariousAttribute(): bool
     {
         return $this->id === self::VARIOUS_ID;
     }
 
-    /**
-     * Get the "Various Artists" object.
-     *
-     * @return Artist
-     */
-    public static function getVariousArtist()
+    public static function getVariousArtist(): self
     {
-        return self::find(self::VARIOUS_ID);
+        return static::find(self::VARIOUS_ID);
     }
 
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
-     *
-     * @param $value
-     *
-     * @return string
      */
-    public function getNameAttribute($value)
+    public function getNameAttribute(string $value): string
     {
         return html_entity_decode($value ?: self::UNKNOWN_NAME);
     }
@@ -98,12 +71,8 @@ class Artist extends Model
     /**
      * Get an Artist object from their name.
      * If such is not found, a new artist will be created.
-     *
-     * @param string $name
-     *
-     * @return Artist
      */
-    public static function get($name)
+    public static function get(string $name): self
     {
         // Remove the BOM from UTF-8/16/32, as it will mess up the database constraints.
         if ($encoding = Util::detectUTFEncoding($name)) {
@@ -112,22 +81,18 @@ class Artist extends Model
 
         $name = trim($name) ?: self::UNKNOWN_NAME;
 
-        return self::firstOrCreate(compact('name'), compact('name'));
+        return static::firstOrCreate(compact('name'), compact('name'));
     }
 
     /**
      * Turn the image name into its absolute URL.
-     *
-     * @param mixed $value
-     *
-     * @return string|null
      */
-    public function getImageAttribute($value)
+    public function getImageAttribute(?string $value): ?string
     {
         return $value ? app()->staticUrl("public/img/artists/$value") : null;
     }
 
-    public function getHasImageAttribute()
+    public function getHasImageAttribute(): bool
     {
         $image = array_get($this->attributes, 'image');
 
@@ -135,10 +100,6 @@ class Artist extends Model
             return false;
         }
 
-        if (!file_exists(public_path("public/img/artists/$image"))) {
-            return false;
-        }
-
-        return true;
+        return file_exists(public_path("public/img/artists/$image"));
     }
 }

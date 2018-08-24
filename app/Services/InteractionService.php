@@ -19,17 +19,14 @@ class InteractionService
     /**
      * Increase the number of times a song is played by a user.
      *
-     * @param string $songId
-     * @param User   $user
-     *
      * @return Interaction The affected Interaction object
      */
-    public function increasePlayCount($songId, User $user)
+    public function increasePlayCount(string $songId, User $user): Interaction
     {
         return tap($this->interaction->firstOrCreate([
             'song_id' => $songId,
             'user_id' => $user->id,
-        ]), static function (Interaction $interaction) {
+        ]), static function (Interaction $interaction): void {
             if (!$interaction->exists) {
                 $interaction->liked = false;
             }
@@ -42,17 +39,14 @@ class InteractionService
     /**
      * Like or unlike a song on behalf of a user.
      *
-     * @param string $songId
-     * @param User   $user
-     *
      * @return Interaction The affected Interaction object.
      */
-    public function toggleLike($songId, User $user)
+    public function toggleLike(string $songId, User $user): Interaction
     {
         return tap($this->interaction->firstOrCreate([
             'song_id' => $songId,
             'user_id' => $user->id,
-        ]), static function (Interaction $interaction) {
+        ]), static function (Interaction $interaction): void {
             $interaction->liked = !$interaction->liked;
             $interaction->save();
 
@@ -63,18 +57,17 @@ class InteractionService
     /**
      * Like several songs at once as a user.
      *
-     * @param array $songIds
-     * @param User  $user
+     * @param string[] $songIds
      *
-     * @return array The array of Interaction objects.
+     * @return Interaction[] The array of Interaction objects.
      */
-    public function batchLike(array $songIds, User $user)
+    public function batchLike(array $songIds, User $user): array
     {
-        return collect($songIds)->map(function ($songId) use ($user) {
+        return collect($songIds)->map(function ($songId) use ($user): Interaction {
             return tap($this->interaction->firstOrCreate([
                 'song_id' => $songId,
                 'user_id' => $user->id,
-            ]), static function (Interaction $interaction) {
+            ]), static function (Interaction $interaction): void {
                 if (!$interaction->exists) {
                     $interaction->play_count = 0;
                 }
@@ -90,16 +83,15 @@ class InteractionService
     /**
      * Unlike several songs at once.
      *
-     * @param array $songIds
-     * @param User  $user
+     * @param string[] $songIds
      */
-    public function batchUnlike(array $songIds, User $user)
+    public function batchUnlike(array $songIds, User $user): void
     {
         $this->interaction
             ->whereIn('song_id', $songIds)
             ->where('user_id', $user->id)
             ->get()
-            ->each(static function (Interaction $interaction) {
+            ->each(static function (Interaction $interaction): void {
                 $interaction->liked = false;
                 $interaction->save();
 
@@ -110,12 +102,8 @@ class InteractionService
 
     /**
      * Get all songs favorited by a user.
-     *
-     * @param User $user
-     *
-     * @return Collection
      */
-    public function getUserFavorites(User $user)
+    public function getUserFavorites(User $user): Collection
     {
         return $this->interaction->where([
             'user_id' => $user->id,

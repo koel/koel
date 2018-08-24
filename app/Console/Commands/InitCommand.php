@@ -39,7 +39,7 @@ class InitCommand extends Command
         $this->db = $db;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->comment('Attempting to install or upgrade Koel.');
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
@@ -68,7 +68,7 @@ class InitCommand extends Command
     /**
      * Prompt user for valid database credentials and set up the database.
      */
-    private function setUpDatabase()
+    private function setUpDatabase(): void
     {
         $config = [
             'DB_CONNECTION' => '',
@@ -117,12 +117,13 @@ class InitCommand extends Command
         ]);
     }
 
-    private function setUpAdminAccount()
+    private function setUpAdminAccount(): void
     {
         $this->info("Let's create the admin account.");
         $name = $this->ask('Your name');
         $email = $this->ask('Your email address');
         $passwordConfirmed = false;
+        $password = null;
 
         while (!$passwordConfirmed) {
             $password = $this->secret('Your desired password');
@@ -143,7 +144,7 @@ class InitCommand extends Command
         ]);
     }
 
-    private function maybeSetMediaPath()
+    private function maybeSetMediaPath(): void
     {
         if (!Setting::get('media_path')) {
             return;
@@ -168,7 +169,7 @@ class InitCommand extends Command
         }
     }
 
-    private function maybeGenerateAppKey()
+    private function maybeGenerateAppKey(): void
     {
         if (!config('app.key')) {
             $this->info('Generating app key');
@@ -178,7 +179,7 @@ class InitCommand extends Command
         }
     }
 
-    private function maybeGenerateJwtSecret()
+    private function maybeGenerateJwtSecret(): void
     {
         if (!config('jwt.secret')) {
             $this->info('Generating JWT secret');
@@ -188,7 +189,7 @@ class InitCommand extends Command
         }
     }
 
-    private function maybeSeedDatabase()
+    private function maybeSeedDatabase(): void
     {
         if (!User::count()) {
             $this->setUpAdminAccount();
@@ -199,7 +200,7 @@ class InitCommand extends Command
         }
     }
 
-    private function maybeSetUpDatabase()
+    private function maybeSetUpDatabase(): void
     {
         $dbSetUp = false;
 
@@ -217,7 +218,7 @@ class InitCommand extends Command
         }
     }
 
-    private function migrateDatabase()
+    private function migrateDatabase(): void
     {
         $this->info('Migrating database');
         $this->artisan->call('migrate', ['--force' => true]);
@@ -226,7 +227,7 @@ class InitCommand extends Command
         $this->mediaCacheService->clear();
     }
 
-    private function compileFrontEndAssets()
+    private function compileFrontEndAssets(): void
     {
         $this->info('Compiling front-end stuff');
         system('yarn install');

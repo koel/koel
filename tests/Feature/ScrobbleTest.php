@@ -3,15 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Song;
+use App\Models\User;
 use App\Services\LastfmService;
 use Exception;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Mockery as m;
 
 class ScrobbleTest extends TestCase
 {
-    use WithoutMiddleware;
-
     /**
      * @throws Exception
      */
@@ -21,13 +18,18 @@ class ScrobbleTest extends TestCase
         $this->createSampleMediaSet();
 
         $song = Song::first();
+        /** @var User $user */
+        $user = factory(User::class)->create();
+        $user->setPreference('lastfm_session_key', 'foo');
 
         $ts = time();
 
-        m::mock(LastfmService::class, ['enabled' => true])
+        $this->mockIocDependency(LastfmService::class)
             ->shouldReceive('scrobble')
-            ->with($song->album->artist->name, $song->title, $ts, $song->album->name, 'bar');
+            ->with($song->album->artist->name, $song->title, $ts, $song->album->name, 'foo')
+            ->once();
 
-        $this->post("/api/{$song->id}/scrobble/$ts");
+        $this->postAsUser("/api/{$song->id}/scrobble/$ts", [], $user)
+            ->assertResponseOk();
     }
 }
