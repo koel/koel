@@ -3,27 +3,10 @@
 namespace Tests\Integration\Models;
 
 use App\Models\Song;
-use Aws\AwsClient;
-use Cache;
-use Mockery as m;
 use Tests\TestCase;
 
 class SongTest extends TestCase
 {
-    /** @test */
-    public function it_can_be_retrieved_using_its_path()
-    {
-        // Given a song with a path
-        /** @var Song $song */
-        $song = factory(Song::class)->create(['path' => 'foo']);
-
-        // When I retrieve it using the path
-        $retrieved = Song::byPath('foo');
-
-        // Then the song is retrieved
-        $this->assertEquals($song->id, $retrieved->id);
-    }
-
     /** @test */
     public function its_lyrics_has_all_new_line_characters_replace_by_br_tags()
     {

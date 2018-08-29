@@ -10,6 +10,7 @@ use App\Models\Artist;
 use App\Models\File;
 use App\Models\Setting;
 use App\Models\Song;
+use App\Repositories\SongRepository;
 use Exception;
 use getID3;
 use getid3_exception;
@@ -39,10 +40,18 @@ class MediaSyncService
     ];
 
     private $mediaMetadataService;
+    private $songRepository;
+    private $helperService;
 
-    public function __construct(MediaMetadataService $mediaMetadataService)
+    public function __construct(
+        MediaMetadataService $mediaMetadataService,
+        SongRepository $songRepository,
+        HelperService $helperService
+    )
     {
         $this->mediaMetadataService = $mediaMetadataService;
+        $this->songRepository = $songRepository;
+        $this->helperService = $helperService;
     }
 
     /**
@@ -112,8 +121,8 @@ class MediaSyncService
         }
 
         // Delete non-existing songs.
-        $hashes = array_map(function (File $file) {
-            return self::getFileHash($file->getPath());
+        $hashes = array_map(function (File $file): string {
+            return $this->helperService->getFileHash($file->getPath());
         }, array_merge($results['unmodified'], $results['success']));
 
         Song::deleteWhereIDsNotIn($hashes);
@@ -166,7 +175,7 @@ class MediaSyncService
         // If the file has been deleted...
         if ($record->isDeleted()) {
             // ...and it has a record in our database, remove it.
-            if ($song = Song::byPath($path)) {
+            if ($song = $this->songRepository->getOneByPath($path)) {
                 $song->delete();
                 Log::info("$path deleted.");
 

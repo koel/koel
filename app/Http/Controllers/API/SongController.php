@@ -6,6 +6,8 @@ use App\Factories\StreamerFactory;
 use App\Http\Requests\API\SongPlayRequest;
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Models\Song;
+use App\Repositories\AlbumRepository;
+use App\Repositories\ArtistRepository;
 use App\Services\MediaInformationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -15,11 +17,20 @@ class SongController extends Controller
 {
     private $mediaInformationService;
     private $streamerFactory;
+    private $artistRepository;
+    private $albumRepository;
 
-    public function __construct(MediaInformationService $mediaInformationService, StreamerFactory $streamerFactory)
+    public function __construct(
+        MediaInformationService $mediaInformationService,
+        StreamerFactory $streamerFactory,
+        ArtistRepository $artistRepository,
+        AlbumRepository $albumRepository
+    )
     {
         $this->mediaInformationService = $mediaInformationService;
         $this->streamerFactory = $streamerFactory;
+        $this->artistRepository = $artistRepository;
+        $this->albumRepository = $albumRepository;
     }
 
     /**
@@ -48,6 +59,12 @@ class SongController extends Controller
      */
     public function update(SongUpdateRequest $request)
     {
-        return response()->json(Song::updateInfo($request->songs, $request->data));
+        $updatedSongs = Song::updateInfo($request->songs, $request->data);
+
+        return response()->json([
+            'artists' => $this->artistRepository->getByIds($updatedSongs->pluck('artist_id')->all()),
+            'albums' => $this->albumRepository->getByIds($updatedSongs->pluck('album_id')->all()),
+            'songs' => $updatedSongs,
+        ]);
     }
 }

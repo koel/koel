@@ -4,14 +4,11 @@ namespace App\Models;
 
 use App\Events\LibraryChanged;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
-use AWS;
-use Aws\AwsClient;
-use Cache;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 
 /**
  * @property string path
@@ -75,14 +72,6 @@ class Song extends Model
     }
 
     /**
-     * Get a Song record using its path.
-     */
-    public static function byPath(string $path): ?self
-    {
-        return static::find(File::getHash($path));
-    }
-
-    /**
      * Update song info.
      *
      * @param string[] $ids
@@ -93,10 +82,8 @@ class Song extends Model
      *                    - lyrics
      *                    All of these are optional, in which case the info will not be changed
      *                    (except for lyrics, which will be emptied).
-     *
-     * @return array
      */
-    public static function updateInfo(array $ids, array $data): array
+    public static function updateInfo(array $ids, array $data): Collection
     {
         /*
          * A collection of the updated songs.
@@ -129,11 +116,7 @@ class Song extends Model
             event(new LibraryChanged());
         }
 
-        return [
-            'artists' => Artist::whereIn('id', $updatedSongs->pluck('artist_id'))->get(),
-            'albums' => Album::whereIn('id', $updatedSongs->pluck('album_id'))->get(),
-            'songs' => $updatedSongs,
-        ];
+        return $updatedSongs;
     }
 
     public function updateSingle(

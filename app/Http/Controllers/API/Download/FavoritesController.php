@@ -3,25 +3,25 @@
 namespace App\Http\Controllers\API\Download;
 
 use App\Http\Requests\API\Download\Request;
+use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
-use App\Services\InteractionService;
 
 class FavoritesController extends Controller
 {
-    private $interactionService;
+    private $interactionRepository;
 
-    public function __construct(DownloadService $downloadService, InteractionService $interactionService)
+    public function __construct(DownloadService $downloadService, InteractionRepository $interactionRepository)
     {
         parent::__construct($downloadService);
-        $this->interactionService = $interactionService;
+        $this->interactionRepository = $interactionRepository;
     }
 
     /**
-     * Download all songs in a playlist.
+     * Download all songs favorite'd by the current user.
      */
     public function show(Request $request)
     {
-        $songs = $this->interactionService->getUserFavorites($request->user());
+        $songs = $this->interactionRepository->getUserFavorites($request->user());
 
         return response()->download($this->downloadService->from($songs));
     }

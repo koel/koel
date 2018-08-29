@@ -8,20 +8,29 @@ use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Repositories\SongRepository;
+use App\Services\HelperService;
 use App\Services\MediaMetadataService;
-use App\Services\MediaSyncService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
 class SongController extends Controller
 {
     private $mediaMetadataService;
-    private $mediaSyncService;
+    private $songRepository;
+    /**
+     * @var HelperService
+     */
+    private $helperService;
 
-    public function __construct(MediaMetadataService $mediaMetadataService, MediaSyncService $mediaSyncService)
+    public function __construct(
+        MediaMetadataService $mediaMetadataService,
+        HelperService $helperService,
+        SongRepository $songRepository)
     {
         $this->mediaMetadataService = $mediaMetadataService;
-        $this->mediaSyncService = $mediaSyncService;
+        $this->songRepository = $songRepository;
+        $this->helperService = $helperService;
     }
 
     /**
@@ -43,7 +52,7 @@ class SongController extends Controller
             $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data']), $cover['extension']);
         }
 
-        $song = Song::updateOrCreate(['id' => $this->mediaSyncService->getFileHash($path)], [
+        $song = Song::updateOrCreate(['id' => $this->helperService->getFileHash($path)], [
             'path' => $path,
             'album_id' => $album->id,
             'artist_id' => $artist->id,
@@ -68,8 +77,9 @@ class SongController extends Controller
      */
     public function remove(RemoveSongRequest $request)
     {
-        $song = Song::byPath("s3://{$request->bucket}/{$request->key}");
+        $song = $this->songRepository->getOneByPath("s3://{$request->bucket}/{$request->key}");
         abort_unless((bool) $song, 404);
+
         $song->delete();
         event(new LibraryChanged());
 
