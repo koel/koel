@@ -107,7 +107,7 @@ class SyncMediaCommand extends Command
             $this->ignored++;
         } elseif ($result === FileSynchronizer::SYNC_RESULT_BAD_FILE) {
             if ($this->option('verbose')) {
-                $this->error(PHP_EOL . "'$name' is not a valid media file: ".$reason);
+                $this->error(PHP_EOL."'$name' is not a valid media file: ".$reason);
             }
 
             $this->invalid++;
