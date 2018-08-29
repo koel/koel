@@ -9,8 +9,8 @@ use App\Repositories\SongRepository;
 use Exception;
 use getID3;
 use getid3_lib;
-use InvalidArgumentException;
 use Illuminate\Contracts\Cache\Repository as Cache;
+use InvalidArgumentException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -69,8 +69,7 @@ class FileSynchronizer
         SongRepository $songRepository,
         Cache $cache,
         Finder $finder
-    )
-    {
+    ) {
         $this->getID3 = $getID3;
         $this->mediaMetadataService = $mediaMetadataService;
         $this->helperService = $helperService;
@@ -179,6 +178,7 @@ class FileSynchronizer
 
         return $props;
     }
+
     /**
      * Sync the song with all available media info against the database.
      *
@@ -289,7 +289,7 @@ class FileSynchronizer
     private function getCoverFileUnderSameDirectory(): ?string
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        return $this->cache->remember(md5($this->filePath . '_cover'), 24 * 60, function (): ?string {
+        return $this->cache->remember(md5($this->filePath.'_cover'), 24 * 60, function (): ?string {
             $matches = array_keys(iterator_to_array(
                     $this->finder->create()
                         ->depth(0)
@@ -311,7 +311,6 @@ class FileSynchronizer
             return $cover;
         });
     }
-
 
     /**
      * Determine if the file is new (its Song record can't be found in the database).

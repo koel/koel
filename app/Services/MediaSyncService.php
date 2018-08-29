@@ -7,7 +7,6 @@ use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\Setting;
 use App\Models\Song;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
@@ -243,7 +242,7 @@ class MediaSyncService
         }
 
         if (config('koel.memory_limit')) {
-            ini_set('memory_limit', config('koel.memory_limit') . 'M');
+            ini_set('memory_limit', config('koel.memory_limit').'M');
         }
     }
 
