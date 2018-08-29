@@ -76,12 +76,12 @@ class Song extends Model
      *
      * @param string[] $ids
      * @param string[] $data The data array, with these supported fields:
-     *                    - title
-     *                    - artistName
-     *                    - albumName
-     *                    - lyrics
-     *                    All of these are optional, in which case the info will not be changed
-     *                    (except for lyrics, which will be emptied).
+     *                       - title
+     *                       - artistName
+     *                       - albumName
+     *                       - lyrics
+     *                       All of these are optional, in which case the info will not be changed
+     *                       (except for lyrics, which will be emptied).
      */
     public static function updateInfo(array $ids, array $data): Collection
     {

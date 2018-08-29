@@ -15,8 +15,8 @@ trait SupportsDeleteWhereIDsNotIn
     /**
      * Deletes all records whose IDs are not in an array.
      *
-     * @param string[]|int[]  $ids The array of IDs.
-     * @param string $key Name of the primary key.
+     * @param string[]|int[] $ids The array of IDs.
+     * @param string         $key Name of the primary key.
      *
      * @throws Exception
      */
@@ -48,9 +48,9 @@ trait SupportsDeleteWhereIDsNotIn
     /**
      * Delete records chunk by chunk.
      *
-     * @param string[]|int[]  $ids       The array of record IDs to delete
-     * @param string $key       Name of the primary key
-     * @param int    $chunkSize Size of each chunk. Defaults to 2^16-1 (65535)
+     * @param string[]|int[] $ids       The array of record IDs to delete
+     * @param string         $key       Name of the primary key
+     * @param int            $chunkSize Size of each chunk. Defaults to 2^16-1 (65535)
      *
      * @throws Exception
      */

@@ -47,8 +47,7 @@ class MediaSyncService
         MediaMetadataService $mediaMetadataService,
         SongRepository $songRepository,
         HelperService $helperService
-    )
-    {
+    ) {
         $this->mediaMetadataService = $mediaMetadataService;
         $this->songRepository = $songRepository;
         $this->helperService = $helperService;
