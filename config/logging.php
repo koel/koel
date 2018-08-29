@@ -1,4 +1,5 @@
 <?php
+
 use Monolog\Handler\StreamHandler;
 
 return [
