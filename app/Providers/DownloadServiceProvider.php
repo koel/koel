@@ -7,25 +7,10 @@ use Illuminate\Support\ServiceProvider;
 
 class DownloadServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function register(): void
     {
-        //
-    }
-
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        app()->singleton('Download', function () {
-            return new DownloadService();
+        app()->singleton('Download', static function (): DownloadService {
+            return app(DownloadService::class);
         });
     }
 }

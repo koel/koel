@@ -10,35 +10,6 @@ use Tests\TestCase;
 
 class SongTest extends TestCase
 {
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
-    /** @test */
-    public function it_returns_object_storage_public_url()
-    {
-        // Given there's a song hosted on Amazon S3
-        /** @var Song $song */
-        $song = factory(Song::class)->create(['path' => 's3://foo/bar']);
-        $mockedURL = 'http://aws.com/foo/bar';
-
-        // When I get the song's object storage public URL
-        $client = m::mock(AwsClient::class, [
-            'getCommand' => null,
-            'createPresignedRequest' => m::mock(Request::class, [
-                'getUri' => $mockedURL,
-            ]),
-        ]);
-
-        Cache::shouldReceive('remember')->andReturn($mockedURL);
-        $url = $song->getObjectStoragePublicUrl($client);
-
-        // Then I should receive the correct S3 public URL
-        $this->assertEquals($mockedURL, $url);
-    }
-
     /** @test */
     public function it_can_be_retrieved_using_its_path()
     {

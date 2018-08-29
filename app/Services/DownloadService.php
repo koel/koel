@@ -12,6 +12,13 @@ use InvalidArgumentException;
 
 class DownloadService
 {
+    private $s3Service;
+
+    public function __construct(S3Service $s3Service)
+    {
+        $this->s3Service = $s3Service;
+    }
+
     /**
      * Generic method to generate a download archive from various source types.
      *
@@ -44,8 +51,7 @@ class DownloadService
         if ($s3Params = $song->s3_params) {
             // The song is hosted on Amazon S3.
             // We download it back to our local server first.
-            $url = $song->getObjectStoragePublicUrl();
-
+            $url = $this->s3Service->getSongPublicUrl($song);
             abort_unless($url, 404);
 
             $localPath = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename($s3Params['key']);

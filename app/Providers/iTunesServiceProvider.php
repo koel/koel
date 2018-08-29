@@ -7,15 +7,10 @@ use Illuminate\Support\ServiceProvider;
 
 class iTunesServiceProvider extends ServiceProvider
 {
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
-        app()->singleton('iTunes', function () {
-            return app()->make(iTunesService::class);
+        app()->singleton('iTunes', static function (): iTunesService {
+            return app(iTunesService::class);
         });
     }
 }

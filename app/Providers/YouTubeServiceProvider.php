@@ -7,25 +7,10 @@ use Illuminate\Support\ServiceProvider;
 
 class YouTubeServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function register(): void
     {
-        //
-    }
-
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        app()->singleton('YouTube', function () {
-            return app()->make(YouTubeService::class);
+        app()->singleton('YouTube', static function (): YouTubeService {
+            return app(YouTubeService::class);
         });
     }
 }
