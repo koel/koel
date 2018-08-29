@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string title
  * @property Album  album
  * @property Artist artist
- * @property string s3_params
+ * @property string[] s3_params
  * @property float  length
  * @property string lyrics
  * @property int    track
@@ -193,30 +193,6 @@ class Song extends Model
         $path = rtrim(trim($path), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
         return $query->where('path', 'LIKE', "$path%");
-    }
-
-    /**
-     * Get the song's Object Storage url for streaming or downloading.
-     */
-    public function getObjectStoragePublicUrl(AwsClient $s3 = null): string
-    {
-        return Cache::remember("OSUrl/{$this->id}", 60, static function () use ($s3) {
-            if (!$s3) {
-                $s3 = AWS::createClient('s3');
-            }
-
-            $cmd = $s3->getCommand('GetObject', [
-                'Bucket' => $this->s3_params['bucket'],
-                'Key' => $this->s3_params['key'],
-            ]);
-
-            // Here we specify that the request is valid for 1 hour.
-            // We'll also cache the public URL for future reuse.
-            $request = $s3->createPresignedRequest($cmd, '+1 hour');
-            $url = (string) $request->getUri();
-
-            return $url;
-        });
     }
 
     /**

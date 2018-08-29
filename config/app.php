@@ -156,6 +156,7 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\iTunesServiceProvider::class,
         App\Providers\StreamerServiceProvider::class,
+        App\Providers\ObjectStorageServiceProvider::class,
     ],
 
     /*
