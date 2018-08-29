@@ -25,8 +25,7 @@ class SongController extends Controller
         StreamerFactory $streamerFactory,
         ArtistRepository $artistRepository,
         AlbumRepository $albumRepository
-    )
-    {
+    ) {
         $this->mediaInformationService = $mediaInformationService;
         $this->streamerFactory = $streamerFactory;
         $this->artistRepository = $artistRepository;
@@ -38,10 +37,10 @@ class SongController extends Controller
      *
      * @link https://github.com/phanan/koel/wiki#streaming-music
      *
-     * @param null|bool       $transcode Whether to force transcoding the song.
-     *                                   If this is omitted, by default Koel will transcode FLAC.
-     * @param null|int        $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
-     *                                   Only taken into account if $transcode is truthy.
+     * @param null|bool $transcode Whether to force transcoding the song.
+     *                             If this is omitted, by default Koel will transcode FLAC.
+     * @param null|int  $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
+     *                             Only taken into account if $transcode is truthy.
      *
      * @return RedirectResponse|Redirector
      */

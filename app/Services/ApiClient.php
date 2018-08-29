@@ -44,8 +44,8 @@ abstract class ApiClient
      * @param string  $method    The HTTP method
      * @param string  $uri       The API URI (segment)
      * @param bool    $appendKey Whether to automatically append the API key into the URI.
-     *                          While it's usually the case, some services (like Last.fm) requires
-     *                          an "API signature" of the request. Appending an API key will break the request.
+     *                           While it's usually the case, some services (like Last.fm) requires
+     *                           an "API signature" of the request. Appending an API key will break the request.
      * @param mixed[] $params    An array of parameters
      *
      * @return mixed|SimpleXMLElement|null
@@ -67,7 +67,7 @@ abstract class ApiClient
 
             return $body;
         } catch (ClientException $e) {
-            return null;
+            return;
         }
     }
 
@@ -77,9 +77,9 @@ abstract class ApiClient
      * @param string  $method The HTTP method
      * @param mixed[] $args   An array of parameters
      *
-     * @return mixed|null|SimpleXMLElement
      * @throws InvalidArgumentException
      *
+     * @return mixed|null|SimpleXMLElement
      */
     public function __call(string $method, array $args)
     {
@@ -97,7 +97,7 @@ abstract class ApiClient
     /**
      * Turn a URI segment into a full API URL.
      *
-     * @param bool   $appendKey Whether to automatically append the API key into the URL.
+     * @param bool $appendKey Whether to automatically append the API key into the URL.
      */
     public function buildUrl(string $uri, bool $appendKey = true): string
     {

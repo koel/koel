@@ -66,6 +66,7 @@ class User extends Authenticatable
      * An alias to savePreference().
      *
      * @param mixed $val
+     *
      * @see self::savePreference
      */
     public function setPreference(string $key, $val): void

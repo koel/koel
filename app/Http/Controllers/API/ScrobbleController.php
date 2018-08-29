@@ -20,7 +20,7 @@ class ScrobbleController extends Controller
     /**
      * Create a Last.fm scrobble entry for a song.
      *
-     * @param string  $timestamp The UNIX timestamp when the song started playing.
+     * @param string $timestamp The UNIX timestamp when the song started playing.
      *
      * @return JsonResponse
      */

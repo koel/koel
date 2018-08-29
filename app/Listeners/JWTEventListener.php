@@ -15,7 +15,7 @@ class JWTEventListener
     {
         $events->listen(
             'tymon.jwt.valid',
-            JWTEventListener::class . '@onValidUser'
+            self::class.'@onValidUser'
         );
     }
 }

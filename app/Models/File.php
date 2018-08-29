@@ -85,7 +85,7 @@ class File
      * Construct our File object.
      * Upon construction, we'll set the path, hash, and associated Song object (if any).
      *
-     * @param string|SplFileInfo        $path                 Either the file's path, or a SplFileInfo object
+     * @param string|SplFileInfo $path Either the file's path, or a SplFileInfo object
      *
      * @throws getid3_exception
      *
@@ -97,8 +97,7 @@ class File
         ?MediaMetadataService $mediaMetadataService = null,
         ?HelperService $helperService = null,
         ?SongRepository $songRepository = null
-    )
-    {
+    ) {
         $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
         $this->setGetID3($getID3);
         $this->setMediaMetadataService($mediaMetadataService);
@@ -201,7 +200,7 @@ class File
      * Sync the song with all available media info against the database.
      *
      * @param string[] $tags  The (selective) tags to sync (if the song exists)
-     * @param bool  $force Whether to force syncing, even if the file is unchanged
+     * @param bool     $force Whether to force syncing, even if the file is unchanged
      *
      * @return bool|Song A Song object on success,
      *                   true if file exists but is unmodified,
