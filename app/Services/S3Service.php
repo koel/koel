@@ -11,7 +11,7 @@ class S3Service implements ObjectStorageInterface
     private $s3Client;
     private $cache;
 
-    public function __construct(S3ClientInterface $s3Client, Cache $cache)
+    public function __construct(?S3ClientInterface $s3Client, Cache $cache)
     {
         $this->s3Client = $s3Client;
         $this->cache = $cache;
