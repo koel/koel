@@ -2,12 +2,21 @@
 
 namespace App\Services;
 
-use Cache;
 use Exception;
+use GuzzleHttp\Client;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Log;
 
 class iTunesService extends ApiClient implements ApiConsumerInterface
 {
+    private $cache;
+
+    public function __construct(Client $client, Cache $cache)
+    {
+        parent::__construct($client);
+        $this->cache = $cache;
+    }
+
     /**
      * Determines whether to use iTunes services.
      */
@@ -28,8 +37,8 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
     public function getTrackUrl(string $term, string $album = '', string $artist = ''): ?string
     {
         try {
-            return Cache::remember(md5("itunes_track_url_{$term}{$album}{$artist}"), 24 * 60 * 7,
-                function () use ($term, $album, $artist) {
+            return $this->cache->remember(md5("itunes_track_url_{$term}{$album}{$artist}"), 24 * 60 * 7,
+                function () use ($term, $album, $artist): string {
                     $params = [
                         'term' => $term.($album ? " $album" : '').($artist ? " $artist" : ''),
                         'media' => 'music',

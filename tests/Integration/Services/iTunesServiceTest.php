@@ -6,7 +6,9 @@ use App\Services\iTunesService;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class iTunesServiceTest extends TestCase
@@ -23,7 +25,10 @@ class iTunesServiceTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/itunes/track.json')),
         ]);
 
-        $url = (new iTunesService($client))->getTrackUrl($term);
+        /** @var Cache|MockInterface $cache */
+        $cache = app(Cache::class);
+
+        $url = (new iTunesService($client, $cache))->getTrackUrl($term);
 
         self::assertEquals(
             'https://itunes.apple.com/us/album/i-remember-you/id265611220?i=265611396&uo=4&at=1000lsGu',

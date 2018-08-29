@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Exception;
+use GuzzleHttp\Client;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Log;
 
 class LastfmService extends ApiClient implements ApiConsumerInterface
@@ -20,6 +22,16 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @var string
      */
     protected $keyParam = 'api_key';
+    /**
+     * @var Cache
+     */
+    private $cache;
+
+    public function __construct(Client $client, Cache $cache)
+    {
+        parent::__construct($client);
+        $this->cache = $cache;
+    }
 
     /**
      * Determine if our application is using Last.fm.
@@ -53,23 +65,22 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         $name = urlencode($name);
 
         try {
-            $cacheKey = md5("lastfm_artist_$name");
+            return $this->cache->remember(md5("lastfm_artist_$name"), 24 * 60 * 7, function () use ($name): ?array {
+                $response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name");
 
-            if ($response = cache($cacheKey)) {
-                $response = simplexml_load_string($response);
-            } else {
-                if ($response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name")) {
-                    cache([$cacheKey => $response->asXML()], 24 * 60 * 7);
+                if (!$response) {
+                    return null;
                 }
-            }
 
-            $response = json_decode(json_encode($response), true);
+                $response = simplexml_load_string($response->asXML());
+                $response = json_decode(json_encode($response), true);
 
-            if (!$response || !$artist = array_get($response, 'artist')) {
-                return null;
-            }
+                if (!$response || !$artist = array_get($response, 'artist')) {
+                    return null;
+                }
 
-            return $this->buildArtistInformation($artist);
+                return $this->buildArtistInformation($artist);
+            });
         } catch (Exception $e) {
             Log::error($e);
 
@@ -90,8 +101,8 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
             'url' => array_get($artistData, 'url'),
             'image' => count($artistData['image']) > 3 ? $artistData['image'][3] : $artistData['image'][0],
             'bio' => [
-                'summary' => $this->formatText(array_get($artistData, 'bio.summary')),
-                'full' => $this->formatText(array_get($artistData, 'bio.content')),
+                'summary' => $this->formatText(array_get($artistData, 'bio.summary', '')),
+                'full' => $this->formatText(array_get($artistData, 'bio.content', '')),
             ],
         ];
     }
@@ -113,21 +124,22 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         try {
             $cacheKey = md5("lastfm_album_{$albumName}_{$artistName}");
 
-            if ($response = cache($cacheKey)) {
-                $response = simplexml_load_string($response);
-            } else {
-                if ($response = $this->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName")) {
-                    cache([$cacheKey => $response->asXML()], 24 * 60 * 7);
+            return $this->cache->remember($cacheKey, 24 * 60 * 7, function () use ($albumName, $artistName): ?array {
+                $response = $this->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName");
+
+                if (!$response) {
+                    return null;
                 }
-            }
 
-            $response = json_decode(json_encode($response), true);
+                $response = simplexml_load_string($response->asXML());
+                $response = json_decode(json_encode($response), true);
 
-            if (!$response || !$album = array_get($response, 'album')) {
-                return null;
-            }
+                if (!$response || !$album = array_get($response, 'album')) {
+                    return null;
+                }
 
-            return $this->buildAlbumInformation($album);
+                return $this->buildAlbumInformation($album);
+            });
         } catch (Exception $e) {
             Log::error($e);
 
@@ -148,8 +160,8 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
             'url' => array_get($albumData, 'url'),
             'image' => count($albumData['image']) > 3 ? $albumData['image'][3] : $albumData['image'][0],
             'wiki' => [
-                'summary' => $this->formatText(array_get($albumData, 'wiki.summary')),
-                'full' => $this->formatText(array_get($albumData, 'wiki.content')),
+                'summary' => $this->formatText(array_get($albumData, 'wiki.summary', '')),
+                'full' => $this->formatText(array_get($albumData, 'wiki.content', '')),
             ],
             'tracks' => array_map(function ($track) {
                 return [

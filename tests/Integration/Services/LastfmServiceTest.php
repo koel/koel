@@ -8,11 +8,17 @@ use App\Services\LastfmService;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Mockery as m;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Mockery;
 use Tests\TestCase;
 
 class LastfmServiceTest extends TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
     /**
      * @throws Exception
      */
@@ -22,14 +28,12 @@ class LastfmServiceTest extends TestCase
         $artist = factory(Artist::class)->make(['name' => 'foo']);
 
         /** @var Client $client */
-        $client = m::mock(Client::class, [
+        $client = Mockery::mock(Client::class, [
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist.xml')),
         ]);
 
-        $api = new LastfmService($client);
-        $info = $api->getArtistInformation($artist->name
-
-        );
+        $api = new LastfmService($client, app(Cache::class));
+        $info = $api->getArtistInformation($artist->name);
 
         $this->assertEquals([
             'url' => 'http://www.last.fm/music/Kamelot',
@@ -50,11 +54,11 @@ class LastfmServiceTest extends TestCase
         $artist = factory(Artist::class)->make();
 
         /** @var Client $client */
-        $client = m::mock(Client::class, [
+        $client = Mockery::mock(Client::class, [
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist-notfound.xml')),
         ]);
 
-        $api = new LastfmService($client);
+        $api = new LastfmService($client, app(Cache::class));
 
         $this->assertNull($api->getArtistInformation($artist->name));
     }
@@ -71,11 +75,11 @@ class LastfmServiceTest extends TestCase
         ]);
 
         /** @var Client $client */
-        $client = m::mock(Client::class, [
+        $client = Mockery::mock(Client::class, [
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album.xml')),
         ]);
 
-        $api = new LastfmService($client);
+        $api = new LastfmService($client, app(Cache::class));
         $info = $api->getAlbumInformation($album->name, $album->artist->name);
 
         // Then I get the album's info
@@ -109,11 +113,11 @@ class LastfmServiceTest extends TestCase
         $album = factory(Album::class)->create();
 
         /** @var Client $client */
-        $client = m::mock(Client::class, [
+        $client = Mockery::mock(Client::class, [
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album-notfound.xml')),
         ]);
 
-        $api = new LastfmService($client);
+        $api = new LastfmService($client, app(Cache::class));
 
         $this->assertNull($api->getAlbumInformation($album->name, $album->artist->name));
     }

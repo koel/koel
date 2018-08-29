@@ -6,7 +6,8 @@ use App\Models\User;
 use App\Services\LastfmService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Mockery as m;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Mockery;
 use Tymon\JWTAuth\JWTAuth;
 
 class LastfmTest extends TestCase
@@ -14,11 +15,11 @@ class LastfmTest extends TestCase
     public function testGetSessionKey()
     {
         /** @var Client $client */
-        $client = m::mock(Client::class, [
+        $client = Mockery::mock(Client::class, [
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/session-key.xml')),
         ]);
 
-        self::assertEquals('foo', (new LastfmService($client))->getSessionKey('bar'));
+        self::assertEquals('foo', (new LastfmService($client, app(Cache::class)))->getSessionKey('bar'));
     }
 
     public function testSetSessionKey()
