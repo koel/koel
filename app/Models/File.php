@@ -328,7 +328,7 @@ class File
     /**
      * Get the last parsing error's text.
      */
-    public function getSyncError(): string
+    public function getSyncError(): ?string
     {
         return $this->syncError;
     }

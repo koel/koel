@@ -15,10 +15,9 @@ use App\Listeners\TidyLibrary;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Album;
 use App\Models\Song;
-use App\Services\HelperService;
-use Exception;
+use App\Observers\AlbumObserver;
+use App\Observers\SongObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Log;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -57,22 +56,7 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        // Generate a unique hash for a song from its path to be the ID
-        Song::creating(static function (Song $song): void {
-            /** @var HelperService $helperService */
-            $helperService = app(HelperService::class);
-            $song->id = $helperService->getFileHash($song->path);
-        });
-
-        // Remove the cover file if the album is deleted
-        Album::deleted(static function (Album $album): void {
-            if ($album->has_cover) {
-                try {
-                    unlink($album->cover_path);
-                } catch (Exception $e) {
-                    Log::error($e);
-                }
-            }
-        });
+        Song::observe(SongObserver::class);
+        Album::observe(AlbumObserver::class);
     }
 }

@@ -109,7 +109,7 @@ class SyncMediaCommand extends Command
     /**
      * Log a song's sync status to console.
      */
-    public function logSyncStatusToConsole(string $path, int $result, string $reason = ''): void
+    public function logSyncStatusToConsole(string $path, int $result, ?string $reason = null): void
     {
         $name = basename($path);
 
