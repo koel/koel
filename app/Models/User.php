@@ -115,7 +115,7 @@ class User extends Authenticatable
      *
      * @return mixed[]
      */
-    public function getPreferencesAttribute(string $value): array
+    public function getPreferencesAttribute(?string $value): array
     {
         $preferences = unserialize($value) ?: [];
 
