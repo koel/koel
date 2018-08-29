@@ -19,7 +19,8 @@
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-SimpleXML": "*",
-    "fideloper/proxy": "^4.0"
+    "fideloper/proxy": "^4.0",
+    "barryvdh/laravel-cors": "^0.11.0"
   },
   "require-dev": {
     "filp/whoops": "~2.0",
