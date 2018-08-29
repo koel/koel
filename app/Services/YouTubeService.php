@@ -58,12 +58,12 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
         });
     }
 
-    public function getEndpoint(): string
+    public function getEndpoint(): ?string
     {
         return config('koel.youtube.endpoint');
     }
 
-    public function getKey(): string
+    public function getKey(): ?string
     {
         return config('koel.youtube.key');
     }

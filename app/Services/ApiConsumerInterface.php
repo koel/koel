@@ -4,7 +4,7 @@ namespace App\Services;
 
 interface ApiConsumerInterface
 {
-    public function getEndpoint(): string;
+    public function getEndpoint(): ?string;
 
     public function getKey(): ?string;
 

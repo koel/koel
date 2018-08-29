@@ -129,5 +129,5 @@ abstract class ApiClient
 
     abstract public function getSecret(): ?string;
 
-    abstract public function getEndpoint(): string;
+    abstract public function getEndpoint(): ?string;
 }

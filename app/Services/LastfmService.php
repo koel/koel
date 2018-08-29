@@ -320,17 +320,17 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($str)))));
     }
 
-    public function getKey(): string
+    public function getKey(): ?string
     {
         return config('koel.lastfm.key');
     }
 
-    public function getEndpoint(): string
+    public function getEndpoint(): ?string
     {
         return config('koel.lastfm.endpoint');
     }
 
-    public function getSecret(): string
+    public function getSecret(): ?string
     {
         return config('koel.lastfm.secret');
     }

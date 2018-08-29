@@ -78,7 +78,7 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
         return null;
     }
 
-    public function getEndpoint(): string
+    public function getEndpoint(): ?string
     {
         return config('koel.itunes.endpoint');
     }
