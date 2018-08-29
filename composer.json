@@ -5,8 +5,8 @@
   "license": "MIT",
   "type": "project",
   "require": {
-    "php": ">=5.6.4",
-    "laravel/framework": "5.5.*",
+    "php": ">=7.1.3",
+    "laravel/framework": "5.6.*",
     "james-heinrich/getid3": "^1.9",
     "guzzlehttp/guzzle": "^6.1",
     "tymon/jwt-auth": "^0.5.6",
@@ -18,20 +18,20 @@
     "ext-exif": "*",
     "ext-fileinfo": "*",
     "ext-json": "*",
-    "ext-SimpleXML": "*"
+    "ext-SimpleXML": "*",
+    "fideloper/proxy": "^4.0"
   },
   "require-dev": {
     "filp/whoops": "~2.0",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "~1.0",
-    "phpunit/phpunit": "~6.0",
+    "phpunit/phpunit": "~7.0",
     "symfony/css-selector": "~3.1",
     "symfony/dom-crawler": "^3.2",
     "facebook/webdriver": "^1.2",
     "barryvdh/laravel-ide-helper": "^2.1",
     "laravel/tinker": "^1.0",
     "laravel/browser-kit-testing": "^2.0",
-    "codeclimate/php-test-reporter": "^0.4.4",
     "mikey179/vfsStream": "^1.6"
   },
   "autoload": {
@@ -55,26 +55,24 @@
       "@php artisan package:discover"
     ],
     "post-install-cmd": [
-      "php artisan clear-compiled",
-      "php artisan optimize",
-      "php artisan cache:clear",
-      "php -r \"if (!file_exists('.env')) copy('.env.example', '.env');\""
+      "@php artisan clear-compiled",
+      "@php artisan cache:clear",
+      "@php -r \"if (!file_exists('.env')) copy('.env.example', '.env');\""
     ],
     "pre-update-cmd": [
-      "php artisan clear-compiled"
+      "@php artisan clear-compiled"
     ],
     "post-update-cmd": [
-      "php artisan optimize",
-      "php artisan cache:clear"
+      "@php artisan cache:clear"
     ],
     "post-root-package-install": [
-      "php -r \"copy('.env.example', '.env');\""
+      "@php -r \"copy('.env.example', '.env');\""
     ],
     "post-create-project-cmd": [
-      "php artisan key:generate"
+      "@php artisan key:generate"
     ],
     "test": [
-      "phpunit --colors=always"
+      "@phpunit --colors=always"
     ]
   },
   "config": {
