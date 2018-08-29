@@ -7,13 +7,13 @@ use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\File;
 use App\Models\Setting;
 use App\Models\Song;
+use App\Repositories\AlbumRepository;
+use App\Repositories\ArtistRepository;
+use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use Exception;
-use getID3;
-use getid3_exception;
 use Log;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
@@ -42,15 +42,30 @@ class MediaSyncService
     private $mediaMetadataService;
     private $songRepository;
     private $helperService;
+    private $fileSynchronizer;
+    private $finder;
+    private $artistRepository;
+    private $albumRepository;
+    private $settingRepository;
 
     public function __construct(
         MediaMetadataService $mediaMetadataService,
         SongRepository $songRepository,
-        HelperService $helperService
+        ArtistRepository $artistRepository,
+        AlbumRepository $albumRepository,
+        SettingRepository $settingRepository,
+        HelperService $helperService,
+        FileSynchronizer $fileSynchronizer,
+        Finder $finder
     ) {
         $this->mediaMetadataService = $mediaMetadataService;
         $this->songRepository = $songRepository;
         $this->helperService = $helperService;
+        $this->fileSynchronizer = $fileSynchronizer;
+        $this->finder = $finder;
+        $this->artistRepository = $artistRepository;
+        $this->albumRepository = $albumRepository;
+        $this->settingRepository = $settingRepository;
     }
 
     /**
@@ -75,17 +90,9 @@ class MediaSyncService
         ?string $mediaPath = null,
         array $tags = [],
         bool $force = false,
-        SyncMediaCommand $syncCommand = null
+        ?SyncMediaCommand $syncCommand = null
     ): void {
-        if (!app()->runningInConsole()) {
-            set_time_limit(config('koel.sync.timeout'));
-        }
-
-        if (config('koel.memory_limit')) {
-            ini_set('memory_limit', config('koel.memory_limit').'M');
-        }
-
-        $mediaPath = $mediaPath ?: Setting::get('media_path');
+        $this->setSystemRequirements();
         $this->setTags($tags);
 
         $results = [
@@ -94,34 +101,33 @@ class MediaSyncService
             'unmodified' => [],
         ];
 
-        $getID3 = new getID3();
-        $songPaths = $this->gatherFiles($mediaPath);
+        $songPaths = $this->gatherFiles($mediaPath ?: $this->settingRepository->getMediaPath());
         $syncCommand && $syncCommand->createProgressBar(count($songPaths));
 
         foreach ($songPaths as $path) {
-            $file = new File($path, $getID3, $this->mediaMetadataService);
+            $result = $this->fileSynchronizer->setFile($path)->sync($this->tags, $force);
 
-            switch ($result = $file->sync($this->tags, $force)) {
-                case File::SYNC_RESULT_SUCCESS:
-                    $results['success'][] = $file;
+            switch ($result) {
+                case FileSynchronizer::SYNC_RESULT_SUCCESS:
+                    $results['success'][] = $path;
                     break;
-                case File::SYNC_RESULT_UNMODIFIED:
-                    $results['unmodified'][] = $file;
+                case FileSynchronizer::SYNC_RESULT_UNMODIFIED:
+                    $results['unmodified'][] = $path;
                     break;
                 default:
-                    $results['bad_files'][] = $file;
+                    $results['bad_files'][] = $path;
                     break;
             }
 
             if ($syncCommand) {
                 $syncCommand->advanceProgressBar();
-                $syncCommand->logSyncStatusToConsole($file->getPath(), $result, $file->getSyncError());
+                $syncCommand->logSyncStatusToConsole($path, $result, $this->fileSynchronizer->getSyncError());
             }
         }
 
         // Delete non-existing songs.
-        $hashes = array_map(function (File $file): string {
-            return $this->helperService->getFileHash($file->getPath());
+        $hashes = array_map(function (string $path): string {
+            return $this->helperService->getFileHash($path);
         }, array_merge($results['unmodified'], $results['success']));
 
         Song::deleteWhereIDsNotIn($hashes);
@@ -140,7 +146,7 @@ class MediaSyncService
     public function gatherFiles(string $path): array
     {
         return iterator_to_array(
-            Finder::create()
+            $this->finder->create()
                 ->ignoreUnreadableDirs()
                 ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/phanan/koel/issues/450
                 ->files()
@@ -173,30 +179,16 @@ class MediaSyncService
 
         // If the file has been deleted...
         if ($record->isDeleted()) {
-            // ...and it has a record in our database, remove it.
-            if ($song = $this->songRepository->getOneByPath($path)) {
-                $song->delete();
-                Log::info("$path deleted.");
-
-                event(new LibraryChanged());
-            } else {
-                Log::info("$path doesn't exist in our database--skipping.");
-            }
+            $this->handleDeletedFileRecord($path);
         }
         // Otherwise, it's a new or changed file. Try to sync it in.
-        // File format etc. will be handled by File::sync().
         elseif ($record->isNewOrModified()) {
-            $result = (new File($path))->sync($this->tags);
-            Log::info($result === File::SYNC_RESULT_SUCCESS ? "Synchronized $path" : "Invalid file $path");
-
-            event(new LibraryChanged());
+            $this->handleNewOrModifiedFileRecord($path);
         }
     }
 
     /**
      * Sync a directory's watch record.
-     *
-     * @throws getid3_exception
      */
     private function syncDirectoryRecord(WatchRecordInterface $record): void
     {
@@ -204,21 +196,9 @@ class MediaSyncService
         Log::info("'$path' is a directory.");
 
         if ($record->isDeleted()) {
-            // The directory is removed. We remove all songs in it.
-            if ($count = Song::inDirectory($path)->delete()) {
-                Log::info("Deleted $count song(s) under $path");
-
-                event(new LibraryChanged());
-            } else {
-                Log::info("$path is empty--no action needed.");
-            }
+            $this->handleDeletedDirectoryRecord($path);
         } elseif ($record->isNewOrModified()) {
-            foreach ($this->gatherFiles($path) as $file) {
-                (new File($file))->sync($this->tags);
-            }
-            Log::info("Synced all song(s) under $path");
-
-            event(new LibraryChanged());
+            $this->handleNewOrModifiedDirectoryRecord($path);
         }
     }
 
@@ -240,35 +220,80 @@ class MediaSyncService
     }
 
     /**
-     * Generate a unique hash for a file path.
-     */
-    public function getFileHash(string $path): string
-    {
-        return File::getHash($path);
-    }
-
-    /**
      * Tidy up the library by deleting empty albums and artists.
      *
      * @throws Exception
      */
     public function tidy(): void
     {
-        $inUseAlbums = Song::select('album_id')
-            ->groupBy('album_id')
-            ->get()
-            ->pluck('album_id')
-            ->toArray();
+        $inUseAlbums = $this->albumRepository->getNonEmptyAlbumIds();
         $inUseAlbums[] = Album::UNKNOWN_ID;
         Album::deleteWhereIDsNotIn($inUseAlbums);
 
-        $inUseArtists = Song::select('artist_id')
-            ->groupBy('artist_id')
-            ->get()
-            ->pluck('artist_id')
-            ->toArray();
+        $inUseArtists = $this->artistRepository->getNonEmptyArtistIds();
         $inUseArtists[] = Artist::UNKNOWN_ID;
         $inUseArtists[] = Artist::VARIOUS_ID;
         Artist::deleteWhereIDsNotIn(array_filter($inUseArtists));
+    }
+
+    private function setSystemRequirements(): void
+    {
+        if (!app()->runningInConsole()) {
+            set_time_limit(config('koel.sync.timeout'));
+        }
+
+        if (config('koel.memory_limit')) {
+            ini_set('memory_limit', config('koel.memory_limit') . 'M');
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function handleDeletedFileRecord(string $path): void
+    {
+        if ($song = $this->songRepository->getOneByPath($path)) {
+            $song->delete();
+            Log::info("$path deleted.");
+
+            event(new LibraryChanged());
+        } else {
+            Log::info("$path doesn't exist in our database--skipping.");
+        }
+    }
+
+    private function handleNewOrModifiedFileRecord(string $path): void
+    {
+        $result = $this->fileSynchronizer->setFile($path)->sync($this->tags);
+
+        if ($result === FileSynchronizer::SYNC_RESULT_SUCCESS) {
+            Log::info("Synchronized $path");
+        } else {
+            Log::info("Failed to synchronized $path. Maybe an invalid file?");
+        }
+
+        event(new LibraryChanged());
+    }
+
+    private function handleDeletedDirectoryRecord(string $path): void
+    {
+        if ($count = Song::inDirectory($path)->delete()) {
+            Log::info("Deleted $count song(s) under $path");
+
+            event(new LibraryChanged());
+        } else {
+            Log::info("$path is empty--no action needed.");
+        }
+    }
+
+    private function handleNewOrModifiedDirectoryRecord(string $path): void
+    {
+        foreach ($this->gatherFiles($path) as $file) {
+            $this->fileSynchronizer->setFile($file)->sync($this->tags);
+        }
+
+        Log::info("Synced all song(s) under $path");
+
+        event(new LibraryChanged());
     }
 }

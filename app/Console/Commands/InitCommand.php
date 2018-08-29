@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Setting;
 use App\Models\User;
+use App\Repositories\SettingRepository;
 use App\Services\MediaCacheService;
 use Exception;
 use Illuminate\Console\Command;
@@ -22,9 +23,11 @@ class InitCommand extends Command
     private $dotenvEditor;
     private $hash;
     private $db;
+    private $settingRepository;
 
     public function __construct(
         MediaCacheService $mediaCacheService,
+        SettingRepository $settingRepository,
         Artisan $artisan,
         Hash $hash,
         DotenvEditor $dotenvEditor,
@@ -37,6 +40,7 @@ class InitCommand extends Command
         $this->dotenvEditor = $dotenvEditor;
         $this->hash = $hash;
         $this->db = $db;
+        $this->settingRepository = $settingRepository;
     }
 
     public function handle(): void
@@ -55,7 +59,7 @@ class InitCommand extends Command
 
         $this->comment(PHP_EOL.'🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
 
-        if (Setting::get('media_path')) {
+        if ($this->settingRepository->getMediaPath()) {
             $this->comment('You can also scan for media with `php artisan koel:sync`.');
         }
 
@@ -146,7 +150,7 @@ class InitCommand extends Command
 
     private function maybeSetMediaPath(): void
     {
-        if (!Setting::get('media_path')) {
+        if ($this->settingRepository->getMediaPath()) {
             return;
         }
 

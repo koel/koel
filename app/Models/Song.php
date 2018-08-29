@@ -23,6 +23,7 @@ use Illuminate\Support\Collection;
  * @property int    album_id
  * @property int    id
  * @property int    artist_id
+ * @property int    mtime
  */
 class Song extends Model
 {

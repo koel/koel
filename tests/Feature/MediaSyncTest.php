@@ -6,14 +6,12 @@ use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\File;
 use App\Models\Song;
+use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
 use Exception;
 use getID3;
-use getid3_exception;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Mockery as m;
 
 class MediaSyncTest extends TestCase
 {
@@ -25,14 +23,7 @@ class MediaSyncTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->mediaService = app(MediaSyncService::class);
-    }
-
-    protected function tearDown()
-    {
-        m::close();
-        parent::tearDown();
     }
 
     /**
@@ -244,14 +235,10 @@ class MediaSyncTest extends TestCase
         $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
     }
 
-    /**
-     * @test
-     *
-     * @throws getid3_exception
-     */
+    /** @test */
     public function html_entities_in_tags_are_recognized_and_saved_properly()
     {
-        $getID3 = m::mock(getID3::class, [
+        $this->mockIocDependency(getID3::class, [
             'analyze' => [
                 'tags' => [
                     'id3v2' => [
@@ -265,11 +252,13 @@ class MediaSyncTest extends TestCase
             ],
         ]);
 
-        $info = (new File(__DIR__.'/songs/blank.mp3', $getID3))->getInfo();
+        /** @var FileSynchronizer $fileSynchronizer */
+        $fileSynchronizer = app(FileSynchronizer::class);
+        $info = $fileSynchronizer->setFile(__DIR__.'/songs/blank.mp3')->getFileInfo();
 
-        $this->assertEquals('佐倉綾音 Unknown', $info['artist']);
-        $this->assertEquals('小岩井こ Random', $info['album']);
-        $this->assertEquals('水谷広実', $info['title']);
+        self::assertEquals('佐倉綾音 Unknown', $info['artist']);
+        self::assertEquals('小岩井こ Random', $info['album']);
+        self::assertEquals('水谷広実', $info['title']);
     }
 
     /**

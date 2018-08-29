@@ -19,7 +19,7 @@ class XAccelRedirectStreamer extends Streamer implements DirectStreamerInterface
         header('X-Media-Root: '.Setting::get('media_path'));
         header("X-Accel-Redirect: /media/$relativePath");
         header("Content-Type: {$this->contentType}");
-        header('Content-Disposition: inline; filename="'.basename($this->song->path).'"');
+        header('Content-Disposition: inline; filename="' . basename($this->song->path) . '"');
 
         exit;
     }

@@ -3,8 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Libraries\WatchRecord\InotifyWatchRecord;
-use App\Models\File;
 use App\Models\Setting;
+use App\Repositories\SettingRepository;
+use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
 use Exception;
 use Illuminate\Console\Command;
@@ -18,21 +19,22 @@ class SyncMediaCommand extends Command
         {--force : Force re-syncing even unchanged files}';
 
     protected $description = 'Sync songs found in configured directory against the database.';
-
     private $ignored = 0;
     private $invalid = 0;
     private $synced = 0;
     private $mediaSyncService;
+    private $settingRepository;
 
     /**
      * @var ProgressBar
      */
     private $progressBar;
 
-    public function __construct(MediaSyncService $mediaSyncService)
+    public function __construct(MediaSyncService $mediaSyncService, SettingRepository $settingRepository)
     {
         parent::__construct();
         $this->mediaSyncService = $mediaSyncService;
+        $this->settingRepository = $settingRepository;
     }
 
     /**
@@ -40,19 +42,7 @@ class SyncMediaCommand extends Command
      */
     public function handle(): void
     {
-        if (!Setting::get('media_path')) {
-            $this->warn("Media path hasn't been configured. Let's set it up.");
-            while (true) {
-                $path = $this->ask('Absolute path to your media directory:');
-
-                if (is_dir($path) && is_readable($path)) {
-                    Setting::set('media_path', $path);
-                    break;
-                }
-
-                $this->error('The path does not exist or not readable. Try again.');
-            }
-        }
+        $this->ensureMediaPath();
 
         if (!$record = $this->argument('record')) {
             $this->syncAll();
@@ -113,23 +103,15 @@ class SyncMediaCommand extends Command
     {
         $name = basename($path);
 
-        if ($result === File::SYNC_RESULT_UNMODIFIED) {
-            if ($this->option('verbose')) {
-                $this->line("$name has no changes – ignoring");
-            }
-
+        if ($result === FileSynchronizer::SYNC_RESULT_UNMODIFIED) {
             $this->ignored++;
-        } elseif ($result === File::SYNC_RESULT_BAD_FILE) {
+        } elseif ($result === FileSynchronizer::SYNC_RESULT_BAD_FILE) {
             if ($this->option('verbose')) {
-                $this->error("$name is not a valid media file because: ".$reason);
+                $this->error(PHP_EOL . "'$name' is not a valid media file: ".$reason);
             }
 
             $this->invalid++;
         } else {
-            if ($this->option('verbose')) {
-                $this->info("$name synced");
-            }
-
             $this->synced++;
         }
     }
@@ -139,8 +121,28 @@ class SyncMediaCommand extends Command
         $this->progressBar = $this->getOutput()->createProgressBar($max);
     }
 
-    public function advanceProgressBar()
+    public function advanceProgressBar(): void
     {
         $this->progressBar->advance();
+    }
+
+    private function ensureMediaPath(): void
+    {
+        if ($this->settingRepository->getMediaPath()) {
+            return;
+        }
+
+        $this->warn("Media path hasn't been configured. Let's set it up.");
+
+        while (true) {
+            $path = $this->ask('Absolute path to your media directory:');
+
+            if (is_dir($path) && is_readable($path)) {
+                Setting::set('media_path', $path);
+                break;
+            }
+
+            $this->error('The path does not exist or is not readable. Try again.');
+        }
     }
 }

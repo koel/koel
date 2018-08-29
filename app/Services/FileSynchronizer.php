@@ -1,129 +1,113 @@
 <?php
 
-namespace App\Models;
+namespace App\Services;
 
+use App\Models\Album;
+use App\Models\Artist;
+use App\Models\Song;
 use App\Repositories\SongRepository;
-use App\Services\HelperService;
-use App\Services\MediaMetadataService;
-use Cache;
 use Exception;
 use getID3;
-use getid3_exception;
 use getid3_lib;
 use InvalidArgumentException;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
-class File
+class FileSynchronizer
 {
     const SYNC_RESULT_SUCCESS = 1;
     const SYNC_RESULT_BAD_FILE = 2;
     const SYNC_RESULT_UNMODIFIED = 3;
 
+    private $getID3;
+    private $mediaMetadataService;
+    private $helperService;
+    private $songRepository;
+    private $cache;
+    private $finder;
+
     /**
-     * A MD5 hash of the file's path.
+     * @var SplFileInfo
+     */
+    private $splFileInfo;
+
+    /**
+     * @var int
+     */
+    private $fileModifiedTime;
+
+    /**
+     * @var string
+     */
+    private $filePath;
+
+    /**
+     * A (MD5) hash of the file's path.
      * This value is unique, and can be used to query a Song record.
      *
      * @var string
      */
-    protected $hash;
+    private $fileHash;
 
     /**
-     * The file's last modified time.
+     * The song model that's associated with the current file.
      *
-     * @var int
+     * @var Song|null
      */
-    protected $mtime;
+    private $song;
 
     /**
-     * The file's path.
+     * @var string|null
      */
-    protected $path;
+    private $syncError;
 
-    /**
-     * The getID3 object, for ID3 tag reading.
-     */
-    protected $getID3;
-
-    /**
-     * @var MediaMetadataService
-     */
-    private $mediaMetadataService;
-
-    /**
-     * The SplFileInfo object of the file.
-     *
-     * @var SplFileInfo
-     */
-    protected $splFileInfo;
-
-    /**
-     * The song model that's associated with this file.
-     *
-     * @var Song
-     */
-    protected $song;
-
-    /**
-     * The last parsing error text, if any.
-     *
-     * @var string
-     */
-    protected $syncError;
-
-    /**
-     * @var HelperService
-     */
-    private $helperService;
-
-    /**
-     * @var SongRepository
-     */
-    private $songRepository;
-
-    /**
-     * Construct our File object.
-     * Upon construction, we'll set the path, hash, and associated Song object (if any).
-     *
-     * @param string|SplFileInfo $path Either the file's path, or a SplFileInfo object
-     *
-     * @throws getid3_exception
-     *
-     * @todo Refactor this bloated, anti-pattern monster.
-     */
     public function __construct(
-        $path,
-        ?getID3 $getID3 = null,
-        ?MediaMetadataService $mediaMetadataService = null,
-        ?HelperService $helperService = null,
-        ?SongRepository $songRepository = null
-    ) {
+        getID3 $getID3,
+        MediaMetadataService $mediaMetadataService,
+        HelperService $helperService,
+        SongRepository $songRepository,
+        Cache $cache,
+        Finder $finder
+    )
+    {
+        $this->getID3 = $getID3;
+        $this->mediaMetadataService = $mediaMetadataService;
+        $this->helperService = $helperService;
+        $this->songRepository = $songRepository;
+        $this->cache = $cache;
+        $this->finder = $finder;
+    }
+
+    /**
+     * @param string|SplFileInfo $path
+     */
+    public function setFile($path): self
+    {
         $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
-        $this->setGetID3($getID3);
-        $this->setMediaMetadataService($mediaMetadataService);
-        $this->setHelperService($helperService);
-        $this->setSongRepository($songRepository);
 
         // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
         try {
-            $this->mtime = $this->splFileInfo->getMTime();
+            $this->fileModifiedTime = $this->splFileInfo->getMTime();
         } catch (Exception $e) {
             // Not worth logging the error. Just use current stamp for mtime.
-            $this->mtime = time();
+            $this->fileModifiedTime = time();
         }
 
-        $this->path = $this->splFileInfo->getPathname();
-        $this->hash = $this->helperService->getFileHash($this->path);
-        $this->song = $this->songRepository->getOneById($this->hash);
+        $this->filePath = $this->splFileInfo->getPathname();
+        $this->fileHash = $this->helperService->getFileHash($this->filePath);
+        $this->song = $this->songRepository->getOneById($this->fileHash);
         $this->syncError = null;
+
+        return $this;
     }
 
     /**
      * Get all applicable ID3 info from the file.
      */
-    public function getInfo(): array
+    public function getFileInfo(): array
     {
-        $info = $this->getID3->analyze($this->path);
+        $info = $this->getID3->analyze($this->filePath);
 
         if (isset($info['error']) || !isset($info['playtime_seconds'])) {
             $this->syncError = isset($info['error']) ? $info['error'][0] : 'No playtime found';
@@ -154,14 +138,14 @@ class File
             'artist' => '',
             'album' => '',
             'compilation' => false,
-            'title' => basename($this->path, '.'.pathinfo($this->path, PATHINFO_EXTENSION)), // default to be file name
+            'title' => basename($this->filePath, '.'.pathinfo($this->filePath, PATHINFO_EXTENSION)), // default to be file name
             'length' => $info['playtime_seconds'],
             'track' => (int) $track,
             'disc' => (int) array_get($info, 'comments.part_of_a_set.0', 1),
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
-            'path' => $this->path,
-            'mtime' => $this->mtime,
+            'path' => $this->filePath,
+            'mtime' => $this->fileModifiedTime,
         ];
 
         if (!$comments = array_get($info, 'comments_html')) {
@@ -195,7 +179,6 @@ class File
 
         return $props;
     }
-
     /**
      * Sync the song with all available media info against the database.
      *
@@ -209,21 +192,21 @@ class File
     public function sync(array $tags, bool $force = false)
     {
         // If the file is not new or changed and we're not forcing update, don't do anything.
-        if (!$this->isNewOrChanged() && !$force) {
+        if (!$this->isFileNewOrChanged() && !$force) {
             return self::SYNC_RESULT_UNMODIFIED;
         }
 
         // If the file is invalid, don't do anything.
-        if (!$info = $this->getInfo()) {
+        if (!$info = $this->getFileInfo()) {
             return self::SYNC_RESULT_BAD_FILE;
         }
 
         // Fixes #366. If the file is new, we use all tags by simply setting $force to false.
-        if ($this->isNew()) {
+        if ($this->isFileNew()) {
             $force = false;
         }
 
-        if ($this->isChanged() || $force) {
+        if ($this->isFileChanged() || $force) {
             // This is a changed file, or the user is forcing updates.
             // In such a case, the user must have specified a list of tags to sync.
             // A sample command could be: ./artisan koel:sync --force --tags=artist,album,lyrics
@@ -268,7 +251,7 @@ class File
         $data = array_except($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
-        $this->song = Song::updateOrCreate(['id' => $this->hash], $data);
+        $this->song = Song::updateOrCreate(['id' => $this->fileHash], $data);
 
         return self::SYNC_RESULT_SUCCESS;
     }
@@ -278,7 +261,7 @@ class File
      *
      * @param mixed[]|null $coverData
      */
-    private function generateAlbumCover(Album $album, ?array $coverData): void
+    private function generateAlbumCover(Album $album, ?array $coverData)
     {
         // If the album has no cover, we try to get the cover image from existing tag data
         if ($coverData) {
@@ -297,56 +280,6 @@ class File
     }
 
     /**
-     * Determine if the file is new (its Song record can't be found in the database).
-     */
-    public function isNew(): bool
-    {
-        return !$this->song;
-    }
-
-    /**
-     * Determine if the file is changed (its Song record is found, but the timestamp is different).
-     */
-    public function isChanged(): bool
-    {
-        return !$this->isNew() && $this->song->mtime !== $this->mtime;
-    }
-
-    /**
-     * Determine if the file is new or changed.
-     */
-    public function isNewOrChanged(): bool
-    {
-        return $this->isNew() || $this->isChanged();
-    }
-
-    public function getGetID3(): getID3
-    {
-        return $this->getID3;
-    }
-
-    /**
-     * Get the last parsing error's text.
-     */
-    public function getSyncError(): ?string
-    {
-        return $this->syncError;
-    }
-
-    /**
-     * @throws getid3_exception
-     */
-    public function setGetID3(?getID3 $getID3 = null): void
-    {
-        $this->getID3 = $getID3 ?: new getID3();
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
-    }
-
-    /**
      * Issue #380.
      * Some albums have its own cover image under the same directory as cover|folder.jpg/png.
      * We'll check if such a cover file is found, and use it if positive.
@@ -356,15 +289,15 @@ class File
     private function getCoverFileUnderSameDirectory(): ?string
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        return Cache::remember(md5($this->path.'_cover'), 24 * 60, function () {
+        return $this->cache->remember(md5($this->filePath . '_cover'), 24 * 60, function (): ?string {
             $matches = array_keys(iterator_to_array(
-                Finder::create()
-                    ->depth(0)
-                    ->ignoreUnreadableDirs()
-                    ->files()
-                    ->followLinks()
-                    ->name('/(cov|fold)er\.(jpe?g|png)$/i')
-                    ->in(dirname($this->path))
+                    $this->finder->create()
+                        ->depth(0)
+                        ->ignoreUnreadableDirs()
+                        ->files()
+                        ->followLinks()
+                        ->name('/(cov|fold)er\.(jpe?g|png)$/i')
+                        ->in(dirname($this->filePath))
                 )
             );
 
@@ -379,18 +312,30 @@ class File
         });
     }
 
-    private function setMediaMetadataService(?MediaMetadataService $mediaMetadataService = null): void
+
+    /**
+     * Determine if the file is new (its Song record can't be found in the database).
+     */
+    public function isFileNew(): bool
     {
-        $this->mediaMetadataService = $mediaMetadataService ?: app(MediaMetadataService::class);
+        return !$this->song;
     }
 
-    private function setHelperService(?HelperService $helperService = null): void
+    /**
+     * Determine if the file is changed (its Song record is found, but the timestamp is different).
+     */
+    public function isFileChanged(): bool
     {
-        $this->helperService = $helperService ?: app(HelperService::class);
+        return !$this->isFileNew() && $this->song->mtime !== $this->fileModifiedTime;
     }
 
-    public function setSongRepository(?SongRepository $songRepository = null): void
+    public function isFileNewOrChanged(): bool
     {
-        $this->songRepository = $songRepository ?: app(SongRepository::class);
+        return $this->isFileNew() || $this->isFileChanged();
+    }
+
+    public function getSyncError(): ?string
+    {
+        return $this->syncError;
     }
 }
