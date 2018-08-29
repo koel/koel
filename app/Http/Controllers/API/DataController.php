@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Application;
-use App\Models\Interaction;
-use App\Models\Playlist;
-use App\Models\Setting;
-use App\Models\User;
+use App\Repositories\InteractionRepository;
+use App\Repositories\PlaylistRepository;
+use App\Repositories\SettingRepository;
+use App\Repositories\UserRepository;
 use App\Services\iTunesService;
 use App\Services\LastfmService;
 use App\Services\MediaCacheService;
@@ -20,17 +20,29 @@ class DataController extends Controller
     private $youTubeService;
     private $iTunesService;
     private $mediaCacheService;
+    private $settingRepository;
+    private $playlistRepository;
+    private $interactionRepository;
+    private $userRepository;
 
     public function __construct(
         LastfmService $lastfmService,
         YouTubeService $youTubeService,
         iTunesService $iTunesService,
-        MediaCacheService $mediaCacheService
+        MediaCacheService $mediaCacheService,
+        SettingRepository $settingRepository,
+        PlaylistRepository $playlistRepository,
+        InteractionRepository $interactionRepository,
+        UserRepository $userRepository
     ) {
         $this->lastfmService = $lastfmService;
         $this->youTubeService = $youTubeService;
         $this->iTunesService = $iTunesService;
         $this->mediaCacheService = $mediaCacheService;
+        $this->settingRepository = $settingRepository;
+        $this->playlistRepository = $playlistRepository;
+        $this->interactionRepository = $interactionRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -41,10 +53,10 @@ class DataController extends Controller
     public function index(Request $request)
     {
         return response()->json($this->mediaCacheService->get() + [
-            'settings' => $request->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
-            'playlists' => Playlist::byCurrentUser()->orderBy('name')->get()->toArray(),
-            'interactions' => Interaction::byCurrentUser()->get(),
-            'users' => $request->user()->is_admin ? User::all() : [],
+            'settings' => $request->user()->is_admin ? $this->settingRepository->getAllAsKeyValueArray() : [],
+            'playlists' => $this->playlistRepository->getAllByCurrentUser(),
+            'interactions' => $this->interactionRepository->getAllByCurrentUser(),
+            'users' => $request->user()->is_admin ? $this->userRepository->getAll() : [],
             'currentUser' => $request->user(),
             'useLastfm' => $this->lastfmService->used(),
             'useYouTube' => $this->youTubeService->enabled(),

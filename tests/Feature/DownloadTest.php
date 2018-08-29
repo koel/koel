@@ -7,8 +7,8 @@ use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
-use App\Services\InteractionService;
 use Exception;
 use Illuminate\Support\Collection;
 use Mockery;
@@ -128,7 +128,7 @@ class DownloadTest extends TestCase
         $user = factory(User::class)->create();
         $favorites = Collection::make();
 
-        $this->mockIocDependency(InteractionService::class)
+        $this->mockIocDependency(InteractionRepository::class)
             ->shouldReceive('getUserFavorites')
             ->once()
             ->with(Mockery::on(static function (User $retrievedUser) use ($user) {

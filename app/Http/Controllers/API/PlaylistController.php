@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Http\Requests\API\PlaylistSyncRequest;
 use App\Models\Playlist;
+use App\Repositories\PlaylistRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -12,6 +13,13 @@ use Illuminate\Http\Request;
 
 class PlaylistController extends Controller
 {
+    private $playlistRepository;
+
+    public function __construct(PlaylistRepository $playlistRepository)
+    {
+        $this->playlistRepository = $playlistRepository;
+    }
+
     /**
      * Gets all playlists by the current user.
      *
@@ -19,7 +27,7 @@ class PlaylistController extends Controller
      */
     public function index()
     {
-        return response()->json(Playlist::byCurrentUser()->orderBy('name')->with('songs')->get());
+        return response()->json($this->playlistRepository->getAllByCurrentUser());
     }
 
     /**

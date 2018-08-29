@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Repositories\SongRepository;
+use App\Services\HelperService;
 use App\Services\MediaMetadataService;
 use Cache;
 use Exception;
@@ -14,6 +16,10 @@ use Symfony\Component\Finder\Finder;
 
 class File
 {
+    const SYNC_RESULT_SUCCESS = 1;
+    const SYNC_RESULT_BAD_FILE = 2;
+    const SYNC_RESULT_UNMODIFIED = 3;
+
     /**
      * A MD5 hash of the file's path.
      * This value is unique, and can be used to query a Song record.
@@ -36,6 +42,8 @@ class File
 
     /**
      * The getID3 object, for ID3 tag reading.
+     *
+     * @var getID3
      */
     protected $getID3;
 
@@ -65,25 +73,39 @@ class File
      */
     protected $syncError;
 
-    const SYNC_RESULT_SUCCESS = 1;
-    const SYNC_RESULT_BAD_FILE = 2;
-    const SYNC_RESULT_UNMODIFIED = 3;
+    /**
+     * @var HelperService
+     */
+    private $helperService;
+
+    /**
+     * @var SongRepository
+     */
+    private $songRepository;
 
     /**
      * Construct our File object.
      * Upon construction, we'll set the path, hash, and associated Song object (if any).
      *
      * @param string|SplFileInfo        $path                 Either the file's path, or a SplFileInfo object
-     * @param getID3|null               $getID3               A getID3 object
-     * @param MediaMetadataService|null $mediaMetadataService
      *
      * @throws getid3_exception
+     *
+     * @todo Refactor this bloated, anti-pattern monster.
      */
-    public function __construct($path, getID3 $getID3 = null, MediaMetadataService $mediaMetadataService = null)
+    public function __construct(
+        $path,
+        ?getID3 $getID3 = null,
+        ?MediaMetadataService $mediaMetadataService = null,
+        ?HelperService $helperService = null,
+        ?SongRepository $songRepository = null
+    )
     {
         $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
         $this->setGetID3($getID3);
         $this->setMediaMetadataService($mediaMetadataService);
+        $this->setHelperService($helperService);
+        $this->setSongRepository($songRepository);
 
         // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
         try {
@@ -94,9 +116,9 @@ class File
         }
 
         $this->path = $this->splFileInfo->getPathname();
-        $this->hash = self::getHash($this->path);
-        $this->song = Song::find($this->hash);
-        $this->syncError = '';
+        $this->hash = $this->helperService->getFileHash($this->path);
+        $this->song = $this->songRepository->getOneById($this->hash);
+        $this->syncError = null;
     }
 
     /**
@@ -360,16 +382,18 @@ class File
         });
     }
 
-    /**
-     * Get a unique hash from a file path.
-     */
-    public static function getHash(string $path): string
-    {
-        return md5(config('app.key').$path);
-    }
-
-    private function setMediaMetadataService(MediaMetadataService $mediaMetadataService = null): void
+    private function setMediaMetadataService(?MediaMetadataService $mediaMetadataService = null): void
     {
         $this->mediaMetadataService = $mediaMetadataService ?: app(MediaMetadataService::class);
+    }
+
+    private function setHelperService(?HelperService $helperService = null): void
+    {
+        $this->helperService = $helperService ?: app(HelperService::class);
+    }
+
+    public function setSongRepository(?SongRepository $songRepository = null): void
+    {
+        $this->songRepository = $songRepository ?: app(SongRepository::class);
     }
 }

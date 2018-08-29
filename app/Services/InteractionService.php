@@ -99,18 +99,4 @@ class InteractionService
             }
         );
     }
-
-    /**
-     * Get all songs favorited by a user.
-     */
-    public function getUserFavorites(User $user): Collection
-    {
-        return $this->interaction->where([
-            'user_id' => $user->id,
-            'like' => true,
-        ])
-            ->with('song')
-            ->get()
-            ->pluck('song');
-    }
 }

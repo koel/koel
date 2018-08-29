@@ -4,11 +4,7 @@ namespace App\Models;
 
 use App\Events\LibraryChanged;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
-use AWS;
-use Aws\AwsClient;
-use Cache;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -72,14 +68,6 @@ class Song extends Model
     public function playlists(): BelongsToMany
     {
         return $this->belongsToMany(Playlist::class);
-    }
-
-    /**
-     * Get a Song record using its path.
-     */
-    public static function byPath(string $path): ?self
-    {
-        return static::find(File::getHash($path));
     }
 
     /**
