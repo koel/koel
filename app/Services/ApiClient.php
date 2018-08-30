@@ -70,7 +70,7 @@ abstract class ApiClient
         } catch (ClientException $e) {
             Log::error($e);
 
-            return null;
+            return;
         }
     }
 

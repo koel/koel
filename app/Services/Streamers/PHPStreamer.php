@@ -3,7 +3,6 @@
 namespace App\Services\Streamers;
 
 use DaveRandom\Resume\FileResource;
-use function DaveRandom\Resume\get_request_header;
 use DaveRandom\Resume\InvalidRangeHeaderException;
 use DaveRandom\Resume\NonExistentFileException;
 use DaveRandom\Resume\RangeSet;
@@ -12,6 +11,7 @@ use DaveRandom\Resume\ResourceServlet;
 use DaveRandom\Resume\SendFileFailureException;
 use DaveRandom\Resume\UnreadableFileException;
 use DaveRandom\Resume\UnsatisfiableRangeException;
+use function DaveRandom\Resume\get_request_header;
 
 class PHPStreamer extends Streamer implements DirectStreamerInterface
 {
@@ -19,7 +19,7 @@ class PHPStreamer extends Streamer implements DirectStreamerInterface
     {
         try {
             $rangeSet = RangeSet::createFromHeader(get_request_header('Range'));
-            /** @var Resource $resource */
+            /** @var resource $resource */
             $resource = new FileResource($this->song->path, 'application/octet-stream');
             (new ResourceServlet($resource))->sendResource($rangeSet);
         } catch (InvalidRangeHeaderException $e) {
