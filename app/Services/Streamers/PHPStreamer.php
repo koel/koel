@@ -19,7 +19,7 @@ class PHPStreamer extends Streamer implements DirectStreamerInterface
     {
         try {
             $rangeSet = RangeSet::createFromHeader(get_request_header('Range'));
-            /** @var resource $resource */
+            /** @var Resource $resource */
             $resource = new FileResource($this->song->path, 'application/octet-stream');
             (new ResourceServlet($resource))->sendResource($rangeSet);
         } catch (InvalidRangeHeaderException $e) {
