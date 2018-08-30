@@ -24,7 +24,8 @@ class ApplicationInformationService
     /**
      * Get the latest version number of Koel from GitHub.
      */
-    public function getLatestVersionNumber(): string {
+    public function getLatestVersionNumber(): string
+    {
         return $this->cache->remember('latestKoelVersion', 1 * 24 * 60, function (): string {
             try {
                 return json_decode(

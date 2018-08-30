@@ -7,9 +7,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Log\Logger;
 use Tests\TestCase;
-use Illuminate\Contracts\Cache\Repository as Cache;
 
 class ApplicationInformationServiceTest extends TestCase
 {
