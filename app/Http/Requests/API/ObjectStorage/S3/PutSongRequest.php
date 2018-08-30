@@ -11,7 +11,7 @@ use App\Http\Requests\API\ObjectStorage\S3\Request as BaseRequest;
  */
 class PutSongRequest extends BaseRequest
 {
-    public function rules()
+    public function rules(): array
     {
         return [
             'bucket' => 'required',

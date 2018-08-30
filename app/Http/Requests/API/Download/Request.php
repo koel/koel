@@ -6,18 +6,8 @@ use App\Http\Requests\API\Request as BaseRequest;
 
 class Request extends BaseRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         return config('koel.download.allow');
-    }
-
-    public function rules()
-    {
-        return [];
     }
 }
