@@ -27,7 +27,7 @@ class UpdateLastfmNowPlaying
         $this->lastfm->updateNowPlaying(
             $event->song->artist->name,
             $event->song->title,
-            $event->song->album->name === Album::UNKNOWN_NAME ? null : $event->song->album->name,
+            $event->song->album->name === Album::UNKNOWN_NAME ? '' : $event->song->album->name,
             $event->song->length,
             $sessionKey
         );
