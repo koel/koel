@@ -10,29 +10,12 @@ class PHPStreamer extends Streamer implements DirectStreamerInterface
      */
     public function stream(): void
     {
-        // Get the 'Range' header if one was sent
-        if (array_key_exists('HTTP_RANGE', $_SERVER)) {
-            // IIS/Some Apache versions
-            $range = $_SERVER['HTTP_RANGE'];
-        } elseif (function_exists('apache_request_headers') && $apache = apache_request_headers()) {
-            // Try Apache again
-            $headers = [];
-
-            foreach ($apache as $header => $val) {
-                $headers[strtolower($header)] = $val;
-            }
-
-            $range = array_key_exists('range', $headers) ? $headers['range'] : false;
-        } else {
-            // We can't get the header/there isn't one set
-            $range = false;
-        }
-
-        // Get the data range requested (if any)
+        $range = $this->getRange();
+        $start = null;
+        $end = null;
         $fileSize = filesize($this->song->path);
 
         if ($range) {
-            $partial = true;
             list($param, $range) = explode('=', $range);
 
             // Bad request - range unit is not 'bytes'
@@ -44,34 +27,25 @@ class PHPStreamer extends Streamer implements DirectStreamerInterface
             // Bad request - 'bytes' parameter is not valid
             abort_unless(count($range) === 2, 400);
 
-            if ($range[0] === '') {
+            $start = (int) $range[0];
+
+            if (!$range[0]) {
                 // First number missing, return last $range[1] bytes
-                $start = 0;
                 $end = (int) $range[1];
-            } elseif ($range[1] === '') {
-                if ($range[0] === 0) {
-                    $start = 0;
-                    $end = $fileSize - 1;
-                    $partial = false;
-                } else {
-                    // Second number missing, return from byte $range[0] to end
-                    $start = (int) $range[0];
-                    $end = $fileSize - 1;
-                }
+            } elseif (!$range[1]) {
+                $end = $fileSize - 1;
             } else {
                 // Both numbers present, return specific range
-                $start = (int) $range[0];
                 $end = (int) $range[1];
 
-                if ($end >= $fileSize || (!$start && (!$end || $end === ($fileSize - 1)))) {
-                    // Invalid range/whole file specified, return whole file
-                    $partial = false;
+                if ($end >= $fileSize) {
+                    $end = $fileSize - 1;
                 }
             }
 
+            $partial = $start > 0 || $end < $fileSize - 1;
             $length = $end - $start + 1;
         } else {
-            // No range requested
             $length = filesize($this->song->path);
             $partial = false;
         }
@@ -79,8 +53,8 @@ class PHPStreamer extends Streamer implements DirectStreamerInterface
         // Send standard headers
         header("Content-Type: {$this->contentType}");
         header("Content-Length: $length");
-        header('Last-Modified: '.gmdate('D, d M Y H:i:s T', filemtime($this->song->path)));
-        header('Content-Disposition: attachment; filename="'.basename($this->song->path).'"');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s T', filemtime($this->song->path)));
+        header('Content-Disposition: attachment; filename="' . basename($this->song->path) . '"');
         header('Accept-Ranges: bytes');
 
         // if requested, send extra headers and part of file...
@@ -104,10 +78,28 @@ class PHPStreamer extends Streamer implements DirectStreamerInterface
 
             fclose($fp);
         } else {
-            // ...otherwise just send the whole file
             readfile($this->song->path);
         }
 
         exit;
+    }
+
+    private function getRange():? string
+    {
+        if (getenv('HTTP_RANGE')) {
+            // IIS/Some Apache versions
+            return (string) getenv('HTTP_RANGE');
+        }
+
+        if (function_exists('apache_request_headers') && $apache = apache_request_headers()) {
+            // Try Apache again
+            foreach ($apache as $header => $val) {
+                if (strtolower($header) === 'range') {
+                    return (string) $val;
+                }
+            }
+        }
+
+        return null;
     }
 }
