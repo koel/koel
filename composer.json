@@ -34,7 +34,8 @@
     "barryvdh/laravel-ide-helper": "^2.1",
     "laravel/tinker": "^1.0",
     "laravel/browser-kit-testing": "^2.0",
-    "mikey179/vfsStream": "^1.6"
+    "mikey179/vfsStream": "^1.6",
+    "phpstan/phpstan": "^0.10.3"
   },
   "autoload": {
     "classmap": [
@@ -75,6 +76,9 @@
     ],
     "test": [
       "@phpunit --colors=always"
+    ],
+    "analyze": [
+      "phpstan analyse app tests"
     ]
   },
   "config": {
