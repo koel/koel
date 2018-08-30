@@ -2,12 +2,8 @@
 
 namespace App;
 
-use Cache;
-use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Foundation\Application as IlluminateApplication;
 use InvalidArgumentException;
-use Log;
 
 /**
  * Extends \Illuminate\Foundation\Application to override some defaults.
@@ -19,7 +15,7 @@ class Application extends IlluminateApplication
      *
      * @link https://github.com/phanan/koel/releases
      */
-    const KOEL_VERSION = 'v3.7.2';
+    public const KOEL_VERSION = 'v3.8.0';
 
     /**
      * We have merged public path and base path.
@@ -68,25 +64,5 @@ class Application extends IlluminateApplication
         $cdnUrl = trim(config('koel.cdn.url'), '/ ');
 
         return $cdnUrl ? $cdnUrl.'/'.trim(ltrim($name, '/')) : trim(asset($name));
-    }
-
-    /**
-     * Get the latest version number of Koel from GitHub.
-     */
-    public function getLatestVersion(Client $client = null): string
-    {
-        return Cache::remember('latestKoelVersion', 1 * 24 * 60, static function () use ($client) {
-            $client = $client ?: new Client();
-
-            try {
-                return json_decode(
-                    $client->get('https://api.github.com/repos/phanan/koel/tags')->getBody()
-                )[0]->name;
-            } catch (Exception $e) {
-                Log::error($e);
-
-                return self::KOEL_VERSION;
-            }
-        });
     }
 }

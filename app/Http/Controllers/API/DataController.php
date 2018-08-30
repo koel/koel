@@ -7,6 +7,7 @@ use App\Repositories\InteractionRepository;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\UserRepository;
+use App\Services\ApplicationInformationService;
 use App\Services\iTunesService;
 use App\Services\LastfmService;
 use App\Services\MediaCacheService;
@@ -24,6 +25,7 @@ class DataController extends Controller
     private $playlistRepository;
     private $interactionRepository;
     private $userRepository;
+    private $applicationInformationService;
 
     public function __construct(
         LastfmService $lastfmService,
@@ -33,7 +35,8 @@ class DataController extends Controller
         SettingRepository $settingRepository,
         PlaylistRepository $playlistRepository,
         InteractionRepository $interactionRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        ApplicationInformationService $applicationInformationService
     ) {
         $this->lastfmService = $lastfmService;
         $this->youTubeService = $youTubeService;
@@ -43,6 +46,7 @@ class DataController extends Controller
         $this->playlistRepository = $playlistRepository;
         $this->interactionRepository = $interactionRepository;
         $this->userRepository = $userRepository;
+        $this->applicationInformationService = $applicationInformationService;
     }
 
     /**
@@ -66,7 +70,9 @@ class DataController extends Controller
                 && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdnUrl' => app()->staticUrl(),
             'currentVersion' => Application::KOEL_VERSION,
-            'latestVersion' => $request->user()->is_admin ? app()->getLatestVersion() : Application::KOEL_VERSION,
+            'latestVersion' => $request->user()->is_admin
+                ? $this->applicationInformationService->getLatestVersionNumber()
+                : Application::KOEL_VERSION,
         ]);
     }
 }

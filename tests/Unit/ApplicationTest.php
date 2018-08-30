@@ -2,10 +2,6 @@
 
 namespace Tests\Unit;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
 use Tests\TestCase;
 
 class ApplicationTest extends TestCase
@@ -76,23 +72,5 @@ class ApplicationTest extends TestCase
 
         // Then I see they're constructed correctly
         $this->assertEquals('http://cdn.tld/public/foo00.css', $assetURL);
-    }
-
-    /** @test */
-    public function koels_latest_version_can_be_retrieved()
-    {
-        // Given there is a latest version
-        $latestVersion = 'v1.1.2';
-
-        // When I check for the latest version
-        $mock = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__.'../../blobs/github-tags.json')),
-        ]);
-
-        $client = new Client(['handler' => HandlerStack::create($mock)]);
-        $checkedVersion = app()->getLatestVersion($client);
-
-        // Then I receive the latest version
-        $this->assertEquals($latestVersion, $checkedVersion);
     }
 }
