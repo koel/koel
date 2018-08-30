@@ -217,6 +217,7 @@ class FileSynchronizer
             // But if 'album' isn't specified, we don't want to update normal albums.
             // This variable is to keep track of this state.
             $changeCompilationAlbumOnly = false;
+
             if (in_array('compilation', $tags, true) && !in_array('album', $tags, true)) {
                 $tags[] = 'album';
                 $changeCompilationAlbumOnly = true;
@@ -261,7 +262,7 @@ class FileSynchronizer
      *
      * @param mixed[]|null $coverData
      */
-    private function generateAlbumCover(Album $album, ?array $coverData)
+    private function generateAlbumCover(Album $album, ?array $coverData): void
     {
         // If the album has no cover, we try to get the cover image from existing tag data
         if ($coverData) {

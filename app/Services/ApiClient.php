@@ -5,6 +5,7 @@ namespace App\Services;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use InvalidArgumentException;
+use Log;
 use SimpleXMLElement;
 
 /**
@@ -67,7 +68,9 @@ abstract class ApiClient
 
             return $body;
         } catch (ClientException $e) {
-            return;
+            Log::error($e);
+
+            return null;
         }
     }
 

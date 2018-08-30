@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b86ba223f580a260b9be10b3f8ad6856",
+    "content-hash": "6a60d98d33aca16675ba28fe3b3adfb9",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -254,6 +254,48 @@
                 "laravel"
             ],
             "time": "2018-01-04T06:59:27+00:00"
+        },
+        {
+            "name": "daverandom/resume",
+            "version": "v0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DaveRandom/Resume.git",
+                "reference": "3d1c11b6c4315dd8d25d6f567c5ea392c7c60edb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DaveRandom/Resume/zipball/3d1c11b6c4315dd8d25d6f567c5ea392c7c60edb",
+                "reference": "3d1c11b6c4315dd8d25d6f567c5ea392c7c60edb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DaveRandom\\Resume\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "mit"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Wright",
+                    "email": "me@daverandom.com"
+                }
+            ],
+            "description": "Tiny library to facilitate resumable downloads",
+            "time": "2018-01-28T03:18:55+00:00"
         },
         {
             "name": "doctrine/cache",
