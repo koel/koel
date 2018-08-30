@@ -10,6 +10,8 @@ use Illuminate\Log\Logger;
 
 class ApplicationInformationService
 {
+    private const CACHE_KEY = 'latestKoelVersion';
+
     private $client;
     private $cache;
     private $logger;
@@ -26,7 +28,7 @@ class ApplicationInformationService
      */
     public function getLatestVersionNumber(): string
     {
-        return $this->cache->remember('latestKoelVersion', 1 * 24 * 60, function (): string {
+        return $this->cache->remember(self::CACHE_KEY, 1 * 24 * 60, function (): string {
             try {
                 return json_decode(
                     $this->client->get('https://api.github.com/repos/phanan/koel/tags')->getBody()
