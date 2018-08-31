@@ -10,8 +10,8 @@ use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
 use App\Services\TranscodingService;
-use Tests\TestCase;
 use phpmock\mockery\PHPMockery;
+use Tests\TestCase;
 
 class StreamerFactoryTest extends TestCase
 {

@@ -28,7 +28,7 @@ class ApiClientTest extends TestCase
     {
         parent::setUp();
 
-        /**
+        /*
          * @var Client client
          * @var Cache cache
          * @var Logger logger
