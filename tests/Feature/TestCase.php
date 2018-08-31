@@ -56,28 +56,28 @@ abstract class TestCase extends BaseTestCase
     protected function getAsUser($url, $user = null): self
     {
         return $this->get($url, [
-            'Authorization' => 'Bearer ' . $this->generateJwtToken($user),
+            'Authorization' => 'Bearer '.$this->generateJwtToken($user),
         ]);
     }
 
     protected function deleteAsUser($url, $data = [], $user = null): self
     {
         return $this->delete($url, $data, [
-            'Authorization' => 'Bearer ' . $this->generateJwtToken($user),
+            'Authorization' => 'Bearer '.$this->generateJwtToken($user),
         ]);
     }
 
     protected function postAsUser($url, $data, $user = null): self
     {
         return $this->post($url, $data, [
-            'Authorization' => 'Bearer ' . $this->generateJwtToken($user),
+            'Authorization' => 'Bearer '.$this->generateJwtToken($user),
         ]);
     }
 
     protected function putAsUser($url, $data, $user = null): self
     {
         return $this->put($url, $data, [
-            'Authorization' => 'Bearer ' . $this->generateJwtToken($user),
+            'Authorization' => 'Bearer '.$this->generateJwtToken($user),
         ]);
     }
 

@@ -43,7 +43,7 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
     public function search(string $q, string $pageToken = '', int $perPage = 10)
     {
         if (!$this->enabled()) {
-            return null;
+            return;
         }
 
         $uri = sprintf('search?part=snippet&type=video&maxResults=%s&pageToken=%s&q=%s',

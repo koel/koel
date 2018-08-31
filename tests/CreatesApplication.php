@@ -3,7 +3,6 @@
 namespace Tests;
 
 use App\Models\User;
-
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Foundation\Application;
 

@@ -4,8 +4,8 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use Illuminate\Log\Logger;
 use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Log\Logger;
 use InvalidArgumentException;
 use SimpleXMLElement;
 
@@ -71,7 +71,7 @@ abstract class ApiClient
         } catch (ClientException $e) {
             $this->logger->error($e);
 
-            return null;
+            return;
         }
     }
 
