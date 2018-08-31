@@ -35,7 +35,8 @@
     "laravel/tinker": "^1.0",
     "laravel/browser-kit-testing": "^2.0",
     "mikey179/vfsStream": "^1.6",
-    "phpstan/phpstan": "^0.10.3"
+    "phpstan/phpstan": "^0.10.3",
+    "php-mock/php-mock-mockery": "^1.3"
   },
   "autoload": {
     "classmap": [
@@ -48,8 +49,7 @@
   },
   "autoload-dev": {
     "classmap": [
-      "tests/TestCase.php",
-      "tests/e2e"
+      "tests/TestCase.php"
     ]
   },
   "scripts": {

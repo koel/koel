@@ -5,6 +5,7 @@ namespace Tests\Integration\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\MediaMetadataService;
+use Illuminate\Log\Logger;
 use org\bovigo\vfs\vfsStream;
 use Tests\TestCase;
 
@@ -16,11 +17,10 @@ class MediaMetadataServiceTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->mediaMetadataService = new MediaMetadataService();
+        $this->mediaMetadataService = new MediaMetadataService(app(Logger::class));
     }
 
-    public function testCopyAlbumCover()
+    public function testCopyAlbumCover(): void
     {
         /** @var Album $album */
         $album = factory(Album::class)->create();
@@ -34,7 +34,7 @@ class MediaMetadataServiceTest extends TestCase
         $this->assertEquals('http://localhost/public/img/covers/bar.jpg', Album::find($album->id)->cover);
     }
 
-    public function testWriteAlbumCover()
+    public function testWriteAlbumCover(): void
     {
         /** @var Album $album */
         $album = factory(Album::class)->create();
@@ -48,7 +48,7 @@ class MediaMetadataServiceTest extends TestCase
         $this->assertEquals('http://localhost/public/img/covers/foo.jpg', Album::find($album->id)->cover);
     }
 
-    public function testWriteArtistImage()
+    public function testWriteArtistImage(): void
     {
         /** @var Artist $artist */
         $artist = factory(Artist::class)->create();

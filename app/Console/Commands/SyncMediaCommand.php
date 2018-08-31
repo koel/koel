@@ -128,7 +128,7 @@ class SyncMediaCommand extends Command
 
     private function ensureMediaPath(): void
     {
-        if ($this->settingRepository->getMediaPath()) {
+        if (Setting::get('media_path')) {
             return;
         }
 

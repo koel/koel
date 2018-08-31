@@ -9,20 +9,16 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Log\Logger;
 use Mockery;
 use Tests\TestCase;
 
 class LastfmServiceTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     /**
      * @throws Exception
      */
-    public function testGetArtistInformation()
+    public function testGetArtistInformation(): void
     {
         /** @var Artist $artist */
         $artist = factory(Artist::class)->make(['name' => 'foo']);
@@ -32,7 +28,7 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist.xml')),
         ]);
 
-        $api = new LastfmService($client, app(Cache::class));
+        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
         $info = $api->getArtistInformation($artist->name);
 
         $this->assertEquals([
@@ -44,11 +40,10 @@ class LastfmServiceTest extends TestCase
             ],
         ], $info);
 
-        // And the response XML is cached as well
-        $this->assertNotNull(cache('0aff3bc1259154f0e9db860026cda7a6'));
+        self::assertNotNull(cache('0aff3bc1259154f0e9db860026cda7a6'));
     }
 
-    public function testGetArtistInformationForNonExistentArtist()
+    public function testGetArtistInformationForNonExistentArtist(): void
     {
         /** @var Artist $artist */
         $artist = factory(Artist::class)->make();
@@ -58,15 +53,15 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist-notfound.xml')),
         ]);
 
-        $api = new LastfmService($client, app(Cache::class));
+        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
 
-        $this->assertNull($api->getArtistInformation($artist->name));
+        self::assertNull($api->getArtistInformation($artist->name));
     }
 
     /**
      * @throws Exception
      */
-    public function testGetAlbumInformation()
+    public function testGetAlbumInformation(): void
     {
         /** @var Album $album */
         $album = factory(Album::class)->create([
@@ -79,7 +74,7 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album.xml')),
         ]);
 
-        $api = new LastfmService($client, app(Cache::class));
+        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
         $info = $api->getAlbumInformation($album->name, $album->artist->name);
 
         // Then I get the album's info
@@ -104,10 +99,10 @@ class LastfmServiceTest extends TestCase
             ],
         ], $info);
 
-        $this->assertNotNull(cache('fca889d13b3222589d7d020669cc5a38'));
+        self::assertNotNull(cache('fca889d13b3222589d7d020669cc5a38'));
     }
 
-    public function testGetAlbumInformationForNonExistentAlbum()
+    public function testGetAlbumInformationForNonExistentAlbum(): void
     {
         /** @var Album $album */
         $album = factory(Album::class)->create();
@@ -117,8 +112,8 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album-notfound.xml')),
         ]);
 
-        $api = new LastfmService($client, app(Cache::class));
+        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
 
-        $this->assertNull($api->getAlbumInformation($album->name, $album->artist->name));
+        self::assertNull($api->getAlbumInformation($album->name, $album->artist->name));
     }
 }

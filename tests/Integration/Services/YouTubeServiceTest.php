@@ -6,30 +6,26 @@ use App\Services\YouTubeService;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Mockery as m;
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Log\Logger;
+use Mockery;
 use Tests\TestCase;
 
 class YouTubeServiceTest extends TestCase
 {
-    protected function tearDown()
-    {
-        m::close();
-        parent::tearDown();
-    }
-
     /**
      * @throws Exception
      */
-    public function testSearch()
+    public function testSearch(): void
     {
         $this->withoutEvents();
 
         /** @var Client $client */
-        $client = m::mock(Client::class, [
+        $client = Mockery::mock(Client::class, [
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/youtube/search.json')),
         ]);
 
-        $api = new YouTubeService($client);
+        $api = new YouTubeService($client, app(Repository::class), app(Logger::class));
         $response = $api->search('Lorem Ipsum');
 
         $this->assertEquals('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);

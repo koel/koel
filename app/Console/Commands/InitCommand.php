@@ -59,7 +59,7 @@ class InitCommand extends Command
 
         $this->comment(PHP_EOL.'🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
 
-        if ($this->settingRepository->getMediaPath()) {
+        if (Setting::get('media_path')) {
             $this->comment('You can also scan for media with `php artisan koel:sync`.');
         }
 
@@ -150,7 +150,7 @@ class InitCommand extends Command
 
     private function maybeSetMediaPath(): void
     {
-        if ($this->settingRepository->getMediaPath()) {
+        if (Setting::get('media_path')) {
             return;
         }
 

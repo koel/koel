@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
-use DB;
 use Exception;
+use Illuminate\Database\DatabaseManager;
 
 /**
  * With reference to GitHub issue #463.
@@ -56,16 +56,18 @@ trait SupportsDeleteWhereIDsNotIn
      */
     public static function deleteByChunk(array $ids, string $key = 'id', int $chunkSize = 65535): void
     {
-        DB::beginTransaction();
+        /** @var DatabaseManager $db */
+        $db = app(DatabaseManager::class);
+        $db->beginTransaction();
 
         try {
             foreach (array_chunk($ids, $chunkSize) as $chunk) {
                 static::whereIn($key, $chunk)->delete();
             }
 
-            DB::commit();
+            $db->commit();
         } catch (Exception $e) {
-            DB::rollBack();
+            $db->rollBack();
         }
     }
 }

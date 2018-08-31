@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use AWS;
 use Aws\AwsClientInterface;
 use Aws\S3\S3ClientInterface;
 use Illuminate\Support\ServiceProvider;
@@ -18,7 +17,7 @@ class ObjectStorageServiceProvider extends ServiceProvider
                 return null;
             }
 
-            return AWS::createClient('s3');
+            return app('aws')->createClient('s3');
         });
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Song;
-use Cache;
 
 class YouTubeService extends ApiClient implements ApiConsumerInterface
 {
@@ -44,7 +43,7 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
     public function search(string $q, string $pageToken = '', int $perPage = 10)
     {
         if (!$this->enabled()) {
-            return;
+            return null;
         }
 
         $uri = sprintf('search?part=snippet&type=video&maxResults=%s&pageToken=%s&q=%s',
@@ -53,7 +52,7 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
             urlencode($q)
         );
 
-        return Cache::remember(md5("youtube_$uri"), 60 * 24 * 7, function () use ($uri) {
+        return $this->cache->remember(md5("youtube_$uri"), 60 * 24 * 7, function () use ($uri) {
             return $this->get($uri);
         });
     }

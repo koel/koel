@@ -7,13 +7,14 @@ use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Setting;
 use App\Models\Song;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use Exception;
-use Log;
+use Illuminate\Log\Logger;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -46,6 +47,7 @@ class MediaSyncService
     private $artistRepository;
     private $albumRepository;
     private $settingRepository;
+    private $logger;
 
     public function __construct(
         MediaMetadataService $mediaMetadataService,
@@ -55,7 +57,8 @@ class MediaSyncService
         SettingRepository $settingRepository,
         HelperService $helperService,
         FileSynchronizer $fileSynchronizer,
-        Finder $finder
+        Finder $finder,
+        Logger $logger
     ) {
         $this->mediaMetadataService = $mediaMetadataService;
         $this->songRepository = $songRepository;
@@ -65,6 +68,7 @@ class MediaSyncService
         $this->artistRepository = $artistRepository;
         $this->albumRepository = $albumRepository;
         $this->settingRepository = $settingRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -100,7 +104,7 @@ class MediaSyncService
             'unmodified' => [],
         ];
 
-        $songPaths = $this->gatherFiles($mediaPath ?: $this->settingRepository->getMediaPath());
+        $songPaths = $this->gatherFiles($mediaPath ?: Setting::get('media_path'));
         $syncCommand && $syncCommand->createProgressBar(count($songPaths));
 
         foreach ($songPaths as $path) {
@@ -162,7 +166,7 @@ class MediaSyncService
      */
     public function syncByWatchRecord(WatchRecordInterface $record): void
     {
-        Log::info("New watch record received: '$record'");
+        $this->logger->info("New watch record received: '$record'");
         $record->isFile() ? $this->syncFileRecord($record) : $this->syncDirectoryRecord($record);
     }
 
@@ -174,7 +178,7 @@ class MediaSyncService
     private function syncFileRecord(WatchRecordInterface $record): void
     {
         $path = $record->getPath();
-        Log::info("'$path' is a file.");
+        $this->logger->info("'$path' is a file.");
 
         // If the file has been deleted...
         if ($record->isDeleted()) {
@@ -192,7 +196,7 @@ class MediaSyncService
     private function syncDirectoryRecord(WatchRecordInterface $record): void
     {
         $path = $record->getPath();
-        Log::info("'$path' is a directory.");
+        $this->logger->info("'$path' is a directory.");
 
         if ($record->isDeleted()) {
             $this->handleDeletedDirectoryRecord($path);
@@ -253,11 +257,11 @@ class MediaSyncService
     {
         if ($song = $this->songRepository->getOneByPath($path)) {
             $song->delete();
-            Log::info("$path deleted.");
+            $this->logger->info("$path deleted.");
 
             event(new LibraryChanged());
         } else {
-            Log::info("$path doesn't exist in our database--skipping.");
+            $this->logger->info("$path doesn't exist in our database--skipping.");
         }
     }
 
@@ -266,9 +270,9 @@ class MediaSyncService
         $result = $this->fileSynchronizer->setFile($path)->sync($this->tags);
 
         if ($result === FileSynchronizer::SYNC_RESULT_SUCCESS) {
-            Log::info("Synchronized $path");
+            $this->logger->info("Synchronized $path");
         } else {
-            Log::info("Failed to synchronized $path. Maybe an invalid file?");
+            $this->logger->info("Failed to synchronized $path. Maybe an invalid file?");
         }
 
         event(new LibraryChanged());
@@ -277,11 +281,11 @@ class MediaSyncService
     private function handleDeletedDirectoryRecord(string $path): void
     {
         if ($count = Song::inDirectory($path)->delete()) {
-            Log::info("Deleted $count song(s) under $path");
+            $this->logger->info("Deleted $count song(s) under $path");
 
             event(new LibraryChanged());
         } else {
-            Log::info("$path is empty--no action needed.");
+            $this->logger->info("$path is empty--no action needed.");
         }
     }
 
@@ -291,7 +295,7 @@ class MediaSyncService
             $this->fileSynchronizer->setFile($file)->sync($this->tags);
         }
 
-        Log::info("Synced all song(s) under $path");
+        $this->logger->info("Synced all song(s) under $path");
 
         event(new LibraryChanged());
     }

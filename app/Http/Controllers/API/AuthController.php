@@ -5,11 +5,20 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\UserLoginRequest;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use JWTAuth;
-use Log;
+use Illuminate\Log\Logger;
+use Tymon\JWTAuth\JWTAuth;
 
 class AuthController extends Controller
 {
+    private $auth;
+    private $logger;
+
+    public function __construct(JWTAuth $auth, Logger $logger)
+    {
+        $this->auth = $auth;
+        $this->logger = $logger;
+    }
+
     /**
      * Log a user in.
      *
@@ -17,7 +26,7 @@ class AuthController extends Controller
      */
     public function login(UserLoginRequest $request)
     {
-        $token = JWTAuth::attempt($request->only('email', 'password'));
+        $token = $this->auth->attempt($request->only('email', 'password'));
         abort_unless($token, 401, 'Invalid credentials');
 
         return response()->json(compact('token'));
@@ -30,11 +39,11 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        if ($token = JWTAuth::getToken()) {
+        if ($token = $this->auth->getToken()) {
             try {
-                JWTAuth::invalidate($token);
+                $this->auth->invalidate($token);
             } catch (Exception $e) {
-                Log::error($e);
+                $this->logger->error($e);
             }
         }
 

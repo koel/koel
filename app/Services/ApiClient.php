@@ -4,8 +4,9 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Log\Logger;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use InvalidArgumentException;
-use Log;
 use SimpleXMLElement;
 
 /**
@@ -19,11 +20,9 @@ use SimpleXMLElement;
 abstract class ApiClient
 {
     protected $responseFormat = 'json';
-
-    /**
-     * The GuzzleHttp client to talk to the API.
-     */
     protected $client;
+    protected $cache;
+    protected $logger;
 
     /**
      * The query parameter name for the key.
@@ -34,9 +33,11 @@ abstract class ApiClient
      */
     protected $keyParam = 'key';
 
-    public function __construct(Client $client)
+    public function __construct(Client $client, Cache $cache, Logger $logger)
     {
         $this->client = $client;
+        $this->cache = $cache;
+        $this->logger = $logger;
     }
 
     /**
@@ -68,9 +69,9 @@ abstract class ApiClient
 
             return $body;
         } catch (ClientException $e) {
-            Log::error($e);
+            $this->logger->error($e);
 
-            return;
+            return null;
         }
     }
 

@@ -4,8 +4,10 @@ namespace Tests\Unit\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Mockery as m;
+use Illuminate\Log\Logger;
+use Mockery;
 use Tests\TestCase;
 use Tests\Unit\Stubs\ConcreteApiClient;
 
@@ -13,15 +15,36 @@ class ApiClientTest extends TestCase
 {
     use WithoutMiddleware;
 
-    public function testBuildUri()
-    {
-        /** @var Client $client */
-        $client = m::mock(Client::class);
-        $api = new ConcreteApiClient($client);
+    /** @var Cache */
+    private $cache;
 
-        $this->assertEquals('http://foo.com/get/param?key=bar', $api->buildUrl('get/param'));
-        $this->assertEquals('http://foo.com/get/param?baz=moo&key=bar', $api->buildUrl('/get/param?baz=moo'));
-        $this->assertEquals('http://baz.com/?key=bar', $api->buildUrl('http://baz.com/'));
+    /** @var Client */
+    private $client;
+
+    /** @var Logger */
+    private $logger;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        /**
+         * @var Client client
+         * @var Cache cache
+         * @var Logger logger
+         */
+        $this->client = Mockery::mock(Client::class);
+        $this->cache = Mockery::mock(Cache::class);
+        $this->logger = Mockery::mock(Logger::class);
+    }
+
+    public function testBuildUri(): void
+    {
+        $api = new ConcreteApiClient($this->client, $this->cache, $this->logger);
+
+        self::assertEquals('http://foo.com/get/param?key=bar', $api->buildUrl('get/param'));
+        self::assertEquals('http://foo.com/get/param?baz=moo&key=bar', $api->buildUrl('/get/param?baz=moo'));
+        self::assertEquals('http://baz.com/?key=bar', $api->buildUrl('http://baz.com/'));
     }
 
     public function provideRequestData()
@@ -43,12 +66,12 @@ class ApiClientTest extends TestCase
     public function testRequest($method, $responseBody)
     {
         /** @var Client $client */
-        $client = m::mock(Client::class, [
+        $client = Mockery::mock(Client::class, [
             $method => new Response(200, [], $responseBody),
         ]);
 
-        $api = new ConcreteApiClient($client);
+        $api = new ConcreteApiClient($client, $this->cache, $this->logger);
 
-        $this->assertSame((array) json_decode($responseBody), (array) $api->$method('/'));
+        self::assertSame((array) json_decode($responseBody), (array) $api->$method('/'));
     }
 }

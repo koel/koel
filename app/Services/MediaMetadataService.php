@@ -5,10 +5,17 @@ namespace App\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use Exception;
-use Log;
+use Illuminate\Log\Logger;
 
 class MediaMetadataService
 {
+    private $logger;
+
+    public function __construct(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Download a copy of the album cover.
      */
@@ -47,7 +54,7 @@ class MediaMetadataService
 
             $album->update(['cover' => basename($destination)]);
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
         }
     }
 
@@ -78,7 +85,7 @@ class MediaMetadataService
 
             $artist->update(['image' => basename($destination)]);
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
         }
     }
 

@@ -3,9 +3,6 @@
 namespace App\Services;
 
 use Exception;
-use GuzzleHttp\Client;
-use Illuminate\Contracts\Cache\Repository as Cache;
-use Log;
 
 class LastfmService extends ApiClient implements ApiConsumerInterface
 {
@@ -22,16 +19,6 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @var string
      */
     protected $keyParam = 'api_key';
-    /**
-     * @var Cache
-     */
-    private $cache;
-
-    public function __construct(Client $client, Cache $cache)
-    {
-        parent::__construct($client);
-        $this->cache = $cache;
-    }
 
     /**
      * Determine if our application is using Last.fm.
@@ -82,7 +69,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
                 return $this->buildArtistInformation($artist);
             });
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
 
             return null;
         }
@@ -141,7 +128,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
                 return $this->buildAlbumInformation($album);
             });
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
 
             return null;
         }
@@ -190,7 +177,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         try {
             return (string) $this->get("/?$query", [], false)->session->key;
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
 
             return null;
         }
@@ -218,7 +205,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         try {
             $this->post('/', $this->buildAuthCallParams($params), false);
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
         }
     }
 
@@ -238,7 +225,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         try {
             $this->post('/', $this->buildAuthCallParams($params), false);
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
         }
     }
 
@@ -263,7 +250,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         try {
             $this->post('/', $this->buildAuthCallParams($params), false);
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
         }
     }
 

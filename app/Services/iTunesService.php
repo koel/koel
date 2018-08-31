@@ -3,20 +3,9 @@
 namespace App\Services;
 
 use Exception;
-use GuzzleHttp\Client;
-use Illuminate\Contracts\Cache\Repository as Cache;
-use Log;
 
 class iTunesService extends ApiClient implements ApiConsumerInterface
 {
-    private $cache;
-
-    public function __construct(Client $client, Cache $cache)
-    {
-        parent::__construct($client);
-        $this->cache = $cache;
-    }
-
     /**
      * Determines whether to use iTunes services.
      */
@@ -62,7 +51,7 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
                 }
             );
         } catch (Exception $e) {
-            Log::error($e);
+            $this->logger->error($e);
 
             return null;
         }

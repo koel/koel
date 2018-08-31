@@ -1,48 +1,37 @@
 <?php
 
-namespace App\Listeners {
-    if (function_exists(__NAMESPACE__.'/init_get')) {
-        function ini_get($key)
-        {
-            if ($key === 'allow_url_fopen') {
-                return true;
-            }
+namespace Tests\Integration\Listeners;
 
-            return \ini_get($key);
-        }
-    }
-}
+use App\Events\ArtistInformationFetched;
+use App\Models\Artist;
+use App\Services\MediaMetadataService;
+use Mockery\MockInterface;
+use phpmock\mockery\PHPMockery;
+use Tests\TestCase;
 
-namespace Tests\Integration\Listeners {
-    use App\Events\ArtistInformationFetched;
-    use App\Models\Artist;
-    use App\Services\MediaMetadataService;
-    use Mockery\MockInterface;
-    use Tests\TestCase;
+class DownloadArtistImageTest extends TestCase
+{
+    /** @var MediaMetadataService|MockInterface */
+    private $mediaMetaDataService;
 
-    class DownloadArtistImageTest extends TestCase
+    public function setUp()
     {
-        /** @var MediaMetadataService|MockInterface */
-        private $mediaMetaDataService;
+        parent::setUp();
 
-        public function setUp()
-        {
-            parent::setUp();
+        $this->mediaMetaDataService = $this->mockIocDependency(MediaMetadataService::class);
+        PHPMockery::mock('App\Listeners', 'ini_get')->andReturn(true);
+    }
 
-            $this->mediaMetaDataService = $this->mockIocDependency(MediaMetadataService::class);
-        }
+    public function testHandle()
+    {
+        $artist = factory(Artist::class)->make(['image' => null]);
+        $event = new ArtistInformationFetched($artist, ['image' => 'https://foo.bar/baz.jpg']);
 
-        public function testHandle()
-        {
-            $artist = factory(Artist::class)->make(['image' => null]);
-            $event = new ArtistInformationFetched($artist, ['image' => 'https://foo.bar/baz.jpg']);
+        $this->mediaMetaDataService
+            ->shouldReceive('downloadArtistImage')
+            ->once()
+            ->with($artist, 'https://foo.bar/baz.jpg');
 
-            $this->mediaMetaDataService
-                ->shouldReceive('downloadArtistImage')
-                ->once()
-                ->with($artist, 'https://foo.bar/baz.jpg');
-
-            event($event);
-        }
+        event($event);
     }
 }
