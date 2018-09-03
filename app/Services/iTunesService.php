@@ -17,8 +17,8 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
     /**
      * Search for a track on iTunes Store with the given information and get its URL.
      *
-     * @param string $term The main query string (should be the track's name)
-     * @param string $album The album's name, if available
+     * @param string $term   The main query string (should be the track's name)
+     * @param string $album  The album's name, if available
      * @param string $artist The artist's name, if available
      */
     public function getTrackUrl(string $term, string $album = '', string $artist = ''): ?string
