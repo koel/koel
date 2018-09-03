@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property string songs
+ * @property string[] $songs
  */
 class PlaylistSyncRequest extends Request
 {

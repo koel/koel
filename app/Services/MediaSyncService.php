@@ -105,7 +105,10 @@ class MediaSyncService
         ];
 
         $songPaths = $this->gatherFiles($mediaPath ?: Setting::get('media_path'));
-        $syncCommand && $syncCommand->createProgressBar(count($songPaths));
+
+        if ($syncCommand) {
+            $syncCommand->createProgressBar(count($songPaths));
+        }
 
         foreach ($songPaths as $path) {
             $result = $this->fileSynchronizer->setFile($path)->sync($this->tags, $force);
@@ -166,7 +169,7 @@ class MediaSyncService
      */
     public function syncByWatchRecord(WatchRecordInterface $record): void
     {
-        $this->logger->info("New watch record received: '$record'");
+        $this->logger->info("New watch record received: '{$record->getPath()}'");
         $record->isFile() ? $this->syncFileRecord($record) : $this->syncDirectoryRecord($record);
     }
 
@@ -214,7 +217,7 @@ class MediaSyncService
      */
     public function setTags(array $tags = []): void
     {
-        $this->tags = array_intersect((array) $tags, self::APPLICABLE_TAGS) ?: self::APPLICABLE_TAGS;
+        $this->tags = array_intersect($tags, self::APPLICABLE_TAGS) ?: self::APPLICABLE_TAGS;
 
         // We always keep track of mtime.
         if (!in_array('mtime', $this->tags, true)) {

@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
- * @property int    id      The model ID
- * @property string name    The artist name
- * @property string image
- * @property bool   is_unknown
- * @property bool   is_various
- * @property Collection songs
- * @property bool   has_image
+ * @property int    $id
+ * @property string $name
+ * @property string $image
+ * @property bool   $is_unknown
+ * @property bool   $is_various
+ * @property Collection $songs
+ * @property bool   $has_image
  */
 class Artist extends Model
 {

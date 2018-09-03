@@ -17,17 +17,15 @@ class iTunesService extends ApiClient implements ApiConsumerInterface
     /**
      * Search for a track on iTunes Store with the given information and get its URL.
      *
-     * @param $term string The main query string (should be the track's name)
-     * @param $album string The album's name, if available
-     * @param $artist string The artist's name, if available
-     *
-     * @return string|false
+     * @param string $term The main query string (should be the track's name)
+     * @param string $album The album's name, if available
+     * @param string $artist The artist's name, if available
      */
     public function getTrackUrl(string $term, string $album = '', string $artist = ''): ?string
     {
         try {
             return $this->cache->remember(md5("itunes_track_url_{$term}{$album}{$artist}"), 24 * 60 * 7,
-                function () use ($term, $album, $artist): string {
+                function () use ($term, $album, $artist): ?string {
                     $params = [
                         'term' => $term.($album ? " $album" : '').($artist ? " $artist" : ''),
                         'media' => 'music',

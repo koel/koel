@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string $key
- * @property mixed $value
+ * @property mixed  $value
  */
 class Setting extends Model
 {

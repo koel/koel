@@ -78,7 +78,7 @@
       "@phpunit --colors=always"
     ],
     "analyze": [
-      "phpstan analyse app tests"
+      "phpstan analyse app --level=5"
     ]
   },
   "config": {

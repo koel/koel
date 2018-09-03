@@ -51,7 +51,9 @@ class UserController extends Controller
             $data['password'] = $this->hash->make($request->password);
         }
 
-        return response()->json($user->update($data));
+        $user->update($data);
+
+        return response()->json();
     }
 
     /**
@@ -66,6 +68,8 @@ class UserController extends Controller
     {
         $this->authorize('destroy', $user);
 
-        return response()->json($user->delete());
+        $user->delete();
+
+        return response()->json();
     }
 }

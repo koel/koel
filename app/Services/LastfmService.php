@@ -25,7 +25,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      */
     public function used(): bool
     {
-        return $this->getKey();
+        return (bool) $this->getKey();
     }
 
     /**
@@ -39,7 +39,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
     /**
      * Get information about an artist.
      *
-     * @param $name string Name of the artist
+     * @param string $name Name of the artist
      *
      * @return mixed[]|null
      */
@@ -192,7 +192,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @param string     $album     The album name
      * @param string     $sk        The session key
      */
-    public function scrobble(string $artist, string $track, int $timestamp, string $album, string $sk): void
+    public function scrobble(string $artist, string $track, $timestamp, string $album, string $sk): void
     {
         $params = compact('artist', 'track', 'timestamp', 'sk');
 
@@ -238,7 +238,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @param int|float $duration Duration of the track, in seconds
      * @param string    $sk       The session key
      */
-    public function updateNowPlaying(string $artist, string $track, string $album, float $duration, string $sk): void
+    public function updateNowPlaying(string $artist, string $track, string $album, $duration, string $sk): void
     {
         $params = compact('artist', 'track', 'duration', 'sk');
         $params['method'] = 'track.updateNowPlaying';

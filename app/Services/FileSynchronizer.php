@@ -184,12 +184,8 @@ class FileSynchronizer
      *
      * @param string[] $tags  The (selective) tags to sync (if the song exists)
      * @param bool     $force Whether to force syncing, even if the file is unchanged
-     *
-     * @return bool|Song A Song object on success,
-     *                   true if file exists but is unmodified,
-     *                   or false on an error.
      */
-    public function sync(array $tags, bool $force = false)
+    public function sync(array $tags, bool $force = false): int
     {
         // If the file is not new or changed and we're not forcing update, don't do anything.
         if (!$this->isFileNewOrChanged() && !$force) {
@@ -247,7 +243,9 @@ class FileSynchronizer
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
 
-        $album->has_cover || $this->generateAlbumCover($album, array_get($info, 'cover'));
+        if (!$album->has_cover) {
+            $this->generateAlbumCover($album, array_get($info, 'cover'));
+        }
 
         $data = array_except($info, ['artist', 'albumartist', 'album', 'cover', 'compilation']);
         $data['album_id'] = $album->id;
@@ -305,7 +303,7 @@ class FileSynchronizer
             $cover = $matches ? $matches[0] : null;
 
             // Even if a file is found, make sure it's a real image.
-            if ($cover && exif_imagetype($cover) === false) {
+            if ($cover && !exif_imagetype($cover)) {
                 $cover = null;
             }
 

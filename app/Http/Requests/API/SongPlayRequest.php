@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property float time
+ * @property float $time
  */
 class SongPlayRequest extends Request
 {

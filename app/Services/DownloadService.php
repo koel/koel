@@ -22,7 +22,7 @@ class DownloadService
     /**
      * Generic method to generate a download archive from various source types.
      *
-     * @param Song|Collection<Song>|Album|Artist|Playlist $mixed
+     * @param Song|Collection|Album|Artist|Playlist $mixed
      *
      * @throws InvalidArgumentException
      *

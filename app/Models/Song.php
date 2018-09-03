@@ -11,19 +11,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
 /**
- * @property string path
- * @property string title
- * @property Album  album
- * @property Artist artist
- * @property string[] s3_params
- * @property float  length
- * @property string lyrics
- * @property int    track
- * @property int    disc
- * @property int    album_id
- * @property int    id
- * @property int    artist_id
- * @property int    mtime
+ * @property string $path
+ * @property string $title
+ * @property Album  $album
+ * @property Artist $artist
+ * @property string[] $s3_params
+ * @property float  $length
+ * @property string $lyrics
+ * @property int    $track
+ * @property int    $disc
+ * @property int    $album_id
+ * @property string $id
+ * @property int    $artist_id
+ * @property int    $mtime
  */
 class Song extends Model
 {

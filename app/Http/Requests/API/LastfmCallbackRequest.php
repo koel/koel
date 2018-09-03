@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property string token
+ * @property string $token
  */
 class LastfmCallbackRequest extends Request
 {

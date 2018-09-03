@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property string key
+ * @property string $key
  */
 class LastfmSetSessionKeyRequest extends Request
 {

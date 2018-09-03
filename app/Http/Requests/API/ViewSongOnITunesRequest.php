@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property string q
+ * @property string $q
  */
 class ViewSongOnITunesRequest extends Request
 {

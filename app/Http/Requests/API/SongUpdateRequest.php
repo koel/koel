@@ -3,8 +3,8 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property array songs
- * @property array data
+ * @property string[] $songs
+ * @property mixed[] $data
  */
 class SongUpdateRequest extends Request
 {

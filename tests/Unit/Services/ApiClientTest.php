@@ -8,6 +8,7 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Log\Logger;
 use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\Unit\Stubs\ConcreteApiClient;
 
@@ -15,16 +16,16 @@ class ApiClientTest extends TestCase
 {
     use WithoutMiddleware;
 
-    /** @var Cache */
+    /** @var Cache|MockInterface */
     private $cache;
 
-    /** @var Client */
+    /** @var Client|MockInterface */
     private $client;
 
-    /** @var Logger */
+    /** @var Logger|MockInterface */
     private $logger;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -47,7 +48,7 @@ class ApiClientTest extends TestCase
         self::assertEquals('http://baz.com/?key=bar', $api->buildUrl('http://baz.com/'));
     }
 
-    public function provideRequestData()
+    public function provideRequestData(): array
     {
         return [
             ['get', '{"foo":"bar"}'],
@@ -59,11 +60,8 @@ class ApiClientTest extends TestCase
 
     /**
      * @dataProvider provideRequestData
-     *
-     * @param $method
-     * @param $responseBody
      */
-    public function testRequest($method, $responseBody)
+    public function testRequest(string $method, string $responseBody): void
     {
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [

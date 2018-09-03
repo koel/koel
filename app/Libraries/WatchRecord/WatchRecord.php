@@ -28,7 +28,7 @@ abstract class WatchRecord implements WatchRecordInterface
     protected $input;
 
     /**
-     * @param $input string The output from a watcher command (which is an input for our script)
+     * @param string $input The output from a watcher command (which is an input for our script)
      */
     public function __construct(string $input)
     {

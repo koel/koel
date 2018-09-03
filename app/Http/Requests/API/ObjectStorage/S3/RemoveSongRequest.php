@@ -5,8 +5,8 @@ namespace App\Http\Requests\API\ObjectStorage\S3;
 use App\Http\Requests\API\ObjectStorage\S3\Request as BaseRequest;
 
 /**
- * @property string bucket
- * @property string key
+ * @property string $bucket
+ * @property string $key
  */
 class RemoveSongRequest extends BaseRequest
 {

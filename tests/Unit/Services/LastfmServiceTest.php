@@ -4,15 +4,14 @@ namespace Tests\Unit\Services;
 
 use App\Services\LastfmService;
 use Mockery;
-use Mockery\MockInterface;
+use Mockery\Mock;
 use Tests\TestCase;
 
 class LastfmServiceTest extends TestCase
 {
-    /** @test */
-    public function testBuildAuthCallParams()
+    public function testBuildAuthCallParams(): void
     {
-        /** @var LastfmService|MockInterface $lastfm */
+        /** @var Mock|LastfmService $lastfm */
         $lastfm = Mockery::mock(LastfmService::class)->makePartial();
         $lastfm->shouldReceive('getKey')->andReturn('key');
         $lastfm->shouldReceive('getSecret')->andReturn('secret');

@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property array songs
+ * @property string[] $songs
  */
 class PlaylistStoreRequest extends Request
 {

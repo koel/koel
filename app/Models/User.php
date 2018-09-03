@@ -7,10 +7,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * @property array  preferences
- * @property int    id
- * @property bool   is_admin
- * @property string lastfm_session_key
+ * @property array  $preferences
+ * @property int    $id
+ * @property bool   $is_admin
+ * @property string $lastfm_session_key
  */
 class User extends Authenticatable
 {
