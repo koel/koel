@@ -84,6 +84,8 @@ class LastfmController extends Controller
      */
     public function disconnect()
     {
-        return response()->json($this->auth->user()->deletePreference('lastfm_session_key'));
+        $this->auth->user()->deletePreference('lastfm_session_key');
+
+        return response()->json();
     }
 }
