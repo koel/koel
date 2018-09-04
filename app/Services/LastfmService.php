@@ -314,15 +314,17 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
     }
 
     /**
-     * Correctly format a string returned by Last.fm.
+     * Correctly format a value returned by Last.fm.
+     *
+     * @param string|array $value
      */
-    protected function formatText(string $str): string
+    protected function formatText($value): string
     {
-        if (!$str) {
+        if (!$value) {
             return '';
         }
 
-        return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($str)))));
+        return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($value)))));
     }
 
     public function getUserSessionKey(User $user): ?string
