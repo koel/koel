@@ -22,8 +22,7 @@ class LastfmController extends Controller
         Guard $auth,
         LastfmService $lastfmService,
         JWTAuth $jwtAuth
-    )
-    {
+    ) {
         $this->auth = $auth;
         $this->lastfmService = $lastfmService;
         $this->jwtAuth = $jwtAuth;

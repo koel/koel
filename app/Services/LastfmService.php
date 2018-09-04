@@ -33,8 +33,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         Cache $cache,
         Logger $logger,
         UserPreferenceService $userPreferenceService
-    )
-    {
+    ) {
         parent::__construct($client, $cache, $logger);
         $this->userPreferenceService = $userPreferenceService;
     }
