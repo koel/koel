@@ -7,7 +7,6 @@ use App\Http\Middleware\GetUserFromToken;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\UseDifferentConfigIfE2E;
-use Barryvdh\Cors\HandleCors;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
@@ -29,7 +28,6 @@ class Kernel extends HttpKernel
         ValidatePostSize::class,
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,
-        HandleCors::class,
     ];
 
     /**

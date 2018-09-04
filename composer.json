@@ -20,7 +20,6 @@
     "ext-json": "*",
     "ext-SimpleXML": "*",
     "fideloper/proxy": "^4.0",
-    "barryvdh/laravel-cors": "^0.11.0",
     "daverandom/resume": "^0.0.3"
   },
   "require-dev": {
