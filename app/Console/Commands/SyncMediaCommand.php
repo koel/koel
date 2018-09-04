@@ -60,7 +60,7 @@ class SyncMediaCommand extends Command
      */
     protected function syncAll(): void
     {
-        $this->info('Koel syncing started.'.PHP_EOL);
+        $this->info('Syncing media from ' . Setting::get('media_path') .PHP_EOL);
 
         // Get the tags to sync.
         // Notice that this is only meaningful for existing records.
@@ -135,7 +135,7 @@ class SyncMediaCommand extends Command
         $this->warn("Media path hasn't been configured. Let's set it up.");
 
         while (true) {
-            $path = $this->ask('Absolute path to your media directory:');
+            $path = $this->ask('Absolute path to your media directory');
 
             if (is_dir($path) && is_readable($path)) {
                 Setting::set('media_path', $path);
