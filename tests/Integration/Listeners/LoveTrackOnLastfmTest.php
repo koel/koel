@@ -8,33 +8,31 @@ use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
-use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\Feature\TestCase;
 
 class LoveTrackOnLastfmTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function testHandle()
     {
-        $this->withoutEvents();
-        $this->createSampleMediaSet();
-
-        $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
+        $user = factory(User::class)->create();
+        $song = factory(Song::class)->create();
 
         $interaction = Interaction::create([
             'user_id' => $user->id,
-            'song_id' => Song::first()->id,
+            'song_id' => $song->id,
         ]);
 
         /** @var LastfmService|MockInterface $lastfm */
-        $lastfm = Mockery::mock(LastfmService::class, ['enabled' => true]);
+        $lastfm = Mockery::mock(LastfmService::class);
+        $lastfm->shouldReceive('enabled')->andReturn(true);
+        $lastfm->shouldReceive('getUserSessionKey')->andReturn('foo');
+        $lastfm->shouldReceive('isUserConnected')->andReturn(true);
+
         $lastfm->shouldReceive('toggleLoveTrack')
-            ->once()
-            ->with($interaction->song->title, $interaction->song->album->artist->name, 'bar', false);
+            ->with($interaction->song->title, $interaction->song->album->artist->name, 'foo', false)
+            ->once();
 
         (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction, $user));
     }

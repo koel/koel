@@ -4,7 +4,9 @@ namespace Tests\Integration\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\User;
 use App\Services\LastfmService;
+use App\Services\UserPreferenceService;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -28,8 +30,7 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist.xml')),
         ]);
 
-        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
-        $info = $api->getArtistInformation($artist->name);
+        $info = $this->createServiceWithMockedClient($client)->getArtistInformation($artist->name);
 
         $this->assertEquals([
             'url' => 'http://www.last.fm/music/Kamelot',
@@ -53,9 +54,7 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist-notfound.xml')),
         ]);
 
-        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
-
-        self::assertNull($api->getArtistInformation($artist->name));
+        self::assertNull($this->createServiceWithMockedClient($client)->getArtistInformation($artist->name));
     }
 
     /**
@@ -74,8 +73,7 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album.xml')),
         ]);
 
-        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
-        $info = $api->getAlbumInformation($album->name, $album->artist->name);
+        $info = $this->createServiceWithMockedClient($client)->getAlbumInformation($album->name, $album->artist->name);
 
         // Then I get the album's info
         $this->assertEquals([
@@ -112,8 +110,38 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album-notfound.xml')),
         ]);
 
-        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
+        $api = $this->createServiceWithMockedClient($client);
 
         self::assertNull($api->getAlbumInformation($album->name, $album->artist->name));
+    }
+
+    public function testFetchSessionKeyUsingToken(): void
+    {
+        /** @var Client $client */
+        $client = Mockery::mock(Client::class, [
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/session-key.xml')),
+        ]);
+
+        self::assertEquals('foo', $this->createServiceWithMockedClient($client)->fetchSessionKeyUsingToken('bar'));
+    }
+
+    public function testIsUserConnected(): void
+    {
+        $user = factory(User::class)->create([
+            'preferences' => ['lastfm_session_key' => 'foo'],
+        ]);
+
+        self::assertTrue(app(LastfmService::class)->isUserConnected($user));
+
+        $user = factory(User::class)->create([
+            'preferences' => [],
+        ]);
+
+        self::assertFalse(app(LastfmService::class)->isUserConnected($user));
+    }
+
+    private function createServiceWithMockedClient(Client $client): LastfmService
+    {
+        return new LastfmService($client, app(Cache::class), app(Logger::class), app(UserPreferenceService::class));
     }
 }

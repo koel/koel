@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\LastfmService;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +11,6 @@ use Illuminate\Notifications\Notifiable;
  * @property array  $preferences
  * @property int    $id
  * @property bool   $is_admin
- * @property string $lastfm_session_key
  */
 class User extends Authenticatable
 {
@@ -21,7 +21,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    private const HIDDEN_PREFERENCES = ['lastfm_session_key'];
+    private const HIDDEN_PREFERENCES = [LastfmService::SESSION_KEY_PREFERENCE_KEY];
 
     protected $guarded = ['id'];
     protected $casts = [
@@ -38,66 +38,6 @@ class User extends Authenticatable
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function getPreference(string $key)
-    {
-        // We can't use $this->preferences directly, since the data has been tampered
-        // by getPreferencesAttribute().
-        return array_get((array) unserialize($this->attributes['preferences']), $key);
-    }
-
-    /**
-     * @param mixed $val
-     */
-    public function savePreference(string $key, $val): void
-    {
-        $preferences = $this->preferences;
-        $preferences[$key] = $val;
-        $this->preferences = $preferences;
-
-        $this->save();
-    }
-
-    /**
-     * An alias to savePreference().
-     *
-     * @param mixed $val
-     *
-     * @see self::savePreference
-     */
-    public function setPreference(string $key, $val): void
-    {
-        $this->savePreference($key, $val);
-    }
-
-    public function deletePreference(string $key): void
-    {
-        $preferences = $this->preferences;
-        array_forget($preferences, $key);
-
-        $this->update(compact('preferences'));
-    }
-
-    /**
-     * Determine if the user is connected to Last.fm.
-     */
-    public function connectedToLastfm(): bool
-    {
-        return (bool) $this->lastfm_session_key;
-    }
-
-    /**
-     * Get the user's Last.fm session key.
-     *
-     * @return string|null The key if found, or null if user isn't connected to Last.fm
-     */
-    public function getLastfmSessionKeyAttribute(): ?string
-    {
-        return $this->getPreference('lastfm_session_key');
     }
 
     /**

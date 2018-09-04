@@ -70,9 +70,9 @@ abstract class ApiClient
             return $body;
         } catch (ClientException $e) {
             $this->logger->error($e);
-
-            return;
         }
+
+        return null;
     }
 
     /**
