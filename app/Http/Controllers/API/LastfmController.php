@@ -18,11 +18,8 @@ class LastfmController extends Controller
     private $lastfmService;
     private $jwtAuth;
 
-    public function __construct(
-        Guard $auth,
-        LastfmService $lastfmService,
-        JWTAuth $jwtAuth
-    ) {
+    public function __construct(Guard $auth, LastfmService $lastfmService, JWTAuth $jwtAuth)
+    {
         $this->auth = $auth;
         $this->lastfmService = $lastfmService;
         $this->jwtAuth = $jwtAuth;
@@ -57,11 +54,11 @@ class LastfmController extends Controller
      */
     public function callback(LastfmCallbackRequest $request)
     {
-        $sessionKey = $this->lastfmService->fetchSessionKeyUsingToken($request->token);
+        $sessionKey = $this->lastfmService->getSessionKey($request->token);
 
         abort_unless($sessionKey, 500, 'Invalid token key.');
 
-        $this->lastfmService->setUserSessionKey($this->auth->user(), $sessionKey);
+        $this->auth->user()->savePreference('lastfm_session_key', $sessionKey);
 
         return view('api.lastfm.callback');
     }
@@ -75,7 +72,7 @@ class LastfmController extends Controller
      */
     public function setSessionKey(LastfmSetSessionKeyRequest $request)
     {
-        $this->lastfmService->setUserSessionKey($this->auth->user(), $request->key);
+        $this->auth->user()->savePreference('lastfm_session_key', trim($request->key));
 
         return response()->json();
     }
@@ -87,7 +84,7 @@ class LastfmController extends Controller
      */
     public function disconnect()
     {
-        $this->lastfmService->deleteUserSessionKey($this->auth->user());
+        $this->auth->user()->deletePreference('lastfm_session_key');
 
         return response()->json();
     }

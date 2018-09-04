@@ -4,33 +4,34 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Services\LastfmService;
-use App\Services\UserPreferenceService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Log\Logger;
 use Mockery;
 use Tymon\JWTAuth\JWTAuth;
 
 class LastfmTest extends TestCase
 {
-    /** @var UserPreferenceService */
-    private $userPreferenceService;
-
-    public function setUp()
+    public function testGetSessionKey(): void
     {
-        parent::setUp();
-        $this->userPreferenceService = app(UserPreferenceService::class);
+        /** @var Client $client */
+        $client = Mockery::mock(Client::class, [
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/session-key.xml')),
+        ]);
+
+        $service = new LastfmService($client, app(Cache::class), app(Logger::class));
+        self::assertEquals('foo', $service->getSessionKey('bar'));
     }
 
     public function testSetSessionKey(): void
     {
-        /** @var User $user */
         $user = factory(User::class)->create();
         $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user)
             ->assertResponseOk();
 
-        $user->refresh();
-
-        self::assertEquals('foo', app(LastfmService::class)->getUserSessionKey($user));
+        $user = User::find($user->id);
+        self::assertEquals('foo', $user->lastfm_session_key);
     }
 
     public function testConnectToLastfm(): void
@@ -46,19 +47,18 @@ class LastfmTest extends TestCase
 
     public function testRetrieveAndStoreSessionKey(): void
     {
-        /** @var Client $client */
-        $client = Mockery::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/session-key.xml')),
-        ]);
-
-        app()->instance(Client::class, $client);
+        $lastfm = $this->mockIocDependency(LastfmService::class);
+        $lastfm->shouldReceive('getSessionKey')
+            ->once()
+            ->with('foo')
+            ->andReturn('bar');
 
         /** @var User $user */
         $user = factory(User::class)->create();
         $this->getAsUser('api/lastfm/callback?token=foo', $user);
         $user->refresh();
 
-        self::assertSame('foo', app(LastfmService::class)->getUserSessionKey($user));
+        $this->assertEquals('bar', $user->lastfm_session_key);
     }
 
     public function testDisconnectUser(): void
@@ -68,6 +68,6 @@ class LastfmTest extends TestCase
         $this->deleteAsUser('api/lastfm/disconnect', [], $user);
         $user->refresh();
 
-        $this->assertNull(app(LastfmService::class)->getUserSessionKey($user));
+        $this->assertNull($user->lastfm_session_key);
     }
 }

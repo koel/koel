@@ -26,13 +26,13 @@ class ScrobbleController extends Controller
      */
     public function store(Request $request, Song $song, string $timestamp)
     {
-        if (!$song->artist->is_unknown && $this->lastfmService->isUserConnected($request->user())) {
+        if (!$song->artist->is_unknown && $request->user()->connectedToLastfm()) {
             $this->lastfmService->scrobble(
                 $song->artist->name,
                 $song->title,
                 (int) $timestamp,
                 $song->album->name === Album::UNKNOWN_NAME ? '' : $song->album->name,
-                $this->lastfmService->getUserSessionKey($request->user())
+                $request->user()->lastfm_session_key
             );
         }
 

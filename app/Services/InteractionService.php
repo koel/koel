@@ -45,11 +45,11 @@ class InteractionService
         return tap($this->interaction->firstOrCreate([
             'song_id' => $songId,
             'user_id' => $user->id,
-        ]), static function (Interaction $interaction) use ($user): void {
+        ]), static function (Interaction $interaction): void {
             $interaction->liked = !$interaction->liked;
             $interaction->save();
 
-            event(new SongLikeToggled($interaction, $user));
+            event(new SongLikeToggled($interaction));
         });
     }
 
@@ -66,7 +66,7 @@ class InteractionService
             return tap($this->interaction->firstOrCreate([
                 'song_id' => $songId,
                 'user_id' => $user->id,
-            ]), static function (Interaction $interaction) use ($user): void {
+            ]), static function (Interaction $interaction): void {
                 if (!$interaction->exists) {
                     $interaction->play_count = 0;
                 }
@@ -74,7 +74,7 @@ class InteractionService
                 $interaction->liked = true;
                 $interaction->save();
 
-                event(new SongLikeToggled($interaction, $user));
+                event(new SongLikeToggled($interaction));
             });
         })->all();
     }
@@ -90,11 +90,11 @@ class InteractionService
             ->whereIn('song_id', $songIds)
             ->where('user_id', $user->id)
             ->get()
-            ->each(static function (Interaction $interaction) use ($user): void {
+            ->each(static function (Interaction $interaction): void {
                 $interaction->liked = false;
                 $interaction->save();
 
-                event(new SongLikeToggled($interaction, $user));
+                event(new SongLikeToggled($interaction));
             }
         );
     }

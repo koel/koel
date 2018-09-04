@@ -17,7 +17,10 @@ class UpdateLastfmNowPlaying
 
     public function handle(SongStartedPlaying $event): void
     {
-        if (!$this->shouldHandle($event)) {
+        if (!$this->lastfm->enabled() ||
+            !($sessionKey = $event->user->lastfm_session_key) ||
+            $event->song->artist->is_unknown
+        ) {
             return;
         }
 
@@ -26,14 +29,7 @@ class UpdateLastfmNowPlaying
             $event->song->title,
             $event->song->album->name === Album::UNKNOWN_NAME ? '' : $event->song->album->name,
             $event->song->length,
-            $this->lastfm->getUserSessionKey($event->user)
+            $sessionKey
         );
-    }
-
-    private function shouldHandle(SongStartedPlaying $event): bool
-    {
-        return $this->lastfm->enabled()
-            && $this->lastfm->isUserConnected($event->user)
-            && !$event->song->artist->is_unknown;
     }
 }

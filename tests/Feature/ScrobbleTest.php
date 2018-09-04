@@ -5,25 +5,29 @@ namespace Tests\Feature;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
-use Mockery;
+use Exception;
 
 class ScrobbleTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function testLastfmScrobble()
     {
-        $song = factory(Song::class)->create();
+        $this->withoutEvents();
+        $this->createSampleMediaSet();
+
+        $song = Song::first();
+        /** @var User $user */
         $user = factory(User::class)->create();
+        $user->setPreference('lastfm_session_key', 'foo');
 
         $ts = time();
 
-        $lastfm = Mockery::mock(LastfmService::class)->makePartial();
-        $lastfm->shouldReceive('enabled')->andReturn(true);
-        $lastfm->shouldReceive('getUserSessionKey')->andReturn('foo');
-        $lastfm->shouldReceive('scrobble')
+        $this->mockIocDependency(LastfmService::class)
+            ->shouldReceive('scrobble')
             ->with($song->album->artist->name, $song->title, $ts, $song->album->name, 'foo')
             ->once();
-
-        app()->instance(LastfmService::class, $lastfm);
 
         $this->postAsUser("/api/{$song->id}/scrobble/$ts", [], $user)
             ->assertResponseOk();

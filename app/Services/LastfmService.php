@@ -2,16 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use Exception;
-use GuzzleHttp\Client;
-use Illuminate\Contracts\Cache\Repository as Cache;
-use Illuminate\Log\Logger;
 
 class LastfmService extends ApiClient implements ApiConsumerInterface
 {
-    public const SESSION_KEY_PREFERENCE_KEY = 'lastfm_session_key';
-
     /**
      * Specify the response format, since Last.fm only returns XML.
      *
@@ -25,18 +19,6 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      * @var string
      */
     protected $keyParam = 'api_key';
-
-    private $userPreferenceService;
-
-    public function __construct(
-        Client $client,
-        Cache $cache,
-        Logger $logger,
-        UserPreferenceService $userPreferenceService
-    ) {
-        parent::__construct($client, $cache, $logger);
-        $this->userPreferenceService = $userPreferenceService;
-    }
 
     /**
      * Determine if our application is using Last.fm.
@@ -185,7 +167,7 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
      *
      * @link http://www.last.fm/api/webauth#4
      */
-    public function fetchSessionKeyUsingToken(string $token): ?string
+    public function getSessionKey(string $token): ?string
     {
         $query = $this->buildAuthCallParams([
             'method' => 'auth.getSession',
@@ -325,26 +307,6 @@ class LastfmService extends ApiClient implements ApiConsumerInterface
         }
 
         return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($value)))));
-    }
-
-    public function getUserSessionKey(User $user): ?string
-    {
-        return $this->userPreferenceService->get($user, self::SESSION_KEY_PREFERENCE_KEY);
-    }
-
-    public function setUserSessionKey(User $user, string $sessionKey): void
-    {
-        $this->userPreferenceService->set($user, self::SESSION_KEY_PREFERENCE_KEY, $sessionKey);
-    }
-
-    public function deleteUserSessionKey(User $user): void
-    {
-        $this->userPreferenceService->delete($user, self::SESSION_KEY_PREFERENCE_KEY);
-    }
-
-    public function isUserConnected(User $user): bool
-    {
-        return (bool) $this->getUserSessionKey($user);
     }
 
     public function getKey(): ?string
