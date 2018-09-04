@@ -60,7 +60,7 @@ class SyncMediaCommand extends Command
      */
     protected function syncAll(): void
     {
-        $this->info('Syncing media from ' . Setting::get('media_path') .PHP_EOL);
+        $this->info('Syncing media from '.Setting::get('media_path').PHP_EOL);
 
         // Get the tags to sync.
         // Notice that this is only meaningful for existing records.
