@@ -71,8 +71,6 @@ abstract class ApiClient
         } catch (ClientException $e) {
             $this->logger->error($e);
         }
-
-        return null;
     }
 
     /**
