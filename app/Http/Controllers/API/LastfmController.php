@@ -41,11 +41,10 @@ class LastfmController extends Controller
         // This is due to the problem that Last.fm returns the token via "token" as well.
         $this->jwtAuth->parseToken('', '', 'jwt-token');
 
-        return redirect(
-            'https://www.last.fm/api/auth/?api_key='
-            .$this->lastfmService->getKey()
-            .'&cb='.urlencode(route('lastfm.callback').'?jwt-token='.$this->jwtAuth->getToken())
-        );
+        $callbackUrl = urlencode(sprintf('%s?jwt-token=%s', route('lastfm.callback'), $this->jwtAuth->getToken()));
+        $url = sprintf('https://www.last.fm/api/auth/?api_key=%s&cb=%s', $this->lastfmService->getKey(), $callbackUrl);
+
+        return redirect($url);
     }
 
     /**
