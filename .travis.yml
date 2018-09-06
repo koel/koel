@@ -23,17 +23,11 @@ branches:
   - master
 
 install:
-  - . $HOME/.nvm/nvm.sh
-  - nvm install 6.10.3
-  - nvm use 6.10.3
-  - npm install -g yarn
-  - yarn
   - composer self-update
   - composer install --prefer-dist --no-interaction
 
 script:
   - composer test
-  - yarn test
 
 addons:
   code_climate:
