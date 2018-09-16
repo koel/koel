@@ -12,7 +12,7 @@ Route::group(['namespace' => 'API'], function () {
         });
 
         Route::post('broadcasting/auth', function (Request $request) {
-            $pusher = new Pusher(
+            $pusher = new Pusher\Pusher(
                 config('broadcasting.connections.pusher.key'),
                 config('broadcasting.connections.pusher.secret'),
                 config('broadcasting.connections.pusher.app_id'),
