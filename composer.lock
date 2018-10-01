@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.67.4",
+            "version": "3.67.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "df94a9ad78c9e817a9887bedf0e5b269c4f25810"
+                "reference": "0d05816beeaf187a3897c28aaa68d683974818d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/df94a9ad78c9e817a9887bedf0e5b269c4f25810",
-                "reference": "df94a9ad78c9e817a9887bedf0e5b269c4f25810",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d05816beeaf187a3897c28aaa68d683974818d9",
+                "reference": "0d05816beeaf187a3897c28aaa68d683974818d9",
                 "shasum": ""
             },
             "require": {
@@ -84,20 +84,20 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-08-31T21:53:42+00:00"
+            "time": "2018-09-28T18:46:40+00:00"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php-laravel.git",
-                "reference": "3b946892d493b91b4920ec4facc4a0ad7195fb86"
+                "reference": "56f9a291061d37439c41ad57e7ff2d493bbdde1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/3b946892d493b91b4920ec4facc4a0ad7195fb86",
-                "reference": "3b946892d493b91b4920ec4facc4a0ad7195fb86",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/56f9a291061d37439c41ad57e7ff2d493bbdde1c",
+                "reference": "56f9a291061d37439c41ad57e7ff2d493bbdde1c",
                 "shasum": ""
             },
             "require": {
@@ -113,6 +113,16 @@
                 "laravel/lumen-framework": "To test the Lumen bindings"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Aws\\Laravel\\AwsServiceProvider"
+                    ],
+                    "aliases": {
+                        "AWS": "Aws\\Laravel\\AwsFacade"
+                    }
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Aws\\Laravel\\": "src/"
@@ -140,7 +150,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-01-18T06:57:07+00:00"
+            "time": "2017-11-16T17:35:06+00:00"
         },
         {
             "name": "daverandom/resume",
