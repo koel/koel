@@ -17,7 +17,6 @@ class CreateVariousArtists extends Migration
         Schema::table('albums', function (Blueprint $table) {
             if (DB::getDriverName() !== 'sqlite') {
                 $table->dropForeign('albums_artist_id_foreign');
-
             }
             $table->foreign('artist_id')->references('id')->on('artists')->onUpdate('cascade')->onDelete('cascade');
         });
