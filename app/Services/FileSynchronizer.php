@@ -303,12 +303,21 @@ class FileSynchronizer
             $cover = $matches ? $matches[0] : null;
 
             // Even if a file is found, make sure it's a real image.
-            if ($cover && !exif_imagetype($cover)) {
+            if ($cover && !$this->isImage($cover)) {
                 $cover = null;
             }
 
             return $cover;
         });
+    }
+
+    private function isImage(string $path): bool
+    {
+        try {
+            return (bool) exif_imagetype($path);
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**
