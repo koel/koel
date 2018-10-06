@@ -74,7 +74,7 @@
       "@php artisan key:generate"
     ],
     "test": [
-      "@phpunit --colors=always"
+      "phpunit --colors=always"
     ],
     "analyze": [
       "phpstan analyse app --level=5"
