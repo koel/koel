@@ -12,13 +12,13 @@ class CascadeDeleteUser extends Migration
      */
     public function up()
     {
-            Schema::table('playlists', function (Blueprint $table) {
-                if (DB::getDriverName() !== 'sqlite') {
-                    $table->dropForeign('playlists_user_id_foreign');
-                }
+        Schema::table('playlists', function (Blueprint $table) {
+            if (DB::getDriverName() !== 'sqlite') {
+                $table->dropForeign('playlists_user_id_foreign');
+            }
 
-                $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            });
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+        });
     }
 
     /**
