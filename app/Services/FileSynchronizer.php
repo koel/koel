@@ -314,7 +314,7 @@ class FileSynchronizer
     private function isImage(string $path): bool
     {
         try {
-            return !!exif_imagetype($path);
+            return (bool) exif_imagetype($path);
         } catch (Exception $e) {
             return false;
         }
