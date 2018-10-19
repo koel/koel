@@ -156,7 +156,7 @@ class FileSynchronizer
             'albumartist' => 'band',
             'album' => 'album',
             'title' => 'title',
-            'lyrics' => 'unsychronised_lyric', // this tag name is mispelled by getID3
+            'lyrics' => 'unsynchronised_lyric',
             'compilation' => 'part_of_a_compilation',
         ];
 
