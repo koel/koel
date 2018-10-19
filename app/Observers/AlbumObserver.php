@@ -17,6 +17,11 @@ class AlbumObserver
 
     public function deleted(Album $album): void
     {
+        $this->deleteAlbumCover($album);
+    }
+
+    private function deleteAlbumCover(Album $album): void
+    {
         if (!$album->has_cover) {
             return;
         }
