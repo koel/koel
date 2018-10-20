@@ -6,7 +6,6 @@ use App\Events\SongLikeToggled;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Database\Query\Builder;
 
 class InteractionService
 {
