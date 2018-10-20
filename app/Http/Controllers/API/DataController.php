@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 
 class DataController extends Controller
 {
+    private const RECENTLY_PLAYED_EXCERPT_COUNT = 7;
+
     private $lastfmService;
     private $youTubeService;
     private $iTunesService;
@@ -60,6 +62,10 @@ class DataController extends Controller
             'settings' => $request->user()->is_admin ? $this->settingRepository->getAllAsKeyValueArray() : [],
             'playlists' => $this->playlistRepository->getAllByCurrentUser(),
             'interactions' => $this->interactionRepository->getAllByCurrentUser(),
+            'recentlyPlayed' => $this->interactionRepository->getRecentlyPlayed(
+                $request->user(),
+                self::RECENTLY_PLAYED_EXCERPT_COUNT
+            ),
             'users' => $request->user()->is_admin ? $this->userRepository->getAll() : [],
             'currentUser' => $request->user(),
             'useLastfm' => $this->lastfmService->used(),

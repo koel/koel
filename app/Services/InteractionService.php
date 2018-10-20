@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Events\SongLikeToggled;
 use App\Models\Interaction;
+use App\Models\Song;
 use App\Models\User;
 
 class InteractionService
