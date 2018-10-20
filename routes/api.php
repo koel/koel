@@ -40,6 +40,9 @@ Route::group(['namespace' => 'API'], function () {
         Route::post('interaction/like', 'Interaction\LikeController@store');
         Route::post('interaction/batch/like', 'Interaction\BatchLikeController@store');
         Route::post('interaction/batch/unlike', 'Interaction\BatchLikeController@destroy');
+        Route::get('interaction/recently-played/{count?}', 'Interaction\RecentlyPlayedController@index')->where([
+            'count' => '\d+',
+        ]);
 
         // Playlist routes
         Route::resource('playlist', 'PlaylistController');
