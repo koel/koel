@@ -25,7 +25,7 @@ class SmartPlaylistService
     public function getSongs(Playlist $playlist): Collection
     {
         if (!$playlist->is_smart) {
-            throw new RuntimeException($playlist->name . ' is not a smart playlist.');
+            throw new RuntimeException($playlist->name.' is not a smart playlist.');
         }
 
         $rules = $this->addRequiresUserRules($playlist->rules, $playlist->user);
@@ -71,7 +71,7 @@ class SmartPlaylistService
     {
         return [
             'logic' => 'and',
-            'model' => $modelPrefix . 'user_id',
+            'model' => $modelPrefix.'user_id',
             'operator' => 'is',
             'value' => [$user->id],
         ];

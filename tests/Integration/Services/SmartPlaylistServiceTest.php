@@ -210,7 +210,7 @@ class SmartPlaylistServiceTest extends TestCase
      * @dataProvider provideRules
      *
      * @param string[] $rules
-     * @param mixed[] $bindings
+     * @param mixed[]  $bindings
      */
     public function testBuildQueryForRules(array $rules, string $sql, array $bindings): void
     {
@@ -218,7 +218,7 @@ class SmartPlaylistServiceTest extends TestCase
         $this->assertSame($sql, $query->toSql());
         $queryBinding = $query->getBindings();
 
-        for ($i = 0, $count = count($queryBinding); $i < $count; ++$i) {
+        for ($i = 0, $count = count($queryBinding); $i < $count; $i++) {
             $this->assertSame(
                 $bindings[$i],
                 is_object($queryBinding[$i]) ? (string) $queryBinding[$i] : $queryBinding[$i]
@@ -242,8 +242,8 @@ class SmartPlaylistServiceTest extends TestCase
 
         factory(Song::class, 2)->create([
             'title' => static function (): string {
-                return 'Unique Foo ' . uniqid();
-            }
+                return 'Unique Foo '.uniqid();
+            },
         ]);
 
         factory(Song::class, 5)->create([
@@ -259,7 +259,7 @@ class SmartPlaylistServiceTest extends TestCase
                     'operator' => 'beginsWith',
                     'value' => ['Unique Foo'],
                 ],
-            ]
+            ],
         ]);
 
         $songs = $this->service->getSongs($playlist);
@@ -279,8 +279,8 @@ class SmartPlaylistServiceTest extends TestCase
             'artist_id' => static function (): int {
                 return factory(Artist::class)->create([
                     'name' => static function (): string {
-                        return 'Foo Artist ' . uniqid();
-                    }
+                        return 'Foo Artist '.uniqid();
+                    },
                 ])->id;
             },
         ]);
@@ -294,7 +294,7 @@ class SmartPlaylistServiceTest extends TestCase
 
         /** @var Album $inApplicableAlbum */
         $inApplicableAlbum = factory(Album::class)->create([
-            'artist_id' => factory(Artist::class)->create(['name' => 'Nothing to do with the rule'])
+            'artist_id' => factory(Artist::class)->create(['name' => 'Nothing to do with the rule']),
         ]);
 
         factory(Song::class, 1)->create([
@@ -316,7 +316,7 @@ class SmartPlaylistServiceTest extends TestCase
                     'operator' => 'beginsWith',
                     'value' => ['There should not be anything like this'],
                 ],
-            ]
+            ],
         ]);
 
         $songs = $this->service->getSongs($playlist);
@@ -329,7 +329,7 @@ class SmartPlaylistServiceTest extends TestCase
     public function testRulesWithUser(): void
     {
         /**
-         * @var User $bob
+         * @var User
          * @var User $alice
          */
         $bob = factory(User::class)->create();
@@ -362,7 +362,7 @@ class SmartPlaylistServiceTest extends TestCase
                     'operator' => 'isGreaterThan',
                     'value' => [5],
                 ],
-            ]
+            ],
         ]);
 
         /** @var Song[]|Collection $songs */
