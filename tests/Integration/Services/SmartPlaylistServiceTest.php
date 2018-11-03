@@ -210,7 +210,7 @@ class SmartPlaylistServiceTest extends TestCase
      * @dataProvider provideRules
      *
      * @param string[] $rules
-     * @param mixed[] $bindings
+     * @param mixed[]  $bindings
      */
     public function testBuildQueryForRules(array $rules, string $sql, array $bindings): void
     {
@@ -218,7 +218,7 @@ class SmartPlaylistServiceTest extends TestCase
         $this->assertSame($sql, $query->toSql());
         $queryBinding = $query->getBindings();
 
-        for ($i = 0, $count = count($queryBinding); $i < $count; ++$i) {
+        for ($i = 0, $count = count($queryBinding); $i < $count; $i++) {
             $this->assertSame(
                 $bindings[$i],
                 is_object($queryBinding[$i]) ? (string) $queryBinding[$i] : $queryBinding[$i]

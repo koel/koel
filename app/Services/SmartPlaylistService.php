@@ -71,7 +71,7 @@ class SmartPlaylistService
     {
         return [
             'logic' => 'and',
-            'model' => $modelPrefix . 'user_id',
+            'model' => $modelPrefix.'user_id',
             'operator' => 'is',
             'value' => [$user->id],
         ];
