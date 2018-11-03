@@ -12,6 +12,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int        $user_id
  * @property Collection $songs
  * @property int        $id
+ * @property array      $rules
+ * @property bool       $is_smart
+ * @property string     $name
+ * @property user       $user
  */
 class Playlist extends Model
 {
@@ -21,6 +25,7 @@ class Playlist extends Model
     protected $guarded = ['id'];
     protected $casts = [
         'user_id' => 'int',
+        'rules' => 'array',
     ];
 
     public function songs(): BelongsToMany
@@ -31,5 +36,10 @@ class Playlist extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getIsSmartAttribute(): bool
+    {
+        return (bool) $this->rules;
     }
 }
