@@ -11,7 +11,7 @@ $factory->define(App\Models\User::class, function ($faker) {
     ];
 });
 
-$factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($factory) {
+$factory->defineAs(App\Models\User::class, 'admin', function () use ($factory) {
     $user = $factory->raw(App\Models\User::class);
 
     return array_merge($user, ['is_admin' => true]);
@@ -49,7 +49,11 @@ $factory->define(App\Models\Song::class, function ($faker) {
 
 $factory->define(App\Models\Playlist::class, function ($faker) {
     return [
+        'user_id' => static function (): int {
+            throw new InvalidArgumentException('A user_id must be supplied');
+        },
         'name' => $faker->name,
+        'rules' => null,
     ];
 });
 
