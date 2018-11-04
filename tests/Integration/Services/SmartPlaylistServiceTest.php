@@ -328,11 +328,9 @@ class SmartPlaylistServiceTest extends TestCase
 
     public function testRulesWithUser(): void
     {
-        /**
-         * @var User
-         * @var User $alice
-         */
+        /** @var User $bob */
         $bob = factory(User::class)->create();
+        /** @var User $alice */
         $alice = factory(User::class)->create();
 
         $bobSong = factory(Song::class)->create([
