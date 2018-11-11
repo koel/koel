@@ -27,7 +27,7 @@ install:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - composer test
+  - composer coverage
 
 addons:
   code_climate:

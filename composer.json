@@ -73,12 +73,9 @@
     "post-create-project-cmd": [
       "@php artisan key:generate"
     ],
-    "test": [
-      "phpunit --colors=always --coverage-clover=coverage.xml"
-    ],
-    "analyze": [
-      "phpstan analyse app --level=5"
-    ]
+    "test": "phpunit --colors=always",
+    "coverage": "phpunit --colors=always --coverage-clover=coverage.xml",
+    "analyze": "phpstan analyse app --level=5"
   },
   "config": {
     "preferred-install": "dist",
