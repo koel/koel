@@ -35,3 +35,4 @@ addons:
 
 after_success:
   - vendor/bin/test-reporter
+  - bash <(curl -s https://codecov.io/bash)
