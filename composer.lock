@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.69.13",
+            "version": "3.71.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "58af8e248aa2ae0709a009502407533a5f13a443"
+                "reference": "18f0f1c2224610b473c80690f0df0bac116da957"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/58af8e248aa2ae0709a009502407533a5f13a443",
-                "reference": "58af8e248aa2ae0709a009502407533a5f13a443",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/18f0f1c2224610b473c80690f0df0bac116da957",
+                "reference": "18f0f1c2224610b473c80690f0df0bac116da957",
                 "shasum": ""
             },
             "require": {
@@ -87,20 +87,20 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-10-23T20:04:06+00:00"
+            "time": "2018-11-12T22:58:19+00:00"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
-            "version": "3.2.1",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php-laravel.git",
-                "reference": "379eb23c62509ea2ddafef86a6d3311e28235bb3"
+                "reference": "16f12cb553ac1ea5f3a0acd95b2d4363fbd317ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/379eb23c62509ea2ddafef86a6d3311e28235bb3",
-                "reference": "379eb23c62509ea2ddafef86a6d3311e28235bb3",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/16f12cb553ac1ea5f3a0acd95b2d4363fbd317ab",
+                "reference": "16f12cb553ac1ea5f3a0acd95b2d4363fbd317ab",
                 "shasum": ""
             },
             "require": {
@@ -153,7 +153,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-10-19T23:48:48+00:00"
+            "time": "2018-11-12T21:56:17+00:00"
         },
         {
             "name": "daverandom/resume",
