@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1541356285385,
+    "rules": [
+      {
+        "id": 1541356313181,
+        "model": "title",
+        "operator": "contains",
+        "value": [
+          "Foo"
+        ]
+      }
+    ]
+  }
+]

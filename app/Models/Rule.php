@@ -8,14 +8,6 @@ use InvalidArgumentException;
 
 class Rule
 {
-    private const LOGIC_OR = 'or';
-    private const LOGIC_AND = 'and';
-
-    private const VALID_LOGICS = [
-        self::LOGIC_AND,
-        self::LOGIC_OR,
-    ];
-
     public const OPERATOR_IS = 'is';
     public const OPERATOR_IS_NOT = 'isNot';
     public const OPERATOR_CONTAINS = 'contains';
@@ -43,17 +35,14 @@ class Rule
     ];
 
     private $operator;
-    private $logic;
     private $value;
     private $model;
     private $parameterFactory;
 
     private function __construct(array $config)
     {
-        $this->validateLogic($config['logic']);
         $this->validateOperator($config['operator']);
 
-        $this->logic = $config['logic'];
         $this->value = $config['value'];
         $this->model = $config['model'];
         $this->operator = $config['operator'];
@@ -83,31 +72,18 @@ class Rule
         // If the model is something like 'artist.name' or 'interactions.play_count', we have a subquery to deal with.
         // We handle such a case with a recursive call which, in theory, should work with an unlimited level of nesting,
         // though in practice we only have one level max.
-        $subQueryLogic = self::LOGIC_AND ? 'whereHas' : 'orWhereHas';
-
-        return $query->$subQueryLogic($fragments[0], function (Builder $subQuery) use ($fragments): Builder {
+        return $query->whereHas($fragments[0], function (Builder $subQuery) use ($fragments): Builder {
             return $this->build($subQuery, $fragments[1]);
         });
     }
 
+    /**
+     * Resolve the logic of a (sub)query base on the configured operator.
+     * Basically, if the operator is "between," we use "whereBetween." Otherwise, it's "where." Simple.
+     */
     private function resolveLogic(): string
     {
-        if ($this->operator === self::OPERATOR_IS_BETWEEN) {
-            return $this->logic === self::LOGIC_AND ? 'whereBetween' : 'orWhereBetween';
-        }
-
-        return $this->logic === self::LOGIC_AND ? 'where' : 'orWhere';
-    }
-
-    private function validateLogic(string $logic): void
-    {
-        if (!in_array($logic, self::VALID_LOGICS, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    '%s is not a valid value for logic. Valid values are: %s', $logic, implode(', ', self::VALID_LOGICS)
-                )
-            );
-        }
+        return $this->operator === self::OPERATOR_IS_BETWEEN ? 'whereBetween' : 'where';
     }
 
     private function validateOperator(string $operator): void

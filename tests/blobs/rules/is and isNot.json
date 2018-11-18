@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1541356285385,
+    "rules": [
+      {
+        "id": 1541356313181,
+        "model": "title",
+        "operator": "is",
+        "value": [
+          "Foo"
+        ]
+      },
+      {
+        "id": 1542572962736,
+        "model": "artist.name",
+        "operator": "isNot",
+        "value": [
+          "Bar"
+        ]
+      }
+    ]
+  }
+]

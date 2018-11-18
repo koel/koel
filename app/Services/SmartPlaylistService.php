@@ -30,18 +30,22 @@ class SmartPlaylistService
 
         $rules = $this->addRequiresUserRules($playlist->rules, $playlist->user);
 
-        return $this->buildQueryForRules($rules)->get();
+        return $this->buildQueryFromRules($rules)->get();
     }
 
-    public function buildQueryForRules(array $rules): Builder
+    public function buildQueryFromRules(array $rules): Builder
     {
-        return tap(Song::query(), static function (Builder $query) use ($rules): Builder {
-            foreach ($rules as $config) {
-                $query = Rule::create($config)->build($query);
-            }
+        $query = Song::query();
 
-            return $query;
+        collect($rules)->each(static function (array $ruleGroup) use ($query): void {
+            $query->orWhere(static function (Builder $subQuery) use ($ruleGroup): void {
+                foreach ($ruleGroup['rules'] as $config) {
+                    Rule::create($config)->build($subQuery);
+                }
+            });
         });
+
+        return $query;
     }
 
     /**
@@ -51,26 +55,29 @@ class SmartPlaylistService
      *
      * @param string[] $rules
      */
-    private function addRequiresUserRules(array $rules, User $user): array
+    public function addRequiresUserRules(array $rules, User $user): array
     {
-        $additionalRules = [];
+        foreach ($rules as &$ruleGroup) {
+            $additionalRules = [];
 
-        foreach ($rules as $rule) {
-            foreach (self::RULE_REQUIRES_USER_PREFIXES as $modelPrefix) {
-                if (starts_with($rule['model'], $modelPrefix)) {
-                    $additionalRules[] = $this->createRequireUserRule($user, $modelPrefix);
+            foreach ($ruleGroup['rules'] as &$config) {
+                foreach (self::RULE_REQUIRES_USER_PREFIXES as $modelPrefix) {
+                    if (starts_with($config['model'], $modelPrefix)) {
+                        $additionalRules[] = $this->createRequireUserRule($user, $modelPrefix);
+                    }
                 }
             }
+
+            // make sure all those additional rules are unique.
+            $ruleGroup['rules'] = array_merge($ruleGroup['rules'], collect($additionalRules)->unique('model')->all());
         }
 
-        // make sure all those additional rules are unique.
-        return array_merge($rules, collect($additionalRules)->unique('model')->all());
+        return $rules;
     }
 
     private function createRequireUserRule(User $user, string $modelPrefix): array
     {
         return [
-            'logic' => 'and',
             'model' => $modelPrefix.'user_id',
             'operator' => 'is',
             'value' => [$user->id],

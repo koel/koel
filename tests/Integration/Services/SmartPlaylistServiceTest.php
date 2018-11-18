@@ -32,176 +32,78 @@ class SmartPlaylistServiceTest extends TestCase
         parent::tearDown();
     }
 
+    private function readFixtureFile(string $fileName): array
+    {
+        return json_decode(file_get_contents(__DIR__ . '/../../blobs/rules/' . $fileName), true);
+    }
+
     public function provideRules(): array
     {
         return [
             [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'title',
-                        'operator' => 'beginsWith',
-                        'value' => ['Foo'],
-                    ],
-                ],
-                'select * from "songs" where "title" LIKE ?',
+                $this->readFixtureFile('is.json'),
+                'select * from "songs" where ("title" = ?)',
+                ['Foo'],
+            ],
+            [
+                $this->readFixtureFile('isNot.json'),
+                'select * from "songs" where ("title" <> ?)',
+                ['Foo'],
+            ],
+            [
+                $this->readFixtureFile('contains.json'),
+                'select * from "songs" where ("title" LIKE ?)',
+                ['%Foo%'],
+            ],
+            [
+                $this->readFixtureFile('doesNotContain.json'),
+                'select * from "songs" where ("title" NOT LIKE ?)',
+                ['%Foo%'],
+            ],
+            [
+                $this->readFixtureFile('beginsWith.json'),
+                'select * from "songs" where ("title" LIKE ?)',
                 ['Foo%'],
             ],
             [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'title',
-                        'operator' => 'endsWith',
-                        'value' => ['Foo'],
-                    ],
-                ],
-                'select * from "songs" where "title" LIKE ?',
+                $this->readFixtureFile('endsWith.json'),
+                'select * from "songs" where ("title" LIKE ?)',
                 ['%Foo'],
             ],
             [
-                [
-                    [
-                        'logic' => 'or',
-                        'model' => 'title',
-                        'operator' => 'is',
-                        'value' => ['Foo'],
-                    ],
-                ],
-                'select * from "songs" where "title" = ?',
-                ['Foo'],
+                $this->readFixtureFile('isBetween.json'),
+                'select * from "songs" where ("bit_rate" between ? and ?)',
+                ['192', '256'],
             ],
             [
-                [
-                    [
-                        'logic' => 'or',
-                        'model' => 'title',
-                        'operator' => 'isNot',
-                        'value' => ['Foo'],
-                    ],
-                ],
-                'select * from "songs" where "title" <> ?',
-                ['Foo'],
-            ],
-            [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'title',
-                        'operator' => 'contains',
-                        'value' => ['Foo'],
-                    ],
-                ],
-                'select * from "songs" where "title" LIKE ?',
-                ['%Foo%'],
-            ],
-            [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'title',
-                        'operator' => 'notContain',
-                        'value' => ['Foo'],
-                    ],
-                ],
-                'select * from "songs" where "title" NOT LIKE ?',
-                ['%Foo%'],
-            ],
-            [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'length',
-                        'operator' => 'isGreaterThan',
-                        'value' => [100],
-                    ],
-                ],
-                'select * from "songs" where "length" > ?',
-                [100],
-            ],
-            [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'length',
-                        'operator' => 'isLessThan',
-                        'value' => [100],
-                    ],
-                ],
-                'select * from "songs" where "length" < ?',
-                [100],
-            ],
-            [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'length',
-                        'operator' => 'isBetween',
-                        'value' => [100, 200],
-                    ],
-                ],
-                'select * from "songs" where "length" between ? and ?',
-                [100, 200],
-            ],
-            [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'created_at',
-                        'operator' => 'inLast',
-                        'value' => [7],
-                    ],
-                ],
-                'select * from "songs" where "created_at" >= ?',
+                $this->readFixtureFile('inLast.json'),
+                'select * from "songs" where ("created_at" >= ?)',
                 ['2018-07-08 00:00:00'],
             ],
             [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'created_at',
-                        'operator' => 'notInLast',
-                        'value' => [7],
-                    ],
-                ],
-                'select * from "songs" where "created_at" < ?',
+                $this->readFixtureFile('notInLast.json'),
+                'select * from "songs" where ("created_at" < ?)',
                 ['2018-07-08 00:00:00'],
             ],
             [
-                [
-                    [
-                        'logic' => 'and',
-                        'model' => 'created_at',
-                        'operator' => 'notInLast',
-                        'value' => [7],
-                    ],
-                    [
-                        'logic' => 'or',
-                        'model' => 'length',
-                        'operator' => 'isBetween',
-                        'value' => [100, 200],
-                    ],
-                ],
-                'select * from "songs" where "created_at" < ? or "length" between ? and ?',
-                ['2018-07-08 00:00:00', 100, 200],
+                $this->readFixtureFile('isLessThan.json'),
+                'select * from "songs" where ("length" < ?)',
+                ['300'],
             ],
             [
-                [
-                    [
-                        'logic' => 'or',
-                        'model' => 'artist.name',
-                        'operator' => 'isNot',
-                        'value' => ['Foo'],
-                    ],
-                    [
-                        'logic' => 'and',
-                        'model' => 'created_at',
-                        'operator' => 'notInLast',
-                        'value' => [7],
-                    ],
-                ],
-                'select * from "songs" where exists (select * from "artists" where "songs"."artist_id" = "artists"."id" or ("name" <> ?)) and "created_at" < ?',
-                ['Foo', '2018-07-08 00:00:00', 100, 200],
+                $this->readFixtureFile('is and isNot.json'),
+                'select * from "songs" where ("title" = ? and exists (select * from "artists" where "songs"."artist_id" = "artists"."id" and "name" <> ?))',
+                ['Foo', 'Bar'],
+            ],
+            [
+                $this->readFixtureFile('(is and isNot) or (is and isGreaterThan).json'),
+                'select * from "songs" where ("title" = ? and exists (select * from "albums" where "songs"."album_id" = "albums"."id" and "name" <> ?)) or ("genre" = ? and "bit_rate" > ?)',
+                ['Foo', 'Bar', 'Metal', '128'],
+            ],
+            [
+                $this->readFixtureFile('is or is.json'),
+                'select * from "songs" where ("title" = ?) or (exists (select * from "artists" where "songs"."artist_id" = "artists"."id" and "name" = ?))',
+                ['Foo', 'Bar'],
             ],
         ];
     }
@@ -214,7 +116,7 @@ class SmartPlaylistServiceTest extends TestCase
      */
     public function testBuildQueryForRules(array $rules, string $sql, array $bindings): void
     {
-        $query = $this->service->buildQueryForRules($rules);
+        $query = $this->service->buildQueryFromRules($rules);
         $this->assertSame($sql, $query->toSql());
         $queryBinding = $query->getBindings();
 
@@ -226,146 +128,36 @@ class SmartPlaylistServiceTest extends TestCase
         }
     }
 
+    public function testAddRequiresUserRules(): void
+    {
+        $rules = $this->readFixtureFile('requiresUser.json');
+
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
+        $this->assertEquals([
+            'model' => 'interactions.user_id',
+            'operator' => 'is',
+            'value' => [$user->id],
+        ], $this->service->addRequiresUserRules($rules, $user)[0]['rules'][1]);
+    }
+
     public function testAllOperatorsAreCovered(): void
     {
-        $operators = collect($this->provideRules())->map(static function (array $providedRules): string {
-            return $providedRules[0][0]['operator'];
+        $rules = collect($this->provideRules())->map(static function (array $providedRule): array {
+            return $providedRule[0];
         });
 
-        $this->assertSame(count(Rule::VALID_OPERATORS), $operators->unique()->count());
-    }
+        $operators = [];
 
-    public function testRuleWithoutSubQueries(): void
-    {
-        /** @var User $user */
-        $user = factory(User::class)->create();
-
-        factory(Song::class, 2)->create([
-            'title' => static function (): string {
-                return 'Unique Foo '.uniqid();
-            },
-        ]);
-
-        factory(Song::class, 5)->create([
-            'title' => 'Has nothing to do with the rule',
-        ]);
-
-        $playlist = factory(Playlist::class)->create([
-            'user_id' => $user->id,
-            'rules' => [
-                [
-                    'logic' => 'and',
-                    'model' => 'title',
-                    'operator' => 'beginsWith',
-                    'value' => ['Unique Foo'],
-                ],
-            ],
-        ]);
-
-        $songs = $this->service->getSongs($playlist);
-        $this->assertCount(2, $songs);
-        $songs->each(function (Song $song): void {
-            $this->assertStringStartsWith('Unique Foo', $song->title);
-        });
-    }
-
-    public function testRulesWithSubQuery(): void
-    {
-        /** @var User $user */
-        $user = factory(User::class)->create();
-
-        /** @var Album[] $albums */
-        $albums = factory(Album::class, 3)->create([
-            'artist_id' => static function (): int {
-                return factory(Artist::class)->create([
-                    'name' => static function (): string {
-                        return 'Foo Artist '.uniqid();
-                    },
-                ])->id;
-            },
-        ]);
-
-        foreach ($albums as $album) {
-            factory(Song::class, 2)->create([
-                'album_id' => $album->id,
-                'artist_id' => $album->artist->id,
-            ]);
+        foreach ($rules as $rule) {
+            foreach ($rule as $ruleGroup) {
+                foreach ($ruleGroup['rules'] as $config) {
+                    $operators[] = $config['operator'];
+                }
+            }
         }
 
-        /** @var Album $inApplicableAlbum */
-        $inApplicableAlbum = factory(Album::class)->create([
-            'artist_id' => factory(Artist::class)->create(['name' => 'Nothing to do with the rule']),
-        ]);
-
-        factory(Song::class, 1)->create([
-            'album_id' => $inApplicableAlbum->id,
-        ]);
-
-        $playlist = factory(Playlist::class)->create([
-            'user_id' => $user->id,
-            'rules' => [
-                [
-                    'logic' => 'and',
-                    'model' => 'artist.name',
-                    'operator' => 'beginsWith',
-                    'value' => ['Foo Artist'],
-                ],
-                [
-                    'logic' => 'or',
-                    'model' => 'title',
-                    'operator' => 'beginsWith',
-                    'value' => ['There should not be anything like this'],
-                ],
-            ],
-        ]);
-
-        $songs = $this->service->getSongs($playlist);
-        $this->assertCount(6, $songs);
-        $songs->each(function (Song $song): void {
-            $this->assertStringStartsWith('Foo Artist', $song->artist->name);
-        });
-    }
-
-    public function testRulesWithUser(): void
-    {
-        /** @var User $bob */
-        $bob = factory(User::class)->create();
-        /** @var User $alice */
-        $alice = factory(User::class)->create();
-
-        $bobSong = factory(Song::class)->create([
-            'title' => 'Song for Bob',
-        ]);
-        factory(Interaction::class)->create([
-            'user_id' => $bob->id,
-            'song_id' => $bobSong->id,
-            'play_count' => 10,
-        ]);
-
-        $aliceSong = factory(Song::class)->create([
-            'title' => 'Song for Alice',
-        ]);
-        factory(Interaction::class)->create([
-            'user_id' => $alice->id,
-            'song_id' => $aliceSong->id,
-            'play_count' => 12,
-        ]);
-
-        $playlist = factory(Playlist::class)->create([
-            'user_id' => $bob->id,
-            'rules' => [
-                [
-                    'logic' => 'and',
-                    'model' => 'interactions.play_count',
-                    'operator' => 'isGreaterThan',
-                    'value' => [5],
-                ],
-            ],
-        ]);
-
-        /** @var Song[]|Collection $songs */
-        $songs = $this->service->getSongs($playlist);
-        $this->assertCount(1, $songs);
-        $this->assertSame('Song for Bob', $songs[0]->title);
+        $this->assertSame(count(Rule::VALID_OPERATORS), count(array_unique($operators)));
     }
 }
