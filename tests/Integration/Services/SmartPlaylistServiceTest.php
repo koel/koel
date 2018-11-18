@@ -2,16 +2,10 @@
 
 namespace Tests\Integration\Services;
 
-use App\Models\Album;
-use App\Models\Artist;
-use App\Models\Interaction;
-use App\Models\Playlist;
 use App\Models\Rule;
-use App\Models\Song;
 use App\Models\User;
 use App\Services\SmartPlaylistService;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 class SmartPlaylistServiceTest extends TestCase
@@ -34,7 +28,7 @@ class SmartPlaylistServiceTest extends TestCase
 
     private function readFixtureFile(string $fileName): array
     {
-        return json_decode(file_get_contents(__DIR__ . '/../../blobs/rules/' . $fileName), true);
+        return json_decode(file_get_contents(__DIR__.'/../../blobs/rules/'.$fileName), true);
     }
 
     public function provideRules(): array
