@@ -24,9 +24,10 @@ class PlaylistTest extends TestCase
         $songs = Song::orderBy('id')->take(3)->get();
 
         $this->postAsUser('api/playlist', [
-                'name' => 'Foo Bar',
-                'songs' => $songs->pluck('id')->toArray(),
-            ], $user);
+            'name' => 'Foo Bar',
+            'songs' => $songs->pluck('id')->toArray(),
+            'rules' => [],
+        ], $user);
 
         $this->seeInDatabase('playlists', [
             'user_id' => $user->id,

@@ -27,6 +27,7 @@ class Playlist extends Model
         'user_id' => 'int',
         'rules' => 'array',
     ];
+    protected $appends = ['is_smart'];
 
     public function songs(): BelongsToMany
     {
