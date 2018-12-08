@@ -1,0 +1,91 @@
+{
+  "albums": [
+    {
+      "id": 42,
+      "artist_id": 42,
+      "name": "...And Justice For All"
+    },
+    {
+      "...": "..."
+    }
+  ],
+  "allowDownload": true,
+  "artists": [
+    {
+      "id": 42,
+      "name": "Metallica"
+    },
+    {
+      "...": "..."
+    }
+  ],
+  "cdnUrl": "https://yourcdn.koel.example/",
+  "currentUser": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@doe.net",
+    "is_admin": true,
+    "preferences": {
+      "lastfm_session_key": "hidden"
+    }
+  },
+  "currentVersion": "v3.7.2",
+  "interactions": [
+    {
+      "song_id": "f88c7671623c6b8be881e2a04e685509",
+      "liked": false,
+      "play_count": 5
+    },
+    {
+      "...": "..."
+    }
+  ],
+  "latestVersion": "v3.7.2",
+  "playlists": [
+    {
+      "id": 1,
+      "name": "Ballads",
+      "rules": null,
+      "is_smart": false
+    },
+    {
+      "...": "..."
+    }
+  ],
+  "recentlyPlayed": [
+    "f78de3724e2823e7e4cfb660c4f691e9", "aebb93a69d6c8af79a1004aceabb201c", "..."
+  ],
+  "settings": {
+    "media_path": "/var/www/media"
+  },
+  "songs": [
+    {
+      "id": "00037ec0715a8781104ffd8efe0db06a",
+      "album_id": 42,
+      "artist_id": 42,
+      "title": "Carpe Diem Baby",
+      "created_at": "2015-12-10 05:52:22",
+      "disc": 1,
+      "track": 7,
+      "length": 372.27
+    },
+    {
+      "...": "..."
+    }
+  ],
+  "supportsTranscoding": true,
+  "useLastfm": true,
+  "useYouTube": true,
+  "useiTunes": true,
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@doe.com",
+      "is_admin": true
+    },
+    {
+      "...": "..."
+    }
+  ]
+}

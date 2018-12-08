@@ -12,6 +12,10 @@ use Illuminate\Http\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
 
+/**
+ * @group Last.fm integration
+ *
+ */
 class LastfmController extends Controller
 {
     protected $auth;
@@ -26,7 +30,14 @@ class LastfmController extends Controller
     }
 
     /**
-     * Connect the current user to Last.fm.
+     * Connect to Last.fm
+     *
+     * [Connect](https://www.last.fm/api/authentication) the current user to Last.fm.
+     * This is actually NOT an API request. The application should instead redirect the current user to this route,
+     * which will send them to Last.fm for authentication. After authentication is successful, the user will be
+     * redirected back to `api/lastfm/callback?token=<Last.fm token>`.
+     *
+     * @queryParam jwt-token required The JWT token of the user.
      *
      * @throws JWTException
      *
@@ -48,7 +59,7 @@ class LastfmController extends Controller
     }
 
     /**
-     * Serve the callback request from Last.fm.
+     * Serve the callback request from Last.fm
      *
      * @return Response
      */
@@ -64,7 +75,13 @@ class LastfmController extends Controller
     }
 
     /**
-     * Set the Last.fm session key of the current user.
+     * Set Last.fm session key
+     *
+     * Set the Last.fm session key for the current user. This call should be made after the user is
+     * [connected to Last.fm](https://www.last.fm/api/authentication).
+     *
+     * @bodyParam key string required The Last.fm [session key](https://www.last.fm/api/show/auth.getSession).
+     * @response []
      *
      * @param LastfmSetSessionKeyRequest $request
      *
@@ -78,7 +95,7 @@ class LastfmController extends Controller
     }
 
     /**
-     * Disconnect the current user from Last.fm.
+     * Disconnect the current user from Last.fm
      *
      * @return JsonResponse
      */

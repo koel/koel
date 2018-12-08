@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 
 Route::group(['namespace' => 'API'], function () {
-    Route::post('me', 'AuthController@login');
+    Route::post('me', 'AuthController@login')->name('auth.login');
     Route::delete('me', 'AuthController@logout');
 
     Route::group(['middleware' => 'jwt.auth'], function () {
@@ -23,13 +23,13 @@ Route::group(['namespace' => 'API'], function () {
             );
 
             return $pusher->socket_auth($request->channel_name, $request->socket_id);
-        });
+        })->name('broadcasting.auth');
 
         Route::get('data', 'DataController@index');
 
         Route::post('settings', 'SettingController@store');
 
-        Route::get('{song}/play/{transcode?}/{bitrate?}', 'SongController@play');
+        Route::get('{song}/play/{transcode?}/{bitrate?}', 'SongController@play')->name('song.play');
         Route::post('{song}/scrobble/{timestamp}', 'ScrobbleController@store')->where([
             'timestamp' => '\d+',
         ]);
@@ -45,7 +45,7 @@ Route::group(['namespace' => 'API'], function () {
         ]);
 
         // Playlist routes
-        Route::resource('playlist', 'PlaylistController');
+        Route::resource('playlist', 'PlaylistController')->only(['index', 'store', 'update', 'destroy']);
         Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
         Route::get('playlist/{playlist}/songs', 'PlaylistController@getSongs')->where(['playlist' => '\d+']);
 
@@ -57,11 +57,8 @@ Route::group(['namespace' => 'API'], function () {
         // Last.fm-related routes
         Route::get('lastfm/connect', 'LastfmController@connect');
         Route::post('lastfm/session-key', 'LastfmController@setSessionKey');
-        Route::get('lastfm/callback', [
-            'as' => 'lastfm.callback',
-            'uses' => 'LastfmController@callback',
-        ]);
-        Route::delete('lastfm/disconnect', 'LastfmController@disconnect');
+        Route::get('lastfm/callback', 'LastfmController@callback')->name('lastfm.callback');
+        Route::delete('lastfm/disconnect', 'LastfmController@disconnect')->name('lastfm.disconnect');
 
         // YouTube-related routes
         if (YouTube::enabled()) {
@@ -81,20 +78,20 @@ Route::group(['namespace' => 'API'], function () {
         Route::group(['namespace' => 'MediaInformation'], function () {
             Route::get('album/{album}/info', 'AlbumController@show');
             Route::get('artist/{artist}/info', 'ArtistController@show');
-            Route::get('{song}/info', 'SongController@show'); // backward compat
+            Route::get('{song}/info', 'SongController@show')->name('song.show.deprecated'); // backward compat
             Route::get('song/{song}/info', 'SongController@show');
         });
 
         // iTunes routes
         if (iTunes::used()) {
-            Route::get('itunes/song/{album}', 'iTunesController@viewSong');
+            Route::get('itunes/song/{album}', 'iTunesController@viewSong')->name('iTunes.viewSong');
         }
     });
 
     Route::group(['middleware' => 'os.auth', 'prefix' => 'os', 'namespace' => 'ObjectStorage'], function () {
         Route::group(['prefix' => 's3', 'namespace' => 'S3'], function () {
-            Route::post('song', 'SongController@put'); // we follow AWS's convention here.
-            Route::delete('song', 'SongController@remove'); // and here.
+            Route::post('song', 'SongController@put')->name('s3.song.put'); // we follow AWS's convention here.
+            Route::delete('song', 'SongController@remove')->name('s3.song.remove'); // and here.
         });
     });
 });
