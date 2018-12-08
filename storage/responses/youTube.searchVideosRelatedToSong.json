@@ -1,0 +1,48 @@
+{
+  "kind": "youtube#searchListResponse",
+  "etag": "\"XI7nbFXulYBIpL0ayR_gDh3eu1k/UMIztE1sQ8L9tu7igiTaSoBA9tw\"",
+  "nextPageToken": "CAoQAA",
+  "regionCode": "CH",
+  "pageInfo": {
+    "totalResults": 1000000,
+    "resultsPerPage": 10
+  },
+  "items": [
+    {
+      "kind": "youtube#searchResult",
+      "etag": "\"XI7nbFXulYBIpL0ayR_gDh3eu1k/bRRI2oEvvXIbCBFKv8WrLUaG-0A\"",
+      "id": {
+        "kind": "youtube#video",
+        "videoId": "t99KH0TR-J4"
+      },
+      "snippet": {
+        "publishedAt": "2013-10-15T14:24:31.000Z",
+        "channelId": "UCiMhD4jzUqG-IgPzUmmytRQ",
+        "title": "Queen - The Show Must Go On (Official Video)",
+        "description": "Subscribe to the Official Queen Channel Here http://bit.ly/Subscribe2Queen Taken from Innuendo, 1991. Queen - The Show Must Go On (promo video, 1991) ...",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/t99KH0TR-J4/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/t99KH0TR-J4/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/t99KH0TR-J4/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "Queen Official",
+        "liveBroadcastContent": "none"
+      }
+    },
+    {
+      "...": "..."
+    }
+  ]
+}
