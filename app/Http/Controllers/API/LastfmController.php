@@ -14,7 +14,6 @@ use Tymon\JWTAuth\JWTAuth;
 
 /**
  * @group Last.fm integration
- *
  */
 class LastfmController extends Controller
 {
@@ -30,7 +29,7 @@ class LastfmController extends Controller
     }
 
     /**
-     * Connect to Last.fm
+     * Connect to Last.fm.
      *
      * [Connect](https://www.last.fm/api/authentication) the current user to Last.fm.
      * This is actually NOT an API request. The application should instead redirect the current user to this route,
@@ -59,7 +58,7 @@ class LastfmController extends Controller
     }
 
     /**
-     * Serve the callback request from Last.fm
+     * Serve the callback request from Last.fm.
      *
      * @return Response
      */
@@ -75,7 +74,7 @@ class LastfmController extends Controller
     }
 
     /**
-     * Set Last.fm session key
+     * Set Last.fm session key.
      *
      * Set the Last.fm session key for the current user. This call should be made after the user is
      * [connected to Last.fm](https://www.last.fm/api/authentication).
@@ -95,7 +94,7 @@ class LastfmController extends Controller
     }
 
     /**
-     * Disconnect the current user from Last.fm
+     * Disconnect the current user from Last.fm.
      *
      * @return JsonResponse
      */

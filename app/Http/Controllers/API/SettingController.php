@@ -21,7 +21,7 @@ class SettingController extends Controller
     }
 
     /**
-     * Save the application settings
+     * Save the application settings.
      *
      * Save the application settings. Right now there's only one setting to be saved (`media_path`).
      *

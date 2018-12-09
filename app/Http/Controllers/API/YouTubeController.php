@@ -20,7 +20,7 @@ class YouTubeController extends Controller
     }
 
     /**
-     * Search for YouTube videos
+     * Search for YouTube videos.
      *
      * Search YouTube for videos related to a song (using its title and artist name).
      *
