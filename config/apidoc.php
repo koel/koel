@@ -83,7 +83,7 @@ return [
                 'auth.login',
                 's3.*',
                 'song.play',
-                'lastfm.*'
+                'lastfm.*',
             ],
 
             /*

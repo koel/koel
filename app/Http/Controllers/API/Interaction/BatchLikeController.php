@@ -10,7 +10,7 @@ use App\Http\Requests\API\BatchInteractionRequest;
 class BatchLikeController extends Controller
 {
     /**
-     * Like multiple songs
+     * Like multiple songs.
      *
      * Like several songs at once, useful for "batch" actions. An array of "interaction" records containing the song
      * and user data will be returned.
@@ -26,7 +26,7 @@ class BatchLikeController extends Controller
     }
 
     /**
-     * Unlike multiple songs
+     * Unlike multiple songs.
      *
      * Unlike several songs at once, useful for "batch" actions. An array of "interaction" records containing the song
      * and user data will be returned.
