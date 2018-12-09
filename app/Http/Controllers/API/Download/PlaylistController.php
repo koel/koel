@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 class PlaylistController extends Controller
 {
     /**
-     * Download a whole playlist
+     * Download a whole playlist.
      *
      * @response []
      *
