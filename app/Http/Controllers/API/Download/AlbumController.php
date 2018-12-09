@@ -4,10 +4,15 @@ namespace App\Http\Controllers\API\Download;
 
 use App\Models\Album;
 
+/**
+ * @group 6. Download
+ */
 class AlbumController extends Controller
 {
     /**
-     * Download all songs in an album.
+     * Download a whole album.
+     *
+     * @response []
      */
     public function show(Album $album)
     {

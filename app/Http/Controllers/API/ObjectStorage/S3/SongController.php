@@ -14,27 +14,32 @@ use App\Services\MediaMetadataService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * @group AWS integration
+ *
+ * These routes are meant for Amazon Web Services (AWS) integration with Koel. For more information, visit
+ * [koel-aws](https://github.com/koel/koel-aws).
+ */
 class SongController extends Controller
 {
     private $mediaMetadataService;
     private $songRepository;
-    /**
-     * @var HelperService
-     */
     private $helperService;
 
     public function __construct(
         MediaMetadataService $mediaMetadataService,
         HelperService $helperService,
-        SongRepository $songRepository)
-    {
+        SongRepository $songRepository
+    ) {
         $this->mediaMetadataService = $mediaMetadataService;
         $this->songRepository = $songRepository;
         $this->helperService = $helperService;
     }
 
     /**
-     * Store a new song or update an existing one with data from AWS.
+     * Store a song.
+     *
+     * Create a new song or update an existing one with data sent from AWS.
      *
      * @return JsonResponse
      */
@@ -69,7 +74,9 @@ class SongController extends Controller
     }
 
     /**
-     * Remove a song whose info matches with data sent from AWS.
+     * Remove a song.
+     *
+     * Remove a song whose information matches with data sent from AWS.
      *
      * @throws Exception
      *

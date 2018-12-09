@@ -8,8 +8,8 @@ server {
   gzip_types      text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/json;
   gzip_comp_level  9;
 
-  # Whitelist only index.php, robots.txt, and those start with public/ or api/ or remote
-  if ($request_uri !~ ^/$|index\.php|robots\.txt|api/|public/|remote) {
+  # Whitelist only index.php, robots.txt, and some special routes
+  if ($request_uri !~ ^/$|index\.php|robots\.txt|(public|api)/|remote|api-docs) {
     return 404;
   }
 

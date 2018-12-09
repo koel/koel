@@ -6,6 +6,9 @@ use App\Http\Requests\API\Download\SongRequest;
 use App\Repositories\SongRepository;
 use App\Services\DownloadService;
 
+/**
+ * @group 6. Download
+ */
 class SongController extends Controller
 {
     private $songRepository;
@@ -17,7 +20,11 @@ class SongController extends Controller
     }
 
     /**
-     * Download a song or multiple songs.
+     * Download one or several songs.
+     *
+     * @queryParam songs array An array of song IDs
+     *
+     * @response []
      */
     public function show(SongRequest $request)
     {

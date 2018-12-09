@@ -13,6 +13,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 
+/**
+ * @group 3. Song interactions
+ */
 class SongController extends Controller
 {
     private $mediaInformationService;
@@ -33,7 +36,14 @@ class SongController extends Controller
     }
 
     /**
-     * Play/stream a song.
+     * Play a song.
+     *
+     * The GET request to play/stream a song. By default Koel will serve the file as-is, unless it's a FLAC.
+     * If the value of `transcode` is truthy, Koel will attempt to transcode the file into `bitRate`kbps using ffmpeg.
+     *
+     * @response {}
+     *
+     * @queryParam jwt-token required The JWT token.
      *
      * @link https://github.com/phanan/koel/wiki#streaming-music
      *
@@ -52,7 +62,12 @@ class SongController extends Controller
     }
 
     /**
-     * Update songs info.
+     * Update song information.
+     *
+     * @bodyParam songs array required An array of song IDs to be updated.
+     * @bodyParam data object required The new data, with these supported fields: `title`, `artistName`, `albumName`, and `lyrics`.
+     *
+     * @group 5. Media information
      *
      * @return JsonResponse
      */

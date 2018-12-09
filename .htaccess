@@ -15,8 +15,8 @@
   # Redirect Trailing Slashes...
   RewriteRule ^(.*)/$ /$1 [L,R=301]
 
-  # Whitelist only index.php, robots.txt, and those start with public/ or api/ or remote
-  RewriteRule ^(?!($|index\.php|robots\.txt|(public|api)/|remote)) - [R=404,L]
+  # Whitelist only index.php, robots.txt, and some special routes
+  RewriteRule ^(?!($|index\.php|robots\.txt|(public|api)/|remote|api-docs)) - [R=404,L]
 
   # Handle Front Controller...
   RewriteCond %{REQUEST_FILENAME} !-d

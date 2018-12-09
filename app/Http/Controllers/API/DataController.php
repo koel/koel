@@ -15,6 +15,9 @@ use App\Services\YouTubeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group 2. Application data
+ */
 class DataController extends Controller
 {
     private const RECENTLY_PLAYED_EXCERPT_COUNT = 7;
@@ -52,7 +55,14 @@ class DataController extends Controller
     }
 
     /**
-     * Get a set of application data.
+     * Get application data.
+     *
+     * The big fat call to retrieve a set of application data catered for the current user
+     * (songs, albums, artists, playlists, interactions, and if the user is an admin, settings as well).
+     * Naturally, this call should be made right after the user has been logged in, when you need to populate
+     * the application's interface with useful information.
+     *
+     * @responseFile responses/data.index.json
      *
      * @return JsonResponse
      */

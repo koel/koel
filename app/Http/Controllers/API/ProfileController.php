@@ -8,6 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use RuntimeException;
 
+/**
+ * @group 7. User management
+ */
 class ProfileController extends Controller
 {
     private $hash;
@@ -18,7 +21,13 @@ class ProfileController extends Controller
     }
 
     /**
-     * Get the current user's profile.
+     * Get current user's profile.
+     *
+     * @response {
+     *   "id": 42,
+     *   "name": "John Doe",
+     *   "email": "john@doe.com"
+     * }
      *
      * @return JsonResponse
      */
@@ -28,7 +37,13 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the current user's profile.
+     * Update current user's profile.
+     *
+     * @bodyParam name string required New name. Example: Johny Doe
+     * @bodyParam email string required New email. Example: johny@doe.com
+     * @bodyParam password string New password (null/blank for no change)
+     *
+     * @response []
      *
      * @throws RuntimeException
      *

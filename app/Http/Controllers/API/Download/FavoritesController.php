@@ -6,6 +6,9 @@ use App\Http\Requests\API\Download\Request;
 use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
 
+/**
+ * @group 6. Download
+ */
 class FavoritesController extends Controller
 {
     private $interactionRepository;
@@ -18,6 +21,8 @@ class FavoritesController extends Controller
 
     /**
      * Download all songs favorite'd by the current user.
+     *
+     * @response []
      */
     public function show(Request $request)
     {

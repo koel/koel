@@ -8,6 +8,9 @@ use App\Services\LastfmService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Last.fm integration
+ */
 class ScrobbleController extends Controller
 {
     private $lastfmService;
@@ -18,7 +21,9 @@ class ScrobbleController extends Controller
     }
 
     /**
-     * Create a Last.fm scrobble entry for a song.
+     * Scrobble a song.
+     *
+     * Create a [Last.fm scrobble entry](https://www.last.fm/api/scrobbling) for a song.
      *
      * @param string $timestamp The UNIX timestamp when the song started playing.
      *

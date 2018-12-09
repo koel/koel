@@ -11,6 +11,9 @@ use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
+/**
+ * @group 7. User management
+ */
 class UserController extends Controller
 {
     private $hash;
@@ -22,6 +25,16 @@ class UserController extends Controller
 
     /**
      * Create a new user.
+     *
+     * @bodyParam name string required User's name. Example: John Doe
+     * @bodyParam email string required User's email. Example: john@doe.com
+     * @bodyParam password string required User's password. Example: SoSecureMuchW0w
+     *
+     * @response {
+     *   "id": 42,
+     *   "name": "John Doe",
+     *   "email": "john@doe.com"
+     * }
      *
      * @throws RuntimeException
      *
@@ -38,6 +51,12 @@ class UserController extends Controller
 
     /**
      * Update a user.
+     *
+     * @bodyParam name string required New name. Example: Johny Doe
+     * @bodyParam email string required New email. Example: johny@doe.com
+     * @bodyParam password string New password (null/blank for no change)
+     *
+     * @response []
      *
      * @throws RuntimeException
      *
@@ -58,6 +77,8 @@ class UserController extends Controller
 
     /**
      * Delete a user.
+     *
+     * @response []
      *
      * @throws Exception
      * @throws AuthorizationException

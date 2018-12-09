@@ -1,0 +1,2389 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>API Reference</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/all.js"></script>
+
+
+          <script>
+        $(function() {
+            setupLanguages(["bash","javascript"]);
+        });
+      </script>
+      </head>
+
+  <body class="">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png" />
+      </span>
+    </a>
+    <div class="tocify-wrapper">
+        <img src="images/logo.png" />
+                    <div class="lang-selector">
+                                  <a href="#" data-language-name="bash">bash</a>
+                                  <a href="#" data-language-name="javascript">javascript</a>
+                            </div>
+                            <div class="search">
+              <input type="text" class="search" id="input-search" placeholder="Search">
+            </div>
+            <ul class="search-results"></ul>
+              <div id="toc">
+      </div>
+                    <ul class="toc-footer">
+                                  <li><a href='http://github.com/mpociot/documentarian'>Documentation Powered by Documentarian</a></li>
+                            </ul>
+            </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+          <!-- START_INFO -->
+<h1>Info</h1>
+<p>Welcome to the generated API reference.
+<a href="http://localhost/api-docs/collection.json">Get Postman Collection</a></p>
+<!-- END_INFO -->
+<h1>1. Authentication</h1>
+<!-- START_d131f717df7db546af1657d1e7ce10f6 -->
+<h2>Log a user in</h2>
+<p>Koel uses <a href="https://jwt.io/">JSON Web Tokens</a> (JWT) for authentication.
+After the user has been authenticated, a random &quot;token&quot; will be returned.
+This token should then be saved in a local storage and used as an <code>Authorization: Bearer</code> header
+for consecutive calls.</p>
+<p>Notice: The token expires after a week.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/me"     -d "email"="john@doe.com" \
+    -d "password"="SoSecureMuchW0w" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/me");
+
+let headers = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "email": "john@doe.com",
+    "password": "SoSecureMuchW0w",
+})
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "token": "&lt;a-random-string&gt;"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/me</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email</td>
+<td>string</td>
+<td>required</td>
+<td>The user's email.</td>
+</tr>
+<tr>
+<td>password</td>
+<td>string</td>
+<td>required</td>
+<td>The password.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_d131f717df7db546af1657d1e7ce10f6 -->
+<!-- START_772eabda142fbed1f55b5e4c9605891c -->
+<h2>Log the current user out</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/me" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/me");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "DELETE",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>DELETE api/me</code></p>
+<!-- END_772eabda142fbed1f55b5e4c9605891c -->
+<h1>2. Application data</h1>
+<!-- START_024021c3c17f0cb3ad10ff7ab83b1aa0 -->
+<h2>Get application data</h2>
+<p>The big fat call to retrieve a set of application data catered for the current user
+(songs, albums, artists, playlists, interactions, and if the user is an admin, settings as well).
+Naturally, this call should be made right after the user has been logged in, when you need to populate
+the application's interface with useful information.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/data" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/data");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "albums": [
+        {
+            "id": 42,
+            "artist_id": 42,
+            "name": "...And Justice For All"
+        },
+        {
+            "...": "..."
+        }
+    ],
+    "allowDownload": true,
+    "artists": [
+        {
+            "id": 42,
+            "name": "Metallica"
+        },
+        {
+            "...": "..."
+        }
+    ],
+    "cdnUrl": "https:\/\/yourcdn.koel.example\/",
+    "currentUser": {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@doe.net",
+        "is_admin": true,
+        "preferences": {
+            "lastfm_session_key": "hidden"
+        }
+    },
+    "currentVersion": "v3.7.2",
+    "interactions": [
+        {
+            "song_id": "f88c7671623c6b8be881e2a04e685509",
+            "liked": false,
+            "play_count": 5
+        },
+        {
+            "...": "..."
+        }
+    ],
+    "latestVersion": "v3.7.2",
+    "playlists": [
+        {
+            "id": 1,
+            "name": "Ballads",
+            "rules": null,
+            "is_smart": false
+        },
+        {
+            "...": "..."
+        }
+    ],
+    "recentlyPlayed": [
+        "f78de3724e2823e7e4cfb660c4f691e9",
+        "aebb93a69d6c8af79a1004aceabb201c",
+        "..."
+    ],
+    "settings": {
+        "media_path": "\/var\/www\/media"
+    },
+    "songs": [
+        {
+            "id": "00037ec0715a8781104ffd8efe0db06a",
+            "album_id": 42,
+            "artist_id": 42,
+            "title": "Carpe Diem Baby",
+            "created_at": "2015-12-10 05:52:22",
+            "disc": 1,
+            "track": 7,
+            "length": 372.27
+        },
+        {
+            "...": "..."
+        }
+    ],
+    "supportsTranscoding": true,
+    "useLastfm": true,
+    "useYouTube": true,
+    "useiTunes": true,
+    "users": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@doe.com",
+            "is_admin": true
+        },
+        {
+            "...": "..."
+        }
+    ]
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/data</code></p>
+<!-- END_024021c3c17f0cb3ad10ff7ab83b1aa0 -->
+<h1>3. Song interactions</h1>
+<!-- START_8ea879d7ef5eb537c1999e83bffa08b4 -->
+<h2>Play a song</h2>
+<p>The GET request to play/stream a song. By default Koel will serve the file as-is, unless it's a FLAC.
+If the value of <code>transcode</code> is truthy, Koel to attempt to transcode the file into <code>bitRate</code> kbps using ffmpeg.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/{song}/play/{transcode?}/{bitrate?}" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/{song}/play/{transcode?}/{bitrate?}");
+
+    let params = {
+            "jwt-token": "Lt4v5p6lGsElP27T",
+        };
+    Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+let headers = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/{song}/play/{transcode?}/{bitrate?}</code></p>
+<h4>Query Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>jwt-token</td>
+<td>required</td>
+<td>The JWT token.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_8ea879d7ef5eb537c1999e83bffa08b4 -->
+<!-- START_a1c4d62f5a36b1ff9e0513802f860a12 -->
+<h2>Increase play count</h2>
+<p>Increase a song's play count as the currently authenticated user.
+This request should be made whenever a song is played.
+An &quot;interaction&quot; record including the song and current user's data will be returned.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/interaction/play" \
+    -H "Authorization: Bearer {token}" \
+    -d "song"="0146d01afb742b01f28ab8b556f9a75d" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/play");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "song": "0146d01afb742b01f28ab8b556f9a75d",
+})
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "song_id": "0146d01afb742b01f28ab8b556f9a75d",
+    "liked": true,
+    "play_count": 228,
+    "song": {
+        "id": "0146d01afb742b01f28ab8b556f9a75d",
+        "album_id": 1363,
+        "artist_id": 430,
+        "title": "The Show Must Go On",
+        "length": 407.33,
+        "track": 0,
+        "disc": 1,
+        "created_at": "2017-02-07 10:35:03",
+        "artist": {
+            "id": 430,
+            "name": "Queen",
+            "image": "https:\/\/koel.yourdomain.net\/img\/artists\/5a7727c2afbb09.08223866.png"
+        },
+        "album": {
+            "id": 1363,
+            "artist_id": 430,
+            "name": "Innuendo",
+            "cover": "https:\/\/koel.yourdomain.net\/img\/covers\/5899a2d7a19c90.72864263.jpg",
+            "created_at": "2017-02-07 10:35:03",
+            "is_compilation": false
+        }
+    },
+    "user": {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@doe.com",
+        "is_admin": true,
+        "preferences": {
+            "lastfm_session_key": "hidden"
+        }
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/interaction/play</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>song</td>
+<td>string</td>
+<td>required</td>
+<td>The ID of the song.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_a1c4d62f5a36b1ff9e0513802f860a12 -->
+<!-- START_a1095be9dc97ea1b85319566c3f18092 -->
+<h2>Like or unlike a song</h2>
+<p>An &quot;interaction&quot; record including the song and current user's data will be returned.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/interaction/like" \
+    -H "Authorization: Bearer {token}" \
+    -d "song"="0146d01afb742b01f28ab8b556f9a75d" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/like");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "song": "0146d01afb742b01f28ab8b556f9a75d",
+})
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "song_id": "0146d01afb742b01f28ab8b556f9a75d",
+    "liked": true,
+    "play_count": 228,
+    "song": {
+        "id": "0146d01afb742b01f28ab8b556f9a75d",
+        "album_id": 1363,
+        "artist_id": 430,
+        "title": "The Show Must Go On",
+        "length": 407.33,
+        "track": 0,
+        "disc": 1,
+        "created_at": "2017-02-07 10:35:03",
+        "artist": {
+            "id": 430,
+            "name": "Queen",
+            "image": "https:\/\/koel.yourdomain.net\/img\/artists\/5a7727c2afbb09.08223866.png"
+        },
+        "album": {
+            "id": 1363,
+            "artist_id": 430,
+            "name": "Innuendo",
+            "cover": "https:\/\/koel.yourdomain.net\/img\/covers\/5899a2d7a19c90.72864263.jpg",
+            "created_at": "2017-02-07 10:35:03",
+            "is_compilation": false
+        }
+    },
+    "user": {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@doe.com",
+        "is_admin": true,
+        "preferences": {
+            "lastfm_session_key": "hidden"
+        }
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/interaction/like</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>song</td>
+<td>string</td>
+<td>required</td>
+<td>The ID of the song.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_a1095be9dc97ea1b85319566c3f18092 -->
+<!-- START_70a0987edd62e0427ffd210d6dfeee0b -->
+<h2>Like multiple songs</h2>
+<p>Like several songs at once, useful for &quot;batch&quot; actions. An array of &quot;interaction&quot; records containing the song
+and user data will be returned.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/interaction/batch/like" \
+    -H "Authorization: Bearer {token}" \
+    -d "songs"="[]" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/batch/like");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "songs": "[]",
+})
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[
+    {
+        "song_id": "0146d01afb742b01f28ab8b556f9a75d",
+        "liked": true,
+        "play_count": 228,
+        "song": {
+            "id": "0146d01afb742b01f28ab8b556f9a75d",
+            "album_id": 1363,
+            "artist_id": 430,
+            "title": "The Show Must Go On",
+            "length": 407.33,
+            "track": 0,
+            "disc": 1,
+            "created_at": "2017-02-07 10:35:03",
+            "artist": {
+                "id": 430,
+                "name": "Queen",
+                "image": "https:\/\/koel.yourdomain.net\/img\/artists\/5a7727c2afbb09.08223866.png"
+            },
+            "album": {
+                "id": 1363,
+                "artist_id": 430,
+                "name": "Innuendo",
+                "cover": "https:\/\/koel.yourdomain.net\/img\/covers\/5899a2d7a19c90.72864263.jpg",
+                "created_at": "2017-02-07 10:35:03",
+                "is_compilation": false
+            }
+        },
+        "user": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@doe.com",
+            "is_admin": true,
+            "preferences": {
+                "lastfm_session_key": "hidden"
+            }
+        }
+    },
+    {
+        "...": "..."
+    }
+]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/interaction/batch/like</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>songs</td>
+<td>array</td>
+<td>required</td>
+<td>An array of song IDs.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_70a0987edd62e0427ffd210d6dfeee0b -->
+<!-- START_1ffdb72cb23b18d9ecb8b07d3c0240f0 -->
+<h2>Unlike multiple songs</h2>
+<p>Unlike several songs at once, useful for &quot;batch&quot; actions. An array of &quot;interaction&quot; records containing the song
+and user data will be returned.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/interaction/batch/unlike" \
+    -H "Authorization: Bearer {token}" \
+    -d "songs"="[]" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/batch/unlike");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "songs": "[]",
+})
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[
+    {
+        "song_id": "0146d01afb742b01f28ab8b556f9a75d",
+        "liked": true,
+        "play_count": 228,
+        "song": {
+            "id": "0146d01afb742b01f28ab8b556f9a75d",
+            "album_id": 1363,
+            "artist_id": 430,
+            "title": "The Show Must Go On",
+            "length": 407.33,
+            "track": 0,
+            "disc": 1,
+            "created_at": "2017-02-07 10:35:03",
+            "artist": {
+                "id": 430,
+                "name": "Queen",
+                "image": "https:\/\/koel.yourdomain.net\/img\/artists\/5a7727c2afbb09.08223866.png"
+            },
+            "album": {
+                "id": 1363,
+                "artist_id": 430,
+                "name": "Innuendo",
+                "cover": "https:\/\/koel.yourdomain.net\/img\/covers\/5899a2d7a19c90.72864263.jpg",
+                "created_at": "2017-02-07 10:35:03",
+                "is_compilation": false
+            }
+        },
+        "user": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@doe.com",
+            "is_admin": true,
+            "preferences": {
+                "lastfm_session_key": "hidden"
+            }
+        }
+    },
+    {
+        "...": "..."
+    }
+]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/interaction/batch/unlike</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>songs</td>
+<td>array</td>
+<td>required</td>
+<td>An array of song IDs.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_1ffdb72cb23b18d9ecb8b07d3c0240f0 -->
+<!-- START_98a64836de32d52385d203ab618f9ddd -->
+<h2>Get recently played songs</h2>
+<p>Get a list of songs recently played by the current user.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/interaction/recently-played/{count?}" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/recently-played/{count?}");
+
+    let params = {
+            "count": "2",
+        };
+    Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[
+    "0146d01afb742b01f28ab8b556f9a75d",
+    "c741133cb8d1982a5c60b1ce2a1e6e47"
+]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/interaction/recently-played/{count?}</code></p>
+<h4>Query Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>count</td>
+<td>optional</td>
+<td>The maximum number of songs to be returned.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_98a64836de32d52385d203ab618f9ddd -->
+<h1>4. Playlist management</h1>
+<!-- START_0f95a89b7f06c40893a1e50400952f5c -->
+<h2>Get current user&#039;s playlists</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/playlist" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[
+    {
+        "id": 13,
+        "name": "Ballads",
+        "rules": null,
+        "is_smart": false
+    },
+    {
+        "id": 17,
+        "name": "Brand New Tracks",
+        "rules": [
+            {
+                "id": 1543242741773,
+                "rules": [
+                    {
+                        "id": 1543242742767,
+                        "model": "interactions.play_count",
+                        "operator": "is",
+                        "value": [
+                            "0"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "is_smart": true
+    },
+    {
+        "id": 12,
+        "name": "Great Solos",
+        "rules": null,
+        "is_smart": false
+    }
+]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/playlist</code></p>
+<!-- END_0f95a89b7f06c40893a1e50400952f5c -->
+<!-- START_3e7029f85581865fdc020295518c93f3 -->
+<h2>Create a new playlist</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/playlist" \
+    -H "Authorization: Bearer {token}" \
+    -d "name"="Sleepy Songs" \
+    -d "rules"="[]" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "name": "Sleepy Songs",
+    "rules": "[]",
+})
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "id": 42,
+    "name": "Sleepy Songs",
+    "rules": [],
+    "is_smart": false
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/playlist</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>required</td>
+<td>Name of the playlist.</td>
+</tr>
+<tr>
+<td>rules</td>
+<td>array</td>
+<td>optional</td>
+<td>An array of rules if creating a &quot;smart playlist.&quot;</td>
+</tr>
+</tbody>
+</table>
+<!-- END_3e7029f85581865fdc020295518c93f3 -->
+<!-- START_e0cc8988ecbec0fac9181c28cd084238 -->
+<h2>Rename a playlist</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT "http://koel.test/api/playlist/{playlist}" \
+    -H "Authorization: Bearer {token}" \
+    -d "name"="Catchy Songs" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist/{playlist}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "name": "Catchy Songs",
+})
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "id": 42,
+    "name": "Catchy Songs",
+    "rules": [],
+    "is_smart": false
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/playlist/{playlist}</code></p>
+<p><code>PATCH api/playlist/{playlist}</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>required</td>
+<td>New name of the playlist.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_e0cc8988ecbec0fac9181c28cd084238 -->
+<!-- START_356c5b315a285debadf8b289d3bae312 -->
+<h2>Delete a playlist</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/playlist/{playlist}" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist/{playlist}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "DELETE",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>DELETE api/playlist/{playlist}</code></p>
+<!-- END_356c5b315a285debadf8b289d3bae312 -->
+<!-- START_68b67f3bf318fce97664a5d0c952b38b -->
+<h2>Replace a playlist&#039;s content</h2>
+<p>Instead of adding or removing songs individually, a playlist's content is replaced entirely with an array of song IDs.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT "http://koel.test/api/playlist/{playlist}/sync" \
+    -H "Authorization: Bearer {token}" \
+    -d "songs"="[]" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist/{playlist}/sync");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "songs": "[]",
+})
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/playlist/{playlist}/sync</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>songs</td>
+<td>array</td>
+<td>required</td>
+<td>An array of song IDs.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_68b67f3bf318fce97664a5d0c952b38b -->
+<!-- START_82c6e7b4ff4186b87ca6c4b6514cfa74 -->
+<h2>Get a playlist&#039;s songs</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/playlist/{playlist}/songs" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist/{playlist}/songs");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[
+    "0146d01afb742b01f28ab8b556f9a75d",
+    "c741133cb8d1982a5c60b1ce2a1e6e47",
+    "..."
+]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/playlist/{playlist}/songs</code></p>
+<!-- END_82c6e7b4ff4186b87ca6c4b6514cfa74 -->
+<h1>5. Media information</h1>
+<!-- START_8b76894631cd3b3d4f86fab8014bc4e1 -->
+<h2>Update song information</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT "http://koel.test/api/songs" \
+    -H "Authorization: Bearer {token}" \
+    -d "songs"="[]" \
+    -d "data"="{}" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/songs");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "songs": "[]",
+    "data": "{}",
+})
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/songs</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>songs</td>
+<td>array</td>
+<td>required</td>
+<td>An array of song IDs to be updated.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>object</td>
+<td>required</td>
+<td>The new data, with these supported fields: <code>title</code>, <code>artistName</code>, <code>albumName</code>, and <code>lyrics</code>.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_8b76894631cd3b3d4f86fab8014bc4e1 -->
+<!-- START_a670fbc8f3161e7fda744d7cc52ca5ea -->
+<h2>Get album&#039;s extra information</h2>
+<p>Get extra information about an album via Last.fm.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/album/{album}/info" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/album/{album}/info");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "url": "https:\/\/www.last.fm\/music\/Queen\/Innuendo",
+    "image": "https:\/\/lastfm-img2.akamaized.net\/i\/u\/300x300\/b56adcd16ca6454498981a8470a3ec06.png",
+    "wiki": {
+        "summary": "Innuendo is a 1991 album by English rock band Queen...",
+        "full": "Innuendo is a 1991 album by English rock band Queen. It is the band's fourteenth studio album..."
+    },
+    "tracks": [
+        {
+            "title": "Innuendo",
+            "length": 392,
+            "url": "https:\/\/www.last.fm\/music\/Queen\/_\/Innuendo"
+        },
+        {
+            "title": "I'm Going Slightly Mad",
+            "length": 247,
+            "url": "https:\/\/www.last.fm\/music\/Queen\/_\/I%27m+Going+Slightly+Mad"
+        },
+        {
+            "...": "..."
+        }
+    ],
+    "cover": "https:\/\/koel.yourdomain.net\/img\/covers\/5a771ec82a5d72.25096250.png"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/album/{album}/info</code></p>
+<!-- END_a670fbc8f3161e7fda744d7cc52ca5ea -->
+<!-- START_92d9d0e186f60300dfde56b152e8536b -->
+<h2>Get artist&#039;s extra information</h2>
+<p>Get extra information about an artist via Last.fm.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/artist/{artist}/info" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/artist/{artist}/info");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "url": "https:\/\/www.last.fm\/music\/Queen",
+    "image": "https:\/\/koel.yourdomain.net\/img\/artists\/5a772708e7de19.84120679.png",
+    "bio": {
+        "summary": "Queen were an English rock band originally consisting of four members...",
+        "full": "Queen were an English rock band originally consisting of four members: vocalist Freddie Mercury, guitarist Brian May, bass guitarist John Deacon, and drummer Roger Taylor..."
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/artist/{artist}/info</code></p>
+<!-- END_92d9d0e186f60300dfde56b152e8536b -->
+<!-- START_8f5482e7dc76601d5d24f0120eddfc14 -->
+<h2>Get song&#039;s extra information</h2>
+<p>Get a song's extra information. The response of this request is a superset of both corresponding
+<code>album/{album}/info</code> and <code>artist/{artist}/info</code> requests, combined with the song's lyrics and related YouTube
+videos, if applicable. This means you can (and should) cache this information somewhere ;)</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/song/{song}/info" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/song/{song}/info");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "lyrics": "...",
+    "album_info": {
+        "url": "https:\/\/www.last.fm\/music\/Queen\/Innuendo",
+        "image": "https:\/\/lastfm-img2.akamaized.net\/i\/u\/300x300\/b56adcd16ca6454498981a8470a3ec06.png",
+        "wiki": {
+            "summary": "Innuendo is a 1991 album by English rock band Queen...",
+            "full": "Innuendo is a 1991 album by English rock band Queen. It is the band's fourteenth studio album and the last..."
+        },
+        "tracks": [
+            {
+                "title": "Innuendo",
+                "length": 392,
+                "url": "https:\/\/www.last.fm\/music\/Queen\/_\/Innuendo"
+            },
+            {
+                "title": "I'm Going Slightly Mad",
+                "length": 247,
+                "url": "https:\/\/www.last.fm\/music\/Queen\/_\/I%27m+Going+Slightly+Mad"
+            },
+            {
+                "...": "..."
+            }
+        ]
+    },
+    "artist_info": {
+        "url": "https:\/\/www.last.fm\/music\/Queen",
+        "image": "https:\/\/koel.yourdomain.net\/img\/artists\/5a772708e7de19.84120679.png",
+        "bio": {
+            "summary": "Queen were an English rock band...",
+            "full": "&lt;br \/&gt;\nQueen were an English rock band originally consisting of four members: vocalist Freddie Mercury, guitarist Brian May, bass guitarist John Deacon, and drummer Roger Taylor..."
+        }
+    },
+    "youtube": {
+        "kind": "youtube#searchListResponse",
+        "etag": "\"XI7nbFXulYBIpL0ayR_gDh3eu1k\/UMIztE1sQ8L9tu7igiTaSoBA9tw\"",
+        "nextPageToken": "CAoQAA",
+        "regionCode": "CH",
+        "pageInfo": {
+            "totalResults": 1000000,
+            "resultsPerPage": 10
+        },
+        "items": [
+            {
+                "kind": "youtube#searchResult",
+                "etag": "\"XI7nbFXulYBIpL0ayR_gDh3eu1k\/bRRI2oEvvXIbCBFKv8WrLUaG-0A\"",
+                "id": {
+                    "kind": "youtube#video",
+                    "videoId": "t99KH0TR-J4"
+                },
+                "snippet": {
+                    "publishedAt": "2013-10-15T14:24:31.000Z",
+                    "channelId": "UCiMhD4jzUqG-IgPzUmmytRQ",
+                    "title": "Queen - The Show Must Go On (Official Video)",
+                    "description": "Subscribe to the Official Queen Channel Here http:\/\/bit.ly\/Subscribe2Queen Taken from Innuendo, 1991. Queen - The Show Must Go On (promo video, 1991) ...",
+                    "thumbnails": {
+                        "default": {
+                            "url": "https:\/\/i.ytimg.com\/vi\/t99KH0TR-J4\/default.jpg",
+                            "width": 120,
+                            "height": 90
+                        },
+                        "medium": {
+                            "url": "https:\/\/i.ytimg.com\/vi\/t99KH0TR-J4\/mqdefault.jpg",
+                            "width": 320,
+                            "height": 180
+                        },
+                        "high": {
+                            "url": "https:\/\/i.ytimg.com\/vi\/t99KH0TR-J4\/hqdefault.jpg",
+                            "width": 480,
+                            "height": 360
+                        }
+                    },
+                    "channelTitle": "Queen Official",
+                    "liveBroadcastContent": "none"
+                }
+            },
+            {
+                "...": "..."
+            }
+        ]
+    }
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/song/{song}/info</code></p>
+<!-- END_8f5482e7dc76601d5d24f0120eddfc14 -->
+<h1>6. Download</h1>
+<!-- START_339c05326ab691afe5ba03de806b77b9 -->
+<h2>Download one or several songs</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/songs" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/songs");
+
+    let params = {
+            "songs": "0ATr2zsrjD646dzY",
+        };
+    Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/download/songs</code></p>
+<h4>Query Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>songs</td>
+<td>optional</td>
+<td>array An array of song IDs</td>
+</tr>
+</tbody>
+</table>
+<!-- END_339c05326ab691afe5ba03de806b77b9 -->
+<!-- START_c4beea69287c52c5ddaf304c1881cfd8 -->
+<h2>Download a whole album</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/album/{album}" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/album/{album}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/download/album/{album}</code></p>
+<!-- END_c4beea69287c52c5ddaf304c1881cfd8 -->
+<!-- START_d7a146e78a726566715eea4427009b54 -->
+<h2>Download all songs by an artist</h2>
+<p>Don't see why one would need this, really.
+Let's pray to God the user doesn't trigger this on Elvis.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/artist/{artist}" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/artist/{artist}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/download/artist/{artist}</code></p>
+<!-- END_d7a146e78a726566715eea4427009b54 -->
+<!-- START_c450a89b6bb24daa242d077b01238e7d -->
+<h2>Download a whole playlist</h2>
+<p>Lorem</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/playlist/{playlist}" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/playlist/{playlist}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/download/playlist/{playlist}</code></p>
+<!-- END_c450a89b6bb24daa242d077b01238e7d -->
+<!-- START_2ada2dccdced8279b3ab405334d3298f -->
+<h2>Download all songs favorite&#039;d by the current user</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/favorites" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/favorites");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/download/favorites</code></p>
+<!-- END_2ada2dccdced8279b3ab405334d3298f -->
+<h1>7. User management</h1>
+<!-- START_f0654d3f2fc63c11f5723f233cc53c83 -->
+<h2>Create a new user</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/user" \
+    -H "Authorization: Bearer {token}" \
+    -d "name"="John Doe" \
+    -d "email"="john@doe.com" \
+    -d "password"="SoSecureMuchW0w" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/user");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "name": "John Doe",
+    "email": "john@doe.com",
+    "password": "SoSecureMuchW0w",
+})
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "id": 42,
+    "name": "John Doe",
+    "email": "john@doe.com"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/user</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>required</td>
+<td>User's name.</td>
+</tr>
+<tr>
+<td>email</td>
+<td>string</td>
+<td>required</td>
+<td>User's email.</td>
+</tr>
+<tr>
+<td>password</td>
+<td>string</td>
+<td>required</td>
+<td>User's password.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_f0654d3f2fc63c11f5723f233cc53c83 -->
+<!-- START_a4a2abed1e8e8cad5e6a3282812fe3f3 -->
+<h2>Update a user</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT "http://koel.test/api/user/{user}" \
+    -H "Authorization: Bearer {token}" \
+    -d "name"="Johny Doe" \
+    -d "email"="johny@doe.com" \
+    -d "password"="rHDMbLdi9Z680buc" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/user/{user}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "name": "Johny Doe",
+    "email": "johny@doe.com",
+    "password": "rHDMbLdi9Z680buc",
+})
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/user/{user}</code></p>
+<p><code>PATCH api/user/{user}</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>required</td>
+<td>New name.</td>
+</tr>
+<tr>
+<td>email</td>
+<td>string</td>
+<td>required</td>
+<td>New email.</td>
+</tr>
+<tr>
+<td>password</td>
+<td>string</td>
+<td>optional</td>
+<td>New password (null/blank for no change)</td>
+</tr>
+</tbody>
+</table>
+<!-- END_a4a2abed1e8e8cad5e6a3282812fe3f3 -->
+<!-- START_4bb7fb4a7501d3cb1ed21acfc3b205a9 -->
+<h2>Delete a user</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/user/{user}" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/user/{user}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "DELETE",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>DELETE api/user/{user}</code></p>
+<!-- END_4bb7fb4a7501d3cb1ed21acfc3b205a9 -->
+<!-- START_b19e2ecbb41b5fa6802edaf581aab5f6 -->
+<h2>Get current user&#039;s profile</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/me" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/me");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "id": 42,
+    "name": "John Doe",
+    "email": "john@doe.com"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/me</code></p>
+<!-- END_b19e2ecbb41b5fa6802edaf581aab5f6 -->
+<!-- START_fa77e70040eb60f0488db2d285d1cdc7 -->
+<h2>Update current user&#039;s profile</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT "http://koel.test/api/me" \
+    -H "Authorization: Bearer {token}" \
+    -d "name"="Johny Doe" \
+    -d "email"="johny@doe.com" \
+    -d "password"="as5GLmAPCbKY23zz" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/me");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "name": "Johny Doe",
+    "email": "johny@doe.com",
+    "password": "as5GLmAPCbKY23zz",
+})
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/me</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>required</td>
+<td>New name.</td>
+</tr>
+<tr>
+<td>email</td>
+<td>string</td>
+<td>required</td>
+<td>New email.</td>
+</tr>
+<tr>
+<td>password</td>
+<td>string</td>
+<td>optional</td>
+<td>New password (null/blank for no change)</td>
+</tr>
+</tbody>
+</table>
+<!-- END_fa77e70040eb60f0488db2d285d1cdc7 -->
+<h1>8. Settings</h1>
+<!-- START_1e1aaba3a713ac3ce04a89d5f4ad0f2e -->
+<h2>Save the application settings</h2>
+<p>Save the application settings. Right now there's only one setting to be saved (<code>media_path</code>).</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/settings" \
+    -H "Authorization: Bearer {token}" \
+    -d "media_path"="/var/www/media/" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/settings");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+let body = JSON.stringify({
+    "media_path": "/var/www/media/",
+})
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/settings</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>media_path</td>
+<td>string</td>
+<td>required</td>
+<td>Absolute path to the media folder.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_1e1aaba3a713ac3ce04a89d5f4ad0f2e -->
+<h1>AWS integration</h1>
+<p>These routes are meant for Amazon Web Services (AWS) integration with Koel. For more information, visit
+<a href="https://github.com/koel/koel-aws">koel-aws</a>.</p>
+<!-- START_9999a98649bc4a1c25373dcae1994fbc -->
+<h2>Store a song</h2>
+<p>Create a new song or update an existing one with data sent from AWS.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/os/s3/song" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/os/s3/song");
+
+let headers = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/os/s3/song</code></p>
+<!-- END_9999a98649bc4a1c25373dcae1994fbc -->
+<!-- START_0c973c710226495c9d34381152b6e78f -->
+<h2>Remove a song</h2>
+<p>Remove a song whose information matches with data sent from AWS.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/os/s3/song" </code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/os/s3/song");
+
+let headers = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "DELETE",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>DELETE api/os/s3/song</code></p>
+<!-- END_0c973c710226495c9d34381152b6e78f -->
+<h1>Last.fm integration</h1>
+<!-- START_3f0f1280d6348b0337e5b773d2dabbb1 -->
+<h2>Scrobble a song</h2>
+<p>Create a Last.fm scrobble entry for a song.</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/{song}/scrobble/{timestamp}" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/{song}/scrobble/{timestamp}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/{song}/scrobble/{timestamp}</code></p>
+<!-- END_3f0f1280d6348b0337e5b773d2dabbb1 -->
+<!-- START_ada8e3ef973c35c16e20e6e72b30a68a -->
+<h2>Connect the current user to Last.fm</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/lastfm/connect" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/lastfm/connect");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/lastfm/connect</code></p>
+<!-- END_ada8e3ef973c35c16e20e6e72b30a68a -->
+<!-- START_a53df47a60b7ce5a088aa7f84af2885c -->
+<h2>Set the Last.fm session key of the current user</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST "http://koel.test/api/lastfm/session-key" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/lastfm/session-key");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/lastfm/session-key</code></p>
+<!-- END_a53df47a60b7ce5a088aa7f84af2885c -->
+<!-- START_2e77e568599c05ed094a9f958bbf8d86 -->
+<h2>Serve the callback request from Last.fm</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/lastfm/callback" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/lastfm/callback");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/lastfm/callback</code></p>
+<!-- END_2e77e568599c05ed094a9f958bbf8d86 -->
+<!-- START_59580eb351b4f7658fc5af1a74500425 -->
+<h2>Disconnect the current user from Last.fm</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/lastfm/disconnect" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/lastfm/disconnect");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "DELETE",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>DELETE api/lastfm/disconnect</code></p>
+<!-- END_59580eb351b4f7658fc5af1a74500425 -->
+<h1>YouTube integration</h1>
+<!-- START_4389db36c36e0737f5cdb85b59f8279b -->
+<h2>Search for YouTube videos</h2>
+<p>Search YouTube for videos related to a song (using its title and artist name).</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/youtube/search/song/{song}" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("http://koel.test/api/youtube/search/song/{song}");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (404):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "message": "No query results for model [App\\Models\\Song].",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException",
+    "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Exceptions\/Handler.php",
+    "line": 50,
+    "trace": [
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 83,
+            "function": "render",
+            "class": "App\\Exceptions\\Handler",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 55,
+            "function": "handleException",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Middleware\/ThrottleRequests.php",
+            "line": 58,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 151,
+            "function": "handle",
+            "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 684,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 659,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 625,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 614,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 176,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 30,
+            "function": "Illuminate\\Foundation\\Http\\{closure}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 31,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 151,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 31,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 151,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ValidatePostSize.php",
+            "line": 27,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 151,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/UseDifferentConfigIfE2E.php",
+            "line": 22,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 151,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\UseDifferentConfigIfE2E",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/CheckForMaintenanceMode.php",
+            "line": 62,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 151,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\CheckForMaintenanceMode",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 151,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 116,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/ResponseStrategies\/ResponseCallStrategy.php",
+            "line": 272,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/ResponseStrategies\/ResponseCallStrategy.php",
+            "line": 256,
+            "function": "callLaravelRoute",
+            "class": "Mpociot\\ApiDoc\\Tools\\ResponseStrategies\\ResponseCallStrategy",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/ResponseStrategies\/ResponseCallStrategy.php",
+            "line": 33,
+            "function": "makeApiCall",
+            "class": "Mpociot\\ApiDoc\\Tools\\ResponseStrategies\\ResponseCallStrategy",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/ResponseResolver.php",
+            "line": 49,
+            "function": "__invoke",
+            "class": "Mpociot\\ApiDoc\\Tools\\ResponseStrategies\\ResponseCallStrategy",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/ResponseResolver.php",
+            "line": 68,
+            "function": "resolve",
+            "class": "Mpociot\\ApiDoc\\Tools\\ResponseResolver",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 54,
+            "function": "getResponse",
+            "class": "Mpociot\\ApiDoc\\Tools\\ResponseResolver",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 194,
+            "function": "processRoute",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 56,
+            "function": "processRoutes",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "function": "handle",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 29,
+            "function": "call_user_func_array"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 87,
+            "function": "Illuminate\\Container\\{closure}",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 31,
+            "function": "callBoundMethod",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/Container.php",
+            "line": 572,
+            "function": "call",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 183,
+            "function": "call",
+            "class": "Illuminate\\Container\\Container",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Command\/Command.php",
+            "line": 255,
+            "function": "execute",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 170,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Command\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 901,
+            "function": "run",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 262,
+            "function": "doRunCommand",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 145,
+            "function": "doRun",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Application.php",
+            "line": 89,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Console\/Kernel.php",
+            "line": 122,
+            "function": "run",
+            "class": "Illuminate\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/artisan",
+            "line": 35,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Console\\Kernel",
+            "type": "-&gt;"
+        }
+    ]
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/youtube/search/song/{song}</code></p>
+<!-- END_4389db36c36e0737f5cdb85b59f8279b -->
+      </div>
+      <div class="dark-box">
+                        <div class="lang-selector">
+                                    <a href="#" data-language-name="bash">bash</a>
+                                    <a href="#" data-language-name="javascript">javascript</a>
+                              </div>
+                </div>
+    </div>
+  </body>
+</html>
