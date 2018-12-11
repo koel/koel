@@ -940,16 +940,16 @@
         },
         {
             "name": "jackiedo/dotenv-editor",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JackieDo/Laravel-Dotenv-Editor.git",
-                "reference": "d27e12b8b120d49234d6759810ad06f076ee52cc"
+                "reference": "2ceebe3a1cf5b2b1ce61bf6d58fce2af754e3ad3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JackieDo/Laravel-Dotenv-Editor/zipball/d27e12b8b120d49234d6759810ad06f076ee52cc",
-                "reference": "d27e12b8b120d49234d6759810ad06f076ee52cc",
+                "url": "https://api.github.com/repos/JackieDo/Laravel-Dotenv-Editor/zipball/2ceebe3a1cf5b2b1ce61bf6d58fce2af754e3ad3",
+                "reference": "2ceebe3a1cf5b2b1ce61bf6d58fce2af754e3ad3",
                 "shasum": ""
             },
             "require": {
@@ -985,7 +985,7 @@
                 "dotenv-editor",
                 "laravel"
             ],
-            "time": "2017-06-26T06:36:42+00:00"
+            "time": "2018-12-10T08:59:29+00:00"
         },
         {
             "name": "james-heinrich/getid3",
