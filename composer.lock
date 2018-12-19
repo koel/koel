@@ -2201,7 +2201,7 @@
         },
         {
             "name": "symfony/console",
-            "version": "v4.2.0",
+            "version": "v4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
@@ -2270,16 +2270,16 @@
         },
         {
             "name": "symfony/contracts",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/contracts.git",
-                "reference": "3edf0ab943d1985a356721952cba36ff31bd6e5f"
+                "reference": "1aa7ab2429c3d594dd70689604b5cf7421254cdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/contracts/zipball/3edf0ab943d1985a356721952cba36ff31bd6e5f",
-                "reference": "3edf0ab943d1985a356721952cba36ff31bd6e5f",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/1aa7ab2429c3d594dd70689604b5cf7421254cdf",
+                "reference": "1aa7ab2429c3d594dd70689604b5cf7421254cdf",
                 "shasum": ""
             },
             "require": {
@@ -2334,7 +2334,7 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2018-11-24T09:35:08+00:00"
+            "time": "2018-12-05T08:06:11+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -4705,16 +4705,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.1.1",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "69f560a1ac4335bef9bd3ba08357a5f1539ec422"
+                "reference": "d13b0e1687de3af9168d94e9845dba48423707b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/69f560a1ac4335bef9bd3ba08357a5f1539ec422",
-                "reference": "69f560a1ac4335bef9bd3ba08357a5f1539ec422",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/d13b0e1687de3af9168d94e9845dba48423707b0",
+                "reference": "d13b0e1687de3af9168d94e9845dba48423707b0",
                 "shasum": ""
             },
             "require": {
@@ -4767,7 +4767,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2018-12-05T07:27:17+00:00"
+            "time": "2018-12-12T21:07:16+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
@@ -7265,7 +7265,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.2.0",
+            "version": "v4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
