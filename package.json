@@ -74,7 +74,7 @@
     "laravel-mix": "^0.8.0",
     "mocha": "^2.3.4",
     "mocha-webpack": "^1.0.1",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.11.0",
     "nyc": "^11.3.0",
     "pusher-js": "^4.1.0",
     "sass-loader": "^6.0.6",
