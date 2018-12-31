@@ -174,30 +174,28 @@ class InitCommand extends Command
 
             if (is_dir($path) && is_readable($path)) {
                 Setting::set('media_path', $path);
+            } else {
+                $this->error('The path '.$path.' does not exist or not readable. Skipping.');
+            }
+
+            return;
+        }
+
+        $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.');
+
+        while (true) {
+            $path = $this->ask('Media path', false);
+
+            if ($path === false) {
                 return;
             }
 
-            $this->error('The path '.$path.' does not exist or not readable. Skipping.');
-            return;
-
-        } else {
-
-            $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.');
-
-            while (true) {
-                $path = $this->ask('Media path', false);
-
-                if ($path === false) {
-                    return;
-                }
-
-                if (is_dir($path) && is_readable($path)) {
-                    Setting::set('media_path', $path);
-                    return;
-                }
-
-                $this->error('The path does not exist or not readable. Try again.');
+            if (is_dir($path) && is_readable($path)) {
+                Setting::set('media_path', $path);
+                return;
             }
+
+            $this->error('The path does not exist or not readable. Try again.');
         }
     }
 
