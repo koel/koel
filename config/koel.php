@@ -26,6 +26,8 @@ return [
     |
     */
 
+    'media_path' => env('APP_MEDIA_PATH', '/media'),
+
     'sync' => [
         'timeout' => env('APP_MAX_SCAN_TIME', 600),
     ],

@@ -174,20 +174,31 @@ class InitCommand extends Command
 
         $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.');
 
-        while (true) {
-            $path = $this->ask('Media path', false);
+        $path = config('koel.media_path');
+        if (!$path) {
+            while (true) {
+                $path = $this->ask('Media Path', false);
 
-            if ($path === false) {
-                return;
+                if ($path === false) {
+                    return;
+                }
+
+                if (is_dir($path) && is_readable($path)) {
+                    Setting::set('media_path', $path);
+                    return;
+                }
+
+                $this->error('The path does not exist or not readable. Try again.');
             }
+        } else {
+            $this->comment('Media Path exists => '.$path);
 
             if (is_dir($path) && is_readable($path)) {
-                Setting::set('media_path', $path);
-
-                return;
+              Setting::set('media_path', $path);
+              return;
             }
 
-            $this->error('The path does not exist or not readable. Try again.');
+            $this->error('The path '.$path.' does not exist or not readable. Skipping.');
         }
     }
 
