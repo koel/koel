@@ -124,20 +124,38 @@ class InitCommand extends Command
     private function setUpAdminAccount(): void
     {
         $this->info("Let's create the admin account.");
-        $name = $this->ask('Your name');
-        $email = $this->ask('Your email address');
-        $passwordConfirmed = false;
-        $password = null;
 
-        while (!$passwordConfirmed) {
-            $password = $this->secret('Your desired password');
-            $confirmation = $this->secret('Again, just to make sure');
+        $name = config('koel.admin.name');
+        if (!$name) {
+            $name = $this->ask('Your name');
+        } else {
+            $this->comment('Admin name exists => '.$name);
+        }
 
-            if ($confirmation !== $password) {
-                $this->error('That doesn\'t match. Let\'s try again.');
-            } else {
-                $passwordConfirmed = true;
+        $email = config('koel.admin.email');
+        if (!$email) {
+            $email = $this->ask('Your email address');
+        } else {
+            $this->comment('Admin email exists => '.$email);
+        }
+
+        $password = config('koel.admin.password');
+        if (!$password) {
+            $passwordConfirmed = false;
+            $password = null;
+
+            while (!$passwordConfirmed) {
+                $password = $this->secret('Your desired password');
+                $confirmation = $this->secret('Again, just to make sure');
+
+                if ($confirmation !== $password) {
+                    $this->error('That doesn\'t match. Let\'s try again.');
+                } else {
+                    $passwordConfirmed = true;
+                }
             }
+        } else {
+            $this->comment('Admin password exists => '.str_repeat("*", strlen($password)));
         }
 
         User::create([
