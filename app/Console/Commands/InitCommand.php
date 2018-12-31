@@ -49,6 +49,10 @@ class InitCommand extends Command
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
         $this->info('📙  '.config('koel.misc.docs_url').PHP_EOL);
 
+        if ($this->inNoInteractionMode()) {
+            $this->info('Running in --no-interaction mode');
+        }
+
         $this->maybeGenerateAppKey();
         $this->maybeGenerateJwtSecret();
         $this->maybeSetUpDatabase();
@@ -121,26 +125,21 @@ class InitCommand extends Command
         ]);
     }
 
+    private function inNoInteractionMode(): bool
+    {
+        return (bool) $this->option('no-interaction');
+    }
+
     private function setUpAdminAccount(): void
     {
         $this->info("Let's create the admin account.");
-
-        $name = config('koel.admin.name');
-        if (!$name) {
-            $name = $this->ask('Your name');
+        if ($this->inNoInteractionMode()) {
+            $name     = config('koel.admin.name');
+            $email    = config('koel.admin.email');
+            $password = config('koel.admin.password');
         } else {
-            $this->comment('Admin name exists => '.$name);
-        }
-
-        $email = config('koel.admin.email');
-        if (!$email) {
+            $name  = $this->ask('Your name');
             $email = $this->ask('Your email address');
-        } else {
-            $this->comment('Admin email exists => '.$email);
-        }
-
-        $password = config('koel.admin.password');
-        if (!$password) {
             $passwordConfirmed = false;
             $password = null;
 
@@ -154,8 +153,6 @@ class InitCommand extends Command
                     $passwordConfirmed = true;
                 }
             }
-        } else {
-            $this->comment('Admin password exists => '.str_repeat("*", strlen($password)));
         }
 
         User::create([
@@ -172,12 +169,22 @@ class InitCommand extends Command
             return;
         }
 
-        $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.');
+        if ($this->inNoInteractionMode()) {
+            $path = config('koel.media_path');
 
-        $path = config('koel.media_path');
-        if (!$path) {
+            if (is_dir($path) && is_readable($path)) {
+                Setting::set('media_path', $path);
+                return;
+            }
+
+            $this->error('The path '.$path.' does not exist or not readable. Skipping.');
+
+        } else {
+
+            $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.');
+
             while (true) {
-                $path = $this->ask('Media Path', false);
+                $path = $this->ask('Media path', false);
 
                 if ($path === false) {
                     return;
@@ -190,15 +197,6 @@ class InitCommand extends Command
 
                 $this->error('The path does not exist or not readable. Try again.');
             }
-        } else {
-            $this->comment('Media Path exists => '.$path);
-
-            if (is_dir($path) && is_readable($path)) {
-              Setting::set('media_path', $path);
-              return;
-            }
-
-            $this->error('The path '.$path.' does not exist or not readable. Skipping.');
         }
     }
 
