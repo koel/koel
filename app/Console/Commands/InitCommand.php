@@ -50,7 +50,7 @@ class InitCommand extends Command
         $this->info('📙  '.config('koel.misc.docs_url').PHP_EOL);
 
         if ($this->inNoInteractionMode()) {
-            $this->info('Running in --no-interaction mode');
+            $this->info('Running in no-interaction mode');
         }
 
         $this->maybeGenerateAppKey();
@@ -134,11 +134,11 @@ class InitCommand extends Command
     {
         $this->info("Let's create the admin account.");
         if ($this->inNoInteractionMode()) {
-            $name     = config('koel.admin.name');
-            $email    = config('koel.admin.email');
+            $name = config('koel.admin.name');
+            $email = config('koel.admin.email');
             $password = config('koel.admin.password');
         } else {
-            $name  = $this->ask('Your name');
+            $name = $this->ask('Your name');
             $email = $this->ask('Your email address');
             $passwordConfirmed = false;
             $password = null;
@@ -178,6 +178,7 @@ class InitCommand extends Command
             }
 
             $this->error('The path '.$path.' does not exist or not readable. Skipping.');
+            return;
 
         } else {
 
