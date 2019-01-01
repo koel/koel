@@ -133,27 +133,8 @@ class InitCommand extends Command
     private function setUpAdminAccount(): void
     {
         $this->info("Let's create the admin account.");
-        if ($this->inNoInteractionMode()) {
-            $name = config('koel.admin.name');
-            $email = config('koel.admin.email');
-            $password = config('koel.admin.password');
-        } else {
-            $name = $this->ask('Your name');
-            $email = $this->ask('Your email address');
-            $passwordConfirmed = false;
-            $password = null;
 
-            while (!$passwordConfirmed) {
-                $password = $this->secret('Your desired password');
-                $confirmation = $this->secret('Again, just to make sure');
-
-                if ($confirmation !== $password) {
-                    $this->error('That doesn\'t match. Let\'s try again.');
-                } else {
-                    $passwordConfirmed = true;
-                }
-            }
-        }
+        [$name, $email, $password] = $this->gatherAdminAccountCredentials();
 
         User::create([
             'name' => $name,
@@ -170,13 +151,7 @@ class InitCommand extends Command
         }
 
         if ($this->inNoInteractionMode()) {
-            $path = config('koel.media_path');
-
-            if (is_dir($path) && is_readable($path)) {
-                Setting::set('media_path', $path);
-            } else {
-                $this->error('The path '.$path.' does not exist or not readable. Skipping.');
-            }
+            $this->setMediaPathFromEnvFile();
 
             return;
         }
@@ -184,14 +159,15 @@ class InitCommand extends Command
         $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.');
 
         while (true) {
-            $path = $this->ask('Media path', false);
+            $path = $this->ask('Media path', config('koel.media_path'));
 
-            if ($path === false) {
+            if (!$path) {
                 return;
             }
 
-            if (is_dir($path) && is_readable($path)) {
+            if ($this->isValidMediaPath($path)) {
                 Setting::set('media_path', $path);
+
                 return;
             }
 
@@ -242,7 +218,7 @@ class InitCommand extends Command
                 $dbSetUp = true;
             } catch (Exception $e) {
                 $this->error($e->getMessage());
-                $this->warn(PHP_EOL.'Koel cannot connect to the database. Let\'s set it up.');
+                $this->warn(PHP_EOL."Koel cannot connect to the database. Let's set it up.");
                 $this->setUpDatabase();
             }
         }
@@ -261,5 +237,51 @@ class InitCommand extends Command
     {
         $this->info('Compiling front-end stuff');
         system('yarn install');
+    }
+
+    /** @return array<string> */
+    private function gatherAdminAccountCredentials(): array
+    {
+        if ($this->inNoInteractionMode()) {
+            return [config('koel.admin.name'), config('koel.admin.email'), config('koel.admin.password')];
+        }
+
+        $name = $this->ask('Your name', config('koel.admin.name'));
+        $email = $this->ask('Your email address', config('koel.admin.email'));
+        $passwordConfirmed = false;
+        $password = null;
+
+        while (!$passwordConfirmed) {
+            $password = $this->secret('Your desired password');
+            $confirmation = $this->secret('Again, just to make sure');
+
+            if ($confirmation !== $password) {
+                $this->error("That doesn't match. Let's try again.");
+            } else {
+                $passwordConfirmed = true;
+            }
+        }
+
+        return [$name, $email, $password];
+    }
+
+    private function isValidMediaPath(string $path): bool
+    {
+        return is_dir($path) && is_readable($path);
+    }
+
+    private function setMediaPathFromEnvFile(): void
+    {
+        with(config('koel.media_path'), function (?string $path): void {
+            if (!$path) {
+                return;
+            }
+
+            if ($this->isValidMediaPath($path)) {
+                Setting::set('media_path', $path);
+            } else {
+                $this->warn(sprintf('The path %s does not exist or not readable. Skipping.', $path));
+            }
+        });
     }
 }

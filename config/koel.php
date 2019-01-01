@@ -17,6 +17,8 @@ return [
         'password' => env('ADMIN_PASSWORD'),
     ],
 
+    'media_path' => env('MEDIA_PATH'),
+
     /*
     |--------------------------------------------------------------------------
     | Sync Options
@@ -25,8 +27,6 @@ return [
     | A timeout is set when using the browser to scan the folder path
     |
     */
-
-    'media_path' => env('APP_MEDIA_PATH', '/media'),
 
     'sync' => [
         'timeout' => env('APP_MAX_SCAN_TIME', 600),

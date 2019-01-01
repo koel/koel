@@ -5,13 +5,13 @@ namespace App\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use Exception;
-use Illuminate\Log\Logger;
+use Psr\Log\LoggerInterface;
 
 class MediaMetadataService
 {
     private $logger;
 
-    public function __construct(Logger $logger)
+    public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

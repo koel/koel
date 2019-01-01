@@ -14,7 +14,7 @@ use App\Repositories\ArtistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use Exception;
-use Illuminate\Log\Logger;
+use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -58,7 +58,7 @@ class MediaSyncService
         HelperService $helperService,
         FileSynchronizer $fileSynchronizer,
         Finder $finder,
-        Logger $logger
+        LoggerInterface $logger
     ) {
         $this->mediaMetadataService = $mediaMetadataService;
         $this->songRepository = $songRepository;
