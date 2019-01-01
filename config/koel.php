@@ -17,6 +17,8 @@ return [
         'password' => env('ADMIN_PASSWORD'),
     ],
 
+    'media_path' => env('MEDIA_PATH'),
+
     /*
     |--------------------------------------------------------------------------
     | Sync Options
