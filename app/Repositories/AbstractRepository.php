@@ -11,7 +11,7 @@ abstract class AbstractRepository implements RepositoryInterface
 {
     /** @var Model */
     protected $model;
-    
+
     /** @var Guard */
     protected $auth;
 
@@ -25,7 +25,8 @@ abstract class AbstractRepository implements RepositoryInterface
         // rendering the whole installation failing.
         try {
             $this->auth = app(Guard::class);
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
     }
 
     public function getOneById($id): ?Model

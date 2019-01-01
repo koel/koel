@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Song;
 use App\Services\HelperService;
-use Illuminate\Contracts\Auth\Guard;
 
 class SongRepository extends AbstractRepository
 {
