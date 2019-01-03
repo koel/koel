@@ -4547,16 +4547,16 @@
         },
         {
             "name": "mnapoli/silly",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mnapoli/silly.git",
-                "reference": "bd6d1ec6d1644a5dfd5325492f2f8d36037da32c"
+                "reference": "5f7f34f4db75685e6fe7d652c12d9a7b6e8034d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mnapoli/silly/zipball/bd6d1ec6d1644a5dfd5325492f2f8d36037da32c",
-                "reference": "bd6d1ec6d1644a5dfd5325492f2f8d36037da32c",
+                "url": "https://api.github.com/repos/mnapoli/silly/zipball/5f7f34f4db75685e6fe7d652c12d9a7b6e8034d6",
+                "reference": "5f7f34f4db75685e6fe7d652c12d9a7b6e8034d6",
                 "shasum": ""
             },
             "require": {
@@ -4566,6 +4566,7 @@
                 "symfony/console": "~3.0|~4.0"
             },
             "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.12",
                 "mnapoli/phpunit-easymock": "~1.0",
                 "phpunit/phpunit": "~6.4"
             },
@@ -4588,7 +4589,7 @@
                 "micro-framework",
                 "silly"
             ],
-            "time": "2017-11-18T14:01:30+00:00"
+            "time": "2018-12-26T21:17:30+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -4705,16 +4706,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.2.0",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "d13b0e1687de3af9168d94e9845dba48423707b0"
+                "reference": "20fdf9858a6381c475a3eb54df520fa374725513"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/d13b0e1687de3af9168d94e9845dba48423707b0",
-                "reference": "d13b0e1687de3af9168d94e9845dba48423707b0",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/20fdf9858a6381c475a3eb54df520fa374725513",
+                "reference": "20fdf9858a6381c475a3eb54df520fa374725513",
                 "shasum": ""
             },
             "require": {
@@ -4767,7 +4768,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2018-12-12T21:07:16+00:00"
+            "time": "2019-01-02T19:53:45+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
