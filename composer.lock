@@ -2201,16 +2201,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v4.2.1",
+            "version": "v4.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "4dff24e5d01e713818805c1862d2e3f901ee7dd0"
+                "reference": "b0a03c1bb0fcbe288629956cf2f1dd3f1dc97522"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/4dff24e5d01e713818805c1862d2e3f901ee7dd0",
-                "reference": "4dff24e5d01e713818805c1862d2e3f901ee7dd0",
+                "url": "https://api.github.com/repos/symfony/console/zipball/b0a03c1bb0fcbe288629956cf2f1dd3f1dc97522",
+                "reference": "b0a03c1bb0fcbe288629956cf2f1dd3f1dc97522",
                 "shasum": ""
             },
             "require": {
@@ -2266,7 +2266,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-27T07:40:44+00:00"
+            "time": "2019-01-04T15:13:53+00:00"
         },
         {
             "name": "symfony/contracts",
@@ -2511,16 +2511,16 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v4.2.1",
+            "version": "v4.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "e53d477d7b5c4982d0e1bfd2298dbee63d01441d"
+                "reference": "9094d69e8c6ee3fe186a0ec5a4f1401e506071ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/e53d477d7b5c4982d0e1bfd2298dbee63d01441d",
-                "reference": "e53d477d7b5c4982d0e1bfd2298dbee63d01441d",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/9094d69e8c6ee3fe186a0ec5a4f1401e506071ce",
+                "reference": "9094d69e8c6ee3fe186a0ec5a4f1401e506071ce",
                 "shasum": ""
             },
             "require": {
@@ -2556,7 +2556,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-11T19:52:12+00:00"
+            "time": "2019-01-03T09:07:35+00:00"
         },
         {
             "name": "symfony/http-foundation",
@@ -5346,16 +5346,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.1.0",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "d0230c5c77a7e3cfa69446febf340978540958c0"
+                "reference": "8aae5b59b83bb4d0dbf07b0a835f2680a658f610"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/d0230c5c77a7e3cfa69446febf340978540958c0",
-                "reference": "d0230c5c77a7e3cfa69446febf340978540958c0",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/8aae5b59b83bb4d0dbf07b0a835f2680a658f610",
+                "reference": "8aae5b59b83bb4d0dbf07b0a835f2680a658f610",
                 "shasum": ""
             },
             "require": {
@@ -5393,7 +5393,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2018-10-10T09:24:14+00:00"
+            "time": "2018-12-26T11:32:39+00:00"
         },
         {
             "name": "ocramius/package-versions",
@@ -6020,16 +6020,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.10.6",
+            "version": "0.10.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "f0252a5ab6b4a293fb25f218d9c64386f272280f"
+                "reference": "4f828460a0276180da76c670a0a6e592e7c38b71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f0252a5ab6b4a293fb25f218d9c64386f272280f",
-                "reference": "f0252a5ab6b4a293fb25f218d9c64386f272280f",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/4f828460a0276180da76c670a0a6e592e7c38b71",
+                "reference": "4f828460a0276180da76c670a0a6e592e7c38b71",
                 "shasum": ""
             },
             "require": {
@@ -6089,7 +6089,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2018-12-04T07:28:04+00:00"
+            "time": "2019-01-08T09:51:19+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
