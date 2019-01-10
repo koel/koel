@@ -13,7 +13,7 @@ search: true
 # Info
 
 Welcome to the generated API reference.
-[Get Postman Collection](http://localhost/api-docs/collection.json)
+[Get Postman Collection](/api-docs/collection.json)
 
 <!-- END_INFO -->
 This is the official API documentation for [Koel](https://koel.phanan.net), generated from the source code using [Laravel API Documentation Generator](https://github.com/mpociot/laravel-apidoc-generator). 
