@@ -75,3 +75,4 @@ Temporary Items
 
 /log
 coverage.xml
+.phpunit.result.cache

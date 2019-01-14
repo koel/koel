@@ -26,7 +26,7 @@
     "filp/whoops": "~2.0",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "~1.0",
-    "phpunit/phpunit": "~7.0",
+    "phpunit/phpunit": "~7.5",
     "symfony/css-selector": "~3.1",
     "symfony/dom-crawler": "^3.2",
     "facebook/webdriver": "^1.2",
@@ -74,7 +74,7 @@
     "post-create-project-cmd": [
       "@php artisan key:generate"
     ],
-    "test": "phpunit --colors=always",
+    "test": "phpunit --colors=always --order-by=defects --stop-on-defect",
     "coverage": "phpunit --colors=always --coverage-clover=coverage.xml",
     "analyze": "phpstan analyse app --level=5"
   },

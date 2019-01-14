@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
+         cacheResult="true"
          backupStaticAttributes="false"
          bootstrap="bootstrap/autoload.php"
          colors="true"
