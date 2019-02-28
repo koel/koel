@@ -3137,7 +3137,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -5163,23 +5163,23 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.3.2",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "eb54c1608a82b2633bf7dfef64f021f1a3b2482a"
+                "reference": "b677e66fcd018b54d1654c1d1e6605c80ab263f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/eb54c1608a82b2633bf7dfef64f021f1a3b2482a",
-                "reference": "eb54c1608a82b2633bf7dfef64f021f1a3b2482a",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/b677e66fcd018b54d1654c1d1e6605c80ab263f5",
+                "reference": "b677e66fcd018b54d1654c1d1e6605c80ab263f5",
                 "shasum": ""
             },
             "require": {
                 "fzaninotto/faker": "~1.8",
-                "illuminate/console": "5.5.* || 5.6.* || 5.7.*",
-                "illuminate/routing": "5.5.* || 5.6.* || 5.7.*",
-                "illuminate/support": "5.5.* || 5.6.* || 5.7.*",
+                "illuminate/console": "5.5.* || 5.6.* || 5.7.* || 5.8.*",
+                "illuminate/routing": "5.5.* || 5.6.* || 5.7.* || 5.8.*",
+                "illuminate/support": "5.5.* || 5.6.* || 5.7.* || 5.8.*",
                 "mpociot/documentarian": "^0.2.0",
                 "mpociot/reflection-docblock": "^1.0.1",
                 "php": ">=7.0.0",
@@ -5225,7 +5225,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-02-12T19:54:08+00:00"
+            "time": "2019-02-27T20:47:09+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
