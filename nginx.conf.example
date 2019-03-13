@@ -9,7 +9,7 @@ server {
   gzip_comp_level  9;
 
   # Whitelist only index.php, robots.txt, and some special routes
-  if ($request_uri !~ ^/$|index\.php|robots\.txt|(public|api)/|remote|api-docs) {
+  if ($request_uri !~ ^/$|index\.php|robots\.txt|(public|api)/|remote|api-docs|sw\.js) {
     return 404;
   }
 
