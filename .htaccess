@@ -16,7 +16,7 @@
   RewriteRule ^(.*)/$ /$1 [L,R=301]
 
   # Whitelist only index.php, robots.txt, and some special routes
-  RewriteRule ^(?!($|index\.php|robots\.txt|(public|api)/|remote|api-docs)) - [R=404,L]
+  RewriteRule ^(?!($|index\.php|robots\.txt|(public|api)/|remote|api-docs|sw\.js)) - [R=404,L]
 
   # Handle Front Controller...
   RewriteCond %{REQUEST_FILENAME} !-d
