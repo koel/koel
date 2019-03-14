@@ -3137,7 +3137,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -5163,16 +5163,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.4.1",
+            "version": "3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "46e7a34b63f67d03951d49a8cfa61e8e1e817747"
+                "reference": "61dc0fbe62dfb0c0a639d046a3abb8fe6c769398"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/46e7a34b63f67d03951d49a8cfa61e8e1e817747",
-                "reference": "46e7a34b63f67d03951d49a8cfa61e8e1e817747",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/61dc0fbe62dfb0c0a639d046a3abb8fe6c769398",
+                "reference": "61dc0fbe62dfb0c0a639d046a3abb8fe6c769398",
                 "shasum": ""
             },
             "require": {
@@ -5225,7 +5225,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-03-04T22:13:05+00:00"
+            "time": "2019-03-10T06:31:17+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
