@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "34c7ae28505ede112af45963a578526a",
+    "content-hash": "15b6d15dc6e8f67e5b38bf8a072510bd",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -7616,16 +7616,16 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v3.4.22",
+            "version": "v3.4.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "32cb577c07bd900ee883a9d4b55d4098aa02e422"
+                "reference": "d40023c057393fb25f7ca80af2a56ed948c45a09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/32cb577c07bd900ee883a9d4b55d4098aa02e422",
-                "reference": "32cb577c07bd900ee883a9d4b55d4098aa02e422",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/d40023c057393fb25f7ca80af2a56ed948c45a09",
+                "reference": "d40023c057393fb25f7ca80af2a56ed948c45a09",
                 "shasum": ""
             },
             "require": {
@@ -7669,7 +7669,7 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2019-01-16T13:27:11+00:00"
+            "time": "2019-02-23T15:06:07+00:00"
         },
         {
             "name": "symfony/filesystem",
