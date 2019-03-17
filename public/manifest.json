@@ -2,7 +2,7 @@
     "name": "Koel",
     "start_url": "/",
     "display": "standalone",
-    "orientation": "landscape",
+    "orientation": "portrait",
     "icons": [{
       "src": "/public/img/icon.png",
       "sizes": "192x192",
