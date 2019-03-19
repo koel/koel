@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "15b6d15dc6e8f67e5b38bf8a072510bd",
@@ -1357,7 +1357,7 @@
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
                     "email": "lcobucci@gmail.com",
-                    "role": "developer"
+                    "role": "Developer"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
@@ -2353,22 +2353,22 @@
         },
         {
             "name": "pusher/pusher-php-server",
-            "version": "v3.3.1",
+            "version": "v3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pusher/pusher-http-php.git",
-                "reference": "2279bcd21a608a76f9be1fe0675aa2dd1efb2fa0"
+                "reference": "9093be6934e2e5129bd66322fc28d8b65794e58c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/2279bcd21a608a76f9be1fe0675aa2dd1efb2fa0",
-                "reference": "2279bcd21a608a76f9be1fe0675aa2dd1efb2fa0",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/9093be6934e2e5129bd66322fc28d8b65794e58c",
+                "reference": "9093be6934e2e5129bd66322fc28d8b65794e58c",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "paragonie/sodium_compat": "^1.6",
-                "php": "^5.4 || ^7.0",
+                "php": ">=5.4 <7.3",
                 "psr/log": "^1.0"
             },
             "require-dev": {
@@ -2403,7 +2403,7 @@
                 "rest",
                 "trigger"
             ],
-            "time": "2019-01-18T12:10:21+00:00"
+            "time": "2019-03-13T17:36:04+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
