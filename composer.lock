@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "15b6d15dc6e8f67e5b38bf8a072510bd",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.90.1",
+            "version": "3.90.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3262a84de9428766646223963c944b2be2cd09c0"
+                "reference": "ac48802401ae7da6f4716023eb093fc598a23995"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3262a84de9428766646223963c944b2be2cd09c0",
-                "reference": "3262a84de9428766646223963c944b2be2cd09c0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ac48802401ae7da6f4716023eb093fc598a23995",
+                "reference": "ac48802401ae7da6f4716023eb093fc598a23995",
                 "shasum": ""
             },
             "require": {
@@ -86,20 +86,20 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-03-12T18:11:23+00:00"
+            "time": "2019-03-19T18:31:52+00:00"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
-            "version": "3.3.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php-laravel.git",
-                "reference": "33ea9fdd86530eeade9ba02ac630524eb89088ac"
+                "reference": "3e8e8801d6666bc60dfaf5429febceb84eed0cec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/33ea9fdd86530eeade9ba02ac630524eb89088ac",
-                "reference": "33ea9fdd86530eeade9ba02ac630524eb89088ac",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/3e8e8801d6666bc60dfaf5429febceb84eed0cec",
+                "reference": "3e8e8801d6666bc60dfaf5429febceb84eed0cec",
                 "shasum": ""
             },
             "require": {
@@ -108,7 +108,8 @@
                 "php": ">=5.5.9"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0|~5.0"
+                "phpunit/phpunit": "~4.0|~5.0",
+                "vlucas/phpdotenv": "~2.0|~3.0"
             },
             "suggest": {
                 "laravel/framework": "To test the Laravel bindings",
@@ -152,7 +153,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-12-03T22:37:23+00:00"
+            "time": "2019-03-15T17:57:46+00:00"
         },
         {
             "name": "daverandom/resume",
@@ -1357,7 +1358,7 @@
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
                     "email": "lcobucci@gmail.com",
-                    "role": "developer"
+                    "role": "Developer"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
