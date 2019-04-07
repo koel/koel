@@ -54,14 +54,13 @@ class iTunesServiceTest extends TestCase
         string $trackViewUrl,
         string $affiliateUrl,
         string $cacheKey
-    ): void
-    {
+    ): void {
         config(['koel.itunes.affiliate_id' => 'foo']);
 
         $mock = new MockHandler([
             new Response(200, [], json_encode([
                 'resultCount' => 1,
-                'results' => [['trackViewUrl' => $trackViewUrl]]
+                'results' => [['trackViewUrl' => $trackViewUrl]],
             ])),
         ]);
 
@@ -73,7 +72,7 @@ class iTunesServiceTest extends TestCase
 
         $cache
             ->shouldReceive('remember')
-            ->with($cacheKey, 10080, m::on(static function(callable $generator) use ($affiliateUrl): bool {
+            ->with($cacheKey, 10080, m::on(static function (callable $generator) use ($affiliateUrl): bool {
                 return $generator() === $affiliateUrl;
             }));
 
