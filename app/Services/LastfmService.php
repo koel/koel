@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Exception;
 
-class LastfmService extends ApiClient implements ApiConsumerInterface
+class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 {
     /**
      * Specify the response format, since Last.fm only returns XML.

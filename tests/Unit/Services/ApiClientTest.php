@@ -29,11 +29,6 @@ class ApiClientTest extends TestCase
     {
         parent::setUp();
 
-        /*
-         * @var Client client
-         * @var Cache cache
-         * @var Logger logger
-         */
         $this->client = Mockery::mock(Client::class);
         $this->cache = Mockery::mock(Cache::class);
         $this->logger = Mockery::mock(Logger::class);

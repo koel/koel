@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Exception;
 
-class iTunesService extends ApiClient implements ApiConsumerInterface
+class iTunesService extends AbstractApiClient implements ApiConsumerInterface
 {
     /**
      * Determines whether to use iTunes services.

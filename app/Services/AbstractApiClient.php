@@ -17,7 +17,7 @@ use SimpleXMLElement;
  * @method object head($uri, ...$data)
  * @method object delete($uri)
  */
-abstract class ApiClient
+abstract class AbstractApiClient
 {
     protected $responseFormat = 'json';
     protected $client;
