@@ -26,7 +26,7 @@
     "filp/whoops": "~2.0",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "~1.0",
-    "phpunit/phpunit": "~7.5",
+    "phpunit/phpunit": "~8.1",
     "symfony/css-selector": "~3.1",
     "symfony/dom-crawler": "^3.2",
     "facebook/webdriver": "^1.2",
