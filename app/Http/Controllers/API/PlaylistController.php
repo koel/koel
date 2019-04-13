@@ -80,7 +80,7 @@ class PlaylistController extends Controller
     {
         $this->authorize('owner', $playlist);
 
-        $playlist->update($request->only('name'));
+        $playlist->update($request->only('name', 'rules'));
 
         return response()->json($playlist);
     }
