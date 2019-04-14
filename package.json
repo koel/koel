@@ -63,6 +63,7 @@
     "chalk": "^1.1.3",
     "cross-env": "^3.2.3",
     "css-loader": "^0.28.7",
+    "cypress": "^3.2.0",
     "eslint": "^3.10.2",
     "eslint-config-vue": "^2.0.1",
     "eslint-plugin-vue": "^1.0.0",
@@ -83,6 +84,7 @@
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.5.0",
     "vue-test-helpers": "^1.0.9",
+    "wait-on": "^3.2.0",
     "webpack": "^3.6.0",
     "webpack-node-externals": "^1.6.0"
   },
@@ -96,6 +98,7 @@
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch-poll": "yarn watch -- --watch-poll",
     "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "cy": "php artisan serve --port=8088 & wait-on http://localhost:8088 && cypress run",
     "build": "yarn production",
     "prod": "yarn production",
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
