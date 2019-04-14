@@ -39,6 +39,7 @@ class InteractionRepository extends AbstractRepository
         /** @var Builder $query */
         $query = $this->model
             ->where('user_id', $user->id)
+            ->where('play_count', '>', 0)
             ->orderBy('updated_at', 'DESC');
 
         if ($count) {
