@@ -73,6 +73,10 @@ Temporary Items
 *.swo
 *~
 
+# Cypress
+cypress/screenshots
+cypress/videos
+
 /log
 coverage.xml
 .phpunit.result.cache

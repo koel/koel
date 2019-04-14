@@ -72,6 +72,7 @@
     "font-awesome": "^4.7.0",
     "jsdom": "^11.5.1",
     "jsdom-global": "^3.0.2",
+    "kill-port": "^1.3.2",
     "laravel-mix": "^0.8.0",
     "mocha": "^2.3.4",
     "mocha-webpack": "^1.0.1",
@@ -98,7 +99,7 @@
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch-poll": "yarn watch -- --watch-poll",
     "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "cy": "php artisan serve --port=8088 & wait-on http://localhost:8088 && cypress run",
+    "cy": "kill-port 8088 && php artisan serve --port=8088 & wait-on http://localhost:8088 && cypress run",
     "build": "yarn production",
     "prod": "yarn production",
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
