@@ -5,6 +5,9 @@ php:
   - 7.2
   - 7.3
 
+node_js:
+  - 10
+
 env:
   APP_ENV: testing
   CACHE_DRIVER: array
@@ -26,9 +29,13 @@ branches:
 install:
   - composer self-update
   - composer install --prefer-dist --no-interaction
+  - yarn
 
 script:
+  # Backend
   - composer coverage
+  # Cypress
+  - yarn cy
 
 addons:
   code_climate:
