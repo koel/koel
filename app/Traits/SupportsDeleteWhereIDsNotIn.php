@@ -22,8 +22,9 @@ trait SupportsDeleteWhereIDsNotIn
      */
     public static function deleteWhereIDsNotIn(array $ids, string $key = 'id'): void
     {
-        // If the number of entries is lower than, or equals to 65535, just go ahead.
-        if (count($ids) <= 65535) {
+        $maxChunkSize = config('database.default') === 'sqlite-persistent' ? 999 : 65535;
+        // If the number of entries is lower than, or equals to maxChunkSize, just go ahead.
+        if (count($ids) <= $maxChunkSize) {
             static::whereNotIn($key, $ids)->delete();
 
             return;
@@ -34,15 +35,15 @@ trait SupportsDeleteWhereIDsNotIn
         $whereInIDs = array_diff($allIDs, $ids);
 
         // …and see if we can delete them instead.
-        if (count($whereInIDs) < 65535) {
+        if (count($whereInIDs) < $maxChunkSize) {
             static::whereIn($key, $whereInIDs)->delete();
 
             return;
         }
 
-        // If that's not possible (i.e. this array has more than 65535 elements, too)
+        // If that's not possible (i.e. this array has more than maxChunkSize elements, too)
         // then we'll delete chunk by chunk.
-        static::deleteByChunk($ids, $key);
+        static::deleteByChunk($ids, $key, $maxChunkSize);
     }
 
     /**
