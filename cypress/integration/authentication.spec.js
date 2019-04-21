@@ -12,7 +12,7 @@ describe('authentication', () => {
   it('logs out', () => {
     cy.login()
     cy.route('DELETE', '/api/me', [])
-    cy.get('[data-cy=btnLogOut').click()
+    cy.get('[data-cy=btnLogOut]').click({ force: true }) // https://github.com/cypress-io/cypress/issues/695
     cy.get('[data-cy=loginForm]').should('be.visible')
     cy.get('[data-cy=appHeader]').should('not.be.visible')
   })
