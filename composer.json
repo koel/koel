@@ -33,7 +33,7 @@
     "barryvdh/laravel-ide-helper": "^2.1",
     "laravel/tinker": "^1.0",
     "laravel/browser-kit-testing": "^2.0",
-    "mikey179/vfsStream": "^1.6",
+    "mikey179/vfsstream": "^1.6",
     "phpstan/phpstan": "^0.11.2",
     "php-mock/php-mock-mockery": "^1.3",
     "mpociot/laravel-apidoc-generator": "^3.1"
