@@ -45,6 +45,12 @@ return [
             'prefix'   => '',
         ],
 
+        'sqlite-persistent' => [
+            'driver'   => 'sqlite',
+            'database' => __DIR__.'/../'.env('DB_DATABASE', 'koel.db'),
+            'prefix'   => '',
+        ],
+
         'mysql' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),
