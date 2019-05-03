@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "7e8b7a739ad4034e35495b6fdbaeef85",
@@ -1363,7 +1363,7 @@
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
                     "email": "lcobucci@gmail.com",
-                    "role": "developer"
+                    "role": "Developer"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
@@ -2597,7 +2597,7 @@
         },
         {
             "name": "symfony/console",
-            "version": "v4.2.7",
+            "version": "v4.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
@@ -3145,7 +3145,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -5294,16 +5294,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.4.4",
+            "version": "3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "ce75c2d05a9895c450ce41cfcf23b58d5e3aa865"
+                "reference": "35af61fb3a93086f3b942f32fcd5d3113d64bc18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/ce75c2d05a9895c450ce41cfcf23b58d5e3aa865",
-                "reference": "ce75c2d05a9895c450ce41cfcf23b58d5e3aa865",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/35af61fb3a93086f3b942f32fcd5d3113d64bc18",
+                "reference": "35af61fb3a93086f3b942f32fcd5d3113d64bc18",
                 "shasum": ""
             },
             "require": {
@@ -5356,7 +5356,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-03-30T10:02:54+00:00"
+            "time": "2019-05-02T19:04:04+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
@@ -5653,7 +5653,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "🔍 Nette Finder: find files and directories with an intuitive API.",
+            "description": "? Nette Finder: find files and directories with an intuitive API.",
             "homepage": "https://nette.org",
             "keywords": [
                 "filesystem",
@@ -5713,7 +5713,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "🍸 Nette NEON: encodes and decodes NEON file format.",
+            "description": "? Nette NEON: encodes and decodes NEON file format.",
             "homepage": "http://ne-on.org",
             "keywords": [
                 "export",
@@ -7907,7 +7907,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.2.7",
+            "version": "v4.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
@@ -8057,16 +8057,16 @@
         },
         {
             "name": "windwalker/renderer",
-            "version": "3.5.3",
+            "version": "3.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ventoviro/windwalker-renderer.git",
-                "reference": "4aceb1abba86f4f16dc5c57186d64f8c5d6b0653"
+                "reference": "6a751d7b85551e32b2c74c627095367dcec507a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ventoviro/windwalker-renderer/zipball/4aceb1abba86f4f16dc5c57186d64f8c5d6b0653",
-                "reference": "4aceb1abba86f4f16dc5c57186d64f8c5d6b0653",
+                "url": "https://api.github.com/repos/ventoviro/windwalker-renderer/zipball/6a751d7b85551e32b2c74c627095367dcec507a2",
+                "reference": "6a751d7b85551e32b2c74c627095367dcec507a2",
                 "shasum": ""
             },
             "require": {
@@ -8110,20 +8110,20 @@
                 "renderer",
                 "windwalker"
             ],
-            "time": "2019-04-18T04:22:04+00:00"
+            "time": "2019-04-27T11:15:30+00:00"
         },
         {
             "name": "windwalker/structure",
-            "version": "3.5.3",
+            "version": "3.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ventoviro/windwalker-structure.git",
-                "reference": "c54090c14f1a9d1bd2a791d64d9aaceaa9440e90"
+                "reference": "271ef82438c20d66d1f42c8c47c9c6365fc5bc9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ventoviro/windwalker-structure/zipball/c54090c14f1a9d1bd2a791d64d9aaceaa9440e90",
-                "reference": "c54090c14f1a9d1bd2a791d64d9aaceaa9440e90",
+                "url": "https://api.github.com/repos/ventoviro/windwalker-structure/zipball/271ef82438c20d66d1f42c8c47c9c6365fc5bc9d",
+                "reference": "271ef82438c20d66d1f42c8c47c9c6365fc5bc9d",
                 "shasum": ""
             },
             "require": {
@@ -8131,11 +8131,15 @@
             },
             "require-dev": {
                 "ext-json": "*",
+                "laktak/hjson": "^2.1",
                 "symfony/yaml": "3.*",
-                "windwalker/test": "~3.0"
+                "windwalker/test": "~3.0",
+                "yosymfony/toml": "^1.0"
             },
             "suggest": {
-                "symfony/yaml": "Install 3.* if you require YAML support."
+                "laktak/hjson": "Install ~2.0 if you require HJSON support.",
+                "symfony/yaml": "Install 3.* if you require YAML support.",
+                "yosymfony/toml": "Install ~1.0 if you require TOML support."
             },
             "type": "windwalker-package",
             "extra": {
@@ -8159,7 +8163,7 @@
                 "structure",
                 "windwalker"
             ],
-            "time": "2019-02-05T05:54:56+00:00"
+            "time": "2019-04-27T13:12:55+00:00"
         }
     ],
     "aliases": [],
