@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\GetUserFromToken;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\TrimStrings;
@@ -28,6 +29,7 @@ class Kernel extends HttpKernel
         ValidatePostSize::class,
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,
+        ForceHttps::class,
     ];
 
     /**

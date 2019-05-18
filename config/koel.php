@@ -124,6 +124,8 @@ return [
 
     'memory_limit' => env('MEMORY_LIMIT'),
 
+    'force_https' => env('FORCE_HTTPS', false),
+
     'misc' => [
         'home_url' => 'https://koel.phanan.net/',
         'docs_url' => 'https://koel.phanan.net/docs',
