@@ -22,6 +22,11 @@ tasks:
         sed -i "/FORCE_HTTPS=/c FORCE_HTTPS=true" .env;
         sed -i "/MEDIA_PATH=/c MEDIA_PATH=/workspace/media" .env;
         mkdir -p /workspace/media;
+        (cd /workspace/media;
+            wget http://www.hochmuth.com/mp3/Haydn_Cello_Concerto_D-1.mp3;
+            wget http://www.hochmuth.com/mp3/Tchaikovsky_Rococo_Var_orch.mp3;
+            wget http://www.hochmuth.com/mp3/Vivaldi_Sonata_eminor_.mp3;
+        );
         source .env;
         mysql -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE";
         mysql -e "CREATE USER '$DB_USERNAME'@'localhost' IDENTIFIED BY '$DB_PASSWORD';";
