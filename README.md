@@ -14,6 +14,10 @@ For system requirements, installation/upgrade guides, troubleshooting etc., head
 
 All contributions, big or small, are warmheartedly welcome! Please note, however, that if you want to work on a new feature, first open an issue to make sure it's something desired – doing this will greatly save time for all of us.
 
+A quick and easy way to start hacking on koel is to open and run this repo in Gitpod, an online IDE with full Laravel support.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/phanan/koel)
+
 ## Backers
 
 Support us with a monthly donation and help us continue our activities. [[Become a backer](https://opencollective.com/koel#backer)]
