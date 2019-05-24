@@ -24,7 +24,7 @@ class InteractionRepository extends AbstractRepository
     {
         return $this->model->where([
             'user_id' => $user->id,
-            'like' => true,
+            'liked' => true,
         ])
             ->with('song')
             ->get()
