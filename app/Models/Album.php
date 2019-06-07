@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Facades\Lastfm;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Exception;
+use Cache;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -150,7 +151,7 @@ class Album extends Model
     public function writeCoverFile($binaryData, $extension, $destination = '')
     {
         $extension = trim(strtolower($extension), '. ');
-        $destination = $destination ?: $this->generateRandomCoverPath($extension);
+        $destination = $destination ?: $this->generateCoverPathFromBinaryData($binaryData, $extension);
         file_put_contents($destination, $binaryData);
 
         $this->update(['cover' => basename($destination)]);
@@ -165,7 +166,7 @@ class Album extends Model
     public function copyCoverFile($source, $destination = '')
     {
         $extension = pathinfo($source, PATHINFO_EXTENSION);
-        $destination = $destination ?: $this->generateRandomCoverPath($extension);
+        $destination = $destination ?: $this->generateCoverPathFromFile($source, $extension);
         copy($source, $destination);
 
         $this->update(['cover' => basename($destination)]);
@@ -181,6 +182,40 @@ class Album extends Model
     private function generateRandomCoverPath($extension)
     {
         return app()->publicPath().'/public/img/covers/'.uniqid('', true).".$extension";
+    }
+
+    /**
+     * Generates an album cover path where the filename is a hash of the images binary data to prevent duplicates.
+     *
+     * @param string $binaryData    The image data.
+     * @param string $extension     The file extension.
+     *
+     * @return string
+     */
+    private function generateCoverPathFromBinaryData($binaryData, $extension)
+    {
+        $hash = Cache::remember('coverHash_' . $binaryData, 1 * 60, function () use ($binaryData) {
+            return hash('sha256', $binaryData);
+        });
+
+        return app()->publicPath() . '/public/img/covers/' . $hash . ".$extension";
+    }
+
+    /**
+     * Generates an album cover path where the filename is a hash of original image file to prevent duplicates.
+     *
+     * @param string $source        The absolute path of the original image.
+     * @param string $extension     The file extension.
+     *
+     * @return string
+     */
+    private function generateCoverPathFromFile($source, $extension)
+    {
+        $hash = Cache::remember('coverSourceHash_' . $source, 1 * 60, function () use ($source) {
+            return hash_file('sha256', $source);
+        });
+
+        return app()->publicPath() . '/public/img/covers/' . $hash . ".$extension";
     }
 
     /**
