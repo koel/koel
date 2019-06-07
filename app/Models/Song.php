@@ -141,6 +141,7 @@ class Song extends Model
      *                    - artistName
      *                    - albumName
      *                    - lyrics
+     *                    - compilationState
      *                    All of these are optional, in which case the info will not be changed
      *                    (except for lyrics, which will be emptied).
      *
@@ -222,6 +223,16 @@ class Song extends Model
         }
 
         $album = Album::get($artist, $albumName, $isCompilation);
+
+        // Restore album cover
+        if ($album->wasRecentlyCreated && !$album->has_cover) {
+            $previousCover = $this->album->getOriginal('cover');
+
+            if ($previousCover) {
+                $album->setCoverAttribute($previousCover);
+                $album->save();
+            }
+        }
 
         $this->artist_id = $artist->id;
         $this->album_id = $album->id;
