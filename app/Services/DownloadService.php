@@ -7,7 +7,7 @@ use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\SongZipArchive;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use InvalidArgumentException;
 
 class DownloadService
