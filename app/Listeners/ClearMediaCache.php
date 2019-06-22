@@ -2,23 +2,19 @@
 
 namespace App\Listeners;
 
-use MediaCache;
+use App\Services\MediaCacheService;
 
 class ClearMediaCache
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
+    private $mediaCacheService;
+
+    public function __construct(MediaCacheService $mediaCacheService)
     {
+        $this->mediaCacheService = $mediaCacheService;
     }
 
-    /**
-     * Fired every time a LibraryChanged event is triggered.
-     * Clears the media cache.
-     */
-    public function handle()
+    public function handle(): void
     {
-        MediaCache::clear();
+        $this->mediaCacheService->clear();
     }
 }

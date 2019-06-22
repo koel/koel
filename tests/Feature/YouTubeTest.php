@@ -3,22 +3,39 @@
 namespace Tests\Feature;
 
 use App\Models\Song;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use YouTube;
+use App\Services\YouTubeService;
+use Exception;
+use Mockery;
+use Mockery\MockInterface;
 
 class YouTubeTest extends TestCase
 {
-    use WithoutMiddleware;
+    /** @var MockInterface */
+    private $youTubeService;
 
-    /** @test */
-    public function youtube_videos_related_to_a_song_can_be_searched()
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->youTubeService = $this->mockIocDependency(YouTubeService::class);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSearchYouTubeVideos(): void
     {
         $this->createSampleMediaSet();
         $song = Song::first();
 
-        // We test on the facade here
-        YouTube::shouldReceive('searchVideosRelatedToSong')->once();
+        $this->youTubeService
+            ->shouldReceive('searchVideosRelatedToSong')
+            ->with(Mockery::on(static function (Song $retrievedSong) use ($song) {
+                return $song->id === $retrievedSong->id;
+            }), 'foo')
+            ->once();
 
-        $this->getAsUser("/api/youtube/search/song/{$song->id}");
+        $this->getAsUser("/api/youtube/search/song/{$song->id}?pageToken=foo")
+            ->assertResponseOk();
     }
 }

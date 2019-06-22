@@ -3,34 +3,33 @@
 namespace Tests\Feature;
 
 use App\Models\Song;
-use App\Services\Lastfm;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Mockery as m;
+use App\Models\User;
+use App\Services\LastfmService;
+use Exception;
 
 class ScrobbleTest extends TestCase
 {
-    use WithoutMiddleware;
-
-    protected function tearDown()
-    {
-        m::close();
-        parent::tearDown();
-    }
-
-    /** @test */
-    public function a_song_can_be_scrobbled_via_lastfm()
+    /**
+     * @throws Exception
+     */
+    public function testLastfmScrobble()
     {
         $this->withoutEvents();
         $this->createSampleMediaSet();
 
         $song = Song::first();
+        /** @var User $user */
+        $user = factory(User::class)->create();
+        $user->setPreference('lastfm_session_key', 'foo');
 
         $ts = time();
 
-        m::mock(Lastfm::class, ['enabled' => true])
+        $this->mockIocDependency(LastfmService::class)
             ->shouldReceive('scrobble')
-            ->with($song->album->artist->name, $song->title, $ts, $song->album->name, 'bar');
+            ->with($song->album->artist->name, $song->title, $ts, $song->album->name, 'foo')
+            ->once();
 
-        $this->post("/api/{$song->id}/scrobble/$ts");
+        $this->postAsUser("/api/{$song->id}/scrobble/$ts", [], $user)
+            ->assertResponseOk();
     }
 }

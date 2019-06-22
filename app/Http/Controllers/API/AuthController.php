@@ -5,21 +5,48 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\UserLoginRequest;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use JWTAuth;
-use Log;
+use Illuminate\Log\Logger;
+use Tymon\JWTAuth\JWTAuth;
 
+/**
+ * @group 1. Authentication
+ */
 class AuthController extends Controller
 {
+    private $auth;
+    private $logger;
+
+    public function __construct(JWTAuth $auth, Logger $logger)
+    {
+        $this->auth = $auth;
+        $this->logger = $logger;
+    }
+
     /**
      * Log a user in.
      *
-     * @param UserLoginRequest $request
+     * Koel uses [JSON Web Tokens](https://jwt.io/) (JWT) for authentication.
+     * After the user has been authenticated, a random "token" will be returned.
+     * This token should then be saved in a local storage and used as an `Authorization: Bearer` header
+     * for consecutive calls.
+     *
+     * Notice: The token is valid for a week, after that the user will need to log in again.
+     *
+     * @bodyParam email string required The user's email. Example: john@doe.com
+     * @bodyParam password string required The password. Example: SoSecureMuchW0w
+     *
+     * @response {
+     *   "token": "<a-random-string>"
+     * }
+     * @reponse 401 {
+     *   "message": "Invalid credentials"
+     * }
      *
      * @return JsonResponse
      */
     public function login(UserLoginRequest $request)
     {
-        $token = JWTAuth::attempt($request->only('email', 'password'));
+        $token = $this->auth->attempt($request->only('email', 'password'));
         abort_unless($token, 401, 'Invalid credentials');
 
         return response()->json(compact('token'));
@@ -32,11 +59,11 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        if ($token = JWTAuth::getToken()) {
+        if ($token = $this->auth->getToken()) {
             try {
-                JWTAuth::invalidate($token);
+                $this->auth->invalidate($token);
             } catch (Exception $e) {
-                Log::error($e);
+                $this->logger->error($e);
             }
         }
 

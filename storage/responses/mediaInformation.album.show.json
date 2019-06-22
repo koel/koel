@@ -1,0 +1,24 @@
+{
+  "url": "https://www.last.fm/music/Queen/Innuendo",
+  "image": "https://lastfm-img2.akamaized.net/i/u/300x300/b56adcd16ca6454498981a8470a3ec06.png",
+  "wiki": {
+    "summary": "Innuendo is a 1991 album by English rock band Queen...",
+    "full": "Innuendo is a 1991 album by English rock band Queen. It is the band's fourteenth studio album..."
+  },
+  "tracks": [
+    {
+      "title": "Innuendo",
+      "length": 392,
+      "url": "https://www.last.fm/music/Queen/_/Innuendo"
+    },
+    {
+      "title": "I'm Going Slightly Mad",
+      "length": 247,
+      "url": "https://www.last.fm/music/Queen/_/I%27m+Going+Slightly+Mad"
+    },
+    {
+      "...": "..."
+    }
+  ],
+  "cover": "https://koel.yourdomain.net/img/covers/5a771ec82a5d72.25096250.png"
+}

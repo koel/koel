@@ -1,4 +1,4 @@
-# koel [![Build Status](https://travis-ci.org/phanan/koel.svg?branch=master)](https://travis-ci.org/phanan/koel) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
+# koel [![Build Status](https://travis-ci.org/phanan/koel.svg?branch=master)](https://travis-ci.org/phanan/koel) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![codecov](https://codecov.io/gh/phanan/koel/branch/master/graph/badge.svg)](https://codecov.io/gh/phanan/koel) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
 
 ![Showcase](http://koel.phanan.net/dist/img/showcase.png?2)
 
@@ -9,6 +9,14 @@
 ## Install and Upgrade Guide
 
 For system requirements, installation/upgrade guides, troubleshooting etc., head over to the [Official Documentation](http://koel.phanan.net/docs).
+
+## Contribute
+
+All contributions, big or small, are warmheartedly welcome! Please note, however, that if you want to work on a new feature, first open an issue to make sure it's something desired – doing this will greatly save time for all of us.
+
+A quick and easy way to start hacking on koel is to open and run this repo in Gitpod, an online IDE with full Laravel support.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/phanan/koel)
 
 ## Backers
 

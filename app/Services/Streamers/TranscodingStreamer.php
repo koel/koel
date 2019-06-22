@@ -2,9 +2,7 @@
 
 namespace App\Services\Streamers;
 
-use App\Models\Song;
-
-class TranscodingStreamer extends Streamer implements StreamerInterface
+class TranscodingStreamer extends Streamer implements TranscodingStreamerInterface
 {
     /**
      * Bit rate the stream should be transcoded at.
@@ -16,21 +14,14 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
     /**
      * Time point to start transcoding from.
      *
-     * @var int
+     * @var float
      */
     private $startTime;
-
-    public function __construct(Song $song, $bitRate, $startTime = 0)
-    {
-        parent::__construct($song);
-        $this->bitRate = $bitRate;
-        $this->startTime = $startTime;
-    }
 
     /**
      * On-the-fly stream the current song while transcoding.
      */
-    public function stream()
+    public function stream(): void
     {
         $ffmpeg = config('koel.streaming.ffmpeg_path');
         abort_unless(is_executable($ffmpeg), 500, 'Transcoding requires valid ffmpeg settings.');
@@ -54,5 +45,15 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
         }
 
         passthru("$ffmpeg ".implode($args, ' '));
+    }
+
+    public function setBitRate(int $bitRate): void
+    {
+        $this->bitRate = $bitRate;
+    }
+
+    public function setStartTime(float $startTime): void
+    {
+        $this->startTime = $startTime;
     }
 }

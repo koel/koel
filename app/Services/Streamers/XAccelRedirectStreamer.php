@@ -4,12 +4,12 @@ namespace App\Services\Streamers;
 
 use App\Models\Setting;
 
-class XAccelRedirectStreamer extends Streamer implements StreamerInterface
+class XAccelRedirectStreamer extends Streamer implements DirectStreamerInterface
 {
     /**
      * Stream the current song using nginx's X-Accel-Redirect.
      */
-    public function stream()
+    public function stream(): void
     {
         $relativePath = str_replace(Setting::get('media_path'), '', $this->song->path);
 

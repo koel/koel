@@ -8,16 +8,38 @@ use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Repositories\SongRepository;
+use App\Services\HelperService;
+use App\Services\MediaMetadataService;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Media;
 
+/**
+ * @group AWS integration
+ *
+ * These routes are meant for Amazon Web Services (AWS) integration with Koel. For more information, visit
+ * [koel-aws](https://github.com/koel/koel-aws).
+ */
 class SongController extends Controller
 {
+    private $mediaMetadataService;
+    private $songRepository;
+    private $helperService;
+
+    public function __construct(
+        MediaMetadataService $mediaMetadataService,
+        HelperService $helperService,
+        SongRepository $songRepository
+    ) {
+        $this->mediaMetadataService = $mediaMetadataService;
+        $this->songRepository = $songRepository;
+        $this->helperService = $helperService;
+    }
+
     /**
-     * Store a new song or update an existing one with data from AWS.
+     * Store a song.
      *
-     * @param PutSongRequest $request
+     * Create a new song or update an existing one with data sent from AWS.
      *
      * @return JsonResponse
      */
@@ -32,27 +54,29 @@ class SongController extends Controller
         $album = Album::get($artist, array_get($tags, 'album'), $compilation);
 
         if ($cover = array_get($tags, 'cover')) {
-            $album->writeCoverFile(base64_decode($cover['data']), $cover['extension']);
+            $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data']), $cover['extension']);
         }
 
-        $song = Song::updateOrCreate(['id' => Media::getHash($path)], [
+        $song = Song::updateOrCreate(['id' => $this->helperService->getFileHash($path)], [
             'path' => $path,
             'album_id' => $album->id,
             'artist_id' => $artist->id,
             'title' => trim(array_get($tags, 'title', '')),
-            'length' => array_get($tags, 'duration', 0),
+            'length' => array_get($tags, 'duration', 0) ?: 0,
             'track' => (int) array_get($tags, 'track'),
-            'lyrics' => array_get($tags, 'lyrics', ''),
+            'lyrics' => array_get($tags, 'lyrics', '') ?: '',
             'mtime' => time(),
         ]);
+
+        event(new LibraryChanged());
 
         return response()->json($song);
     }
 
     /**
-     * Remove a song whose info matches with data sent from AWS.
+     * Remove a song.
      *
-     * @param RemoveSongRequest $request
+     * Remove a song whose information matches with data sent from AWS.
      *
      * @throws Exception
      *
@@ -60,8 +84,9 @@ class SongController extends Controller
      */
     public function remove(RemoveSongRequest $request)
     {
-        $song = Song::byPath("s3://{$request->bucket}/{$request->key}");
+        $song = $this->songRepository->getOneByPath("s3://{$request->bucket}/{$request->key}");
         abort_unless((bool) $song, 404);
+
         $song->delete();
         event(new LibraryChanged());
 

@@ -3,31 +3,10 @@
 namespace Tests\Integration\Models;
 
 use App\Models\Artist;
-use Lastfm;
-use org\bovigo\vfs\vfsStream;
 use Tests\TestCase;
 
 class ArtistTest extends TestCase
 {
-    /** @test */
-    public function extra_info_can_be_retrieved_for_an_artist()
-    {
-        // Given there's an artist
-        /** @var Artist $artist */
-        $artist = factory(Artist::class)->create();
-
-        // When I get the extra info
-        Lastfm::shouldReceive('getArtistInfo')
-            ->once()
-            ->with($artist->name)
-            ->andReturn(['foo' => 'bar']);
-
-        $info = $artist->getInfo();
-
-        // Then I receive the extra info
-        $this->assertEquals(['foo' => 'bar'], $info);
-    }
-
     /** @test */
     public function existing_artist_can_be_retrieved_using_name()
     {
@@ -69,26 +48,6 @@ class ArtistTest extends TestCase
 
         // Then I get the artist as Unknown Artist
         $this->assertTrue($artist->is_unknown);
-    }
-
-    /** @test */
-    public function it_can_write_an_image_file_and_update_itself_with_the_image()
-    {
-        // Given there's an artist and an image file content
-        /** @var Artist $artist */
-        $artist = factory(Artist::class)->create();
-        $imageContent = 'dummy';
-        $root = vfsStream::setup('home');
-        $imagePath = vfsStream::url('home/foo.jpg');
-
-        // When I call the method to write the image file
-        $artist->writeImageFile($imageContent, 'jpg', $imagePath);
-
-        // Then I see the image file is generated
-        $this->assertTrue($root->hasChild('foo.jpg'));
-
-        // And the artist's image attribute is updated
-        $this->assertEquals('http://localhost/public/img/artists/foo.jpg', Artist::find($artist->id)->image);
     }
 
     /** @test */

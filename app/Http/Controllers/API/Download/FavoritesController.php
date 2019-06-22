@@ -3,24 +3,31 @@
 namespace App\Http\Controllers\API\Download;
 
 use App\Http\Requests\API\Download\Request;
-use App\Models\Song;
-use Download;
-use Exception;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Repositories\InteractionRepository;
+use App\Services\DownloadService;
 
+/**
+ * @group 6. Download
+ */
 class FavoritesController extends Controller
 {
-    /**
-     * Download all songs in a playlist.
-     *
-     * @param Request $request
-     *
-     * @throws Exception
-     *
-     * @return BinaryFileResponse
-     */
-    public function download(Request $request)
+    private $interactionRepository;
+
+    public function __construct(DownloadService $downloadService, InteractionRepository $interactionRepository)
     {
-        return response()->download(Download::from(Song::getFavorites($request->user())));
+        parent::__construct($downloadService);
+        $this->interactionRepository = $interactionRepository;
+    }
+
+    /**
+     * Download all songs favorite'd by the current user.
+     *
+     * @response []
+     */
+    public function show(Request $request)
+    {
+        $songs = $this->interactionRepository->getUserFavorites($request->user());
+
+        return response()->download($this->downloadService->from($songs));
     }
 }

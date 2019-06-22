@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1541356285385,
+    "rules": [
+      {
+        "id": 1541356313181,
+        "model": "title",
+        "operator": "is",
+        "value": [
+          "Foo"
+        ]
+      },
+      {
+        "id": 1542573964152,
+        "model": "album.name",
+        "operator": "isNot",
+        "value": [
+          "Bar"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 1542573971423,
+    "rules": [
+      {
+        "id": 1542573972485,
+        "model": "genre",
+        "operator": "is",
+        "value": [
+          "Metal"
+        ]
+      },
+      {
+        "id": 1542573978609,
+        "model": "bit_rate",
+        "operator": "isGreaterThan",
+        "value": [
+          "128"
+        ]
+      }
+    ]
+  }
+]

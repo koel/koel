@@ -1,0 +1,38 @@
+image:
+  file: .gitpod.dockerfile
+ports:
+  - port: 8001
+    onOpen: open-preview
+  - port: 3306
+    onOpen: ignore
+tasks:
+  - name: Apache
+    command: >
+        touch /var/log/apache2/error.log;
+        touch /var/log/apache2/access.log;
+        multitail /var/log/apache2/error.log -I /var/log/apache2/access.log
+  - name: koel
+    init: >
+        composer install
+    command: >
+        cp .env.example .env;
+        WORKSPACE_URL=$(gp url 8001 | sed -E s/\\/$//);
+        sed -i "/APP_URL=/c APP_URL=$WORKSPACE_URL" .env;
+        sed -i "/CDN_URL=/c CDN_URL=$WORKSPACE_URL" .env;
+        sed -i "/FORCE_HTTPS=/c FORCE_HTTPS=true" .env;
+        sed -i "/MEDIA_PATH=/c MEDIA_PATH=/workspace/media" .env;
+        mkdir -p /workspace/media;
+        (cd /workspace/media;
+            wget http://www.hochmuth.com/mp3/Haydn_Cello_Concerto_D-1.mp3;
+            wget http://www.hochmuth.com/mp3/Tchaikovsky_Rococo_Var_orch.mp3;
+            wget http://www.hochmuth.com/mp3/Vivaldi_Sonata_eminor_.mp3;
+        );
+        source .env;
+        mysql -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE";
+        mysql -e "CREATE USER '$DB_USERNAME'@'localhost' IDENTIFIED BY '$DB_PASSWORD';";
+        mysql -e "GRANT ALL PRIVILEGES ON * . * TO '$DB_USERNAME'@'localhost';";
+        mysqladmin reload;
+        php artisan koel:init --no-interaction;
+        php artisan koel:sync;
+        php artisan key:generate;
+        apachectl start;

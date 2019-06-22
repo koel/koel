@@ -2,31 +2,26 @@
 
 namespace App\Http\Requests\API;
 
+use App\Models\User;
+
 /**
- * @property string password
+ * @property string $password
  */
 class UserUpdateRequest extends Request
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         return auth()->user()->is_admin;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
+        /** @var User $user */
+        $user = $this->route('user');
+
         return [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$this->route('user')->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
         ];
     }
 }

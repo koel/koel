@@ -17,15 +17,6 @@
     "presets": [
       "es2015",
       "stage-0"
-    ],
-    "plugins": [
-      [
-        "babel-plugin-root-import",
-        {
-          "rootPathSuffix": "resources/assets/js",
-          "rootPathPrefix": "@"
-        }
-      ]
     ]
   },
   "eslintConfig": {
@@ -36,6 +27,7 @@
     }
   },
   "dependencies": {
+    "@phanan/vuebus": "^1.0.0",
     "alertify.js": "^1.0.12",
     "axios": "^0.15.3",
     "blueimp-md5": "^2.3.0",
@@ -47,8 +39,10 @@
     "nprogress": "^0.2.0",
     "plyr": "1.5.x",
     "select": "^1.0.6",
+    "sketch-js": "^1.1.3",
     "slugify": "^1.0.2",
     "vue": "^2.5.0",
+    "vue-global-events": "^1.0.2",
     "vue-virtual-scroller": "^0.5.0",
     "vuequery": "^1.0.0",
     "youtube-player": "^3.0.4"
@@ -59,9 +53,9 @@
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.2",
-    "babel-plugin-root-import": "^5.1.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.23.0",
     "babel-runtime": "^6.22.0",
@@ -69,6 +63,7 @@
     "chalk": "^1.1.3",
     "cross-env": "^3.2.3",
     "css-loader": "^0.28.7",
+    "cypress": "^3.2.0",
     "eslint": "^3.10.2",
     "eslint-config-vue": "^2.0.1",
     "eslint-plugin-vue": "^1.0.0",
@@ -77,10 +72,11 @@
     "font-awesome": "^4.7.0",
     "jsdom": "^11.5.1",
     "jsdom-global": "^3.0.2",
+    "kill-port": "^1.3.2",
     "laravel-mix": "^0.8.0",
     "mocha": "^2.3.4",
     "mocha-webpack": "^1.0.1",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.11.0",
     "nyc": "^11.3.0",
     "pusher-js": "^4.1.0",
     "sass-loader": "^6.0.6",
@@ -89,6 +85,7 @@
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.5.0",
     "vue-test-helpers": "^1.0.9",
+    "wait-on": "^3.2.0",
     "webpack": "^3.6.0",
     "webpack-node-externals": "^1.6.0"
   },
@@ -102,6 +99,7 @@
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch-poll": "yarn watch -- --watch-poll",
     "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "cy": "kill-port 8088 && php artisan serve --port=8088 & wait-on http://localhost:8088 && cypress run --browser chrome",
     "build": "yarn production",
     "prod": "yarn production",
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"

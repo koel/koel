@@ -2,30 +2,15 @@
 
 namespace App\Providers;
 
-use App\Services\MediaCache;
+use App\Services\MediaCacheService;
 use Illuminate\Support\ServiceProvider;
 
 class MediaCacheServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function register(): void
     {
-        //
-    }
-
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        app()->singleton('MediaCache', function () {
-            return new MediaCache();
+        app()->singleton('MediaCache', static function (): MediaCacheService {
+            return app(MediaCacheService::class);
         });
     }
 }

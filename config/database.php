@@ -41,7 +41,13 @@ return [
 
         'sqlite-e2e' => [
             'driver'   => 'sqlite',
-            'database' => __DIR__.'/../database/e2e.sqlite',
+            'database' => env('DB_DATABASE', __DIR__.'/../database/e2e.sqlite'),
+            'prefix'   => '',
+        ],
+
+        'sqlite-persistent' => [
+            'driver'   => 'sqlite',
+            'database' => __DIR__.'/../'.env('DB_DATABASE', 'koel.db'),
             'prefix'   => '',
         ],
 

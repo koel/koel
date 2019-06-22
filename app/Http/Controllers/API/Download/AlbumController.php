@@ -3,23 +3,19 @@
 namespace App\Http\Controllers\API\Download;
 
 use App\Models\Album;
-use Download;
-use Exception;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
+/**
+ * @group 6. Download
+ */
 class AlbumController extends Controller
 {
     /**
-     * Download all songs in an album.
+     * Download a whole album.
      *
-     * @param Album $album
-     *
-     * @throws Exception
-     *
-     * @return BinaryFileResponse
+     * @response []
      */
-    public function download(Album $album)
+    public function show(Album $album)
     {
-        return response()->download(Download::from($album));
+        return response()->download($this->downloadService->from($album));
     }
 }

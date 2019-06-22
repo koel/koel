@@ -7,20 +7,22 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Exception;
 
 class SongTest extends TestCase
 {
-    use WithoutMiddleware;
-
+    /**
+     * @throws Exception
+     */
     public function setUp()
     {
         parent::setUp();
+
         $this->createSampleMediaSet();
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testSingleUpdateAllInfoNoCompilation()
     {
@@ -302,7 +304,7 @@ class SongTest extends TestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testDeletingByChunk()
     {

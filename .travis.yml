@@ -1,38 +1,29 @@
 language: php
 
-php:
-  - 7.0
+addons:
+  chrome: stable
 
-env:
-  APP_ENV: testing
-  CACHE_DRIVER: array
-  SESSION_DRIVER: array
-  QUEUE_DRIVER: sync
-  DB_CONNECTION: sqlite
-  APP_KEY: 16efa6c23c2e8c705826b0e66778fbe7
-  JWT_SECRET: ki8jSvMf5wFrlSRBAWcGbmAzBUJfc8p8
-  ADMIN_EMAIL: koel@example.com
-  ADMIN_NAME: Koel
-  ADMIN_PASSWORD: SoSecureK0el
-  LASTFM_API_KEY: foo
-  LASTFM_API_SECRET: bar
-  BROADCAST_DRIVER: log
+php:
+  - 7.1
+  - 7.2
+  - 7.3
+
+node_js:
+  - 10
 
 branches:
   - master
 
 install:
-  - . $HOME/.nvm/nvm.sh
-  - nvm install 6.10.3
-  - nvm use 6.10.3
-  - npm install -g yarn
-  - yarn
   - composer self-update
   - composer install --prefer-dist --no-interaction
+  - yarn
 
 script:
-  - composer test
-  - yarn test
+  # Backend
+  - composer coverage
+  # Cypress
+  - yarn cy
 
 addons:
   code_climate:
@@ -40,3 +31,4 @@ addons:
 
 after_success:
   - vendor/bin/test-reporter
+  - bash <(curl -s https://codecov.io/bash)

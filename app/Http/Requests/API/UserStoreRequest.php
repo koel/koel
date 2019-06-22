@@ -3,28 +3,18 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property string password
- * @property string name
- * @property string email
+ * @property string $password
+ * @property string $name
+ * @property string $email
  */
 class UserStoreRequest extends Request
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         return auth()->user()->is_admin;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => 'required',

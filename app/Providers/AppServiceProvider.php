@@ -2,45 +2,45 @@
 
 namespace App\Providers;
 
-use DB;
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
+use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Factory as Validator;
+use Laravel\Tinker\TinkerServiceProvider;
+use Mpociot\ApiDoc\ApiDocGeneratorServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(Builder $schema, DatabaseManager $db, Validator $validator): void
     {
         // Fix utf8mb4-related error starting from Laravel 5.4
-        Schema::defaultStringLength(191);
+        $schema->defaultStringLength(191);
 
         // Enable on delete cascade for sqlite connections
-        if (DB::connection() instanceof SQLiteConnection) {
-            DB::statement(DB::raw('PRAGMA foreign_keys = ON'));
+        if ($db->connection() instanceof SQLiteConnection) {
+            $db->statement($db->raw('PRAGMA foreign_keys = ON'));
         }
 
         // Add some custom validation rules
-        Validator::extend('path.valid', function ($attribute, $value, $parameters, $validator) {
+        $validator->extend('path.valid', static function ($attribute, $value): bool {
             return is_dir($value) && is_readable($value);
         });
     }
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         if (!$this->app->environment('production')) {
-            $this->app->register('Laravel\Tinker\TinkerServiceProvider');
-            $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
+            $this->app->register(TinkerServiceProvider::class);
+            $this->app->register(IdeHelperServiceProvider::class);
+            $this->app->register(ApiDocGeneratorServiceProvider::class);
         }
     }
 }

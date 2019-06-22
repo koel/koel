@@ -3,34 +3,64 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Contracts\Hashing\Hasher;
+use Mockery\MockInterface;
 
 class UserTest extends TestCase
 {
-    /** @test */
-    public function admin_can_create_a_user()
-    {
-        // Non-admins can't do shit
-        $this->postAsUser('api/user', [
-                'name' => 'Foo',
-                'email' => 'bar@baz.com',
-                'password' => 'qux',
-            ])
-            ->seeStatusCode(403);
+    /** @var MockInterface */
+    private $hash;
 
-        // But admins can
+    public function setUp()
+    {
+        parent::setUp();
+        $this->hash = $this->mockIocDependency(Hasher::class);
+    }
+
+    public function testNonAdminCannotCreateUser()
+    {
+        $this->postAsUser('api/user', [
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'password' => 'qux',
+        ])->seeStatusCode(403);
+    }
+
+    public function testAdminCreatesUser()
+    {
+        $this->hash
+            ->shouldReceive('make')
+            ->once()
+            ->with('qux')
+            ->andReturn('hashed');
+
         $this->postAsUser('api/user', [
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'password' => 'qux',
             ], factory(User::class, 'admin')->create());
 
-        $this->seeInDatabase('users', ['name' => 'Foo']);
+        self::seeInDatabase('users', [
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'password' => 'hashed',
+        ]);
     }
 
-    /** @test */
-    public function admin_can_update_a_user()
+    public function testAdminUpdatesUser()
     {
-        $user = factory(User::class)->create();
+        /** @var User $user */
+        $user = factory(User::class)->create([
+            'name' => 'John',
+            'email' => 'john@doe.com',
+            'password' => 'nope',
+        ]);
+
+        $this->hash
+            ->shouldReceive('make')
+            ->once()
+            ->with('qux')
+            ->andReturn('hashed');
 
         $this->putAsUser("api/user/{$user->id}", [
                 'name' => 'Foo',
@@ -38,17 +68,26 @@ class UserTest extends TestCase
                 'password' => 'qux',
             ], factory(User::class, 'admin')->create());
 
-        $this->seeInDatabase('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
+        self::seeInDatabase('users', [
+            'id' => $user->id,
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'password' => 'hashed',
+        ]);
     }
 
-    /** @test */
-    public function admin_can_delete_a_user()
+    public function testAdminDeletesUser()
     {
         $user = factory(User::class)->create();
         $admin = factory(User::class, 'admin')->create();
 
         $this->deleteAsUser("api/user/{$user->id}", [], $admin)
             ->notSeeInDatabase('users', ['id' => $user->id]);
+    }
+
+    public function testSeppukuNotAllowed()
+    {
+        $admin = factory(User::class, 'admin')->create();
 
         // A user can't delete himself
         $this->deleteAsUser("api/user/{$admin->id}", [], $admin)
@@ -56,8 +95,7 @@ class UserTest extends TestCase
             ->seeInDatabase('users', ['id' => $admin->id]);
     }
 
-    /** @test */
-    public function user_can_update_their_preferences()
+    public function testUpdateUserProfile()
     {
         $user = factory(User::class)->create();
         $this->assertNull($user->getPreference('foo'));

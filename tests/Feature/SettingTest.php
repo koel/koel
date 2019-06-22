@@ -4,21 +4,28 @@ namespace Tests\Feature;
 
 use App\Models\Setting;
 use App\Models\User;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Media;
+use App\Services\MediaSyncService;
+use Mockery\MockInterface;
 
 class SettingTest extends TestCase
 {
-    use WithoutMiddleware;
+    /** @var MockInterface */
+    private $mediaSyncService;
 
-    /** @test */
-    public function application_setting_is_saved_properly()
+    public function setUp()
     {
-        Media::shouldReceive('sync')->once();
+        parent::setUp();
+        $this->mediaSyncService = $this->mockIocDependency(MediaSyncService::class);
+    }
+
+    public function testSaveSettings()
+    {
+        $this->mediaSyncService->shouldReceive('sync')->once();
 
         $user = factory(User::class, 'admin')->create();
-        $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user)->seeStatusCode(200);
+        file_put_contents('log', $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user)
+            ->response->content());
 
-        $this->assertEquals(__DIR__, Setting::get('media_path'));
+        self::assertEquals(__DIR__, Setting::get('media_path'));
     }
 }
