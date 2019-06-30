@@ -95,7 +95,7 @@ class SongZipArchive
             $this->fileNames[$name]++;
             $parts = explode('.', $name);
             $ext = $parts[count($parts) - 1];
-            $parts[count($parts) - 1] = $this->fileNames[$name] . ".$ext";
+            $parts[count($parts) - 1] = $this->fileNames[$name].".$ext";
             $name = implode('.', $parts);
         } else {
             $this->fileNames[$name] = 1;
