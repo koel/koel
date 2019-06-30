@@ -102,7 +102,7 @@ class FileSynchronizer
     }
 
     /**
-     * Get all applicable ID3 info from the file.
+     * Get all applicable info from the file.
      */
     public function getFileInfo(): array
     {
@@ -117,21 +117,9 @@ class FileSynchronizer
         // Copy the available tags over to comment.
         // This is a helper from getID3, though it doesn't really work well.
         // We'll still prefer getting ID3v2 tags directly later.
-        // Read on.
         getid3_lib::CopyTagsToComments($info);
 
-        $track = 0;
-
-        // Apparently track number can be stored with different indices as the following.
-        $trackIndices = [
-            'comments.track',
-            'comments.tracknumber',
-            'comments.track_number',
-        ];
-
-        for ($i = 0; $i < count($trackIndices) && $track === 0; $i++) {
-            $track = array_get($info, $trackIndices[$i], [0])[0];
-        }
+        $track = $this->getTrackNumberFromInfo($info);
 
         $props = [
             'artist' => '',
@@ -151,30 +139,8 @@ class FileSynchronizer
             return $props;
         }
 
-        $propertyMap = [
-            'artist' => 'artist',
-            'albumartist' => 'band',
-            'album' => 'album',
-            'title' => 'title',
-            'lyrics' => 'unsynchronised_lyric',
-            'compilation' => 'part_of_a_compilation',
-        ];
-
-        foreach ($propertyMap as $name => $tag) {
-            $props[$name] = array_get($info, "tags.id3v2.$tag", [null])[0] ?: array_get($comments, $tag, [''])[0];
-            // Fixes #323, where tag names can be htmlentities()'ed
-            if (is_string($props[$name]) && $props[$name]) {
-                $props[$name] = trim(html_entity_decode($props[$name]));
-            }
-        }
-
-        // A "compilation" property can be determined by:
-        // - "part_of_a_compilation" tag (used by iTunes), or
-        // - "albumartist" (used by non-retarded applications).
-        // Also, the latter is only valid if the value is NOT the same as "artist".
-        if (!$props['compilation']) {
-            $props['compilation'] = $props['albumartist'] && $props['artist'] !== $props['albumartist'];
-        }
+        $this->gatherPropsFromTags($info, $comments, $props);
+        $props['compilation'] = (bool) $props['compilation'] || $this->isCompilation($props);
 
         return $props;
     }
@@ -187,12 +153,10 @@ class FileSynchronizer
      */
     public function sync(array $tags, bool $force = false): int
     {
-        // If the file is not new or changed and we're not forcing update, don't do anything.
         if (!$this->isFileNewOrChanged() && !$force) {
             return self::SYNC_RESULT_UNMODIFIED;
         }
 
-        // If the file is invalid, don't do anything.
         if (!$info = $this->getFileInfo()) {
             return self::SYNC_RESULT_BAD_FILE;
         }
@@ -225,22 +189,19 @@ class FileSynchronizer
             // Otherwise, re-use the existing model value.
             $artist = isset($info['artist']) ? Artist::get($info['artist']) : $this->song->album->artist;
 
-            $isCompilation = (bool) array_get($info, 'compilation');
-
             // If the "album" tag is specified, use it.
             // Otherwise, re-use the existing model value.
             if (isset($info['album'])) {
                 $album = $changeCompilationAlbumOnly
                     ? $this->song->album
-                    : Album::get($artist, $info['album'], $isCompilation);
+                    : Album::get($artist, $info['album'], array_get($info, 'compilation'));
             } else {
                 $album = $this->song->album;
             }
         } else {
             // The file is newly added.
-            $isCompilation = (bool) array_get($info, 'compilation');
             $artist = Artist::get($info['artist']);
-            $album = Album::get($artist, $info['album'], $isCompilation);
+            $album = Album::get($artist, $info['album'], array_get($info, 'compilation'));
         }
 
         if (!$album->has_cover) {
@@ -290,24 +251,19 @@ class FileSynchronizer
         // As directory scanning can be expensive, we cache and reuse the result.
         return $this->cache->remember(md5($this->filePath.'_cover'), 24 * 60, function (): ?string {
             $matches = array_keys(iterator_to_array(
-                    $this->finder->create()
-                        ->depth(0)
-                        ->ignoreUnreadableDirs()
-                        ->files()
-                        ->followLinks()
-                        ->name('/(cov|fold)er\.(jpe?g|png)$/i')
-                        ->in(dirname($this->filePath))
+                $this->finder->create()
+                    ->depth(0)
+                    ->ignoreUnreadableDirs()
+                    ->files()
+                    ->followLinks()
+                    ->name('/(cov|fold)er\.(jpe?g|png)$/i')
+                    ->in(dirname($this->filePath))
                 )
             );
 
             $cover = $matches ? $matches[0] : null;
 
-            // Even if a file is found, make sure it's a real image.
-            if ($cover && !$this->isImage($cover)) {
-                $cover = null;
-            }
-
-            return $cover;
+            return $cover && $this->isImage($cover) ? $cover : null;
         });
     }
 
@@ -344,5 +300,53 @@ class FileSynchronizer
     public function getSyncError(): ?string
     {
         return $this->syncError;
+    }
+
+    private function getTrackNumberFromInfo(array $info): int
+    {
+        $track = 0;
+
+        // Apparently track numbers can be stored with different indices as the following.
+        $trackIndices = [
+            'comments.track',
+            'comments.tracknumber',
+            'comments.track_number',
+        ];
+
+        for ($i = 0; $i < count($trackIndices) && $track === 0; $i++) {
+            $track = (int) array_get($info, $trackIndices[$i], [0])[0];
+        }
+
+        return $track;
+    }
+
+    private function gatherPropsFromTags(array $info, array $comments, array &$props): void
+    {
+        $propertyMap = [
+            'artist' => 'artist',
+            'albumartist' => 'band',
+            'album' => 'album',
+            'title' => 'title',
+            'lyrics' => 'unsynchronised_lyric',
+            'compilation' => 'part_of_a_compilation',
+        ];
+
+        foreach ($propertyMap as $name => $tag) {
+            $props[$name] = array_get($info, "tags.id3v2.$tag", [null])[0] ?: array_get($comments, $tag, [''])[0];
+
+            // Fixes #323, where tag names can be htmlentities()'ed
+            if (is_string($props[$name]) && $props[$name]) {
+                $props[$name] = trim(html_entity_decode($props[$name]));
+            }
+        }
+    }
+
+    private function isCompilation(array $props): bool
+    {
+        // A "compilation" property can be determined by:
+        // - "part_of_a_compilation" tag (used by iTunes), or
+        // - "albumartist" (used by non-retarded applications).
+        // Also, the latter is only valid if the value is NOT the same as "artist".
+        return $props['albumartist'] && $props['artist'] !== $props['albumartist'];
     }
 }
