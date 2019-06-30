@@ -69,8 +69,7 @@ class FileSynchronizer
         SongRepository $songRepository,
         Cache $cache,
         Finder $finder
-    )
-    {
+    ) {
         $this->getID3 = $getID3;
         $this->mediaMetadataService = $mediaMetadataService;
         $this->helperService = $helperService;
@@ -138,10 +137,10 @@ class FileSynchronizer
             'artist' => '',
             'album' => '',
             'compilation' => false,
-            'title' => basename($this->filePath, '.' . pathinfo($this->filePath, PATHINFO_EXTENSION)), // default to be file name
+            'title' => basename($this->filePath, '.'.pathinfo($this->filePath, PATHINFO_EXTENSION)), // default to be file name
             'length' => $info['playtime_seconds'],
-            'track' => (int)$track,
-            'disc' => (int)array_get($info, 'comments.part_of_a_set.0', 1),
+            'track' => (int) $track,
+            'disc' => (int) array_get($info, 'comments.part_of_a_set.0', 1),
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
             'path' => $this->filePath,
@@ -226,7 +225,7 @@ class FileSynchronizer
             // Otherwise, re-use the existing model value.
             $artist = isset($info['artist']) ? Artist::get($info['artist']) : $this->song->album->artist;
 
-            $isCompilation = (bool)array_get($info, 'compilation');
+            $isCompilation = (bool) array_get($info, 'compilation');
 
             // If the "album" tag is specified, use it.
             // Otherwise, re-use the existing model value.
@@ -239,7 +238,7 @@ class FileSynchronizer
             }
         } else {
             // The file is newly added.
-            $isCompilation = (bool)array_get($info, 'compilation');
+            $isCompilation = (bool) array_get($info, 'compilation');
             $artist = Artist::get($info['artist']);
             $album = Album::get($artist, $info['album'], $isCompilation);
         }
@@ -289,7 +288,7 @@ class FileSynchronizer
     private function getCoverFileUnderSameDirectory(): ?string
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        return $this->cache->remember(md5($this->filePath . '_cover'), 24 * 60, function (): ?string {
+        return $this->cache->remember(md5($this->filePath.'_cover'), 24 * 60, function (): ?string {
             $matches = array_keys(iterator_to_array(
                     $this->finder->create()
                         ->depth(0)
@@ -315,7 +314,7 @@ class FileSynchronizer
     private function isImage(string $path): bool
     {
         try {
-            return (bool)exif_imagetype($path);
+            return (bool) exif_imagetype($path);
         } catch (Exception $e) {
             return false;
         }
