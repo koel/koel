@@ -33,7 +33,7 @@ class SongZipArchive
 
     public function __construct(string $path = '')
     {
-        $this->path = $path ? $path : self::generateRandomArchivePath();
+        $this->path = $path ?: self::generateRandomArchivePath();
 
         $this->archive = new ZipArchive();
 
@@ -109,5 +109,10 @@ class SongZipArchive
         // We use system's temp dir instead of storage_path() here, so that the generated files
         // can be cleaned up automatically after server reboot.
         return sprintf('%s%skoel-download-%s.zip', sys_get_temp_dir(), DIRECTORY_SEPARATOR, uniqid());
+    }
+
+    public function getArchive(): ZipArchive
+    {
+        return $this->archive;
     }
 }

@@ -15,11 +15,11 @@ class SongZipArchiveTest extends TestCase
             'path' => realpath(__DIR__.'/../../songs/full.mp3'),
         ]);
 
-        $archive = new SongZipArchive();
-        $archive->addSong($song);
+        $songZipArchive = new SongZipArchive();
+        $songZipArchive->addSong($song);
 
-        $this->assertEquals(1, $archive->numFiles);
-        $this->assertEquals('full.mp3', $archive->getNameIndex(0));
+        $this->assertEquals(1, $songZipArchive->getArchive()->numFiles);
+        $this->assertEquals('full.mp3', $songZipArchive->getArchive()->getNameIndex(0));
     }
 
     /** @test */
@@ -34,11 +34,11 @@ class SongZipArchiveTest extends TestCase
             ]),
         ]);
 
-        $archive = new SongZipArchive();
-        $archive->addSongs($songs);
+        $songZipArchive = new SongZipArchive();
+        $songZipArchive->addSongs($songs);
 
-        $this->assertEquals(2, $archive->numFiles);
-        $this->assertEquals('full.mp3', $archive->getNameIndex(0));
-        $this->assertEquals('lorem.mp3', $archive->getNameIndex(1));
+        $this->assertEquals(2, $songZipArchive->getArchive()->numFiles);
+        $this->assertEquals('full.mp3', $songZipArchive->getArchive()->getNameIndex(0));
+        $this->assertEquals('lorem.mp3', $songZipArchive->getArchive()->getNameIndex(1));
     }
 }
