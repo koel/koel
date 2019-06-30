@@ -34,7 +34,7 @@ class MediaMetadataService
     public function copyAlbumCover(Album $album, string $source, string $destination = ''): void
     {
         $extension = pathinfo($source, PATHINFO_EXTENSION);
-        $destination = $destination ?: $this->generateAlbumCoverPath($extension);
+        $destination = $destination ?: $this->generateAlbumCoverPath($album, $extension);
         copy($source, $destination);
 
         $album->update(['cover' => basename($destination)]);
@@ -49,7 +49,7 @@ class MediaMetadataService
     {
         try {
             $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateAlbumCoverPath($extension);
+            $destination = $destination ?: $this->generateAlbumCoverPath($album, $extension);
             file_put_contents($destination, $binaryData);
 
             $album->update(['cover' => basename($destination)]);
@@ -80,7 +80,7 @@ class MediaMetadataService
     ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateArtistImagePath($extension);
+            $destination = $destination ?: $this->generateArtistImagePath($artist, $extension);
             file_put_contents($destination, $binaryData);
 
             $artist->update(['image' => basename($destination)]);
@@ -90,22 +90,22 @@ class MediaMetadataService
     }
 
     /**
-     * Generate a random path for an album cover image.
+     * Generate the absolute path for an album cover image.
      *
      * @param string $extension The extension of the cover (without dot)
      */
-    private function generateAlbumCoverPath($extension): string
+    private function generateAlbumCoverPath(Album $album, string $extension): string
     {
-        return sprintf('%s/public/img/covers/%s.%s', app()->publicPath(), uniqid('', true), $extension);
+        return sprintf('%s/public/img/covers/%s.%s', app()->publicPath(), sha1($album->id), $extension);
     }
 
     /**
-     * Generate a random path for an artist image.
+     * Generate the absolute path for an artist image.
      *
      * @param string $extension The extension of the cover (without dot)
      */
-    private function generateArtistImagePath($extension): string
+    private function generateArtistImagePath(Artist $artist, $extension): string
     {
-        return sprintf('%s/public/img/artists/%s.%s', app()->publicPath(), uniqid('', true), $extension);
+        return sprintf('%s/public/img/artists/%s.%s', app()->publicPath(), sha1($artist->id), $extension);
     }
 }
