@@ -11,7 +11,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-class SyncMediaCommand extends Command
+class SyncCommand extends Command
 {
     protected $signature = 'koel:sync
         {record? : A single watch record. Consult Wiki for more info.}

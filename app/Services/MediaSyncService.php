@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Console\Commands\SyncMediaCommand;
+use App\Console\Commands\SyncCommand;
 use App\Events\LibraryChanged;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
@@ -81,11 +81,11 @@ class MediaSyncService
     /**
      * Sync the media. Oh sync the media.
      *
-     * @param string[]         $tags        The tags to sync.
+     * @param string[]    $tags             The tags to sync.
      *                                      Only taken into account for existing records.
      *                                      New records will have all tags synced in regardless.
-     * @param bool             $force       Whether to force syncing even unchanged files
-     * @param SyncMediaCommand $syncCommand The SyncMedia command object, to log to console if executed by artisan.
+     * @param bool        $force            Whether to force syncing even unchanged files
+     * @param SyncCommand $syncCommand      The SyncMedia command object, to log to console if executed by artisan.
      *
      * @throws Exception
      */
@@ -93,7 +93,7 @@ class MediaSyncService
         ?string $mediaPath = null,
         array $tags = [],
         bool $force = false,
-        ?SyncMediaCommand $syncCommand = null
+        ?SyncCommand $syncCommand = null
     ): void {
         $this->setSystemRequirements();
         $this->setTags($tags);
