@@ -14,14 +14,14 @@ class SongZipArchive
     /**
      * @var ZipArchive
      */
-    protected $archive;
+    private $archive;
 
     /**
      * Path to the zip archive.
      *
      * @var string
      */
-    protected $path;
+    private $path;
 
     /**
      * Names of the files in the archive
@@ -29,26 +29,11 @@ class SongZipArchive
      *
      * @var array
      */
-    protected $fileNames = [];
+    private $fileNames = [];
 
-    /**
-     * @param string $path
-     *
-     * @throws RuntimeException
-     */
-    public function __construct($path = '')
+    public function __construct(string $path = '')
     {
-        if (!class_exists('ZipArchive')) {
-            throw new RuntimeException('Downloading multiple files requires ZipArchive module.');
-        }
-
-        if ($path) {
-            $this->path = $path;
-        } else {
-            // We use system's temp dir instead of storage_path() here, so that the generated files
-            // can be cleaned up automatically after server reboot.
-            $this->path = sprintf('%s%skoel-download-%s.zip', sys_get_temp_dir(), DIRECTORY_SEPARATOR, uniqid());
-        }
+        $this->path = $path ? $path : self::generateRandomArchivePath();
 
         $this->archive = new ZipArchive();
 
@@ -74,22 +59,7 @@ class SongZipArchive
     {
         try {
             $path = Download::fromSong($song);
-
-            // We add all files into the zip archive as a flat structure.
-            // As a result, there can be duplicate file names.
-            // The following several lines are to make sure each file name is unique.
-            $name = basename($path);
-            if (array_key_exists($name, $this->fileNames)) {
-                $this->fileNames[$name]++;
-                $parts = explode('.', $name);
-                $ext = $parts[count($parts) - 1];
-                $parts[count($parts) - 1] = $this->fileNames[$name].".$ext";
-                $name = implode('.', $parts);
-            } else {
-                $this->fileNames[$name] = 1;
-            }
-
-            $this->archive->addFile($path, $name);
+            $this->archive->addFile($path, $this->generateZipContentFileNameFromPath($path));
         } catch (Exception $e) {
             Log::error($e);
         }
@@ -107,16 +77,37 @@ class SongZipArchive
         return $this;
     }
 
-    /**
-     * Get the path to the archive.
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    public function getArchive(): ZipArchive
+    /**
+     * We add all files into the zip archive as a flat structure.
+     * As a result, there can be duplicate file names.
+     * This method makes sure each file name is unique in the zip archive.
+     */
+    private function generateZipContentFileNameFromPath(string $path): string
     {
-        return $this->archive;
+        $name = basename($path);
+
+        if (array_key_exists($name, $this->fileNames)) {
+            $this->fileNames[$name]++;
+            $parts = explode('.', $name);
+            $ext = $parts[count($parts) - 1];
+            $parts[count($parts) - 1] = $this->fileNames[$name] . ".$ext";
+            $name = implode('.', $parts);
+        } else {
+            $this->fileNames[$name] = 1;
+        }
+
+        return $name;
+    }
+
+    private static function generateRandomArchivePath(): string
+    {
+        // We use system's temp dir instead of storage_path() here, so that the generated files
+        // can be cleaned up automatically after server reboot.
+        return sprintf('%s%skoel-download-%s.zip', sys_get_temp_dir(), DIRECTORY_SEPARATOR, uniqid());
     }
 }

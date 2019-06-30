@@ -56,7 +56,7 @@ class DownloadService
 
             $localPath = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename($s3Params['key']);
 
-            // The following function require allow_url_fopen to be ON.
+            // The following function requires allow_url_fopen to be ON.
             // We're just assuming that to be the case here.
             copy($url, $localPath);
         } else {
