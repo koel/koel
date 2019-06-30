@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "7e8b7a739ad4034e35495b6fdbaeef85",
@@ -1363,7 +1363,7 @@
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
                     "email": "lcobucci@gmail.com",
-                    "role": "developer"
+                    "role": "Developer"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
@@ -2164,6 +2164,52 @@
             "time": "2016-06-16T16:22:20+00:00"
         },
         {
+            "name": "psr/cache",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/cache.git",
+                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for caching libraries",
+            "keywords": [
+                "cache",
+                "psr",
+                "psr-6"
+            ],
+            "time": "2016-08-06T20:24:11+00:00"
+        },
+        {
             "name": "psr/container",
             "version": "1.0.0",
             "source": {
@@ -2597,16 +2643,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v4.2.7",
+            "version": "v4.2.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "e2840bb38bddad7a0feaf85931e38fdcffdb2f81"
+                "reference": "79860cda331a2edb497c72ee487ed75c484ab75e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/e2840bb38bddad7a0feaf85931e38fdcffdb2f81",
-                "reference": "e2840bb38bddad7a0feaf85931e38fdcffdb2f81",
+                "url": "https://api.github.com/repos/symfony/console/zipball/79860cda331a2edb497c72ee487ed75c484ab75e",
+                "reference": "79860cda331a2edb497c72ee487ed75c484ab75e",
                 "shasum": ""
             },
             "require": {
@@ -2665,40 +2711,49 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2019-04-08T14:23:48+00:00"
+            "time": "2019-06-13T10:57:15+00:00"
         },
         {
             "name": "symfony/contracts",
-            "version": "v1.0.2",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/contracts.git",
-                "reference": "1aa7ab2429c3d594dd70689604b5cf7421254cdf"
+                "reference": "3f3f796d5f24a098a9da62828b8daa1b11494c1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/contracts/zipball/1aa7ab2429c3d594dd70689604b5cf7421254cdf",
-                "reference": "1aa7ab2429c3d594dd70689604b5cf7421254cdf",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/3f3f796d5f24a098a9da62828b8daa1b11494c1b",
+                "reference": "3f3f796d5f24a098a9da62828b8daa1b11494c1b",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1.3"
-            },
-            "require-dev": {
+                "php": "^7.1.3",
                 "psr/cache": "^1.0",
                 "psr/container": "^1.0"
             },
+            "replace": {
+                "symfony/cache-contracts": "self.version",
+                "symfony/event-dispatcher-contracts": "self.version",
+                "symfony/http-client-contracts": "self.version",
+                "symfony/service-contracts": "self.version",
+                "symfony/translation-contracts": "self.version"
+            },
+            "require-dev": {
+                "symfony/polyfill-intl-idn": "^1.10"
+            },
             "suggest": {
-                "psr/cache": "When using the Cache contracts",
-                "psr/container": "When using the Service contracts",
-                "symfony/cache-contracts-implementation": "",
-                "symfony/service-contracts-implementation": "",
-                "symfony/translation-contracts-implementation": ""
+                "psr/event-dispatcher": "When using the EventDispatcher contracts",
+                "symfony/cache-implementation": "",
+                "symfony/event-dispatcher-implementation": "",
+                "symfony/http-client-implementation": "",
+                "symfony/service-implementation": "",
+                "symfony/translation-implementation": ""
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.1-dev"
                 }
             },
             "autoload": {
@@ -2733,7 +2788,7 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2018-12-05T08:06:11+00:00"
+            "time": "2019-06-20T06:46:26+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -3145,7 +3200,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -5053,7 +5108,7 @@
             "time": "2018-10-12T19:39:35+00:00"
         },
         {
-            "name": "mikey179/vfsStream",
+            "name": "mikey179/vfsstream",
             "version": "v1.6.6",
             "source": {
                 "type": "git",
@@ -5294,16 +5349,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.4.4",
+            "version": "3.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "ce75c2d05a9895c450ce41cfcf23b58d5e3aa865"
+                "reference": "19d56564133e8e25db9f8d48858a4e23f43da90e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/ce75c2d05a9895c450ce41cfcf23b58d5e3aa865",
-                "reference": "ce75c2d05a9895c450ce41cfcf23b58d5e3aa865",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/19d56564133e8e25db9f8d48858a4e23f43da90e",
+                "reference": "19d56564133e8e25db9f8d48858a4e23f43da90e",
                 "shasum": ""
             },
             "require": {
@@ -5311,8 +5366,10 @@
                 "illuminate/console": "5.5.* || 5.6.* || 5.7.* || 5.8.*",
                 "illuminate/routing": "5.5.* || 5.6.* || 5.7.* || 5.8.*",
                 "illuminate/support": "5.5.* || 5.6.* || 5.7.* || 5.8.*",
+                "league/flysystem": "^1.0",
                 "mpociot/documentarian": "^0.2.0",
                 "mpociot/reflection-docblock": "^1.0.1",
+                "nunomaduro/collision": "^3.0",
                 "php": ">=7.0.0",
                 "ramsey/uuid": "^3.8"
             },
@@ -5356,7 +5413,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-03-30T10:02:54+00:00"
+            "time": "2019-06-23T20:53:34+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
@@ -5653,7 +5710,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "🔍 Nette Finder: find files and directories with an intuitive API.",
+            "description": "? Nette Finder: find files and directories with an intuitive API.",
             "homepage": "https://nette.org",
             "keywords": [
                 "filesystem",
@@ -5713,7 +5770,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "🍸 Nette NEON: encodes and decodes NEON file format.",
+            "description": "? Nette NEON: encodes and decodes NEON file format.",
             "homepage": "http://ne-on.org",
             "keywords": [
                 "export",
@@ -6028,6 +6085,70 @@
                 "php"
             ],
             "time": "2019-02-16T20:54:15+00:00"
+        },
+        {
+            "name": "nunomaduro/collision",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nunomaduro/collision.git",
+                "reference": "af42d339fe2742295a54f6fdd42aaa6f8c4aca68"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/af42d339fe2742295a54f6fdd42aaa6f8c4aca68",
+                "reference": "af42d339fe2742295a54f6fdd42aaa6f8c4aca68",
+                "shasum": ""
+            },
+            "require": {
+                "filp/whoops": "^2.1.4",
+                "jakub-onderka/php-console-highlighter": "0.3.*|0.4.*",
+                "php": "^7.1",
+                "symfony/console": "~2.8|~3.3|~4.0"
+            },
+            "require-dev": {
+                "laravel/framework": "5.8.*",
+                "nunomaduro/larastan": "^0.3.0",
+                "phpstan/phpstan": "^0.11",
+                "phpunit/phpunit": "~8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NunoMaduro\\Collision\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nuno Maduro",
+                    "email": "enunomaduro@gmail.com"
+                }
+            ],
+            "description": "Cli error handling for console/command-line PHP applications.",
+            "keywords": [
+                "artisan",
+                "cli",
+                "command-line",
+                "console",
+                "error",
+                "handling",
+                "laravel",
+                "laravel-zero",
+                "php",
+                "symfony"
+            ],
+            "time": "2019-03-07T21:35:13+00:00"
         },
         {
             "name": "ocramius/package-versions",
@@ -7907,16 +8028,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.2.7",
+            "version": "v4.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "6712daf03ee25b53abb14e7e8e0ede1a770efdb1"
+                "reference": "c60ecf5ba842324433b46f58dc7afc4487dbab99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/6712daf03ee25b53abb14e7e8e0ede1a770efdb1",
-                "reference": "6712daf03ee25b53abb14e7e8e0ede1a770efdb1",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/c60ecf5ba842324433b46f58dc7afc4487dbab99",
+                "reference": "c60ecf5ba842324433b46f58dc7afc4487dbab99",
                 "shasum": ""
             },
             "require": {
@@ -7935,7 +8056,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "4.3-dev"
                 }
             },
             "autoload": {
@@ -7962,7 +8083,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2019-03-30T15:58:42+00:00"
+            "time": "2019-04-06T14:04:46+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -8057,16 +8178,16 @@
         },
         {
             "name": "windwalker/renderer",
-            "version": "3.5.3",
+            "version": "3.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ventoviro/windwalker-renderer.git",
-                "reference": "4aceb1abba86f4f16dc5c57186d64f8c5d6b0653"
+                "reference": "b5543585e54fab4e2f4d844e910272c2b405ba8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ventoviro/windwalker-renderer/zipball/4aceb1abba86f4f16dc5c57186d64f8c5d6b0653",
-                "reference": "4aceb1abba86f4f16dc5c57186d64f8c5d6b0653",
+                "url": "https://api.github.com/repos/ventoviro/windwalker-renderer/zipball/b5543585e54fab4e2f4d844e910272c2b405ba8f",
+                "reference": "b5543585e54fab4e2f4d844e910272c2b405ba8f",
                 "shasum": ""
             },
             "require": {
@@ -8110,20 +8231,20 @@
                 "renderer",
                 "windwalker"
             ],
-            "time": "2019-04-18T04:22:04+00:00"
+            "time": "2019-05-29T13:58:28+00:00"
         },
         {
             "name": "windwalker/structure",
-            "version": "3.5.3",
+            "version": "3.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ventoviro/windwalker-structure.git",
-                "reference": "c54090c14f1a9d1bd2a791d64d9aaceaa9440e90"
+                "reference": "6d3fc1ae456069a717d5a235532a68d1ef51486d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ventoviro/windwalker-structure/zipball/c54090c14f1a9d1bd2a791d64d9aaceaa9440e90",
-                "reference": "c54090c14f1a9d1bd2a791d64d9aaceaa9440e90",
+                "url": "https://api.github.com/repos/ventoviro/windwalker-structure/zipball/6d3fc1ae456069a717d5a235532a68d1ef51486d",
+                "reference": "6d3fc1ae456069a717d5a235532a68d1ef51486d",
                 "shasum": ""
             },
             "require": {
@@ -8131,11 +8252,15 @@
             },
             "require-dev": {
                 "ext-json": "*",
+                "laktak/hjson": "^2.1",
                 "symfony/yaml": "3.*",
-                "windwalker/test": "~3.0"
+                "windwalker/test": "~3.0",
+                "yosymfony/toml": "^1.0"
             },
             "suggest": {
-                "symfony/yaml": "Install 3.* if you require YAML support."
+                "laktak/hjson": "Install ~2.0 if you require HJSON support.",
+                "symfony/yaml": "Install 3.* if you require YAML support.",
+                "yosymfony/toml": "Install ~1.0 if you require TOML support."
             },
             "type": "windwalker-package",
             "extra": {
@@ -8159,7 +8284,7 @@
                 "structure",
                 "windwalker"
             ],
-            "time": "2019-02-05T05:54:56+00:00"
+            "time": "2019-04-28T06:01:00+00:00"
         }
     ],
     "aliases": [],
