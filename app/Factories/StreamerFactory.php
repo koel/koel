@@ -32,7 +32,8 @@ class StreamerFactory
         Song $song,
         ?bool $transcode = null,
         ?int $bitRate = null,
-        float $startTime = 0): StreamerInterface
+        float $startTime = 0.0
+    ): StreamerInterface
     {
         if ($song->s3_params) {
             $this->objectStorageStreamer->setSong($song);

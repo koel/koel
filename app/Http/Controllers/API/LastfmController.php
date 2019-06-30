@@ -59,8 +59,6 @@ class LastfmController extends Controller
 
     /**
      * Serve the callback request from Last.fm.
-     *
-     * @return Response
      */
     public function callback(LastfmCallbackRequest $request)
     {

@@ -19,7 +19,7 @@ class S3Service implements ObjectStorageInterface
 
     public function getSongPublicUrl(Song $song): string
     {
-        return $this->cache->remember("OSUrl/{$song->id}", 60, static function () use ($song): string {
+        return $this->cache->remember("OSUrl/{$song->id}", 60, function () use ($song): string {
             $cmd = $this->s3Client->getCommand('GetObject', [
                 'Bucket' => $song->s3_params['bucket'],
                 'Key' => $song->s3_params['key'],

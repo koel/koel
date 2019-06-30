@@ -102,10 +102,10 @@ class InitCommand extends Command
             $config['DB_DATABASE'] = $this->ask('Absolute path to the DB file');
         } else {
             $config['DB_HOST'] = $this->anticipate('DB host', ['127.0.0.1', 'localhost']);
-            $config['DB_PORT'] = (string) $this->ask('DB port (leave empty for default)', false);
+            $config['DB_PORT'] = (string) $this->ask('DB port (leave empty for default)');
             $config['DB_DATABASE'] = $this->anticipate('DB name', ['koel']);
             $config['DB_USERNAME'] = $this->anticipate('DB user', ['koel']);
-            $config['DB_PASSWORD'] = (string) $this->ask('DB password', false);
+            $config['DB_PASSWORD'] = (string) $this->ask('DB password');
         }
 
         foreach ($config as $key => $value) {

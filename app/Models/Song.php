@@ -104,7 +104,10 @@ class Song extends Model
         $single = count($ids) === 1;
 
         foreach ($ids as $id) {
-            if (!$song = self::with('album', 'album.artist')->find($id)) {
+            /** @var Song $song */
+            $song = self::with('album', 'album.artist')->find($id);
+
+            if (!$song) {
                 continue;
             }
 

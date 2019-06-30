@@ -53,7 +53,7 @@ class SmartPlaylistService
      * (basically everything related to interactions).
      * For those, we create an additional "user_id" rule.
      *
-     * @param string[] $rules
+     * @param array[] $rules
      */
     public function addRequiresUserRules(array $rules, User $user): array
     {

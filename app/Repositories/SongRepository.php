@@ -22,6 +22,9 @@ class SongRepository extends AbstractRepository
 
     public function getOneByPath(string $path): ?Song
     {
-        return $this->getOneById($this->helperService->getFileHash($path));
+        /** @var Song|null $song */
+        $song = $this->getOneById($this->helperService->getFileHash($path));
+
+        return $song;
     }
 }

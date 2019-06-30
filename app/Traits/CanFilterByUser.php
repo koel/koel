@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Builder;
  */
 trait CanFilterByUser
 {
-    public function scopeByCurrentUser($query): Builder
+    public function scopeByCurrentUser(Builder $query): Builder
     {
-        return $query->whereUserId(auth()->user()->id);
+        return $query->where('user_id', auth()->user()->id);
     }
 }
