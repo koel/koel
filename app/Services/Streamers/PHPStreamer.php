@@ -3,6 +3,7 @@
 namespace App\Services\Streamers;
 
 use DaveRandom\Resume\FileResource;
+use function DaveRandom\Resume\get_request_header;
 use DaveRandom\Resume\InvalidRangeHeaderException;
 use DaveRandom\Resume\NonExistentFileException;
 use DaveRandom\Resume\RangeSet;
@@ -11,7 +12,6 @@ use DaveRandom\Resume\SendFileFailureException;
 use DaveRandom\Resume\UnreadableFileException;
 use DaveRandom\Resume\UnsatisfiableRangeException;
 use Symfony\Component\HttpFoundation\Response;
-use function DaveRandom\Resume\get_request_header;
 
 class PHPStreamer extends Streamer implements DirectStreamerInterface
 {
