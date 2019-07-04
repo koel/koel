@@ -21,7 +21,8 @@ class StreamerFactory
         TranscodingStreamerInterface $transcodingStreamer,
         ObjectStorageStreamerInterface $objectStorageStreamer,
         TranscodingService $transcodingService
-    ) {
+    )
+    {
         $this->directStreamer = $directStreamer;
         $this->transcodingStreamer = $transcodingStreamer;
         $this->objectStorageStreamer = $objectStorageStreamer;
@@ -33,7 +34,8 @@ class StreamerFactory
         ?bool $transcode = null,
         ?int $bitRate = null,
         float $startTime = 0.0
-    ): StreamerInterface {
+    ): StreamerInterface
+    {
         if ($song->s3_params) {
             $this->objectStorageStreamer->setSong($song);
 

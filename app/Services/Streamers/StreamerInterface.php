@@ -6,7 +6,7 @@ use App\Models\Song;
 
 interface StreamerInterface
 {
-    public function setSong(Song $song);
+    public function setSong(Song $song): void;
 
     public function stream();
 }
