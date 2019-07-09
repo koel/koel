@@ -55,6 +55,12 @@ Support us with a monthly donation and help us continue our activities. [[Become
 
 ## Sponsors
 
+#### GitHub Sponsors
+
+* Eduardo San Martin Morote ([@posva](https://github.com/posva))
+
+#### OpenCollective
+
 Become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://opencollective.com/koel#sponsor)]
 
 <a href="https://opencollective.com/koel/sponsor/0/website" target="_blank"><img src="https://opencollective.com/koel/sponsor/0/avatar.svg"></a>
