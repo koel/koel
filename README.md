@@ -4,7 +4,7 @@
 
 ## Intro
 
-**Koel** (also stylized as **koel**, with a lowercase k) is a simple web-based personal audio streaming service written in [Vue](http://vuejs.org/) on the client side and [Laravel](http://laravel.com/) on the server side. Targeting web developers, Koel embraces some of the more modern web technologies – flexbox, audio, and drag-and-drop API to name a few – to do its job.
+**Koel** (also stylized as **koel**, with a lowercase k) is a simple web-based personal audio streaming service written in [Vue](http://vuejs.org/) on the client side and [Laravel](http://laravel.com/) on the server side. Targeting web developers, Koel embraces some of the more modern web technologies – CSS grid, audio, and drag-and-drop API to name a few – to do its job.
 
 ## Install and Upgrade Guide
 
@@ -20,7 +20,7 @@ A quick and easy way to start hacking on koel is to open and run this repo in Gi
 
 ## Backers
 
-Support us with a monthly donation and help us continue our activities. [[Become a backer](https://opencollective.com/koel#backer)]
+[Support me on OpenCollective](https://opencollective.com/koel#backer) with a monthly donation and help me continue building Koel.
 
 <a href="https://opencollective.com/koel/backer/0/website" target="_blank"><img src="https://opencollective.com/koel/backer/0/avatar.svg"></a>
 <a href="https://opencollective.com/koel/backer/1/website" target="_blank"><img src="https://opencollective.com/koel/backer/1/avatar.svg"></a>
@@ -59,10 +59,11 @@ Support us with a monthly donation and help us continue our activities. [[Become
 
 * Eduardo San Martin Morote ([@posva](https://github.com/posva))
 * Nina Reynolds ([@cutecycle](https://github.com/cutecycle))
+* [You](https://github.com/users/phanan/sponsorship)?
 
 #### OpenCollective
 
-Become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://opencollective.com/koel#sponsor)]
+[Become a sponsor on OpenCollective](https://opencollective.com/koel#sponsor) and get your logo on our README on Github with a link to your site.
 
 <a href="https://opencollective.com/koel/sponsor/0/website" target="_blank"><img src="https://opencollective.com/koel/sponsor/0/avatar.svg"></a>
 <a href="https://opencollective.com/koel/sponsor/1/website" target="_blank"><img src="https://opencollective.com/koel/sponsor/1/avatar.svg"></a>
