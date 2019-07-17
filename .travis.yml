@@ -28,6 +28,9 @@ script:
 addons:
   code_climate:
     repo_token: e74dc85a4eeb025a067bde238175f44d9f6a9e544278c4c096a46b8467c5fb9f
+  apt:
+    packages:
+    - libgconf-2-4
 
 after_success:
   - vendor/bin/test-reporter
