@@ -58,6 +58,7 @@ Support us with a monthly donation and help us continue our activities. [[Become
 #### GitHub Sponsors
 
 * Eduardo San Martin Morote ([@posva](https://github.com/posva))
+* Nina Reynolds ([@cutecycle](https://github.com/cutecycle))
 
 #### OpenCollective
 
