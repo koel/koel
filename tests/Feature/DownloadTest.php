@@ -29,7 +29,6 @@ class DownloadTest extends TestCase
         parent::setUp();
         $this->createSampleMediaSet();
         $this->downloadService = $this->mockIocDependency(DownloadService::class);
-
     }
 
     public function testDownloadOneSong(): void
