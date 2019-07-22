@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Console\Kernel;
 use App\Models\User;
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Foundation\Application;
@@ -11,7 +12,7 @@ trait CreatesApplication
     protected $coverPath;
     protected $mediaPath = __DIR__.'/songs';
 
-    /** @var Artisan */
+    /** @var Kernel */
     private $artisan;
 
     /**
