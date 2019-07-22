@@ -11,13 +11,13 @@ class UserTest extends TestCase
     /** @var MockInterface */
     private $hash;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->hash = $this->mockIocDependency(Hasher::class);
     }
 
-    public function testNonAdminCannotCreateUser()
+    public function testNonAdminCannotCreateUser(): void
     {
         $this->postAsUser('api/user', [
             'name' => 'Foo',
@@ -26,7 +26,7 @@ class UserTest extends TestCase
         ])->seeStatusCode(403);
     }
 
-    public function testAdminCreatesUser()
+    public function testAdminCreatesUser(): void
     {
         $this->hash
             ->shouldReceive('make')
@@ -47,7 +47,7 @@ class UserTest extends TestCase
         ]);
     }
 
-    public function testAdminUpdatesUser()
+    public function testAdminUpdatesUser(): void
     {
         /** @var User $user */
         $user = factory(User::class)->create([
@@ -76,7 +76,7 @@ class UserTest extends TestCase
         ]);
     }
 
-    public function testAdminDeletesUser()
+    public function testAdminDeletesUser(): void
     {
         $user = factory(User::class)->create();
         $admin = factory(User::class, 'admin')->create();
@@ -85,7 +85,7 @@ class UserTest extends TestCase
             ->notSeeInDatabase('users', ['id' => $user->id]);
     }
 
-    public function testSeppukuNotAllowed()
+    public function testSeppukuNotAllowed(): void
     {
         $admin = factory(User::class, 'admin')->create();
 
@@ -95,7 +95,7 @@ class UserTest extends TestCase
             ->seeInDatabase('users', ['id' => $admin->id]);
     }
 
-    public function testUpdateUserProfile()
+    public function testUpdateUserProfile(): void
     {
         $user = factory(User::class)->create();
         $this->assertNull($user->getPreference('foo'));

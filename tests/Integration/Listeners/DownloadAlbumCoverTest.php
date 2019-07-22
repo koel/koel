@@ -14,7 +14,7 @@ class DownloadAlbumCoverTest extends TestCase
     /** @var MediaMetadataService|MockInterface */
     private $mediaMetaDataService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -22,7 +22,7 @@ class DownloadAlbumCoverTest extends TestCase
         PHPMockery::mock('App\Listeners', 'ini_get')->andReturn(true);
     }
 
-    public function testHandle()
+    public function testHandle(): void
     {
         $album = factory(Album::class)->make(['cover' => null]);
         $event = new AlbumInformationFetched($album, ['image' => 'https://foo.bar/baz.jpg']);

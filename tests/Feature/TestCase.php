@@ -21,7 +21,7 @@ abstract class TestCase extends BaseTestCase
     /** @var JWTAuth */
     private $auth;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -86,7 +86,7 @@ abstract class TestCase extends BaseTestCase
         return $this->auth->fromUser($user ?: factory(User::class)->create());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
 

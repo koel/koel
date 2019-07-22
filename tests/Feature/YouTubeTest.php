@@ -13,7 +13,7 @@ class YouTubeTest extends TestCase
     /** @var MockInterface */
     private $youTubeService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

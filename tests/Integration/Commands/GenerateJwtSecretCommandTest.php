@@ -17,7 +17,7 @@ class GenerateJwtSecretCommandTest extends TestCase
     /** @var GenerateJwtSecretCommand */
     private $command;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -26,7 +26,7 @@ class GenerateJwtSecretCommandTest extends TestCase
         app(Kernel::class)->registerCommand($this->command);
     }
 
-    public function testGenerateJwtSecret()
+    public function testGenerateJwtSecret(): void
     {
         config(['jwt.secret' => false]);
 
@@ -39,7 +39,7 @@ class GenerateJwtSecretCommandTest extends TestCase
         $this->artisan('koel:generate-jwt-secret');
     }
 
-    public function testNotRegenerateJwtSecret()
+    public function testNotRegenerateJwtSecret(): void
     {
         config(['jwt.secret' => '12345678901234567890123456789012']);
 

@@ -12,13 +12,13 @@ class PlaylistTest extends TestCase
     /**
      * @throws Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->createSampleMediaSet();
     }
 
-    public function testCreatingPlaylist()
+    public function testCreatingPlaylist(): void
     {
         $user = factory(User::class)->create();
         $songs = Song::orderBy('id')->take(3)->get();
@@ -51,7 +51,7 @@ class PlaylistTest extends TestCase
     }
 
     /** @test */
-    public function user_can_update_a_playlists_name()
+    public function user_can_update_a_playlists_name(): void
     {
         $user = factory(User::class)->create();
 
@@ -72,7 +72,7 @@ class PlaylistTest extends TestCase
     }
 
     /** @test */
-    public function playlists_can_be_synced()
+    public function playlists_can_be_synced(): void
     {
         $user = factory(User::class)->create();
 
@@ -109,7 +109,7 @@ class PlaylistTest extends TestCase
     }
 
     /** @test */
-    public function user_can_delete_a_playlist()
+    public function user_can_delete_a_playlist(): void
     {
         $user = factory(User::class)->create();
 
@@ -125,7 +125,7 @@ class PlaylistTest extends TestCase
     }
 
     /** @test */
-    public function playlist_content_can_be_retrieved()
+    public function playlist_content_can_be_retrieved(): void
     {
         $user = factory(User::class)->create();
 

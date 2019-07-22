@@ -25,7 +25,7 @@ class MediaInformationServiceTest extends TestCase
      */
     private $mediaInformationService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -36,7 +36,7 @@ class MediaInformationServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetAlbumInformation()
+    public function testGetAlbumInformation(): void
     {
         $this->expectsEvents(AlbumInformationFetched::class);
 
@@ -60,7 +60,7 @@ class MediaInformationServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetArtistInformation()
+    public function testGetArtistInformation(): void
     {
         $this->expectsEvents(ArtistInformationFetched::class);
 

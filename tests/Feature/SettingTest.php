@@ -12,13 +12,13 @@ class SettingTest extends TestCase
     /** @var MockInterface */
     private $mediaSyncService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->mediaSyncService = $this->mockIocDependency(MediaSyncService::class);
     }
 
-    public function testSaveSettings()
+    public function testSaveSettings(): void
     {
         $this->mediaSyncService->shouldReceive('sync')->once();
 

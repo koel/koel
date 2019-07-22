@@ -14,7 +14,7 @@ class DownloadArtistImageTest extends TestCase
     /** @var MediaMetadataService|MockInterface */
     private $mediaMetaDataService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -22,7 +22,7 @@ class DownloadArtistImageTest extends TestCase
         PHPMockery::mock('App\Listeners', 'ini_get')->andReturn(true);
     }
 
-    public function testHandle()
+    public function testHandle(): void
     {
         $artist = factory(Artist::class)->make(['image' => null]);
         $event = new ArtistInformationFetched($artist, ['image' => 'https://foo.bar/baz.jpg']);

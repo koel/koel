@@ -14,7 +14,7 @@ class MediaMetadataServiceTest extends TestCase
     /** @var MediaMetadataService */
     private $mediaMetadataService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->mediaMetadataService = new MediaMetadataService(app(Logger::class));

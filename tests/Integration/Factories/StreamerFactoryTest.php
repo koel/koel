@@ -18,7 +18,7 @@ class StreamerFactoryTest extends TestCase
     /** @var StreamerFactory */
     private $streamerFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->streamerFactory = app(StreamerFactory::class);

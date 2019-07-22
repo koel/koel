@@ -24,14 +24,15 @@ class DownloadTest extends TestCase
     /**
      * @throws Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->createSampleMediaSet();
         $this->downloadService = $this->mockIocDependency(DownloadService::class);
+
     }
 
-    public function testDownloadOneSong()
+    public function testDownloadOneSong(): void
     {
         $song = Song::first();
 
@@ -47,7 +48,7 @@ class DownloadTest extends TestCase
             ->assertResponseOk();
     }
 
-    public function testDownloadMultipleSongs()
+    public function testDownloadMultipleSongs(): void
     {
         $songs = Song::take(2)->orderBy('id')->get();
 
@@ -66,7 +67,7 @@ class DownloadTest extends TestCase
             ->assertResponseOk();
     }
 
-    public function testDownloadAlbum()
+    public function testDownloadAlbum(): void
     {
         $album = Album::first();
 
@@ -82,7 +83,7 @@ class DownloadTest extends TestCase
             ->assertResponseOk();
     }
 
-    public function testDownloadArtist()
+    public function testDownloadArtist(): void
     {
         $artist = Artist::first();
 
@@ -98,7 +99,7 @@ class DownloadTest extends TestCase
             ->assertResponseOk();
     }
 
-    public function testDownloadPlaylist()
+    public function testDownloadPlaylist(): void
     {
         $user = factory(User::class)->create();
 
@@ -122,7 +123,7 @@ class DownloadTest extends TestCase
             ->assertResponseOk();
     }
 
-    public function testDownloadFavorites()
+    public function testDownloadFavorites(): void
     {
         /** @var User $user */
         $user = factory(User::class)->create();

@@ -6,14 +6,14 @@ use Tests\TestCase;
 
 class ApplicationTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         @unlink(app()->publicPath().'/public/hot');
     }
 
     /** @test */
-    public function static_urls_without_cdn_are_constructed_correctly()
+    public function static_urls_without_cdn_are_constructed_correctly(): void
     {
         // Given we are not using a CDN
         config(['koel.cdn.url' => '']);
@@ -28,7 +28,7 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
-    public function static_urls_with_cdn_are_constructed_correctly()
+    public function static_urls_with_cdn_are_constructed_correctly(): void
     {
         // Given we're using a CDN
         config(['koel.cdn.url' => 'http://cdn.tld']);
@@ -43,7 +43,7 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
-    public function application_asset_revision_urls_are_constructed_correctly_when_not_using_cdn()
+    public function application_asset_revision_urls_are_constructed_correctly_when_not_using_cdn(): void
     {
         // Given we have revisioned assets in the manifest file
         $manifestFile = __DIR__.'../../blobs/rev-manifest.json';
@@ -59,7 +59,7 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
-    public function application_asset_revision_urls_are_constructed_correctly_when_using_cdn()
+    public function application_asset_revision_urls_are_constructed_correctly_when_using_cdn(): void
     {
         // Given we have revisioned assets in the manifest file
         $manifestFile = __DIR__.'../../blobs/rev-manifest.json';

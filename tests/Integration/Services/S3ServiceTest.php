@@ -29,7 +29,7 @@ class S3ServiceTest extends TestCase
      */
     private $s3Service;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->s3Client = Mockery::mock(S3ClientInterface::class);

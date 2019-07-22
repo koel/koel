@@ -11,14 +11,14 @@ class ProfileTest extends TestCase
     /** @var MockInterface */
     private $hash;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->hash = $this->mockIocDependency(Hasher::class);
     }
 
-    public function testUpdateProfileWithoutPassword()
+    public function testUpdateProfileWithoutPassword(): void
     {
         $user = factory(User::class)->create();
 
@@ -29,7 +29,7 @@ class ProfileTest extends TestCase
         $this->seeInDatabase('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
     }
 
-    public function testUpdateProfileWithPassword()
+    public function testUpdateProfileWithPassword(): void
     {
         /** @var User $user */
         $user = factory(User::class)->create();

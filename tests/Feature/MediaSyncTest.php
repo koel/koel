@@ -20,7 +20,7 @@ class MediaSyncTest extends TestCase
     /** @var MediaSyncService */
     private $mediaService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->mediaService = app(MediaSyncService::class);
@@ -31,7 +31,7 @@ class MediaSyncTest extends TestCase
      *
      * @throws Exception
      */
-    public function songs_can_be_synced()
+    public function songs_can_be_synced(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -97,7 +97,7 @@ class MediaSyncTest extends TestCase
      *
      * @throws Exception
      */
-    public function songs_can_be_force_synced()
+    public function songs_can_be_force_synced(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -135,7 +135,7 @@ class MediaSyncTest extends TestCase
      *
      * @throws Exception
      */
-    public function songs_can_be_synced_with_selectively_tags()
+    public function songs_can_be_synced_with_selectively_tags(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -164,7 +164,7 @@ class MediaSyncTest extends TestCase
      *
      * @throws Exception
      */
-    public function all_tags_are_catered_for_if_syncing_new_file()
+    public function all_tags_are_catered_for_if_syncing_new_file(): void
     {
         // First we sync the test directory to get the data
         $this->mediaService->sync($this->mediaPath);
@@ -189,7 +189,7 @@ class MediaSyncTest extends TestCase
      *
      * @throws Exception
      */
-    public function added_song_is_synced_when_watching()
+    public function added_song_is_synced_when_watching(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -205,7 +205,7 @@ class MediaSyncTest extends TestCase
      *
      * @throws Exception
      */
-    public function deleted_song_is_synced_when_watching()
+    public function deleted_song_is_synced_when_watching(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -222,7 +222,7 @@ class MediaSyncTest extends TestCase
      *
      * @throws Exception
      */
-    public function deleted_directory_is_synced_when_watching()
+    public function deleted_directory_is_synced_when_watching(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -236,7 +236,7 @@ class MediaSyncTest extends TestCase
     }
 
     /** @test */
-    public function html_entities_in_tags_are_recognized_and_saved_properly()
+    public function html_entities_in_tags_are_recognized_and_saved_properly(): void
     {
         $this->mockIocDependency(getID3::class, [
             'analyze' => [
@@ -266,7 +266,7 @@ class MediaSyncTest extends TestCase
      *
      * @throws Exception
      */
-    public function hidden_files_can_optionally_be_ignored_when_syncing()
+    public function hidden_files_can_optionally_be_ignored_when_syncing(): void
     {
         config(['koel.ignore_dot_files' => false]);
         $this->mediaService->sync($this->mediaPath);

@@ -12,14 +12,14 @@ class InteractionTest extends TestCase
     /**
      * @throws Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->createSampleMediaSet();
     }
 
     /** @test */
-    public function play_count_is_increased()
+    public function play_count_is_increased(): void
     {
         $this->withoutEvents();
         $user = factory(User::class)->create();
@@ -48,7 +48,7 @@ class InteractionTest extends TestCase
      *
      * @throws Exception
      */
-    public function user_can_like_and_unlike_a_song()
+    public function user_can_like_and_unlike_a_song(): void
     {
         $this->expectsEvents(SongLikeToggled::class);
 
@@ -78,7 +78,7 @@ class InteractionTest extends TestCase
      *
      * @throws Exception
      */
-    public function user_can_like_and_unlike_songs_in_batch()
+    public function user_can_like_and_unlike_songs_in_batch(): void
     {
         $this->expectsEvents(SongLikeToggled::class);
 

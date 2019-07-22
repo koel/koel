@@ -15,13 +15,13 @@ class S3Test extends TestCase
     /**
      * @throws Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->disableMiddlewareForAllTests();
     }
 
-    public function testStoringASong()
+    public function testStoringASong(): void
     {
         $this->post('api/os/s3/song', [
             'bucket' => 'koel',
@@ -40,7 +40,7 @@ class S3Test extends TestCase
     /**
      * @throws Exception
      */
-    public function testRemovingASong()
+    public function testRemovingASong(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 

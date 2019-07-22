@@ -23,7 +23,7 @@ class MediaCacheServiceTest extends TestCase
      */
     private $cache;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -31,7 +31,7 @@ class MediaCacheServiceTest extends TestCase
         $this->mediaCacheService = new MediaCacheService($this->cache);
     }
 
-    public function testGetIfCacheIsNotAvailable()
+    public function testGetIfCacheIsNotAvailable(): void
     {
         factory(Song::class, 5)->create();
 
@@ -48,7 +48,7 @@ class MediaCacheServiceTest extends TestCase
         $this->assertCount(5, $data['songs']);
     }
 
-    public function testGetIfCacheIsAvailable()
+    public function testGetIfCacheIsAvailable(): void
     {
         $this->cache->shouldReceive('rememberForever')->andReturn(['dummy']);
 
@@ -59,7 +59,7 @@ class MediaCacheServiceTest extends TestCase
         $this->assertEquals(['dummy'], $data);
     }
 
-    public function testCacheDisabled()
+    public function testCacheDisabled(): void
     {
         $this->cache->shouldReceive('rememberForever')->never();
 

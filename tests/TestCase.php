@@ -11,13 +11,13 @@ abstract class TestCase extends BaseTestCase
 {
     use DatabaseTransactions, CreatesApplication, InteractsWithIoc;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->prepareForTests();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
 

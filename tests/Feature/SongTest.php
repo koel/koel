@@ -14,7 +14,7 @@ class SongTest extends TestCase
     /**
      * @throws Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -24,7 +24,7 @@ class SongTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testSingleUpdateAllInfoNoCompilation()
+    public function testSingleUpdateAllInfoNoCompilation(): void
     {
         $this->expectsEvents(LibraryChanged::class);
         $song = Song::orderBy('id', 'desc')->first();
@@ -57,7 +57,7 @@ class SongTest extends TestCase
         ]);
     }
 
-    public function testSingleUpdateSomeInfoNoCompilation()
+    public function testSingleUpdateSomeInfoNoCompilation(): void
     {
         $song = Song::orderBy('id', 'desc')->first();
         $originalArtistId = $song->album->artist->id;
@@ -83,7 +83,7 @@ class SongTest extends TestCase
         $this->assertEquals('One by One', Song::find($song->id)->album->name);
     }
 
-    public function testMultipleUpdateAllInfoNoCompilation()
+    public function testMultipleUpdateAllInfoNoCompilation(): void
     {
         $songIds = Song::orderBy('id', 'desc')->take(3)->pluck('id')->toArray();
 
@@ -119,7 +119,7 @@ class SongTest extends TestCase
         $this->assertEquals('John Cena', $songs[2]->album->artist->name);
     }
 
-    public function testMultipleUpdateSomeInfoNoCompilation()
+    public function testMultipleUpdateSomeInfoNoCompilation(): void
     {
         $originalSongs = Song::orderBy('id', 'desc')->take(3)->get();
         $songIds = $originalSongs->pluck('id')->toArray();
@@ -155,7 +155,7 @@ class SongTest extends TestCase
         $this->assertEquals('John Cena', $songs[2]->album->artist->name); // And... JOHN CENAAAAAAAAAAA!!!
     }
 
-    public function testSingleUpdateAllInfoYesCompilation()
+    public function testSingleUpdateAllInfoYesCompilation(): void
     {
         $song = Song::orderBy('id', 'desc')->first();
 
@@ -306,7 +306,7 @@ class SongTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testDeletingByChunk()
+    public function testDeletingByChunk(): void
     {
         $this->assertNotEquals(0, Song::count());
         $ids = Song::select('id')->get()->pluck('id')->all();

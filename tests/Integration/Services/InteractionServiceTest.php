@@ -18,7 +18,7 @@ class InteractionServiceTest extends TestCase
      */
     private $interactionService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -26,7 +26,7 @@ class InteractionServiceTest extends TestCase
     }
 
     /** @test */
-    public function it_increases_a_songs_play_count()
+    public function it_increases_a_songs_play_count(): void
     {
         /** @var Interaction $interaction */
         $interaction = factory(Interaction::class)->create();
@@ -43,7 +43,7 @@ class InteractionServiceTest extends TestCase
      *
      * @throws Exception
      */
-    public function it_toggles_like_status()
+    public function it_toggles_like_status(): void
     {
         $this->expectsEvents(SongLikeToggled::class);
 
@@ -61,7 +61,7 @@ class InteractionServiceTest extends TestCase
      *
      * @throws Exception
      */
-    public function user_can_like_multiple_songs_at_once()
+    public function user_can_like_multiple_songs_at_once(): void
     {
         $this->expectsEvents(SongLikeToggled::class);
 
@@ -81,7 +81,7 @@ class InteractionServiceTest extends TestCase
      *
      * @throws Exception
      */
-    public function user_can_unlike_multiple_songs_at_once()
+    public function user_can_unlike_multiple_songs_at_once(): void
     {
         $this->expectsEvents(SongLikeToggled::class);
 

@@ -30,7 +30,7 @@ class MediaCacheService
             return $this->query();
         }
 
-        return $this->cache->rememberForever(self::CACHE_KEY, function () {
+        return $this->cache->rememberForever(self::CACHE_KEY, function (): array {
             return $this->query();
         });
     }
