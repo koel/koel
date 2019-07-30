@@ -1261,20 +1261,20 @@
         },
         {
             "name": "laravel/helpers",
-            "version": "v1.0.1",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/helpers.git",
-                "reference": "7f47ef43aaa76335d74e604fd2fc57a0e6f5a59f"
+                "reference": "60296b92778c6d44c4f5c4007eca2c8a2e0f5281"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/helpers/zipball/7f47ef43aaa76335d74e604fd2fc57a0e6f5a59f",
-                "reference": "7f47ef43aaa76335d74e604fd2fc57a0e6f5a59f",
+                "url": "https://api.github.com/repos/laravel/helpers/zipball/60296b92778c6d44c4f5c4007eca2c8a2e0f5281",
+                "reference": "60296b92778c6d44c4f5c4007eca2c8a2e0f5281",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "~5.8.0|~5.9.0",
+                "illuminate/support": "~5.8.0|~5.9.0|^6.0",
                 "php": ">=7.1.3"
             },
             "require-dev": {
@@ -1310,7 +1310,7 @@
                 "helpers",
                 "laravel"
             ],
-            "time": "2019-04-18T21:20:57+00:00"
+            "time": "2019-07-29T18:08:25+00:00"
         },
         {
             "name": "league/flysystem",
