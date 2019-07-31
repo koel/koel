@@ -1261,20 +1261,20 @@
         },
         {
             "name": "laravel/helpers",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/helpers.git",
-                "reference": "60296b92778c6d44c4f5c4007eca2c8a2e0f5281"
+                "reference": "b8eae9ddd461e89d0296f74fd069c413bf83b6fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/helpers/zipball/60296b92778c6d44c4f5c4007eca2c8a2e0f5281",
-                "reference": "60296b92778c6d44c4f5c4007eca2c8a2e0f5281",
+                "url": "https://api.github.com/repos/laravel/helpers/zipball/b8eae9ddd461e89d0296f74fd069c413bf83b6fa",
+                "reference": "b8eae9ddd461e89d0296f74fd069c413bf83b6fa",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "~5.8.0|~5.9.0|^6.0",
+                "illuminate/support": "~5.8.0|^6.0",
                 "php": ">=7.1.3"
             },
             "require-dev": {
@@ -1310,7 +1310,7 @@
                 "helpers",
                 "laravel"
             ],
-            "time": "2019-07-29T18:08:25+00:00"
+            "time": "2019-07-30T15:25:31+00:00"
         },
         {
             "name": "league/flysystem",
@@ -6363,18 +6363,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "email": "sebastian@phpeople.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpeople.de"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Library for handling version information and constraints",
