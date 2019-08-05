@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property bool       $is_various
  * @property Collection $songs
  * @property bool       $has_image
+ *
  * @method static self find(int $id)
  * @method static self firstOrCreate(array $where, array $params)
  */

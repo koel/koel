@@ -3,7 +3,6 @@
 namespace Tests\Unit\Http\Middleware;
 
 use App\Http\Middleware\ForceHttps;
-use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use Mockery;

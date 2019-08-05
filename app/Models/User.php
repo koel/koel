@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
  * @property int    $id
  * @property bool   $is_admin
  * @property string $lastfm_session_key
+ *
  * @method static self create(array $params)
  * @method static int count()
  */

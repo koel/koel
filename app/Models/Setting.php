@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property string $key
  * @property mixed  $value
+ *
  * @method static self find(string $key)
  * @method static self updateOrCreate(array $where, array $params)
  */

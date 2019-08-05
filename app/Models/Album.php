@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use PhpParser\Builder;
 
 /**
  * @property string      $cover           The album cover's file name
@@ -20,6 +19,7 @@ use PhpParser\Builder;
  * @property int         $artist_id
  * @property Collection  $songs
  * @property bool        $is_unknown
+ *
  * @method static self firstOrCreate(array $params)
  */
 class Album extends Model
