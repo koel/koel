@@ -46,4 +46,20 @@ class ForceHttpsTest extends TestCase
 
         $this->assertSame($request, $this->middleware->handle($request, $next));
     }
+
+    public function testNotHandle(): void
+    {
+        config(['koel.force_https' => false]);
+
+        $this->url->shouldReceive('forceScheme')->with('https')->never();
+
+        $request = Mockery::mock(Request::class);
+        $request->shouldReceive('setTrustedProxies')->never();
+
+        $next = static function (Request $request): Request {
+            return $request;
+        };
+
+        $this->assertSame($request, $this->middleware->handle($request, $next));
+    }
 }
