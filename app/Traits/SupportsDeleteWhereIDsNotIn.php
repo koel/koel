@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static Builder whereNotIn($keys, array $values)
  * @method static Builder select(string $string)
  */
-
 trait SupportsDeleteWhereIDsNotIn
 {
     /**
