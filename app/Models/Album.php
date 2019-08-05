@@ -7,18 +7,20 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use PhpParser\Builder;
 
 /**
- * @property string     $cover           The album cover's file name
- * @property string|null $cover_path     The absolute path to the cover file
- * @property bool       $has_cover       If the album has a cover image
- * @property int        $id
- * @property string     $name            Name of the album
- * @property bool       $is_compilation  If the album is a compilation from multiple artists
- * @property Artist     $artist          The album's artist
- * @property int        $artist_id
- * @property Collection $songs
- * @property bool       $is_unknown
+ * @property string      $cover           The album cover's file name
+ * @property string|null $cover_path      The absolute path to the cover file
+ * @property bool        $has_cover       If the album has a cover image
+ * @property int         $id
+ * @property string      $name            Name of the album
+ * @property bool        $is_compilation  If the album is a compilation from multiple artists
+ * @property Artist      $artist          The album's artist
+ * @property int         $artist_id
+ * @property Collection  $songs
+ * @property bool        $is_unknown
+ * @method static self firstOrCreate(array $params)
  */
 class Album extends Model
 {

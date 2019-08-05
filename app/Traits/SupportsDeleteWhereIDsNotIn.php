@@ -4,12 +4,18 @@ namespace App\Traits;
 
 use Exception;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * With reference to GitHub issue #463.
  * MySQL and PostgreSQL seem to have a limit of 2^16-1 (65535) elements in an IN statement.
  * This trait provides a method as a workaround to this limitation.
+ *
+ * @method static Builder whereIn($keys, array $values)
+ * @method static Builder whereNotIn($keys, array $values)
+ * @method static Builder select(string $string)
  */
+
 trait SupportsDeleteWhereIDsNotIn
 {
     /**

@@ -25,6 +25,9 @@ use Illuminate\Support\Collection;
  * @property string $id
  * @property int    $artist_id
  * @property int    $mtime
+ * @method static self updateOrCreate(array $where, array $params)
+ * @method static Builder select(string $string)
+ * @method static Builder inDirectory(string $path)
  */
 class Song extends Model
 {

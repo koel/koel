@@ -15,9 +15,6 @@ class Authenticate
         $this->auth = $auth;
     }
 
-    /**
-     * @return mixed
-     */
     public function handle(Request $request, Closure $next)
     {
         if ($this->auth->guest()) {
