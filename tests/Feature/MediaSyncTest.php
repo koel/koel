@@ -10,8 +10,8 @@ use App\Models\Song;
 use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
 use Exception;
-use JamesHeinrich\GetID3\GetID3;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use JamesHeinrich\GetID3\GetID3;
 
 class MediaSyncTest extends TestCase
 {
