@@ -7,10 +7,10 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use Exception;
-use getID3;
-use getid3_lib;
+use JamesHeinrich\GetID3\GetID3;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use InvalidArgumentException;
+use JamesHeinrich\GetID3\Utils;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -63,7 +63,7 @@ class FileSynchronizer
     private $syncError;
 
     public function __construct(
-        getID3 $getID3,
+        GetID3 $getID3,
         MediaMetadataService $mediaMetadataService,
         HelperService $helperService,
         SongRepository $songRepository,
@@ -117,17 +117,16 @@ class FileSynchronizer
         // Copy the available tags over to comment.
         // This is a helper from getID3, though it doesn't really work well.
         // We'll still prefer getting ID3v2 tags directly later.
-        getid3_lib::CopyTagsToComments($info);
-
-        $track = $this->getTrackNumberFromInfo($info);
+        Utils::CopyTagsToComments($info);
 
         $props = [
             'artist' => '',
             'album' => '',
+            'albumartist' => '',
             'compilation' => false,
             'title' => basename($this->filePath, '.'.pathinfo($this->filePath, PATHINFO_EXTENSION)), // default to be file name
             'length' => $info['playtime_seconds'],
-            'track' => (int) $track,
+            'track' => $this->getTrackNumberFromInfo($info),
             'disc' => (int) array_get($info, 'comments.part_of_a_set.0', 1),
             'lyrics' => '',
             'cover' => array_get($info, 'comments.picture', [null])[0],
@@ -327,12 +326,18 @@ class FileSynchronizer
             'albumartist' => 'band',
             'album' => 'album',
             'title' => 'title',
-            'lyrics' => 'unsynchronised_lyric',
+            'lyrics' => ['unsychronised_lyric', 'unsynchronised_lyric'],
             'compilation' => 'part_of_a_compilation',
         ];
 
-        foreach ($propertyMap as $name => $tag) {
-            $props[$name] = array_get($info, "tags.id3v2.$tag", [null])[0] ?: array_get($comments, $tag, [''])[0];
+        foreach ($propertyMap as $name => $tags) {
+            foreach ((array) $tags as $tag) {
+                $value = array_get($info, "tags.id3v2.$tag", [null])[0] ?: array_get($comments, $tag, [''])[0];
+
+                if ($value) {
+                    $props[$name] = $value;
+                }
+            }
 
             // Fixes #323, where tag names can be htmlentities()'ed
             if (is_string($props[$name]) && $props[$name]) {
