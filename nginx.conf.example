@@ -16,7 +16,6 @@ server {
   location /media/ {
     internal;
 
-    # A 'X-Media-Root' should be set to media_path settings from upstream
     alias       $upstream_http_x_media_root;
 
     #access_log /var/log/nginx/koel.access.log;
