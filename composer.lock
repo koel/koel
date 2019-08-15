@@ -2936,16 +2936,16 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.11.0",
+            "version": "v1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "82ebae02209c21113908c229e9883c419720738a"
+                "reference": "550ebaac289296ce228a706d0867afc34687e3f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/82ebae02209c21113908c229e9883c419720738a",
-                "reference": "82ebae02209c21113908c229e9883c419720738a",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/550ebaac289296ce228a706d0867afc34687e3f4",
+                "reference": "550ebaac289296ce228a706d0867afc34687e3f4",
                 "shasum": ""
             },
             "require": {
@@ -2957,7 +2957,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.11-dev"
+                    "dev-master": "1.12-dev"
                 }
             },
             "autoload": {
@@ -2974,12 +2974,12 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                },
-                {
                     "name": "Gert de Pagter",
                     "email": "BackEndTea@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -2990,7 +2990,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2019-02-06T07:57:58+00:00"
+            "time": "2019-08-06T08:03:45+00:00"
         },
         {
             "name": "symfony/polyfill-iconv",
@@ -5239,16 +5239,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.10.0",
+            "version": "3.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "19d56564133e8e25db9f8d48858a4e23f43da90e"
+                "reference": "921a365f5b9859f782cf34c8dba8f61609d4447a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/19d56564133e8e25db9f8d48858a4e23f43da90e",
-                "reference": "19d56564133e8e25db9f8d48858a4e23f43da90e",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/921a365f5b9859f782cf34c8dba8f61609d4447a",
+                "reference": "921a365f5b9859f782cf34c8dba8f61609d4447a",
                 "shasum": ""
             },
             "require": {
@@ -5259,7 +5259,6 @@
                 "league/flysystem": "^1.0",
                 "mpociot/documentarian": "^0.2.0",
                 "mpociot/reflection-docblock": "^1.0.1",
-                "nunomaduro/collision": "^3.0",
                 "php": ">=7.0.0",
                 "ramsey/uuid": "^3.8"
             },
@@ -5271,7 +5270,8 @@
                 "phpunit/phpunit": "^6.0.0 || ^7.4.0"
             },
             "suggest": {
-                "league/fractal": "Required for transformers support"
+                "league/fractal": "Required for transformers support",
+                "nunomaduro/collision": "For better reporting of errors that are thrpwn when generating docs"
             },
             "type": "library",
             "extra": {
@@ -5303,7 +5303,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-06-23T20:53:34+00:00"
+            "time": "2019-08-09T18:43:04+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
@@ -5975,70 +5975,6 @@
                 "php"
             ],
             "time": "2019-08-12T20:17:41+00:00"
-        },
-        {
-            "name": "nunomaduro/collision",
-            "version": "v3.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nunomaduro/collision.git",
-                "reference": "af42d339fe2742295a54f6fdd42aaa6f8c4aca68"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/af42d339fe2742295a54f6fdd42aaa6f8c4aca68",
-                "reference": "af42d339fe2742295a54f6fdd42aaa6f8c4aca68",
-                "shasum": ""
-            },
-            "require": {
-                "filp/whoops": "^2.1.4",
-                "jakub-onderka/php-console-highlighter": "0.3.*|0.4.*",
-                "php": "^7.1",
-                "symfony/console": "~2.8|~3.3|~4.0"
-            },
-            "require-dev": {
-                "laravel/framework": "5.8.*",
-                "nunomaduro/larastan": "^0.3.0",
-                "phpstan/phpstan": "^0.11",
-                "phpunit/phpunit": "~8.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "NunoMaduro\\Collision\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nuno Maduro",
-                    "email": "enunomaduro@gmail.com"
-                }
-            ],
-            "description": "Cli error handling for console/command-line PHP applications.",
-            "keywords": [
-                "artisan",
-                "cli",
-                "command-line",
-                "console",
-                "error",
-                "handling",
-                "laravel",
-                "laravel-zero",
-                "php",
-                "symfony"
-            ],
-            "time": "2019-03-07T21:35:13+00:00"
         },
         {
             "name": "nunomaduro/larastan",
@@ -8100,16 +8036,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.3.2",
+            "version": "v4.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "c60ecf5ba842324433b46f58dc7afc4487dbab99"
+                "reference": "34d29c2acd1ad65688f58452fd48a46bd996d5a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/c60ecf5ba842324433b46f58dc7afc4487dbab99",
-                "reference": "c60ecf5ba842324433b46f58dc7afc4487dbab99",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/34d29c2acd1ad65688f58452fd48a46bd996d5a6",
+                "reference": "34d29c2acd1ad65688f58452fd48a46bd996d5a6",
                 "shasum": ""
             },
             "require": {
@@ -8155,7 +8091,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2019-04-06T14:04:46+00:00"
+            "time": "2019-07-24T14:47:54+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -8250,7 +8186,7 @@
         },
         {
             "name": "windwalker/renderer",
-            "version": "3.5.9",
+            "version": "3.5.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ventoviro/windwalker-renderer.git",
@@ -8307,16 +8243,16 @@
         },
         {
             "name": "windwalker/structure",
-            "version": "3.5.9",
+            "version": "3.5.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ventoviro/windwalker-structure.git",
-                "reference": "6d3fc1ae456069a717d5a235532a68d1ef51486d"
+                "reference": "efd8e765b6d57db395c23ba02948953b7d20dd86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ventoviro/windwalker-structure/zipball/6d3fc1ae456069a717d5a235532a68d1ef51486d",
-                "reference": "6d3fc1ae456069a717d5a235532a68d1ef51486d",
+                "url": "https://api.github.com/repos/ventoviro/windwalker-structure/zipball/efd8e765b6d57db395c23ba02948953b7d20dd86",
+                "reference": "efd8e765b6d57db395c23ba02948953b7d20dd86",
                 "shasum": ""
             },
             "require": {
@@ -8356,7 +8292,7 @@
                 "structure",
                 "windwalker"
             ],
-            "time": "2019-04-28T06:01:00+00:00"
+            "time": "2019-07-26T17:11:14+00:00"
         }
     ],
     "aliases": [],
