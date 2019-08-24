@@ -102,6 +102,7 @@
     "cy": "kill-port 8088 && php artisan serve --port=8088 & wait-on http://localhost:8088 && cypress run --browser chrome",
     "build": "yarn production",
     "prod": "yarn production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "build-demo": "cross-env NODE_ENV=demo node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   }
 }
