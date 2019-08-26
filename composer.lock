@@ -1308,16 +1308,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.53",
+            "version": "1.0.55",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "08e12b7628f035600634a5e76d95b5eb66cea674"
+                "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/08e12b7628f035600634a5e76d95b5eb66cea674",
-                "reference": "08e12b7628f035600634a5e76d95b5eb66cea674",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/33c91155537c6dc899eacdc54a13ac6303f156e6",
+                "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6",
                 "shasum": ""
             },
             "require": {
@@ -1388,7 +1388,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2019-06-18T20:09:29+00:00"
+            "time": "2019-08-24T11:17:19+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -5239,16 +5239,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.11.0",
+            "version": "3.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "921a365f5b9859f782cf34c8dba8f61609d4447a"
+                "reference": "d5eef26cc525cda9280f54ec539be5d022841e48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/921a365f5b9859f782cf34c8dba8f61609d4447a",
-                "reference": "921a365f5b9859f782cf34c8dba8f61609d4447a",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/d5eef26cc525cda9280f54ec539be5d022841e48",
+                "reference": "d5eef26cc525cda9280f54ec539be5d022841e48",
                 "shasum": ""
             },
             "require": {
@@ -5267,6 +5267,7 @@
                 "league/fractal": "^0.17.0",
                 "mockery/mockery": "^1.2.0",
                 "orchestra/testbench": "3.5.* || 3.6.* || 3.7.*",
+                "phpstan/phpstan": "^0.11.15",
                 "phpunit/phpunit": "^6.0.0 || ^7.4.0"
             },
             "suggest": {
@@ -5303,7 +5304,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-08-09T18:43:04+00:00"
+            "time": "2019-08-25T22:43:42+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
@@ -8126,8 +8127,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
@@ -8186,16 +8187,16 @@
         },
         {
             "name": "windwalker/renderer",
-            "version": "3.5.10",
+            "version": "3.5.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ventoviro/windwalker-renderer.git",
-                "reference": "b5543585e54fab4e2f4d844e910272c2b405ba8f"
+                "reference": "c49ee2a473f565b5a428f86d3462f6637a40b35e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ventoviro/windwalker-renderer/zipball/b5543585e54fab4e2f4d844e910272c2b405ba8f",
-                "reference": "b5543585e54fab4e2f4d844e910272c2b405ba8f",
+                "url": "https://api.github.com/repos/ventoviro/windwalker-renderer/zipball/c49ee2a473f565b5a428f86d3462f6637a40b35e",
+                "reference": "c49ee2a473f565b5a428f86d3462f6637a40b35e",
                 "shasum": ""
             },
             "require": {
@@ -8239,11 +8240,11 @@
                 "renderer",
                 "windwalker"
             ],
-            "time": "2019-05-29T13:58:28+00:00"
+            "time": "2019-08-17T05:12:18+00:00"
         },
         {
             "name": "windwalker/structure",
-            "version": "3.5.10",
+            "version": "3.5.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ventoviro/windwalker-structure.git",
