@@ -6917,10 +6917,10 @@ normalize-url@^1.4.0:
     query-string "^4.1.0"
     sort-keys "^1.0.0"
 
-nouislider@^9.1.0:
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/nouislider/-/nouislider-9.2.0.tgz#e87c507de2b0b4d075038b5a42547c7dbbebaf69"
-  integrity sha1-6HxQfeKwtNB1A4taQlR8fbvrr2k=
+nouislider@v14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/nouislider/-/nouislider-14.0.2.tgz#673e7e7362345d938db9d74f84bea5f3c31505de"
+  integrity sha512-N4AQStV4frh+XcLUwMI/hZpBP6tRboDE/4LZ7gzfxMVXFi/2J9URphnm40Ff4KEyrAVGSGaWApvljoMzTNWBlA==
 
 np@^2.18.3:
   version "2.20.1"
