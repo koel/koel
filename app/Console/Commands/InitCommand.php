@@ -235,8 +235,17 @@ class InitCommand extends Command
 
     private function compileFrontEndAssets(): void
     {
-        $this->info('Compiling front-end stuff');
-        system('yarn install');
+        $this->info('Now to front-end stuff');
+
+        // We need to run two yarn commands:
+        // - The first to install node_modules in the resources/assets submodule
+        // - The second for the root folder, to build Koel's front-end assets with Mix.
+        chdir('./resources/assets');
+        $this->info('├── Installing Node modules in resources/assets directory');
+        system('yarn');
+        chdir('../..');
+        $this->info('└── Compiling assets');
+        system('yarn');
     }
 
     /** @return array<string> */
