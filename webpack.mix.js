@@ -14,8 +14,6 @@ mix.webpackConfig({
 
 mix.setResourceRoot('./public/')
 
-mix.config.detectHotReloading()
-
 if (mix.config.hmr) {
   // There's a bug with Mix/copy plugin which prevents HMR from working:
   // https://github.com/JeffreyWay/laravel-mix/issues/150
