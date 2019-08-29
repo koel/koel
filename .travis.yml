@@ -17,7 +17,7 @@ branches:
 install:
   - composer self-update
   - composer install --prefer-dist --no-interaction
-  - yarn
+  - cd resources/assets && yarn && cd ../.. && yarn
 
 script:
   # Backend
