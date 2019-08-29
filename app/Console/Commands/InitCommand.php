@@ -246,6 +246,7 @@ class InitCommand extends Command
         chdir('../..');
         $this->info('└── Compiling assets');
         system('yarn');
+        system('yarn production');
     }
 
     /** @return array<string> */
