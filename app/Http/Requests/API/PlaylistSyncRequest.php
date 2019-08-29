@@ -10,7 +10,7 @@ class PlaylistSyncRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => 'required',
+            'songs' => 'present|array',
         ];
     }
 }
