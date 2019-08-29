@@ -242,11 +242,11 @@ class InitCommand extends Command
         // - The second for the root folder, to build Koel's front-end assets with Mix.
         chdir('./resources/assets');
         $this->info('├── Installing Node modules in resources/assets directory');
-        system('yarn');
+        system('yarn --colors');
         chdir('../..');
         $this->info('└── Compiling assets');
-        system('yarn');
-        system('yarn production');
+        system('yarn --colors');
+        system('yarn production --colors');
     }
 
     /** @return array<string> */
