@@ -12,11 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Backend dependencies
+    - name: Install backend dependencies
       run: composer install --prefer-dist --no-interaction
-    - name: PHPUnit
+    - name: Run PHPUnit
       run: composer coverage
-    - name: Codecov
-      env:
-        CODECOV_TOKEN: 60cca453-c95d-4f29-8488-90ebfb1312f4
+    - name: Upload coverage reports
       run: bash <(curl -s https://codecov.io/bash)
