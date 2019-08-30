@@ -1,6 +1,10 @@
 name: CI
 
-on: [push]
+on: 
+  push:
+    branches: 
+      - actions
+  
 
 jobs:
   build:
