@@ -17,4 +17,6 @@ jobs:
     - name: Run PHPUnit
       run: composer coverage
     - name: Upload coverage reports
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: bash <(curl -s https://codecov.io/bash)
