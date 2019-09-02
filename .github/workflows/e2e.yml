@@ -14,8 +14,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install backend dependencies
       run: composer install --prefer-dist --no-interaction
-    - name: Install front end dependencies
-      run: resources/assets && yarn
+    - name: Install frontend dependencies
+      run: cd resources/assets && yarn
     - name: Compile front end assets
       run: cd ../.. && yarn && yarn production
     - name: Run cypress
