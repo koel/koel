@@ -1,0 +1,22 @@
+name: E2E
+
+on:
+  push:
+    branches:
+    - master
+    - actions
+
+jobs:
+  cypress:
+    name: E2E with cypress
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install backend dependencies
+      run: composer install --prefer-dist --no-interaction
+    - name: Install front end dependencies
+      run: resources/assets && yarn
+    - name: Compile front end assets
+      run: cd ../.. && yarn && yarn production
+    - name: Run cypress
+      run: yarn cy
