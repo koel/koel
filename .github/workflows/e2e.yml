@@ -15,8 +15,6 @@ jobs:
     - name: Install backend dependencies
       run: composer install --prefer-dist --no-interaction
     - name: Install frontend dependencies
-      run: cd resources/assets && yarn
-    - name: Compile frontend assets
-      run: yarn && yarn production
+      run: cd resources/assets && yarn && cd ../../ && yarn && yarn production
     - name: Run cypress
       run: yarn cy
