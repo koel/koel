@@ -5245,16 +5245,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.16.2",
+            "version": "3.16.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "741f6d16975c1e264821c33e59c45e25c02de429"
+                "reference": "248a05245a4279c5c44bb7cbf5ef9c2b6f40b763"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/741f6d16975c1e264821c33e59c45e25c02de429",
-                "reference": "741f6d16975c1e264821c33e59c45e25c02de429",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/248a05245a4279c5c44bb7cbf5ef9c2b6f40b763",
+                "reference": "248a05245a4279c5c44bb7cbf5ef9c2b6f40b763",
                 "shasum": ""
             },
             "require": {
@@ -5310,7 +5310,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-09-04T22:28:32+00:00"
+            "time": "2019-09-05T09:56:37+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
