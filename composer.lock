@@ -3825,8 +3825,8 @@
             "authors": [
                 {
                     "name": "Tijs Verkoyen",
-                    "role": "Developer",
-                    "email": "css_to_inline_styles@verkoyen.eu"
+                    "email": "css_to_inline_styles@verkoyen.eu",
+                    "role": "Developer"
                 }
             ],
             "description": "CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline styles. This is very useful when you're sending emails.",
@@ -3879,9 +3879,9 @@
             "authors": [
                 {
                     "name": "Sean Tymon",
-                    "role": "Developer",
                     "email": "tymon148@gmail.com",
-                    "homepage": "http://tymondesigns.com"
+                    "homepage": "http://tymondesigns.com",
+                    "role": "Developer"
                 }
             ],
             "description": "JSON Web Token Authentication for Laravel 4 and 5",
@@ -4574,8 +4574,8 @@
             "authors": [
                 {
                     "name": "Filipe Dobreira",
-                    "role": "Developer",
-                    "homepage": "https://github.com/filp"
+                    "homepage": "https://github.com/filp",
+                    "role": "Developer"
                 }
             ],
             "description": "php error handling for cool kids",
@@ -5245,16 +5245,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.16.3",
+            "version": "3.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "248a05245a4279c5c44bb7cbf5ef9c2b6f40b763"
+                "reference": "4893170252adc9f37401c78a98543bbc6d01d69d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/248a05245a4279c5c44bb7cbf5ef9c2b6f40b763",
-                "reference": "248a05245a4279c5c44bb7cbf5ef9c2b6f40b763",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/4893170252adc9f37401c78a98543bbc6d01d69d",
+                "reference": "4893170252adc9f37401c78a98543bbc6d01d69d",
                 "shasum": ""
             },
             "require": {
@@ -5310,7 +5310,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-09-05T09:56:37+00:00"
+            "time": "2019-09-07T15:44:55+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
@@ -6291,9 +6291,9 @@
             "authors": [
                 {
                     "name": "Markus Malkusch",
-                    "role": "Developer",
                     "email": "markus@malkusch.de",
-                    "homepage": "http://markus.malkusch.de"
+                    "homepage": "http://markus.malkusch.de",
+                    "role": "Developer"
                 }
             ],
             "description": "PHP-Mock can mock built-in PHP functions (e.g. time()). PHP-Mock relies on PHP's namespace fallback policy. No further extension is needed.",
@@ -6344,9 +6344,9 @@
             "authors": [
                 {
                     "name": "Markus Malkusch",
-                    "role": "Developer",
                     "email": "markus@malkusch.de",
-                    "homepage": "http://markus.malkusch.de"
+                    "homepage": "http://markus.malkusch.de",
+                    "role": "Developer"
                 }
             ],
             "description": "Integration package for PHP-Mock",
@@ -6397,9 +6397,9 @@
             "authors": [
                 {
                     "name": "Markus Malkusch",
-                    "role": "Developer",
                     "email": "markus@malkusch.de",
-                    "homepage": "http://markus.malkusch.de"
+                    "homepage": "http://markus.malkusch.de",
+                    "role": "Developer"
                 }
             ],
             "description": "Mock built-in PHP functions (e.g. time()) with Mockery. This package relies on PHP's namespace fallback policy. No further extension is needed.",
