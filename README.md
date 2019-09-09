@@ -10,6 +10,10 @@
 
 For system requirements, installation/upgrade guides, troubleshooting etc., head over to the [Official Documentation](http://koel.phanan.net/docs).
 
+## API Docs
+
+If you're interested in the development of a client, Koel's offical API documentation is available [here](https://koel.phanan.net/api-docs/).
+
 ## Contribute
 
 All contributions, big or small, are warmheartedly welcome! Please note, however, that if you want to work on a new feature, first open an issue to make sure it's something desired – doing this will greatly save time for all of us.
