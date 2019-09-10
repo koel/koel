@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.107.4",
+            "version": "3.111.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "37bacdae146326ed8008e3354e9e2c3547646996"
+                "reference": "a31376012346118b2b88df6d2f0c185af71e3096"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/37bacdae146326ed8008e3354e9e2c3547646996",
-                "reference": "37bacdae146326ed8008e3354e9e2c3547646996",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a31376012346118b2b88df6d2f0c185af71e3096",
+                "reference": "a31376012346118b2b88df6d2f0c185af71e3096",
                 "shasum": ""
             },
             "require": {
@@ -87,25 +87,25 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-07-19T18:14:22+00:00"
+            "time": "2019-09-09T18:13:28+00:00"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
-            "version": "3.3.2",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php-laravel.git",
-                "reference": "3e8e8801d6666bc60dfaf5429febceb84eed0cec"
+                "reference": "90f72efd7ec85c1141b397079112f58e0ca0143b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/3e8e8801d6666bc60dfaf5429febceb84eed0cec",
-                "reference": "3e8e8801d6666bc60dfaf5429febceb84eed0cec",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/90f72efd7ec85c1141b397079112f58e0ca0143b",
+                "reference": "90f72efd7ec85c1141b397079112f58e0ca0143b",
                 "shasum": ""
             },
             "require": {
                 "aws/aws-sdk-php": "~3.0",
-                "illuminate/support": "~5.1",
+                "illuminate/support": "~5.1|~6.0",
                 "php": ">=5.5.9"
             },
             "require-dev": {
@@ -154,7 +154,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-03-15T17:57:46+00:00"
+            "time": "2019-09-09T21:00:25+00:00"
         },
         {
             "name": "daverandom/resume",
@@ -6138,18 +6138,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "role": "Developer",
-                    "email": "arne@blankerts.de"
+                    "email": "arne@blankerts.de",
+                    "role": "Developer"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "role": "Developer",
-                    "email": "sebastian@phpeople.de"
+                    "email": "sebastian@phpeople.de",
+                    "role": "Developer"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "role": "Developer",
-                    "email": "sebastian@phpunit.de"
+                    "email": "sebastian@phpunit.de",
+                    "role": "Developer"
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
