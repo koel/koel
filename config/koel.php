@@ -129,6 +129,8 @@ return [
     'misc' => [
         'home_url' => 'https://koel.phanan.net/',
         'docs_url' => 'https://koel.phanan.net/docs',
+        'sponsor_github_url' => 'https://github.com/users/phanan/sponsorship',
+        'sponsor_open_collective_url' => 'https://opencollective.com/koel',
     ],
 
 ];

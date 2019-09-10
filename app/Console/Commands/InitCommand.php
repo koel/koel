@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\SettingRepository;
@@ -53,13 +54,21 @@ class InitCommand extends Command
             $this->info('Running in no-interaction mode');
         }
 
-        $this->maybeGenerateAppKey();
-        $this->maybeGenerateJwtSecret();
-        $this->maybeSetUpDatabase();
-        $this->migrateDatabase();
-        $this->maybeSeedDatabase();
-        $this->maybeSetMediaPath();
-        $this->compileFrontEndAssets();
+        try {
+            $this->maybeGenerateAppKey();
+            $this->maybeGenerateJwtSecret();
+            $this->maybeSetUpDatabase();
+            $this->migrateDatabase();
+            $this->maybeSeedDatabase();
+            $this->maybeSetMediaPath();
+            $this->compileFrontEndAssets();
+        } catch (Exception $e) {
+            $this->error("Oops! Koel installation or upgrade didn't finish successfully.");
+            $this->error('Please try again, or visit '.config('koel.misc.docs_url').' for manual installation.');
+            $this->error('😥 Sorry for this. You deserve better.');
+
+            return;
+        }
 
         $this->comment(PHP_EOL.'🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
 
@@ -67,10 +76,13 @@ class InitCommand extends Command
             $this->comment('You can also scan for media with `php artisan koel:sync`.');
         }
 
-        $this->comment('Again, for more configuration guidance, refer to');
-        $this->info('📙  '.config('koel.misc.docs_url'));
-        $this->comment('or open the .env file in the root installation folder.');
-        $this->comment('Thanks for using Koel. You rock!');
+        $this->comment('Again, visit 📙 '.config('koel.misc.docs_url').' for the official documentation.');
+        $this->comment(
+            "Feeling generous and want to support Koel's development? Check out "
+            .config('koel.misc.sponsor_github_url')
+            .' 🤗'
+        );
+        $this->comment('Thanks for using Koel. You rock! 🤘');
     }
 
     /**
@@ -237,16 +249,25 @@ class InitCommand extends Command
     {
         $this->info('Now to front-end stuff');
 
-        // We need to run two yarn commands:
+        // We need to run several yarn commands:
         // - The first to install node_modules in the resources/assets submodule
-        // - The second for the root folder, to build Koel's front-end assets with Mix.
+        // - The second and third for the root folder, to build Koel's front-end assets with Mix.
+
         chdir('./resources/assets');
         $this->info('├── Installing Node modules in resources/assets directory');
-        system('yarn --colors');
+
+        $runOkOrThrow = static function (string $command): void {
+            passthru($command, $status);
+            throw_if((bool) $status, InstallationFailedException::class);
+        };
+
+        $runOkOrThrow('yarn install --colors');
+
         chdir('../..');
         $this->info('└── Compiling assets');
-        system('yarn --colors');
-        system('yarn production --colors');
+
+        $runOkOrThrow('yarn install --colors');
+        $runOkOrThrow('yarn production --colors');
     }
 
     /** @return array<string> */
