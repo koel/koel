@@ -47,6 +47,7 @@ return [
         'bitrate' => env('OUTPUT_BIT_RATE', 128),
         'method' => env('STREAMING_METHOD'),
         'ffmpeg_path' => env('FFMPEG_PATH'),
+	'ffmpeg_codec' => env('FFMPEG_CODEC', 'libmp3lame'),
     ],
 
     /*
