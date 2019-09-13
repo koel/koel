@@ -5038,8 +5038,8 @@
             "authors": [
                 {
                     "name": "Frank Kleine",
-                    "role": "Developer",
-                    "homepage": "http://frankkleine.de/"
+                    "homepage": "http://frankkleine.de/",
+                    "role": "Developer"
                 }
             ],
             "description": "Virtual file system to mock the real file system in unit tests.",
@@ -5242,16 +5242,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "3.17.0",
+            "version": "3.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "4893170252adc9f37401c78a98543bbc6d01d69d"
+                "reference": "009d7603bf40262e37be329872c99a9ba97471c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/4893170252adc9f37401c78a98543bbc6d01d69d",
-                "reference": "4893170252adc9f37401c78a98543bbc6d01d69d",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/009d7603bf40262e37be329872c99a9ba97471c8",
+                "reference": "009d7603bf40262e37be329872c99a9ba97471c8",
                 "shasum": ""
             },
             "require": {
@@ -5307,7 +5307,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2019-09-07T15:44:55+00:00"
+            "time": "2019-09-12T22:34:17+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
