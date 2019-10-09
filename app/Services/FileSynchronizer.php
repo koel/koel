@@ -9,8 +9,8 @@ use App\Repositories\SongRepository;
 use Exception;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use InvalidArgumentException;
-use JamesHeinrich\GetID3\GetID3;
-use JamesHeinrich\GetID3\Utils;
+use getID3;
+use getid3_lib;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -63,7 +63,7 @@ class FileSynchronizer
     private $syncError;
 
     public function __construct(
-        GetID3 $getID3,
+        getID3 $getID3,
         MediaMetadataService $mediaMetadataService,
         HelperService $helperService,
         SongRepository $songRepository,
@@ -117,7 +117,7 @@ class FileSynchronizer
         // Copy the available tags over to comment.
         // This is a helper from getID3, though it doesn't really work well.
         // We'll still prefer getting ID3v2 tags directly later.
-        Utils::CopyTagsToComments($info);
+        getid3_lib::CopyTagsToComments($info);
 
         $props = [
             'artist' => '',

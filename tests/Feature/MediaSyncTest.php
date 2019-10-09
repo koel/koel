@@ -10,8 +10,8 @@ use App\Models\Song;
 use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
 use Exception;
+use getID3;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use JamesHeinrich\GetID3\GetID3;
 
 class MediaSyncTest extends TestCase
 {
@@ -238,7 +238,7 @@ class MediaSyncTest extends TestCase
     /** @test */
     public function html_entities_in_tags_are_recognized_and_saved_properly(): void
     {
-        $this->mockIocDependency(GetID3::class, [
+        $this->mockIocDependency(getID3::class, [
             'analyze' => [
                 'tags' => [
                     'id3v2' => [
