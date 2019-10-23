@@ -21,7 +21,7 @@ class ChangePasswordCommand extends Command
 
     public function handle(): void
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = User::where('is_admin', true)->first();
 
         if (!$user) {
