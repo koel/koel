@@ -29,6 +29,8 @@ use Illuminate\Support\Collection;
  * @method static self updateOrCreate(array $where, array $params)
  * @method static Builder select(string $string)
  * @method static Builder inDirectory(string $path)
+ * @method static self first()
+ * @method static Collection orderBy(...$args)
  */
 class Song extends Model
 {

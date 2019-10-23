@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,9 +12,12 @@ use Illuminate\Notifications\Notifiable;
  * @property int    $id
  * @property bool   $is_admin
  * @property string $lastfm_session_key
+ * @property string $email
+ * @property string $password
  *
  * @method static self create(array $params)
  * @method static int count()
+ * @method static Collection where(string $key, $val)
  */
 class User extends Authenticatable
 {
