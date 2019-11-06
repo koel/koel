@@ -51,6 +51,10 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request)
     {
+        if (config('koel.misc.demo')) {
+            return response()->json();
+        }
+
         $data = $request->only('name', 'email');
 
         if ($request->password) {
