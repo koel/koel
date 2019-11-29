@@ -6,12 +6,11 @@ use Illuminate\Database\Seeder;
 
 class AlbumTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run()
     {
-        Album::create([
+        Album::firstOrCreate([
+            'id' => Album::UNKNOWN_ID
+        ], [
             'id' => Album::UNKNOWN_ID,
             'artist_id' => Artist::UNKNOWN_ID,
             'name' => Album::UNKNOWN_NAME,

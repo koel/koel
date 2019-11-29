@@ -5,12 +5,11 @@ use Illuminate\Database\Seeder;
 
 class ArtistTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run()
     {
-        Artist::create([
+        Artist::firstOrCreate([
+            'id' => Artist::UNKNOWN_ID
+        ], [
             'id' => Artist::UNKNOWN_ID,
             'name' => Artist::UNKNOWN_NAME,
         ]);

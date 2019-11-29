@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Collection  $songs
  * @property bool        $is_unknown
  *
- * @method static self firstOrCreate(array $params)
+ * @method static self firstOrCreate(array $where, array $params)
  */
 class Album extends Model
 {
