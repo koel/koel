@@ -1,4 +1,4 @@
 *
 !.gitignore
-!manifest.json
+!manifest.json.example
 !browserconfig.xml
