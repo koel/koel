@@ -2,12 +2,15 @@
 
 namespace App\Console\Commands\Admin;
 
+use App\Console\Commands\Traits\AskForPassword;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 
 class ChangePasswordCommand extends Command
 {
+    use AskForPassword;
+
     protected $name = 'koel:admin:change-password';
     protected $description = "Change the default admin's password";
 
@@ -32,31 +35,9 @@ class ChangePasswordCommand extends Command
 
         $this->comment("Changing the default admin's password (ID: {$user->id}, email: {$user->email})");
 
-        do {
-            $password = $this->secret('New password');
-            $confirmedPassword = $this->secret('Again, just to be sure');
-        } while (!$this->validatePasswords($password, $confirmedPassword));
-
-        $user->password = $this->hash->make($password);
+        $user->password = $this->hash->make($this->askForPassword());
         $user->save();
 
-        $this->comment('New password saved, enjoy! 👌');
-    }
-
-    private function validatePasswords(?string $password, ?string $confirmedPassword): bool
-    {
-        if (!$password || !$confirmedPassword) {
-            $this->error('Passwords cannot be empty. You know that.');
-
-            return false;
-        }
-
-        if (strcmp($password, $confirmedPassword) !== 0) {
-            $this->error('The passwords do not match. Try again maybe?');
-
-            return false;
-        }
-
-        return true;
+        $this->comment('Alrighty, your new password has been saved. Enjoy! 👌');
     }
 }

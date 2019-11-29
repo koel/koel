@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Traits\AskForPassword;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
@@ -16,6 +17,8 @@ use Jackiedo\DotenvEditor\DotenvEditor;
 
 class InitCommand extends Command
 {
+    use AskForPassword;
+
     protected $signature = 'koel:init';
     protected $description = 'Install or upgrade Koel';
 
@@ -220,14 +223,13 @@ class InitCommand extends Command
 
     private function maybeSetUpDatabase(): void
     {
-        $dbSetUp = false;
-
-        while (!$dbSetUp) {
+        while (true) {
             try {
                 // Make sure the config cache is cleared before another attempt.
                 $this->artisan->call('config:clear');
                 $this->db->reconnect()->getPdo();
-                $dbSetUp = true;
+
+                break;
             } catch (Exception $e) {
                 $this->error($e->getMessage());
                 $this->warn(PHP_EOL."Koel cannot connect to the database. Let's set it up.");
@@ -279,19 +281,7 @@ class InitCommand extends Command
 
         $name = $this->ask('Your name', config('koel.admin.name'));
         $email = $this->ask('Your email address', config('koel.admin.email'));
-        $passwordConfirmed = false;
-        $password = null;
-
-        while (!$passwordConfirmed) {
-            $password = $this->secret('Your desired password');
-            $confirmation = $this->secret('Again, just to make sure');
-
-            if ($confirmation !== $password) {
-                $this->error("That doesn't match. Let's try again.");
-            } else {
-                $passwordConfirmed = true;
-            }
-        }
+        $password = $this->askForPassword();
 
         return [$name, $email, $password];
     }
