@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Song  $song
  * @property User  $user
  * @property int   $id
+ * @method self firstOrCreate(array $where, array $params = [])
  */
 class Interaction extends Model
 {

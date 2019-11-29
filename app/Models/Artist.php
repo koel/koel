@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property bool       $has_image
  *
  * @method static self find(int $id)
- * @method static self firstOrCreate(array $where, array $params)
+ * @method static self firstOrCreate(array $where, array $params = [])
  */
 class Artist extends Model
 {
@@ -84,7 +84,7 @@ class Artist extends Model
 
         $name = trim($name) ?: self::UNKNOWN_NAME;
 
-        return static::firstOrCreate(compact('name'), compact('name'));
+        return static::firstOrCreate(compact('name'));
     }
 
     /**

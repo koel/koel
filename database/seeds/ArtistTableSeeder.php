@@ -10,7 +10,6 @@ class ArtistTableSeeder extends Seeder
         Artist::firstOrCreate([
             'id' => Artist::UNKNOWN_ID,
         ], [
-            'id' => Artist::UNKNOWN_ID,
             'name' => Artist::UNKNOWN_NAME,
         ]);
     }
