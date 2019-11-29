@@ -8,7 +8,7 @@ use App\Services\LastfmService;
 
 class UpdateLastfmNowPlaying
 {
-    protected $lastfm;
+    private $lastfm;
 
     public function __construct(LastfmService $lastfm)
     {

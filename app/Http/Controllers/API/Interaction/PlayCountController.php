@@ -27,10 +27,7 @@ class PlayCountController extends Controller
     public function store(StorePlayCountRequest $request)
     {
         $interaction = $this->interactionService->increasePlayCount($request->song, $request->user());
-
-        if ($interaction) {
-            event(new SongStartedPlaying($interaction->song, $interaction->user));
-        }
+        $this->dispatch(new SongStartedPlaying($interaction->song, $interaction->user));
 
         return response()->json($interaction);
     }

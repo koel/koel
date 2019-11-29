@@ -7,7 +7,7 @@ use App\Services\LastfmService;
 
 class LoveTrackOnLastfm
 {
-    protected $lastfm;
+    private $lastfm;
 
     public function __construct(LastfmService $lastfm)
     {
@@ -18,14 +18,14 @@ class LoveTrackOnLastfm
     {
         if (!$this->lastfm->enabled() ||
             !($sessionKey = $event->user->lastfm_session_key) ||
-            $event->interaction->song->album->artist->is_unknown
+            $event->interaction->song->artist->is_unknown
         ) {
             return;
         }
 
         $this->lastfm->toggleLoveTrack(
             $event->interaction->song->title,
-            $event->interaction->song->album->artist->name,
+            $event->interaction->song->artist->name,
             $sessionKey,
             $event->interaction->liked
         );
