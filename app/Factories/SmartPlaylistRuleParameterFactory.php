@@ -14,7 +14,7 @@ class SmartPlaylistRuleParameterFactory
      *
      * @throws Throwable
      *
-     * @return array
+     * @return string[]
      */
     public function createParameters(string $model, string $operator, array $value): array
     {
@@ -28,8 +28,12 @@ class SmartPlaylistRuleParameterFactory
             Rule::OPERATOR_IS_LESS_THAN => [$model, '<', $value[0]],
             Rule::OPERATOR_IS_GREATER_THAN =>  [$model, '>', $value[0]],
             Rule::OPERATOR_IS_BETWEEN => [$model, $value],
-            Rule::OPERATOR_NOT_IN_LAST => [$model, '<', (new Carbon())->subDay($value[0])],
-            Rule::OPERATOR_IN_LAST => [$model, '>=', (new Carbon())->subDay($value[0])],
+            Rule::OPERATOR_NOT_IN_LAST => static function () use ($model, $value): array {
+                return [$model, '<', (new Carbon())->subDay($value[0])];
+            },
+            Rule::OPERATOR_IN_LAST => static function () use ($model, $value): array {
+                return [$model, '>=', (new Carbon())->subDay($value[0])];
+            },
         ];
 
         throw_unless(array_key_exists($operator, $ruleParameterMap), InvalidArgumentException::class, sprintf(
@@ -38,6 +42,6 @@ class SmartPlaylistRuleParameterFactory
             implode(', ', array_keys($ruleParameterMap))
         ));
 
-        return $ruleParameterMap[$operator];
+        return is_array($ruleParameterMap[$operator]) ? $ruleParameterMap[$operator] : $ruleParameterMap[$operator]();
     }
 }
