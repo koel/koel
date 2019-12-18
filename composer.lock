@@ -1008,16 +1008,16 @@
         },
         {
             "name": "james-heinrich/getid3",
-            "version": "v1.9.18",
+            "version": "v1.9.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JamesHeinrich/getID3.git",
-                "reference": "0723b77cafe9278618cfb6bc91b75e73705d3de8"
+                "reference": "c6fd499a690ae67eea2eec6b2edba5df13f60f6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/0723b77cafe9278618cfb6bc91b75e73705d3de8",
-                "reference": "0723b77cafe9278618cfb6bc91b75e73705d3de8",
+                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/c6fd499a690ae67eea2eec6b2edba5df13f60f6f",
+                "reference": "c6fd499a690ae67eea2eec6b2edba5df13f60f6f",
                 "shasum": ""
             },
             "require": {
@@ -1067,7 +1067,7 @@
                 "php",
                 "tags"
             ],
-            "time": "2019-09-16T19:08:47+00:00"
+            "time": "2019-12-17T21:17:26+00:00"
         },
         {
             "name": "kylekatarnls/update-helper",
