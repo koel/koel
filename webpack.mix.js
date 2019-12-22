@@ -8,7 +8,7 @@ mix.webpackConfig({
   plugins,
   output: {
     chunkFilename: mix.config.inProduction ? 'js/[name].[chunkhash].js' : 'js/[name].js',
-    publicPath: '/public/'
+    publicPath: 'public/'
   }
 })
 
