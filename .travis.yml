@@ -27,10 +27,6 @@ script:
   # Cypress
   - yarn cy
 
-matrix:
-  allow_failures:
-    - php: 7.4 # Not ready yet on Travis
-
 cache:
   directories:
     - vendor/
