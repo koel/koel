@@ -24,12 +24,12 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('login', (email = 'me@phanan.net', password = 'secret') => {
+Cypress.Commands.add('login', (path = '/', email = 'me@phanan.net', password = 'secret') => {
   cy.server()
   cy.route('POST', '/api/me', 'fixture:token.json')
   cy.route('GET', '/api/data', 'fixture:data.json')
   cy.route('GET', '/api/ping', '')
-  cy.visit('/')
+  cy.visit(path)
   cy.get('[type=email]').type(email)
   cy.get('[type=password]').type(password)
   cy.get('[type=submit]').click()
