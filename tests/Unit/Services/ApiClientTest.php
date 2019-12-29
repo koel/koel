@@ -22,7 +22,7 @@ class ApiClientTest extends TestCase
     /** @var Client|MockInterface */
     private $client;
 
-    /** @var Logger|MockInterface */a
+    /** @var Logger|MockInterface */
     private $logger;
 
     public function setUp(): void
