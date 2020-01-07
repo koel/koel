@@ -86,13 +86,13 @@ class PlaylistTest extends TestCase
         $removedSong = $songs->pop();
 
         $this->putAsUser("api/playlist/{$playlist->id}/sync", [
-                'songs' => $songs->pluck('id')->toArray(),
-            ])
+            'songs' => $songs->pluck('id')->toArray(),
+        ])
             ->seeStatusCode(403);
 
         $this->putAsUser("api/playlist/{$playlist->id}/sync", [
-                'songs' => $songs->pluck('id')->toArray(),
-            ], $user);
+            'songs' => $songs->pluck('id')->toArray(),
+        ], $user);
 
         // We should still see the first 3 songs, but not the removed one
         foreach ($songs as $song) {
