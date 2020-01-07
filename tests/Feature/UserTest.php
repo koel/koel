@@ -35,10 +35,10 @@ class UserTest extends TestCase
             ->andReturn('hashed');
 
         $this->postAsUser('api/user', [
-                'name' => 'Foo',
-                'email' => 'bar@baz.com',
-                'password' => 'qux',
-            ], factory(User::class, 'admin')->create());
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'password' => 'qux',
+        ], factory(User::class, 'admin')->create());
 
         self::seeInDatabase('users', [
             'name' => 'Foo',
@@ -63,10 +63,10 @@ class UserTest extends TestCase
             ->andReturn('hashed');
 
         $this->putAsUser("api/user/{$user->id}", [
-                'name' => 'Foo',
-                'email' => 'bar@baz.com',
-                'password' => 'qux',
-            ], factory(User::class, 'admin')->create());
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'password' => 'qux',
+        ], factory(User::class, 'admin')->create());
 
         self::seeInDatabase('users', [
             'id' => $user->id,
