@@ -9,8 +9,9 @@ use Tests\Traits\InteractsWithIoc;
 
 abstract class TestCase extends BaseTestCase
 {
-    use DatabaseTransactions, CreatesApplication, InteractsWithIoc;
-
+    use DatabaseTransactions;
+    use CreatesApplication;
+    use InteractsWithIoc;
     public function setUp(): void
     {
         parent::setUp();

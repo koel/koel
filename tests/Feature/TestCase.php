@@ -16,8 +16,9 @@ use Tymon\JWTAuth\JWTAuth;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication, DatabaseTransactions, InteractsWithIoc;
-
+    use CreatesApplication;
+    use DatabaseTransactions;
+    use InteractsWithIoc;
     /** @var JWTAuth */
     private $auth;
 
