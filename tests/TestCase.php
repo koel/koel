@@ -12,6 +12,7 @@ abstract class TestCase extends BaseTestCase
     use DatabaseTransactions;
     use CreatesApplication;
     use InteractsWithIoc;
+
     public function setUp(): void
     {
         parent::setUp();
