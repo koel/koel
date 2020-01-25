@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class GetUserFromToken extends BaseMiddleware
 {
@@ -16,7 +17,11 @@ class GetUserFromToken extends BaseMiddleware
             return $this->respond('tymon.jwt.absent', 'token_not_provided', 401);
         }
 
-        $user = $this->auth->authenticate($token);
+        try {
+            $user = $this->auth->authenticate($token);
+        } catch (TokenInvalidException $exception) {
+            abort(401, 'Invalid or expired token');
+        }
 
         if (!$user) {
             return $this->respond('tymon.jwt.user_not_found', 'user_not_found', 401);
