@@ -3458,7 +3458,7 @@ gulp-watch@^4.2.4:
     vinyl "^1.2.0"
     vinyl-file "^2.0.0"
 
-gulp@^3.9.1:
+gulp@3.9.1:
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/gulp/-/gulp-3.9.1.tgz#571ce45928dd40af6514fc4011866016c13845b4"
   integrity sha1-VxzkWSjdQK9lFPxAEYZgFsE4RbQ=
@@ -4330,7 +4330,7 @@ labeled-stream-splicer@^2.0.0:
     isarray "^2.0.4"
     stream-splicer "^2.0.0"
 
-laravel-elixir-stylus@^1.0.1:
+laravel-elixir-stylus@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/laravel-elixir-stylus/-/laravel-elixir-stylus-1.0.1.tgz#bfdd1efeeb3f9f54533c0144c8169236a0b2ebfa"
   integrity sha1-v90e/us/n1RTPAFEyBaSNqCy6/o=
@@ -4339,7 +4339,7 @@ laravel-elixir-stylus@^1.0.1:
     lost "^6.5.0"
     poststylus "^0.2.0"
 
-laravel-elixir@^5.0.0:
+laravel-elixir@5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/laravel-elixir/-/laravel-elixir-5.0.0.tgz#742f0d8676ef0db3d853f0620c996a5f6330e265"
   integrity sha1-dC8NhnbvDbPYU/BiDJlqX2Mw4mU=
