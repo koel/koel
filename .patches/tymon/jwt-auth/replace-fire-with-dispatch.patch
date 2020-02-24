@@ -1,0 +1,39 @@
+From 653ea67ccf5987b16815d0d4cd4ae4f6147b8649 Mon Sep 17 00:00:00 2001
+From: An Phan <me@phanan.net>
+Date: Mon, 24 Feb 2020 22:28:43 +0100
+Subject: [PATCH] Replace fire() with dispatch()
+
+---
+ src/Middleware/BaseMiddleware.php   | 2 +-
+ src/Middleware/GetUserFromToken.php | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/Middleware/BaseMiddleware.php b/src/Middleware/BaseMiddleware.php
+index 9715f0c..cba7f8f 100644
+--- a/src/Middleware/BaseMiddleware.php
++++ b/src/Middleware/BaseMiddleware.php
+@@ -57,7 +57,7 @@ abstract class BaseMiddleware
+      */
+     protected function respond($event, $error, $status, $payload = [])
+     {
+-        $response = $this->events->fire($event, $payload, true);
++        $response = $this->events->dispatch($event, $payload, true);
+
+         return $response ?: $this->response->json(['error' => $error], $status);
+     }
+diff --git a/src/Middleware/GetUserFromToken.php b/src/Middleware/GetUserFromToken.php
+index af3b21c..7542158 100644
+--- a/src/Middleware/GetUserFromToken.php
++++ b/src/Middleware/GetUserFromToken.php
+@@ -41,7 +41,7 @@ class GetUserFromToken extends BaseMiddleware
+             return $this->respond('tymon.jwt.user_not_found', 'user_not_found', 404);
+         }
+
+-        $this->events->fire('tymon.jwt.valid', $user);
++        $this->events->dispatch('tymon.jwt.valid', $user);
+
+         return $next($request);
+     }
+--
+2.24.0
+

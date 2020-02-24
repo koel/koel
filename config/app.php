@@ -123,7 +123,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider', // hard-coding to make it compatible with patching procedure
         Aws\Laravel\AwsServiceProvider::class,
         Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
 

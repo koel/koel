@@ -9,7 +9,7 @@
     "laravel/framework": "5.8.*",
     "james-heinrich/getid3": "^1.9",
     "guzzlehttp/guzzle": "^6.1",
-    "tymon/jwt-auth": "^0.5.6",
+    "tymon/jwt-auth": "^0.5.12",
     "aws/aws-sdk-php-laravel": "^3.1",
     "pusher/pusher-php-server": "^4.0",
     "predis/predis": "~1.0",
@@ -21,7 +21,8 @@
     "ext-SimpleXML": "*",
     "fideloper/proxy": "^4.0",
     "daverandom/resume": "^0.0.3",
-    "laravel/helpers": "^1.0"
+    "laravel/helpers": "^1.0",
+    "cweagans/composer-patches": "^1.6"
   },
   "require-dev": {
     "filp/whoops": "~2.0",
@@ -87,5 +88,12 @@
     "optimize-autoloader": true
   },
   "minimum-stability": "stable",
-  "prefer-stable": false
+  "prefer-stable": false,
+  "extra": {
+    "patches": {
+      "tymon/jwt-auth": {
+        "Replace fire() with dispatch()": ".patches/tymon/jwt-auth/replace-fire-with-dispatch.patch"
+      }
+    }
+  }
 }
