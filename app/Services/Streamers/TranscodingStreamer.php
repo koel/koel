@@ -44,7 +44,7 @@ class TranscodingStreamer extends Streamer implements TranscodingStreamerInterfa
             array_unshift($args, "-ss {$this->startTime}");
         }
 
-        passthru("$ffmpeg ".implode($args, ' '));
+        passthru("$ffmpeg ".implode(' ', $args));
     }
 
     public function setBitRate(int $bitRate): void
