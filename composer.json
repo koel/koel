@@ -9,7 +9,7 @@
     "laravel/framework": "5.8.*",
     "james-heinrich/getid3": "^1.9",
     "guzzlehttp/guzzle": "^6.1",
-    "tymon/jwt-auth": "^0.5.12",
+    "tymon/jwt-auth": "^1.0.0",
     "aws/aws-sdk-php-laravel": "^3.1",
     "pusher/pusher-php-server": "^4.0",
     "predis/predis": "~1.0",
