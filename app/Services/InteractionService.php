@@ -90,12 +90,13 @@ class InteractionService
             ->whereIn('song_id', $songIds)
             ->where('user_id', $user->id)
             ->get()
-            ->each(static function (Interaction $interaction): void {
+            ->each(
+                static function (Interaction $interaction): void {
                 $interaction->liked = false;
                 $interaction->save();
 
                 event(new SongLikeToggled($interaction));
             }
-        );
+            );
     }
 }
