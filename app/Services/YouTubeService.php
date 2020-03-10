@@ -47,7 +47,8 @@ class YouTubeService extends AbstractApiClient implements ApiConsumerInterface
             return null;
         }
 
-        $uri = sprintf('search?part=snippet&type=video&maxResults=%s&pageToken=%s&q=%s',
+        $uri = sprintf(
+            'search?part=snippet&type=video&maxResults=%s&pageToken=%s&q=%s',
             $perPage,
             urlencode($pageToken),
             urlencode($q)

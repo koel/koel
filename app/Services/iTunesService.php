@@ -24,7 +24,9 @@ class iTunesService extends AbstractApiClient implements ApiConsumerInterface
     public function getTrackUrl(string $term, string $album = '', string $artist = ''): ?string
     {
         try {
-            return $this->cache->remember(md5("itunes_track_url_{$term}{$album}{$artist}"), 24 * 60 * 7,
+            return $this->cache->remember(
+                md5("itunes_track_url_{$term}{$album}{$artist}"),
+                24 * 60 * 7,
                 function () use ($term, $album, $artist): ?string {
                     $params = [
                         'term' => $term.($album ? " $album" : '').($artist ? " $artist" : ''),
