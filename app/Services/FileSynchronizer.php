@@ -251,14 +251,14 @@ class FileSynchronizer
         return $this->cache->remember(md5($this->filePath.'_cover'), 24 * 60, function (): ?string {
             $matches = array_keys(
                 iterator_to_array(
-                $this->finder->create()
+                    $this->finder->create()
                     ->depth(0)
                     ->ignoreUnreadableDirs()
                     ->files()
                     ->followLinks()
                     ->name('/(cov|fold)er\.(jpe?g|png)$/i')
                     ->in(dirname($this->filePath))
-            )
+                )
             );
 
             $cover = $matches ? $matches[0] : null;

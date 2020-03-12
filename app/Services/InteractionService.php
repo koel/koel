@@ -92,11 +92,11 @@ class InteractionService
             ->get()
             ->each(
                 static function (Interaction $interaction): void {
-                $interaction->liked = false;
-                $interaction->save();
+                    $interaction->liked = false;
+                    $interaction->save();
 
-                event(new SongLikeToggled($interaction));
-            }
+                    event(new SongLikeToggled($interaction));
+                }
             );
     }
 }
