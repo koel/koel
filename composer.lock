@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.21",
+            "version": "3.133.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3501468a7ef894703141d1c4d68caa3b914cbd96"
+                "reference": "02131fd17c9b62f36993bb2da88dd624ce058179"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3501468a7ef894703141d1c4d68caa3b914cbd96",
-                "reference": "3501468a7ef894703141d1c4d68caa3b914cbd96",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/02131fd17c9b62f36993bb2da88dd624ce058179",
+                "reference": "02131fd17c9b62f36993bb2da88dd624ce058179",
                 "shasum": ""
             },
             "require": {
@@ -88,30 +88,30 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-24T19:15:07+00:00"
+            "time": "2020-03-11T18:17:17+00:00"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
-            "version": "3.4.0",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php-laravel.git",
-                "reference": "90f72efd7ec85c1141b397079112f58e0ca0143b"
+                "reference": "7a3705461c06dc1ce8496fbf9b22ec96f769b3a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/90f72efd7ec85c1141b397079112f58e0ca0143b",
-                "reference": "90f72efd7ec85c1141b397079112f58e0ca0143b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php-laravel/zipball/7a3705461c06dc1ce8496fbf9b22ec96f769b3a7",
+                "reference": "7a3705461c06dc1ce8496fbf9b22ec96f769b3a7",
                 "shasum": ""
             },
             "require": {
                 "aws/aws-sdk-php": "~3.0",
-                "illuminate/support": "~5.1|~6.0",
+                "illuminate/support": "^5.1 || ^6.0 || ^7.0",
                 "php": ">=5.5.9"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0|~5.0",
-                "vlucas/phpdotenv": "~2.0|~3.0"
+                "phpunit/phpunit": "^4.0 || ^5.0",
+                "vlucas/phpdotenv": "^1.0 || ^2.0 || ^3.0 || ^4.0"
             },
             "suggest": {
                 "laravel/framework": "To test the Laravel bindings",
@@ -143,7 +143,7 @@
                     "homepage": "http://aws.amazon.com"
                 }
             ],
-            "description": "A simple Laravel 5 service provider for including the AWS SDK for PHP.",
+            "description": "A simple Laravel 5/6/7 service provider for including the AWS SDK for PHP.",
             "homepage": "http://aws.amazon.com/sdkforphp2",
             "keywords": [
                 "amazon",
@@ -152,10 +152,12 @@
                 "ec2",
                 "laravel",
                 "laravel 5",
+                "laravel 6",
+                "laravel 7",
                 "s3",
                 "sdk"
             ],
-            "time": "2019-09-09T21:00:25+00:00"
+            "time": "2020-03-11T19:35:23+00:00"
         },
         {
             "name": "cweagans/composer-patches",
