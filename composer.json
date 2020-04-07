@@ -81,7 +81,8 @@
     ],
     "test": "phpunit --colors=always --order-by=defects --stop-on-defect",
     "coverage": "phpunit --colors=always --coverage-clover=coverage.xml",
-    "analyze": "phpstan analyse app --level=5"
+    "analyze": "phpstan analyse app --level=5",
+    "gen-api-docs": "@php artisan apidoc:generate"
   },
   "config": {
     "preferred-install": "dist",
