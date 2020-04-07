@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'base_url' => 'https://api-docs.koel.dev',
 
     /*
      * The output path for the generated documentation.
