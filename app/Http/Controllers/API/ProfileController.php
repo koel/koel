@@ -21,7 +21,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Get current user's profile.
+     * Get current user's profile
      *
      * @response {
      *   "id": 42,
@@ -37,7 +37,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update current user's profile.
+     * Update current user's profile
      *
      * @bodyParam name string required New name. Example: Johny Doe
      * @bodyParam email string required New email. Example: johny@doe.com

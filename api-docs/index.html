@@ -43,7 +43,7 @@
           <!-- START_INFO -->
 <h1>Info</h1>
 <p>Welcome to the generated API reference.
-<a href="http://localhost/api-docs/collection.json">Get Postman Collection</a></p>
+<a href="https://api-docs.koel.dev/api-docs/collection.json">Get Postman Collection</a></p>
 <!-- END_INFO -->
 <p>This is the official API documentation for <a href="https://koel.phanan.net">Koel</a>, generated from the source code using <a href="https://github.com/mpociot/laravel-apidoc-generator">Laravel API Documentation Generator</a>.
 If you spot any mistake or want to add an improvement, please <a href="https://github.com/phanan/koel/issues/new">submit an issue</a> or <a href="https://github.com/phanan/koel/compare">open a pull request</a>.  </p>
@@ -58,19 +58,21 @@ for consecutive calls.</p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/me"     -d "email"="john@doe.com" \
-    -d "password"="SoSecureMuchW0w" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/me");
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/me" \
+    -H "Content-Type: application/json" \
+    -d '{"email":"john@doe.com","password":"SoSecureMuchW0w"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/me");
 
 let headers = {
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
+let body = {
     "email": "john@doe.com",
-    "password": "SoSecureMuchW0w",
-})
+    "password": "SoSecureMuchW0w"
+}
 
 fetch(url, {
     method: "POST",
@@ -118,9 +120,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/me" \
+<pre><code class="language-bash">curl -X DELETE "https://api-docs.koel.dev/api/me" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/me");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/me");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -147,9 +149,9 @@ the application's interface with useful information.</p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/data" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/data" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/data");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/data");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -259,6 +261,12 @@ fetch(url, {
         }
     ]
 }</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/data</code></p>
 <!-- END_024021c3c17f0cb3ad10ff7ab83b1aa0 -->
@@ -270,11 +278,11 @@ If the value of <code>transcode</code> is truthy, Koel will attempt to transcode
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/{song}/play/{transcode?}/{bitrate?}" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/{song}/play/{transcode?}/{bitrate?}");
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/1/play/1/1?jwt-token=blanditiis" </code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/1/play/1/1");
 
     let params = {
-            "jwt-token": "IHcH5I1rWR40Sqg2",
+            "jwt-token": "blanditiis",
         };
     Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
 
@@ -292,7 +300,7 @@ fetch(url, {
 <blockquote>
 <p>Example response (200):</p>
 </blockquote>
-<pre><code class="language-json">[]</code></pre>
+<pre><code class="language-json">{}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/{song}/play/{transcode?}/{bitrate?}</code></p>
 <h4>Query Parameters</h4>
@@ -321,20 +329,22 @@ An &quot;interaction&quot; record including the song and current user's data wil
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/interaction/play" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/interaction/play" \
     -H "Authorization: Bearer {token}" \
-    -d "song"="0146d01afb742b01f28ab8b556f9a75d" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/play");
+    -H "Content-Type: application/json" \
+    -d '{"song":"0146d01afb742b01f28ab8b556f9a75d"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/interaction/play");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "song": "0146d01afb742b01f28ab8b556f9a75d",
-})
+let body = {
+    "song": "0146d01afb742b01f28ab8b556f9a75d"
+}
 
 fetch(url, {
     method: "POST",
@@ -411,20 +421,22 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/interaction/like" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/interaction/like" \
     -H "Authorization: Bearer {token}" \
-    -d "song"="0146d01afb742b01f28ab8b556f9a75d" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/like");
+    -H "Content-Type: application/json" \
+    -d '{"song":"0146d01afb742b01f28ab8b556f9a75d"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/interaction/like");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "song": "0146d01afb742b01f28ab8b556f9a75d",
-})
+let body = {
+    "song": "0146d01afb742b01f28ab8b556f9a75d"
+}
 
 fetch(url, {
     method: "POST",
@@ -502,20 +514,22 @@ and user data will be returned.</p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/interaction/batch/like" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/interaction/batch/like" \
     -H "Authorization: Bearer {token}" \
-    -d "songs"="[]" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/batch/like");
+    -H "Content-Type: application/json" \
+    -d '{"songs":[]}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/interaction/batch/like");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "songs": "[]",
-})
+let body = {
+    "songs": []
+}
 
 fetch(url, {
     method: "POST",
@@ -598,20 +612,22 @@ and user data will be returned.</p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/interaction/batch/unlike" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/interaction/batch/unlike" \
     -H "Authorization: Bearer {token}" \
-    -d "songs"="[]" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/batch/unlike");
+    -H "Content-Type: application/json" \
+    -d '{"songs":[]}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/interaction/batch/unlike");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "songs": "[]",
-})
+let body = {
+    "songs": []
+}
 
 fetch(url, {
     method: "POST",
@@ -693,9 +709,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/interaction/recently-played/{count?}" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/interaction/recently-played/1?count=2" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/interaction/recently-played/{count?}");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/interaction/recently-played/1");
 
     let params = {
             "count": "2",
@@ -721,6 +737,12 @@ fetch(url, {
     "0146d01afb742b01f28ab8b556f9a75d",
     "c741133cb8d1982a5c60b1ce2a1e6e47"
 ]</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/interaction/recently-played/{count?}</code></p>
 <h4>Query Parameters</h4>
@@ -747,9 +769,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/playlist" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/playlist" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/playlist");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -800,6 +822,12 @@ fetch(url, {
         "is_smart": false
     }
 ]</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/playlist</code></p>
 <!-- END_0f95a89b7f06c40893a1e50400952f5c -->
@@ -808,22 +836,23 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/playlist" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/playlist" \
     -H "Authorization: Bearer {token}" \
-    -d "name"="Sleepy Songs" \
-    -d "rules"="[]" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist");
+    -H "Content-Type: application/json" \
+    -d '{"name":"Sleepy Songs","rules":[]}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/playlist");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
+let body = {
     "name": "Sleepy Songs",
-    "rules": "[]",
-})
+    "rules": []
+}
 
 fetch(url, {
     method: "POST",
@@ -874,20 +903,22 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X PUT "http://koel.test/api/playlist/{playlist}" \
+<pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/playlist/1" \
     -H "Authorization: Bearer {token}" \
-    -d "name"="Catchy Songs" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist/{playlist}");
+    -H "Content-Type: application/json" \
+    -d '{"name":"Catchy Songs"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/playlist/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "name": "Catchy Songs",
-})
+let body = {
+    "name": "Catchy Songs"
+}
 
 fetch(url, {
     method: "PUT",
@@ -933,9 +964,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/playlist/{playlist}" \
+<pre><code class="language-bash">curl -X DELETE "https://api-docs.koel.dev/api/playlist/1" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist/{playlist}");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/playlist/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -962,20 +993,22 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X PUT "http://koel.test/api/playlist/{playlist}/sync" \
+<pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/playlist/1/sync" \
     -H "Authorization: Bearer {token}" \
-    -d "songs"="[]" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist/{playlist}/sync");
+    -H "Content-Type: application/json" \
+    -d '{"songs":[]}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/playlist/1/sync");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "songs": "[]",
-})
+let body = {
+    "songs": []
+}
 
 fetch(url, {
     method: "PUT",
@@ -1015,9 +1048,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/playlist/{playlist}/songs" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/playlist/1/songs" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/playlist/{playlist}/songs");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/playlist/1/songs");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1039,6 +1072,398 @@ fetch(url, {
     "c741133cb8d1982a5c60b1ce2a1e6e47",
     "..."
 ]</code></pre>
+<blockquote>
+<p>Example response (404):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "message": "No query results for model [App\\Models\\Playlist] 1",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException",
+    "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Exceptions\/Handler.php",
+    "line": 50,
+    "trace": [
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 83,
+            "function": "render",
+            "class": "App\\Exceptions\\Handler",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 55,
+            "function": "handleException",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Middleware\/ThrottleRequests.php",
+            "line": 58,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 682,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 657,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 623,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 612,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 176,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 30,
+            "function": "Illuminate\\Foundation\\Http\\{closure}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/ForceHttps.php",
+            "line": 25,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceHttps",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ValidatePostSize.php",
+            "line": 27,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/UseDifferentConfigIfE2E.php",
+            "line": 23,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\UseDifferentConfigIfE2E",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/CheckForMaintenanceMode.php",
+            "line": 62,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\CheckForMaintenanceMode",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 151,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 116,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 292,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 274,
+            "function": "callLaravelRoute",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 46,
+            "function": "makeApiCall",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 147,
+            "function": "__invoke",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 108,
+            "function": "iterateThroughStrategies",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 72,
+            "function": "fetchResponses",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 233,
+            "function": "processRoute",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 84,
+            "function": "processRoutes",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "function": "handle",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 32,
+            "function": "call_user_func_array"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 90,
+            "function": "Illuminate\\Container\\{closure}",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 34,
+            "function": "callBoundMethod",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/Container.php",
+            "line": 576,
+            "function": "call",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 183,
+            "function": "call",
+            "class": "Illuminate\\Container\\Container",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Command\/Command.php",
+            "line": 255,
+            "function": "execute",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 170,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Command\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 1012,
+            "function": "run",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 272,
+            "function": "doRunCommand",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 148,
+            "function": "doRun",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Application.php",
+            "line": 90,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Console\/Kernel.php",
+            "line": 133,
+            "function": "run",
+            "class": "Illuminate\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/artisan",
+            "line": 35,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Console\\Kernel",
+            "type": "-&gt;"
+        }
+    ]
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/playlist/{playlist}/songs</code></p>
 <!-- END_82c6e7b4ff4186b87ca6c4b6514cfa74 -->
@@ -1048,22 +1473,23 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X PUT "http://koel.test/api/songs" \
+<pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/songs" \
     -H "Authorization: Bearer {token}" \
-    -d "songs"="[]" \
-    -d "data"="{}" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/songs");
+    -H "Content-Type: application/json" \
+    -d '{"songs":[],"data":{}}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/songs");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "songs": "[]",
-    "data": "{}",
-})
+let body = {
+    "songs": [],
+    "data": {}
+}
 
 fetch(url, {
     method: "PUT",
@@ -1106,9 +1532,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/album/{album}/info" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/album/1/info" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/album/{album}/info");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/album/1/info");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1149,6 +1575,12 @@ fetch(url, {
     ],
     "cover": "https:\/\/koel.yourdomain.net\/img\/covers\/5a771ec82a5d72.25096250.png"
 }</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/album/{album}/info</code></p>
 <!-- END_a670fbc8f3161e7fda744d7cc52ca5ea -->
@@ -1158,9 +1590,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/artist/{artist}/info" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/artist/1/info" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/artist/{artist}/info");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/artist/1/info");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1185,6 +1617,12 @@ fetch(url, {
         "full": "Queen were an English rock band originally consisting of four members: vocalist Freddie Mercury, guitarist Brian May, bass guitarist John Deacon, and drummer Roger Taylor..."
     }
 }</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/artist/{artist}/info</code></p>
 <!-- END_92d9d0e186f60300dfde56b152e8536b -->
@@ -1196,9 +1634,9 @@ videos, if applicable. This means you can (and should) cache this information so
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/song/{song}/info" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/song/1/info" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/song/{song}/info");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/song/1/info");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1297,6 +1735,398 @@ fetch(url, {
         ]
     }
 }</code></pre>
+<blockquote>
+<p>Example response (404):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "message": "No query results for model [App\\Models\\Song] 1",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException",
+    "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Exceptions\/Handler.php",
+    "line": 50,
+    "trace": [
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 83,
+            "function": "render",
+            "class": "App\\Exceptions\\Handler",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 55,
+            "function": "handleException",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Middleware\/ThrottleRequests.php",
+            "line": 58,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 682,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 657,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 623,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 612,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 176,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 30,
+            "function": "Illuminate\\Foundation\\Http\\{closure}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/ForceHttps.php",
+            "line": 25,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceHttps",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ValidatePostSize.php",
+            "line": 27,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/UseDifferentConfigIfE2E.php",
+            "line": 23,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\UseDifferentConfigIfE2E",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/CheckForMaintenanceMode.php",
+            "line": 62,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\CheckForMaintenanceMode",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 151,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 116,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 292,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 274,
+            "function": "callLaravelRoute",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 46,
+            "function": "makeApiCall",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 147,
+            "function": "__invoke",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 108,
+            "function": "iterateThroughStrategies",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 72,
+            "function": "fetchResponses",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 233,
+            "function": "processRoute",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 84,
+            "function": "processRoutes",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "function": "handle",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 32,
+            "function": "call_user_func_array"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 90,
+            "function": "Illuminate\\Container\\{closure}",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 34,
+            "function": "callBoundMethod",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/Container.php",
+            "line": 576,
+            "function": "call",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 183,
+            "function": "call",
+            "class": "Illuminate\\Container\\Container",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Command\/Command.php",
+            "line": 255,
+            "function": "execute",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 170,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Command\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 1012,
+            "function": "run",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 272,
+            "function": "doRunCommand",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 148,
+            "function": "doRun",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Application.php",
+            "line": 90,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Console\/Kernel.php",
+            "line": 133,
+            "function": "run",
+            "class": "Illuminate\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/artisan",
+            "line": 35,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Console\\Kernel",
+            "type": "-&gt;"
+        }
+    ]
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/song/{song}/info</code></p>
 <!-- END_8f5482e7dc76601d5d24f0120eddfc14 -->
@@ -1306,12 +2136,12 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/songs" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/download/songs?songs=cum" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/songs");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/download/songs");
 
     let params = {
-            "songs": "xssITiRFm57vV9VF",
+            "songs": "cum",
         };
     Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
 
@@ -1331,6 +2161,12 @@ fetch(url, {
 <p>Example response (200):</p>
 </blockquote>
 <pre><code class="language-json">[]</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/download/songs</code></p>
 <h4>Query Parameters</h4>
@@ -1356,9 +2192,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/album/{album}" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/download/album/1" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/album/{album}");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/download/album/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1376,6 +2212,12 @@ fetch(url, {
 <p>Example response (200):</p>
 </blockquote>
 <pre><code class="language-json">[]</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/download/album/{album}</code></p>
 <!-- END_c4beea69287c52c5ddaf304c1881cfd8 -->
@@ -1386,9 +2228,9 @@ Let's pray to God the user doesn't trigger this on Elvis.</p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/artist/{artist}" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/download/artist/1" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/artist/{artist}");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/download/artist/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1406,6 +2248,12 @@ fetch(url, {
 <p>Example response (200):</p>
 </blockquote>
 <pre><code class="language-json">[]</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/download/artist/{artist}</code></p>
 <!-- END_d7a146e78a726566715eea4427009b54 -->
@@ -1414,9 +2262,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/playlist/{playlist}" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/download/playlist/1" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/playlist/{playlist}");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/download/playlist/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1434,6 +2282,398 @@ fetch(url, {
 <p>Example response (200):</p>
 </blockquote>
 <pre><code class="language-json">[]</code></pre>
+<blockquote>
+<p>Example response (404):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "message": "No query results for model [App\\Models\\Playlist] 1",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException",
+    "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Exceptions\/Handler.php",
+    "line": 50,
+    "trace": [
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 83,
+            "function": "render",
+            "class": "App\\Exceptions\\Handler",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 55,
+            "function": "handleException",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Middleware\/ThrottleRequests.php",
+            "line": 58,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 682,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 657,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 623,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 612,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 176,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 30,
+            "function": "Illuminate\\Foundation\\Http\\{closure}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/ForceHttps.php",
+            "line": 25,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceHttps",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ValidatePostSize.php",
+            "line": 27,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/UseDifferentConfigIfE2E.php",
+            "line": 23,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\UseDifferentConfigIfE2E",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/CheckForMaintenanceMode.php",
+            "line": 62,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\CheckForMaintenanceMode",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 151,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 116,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 292,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 274,
+            "function": "callLaravelRoute",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 46,
+            "function": "makeApiCall",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 147,
+            "function": "__invoke",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 108,
+            "function": "iterateThroughStrategies",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 72,
+            "function": "fetchResponses",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 233,
+            "function": "processRoute",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 84,
+            "function": "processRoutes",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "function": "handle",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 32,
+            "function": "call_user_func_array"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 90,
+            "function": "Illuminate\\Container\\{closure}",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 34,
+            "function": "callBoundMethod",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/Container.php",
+            "line": 576,
+            "function": "call",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 183,
+            "function": "call",
+            "class": "Illuminate\\Container\\Container",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Command\/Command.php",
+            "line": 255,
+            "function": "execute",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 170,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Command\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 1012,
+            "function": "run",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 272,
+            "function": "doRunCommand",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 148,
+            "function": "doRun",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Application.php",
+            "line": 90,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Console\/Kernel.php",
+            "line": 133,
+            "function": "run",
+            "class": "Illuminate\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/artisan",
+            "line": 35,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Console\\Kernel",
+            "type": "-&gt;"
+        }
+    ]
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/download/playlist/{playlist}</code></p>
 <!-- END_c450a89b6bb24daa242d077b01238e7d -->
@@ -1442,9 +2682,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/download/favorites" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/download/favorites" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/download/favorites");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/download/favorites");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1462,6 +2702,12 @@ fetch(url, {
 <p>Example response (200):</p>
 </blockquote>
 <pre><code class="language-json">[]</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/download/favorites</code></p>
 <!-- END_2ada2dccdced8279b3ab405334d3298f -->
@@ -1471,24 +2717,24 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/user" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/user" \
     -H "Authorization: Bearer {token}" \
-    -d "name"="John Doe" \
-    -d "email"="john@doe.com" \
-    -d "password"="SoSecureMuchW0w" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/user");
+    -H "Content-Type: application/json" \
+    -d '{"name":"John Doe","email":"john@doe.com","password":"SoSecureMuchW0w"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/user");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
+let body = {
     "name": "John Doe",
     "email": "john@doe.com",
-    "password": "SoSecureMuchW0w",
-})
+    "password": "SoSecureMuchW0w"
+}
 
 fetch(url, {
     method: "POST",
@@ -1544,24 +2790,24 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X PUT "http://koel.test/api/user/{user}" \
+<pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/user/1" \
     -H "Authorization: Bearer {token}" \
-    -d "name"="Johny Doe" \
-    -d "email"="johny@doe.com" \
-    -d "password"="wJgmKkTITwHmdgUG" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/user/{user}");
+    -H "Content-Type: application/json" \
+    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"sed"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/user/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
+let body = {
     "name": "Johny Doe",
     "email": "johny@doe.com",
-    "password": "wJgmKkTITwHmdgUG",
-})
+    "password": "sed"
+}
 
 fetch(url, {
     method: "PUT",
@@ -1614,9 +2860,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/user/{user}" \
+<pre><code class="language-bash">curl -X DELETE "https://api-docs.koel.dev/api/user/1" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/user/{user}");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/user/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1642,9 +2888,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/me" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/me" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/me");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/me");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1666,6 +2912,12 @@ fetch(url, {
     "name": "John Doe",
     "email": "john@doe.com"
 }</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "error": "token_not_provided"
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/me</code></p>
 <!-- END_b19e2ecbb41b5fa6802edaf581aab5f6 -->
@@ -1674,24 +2926,24 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X PUT "http://koel.test/api/me" \
+<pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/me" \
     -H "Authorization: Bearer {token}" \
-    -d "name"="Johny Doe" \
-    -d "email"="johny@doe.com" \
-    -d "password"="Lm4qQDyLb3NNddWI" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/me");
+    -H "Content-Type: application/json" \
+    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"inventore"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/me");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
+let body = {
     "name": "Johny Doe",
     "email": "johny@doe.com",
-    "password": "Lm4qQDyLb3NNddWI",
-})
+    "password": "inventore"
+}
 
 fetch(url, {
     method: "PUT",
@@ -1745,20 +2997,22 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/settings" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/settings" \
     -H "Authorization: Bearer {token}" \
-    -d "media_path"="/var/www/media/" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/settings");
+    -H "Content-Type: application/json" \
+    -d '{"media_path":"\/var\/www\/media\/"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/settings");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "media_path": "/var/www/media/",
-})
+let body = {
+    "media_path": "\/var\/www\/media\/"
+}
 
 fetch(url, {
     method: "POST",
@@ -1802,8 +3056,8 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/os/s3/song" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/os/s3/song");
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/os/s3/song" </code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/os/s3/song");
 
 let headers = {
     "Accept": "application/json",
@@ -1825,8 +3079,8 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X DELETE "http://koel.test/api/os/s3/song" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/os/s3/song");
+<pre><code class="language-bash">curl -X DELETE "https://api-docs.koel.dev/api/os/s3/song" </code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/os/s3/song");
 
 let headers = {
     "Accept": "application/json",
@@ -1849,9 +3103,9 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/{song}/scrobble/{timestamp}" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/1/scrobble/1" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/{song}/scrobble/{timestamp}");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/1/scrobble/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
@@ -1877,12 +3131,12 @@ redirected back to <code>api/lastfm/callback?token=&lt;Last.fm token&gt;</code>.
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/lastfm/connect" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/lastfm/connect?jwt-token=consequatur" \
     -H "Authorization: Bearer {token}"</code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/lastfm/connect");
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/lastfm/connect");
 
     let params = {
-            "jwt-token": "AgOg6hUdoPnDBWHi",
+            "jwt-token": "consequatur",
         };
     Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
 
@@ -1898,6 +3152,10 @@ fetch(url, {
 })
     .then(response =&gt; response.json())
     .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">[]</code></pre>
 <blockquote>
 <p>Example response (401):</p>
 </blockquote>
@@ -1931,20 +3189,22 @@ fetch(url, {
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X POST "http://koel.test/api/lastfm/session-key" \
+<pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/lastfm/session-key" \
     -H "Authorization: Bearer {token}" \
-    -d "key"="9mVYhfjKFsD9W160" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/lastfm/session-key");
+    -H "Content-Type: application/json" \
+    -d '{"key":"nulla"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/lastfm/session-key");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "key": "9mVYhfjKFsD9W160",
-})
+let body = {
+    "key": "nulla"
+}
 
 fetch(url, {
     method: "POST",
@@ -1981,25 +3241,27 @@ fetch(url, {
 <!-- END_a53df47a60b7ce5a088aa7f84af2885c -->
 <h1>YouTube integration</h1>
 <!-- START_4389db36c36e0737f5cdb85b59f8279b -->
-<h2>Search for YouTube videos</h2>
+<h2>Search for YouTube videos.</h2>
 <p>Search YouTube for videos related to a song (using its title and artist name).</p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "http://koel.test/api/youtube/search/song/{song}" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/youtube/search/song/1" \
     -H "Authorization: Bearer {token}" \
-    -d "pageToken"="26tAbdCbQhXPqp73" </code></pre>
-<pre><code class="language-javascript">const url = new URL("http://koel.test/api/youtube/search/song/{song}");
+    -H "Content-Type: application/json" \
+    -d '{"pageToken":"totam"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/youtube/search/song/1");
 
 let headers = {
     "Authorization": "Bearer {token}",
-    "Accept": "application/json",
     "Content-Type": "application/json",
+    "Accept": "application/json",
 }
 
-let body = JSON.stringify({
-    "pageToken": "26tAbdCbQhXPqp73",
-})
+let body = {
+    "pageToken": "totam"
+}
 
 fetch(url, {
     method: "GET",
@@ -2059,6 +3321,398 @@ fetch(url, {
         }
     ]
 }</code></pre>
+<blockquote>
+<p>Example response (404):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "message": "No query results for model [App\\Models\\Song] 1",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException",
+    "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Exceptions\/Handler.php",
+    "line": 50,
+    "trace": [
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 83,
+            "function": "render",
+            "class": "App\\Exceptions\\Handler",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 55,
+            "function": "handleException",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Middleware\/ThrottleRequests.php",
+            "line": 58,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 682,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 657,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 623,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 612,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 176,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 30,
+            "function": "Illuminate\\Foundation\\Http\\{closure}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/ForceHttps.php",
+            "line": 25,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceHttps",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ValidatePostSize.php",
+            "line": 27,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/UseDifferentConfigIfE2E.php",
+            "line": 23,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\UseDifferentConfigIfE2E",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/CheckForMaintenanceMode.php",
+            "line": 62,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\CheckForMaintenanceMode",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 151,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 116,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 292,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 274,
+            "function": "callLaravelRoute",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 46,
+            "function": "makeApiCall",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 147,
+            "function": "__invoke",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 108,
+            "function": "iterateThroughStrategies",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 72,
+            "function": "fetchResponses",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 233,
+            "function": "processRoute",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 84,
+            "function": "processRoutes",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "function": "handle",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 32,
+            "function": "call_user_func_array"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 90,
+            "function": "Illuminate\\Container\\{closure}",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 34,
+            "function": "callBoundMethod",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/Container.php",
+            "line": 576,
+            "function": "call",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 183,
+            "function": "call",
+            "class": "Illuminate\\Container\\Container",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Command\/Command.php",
+            "line": 255,
+            "function": "execute",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 170,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Command\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 1012,
+            "function": "run",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 272,
+            "function": "doRunCommand",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 148,
+            "function": "doRun",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Application.php",
+            "line": 90,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Console\/Kernel.php",
+            "line": 133,
+            "function": "run",
+            "class": "Illuminate\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/artisan",
+            "line": 35,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Console\\Kernel",
+            "type": "-&gt;"
+        }
+    ]
+}</code></pre>
 <h3>HTTP Request</h3>
 <p><code>GET api/youtube/search/song/{song}</code></p>
 <h4>Body Parameters</h4>
@@ -2081,6 +3735,575 @@ fetch(url, {
 </tbody>
 </table>
 <!-- END_4389db36c36e0737f5cdb85b59f8279b -->
+<h1>general</h1>
+<!-- START_b09539e6d8b4dd71bddd777f0fa78af0 -->
+<h2>Execute GraphQL query.</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/graphql" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/graphql");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (500):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "message": "Failed to find a GraphQL schema file at \/Users\/anphan\/Personal\/koel\/koel\/graphql\/schema.graphql. If you just installed Lighthouse, run php artisan vendor:publish --provider=\"Nuwave\\Lighthouse\\Providers\\LighthouseServiceProvider\" --tag=schema",
+    "exception": "Illuminate\\Contracts\\Filesystem\\FileNotFoundException",
+    "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/Source\/SchemaStitcher.php",
+    "line": 100,
+    "trace": [
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/Source\/SchemaStitcher.php",
+            "line": 59,
+            "function": "throwFileNotFoundException",
+            "class": "Nuwave\\Lighthouse\\Schema\\Source\\SchemaStitcher",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/Source\/SchemaStitcher.php",
+            "line": 47,
+            "function": "gatherSchemaImportsRecursively",
+            "class": "Nuwave\\Lighthouse\\Schema\\Source\\SchemaStitcher",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/AST\/ASTBuilder.php",
+            "line": 109,
+            "function": "getSchemaString",
+            "class": "Nuwave\\Lighthouse\\Schema\\Source\\SchemaStitcher",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/AST\/ASTBuilder.php",
+            "line": 101,
+            "function": "build",
+            "class": "Nuwave\\Lighthouse\\Schema\\AST\\ASTBuilder",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/GraphQL.php",
+            "line": 224,
+            "function": "documentAST",
+            "class": "Nuwave\\Lighthouse\\Schema\\AST\\ASTBuilder",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/GraphQL.php",
+            "line": 157,
+            "function": "prepSchema",
+            "class": "Nuwave\\Lighthouse\\GraphQL",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/GraphQL.php",
+            "line": 110,
+            "function": "executeQuery",
+            "class": "Nuwave\\Lighthouse\\GraphQL",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Support\/Http\/Controllers\/GraphQLController.php",
+            "line": 92,
+            "function": "executeRequest",
+            "class": "Nuwave\\Lighthouse\\GraphQL",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Support\/Http\/Controllers\/GraphQLController.php",
+            "line": 69,
+            "function": "executeBatched",
+            "class": "Nuwave\\Lighthouse\\Support\\Http\\Controllers\\GraphQLController",
+            "type": "-&gt;"
+        },
+        {
+            "function": "query",
+            "class": "Nuwave\\Lighthouse\\Support\\Http\\Controllers\\GraphQLController",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php",
+            "line": 54,
+            "function": "call_user_func_array"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php",
+            "line": 45,
+            "function": "callAction",
+            "class": "Illuminate\\Routing\\Controller",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Route.php",
+            "line": 219,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\ControllerDispatcher",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Route.php",
+            "line": 176,
+            "function": "runController",
+            "class": "Illuminate\\Routing\\Route",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 680,
+            "function": "run",
+            "class": "Illuminate\\Routing\\Route",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 30,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Support\/Http\/Middleware\/AcceptJson.php",
+            "line": 30,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Nuwave\\Lighthouse\\Support\\Http\\Middleware\\AcceptJson",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 682,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 657,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 623,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
+            "line": 612,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 176,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 30,
+            "function": "Illuminate\\Foundation\\Http\\{closure}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/ForceHttps.php",
+            "line": 25,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceHttps",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
+            "line": 21,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ValidatePostSize.php",
+            "line": 27,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/UseDifferentConfigIfE2E.php",
+            "line": 23,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\UseDifferentConfigIfE2E",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/CheckForMaintenanceMode.php",
+            "line": 62,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 163,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\CheckForMaintenanceMode",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
+            "line": 53,
+            "function": "Illuminate\\Pipeline\\{closure}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
+            "line": 104,
+            "function": "Illuminate\\Routing\\{closure}",
+            "class": "Illuminate\\Routing\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 151,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
+            "line": 116,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 292,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 274,
+            "function": "callLaravelRoute",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
+            "line": 46,
+            "function": "makeApiCall",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 147,
+            "function": "__invoke",
+            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 108,
+            "function": "iterateThroughStrategies",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
+            "line": 72,
+            "function": "fetchResponses",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 233,
+            "function": "processRoute",
+            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
+            "line": 84,
+            "function": "processRoutes",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "function": "handle",
+            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 32,
+            "function": "call_user_func_array"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 90,
+            "function": "Illuminate\\Container\\{closure}",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
+            "line": 34,
+            "function": "callBoundMethod",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/Container.php",
+            "line": 576,
+            "function": "call",
+            "class": "Illuminate\\Container\\BoundMethod",
+            "type": "::"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 183,
+            "function": "call",
+            "class": "Illuminate\\Container\\Container",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Command\/Command.php",
+            "line": 255,
+            "function": "execute",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
+            "line": 170,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Command\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 1012,
+            "function": "run",
+            "class": "Illuminate\\Console\\Command",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 272,
+            "function": "doRunCommand",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
+            "line": 148,
+            "function": "doRun",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Application.php",
+            "line": 90,
+            "function": "run",
+            "class": "Symfony\\Component\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Console\/Kernel.php",
+            "line": 133,
+            "function": "run",
+            "class": "Illuminate\\Console\\Application",
+            "type": "-&gt;"
+        },
+        {
+            "file": "\/Users\/anphan\/Personal\/koel\/koel\/artisan",
+            "line": 35,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Console\\Kernel",
+            "type": "-&gt;"
+        }
+    ]
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET graphql</code></p>
+<p><code>POST graphql</code></p>
+<!-- END_b09539e6d8b4dd71bddd777f0fa78af0 -->
+<!-- START_af1b547728e980a368f8f6aefe54ac24 -->
+<h2>graphql-playground</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/graphql-playground" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/graphql-playground");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">null</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET graphql-playground</code></p>
+<!-- END_af1b547728e980a368f8f6aefe54ac24 -->
+<!-- START_66df3678904adde969490f2278b8f47f -->
+<h2>Authenticate the request for channel access.</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/broadcasting/auth" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/broadcasting/auth");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response:</p>
+</blockquote>
+<pre><code class="language-json">null</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET broadcasting/auth</code></p>
+<p><code>POST broadcasting/auth</code></p>
+<!-- END_66df3678904adde969490f2278b8f47f -->
       </div>
       <div class="dark-box">
                         <div class="lang-selector">

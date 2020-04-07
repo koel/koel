@@ -20,7 +20,7 @@ class SongController extends Controller
     }
 
     /**
-     * Download one or several songs.
+     * Download one or several songs
      *
      * @queryParam songs array An array of song IDs
      *

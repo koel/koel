@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 class LikeController extends Controller
 {
     /**
-     * Like or unlike a song.
+     * Like or unlike a song
      *
      * An "interaction" record including the song and current user's data will be returned.
      *

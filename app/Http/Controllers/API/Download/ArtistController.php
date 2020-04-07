@@ -10,7 +10,7 @@ use App\Models\Artist;
 class ArtistController extends Controller
 {
     /**
-     * Download all songs by an artist.
+     * Download all songs by an artist
      *
      * Don't see why one would need this, really.
      * Let's pray to God the user doesn't trigger this on Elvis.
