@@ -16,7 +16,7 @@ return [
     /*
      * Generate a Postman collection in addition to HTML docs.
      */
-    'postman' => true,
+    'postman' => false,
 
     /*
      * The routes for which documentation should be generated.
