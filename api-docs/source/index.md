@@ -13,7 +13,6 @@ search: true
 # Info
 
 Welcome to the generated API reference.
-[Get Postman Collection](https://api-docs.koel.dev/api-docs/collection.json)
 
 <!-- END_INFO -->
 This is the official API documentation for [Koel](https://koel.phanan.net), generated from the source code using [Laravel API Documentation Generator](https://github.com/mpociot/laravel-apidoc-generator). 
@@ -24,7 +23,7 @@ If you spot any mistake or want to add an improvement, please [submit an issue](
 
 
 <!-- START_d131f717df7db546af1657d1e7ce10f6 -->
-## Log a user in
+## Log a user in.
 
 Koel uses [JSON Web Tokens](https://jwt.io/) (JWT) for authentication.
 After the user has been authenticated, a random "token" will be returned.
@@ -86,7 +85,7 @@ Parameter | Type | Status | Description
 <!-- END_d131f717df7db546af1657d1e7ce10f6 -->
 
 <!-- START_772eabda142fbed1f55b5e4c9605891c -->
-## Log the current user out
+## Log the current user out.
 
 > Example request:
 
@@ -124,7 +123,7 @@ fetch(url, {
 
 
 <!-- START_024021c3c17f0cb3ad10ff7ab83b1aa0 -->
-## Get application data
+## Get application data.
 
 The big fat call to retrieve a set of application data catered for the current user
 (songs, albums, artists, playlists, interactions, and if the user is an admin, settings as well).
@@ -271,7 +270,7 @@ fetch(url, {
 
 
 <!-- START_8ea879d7ef5eb537c1999e83bffa08b4 -->
-## Play a song
+## Play a song.
 
 The GET request to play/stream a song. By default Koel will serve the file as-is, unless it's a FLAC.
 If the value of `transcode` is truthy, Koel will attempt to transcode the file into `bitRate`kbps using ffmpeg.
@@ -279,14 +278,14 @@ If the value of `transcode` is truthy, Koel will attempt to transcode the file i
 > Example request:
 
 ```bash
-curl -X GET -G "https://api-docs.koel.dev/api/1/play/1/1?jwt-token=blanditiis" 
+curl -X GET -G "https://api-docs.koel.dev/api/1/play/1/1?jwt-token=et" 
 ```
 
 ```javascript
 const url = new URL("https://api-docs.koel.dev/api/1/play/1/1");
 
     let params = {
-            "jwt-token": "blanditiis",
+            "jwt-token": "et",
         };
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
@@ -322,7 +321,7 @@ Parameter | Status | Description
 <!-- END_8ea879d7ef5eb537c1999e83bffa08b4 -->
 
 <!-- START_a1c4d62f5a36b1ff9e0513802f860a12 -->
-## Increase play count
+## Increase play count.
 
 Increase a song's play count as the currently authenticated user.
 This request should be made whenever a song is played.
@@ -415,7 +414,7 @@ Parameter | Type | Status | Description
 <!-- END_a1c4d62f5a36b1ff9e0513802f860a12 -->
 
 <!-- START_a1095be9dc97ea1b85319566c3f18092 -->
-## Like or unlike a song
+## Like or unlike a song.
 
 An "interaction" record including the song and current user's data will be returned.
 
@@ -506,7 +505,7 @@ Parameter | Type | Status | Description
 <!-- END_a1095be9dc97ea1b85319566c3f18092 -->
 
 <!-- START_70a0987edd62e0427ffd210d6dfeee0b -->
-## Like multiple songs
+## Like multiple songs.
 
 Like several songs at once, useful for "batch" actions. An array of "interaction" records containing the song
 and user data will be returned.
@@ -603,7 +602,7 @@ Parameter | Type | Status | Description
 <!-- END_70a0987edd62e0427ffd210d6dfeee0b -->
 
 <!-- START_1ffdb72cb23b18d9ecb8b07d3c0240f0 -->
-## Unlike multiple songs
+## Unlike multiple songs.
 
 Unlike several songs at once, useful for "batch" actions. An array of "interaction" records containing the song
 and user data will be returned.
@@ -700,7 +699,7 @@ Parameter | Type | Status | Description
 <!-- END_1ffdb72cb23b18d9ecb8b07d3c0240f0 -->
 
 <!-- START_98a64836de32d52385d203ab618f9ddd -->
-## Get recently played songs
+## Get recently played songs.
 
 Get a list of songs recently played by the current user.
 
@@ -765,7 +764,7 @@ Parameter | Status | Description
 
 
 <!-- START_0f95a89b7f06c40893a1e50400952f5c -->
-## Get current user&#039;s playlists
+## Get current user&#039;s playlists.
 
 > Example request:
 
@@ -845,7 +844,7 @@ fetch(url, {
 <!-- END_0f95a89b7f06c40893a1e50400952f5c -->
 
 <!-- START_3e7029f85581865fdc020295518c93f3 -->
-## Create a new playlist
+## Create a new playlist.
 
 > Example request:
 
@@ -905,7 +904,7 @@ Parameter | Type | Status | Description
 <!-- END_3e7029f85581865fdc020295518c93f3 -->
 
 <!-- START_e0cc8988ecbec0fac9181c28cd084238 -->
-## Rename a playlist
+## Rename a playlist.
 
 > Example request:
 
@@ -965,7 +964,7 @@ Parameter | Type | Status | Description
 <!-- END_e0cc8988ecbec0fac9181c28cd084238 -->
 
 <!-- START_356c5b315a285debadf8b289d3bae312 -->
-## Delete a playlist
+## Delete a playlist.
 
 > Example request:
 
@@ -1005,7 +1004,7 @@ fetch(url, {
 <!-- END_356c5b315a285debadf8b289d3bae312 -->
 
 <!-- START_68b67f3bf318fce97664a5d0c952b38b -->
-## Replace a playlist&#039;s content
+## Replace a playlist&#039;s content.
 
 Instead of adding or removing songs individually, a playlist's content is replaced entirely with an array of song IDs.
 
@@ -1060,7 +1059,7 @@ Parameter | Type | Status | Description
 <!-- END_68b67f3bf318fce97664a5d0c952b38b -->
 
 <!-- START_82c6e7b4ff4186b87ca6c4b6514cfa74 -->
-## Get a playlist&#039;s songs
+## Get a playlist&#039;s songs.
 
 > Example request:
 
@@ -1500,7 +1499,7 @@ fetch(url, {
 
 
 <!-- START_8b76894631cd3b3d4f86fab8014bc4e1 -->
-## Update song information
+## Update song information.
 
 > Example request:
 
@@ -1550,7 +1549,7 @@ Parameter | Type | Status | Description
 <!-- END_8b76894631cd3b3d4f86fab8014bc4e1 -->
 
 <!-- START_a670fbc8f3161e7fda744d7cc52ca5ea -->
-## Get album&#039;s extra information
+## Get album&#039;s extra information.
 
 Get extra information about an album via Last.fm.
 
@@ -1622,7 +1621,7 @@ fetch(url, {
 <!-- END_a670fbc8f3161e7fda744d7cc52ca5ea -->
 
 <!-- START_92d9d0e186f60300dfde56b152e8536b -->
-## Get artist&#039;s extra information
+## Get artist&#039;s extra information.
 
 Get extra information about an artist via Last.fm.
 
@@ -1678,7 +1677,7 @@ fetch(url, {
 <!-- END_92d9d0e186f60300dfde56b152e8536b -->
 
 <!-- START_8f5482e7dc76601d5d24f0120eddfc14 -->
-## Get song&#039;s extra information
+## Get song&#039;s extra information.
 
 Get a song's extra information. The response of this request is a superset of both corresponding
 `album/{album}/info` and `artist/{artist}/info` requests, combined with the song's lyrics and related YouTube
@@ -2199,12 +2198,12 @@ fetch(url, {
 
 
 <!-- START_339c05326ab691afe5ba03de806b77b9 -->
-## Download one or several songs
+## Download one or several songs.
 
 > Example request:
 
 ```bash
-curl -X GET -G "https://api-docs.koel.dev/api/download/songs?songs=cum" \
+curl -X GET -G "https://api-docs.koel.dev/api/download/songs?songs=molestiae" \
     -H "Authorization: Bearer {token}"
 ```
 
@@ -2212,7 +2211,7 @@ curl -X GET -G "https://api-docs.koel.dev/api/download/songs?songs=cum" \
 const url = new URL("https://api-docs.koel.dev/api/download/songs");
 
     let params = {
-            "songs": "cum",
+            "songs": "molestiae",
         };
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
@@ -2256,7 +2255,7 @@ Parameter | Status | Description
 <!-- END_339c05326ab691afe5ba03de806b77b9 -->
 
 <!-- START_c4beea69287c52c5ddaf304c1881cfd8 -->
-## Download a whole album
+## Download a whole album.
 
 > Example request:
 
@@ -2303,7 +2302,7 @@ fetch(url, {
 <!-- END_c4beea69287c52c5ddaf304c1881cfd8 -->
 
 <!-- START_d7a146e78a726566715eea4427009b54 -->
-## Download all songs by an artist
+## Download all songs by an artist.
 
 Don't see why one would need this, really.
 Let's pray to God the user doesn't trigger this on Elvis.
@@ -2353,7 +2352,7 @@ fetch(url, {
 <!-- END_d7a146e78a726566715eea4427009b54 -->
 
 <!-- START_c450a89b6bb24daa242d077b01238e7d -->
-## Download a whole playlist
+## Download a whole playlist.
 
 > Example request:
 
@@ -2786,7 +2785,7 @@ fetch(url, {
 <!-- END_c450a89b6bb24daa242d077b01238e7d -->
 
 <!-- START_2ada2dccdced8279b3ab405334d3298f -->
-## Download all songs favorite&#039;d by the current user
+## Download all songs favorite&#039;d by the current user.
 
 > Example request:
 
@@ -2836,7 +2835,7 @@ fetch(url, {
 
 
 <!-- START_f0654d3f2fc63c11f5723f233cc53c83 -->
-## Create a new user
+## Create a new user.
 
 > Example request:
 
@@ -2897,7 +2896,7 @@ Parameter | Type | Status | Description
 <!-- END_f0654d3f2fc63c11f5723f233cc53c83 -->
 
 <!-- START_a4a2abed1e8e8cad5e6a3282812fe3f3 -->
-## Update a user
+## Update a user.
 
 > Example request:
 
@@ -2905,7 +2904,7 @@ Parameter | Type | Status | Description
 curl -X PUT "https://api-docs.koel.dev/api/user/1" \
     -H "Authorization: Bearer {token}" \
     -H "Content-Type: application/json" \
-    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"sed"}'
+    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"asperiores"}'
 
 ```
 
@@ -2921,7 +2920,7 @@ let headers = {
 let body = {
     "name": "Johny Doe",
     "email": "johny@doe.com",
-    "password": "sed"
+    "password": "asperiores"
 }
 
 fetch(url, {
@@ -2956,7 +2955,7 @@ Parameter | Type | Status | Description
 <!-- END_a4a2abed1e8e8cad5e6a3282812fe3f3 -->
 
 <!-- START_4bb7fb4a7501d3cb1ed21acfc3b205a9 -->
-## Delete a user
+## Delete a user.
 
 > Example request:
 
@@ -2996,7 +2995,7 @@ fetch(url, {
 <!-- END_4bb7fb4a7501d3cb1ed21acfc3b205a9 -->
 
 <!-- START_b19e2ecbb41b5fa6802edaf581aab5f6 -->
-## Get current user&#039;s profile
+## Get current user&#039;s profile.
 
 > Example request:
 
@@ -3047,7 +3046,7 @@ fetch(url, {
 <!-- END_b19e2ecbb41b5fa6802edaf581aab5f6 -->
 
 <!-- START_fa77e70040eb60f0488db2d285d1cdc7 -->
-## Update current user&#039;s profile
+## Update current user&#039;s profile.
 
 > Example request:
 
@@ -3055,7 +3054,7 @@ fetch(url, {
 curl -X PUT "https://api-docs.koel.dev/api/me" \
     -H "Authorization: Bearer {token}" \
     -H "Content-Type: application/json" \
-    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"inventore"}'
+    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"voluptatem"}'
 
 ```
 
@@ -3071,7 +3070,7 @@ let headers = {
 let body = {
     "name": "Johny Doe",
     "email": "johny@doe.com",
-    "password": "inventore"
+    "password": "voluptatem"
 }
 
 fetch(url, {
@@ -3107,7 +3106,7 @@ Parameter | Type | Status | Description
 
 
 <!-- START_1e1aaba3a713ac3ce04a89d5f4ad0f2e -->
-## Save the application settings
+## Save the application settings.
 
 Save the application settings. Right now there's only one setting to be saved (`media_path`).
 
@@ -3167,7 +3166,7 @@ Parameter | Type | Status | Description
 These routes are meant for Amazon Web Services (AWS) integration with Koel. For more information, visit
 [koel-aws](https://github.com/koel/koel-aws).
 <!-- START_9999a98649bc4a1c25373dcae1994fbc -->
-## Store a song
+## Store a song.
 
 Create a new song or update an existing one with data sent from AWS.
 
@@ -3202,7 +3201,7 @@ fetch(url, {
 <!-- END_9999a98649bc4a1c25373dcae1994fbc -->
 
 <!-- START_0c973c710226495c9d34381152b6e78f -->
-## Remove a song
+## Remove a song.
 
 Remove a song whose information matches with data sent from AWS.
 
@@ -3240,7 +3239,7 @@ fetch(url, {
 
 
 <!-- START_3f0f1280d6348b0337e5b773d2dabbb1 -->
-## Scrobble a song
+## Scrobble a song.
 
 Create a [Last.fm scrobble entry](https://www.last.fm/api/scrobbling) for a song.
 
@@ -3277,7 +3276,7 @@ fetch(url, {
 <!-- END_3f0f1280d6348b0337e5b773d2dabbb1 -->
 
 <!-- START_ada8e3ef973c35c16e20e6e72b30a68a -->
-## Connect to Last.fm
+## Connect to Last.fm.
 
 [Connect](https://www.last.fm/api/authentication) the current user to Last.fm.
 This is actually NOT an API request. The application should instead redirect the current user to this route,
@@ -3287,7 +3286,7 @@ redirected back to `api/lastfm/callback?token=<Last.fm token>`.
 > Example request:
 
 ```bash
-curl -X GET -G "https://api-docs.koel.dev/api/lastfm/connect?jwt-token=consequatur" \
+curl -X GET -G "https://api-docs.koel.dev/api/lastfm/connect?jwt-token=animi" \
     -H "Authorization: Bearer {token}"
 ```
 
@@ -3295,7 +3294,7 @@ curl -X GET -G "https://api-docs.koel.dev/api/lastfm/connect?jwt-token=consequat
 const url = new URL("https://api-docs.koel.dev/api/lastfm/connect");
 
     let params = {
-            "jwt-token": "consequatur",
+            "jwt-token": "animi",
         };
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
@@ -3339,7 +3338,7 @@ Parameter | Status | Description
 <!-- END_ada8e3ef973c35c16e20e6e72b30a68a -->
 
 <!-- START_a53df47a60b7ce5a088aa7f84af2885c -->
-## Set Last.fm session key
+## Set Last.fm session key.
 
 Set the Last.fm session key for the current user. This call should be made after the user is
 [connected to Last.fm](https://www.last.fm/api/authentication).
@@ -3350,7 +3349,7 @@ Set the Last.fm session key for the current user. This call should be made after
 curl -X POST "https://api-docs.koel.dev/api/lastfm/session-key" \
     -H "Authorization: Bearer {token}" \
     -H "Content-Type: application/json" \
-    -d '{"key":"nulla"}'
+    -d '{"key":"et"}'
 
 ```
 
@@ -3364,7 +3363,7 @@ let headers = {
 }
 
 let body = {
-    "key": "nulla"
+    "key": "et"
 }
 
 fetch(url, {
@@ -3408,7 +3407,7 @@ Search YouTube for videos related to a song (using its title and artist name).
 curl -X GET -G "https://api-docs.koel.dev/api/youtube/search/song/1" \
     -H "Authorization: Bearer {token}" \
     -H "Content-Type: application/json" \
-    -d '{"pageToken":"totam"}'
+    -d '{"pageToken":"fugiat"}'
 
 ```
 
@@ -3422,7 +3421,7 @@ let headers = {
 }
 
 let body = {
-    "pageToken": "totam"
+    "pageToken": "fugiat"
 }
 
 fetch(url, {
@@ -3894,569 +3893,6 @@ Parameter | Type | Status | Description
 
 #general
 
-
-<!-- START_b09539e6d8b4dd71bddd777f0fa78af0 -->
-## Execute GraphQL query.
-
-> Example request:
-
-```bash
-curl -X GET -G "https://api-docs.koel.dev/graphql" \
-    -H "Authorization: Bearer {token}"
-```
-
-```javascript
-const url = new URL("https://api-docs.koel.dev/graphql");
-
-let headers = {
-    "Authorization": "Bearer {token}",
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-}
-
-fetch(url, {
-    method: "GET",
-    headers: headers,
-})
-    .then(response => response.json())
-    .then(json => console.log(json));
-```
-
-
-> Example response (500):
-
-```json
-{
-    "message": "Failed to find a GraphQL schema file at \/Users\/anphan\/Personal\/koel\/koel\/graphql\/schema.graphql. If you just installed Lighthouse, run php artisan vendor:publish --provider=\"Nuwave\\Lighthouse\\Providers\\LighthouseServiceProvider\" --tag=schema",
-    "exception": "Illuminate\\Contracts\\Filesystem\\FileNotFoundException",
-    "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/Source\/SchemaStitcher.php",
-    "line": 100,
-    "trace": [
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/Source\/SchemaStitcher.php",
-            "line": 59,
-            "function": "throwFileNotFoundException",
-            "class": "Nuwave\\Lighthouse\\Schema\\Source\\SchemaStitcher",
-            "type": "::"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/Source\/SchemaStitcher.php",
-            "line": 47,
-            "function": "gatherSchemaImportsRecursively",
-            "class": "Nuwave\\Lighthouse\\Schema\\Source\\SchemaStitcher",
-            "type": "::"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/AST\/ASTBuilder.php",
-            "line": 109,
-            "function": "getSchemaString",
-            "class": "Nuwave\\Lighthouse\\Schema\\Source\\SchemaStitcher",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Schema\/AST\/ASTBuilder.php",
-            "line": 101,
-            "function": "build",
-            "class": "Nuwave\\Lighthouse\\Schema\\AST\\ASTBuilder",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/GraphQL.php",
-            "line": 224,
-            "function": "documentAST",
-            "class": "Nuwave\\Lighthouse\\Schema\\AST\\ASTBuilder",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/GraphQL.php",
-            "line": 157,
-            "function": "prepSchema",
-            "class": "Nuwave\\Lighthouse\\GraphQL",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/GraphQL.php",
-            "line": 110,
-            "function": "executeQuery",
-            "class": "Nuwave\\Lighthouse\\GraphQL",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Support\/Http\/Controllers\/GraphQLController.php",
-            "line": 92,
-            "function": "executeRequest",
-            "class": "Nuwave\\Lighthouse\\GraphQL",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Support\/Http\/Controllers\/GraphQLController.php",
-            "line": 69,
-            "function": "executeBatched",
-            "class": "Nuwave\\Lighthouse\\Support\\Http\\Controllers\\GraphQLController",
-            "type": "->"
-        },
-        {
-            "function": "query",
-            "class": "Nuwave\\Lighthouse\\Support\\Http\\Controllers\\GraphQLController",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php",
-            "line": 54,
-            "function": "call_user_func_array"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php",
-            "line": 45,
-            "function": "callAction",
-            "class": "Illuminate\\Routing\\Controller",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Route.php",
-            "line": 219,
-            "function": "dispatch",
-            "class": "Illuminate\\Routing\\ControllerDispatcher",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Route.php",
-            "line": 176,
-            "function": "runController",
-            "class": "Illuminate\\Routing\\Route",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
-            "line": 680,
-            "function": "run",
-            "class": "Illuminate\\Routing\\Route",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 30,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Router",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/nuwave\/lighthouse\/src\/Support\/Http\/Middleware\/AcceptJson.php",
-            "line": 30,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 163,
-            "function": "handle",
-            "class": "Nuwave\\Lighthouse\\Support\\Http\\Middleware\\AcceptJson",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 53,
-            "function": "Illuminate\\Pipeline\\{closure}",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 104,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
-            "line": 682,
-            "function": "then",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
-            "line": 657,
-            "function": "runRouteWithinStack",
-            "class": "Illuminate\\Routing\\Router",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
-            "line": 623,
-            "function": "runRoute",
-            "class": "Illuminate\\Routing\\Router",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php",
-            "line": 612,
-            "function": "dispatchToRoute",
-            "class": "Illuminate\\Routing\\Router",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
-            "line": 176,
-            "function": "dispatch",
-            "class": "Illuminate\\Routing\\Router",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 30,
-            "function": "Illuminate\\Foundation\\Http\\{closure}",
-            "class": "Illuminate\\Foundation\\Http\\Kernel",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/ForceHttps.php",
-            "line": 25,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 163,
-            "function": "handle",
-            "class": "App\\Http\\Middleware\\ForceHttps",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 53,
-            "function": "Illuminate\\Pipeline\\{closure}",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
-            "line": 21,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 163,
-            "function": "handle",
-            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 53,
-            "function": "Illuminate\\Pipeline\\{closure}",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php",
-            "line": 21,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 163,
-            "function": "handle",
-            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 53,
-            "function": "Illuminate\\Pipeline\\{closure}",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ValidatePostSize.php",
-            "line": 27,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 163,
-            "function": "handle",
-            "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 53,
-            "function": "Illuminate\\Pipeline\\{closure}",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/app\/Http\/Middleware\/UseDifferentConfigIfE2E.php",
-            "line": 23,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 163,
-            "function": "handle",
-            "class": "App\\Http\\Middleware\\UseDifferentConfigIfE2E",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 53,
-            "function": "Illuminate\\Pipeline\\{closure}",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/CheckForMaintenanceMode.php",
-            "line": 62,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 163,
-            "function": "handle",
-            "class": "Illuminate\\Foundation\\Http\\Middleware\\CheckForMaintenanceMode",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Pipeline.php",
-            "line": 53,
-            "function": "Illuminate\\Pipeline\\{closure}",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php",
-            "line": 104,
-            "function": "Illuminate\\Routing\\{closure}",
-            "class": "Illuminate\\Routing\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
-            "line": 151,
-            "function": "then",
-            "class": "Illuminate\\Pipeline\\Pipeline",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php",
-            "line": 116,
-            "function": "sendRequestThroughRouter",
-            "class": "Illuminate\\Foundation\\Http\\Kernel",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
-            "line": 292,
-            "function": "handle",
-            "class": "Illuminate\\Foundation\\Http\\Kernel",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
-            "line": 274,
-            "function": "callLaravelRoute",
-            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Strategies\/Responses\/ResponseCalls.php",
-            "line": 46,
-            "function": "makeApiCall",
-            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
-            "line": 147,
-            "function": "__invoke",
-            "class": "Mpociot\\ApiDoc\\Strategies\\Responses\\ResponseCalls",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
-            "line": 108,
-            "function": "iterateThroughStrategies",
-            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Tools\/Generator.php",
-            "line": 72,
-            "function": "fetchResponses",
-            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
-            "line": 233,
-            "function": "processRoute",
-            "class": "Mpociot\\ApiDoc\\Tools\\Generator",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/mpociot\/laravel-apidoc-generator\/src\/Commands\/GenerateDocumentation.php",
-            "line": 84,
-            "function": "processRoutes",
-            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
-            "type": "->"
-        },
-        {
-            "function": "handle",
-            "class": "Mpociot\\ApiDoc\\Commands\\GenerateDocumentation",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
-            "line": 32,
-            "function": "call_user_func_array"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
-            "line": 90,
-            "function": "Illuminate\\Container\\{closure}",
-            "class": "Illuminate\\Container\\BoundMethod",
-            "type": "::"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/BoundMethod.php",
-            "line": 34,
-            "function": "callBoundMethod",
-            "class": "Illuminate\\Container\\BoundMethod",
-            "type": "::"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Container\/Container.php",
-            "line": 576,
-            "function": "call",
-            "class": "Illuminate\\Container\\BoundMethod",
-            "type": "::"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
-            "line": 183,
-            "function": "call",
-            "class": "Illuminate\\Container\\Container",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Command\/Command.php",
-            "line": 255,
-            "function": "execute",
-            "class": "Illuminate\\Console\\Command",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Command.php",
-            "line": 170,
-            "function": "run",
-            "class": "Symfony\\Component\\Console\\Command\\Command",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
-            "line": 1012,
-            "function": "run",
-            "class": "Illuminate\\Console\\Command",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
-            "line": 272,
-            "function": "doRunCommand",
-            "class": "Symfony\\Component\\Console\\Application",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/symfony\/console\/Application.php",
-            "line": 148,
-            "function": "doRun",
-            "class": "Symfony\\Component\\Console\\Application",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Console\/Application.php",
-            "line": 90,
-            "function": "run",
-            "class": "Symfony\\Component\\Console\\Application",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Console\/Kernel.php",
-            "line": 133,
-            "function": "run",
-            "class": "Illuminate\\Console\\Application",
-            "type": "->"
-        },
-        {
-            "file": "\/Users\/anphan\/Personal\/koel\/koel\/artisan",
-            "line": 35,
-            "function": "handle",
-            "class": "Illuminate\\Foundation\\Console\\Kernel",
-            "type": "->"
-        }
-    ]
-}
-```
-
-### HTTP Request
-`GET graphql`
-
-`POST graphql`
-
-
-<!-- END_b09539e6d8b4dd71bddd777f0fa78af0 -->
-
-<!-- START_af1b547728e980a368f8f6aefe54ac24 -->
-## graphql-playground
-> Example request:
-
-```bash
-curl -X GET -G "https://api-docs.koel.dev/graphql-playground" \
-    -H "Authorization: Bearer {token}"
-```
-
-```javascript
-const url = new URL("https://api-docs.koel.dev/graphql-playground");
-
-let headers = {
-    "Authorization": "Bearer {token}",
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-}
-
-fetch(url, {
-    method: "GET",
-    headers: headers,
-})
-    .then(response => response.json())
-    .then(json => console.log(json));
-```
-
-
-> Example response (200):
-
-```json
-null
-```
-
-### HTTP Request
-`GET graphql-playground`
-
-
-<!-- END_af1b547728e980a368f8f6aefe54ac24 -->
 
 <!-- START_66df3678904adde969490f2278b8f47f -->
 ## Authenticate the request for channel access.
