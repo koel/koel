@@ -20,7 +20,7 @@ class RecentlyPlayedController extends Controller
     }
 
     /**
-     * Get recently played songs
+     * Get recently played songs.
      *
      * Get a list of songs recently played by the current user.
      *

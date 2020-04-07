@@ -21,7 +21,7 @@ class SongController extends Controller
     }
 
     /**
-     * Get song's extra information
+     * Get song's extra information.
      *
      * Get a song's extra information. The response of this request is a superset of both corresponding
      * `album/{album}/info` and `artist/{artist}/info` requests, combined with the song's lyrics and related YouTube
