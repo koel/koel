@@ -36,7 +36,7 @@ class SongController extends Controller
     }
 
     /**
-     * Play a song
+     * Play a song.
      *
      * The GET request to play/stream a song. By default Koel will serve the file as-is, unless it's a FLAC.
      * If the value of `transcode` is truthy, Koel will attempt to transcode the file into `bitRate`kbps using ffmpeg.
@@ -62,7 +62,7 @@ class SongController extends Controller
     }
 
     /**
-     * Update song information
+     * Update song information.
      *
      * @bodyParam songs array required An array of song IDs to be updated.
      * @bodyParam data object required The new data, with these supported fields: `title`, `artistName`, `albumName`, and `lyrics`.

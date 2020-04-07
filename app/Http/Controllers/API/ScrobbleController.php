@@ -21,7 +21,7 @@ class ScrobbleController extends Controller
     }
 
     /**
-     * Scrobble a song
+     * Scrobble a song.
      *
      * Create a [Last.fm scrobble entry](https://www.last.fm/api/scrobbling) for a song.
      *
