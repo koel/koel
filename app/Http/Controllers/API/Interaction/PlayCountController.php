@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 class PlayCountController extends Controller
 {
     /**
-     * Increase play count
+     * Increase play count.
      *
      * Increase a song's play count as the currently authenticated user.
      * This request should be made whenever a song is played.
