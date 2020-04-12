@@ -20,7 +20,7 @@ class FavoritesController extends Controller
     }
 
     /**
-     * Download all songs favorite'd by the current user.
+     * Download all songs favorite'd by the current user
      *
      * @response []
      */

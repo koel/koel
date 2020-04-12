@@ -37,7 +37,7 @@ class SongController extends Controller
     }
 
     /**
-     * Store a song.
+     * Store a song
      *
      * Create a new song or update an existing one with data sent from AWS.
      *
@@ -74,7 +74,7 @@ class SongController extends Controller
     }
 
     /**
-     * Remove a song.
+     * Remove a song
      *
      * Remove a song whose information matches with data sent from AWS.
      *

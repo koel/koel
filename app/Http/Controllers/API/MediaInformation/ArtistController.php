@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 class ArtistController extends Controller
 {
     /**
-     * Get artist's extra information.
+     * Get artist's extra information
      *
      * Get extra information about an artist via Last.fm.
      *

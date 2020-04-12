@@ -55,7 +55,7 @@ class DataController extends Controller
     }
 
     /**
-     * Get application data.
+     * Get application data
      *
      * The big fat call to retrieve a set of application data catered for the current user
      * (songs, albums, artists, playlists, interactions, and if the user is an admin, settings as well).

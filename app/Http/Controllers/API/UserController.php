@@ -24,7 +24,7 @@ class UserController extends Controller
     }
 
     /**
-     * Create a new user.
+     * Create a new user
      *
      * @bodyParam name string required User's name. Example: John Doe
      * @bodyParam email string required User's email. Example: john@doe.com
@@ -50,7 +50,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update a user.
+     * Update a user
      *
      * @bodyParam name string required New name. Example: Johny Doe
      * @bodyParam email string required New email. Example: johny@doe.com
@@ -76,7 +76,7 @@ class UserController extends Controller
     }
 
     /**
-     * Delete a user.
+     * Delete a user
      *
      * @response []
      *
