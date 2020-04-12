@@ -27,7 +27,7 @@ class PlaylistController extends Controller
     }
 
     /**
-     * Get current user's playlists.
+     * Get current user's playlists
      *
      * @responseFile responses/playlist.index.json
      *
@@ -39,7 +39,7 @@ class PlaylistController extends Controller
     }
 
     /**
-     * Create a new playlist.
+     * Create a new playlist
      *
      * @bodyParam name string required Name of the playlist. Example: Sleepy Songs
      * @bodyParam rules array An array of rules if creating a "smart playlist."
@@ -67,7 +67,7 @@ class PlaylistController extends Controller
     }
 
     /**
-     * Rename a playlist.
+     * Rename a playlist
      *
      * @bodyParam name string required New name of the playlist. Example: Catchy Songs
      * @responseFile responses/playlist.update.json
@@ -86,7 +86,7 @@ class PlaylistController extends Controller
     }
 
     /**
-     * Replace a playlist's content.
+     * Replace a playlist's content
      *
      * Instead of adding or removing songs individually, a playlist's content is replaced entirely with an array of song IDs.
      *
@@ -109,7 +109,7 @@ class PlaylistController extends Controller
     }
 
     /**
-     * Get a playlist's songs.
+     * Get a playlist's songs
      *
      * @response ["0146d01afb742b01f28ab8b556f9a75d", "c741133cb8d1982a5c60b1ce2a1e6e47", "..."]
      *
@@ -129,7 +129,7 @@ class PlaylistController extends Controller
     }
 
     /**
-     * Delete a playlist.
+     * Delete a playlist
      *
      * @response []
      *

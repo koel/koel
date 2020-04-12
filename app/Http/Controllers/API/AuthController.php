@@ -23,7 +23,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Log a user in.
+     * Log a user in
      *
      * Koel uses [JSON Web Tokens](https://jwt.io/) (JWT) for authentication.
      * After the user has been authenticated, a random "token" will be returned.
@@ -53,7 +53,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Log the current user out.
+     * Log the current user out
      *
      * @return JsonResponse
      */

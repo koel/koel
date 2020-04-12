@@ -10,7 +10,7 @@ use App\Models\Album;
 class AlbumController extends Controller
 {
     /**
-     * Download a whole album.
+     * Download a whole album
      *
      * @response []
      */
