@@ -45,7 +45,7 @@ class Application extends IlluminateApplication
 
         if (isset($manifest[$file])) {
             return file_exists(public_path('public/hot'))
-                    ? "http://localhost:8080{$manifest[$file]}"
+                    ? "http://localhost:8080/public{$manifest[$file]}"
                     : $this->staticUrl("public{$manifest[$file]}");
         }
 
