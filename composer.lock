@@ -1015,16 +1015,16 @@
         },
         {
             "name": "jackiedo/dotenv-editor",
-            "version": "1.0.8",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JackieDo/Laravel-Dotenv-Editor.git",
-                "reference": "2ceebe3a1cf5b2b1ce61bf6d58fce2af754e3ad3"
+                "reference": "519f4c102a8d1fa70335d7822f1ac77466859039"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JackieDo/Laravel-Dotenv-Editor/zipball/2ceebe3a1cf5b2b1ce61bf6d58fce2af754e3ad3",
-                "reference": "2ceebe3a1cf5b2b1ce61bf6d58fce2af754e3ad3",
+                "url": "https://api.github.com/repos/JackieDo/Laravel-Dotenv-Editor/zipball/519f4c102a8d1fa70335d7822f1ac77466859039",
+                "reference": "519f4c102a8d1fa70335d7822f1ac77466859039",
                 "shasum": ""
             },
             "require": {
@@ -1037,6 +1037,14 @@
             "extra": {
                 "branch-alias": {
                     "dev-master": "1.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Jackiedo\\DotenvEditor\\DotenvEditorServiceProvider"
+                    ],
+                    "aliases": {
+                        "DotenvEditor": "Jackiedo\\DotenvEditor\\Facades\\DotenvEditor"
+                    }
                 }
             },
             "autoload": {
@@ -1060,7 +1068,7 @@
                 "dotenv-editor",
                 "laravel"
             ],
-            "time": "2018-12-10T08:59:29+00:00"
+            "time": "2020-04-12T11:17:49+00:00"
         },
         {
             "name": "james-heinrich/getid3",
@@ -4869,6 +4877,7 @@
                     "email": "jakub.onderka@gmail.com"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-color",
             "time": "2018-09-29T17:23:10+00:00"
         },
         {
@@ -4915,6 +4924,7 @@
                 }
             ],
             "description": "Highlight PHP code in terminal",
+            "abandoned": "php-parallel-lint/php-console-highlighter",
             "time": "2018-09-29T18:48:56+00:00"
         },
         {
