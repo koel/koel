@@ -13,8 +13,8 @@ mix.webpackConfig({
   devServer: {
     port: 8080,
     proxy: {
-      '/': 'http://localhost:8081/',
-      '/play' : 'http://localhost:8081/play'
+      '/': 'http://localhost:8000/',
+      '/play' : 'http://localhost:8000/play'
     }
   }
 })
