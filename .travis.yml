@@ -9,11 +9,11 @@ php:
   - 7.3
   - 7.4
 
+node_js:
+  - 10
+
 branches:
   - master
-
-before_install:
-  - nvm install 10.20.0
 
 install:
   - composer self-update
