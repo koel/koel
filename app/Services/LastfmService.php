@@ -7,13 +7,6 @@ use Exception;
 class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 {
     /**
-     * Specify the response format, since Last.fm only returns XML.
-     *
-     * @var string
-     */
-    protected $responseFormat = 'xml';
-
-    /**
      * Override the key param, since, again, Lastfm wants to be different.
      *
      * @var string
@@ -53,20 +46,13 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
         try {
             return $this->cache->remember(md5("lastfm_artist_$name"), 24 * 60 * 7, function () use ($name): ?array {
-                $response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name");
+                $response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
 
-                if (!$response) {
+                if (!$response || !$response->artist) {
                     return null;
                 }
 
-                $response = simplexml_load_string($response->asXML());
-                $response = json_decode(json_encode($response), true);
-
-                if (!$response || !$artist = array_get($response, 'artist')) {
-                    return null;
-                }
-
-                return $this->buildArtistInformation($artist);
+                return $this->buildArtistInformation($response->artist);
             });
         } catch (Exception $e) {
             $this->logger->error($e);
@@ -78,18 +64,18 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Build a Koel-usable array of artist information using the data from Last.fm.
      *
-     * @param mixed[] $artistData
+     * @param object $data
      *
      * @return mixed[]
      */
-    private function buildArtistInformation(array $artistData): array
+    private function buildArtistInformation($data): array
     {
         return [
-            'url' => array_get($artistData, 'url'),
-            'image' => count($artistData['image']) > 3 ? $artistData['image'][3] : $artistData['image'][0],
+            'url' => $data->url,
+            'image' => count($data->image) > 3 ? $data->image[3]->{'#text'} : $data->image[0]->{'#text'},
             'bio' => [
-                'summary' => $this->formatText(array_get($artistData, 'bio.summary', '')),
-                'full' => $this->formatText(array_get($artistData, 'bio.content', '')),
+                'summary' => $data->bio ? $this->formatText($data->bio->summary) : '',
+                'full' => $data->bio ? $this->formatText($data->bio->content) : '',
             ],
         ];
     }
@@ -112,20 +98,14 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
             $cacheKey = md5("lastfm_album_{$albumName}_{$artistName}");
 
             return $this->cache->remember($cacheKey, 24 * 60 * 7, function () use ($albumName, $artistName): ?array {
-                $response = $this->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName");
+                $response = $this
+                    ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
 
-                if (!$response) {
+                if (!$response || !$response->album) {
                     return null;
                 }
 
-                $response = simplexml_load_string($response->asXML());
-                $response = json_decode(json_encode($response), true);
-
-                if (!$response || !$album = array_get($response, 'album')) {
-                    return null;
-                }
-
-                return $this->buildAlbumInformation($album);
+                return $this->buildAlbumInformation($response->album);
             });
         } catch (Exception $e) {
             $this->logger->error($e);
@@ -137,26 +117,26 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Build a Koel-usable array of album information using the data from Last.fm.
      *
-     * @param mixed[] $albumData
+     * @param object $data
      *
      * @return mixed[]
      */
-    private function buildAlbumInformation(array $albumData): array
+    private function buildAlbumInformation($data): array
     {
         return [
-            'url' => array_get($albumData, 'url'),
-            'image' => count($albumData['image']) > 3 ? $albumData['image'][3] : $albumData['image'][0],
+            'url' => $data->url,
+            'image' => count($data->image) > 3 ? $data->image[3]->{'#text'} : $data->image[0]->{'#text'},
             'wiki' => [
-                'summary' => $this->formatText(array_get($albumData, 'wiki.summary', '')),
-                'full' => $this->formatText(array_get($albumData, 'wiki.content', '')),
+                'summary' => $data->wiki ? $this->formatText($data->wiki->summary) : '',
+                'full' => $data->wiki ? $this->formatText($data->wiki->content) : '',
             ],
-            'tracks' => array_map(function ($track) {
+            'tracks' => array_map(static function ($track): array {
                 return [
-                    'title' => $track['name'],
-                    'length' => (int) $track['duration'],
-                    'url' => $track['url'],
+                    'title' => $track->name,
+                    'length' => (int) $track->duration,
+                    'url' => $track->url,
                 ];
-            }, array_get($albumData, 'tracks.track', [])),
+            }, $data->tracks ? $data->tracks->track : []),
         ];
     }
 
@@ -175,7 +155,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         ], true);
 
         try {
-            return (string) $this->get("/?$query", [], false)->session->key;
+            return $this->get("/?$query&format=json", [], false)->session->key;
         } catch (Exception $e) {
             $this->logger->error($e);
 
@@ -300,7 +280,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
      *
      * @param string|array $value
      */
-    protected function formatText($value): string
+    protected function formatText(?string $value): string
     {
         if (!$value) {
             return '';

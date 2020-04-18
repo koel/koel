@@ -17,7 +17,7 @@ class LastfmTest extends TestCase
     {
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/session-key.xml')),
+            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/session-key.json')),
         ]);
 
         $service = new LastfmService($client, app(Cache::class), app(Logger::class));
