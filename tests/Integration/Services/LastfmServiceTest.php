@@ -28,10 +28,8 @@ class LastfmServiceTest extends TestCase
             'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist.xml')),
         ]);
 
-        $lastfmService = new LastfmService($client, app(Cache::class), app(Logger::class));
-        $info = $lastfmService->getArtistInformation($artist->name);
-
-        dump($info);
+        $api = new LastfmService($client, app(Cache::class), app(Logger::class));
+        $info = $api->getArtistInformation($artist->name);
 
         $this->assertEquals([
             'url' => 'http://www.last.fm/music/Kamelot',

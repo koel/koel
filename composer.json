@@ -80,7 +80,6 @@
       "@php artisan key:generate"
     ],
     "test": "phpunit --colors=always --order-by=defects --stop-on-defect",
-    "test-travis": "phpunit tests/Integration/Services/LastfmServiceTest.php --colors=always --filter='testGetArtistInformation$'",
     "coverage": "phpunit --colors=always --coverage-clover=coverage.xml",
     "analyze": "phpstan analyse app --level=5",
     "gen-api-docs": "@php artisan apidoc:generate"
