@@ -1,6 +1,6 @@
-# koel [![Build Status](https://travis-ci.org/phanan/koel.svg?branch=master)](https://travis-ci.org/phanan/koel) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![codecov](https://codecov.io/gh/phanan/koel/branch/master/graph/badge.svg)](https://codecov.io/gh/phanan/koel) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
+# koel [![Build Status](https://travis-ci.org/koel/koel.svg?branch=master)](https://travis-ci.org/koel/koel) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![codecov](https://codecov.io/gh/phanan/koel/branch/master/graph/badge.svg)](https://codecov.io/gh/phanan/koel) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
 
-![Showcase](http://koel.phanan.net/dist/img/showcase.png?2)
+![Showcase](https://koel.dev/img/showcase.png)
 
 ## Intro
 
@@ -8,11 +8,11 @@
 
 ## Install and Upgrade Guide
 
-For system requirements, installation/upgrade guides, troubleshooting etc., head over to the [Official Documentation](http://koel.phanan.net/docs).
+For system requirements, installation/upgrade guides, troubleshooting etc., head over to the [Official Documentation](https://docs.koel.dev).
 
 ## API Docs
 
-If you're interested in the development of a client, Koel's offical API documentation is available [here](https://koel.phanan.net/api-docs/).
+If you're interested in the development of a client, Koel's offical API documentation is available [here](https://api-docs.koel.dev).
 
 ## Contribute
 
@@ -20,7 +20,7 @@ All contributions, big or small, are warmheartedly welcome! Please note, however
 
 A quick and easy way to start hacking on koel is to open and run this repo in Gitpod, an online IDE with full Laravel support.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/phanan/koel)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/koel/koel)
 
 ## Backers
 
