@@ -9,6 +9,12 @@ mix.webpackConfig({
   output: {
     chunkFilename: mix.config.inProduction ? 'js/[name].[chunkhash].js' : 'js/[name].js',
     publicPath: '/public/'
+  },
+  devServer: {
+    port: 8080,
+    proxy: {
+      '/': 'http://127.0.0.1:8000/'
+    }
   }
 })
 
