@@ -1,0 +1,103 @@
+{
+  "album": {
+    "name": "Epica",
+    "artist": "Kamelot",
+    "mbid": "4c5b22d5-e901-3e0c-89b1-ded24953449a",
+    "url": "https://www.last.fm/music/Kamelot/Epica",
+    "image": [
+      {
+        "#text": "https://lastfm.freetls.fastly.net/i/u/34s/54d87dcabf716c439697d5a326dd3311.png",
+        "size": "small"
+      },
+      {
+        "#text": "https://lastfm.freetls.fastly.net/i/u/64s/54d87dcabf716c439697d5a326dd3311.png",
+        "size": "medium"
+      },
+      {
+        "#text": "https://lastfm.freetls.fastly.net/i/u/174s/54d87dcabf716c439697d5a326dd3311.png",
+        "size": "large"
+      },
+      {
+        "#text": "http://foo.bar/extralarge.jpg",
+        "size": "extralarge"
+      },
+      {
+        "#text": "https://lastfm.freetls.fastly.net/i/u/300x300/54d87dcabf716c439697d5a326dd3311.png",
+        "size": "mega"
+      },
+      {
+        "#text": "https://lastfm.freetls.fastly.net/i/u/300x300/54d87dcabf716c439697d5a326dd3311.png",
+        "size": ""
+      }
+    ],
+    "listeners": "187518",
+    "playcount": "4816629",
+    "tracks": {
+      "track": [
+        {
+          "name": "Track 1",
+          "url": "http://foo/track1",
+          "duration": "100",
+          "@attr": {
+            "rank": "1"
+          },
+          "streamable": {
+            "#text": "0",
+            "fulltrack": "0"
+          },
+          "artist": {
+            "name": "Kamelot",
+            "mbid": "46f4cd77-8870-4ad8-a205-1bee18901d0f",
+            "url": "https://www.last.fm/music/Kamelot"
+          }
+        },
+        {
+          "name": "Track 2",
+          "url": "http://foo/track2",
+          "duration": "150",
+          "@attr": {
+            "rank": "2"
+          },
+          "streamable": {
+            "#text": "0",
+            "fulltrack": "0"
+          },
+          "artist": {
+            "name": "Kamelot",
+            "mbid": "46f4cd77-8870-4ad8-a205-1bee18901d0f",
+            "url": "https://www.last.fm/music/Kamelot"
+          }
+        }
+      ]
+    },
+    "tags": {
+      "tag": [
+        {
+          "name": "Power metal",
+          "url": "https://www.last.fm/tag/Power+metal"
+        },
+        {
+          "name": "symphonic metal",
+          "url": "https://www.last.fm/tag/symphonic+metal"
+        },
+        {
+          "name": "Progressive metal",
+          "url": "https://www.last.fm/tag/Progressive+metal"
+        },
+        {
+          "name": "Melodic Power Metal",
+          "url": "https://www.last.fm/tag/Melodic+Power+Metal"
+        },
+        {
+          "name": "albums I own",
+          "url": "https://www.last.fm/tag/albums+I+own"
+        }
+      ]
+    },
+    "wiki": {
+      "published": "03 Sep 2008, 01:16",
+      "summary": "Quisque ut nisi.",
+      "content": "Quisque ut nisi. Vestibulum ullamcorper mauris at ligula."
+    }
+  }
+}
