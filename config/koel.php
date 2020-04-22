@@ -127,8 +127,8 @@ return [
     'force_https' => env('FORCE_HTTPS', false),
 
     'misc' => [
-        'home_url' => 'https://koel.phanan.net/',
-        'docs_url' => 'https://koel.phanan.net/docs',
+        'home_url' => 'https://koel.dev',
+        'docs_url' => 'https://docs.koel.dev',
         'sponsor_github_url' => 'https://github.com/users/phanan/sponsorship',
         'sponsor_open_collective_url' => 'https://opencollective.com/koel',
         'demo' => env('KOEL_DEMO', false),

@@ -1,7 +1,7 @@
 {
   "name": "koel",
   "author": "Phan An <me@phanan.net>",
-  "homepage": "https://koel.phanan.net",
+  "homepage": "https://koel.dev",
   "license": "MIT",
   "description": "A personal music streaming server that works",
   "keywords": [
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/phanan/koel"
+    "url": "https://github.com/koel/koel"
   },
   "devDependencies": {
     "cross-env": "^3.2.3",
