@@ -74,8 +74,8 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
             'url' => $data->url,
             'image' => count($data->image) > 3 ? $data->image[3]->{'#text'} : $data->image[0]->{'#text'},
             'bio' => [
-                'summary' => $data->bio ? $this->formatText($data->bio->summary) : '',
-                'full' => $data->bio ? $this->formatText($data->bio->content) : '',
+                'summary' => isset($data->bio) ? $this->formatText($data->bio->summary) : '',
+                'full' => isset($data->bio) ? $this->formatText($data->bio->content) : '',
             ],
         ];
     }
@@ -127,8 +127,8 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
             'url' => $data->url,
             'image' => count($data->image) > 3 ? $data->image[3]->{'#text'} : $data->image[0]->{'#text'},
             'wiki' => [
-                'summary' => $data->wiki ? $this->formatText($data->wiki->summary) : '',
-                'full' => $data->wiki ? $this->formatText($data->wiki->content) : '',
+                'summary' => isset($data->wiki) ? $this->formatText($data->wiki->summary) : '',
+                'full' => isset($data->wiki) ? $this->formatText($data->wiki->content) : '',
             ],
             'tracks' => array_map(static function ($track): array {
                 return [
@@ -136,7 +136,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
                     'length' => (int) $track->duration,
                     'url' => $track->url,
                 ];
-            }, $data->tracks ? $data->tracks->track : []),
+            }, isset($data->tracks) ? $data->tracks->track : []),
         ];
     }
 
