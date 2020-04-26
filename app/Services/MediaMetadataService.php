@@ -34,7 +34,7 @@ class MediaMetadataService
     public function copyAlbumCover(Album $album, string $source, string $destination = ''): void
     {
         $extension = pathinfo($source, PATHINFO_EXTENSION);
-        $destination = $destination ?: $this->generateAlbumCoverPath($album, $extension);
+        $destination = $destination ?: $this->generateAlbumCoverPath($extension);
         copy($source, $destination);
 
         $album->update(['cover' => basename($destination)]);
@@ -49,7 +49,7 @@ class MediaMetadataService
     {
         try {
             $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateAlbumCoverPath($album, $extension);
+            $destination = $destination ?: $this->generateAlbumCoverPath($extension);
             file_put_contents($destination, $binaryData);
 
             $album->update(['cover' => basename($destination)]);
@@ -80,7 +80,7 @@ class MediaMetadataService
     ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateArtistImagePath($artist, $extension);
+            $destination = $destination ?: $this->generateArtistImagePath($extension);
             file_put_contents($destination, $binaryData);
 
             $artist->update(['image' => basename($destination)]);
@@ -94,9 +94,9 @@ class MediaMetadataService
      *
      * @param string $extension The extension of the cover (without dot)
      */
-    private function generateAlbumCoverPath(Album $album, string $extension): string
+    private function generateAlbumCoverPath(string $extension): string
     {
-        return sprintf('%s/public/img/covers/%s.%s', app()->publicPath(), sha1($album->id), $extension);
+        return sprintf('%s/public/img/covers/%s.%s', app()->publicPath(), sha1(uniqid()), $extension);
     }
 
     /**
@@ -104,8 +104,8 @@ class MediaMetadataService
      *
      * @param string $extension The extension of the cover (without dot)
      */
-    private function generateArtistImagePath(Artist $artist, $extension): string
+    private function generateArtistImagePath($extension): string
     {
-        return sprintf('%s/public/img/artists/%s.%s', app()->publicPath(), sha1($artist->id), $extension);
+        return sprintf('%s/public/img/artists/%s.%s', app()->publicPath(), sha1(uniqid()), $extension);
     }
 }

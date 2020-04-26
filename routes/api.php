@@ -8,7 +8,7 @@ Route::group(['namespace' => 'API'], function () {
 
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::get('/ping', function () {
-            // Just acting as a ping service.
+            // Only  acting as a ping service.
         });
 
         Route::post('broadcasting/auth', function (Request $request) {
@@ -81,6 +81,10 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('{song}/info', 'SongController@show')->name('song.show.deprecated'); // backward compat
             Route::get('song/{song}/info', 'SongController@show');
         });
+
+        // Cover/image upload routes
+        Route::put('album/{album}/cover', 'AlbumCoverController@update');
+        Route::put('artist/{artist}/image', 'ArtistImageController@update');
 
         // iTunes routes
         if (iTunes::used()) {

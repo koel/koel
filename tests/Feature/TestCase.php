@@ -19,6 +19,7 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use DatabaseTransactions;
     use InteractsWithIoc;
+
     /** @var JWTAuth */
     private $auth;
 

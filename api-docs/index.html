@@ -44,11 +44,11 @@
 <h1>Info</h1>
 <p>Welcome to the generated API reference.</p>
 <!-- END_INFO -->
-<p>This is the official API documentation for <a href="https://koel.phanan.net">Koel</a>, generated from the source code using <a href="https://github.com/mpociot/laravel-apidoc-generator">Laravel API Documentation Generator</a>.
-If you spot any mistake or want to add an improvement, please <a href="https://github.com/phanan/koel/issues/new">submit an issue</a> or <a href="https://github.com/phanan/koel/compare">open a pull request</a>.  </p>
+<p>This is the official API documentation for <a href="https://koel.dev">Koel</a>, generated from the source code using <a href="https://github.com/mpociot/laravel-apidoc-generator">Laravel API Documentation Generator</a>.
+If you spot any mistake or want to add an improvement, please <a href="https://github.com/koel/koel/issues/new">submit an issue</a> or <a href="https://github.com/koel/koel/compare">open a pull request</a>.  </p>
 <h1>1. Authentication</h1>
 <!-- START_d131f717df7db546af1657d1e7ce10f6 -->
-<h2>Log a user in.</h2>
+<h2>Log a user in</h2>
 <p>Koel uses <a href="https://jwt.io/">JSON Web Tokens</a> (JWT) for authentication.
 After the user has been authenticated, a random &quot;token&quot; will be returned.
 This token should then be saved in a local storage and used as an <code>Authorization: Bearer</code> header
@@ -115,7 +115,7 @@ fetch(url, {
 </table>
 <!-- END_d131f717df7db546af1657d1e7ce10f6 -->
 <!-- START_772eabda142fbed1f55b5e4c9605891c -->
-<h2>Log the current user out.</h2>
+<h2>Log the current user out</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -140,7 +140,7 @@ fetch(url, {
 <!-- END_772eabda142fbed1f55b5e4c9605891c -->
 <h1>2. Application data</h1>
 <!-- START_024021c3c17f0cb3ad10ff7ab83b1aa0 -->
-<h2>Get application data.</h2>
+<h2>Get application data</h2>
 <p>The big fat call to retrieve a set of application data catered for the current user
 (songs, albums, artists, playlists, interactions, and if the user is an admin, settings as well).
 Naturally, this call should be made right after the user has been logged in, when you need to populate
@@ -271,17 +271,17 @@ fetch(url, {
 <!-- END_024021c3c17f0cb3ad10ff7ab83b1aa0 -->
 <h1>3. Song interactions</h1>
 <!-- START_8ea879d7ef5eb537c1999e83bffa08b4 -->
-<h2>Play a song.</h2>
+<h2>Play a song</h2>
 <p>The GET request to play/stream a song. By default Koel will serve the file as-is, unless it's a FLAC.
 If the value of <code>transcode</code> is truthy, Koel will attempt to transcode the file into <code>bitRate</code>kbps using ffmpeg.</p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/1/play/1/1?jwt-token=et" </code></pre>
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/1/play/1/1?jwt-token=consequatur" </code></pre>
 <pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/1/play/1/1");
 
     let params = {
-            "jwt-token": "et",
+            "jwt-token": "consequatur",
         };
     Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
 
@@ -321,7 +321,7 @@ fetch(url, {
 </table>
 <!-- END_8ea879d7ef5eb537c1999e83bffa08b4 -->
 <!-- START_a1c4d62f5a36b1ff9e0513802f860a12 -->
-<h2>Increase play count.</h2>
+<h2>Increase play count</h2>
 <p>Increase a song's play count as the currently authenticated user.
 This request should be made whenever a song is played.
 An &quot;interaction&quot; record including the song and current user's data will be returned.</p>
@@ -415,7 +415,7 @@ fetch(url, {
 </table>
 <!-- END_a1c4d62f5a36b1ff9e0513802f860a12 -->
 <!-- START_a1095be9dc97ea1b85319566c3f18092 -->
-<h2>Like or unlike a song.</h2>
+<h2>Like or unlike a song</h2>
 <p>An &quot;interaction&quot; record including the song and current user's data will be returned.</p>
 <blockquote>
 <p>Example request:</p>
@@ -507,7 +507,7 @@ fetch(url, {
 </table>
 <!-- END_a1095be9dc97ea1b85319566c3f18092 -->
 <!-- START_70a0987edd62e0427ffd210d6dfeee0b -->
-<h2>Like multiple songs.</h2>
+<h2>Like multiple songs</h2>
 <p>Like several songs at once, useful for &quot;batch&quot; actions. An array of &quot;interaction&quot; records containing the song
 and user data will be returned.</p>
 <blockquote>
@@ -605,7 +605,7 @@ fetch(url, {
 </table>
 <!-- END_70a0987edd62e0427ffd210d6dfeee0b -->
 <!-- START_1ffdb72cb23b18d9ecb8b07d3c0240f0 -->
-<h2>Unlike multiple songs.</h2>
+<h2>Unlike multiple songs</h2>
 <p>Unlike several songs at once, useful for &quot;batch&quot; actions. An array of &quot;interaction&quot; records containing the song
 and user data will be returned.</p>
 <blockquote>
@@ -703,7 +703,7 @@ fetch(url, {
 </table>
 <!-- END_1ffdb72cb23b18d9ecb8b07d3c0240f0 -->
 <!-- START_98a64836de32d52385d203ab618f9ddd -->
-<h2>Get recently played songs.</h2>
+<h2>Get recently played songs</h2>
 <p>Get a list of songs recently played by the current user.</p>
 <blockquote>
 <p>Example request:</p>
@@ -764,7 +764,7 @@ fetch(url, {
 <!-- END_98a64836de32d52385d203ab618f9ddd -->
 <h1>4. Playlist management</h1>
 <!-- START_0f95a89b7f06c40893a1e50400952f5c -->
-<h2>Get current user&#039;s playlists.</h2>
+<h2>Get current user&#039;s playlists</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -831,7 +831,7 @@ fetch(url, {
 <p><code>GET api/playlist</code></p>
 <!-- END_0f95a89b7f06c40893a1e50400952f5c -->
 <!-- START_3e7029f85581865fdc020295518c93f3 -->
-<h2>Create a new playlist.</h2>
+<h2>Create a new playlist</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -898,7 +898,7 @@ fetch(url, {
 </table>
 <!-- END_3e7029f85581865fdc020295518c93f3 -->
 <!-- START_e0cc8988ecbec0fac9181c28cd084238 -->
-<h2>Rename a playlist.</h2>
+<h2>Rename a playlist</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -959,7 +959,7 @@ fetch(url, {
 </table>
 <!-- END_e0cc8988ecbec0fac9181c28cd084238 -->
 <!-- START_356c5b315a285debadf8b289d3bae312 -->
-<h2>Delete a playlist.</h2>
+<h2>Delete a playlist</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -987,7 +987,7 @@ fetch(url, {
 <p><code>DELETE api/playlist/{playlist}</code></p>
 <!-- END_356c5b315a285debadf8b289d3bae312 -->
 <!-- START_68b67f3bf318fce97664a5d0c952b38b -->
-<h2>Replace a playlist&#039;s content.</h2>
+<h2>Replace a playlist&#039;s content</h2>
 <p>Instead of adding or removing songs individually, a playlist's content is replaced entirely with an array of song IDs.</p>
 <blockquote>
 <p>Example request:</p>
@@ -1043,7 +1043,7 @@ fetch(url, {
 </table>
 <!-- END_68b67f3bf318fce97664a5d0c952b38b -->
 <!-- START_82c6e7b4ff4186b87ca6c4b6514cfa74 -->
-<h2>Get a playlist&#039;s songs.</h2>
+<h2>Get a playlist&#039;s songs</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -1468,7 +1468,7 @@ fetch(url, {
 <!-- END_82c6e7b4ff4186b87ca6c4b6514cfa74 -->
 <h1>5. Media information</h1>
 <!-- START_8b76894631cd3b3d4f86fab8014bc4e1 -->
-<h2>Update song information.</h2>
+<h2>Update song information</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -1526,7 +1526,7 @@ fetch(url, {
 </table>
 <!-- END_8b76894631cd3b3d4f86fab8014bc4e1 -->
 <!-- START_a670fbc8f3161e7fda744d7cc52ca5ea -->
-<h2>Get album&#039;s extra information.</h2>
+<h2>Get album&#039;s extra information</h2>
 <p>Get extra information about an album via Last.fm.</p>
 <blockquote>
 <p>Example request:</p>
@@ -1584,7 +1584,7 @@ fetch(url, {
 <p><code>GET api/album/{album}/info</code></p>
 <!-- END_a670fbc8f3161e7fda744d7cc52ca5ea -->
 <!-- START_92d9d0e186f60300dfde56b152e8536b -->
-<h2>Get artist&#039;s extra information.</h2>
+<h2>Get artist&#039;s extra information</h2>
 <p>Get extra information about an artist via Last.fm.</p>
 <blockquote>
 <p>Example request:</p>
@@ -1626,7 +1626,7 @@ fetch(url, {
 <p><code>GET api/artist/{artist}/info</code></p>
 <!-- END_92d9d0e186f60300dfde56b152e8536b -->
 <!-- START_8f5482e7dc76601d5d24f0120eddfc14 -->
-<h2>Get song&#039;s extra information.</h2>
+<h2>Get song&#039;s extra information</h2>
 <p>Get a song's extra information. The response of this request is a superset of both corresponding
 <code>album/{album}/info</code> and <code>artist/{artist}/info</code> requests, combined with the song's lyrics and related YouTube
 videos, if applicable. This means you can (and should) cache this information somewhere ;)</p>
@@ -2129,18 +2129,76 @@ fetch(url, {
 <h3>HTTP Request</h3>
 <p><code>GET api/song/{song}/info</code></p>
 <!-- END_8f5482e7dc76601d5d24f0120eddfc14 -->
-<h1>6. Download</h1>
-<!-- START_339c05326ab691afe5ba03de806b77b9 -->
-<h2>Download one or several songs.</h2>
+<!-- START_5f4d5a555fa53526cea8539392c66557 -->
+<h2>Upload an artist&#039;s image</h2>
+<p>Upload an image as an artist's image.</p>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/download/songs?songs=molestiae" \
+<pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/artist/1/image" \
+    -H "Authorization: Bearer {token}" \
+    -H "Content-Type: application/json" \
+    -d '{"image":"tempore"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/artist/1/image");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+}
+
+let body = {
+    "image": "tempore"
+}
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (200):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "artistUrl": "https:\/\/koel.host\/images\/artists\/new-cover.jpg"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/artist/{artist}/image</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>image</td>
+<td>string</td>
+<td>required</td>
+<td>The image's content, in <a href="https://en.wikipedia.org/wiki/Data_URI_scheme">Data URI format</a>.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_5f4d5a555fa53526cea8539392c66557 -->
+<h1>6. Download</h1>
+<!-- START_339c05326ab691afe5ba03de806b77b9 -->
+<h2>Download one or several songs</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/download/songs?songs=neque" \
     -H "Authorization: Bearer {token}"</code></pre>
 <pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/download/songs");
 
     let params = {
-            "songs": "molestiae",
+            "songs": "neque",
         };
     Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
 
@@ -2187,7 +2245,7 @@ fetch(url, {
 </table>
 <!-- END_339c05326ab691afe5ba03de806b77b9 -->
 <!-- START_c4beea69287c52c5ddaf304c1881cfd8 -->
-<h2>Download a whole album.</h2>
+<h2>Download a whole album</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -2221,7 +2279,7 @@ fetch(url, {
 <p><code>GET api/download/album/{album}</code></p>
 <!-- END_c4beea69287c52c5ddaf304c1881cfd8 -->
 <!-- START_d7a146e78a726566715eea4427009b54 -->
-<h2>Download all songs by an artist.</h2>
+<h2>Download all songs by an artist</h2>
 <p>Don't see why one would need this, really.
 Let's pray to God the user doesn't trigger this on Elvis.</p>
 <blockquote>
@@ -2257,7 +2315,7 @@ fetch(url, {
 <p><code>GET api/download/artist/{artist}</code></p>
 <!-- END_d7a146e78a726566715eea4427009b54 -->
 <!-- START_c450a89b6bb24daa242d077b01238e7d -->
-<h2>Download a whole playlist.</h2>
+<h2>Download a whole playlist</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -2677,7 +2735,7 @@ fetch(url, {
 <p><code>GET api/download/playlist/{playlist}</code></p>
 <!-- END_c450a89b6bb24daa242d077b01238e7d -->
 <!-- START_2ada2dccdced8279b3ab405334d3298f -->
-<h2>Download all songs favorite&#039;d by the current user.</h2>
+<h2>Download all songs favorite&#039;d by the current user</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -2712,7 +2770,7 @@ fetch(url, {
 <!-- END_2ada2dccdced8279b3ab405334d3298f -->
 <h1>7. User management</h1>
 <!-- START_f0654d3f2fc63c11f5723f233cc53c83 -->
-<h2>Create a new user.</h2>
+<h2>Create a new user</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -2785,14 +2843,14 @@ fetch(url, {
 </table>
 <!-- END_f0654d3f2fc63c11f5723f233cc53c83 -->
 <!-- START_a4a2abed1e8e8cad5e6a3282812fe3f3 -->
-<h2>Update a user.</h2>
+<h2>Update a user</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
 <pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/user/1" \
     -H "Authorization: Bearer {token}" \
     -H "Content-Type: application/json" \
-    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"asperiores"}'
+    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"accusantium"}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/user/1");
 
@@ -2805,7 +2863,7 @@ let headers = {
 let body = {
     "name": "Johny Doe",
     "email": "johny@doe.com",
-    "password": "asperiores"
+    "password": "accusantium"
 }
 
 fetch(url, {
@@ -2855,7 +2913,7 @@ fetch(url, {
 </table>
 <!-- END_a4a2abed1e8e8cad5e6a3282812fe3f3 -->
 <!-- START_4bb7fb4a7501d3cb1ed21acfc3b205a9 -->
-<h2>Delete a user.</h2>
+<h2>Delete a user</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -2883,7 +2941,7 @@ fetch(url, {
 <p><code>DELETE api/user/{user}</code></p>
 <!-- END_4bb7fb4a7501d3cb1ed21acfc3b205a9 -->
 <!-- START_b19e2ecbb41b5fa6802edaf581aab5f6 -->
-<h2>Get current user&#039;s profile.</h2>
+<h2>Get current user&#039;s profile</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
@@ -2921,14 +2979,14 @@ fetch(url, {
 <p><code>GET api/me</code></p>
 <!-- END_b19e2ecbb41b5fa6802edaf581aab5f6 -->
 <!-- START_fa77e70040eb60f0488db2d285d1cdc7 -->
-<h2>Update current user&#039;s profile.</h2>
+<h2>Update current user&#039;s profile</h2>
 <blockquote>
 <p>Example request:</p>
 </blockquote>
 <pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/me" \
     -H "Authorization: Bearer {token}" \
     -H "Content-Type: application/json" \
-    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"voluptatem"}'
+    -d '{"name":"Johny Doe","email":"johny@doe.com","password":"explicabo"}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/me");
 
@@ -2941,7 +2999,7 @@ let headers = {
 let body = {
     "name": "Johny Doe",
     "email": "johny@doe.com",
-    "password": "voluptatem"
+    "password": "explicabo"
 }
 
 fetch(url, {
@@ -2991,7 +3049,7 @@ fetch(url, {
 <!-- END_fa77e70040eb60f0488db2d285d1cdc7 -->
 <h1>8. Settings</h1>
 <!-- START_1e1aaba3a713ac3ce04a89d5f4ad0f2e -->
-<h2>Save the application settings.</h2>
+<h2>Save the application settings</h2>
 <p>Save the application settings. Right now there's only one setting to be saved (<code>media_path</code>).</p>
 <blockquote>
 <p>Example request:</p>
@@ -3050,7 +3108,7 @@ fetch(url, {
 <p>These routes are meant for Amazon Web Services (AWS) integration with Koel. For more information, visit
 <a href="https://github.com/koel/koel-aws">koel-aws</a>.</p>
 <!-- START_9999a98649bc4a1c25373dcae1994fbc -->
-<h2>Store a song.</h2>
+<h2>Store a song</h2>
 <p>Create a new song or update an existing one with data sent from AWS.</p>
 <blockquote>
 <p>Example request:</p>
@@ -3073,7 +3131,7 @@ fetch(url, {
 <p><code>POST api/os/s3/song</code></p>
 <!-- END_9999a98649bc4a1c25373dcae1994fbc -->
 <!-- START_0c973c710226495c9d34381152b6e78f -->
-<h2>Remove a song.</h2>
+<h2>Remove a song</h2>
 <p>Remove a song whose information matches with data sent from AWS.</p>
 <blockquote>
 <p>Example request:</p>
@@ -3097,7 +3155,7 @@ fetch(url, {
 <!-- END_0c973c710226495c9d34381152b6e78f -->
 <h1>Last.fm integration</h1>
 <!-- START_3f0f1280d6348b0337e5b773d2dabbb1 -->
-<h2>Scrobble a song.</h2>
+<h2>Scrobble a song</h2>
 <p>Create a <a href="https://www.last.fm/api/scrobbling">Last.fm scrobble entry</a> for a song.</p>
 <blockquote>
 <p>Example request:</p>
@@ -3122,7 +3180,7 @@ fetch(url, {
 <p><code>POST api/{song}/scrobble/{timestamp}</code></p>
 <!-- END_3f0f1280d6348b0337e5b773d2dabbb1 -->
 <!-- START_ada8e3ef973c35c16e20e6e72b30a68a -->
-<h2>Connect to Last.fm.</h2>
+<h2>Connect to Last.fm</h2>
 <p><a href="https://www.last.fm/api/authentication">Connect</a> the current user to Last.fm.
 This is actually NOT an API request. The application should instead redirect the current user to this route,
 which will send them to Last.fm for authentication. After authentication is successful, the user will be
@@ -3130,12 +3188,12 @@ redirected back to <code>api/lastfm/callback?token=&lt;Last.fm token&gt;</code>.
 <blockquote>
 <p>Example request:</p>
 </blockquote>
-<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/lastfm/connect?jwt-token=animi" \
+<pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/lastfm/connect?jwt-token=ipsum" \
     -H "Authorization: Bearer {token}"</code></pre>
 <pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/lastfm/connect");
 
     let params = {
-            "jwt-token": "animi",
+            "jwt-token": "ipsum",
         };
     Object.keys(params).forEach(key =&gt; url.searchParams.append(key, params[key]));
 
@@ -3182,7 +3240,7 @@ fetch(url, {
 </table>
 <!-- END_ada8e3ef973c35c16e20e6e72b30a68a -->
 <!-- START_a53df47a60b7ce5a088aa7f84af2885c -->
-<h2>Set Last.fm session key.</h2>
+<h2>Set Last.fm session key</h2>
 <p>Set the Last.fm session key for the current user. This call should be made after the user is
 <a href="https://www.last.fm/api/authentication">connected to Last.fm</a>.</p>
 <blockquote>
@@ -3191,7 +3249,7 @@ fetch(url, {
 <pre><code class="language-bash">curl -X POST "https://api-docs.koel.dev/api/lastfm/session-key" \
     -H "Authorization: Bearer {token}" \
     -H "Content-Type: application/json" \
-    -d '{"key":"et"}'
+    -d '{"key":"nulla"}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/lastfm/session-key");
 
@@ -3202,7 +3260,7 @@ let headers = {
 }
 
 let body = {
-    "key": "et"
+    "key": "nulla"
 }
 
 fetch(url, {
@@ -3248,7 +3306,7 @@ fetch(url, {
 <pre><code class="language-bash">curl -X GET -G "https://api-docs.koel.dev/api/youtube/search/song/1" \
     -H "Authorization: Bearer {token}" \
     -H "Content-Type: application/json" \
-    -d '{"pageToken":"fugiat"}'
+    -d '{"pageToken":"earum"}'
 </code></pre>
 <pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/youtube/search/song/1");
 
@@ -3259,7 +3317,7 @@ let headers = {
 }
 
 let body = {
-    "pageToken": "fugiat"
+    "pageToken": "earum"
 }
 
 fetch(url, {
@@ -3735,6 +3793,30 @@ fetch(url, {
 </table>
 <!-- END_4389db36c36e0737f5cdb85b59f8279b -->
 <h1>general</h1>
+<!-- START_9c0ffac5ef8e14fc6907e1c08a18b89d -->
+<h2>api/album/{album}/cover</h2>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT "https://api-docs.koel.dev/api/album/1/cover" \
+    -H "Authorization: Bearer {token}"</code></pre>
+<pre><code class="language-javascript">const url = new URL("https://api-docs.koel.dev/api/album/1/cover");
+
+let headers = {
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/album/{album}/cover</code></p>
+<!-- END_9c0ffac5ef8e14fc6907e1c08a18b89d -->
 <!-- START_66df3678904adde969490f2278b8f47f -->
 <h2>Authenticate the request for channel access.</h2>
 <blockquote>
