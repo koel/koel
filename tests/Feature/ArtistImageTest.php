@@ -34,6 +34,21 @@ class ArtistImageTest extends TestCase
 
         $this->putAsUser('api/artist/9999/image', [
             'image' => 'data:image/jpeg;base64,Rm9v'
-        ], factory(User::class, 'admin')->create());
+        ], factory(User::class, 'admin')->create())
+            ->seeStatusCode(200);
+    }
+
+    public function testUpdateNotAllowedForNormalUsers(): void
+    {
+        factory(Artist::class)->create(['id' => 9999]);
+
+        $this->mediaMetadataService
+            ->shouldReceive('writeArtistImage')
+            ->never();
+
+        $this->putAsUser('api/artist/9999/image', [
+            'image' => 'data:image/jpeg;base64,Rm9v'
+        ], factory(User::class)->create())
+            ->seeStatusCode(403);
     }
 }

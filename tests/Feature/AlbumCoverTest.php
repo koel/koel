@@ -34,6 +34,21 @@ class AlbumCoverTest extends TestCase
 
         $this->putAsUser('api/album/9999/cover', [
             'cover' => 'data:image/jpeg;base64,Rm9v'
-        ], factory(User::class, 'admin')->create());
+        ], factory(User::class, 'admin')->create())
+            ->seeStatusCode(200);
+    }
+
+    public function testUpdateNotAllowedForNormalUsers(): void
+    {
+        factory(Album::class)->create(['id' => 9999]);
+
+        $this->mediaMetadataService
+            ->shouldReceive('writeAlbumCover')
+            ->never();
+
+        $this->putAsUser('api/album/9999/cover', [
+            'cover' => 'data:image/jpeg;base64,Rm9v'
+        ], factory(User::class)->create())
+            ->seeStatusCode(403);
     }
 }
