@@ -126,6 +126,7 @@ return [
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider', // hard-coding to make it compatible with patching procedure
         Aws\Laravel\AwsServiceProvider::class,
         Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -189,6 +190,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
+        'Image' => Intervention\Image\Facades\Image::class,
 
         'Util' => App\Facades\Util::class,
         'YouTube' => App\Facades\YouTube::class,

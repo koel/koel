@@ -4,9 +4,11 @@ namespace Tests\Integration\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Services\ImageWriter;
 use App\Services\MediaMetadataService;
 use Illuminate\Log\Logger;
-use org\bovigo\vfs\vfsStream;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class MediaMetadataServiceTest extends TestCase
@@ -14,24 +16,15 @@ class MediaMetadataServiceTest extends TestCase
     /** @var MediaMetadataService */
     private $mediaMetadataService;
 
+    /** @var ImageWriter|MockInterface */
+    private $imageWriter;
+
     public function setUp(): void
     {
         parent::setUp();
-        $this->mediaMetadataService = new MediaMetadataService(app(Logger::class));
-    }
 
-    public function testCopyAlbumCover(): void
-    {
-        /** @var Album $album */
-        $album = factory(Album::class)->create();
-        $root = vfsStream::setup('home');
-        $imageFile = vfsStream::newFile('foo.jpg')->at($root)->setContent('foo');
-        $coverPath = vfsStream::url('home/bar.jpg');
-
-        $this->mediaMetadataService->copyAlbumCover($album, $imageFile->url(), $coverPath);
-
-        $this->assertTrue($root->hasChild('bar.jpg'));
-        $this->assertEquals('http://localhost/public/img/covers/bar.jpg', Album::find($album->id)->cover);
+        $this->imageWriter = Mockery::mock(ImageWriter::class);
+        $this->mediaMetadataService = new MediaMetadataService($this->imageWriter, app(Logger::class));
     }
 
     public function testWriteAlbumCover(): void
@@ -39,26 +32,29 @@ class MediaMetadataServiceTest extends TestCase
         /** @var Album $album */
         $album = factory(Album::class)->create();
         $coverContent = 'dummy';
-        $root = vfsStream::setup('home');
-        $coverPath = vfsStream::url('home/foo.jpg');
+        $coverPath = '/koel/public/images/album/foo.jpg';
+
+        $this->imageWriter
+            ->shouldReceive('writeFromBinaryData')
+            ->once()
+            ->with('/koel/public/images/album/foo.jpg', 'dummy');
 
         $this->mediaMetadataService->writeAlbumCover($album, $coverContent, 'jpg', $coverPath);
-
-        $this->assertTrue($root->hasChild('foo.jpg'));
         $this->assertEquals('http://localhost/public/img/covers/foo.jpg', Album::find($album->id)->cover);
     }
 
     public function testWriteArtistImage(): void
     {
-        /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
         $imageContent = 'dummy';
-        $root = vfsStream::setup('home');
-        $imagePath = vfsStream::url('home/foo.jpg');
+        $imagePath = '/koel/public/images/artist/foo.jpg';
+
+        $this->imageWriter
+            ->shouldReceive('writeFromBinaryData')
+            ->once()
+            ->with('/koel/public/images/artist/foo.jpg', 'dummy');
 
         $this->mediaMetadataService->writeArtistImage($artist, $imageContent, 'jpg', $imagePath);
-
-        $this->assertTrue($root->hasChild('foo.jpg'));
         $this->assertEquals('http://localhost/public/img/artists/foo.jpg', Artist::find($artist->id)->image);
     }
 }

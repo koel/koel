@@ -234,7 +234,8 @@ class FileSynchronizer
 
         // Or, if there's a cover image under the same directory, use it.
         if ($cover = $this->getCoverFileUnderSameDirectory()) {
-            $this->mediaMetadataService->copyAlbumCover($album, $cover);
+            $extension = pathinfo($cover, PATHINFO_EXTENSION);
+            $this->mediaMetadataService->writeAlbumCover($album, file_get_contents($cover), $extension);
         }
     }
 

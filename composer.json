@@ -22,7 +22,8 @@
     "fideloper/proxy": "^4.0",
     "daverandom/resume": "^0.0.3",
     "laravel/helpers": "^1.0",
-    "cweagans/composer-patches": "^1.6"
+    "cweagans/composer-patches": "^1.6",
+    "intervention/image": "^2.5"
   },
   "require-dev": {
     "filp/whoops": "~2.0",

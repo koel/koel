@@ -9,10 +9,12 @@ use Psr\Log\LoggerInterface;
 
 class MediaMetadataService
 {
+    private $imageWriter;
     private $logger;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(ImageWriter $imageWriter, LoggerInterface $logger)
     {
+        $this->imageWriter = $imageWriter;
         $this->logger = $logger;
     }
 
@@ -26,21 +28,6 @@ class MediaMetadataService
     }
 
     /**
-     * Copy a cover file from an existing image on the system.
-     *
-     * @param string $source      The original image's full path.
-     * @param string $destination The destination path. Automatically generated if empty.
-     */
-    public function copyAlbumCover(Album $album, string $source, string $destination = ''): void
-    {
-        $extension = pathinfo($source, PATHINFO_EXTENSION);
-        $destination = $destination ?: $this->generateAlbumCoverPath($extension);
-        copy($source, $destination);
-
-        $album->update(['cover' => basename($destination)]);
-    }
-
-    /**
      * Write an album cover image file with binary data and update the Album with the new cover attribute.
      *
      * @param string $destination The destination path. Automatically generated if empty.
@@ -50,7 +37,7 @@ class MediaMetadataService
         try {
             $extension = trim(strtolower($extension), '. ');
             $destination = $destination ?: $this->generateAlbumCoverPath($extension);
-            file_put_contents($destination, $binaryData);
+            $this->imageWriter->writeFromBinaryData($destination, $binaryData);
 
             $album->update(['cover' => basename($destination)]);
         } catch (Exception $e) {
@@ -81,7 +68,7 @@ class MediaMetadataService
         try {
             $extension = trim(strtolower($extension), '. ');
             $destination = $destination ?: $this->generateArtistImagePath($extension);
-            file_put_contents($destination, $binaryData);
+            $this->imageWriter->writeFromBinaryData($destination, $binaryData);
 
             $artist->update(['image' => basename($destination)]);
         } catch (Exception $e) {
