@@ -48,7 +48,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
             return $this->cache->remember(md5("lastfm_artist_$name"), 24 * 60 * 7, function () use ($name): ?array {
                 $response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
 
-                if (!$response || !$response->artist) {
+                if (!$response || !isset($response->artist)) {
                     return null;
                 }
 
@@ -101,7 +101,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
                 $response = $this
                     ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
 
-                if (!$response || !$response->album) {
+                if (!$response || !isset($response->album)) {
                     return null;
                 }
 

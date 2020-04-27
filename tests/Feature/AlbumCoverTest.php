@@ -17,7 +17,7 @@ class AlbumCoverTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->mediaMetadataService = $this->mockIocDependency(MediaMetadataService::class);
+        $this->mediaMetadataService = static::mockIocDependency(MediaMetadataService::class);
     }
 
     public function testUpdate(): void

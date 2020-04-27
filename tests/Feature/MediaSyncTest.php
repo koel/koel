@@ -209,7 +209,7 @@ class MediaSyncTest extends TestCase
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        $this->createSampleMediaSet();
+        static::createSampleMediaSet();
         $song = Song::orderBy('id', 'desc')->first();
 
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("DELETE {$song->path}"));
@@ -238,7 +238,7 @@ class MediaSyncTest extends TestCase
     /** @test */
     public function html_entities_in_tags_are_recognized_and_saved_properly(): void
     {
-        $this->mockIocDependency(getID3::class, [
+        static::mockIocDependency(getID3::class, [
             'analyze' => [
                 'tags' => [
                     'id3v2' => [

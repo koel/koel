@@ -15,7 +15,7 @@ class SettingTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->mediaSyncService = $this->mockIocDependency(MediaSyncService::class);
+        $this->mediaSyncService = static::mockIocDependency(MediaSyncService::class);
     }
 
     public function testSaveSettings(): void

@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\AlbumInformationFetched;
 use App\Services\MediaMetadataService;
+use Exception;
 
 class DownloadAlbumCover
 {
@@ -22,8 +23,11 @@ class DownloadAlbumCover
         $image = array_get($info, 'image');
 
         // If our current album has no cover, and Last.fm has one, steal it?
-        if (!$album->has_cover && is_string($image) && ini_get('allow_url_fopen')) {
-            $this->mediaMetadataService->downloadAlbumCover($album, $image);
+        if (!$album->has_cover && $image && ini_get('allow_url_fopen')) {
+            try {
+                $this->mediaMetadataService->downloadAlbumCover($album, $image);
+            } catch (Exception $e) {
+            }
         }
     }
 }

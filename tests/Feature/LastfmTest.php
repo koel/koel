@@ -36,7 +36,7 @@ class LastfmTest extends TestCase
 
     public function testConnectToLastfm(): void
     {
-        $this->mockIocDependency(JWTAuth::class, [
+        static::mockIocDependency(JWTAuth::class, [
             'parseToken' => null,
             'getToken' => 'foo',
         ]);
@@ -47,7 +47,7 @@ class LastfmTest extends TestCase
 
     public function testRetrieveAndStoreSessionKey(): void
     {
-        $lastfm = $this->mockIocDependency(LastfmService::class);
+        $lastfm = static::mockIocDependency(LastfmService::class);
         $lastfm->shouldReceive('getSessionKey')
             ->once()
             ->with('foo')

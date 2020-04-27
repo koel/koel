@@ -14,7 +14,7 @@ class UserTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->hash = $this->mockIocDependency(Hasher::class);
+        $this->hash = static::mockIocDependency(Hasher::class);
     }
 
     public function testNonAdminCannotCreateUser(): void

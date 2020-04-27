@@ -9,15 +9,10 @@ trait InteractsWithIoc
 {
     /**
      * Mock an IOC dependency, for example an injected service in controllers.
-     *
-     * @param string $abstract
-     * @param array  $args
-     *
-     * @return MockInterface
      */
-    protected function mockIocDependency($abstract, ...$args)
+    protected static function mockIocDependency(string $abstract, ...$args): MockInterface
     {
-        return tap(Mockery::mock($abstract, ...$args), static function ($mocked) use ($abstract) {
+        return tap(Mockery::mock($abstract, ...$args), static function (MockInterface $mocked) use ($abstract): void {
             app()->instance($abstract, $mocked);
         });
     }

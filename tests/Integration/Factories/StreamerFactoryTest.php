@@ -35,7 +35,7 @@ class StreamerFactoryTest extends TestCase
 
     public function testCreateTranscodingStreamerIfSupported(): void
     {
-        $this->mockIocDependency(TranscodingService::class, [
+        static::mockIocDependency(TranscodingService::class, [
             'songShouldBeTranscoded' => true,
         ]);
 
@@ -48,7 +48,7 @@ class StreamerFactoryTest extends TestCase
 
     public function testCreateTranscodingStreamerIfForced(): void
     {
-        $this->mockIocDependency(TranscodingService::class, [
+        static::mockIocDependency(TranscodingService::class, [
             'songShouldBeTranscoded' => false,
         ]);
 
@@ -76,7 +76,7 @@ class StreamerFactoryTest extends TestCase
      */
     public function testCreatePHPStreamer($config, $expectedClass): void
     {
-        $this->mockIocDependency(TranscodingService::class, [
+        static::mockIocDependency(TranscodingService::class, [
             'songShouldBeTranscoded' => false,
         ]);
 

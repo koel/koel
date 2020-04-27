@@ -1,6 +1,15 @@
 <?php
 
-$factory->define(App\Models\User::class, function ($faker) {
+use App\Models\Album;
+use App\Models\Artist;
+use App\Models\Interaction;
+use App\Models\Playlist;
+use App\Models\Setting;
+use App\Models\Song;
+use App\Models\User;
+use Faker\Generator as Faker;
+
+$factory->define(User::class, function ($faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
@@ -11,29 +20,30 @@ $factory->define(App\Models\User::class, function ($faker) {
     ];
 });
 
-$factory->defineAs(App\Models\User::class, 'admin', function () use ($factory) {
-    $user = $factory->raw(App\Models\User::class);
+$factory->defineAs(User::class, 'admin', function () use ($factory) {
+    $user = $factory->raw(User::class);
 
     return array_merge($user, ['is_admin' => true]);
 });
 
-$factory->define(App\Models\Artist::class, function ($faker) {
+$factory->define(Artist::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'image' => md5(uniqid()).'.jpg',
     ];
 });
 
-$factory->define(App\Models\Album::class, function ($faker) {
+$factory->define(Album::class, function (Faker $faker) {
     return [
-        'artist_id' => factory(\App\Models\Artist::class)->create()->id,
+        'artist_id' => factory(Artist::class)->create()->id,
         'name' => ucwords($faker->words(random_int(2, 5), true)),
         'cover' => md5(uniqid()).'.jpg',
     ];
 });
 
-$factory->define(App\Models\Song::class, function ($faker) {
-    $album = factory(\App\Models\Album::class)->create();
+$factory->define(Song::class, function (Faker $faker) {
+    /** @var Album $album */
+    $album = factory(Album::class)->create();
 
     return [
         'album_id' => $album->id,
@@ -47,7 +57,7 @@ $factory->define(App\Models\Song::class, function ($faker) {
     ];
 });
 
-$factory->define(App\Models\Playlist::class, function ($faker) {
+$factory->define(Playlist::class, function (Faker $faker) {
     return [
         'user_id' => static function (): int {
             throw new InvalidArgumentException('A user_id must be supplied');
@@ -57,16 +67,16 @@ $factory->define(App\Models\Playlist::class, function ($faker) {
     ];
 });
 
-$factory->define(\App\Models\Interaction::class, function ($faker) {
+$factory->define(Interaction::class, function (Faker $faker) {
     return [
-        'song_id' => factory(\App\Models\Song::class)->create()->id,
-        'user_id' => factory(\App\Models\User::class)->create()->id,
+        'song_id' => factory(Song::class)->create()->id,
+        'user_id' => factory(User::class)->create()->id,
         'liked' => $faker->boolean,
         'play_count' => $faker->randomNumber,
     ];
 });
 
-$factory->define(\App\Models\Setting::class, function ($faker) {
+$factory->define(Setting::class, function (Faker $faker) {
     return [
         'key' => $faker->slug,
         'value' => $faker->name,

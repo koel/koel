@@ -18,7 +18,7 @@ class SongTest extends TestCase
     {
         parent::setUp();
 
-        $this->createSampleMediaSet();
+        static::createSampleMediaSet();
     }
 
     /**

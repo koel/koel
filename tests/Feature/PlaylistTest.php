@@ -15,7 +15,7 @@ class PlaylistTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->createSampleMediaSet();
+        static::createSampleMediaSet();
     }
 
     public function testCreatingPlaylist(): void

@@ -18,7 +18,7 @@ class DownloadArtistImageTest extends TestCase
     {
         parent::setUp();
 
-        $this->mediaMetaDataService = $this->mockIocDependency(MediaMetadataService::class);
+        $this->mediaMetaDataService = static::mockIocDependency(MediaMetadataService::class);
         PHPMockery::mock('App\Listeners', 'ini_get')->andReturn(true);
     }
 

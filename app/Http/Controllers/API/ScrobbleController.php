@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Album;
+use App\Jobs\ScrobbleJob;
 use App\Models\Song;
 use App\Services\LastfmService;
 use Illuminate\Http\JsonResponse;
@@ -32,13 +32,7 @@ class ScrobbleController extends Controller
     public function store(Request $request, Song $song, string $timestamp)
     {
         if (!$song->artist->is_unknown && $request->user()->connectedToLastfm()) {
-            $this->lastfmService->scrobble(
-                $song->artist->name,
-                $song->title,
-                (int) $timestamp,
-                $song->album->name === Album::UNKNOWN_NAME ? '' : $song->album->name,
-                $request->user()->lastfm_session_key
-            );
+            ScrobbleJob::dispatch($request->user(), $song, (int) $timestamp);
         }
 
         return response()->json();

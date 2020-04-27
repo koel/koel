@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
 use Mockery;
+use ReflectionClass;
 use Tests\CreatesApplication;
 use Tests\Traits\InteractsWithIoc;
 use Tymon\JWTAuth\JWTAuth;
@@ -37,11 +38,13 @@ abstract class TestCase extends BaseTestCase
      *
      * @throws Exception
      */
-    protected function createSampleMediaSet(): void
+    protected static function createSampleMediaSet(): void
     {
+        /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
 
         // Sample 3 albums
+        /** @var Album[] $albums */
         $albums = factory(Album::class, 3)->create([
             'artist_id' => $artist->id,
         ]);
@@ -86,6 +89,15 @@ abstract class TestCase extends BaseTestCase
     private function generateJwtToken(?User $user): string
     {
         return $this->auth->fromUser($user ?: factory(User::class)->create());
+    }
+
+    protected static function getNonPublicProperty($object, string $property)
+    {
+        $reflection = new ReflectionClass($object);
+        $property = $reflection->getProperty($property);
+        $property->setAccessible(true);
+
+        return $property->getValue($object);
     }
 
     protected function tearDown(): void

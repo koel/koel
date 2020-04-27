@@ -3,12 +3,14 @@
 namespace Tests\Integration\Listeners;
 
 use App\Events\SongLikeToggled;
+use App\Jobs\LoveTrackOnLastfmJob;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
 use Exception;
+use Illuminate\Support\Facades\Queue;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\Feature\TestCase;
@@ -20,8 +22,7 @@ class LoveTrackOnLastfmTest extends TestCase
      */
     public function testHandle()
     {
-        $this->withoutEvents();
-        $this->createSampleMediaSet();
+        static::createSampleMediaSet();
 
         $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
 
@@ -30,12 +31,21 @@ class LoveTrackOnLastfmTest extends TestCase
             'song_id' => Song::first()->id,
         ]);
 
+        $queue = Queue::fake();
+
         /** @var LastfmService|MockInterface $lastfm */
         $lastfm = Mockery::mock(LastfmService::class, ['enabled' => true]);
-        $lastfm->shouldReceive('toggleLoveTrack')
-            ->once()
-            ->with($interaction->song->title, $interaction->song->album->artist->name, 'bar', false);
 
         (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction, $user));
+
+        $queue->assertPushed(
+            LoveTrackOnLastfmJob::class,
+            static function (LoveTrackOnLastfmJob $job) use ($interaction, $user): bool {
+                static::assertSame($interaction, static::getNonPublicProperty($job, 'interaction'));
+                static::assertSame($user, static::getNonPublicProperty($job, 'user'));
+
+                return true;
+            }
+        );
     }
 }

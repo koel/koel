@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\SongLikeToggled;
+use App\Jobs\LoveTrackOnLastfmJob;
 use App\Services\LastfmService;
 
 class LoveTrackOnLastfm
@@ -23,11 +24,6 @@ class LoveTrackOnLastfm
             return;
         }
 
-        $this->lastfm->toggleLoveTrack(
-            $event->interaction->song->title,
-            $event->interaction->song->artist->name,
-            $sessionKey,
-            $event->interaction->liked
-        );
+        LoveTrackOnLastfmJob::dispatch($event->user, $event->interaction);
     }
 }

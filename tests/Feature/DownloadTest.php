@@ -27,8 +27,8 @@ class DownloadTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->createSampleMediaSet();
-        $this->downloadService = $this->mockIocDependency(DownloadService::class);
+        static::createSampleMediaSet();
+        $this->downloadService = static::mockIocDependency(DownloadService::class);
     }
 
     public function testDownloadOneSong(): void
@@ -128,7 +128,7 @@ class DownloadTest extends TestCase
         $user = factory(User::class)->create();
         $favorites = Collection::make();
 
-        $this->mockIocDependency(InteractionRepository::class)
+        static::mockIocDependency(InteractionRepository::class)
             ->shouldReceive('getUserFavorites')
             ->once()
             ->with(Mockery::on(static function (User $retrievedUser) use ($user) {

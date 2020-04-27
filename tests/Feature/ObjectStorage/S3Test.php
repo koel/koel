@@ -4,7 +4,6 @@ namespace Tests\Feature\ObjectStorage;
 
 use App\Events\LibraryChanged;
 use App\Models\Song;
-use Exception;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\Feature\TestCase;
 
@@ -12,9 +11,6 @@ class S3Test extends TestCase
 {
     use WithoutMiddleware;
 
-    /**
-     * @throws Exception
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -37,9 +33,6 @@ class S3Test extends TestCase
         ])->seeInDatabase('songs', ['path' => 's3://koel/sample.mp3']);
     }
 
-    /**
-     * @throws Exception
-     */
     public function testRemovingASong(): void
     {
         $this->expectsEvents(LibraryChanged::class);

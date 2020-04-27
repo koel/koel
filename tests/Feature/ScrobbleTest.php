@@ -15,7 +15,7 @@ class ScrobbleTest extends TestCase
     public function testLastfmScrobble()
     {
         $this->withoutEvents();
-        $this->createSampleMediaSet();
+        static::createSampleMediaSet();
 
         $song = Song::first();
         /** @var User $user */
@@ -24,7 +24,7 @@ class ScrobbleTest extends TestCase
 
         $ts = time();
 
-        $this->mockIocDependency(LastfmService::class)
+        static::mockIocDependency(LastfmService::class)
             ->shouldReceive('scrobble')
             ->with($song->album->artist->name, $song->title, $ts, $song->album->name, 'foo')
             ->once();

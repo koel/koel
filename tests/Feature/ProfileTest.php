@@ -15,7 +15,7 @@ class ProfileTest extends TestCase
     {
         parent::setUp();
 
-        $this->hash = $this->mockIocDependency(Hasher::class);
+        $this->hash = static::mockIocDependency(Hasher::class);
     }
 
     public function testUpdateProfileWithoutPassword(): void

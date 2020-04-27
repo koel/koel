@@ -21,7 +21,7 @@ class GenerateJwtSecretCommandTest extends TestCase
     {
         parent::setUp();
 
-        $this->dotenvEditor = $this->mockIocDependency(DotenvEditor::class);
+        $this->dotenvEditor = static::mockIocDependency(DotenvEditor::class);
         $this->command = app(GenerateJwtSecretCommand::class);
         app(Kernel::class)->registerCommand($this->command);
     }

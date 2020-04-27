@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\SongStartedPlaying;
-use App\Models\Album;
+use App\Jobs\UpdateLastfmNowPlayingJob;
 use App\Services\LastfmService;
 
 class UpdateLastfmNowPlaying
@@ -24,12 +24,6 @@ class UpdateLastfmNowPlaying
             return;
         }
 
-        $this->lastfm->updateNowPlaying(
-            $event->song->artist->name,
-            $event->song->title,
-            $event->song->album->name === Album::UNKNOWN_NAME ? '' : $event->song->album->name,
-            $event->song->length,
-            $sessionKey
-        );
+        UpdateLastfmNowPlayingJob::dispatch($event->user, $event->song);
     }
 }
