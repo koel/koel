@@ -38,9 +38,9 @@ if (mix.config.hmr) {
     .copy('node_modules/font-awesome/fonts', 'public/fonts', false)
 }
 
-mix.js('resources/assets/js/app.js', 'public/js')
+mix.ts('resources/assets/js/app.ts', 'public/js')
   .sass('resources/assets/sass/app.scss', 'public/css')
-  .js('resources/assets/js/remote/app.js', 'public/js/remote')
+  .ts('resources/assets/js/remote/app.ts', 'public/js/remote')
   .sass('resources/assets/sass/remote.scss', 'public/css')
 
 if (mix.config.inProduction) {
