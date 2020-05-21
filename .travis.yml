@@ -1,7 +1,7 @@
 language: php
 
-addons:
-  chrome: stable
+#addons:
+#  chrome: stable
 
 php:
   - 7.1
@@ -9,8 +9,8 @@ php:
   - 7.3
   - 7.4
 
-node_js:
-  - 10
+#node_js:
+#  - 10
 
 branches:
   - master
@@ -18,14 +18,14 @@ branches:
 install:
   - composer self-update
   - composer install --prefer-dist --no-interaction
-  - cd resources/assets && yarn
-  - cd ../.. && yarn && yarn production
+#  - cd resources/assets && yarn
+#  - cd ../.. && yarn && yarn production
 
 script:
   # Backend
   - composer coverage
-  # Cypress
-  - yarn cy
+#  # Cypress
+#  - yarn cy
 
 cache:
   directories:
