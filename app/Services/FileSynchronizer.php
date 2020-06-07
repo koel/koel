@@ -16,9 +16,9 @@ use Symfony\Component\Finder\Finder;
 
 class FileSynchronizer
 {
-    const SYNC_RESULT_SUCCESS = 1;
-    const SYNC_RESULT_BAD_FILE = 2;
-    const SYNC_RESULT_UNMODIFIED = 3;
+    public const SYNC_RESULT_SUCCESS = 1;
+    public const SYNC_RESULT_BAD_FILE = 2;
+    public const SYNC_RESULT_UNMODIFIED = 3;
 
     private $getID3;
     private $mediaMetadataService;
@@ -355,5 +355,10 @@ class FileSynchronizer
         // - "albumartist" (used by non-retarded applications).
         // Also, the latter is only valid if the value is NOT the same as "artist".
         return $props['albumartist'] && $props['artist'] !== $props['albumartist'];
+    }
+
+    public function getSong(): ?Song
+    {
+        return $this->song;
     }
 }

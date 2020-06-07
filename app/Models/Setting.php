@@ -32,7 +32,7 @@ class Setting extends Model
             return $record->value;
         }
 
-        return '';
+        return null;
     }
 
     /**

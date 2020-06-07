@@ -26,7 +26,7 @@ class MediaSyncService
      *
      * @var array
      */
-    private const APPLICABLE_TAGS = [
+    public const APPLICABLE_TAGS = [
         'artist',
         'album',
         'title',
