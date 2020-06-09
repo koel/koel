@@ -19,7 +19,7 @@ class InitCommand extends Command
 {
     use AskForPassword;
 
-    protected $signature = 'koel:init';
+    protected $signature = 'koel:init {--no-assets}';
     protected $description = 'Install or upgrade Koel';
 
     private $mediaCacheService;
@@ -64,7 +64,7 @@ class InitCommand extends Command
             $this->migrateDatabase();
             $this->maybeSeedDatabase();
             $this->maybeSetMediaPath();
-            $this->compileFrontEndAssets();
+            $this->maybeCompileFrontEndAssets();
         } catch (Exception $e) {
             $this->error("Oops! Koel installation or upgrade didn't finish successfully.");
             $this->error('Please try again, or visit '.config('koel.misc.docs_url').' for manual installation.');
@@ -143,6 +143,11 @@ class InitCommand extends Command
     private function inNoInteractionMode(): bool
     {
         return (bool) $this->option('no-interaction');
+    }
+
+    private function inNoAssetsMode(): bool
+    {
+        return (bool) $this->option('no-assets');
     }
 
     private function setUpAdminAccount(): void
@@ -247,8 +252,12 @@ class InitCommand extends Command
         $this->mediaCacheService->clear();
     }
 
-    private function compileFrontEndAssets(): void
+    private function maybeCompileFrontEndAssets(): void
     {
+        if ($this->inNoAssetsMode()) {
+            return;
+        }
+
         $this->info('Now to front-end stuff');
 
         // We need to run several yarn commands:
