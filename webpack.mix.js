@@ -7,7 +7,7 @@ mix.webpackConfig({
   resolve,
   plugins,
   output: {
-    chunkFilename: mix.config.inProduction ? 'js/[name].[chunkhash].js' : 'js/[name].js',
+    chunkFilename: mix.config.production ? 'js/[name].[chunkhash].js' : 'js/[name].js',
     publicPath: '/public/'
   },
   devServer: {
@@ -43,7 +43,7 @@ mix.ts('resources/assets/js/app.ts', 'public/js')
   .ts('resources/assets/js/remote/app.ts', 'public/js/remote')
   .sass('resources/assets/sass/remote.scss', 'public/css')
 
-if (mix.config.inProduction) {
+if (mix.config.production) {
   mix.version()
   mix.disableNotifications()
 }
