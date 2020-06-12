@@ -110,7 +110,7 @@ class MediaMetadataService
             $this->imageWriter->writeFromBinaryData(
                 $thumbnailPath,
                 file_get_contents($album->cover_path),
-                ['max_width' => 48]
+                ['max_width' => 48, 'blur' => 10]
             );
         }
 

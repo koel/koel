@@ -19,7 +19,7 @@ class ImageWriter
 
     public function writeFromBinaryData(string $destination, string $data, array $config = []): void
     {
-        $this->imageManager
+        $img = $this->imageManager
             ->make($data)
             ->resize(
                 $config['max_width'] ?? self::DEFAULT_MAX_WIDTH,
@@ -27,7 +27,12 @@ class ImageWriter
                     $constraint->upsize();
                     $constraint->aspectRatio();
                 }
-            )
-            ->save($destination, $config['quality'] ?? self::DEFAULT_QUALITY);
+            );
+
+        if (isset($config['blur'])) {
+            $img->blur($config['blur']);
+        }
+
+        $img->save($destination, $config['quality'] ?? self::DEFAULT_QUALITY);
     }
 }

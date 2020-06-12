@@ -45,6 +45,7 @@ class MediaMetadataServiceTest extends TestCase
 
     public function testWriteArtistImage(): void
     {
+        /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
         $imageContent = 'dummy';
         $imagePath = '/koel/public/images/artist/foo.jpg';

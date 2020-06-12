@@ -21,8 +21,8 @@ class AlbumThumbnailController extends Controller
     /**
      * Get an album's thumbnail
      *
-     * Get an album's thumbnail (a 48px-wide version of the album's cover). Returns the full URL to the thumbnail,
-     * or NULL if the album has no cover.
+     * Get an album's thumbnail (a 48px-wide blurry version of the album's cover).
+     * Returns the full URL to the thumbnail or NULL if the album has no cover.
      *
      * @response ["thumbnailUrl", "https://localhost/public/img/covers/a146d01afb742b01f28ab8b556f9a75d_thumbnail.jpg"]
      * @return JsonResponse

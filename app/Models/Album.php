@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property bool        $is_unknown
  *
  * @method static self firstOrCreate(array $where, array $params = [])
+ * @method static self|null find(int $id)
  */
 class Album extends Model
 {
