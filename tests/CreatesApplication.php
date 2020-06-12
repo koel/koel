@@ -22,24 +22,20 @@ trait CreatesApplication
      */
     protected $baseUrl = 'http://localhost';
 
-    /**
-     * Creates the application.
-     *
-     * @return Application
-     */
-    public function createApplication()
+    public function createApplication(): Application
     {
+        /** @var Application $app */
         $app = require __DIR__.'/../bootstrap/app.php';
 
         $this->artisan = $app->make(Artisan::class);
         $this->artisan->bootstrap();
 
-        $this->coverPath = $app->basePath().'/public/img/covers';
+        $this->coverPath = $app->basePath('/public/img/covers');
 
         return $app;
     }
 
-    private function prepareForTests()
+    private function prepareForTests(): void
     {
         $this->artisan->call('migrate');
 

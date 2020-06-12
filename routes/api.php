@@ -88,6 +88,8 @@ Route::group(['namespace' => 'API'], function () {
         Route::put('album/{album}/cover', 'AlbumCoverController@update');
         Route::put('artist/{artist}/image', 'ArtistImageController@update');
 
+        Route::get('album/{album}/thumbnail', 'AlbumThumbnailController@get');
+
         // iTunes routes
         if (iTunes::used()) {
             Route::get('itunes/song/{album}', 'iTunesController@viewSong')->name('iTunes.viewSong');

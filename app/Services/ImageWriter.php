@@ -7,8 +7,8 @@ use Intervention\Image\ImageManager;
 
 class ImageWriter
 {
-    private const MAX_WIDTH = 500;
-    private const QUALITY = 80;
+    private const DEFAULT_MAX_WIDTH = 500;
+    private const DEFAULT_QUALITY = 80;
 
     private $imageManager;
 
@@ -17,14 +17,17 @@ class ImageWriter
         $this->imageManager = $imageManager;
     }
 
-    public function writeFromBinaryData(string $destination, string $data): void
+    public function writeFromBinaryData(string $destination, string $data, array $config = []): void
     {
         $this->imageManager
             ->make($data)
-            ->resize(self::MAX_WIDTH, null, static function (Constraint $constraint): void {
-                $constraint->upsize();
-                $constraint->aspectRatio();
-            })
-            ->save($destination, self::QUALITY);
+            ->resize(
+                $config['max_width'] ?? self::DEFAULT_MAX_WIDTH,
+                null, static function (Constraint $constraint): void {
+                    $constraint->upsize();
+                    $constraint->aspectRatio();
+                }
+            )
+            ->save($destination, $config['quality'] ?? self::DEFAULT_QUALITY);
     }
 }

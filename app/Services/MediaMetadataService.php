@@ -95,4 +95,25 @@ class MediaMetadataService
     {
         return sprintf('%s/public/img/artists/%s.%s', app()->publicPath(), sha1(uniqid()), $extension);
     }
+
+    public function getAlbumThumbnailUrl(Album $album): ?string
+    {
+        if (!$album->has_cover) {
+            return null;
+        }
+
+        $parts = pathinfo($album->cover_path);
+        $thumbnail = sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
+        $thumbnailPath = public_path("/public/img/covers/$thumbnail");
+
+        if (!file_exists($thumbnailPath)) {
+            $this->imageWriter->writeFromBinaryData(
+                $thumbnailPath,
+                file_get_contents($album->cover_path),
+                ['max_width' => 48]
+            );
+        }
+
+        return app()->staticUrl("public/img/covers/$thumbnail");
+    }
 }

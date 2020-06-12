@@ -100,7 +100,7 @@ class Album extends Model
             return null;
         }
 
-        return public_path("/public/img/covers/{$this->cover}");
+        return public_path("/public/img/covers/$cover");
     }
 
     /**
