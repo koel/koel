@@ -88,9 +88,9 @@ class UploadTest extends TestCase
             '/api/upload',
             ['file' => $file],
             factory(User::class, 'admin')->create()
-        )->seeJsonStructure(['song' => [
+        )->seeJsonStructure([
             'album',
             'artist',
-        ]]);
+        ]);
     }
 }
