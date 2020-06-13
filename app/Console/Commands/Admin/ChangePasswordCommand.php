@@ -11,8 +11,9 @@ class ChangePasswordCommand extends Command
 {
     use AskForPassword;
 
-    protected $name = 'koel:admin:change-password';
-    protected $description = "Change the default admin's password";
+    protected $signature = "koel:admin:change-password 
+                            {email? : The user's email. If empty, will get the default admin user.}";
+    protected $description = "Change a user's password";
 
     private $hash;
 
@@ -24,20 +25,22 @@ class ChangePasswordCommand extends Command
 
     public function handle(): void
     {
+        $email = $this->argument('email');
+
         /** @var User|null $user */
-        $user = User::where('is_admin', true)->first();
+        $user = $email ? User::where('email', $email)->first() : User::where('is_admin', true)->first();
 
         if (!$user) {
-            $this->error('An admin account cannot be found. Have you set up Koel yet?');
+            $this->error('The user account cannot be found.');
 
             return;
         }
 
-        $this->comment("Changing the default admin's password (ID: {$user->id}, email: {$user->email})");
+        $this->comment("Changing the user's password (ID: {$user->id}, email: {$user->email})");
 
         $user->password = $this->hash->make($this->askForPassword());
         $user->save();
 
-        $this->comment('Alrighty, your new password has been saved. Enjoy! 👌');
+        $this->comment('Alrighty, the new password has been saved. Enjoy! 👌');
     }
 }
