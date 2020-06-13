@@ -10,13 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
- * @property int        $id
- * @property string     $name
- * @property string     $image
- * @property bool       $is_unknown
- * @property bool       $is_various
- * @property Collection $songs
- * @property bool       $has_image
+ * @property int         $id
+ * @property string      $name
+ * @property string|null $image      Public URL to the artist's image
+ * @property bool        $is_unknown If the artist is Unknown Artist
+ * @property bool        $is_various If the artist is Various Artist
+ * @property Collection  $songs
+ * @property bool        $has_image  If the artist has a (non-default) image
+ * @property string|null $image_path Absolute path to the artist's image
  *
  * @method static self find(int $id)
  * @method static self firstOrCreate(array $where, array $params = [])
@@ -93,6 +94,17 @@ class Artist extends Model
     public function getImageAttribute(?string $value): ?string
     {
         return $value ? app()->staticUrl("public/img/artists/$value") : null;
+    }
+
+    public function getImagePathAttribute(): ?string
+    {
+        if (!$this->has_image) {
+            return null;
+        }
+
+        $image = array_get($this->attributes, 'image');
+
+        return public_path("public/img/artists/$image");
     }
 
     public function getHasImageAttribute(): bool

@@ -32,14 +32,25 @@ class MediaMetadataService
      *
      * @param string $destination The destination path. Automatically generated if empty.
      */
-    public function writeAlbumCover(Album $album, string $binaryData, string $extension, string $destination = ''): void
+    public function writeAlbumCover(
+        Album $album,
+        string $binaryData,
+        string $extension,
+        string $destination = '',
+        bool $cleanUp = true
+    ): void
     {
         try {
             $extension = trim(strtolower($extension), '. ');
             $destination = $destination ?: $this->generateAlbumCoverPath($extension);
             $this->imageWriter->writeFromBinaryData($destination, $binaryData);
 
+            if ($cleanUp) {
+                $this->deleteAlbumCoverFiles($album);
+            }
+
             $album->update(['cover' => basename($destination)]);
+            $this->createThumbnailForAlbum($album);
         } catch (Exception $e) {
             $this->logger->error($e);
         }
@@ -63,12 +74,17 @@ class MediaMetadataService
         Artist $artist,
         string $binaryData,
         string $extension,
-        string $destination = ''
+        string $destination = '',
+        bool $cleanUp = true
     ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
             $destination = $destination ?: $this->generateArtistImagePath($extension);
             $this->imageWriter->writeFromBinaryData($destination, $binaryData);
+
+            if ($cleanUp && $artist->has_image) {
+                @unlink($artist->image_path);
+            }
 
             $artist->update(['image' => basename($destination)]);
         } catch (Exception $e) {
@@ -83,7 +99,7 @@ class MediaMetadataService
      */
     private function generateAlbumCoverPath(string $extension): string
     {
-        return sprintf('%s/public/img/covers/%s.%s', app()->publicPath(), sha1(uniqid()), $extension);
+        return public_path(sprintf('public/img/covers/%s.%s', sha1(uniqid()), $extension));
     }
 
     /**
@@ -93,27 +109,42 @@ class MediaMetadataService
      */
     private function generateArtistImagePath($extension): string
     {
-        return sprintf('%s/public/img/artists/%s.%s', app()->publicPath(), sha1(uniqid()), $extension);
+        return public_path(sprintf('public/img/artists/%s.%s', sha1(uniqid()), $extension));
     }
 
+    /**
+     * Get the URL of an album's thumbnail.
+     * Auto-generate the thumbnail when possible, if one doesn't exist yet.
+     */
     public function getAlbumThumbnailUrl(Album $album): ?string
     {
         if (!$album->has_cover) {
             return null;
         }
 
-        $parts = pathinfo($album->cover_path);
-        $thumbnail = sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
-        $thumbnailPath = public_path("/public/img/covers/$thumbnail");
-
-        if (!file_exists($thumbnailPath)) {
-            $this->imageWriter->writeFromBinaryData(
-                $thumbnailPath,
-                file_get_contents($album->cover_path),
-                ['max_width' => 48, 'blur' => 10]
-            );
+        if (!file_exists($album->thumbnail_path)) {
+            $this->createThumbnailForAlbum($album);
         }
 
-        return app()->staticUrl("public/img/covers/$thumbnail");
+        return $album->thumbnail;
+    }
+
+    private function createThumbnailForAlbum(Album $album): void
+    {
+        $this->imageWriter->writeFromBinaryData(
+            $album->thumbnail_path,
+            file_get_contents($album->cover_path),
+            ['max_width' => 48, 'blur' => 10]
+        );
+    }
+
+    private function deleteAlbumCoverFiles(Album $album): void
+    {
+        if (!$album->has_cover) {
+            return;
+        }
+
+        @unlink($album->cover_path);
+        @unlink($album->thumbnail_path);
     }
 }

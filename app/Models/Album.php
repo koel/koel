@@ -11,14 +11,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property string      $cover           The album cover's file name
  * @property string|null $cover_path      The absolute path to the cover file
- * @property bool        $has_cover       If the album has a cover image
+ * @property bool        $has_cover       If the album has a non-default cover image
  * @property int         $id
  * @property string      $name            Name of the album
  * @property bool        $is_compilation  If the album is a compilation from multiple artists
  * @property Artist      $artist          The album's artist
  * @property int         $artist_id
  * @property Collection  $songs
- * @property bool        $is_unknown
+ * @property bool        $is_unknown      If the album is the Unknown Album
+ * @property string|null $thumbnail_name  The file name of the album's thumbnail
+ * @property string|null $thumbnail_path  The full path to the thumbnail. Notice that this doesn't guarantee the thumbnail exists.
+ * @property string|null $thumbnail       The public URL to the album's thumbnail
+ *
  *
  * @method static self firstOrCreate(array $where, array $params = [])
  * @method static self|null find(int $id)
@@ -116,5 +120,26 @@ class Album extends Model
     public function getIsCompilationAttribute(): bool
     {
         return $this->artist_id === Artist::VARIOUS_ID;
+    }
+
+    public function getThumbnailNameAttribute(): ?string
+    {
+        if (!$this->has_cover) {
+            return null;
+        }
+
+        $parts = pathinfo($this->cover_path);
+
+        return sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
+    }
+
+    public function getThumbnailPathAttribute(): ?string
+    {
+        return $this->thumbnail_name ? public_path("/public/img/covers/{$this->thumbnail_name}") : null;
+    }
+
+    public function getThumbnailAttribute(): ?string
+    {
+        return $this->thumbnail_name ? app()->staticUrl("public/img/covers/$this->thumbnail_name") : null;
     }
 }
