@@ -3,9 +3,10 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property string $password
- * @property string $name
- * @property string $email
+ * @property-read string $password
+ * @property-read string $name
+ * @property-read string $email
+ * @property-read bool $is_admin
  */
 class UserStoreRequest extends Request
 {
@@ -20,6 +21,7 @@ class UserStoreRequest extends Request
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
+            'is_admin' => 'required'
         ];
     }
 }

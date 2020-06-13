@@ -23,6 +23,7 @@ class UserTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'qux',
+            'is_admin' => false
         ])->seeStatusCode(403);
     }
 
@@ -38,12 +39,14 @@ class UserTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'qux',
+            'is_admin' => true
         ], factory(User::class, 'admin')->create());
 
         self::seeInDatabase('users', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'hashed',
+            'is_admin' => true,
         ]);
     }
 
@@ -54,6 +57,7 @@ class UserTest extends TestCase
             'name' => 'John',
             'email' => 'john@doe.com',
             'password' => 'nope',
+            'is_admin' => true,
         ]);
 
         $this->hash
@@ -66,6 +70,7 @@ class UserTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'qux',
+            'is_admin' => false,
         ], factory(User::class, 'admin')->create());
 
         self::seeInDatabase('users', [
@@ -73,6 +78,7 @@ class UserTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'hashed',
+            'is_admin' => false,
         ]);
     }
 

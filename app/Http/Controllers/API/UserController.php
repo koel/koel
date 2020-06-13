@@ -29,11 +29,13 @@ class UserController extends Controller
      * @bodyParam name string required User's name. Example: John Doe
      * @bodyParam email string required User's email. Example: john@doe.com
      * @bodyParam password string required User's password. Example: SoSecureMuchW0w
+     * @bodyParam is_admin boolean required Whether the user is an admin
      *
      * @response {
      *   "id": 42,
      *   "name": "John Doe",
-     *   "email": "john@doe.com"
+     *   "email": "john@doe.com",
+     *   "is_admin": true
      * }
      *
      * @throws RuntimeException
@@ -46,6 +48,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => $this->hash->make($request->password),
+            'is_admin' => $request->is_admin,
         ]));
     }
 
@@ -55,8 +58,14 @@ class UserController extends Controller
      * @bodyParam name string required New name. Example: Johny Doe
      * @bodyParam email string required New email. Example: johny@doe.com
      * @bodyParam password string New password (null/blank for no change)
+     * @bodyParam is_admin boolean Whether the user is an admin
      *
-     * @response []
+     * @response {
+     *   "id": 42,
+     *   "name": "John Doe",
+     *   "email": "john@doe.com",
+     *   "is_admin": true
+     * }
      *
      * @throws RuntimeException
      *
@@ -64,7 +73,7 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-        $data = $request->only('name', 'email');
+        $data = $request->only('name', 'email', 'is_admin');
 
         if ($request->password) {
             $data['password'] = $this->hash->make($request->password);
@@ -72,7 +81,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return response()->json();
+        return response()->json($user);
     }
 
     /**
