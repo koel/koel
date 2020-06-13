@@ -6,6 +6,8 @@ use App\Models\Album;
 use App\Models\Artist;
 use Exception;
 use Psr\Log\LoggerInterface;
+use function App\Helpers\album_cover_path;
+use function App\Helpers\artist_image_path;
 
 class MediaMetadataService
 {
@@ -99,7 +101,7 @@ class MediaMetadataService
      */
     private function generateAlbumCoverPath(string $extension): string
     {
-        return public_path(sprintf('public/img/covers/%s.%s', sha1(uniqid()), $extension));
+        return album_cover_path(sprintf('%s.%s', sha1(uniqid()), $extension));
     }
 
     /**
@@ -109,7 +111,7 @@ class MediaMetadataService
      */
     private function generateArtistImagePath($extension): string
     {
-        return public_path(sprintf('public/img/artists/%s.%s', sha1(uniqid()), $extension));
+        return artist_image_path(sprintf('%s.%s', sha1(uniqid()), $extension));
     }
 
     /**

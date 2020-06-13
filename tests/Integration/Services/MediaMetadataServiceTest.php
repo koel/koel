@@ -5,6 +5,8 @@ namespace Tests\Integration\Services;
 use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Tests\TestCase;
+use function App\Helpers\album_cover_path;
+use function App\Helpers\album_cover_url;
 
 class MediaMetadataServiceTest extends TestCase
 {
@@ -16,16 +18,16 @@ class MediaMetadataServiceTest extends TestCase
 
     public function testGetAlbumThumbnailUrl(): void
     {
-        copy(__DIR__ . '/../../blobs/cover.png', $this->coverPath . '/album-cover-for-thumbnail-test.jpg');
+        copy(__DIR__ . '/../../blobs/cover.png', album_cover_path('album-cover-for-thumbnail-test.jpg'));
 
         $album = factory(Album::class)->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
 
         self::assertSame(
-            app()->staticUrl('public/img/covers/album-cover-for-thumbnail-test_thumb.jpg'),
+            album_cover_url('album-cover-for-thumbnail-test_thumb.jpg'),
             app()->get(MediaMetadataService::class)->getAlbumThumbnailUrl($album)
         );
 
-        self::assertFileExists($this->coverPath . '/album-cover-for-thumbnail-test_thumb.jpg');
+        self::assertFileExists(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
     }
 
     public function testGetAlbumThumbnailUrlWithNoCover(): void
@@ -36,10 +38,10 @@ class MediaMetadataServiceTest extends TestCase
 
     private function cleanUp(): void
     {
-        @unlink($this->coverPath . '/album-cover-for-thumbnail-test.jpg');
-        @unlink($this->coverPath . '/album-cover-for-thumbnail-test_thumb.jpg');
-        self::assertFileNotExists($this->coverPath . '/album-cover-for-thumbnail-test.jpg');
-        self::assertFileNotExists($this->coverPath . '/album-cover-for-thumbnail-test_thumb.jpg');
+        @unlink(album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        @unlink(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
+        self::assertFileNotExists(album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        self::assertFileNotExists(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
     }
 
     protected function tearDown(): void

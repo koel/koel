@@ -11,8 +11,9 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
 use Mockery;
 use ReflectionClass;
-use Tests\CreatesApplication;
+use Tests\Traits\CreatesApplication;
 use Tests\Traits\InteractsWithIoc;
+use Tests\Traits\SandboxesTests;
 use Tymon\JWTAuth\JWTAuth;
 
 abstract class TestCase extends BaseTestCase
@@ -20,6 +21,7 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use DatabaseTransactions;
     use InteractsWithIoc;
+    use SandboxesTests;
 
     /** @var JWTAuth */
     private $auth;
@@ -29,8 +31,8 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->auth = app(JWTAuth::class);
-
         $this->prepareForTests();
+        self::createSandbox();
     }
 
     /**
@@ -103,8 +105,8 @@ abstract class TestCase extends BaseTestCase
     protected function tearDown(): void
     {
         $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
-
         Mockery::close();
+        self::destroySandbox();
         parent::tearDown();
     }
 }

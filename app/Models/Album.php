@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use function App\Helpers\album_cover_path;
+use function App\Helpers\album_cover_url;
 
 /**
  * @property string      $cover           The album cover's file name
@@ -79,7 +81,7 @@ class Album extends Model
 
     public function getCoverAttribute(?string $value): string
     {
-        return app()->staticUrl('public/img/covers/'.($value ?: self::UNKNOWN_COVER));
+        return album_cover_url($value ?: self::UNKNOWN_COVER);
     }
 
     public function getHasCoverAttribute(): bool
@@ -94,18 +96,14 @@ class Album extends Model
             return false;
         }
 
-        return file_exists(public_path("/public/img/covers/$cover"));
+        return file_exists(album_cover_path($cover));
     }
 
     public function getCoverPathAttribute(): ?string
     {
         $cover = array_get($this->attributes, 'cover');
 
-        if (!$cover) {
-            return null;
-        }
-
-        return public_path("/public/img/covers/$cover");
+        return $cover ? album_cover_path($cover) : null;
     }
 
     /**
@@ -135,11 +133,11 @@ class Album extends Model
 
     public function getThumbnailPathAttribute(): ?string
     {
-        return $this->thumbnail_name ? public_path("/public/img/covers/{$this->thumbnail_name}") : null;
+        return $this->thumbnail_name ? album_cover_path($this->thumbnail_name) : null;
     }
 
     public function getThumbnailAttribute(): ?string
     {
-        return $this->thumbnail_name ? app()->staticUrl("public/img/covers/$this->thumbnail_name") : null;
+        return $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null;
     }
 }

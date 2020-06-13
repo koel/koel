@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Traits;
 
 use App\Console\Kernel;
 use App\Models\User;
@@ -9,8 +9,7 @@ use Illuminate\Foundation\Application;
 
 trait CreatesApplication
 {
-    protected $coverPath;
-    protected $mediaPath = __DIR__.'/songs';
+    protected $mediaPath = __DIR__ . '/../songs';
 
     /** @var Kernel */
     private $artisan;
@@ -25,12 +24,10 @@ trait CreatesApplication
     public function createApplication(): Application
     {
         /** @var Application $app */
-        $app = require __DIR__.'/../bootstrap/app.php';
+        $app = require __DIR__ . '/../../bootstrap/app.php';
 
         $this->artisan = $app->make(Artisan::class);
         $this->artisan->bootstrap();
-
-        $this->coverPath = $app->basePath('/public/img/covers');
 
         return $app;
     }
@@ -41,10 +38,6 @@ trait CreatesApplication
 
         if (!User::all()->count()) {
             $this->artisan->call('db:seed');
-        }
-
-        if (!file_exists($this->coverPath)) {
-            mkdir($this->coverPath, 0777, true);
         }
     }
 }

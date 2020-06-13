@@ -10,6 +10,8 @@ use Illuminate\Log\Logger;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
+use function App\Helpers\album_cover_url;
+use function App\Helpers\artist_image_url;
 
 class MediaMetadataServiceTest extends TestCase
 {
@@ -40,7 +42,7 @@ class MediaMetadataServiceTest extends TestCase
             ->with('/koel/public/images/album/foo.jpg', 'dummy');
 
         $this->mediaMetadataService->writeAlbumCover($album, $coverContent, 'jpg', $coverPath);
-        $this->assertEquals('http://localhost/public/img/covers/foo.jpg', Album::find($album->id)->cover);
+        $this->assertEquals(album_cover_url('foo.jpg'), Album::find($album->id)->cover);
     }
 
     public function testWriteArtistImage(): void
@@ -56,6 +58,6 @@ class MediaMetadataServiceTest extends TestCase
             ->with('/koel/public/images/artist/foo.jpg', 'dummy');
 
         $this->mediaMetadataService->writeArtistImage($artist, $imageContent, 'jpg', $imagePath);
-        $this->assertEquals('http://localhost/public/img/artists/foo.jpg', Artist::find($artist->id)->image);
+        $this->assertEquals(artist_image_url('foo.jpg'), Artist::find($artist->id)->image);
     }
 }

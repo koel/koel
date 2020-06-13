@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
+use function App\Helpers\album_cover_url;
 
 class AlbumThumbnailTest extends TestCase
 {

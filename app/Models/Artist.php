@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use function App\Helpers\artist_image_path;
+use function App\Helpers\artist_image_url;
 
 /**
  * @property int         $id
@@ -93,7 +95,7 @@ class Artist extends Model
      */
     public function getImageAttribute(?string $value): ?string
     {
-        return $value ? app()->staticUrl("public/img/artists/$value") : null;
+        return $value ? artist_image_url($value) : null;
     }
 
     public function getImagePathAttribute(): ?string
@@ -102,9 +104,7 @@ class Artist extends Model
             return null;
         }
 
-        $image = array_get($this->attributes, 'image');
-
-        return public_path("public/img/artists/$image");
+        return artist_image_path(array_get($this->attributes, 'image'));
     }
 
     public function getHasImageAttribute(): bool
@@ -115,6 +115,6 @@ class Artist extends Model
             return false;
         }
 
-        return file_exists(public_path("public/img/artists/$image"));
+        return file_exists(artist_image_path($image));
     }
 }
