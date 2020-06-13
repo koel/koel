@@ -21,7 +21,7 @@ trait CreatesApplication
      */
     protected $baseUrl = 'http://localhost';
 
-    public function createApplication(): Application
+    public function createApplication()
     {
         /** @var Application $app */
         $app = require __DIR__ . '/../../bootstrap/app.php';
