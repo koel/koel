@@ -30,8 +30,6 @@ class UploadController extends Controller
 
         event(new MediaCacheObsolete());
 
-        return response()->json([
-            'song' => $song->load('album', 'artist'),
-        ]);
+        return response()->json($song->load('album', 'artist'));
     }
 }
