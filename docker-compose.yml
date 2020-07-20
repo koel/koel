@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: bash -c "php artisan serve --host=0.0.0.0"
+    volumes:
+      - .:/app_home
+      - music:/music
+    ports:
+      - "8000:8000"
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      DB_DATABASE: koel
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+
+  db:
+    image: mysql:5.7
+    restart: always
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"
+
+volumes:
+  music:
+  mysql-data:

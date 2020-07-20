@@ -1,0 +1,5 @@
+.git
+.gitignore
+node_modules
+resources/assets
+vendor
