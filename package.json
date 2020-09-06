@@ -17,7 +17,9 @@
     "cross-env": "^3.2.3",
     "cypress": "^3.2.0",
     "font-awesome": "^4.7.0",
+    "husky": "^4.2.5",
     "laravel-mix": "^5.0.4",
+    "lint-staged": "^10.3.0",
     "resolve-url-loader": "^3.1.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
@@ -37,5 +39,10 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "build-demo": "cross-env NODE_ENV=demo node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
 }
