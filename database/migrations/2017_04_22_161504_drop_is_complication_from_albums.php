@@ -25,6 +25,5 @@ class DropIsComplicationFromAlbums extends Migration
      */
     public function down()
     {
-        //
     }
 }

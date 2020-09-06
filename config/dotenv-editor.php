@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |----------------------------------------------------------------------
     | Auto backup mode
@@ -23,5 +22,4 @@ return [
     */
 
     'backupPath' => base_path('storage/dotenv-editor/backups/'),
-
 ];

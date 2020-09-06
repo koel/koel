@@ -13,19 +13,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
- * @property string $path
- * @property string $title
- * @property Album  $album
- * @property Artist $artist
+ * @property string   $path
+ * @property string   $title
+ * @property Album    $album
+ * @property Artist   $artist
  * @property string[] $s3_params
- * @property float  $length
- * @property string $lyrics
- * @property int    $track
- * @property int    $disc
- * @property int    $album_id
- * @property string $id
- * @property int    $artist_id
- * @property int    $mtime
+ * @property float    $length
+ * @property string   $lyrics
+ * @property int      $track
+ * @property int      $disc
+ * @property int      $album_id
+ * @property string   $id
+ * @property int      $artist_id
+ * @property int      $mtime
  *
  * @method static self updateOrCreate(array $where, array $params)
  * @method static Builder select(string $string)
@@ -93,13 +93,13 @@ class Song extends Model
      * Update song info.
      *
      * @param string[] $ids
-     * @param string[] $data The data array, with these supported fields:
+     * @param string[] $data the data array, with these supported fields:
      *                       - title
      *                       - artistName
      *                       - albumName
      *                       - lyrics
      *                       All of these are optional, in which case the info will not be changed
-     *                       (except for lyrics, which will be emptied).
+     *                       (except for lyrics, which will be emptied)
      */
     public static function updateInfo(array $ids, array $data): Collection
     {

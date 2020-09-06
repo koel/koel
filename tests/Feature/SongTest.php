@@ -205,7 +205,7 @@ class SongTest extends TestCase
         /** @var Album $compilationAlbum */
         $compilationAlbum = Album::where([
             'artist_id' => Artist::VARIOUS_ID,
-            'name' => 'Two by Two'
+            'name' => 'Two by Two',
         ])->first();
 
         self::assertNotNull($compilationAlbum);
@@ -235,7 +235,7 @@ class SongTest extends TestCase
 
         $compilationAlbum = Album::where([
             'artist_id' => Artist::VARIOUS_ID,
-            'name' => 'One by One'
+            'name' => 'One by One',
         ])->first();
         self::assertNotNull($compilationAlbum);
 

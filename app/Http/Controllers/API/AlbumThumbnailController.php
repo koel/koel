@@ -25,7 +25,6 @@ class AlbumThumbnailController extends Controller
      * Returns the full URL to the thumbnail or NULL if the album has no cover.
      *
      * @response ["thumbnailUrl", "https://localhost/public/img/covers/a146d01afb742b01f28ab8b556f9a75d_thumbnail.jpg"]
-     * @return JsonResponse
      */
     public function get(Album $album): JsonResponse
     {

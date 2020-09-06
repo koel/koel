@@ -27,6 +27,5 @@ class CopyArtistToContributingArtist extends Migration
      */
     public function down()
     {
-        //
     }
 }

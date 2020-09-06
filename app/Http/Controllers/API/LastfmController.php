@@ -88,8 +88,6 @@ class LastfmController extends Controller
      * @bodyParam key string required The Last.fm [session key](https://www.last.fm/api/show/auth.getSession).
      * @response []
      *
-     * @param LastfmSetSessionKeyRequest $request
-     *
      * @return JsonResponse
      */
     public function setSessionKey(LastfmSetSessionKeyRequest $request)

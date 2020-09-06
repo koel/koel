@@ -13,7 +13,7 @@ class Application extends IlluminateApplication
     /**
      * Current Koel version. Must start with a v, and is synced with git tags/releases.
      *
-     * @link https://github.com/phanan/koel/releases
+     * @see https://github.com/phanan/koel/releases
      */
     public const KOEL_VERSION = 'v4.4.0';
 
@@ -57,7 +57,7 @@ class Application extends IlluminateApplication
      * If this installation of Koel has a CDN_URL configured, use it as the base.
      * Otherwise, just use a full URL to the asset.
      *
-     * @param string $name The additional resource name/path.
+     * @param string $name the additional resource name/path
      */
     public function staticUrl(?string $name = null): string
     {

@@ -81,7 +81,7 @@ class DataController extends Controller
             'useLastfm' => $this->lastfmService->used(),
             'useYouTube' => $this->youTubeService->enabled(),
             'useiTunes' => $this->iTunesService->used(),
-            'allowDownload' =>  config('koel.download.allow'),
+            'allowDownload' => config('koel.download.allow'),
             'supportsTranscoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdnUrl' => app()->staticUrl(),

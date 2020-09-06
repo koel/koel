@@ -87,7 +87,7 @@ class SyncCommand extends Command
      *                       - "CLOSE_WRITE,CLOSE /var/www/media/new.mp3"
      *                       - "MOVED_TO /var/www/media/new_dir"
      *
-     * @link http://man7.org/linux/man-pages/man1/inotifywait.1.html
+     * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
      *
      * @throws Exception
      */
@@ -104,15 +104,15 @@ class SyncCommand extends Command
         $name = basename($path);
 
         if ($result === FileSynchronizer::SYNC_RESULT_UNMODIFIED) {
-            $this->ignored++;
+            ++$this->ignored;
         } elseif ($result === FileSynchronizer::SYNC_RESULT_BAD_FILE) {
             if ($this->option('verbose')) {
                 $this->error(PHP_EOL."'$name' is not a valid media file: ".$reason);
             }
 
-            $this->invalid++;
+            ++$this->invalid;
         } else {
-            $this->synced++;
+            ++$this->synced;
         }
     }
 

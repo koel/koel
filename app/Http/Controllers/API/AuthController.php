@@ -28,8 +28,7 @@ class AuthController extends Controller
         HashManager $hash,
         TokenManager $tokenManager,
         ?Authenticatable $currentUser
-    )
-    {
+    ) {
         $this->userRepository = $userRepository;
         $this->hash = $hash;
         $this->currentUser = $currentUser;
@@ -68,7 +67,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'token' => $this->tokenManager->createToken($user)->plainTextToken
+            'token' => $this->tokenManager->createToken($user)->plainTextToken,
         ]);
     }
 

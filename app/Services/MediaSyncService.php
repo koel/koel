@@ -85,7 +85,7 @@ class MediaSyncService
      *                                 Only taken into account for existing records.
      *                                 New records will have all tags synced in regardless.
      * @param bool        $force       Whether to force syncing even unchanged files
-     * @param SyncCommand $syncCommand The SyncMedia command object, to log to console if executed by artisan.
+     * @param SyncCommand $syncCommand the SyncMedia command object, to log to console if executed by artisan
      *
      * @throws Exception
      */

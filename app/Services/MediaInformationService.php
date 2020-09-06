@@ -19,7 +19,7 @@ class MediaInformationService
     /**
      * Get extra information about an album from Last.fm.
      *
-     * @return array|null The album info in an array format, or null on failure.
+     * @return array|null the album info in an array format, or null on failure
      */
     public function getAlbumInformation(Album $album): ?array
     {
@@ -43,7 +43,7 @@ class MediaInformationService
     /**
      * Get extra information about an artist from Last.fm.
      *
-     * @return array|null The artist info in an array format, or null on failure.
+     * @return array|null the artist info in an array format, or null on failure
      */
     public function getArtistInformation(Artist $artist): ?array
     {

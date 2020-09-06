@@ -30,6 +30,5 @@ class FixArtistAutoindexValue extends Migration
      */
     public function down()
     {
-        //
     }
 }

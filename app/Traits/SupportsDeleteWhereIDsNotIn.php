@@ -20,8 +20,8 @@ trait SupportsDeleteWhereIDsNotIn
     /**
      * Deletes all records whose IDs are not in an array.
      *
-     * @param string[]|int[] $ids The array of IDs.
-     * @param string         $key Name of the primary key.
+     * @param string[]|int[] $ids the array of IDs
+     * @param string         $key name of the primary key
      *
      * @throws Exception
      */

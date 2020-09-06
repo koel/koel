@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Image Driver
@@ -16,5 +15,4 @@ return [
     */
 
     'driver' => extension_loaded('imagick') ? 'imagick' : 'gd',
-
 ];

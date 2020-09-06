@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Password Reminder Language Lines
@@ -18,5 +17,4 @@ return [
     'sent' => '¡Hemos enviado por correo electrónico el enlace para reestablecer contraseña!',
     'token' => 'Este token de reestablecimiento de contraseña no es válido.',
     'user' => 'No podemos encontrar un usuario con ese correo electrónico.',
-
 ];

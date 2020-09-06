@@ -30,7 +30,7 @@ class InteractionService
                 $interaction->liked = false;
             }
 
-            $interaction->play_count++;
+            ++$interaction->play_count;
             $interaction->save();
         });
     }
@@ -38,7 +38,7 @@ class InteractionService
     /**
      * Like or unlike a song on behalf of a user.
      *
-     * @return Interaction The affected Interaction object.
+     * @return Interaction the affected Interaction object
      */
     public function toggleLike(string $songId, User $user): Interaction
     {
@@ -58,7 +58,7 @@ class InteractionService
      *
      * @param string[] $songIds
      *
-     * @return Interaction[] The array of Interaction objects.
+     * @return Interaction[] the array of Interaction objects
      */
     public function batchLike(array $songIds, User $user): array
     {

@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Services;
 
+use function App\Helpers\album_cover_url;
+use function App\Helpers\artist_image_url;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\ImageWriter;
@@ -10,8 +12,6 @@ use Illuminate\Log\Logger;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
-use function App\Helpers\album_cover_url;
-use function App\Helpers\artist_image_url;
 
 class MediaMetadataServiceTest extends TestCase
 {

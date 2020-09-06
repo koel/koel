@@ -81,7 +81,7 @@ abstract class AbstractApiClient
      *
      * @throws InvalidArgumentException
      *
-     * @return mixed|null|SimpleXMLElement
+     * @return mixed|SimpleXMLElement|null
      */
     public function __call(string $method, array $args)
     {
@@ -99,7 +99,7 @@ abstract class AbstractApiClient
     /**
      * Turn a URI segment into a full API URL.
      *
-     * @param bool $appendKey Whether to automatically append the API key into the URL.
+     * @param bool $appendKey whether to automatically append the API key into the URL
      */
     public function buildUrl(string $uri, bool $appendKey = true): string
     {

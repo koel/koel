@@ -45,11 +45,11 @@ class SongController extends Controller
      *
      * @queryParam jwt-token required The JWT token.
      *
-     * @link https://github.com/phanan/koel/wiki#streaming-music
+     * @see https://github.com/phanan/koel/wiki#streaming-music
      *
-     * @param null|bool $transcode Whether to force transcoding the song.
+     * @param bool|null $transcode Whether to force transcoding the song.
      *                             If this is omitted, by default Koel will transcode FLAC.
-     * @param null|int  $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
+     * @param int|null  $bitRate   The target bit rate to transcode, defaults to OUTPUT_BIT_RATE.
      *                             Only taken into account if $transcode is truthy.
      *
      * @return RedirectResponse|Redirector

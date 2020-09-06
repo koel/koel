@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use function App\Helpers\album_cover_path;
+use function App\Helpers\artist_image_path;
 use App\Models\Album;
 use App\Models\Artist;
 use Exception;
 use Psr\Log\LoggerInterface;
-use function App\Helpers\album_cover_path;
-use function App\Helpers\artist_image_path;
 
 class MediaMetadataService
 {
@@ -40,8 +40,7 @@ class MediaMetadataService
         string $extension,
         string $destination = '',
         bool $cleanUp = true
-    ): void
-    {
+    ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
             $destination = $destination ?: $this->generateAlbumCoverPath($extension);

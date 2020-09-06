@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Traits;
 
 /**
- * @method void error($message, $verbosity = null)
+ * @method void  error($message, $verbosity = null)
  * @method mixed secret($message, $fallback = true)
  */
 trait AskForPassword

@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Cache Store
@@ -27,7 +26,6 @@ return [
     */
 
     'stores' => [
-
         'apc' => [
             'driver' => 'apc',
         ],
@@ -38,17 +36,17 @@ return [
 
         'database' => [
             'driver' => 'database',
-            'table'  => 'cache',
+            'table' => 'cache',
             'connection' => null,
         ],
 
         'file' => [
             'driver' => 'file',
-            'path'   => storage_path('framework/cache/data'),
+            'path' => storage_path('framework/cache/data'),
         ],
 
         'memcached' => [
-            'driver'  => 'memcached',
+            'driver' => 'memcached',
             'servers' => [
                 [
                     'host' => '127.0.0.1', 'port' => 11211, 'weight' => 100,
@@ -60,7 +58,6 @@ return [
             'driver' => 'redis',
             'connection' => 'default',
         ],
-
     ],
 
     /*
@@ -75,5 +72,4 @@ return [
     */
 
     'prefix' => 'laravel',
-
 ];

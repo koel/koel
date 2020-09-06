@@ -5,10 +5,10 @@ namespace App\Http\Requests\API;
 use App\Models\User;
 
 /**
- * @property-read string $password
- * @property-read string $name
- * @property-read string $email
- * @property-read bool   $is_admin
+ * @property string $password
+ * @property string $name
+ * @property string $email
+ * @property bool   $is_admin
  */
 class UserUpdateRequest extends Request
 {
@@ -24,7 +24,7 @@ class UserUpdateRequest extends Request
 
         return [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
         ];
     }
 }

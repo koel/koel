@@ -5,7 +5,7 @@ namespace App\Http\Requests\API;
 use App\Http\Requests\AbstractRequest;
 use Illuminate\Http\UploadedFile;
 
-/** @property-read UploadedFile $file */
+/** @property UploadedFile $file */
 class UploadRequest extends AbstractRequest
 {
     public function authorize(): bool
@@ -19,7 +19,7 @@ class UploadRequest extends AbstractRequest
             'file' => [
                 'required',
                 'file',
-                'mimetypes:audio/mpeg,audio/ogg,audio/x-flac,audio/x-aac'
+                'mimetypes:audio/mpeg,audio/ogg,audio/x-flac,audio/x-aac',
             ],
         ];
     }

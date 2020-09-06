@@ -114,7 +114,7 @@ class SmartPlaylistServiceTest extends TestCase
         self::assertSame($sql, $query->toSql());
         $queryBinding = $query->getBindings();
 
-        for ($i = 0, $count = count($queryBinding); $i < $count; $i++) {
+        for ($i = 0, $count = count($queryBinding); $i < $count; ++$i) {
             self::assertSame(
                 $bindings[$i],
                 is_object($queryBinding[$i]) ? (string) $queryBinding[$i] : $queryBinding[$i]

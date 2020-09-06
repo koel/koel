@@ -22,8 +22,6 @@ class Setting extends Model
     /**
      * Get a setting value.
      *
-     * @param string $key
-     *
      * @return mixed|string
      */
     public static function get(string $key)
@@ -38,8 +36,8 @@ class Setting extends Model
     /**
      * Set a setting (no pun) value.
      *
-     * @param string|array $key   The key of the setting, or an associative array of settings,
-     *                            in which case $value will be discarded.
+     * @param string|array $key   the key of the setting, or an associative array of settings,
+     *                            in which case $value will be discarded
      * @param mixed        $value
      */
     public static function set($key, $value = null): void

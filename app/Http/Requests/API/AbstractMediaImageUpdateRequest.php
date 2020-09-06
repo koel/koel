@@ -14,7 +14,7 @@ abstract class AbstractMediaImageUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            $this->getImageFieldName() => ['string', 'required', new ImageData()]
+            $this->getImageFieldName() => ['string', 'required', new ImageData()],
         ];
     }
 

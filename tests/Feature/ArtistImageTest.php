@@ -29,11 +29,11 @@ class ArtistImageTest extends TestCase
             ->shouldReceive('writeArtistImage')
             ->once()
             ->with(Mockery::on(static function (Artist $artist): bool {
-               return $artist->id === 9999;
+                return $artist->id === 9999;
             }), 'Foo', 'jpeg');
 
         $this->putAsUser('api/artist/9999/image', [
-            'image' => 'data:image/jpeg;base64,Rm9v'
+            'image' => 'data:image/jpeg;base64,Rm9v',
         ], factory(User::class)->states('admin')->create())
             ->assertStatus(200);
     }
@@ -47,7 +47,7 @@ class ArtistImageTest extends TestCase
             ->never();
 
         $this->putAsUser('api/artist/9999/image', [
-            'image' => 'data:image/jpeg;base64,Rm9v'
+            'image' => 'data:image/jpeg;base64,Rm9v',
         ], factory(User::class)->create())
             ->assertStatus(403);
     }

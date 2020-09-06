@@ -98,7 +98,6 @@ return [
     */
 
     'providers' => [
-
         /*
          * Laravel Framework Service Providers...
          */
@@ -157,7 +156,6 @@ return [
     */
 
     'aliases' => [
-
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
@@ -197,7 +195,5 @@ return [
         'Download' => App\Facades\Download::class,
         'AWS' => Aws\Laravel\AwsFacade::class,
         'iTunes' => App\Facades\iTunes::class,
-
     ],
-
 ];

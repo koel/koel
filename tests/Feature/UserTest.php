@@ -23,7 +23,7 @@ class UserTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'qux',
-            'is_admin' => false
+            'is_admin' => false,
         ])->assertStatus(403);
     }
 
@@ -39,7 +39,7 @@ class UserTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'qux',
-            'is_admin' => true
+            'is_admin' => true,
         ], factory(User::class)->states('admin')->create());
 
         self::assertDatabaseHas('users', [

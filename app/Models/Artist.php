@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use App\Facades\Util;
+use function App\Helpers\artist_image_path;
+use function App\Helpers\artist_image_url;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use function App\Helpers\artist_image_path;
-use function App\Helpers\artist_image_url;
 
 /**
  * @property int         $id

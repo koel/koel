@@ -145,7 +145,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
      *
      * @param string $token The token after successfully connecting to Last.fm
      *
-     * @link http://www.last.fm/api/webauth#4
+     * @see http://www.last.fm/api/webauth#4
      */
     public function getSessionKey(string $token): ?string
     {
@@ -240,9 +240,9 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
      * - The API key (api_key)
      * - The API signature (api_sig).
      *
-     * @link http://www.last.fm/api/webauth#5
+     * @see http://www.last.fm/api/webauth#5
      *
-     * @param array $params   The array of parameters.
+     * @param array $params   the array of parameters
      * @param bool  $toString Whether to turn the array into a query string
      *
      * @return array|string

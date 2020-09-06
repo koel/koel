@@ -30,8 +30,7 @@ class PlaylistController extends Controller
         PlaylistRepository $playlistRepository,
         SmartPlaylistService $smartPlaylistService,
         Authenticatable $currentUser
-    )
-    {
+    ) {
         $this->playlistRepository = $playlistRepository;
         $this->smartPlaylistService = $smartPlaylistService;
         $this->currentUser = $currentUser;

@@ -37,7 +37,6 @@ return [
              * A route must fulfill ALL conditions to pass.
              */
             'match' => [
-
                 /*
                  * Match only routes whose domains match this pattern (use * as a wildcard to match any characters).
                  */

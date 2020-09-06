@@ -28,7 +28,7 @@ class UploadService
         $targetFileName = $this->getTargetFileName($file);
         $file->move($this->getUploadDirectory(), $targetFileName);
 
-        $targetPathName = $this->getUploadDirectory() . $targetFileName;
+        $targetPathName = $this->getUploadDirectory().$targetFileName;
         $this->fileSynchronizer->setFile($targetPathName);
         $result = $this->fileSynchronizer->sync(MediaSyncService::APPLICABLE_TAGS);
 
@@ -54,7 +54,7 @@ class UploadService
                 throw new MediaPathNotSetException();
             }
 
-            $uploadDirectory = $mediaPath . DIRECTORY_SEPARATOR . self::UPLOAD_DIRECTORY . DIRECTORY_SEPARATOR;
+            $uploadDirectory = $mediaPath.DIRECTORY_SEPARATOR.self::UPLOAD_DIRECTORY.DIRECTORY_SEPARATOR;
         }
 
         return $uploadDirectory;
@@ -68,11 +68,11 @@ class UploadService
         // If there's no existing file with the same name in the upload directory, use the original name.
         // Otherwise, prefix the original name with a hash.
         // The whole point is to keep a readable file name when we can.
-        if (!file_exists($this->getUploadDirectory() . $file->getClientOriginalName())) {
+        if (!file_exists($this->getUploadDirectory().$file->getClientOriginalName())) {
             return $file->getClientOriginalName();
         }
 
-        return $this->getUniqueHash() . '_' . $file->getClientOriginalName();
+        return $this->getUniqueHash().'_'.$file->getClientOriginalName();
     }
 
     private function getUniqueHash(): string

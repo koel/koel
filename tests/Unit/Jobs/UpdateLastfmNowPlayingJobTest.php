@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class UpdateLastfmNowPlayingJobTest extends TestCase
 {
-    /** @var UpdateLastfmNowPlayingJob  */
+    /** @var UpdateLastfmNowPlayingJob */
     private $job;
 
     /** @var User */

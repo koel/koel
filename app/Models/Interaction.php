@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property bool  $liked
- * @property int   $play_count
- * @property Song  $song
- * @property User  $user
- * @property int   $id
+ * @property bool $liked
+ * @property int  $play_count
+ * @property Song $song
+ * @property User $user
+ * @property int  $id
  *
  * @method self firstOrCreate(array $where, array $params = [])
  */

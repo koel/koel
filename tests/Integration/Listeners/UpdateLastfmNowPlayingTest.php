@@ -8,7 +8,6 @@ use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
-use Exception;
 use Illuminate\Support\Facades\Queue;
 use Mockery;
 use Mockery\MockInterface;

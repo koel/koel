@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Queue Driver
@@ -30,41 +29,39 @@ return [
     */
 
     'connections' => [
-
         'sync' => [
             'driver' => 'sync',
         ],
 
         'database' => [
             'driver' => 'database',
-            'table'  => 'jobs',
-            'queue'  => 'default',
+            'table' => 'jobs',
+            'queue' => 'default',
             'expire' => 60,
         ],
 
         'beanstalkd' => [
             'driver' => 'beanstalkd',
-            'host'   => 'localhost',
-            'queue'  => 'default',
-            'ttr'    => 60,
+            'host' => 'localhost',
+            'queue' => 'default',
+            'ttr' => 60,
         ],
 
         'sqs' => [
             'driver' => 'sqs',
-            'key'    => env('SQS_PUBLIC_KEY'),
+            'key' => env('SQS_PUBLIC_KEY'),
             'secret' => env('SQS_SECRET_KEY'),
             'prefix' => env('SQS_QUEUE_PREFIX'),
-            'queue'  => env('SQL_QUEUE_NAME'),
+            'queue' => env('SQL_QUEUE_NAME'),
             'region' => env('SQS_QUEUE_REGION'),
         ],
 
         'redis' => [
-            'driver'     => 'redis',
+            'driver' => 'redis',
             'connection' => 'default',
-            'queue'      => 'default',
-            'expire'     => 60,
+            'queue' => 'default',
+            'expire' => 60,
         ],
-
     ],
 
     /*
@@ -80,7 +77,6 @@ return [
 
     'failed' => [
         'database' => env('DB_CONNECTION', 'mysql'),
-        'table'    => 'failed_jobs',
+        'table' => 'failed_jobs',
     ],
-
 ];

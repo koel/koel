@@ -11,7 +11,7 @@ use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\Hash;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 $factory->define(User::class, function ($faker) {
     return [
         'name' => $faker->name,

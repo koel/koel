@@ -11,7 +11,6 @@ use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Testing\TestResponse;
 use Mockery;
 use Mockery\MockInterface;
 

@@ -22,11 +22,11 @@ class SmartPlaylistRuleParameterFactory
             Rule::OPERATOR_BEGINS_WITH => [$model, 'LIKE', "{$value[0]}%"],
             Rule::OPERATOR_ENDS_WITH => [$model, 'LIKE', "%{$value[0]}"],
             Rule::OPERATOR_IS => [$model, '=', $value[0]],
-            Rule::OPERATOR_IS_NOT =>  [$model, '<>', $value[0]],
+            Rule::OPERATOR_IS_NOT => [$model, '<>', $value[0]],
             Rule::OPERATOR_CONTAINS => [$model, 'LIKE', "%{$value[0]}%"],
             Rule::OPERATOR_NOT_CONTAIN => [$model, 'NOT LIKE', "%{$value[0]}%"],
             Rule::OPERATOR_IS_LESS_THAN => [$model, '<', $value[0]],
-            Rule::OPERATOR_IS_GREATER_THAN =>  [$model, '>', $value[0]],
+            Rule::OPERATOR_IS_GREATER_THAN => [$model, '>', $value[0]],
             Rule::OPERATOR_IS_BETWEEN => [$model, $value],
             Rule::OPERATOR_NOT_IN_LAST => static function () use ($model, $value): array {
                 return [$model, '<', (new Carbon())->subDay($value[0])];

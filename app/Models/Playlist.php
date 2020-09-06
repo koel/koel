@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
  * @property bool       $is_smart
  * @property string     $name
  * @property user       $user
+ *
  * @method static \Illuminate\Database\Eloquent\Collection orderBy(string $field, string $order = 'asc')
  */
 class Playlist extends Model

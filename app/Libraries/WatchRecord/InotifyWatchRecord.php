@@ -6,8 +6,6 @@ class InotifyWatchRecord extends WatchRecord implements WatchRecordInterface
 {
     /**
      * {@inheritdoc}
-     *
-     * @param string $input
      */
     public function __construct(string $input)
     {
