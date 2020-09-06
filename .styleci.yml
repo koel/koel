@@ -1,8 +1,0 @@
-disabled:
-  - align_double_arrow
-  - phpdoc_summary
-
-finder:
-  exclude: 
-    # StyleCI has a bug which converts "Resource" into "resource"
-    - "app/Services/Streamers/PHPStreamer.php"
