@@ -36,7 +36,7 @@ class LastfmController extends Controller
      * [Connect](https://www.last.fm/api/authentication) the current user to Last.fm.
      * This is actually NOT an API request. The application should instead redirect the current user to this route,
      * which will send them to Last.fm for authentication. After authentication is successful, the user will be
-     * redirected back to `api/lastfm/callback?token=<Last.fm token>`.
+     * redirected back to `lastfm/callback?token=<Last.fm token>`.
      *
      * @queryParam jwt-token required The JWT token of the user. (Deprecated. Use api_token instead).
      * @queryParam api_token required Authentication token of the current user.
