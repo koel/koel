@@ -14,3 +14,9 @@ Route::get('/♫', function () {
 Route::get('/remote', function () {
     return view('remote');
 });
+
+Route::get('/lastfm/connect', 'API\LastfmController@connect')
+    ->name('lastfm.connect');
+
+Route::get('/lastfm/callback', 'API\LastfmController@callback')
+    ->name('lastfm.callback');

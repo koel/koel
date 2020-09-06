@@ -57,9 +57,7 @@ Route::group(['namespace' => 'API'], function () {
         Route::put('me', 'ProfileController@update');
 
         // Last.fm-related routes
-        Route::get('lastfm/connect', 'LastfmController@connect');
         Route::post('lastfm/session-key', 'LastfmController@setSessionKey');
-        Route::get('lastfm/callback', 'LastfmController@callback')->name('lastfm.callback');
         Route::delete('lastfm/disconnect', 'LastfmController@disconnect')->name('lastfm.disconnect');
 
         // YouTube-related routes

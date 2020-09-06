@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Log\Logger;
-use Laravel\Sanctum\NewAccessToken;
 use Mockery;
 
 class LastfmTest extends TestCase
@@ -27,12 +26,12 @@ class LastfmTest extends TestCase
 
     public function testSetSessionKey(): void
     {
+        /** @var User $user */
         $user = factory(User::class)->create();
         $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user)
             ->assertOk();
 
-        $user = User::find($user->id);
-        self::assertEquals('foo', $user->lastfm_session_key);
+        self::assertEquals('foo', $user->refresh()->lastfm_session_key);
     }
 
     public function testConnectToLastfm(): void
@@ -41,27 +40,33 @@ class LastfmTest extends TestCase
         $user = factory(User::class)->create();
         $token = $user->createToken('Koel')->plainTextToken;
 
-        $this->getAsUser('api/lastfm/connect?api_token='.$token, $user)
+        $this->get('lastfm/connect?api_token='.$token)
             ->assertRedirect(
-                'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Fapi%2Flastfm%2Fcallback%3Fapi_token%3D'
+                'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Flastfm%2Fcallback%3Fapi_token%3D'
                 .urlencode($token)
             );
     }
 
     public function testRetrieveAndStoreSessionKey(): void
     {
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
         $lastfm = static::mockIocDependency(LastfmService::class);
         $lastfm->shouldReceive('getSessionKey')
             ->once()
             ->with('foo')
             ->andReturn('bar');
 
-        /** @var User $user */
-        $user = factory(User::class)->create();
-        $this->getAsUser('api/lastfm/callback?token=foo', $user);
-        $user->refresh();
+        $tokenManager = static::mockIocDependency(TokenManager::class);
+        $tokenManager->shouldReceive('getUserFromPlainTextToken')
+            ->once()
+            ->with('my-token')
+            ->andReturn($user);
 
-        self::assertEquals('bar', $user->lastfm_session_key);
+        $this->get('lastfm/callback?token=foo&api_token=my-token');
+
+        self::assertEquals('bar', $user->refresh()->lastfm_session_key);
     }
 
     public function testDisconnectUser(): void
