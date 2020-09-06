@@ -31,7 +31,7 @@ class LastfmServiceTest extends TestCase
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
         $info = $api->getArtistInformation($artist->name);
 
-        $this->assertEquals([
+        self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot',
             'image' => 'http://foo.bar/extralarge.jpg',
             'bio' => [
@@ -78,7 +78,7 @@ class LastfmServiceTest extends TestCase
         $info = $api->getAlbumInformation($album->name, $album->artist->name);
 
         // Then I get the album's info
-        $this->assertEquals([
+        self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot/Epica',
             'image' => 'http://foo.bar/extralarge.jpg',
             'tracks' => [

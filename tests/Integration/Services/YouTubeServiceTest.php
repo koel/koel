@@ -28,7 +28,7 @@ class YouTubeServiceTest extends TestCase
         $api = new YouTubeService($client, app(Repository::class), app(Logger::class));
         $response = $api->search('Lorem Ipsum');
 
-        $this->assertEquals('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
-        $this->assertNotNull(cache('1492972ec5c8e6b3a9323ba719655ddb'));
+        self::assertEquals('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
+        self::assertNotNull(cache('1492972ec5c8e6b3a9323ba719655ddb'));
     }
 }

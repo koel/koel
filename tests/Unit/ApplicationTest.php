@@ -23,8 +23,8 @@ class ApplicationTest extends TestCase
         $assetURL = app()->staticUrl('/foo.css ');
 
         // Then I see they're constructed correctly
-        $this->assertEquals('http://localhost/', $root);
-        $this->assertEquals('http://localhost/foo.css', $assetURL);
+        self::assertEquals('http://localhost/', $root);
+        self::assertEquals('http://localhost/foo.css', $assetURL);
     }
 
     /** @test */
@@ -38,8 +38,8 @@ class ApplicationTest extends TestCase
         $assetURL = app()->staticUrl('/foo.css ');
 
         // Then I see they're constructed correctly
-        $this->assertEquals('http://cdn.tld/', $root);
-        $this->assertEquals('http://cdn.tld/foo.css', $assetURL);
+        self::assertEquals('http://cdn.tld/', $root);
+        self::assertEquals('http://cdn.tld/foo.css', $assetURL);
     }
 
     /** @test */
@@ -55,7 +55,7 @@ class ApplicationTest extends TestCase
         $assetURL = app()->rev('/foo.css', $manifestFile);
 
         // Then I see they're constructed correctly
-        $this->assertEquals('http://localhost/public/foo00.css', $assetURL);
+        self::assertEquals('http://localhost/public/foo00.css', $assetURL);
     }
 
     /** @test */
@@ -71,6 +71,6 @@ class ApplicationTest extends TestCase
         $assetURL = app()->rev('/foo.css', $manifestFile);
 
         // Then I see they're constructed correctly
-        $this->assertEquals('http://cdn.tld/public/foo00.css', $assetURL);
+        self::assertEquals('http://cdn.tld/public/foo00.css', $assetURL);
     }
 }

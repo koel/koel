@@ -6,7 +6,7 @@ Route::group(['namespace' => 'API'], function () {
     Route::post('me', 'AuthController@login')->name('auth.login');
     Route::delete('me', 'AuthController@logout');
 
-    Route::group(['middleware' => 'jwt.auth'], function () {
+    Route::group(['middleware' => 'auth'], function () {
         Route::get('/ping', function () {
             // Only  acting as a ping service.
         });

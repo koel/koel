@@ -30,7 +30,9 @@ class S3Test extends TestCase
                 'duration' => 10,
                 'track' => 5,
             ],
-        ])->seeInDatabase('songs', ['path' => 's3://koel/sample.mp3']);
+        ]);
+
+        self::assertDatabaseHas('songs', ['path' => 's3://koel/sample.mp3']);
     }
 
     public function testRemovingASong(): void
@@ -44,6 +46,8 @@ class S3Test extends TestCase
         $this->delete('api/os/s3/song', [
             'bucket' => 'koel',
             'key' => 'sample.mp3',
-        ])->notSeeInDatabase('songs', ['path' => 's3://koel/sample.mp3']);
+        ]);
+
+        self::assertDatabaseMissing('songs', ['path' => 's3://koel/sample.mp3']);
     }
 }

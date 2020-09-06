@@ -20,7 +20,7 @@ class SongTest extends TestCase
         $lyrics = $song->lyrics;
 
         // Then I see the new line characters replaced by <br />
-        $this->assertEquals('foo<br />bar<br />baz<br />qux', $lyrics);
+        self::assertEquals('foo<br />bar<br />baz<br />qux', $lyrics);
     }
 
     /** @test */
@@ -34,6 +34,6 @@ class SongTest extends TestCase
         $params = $song->s3_params;
 
         // Then I receive the correct parameters
-        $this->assertEquals(['bucket' => 'foo', 'key' => 'bar'], $params);
+        self::assertEquals(['bucket' => 'foo', 'key' => 'bar'], $params);
     }
 }

@@ -34,8 +34,8 @@ class ArtistImageTest extends TestCase
 
         $this->putAsUser('api/artist/9999/image', [
             'image' => 'data:image/jpeg;base64,Rm9v'
-        ], factory(User::class, 'admin')->create())
-            ->seeStatusCode(200);
+        ], factory(User::class)->states('admin')->create())
+            ->assertStatus(200);
     }
 
     public function testUpdateNotAllowedForNormalUsers(): void
@@ -49,6 +49,6 @@ class ArtistImageTest extends TestCase
         $this->putAsUser('api/artist/9999/image', [
             'image' => 'data:image/jpeg;base64,Rm9v'
         ], factory(User::class)->create())
-            ->seeStatusCode(403);
+            ->assertStatus(403);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Facades\Util;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,6 +24,7 @@ use function App\Helpers\artist_image_url;
  *
  * @method static self find(int $id)
  * @method static self firstOrCreate(array $where, array $params = [])
+ * @method static Builder where(...$params)
  */
 class Artist extends Model
 {

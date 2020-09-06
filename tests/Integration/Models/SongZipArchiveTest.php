@@ -18,8 +18,8 @@ class SongZipArchiveTest extends TestCase
         $songZipArchive = new SongZipArchive();
         $songZipArchive->addSong($song);
 
-        $this->assertEquals(1, $songZipArchive->getArchive()->numFiles);
-        $this->assertEquals('full.mp3', $songZipArchive->getArchive()->getNameIndex(0));
+        self::assertEquals(1, $songZipArchive->getArchive()->numFiles);
+        self::assertEquals('full.mp3', $songZipArchive->getArchive()->getNameIndex(0));
     }
 
     /** @test */
@@ -37,8 +37,8 @@ class SongZipArchiveTest extends TestCase
         $songZipArchive = new SongZipArchive();
         $songZipArchive->addSongs($songs);
 
-        $this->assertEquals(2, $songZipArchive->getArchive()->numFiles);
-        $this->assertEquals('full.mp3', $songZipArchive->getArchive()->getNameIndex(0));
-        $this->assertEquals('lorem.mp3', $songZipArchive->getArchive()->getNameIndex(1));
+        self::assertEquals(2, $songZipArchive->getArchive()->numFiles);
+        self::assertEquals('full.mp3', $songZipArchive->getArchive()->getNameIndex(0));
+        self::assertEquals('lorem.mp3', $songZipArchive->getArchive()->getNameIndex(1));
     }
 }

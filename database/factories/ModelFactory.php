@@ -8,22 +8,23 @@ use App\Models\Setting;
 use App\Models\Song;
 use App\Models\User;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Facades\Hash;
 
+/** @var Factory $factory */
 $factory->define(User::class, function ($faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
-        'password' => bcrypt(str_random(10)),
+        'password' => Hash::make('secret'),
         'is_admin' => false,
         'preferences' => [],
         'remember_token' => str_random(10),
     ];
 });
 
-$factory->defineAs(User::class, 'admin', function () use ($factory) {
-    $user = $factory->raw(User::class);
-
-    return array_merge($user, ['is_admin' => true]);
+$factory->state(User::class, 'admin', function () use ($factory) {
+    return ['is_admin' => true];
 });
 
 $factory->define(Artist::class, function (Faker $faker) {
@@ -35,7 +36,9 @@ $factory->define(Artist::class, function (Faker $faker) {
 
 $factory->define(Album::class, function (Faker $faker) {
     return [
-        'artist_id' => factory(Artist::class)->create()->id,
+        'artist_id' => static function (): int {
+            return factory(Artist::class)->create()->id;
+        },
         'name' => ucwords($faker->words(random_int(2, 5), true)),
         'cover' => md5(uniqid()).'.jpg',
     ];
@@ -60,7 +63,7 @@ $factory->define(Song::class, function (Faker $faker) {
 $factory->define(Playlist::class, function (Faker $faker) {
     return [
         'user_id' => static function (): int {
-            throw new InvalidArgumentException('A user_id must be supplied');
+            return factory(User::class)->create()->id;
         },
         'name' => $faker->name,
         'rules' => null,
@@ -69,8 +72,12 @@ $factory->define(Playlist::class, function (Faker $faker) {
 
 $factory->define(Interaction::class, function (Faker $faker) {
     return [
-        'song_id' => factory(Song::class)->create()->id,
-        'user_id' => factory(User::class)->create()->id,
+        'song_id' => static function (): string {
+            return factory(Song::class)->create()->id;
+        },
+        'user_id' => static function (): int {
+            return factory(User::class)->create()->id;
+        },
         'liked' => $faker->boolean,
         'play_count' => $faker->randomNumber,
     ];

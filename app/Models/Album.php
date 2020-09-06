@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\SupportsDeleteWhereIDsNotIn;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,7 @@ use function App\Helpers\album_cover_url;
  *
  * @method static self firstOrCreate(array $where, array $params = [])
  * @method static self|null find(int $id)
+ * @method static Builder where(...$params)
  */
 class Album extends Model
 {

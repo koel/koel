@@ -42,7 +42,7 @@ class MediaMetadataServiceTest extends TestCase
             ->with('/koel/public/images/album/foo.jpg', 'dummy');
 
         $this->mediaMetadataService->writeAlbumCover($album, $coverContent, 'jpg', $coverPath);
-        $this->assertEquals(album_cover_url('foo.jpg'), Album::find($album->id)->cover);
+        self::assertEquals(album_cover_url('foo.jpg'), Album::find($album->id)->cover);
     }
 
     public function testWriteArtistImage(): void
@@ -58,6 +58,6 @@ class MediaMetadataServiceTest extends TestCase
             ->with('/koel/public/images/artist/foo.jpg', 'dummy');
 
         $this->mediaMetadataService->writeArtistImage($artist, $imageContent, 'jpg', $imagePath);
-        $this->assertEquals(artist_image_url('foo.jpg'), Artist::find($artist->id)->image);
+        self::assertEquals(artist_image_url('foo.jpg'), Artist::find($artist->id)->image);
     }
 }

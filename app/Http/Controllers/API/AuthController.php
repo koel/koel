@@ -3,23 +3,37 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\UserLoginRequest;
-use Exception;
+use App\Models\User;
+use App\Repositories\UserRepository;
+use App\Services\TokenManager;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Hashing\HashManager;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Log\Logger;
-use Tymon\JWTAuth\JWTAuth;
+use Illuminate\Http\Response;
 
 /**
  * @group 1. Authentication
  */
 class AuthController extends Controller
 {
-    private $auth;
-    private $logger;
+    private $userRepository;
+    private $hash;
+    private $tokenManager;
 
-    public function __construct(JWTAuth $auth, Logger $logger)
+    /** @var User|null */
+    private $currentUser;
+
+    public function __construct(
+        UserRepository $userRepository,
+        HashManager $hash,
+        TokenManager $tokenManager,
+        ?Authenticatable $currentUser
+    )
     {
-        $this->auth = $auth;
-        $this->logger = $logger;
+        $this->userRepository = $userRepository;
+        $this->hash = $hash;
+        $this->currentUser = $currentUser;
+        $this->tokenManager = $tokenManager;
     }
 
     /**
@@ -46,10 +60,16 @@ class AuthController extends Controller
      */
     public function login(UserLoginRequest $request)
     {
-        $token = $this->auth->attempt($request->only('email', 'password'));
-        abort_unless($token, 401, 'Invalid credentials');
+        /** @var User $user */
+        $user = $this->userRepository->getFirstWhere('email', $request->email);
 
-        return response()->json(compact('token'));
+        if (!$user || !$this->hash->check($request->password, $user->password)) {
+            abort(Response::HTTP_UNAUTHORIZED, 'Invalid credentials');
+        }
+
+        return response()->json([
+            'token' => $this->tokenManager->createToken($user)->plainTextToken
+        ]);
     }
 
     /**
@@ -59,13 +79,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        if ($token = $this->auth->getToken()) {
-            try {
-                $this->auth->invalidate($token);
-            } catch (Exception $e) {
-                $this->logger->error($e);
-            }
-        }
+        $this->tokenManager->destroyTokens($this->currentUser);
 
         return response()->json();
     }

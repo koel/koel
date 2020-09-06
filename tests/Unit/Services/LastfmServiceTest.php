@@ -26,7 +26,7 @@ class LastfmServiceTest extends TestCase
         $builtParamsAsString = $lastfm->buildAuthCallParams($params, true);
 
         // Then I receive the Last.fm-compatible API parameters
-        $this->assertEquals([
+        self::assertEquals([
             'api_key' => 'key',
             'bar' => 'baz',
             'qux' => '安',
@@ -34,7 +34,7 @@ class LastfmServiceTest extends TestCase
         ], $builtParams);
 
         // And the string version as well
-        $this->assertEquals(
+        self::assertEquals(
             'api_key=key&bar=baz&qux=安&api_sig=7f21233b54edea994aa0f23cf55f18a2',
             $builtParamsAsString
         );

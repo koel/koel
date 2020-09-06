@@ -24,7 +24,7 @@ class MediaMetadataServiceTest extends TestCase
 
         self::assertSame(
             album_cover_url('album-cover-for-thumbnail-test_thumb.jpg'),
-            app()->get(MediaMetadataService::class)->getAlbumThumbnailUrl($album)
+            app(MediaMetadataService::class)->getAlbumThumbnailUrl($album)
         );
 
         self::assertFileExists(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
@@ -33,7 +33,7 @@ class MediaMetadataServiceTest extends TestCase
     public function testGetAlbumThumbnailUrlWithNoCover(): void
     {
         $album = factory(Album::class)->create(['cover' => null]);
-        self::assertNull(app()->get(MediaMetadataService::class)->getAlbumThumbnailUrl($album));
+        self::assertNull(app(MediaMetadataService::class)->getAlbumThumbnailUrl($album));
     }
 
     private function cleanUp(): void

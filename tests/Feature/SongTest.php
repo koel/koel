@@ -29,7 +29,7 @@ class SongTest extends TestCase
         $this->expectsEvents(LibraryChanged::class);
         $song = Song::orderBy('id', 'desc')->first();
 
-        $user = factory(User::class, 'admin')->create();
+        $user = factory(User::class)->states('admin')->create();
         $this->putAsUser('/api/songs', [
             'songs' => [$song->id],
             'data' => [
@@ -41,15 +41,15 @@ class SongTest extends TestCase
                 'compilationState' => 0,
             ],
         ], $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
 
-        $artist = Artist::whereName('John Cena')->first();
-        $this->assertNotNull($artist);
+        $artist = Artist::where('name', 'John Cena')->first();
+        self::assertNotNull($artist);
 
-        $album = Album::whereName('One by One')->first();
-        $this->assertNotNull($album);
+        $album = Album::where('name', 'One by One')->first();
+        self::assertNotNull($album);
 
-        $this->seeInDatabase('songs', [
+        self::assertDatabaseHas('songs', [
             'id' => $song->id,
             'album_id' => $album->id,
             'lyrics' => 'Lorem ipsum dolor sic amet.',
@@ -62,7 +62,7 @@ class SongTest extends TestCase
         $song = Song::orderBy('id', 'desc')->first();
         $originalArtistId = $song->album->artist->id;
 
-        $user = factory(User::class, 'admin')->create();
+        $user = factory(User::class)->states('admin')->create();
         $this->putAsUser('/api/songs', [
             'songs' => [$song->id],
             'data' => [
@@ -74,20 +74,20 @@ class SongTest extends TestCase
                 'compilationState' => 0,
             ],
         ], $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
 
         // We don't expect the song's artist to change
-        $this->assertEquals($originalArtistId, Song::find($song->id)->album->artist->id);
+        self::assertEquals($originalArtistId, Song::find($song->id)->album->artist->id);
 
         // But we expect a new album to be created for this artist and contain this song
-        $this->assertEquals('One by One', Song::find($song->id)->album->name);
+        self::assertEquals('One by One', Song::find($song->id)->album->name);
     }
 
     public function testMultipleUpdateAllInfoNoCompilation(): void
     {
         $songIds = Song::orderBy('id', 'desc')->take(3)->pluck('id')->toArray();
 
-        $user = factory(User::class, 'admin')->create();
+        $user = factory(User::class)->states('admin')->create();
         $this->putAsUser('/api/songs', [
             'songs' => $songIds,
             'data' => [
@@ -99,24 +99,24 @@ class SongTest extends TestCase
                 'compilationState' => 0,
             ],
         ], $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
 
         $songs = Song::orderBy('id', 'desc')->take(3)->get();
 
         // Even though we post the title, lyrics, and tracks, we don't expect them to take any effect
         // because we're updating multiple songs here.
-        $this->assertNotEquals('foo', $songs[0]->title);
-        $this->assertNotEquals('bar', $songs[2]->lyrics);
-        $this->assertNotEquals(9999, $songs[2]->track);
+        self::assertNotEquals('foo', $songs[0]->title);
+        self::assertNotEquals('bar', $songs[2]->lyrics);
+        self::assertNotEquals(9999, $songs[2]->track);
 
         // But all of these songs must now belong to a new album and artist set
-        $this->assertEquals('One by One', $songs[0]->album->name);
-        $this->assertEquals('One by One', $songs[1]->album->name);
-        $this->assertEquals('One by One', $songs[2]->album->name);
+        self::assertEquals('One by One', $songs[0]->album->name);
+        self::assertEquals('One by One', $songs[1]->album->name);
+        self::assertEquals('One by One', $songs[2]->album->name);
 
-        $this->assertEquals('John Cena', $songs[0]->album->artist->name);
-        $this->assertEquals('John Cena', $songs[1]->album->artist->name);
-        $this->assertEquals('John Cena', $songs[2]->album->artist->name);
+        self::assertEquals('John Cena', $songs[0]->album->artist->name);
+        self::assertEquals('John Cena', $songs[1]->album->artist->name);
+        self::assertEquals('John Cena', $songs[2]->album->artist->name);
     }
 
     public function testMultipleUpdateSomeInfoNoCompilation(): void
@@ -124,7 +124,7 @@ class SongTest extends TestCase
         $originalSongs = Song::orderBy('id', 'desc')->take(3)->get();
         $songIds = $originalSongs->pluck('id')->toArray();
 
-        $user = factory(User::class, 'admin')->create();
+        $user = factory(User::class)->states('admin')->create();
         $this->putAsUser('/api/songs', [
             'songs' => $songIds,
             'data' => [
@@ -136,30 +136,30 @@ class SongTest extends TestCase
                 'compilationState' => 0,
             ],
         ], $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
 
         $songs = Song::orderBy('id', 'desc')->take(3)->get();
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.
-        $this->assertEquals($songs[0]->album->name, $originalSongs[0]->album->name);
-        $this->assertNotEquals($songs[0]->album->id, $originalSongs[0]->album->id);
-        $this->assertEquals($songs[1]->album->name, $originalSongs[1]->album->name);
-        $this->assertNotEquals($songs[1]->album->id, $originalSongs[1]->album->id);
-        $this->assertEquals($songs[2]->album->name, $originalSongs[2]->album->name);
-        $this->assertNotEquals($songs[2]->album->id, $originalSongs[2]->album->id);
+        self::assertEquals($songs[0]->album->name, $originalSongs[0]->album->name);
+        self::assertNotEquals($songs[0]->album->id, $originalSongs[0]->album->id);
+        self::assertEquals($songs[1]->album->name, $originalSongs[1]->album->name);
+        self::assertNotEquals($songs[1]->album->id, $originalSongs[1]->album->id);
+        self::assertEquals($songs[2]->album->name, $originalSongs[2]->album->name);
+        self::assertNotEquals($songs[2]->album->id, $originalSongs[2]->album->id);
 
         // And of course, the new artist is...
-        $this->assertEquals('John Cena', $songs[0]->album->artist->name); // JOHN CENA!!!
-        $this->assertEquals('John Cena', $songs[1]->album->artist->name); // JOHN CENA!!!
-        $this->assertEquals('John Cena', $songs[2]->album->artist->name); // And... JOHN CENAAAAAAAAAAA!!!
+        self::assertEquals('John Cena', $songs[0]->album->artist->name); // JOHN CENA!!!
+        self::assertEquals('John Cena', $songs[1]->album->artist->name); // JOHN CENA!!!
+        self::assertEquals('John Cena', $songs[2]->album->artist->name); // And... JOHN CENAAAAAAAAAAA!!!
     }
 
     public function testSingleUpdateAllInfoYesCompilation(): void
     {
         $song = Song::orderBy('id', 'desc')->first();
 
-        $user = factory(User::class, 'admin')->create();
+        $user = factory(User::class)->states('admin')->create();
         $this->putAsUser('/api/songs', [
             'songs' => [$song->id],
             'data' => [
@@ -171,15 +171,15 @@ class SongTest extends TestCase
                 'compilationState' => 1,
             ],
         ], $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
 
         $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'One by One')->first();
-        $this->assertNotNull($compilationAlbum);
+        self::assertNotNull($compilationAlbum);
 
         $artist = Artist::whereName('John Cena')->first();
-        $this->assertNotNull($artist);
+        self::assertNotNull($artist);
 
-        $this->seeInDatabase('songs', [
+        self::assertDatabaseHas('songs', [
             'id' => $song->id,
             'artist_id' => $artist->id,
             'album_id' => $compilationAlbum->id,
@@ -200,15 +200,20 @@ class SongTest extends TestCase
                 'compilationState' => 2,
             ],
         ], $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
 
-        $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'Two by Two')->first();
-        $this->assertNotNull($compilationAlbum);
+        /** @var Album $compilationAlbum */
+        $compilationAlbum = Album::where([
+            'artist_id' => Artist::VARIOUS_ID,
+            'name' => 'Two by Two'
+        ])->first();
 
-        $contributingArtist = Artist::whereName('John Cena')->first();
-        $this->assertNotNull($contributingArtist);
+        self::assertNotNull($compilationAlbum);
 
-        $this->seeInDatabase('songs', [
+        $contributingArtist = Artist::where('name', 'John Cena')->first();
+        self::assertNotNull($contributingArtist);
+
+        self::assertDatabaseHas('songs', [
             'id' => $song->id,
             'artist_id' => $contributingArtist->id,
             'album_id' => $compilationAlbum->id,
@@ -226,15 +231,19 @@ class SongTest extends TestCase
                 'compilationState' => 2,
             ],
         ], $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
 
-        $compilationAlbum = Album::whereArtistIdAndName(Artist::VARIOUS_ID, 'One by One')->first();
-        $this->assertNotNull($compilationAlbum);
+        $compilationAlbum = Album::where([
+            'artist_id' => Artist::VARIOUS_ID,
+            'name' => 'One by One'
+        ])->first();
+        self::assertNotNull($compilationAlbum);
 
-        $contributingArtist = Artist::whereName('Foo Fighters')->first();
-        $this->assertNotNull($contributingArtist);
+        /** @var Artist $contributingArtist */
+        $contributingArtist = Artist::where('name', 'Foo Fighters')->first();
+        self::assertNotNull($contributingArtist);
 
-        $this->seeInDatabase('songs', [
+        self::assertDatabaseHas('songs', [
             'id' => $song->id,
             'artist_id' => $contributingArtist->id,
             'album_id' => $compilationAlbum->id,
@@ -252,14 +261,19 @@ class SongTest extends TestCase
                 'compilationState' => 0,
             ],
         ], $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
 
-        $artist = Artist::whereName('Foo Fighters')->first();
-        $this->assertNotNull($artist);
-        $album = Album::whereArtistIdAndName($artist->id, 'One by One')->first();
-        $this->assertNotNull($album);
+        /** @var Artist $artist */
+        $artist = Artist::where('name', 'Foo Fighters')->first();
+        self::assertNotNull($artist);
 
-        $this->seeInDatabase('songs', [
+        $album = Album::where([
+            'artist_id' => $artist->id,
+            'name' => 'One by One',
+        ])->first();
+        self::assertNotNull($album);
+
+        self::assertDatabaseHas('songs', [
             'id' => $song->id,
             'artist_id' => $artist->id,
             'album_id' => $album->id,
@@ -277,25 +291,29 @@ class SongTest extends TestCase
                 'track' => 1,
                 'compilationState' => 1,
             ],
-        ], $user)
-            ->putAsUser('/api/songs', [
-                'songs' => [$song->id],
-                'data' => [
-                    'title' => 'Twilight of the Thunder God',
-                    'artistName' => 'Amon Amarth',
-                    'albumName' => 'Twilight of the Thunder God',
-                    'lyrics' => 'Thor! Nanananananana Batman.',
-                    'track' => 1,
-                    'compilationState' => 0,
-                ],
-            ], $user)
-            ->seeStatusCode(200);
+        ], $user);
 
-        $artist = Artist::whereName('Amon Amarth')->first();
-        $this->assertNotNull($artist);
-        $album = Album::whereArtistIdAndName($artist->id, 'Twilight of the Thunder God')->first();
-        $this->assertNotNull($album);
-        $this->seeInDatabase('songs', [
+        $this->putAsUser('/api/songs', [
+            'songs' => [$song->id],
+            'data' => [
+                'title' => 'Twilight of the Thunder God',
+                'artistName' => 'Amon Amarth',
+                'albumName' => 'Twilight of the Thunder God',
+                'lyrics' => 'Thor! Nanananananana Batman.',
+                'track' => 1,
+                'compilationState' => 0,
+            ],
+        ], $user)
+            ->assertStatus(200);
+
+        $artist = Artist::where('name', 'Amon Amarth')->first();
+        self::assertNotNull($artist);
+        $album = Album::where([
+            'artist_id' => $artist->id,
+            'name' => 'Twilight of the Thunder God',
+        ])->first();
+        self::assertNotNull($album);
+        self::assertDatabaseHas('songs', [
             'id' => $song->id,
             'artist_id' => $artist->id,
             'album_id' => $album->id,
@@ -303,14 +321,11 @@ class SongTest extends TestCase
         ]);
     }
 
-    /**
-     * @throws Exception
-     */
     public function testDeletingByChunk(): void
     {
-        $this->assertNotEquals(0, Song::count());
+        self::assertNotEquals(0, Song::count());
         $ids = Song::select('id')->get()->pluck('id')->all();
         Song::deleteByChunk($ids, 'id', 1);
-        $this->assertEquals(0, Song::count());
+        self::assertEquals(0, Song::count());
     }
 }

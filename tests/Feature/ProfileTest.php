@@ -26,7 +26,7 @@ class ProfileTest extends TestCase
 
         $this->putAsUser('api/me', ['name' => 'Foo', 'email' => 'bar@baz.com'], $user);
 
-        $this->seeInDatabase('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
+        self::assertDatabaseHas('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
     }
 
     public function testUpdateProfileWithPassword(): void
@@ -46,7 +46,7 @@ class ProfileTest extends TestCase
             'password' => 'qux',
         ], $user);
 
-        $this->seeInDatabase('users', [
+        self::assertDatabaseHas('users', [
             'id' => $user->id,
             'name' => 'Foo',
             'email' => 'bar@baz.com',

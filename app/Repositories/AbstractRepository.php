@@ -43,4 +43,9 @@ abstract class AbstractRepository implements RepositoryInterface
     {
         return $this->model->all();
     }
+
+    public function getFirstWhere(...$params): Model
+    {
+        return $this->model->where(...$params)->first();
+    }
 }

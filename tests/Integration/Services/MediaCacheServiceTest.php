@@ -43,9 +43,9 @@ class MediaCacheServiceTest extends TestCase
 
         $data = $this->mediaCacheService->get();
 
-        $this->assertCount(6, $data['albums']); // 5 new albums and the default Unknown Album
-        $this->assertCount(7, $data['artists']); // 5 new artists and the default Various and Unknown Artist
-        $this->assertCount(5, $data['songs']);
+        self::assertCount(6, $data['albums']); // 5 new albums and the default Unknown Album
+        self::assertCount(7, $data['artists']); // 5 new artists and the default Various and Unknown Artist
+        self::assertCount(5, $data['songs']);
     }
 
     public function testGetIfCacheIsAvailable(): void
@@ -56,7 +56,7 @@ class MediaCacheServiceTest extends TestCase
 
         $data = $this->mediaCacheService->get();
 
-        $this->assertEquals(['dummy'], $data);
+        self::assertEquals(['dummy'], $data);
     }
 
     public function testCacheDisabled(): void

@@ -21,7 +21,7 @@ class Authenticate
             if ($request->ajax() || $request->route()->getName() === 'play') {
                 return response('Unauthorized.', 401);
             } else {
-                return redirect()->guest('login');
+                return redirect()->guest('/');
             }
         }
 

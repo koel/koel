@@ -5,12 +5,15 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Http\Requests\API\PlaylistSyncRequest;
 use App\Models\Playlist;
+use App\Models\User;
 use App\Repositories\PlaylistRepository;
 use App\Services\SmartPlaylistService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * @group 4. Playlist management
@@ -20,10 +23,18 @@ class PlaylistController extends Controller
     private $playlistRepository;
     private $smartPlaylistService;
 
-    public function __construct(PlaylistRepository $playlistRepository, SmartPlaylistService $smartPlaylistService)
+    /** @var User */
+    private $currentUser;
+
+    public function __construct(
+        PlaylistRepository $playlistRepository,
+        SmartPlaylistService $smartPlaylistService,
+        Authenticatable $currentUser
+    )
     {
         $this->playlistRepository = $playlistRepository;
         $this->smartPlaylistService = $smartPlaylistService;
+        $this->currentUser = $currentUser;
     }
 
     /**
@@ -50,7 +61,7 @@ class PlaylistController extends Controller
     public function store(PlaylistStoreRequest $request)
     {
         /** @var Playlist $playlist */
-        $playlist = $request->user()->playlists()->create([
+        $playlist = $this->currentUser->playlists()->create([
             'name' => $request->name,
             'rules' => $request->rules,
         ]);
@@ -78,7 +89,7 @@ class PlaylistController extends Controller
      */
     public function update(Request $request, Playlist $playlist)
     {
-        $this->authorize('owner', $playlist);
+        abort_unless($this->currentUser->can('owner', $playlist), Response::HTTP_FORBIDDEN);
 
         $playlist->update($request->only('name', 'rules'));
 

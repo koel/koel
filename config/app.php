@@ -4,6 +4,7 @@ return [
     'tagline' => 'Personal audio streaming service that works.',
 
     'env' => env('APP_ENV', 'production'),
+    'name' => 'Koel',
 
     /*
     |--------------------------------------------------------------------------
@@ -123,7 +124,6 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider', // hard-coding to make it compatible with patching procedure
         Aws\Laravel\AwsServiceProvider::class,
         Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
@@ -195,8 +195,6 @@ return [
         'Util' => App\Facades\Util::class,
         'YouTube' => App\Facades\YouTube::class,
         'Download' => App\Facades\Download::class,
-        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
-        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'AWS' => Aws\Laravel\AwsFacade::class,
         'iTunes' => App\Facades\iTunes::class,
 

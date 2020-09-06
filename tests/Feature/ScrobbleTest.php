@@ -30,6 +30,6 @@ class ScrobbleTest extends TestCase
             ->once();
 
         $this->postAsUser("/api/{$song->id}/scrobble/$ts", [], $user)
-            ->assertResponseOk();
+            ->assertOk();
     }
 }

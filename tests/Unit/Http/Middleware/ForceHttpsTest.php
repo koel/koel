@@ -44,7 +44,7 @@ class ForceHttpsTest extends TestCase
             return $request;
         };
 
-        $this->assertSame($request, $this->middleware->handle($request, $next));
+        self::assertSame($request, $this->middleware->handle($request, $next));
     }
 
     public function testNotHandle(): void
@@ -60,6 +60,6 @@ class ForceHttpsTest extends TestCase
             return $request;
         };
 
-        $this->assertSame($request, $this->middleware->handle($request, $next));
+        self::assertSame($request, $this->middleware->handle($request, $next));
     }
 }

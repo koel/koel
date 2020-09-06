@@ -18,7 +18,7 @@ class ArtistTest extends TestCase
         $gottenArtist = Artist::get('Foo');
 
         // Then I get the artist
-        $this->assertEquals($artist->id, $gottenArtist->id);
+        self::assertEquals($artist->id, $gottenArtist->id);
     }
 
     /** @test */
@@ -28,13 +28,13 @@ class ArtistTest extends TestCase
         $name = 'Foo';
 
         // And an artist with such a name doesn't exist yet
-        $this->assertNull(Artist::whereName($name)->first());
+        self::assertNull(Artist::whereName($name)->first());
 
         // When I get the artist by name
         $artist = Artist::get($name);
 
         // Then I get the newly created artist
-        $this->assertInstanceOf(Artist::class, $artist);
+        self::assertInstanceOf(Artist::class, $artist);
     }
 
     /** @test */
@@ -47,7 +47,7 @@ class ArtistTest extends TestCase
         $artist = Artist::get($name);
 
         // Then I get the artist as Unknown Artist
-        $this->assertTrue($artist->is_unknown);
+        self::assertTrue($artist->is_unknown);
     }
 
     /** @test */
@@ -61,6 +61,6 @@ class ArtistTest extends TestCase
         $retrieved = Artist::get($name);
 
         // Then I receive the artist
-        $this->assertEquals($artist->id, $retrieved->id);
+        self::assertEquals($artist->id, $retrieved->id);
     }
 }

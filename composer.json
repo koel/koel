@@ -5,15 +5,13 @@
   "license": "MIT",
   "type": "project",
   "require": {
-    "php": ">=7.1.3",
-    "laravel/framework": "5.8.*",
+    "php": ">=7.2.5",
+    "laravel/framework": "^7.0",
     "james-heinrich/getid3": "^1.9",
     "guzzlehttp/guzzle": "^6.1",
-    "tymon/jwt-auth": "^0.5.12",
     "aws/aws-sdk-php-laravel": "^3.1",
     "pusher/pusher-php-server": "^4.0",
     "predis/predis": "~1.0",
-    "doctrine/dbal": "^2.5",
     "jackiedo/dotenv-editor": "^1.0",
     "ext-exif": "*",
     "ext-fileinfo": "*",
@@ -22,24 +20,24 @@
     "fideloper/proxy": "^4.0",
     "daverandom/resume": "^0.0.3",
     "laravel/helpers": "^1.0",
-    "cweagans/composer-patches": "^1.6",
-    "intervention/image": "^2.5"
+    "intervention/image": "^2.5",
+    "laravel/sanctum": "^2.6",
+    "doctrine/dbal": "^2.10"
   },
   "require-dev": {
     "filp/whoops": "~2.0",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "~1.0",
-    "phpunit/phpunit": "~7.5",
-    "symfony/css-selector": "~3.1",
-    "symfony/dom-crawler": "^3.2",
+    "phpunit/phpunit": "^8.5",
+    "symfony/css-selector": "~5.0",
+    "symfony/dom-crawler": "^5.0",
     "facebook/webdriver": "^1.2",
     "barryvdh/laravel-ide-helper": "^2.1",
-    "laravel/tinker": "^1.0",
-    "laravel/browser-kit-testing": "^2.0",
+    "laravel/tinker": "^2.0",
+    "laravel/browser-kit-testing": "^6.0",
     "mikey179/vfsstream": "^1.6",
     "php-mock/php-mock-mockery": "^1.3",
-    "mpociot/laravel-apidoc-generator": "^3.1",
-    "nunomaduro/larastan": "^0.4.0"
+    "mpociot/laravel-apidoc-generator": "^4.1"
   },
   "suggest": {
     "ext-zip": "Allow downloading multiple songs as Zip archives"
@@ -83,7 +81,7 @@
     "post-create-project-cmd": [
       "@php artisan key:generate"
     ],
-    "test": "phpunit --colors=always --order-by=defects --stop-on-defect",
+    "test": "phpunit --colors=always --order-by=defects",
     "coverage": "phpunit --colors=always --coverage-clover=coverage.xml",
     "analyze": "phpstan analyse app --level=5",
     "gen-api-docs": "@php artisan apidoc:generate"
@@ -93,12 +91,5 @@
     "optimize-autoloader": true
   },
   "minimum-stability": "stable",
-  "prefer-stable": false,
-  "extra": {
-    "patches": {
-      "tymon/jwt-auth": {
-        "Replace fire() with dispatch()": ".patches/tymon/jwt-auth/replace-fire-with-dispatch.patch"
-      }
-    }
-  }
+  "prefer-stable": false
 }

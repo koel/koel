@@ -31,7 +31,6 @@
         <env name="APP_ENV" value="testing"/>
         <env name="APP_URL" value="http://localhost/"/>
         <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
-        <env name="JWT_SECRET" value="ki8jSvMf5wFrlSRBAWcGbmAzBUJfc8p8"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
@@ -44,5 +43,7 @@
         <env name="ADMIN_PASSWORD" value="SoSecureK0el"/>
         <env name="BROADCAST_DRIVER" value="log"/>
         <env name="CACHE_MEDIA" value="true"/>
+
+        <ini name="memory_limit" value="512M" />
     </php>
 </phpunit>

@@ -4,12 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Services\LastfmService;
+use App\Services\TokenManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Log\Logger;
+use Laravel\Sanctum\NewAccessToken;
 use Mockery;
-use Tymon\JWTAuth\JWTAuth;
 
 class LastfmTest extends TestCase
 {
@@ -28,7 +29,7 @@ class LastfmTest extends TestCase
     {
         $user = factory(User::class)->create();
         $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user)
-            ->assertResponseOk();
+            ->assertOk();
 
         $user = User::find($user->id);
         self::assertEquals('foo', $user->lastfm_session_key);
@@ -36,13 +37,15 @@ class LastfmTest extends TestCase
 
     public function testConnectToLastfm(): void
     {
-        static::mockIocDependency(JWTAuth::class, [
-            'parseToken' => null,
-            'getToken' => 'foo',
-        ]);
+        /** @var User $user */
+        $user = factory(User::class)->create();
+        $token = $user->createToken('Koel')->plainTextToken;
 
-        $this->getAsUser('api/lastfm/connect')
-            ->assertRedirectedTo('https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Fapi%2Flastfm%2Fcallback%3Fjwt-token%3Dfoo');
+        $this->getAsUser('api/lastfm/connect?api_token='.$token, $user)
+            ->assertRedirect(
+                'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Fapi%2Flastfm%2Fcallback%3Fapi_token%3D'
+                .urlencode($token)
+            );
     }
 
     public function testRetrieveAndStoreSessionKey(): void
@@ -58,7 +61,7 @@ class LastfmTest extends TestCase
         $this->getAsUser('api/lastfm/callback?token=foo', $user);
         $user->refresh();
 
-        $this->assertEquals('bar', $user->lastfm_session_key);
+        self::assertEquals('bar', $user->lastfm_session_key);
     }
 
     public function testDisconnectUser(): void
@@ -68,6 +71,6 @@ class LastfmTest extends TestCase
         $this->deleteAsUser('api/lastfm/disconnect', [], $user);
         $user->refresh();
 
-        $this->assertNull($user->lastfm_session_key);
+        self::assertNull($user->lastfm_session_key);
     }
 }

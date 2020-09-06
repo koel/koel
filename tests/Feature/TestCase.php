@@ -8,13 +8,13 @@ use App\Models\Song;
 use App\Models\User;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Testing\TestResponse;
 use Mockery;
 use ReflectionClass;
 use Tests\Traits\CreatesApplication;
 use Tests\Traits\InteractsWithIoc;
 use Tests\Traits\SandboxesTests;
-use Tymon\JWTAuth\JWTAuth;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -23,14 +23,10 @@ abstract class TestCase extends BaseTestCase
     use InteractsWithIoc;
     use SandboxesTests;
 
-    /** @var JWTAuth */
-    private $auth;
-
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->auth = app(JWTAuth::class);
         $this->prepareForTests();
         self::createSandbox();
     }
@@ -60,37 +56,33 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    protected function getAsUser($url, $user = null): self
+    private function jsonAsUser(?User $user, string $method, $uri, array $data = [], array $headers = []): TestResponse
     {
-        return $this->get($url, [
-            'Authorization' => 'Bearer '.$this->generateJwtToken($user),
-        ]);
+        $user = $user ?: factory(User::class)->create();
+        $headers['X-Requested-With'] = 'XMLHttpRequest';
+        $headers['Authorization'] = 'Bearer '.$user->createToken('koel')->plainTextToken;
+
+        return parent::json($method, $uri, $data, $headers);
     }
 
-    protected function deleteAsUser($url, $data = [], $user = null): self
+    protected function getAsUser(string $url, ?User $user = null): TestResponse
     {
-        return $this->delete($url, $data, [
-            'Authorization' => 'Bearer '.$this->generateJwtToken($user),
-        ]);
+        return $this->jsonAsUser($user, 'get', $url);
     }
 
-    protected function postAsUser($url, $data, $user = null): self
+    protected function deleteAsUser(string $url, array $data = [], ?User $user = null): TestResponse
     {
-        return $this->post($url, $data, [
-            'Authorization' => 'Bearer '.$this->generateJwtToken($user),
-        ]);
+        return $this->jsonAsUser($user, 'delete', $url, $data);
     }
 
-    protected function putAsUser($url, $data, $user = null): self
+    protected function postAsUser(string $url, array $data, ?User $user = null): TestResponse
     {
-        return $this->put($url, $data, [
-            'Authorization' => 'Bearer '.$this->generateJwtToken($user),
-        ]);
+        return $this->jsonAsUser($user, 'post', $url, $data);
     }
 
-    private function generateJwtToken(?User $user): string
+    protected function putAsUser(string $url, array $data, ?User $user = null): TestResponse
     {
-        return $this->auth->fromUser($user ?: factory(User::class)->create());
+        return $this->jsonAsUser($user, 'put', $url, $data);
     }
 
     protected static function getNonPublicProperty($object, string $property)
@@ -107,6 +99,7 @@ abstract class TestCase extends BaseTestCase
         $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
         Mockery::close();
         self::destroySandbox();
+
         parent::tearDown();
     }
 }

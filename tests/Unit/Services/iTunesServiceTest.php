@@ -19,10 +19,10 @@ class iTunesServiceTest extends TestCase
         config(['koel.itunes.enabled' => true]);
         /** @var iTunesService $iTunes */
         $iTunes = app()->make(iTunesService::class);
-        $this->assertTrue($iTunes->used());
+        self::assertTrue($iTunes->used());
 
         config(['koel.itunes.enabled' => false]);
-        $this->assertFalse($iTunes->used());
+        self::assertFalse($iTunes->used());
     }
 
     public function provideGetTrackUrlData(): array

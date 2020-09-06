@@ -18,7 +18,7 @@ class SettingTest extends TestCase
         Setting::set($key, $value);
 
         // Then I see the key and serialized value in the database
-        $this->assertDatabaseHas('settings', [
+        self::assertDatabaseHas('settings', [
             'key' => 'foo',
             'value' => serialize('bar'),
         ]);
@@ -37,7 +37,7 @@ class SettingTest extends TestCase
         Setting::set($settings);
 
         // Then I see all settings the database
-        $this->assertDatabaseHas('settings', [
+        self::assertDatabaseHas('settings', [
             'key' => 'foo',
             'value' => serialize('bar'),
         ])->assertDatabaseHas('settings', [
@@ -52,7 +52,7 @@ class SettingTest extends TestCase
         Setting::set('foo', 'bar');
         Setting::set('foo', 'baz');
 
-        $this->assertEquals('baz', Setting::get('foo'));
+        self::assertEquals('baz', Setting::get('foo'));
     }
 
     /** @test */
@@ -68,6 +68,6 @@ class SettingTest extends TestCase
         $value = Setting::get('foo');
 
         // Then I receive the value in an unserialized format
-        $this->assertSame('bar', $value);
+        self::assertSame('bar', $value);
     }
 }

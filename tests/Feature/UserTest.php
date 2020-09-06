@@ -24,7 +24,7 @@ class UserTest extends TestCase
             'email' => 'bar@baz.com',
             'password' => 'qux',
             'is_admin' => false
-        ])->seeStatusCode(403);
+        ])->assertStatus(403);
     }
 
     public function testAdminCreatesUser(): void
@@ -40,9 +40,9 @@ class UserTest extends TestCase
             'email' => 'bar@baz.com',
             'password' => 'qux',
             'is_admin' => true
-        ], factory(User::class, 'admin')->create());
+        ], factory(User::class)->states('admin')->create());
 
-        self::seeInDatabase('users', [
+        self::assertDatabaseHas('users', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'hashed',
@@ -71,9 +71,9 @@ class UserTest extends TestCase
             'email' => 'bar@baz.com',
             'password' => 'qux',
             'is_admin' => false,
-        ], factory(User::class, 'admin')->create());
+        ], factory(User::class)->states('admin')->create());
 
-        self::seeInDatabase('users', [
+        self::assertDatabaseHas('users', [
             'id' => $user->id,
             'name' => 'Foo',
             'email' => 'bar@baz.com',
@@ -84,32 +84,35 @@ class UserTest extends TestCase
 
     public function testAdminDeletesUser(): void
     {
+        /** @var User $user */
         $user = factory(User::class)->create();
-        $admin = factory(User::class, 'admin')->create();
+        $admin = factory(User::class)->states('admin')->create();
 
-        $this->deleteAsUser("api/user/{$user->id}", [], $admin)
-            ->notSeeInDatabase('users', ['id' => $user->id]);
+        $this->deleteAsUser("api/user/{$user->id}", [], $admin);
+        self::assertDatabaseMissing('users', ['id' => $user->id]);
     }
 
     public function testSeppukuNotAllowed(): void
     {
-        $admin = factory(User::class, 'admin')->create();
+        /** @var User $admin */
+        $admin = factory(User::class)->states('admin')->create();
 
         // A user can't delete himself
         $this->deleteAsUser("api/user/{$admin->id}", [], $admin)
-            ->seeStatusCode(403)
-            ->seeInDatabase('users', ['id' => $admin->id]);
+            ->assertStatus(403);
+
+        self::assertDatabaseHas('users', ['id' => $admin->id]);
     }
 
     public function testUpdateUserProfile(): void
     {
         $user = factory(User::class)->create();
-        $this->assertNull($user->getPreference('foo'));
+        self::assertNull($user->getPreference('foo'));
 
         $user->setPreference('foo', 'bar');
-        $this->assertEquals('bar', $user->getPreference('foo'));
+        self::assertEquals('bar', $user->getPreference('foo'));
 
         $user->deletePreference('foo');
-        $this->assertNull($user->getPreference('foo'));
+        self::assertNull($user->getPreference('foo'));
     }
 }

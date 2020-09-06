@@ -36,6 +36,6 @@ class YouTubeTest extends TestCase
             ->once();
 
         $this->getAsUser("/api/youtube/search/song/{$song->id}?pageToken=foo")
-            ->assertResponseOk();
+            ->assertOk();
     }
 }

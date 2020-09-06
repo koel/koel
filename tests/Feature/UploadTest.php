@@ -39,7 +39,7 @@ class UploadTest extends TestCase
             '/api/upload',
             ['file' => $file],
             factory(User::class)->create()
-        )->seeStatusCode(403);
+        )->assertStatus(403);
     }
 
     public function provideUploadExceptions(): array
@@ -67,8 +67,8 @@ class UploadTest extends TestCase
         $this->postAsUser(
             '/api/upload',
             ['file' => $file],
-            factory(User::class, 'admin')->create()
-        )->seeStatusCode($statusCode);
+            factory(User::class)->states('admin')->create()
+        )->assertStatus($statusCode);
     }
 
     public function testPost(): void
@@ -87,8 +87,8 @@ class UploadTest extends TestCase
         $this->postAsUser(
             '/api/upload',
             ['file' => $file],
-            factory(User::class, 'admin')->create()
-        )->seeJsonStructure([
+            factory(User::class)->states('admin')->create()
+        )->assertJsonStructure([
             'album',
             'artist',
         ]);

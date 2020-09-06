@@ -81,3 +81,4 @@ cypress/videos
 /log
 coverage.xml
 .phpunit.result.cache
+log.json

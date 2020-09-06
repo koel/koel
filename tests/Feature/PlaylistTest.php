@@ -5,13 +5,9 @@ namespace Tests\Feature;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use Exception;
 
 class PlaylistTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -20,6 +16,7 @@ class PlaylistTest extends TestCase
 
     public function testCreatingPlaylist(): void
     {
+        /** @var User $user */
         $user = factory(User::class)->create();
         $songs = Song::orderBy('id')->take(3)->get();
 
@@ -29,7 +26,7 @@ class PlaylistTest extends TestCase
             'rules' => [],
         ], $user);
 
-        $this->seeInDatabase('playlists', [
+        self::assertDatabaseHas('playlists', [
             'user_id' => $user->id,
             'name' => 'Foo Bar',
         ]);
@@ -37,45 +34,46 @@ class PlaylistTest extends TestCase
         $playlist = Playlist::orderBy('id', 'desc')->first();
 
         foreach ($songs as $song) {
-            $this->seeInDatabase('playlist_song', [
+            self::assertDatabaseHas('playlist_song', [
                 'playlist_id' => $playlist->id,
                 'song_id' => $song->id,
             ]);
         }
-
-        $this->getAsUser('api/playlist', $user)
-            ->seeJson([
-                'id' => $playlist->id,
-                'name' => 'Foo Bar',
-            ]);
     }
 
-    /** @test */
-    public function user_can_update_a_playlists_name(): void
+    public function testUpdatePlaylistName(): void
     {
+        /** @var User $user */
         $user = factory(User::class)->create();
 
+        /** @var Playlist $playlist */
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
+            'name' => 'Foo',
         ]);
 
-        $this->putAsUser("api/playlist/{$playlist->id}", ['name' => 'Foo Bar'], $user);
+        $this->putAsUser("api/playlist/{$playlist->id}", ['name' => 'Bar'], $user);
 
-        $this->seeInDatabase('playlists', [
-            'user_id' => $user->id,
-            'name' => 'Foo Bar',
-        ]);
-
-        // Other users can't modify it
-        $this->putAsUser("api/playlist/{$playlist->id}", ['name' => 'Foo Bar'])
-            ->seeStatusCode(403);
+        self::assertSame('Bar', $playlist->refresh()->name);
     }
 
-    /** @test */
-    public function playlists_can_be_synced(): void
+    public function testNonOwnerCannotUpdatePlaylist(): void
     {
+        /** @var Playlist $playlist */
+        $playlist = factory(Playlist::class)->create([
+            'name' => 'Foo',
+        ]);
+
+        $response = $this->putAsUser("api/playlist/{$playlist->id}", ['name' => 'Qux']);
+        $response->assertStatus(403);
+    }
+
+    public function testSyncPlaylist(): void
+    {
+        /** @var User $user */
         $user = factory(User::class)->create();
 
+        /** @var Playlist $playlist */
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
         ]);
@@ -87,48 +85,51 @@ class PlaylistTest extends TestCase
 
         $this->putAsUser("api/playlist/{$playlist->id}/sync", [
             'songs' => $songs->pluck('id')->toArray(),
-        ])
-            ->seeStatusCode(403);
-
-        $this->putAsUser("api/playlist/{$playlist->id}/sync", [
-            'songs' => $songs->pluck('id')->toArray(),
         ], $user);
 
         // We should still see the first 3 songs, but not the removed one
         foreach ($songs as $song) {
-            $this->seeInDatabase('playlist_song', [
+            self::assertDatabaseHas('playlist_song', [
                 'playlist_id' => $playlist->id,
                 'song_id' => $song->id,
             ]);
         }
 
-        $this->notSeeInDatabase('playlist_song', [
+        self::assertDatabaseMissing('playlist_song', [
             'playlist_id' => $playlist->id,
             'song_id' => $removedSong->id,
         ]);
     }
 
-    /** @test */
-    public function user_can_delete_a_playlist(): void
+    public function testDeletePlaylist(): void
     {
+        /** @var User $user */
         $user = factory(User::class)->create();
 
+        /** @var Playlist $playlist */
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
         ]);
 
-        $this->deleteAsUser("api/playlist/{$playlist->id}")
-            ->seeStatusCode(403);
-
-        $this->deleteAsUser("api/playlist/{$playlist->id}", [], $user)
-            ->notSeeInDatabase('playlists', ['id' => $playlist->id]);
+        $this->deleteAsUser("api/playlist/{$playlist->id}", [], $user);
+        self::assertDatabaseMissing('playlists', ['id' => $playlist->id]);
     }
 
-    /** @test */
-    public function playlist_content_can_be_retrieved(): void
+    public function testNonOwnerCannotDeletePlaylist(): void
     {
+        /** @var Playlist $playlist */
+        $playlist = factory(Playlist::class)->create();
+
+        $this->deleteAsUser("api/playlist/{$playlist->id}")
+            ->assertStatus(403);
+    }
+
+    public function testGetPlaylist(): void
+    {
+        /** @var User $user */
         $user = factory(User::class)->create();
 
+        /** @var Playlist $playlist */
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
         ]);
@@ -137,6 +138,6 @@ class PlaylistTest extends TestCase
         $playlist->songs()->saveMany($songs);
 
         $this->getAsUser("api/playlist/{$playlist->id}/songs", $user)
-            ->seeJson($songs->pluck('id')->all());
+            ->assertJson($songs->pluck('id')->all());
     }
 }

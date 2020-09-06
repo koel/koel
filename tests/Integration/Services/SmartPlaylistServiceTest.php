@@ -111,11 +111,11 @@ class SmartPlaylistServiceTest extends TestCase
     public function testBuildQueryForRules(array $rules, string $sql, array $bindings): void
     {
         $query = $this->service->buildQueryFromRules($rules);
-        $this->assertSame($sql, $query->toSql());
+        self::assertSame($sql, $query->toSql());
         $queryBinding = $query->getBindings();
 
         for ($i = 0, $count = count($queryBinding); $i < $count; $i++) {
-            $this->assertSame(
+            self::assertSame(
                 $bindings[$i],
                 is_object($queryBinding[$i]) ? (string) $queryBinding[$i] : $queryBinding[$i]
             );
@@ -129,7 +129,7 @@ class SmartPlaylistServiceTest extends TestCase
         /** @var User $user */
         $user = factory(User::class)->create();
 
-        $this->assertEquals([
+        self::assertEquals([
             'model' => 'interactions.user_id',
             'operator' => 'is',
             'value' => [$user->id],
@@ -152,6 +152,6 @@ class SmartPlaylistServiceTest extends TestCase
             }
         }
 
-        $this->assertSame(count(Rule::VALID_OPERATORS), count(array_unique($operators)));
+        self::assertSame(count(Rule::VALID_OPERATORS), count(array_unique($operators)));
     }
 }

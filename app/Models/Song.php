@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Events\LibraryChanged;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -30,7 +31,9 @@ use Illuminate\Support\Collection;
  * @method static Builder select(string $string)
  * @method static Builder inDirectory(string $path)
  * @method static self first()
- * @method static Collection orderBy(...$args)
+ * @method static EloquentCollection orderBy(...$args)
+ * @method static int count()
+ * @method static self|null find($id)
  */
 class Song extends Model
 {
@@ -56,6 +59,8 @@ class Song extends Model
         'track' => 'int',
         'disc' => 'int',
     ];
+
+    protected $keyType = 'string';
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -234,7 +239,7 @@ class Song extends Model
             return null;
         }
 
-        list($bucket, $key) = explode('/', $matches[1], 2);
+        [$bucket, $key] = explode('/', $matches[1], 2);
 
         return compact('bucket', 'key');
     }

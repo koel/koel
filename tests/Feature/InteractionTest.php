@@ -27,7 +27,7 @@ class InteractionTest extends TestCase
         $song = Song::orderBy('id')->first();
         $this->postAsUser('api/interaction/play', ['song' => $song->id], $user);
 
-        $this->seeInDatabase('interactions', [
+        self::assertDatabaseHas('interactions', [
             'user_id' => $user->id,
             'song_id' => $song->id,
             'play_count' => 1,
@@ -36,7 +36,7 @@ class InteractionTest extends TestCase
         // Try again
         $this->postAsUser('api/interaction/play', ['song' => $song->id], $user);
 
-        $this->seeInDatabase('interactions', [
+        self::assertDatabaseHas('interactions', [
             'user_id' => $user->id,
             'song_id' => $song->id,
             'play_count' => 2,
@@ -57,7 +57,7 @@ class InteractionTest extends TestCase
         $song = Song::orderBy('id')->first();
         $this->postAsUser('api/interaction/like', ['song' => $song->id], $user);
 
-        $this->seeInDatabase('interactions', [
+        self::assertDatabaseHas('interactions', [
             'user_id' => $user->id,
             'song_id' => $song->id,
             'liked' => 1,
@@ -66,7 +66,7 @@ class InteractionTest extends TestCase
         // Try again
         $this->postAsUser('api/interaction/like', ['song' => $song->id], $user);
 
-        $this->seeInDatabase('interactions', [
+        self::assertDatabaseHas('interactions', [
             'user_id' => $user->id,
             'song_id' => $song->id,
             'liked' => 0,
@@ -90,7 +90,7 @@ class InteractionTest extends TestCase
         $this->postAsUser('api/interaction/batch/like', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
-            $this->seeInDatabase('interactions', [
+            self::assertDatabaseHas('interactions', [
                 'user_id' => $user->id,
                 'song_id' => $song->id,
                 'liked' => 1,
@@ -100,7 +100,7 @@ class InteractionTest extends TestCase
         $this->postAsUser('api/interaction/batch/unlike', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
-            $this->seeInDatabase('interactions', [
+            self::assertDatabaseHas('interactions', [
                 'user_id' => $user->id,
                 'song_id' => $song->id,
                 'liked' => 0,

@@ -38,45 +38,45 @@ class MediaSyncTest extends TestCase
         $this->mediaService->sync($this->mediaPath);
 
         // Standard mp3 files under root path should be recognized
-        $this->seeInDatabase('songs', [
+        self::assertDatabaseHas('songs', [
             'path' => $this->mediaPath.'/full.mp3',
             // Track # should be recognized
             'track' => 5,
         ]);
 
         // Ogg files and audio files in subdirectories should be recognized
-        $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.ogg']);
+        self::assertDatabaseHas('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.ogg']);
 
         // GitHub issue #380. folder.png should be copied and used as the cover for files
         // under subdir/
         $song = Song::wherePath($this->mediaPath.'/subdir/back-in-black.ogg')->first();
-        $this->assertNotNull($song->album->cover);
+        self::assertNotNull($song->album->cover);
 
         // File search shouldn't be case-sensitive.
-        $this->seeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
+        self::assertDatabaseHas('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
 
         // Non-audio files shouldn't be recognized
-        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/rubbish.log']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/rubbish.log']);
 
         // Broken/corrupted audio files shouldn't be recognized
-        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/fake.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/fake.mp3']);
 
         // Artists should be created
-        $this->seeInDatabase('artists', ['name' => 'Cuckoo']);
-        $this->seeInDatabase('artists', ['name' => 'Koel']);
+        self::assertDatabaseHas('artists', ['name' => 'Cuckoo']);
+        self::assertDatabaseHas('artists', ['name' => 'Koel']);
 
         // Albums should be created
-        $this->seeInDatabase('albums', ['name' => 'Koel Testing Vol. 1']);
+        self::assertDatabaseHas('albums', ['name' => 'Koel Testing Vol. 1']);
 
         // Albums and artists should be correctly linked
         $album = Album::whereName('Koel Testing Vol. 1')->first();
-        $this->assertEquals('Koel', $album->artist->name);
+        self::assertEquals('Koel', $album->artist->name);
 
         // Compilation albums, artists and songs must be recognized
         $song = Song::whereTitle('This song belongs to a compilation')->first();
-        $this->assertNotNull($song->artist_id);
-        $this->assertTrue($song->album->is_compilation);
-        $this->assertEquals(Artist::VARIOUS_ID, $song->album->artist_id);
+        self::assertNotNull($song->artist_id);
+        self::assertTrue($song->album->is_compilation);
+        self::assertEquals(Artist::VARIOUS_ID, $song->album->artist_id);
 
         $currentCover = $album->cover;
 
@@ -86,10 +86,10 @@ class MediaSyncTest extends TestCase
         touch($song->path, $time = time());
         $this->mediaService->sync($this->mediaPath);
         $song = Song::find($song->id);
-        $this->assertEquals($time, $song->mtime);
+        self::assertEquals($time, $song->mtime);
 
         // Albums with a non-default cover should have their covers overwritten
-        $this->assertEquals($currentCover, Album::find($album->id)->cover);
+        self::assertEquals($currentCover, Album::find($album->id)->cover);
     }
 
     /**
@@ -118,16 +118,16 @@ class MediaSyncTest extends TestCase
 
         // Validate that the changes are not lost
         $song = Song::orderBy('id', 'desc')->first();
-        $this->assertEquals("It's John Cena!", $song->title);
-        $this->assertEquals('Booom Wroooom', $song->lyrics);
+        self::assertEquals("It's John Cena!", $song->title);
+        self::assertEquals('Booom Wroooom', $song->lyrics);
 
         // Resync with force
         $this->mediaService->sync($this->mediaPath, [], true);
 
         // All is lost.
         $song = Song::orderBy('id', 'desc')->first();
-        $this->assertEquals($originalTitle, $song->title);
-        $this->assertEquals($originalLyrics, $song->lyrics);
+        self::assertEquals($originalTitle, $song->title);
+        self::assertEquals($originalLyrics, $song->lyrics);
     }
 
     /**
@@ -155,8 +155,8 @@ class MediaSyncTest extends TestCase
 
         // Validate that the specified tags are changed, other remains the same
         $song = Song::orderBy('id', 'desc')->first();
-        $this->assertEquals($originalTitle, $song->title);
-        $this->assertEquals('Booom Wroooom', $song->lyrics);
+        self::assertEquals($originalTitle, $song->title);
+        self::assertEquals('Booom Wroooom', $song->lyrics);
     }
 
     /**
@@ -181,7 +181,7 @@ class MediaSyncTest extends TestCase
         $song = $song->toArray();
         array_forget($addedSong, 'created_at');
         array_forget($song, 'created_at');
-        $this->assertEquals($song, $addedSong);
+        self::assertEquals($song, $addedSong);
     }
 
     /**
@@ -197,7 +197,7 @@ class MediaSyncTest extends TestCase
 
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
 
-        $this->seeInDatabase('songs', ['path' => $path]);
+        self::assertDatabaseHas('songs', ['path' => $path]);
     }
 
     /**
@@ -214,7 +214,7 @@ class MediaSyncTest extends TestCase
 
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("DELETE {$song->path}"));
 
-        $this->notSeeInDatabase('songs', ['id' => $song->id]);
+        self::assertDatabaseMissing('songs', ['id' => $song->id]);
     }
 
     /**
@@ -230,9 +230,9 @@ class MediaSyncTest extends TestCase
 
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR {$this->mediaPath}/subdir"));
 
-        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/sic.mp3']);
-        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
-        $this->notSeeInDatabase('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/subdir/sic.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
     }
 
     /** @test */
@@ -270,10 +270,10 @@ class MediaSyncTest extends TestCase
     {
         config(['koel.ignore_dot_files' => false]);
         $this->mediaService->sync($this->mediaPath);
-        $this->seeInDatabase('albums', ['name' => 'Hidden Album']);
+        self::assertDatabaseHas('albums', ['name' => 'Hidden Album']);
 
         config(['koel.ignore_dot_files' => true]);
         $this->mediaService->sync($this->mediaPath);
-        $this->notSeeInDatabase('albums', ['name' => 'Hidden Album']);
+        self::assertDatabaseMissing('albums', ['name' => 'Hidden Album']);
     }
 }

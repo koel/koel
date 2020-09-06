@@ -11,6 +11,7 @@ use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Testing\TestResponse;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -44,7 +45,7 @@ class DownloadTest extends TestCase
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser("api/download/songs?songs[]={$song->id}")
-            ->assertResponseOk();
+            ->assertOk();
     }
 
     public function testDownloadMultipleSongs(): void
@@ -63,7 +64,7 @@ class DownloadTest extends TestCase
             ->andReturn($this->mediaPath.'/blank.mp3'); // should be a zip file, but we're testing here…
 
         $this->getAsUser("api/download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}")
-            ->assertResponseOk();
+            ->assertOk();
     }
 
     public function testDownloadAlbum(): void
@@ -79,7 +80,7 @@ class DownloadTest extends TestCase
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser("api/download/album/{$album->id}")
-            ->assertResponseOk();
+            ->assertOk();
     }
 
     public function testDownloadArtist(): void
@@ -95,20 +96,18 @@ class DownloadTest extends TestCase
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser("api/download/artist/{$artist->id}")
-            ->assertResponseOk();
+            ->assertOk();
     }
 
     public function testDownloadPlaylist(): void
     {
+        /** @var User $user */
         $user = factory(User::class)->create();
 
         /** @var Playlist $playlist */
         $playlist = factory(Playlist::class)->create([
             'user_id' => $user->id,
         ]);
-
-        $this->getAsUser("api/download/playlist/{$playlist->id}")
-            ->assertResponseStatus(403);
 
         $this->downloadService
             ->shouldReceive('from')
@@ -119,7 +118,16 @@ class DownloadTest extends TestCase
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser("api/download/playlist/{$playlist->id}", $user)
-            ->assertResponseOk();
+            ->assertOk();
+    }
+
+    public function testNonOwnerCannotDownloadPlaylist(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = factory(Playlist::class)->create();
+
+        $this->getAsUser("api/download/playlist/{$playlist->id}")
+            ->assertStatus(403);
     }
 
     public function testDownloadFavorites(): void
@@ -143,6 +151,6 @@ class DownloadTest extends TestCase
             ->andReturn($this->mediaPath.'/blank.mp3');
 
         $this->getAsUser('api/download/favorites', $user)
-            ->seeStatusCode(200);
+            ->assertStatus(200);
     }
 }

@@ -59,7 +59,6 @@ class InitCommand extends Command
 
         try {
             $this->maybeGenerateAppKey();
-            $this->maybeGenerateJwtSecret();
             $this->maybeSetUpDatabase();
             $this->migrateDatabase();
             $this->maybeSeedDatabase();
@@ -197,16 +196,6 @@ class InitCommand extends Command
             $this->artisan->call('key:generate');
         } else {
             $this->comment('App key exists -- skipping');
-        }
-    }
-
-    private function maybeGenerateJwtSecret(): void
-    {
-        if (!config('jwt.secret')) {
-            $this->info('Generating JWT secret');
-            $this->artisan->call('koel:generate-jwt-secret');
-        } else {
-            $this->comment('JWT secret exists -- skipping');
         }
     }
 
