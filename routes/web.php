@@ -11,7 +11,7 @@ Route::get('/remote', static function () {
     return view('remote');
 });
 
-Route::group(['middleware' => 'auth'], static function (): void {
+Route::group(['middleware' => 'auth', 'prefix' => 'web'], static function (): void {
     Route::get('/{song}/play/{transcode?}/{bitrate?}', 'PlayController@show')
         ->name('song.play');
 

@@ -56,9 +56,9 @@ class LastfmTest extends TestCase
             ->with($user)
             ->andReturn($temporaryToken);
 
-        $this->get('lastfm/connect?api_token='.$token)
+        $this->get('web/lastfm/connect?api_token='.$token)
             ->assertRedirect(
-                'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Flastfm%2Fcallback%3Fapi_token%3Dtmp-token'
+                'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Fweb%2Flastfm%2Fcallback%3Fapi_token%3Dtmp-token'
             );
     }
 
@@ -77,7 +77,7 @@ class LastfmTest extends TestCase
             ->once()
             ->andReturn('my-session-key');
 
-        $this->get('lastfm/callback?token=lastfm-token&api_token='.urlencode($token))
+        $this->get('web/lastfm/callback?token=lastfm-token&api_token='.urlencode($token))
             ->assertOk();
 
         self::assertSame('my-session-key', $user->refresh()->lastfm_session_key);
@@ -102,7 +102,7 @@ class LastfmTest extends TestCase
             ->with('my-token')
             ->andReturn($user);
 
-        $this->get('lastfm/callback?token=foo&api_token=my-token');
+        $this->get('web/lastfm/callback?token=foo&api_token=my-token');
 
         self::assertEquals('bar', $user->refresh()->lastfm_session_key);
     }
