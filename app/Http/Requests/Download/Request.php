@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\API\Download;
+namespace App\Http\Requests\Download;
 
 use App\Http\Requests\API\Request as BaseRequest;
 

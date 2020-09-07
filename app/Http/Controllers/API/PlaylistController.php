@@ -29,7 +29,7 @@ class PlaylistController extends Controller
     public function __construct(
         PlaylistRepository $playlistRepository,
         SmartPlaylistService $smartPlaylistService,
-        Authenticatable $currentUser
+        ?Authenticatable $currentUser
     ) {
         $this->playlistRepository = $playlistRepository;
         $this->smartPlaylistService = $smartPlaylistService;
@@ -88,7 +88,7 @@ class PlaylistController extends Controller
      */
     public function update(Request $request, Playlist $playlist)
     {
-        abort_unless($this->currentUser->can('owner', $playlist), Response::HTTP_FORBIDDEN);
+        $this->authorize('owner', $playlist);
 
         $playlist->update($request->only('name', 'rules'));
 

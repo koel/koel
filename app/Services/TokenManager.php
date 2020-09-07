@@ -18,6 +18,15 @@ class TokenManager
         $user->tokens()->delete();
     }
 
+    public function deleteTokenByPlainTextToken(string $plainTextToken): void
+    {
+        $token = PersonalAccessToken::findToken($plainTextToken);
+
+        if ($token) {
+            $token->delete();
+        }
+    }
+
     public function getUserFromPlainTextToken(string $plainTextToken): ?User
     {
         $token = PersonalAccessToken::findToken($plainTextToken);

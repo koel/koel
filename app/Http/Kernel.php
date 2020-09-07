@@ -36,7 +36,7 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            // Koel doesn't use any default Laravel middleware for web.
+            'bindings',
         ],
         'api' => [
             'throttle:60,1',

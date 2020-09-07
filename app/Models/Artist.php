@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @method static self find(int $id)
  * @method static self firstOrCreate(array $where, array $params = [])
  * @method static Builder where(...$params)
+ * @method static self first()
  */
 class Artist extends Model
 {

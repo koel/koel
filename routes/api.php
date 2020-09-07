@@ -29,10 +29,7 @@ Route::group(['namespace' => 'API'], function () {
 
         Route::post('settings', 'SettingController@store');
 
-        Route::get('{song}/play/{transcode?}/{bitrate?}', 'SongController@play')->name('song.play');
-        Route::post('{song}/scrobble/{timestamp}', 'ScrobbleController@store')->where([
-            'timestamp' => '\d+',
-        ]);
+        Route::post('{song}/scrobble/{timestamp}', 'ScrobbleController@store')->where(['timestamp' => '\d+']);
         Route::put('songs', 'SongController@update');
 
         Route::resource('upload', 'UploadController');
@@ -65,15 +62,6 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('youtube/search/song/{song}', 'YouTubeController@searchVideosRelatedToSong');
         }
 
-        // Download routes
-        Route::group(['prefix' => 'download', 'namespace' => 'Download'], function () {
-            Route::get('songs', 'SongController@show');
-            Route::get('album/{album}', 'AlbumController@show');
-            Route::get('artist/{artist}', 'ArtistController@show');
-            Route::get('playlist/{playlist}', 'PlaylistController@show');
-            Route::get('favorites', 'FavoritesController@show');
-        });
-
         // Info routes
         Route::group(['namespace' => 'MediaInformation'], function () {
             Route::get('album/{album}/info', 'AlbumController@show');
@@ -87,11 +75,6 @@ Route::group(['namespace' => 'API'], function () {
         Route::put('artist/{artist}/image', 'ArtistImageController@update');
 
         Route::get('album/{album}/thumbnail', 'AlbumThumbnailController@get');
-
-        // iTunes routes
-        if (iTunes::used()) {
-            Route::get('itunes/song/{album}', 'iTunesController@viewSong')->name('iTunes.viewSong');
-        }
     });
 
     Route::group(['middleware' => 'os.auth', 'prefix' => 'os', 'namespace' => 'ObjectStorage'], function () {

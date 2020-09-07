@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static self firstOrCreate(array $where, array $params = [])
  * @method static self|null find(int $id)
  * @method static Builder where(...$params)
+ * @method static self first()
  */
 class Album extends Model
 {

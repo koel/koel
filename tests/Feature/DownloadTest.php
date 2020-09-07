@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
 use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\MockInterface;
@@ -27,13 +28,29 @@ class DownloadTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         static::createSampleMediaSet();
         $this->downloadService = static::mockIocDependency(DownloadService::class);
+    }
+
+    public function testNonLoggedInUserCannotDownload(): void
+    {
+        $song = Song::first();
+
+        $this->downloadService
+            ->shouldReceive('from')
+            ->never();
+
+        $this->get("download/songs?songs[]={$song->id}")
+            ->assertRedirect('/');
     }
 
     public function testDownloadOneSong(): void
     {
         $song = Song::first();
+
+        /** @var User $user */
+        $user = factory(User::class)->create();
 
         $this->downloadService
             ->shouldReceive('from')
@@ -43,18 +60,21 @@ class DownloadTest extends TestCase
             }))
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->getAsUser("api/download/songs?songs[]={$song->id}")
+        $this->get("download/songs?songs[]={$song->id}&api_token=".$user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
     public function testDownloadMultipleSongs(): void
     {
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
         $songs = Song::take(2)->orderBy('id')->get();
 
         $this->downloadService
             ->shouldReceive('from')
             ->once()
-            ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs) {
+            ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 $retrievedIds = $retrievedSongs->pluck('id')->toArray();
                 $requestedIds = $songs->pluck('id')->toArray();
 
@@ -62,7 +82,10 @@ class DownloadTest extends TestCase
             }))
             ->andReturn($this->mediaPath.'/blank.mp3'); // should be a zip file, but we're testing here…
 
-        $this->getAsUser("api/download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}")
+        $this->get(
+            "download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}&api_token="
+            .$user->createToken('Koel')->plainTextToken
+        )
             ->assertOk();
     }
 
@@ -70,15 +93,18 @@ class DownloadTest extends TestCase
     {
         $album = Album::first();
 
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
         $this->downloadService
             ->shouldReceive('from')
             ->once()
-            ->with(Mockery::on(static function (Album $retrievedAlbum) use ($album) {
+            ->with(Mockery::on(static function (Album $retrievedAlbum) use ($album): bool {
                 return $retrievedAlbum->id === $album->id;
             }))
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->getAsUser("api/download/album/{$album->id}")
+        $this->get("download/album/{$album->id}?api_token=".$user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -86,15 +112,18 @@ class DownloadTest extends TestCase
     {
         $artist = Artist::first();
 
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
         $this->downloadService
             ->shouldReceive('from')
             ->once()
-            ->with(Mockery::on(static function (Artist $retrievedArtist) use ($artist) {
+            ->with(Mockery::on(static function (Artist $retrievedArtist) use ($artist): bool {
                 return $retrievedArtist->id === $artist->id;
             }))
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->getAsUser("api/download/artist/{$artist->id}")
+        $this->get("download/artist/{$artist->id}?api_token=".$user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -110,13 +139,13 @@ class DownloadTest extends TestCase
 
         $this->downloadService
             ->shouldReceive('from')
-            ->with(Mockery::on(static function (Playlist $retrievedPlaylist) use ($playlist) {
+            ->with(Mockery::on(static function (Playlist $retrievedPlaylist) use ($playlist): bool {
                 return $retrievedPlaylist->id === $playlist->id;
             }))
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->getAsUser("api/download/playlist/{$playlist->id}", $user)
+        $this->get("download/playlist/{$playlist->id}?api_token=".$user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -125,8 +154,11 @@ class DownloadTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = factory(Playlist::class)->create();
 
-        $this->getAsUser("api/download/playlist/{$playlist->id}")
-            ->assertStatus(403);
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
+        $this->get("download/playlist/{$playlist->id}?api_token=".$user->createToken('Koel')->plainTextToken)
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function testDownloadFavorites(): void
@@ -138,7 +170,7 @@ class DownloadTest extends TestCase
         static::mockIocDependency(InteractionRepository::class)
             ->shouldReceive('getUserFavorites')
             ->once()
-            ->with(Mockery::on(static function (User $retrievedUser) use ($user) {
+            ->with(Mockery::on(static function (User $retrievedUser) use ($user): bool {
                 return $retrievedUser->id === $user->id;
             }))
             ->andReturn($favorites);
@@ -149,7 +181,7 @@ class DownloadTest extends TestCase
             ->once()
             ->andReturn($this->mediaPath.'/blank.mp3');
 
-        $this->getAsUser('api/download/favorites', $user)
-            ->assertStatus(200);
+        $this->get('download/favorites?api_token='.$user->createToken('Koel')->plainTextToken)
+            ->assertOk();
     }
 }

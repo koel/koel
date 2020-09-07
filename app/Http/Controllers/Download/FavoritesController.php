@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API\Download;
+namespace App\Http\Controllers\Download;
 
-use App\Http\Requests\API\Download\Request;
+use App\Http\Requests\Download\Request;
 use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
 

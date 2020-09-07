@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Download;
+namespace App\Http\Controllers\Download;
 
 use App\Http\Controllers\API\Controller as BaseController;
 use App\Services\DownloadService;

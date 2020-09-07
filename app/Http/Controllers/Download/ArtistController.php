@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Download;
+namespace App\Http\Controllers\Download;
 
 use App\Models\Artist;
 

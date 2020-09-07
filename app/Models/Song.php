@@ -34,6 +34,7 @@ use Illuminate\Support\Collection;
  * @method static EloquentCollection orderBy(...$args)
  * @method static int count()
  * @method static self|null find($id)
+ * @method static Builder take(int $count)
  */
 class Song extends Model
 {
