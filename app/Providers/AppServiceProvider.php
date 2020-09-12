@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
@@ -39,7 +38,6 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->environment() !== 'production') {
             $this->app->register(TinkerServiceProvider::class);
-            $this->app->register(IdeHelperServiceProvider::class);
             $this->app->register(ApiDocGeneratorServiceProvider::class);
         }
     }

@@ -32,7 +32,6 @@
     "symfony/css-selector": "~5.0",
     "symfony/dom-crawler": "^5.0",
     "facebook/webdriver": "^1.2",
-    "barryvdh/laravel-ide-helper": "^2.1",
     "laravel/tinker": "^2.0",
     "php-mock/php-mock-mockery": "^1.3",
     "mpociot/laravel-apidoc-generator": "^4.1",
