@@ -12,11 +12,11 @@
     <meta name="msapplication-navbutton-color" content="#282828">
 
     <base href="{{ asset('') }}">
-    <link rel="manifest" href="{{ App::staticUrl('public/manifest.json') }}" />
-    <meta name="msapplication-config" content="{{ App::staticUrl('public/browserconfig.xml') }}" />
-    <link rel="icon" type="image/x-icon" href="{{ App::staticUrl('public/img/favicon.ico') }}" />
-    <link rel="icon" href="{{ App::staticUrl('public/img/icon.png') }}">
-    <link rel="apple-touch-icon" href="{{ App::staticUrl('public/img/icon.png') }}">
+    <link rel="manifest" href="{{ App::staticUrl('manifest.json') }}" />
+    <meta name="msapplication-config" content="{{ App::staticUrl('browserconfig.xml') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ App::staticUrl('img/favicon.ico') }}" />
+    <link rel="icon" href="{{ App::staticUrl('img/icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ App::staticUrl('img/icon.png') }}">
 
     <link rel="stylesheet" href="{{ App::rev('/css/app.css') }}">
 </head>

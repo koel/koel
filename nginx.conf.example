@@ -1,17 +1,12 @@
 server {
   listen          *:80;
   server_name     koel.dev;
-  root            /var/www/koel;
+  root            /var/www/koel/public;
   index           index.php;
 
   gzip            on;
   gzip_types      text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/json;
   gzip_comp_level  9;
-
-  # Whitelist only index.php, robots.txt, and some special routes
-  if ($request_uri !~ ^/$|index\.php|robots\.txt|(public|api|web)/|remote|api-docs|sw\.js) {
-    return 404;
-  }
 
   location /media/ {
     internal;

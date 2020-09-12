@@ -34,12 +34,12 @@ class MediaMetadataServiceTest extends TestCase
         /** @var Album $album */
         $album = factory(Album::class)->create();
         $coverContent = 'dummy';
-        $coverPath = '/koel/public/images/album/foo.jpg';
+        $coverPath = '/koel/public/img/album/foo.jpg';
 
         $this->imageWriter
             ->shouldReceive('writeFromBinaryData')
             ->once()
-            ->with('/koel/public/images/album/foo.jpg', 'dummy');
+            ->with('/koel/public/img/album/foo.jpg', 'dummy');
 
         $this->mediaMetadataService->writeAlbumCover($album, $coverContent, 'jpg', $coverPath);
         self::assertEquals(album_cover_url('foo.jpg'), Album::find($album->id)->cover);
@@ -50,12 +50,12 @@ class MediaMetadataServiceTest extends TestCase
         /** @var Artist $artist */
         $artist = factory(Artist::class)->create();
         $imageContent = 'dummy';
-        $imagePath = '/koel/public/images/artist/foo.jpg';
+        $imagePath = '/koel/public/img/artist/foo.jpg';
 
         $this->imageWriter
             ->shouldReceive('writeFromBinaryData')
             ->once()
-            ->with('/koel/public/images/artist/foo.jpg', 'dummy');
+            ->with('/koel/public/img/artist/foo.jpg', 'dummy');
 
         $this->mediaMetadataService->writeArtistImage($artist, $imageContent, 'jpg', $imagePath);
         self::assertEquals(artist_image_url('foo.jpg'), Artist::find($artist->id)->image);

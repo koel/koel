@@ -4,7 +4,7 @@
     "display": "standalone",
     "orientation": "portrait",
     "icons": [{
-      "src": "/public/img/icon.png",
+      "src": "/img/icon.png",
       "sizes": "192x192",
       "type": "image/png"
     }],

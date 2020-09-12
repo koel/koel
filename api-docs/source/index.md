@@ -2236,7 +2236,7 @@ fetch(url, {
 
 ```json
 {
-    "artistUrl": "https:\/\/koel.host\/images\/artists\/new-cover.jpg"
+    "artistUrl": "https:\/\/koel.host\/img\/artists\/new-cover.jpg"
 }
 ```
 

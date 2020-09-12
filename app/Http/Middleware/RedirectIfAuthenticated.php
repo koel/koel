@@ -21,7 +21,7 @@ class RedirectIfAuthenticated
     public function handle(Request $request, Closure $next)
     {
         if ($this->auth->check()) {
-            return redirect('/♫');
+            return redirect('/');
         }
 
         return $next($request);

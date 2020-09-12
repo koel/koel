@@ -19,10 +19,10 @@ return [
     'media_path' => env('MEDIA_PATH'),
 
     // The *relative* path to the directory to store album covers and thumbnails, *with* a trailing slash.
-    'album_cover_dir' => 'public/img/covers/',
+    'album_cover_dir' => 'img/covers/',
 
     // The *relative* path to the directory to store artist images, *with* a trailing slash.
-    'artist_image_dir' => 'public/img/artists/',
+    'artist_image_dir' => 'img/artists/',
 
     /*
     |--------------------------------------------------------------------------

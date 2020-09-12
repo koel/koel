@@ -6,26 +6,24 @@
 
 <IfModule mod_rewrite.c>
   <IfModule mod_negotiation.c>
-    Options -MultiViews
+    Options -MultiViews -Indexes
   </IfModule>
 
   RewriteEngine On
-  RewriteBase /
 
-  # Redirect Trailing Slashes...
-  RewriteRule ^(.*)/$ /$1 [L,R=301]
+  # Handle Authorization Header
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-  # Whitelist only index.php, robots.txt, and some special routes
-  RewriteRule ^(?!($|index\.php|robots\.txt|(public|api|web)/|remote|api-docs|sw\.js)) - [R=404,L]
+  # Redirect Trailing Slashes If Not A Folder...
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} (.+)/$
+  RewriteRule ^ %1 [L,R=301]
 
   # Handle Front Controller...
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule .* index.php [L]
-
-  # https://github.com/tymondesigns/jwt-auth/wiki/Authentication
-  RewriteCond %{HTTP:Authorization} ^(.*)
-  RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+  RewriteRule ^ index.php [L]
 </IfModule>
 
 <IfModule mod_expires.c>
@@ -52,7 +50,7 @@
 <IfModule mod_deflate.c>
 
   # Disable deflation for media files.
-  SetEnvIfNoCase Request_URI "^/api/play/" no-gzip dont-vary
+  SetEnvIfNoCase Request_URI "^/play/" no-gzip dont-vary
 
   # ----------------------------------------------------------------------
   # Gzip compression.

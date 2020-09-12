@@ -9,7 +9,8 @@ class ApplicationTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        @unlink(app()->publicPath().'/public/hot');
+
+        @unlink(public_path('hot'));
     }
 
     /** @test */
@@ -55,7 +56,7 @@ class ApplicationTest extends TestCase
         $assetURL = app()->rev('/foo.css', $manifestFile);
 
         // Then I see they're constructed correctly
-        self::assertEquals('http://localhost/public/foo00.css', $assetURL);
+        self::assertEquals('http://localhost/foo00.css', $assetURL);
     }
 
     /** @test */
@@ -71,6 +72,6 @@ class ApplicationTest extends TestCase
         $assetURL = app()->rev('/foo.css', $manifestFile);
 
         // Then I see they're constructed correctly
-        self::assertEquals('http://cdn.tld/public/foo00.css', $assetURL);
+        self::assertEquals('http://cdn.tld/foo00.css', $assetURL);
     }
 }

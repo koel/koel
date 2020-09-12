@@ -18,7 +18,7 @@ class AlbumThumbnailTest extends TestCase
 
     public function provideAlbumThumbnailData(): array
     {
-        return [['http://localhost/public/img/covers/foo_thumbnail.jpg'], [null]];
+        return [['http://localhost/img/covers/foo_thumbnail.jpg'], [null]];
     }
 
     /** @dataProvider provideAlbumThumbnailData */
