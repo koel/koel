@@ -5,11 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\LastfmSetSessionKeyRequest;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
-/**
- * @group Last.fm integration
- */
 class LastfmController extends Controller
 {
     /** @var User */
@@ -20,33 +17,17 @@ class LastfmController extends Controller
         $this->currentUser = $currentUser;
     }
 
-    /**
-     * Set Last.fm session key
-     *
-     * Set the Last.fm session key for the current user. This call should be made after the user is
-     * [connected to Last.fm](https://www.last.fm/api/authentication).
-     *
-     * @bodyParam key string required The Last.fm [session key](https://www.last.fm/api/show/auth.getSession).
-     * @response []
-     *
-     * @return JsonResponse
-     */
     public function setSessionKey(LastfmSetSessionKeyRequest $request)
     {
         $this->currentUser->savePreference('lastfm_session_key', trim($request->key));
 
-        return response()->json();
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-    /**
-     * Disconnect the current user from Last.fm
-     *
-     * @return JsonResponse
-     */
     public function disconnect()
     {
         $this->currentUser->deletePreference('lastfm_session_key');
 
-        return response()->json();
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

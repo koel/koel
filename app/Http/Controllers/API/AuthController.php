@@ -8,12 +8,8 @@ use App\Repositories\UserRepository;
 use App\Services\TokenManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Hashing\HashManager;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
-/**
- * @group 1. Authentication
- */
 class AuthController extends Controller
 {
     private $userRepository;
@@ -35,28 +31,6 @@ class AuthController extends Controller
         $this->tokenManager = $tokenManager;
     }
 
-    /**
-     * Log a user in
-     *
-     * Koel uses [JSON Web Tokens](https://jwt.io/) (JWT) for authentication.
-     * After the user has been authenticated, a random "token" will be returned.
-     * This token should then be saved in a local storage and used as an `Authorization: Bearer` header
-     * for consecutive calls.
-     *
-     * Notice: The token is valid for a week, after that the user will need to log in again.
-     *
-     * @bodyParam email string required The user's email. Example: john@doe.com
-     * @bodyParam password string required The password. Example: SoSecureMuchW0w
-     *
-     * @response {
-     *   "token": "<a-random-string>"
-     * }
-     * @reponse 401 {
-     *   "message": "Invalid credentials"
-     * }
-     *
-     * @return JsonResponse
-     */
     public function login(UserLoginRequest $request)
     {
         /** @var User $user */
@@ -71,15 +45,10 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Log the current user out
-     *
-     * @return JsonResponse
-     */
     public function logout()
     {
         $this->tokenManager->destroyTokens($this->currentUser);
 
-        return response()->json();
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

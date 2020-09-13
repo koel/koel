@@ -5,12 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\SettingRequest;
 use App\Models\Setting;
 use App\Services\MediaSyncService;
-use Exception;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
-/**
- * @group 8. Settings
- */
 class SettingController extends Controller
 {
     private $mediaSyncService;
@@ -20,19 +16,7 @@ class SettingController extends Controller
         $this->mediaSyncService = $mediaSyncService;
     }
 
-    /**
-     * Save the application settings
-     *
-     * Save the application settings. Right now there's only one setting to be saved (`media_path`).
-     *
-     * @bodyParam media_path string required Absolute path to the media folder. Example: /var/www/media/
-     *
-     * @response []
-     *
-     * @throws Exception
-     *
-     * @return JsonResponse
-     */
+    // @TODO: This should be a PUT request
     public function store(SettingRequest $request)
     {
         Setting::set('media_path', rtrim(trim($request->media_path), '/'));
@@ -41,6 +25,6 @@ class SettingController extends Controller
         // but let's just do this async now.
         $this->mediaSyncService->sync();
 
-        return response()->json();
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Application;
+use App\Models\User;
 use App\Repositories\InteractionRepository;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
@@ -12,12 +13,8 @@ use App\Services\iTunesService;
 use App\Services\LastfmService;
 use App\Services\MediaCacheService;
 use App\Services\YouTubeService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\Auth\Authenticatable;
 
-/**
- * @group 2. Application data
- */
 class DataController extends Controller
 {
     private const RECENTLY_PLAYED_EXCERPT_COUNT = 7;
@@ -32,6 +29,9 @@ class DataController extends Controller
     private $userRepository;
     private $applicationInformationService;
 
+    /** @var User */
+    private $currentUser;
+
     public function __construct(
         LastfmService $lastfmService,
         YouTubeService $youTubeService,
@@ -41,7 +41,8 @@ class DataController extends Controller
         PlaylistRepository $playlistRepository,
         InteractionRepository $interactionRepository,
         UserRepository $userRepository,
-        ApplicationInformationService $applicationInformationService
+        ApplicationInformationService $applicationInformationService,
+        Authenticatable $currentUser
     ) {
         $this->lastfmService = $lastfmService;
         $this->youTubeService = $youTubeService;
@@ -52,32 +53,21 @@ class DataController extends Controller
         $this->interactionRepository = $interactionRepository;
         $this->userRepository = $userRepository;
         $this->applicationInformationService = $applicationInformationService;
+        $this->currentUser = $currentUser;
     }
 
-    /**
-     * Get application data
-     *
-     * The big fat call to retrieve a set of application data catered for the current user
-     * (songs, albums, artists, playlists, interactions, and if the user is an admin, settings as well).
-     * Naturally, this call should be made right after the user has been logged in, when you need to populate
-     * the application's interface with useful information.
-     *
-     * @responseFile responses/data.index.json
-     *
-     * @return JsonResponse
-     */
-    public function index(Request $request)
+    public function index()
     {
         return response()->json($this->mediaCacheService->get() + [
-            'settings' => $request->user()->is_admin ? $this->settingRepository->getAllAsKeyValueArray() : [],
+            'settings' => $this->currentUser->is_admin ? $this->settingRepository->getAllAsKeyValueArray() : [],
             'playlists' => $this->playlistRepository->getAllByCurrentUser(),
             'interactions' => $this->interactionRepository->getAllByCurrentUser(),
             'recentlyPlayed' => $this->interactionRepository->getRecentlyPlayed(
-                $request->user(),
+                $this->currentUser,
                 self::RECENTLY_PLAYED_EXCERPT_COUNT
             ),
-            'users' => $request->user()->is_admin ? $this->userRepository->getAll() : [],
-            'currentUser' => $request->user(),
+            'users' => $this->currentUser->is_admin ? $this->userRepository->getAll() : [],
+            'currentUser' => $this->currentUser,
             'useLastfm' => $this->lastfmService->used(),
             'useYouTube' => $this->youTubeService->enabled(),
             'useiTunes' => $this->iTunesService->used(),
@@ -86,7 +76,7 @@ class DataController extends Controller
                 && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdnUrl' => app()->staticUrl(),
             'currentVersion' => Application::KOEL_VERSION,
-            'latestVersion' => $request->user()->is_admin
+            'latestVersion' => $this->currentUser->is_admin
                 ? $this->applicationInformationService->getLatestVersionNumber()
                 : Application::KOEL_VERSION,
         ]);

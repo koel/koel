@@ -4,7 +4,7 @@
       "id":917,
       "artist_id":471,
       "name":"Epica",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/unknown-album.png",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
       "created_at":"2019-04-14 13:47:40",
       "is_compilation":false
     },
@@ -12,7 +12,7 @@
       "id":928,
       "artist_id":475,
       "name":"Gutter Ballet",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/unknown-album.png",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
       "created_at":"2019-04-14 13:51:20",
       "is_compilation":false
     },
@@ -20,7 +20,7 @@
       "id":915,
       "artist_id":470,
       "name":"Iron",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/5cb339fbcbf9e9.89185391.jpeg",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fbcbf9e9.89185391.jpeg",
       "created_at":"2019-04-14 13:47:39",
       "is_compilation":false
     },
@@ -28,7 +28,7 @@
       "id":923,
       "artist_id":473,
       "name":"Skid Row",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/5cb339fc9ff711.65820502.jpeg",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fc9ff711.65820502.jpeg",
       "created_at":"2019-04-14 13:47:40",
       "is_compilation":false
     },
@@ -36,7 +36,7 @@
       "id":924,
       "artist_id":473,
       "name":"Slave To The Grind",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/5cb339fca1f200.50942329.jpeg",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fca1f200.50942329.jpeg",
       "created_at":"2019-04-14 13:47:40",
       "is_compilation":false
     },
@@ -44,7 +44,7 @@
       "id":922,
       "artist_id":473,
       "name":"Subhuman Race",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/5cb339fc9df9c4.46591349.jpeg",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fc9df9c4.46591349.jpeg",
       "created_at":"2019-04-14 13:47:40",
       "is_compilation":false
     },
@@ -52,7 +52,7 @@
       "id":926,
       "artist_id":471,
       "name":"The Black Halo",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/unknown-album.png",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
       "created_at":"2019-04-14 13:49:34",
       "is_compilation":false
     },
@@ -60,7 +60,7 @@
       "id":916,
       "artist_id":471,
       "name":"The Fourth Legacy",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/unknown-album.png",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
       "created_at":"2019-04-14 13:47:39",
       "is_compilation":false
     },
@@ -68,7 +68,7 @@
       "id":927,
       "artist_id":472,
       "name":"The Wall",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/unknown-album.png",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
       "created_at":"2019-04-14 13:49:54",
       "is_compilation":false
     },
@@ -76,7 +76,7 @@
       "id":1,
       "artist_id":1,
       "name":"Unknown Album",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/5b865325d77e87.43753375.jpg",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/5b865325d77e87.43753375.jpg",
       "created_at":"2018-08-29 02:59:42",
       "is_compilation":false
     },
@@ -84,7 +84,7 @@
       "id":914,
       "artist_id":470,
       "name":"Victory Songs",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/5cb339fbae3801.97073873.jpeg",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fbae3801.97073873.jpeg",
       "created_at":"2019-04-14 13:47:39",
       "is_compilation":false
     },
@@ -92,7 +92,7 @@
       "id":921,
       "artist_id":472,
       "name":"Wish You Were Here",
-      "cover":"https:\/\/localhost:8088\/public\/img\/covers\/5cb339fc935a73.87216239.jpeg",
+      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fc935a73.87216239.jpeg",
       "created_at":"2019-04-14 13:47:40",
       "is_compilation":false
     }

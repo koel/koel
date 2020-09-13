@@ -6,9 +6,6 @@ use App\Http\Requests\Download\SongRequest;
 use App\Repositories\SongRepository;
 use App\Services\DownloadService;
 
-/**
- * @group 6. Download
- */
 class SongController extends Controller
 {
     private $songRepository;
@@ -19,13 +16,6 @@ class SongController extends Controller
         $this->songRepository = $songRepository;
     }
 
-    /**
-     * Download one or several songs
-     *
-     * @queryParam songs array An array of song IDs
-     *
-     * @response []
-     */
     public function show(SongRequest $request)
     {
         $songs = $this->songRepository->getByIds($request->songs);

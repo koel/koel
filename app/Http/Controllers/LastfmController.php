@@ -11,7 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
 /**
- * @group Last.fm integration
+ * @group 9. Last.fm integration
  */
 class LastfmController extends Controller
 {

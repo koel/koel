@@ -2,39 +2,33 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\ScrobbleStoreRequest;
 use App\Jobs\ScrobbleJob;
 use App\Models\Song;
+use App\Models\User;
 use App\Services\LastfmService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Response;
 
-/**
- * @group Last.fm integration
- */
 class ScrobbleController extends Controller
 {
     private $lastfmService;
 
-    public function __construct(LastfmService $lastfmService)
+    /** @var User */
+    private $currentUser;
+
+    public function __construct(LastfmService $lastfmService, Authenticatable $currentUser)
     {
         $this->lastfmService = $lastfmService;
+        $this->currentUser = $currentUser;
     }
 
-    /**
-     * Scrobble a song
-     *
-     * Create a [Last.fm scrobble entry](https://www.last.fm/api/scrobbling) for a song.
-     *
-     * @param string $timestamp the UNIX timestamp when the song started playing
-     *
-     * @return JsonResponse
-     */
-    public function store(Request $request, Song $song, string $timestamp)
+    public function store(ScrobbleStoreRequest $request, Song $song)
     {
-        if (!$song->artist->is_unknown && $request->user()->connectedToLastfm()) {
-            ScrobbleJob::dispatch($request->user(), $song, (int) $timestamp);
+        if (!$song->artist->is_unknown && $this->currentUser->connectedToLastfm()) {
+            ScrobbleJob::dispatch($this->currentUser, $song, (int) $request->timestamp);
         }
 
-        return response()->json();
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

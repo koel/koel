@@ -6,7 +6,6 @@ use App\Http\Requests\API\ViewSongOnITunesRequest;
 use App\Models\Album;
 use App\Services\iTunesService;
 use App\Services\TokenManager;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
 class iTunesController extends Controller
@@ -20,11 +19,6 @@ class iTunesController extends Controller
         $this->tokenManager = $tokenManager;
     }
 
-    /**
-     * View a song on iTunes store.
-     *
-     * @return RedirectResponse
-     */
     public function viewSong(ViewSongOnITunesRequest $request, Album $album)
     {
         abort_unless(

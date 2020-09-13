@@ -29,7 +29,7 @@ Route::group(['namespace' => 'API'], function () {
 
         Route::post('settings', 'SettingController@store');
 
-        Route::post('{song}/scrobble/{timestamp}', 'ScrobbleController@store')->where(['timestamp' => '\d+']);
+        Route::post('{song}/scrobble', 'ScrobbleController@store');
         Route::put('songs', 'SongController@update');
 
         Route::resource('upload', 'UploadController');

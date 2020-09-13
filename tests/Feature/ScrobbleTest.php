@@ -22,14 +22,15 @@ class ScrobbleTest extends TestCase
         $user = factory(User::class)->create();
         $user->setPreference('lastfm_session_key', 'foo');
 
-        $ts = time();
+        $timestamp = time();
 
         static::mockIocDependency(LastfmService::class)
             ->shouldReceive('scrobble')
-            ->with($song->album->artist->name, $song->title, $ts, $song->album->name, 'foo')
+            ->with($song->album->artist->name, $song->title, $timestamp, $song->album->name, 'foo')
             ->once();
 
-        $this->postAsUser("/api/{$song->id}/scrobble/$ts", [], $user)
-            ->assertOk();
+        $response = $this->postAsUser("/api/{$song->id}/scrobble", ['timestamp' => $timestamp], $user);
+
+        $response->assertStatus(204);
     }
 }

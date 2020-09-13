@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use App\Traits\CanFilterByUser;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Collection;
 
 /**
  * @property int        $user_id
@@ -17,7 +18,7 @@ use Illuminate\Support\Collection;
  * @property string     $name
  * @property user       $user
  *
- * @method static \Illuminate\Database\Eloquent\Collection orderBy(string $field, string $order = 'asc')
+ * @method static Builder orderBy(string $field, string $order = 'asc')
  */
 class Playlist extends Model
 {

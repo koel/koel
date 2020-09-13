@@ -30,7 +30,6 @@
     "phpunit/phpunit": "^8.5",
     "laravel/tinker": "^2.0",
     "php-mock/php-mock-mockery": "^1.3",
-    "mpociot/laravel-apidoc-generator": "^4.1",
     "friendsofphp/php-cs-fixer": "^2.16"
   },
   "suggest": {

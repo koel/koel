@@ -13,11 +13,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
-/**
- * @group 4. Playlist management
- */
 class PlaylistController extends Controller
 {
     private $playlistRepository;
@@ -36,27 +32,11 @@ class PlaylistController extends Controller
         $this->currentUser = $currentUser;
     }
 
-    /**
-     * Get current user's playlists
-     *
-     * @responseFile responses/playlist.index.json
-     *
-     * @return JsonResponse
-     */
     public function index()
     {
         return response()->json($this->playlistRepository->getAllByCurrentUser());
     }
 
-    /**
-     * Create a new playlist
-     *
-     * @bodyParam name string required Name of the playlist. Example: Sleepy Songs
-     * @bodyParam rules array An array of rules if creating a "smart playlist."
-     * @responseFile responses/playlist.store.json
-     *
-     * @return JsonResponse
-     */
     public function store(PlaylistStoreRequest $request)
     {
         /** @var Playlist $playlist */
@@ -76,16 +56,6 @@ class PlaylistController extends Controller
         return response()->json($playlist);
     }
 
-    /**
-     * Rename a playlist
-     *
-     * @bodyParam name string required New name of the playlist. Example: Catchy Songs
-     * @responseFile responses/playlist.update.json
-     *
-     * @throws AuthorizationException
-     *
-     * @return JsonResponse
-     */
     public function update(Request $request, Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
@@ -95,18 +65,6 @@ class PlaylistController extends Controller
         return response()->json($playlist);
     }
 
-    /**
-     * Replace a playlist's content
-     *
-     * Instead of adding or removing songs individually, a playlist's content is replaced entirely with an array of song IDs.
-     *
-     * @bodyParam songs array required An array of song IDs.
-     * @response []
-     *
-     * @throws AuthorizationException
-     *
-     * @return JsonResponse
-     */
     public function sync(PlaylistSyncRequest $request, Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
@@ -118,15 +76,6 @@ class PlaylistController extends Controller
         return response()->json();
     }
 
-    /**
-     * Get a playlist's songs
-     *
-     * @response ["0146d01afb742b01f28ab8b556f9a75d", "c741133cb8d1982a5c60b1ce2a1e6e47", "..."]
-     *
-     * @throws AuthorizationException
-     *
-     * @return JsonResponse
-     */
     public function getSongs(Playlist $playlist)
     {
         $this->authorize('owner', $playlist);

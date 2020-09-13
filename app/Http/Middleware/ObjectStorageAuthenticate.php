@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 /**
  * Authenticate requests from Object Storage services (like S3).
- * Such requests must have an apKey data, which matches with our app key.
+ * Such requests must have an `appKey` query parameter, which matches our app key.
  */
 class ObjectStorageAuthenticate
 {

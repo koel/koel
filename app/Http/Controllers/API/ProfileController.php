@@ -3,52 +3,29 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\ProfileUpdateRequest;
+use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use RuntimeException;
+use Illuminate\Http\Response;
 
-/**
- * @group 7. User management
- */
 class ProfileController extends Controller
 {
     private $hash;
 
-    public function __construct(Hash $hash)
+    /** @var User */
+    private $currentUser;
+
+    public function __construct(Hash $hash, ?Authenticatable $currentUser)
     {
         $this->hash = $hash;
+        $this->currentUser = $currentUser;
     }
 
-    /**
-     * Get current user's profile
-     *
-     * @response {
-     *   "id": 42,
-     *   "name": "John Doe",
-     *   "email": "john@doe.com"
-     * }
-     *
-     * @return JsonResponse
-     */
-    public function show(Request $request)
+    public function show()
     {
-        return response()->json($request->user());
+        return response()->json($this->currentUser);
     }
 
-    /**
-     * Update current user's profile
-     *
-     * @bodyParam name string required New name. Example: Johny Doe
-     * @bodyParam email string required New email. Example: johny@doe.com
-     * @bodyParam password string New password (null/blank for no change)
-     *
-     * @response []
-     *
-     * @throws RuntimeException
-     *
-     * @return JsonResponse
-     */
     public function update(ProfileUpdateRequest $request)
     {
         if (config('koel.misc.demo')) {
@@ -61,6 +38,8 @@ class ProfileController extends Controller
             $data['password'] = $this->hash->make($request->password);
         }
 
-        return response()->json($request->user()->update($data));
+        $this->currentUser->update($data);
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

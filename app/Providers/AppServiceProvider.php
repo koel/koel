@@ -7,8 +7,6 @@ use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Factory as Validator;
-use Laravel\Tinker\TinkerServiceProvider;
-use Mpociot\ApiDoc\ApiDocGeneratorServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,8 +35,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         if ($this->app->environment() !== 'production') {
-            $this->app->register(TinkerServiceProvider::class);
-            $this->app->register(ApiDocGeneratorServiceProvider::class);
+            $this->app->register(\Laravel\Tinker\TinkerServiceProvider::class);
         }
     }
 }
