@@ -8,10 +8,7 @@ use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\PlaylistRepository;
 use App\Services\SmartPlaylistService;
-use Exception;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PlaylistController extends Controller
@@ -87,16 +84,6 @@ class PlaylistController extends Controller
         );
     }
 
-    /**
-     * Delete a playlist
-     *
-     * @response []
-     *
-     * @throws Exception
-     * @throws AuthorizationException
-     *
-     * @return JsonResponse
-     */
     public function destroy(Playlist $playlist)
     {
         $this->authorize('owner', $playlist);

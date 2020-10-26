@@ -4,20 +4,23 @@ namespace App\Http\Controllers\API\Interaction;
 
 use App\Repositories\InteractionRepository;
 use App\Services\InteractionService;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class RecentlyPlayedController extends Controller
 {
     private $interactionRepository;
 
-    public function __construct(InteractionService $interactionService, InteractionRepository $interactionRepository)
-    {
-        parent::__construct($interactionService);
+    public function __construct(
+        InteractionService $interactionService,
+        InteractionRepository $interactionRepository,
+        ?Authenticatable $currentUser
+    ) {
+        parent::__construct($interactionService, $currentUser);
         $this->interactionRepository = $interactionRepository;
     }
 
-    public function index(Request $request, ?int $count = null)
+    public function index(?int $count = null)
     {
-        return response()->json($this->interactionRepository->getRecentlyPlayed($request->user(), $count));
+        return response()->json($this->interactionRepository->getRecentlyPlayed($this->currentUser, $count));
     }
 }

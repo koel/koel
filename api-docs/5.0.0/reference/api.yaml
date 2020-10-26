@@ -1006,7 +1006,7 @@ paths:
         - last.fm
       responses: {}
       operationId: get-lastfm-connect
-      description: 'Connect the current user to Last.fm. This is NOT an XmlHttpRequest. The application should instead redirect the current user to this route, which will send them to Last.fm for authentication. After authentication is successful, the user will be redirected back to `/lastfm/callback?token=<Last.fm token>`.'
+      description: '[Connect](https://www.last.fm/api/authentication) the current user to Last.fm. This is actually NOT an API request. The application should instead redirect the current user to this route, which will send them to Last.fm for authentication. After authentication is successful, the user will be redirected back to `/lastfm/callback?token=<Last.fm token>`.'
       security:
         - api-token: []
   '/play/{songId}/{transcode}/{bitrate}':

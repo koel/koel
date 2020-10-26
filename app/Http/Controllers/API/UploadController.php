@@ -8,6 +8,7 @@ use App\Exceptions\SongUploadFailedException;
 use App\Http\Requests\API\UploadRequest;
 use App\Services\UploadService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class UploadController extends Controller
 {
@@ -23,9 +24,9 @@ class UploadController extends Controller
         try {
             $song = $this->uploadService->handleUploadedFile($request->file);
         } catch (MediaPathNotSetException $e) {
-            abort(403, $e->getMessage());
+            abort(Response::HTTP_FORBIDDEN, $e->getMessage());
         } catch (SongUploadFailedException $e) {
-            abort(400, $e->getMessage());
+            abort(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
 
         event(new MediaCacheObsolete());

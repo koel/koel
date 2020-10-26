@@ -6,9 +6,6 @@ use App\Http\Requests\Download\Request;
 use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
 
-/**
- * @group 6. Download
- */
 class FavoritesController extends Controller
 {
     private $interactionRepository;
@@ -19,11 +16,6 @@ class FavoritesController extends Controller
         $this->interactionRepository = $interactionRepository;
     }
 
-    /**
-     * Download all songs favorite'd by the current user
-     *
-     * @response []
-     */
     public function show(Request $request)
     {
         $songs = $this->interactionRepository->getUserFavorites($request->user());

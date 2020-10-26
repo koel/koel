@@ -7,12 +7,8 @@ use App\Models\User;
 use App\Services\LastfmService;
 use App\Services\TokenManager;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
-/**
- * @group 9. Last.fm integration
- */
 class LastfmController extends Controller
 {
     private $lastfmService;
@@ -28,19 +24,6 @@ class LastfmController extends Controller
         $this->currentUser = $currentUser;
     }
 
-    /**
-     * Connect to Last.fm
-     *
-     * [Connect](https://www.last.fm/api/authentication) the current user to Last.fm.
-     * This is actually NOT an API request. The application should instead redirect the current user to this route,
-     * which will send them to Last.fm for authentication. After authentication is successful, the user will be
-     * redirected back to `lastfm/callback?token=<Last.fm token>`.
-     *
-     * @queryParam api_token required Authentication token of the current user.
-     * @response []
-     *
-     * @return RedirectResponse
-     */
     public function connect()
     {
         abort_unless(
@@ -52,7 +35,7 @@ class LastfmController extends Controller
         $callbackUrl = urlencode(sprintf(
             '%s?api_token=%s',
             route('lastfm.callback'),
-            // for enhanced security, create a temporary token that can be deleted later
+            // create a temporary token that can be deleted later
             $this->tokenManager->createToken($this->currentUser)->plainTextToken
         ));
 
@@ -61,9 +44,6 @@ class LastfmController extends Controller
         return redirect($url);
     }
 
-    /**
-     * Serve the callback request from Last.fm.
-     */
     public function callback(LastfmCallbackRequest $request)
     {
         $sessionKey = $this->lastfmService->getSessionKey($request->token);

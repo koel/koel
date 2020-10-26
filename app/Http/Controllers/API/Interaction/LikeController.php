@@ -8,6 +8,6 @@ class LikeController extends Controller
 {
     public function store(SongLikeRequest $request)
     {
-        return response()->json($this->interactionService->toggleLike($request->song, $request->user()));
+        return response()->json($this->interactionService->toggleLike($request->song, $this->currentUser));
     }
 }
