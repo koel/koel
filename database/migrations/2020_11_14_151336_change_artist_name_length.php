@@ -9,7 +9,9 @@ class ChangeArtistNameLength extends Migration
     public function up(): void
     {
         Schema::table('artists', static function (Blueprint $table): void {
+            $table->dropIndex('artists_name_unique');
             $table->text('name')->change();
+            $table->unique(['name']);
         });
     }
 
