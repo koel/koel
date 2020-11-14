@@ -12,9 +12,6 @@ php:
 #node_js:
 #  - 10
 
-branches:
-  - master
-
 install:
   - composer self-update
   - composer install --prefer-dist --no-interaction
