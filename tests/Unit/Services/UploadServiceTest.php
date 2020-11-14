@@ -16,14 +16,7 @@ use Tests\TestCase;
 
 class UploadServiceTest extends TestCase
 {
-    /**
-     * @var FileSynchronizer|MockInterface
-     */
     private $fileSynchronizer;
-
-    /**
-     * @var UploadService
-     */
     private $uploadService;
 
     public function setUp(): void

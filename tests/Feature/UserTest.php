@@ -4,16 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
-use Mockery\MockInterface;
 
 class UserTest extends TestCase
 {
-    /** @var MockInterface */
     private $hash;
 
     public function setUp(): void
     {
         parent::setUp();
+
         $this->hash = static::mockIocDependency(Hasher::class);
     }
 
@@ -40,7 +39,7 @@ class UserTest extends TestCase
             'email' => 'bar@baz.com',
             'password' => 'qux',
             'is_admin' => true,
-        ], factory(User::class)->states('admin')->create());
+        ], User::factory()->admin()->create());
 
         self::assertDatabaseHas('users', [
             'name' => 'Foo',
@@ -53,7 +52,7 @@ class UserTest extends TestCase
     public function testAdminUpdatesUser(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'name' => 'John',
             'email' => 'john@doe.com',
             'password' => 'nope',
@@ -71,7 +70,7 @@ class UserTest extends TestCase
             'email' => 'bar@baz.com',
             'password' => 'qux',
             'is_admin' => false,
-        ], factory(User::class)->states('admin')->create());
+        ], User::factory()->admin()->create());
 
         self::assertDatabaseHas('users', [
             'id' => $user->id,
@@ -85,8 +84,8 @@ class UserTest extends TestCase
     public function testAdminDeletesUser(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
-        $admin = factory(User::class)->states('admin')->create();
+        $user = User::factory()->create();
+        $admin = User::factory()->admin()->create();
 
         $this->deleteAsUser("api/user/{$user->id}", [], $admin);
         self::assertDatabaseMissing('users', ['id' => $user->id]);
@@ -95,7 +94,7 @@ class UserTest extends TestCase
     public function testSeppukuNotAllowed(): void
     {
         /** @var User $admin */
-        $admin = factory(User::class)->states('admin')->create();
+        $admin = User::factory()->admin()->create();
 
         // A user can't delete himself
         $this->deleteAsUser("api/user/{$admin->id}", [], $admin)
@@ -106,7 +105,7 @@ class UserTest extends TestCase
 
     public function testUpdateUserProfile(): void
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         self::assertNull($user->getPreference('foo'));
 
         $user->setPreference('foo', 'bar');

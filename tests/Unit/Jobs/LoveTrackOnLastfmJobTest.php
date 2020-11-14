@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Jobs;
+namespace Tests\Unit\Jobs;
 
 use App\Jobs\LoveTrackOnLastfmJob;
 use App\Models\Interaction;
@@ -11,21 +11,16 @@ use Tests\TestCase;
 
 class LoveTrackOnLastfmJobTest extends TestCase
 {
-    /** @var LoveTrackOnLastfmJob */
     private $job;
-
-    /** @var User */
     private $user;
-
-    /** @var Interaction */
     private $interaction;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'foo']]);
-        $this->interaction = factory(Interaction::class)->make();
+        $this->user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'foo']]);
+        $this->interaction = Interaction::factory()->make();
         $this->job = new LoveTrackOnLastfmJob($this->user, $this->interaction);
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Jobs;
+namespace Tests\Unit\Jobs;
 
 use App\Jobs\ScrobbleJob;
 use App\Models\Song;
@@ -11,21 +11,16 @@ use Tests\TestCase;
 
 class ScrobbleJobTest extends TestCase
 {
-    /** @var ScrobbleJob */
     private $job;
-
-    /** @var User */
     private $user;
-
-    /** @var Song */
     private $song;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'foo']]);
-        $this->song = factory(Song::class)->make();
+        $this->user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'foo']]);
+        $this->song = Song::factory()->make();
         $this->job = new ScrobbleJob($this->user, $this->song, 100);
     }
 

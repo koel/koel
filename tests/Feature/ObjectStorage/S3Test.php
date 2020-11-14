@@ -14,6 +14,7 @@ class S3Test extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->disableMiddlewareForAllTests();
     }
 
@@ -39,7 +40,7 @@ class S3Test extends TestCase
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        factory(Song::class)->create([
+        Song::factory()->create([
             'path' => 's3://koel/sample.mp3',
         ]);
 

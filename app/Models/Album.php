@@ -7,6 +7,7 @@ use function App\Helpers\album_cover_url;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -30,9 +31,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static self|null find(int $id)
  * @method static Builder where(...$params)
  * @method static self first()
+ * @method static Builder whereArtistIdAndName(int $id, string $name)
  */
 class Album extends Model
 {
+    use HasFactory;
     use SupportsDeleteWhereIDsNotIn;
 
     const UNKNOWN_ID = 1;
@@ -63,7 +66,7 @@ class Album extends Model
      * Get an album using some provided information.
      * If such is not found, a new album will be created using the information.
      */
-    public static function get(Artist $artist, string $name, bool $isCompilation = false): self
+    public static function getOrCreate(Artist $artist, ?string $name = null, bool $isCompilation = false): self
     {
         // If this is a compilation album, its artist must be "Various Artists"
         if ($isCompilation) {
@@ -72,7 +75,7 @@ class Album extends Model
 
         return static::firstOrCreate([
             'artist_id' => $artist->id,
-            'name' => $name ?: self::UNKNOWN_NAME,
+            'name' => trim($name) ?: self::UNKNOWN_NAME,
         ]);
     }
 

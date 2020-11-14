@@ -10,7 +10,7 @@ class UserTest extends TestCase
     public function testSetUserPreferences(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->setPreference('foo', 'bar');
 
         self::assertSame('bar', $user->preferences['foo']);
@@ -19,7 +19,7 @@ class UserTest extends TestCase
     public function testGetUserPreferences(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'preferences' => ['foo' => 'bar'],
         ]);
 
@@ -29,7 +29,7 @@ class UserTest extends TestCase
     public function testDeleteUserPreferences(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'preferences' => ['foo' => 'bar'],
         ]);
         $user->deletePreference('foo');
@@ -40,7 +40,7 @@ class UserTest extends TestCase
     public function testSensitivePreferencesAreHidden(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'preferences' => ['lastfm_session_key' => 'foo'],
         ]);
 

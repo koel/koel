@@ -23,7 +23,7 @@ class AlbumCoverTest extends TestCase
         $this->expectsEvents(LibraryChanged::class);
 
         /** @var Album $album */
-        $album = factory(Album::class)->create(['id' => 9999]);
+        $album = Album::factory()->create(['id' => 9999]);
 
         $this->mediaMetadataService
             ->shouldReceive('writeAlbumCover')
@@ -34,7 +34,7 @@ class AlbumCoverTest extends TestCase
 
         $response = $this->putAsUser('api/album/'.$album->id.'/cover', [
             'cover' => 'data:image/jpeg;base64,Rm9v',
-        ], factory(User::class)->states('admin')->create());
+        ], User::factory()->admin()->create());
 
         $response->assertStatus(200);
     }
@@ -42,7 +42,7 @@ class AlbumCoverTest extends TestCase
     public function testUpdateNotAllowedForNormalUsers(): void
     {
         /** @var Album $album */
-        $album = factory(Album::class)->create();
+        $album = Album::factory()->create();
 
         $this->mediaMetadataService
             ->shouldReceive('writeAlbumCover')
@@ -50,7 +50,7 @@ class AlbumCoverTest extends TestCase
 
         $this->putAsUser('api/album/'.$album->id.'/cover', [
             'cover' => 'data:image/jpeg;base64,Rm9v',
-        ], factory(User::class)->create())
+        ], User::factory()->create())
             ->assertStatus(403);
     }
 }

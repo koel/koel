@@ -6,19 +6,11 @@ use App\Http\Middleware\ForceHttps;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use Mockery;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 class ForceHttpsTest extends TestCase
 {
-    /**
-     * @var UrlGenerator|MockInterface
-     */
     private $url;
-
-    /**
-     * @var ForceHttps
-     */
     private $middleware;
 
     public function setUp(): void

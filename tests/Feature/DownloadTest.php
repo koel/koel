@@ -50,7 +50,7 @@ class DownloadTest extends TestCase
         $song = Song::first();
 
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->downloadService
             ->shouldReceive('from')
@@ -67,7 +67,7 @@ class DownloadTest extends TestCase
     public function testDownloadMultipleSongs(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $songs = Song::take(2)->orderBy('id')->get();
 
@@ -94,7 +94,7 @@ class DownloadTest extends TestCase
         $album = Album::first();
 
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->downloadService
             ->shouldReceive('from')
@@ -113,7 +113,7 @@ class DownloadTest extends TestCase
         $artist = Artist::first();
 
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->downloadService
             ->shouldReceive('from')
@@ -130,10 +130,10 @@ class DownloadTest extends TestCase
     public function testDownloadPlaylist(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         /** @var Playlist $playlist */
-        $playlist = factory(Playlist::class)->create([
+        $playlist = Playlist::factory()->create([
             'user_id' => $user->id,
         ]);
 
@@ -152,10 +152,10 @@ class DownloadTest extends TestCase
     public function testNonOwnerCannotDownloadPlaylist(): void
     {
         /** @var Playlist $playlist */
-        $playlist = factory(Playlist::class)->create();
+        $playlist = Playlist::factory()->create();
 
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->get("download/playlist/{$playlist->id}?api_token=".$user->createToken('Koel')->plainTextToken)
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -164,7 +164,7 @@ class DownloadTest extends TestCase
     public function testDownloadFavorites(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $favorites = Collection::make();
 
         static::mockIocDependency(InteractionRepository::class)

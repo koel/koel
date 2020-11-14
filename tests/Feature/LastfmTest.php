@@ -29,7 +29,7 @@ class LastfmTest extends TestCase
     public function testSetSessionKey(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user)
             ->assertStatus(204);
 
@@ -39,7 +39,7 @@ class LastfmTest extends TestCase
     public function testConnectToLastfm(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $token = $user->createToken('Koel')->plainTextToken;
 
         $temporaryToken = Mockery::mock(NewAccessToken::class);
@@ -65,7 +65,7 @@ class LastfmTest extends TestCase
     public function testCallback(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $token = $user->createToken('Koel')->plainTextToken;
 
         self::assertNotNull(PersonalAccessToken::findToken($token));
@@ -88,7 +88,7 @@ class LastfmTest extends TestCase
     public function testRetrieveAndStoreSessionKey(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $lastfm = static::mockIocDependency(LastfmService::class);
         $lastfm->shouldReceive('getSessionKey')
@@ -110,7 +110,7 @@ class LastfmTest extends TestCase
     public function testDisconnectUser(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
+        $user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'bar']]);
         $this->deleteAsUser('api/lastfm/disconnect', [], $user);
         $user->refresh();
 

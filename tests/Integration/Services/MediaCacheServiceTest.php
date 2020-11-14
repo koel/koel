@@ -8,19 +8,11 @@ use App\Models\Song;
 use App\Services\MediaCacheService;
 use Illuminate\Cache\Repository as Cache;
 use Mockery;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 class MediaCacheServiceTest extends TestCase
 {
-    /**
-     * @var MediaCacheService
-     */
     private $mediaCacheService;
-
-    /**
-     * @var Cache|MockInterface
-     */
     private $cache;
 
     public function setUp(): void
@@ -33,7 +25,7 @@ class MediaCacheServiceTest extends TestCase
 
     public function testGetIfCacheIsNotAvailable(): void
     {
-        factory(Song::class, 5)->create();
+        Song::factory(5)->create();
 
         $this->cache->shouldReceive('rememberForever')->andReturn([
             'albums' => Album::orderBy('name')->get(),

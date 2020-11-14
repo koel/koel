@@ -7,33 +7,21 @@ use Tests\TestCase;
 
 class SongTest extends TestCase
 {
-    /** @test */
-    public function its_lyrics_has_all_new_line_characters_replace_by_br_tags()
+    public function testLyricsHaveNewlinesReplacedByBrTags()
     {
-        // Given a song with lyrics contains new line characters
         /** @var Song $song */
-        $song = factory(Song::class)->create([
+        $song = Song::factory()->create([
             'lyrics' => "foo\rbar\nbaz\r\nqux",
         ]);
 
-        // When I retrieve its lyrics
-        $lyrics = $song->lyrics;
-
-        // Then I see the new line characters replaced by <br />
-        self::assertEquals('foo<br />bar<br />baz<br />qux', $lyrics);
+        self::assertEquals('foo<br />bar<br />baz<br />qux', $song->lyrics);
     }
 
-    /** @test */
-    public function amazon_s3_parameters_can_be_retrieved_from_s3_hosted_songs()
+    public function testGettingS3HostedSongs(): void
     {
-        // Given a song hosted on S3
         /** @var Song $song */
-        $song = factory(Song::class)->create(['path' => 's3://foo/bar']);
+        $song = Song::factory()->create(['path' => 's3://foo/bar']);
 
-        // When I check its S3 parameters
-        $params = $song->s3_params;
-
-        // Then I receive the correct parameters
-        self::assertEquals(['bucket' => 'foo', 'key' => 'bar'], $params);
+        self::assertEquals(['bucket' => 'foo', 'key' => 'bar'], $song->s3_params);
     }
 }

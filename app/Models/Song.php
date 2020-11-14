@@ -6,6 +6,7 @@ use App\Events\LibraryChanged;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -38,6 +39,7 @@ use Illuminate\Support\Collection;
  */
 class Song extends Model
 {
+    use HasFactory;
     use SupportsDeleteWhereIDsNotIn;
 
     protected $guarded = [];
@@ -156,7 +158,7 @@ class Song extends Model
             $artistName = Artist::UNKNOWN_NAME;
         }
 
-        $artist = Artist::get($artistName);
+        $artist = Artist::getOrCreate($artistName);
 
         switch ($compilationState) {
             case 1: // ALL, or forcing compilation status to be Yes
@@ -170,7 +172,7 @@ class Song extends Model
                 break;
         }
 
-        $album = Album::get($artist, $albumName, $isCompilation);
+        $album = Album::getOrCreate($artist, $albumName, $isCompilation);
 
         $this->artist_id = $artist->id;
         $this->album_id = $album->id;

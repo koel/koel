@@ -22,7 +22,7 @@ class InteractionTest extends TestCase
     public function play_count_is_increased(): void
     {
         $this->withoutEvents();
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $song = Song::orderBy('id')->first();
         $this->postAsUser('api/interaction/play', ['song' => $song->id], $user);
@@ -52,7 +52,7 @@ class InteractionTest extends TestCase
     {
         $this->expectsEvents(SongLikeToggled::class);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $song = Song::orderBy('id')->first();
         $this->postAsUser('api/interaction/like', ['song' => $song->id], $user);
@@ -82,7 +82,7 @@ class InteractionTest extends TestCase
     {
         $this->expectsEvents(SongLikeToggled::class);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $songs = Song::orderBy('id')->take(2)->get();
         $songIds = array_pluck($songs->toArray(), 'id');

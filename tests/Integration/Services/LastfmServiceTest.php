@@ -5,7 +5,6 @@ namespace Tests\Integration\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\LastfmService;
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -15,13 +14,10 @@ use Tests\TestCase;
 
 class LastfmServiceTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function testGetArtistInformation(): void
     {
         /** @var Artist $artist */
-        $artist = factory(Artist::class)->make(['name' => 'foo']);
+        $artist = Artist::factory()->make(['name' => 'foo']);
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
@@ -46,7 +42,7 @@ class LastfmServiceTest extends TestCase
     public function testGetArtistInformationForNonExistentArtist(): void
     {
         /** @var Artist $artist */
-        $artist = factory(Artist::class)->make();
+        $artist = Artist::factory()->make();
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
@@ -58,14 +54,11 @@ class LastfmServiceTest extends TestCase
         self::assertNull($api->getArtistInformation($artist->name));
     }
 
-    /**
-     * @throws Exception
-     */
     public function testGetAlbumInformation(): void
     {
         /** @var Album $album */
-        $album = factory(Album::class)->create([
-            'artist_id' => factory(Artist::class)->create(['name' => 'bar'])->id,
+        $album = Album::factory()->create([
+            'artist_id' => Artist::factory()->create(['name' => 'bar'])->id,
             'name' => 'foo',
         ]);
 
@@ -105,7 +98,7 @@ class LastfmServiceTest extends TestCase
     public function testGetAlbumInformationForNonExistentAlbum(): void
     {
         /** @var Album $album */
-        $album = factory(Album::class)->create();
+        $album = Album::factory()->create();
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [

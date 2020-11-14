@@ -13,6 +13,7 @@ class MediaMetadataServiceTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->cleanUp();
     }
 
@@ -20,7 +21,7 @@ class MediaMetadataServiceTest extends TestCase
     {
         copy(__DIR__.'/../../blobs/cover.png', album_cover_path('album-cover-for-thumbnail-test.jpg'));
 
-        $album = factory(Album::class)->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
+        $album = Album::factory()->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
 
         self::assertSame(
             album_cover_url('album-cover-for-thumbnail-test_thumb.jpg'),
@@ -32,7 +33,7 @@ class MediaMetadataServiceTest extends TestCase
 
     public function testGetAlbumThumbnailUrlWithNoCover(): void
     {
-        $album = factory(Album::class)->create(['cover' => null]);
+        $album = Album::factory()->create(['cover' => null]);
         self::assertNull(app(MediaMetadataService::class)->getAlbumThumbnailUrl($album));
     }
 
@@ -40,8 +41,8 @@ class MediaMetadataServiceTest extends TestCase
     {
         @unlink(album_cover_path('album-cover-for-thumbnail-test.jpg'));
         @unlink(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
-        self::assertFileNotExists(album_cover_path('album-cover-for-thumbnail-test.jpg'));
-        self::assertFileNotExists(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
+        self::assertFileDoesNotExist(album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        self::assertFileDoesNotExist(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
     }
 
     protected function tearDown(): void
