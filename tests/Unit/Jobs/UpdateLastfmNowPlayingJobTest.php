@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Jobs;
+namespace Tests\Unit\Jobs;
 
 use App\Jobs\UpdateLastfmNowPlayingJob;
 use App\Models\Song;
@@ -11,22 +11,17 @@ use Tests\TestCase;
 
 class UpdateLastfmNowPlayingJobTest extends TestCase
 {
-    /** @var UpdateLastfmNowPlayingJob */
     private $job;
-
-    /** @var User */
     private $user;
-
-    /** @var Song */
     private $song;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'foo']]);
-        $this->song = factory(Song::class)->make();
-        $this->job = new UpdateLastfmNowPlayingJob($this->user, $this->song, 100);
+        $this->user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'foo']]);
+        $this->song = Song::factory()->make();
+        $this->job = new UpdateLastfmNowPlayingJob($this->user, $this->song);
     }
 
     public function testHandle(): void

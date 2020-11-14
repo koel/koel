@@ -24,7 +24,7 @@ class DownloadArtistImageTest extends TestCase
 
     public function testHandle(): void
     {
-        $artist = factory(Artist::class)->make(['image' => null]);
+        $artist = Artist::factory()->make(['image' => null]);
         $event = new ArtistInformationFetched($artist, ['image' => 'https://foo.bar/baz.jpg']);
 
         $this->mediaMetaDataService

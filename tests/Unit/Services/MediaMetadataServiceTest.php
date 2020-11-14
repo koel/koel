@@ -10,15 +10,11 @@ use App\Services\ImageWriter;
 use App\Services\MediaMetadataService;
 use Illuminate\Log\Logger;
 use Mockery;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 class MediaMetadataServiceTest extends TestCase
 {
-    /** @var MediaMetadataService */
     private $mediaMetadataService;
-
-    /** @var ImageWriter|MockInterface */
     private $imageWriter;
 
     public function setUp(): void
@@ -32,7 +28,7 @@ class MediaMetadataServiceTest extends TestCase
     public function testWriteAlbumCover(): void
     {
         /** @var Album $album */
-        $album = factory(Album::class)->create();
+        $album = Album::factory()->create();
         $coverContent = 'dummy';
         $coverPath = '/koel/public/img/album/foo.jpg';
 
@@ -48,7 +44,7 @@ class MediaMetadataServiceTest extends TestCase
     public function testWriteArtistImage(): void
     {
         /** @var Artist $artist */
-        $artist = factory(Artist::class)->create();
+        $artist = Artist::factory()->create();
         $imageContent = 'dummy';
         $imagePath = '/koel/public/img/artist/foo.jpg';
 

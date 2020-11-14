@@ -5,6 +5,7 @@ namespace Tests;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -15,8 +16,9 @@ use Tests\Traits\SandboxesTests;
 
 abstract class TestCase extends BaseTestCase
 {
-    use DatabaseTransactions;
+    use ArraySubsetAsserts;
     use CreatesApplication;
+    use DatabaseTransactions;
     use InteractsWithIoc;
     use SandboxesTests;
 
@@ -42,17 +44,17 @@ abstract class TestCase extends BaseTestCase
     protected static function createSampleMediaSet(): void
     {
         /** @var Artist $artist */
-        $artist = factory(Artist::class)->create();
+        $artist = Artist::factory()->create();
 
         // Sample 3 albums
         /** @var Album[] $albums */
-        $albums = factory(Album::class, 3)->create([
+        $albums = Album::factory(3)->create([
             'artist_id' => $artist->id,
         ]);
 
         // 7-15 songs per albums
         foreach ($albums as $album) {
-            factory(Song::class, random_int(7, 15))->create([
+            Song::factory(random_int(7, 15))->create([
                 'album_id' => $album->id,
                 'artist_id' => $artist->id,
             ]);

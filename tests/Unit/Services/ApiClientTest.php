@@ -8,7 +8,6 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Log\Logger;
 use Mockery;
-use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\Unit\Stubs\ConcreteApiClient;
 
@@ -16,13 +15,8 @@ class ApiClientTest extends TestCase
 {
     use WithoutMiddleware;
 
-    /** @var Cache|MockInterface */
     private $cache;
-
-    /** @var Client|MockInterface */
     private $client;
-
-    /** @var Logger|MockInterface */
     private $logger;
 
     public function setUp(): void

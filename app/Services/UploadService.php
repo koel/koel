@@ -6,6 +6,7 @@ use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use App\Models\Song;
+use function Functional\memoize;
 use Illuminate\Http\UploadedFile;
 
 class UploadService
@@ -45,19 +46,15 @@ class UploadService
      */
     private function getUploadDirectory(): string
     {
-        static $uploadDirectory;
-
-        if (!$uploadDirectory) {
+        return memoize(static function (): string {
             $mediaPath = Setting::get('media_path');
 
             if (!$mediaPath) {
                 throw new MediaPathNotSetException();
             }
 
-            $uploadDirectory = $mediaPath.DIRECTORY_SEPARATOR.self::UPLOAD_DIRECTORY.DIRECTORY_SEPARATOR;
-        }
-
-        return $uploadDirectory;
+            return $mediaPath.DIRECTORY_SEPARATOR.self::UPLOAD_DIRECTORY.DIRECTORY_SEPARATOR;
+        });
     }
 
     /**

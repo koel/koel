@@ -7,13 +7,9 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
-use Exception;
 
 class SongTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -21,15 +17,12 @@ class SongTest extends TestCase
         static::createSampleMediaSet();
     }
 
-    /**
-     * @throws Exception
-     */
     public function testSingleUpdateAllInfoNoCompilation(): void
     {
         $this->expectsEvents(LibraryChanged::class);
         $song = Song::orderBy('id', 'desc')->first();
 
-        $user = factory(User::class)->states('admin')->create();
+        $user = User::factory()->admin()->create();
         $this->putAsUser('/api/songs', [
             'songs' => [$song->id],
             'data' => [
@@ -62,7 +55,7 @@ class SongTest extends TestCase
         $song = Song::orderBy('id', 'desc')->first();
         $originalArtistId = $song->album->artist->id;
 
-        $user = factory(User::class)->states('admin')->create();
+        $user = User::factory()->admin()->create();
         $this->putAsUser('/api/songs', [
             'songs' => [$song->id],
             'data' => [
@@ -87,7 +80,7 @@ class SongTest extends TestCase
     {
         $songIds = Song::orderBy('id', 'desc')->take(3)->pluck('id')->toArray();
 
-        $user = factory(User::class)->states('admin')->create();
+        $user = User::factory()->admin()->create();
         $this->putAsUser('/api/songs', [
             'songs' => $songIds,
             'data' => [
@@ -124,7 +117,7 @@ class SongTest extends TestCase
         $originalSongs = Song::orderBy('id', 'desc')->take(3)->get();
         $songIds = $originalSongs->pluck('id')->toArray();
 
-        $user = factory(User::class)->states('admin')->create();
+        $user = User::factory()->admin()->create();
         $this->putAsUser('/api/songs', [
             'songs' => $songIds,
             'data' => [
@@ -159,7 +152,7 @@ class SongTest extends TestCase
     {
         $song = Song::orderBy('id', 'desc')->first();
 
-        $user = factory(User::class)->states('admin')->create();
+        $user = User::factory()->admin()->create();
         $this->putAsUser('/api/songs', [
             'songs' => [$song->id],
             'data' => [

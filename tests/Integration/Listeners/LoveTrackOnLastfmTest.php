@@ -24,7 +24,7 @@ class LoveTrackOnLastfmTest extends TestCase
     {
         static::createSampleMediaSet();
 
-        $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
+        $user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'bar']]);
 
         $interaction = Interaction::create([
             'user_id' => $user->id,

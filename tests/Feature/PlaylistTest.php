@@ -11,13 +11,14 @@ class PlaylistTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         static::createSampleMediaSet();
     }
 
     public function testCreatingPlaylist(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $songs = Song::orderBy('id')->take(3)->get();
 
         $this->postAsUser('api/playlist', [
@@ -44,10 +45,10 @@ class PlaylistTest extends TestCase
     public function testUpdatePlaylistName(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         /** @var Playlist $playlist */
-        $playlist = factory(Playlist::class)->create([
+        $playlist = Playlist::factory()->create([
             'user_id' => $user->id,
             'name' => 'Foo',
         ]);
@@ -60,7 +61,7 @@ class PlaylistTest extends TestCase
     public function testNonOwnerCannotUpdatePlaylist(): void
     {
         /** @var Playlist $playlist */
-        $playlist = factory(Playlist::class)->create([
+        $playlist = Playlist::factory()->create([
             'name' => 'Foo',
         ]);
 
@@ -71,10 +72,10 @@ class PlaylistTest extends TestCase
     public function testSyncPlaylist(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         /** @var Playlist $playlist */
-        $playlist = factory(Playlist::class)->create([
+        $playlist = Playlist::factory()->create([
             'user_id' => $user->id,
         ]);
 
@@ -104,10 +105,10 @@ class PlaylistTest extends TestCase
     public function testDeletePlaylist(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         /** @var Playlist $playlist */
-        $playlist = factory(Playlist::class)->create([
+        $playlist = Playlist::factory()->create([
             'user_id' => $user->id,
         ]);
 
@@ -118,7 +119,7 @@ class PlaylistTest extends TestCase
     public function testNonOwnerCannotDeletePlaylist(): void
     {
         /** @var Playlist $playlist */
-        $playlist = factory(Playlist::class)->create();
+        $playlist = Playlist::factory()->create();
 
         $this->deleteAsUser("api/playlist/{$playlist->id}")
             ->assertStatus(403);
@@ -127,14 +128,14 @@ class PlaylistTest extends TestCase
     public function testGetPlaylist(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         /** @var Playlist $playlist */
-        $playlist = factory(Playlist::class)->create([
+        $playlist = Playlist::factory()->create([
             'user_id' => $user->id,
         ]);
 
-        $songs = factory(Song::class, 2)->create();
+        $songs = Song::factory(2)->create();
         $playlist->songs()->saveMany($songs);
 
         $this->getAsUser("api/playlist/{$playlist->id}/songs", $user)

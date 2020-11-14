@@ -8,6 +8,7 @@ use function App\Helpers\artist_image_url;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -26,9 +27,11 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @method static self firstOrCreate(array $where, array $params = [])
  * @method static Builder where(...$params)
  * @method static self first()
+ * @method static Builder whereName(string $name)
  */
 class Artist extends Model
 {
+    use HasFactory;
     use SupportsDeleteWhereIDsNotIn;
 
     const UNKNOWN_ID = 1;
@@ -81,16 +84,14 @@ class Artist extends Model
      * Get an Artist object from their name.
      * If such is not found, a new artist will be created.
      */
-    public static function get(string $name): self
+    public static function getOrCreate(?string $name = null): self
     {
         // Remove the BOM from UTF-8/16/32, as it will mess up the database constraints.
         if ($encoding = Util::detectUTFEncoding($name)) {
             $name = mb_convert_encoding($name, 'UTF-8', $encoding);
         }
 
-        $name = trim($name) ?: self::UNKNOWN_NAME;
-
-        return static::firstOrCreate(compact('name'));
+        return static::firstOrCreate(['name' => trim($name) ?: self::UNKNOWN_NAME]);
     }
 
     /**

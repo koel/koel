@@ -13,6 +13,7 @@ class FileSynchronizerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->fileSynchronizer = app(FileSynchronizer::class);
     }
 
@@ -48,9 +49,10 @@ class FileSynchronizerTest extends TestCase
     }
 
     /** @test */
-    public function song_without_a_title_tag_has_file_name_as_the_title(): void
+    public function testSongWithoutTitleHasFileNameAsTitle(): void
     {
         $this->fileSynchronizer->setFile(__DIR__.'/../../songs/blank.mp3');
+
         self::assertSame('blank', $this->fileSynchronizer->getFileInfo()['title']);
     }
 }

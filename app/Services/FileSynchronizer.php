@@ -186,21 +186,21 @@ class FileSynchronizer
 
             // If the "artist" tag is specified, use it.
             // Otherwise, re-use the existing model value.
-            $artist = isset($info['artist']) ? Artist::get($info['artist']) : $this->song->album->artist;
+            $artist = isset($info['artist']) ? Artist::getOrCreate($info['artist']) : $this->song->album->artist;
 
             // If the "album" tag is specified, use it.
             // Otherwise, re-use the existing model value.
             if (isset($info['album'])) {
                 $album = $changeCompilationAlbumOnly
                     ? $this->song->album
-                    : Album::get($artist, $info['album'], array_get($info, 'compilation'));
+                    : Album::getOrCreate($artist, $info['album'], array_get($info, 'compilation'));
             } else {
                 $album = $this->song->album;
             }
         } else {
             // The file is newly added.
-            $artist = Artist::get($info['artist']);
-            $album = Album::get($artist, $info['album'], array_get($info, 'compilation'));
+            $artist = Artist::getOrCreate($info['artist']);
+            $album = Album::getOrCreate($artist, $info['album'], array_get($info, 'compilation'));
         }
 
         if (!$album->has_cover) {

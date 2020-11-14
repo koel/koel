@@ -16,14 +16,9 @@ class SmartPlaylistServiceTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->service = $this->app->make(SmartPlaylistService::class);
-        Carbon::setTestNow(new Carbon('2018-07-15'));
-    }
 
-    protected function tearDown(): void
-    {
-        Carbon::setTestNow();
-        parent::tearDown();
+        $this->service = app(SmartPlaylistService::class);
+        Carbon::setTestNow(new Carbon('2018-07-15'));
     }
 
     private function readFixtureFile(string $fileName): array
@@ -127,7 +122,7 @@ class SmartPlaylistServiceTest extends TestCase
         $rules = $this->readFixtureFile('requiresUser.json');
 
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         self::assertEquals([
             'model' => 'interactions.user_id',

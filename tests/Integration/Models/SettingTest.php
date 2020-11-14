@@ -7,36 +7,25 @@ use Tests\TestCase;
 
 class SettingTest extends TestCase
 {
-    /** @test */
-    public function it_sets_a_key_value_pair()
+    public function testSetsKeyValuePair(): void
     {
-        // Given a key-value pair
-        $key = 'foo';
-        $value = 'bar';
+        Setting::set('foo', 'bar');
 
-        // When I call the method to save the key-value
-        Setting::set($key, $value);
-
-        // Then I see the key and serialized value in the database
         self::assertDatabaseHas('settings', [
             'key' => 'foo',
             'value' => serialize('bar'),
         ]);
     }
 
-    /** @test */
-    public function it_supports_associative_arrays_when_saving_settings()
+    public function testSupportAssociativeArray(): void
     {
-        // Given an associative array of multiple settings
         $settings = [
             'foo' => 'bar',
             'baz' => 'qux',
         ];
 
-        // When I call the method to save the settings
         Setting::set($settings);
 
-        // Then I see all settings the database
         self::assertDatabaseHas('settings', [
             'key' => 'foo',
             'value' => serialize('bar'),
@@ -46,8 +35,7 @@ class SettingTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function existing_settings_should_be_updated()
+    public function testUpdateSettings(): void
     {
         Setting::set('foo', 'bar');
         Setting::set('foo', 'baz');
@@ -55,19 +43,13 @@ class SettingTest extends TestCase
         self::assertEquals('baz', Setting::get('foo'));
     }
 
-    /** @test */
-    public function it_gets_the_setting_value_in_an_unserialized_format()
+    public function testGetSettings(): void
     {
-        // Given a setting in the database
-        factory(Setting::class)->create([
+        Setting::factory()->create([
             'key' => 'foo',
             'value' => 'bar',
         ]);
 
-        // When I get the setting using the key
-        $value = Setting::get('foo');
-
-        // Then I receive the value in an unserialized format
-        self::assertSame('bar', $value);
+        self::assertSame('bar', Setting::get('foo'));
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Traits\CanFilterByUser;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,11 +15,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User $user
  * @property int  $id
  *
- * @method self firstOrCreate(array $where, array $params = [])
+ * @method self   firstOrCreate(array $where, array $params = [])
+ * @method static self find(int $id)
+ * @method static Builder whereSongIdAndUserId(string $songId, string $userId)
  */
 class Interaction extends Model
 {
     use CanFilterByUser;
+    use HasFactory;
 
     protected $casts = [
         'liked' => 'boolean',

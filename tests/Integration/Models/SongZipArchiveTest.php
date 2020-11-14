@@ -8,12 +8,9 @@ use Tests\TestCase;
 
 class SongZipArchiveTest extends TestCase
 {
-    /** @test */
-    public function a_song_can_be_added_into_an_archive()
+    public function testAddSongIntoArchive(): void
     {
-        $song = factory(Song::class)->create([
-            'path' => realpath(__DIR__.'/../../songs/full.mp3'),
-        ]);
+        $song = Song::factory()->create(['path' => realpath(__DIR__.'/../../songs/full.mp3')]);
 
         $songZipArchive = new SongZipArchive();
         $songZipArchive->addSong($song);
@@ -22,16 +19,11 @@ class SongZipArchiveTest extends TestCase
         self::assertEquals('full.mp3', $songZipArchive->getArchive()->getNameIndex(0));
     }
 
-    /** @test */
-    public function multiple_songs_can_be_added_into_an_archive()
+    public function testAddMultipleSongsIntoArchive(): void
     {
         $songs = collect([
-            factory(Song::class)->create([
-                'path' => realpath(__DIR__.'/../../songs/full.mp3'),
-            ]),
-            factory(Song::class)->create([
-                'path' => realpath(__DIR__.'/../../songs/lorem.mp3'),
-            ]),
+            Song::factory()->create(['path' => realpath(__DIR__.'/../../songs/full.mp3')]),
+            Song::factory()->create(['path' => realpath(__DIR__.'/../../songs/lorem.mp3')]),
         ]);
 
         $songZipArchive = new SongZipArchive();

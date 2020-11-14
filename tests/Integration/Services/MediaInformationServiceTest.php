@@ -8,40 +8,28 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Services\LastfmService;
 use App\Services\MediaInformationService;
-use Exception;
-use Mockery as m;
-use Mockery\MockInterface;
+use Mockery;
 use Tests\TestCase;
 
 class MediaInformationServiceTest extends TestCase
 {
-    /**
-     * @var LastfmService|MockInterface
-     */
     private $lastFmService;
-
-    /**
-     * @var MediaInformationService
-     */
     private $mediaInformationService;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->lastFmService = m::mock(LastfmService::class);
+        $this->lastFmService = Mockery::mock(LastfmService::class);
         $this->mediaInformationService = new MediaInformationService($this->lastFmService);
     }
 
-    /**
-     * @throws Exception
-     */
     public function testGetAlbumInformation(): void
     {
         $this->expectsEvents(AlbumInformationFetched::class);
 
         /** @var Album $album */
-        $album = factory(Album::class)->create();
+        $album = Album::factory()->create();
 
         $this->lastFmService
             ->shouldReceive('getAlbumInformation')
@@ -57,15 +45,12 @@ class MediaInformationServiceTest extends TestCase
         ], $info);
     }
 
-    /**
-     * @throws Exception
-     */
     public function testGetArtistInformation(): void
     {
         $this->expectsEvents(ArtistInformationFetched::class);
 
         /** @var Artist $artist */
-        $artist = factory(Artist::class)->create();
+        $artist = Artist::factory()->create();
 
         $this->lastFmService
             ->shouldReceive('getArtistInformation')

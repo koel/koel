@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Database\Seeder;

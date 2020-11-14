@@ -10,18 +10,15 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\UploadService;
 use Illuminate\Http\UploadedFile;
-use Mockery\MockInterface;
 
 class UploadTest extends TestCase
 {
-    /**
-     * @var MockInterface
-     */
     private $uploadService;
 
     public function setUp(): void
     {
         parent::setUp();
+
         $this->uploadService = $this->mockIocDependency(UploadService::class);
     }
 
@@ -38,7 +35,7 @@ class UploadTest extends TestCase
         $this->postAsUser(
             '/api/upload',
             ['file' => $file],
-            factory(User::class)->create()
+            User::factory()->create()
         )->assertStatus(403);
     }
 
@@ -50,9 +47,7 @@ class UploadTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideUploadExceptions
-     */
+    /** @dataProvider provideUploadExceptions */
     public function testPostShouldFail(string $exceptionClass, int $statusCode): void
     {
         $this->doesntExpectEvents(MediaCacheObsolete::class);
@@ -67,7 +62,7 @@ class UploadTest extends TestCase
         $this->postAsUser(
             '/api/upload',
             ['file' => $file],
-            factory(User::class)->states('admin')->create()
+            User::factory()->admin()->create()
         )->assertStatus($statusCode);
     }
 
@@ -77,7 +72,7 @@ class UploadTest extends TestCase
         $this->expectsEvents(MediaCacheObsolete::class);
         $file = UploadedFile::fake()->create('foo.mp3', 2048);
         /** @var Song $song */
-        $song = factory(Song::class)->create();
+        $song = Song::factory()->create();
         $this->uploadService
             ->shouldReceive('handleUploadedFile')
             ->once()
@@ -87,7 +82,7 @@ class UploadTest extends TestCase
         $this->postAsUser(
             '/api/upload',
             ['file' => $file],
-            factory(User::class)->states('admin')->create()
+            User::factory()->admin()->create()
         )->assertJsonStructure([
             'album',
             'artist',

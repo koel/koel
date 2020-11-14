@@ -9,7 +9,6 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
-use Exception;
 use getID3;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
@@ -23,15 +22,11 @@ class MediaSyncTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->mediaService = app(MediaSyncService::class);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function songs_can_be_synced(): void
+    public function testSync(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -92,12 +87,7 @@ class MediaSyncTest extends TestCase
         self::assertEquals($currentCover, Album::find($album->id)->cover);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function songs_can_be_force_synced(): void
+    public function testForceSync(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -130,12 +120,7 @@ class MediaSyncTest extends TestCase
         self::assertEquals($originalLyrics, $song->lyrics);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function songs_can_be_synced_with_selectively_tags(): void
+    public function testSelectiveSync(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -159,12 +144,7 @@ class MediaSyncTest extends TestCase
         self::assertEquals('Booom Wroooom', $song->lyrics);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function all_tags_are_catered_for_if_syncing_new_file(): void
+    public function testSyncAllTagsForNewFiles(): void
     {
         // First we sync the test directory to get the data
         $this->mediaService->sync($this->mediaPath);
@@ -184,28 +164,17 @@ class MediaSyncTest extends TestCase
         self::assertEquals($song, $addedSong);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function added_song_is_synced_when_watching(): void
+    public function testSyncAddedSongViaWatch(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
         $path = $this->mediaPath.'/blank.mp3';
-
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
 
         self::assertDatabaseHas('songs', ['path' => $path]);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function deleted_song_is_synced_when_watching(): void
+    public function testSyncDeletedSongViaWatch(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -217,12 +186,7 @@ class MediaSyncTest extends TestCase
         self::assertDatabaseMissing('songs', ['id' => $song->id]);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function deleted_directory_is_synced_when_watching(): void
+    public function testSyncDeletedDirectoryViaWatch(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -235,8 +199,7 @@ class MediaSyncTest extends TestCase
         self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
     }
 
-    /** @test */
-    public function html_entities_in_tags_are_recognized_and_saved_properly(): void
+    public function testHtmlEntities(): void
     {
         static::mockIocDependency(getID3::class, [
             'analyze' => [
@@ -261,12 +224,7 @@ class MediaSyncTest extends TestCase
         self::assertEquals('水谷広実', $info['title']);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function hidden_files_can_optionally_be_ignored_when_syncing(): void
+    public function testOptionallyIgnoreHiddenFiles(): void
     {
         config(['koel.ignore_dot_files' => false]);
         $this->mediaService->sync($this->mediaPath);

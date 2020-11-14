@@ -3,7 +3,6 @@
 namespace Tests\Integration\Services;
 
 use App\Services\YouTubeService;
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Repository;
@@ -13,9 +12,6 @@ use Tests\TestCase;
 
 class YouTubeServiceTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function testSearch(): void
     {
         $this->withoutEvents();

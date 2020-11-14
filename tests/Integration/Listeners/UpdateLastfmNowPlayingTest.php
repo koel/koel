@@ -19,7 +19,7 @@ class UpdateLastfmNowPlayingTest extends TestCase
     {
         static::createSampleMediaSet();
 
-        $user = factory(User::class)->create(['preferences' => ['lastfm_session_key' => 'bar']]);
+        $user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'bar']]);
         $song = Song::first();
 
         $queue = Queue::fake();

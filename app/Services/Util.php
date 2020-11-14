@@ -16,7 +16,7 @@ class Util
     /**
      * Detects higher UTF encoded strings.
      */
-    public function detectUTFEncoding(string $str): ?string
+    public function detectUTFEncoding(?string $str): ?string
     {
         switch (substr($str, 0, 2)) {
             case UTF16_BIG_ENDIAN_BOM:

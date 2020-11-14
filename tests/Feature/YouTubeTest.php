@@ -4,13 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Song;
 use App\Services\YouTubeService;
-use Exception;
 use Mockery;
-use Mockery\MockInterface;
 
 class YouTubeTest extends TestCase
 {
-    /** @var MockInterface */
     private $youTubeService;
 
     public function setUp(): void
@@ -20,9 +17,6 @@ class YouTubeTest extends TestCase
         $this->youTubeService = static::mockIocDependency(YouTubeService::class);
     }
 
-    /**
-     * @throws Exception
-     */
     public function testSearchYouTubeVideos(): void
     {
         static::createSampleMediaSet();

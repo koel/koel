@@ -9,14 +9,7 @@ use Tests\TestCase;
 
 class SongRepositoryTest extends TestCase
 {
-    /**
-     * @var HelperService
-     */
     private $helperService;
-
-    /**
-     * @var SongRepository
-     */
     private $songRepository;
 
     public function setUp(): void
@@ -29,7 +22,7 @@ class SongRepositoryTest extends TestCase
     public function testGetOneByPath(): void
     {
         /** @var Song $song */
-        $song = factory(Song::class)->create(['path' => 'foo']);
+        $song = Song::factory()->create(['path' => 'foo']);
         self::assertSame($song->id, $this->songRepository->getOneByPath('foo')->id);
     }
 }

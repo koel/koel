@@ -4,11 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
-use Mockery\MockInterface;
 
 class ProfileTest extends TestCase
 {
-    /** @var MockInterface */
     private $hash;
 
     public function setUp(): void
@@ -20,7 +18,7 @@ class ProfileTest extends TestCase
 
     public function testUpdateProfileWithoutPassword(): void
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->hash->shouldReceive('make')->never();
 
@@ -32,7 +30,7 @@ class ProfileTest extends TestCase
     public function testUpdateProfileWithPassword(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->hash
             ->shouldReceive('make')

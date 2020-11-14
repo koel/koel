@@ -28,7 +28,7 @@ class StreamerFactoryTest extends TestCase
     public function testCreateS3Streamer(): void
     {
         /** @var Song $song */
-        $song = factory(Song::class)->make(['path' => 's3://bucket/foo.mp3']);
+        $song = Song::factory()->make(['path' => 's3://bucket/foo.mp3']);
 
         self::assertInstanceOf(S3Streamer::class, $this->streamerFactory->createStreamer($song));
     }
@@ -41,8 +41,9 @@ class StreamerFactoryTest extends TestCase
 
         /** @var StreamerFactory $streamerFactory */
         $streamerFactory = app(StreamerFactory::class);
+
         /** @var Song $song */
-        $song = factory(Song::class)->make();
+        $song = Song::factory()->make();
         self::assertInstanceOf(TranscodingStreamer::class, $streamerFactory->createStreamer($song, null));
     }
 
@@ -55,7 +56,7 @@ class StreamerFactoryTest extends TestCase
         /** @var StreamerFactory $streamerFactory */
         $streamerFactory = app(StreamerFactory::class);
 
-        $song = factory(Song::class)->make();
+        $song = Song::factory()->make();
         self::assertInstanceOf(TranscodingStreamer::class, $streamerFactory->createStreamer($song, true));
     }
 
@@ -85,7 +86,7 @@ class StreamerFactoryTest extends TestCase
         /** @var StreamerFactory $streamerFactory */
         $streamerFactory = app(StreamerFactory::class);
 
-        $song = factory(Song::class)->make();
+        $song = Song::factory()->make();
         self::assertInstanceOf($expectedClass, $streamerFactory->createStreamer($song));
     }
 }

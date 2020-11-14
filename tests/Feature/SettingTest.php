@@ -13,6 +13,7 @@ class SettingTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->mediaSyncService = static::mockIocDependency(MediaSyncService::class);
     }
 
@@ -20,7 +21,7 @@ class SettingTest extends TestCase
     {
         $this->mediaSyncService->shouldReceive('sync')->once();
 
-        $user = factory(User::class)->states('admin')->create();
+        $user = User::factory()->admin()->create();
         $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user);
 
         self::assertEquals(__DIR__, Setting::get('media_path'));

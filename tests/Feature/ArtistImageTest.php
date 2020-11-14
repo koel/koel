@@ -23,7 +23,7 @@ class ArtistImageTest extends TestCase
     public function testUpdate(): void
     {
         $this->expectsEvents(LibraryChanged::class);
-        factory(Artist::class)->create(['id' => 9999]);
+        Artist::factory()->create(['id' => 9999]);
 
         $this->mediaMetadataService
             ->shouldReceive('writeArtistImage')
@@ -34,13 +34,13 @@ class ArtistImageTest extends TestCase
 
         $this->putAsUser('api/artist/9999/image', [
             'image' => 'data:image/jpeg;base64,Rm9v',
-        ], factory(User::class)->states('admin')->create())
+        ], User::factory()->admin()->create())
             ->assertStatus(200);
     }
 
     public function testUpdateNotAllowedForNormalUsers(): void
     {
-        factory(Artist::class)->create(['id' => 9999]);
+        Artist::factory()->create(['id' => 9999]);
 
         $this->mediaMetadataService
             ->shouldReceive('writeArtistImage')
@@ -48,7 +48,7 @@ class ArtistImageTest extends TestCase
 
         $this->putAsUser('api/artist/9999/image', [
             'image' => 'data:image/jpeg;base64,Rm9v',
-        ], factory(User::class)->create())
+        ], User::factory()->create())
             ->assertStatus(403);
     }
 }

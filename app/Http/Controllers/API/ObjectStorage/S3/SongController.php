@@ -34,10 +34,10 @@ class SongController extends Controller
         $path = "s3://{$request->bucket}/{$request->key}";
 
         $tags = $request->tags;
-        $artist = Artist::get(array_get($tags, 'artist'));
+        $artist = Artist::getOrCreate(array_get($tags, 'artist'));
 
         $compilation = (bool) trim(array_get($tags, 'albumartist'));
-        $album = Album::get($artist, array_get($tags, 'album'), $compilation);
+        $album = Album::getOrCreate($artist, array_get($tags, 'album'), $compilation);
 
         if ($cover = array_get($tags, 'cover')) {
             $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data']), $cover['extension']);

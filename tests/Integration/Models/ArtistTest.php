@@ -7,60 +7,41 @@ use Tests\TestCase;
 
 class ArtistTest extends TestCase
 {
-    /** @test */
-    public function existing_artist_can_be_retrieved_using_name()
+    public function testExistingArtistCanBeRetrievedUsingName(): void
     {
-        // Given an existing artist with a name
         /** @var Artist $artist */
-        $artist = factory(Artist::class)->create(['name' => 'Foo']);
+        $artist = Artist::factory()->create(['name' => 'Foo']);
 
-        // When I get the artist by name
-        $gottenArtist = Artist::get('Foo');
-
-        // Then I get the artist
-        self::assertEquals($artist->id, $gottenArtist->id);
+        self::assertTrue(Artist::getOrCreate('Foo')->is($artist));
     }
 
-    /** @test */
-    public function new_artist_can_be_created_using_name()
+    public function testNewArtistIsCreatedWithName(): void
     {
-        // Given an artist name
-        $name = 'Foo';
-
-        // And an artist with such a name doesn't exist yet
-        self::assertNull(Artist::whereName($name)->first());
-
-        // When I get the artist by name
-        $artist = Artist::get($name);
-
-        // Then I get the newly created artist
-        self::assertInstanceOf(Artist::class, $artist);
+        self::assertNull(Artist::whereName('Foo')->first());
+        self::assertSame('Foo', Artist::getOrCreate('Foo')->name);
     }
 
-    /** @test */
-    public function getting_artist_with_empty_name_returns_unknown_artist()
+    public function provideEmptyNames(): array
     {
-        // Given an empty name
-        $name = '';
-
-        // When I get the artist by the empty name
-        $artist = Artist::get($name);
-
-        // Then I get the artist as Unknown Artist
-        self::assertTrue($artist->is_unknown);
+        return [
+            [''],
+            ['  '],
+            [null],
+            [false],
+        ];
     }
 
-    /** @test */
-    public function artists_with_name_in_utf16_encoding_are_retrieved_correctly()
+    /** @dataProvider provideEmptyNames */
+    public function testGettingArtistWithEmptyNameReturnsUnknownArtist($name): void
     {
-        // Given there's an artist with name in UTF-16 encoding
+        self::assertTrue(Artist::getOrCreate($name)->is_unknown);
+    }
+
+    public function testArtistsWithNameInUtf16EncodingAreRetrievedCorrectly(): void
+    {
         $name = file_get_contents(__DIR__.'../../../blobs/utf16');
-        $artist = Artist::get($name);
+        $artist = Artist::getOrCreate($name);
 
-        // When I get the artist using the name
-        $retrieved = Artist::get($name);
-
-        // Then I receive the artist
-        self::assertEquals($artist->id, $retrieved->id);
+        self::assertTrue(Artist::getOrCreate($name)->is($artist));
     }
 }

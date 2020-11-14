@@ -3,7 +3,6 @@
 namespace Tests\Integration\Services;
 
 use App\Services\ApplicationInformationService;
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -14,9 +13,6 @@ use Tests\TestCase;
 
 class ApplicationInformationServiceTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function testGetLatestVersionNumber(): void
     {
         $latestVersion = 'v1.1.2';

@@ -3,7 +3,6 @@
 namespace Tests\Integration\Services;
 
 use App\Services\iTunesService;
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -13,9 +12,6 @@ use Tests\TestCase;
 
 class iTunesServiceTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function testGetTrackUrl(): void
     {
         $term = 'Foo Bar';
