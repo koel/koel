@@ -238,12 +238,12 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
      *
      * @see http://www.last.fm/api/webauth#5
      *
-     * @param array $params the array of parameters
+     * @param array $params The array of parameters
      * @param bool $toString Whether to turn the array into a query string
      *
      * @return array<mixed>|string
      */
-    public function buildAuthCallParams(array $params, bool $toString = false): string
+    public function buildAuthCallParams(array $params, bool $toString = false)
     {
         $params['api_key'] = $this->getKey();
         ksort($params);

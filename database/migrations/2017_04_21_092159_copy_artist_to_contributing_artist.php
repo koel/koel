@@ -5,10 +5,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CopyArtistToContributingArtist extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     */
     public function up(): void
     {
         Song::with('album', 'album.artist')->get()->each(static function (Song $song): void {
@@ -19,10 +15,6 @@ class CopyArtistToContributingArtist extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     */
     public function down(): void
     {
     }

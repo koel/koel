@@ -36,7 +36,7 @@ class LastfmServiceTest extends TestCase
             ],
         ], $info);
 
-        self::assertNotNull(cache('0aff3bc1259154f0e9db860026cda7a6'));
+        self::assertNotNull(cache()->get('0aff3bc1259154f0e9db860026cda7a6'));
     }
 
     public function testGetArtistInformationForNonExistentArtist(): void
@@ -70,7 +70,6 @@ class LastfmServiceTest extends TestCase
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
         $info = $api->getAlbumInformation($album->name, $album->artist->name);
 
-        // Then I get the album's info
         self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot/Epica',
             'image' => 'http://foo.bar/extralarge.jpg',
@@ -92,7 +91,7 @@ class LastfmServiceTest extends TestCase
             ],
         ], $info);
 
-        self::assertNotNull(cache('fca889d13b3222589d7d020669cc5a38'));
+        self::assertNotNull(cache()->get('fca889d13b3222589d7d020669cc5a38'));
     }
 
     public function testGetAlbumInformationForNonExistentAlbum(): void

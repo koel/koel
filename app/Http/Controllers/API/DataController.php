@@ -74,7 +74,7 @@ class DataController extends Controller
             'allowDownload' => config('koel.download.allow'),
             'supportsTranscoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),
-            'cdnUrl' => app()->staticUrl(),
+            'cdnUrl' => static_url(),
             'currentVersion' => Application::KOEL_VERSION,
             'latestVersion' => $this->currentUser->is_admin
                 ? $this->applicationInformationService->getLatestVersionNumber()

@@ -10,7 +10,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use ReflectionClass;
 use Tests\Traits\CreatesApplication;
-use Tests\Traits\InteractsWithIoc;
 use Tests\Traits\SandboxesTests;
 
 abstract class TestCase extends BaseTestCase
@@ -18,7 +17,6 @@ abstract class TestCase extends BaseTestCase
     use ArraySubsetAsserts;
     use CreatesApplication;
     use DatabaseTransactions;
-    use InteractsWithIoc;
     use SandboxesTests;
 
     public function setUp(): void

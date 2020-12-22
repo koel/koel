@@ -10,6 +10,7 @@ use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
 use App\Services\TranscodingService;
+use Mockery;
 use phpmock\mockery\PHPMockery;
 use Tests\TestCase;
 
@@ -36,9 +37,9 @@ class StreamerFactoryTest extends TestCase
 
     public function testCreateTranscodingStreamerIfSupported(): void
     {
-        static::mockIocDependency(TranscodingService::class, [
+        $this->swap(TranscodingService::class, Mockery::mock(TranscodingService::class, [
             'songShouldBeTranscoded' => true,
-        ]);
+        ]));
 
         /** @var StreamerFactory $streamerFactory */
         $streamerFactory = app(StreamerFactory::class);
@@ -50,9 +51,9 @@ class StreamerFactoryTest extends TestCase
 
     public function testCreateTranscodingStreamerIfForced(): void
     {
-        static::mockIocDependency(TranscodingService::class, [
+        $this->swap(TranscodingService::class, Mockery::mock(TranscodingService::class, [
             'songShouldBeTranscoded' => false,
-        ]);
+        ]));
 
         /** @var StreamerFactory $streamerFactory */
         $streamerFactory = app(StreamerFactory::class);
@@ -79,9 +80,9 @@ class StreamerFactoryTest extends TestCase
      */
     public function testCreatePHPStreamer($config, $expectedClass): void
     {
-        static::mockIocDependency(TranscodingService::class, [
+        $this->swap(TranscodingService::class, Mockery::mock(TranscodingService::class, [
             'songShouldBeTranscoded' => false,
-        ]);
+        ]));
 
         config(['koel.streaming.method' => $config]);
 

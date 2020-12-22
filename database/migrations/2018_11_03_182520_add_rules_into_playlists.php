@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class AddRulesIntoPlaylists extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('playlists', static function (Blueprint $table): void {
@@ -16,9 +13,6 @@ class AddRulesIntoPlaylists extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('playlists', static function (Blueprint $table): void {

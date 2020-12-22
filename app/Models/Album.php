@@ -10,9 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-use function App\Helpers\album_cover_path;
-use function App\Helpers\album_cover_url;
-
 /**
  * @property string $cover          The album cover's file name
  * @property string|null $cover_path     The absolute path to the cover file

@@ -25,6 +25,6 @@ class YouTubeServiceTest extends TestCase
         $response = $api->search('Lorem Ipsum');
 
         self::assertEquals('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
-        self::assertNotNull(cache('1492972ec5c8e6b3a9323ba719655ddb'));
+        self::assertNotNull(cache()->get('1492972ec5c8e6b3a9323ba719655ddb'));
     }
 }

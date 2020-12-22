@@ -17,16 +17,16 @@ class ApplicationTest extends TestCase
     {
         config(['koel.cdn.url' => '']);
 
-        self::assertEquals('http://localhost/', app()->staticUrl());
-        self::assertEquals('http://localhost/foo.css', app()->staticUrl('/foo.css '));
+        self::assertEquals('http://localhost/', static_url());
+        self::assertEquals('http://localhost/foo.css', static_url('/foo.css '));
     }
 
     public function testStaticUrlsWithCdnAreConstructedCorrectly(): void
     {
         config(['koel.cdn.url' => 'http://cdn.tld']);
 
-        self::assertEquals('http://cdn.tld/', app()->staticUrl());
-        self::assertEquals('http://cdn.tld/foo.css', app()->staticUrl('/foo.css '));
+        self::assertEquals('http://cdn.tld/', static_url());
+        self::assertEquals('http://cdn.tld/foo.css', static_url('/foo.css '));
     }
 
     public function testApplicationAssetRevisionUrlsAreConstructedCorrectlyWhenNotUsingCdn(): void

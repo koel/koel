@@ -28,7 +28,7 @@ class DownloadTest extends TestCase
         parent::setUp();
 
         static::createSampleMediaSet();
-        $this->downloadService = static::mockIocDependency(DownloadService::class);
+        $this->downloadService = self::mock(DownloadService::class);
     }
 
     public function testNonLoggedInUserCannotDownload(): void
@@ -165,7 +165,7 @@ class DownloadTest extends TestCase
         $user = User::factory()->create();
         $favorites = Collection::make();
 
-        static::mockIocDependency(InteractionRepository::class)
+        self::mock(InteractionRepository::class)
             ->shouldReceive('getUserFavorites')
             ->once()
             ->with(Mockery::on(static function (User $retrievedUser) use ($user): bool {

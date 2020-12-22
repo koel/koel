@@ -14,18 +14,11 @@ class SongZipArchive
     /** @var ZipArchive */
     private $archive;
 
-    /**
-     * Path to the zip archive.
-     *
-     * @var string
-     */
     private $path;
 
     /**
      * Names of the files in the archive
      * Format: [file-name.mp3' => currentFileIndex].
-     *
-     * @var array
      */
     private $fileNames = [];
 
@@ -40,19 +33,15 @@ class SongZipArchive
         }
     }
 
-    /**
-     * Add multiple songs into the archive.
-     */
     public function addSongs(Collection $songs): self
     {
-        $songs->each([$this, 'addSong']);
+        $songs->each(function (Song $song): void {
+            $this->addSong($song);
+        });
 
         return $this;
     }
 
-    /**
-     * Add a single song into the archive.
-     */
     public function addSong(Song $song): self
     {
         try {
@@ -65,9 +54,6 @@ class SongZipArchive
         return $this;
     }
 
-    /**
-     * Finish (close) the archive.
-     */
     public function finish(): self
     {
         $this->archive->close();

@@ -25,7 +25,6 @@ class InteractionRepository extends AbstractRepository
             'liked' => true,
         ])
             ->with('song')
-            ->get()
             ->pluck('song');
     }
 
@@ -42,9 +41,6 @@ class InteractionRepository extends AbstractRepository
             $query = $query->take($count);
         }
 
-        return $query
-            ->get()
-            ->pluck('song_id')
-            ->all();
+        return $query->pluck('song_id')->all();
     }
 }

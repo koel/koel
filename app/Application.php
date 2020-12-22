@@ -36,23 +36,9 @@ class Application extends IlluminateApplication
         if (isset($manifest[$file])) {
             return file_exists(public_path('hot'))
                     ? "http://localhost:8080{$manifest[$file]}"
-                    : $this->staticUrl("{$manifest[$file]}");
+                    : static_url("{$manifest[$file]}");
         }
 
         throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
-    }
-
-    /**
-     * Get a URL for static file requests.
-     * If this installation of Koel has a CDN_URL configured, use it as the base.
-     * Otherwise, just use a full URL to the asset.
-     *
-     * @param string $name the additional resource name/path
-     */
-    public function staticUrl(?string $name = null): string
-    {
-        $cdnUrl = trim(config('koel.cdn.url'), '/ ');
-
-        return $cdnUrl ? $cdnUrl . '/' . trim(ltrim($name, '/')) : trim(asset($name));
     }
 }

@@ -14,7 +14,7 @@ class AlbumThumbnailTest extends TestCase
     {
         parent::setUp();
 
-        $this->mediaMetadataService = self::mockIocDependency(MediaMetadataService::class);
+        $this->mediaMetadataService = self::mock(MediaMetadataService::class);
     }
 
     /** @return array<mixed> */

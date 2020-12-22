@@ -6,6 +6,7 @@ use App\Http\Middleware\ForceHttps;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use Mockery;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class ForceHttpsTest extends TestCase
@@ -32,11 +33,13 @@ class ForceHttpsTest extends TestCase
         $request->shouldReceive('setTrustedProxies')
             ->with(['127.0.0.1'], Request::HEADER_X_FORWARDED_ALL);
 
-        $next = static function (Request $request): Request {
-            return $request;
+        $response = Mockery::mock(Response::class);
+
+        $next = static function () use ($response): Response {
+            return $response;
         };
 
-        self::assertSame($request, $this->middleware->handle($request, $next));
+        self::assertSame($response, $this->middleware->handle($request, $next));
     }
 
     public function testNotHandle(): void
@@ -48,10 +51,12 @@ class ForceHttpsTest extends TestCase
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('setTrustedProxies')->never();
 
-        $next = static function (Request $request): Request {
-            return $request;
+        $response = Mockery::mock(Response::class);
+
+        $next = static function () use ($response): Response {
+            return $response;
         };
 
-        self::assertSame($request, $this->middleware->handle($request, $next));
+        self::assertSame($response, $this->middleware->handle($request, $next));
     }
 }

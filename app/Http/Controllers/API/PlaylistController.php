@@ -48,9 +48,10 @@ class PlaylistController extends Controller
             $playlist->songs()->sync($songs);
         }
 
-        $playlist->songs = $playlist->songs->pluck('id');
+        $playlistAsArray = $playlist->toArray();
+        $playlistAsArray['songs'] = $playlist->songs->pluck('id');
 
-        return response()->json($playlist);
+        return response()->json($playlistAsArray);
     }
 
     public function update(Request $request, Playlist $playlist)

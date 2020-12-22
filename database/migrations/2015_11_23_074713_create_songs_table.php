@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateSongsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     */
     public function up(): void
     {
         Schema::create('songs', static function (Blueprint $table): void {
@@ -28,10 +24,6 @@ class CreateSongsTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     */
     public function down(): void
     {
         Schema::drop('songs');

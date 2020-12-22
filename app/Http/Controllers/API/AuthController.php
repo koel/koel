@@ -33,7 +33,7 @@ class AuthController extends Controller
 
     public function login(UserLoginRequest $request)
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $this->userRepository->getFirstWhere('email', $request->email);
 
         if (!$user || !$this->hash->check($request->password, $user->password)) {

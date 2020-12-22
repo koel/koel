@@ -12,12 +12,12 @@ parameters:
     level: 5
 
     ignoreErrors:
-        - '#\(Modules\\Core\\Entities\\User(\|null)?\) does not accept Illuminate\\Contracts\\Auth\\Authenticatable#'
+        - '#\(App\\Models\\User(\|null)?\) does not accept Illuminate\\Contracts\\Auth\\Authenticatable#'
         - '#PHPDoc tag @return with type array\|Illuminate\\Support\\Collection is not subtype of native type Illuminate\\Support\\Collection#'
         - '#Unsafe usage of new static#'
         - '#is not subtype of native type (Illuminate\\Support|Illuminate\\Database\\Eloquent)\\Collection#'
         - '#expects Countable\|iterable, Illuminate\\Contracts\\Pagination\\LengthAwarePaginator given#'
-        - '#expects Modules\\Core\\Entities\\User\|null, Illuminate\\Contracts\\Auth\\Authenticatable\|null given#'
+        - '#expects App\\Models\\User\|null, Illuminate\\Contracts\\Auth\\Authenticatable\|null given#'
         - '#expects .*, Mockery\\LegacyMockInterface given#'
         - '#Call to an undefined method Illuminate\\Filesystem\\FilesystemAdapter::getAdapter\(\)#'
         - '#Call to an undefined method Mockery\\ExpectationInterface|Mockery\\HigherOrderMessage::with\(\)#'
@@ -28,6 +28,7 @@ parameters:
 
     excludes_analyse:
         - ./routes/console.php
+        - ./app/Services/Util.php
 
     checkMissingIterableValueType: false
     reportUnmatchedIgnoredErrors: false

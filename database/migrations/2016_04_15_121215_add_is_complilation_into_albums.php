@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddIsComplilationIntoAlbums extends Migration
 {
@@ -12,7 +13,7 @@ class AddIsComplilationIntoAlbums extends Migration
     public function up(): void
     {
         Schema::table('albums', static function (Blueprint $table): void {
-            $table->boolean('is_compilation')->nullable()->defaults(false)->after('cover');
+            $table->boolean('is_compilation')->nullable()->default(false)->after('cover');
         });
     }
 

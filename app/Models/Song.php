@@ -27,6 +27,7 @@ use Illuminate\Support\Collection;
  * @property string $id
  * @property int $artist_id
  * @property int $mtime
+ * @property int $contributing_artist_id
  *
  * @method static self updateOrCreate(array $where, array $params)
  * @method static Builder select(string $string)
@@ -109,7 +110,7 @@ class Song extends Model
         $single = count($ids) === 1;
 
         foreach ($ids as $id) {
-            /** @var Song $song */
+            /** @var Song|null $song */
             $song = self::with('album', 'album.artist')->find($id);
 
             if (!$song) {

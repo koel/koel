@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
-use Symfony\Component\HttpFoundation\Response;
 
 class ForceHttps
 {
@@ -16,7 +15,8 @@ class ForceHttps
         $this->url = $url;
     }
 
-    public function handle(Request $request, Closure $next): Response
+    /** @return mixed */
+    public function handle(Request $request, Closure $next)
     {
         if (config('koel.force_https')) {
             $this->url->forceScheme('https');

@@ -10,9 +10,6 @@ use Illuminate\Log\Logger;
 use Mockery;
 use Tests\TestCase;
 
-use function App\Helpers\album_cover_url;
-use function App\Helpers\artist_image_url;
-
 class MediaMetadataServiceTest extends TestCase
 {
     private $mediaMetadataService;

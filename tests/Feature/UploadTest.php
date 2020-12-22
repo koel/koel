@@ -19,7 +19,7 @@ class UploadTest extends TestCase
     {
         parent::setUp();
 
-        $this->uploadService = $this->mockIocDependency(UploadService::class);
+        $this->uploadService = self::mock(UploadService::class);
     }
 
     public function testUnauthorizedPost(): void

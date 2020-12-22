@@ -2,13 +2,10 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateArtistsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     */
     public function up(): void
     {
         Schema::create('artists', static function (Blueprint $table): void {
@@ -18,10 +15,6 @@ class CreateArtistsTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     */
     public function down(): void
     {
         Schema::drop('artists');

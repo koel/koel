@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreatePlaylistSongTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     */
     public function up(): void
     {
         Schema::create('playlist_song', static function (Blueprint $table): void {
@@ -24,10 +20,6 @@ class CreatePlaylistSongTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     */
     public function down(): void
     {
         Schema::drop('playlist_song');

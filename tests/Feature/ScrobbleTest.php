@@ -20,7 +20,7 @@ class ScrobbleTest extends TestCase
 
         $timestamp = time();
 
-        static::mockIocDependency(LastfmService::class)
+        self::mock(LastfmService::class)
             ->shouldReceive('scrobble')
             ->with($song->album->artist->name, $song->title, $timestamp, $song->album->name, 'foo')
             ->once();

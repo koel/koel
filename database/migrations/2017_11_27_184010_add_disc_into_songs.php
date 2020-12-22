@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class AddDiscIntoSongs extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     */
     public function up(): void
     {
         Schema::table('songs', static function (Blueprint $table): void {
@@ -17,10 +13,6 @@ class AddDiscIntoSongs extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     */
     public function down(): void
     {
         Schema::table('songs', static function (Blueprint $table): void {

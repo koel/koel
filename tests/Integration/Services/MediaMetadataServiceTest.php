@@ -6,9 +6,6 @@ use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Tests\TestCase;
 
-use function App\Helpers\album_cover_path;
-use function App\Helpers\album_cover_url;
-
 class MediaMetadataServiceTest extends TestCase
 {
     public function setUp(): void

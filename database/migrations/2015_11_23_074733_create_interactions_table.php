@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateInteractionsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     */
     public function up(): void
     {
         Schema::create('interactions', static function (Blueprint $table): void {
@@ -27,10 +23,6 @@ class CreateInteractionsTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     */
     public function down(): void
     {
         Schema::drop('interactions');

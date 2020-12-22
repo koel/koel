@@ -14,7 +14,7 @@ class YouTubeTest extends TestCase
     {
         parent::setUp();
 
-        $this->youTubeService = static::mockIocDependency(YouTubeService::class);
+        $this->youTubeService = self::mock(YouTubeService::class);
     }
 
     public function testSearchYouTubeVideos(): void

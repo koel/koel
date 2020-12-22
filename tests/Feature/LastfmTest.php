@@ -12,6 +12,7 @@ use Illuminate\Log\Logger;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery;
+use Mockery\MockInterface;
 
 class LastfmTest extends TestCase
 {
@@ -42,10 +43,11 @@ class LastfmTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('Koel')->plainTextToken;
 
+        /** @var NewAccessToken|MockInterface $temporaryToken */
         $temporaryToken = Mockery::mock(NewAccessToken::class);
         $temporaryToken->plainTextToken = 'tmp-token';
 
-        $tokenManager = static::mockIocDependency(TokenManager::class);
+        $tokenManager = self::mock(TokenManager::class);
 
         $tokenManager->shouldReceive('getUserFromPlainTextToken')
             ->with($token)
@@ -70,7 +72,7 @@ class LastfmTest extends TestCase
 
         self::assertNotNull(PersonalAccessToken::findToken($token));
 
-        $lastfm = static::mockIocDependency(LastfmService::class);
+        $lastfm = self::mock(LastfmService::class);
 
         $lastfm->shouldReceive('getSessionKey')
             ->with('lastfm-token')
@@ -90,13 +92,13 @@ class LastfmTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
-        $lastfm = static::mockIocDependency(LastfmService::class);
+        $lastfm = self::mock(LastfmService::class);
         $lastfm->shouldReceive('getSessionKey')
             ->once()
             ->with('foo')
             ->andReturn('bar');
 
-        $tokenManager = static::mockIocDependency(TokenManager::class);
+        $tokenManager = self::mock(TokenManager::class);
         $tokenManager->shouldReceive('getUserFromPlainTextToken')
             ->once()
             ->with('my-token')

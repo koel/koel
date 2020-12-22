@@ -25,6 +25,6 @@ class ApplicationInformationServiceTest extends TestCase
         $service = new ApplicationInformationService($client, app(Cache::class), app(Logger::class));
 
         self::assertEquals($latestVersion, $service->getLatestVersionNumber());
-        self::assertSame($latestVersion, cache('latestKoelVersion'));
+        self::assertSame($latestVersion, cache()->get('latestKoelVersion'));
     }
 }

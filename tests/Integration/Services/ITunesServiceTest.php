@@ -31,6 +31,6 @@ class ITunesServiceTest extends TestCase
             $url
         );
 
-        self::assertNotNull(cache('b57a14784d80c58a856e0df34ff0c8e2'));
+        self::assertNotNull(cache()->get('b57a14784d80c58a856e0df34ff0c8e2'));
     }
 }

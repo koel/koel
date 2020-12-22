@@ -7,9 +7,6 @@ use App\Models\Artist;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-use function App\Helpers\album_cover_path;
-use function App\Helpers\artist_image_path;
-
 class MediaMetadataService
 {
     private $imageWriter;

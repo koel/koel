@@ -11,6 +11,7 @@ use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
 use getID3;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Mockery;
 
 class MediaSyncTest extends TestCase
 {
@@ -201,19 +202,22 @@ class MediaSyncTest extends TestCase
 
     public function testHtmlEntities(): void
     {
-        static::mockIocDependency(getID3::class, [
-            'analyze' => [
-                'tags' => [
-                    'id3v2' => [
-                        'title' => ['&#27700;&#35895;&#24195;&#23455;'],
-                        'album' => ['&#23567;&#23721;&#20117;&#12371; Random'],
-                        'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown'],
+        $this->swap(
+            getID3::class,
+            Mockery::mock(getID3::class, [
+                'analyze' => [
+                    'tags' => [
+                        'id3v2' => [
+                            'title' => ['&#27700;&#35895;&#24195;&#23455;'],
+                            'album' => ['&#23567;&#23721;&#20117;&#12371; Random'],
+                            'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown'],
+                        ],
                     ],
+                    'encoding' => 'UTF-8',
+                    'playtime_seconds' => 100,
                 ],
-                'encoding' => 'UTF-8',
-                'playtime_seconds' => 100,
-            ],
-        ]);
+            ])
+        );
 
         /** @var FileSynchronizer $fileSynchronizer */
         $fileSynchronizer = app(FileSynchronizer::class);

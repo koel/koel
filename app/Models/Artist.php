@@ -11,9 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
-use function App\Helpers\artist_image_path;
-use function App\Helpers\artist_image_url;
-
 /**
  * @property int         $id
  * @property string      $name
@@ -29,6 +26,7 @@ use function App\Helpers\artist_image_url;
  * @method static Builder where(...$params)
  * @method static self first()
  * @method static Builder whereName(string $name)
+ * @method static Builder orderBy(...$params)
  */
 class Artist extends Model
 {

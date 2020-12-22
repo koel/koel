@@ -18,7 +18,7 @@ class DownloadAlbumCoverTest extends TestCase
     {
         parent::setUp();
 
-        $this->mediaMetaDataService = static::mockIocDependency(MediaMetadataService::class);
+        $this->mediaMetaDataService = self::mock(MediaMetadataService::class);
         PHPMockery::mock('App\Listeners', 'ini_get')->andReturn(true);
     }
 

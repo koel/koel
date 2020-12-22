@@ -4,7 +4,7 @@ namespace App\Http\Requests\API;
 
 /**
  * @property string $q
- * @property string api_token
+ * @property string $api_token
  */
 class ViewSongOnITunesRequest extends Request
 {

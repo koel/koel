@@ -2,17 +2,15 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CascadeDeleteUser extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     */
     public function up(): void
     {
         Schema::table('playlists', static function (Blueprint $table): void {
-            if (DB::getDriverName() !== 'sqlite') {
+            if (DB::getDriverName() !== 'sqlite') { // @phpstan-ignore-line
                 $table->dropForeign('playlists_user_id_foreign');
             }
 
@@ -20,14 +18,10 @@ class CascadeDeleteUser extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     */
     public function down(): void
     {
         Schema::table('playlists', static function (Blueprint $table): void {
-            if (DB::getDriverName() !== 'sqlite') {
+            if (DB::getDriverName() !== 'sqlite') { // @phpstan-ignore-line
                 $table->dropForeign('playlists_user_id_foreign');
             }
 

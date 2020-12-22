@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class DropIsComplicationFromAlbums extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     */
     public function up(): void
     {
         Schema::table('albums', static function (Blueprint $table): void {
@@ -17,10 +13,6 @@ class DropIsComplicationFromAlbums extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     */
     public function down(): void
     {
     }
