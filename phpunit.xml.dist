@@ -8,6 +8,17 @@
         <include>
             <directory suffix=".php">./app/</directory>
         </include>
+        <exclude>
+            <directory>./app/Console</directory>
+            <directory>./app/Events</directory>
+            <directory>./app/Exceptions</directory>
+            <directory>./app/Facades</directory>
+            <directory>./app/Http/Requests</directory>
+            <directory>./app/Models</directory>
+            <directory>./app/Policies</directory>
+            <directory>./app/Providers</directory>
+            <directory>./app/Repositories</directory>
+        </exclude>
     </coverage>
     <testsuites>
         <testsuite name="feature">
