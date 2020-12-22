@@ -14,6 +14,30 @@ function static_url(?string $name = null): string
     return $cdnUrl ? $cdnUrl . '/' . trim(ltrim($name, '/')) : trim(asset($name));
 }
 
+/**
+ * A copy of Laravel Mix but catered to our directory structure.
+ *
+ * @throws InvalidArgumentException
+ */
+function asset_rev(string $file, ?string $manifestFile = null): string
+{
+    static $manifest = null;
+
+    $manifestFile = $manifestFile ?: public_path('mix-manifest.json');
+
+    if ($manifest === null) {
+        $manifest = json_decode(file_get_contents($manifestFile), true);
+    }
+
+    if (isset($manifest[$file])) {
+        return file_exists(public_path('hot'))
+            ? "http://localhost:8080{$manifest[$file]}"
+            : static_url($manifest[$file]);
+    }
+
+    throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
+}
+
 function album_cover_path(string $fileName): string
 {
     return public_path(config('koel.album_cover_dir') . $fileName);

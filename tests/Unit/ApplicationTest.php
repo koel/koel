@@ -34,7 +34,7 @@ class ApplicationTest extends TestCase
         $manifestFile = __DIR__ . '../../blobs/rev-manifest.json';
         config(['koel.cdn.url' => '']);
 
-        self::assertEquals('http://localhost/foo00.css', app()->rev('/foo.css', $manifestFile));
+        self::assertEquals('http://localhost/foo00.css', asset_rev('/foo.css', $manifestFile));
     }
 
     public function testApplicationAssetRevisionUrlsAreConstructedCorrectlyWhenUsingCdn(): void
@@ -42,6 +42,6 @@ class ApplicationTest extends TestCase
         $manifestFile = __DIR__ . '../../blobs/rev-manifest.json';
         config(['koel.cdn.url' => 'http://cdn.tld']);
 
-        self::assertEquals('http://cdn.tld/foo00.css', app()->rev('/foo.css', $manifestFile));
+        self::assertEquals('http://cdn.tld/foo00.css', asset_rev('/foo.css', $manifestFile));
     }
 }

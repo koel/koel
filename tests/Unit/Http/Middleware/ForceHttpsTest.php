@@ -35,7 +35,7 @@ class ForceHttpsTest extends TestCase
 
         $response = Mockery::mock(Response::class);
 
-        $next = static function () use ($response): Response {
+        $next = static function () use ($response) {
             return $response;
         };
 
@@ -53,7 +53,7 @@ class ForceHttpsTest extends TestCase
 
         $response = Mockery::mock(Response::class);
 
-        $next = static function () use ($response): Response {
+        $next = static function () use ($response) {
             return $response;
         };
 

@@ -18,13 +18,13 @@
     <link rel="icon" href="{{ static_url('img/icon.png') }}">
     <link rel="apple-touch-icon" href="{{ static_url('img/icon.png') }}">
 
-    <link rel="stylesheet" href="{{ App::rev('/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset_rev('/css/app.css') }}">
 </head>
 <body>
     <div id="app"></div>
 
     <noscript>It may sound funny, but Koel requires JavaScript to sing. Please enable it.</noscript>
     @include('client-js-vars')
-    <script src="{{ App::rev('/js/app.js') }}"></script>
+    <script src="{{ asset_rev('/js/app.js') }}"></script>
 </body>
 </html>
