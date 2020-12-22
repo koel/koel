@@ -25,3 +25,7 @@ jobs:
         run: composer analyze -- --no-progress
       - name: Run tests
         run: composer coverage
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
