@@ -1,7 +1,5 @@
-name: CI
-
-on: [push]
-
+name: main
+on: [ push ]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,20 +15,13 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
           coverage: xdebug
-      - name: Copy .env file
-        run: cp .env.ci .env
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-scripts --no-progress
       - name: Generate app key
         run: php artisan key:generate --quiet
-
       - name: Run code style checker
         run: composer cs
       - name: Run static analysis
         run: composer analyze -- --no-progress
-    steps:
-    - uses: actions/checkout@v1
-    - name: Composer
-      run: composer install --no-interaction
-    - name: PHPUnit
-      run: composer coverage
+      - name: Run tests
+        run: composer coverage
