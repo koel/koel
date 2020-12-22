@@ -1,4 +1,4 @@
-# koel [![Build Status](https://travis-ci.org/koel/koel.svg?branch=master)](https://travis-ci.org/koel/koel) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![codecov](https://codecov.io/gh/phanan/koel/branch/master/graph/badge.svg)](https://codecov.io/gh/phanan/koel) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
+# koel [![GitHub Actions](https://github.com/koel/koel/workflows/main/badge.svg)](https://github.com/koel/koel/actions) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![codecov](https://codecov.io/gh/koel/koel/branch/master/graph/badge.svg)](https://codecov.io/gh/koel/koel) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
 
 ![Showcase](https://koel.dev/img/showcase.png)
 
@@ -16,7 +16,7 @@ If you're interested in the development of a client, Koel's offical API document
 
 ## Contribute
 
-All contributions, big or small, are warmheartedly welcome! Please note, however, that if you want to work on a new feature, first open an issue to make sure it's something desired – doing this will greatly save time for all of us.
+All contributions, big or small, are warm-heartedly welcome! Please note, however, that if you want to work on a new feature, first open an issue to make sure it's something desired – doing this will greatly save time for all of us.
 
 A quick and easy way to start hacking on koel is to open and run this repo in Gitpod, an online IDE with full Laravel support.
 
