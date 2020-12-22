@@ -7,11 +7,12 @@ namespace App\Http\Requests\API;
  */
 class ProfileUpdateRequest extends Request
 {
+    /** @return array<mixed> */
     public function rules(): array
     {
         return [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.auth()->user()->id,
+            'email' => 'required|email|unique:users,email,' . auth()->user()->id,
         ];
     }
 }

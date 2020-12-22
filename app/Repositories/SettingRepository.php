@@ -11,6 +11,7 @@ class SettingRepository extends AbstractRepository
         return Setting::class;
     }
 
+    /** @return array<mixed> */
     public function getAllAsKeyValueArray(): array
     {
         return $this->model->pluck('value', 'key')->all();

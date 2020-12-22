@@ -10,7 +10,7 @@ class ImageData implements Rule
     public function passes($attribute, $value): bool
     {
         try {
-            [$header, $_] = explode(';', $value);
+            [$header,] = explode(';', $value);
 
             return (bool) preg_match('/data:image\/(jpe?g|png|gif)/i', $header);
         } catch (Throwable $exception) {

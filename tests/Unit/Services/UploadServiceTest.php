@@ -22,6 +22,7 @@ class UploadServiceTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->fileSynchronizer = Mockery::mock(FileSynchronizer::class);
         $this->uploadService = new UploadService($this->fileSynchronizer);
     }

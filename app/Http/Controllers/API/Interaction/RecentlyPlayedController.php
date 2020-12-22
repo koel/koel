@@ -16,6 +16,7 @@ class RecentlyPlayedController extends Controller
         ?Authenticatable $currentUser
     ) {
         parent::__construct($interactionService, $currentUser);
+
         $this->interactionRepository = $interactionRepository;
     }
 

@@ -7,6 +7,7 @@ namespace App\Http\Requests\Download;
  */
 class SongRequest extends Request
 {
+    /** @return array<mixed> */
     public function rules(): array
     {
         return [

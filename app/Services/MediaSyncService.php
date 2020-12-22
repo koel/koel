@@ -23,8 +23,6 @@ class MediaSyncService
     /**
      * All applicable tags in a media file that we cater for.
      * Note that each isn't necessarily a valid ID3 tag name.
-     *
-     * @var array
      */
     public const APPLICABLE_TAGS = [
         'artist',
@@ -81,10 +79,10 @@ class MediaSyncService
     /**
      * Sync the media. Oh sync the media.
      *
-     * @param string[]    $tags        The tags to sync.
-     *                                 Only taken into account for existing records.
-     *                                 New records will have all tags synced in regardless.
-     * @param bool        $force       Whether to force syncing even unchanged files
+     * @param array<string> $tags The tags to sync.
+     * Only taken into account for existing records.
+     * New records will have all tags synced in regardless.
+     * @param bool $force Whether to force syncing even unchanged files
      * @param SyncCommand $syncCommand the SyncMedia command object, to log to console if executed by artisan
      *
      * @throws Exception
@@ -117,9 +115,11 @@ class MediaSyncService
                 case FileSynchronizer::SYNC_RESULT_SUCCESS:
                     $results['success'][] = $path;
                     break;
+
                 case FileSynchronizer::SYNC_RESULT_UNMODIFIED:
                     $results['unmodified'][] = $path;
                     break;
+
                 default:
                     $results['bad_files'][] = $path;
                     break;
@@ -147,7 +147,7 @@ class MediaSyncService
      *
      * @param string $path The directory's full path
      *
-     * @return SplFileInfo[]
+     * @return array<SplFileInfo>
      */
     public function gatherFiles(string $path): array
     {
@@ -162,40 +162,24 @@ class MediaSyncService
         );
     }
 
-    /**
-     * Sync media using a watch record.
-     *
-     * @throws Exception
-     */
     public function syncByWatchRecord(WatchRecordInterface $record): void
     {
         $this->logger->info("New watch record received: '{$record->getPath()}'");
         $record->isFile() ? $this->syncFileRecord($record) : $this->syncDirectoryRecord($record);
     }
 
-    /**
-     * Sync a file's watch record.
-     *
-     * @throws Exception
-     */
     private function syncFileRecord(WatchRecordInterface $record): void
     {
         $path = $record->getPath();
         $this->logger->info("'$path' is a file.");
 
-        // If the file has been deleted...
         if ($record->isDeleted()) {
             $this->handleDeletedFileRecord($path);
-        }
-        // Otherwise, it's a new or changed file. Try to sync it in.
-        elseif ($record->isNewOrModified()) {
+        } elseif ($record->isNewOrModified()) {
             $this->handleNewOrModifiedFileRecord($path);
         }
     }
 
-    /**
-     * Sync a directory's watch record.
-     */
     private function syncDirectoryRecord(WatchRecordInterface $record): void
     {
         $path = $record->getPath();
@@ -213,7 +197,7 @@ class MediaSyncService
      * If the input array is empty or contains only invalid items, we use all tags.
      * Otherwise, we only use the valid items in it.
      *
-     * @param string[] $tags
+     * @param array<string> $tags
      */
     public function setTags(array $tags = []): void
     {
@@ -225,11 +209,6 @@ class MediaSyncService
         }
     }
 
-    /**
-     * Tidy up the library by deleting empty albums and artists.
-     *
-     * @throws Exception
-     */
     public function tidy(): void
     {
         $inUseAlbums = $this->albumRepository->getNonEmptyAlbumIds();
@@ -249,19 +228,17 @@ class MediaSyncService
         }
 
         if (config('koel.memory_limit')) {
-            ini_set('memory_limit', config('koel.memory_limit').'M');
+            ini_set('memory_limit', config('koel.memory_limit') . 'M');
         }
     }
 
-    /**
-     * @throws Exception
-     */
     private function handleDeletedFileRecord(string $path): void
     {
-        if ($song = $this->songRepository->getOneByPath($path)) {
+        $song = $this->songRepository->getOneByPath($path);
+
+        if ($song) {
             $song->delete();
             $this->logger->info("$path deleted.");
-
             event(new LibraryChanged());
         } else {
             $this->logger->info("$path doesn't exist in our database--skipping.");
@@ -283,7 +260,9 @@ class MediaSyncService
 
     private function handleDeletedDirectoryRecord(string $path): void
     {
-        if ($count = Song::inDirectory($path)->delete()) {
+        $count = Song::inDirectory($path)->delete();
+
+        if ($count) {
             $this->logger->info("Deleted $count song(s) under $path");
 
             event(new LibraryChanged());

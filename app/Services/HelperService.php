@@ -10,6 +10,6 @@ class HelperService
      */
     public function getFileHash(string $path): string
     {
-        return md5(config('app.key').$path);
+        return md5(config('app.key') . $path);
     }
 }

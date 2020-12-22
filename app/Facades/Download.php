@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Facade;
  */
 class Download extends Facade
 {
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'Download';
     }

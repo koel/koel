@@ -11,6 +11,7 @@ class InteractionFactory extends Factory
 {
     protected $model = Interaction::class;
 
+    /** @return array<mixed> */
     public function definition(): array
     {
         return [

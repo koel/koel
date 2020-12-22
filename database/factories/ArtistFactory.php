@@ -9,11 +9,12 @@ class ArtistFactory extends Factory
 {
     protected $model = Artist::class;
 
+    /** @return array<mixed> */
     public function definition(): array
     {
         return [
             'name' => $this->faker->name,
-            'image' => md5(uniqid()).'.jpg',
+            'image' => md5(uniqid()) . '.jpg',
         ];
     }
 }

@@ -10,6 +10,7 @@ class PlaylistFactory extends Factory
 {
     protected $model = Playlist::class;
 
+    /** @return array<mixed> */
     public function definition(): array
     {
         return [

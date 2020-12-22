@@ -8,11 +8,10 @@ class AddPreferencesToUsersTable extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', static function (Blueprint $table): void {
             $table->text('preferences')->after('is_admin')->nullable();
         });
     }
@@ -20,11 +19,10 @@ class AddPreferencesToUsersTable extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', static function (Blueprint $table): void {
             $table->dropColumn('preferences');
         });
     }

@@ -9,15 +9,11 @@ interface RepositoryInterface
 {
     public function getModelClass(): string;
 
-    /**
-     * @param int|string $id
-     */
     public function getOneById($id): ?Model;
 
-    /**
-     * @param int[]|string[] $ids
-     */
+    /** @return Collection|array<Model> */
     public function getByIds(array $ids): Collection;
 
+    /** @return Collection|array<Model> */
     public function getAll(): Collection;
 }

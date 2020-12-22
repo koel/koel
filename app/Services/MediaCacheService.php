@@ -22,7 +22,7 @@ class MediaCacheService
      * Get media data.
      * If caching is enabled, the data will be retrieved from the cache.
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
     public function get(): array
     {
@@ -38,7 +38,7 @@ class MediaCacheService
     /**
      * Query fresh data from the database.
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
     private function query(): array
     {

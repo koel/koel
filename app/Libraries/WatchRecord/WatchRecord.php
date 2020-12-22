@@ -53,7 +53,7 @@ abstract class WatchRecord implements WatchRecordInterface
         return $this->path;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->input;
     }

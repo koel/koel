@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use function App\Helpers\album_cover_path;
-use function App\Helpers\album_cover_url;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,19 +10,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use function App\Helpers\album_cover_path;
+use function App\Helpers\album_cover_url;
+
 /**
- * @property string      $cover          The album cover's file name
+ * @property string $cover          The album cover's file name
  * @property string|null $cover_path     The absolute path to the cover file
- * @property bool        $has_cover      If the album has a non-default cover image
- * @property int         $id
- * @property string      $name           Name of the album
- * @property bool        $is_compilation If the album is a compilation from multiple artists
- * @property Artist      $artist         The album's artist
- * @property int         $artist_id
- * @property Collection  $songs
- * @property bool        $is_unknown     If the album is the Unknown Album
+ * @property bool $has_cover      If the album has a non-default cover image
+ * @property int $id
+ * @property string $name           Name of the album
+ * @property bool $is_compilation If the album is a compilation from multiple artists
+ * @property Artist $artist         The album's artist
+ * @property int $artist_id
+ * @property Collection $songs
+ * @property bool $is_unknown     If the album is the Unknown Album
  * @property string|null $thumbnail_name The file name of the album's thumbnail
- * @property string|null $thumbnail_path The full path to the thumbnail. Notice that this doesn't guarantee the thumbnail exists.
+ * @property string|null $thumbnail_path The full path to the thumbnail.
+ *                                       Notice that this doesn't guarantee the thumbnail exists.
  * @property string|null $thumbnail      The public URL to the album's thumbnail
  *
  * @method static self firstOrCreate(array $where, array $params = [])
@@ -38,9 +40,9 @@ class Album extends Model
     use HasFactory;
     use SupportsDeleteWhereIDsNotIn;
 
-    const UNKNOWN_ID = 1;
-    const UNKNOWN_NAME = 'Unknown Album';
-    const UNKNOWN_COVER = 'unknown-album.png';
+    public const UNKNOWN_ID = 1;
+    public const UNKNOWN_NAME = 'Unknown Album';
+    public const UNKNOWN_COVER = 'unknown-album.png';
 
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];

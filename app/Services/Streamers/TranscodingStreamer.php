@@ -29,10 +29,10 @@ class TranscodingStreamer extends Streamer implements TranscodingStreamerInterfa
         $bitRate = filter_var($this->bitRate, FILTER_SANITIZE_NUMBER_INT);
 
         header('Content-Type: audio/mpeg');
-        header('Content-Disposition: attachment; filename="'.basename($this->song->path).'"');
+        header('Content-Disposition: attachment; filename="' . basename($this->song->path) . '"');
 
         $args = [
-            '-i '.escapeshellarg($this->song->path),
+            '-i ' . escapeshellarg($this->song->path),
             '-map 0:0',
             '-v 0',
             "-ab {$bitRate}k",
@@ -44,7 +44,7 @@ class TranscodingStreamer extends Streamer implements TranscodingStreamerInterfa
             array_unshift($args, "-ss {$this->startTime}");
         }
 
-        passthru("$ffmpeg ".implode(' ', $args));
+        passthru("$ffmpeg " . implode(' ', $args));
     }
 
     public function setBitRate(int $bitRate): void

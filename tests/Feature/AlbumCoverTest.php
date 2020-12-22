@@ -15,6 +15,7 @@ class AlbumCoverTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->mediaMetadataService = static::mockIocDependency(MediaMetadataService::class);
     }
 
@@ -32,7 +33,7 @@ class AlbumCoverTest extends TestCase
                 return $album->id === 9999;
             }), 'Foo', 'jpeg');
 
-        $response = $this->putAsUser('api/album/'.$album->id.'/cover', [
+        $response = $this->putAsUser('api/album/' . $album->id . '/cover', [
             'cover' => 'data:image/jpeg;base64,Rm9v',
         ], User::factory()->admin()->create());
 
@@ -48,7 +49,7 @@ class AlbumCoverTest extends TestCase
             ->shouldReceive('writeAlbumCover')
             ->never();
 
-        $this->putAsUser('api/album/'.$album->id.'/cover', [
+        $this->putAsUser('api/album/' . $album->id . '/cover', [
             'cover' => 'data:image/jpeg;base64,Rm9v',
         ], User::factory()->create())
             ->assertStatus(403);

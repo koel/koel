@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Events\AlbumInformationFetched;
 use App\Services\MediaMetadataService;
-use Exception;
+use Throwable;
 
 class DownloadAlbumCover
 {
@@ -26,7 +26,7 @@ class DownloadAlbumCover
         if (!$album->has_cover && $image && ini_get('allow_url_fopen')) {
             try {
                 $this->mediaMetadataService->downloadAlbumCover($album, $image);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
             }
         }
     }

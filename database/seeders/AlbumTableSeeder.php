@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 
 class AlbumTableSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         Album::firstOrCreate([
             'id' => Album::UNKNOWN_ID,

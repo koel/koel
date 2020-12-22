@@ -24,7 +24,7 @@ class AlbumInformationFetched extends Event
     }
 
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public function getInformation(): array
     {

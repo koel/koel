@@ -13,9 +13,11 @@ class AlbumThumbnailTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->mediaMetadataService = self::mockIocDependency(MediaMetadataService::class);
     }
 
+    /** @return array<mixed> */
     public function provideAlbumThumbnailData(): array
     {
         return [['http://localhost/img/covers/foo_thumbnail.jpg'], [null]];

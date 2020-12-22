@@ -10,6 +10,7 @@ use App\Http\Requests\API\ObjectStorage\S3\Request as BaseRequest;
  */
 class RemoveSongRequest extends BaseRequest
 {
+    /** @return array<mixed> */
     public function rules(): array
     {
         return [

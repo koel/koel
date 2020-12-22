@@ -13,6 +13,7 @@ class UploadRequest extends AbstractRequest
         return auth()->user()->is_admin;
     }
 
+    /** @return array<mixed> */
     public function rules(): array
     {
         return [

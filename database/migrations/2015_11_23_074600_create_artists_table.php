@@ -8,11 +8,10 @@ class CreateArtistsTable extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('artists', function (Blueprint $table) {
+        Schema::create('artists', static function (Blueprint $table): void {
             $table->increments('id');
             $table->string('name')->unique();
             $table->timestamps();
@@ -22,9 +21,8 @@ class CreateArtistsTable extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('artists');
     }

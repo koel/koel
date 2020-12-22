@@ -9,18 +9,17 @@ class CreatePlaylistsTable extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('playlists', function (Blueprint $table) {
+        Schema::create('playlists', static function (Blueprint $table): void {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->string('name');
             $table->timestamps();
         });
 
-        Schema::table('playlists', function (Blueprint $table) {
+        Schema::table('playlists', static function (Blueprint $table): void {
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
@@ -28,9 +27,8 @@ class CreatePlaylistsTable extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('playlists');
     }

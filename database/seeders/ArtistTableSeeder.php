@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class ArtistTableSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         Artist::firstOrCreate([
             'id' => Artist::UNKNOWN_ID,

@@ -29,6 +29,7 @@ class AlbumTest extends TestCase
         self::assertTrue($album->artist->is($artist));
     }
 
+    /** @return array<mixed> */
     public function provideEmptyAlbumNames(): array
     {
         return [

@@ -13,6 +13,6 @@ class JWTEventListener
 
     public function subscribe(Dispatcher $events): void
     {
-        $events->listen('tymon.jwt.valid', self::class.'@onValidUser');
+        $events->listen('tymon.jwt.valid', self::class . '@onValidUser');
     }
 }

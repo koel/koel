@@ -39,6 +39,7 @@ class UploadTest extends TestCase
         )->assertStatus(403);
     }
 
+    /** @return array<mixed> */
     public function provideUploadExceptions(): array
     {
         return [

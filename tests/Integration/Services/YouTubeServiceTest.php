@@ -18,7 +18,7 @@ class YouTubeServiceTest extends TestCase
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/youtube/search.json')),
+            'get' => new Response(200, [], file_get_contents(__DIR__ . '../../../blobs/youtube/search.json')),
         ]);
 
         $api = new YouTubeService($client, app(Repository::class), app(Logger::class));

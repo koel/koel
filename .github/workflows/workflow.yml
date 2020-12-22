@@ -1,15 +1,33 @@
 name: CI
 
-on:
-  push:
-    branches: 
-    - master
-    - actions
+on: [push]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+    strategy:
+      matrix:
+        php-version: [ 7.4, 8.0 ]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: xdebug
+      - name: Copy .env file
+        run: cp .env.ci .env
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-scripts --no-progress
+      - name: Generate app key
+        run: php artisan key:generate --quiet
+
+      - name: Run code style checker
+        run: composer cs
+      - name: Run static analysis
+        run: composer analyze -- --no-progress
     steps:
     - uses: actions/checkout@v1
     - name: Composer

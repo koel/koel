@@ -9,6 +9,7 @@ use App\Http\Requests\API\Request;
  */
 class StorePlayCountRequest extends Request
 {
+    /** @return array<mixed> */
     public function rules(): array
     {
         return [

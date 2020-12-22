@@ -23,7 +23,7 @@ class Application extends IlluminateApplication
      *
      * @throws InvalidArgumentException
      */
-    public function rev(string $file, string $manifestFile = null): string
+    public function rev(string $file, ?string $manifestFile = null): string
     {
         static $manifest = null;
 
@@ -53,6 +53,6 @@ class Application extends IlluminateApplication
     {
         $cdnUrl = trim(config('koel.cdn.url'), '/ ');
 
-        return $cdnUrl ? $cdnUrl.'/'.trim(ltrim($name, '/')) : trim(asset($name));
+        return $cdnUrl ? $cdnUrl . '/' . trim(ltrim($name, '/')) : trim(asset($name));
     }
 }

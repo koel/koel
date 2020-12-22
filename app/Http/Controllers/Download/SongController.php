@@ -13,6 +13,7 @@ class SongController extends Controller
     public function __construct(DownloadService $downloadService, SongRepository $songRepository)
     {
         parent::__construct($downloadService);
+
         $this->songRepository = $songRepository;
     }
 

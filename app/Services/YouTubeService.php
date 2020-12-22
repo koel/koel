@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Song;
-use Exception;
+use Throwable;
 
 class YouTubeService extends AbstractApiClient implements ApiConsumerInterface
 {
@@ -58,7 +58,7 @@ class YouTubeService extends AbstractApiClient implements ApiConsumerInterface
             return $this->cache->remember(md5("youtube_$uri"), 60 * 24 * 7, function () use ($uri) {
                 return $this->get($uri);
             });
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
 
             return null;

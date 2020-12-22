@@ -17,6 +17,7 @@ class ArtistImageTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->mediaMetadataService = static::mockIocDependency(MediaMetadataService::class);
     }
 

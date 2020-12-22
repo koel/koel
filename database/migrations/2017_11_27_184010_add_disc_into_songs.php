@@ -9,11 +9,10 @@ class AddDiscIntoSongs extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('songs', function (Blueprint $table) {
+        Schema::table('songs', static function (Blueprint $table): void {
             $table->integer('disc')->after('track')->default(1);
         });
     }
@@ -21,11 +20,10 @@ class AddDiscIntoSongs extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('songs', function (Blueprint $table) {
+        Schema::table('songs', static function (Blueprint $table): void {
             $table->dropColumn('disc');
         });
     }

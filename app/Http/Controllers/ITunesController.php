@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\API\ViewSongOnITunesRequest;
 use App\Models\Album;
-use App\Services\iTunesService;
+use App\Services\ITunesService;
 use App\Services\TokenManager;
 use Illuminate\Http\Response;
 
-class iTunesController extends Controller
+class ITunesController extends Controller
 {
     private $iTunesService;
     private $tokenManager;
 
-    public function __construct(iTunesService $iTunesService, TokenManager $tokenManager)
+    public function __construct(ITunesService $iTunesService, TokenManager $tokenManager)
     {
         $this->iTunesService = $iTunesService;
         $this->tokenManager = $tokenManager;

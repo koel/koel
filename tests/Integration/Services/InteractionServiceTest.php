@@ -21,8 +21,7 @@ class InteractionServiceTest extends TestCase
         $this->interactionService = new InteractionService(new Interaction());
     }
 
-    /** @test */
-    public function it_increases_a_songs_play_count(): void
+    public function testIncreasePlayCount(): void
     {
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();

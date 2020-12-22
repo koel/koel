@@ -10,6 +10,7 @@ class SongFactory extends Factory
 {
     protected $model = Song::class;
 
+    /** @return array<mixed> */
     public function definition(): array
     {
         /** @var Album $album */
@@ -22,7 +23,7 @@ class SongFactory extends Factory
             'length' => $this->faker->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),
             'lyrics' => $this->faker->paragraph(),
-            'path' => '/tmp/'.uniqid().'.mp3',
+            'path' => '/tmp/' . uniqid() . '.mp3',
             'mtime' => time(),
         ];
     }

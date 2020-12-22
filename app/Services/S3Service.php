@@ -28,9 +28,7 @@ class S3Service implements ObjectStorageInterface
             // Here we specify that the request is valid for 1 hour.
             // We'll also cache the public URL for future reuse.
             $request = $this->s3Client->createPresignedRequest($cmd, '+1 hour');
-            $url = (string) $request->getUri();
-
-            return $url;
+            return (string) $request->getUri();
         });
     }
 }

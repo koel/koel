@@ -6,13 +6,13 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
-use Exception;
 use getID3;
 use getid3_lib;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use InvalidArgumentException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
+use Throwable;
 
 class FileSynchronizer
 {
@@ -27,19 +27,13 @@ class FileSynchronizer
     private $cache;
     private $finder;
 
-    /**
-     * @var SplFileInfo
-     */
+    /** @var SplFileInfo */
     private $splFileInfo;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $fileModifiedTime;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $filePath;
 
     /**
@@ -57,9 +51,7 @@ class FileSynchronizer
      */
     private $song;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $syncError;
 
     public function __construct(
@@ -78,9 +70,7 @@ class FileSynchronizer
         $this->finder = $finder;
     }
 
-    /**
-     * @param string|SplFileInfo $path
-     */
+    /** @param string|SplFileInfo $path */
     public function setFile($path): self
     {
         $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
@@ -88,7 +78,7 @@ class FileSynchronizer
         // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
         try {
             $this->fileModifiedTime = $this->splFileInfo->getMTime();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             // Not worth logging the error. Just use current stamp for mtime.
             $this->fileModifiedTime = time();
         }
@@ -103,6 +93,8 @@ class FileSynchronizer
 
     /**
      * Get all applicable info from the file.
+     *
+     * @return array<mixed>
      */
     public function getFileInfo(): array
     {
@@ -124,7 +116,7 @@ class FileSynchronizer
             'album' => '',
             'albumartist' => '',
             'compilation' => false,
-            'title' => basename($this->filePath, '.'.pathinfo($this->filePath, PATHINFO_EXTENSION)), // default to be file name
+            'title' => basename($this->filePath, '.' . pathinfo($this->filePath, PATHINFO_EXTENSION)),
             'length' => $info['playtime_seconds'],
             'track' => $this->getTrackNumberFromInfo($info),
             'disc' => (int) array_get($info, 'comments.part_of_a_set.0', 1),
@@ -134,7 +126,9 @@ class FileSynchronizer
             'mtime' => $this->fileModifiedTime,
         ];
 
-        if (!$comments = array_get($info, 'comments_html')) {
+        $comments = array_get($info, 'comments_html');
+
+        if (!$comments) {
             return $props;
         }
 
@@ -147,8 +141,8 @@ class FileSynchronizer
     /**
      * Sync the song with all available media info against the database.
      *
-     * @param string[] $tags  The (selective) tags to sync (if the song exists)
-     * @param bool     $force Whether to force syncing, even if the file is unchanged
+     * @param array<string> $tags The (selective) tags to sync (if the song exists)
+     * @param bool $force Whether to force syncing, even if the file is unchanged
      */
     public function sync(array $tags, bool $force = false): int
     {
@@ -156,7 +150,9 @@ class FileSynchronizer
             return self::SYNC_RESULT_UNMODIFIED;
         }
 
-        if (!$info = $this->getFileInfo()) {
+        $info = $this->getFileInfo();
+
+        if (!$info) {
             return self::SYNC_RESULT_BAD_FILE;
         }
 
@@ -218,14 +214,14 @@ class FileSynchronizer
     /**
      * Try to generate a cover for an album based on extracted data, or use the cover file under the directory.
      *
-     * @param mixed[]|null $coverData
+     * @param array<mixed>|null $coverData
      */
     private function generateAlbumCover(Album $album, ?array $coverData): void
     {
         // If the album has no cover, we try to get the cover image from existing tag data
         if ($coverData) {
             $extension = explode('/', $coverData['image_mime']);
-            $extension = empty($extension[1]) ? 'png' : $extension[1];
+            $extension = $extension[1] ? 'png' : $extension[1];
 
             $this->mediaMetadataService->writeAlbumCover($album, $coverData['data'], $extension);
 
@@ -233,7 +229,9 @@ class FileSynchronizer
         }
 
         // Or, if there's a cover image under the same directory, use it.
-        if ($cover = $this->getCoverFileUnderSameDirectory()) {
+        $cover = $this->getCoverFileUnderSameDirectory();
+
+        if ($cover) {
             $extension = pathinfo($cover, PATHINFO_EXTENSION);
             $this->mediaMetadataService->writeAlbumCover($album, file_get_contents($cover), $extension);
         }
@@ -249,16 +247,16 @@ class FileSynchronizer
     private function getCoverFileUnderSameDirectory(): ?string
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        return $this->cache->remember(md5($this->filePath.'_cover'), 24 * 60, function (): ?string {
+        return $this->cache->remember(md5($this->filePath . '_cover'), 24 * 60, function (): ?string {
             $matches = array_keys(
                 iterator_to_array(
                     $this->finder->create()
-                    ->depth(0)
-                    ->ignoreUnreadableDirs()
-                    ->files()
-                    ->followLinks()
-                    ->name('/(cov|fold)er\.(jpe?g|png)$/i')
-                    ->in(dirname($this->filePath))
+                        ->depth(0)
+                        ->ignoreUnreadableDirs()
+                        ->files()
+                        ->followLinks()
+                        ->name('/(cov|fold)er\.(jpe?g|png)$/i')
+                        ->in(dirname($this->filePath))
                 )
             );
 
@@ -272,7 +270,7 @@ class FileSynchronizer
     {
         try {
             return (bool) exif_imagetype($path);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return false;
         }
     }

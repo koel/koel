@@ -20,6 +20,7 @@ class ChangePasswordCommand extends Command
     public function __construct(Hash $hash)
     {
         parent::__construct();
+
         $this->hash = $hash;
     }
 

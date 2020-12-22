@@ -15,6 +15,7 @@ class SongRepositoryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->helperService = new HelperService();
         $this->songRepository = new SongRepository($this->helperService);
     }

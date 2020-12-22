@@ -15,6 +15,7 @@ class PlaylistRepository extends AbstractRepository
         return Playlist::class;
     }
 
+    /** @return Collection|array<Playlist> */
     public function getAllByCurrentUser(): Collection
     {
         return $this->byCurrentUser()->orderBy('name')->get();

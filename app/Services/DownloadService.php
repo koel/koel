@@ -33,12 +33,16 @@ class DownloadService
         switch (get_class($mixed)) {
             case Song::class:
                 return $this->fromSong($mixed);
+
             case Collection::class:
                 return $this->fromMultipleSongs($mixed);
+
             case Album::class:
                 return $this->fromAlbum($mixed);
+
             case Artist::class:
                 return $this->fromArtist($mixed);
+
             case Playlist::class:
                 return $this->fromPlaylist($mixed);
         }
@@ -48,13 +52,13 @@ class DownloadService
 
     public function fromSong(Song $song): string
     {
-        if ($s3Params = $song->s3_params) {
+        if ($song->s3_params) {
             // The song is hosted on Amazon S3.
             // We download it back to our local server first.
             $url = $this->s3Service->getSongPublicUrl($song);
             abort_unless($url, 404);
 
-            $localPath = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename($s3Params['key']);
+            $localPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . basename($song->s3_params['key']);
 
             // The following function requires allow_url_fopen to be ON.
             // We're just assuming that to be the case here.

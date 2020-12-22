@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use Exception;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
@@ -25,7 +25,7 @@ abstract class AbstractRepository implements RepositoryInterface
         // rendering the whole installation failing.
         try {
             $this->auth = app(Guard::class);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
         }
     }
 
@@ -34,11 +34,13 @@ abstract class AbstractRepository implements RepositoryInterface
         return $this->model->find($id);
     }
 
+    /** @return Collection|array<Model> */
     public function getByIds(array $ids): Collection
     {
         return $this->model->whereIn($this->model->getKeyName(), $ids)->get();
     }
 
+    /** @return Collection|array<Model> */
     public function getAll(): Collection
     {
         return $this->model->all();

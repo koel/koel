@@ -17,9 +17,7 @@ use Mockery\MockInterface;
 
 class DownloadTest extends TestCase
 {
-    /**
-     * @var MockInterface|DownloadService
-     */
+    /** @var MockInterface|DownloadService */
     private $downloadService;
 
     /**
@@ -58,9 +56,9 @@ class DownloadTest extends TestCase
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($song) {
                 return $retrievedSongs->count() === 1 && $retrievedSongs->first()->id === $song->id;
             }))
-            ->andReturn($this->mediaPath.'/blank.mp3');
+            ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get("download/songs?songs[]={$song->id}&api_token=".$user->createToken('Koel')->plainTextToken)
+        $this->get("download/songs?songs[]={$song->id}&api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -80,11 +78,11 @@ class DownloadTest extends TestCase
 
                 return $requestedIds[0] === $retrievedIds[0] && $requestedIds[1] === $retrievedIds[1];
             }))
-            ->andReturn($this->mediaPath.'/blank.mp3'); // should be a zip file, but we're testing here…
+            ->andReturn($this->mediaPath . '/blank.mp3'); // should be a zip file, but we're testing here…
 
         $this->get(
             "download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}&api_token="
-            .$user->createToken('Koel')->plainTextToken
+            . $user->createToken('Koel')->plainTextToken
         )
             ->assertOk();
     }
@@ -102,9 +100,9 @@ class DownloadTest extends TestCase
             ->with(Mockery::on(static function (Album $retrievedAlbum) use ($album): bool {
                 return $retrievedAlbum->id === $album->id;
             }))
-            ->andReturn($this->mediaPath.'/blank.mp3');
+            ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get("download/album/{$album->id}?api_token=".$user->createToken('Koel')->plainTextToken)
+        $this->get("download/album/{$album->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -121,9 +119,9 @@ class DownloadTest extends TestCase
             ->with(Mockery::on(static function (Artist $retrievedArtist) use ($artist): bool {
                 return $retrievedArtist->id === $artist->id;
             }))
-            ->andReturn($this->mediaPath.'/blank.mp3');
+            ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get("download/artist/{$artist->id}?api_token=".$user->createToken('Koel')->plainTextToken)
+        $this->get("download/artist/{$artist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -143,9 +141,9 @@ class DownloadTest extends TestCase
                 return $retrievedPlaylist->id === $playlist->id;
             }))
             ->once()
-            ->andReturn($this->mediaPath.'/blank.mp3');
+            ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get("download/playlist/{$playlist->id}?api_token=".$user->createToken('Koel')->plainTextToken)
+        $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -157,7 +155,7 @@ class DownloadTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
-        $this->get("download/playlist/{$playlist->id}?api_token=".$user->createToken('Koel')->plainTextToken)
+        $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -179,9 +177,9 @@ class DownloadTest extends TestCase
             ->shouldReceive('from')
             ->with($favorites)
             ->once()
-            ->andReturn($this->mediaPath.'/blank.mp3');
+            ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get('download/favorites?api_token='.$user->createToken('Koel')->plainTextToken)
+        $this->get('download/favorites?api_token=' . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 }

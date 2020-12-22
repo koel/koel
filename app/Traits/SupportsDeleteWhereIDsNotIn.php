@@ -5,6 +5,7 @@ namespace App\Traits;
 use Exception;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Builder;
+use Throwable;
 
 /**
  * With reference to GitHub issue #463.
@@ -20,7 +21,7 @@ trait SupportsDeleteWhereIDsNotIn
     /**
      * Deletes all records whose IDs are not in an array.
      *
-     * @param string[]|int[] $ids the array of IDs
+     * @param array<string>|array<int> $ids the array of IDs
      * @param string         $key name of the primary key
      *
      * @throws Exception
@@ -28,6 +29,7 @@ trait SupportsDeleteWhereIDsNotIn
     public static function deleteWhereIDsNotIn(array $ids, string $key = 'id'): void
     {
         $maxChunkSize = config('database.default') === 'sqlite-persistent' ? 999 : 65535;
+
         // If the number of entries is lower than, or equals to maxChunkSize, just go ahead.
         if (count($ids) <= $maxChunkSize) {
             static::whereNotIn($key, $ids)->delete();
@@ -54,7 +56,7 @@ trait SupportsDeleteWhereIDsNotIn
     /**
      * Delete records chunk by chunk.
      *
-     * @param string[]|int[] $ids       The array of record IDs to delete
+     * @param array<string>|array<int> $ids The array of record IDs to delete
      * @param string         $key       Name of the primary key
      * @param int            $chunkSize Size of each chunk. Defaults to 2^16-1 (65535)
      *
@@ -72,7 +74,7 @@ trait SupportsDeleteWhereIDsNotIn
             }
 
             $db->commit();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $db->rollBack();
         }
     }

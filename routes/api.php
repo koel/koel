@@ -2,16 +2,16 @@
 
 use Illuminate\Http\Request;
 
-Route::group(['namespace' => 'API'], function () {
+Route::group(['namespace' => 'API'], static function (): void {
     Route::post('me', 'AuthController@login')->name('auth.login');
     Route::delete('me', 'AuthController@logout');
 
-    Route::group(['middleware' => 'auth'], function () {
-        Route::get('/ping', function () {
+    Route::group(['middleware' => 'auth'], static function (): void {
+        Route::get('/ping', static function (): void {
             // Only  acting as a ping service.
         });
 
-        Route::post('broadcasting/auth', function (Request $request) {
+        Route::post('broadcasting/auth', static function (Request $request) {
             $pusher = new Pusher\Pusher(
                 config('broadcasting.connections.pusher.key'),
                 config('broadcasting.connections.pusher.secret'),
@@ -63,7 +63,7 @@ Route::group(['namespace' => 'API'], function () {
         }
 
         // Info routes
-        Route::group(['namespace' => 'MediaInformation'], function () {
+        Route::group(['namespace' => 'MediaInformation'], static function (): void {
             Route::get('album/{album}/info', 'AlbumController@show');
             Route::get('artist/{artist}/info', 'ArtistController@show');
             Route::get('{song}/info', 'SongController@show')->name('song.show.deprecated'); // backward compat
@@ -77,8 +77,12 @@ Route::group(['namespace' => 'API'], function () {
         Route::get('album/{album}/thumbnail', 'AlbumThumbnailController@get');
     });
 
-    Route::group(['middleware' => 'os.auth', 'prefix' => 'os', 'namespace' => 'ObjectStorage'], function () {
-        Route::group(['prefix' => 's3', 'namespace' => 'S3'], function () {
+    Route::group([
+        'middleware' => 'os.auth',
+        'prefix' => 'os',
+        'namespace' => 'ObjectStorage',
+    ], static function (): void {
+        Route::group(['prefix' => 's3', 'namespace' => 'S3'], static function (): void {
             Route::post('song', 'SongController@put')->name('s3.song.put'); // we follow AWS's convention here.
             Route::delete('song', 'SongController@remove')->name('s3.song.remove'); // and here.
         });

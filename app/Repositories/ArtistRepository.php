@@ -12,6 +12,7 @@ class ArtistRepository extends AbstractRepository
         return Artist::class;
     }
 
+    /** @return array<int> */
     public function getNonEmptyArtistIds(): array
     {
         return Song::select('artist_id')

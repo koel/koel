@@ -19,7 +19,7 @@ class FileSynchronizerTest extends TestCase
 
     public function testGetFileInfo(): void
     {
-        $info = $this->fileSynchronizer->setFile(__DIR__.'/../../songs/full.mp3')->getFileInfo();
+        $info = $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/full.mp3')->getFileInfo();
 
         $expectedData = [
             'artist' => 'Koel',
@@ -30,7 +30,7 @@ class FileSynchronizerTest extends TestCase
             'disc' => 3,
             'lyrics' => "Foo\rbar",
             'cover' => [
-                'data' => file_get_contents(__DIR__.'/../../blobs/cover.png'),
+                'data' => file_get_contents(__DIR__ . '/../../blobs/cover.png'),
                 'image_mime' => 'image/png',
                 'image_width' => 512,
                 'image_height' => 512,
@@ -39,8 +39,8 @@ class FileSynchronizerTest extends TestCase
                 'description' => '',
                 'datalength' => 7627,
             ],
-            'path' => __DIR__.'/../../songs/full.mp3',
-            'mtime' => filemtime(__DIR__.'/../../songs/full.mp3'),
+            'path' => __DIR__ . '/../../songs/full.mp3',
+            'mtime' => filemtime(__DIR__ . '/../../songs/full.mp3'),
             'albumartist' => '',
         ];
 
@@ -51,7 +51,7 @@ class FileSynchronizerTest extends TestCase
     /** @test */
     public function testSongWithoutTitleHasFileNameAsTitle(): void
     {
-        $this->fileSynchronizer->setFile(__DIR__.'/../../songs/blank.mp3');
+        $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/blank.mp3');
 
         self::assertSame('blank', $this->fileSynchronizer->getFileInfo()['title']);
     }

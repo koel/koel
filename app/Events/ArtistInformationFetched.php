@@ -24,7 +24,7 @@ class ArtistInformationFetched
     }
 
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public function getInformation(): array
     {

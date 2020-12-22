@@ -10,6 +10,7 @@ class InotifyWatchRecord extends WatchRecord implements WatchRecordInterface
     public function __construct(string $input)
     {
         parent::__construct($input);
+
         $this->parse($input);
     }
 

@@ -9,11 +9,10 @@ class CreateSongsTable extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('songs', function (Blueprint $table) {
+        Schema::create('songs', static function (Blueprint $table): void {
             $table->string('id', 32)->primary();
             $table->integer('album_id')->unsigned();
             $table->string('title');
@@ -24,7 +23,7 @@ class CreateSongsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::table('songs', function (Blueprint $table) {
+        Schema::table('songs', static function (Blueprint $table): void {
             $table->foreign('album_id')->references('id')->on('albums');
         });
     }
@@ -32,9 +31,8 @@ class CreateSongsTable extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('songs');
     }

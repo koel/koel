@@ -13,7 +13,7 @@ class SongLikeToggled extends Event
     public $interaction;
     public $user;
 
-    public function __construct(Interaction $interaction, User $user = null)
+    public function __construct(Interaction $interaction, ?User $user = null)
     {
         $this->interaction = $interaction;
         $this->user = $user ?: auth()->user();

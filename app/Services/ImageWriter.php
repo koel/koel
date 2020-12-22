@@ -23,7 +23,8 @@ class ImageWriter
             ->make($data)
             ->resize(
                 $config['max_width'] ?? self::DEFAULT_MAX_WIDTH,
-                null, static function (Constraint $constraint): void {
+                null,
+                static function (Constraint $constraint): void {
                     $constraint->upsize();
                     $constraint->aspectRatio();
                 }

@@ -8,11 +8,10 @@ class AddImageToArtistsTable extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('artists', function (Blueprint $table) {
+        Schema::table('artists', static function (Blueprint $table): void {
             $table->string('image')->nullable()->after('name');
         });
     }
@@ -20,11 +19,10 @@ class AddImageToArtistsTable extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('artists', function (Blueprint $table) {
+        Schema::table('artists', static function (Blueprint $table): void {
             $table->dropColumn('image');
         });
     }

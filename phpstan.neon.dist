@@ -1,0 +1,33 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - database
+        - routes
+        - tests
+
+    # 8 is the highest level
+    level: 5
+
+    ignoreErrors:
+        - '#\(Modules\\Core\\Entities\\User(\|null)?\) does not accept Illuminate\\Contracts\\Auth\\Authenticatable#'
+        - '#PHPDoc tag @return with type array\|Illuminate\\Support\\Collection is not subtype of native type Illuminate\\Support\\Collection#'
+        - '#Unsafe usage of new static#'
+        - '#is not subtype of native type (Illuminate\\Support|Illuminate\\Database\\Eloquent)\\Collection#'
+        - '#expects Countable\|iterable, Illuminate\\Contracts\\Pagination\\LengthAwarePaginator given#'
+        - '#expects Modules\\Core\\Entities\\User\|null, Illuminate\\Contracts\\Auth\\Authenticatable\|null given#'
+        - '#expects .*, Mockery\\LegacyMockInterface given#'
+        - '#Call to an undefined method Illuminate\\Filesystem\\FilesystemAdapter::getAdapter\(\)#'
+        - '#Call to an undefined method Mockery\\ExpectationInterface|Mockery\\HigherOrderMessage::with\(\)#'
+        - '#Call to an undefined method Laravel\\Scout\\Builder::with\(\)#'
+        - '#should return App\\Models\\.*(\|null)? but returns Illuminate\\Database\\Eloquent\\Model(\|null)?#'
+        # Laravel factories allow declaration of dynamic methods as "states"
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factories\\Factory::#'
+
+    excludes_analyse:
+        - ./routes/console.php
+
+    checkMissingIterableValueType: false
+    reportUnmatchedIgnoredErrors: false

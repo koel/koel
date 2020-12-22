@@ -19,7 +19,7 @@ class LastfmTest extends TestCase
     {
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../blobs/lastfm/session-key.json')),
+            'get' => new Response(200, [], file_get_contents(__DIR__ . '../../blobs/lastfm/session-key.json')),
         ]);
 
         $service = new LastfmService($client, app(Cache::class), app(Logger::class));
@@ -56,9 +56,9 @@ class LastfmTest extends TestCase
             ->with($user)
             ->andReturn($temporaryToken);
 
-        $this->get('lastfm/connect?api_token='.$token)
+        $this->get('lastfm/connect?api_token=' . $token)
             ->assertRedirect(
-                'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Flastfm%2Fcallback%3Fapi_token%3Dtmp-token'
+                'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Flastfm%2Fcallback%3Fapi_token%3Dtmp-token' // @phpcs-ignore-line
             );
     }
 
@@ -77,7 +77,7 @@ class LastfmTest extends TestCase
             ->once()
             ->andReturn('my-session-key');
 
-        $this->get('lastfm/callback?token=lastfm-token&api_token='.urlencode($token))
+        $this->get('lastfm/callback?token=lastfm-token&api_token=' . urlencode($token))
             ->assertOk();
 
         self::assertSame('my-session-key', $user->refresh()->lastfm_session_key);

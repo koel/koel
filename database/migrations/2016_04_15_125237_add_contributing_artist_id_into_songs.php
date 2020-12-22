@@ -8,11 +8,10 @@ class AddContributingArtistIdIntoSongs extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('songs', function (Blueprint $table) {
+        Schema::table('songs', static function (Blueprint $table): void {
             $table->integer('contributing_artist_id')->unsigned()->nullable()->after('album_id');
             $table->foreign('contributing_artist_id')->references('id')->on('artists')->onDelete('cascade');
         });
@@ -21,11 +20,10 @@ class AddContributingArtistIdIntoSongs extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('songs', function (Blueprint $table) {
+        Schema::table('songs', static function (Blueprint $table): void {
             $table->dropColumn('contributing_artist_id');
         });
     }

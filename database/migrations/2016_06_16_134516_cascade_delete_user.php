@@ -8,11 +8,10 @@ class CascadeDeleteUser extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('playlists', function (Blueprint $table) {
+        Schema::table('playlists', static function (Blueprint $table): void {
             if (DB::getDriverName() !== 'sqlite') {
                 $table->dropForeign('playlists_user_id_foreign');
             }
@@ -24,11 +23,10 @@ class CascadeDeleteUser extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('playlists', function (Blueprint $table) {
+        Schema::table('playlists', static function (Blueprint $table): void {
             if (DB::getDriverName() !== 'sqlite') {
                 $table->dropForeign('playlists_user_id_foreign');
             }

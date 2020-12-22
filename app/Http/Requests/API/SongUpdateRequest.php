@@ -3,8 +3,8 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property string[] $songs
- * @property mixed[]  $data
+ * @property array<string> $songs
+ * @property array<mixed> $data
  */
 class SongUpdateRequest extends Request
 {
@@ -13,6 +13,7 @@ class SongUpdateRequest extends Request
         return $this->user()->is_admin;
     }
 
+    /** @return array<mixed> */
     public function rules(): array
     {
         return [

@@ -3,8 +3,8 @@
 namespace App\Observers;
 
 use App\Models\Album;
-use Exception;
 use Illuminate\Log\Logger;
+use Throwable;
 
 class AlbumObserver
 {
@@ -28,7 +28,7 @@ class AlbumObserver
 
         try {
             unlink($album->cover_path);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
         }
     }

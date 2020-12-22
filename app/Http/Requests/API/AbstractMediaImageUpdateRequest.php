@@ -11,6 +11,7 @@ abstract class AbstractMediaImageUpdateRequest extends Request
         return auth()->user()->is_admin;
     }
 
+    /** @return array<mixed> */
     public function rules(): array
     {
         return [
@@ -20,15 +21,15 @@ abstract class AbstractMediaImageUpdateRequest extends Request
 
     public function getFileContentAsBinaryString(): string
     {
-        [$_, $data] = explode(',', $this->{$this->getImageFieldName()});
+        [, $data] = explode(',', $this->{$this->getImageFieldName()});
 
-        return base64_decode($data);
+        return base64_decode($data, true);
     }
 
     public function getFileExtension(): string
     {
-        [$type, $data] = explode(';', $this->{$this->getImageFieldName()});
-        [$_, $extension] = explode('/', $type);
+        [$type,] = explode(';', $this->{$this->getImageFieldName()});
+        [, $extension] = explode('/', $type);
 
         return $extension;
     }

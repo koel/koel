@@ -10,7 +10,7 @@ class SongZipArchiveTest extends TestCase
 {
     public function testAddSongIntoArchive(): void
     {
-        $song = Song::factory()->create(['path' => realpath(__DIR__.'/../../songs/full.mp3')]);
+        $song = Song::factory()->create(['path' => realpath(__DIR__ . '/../../songs/full.mp3')]);
 
         $songZipArchive = new SongZipArchive();
         $songZipArchive->addSong($song);
@@ -22,8 +22,8 @@ class SongZipArchiveTest extends TestCase
     public function testAddMultipleSongsIntoArchive(): void
     {
         $songs = collect([
-            Song::factory()->create(['path' => realpath(__DIR__.'/../../songs/full.mp3')]),
-            Song::factory()->create(['path' => realpath(__DIR__.'/../../songs/lorem.mp3')]),
+            Song::factory()->create(['path' => realpath(__DIR__ . '/../../songs/full.mp3')]),
+            Song::factory()->create(['path' => realpath(__DIR__ . '/../../songs/lorem.mp3')]),
         ]);
 
         $songZipArchive = new SongZipArchive();

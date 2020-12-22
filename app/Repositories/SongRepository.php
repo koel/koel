@@ -12,6 +12,7 @@ class SongRepository extends AbstractRepository
     public function __construct(HelperService $helperService)
     {
         parent::__construct();
+
         $this->helperService = $helperService;
     }
 

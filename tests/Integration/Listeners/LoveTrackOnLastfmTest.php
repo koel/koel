@@ -20,7 +20,7 @@ class LoveTrackOnLastfmTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testHandle()
+    public function testHandle(): void
     {
         static::createSampleMediaSet();
 

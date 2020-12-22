@@ -2,15 +2,15 @@
 
 namespace App\Providers;
 
-use App\Services\iTunesService;
+use App\Services\ITunesService;
 use Illuminate\Support\ServiceProvider;
 
-class iTunesServiceProvider extends ServiceProvider
+class ITunesServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        app()->singleton('iTunes', static function (): iTunesService {
-            return app(iTunesService::class);
+        app()->singleton('iTunes', static function (): ITunesService {
+            return app(ITunesService::class);
         });
     }
 }

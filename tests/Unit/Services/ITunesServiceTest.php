@@ -2,29 +2,30 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\iTunesService;
+use App\Services\ITunesService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Log\Logger;
-use Mockery as m;
+use Mockery;
 use Tests\TestCase;
 
-class iTunesServiceTest extends TestCase
+class ITunesServiceTest extends TestCase
 {
     public function testConfiguration(): void
     {
         config(['koel.itunes.enabled' => true]);
-        /** @var iTunesService $iTunes */
-        $iTunes = app()->make(iTunesService::class);
+        /** @var ITunesService $iTunes */
+        $iTunes = app()->make(ITunesService::class);
         self::assertTrue($iTunes->used());
 
         config(['koel.itunes.enabled' => false]);
         self::assertFalse($iTunes->used());
     }
 
+    /** @return array<mixed> */
     public function provideGetTrackUrlData(): array
     {
         return [
@@ -65,14 +66,14 @@ class iTunesServiceTest extends TestCase
         ]);
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);
-        $cache = m::mock(Cache::class);
-        $logger = m::mock(Logger::class);
+        $cache = Mockery::mock(Cache::class);
+        $logger = Mockery::mock(Logger::class);
 
-        $service = new iTunesService($client, $cache, $logger);
+        $service = new ITunesService($client, $cache, $logger);
 
         $cache
             ->shouldReceive('remember')
-            ->with($cacheKey, 10080, m::on(static function (callable $generator) use ($affiliateUrl): bool {
+            ->with($cacheKey, 10080, Mockery::on(static function (callable $generator) use ($affiliateUrl): bool {
                 return $generator() === $affiliateUrl;
             }));
 

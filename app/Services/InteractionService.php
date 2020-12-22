@@ -56,9 +56,9 @@ class InteractionService
     /**
      * Like several songs at once as a user.
      *
-     * @param string[] $songIds
+     * @param array<string> $songIds
      *
-     * @return Interaction[] the array of Interaction objects
+     * @return array<Interaction> the array of Interaction objects
      */
     public function batchLike(array $songIds, User $user): array
     {
@@ -82,7 +82,7 @@ class InteractionService
     /**
      * Unlike several songs at once.
      *
-     * @param string[] $songIds
+     * @param array<string> $songIds
      */
     public function batchUnlike(array $songIds, User $user): void
     {

@@ -34,27 +34,27 @@ class MediaSyncTest extends TestCase
 
         // Standard mp3 files under root path should be recognized
         self::assertDatabaseHas('songs', [
-            'path' => $this->mediaPath.'/full.mp3',
+            'path' => $this->mediaPath . '/full.mp3',
             // Track # should be recognized
             'track' => 5,
         ]);
 
         // Ogg files and audio files in subdirectories should be recognized
-        self::assertDatabaseHas('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.ogg']);
+        self::assertDatabaseHas('songs', ['path' => $this->mediaPath . '/subdir/back-in-black.ogg']);
 
         // GitHub issue #380. folder.png should be copied and used as the cover for files
         // under subdir/
-        $song = Song::wherePath($this->mediaPath.'/subdir/back-in-black.ogg')->first();
+        $song = Song::wherePath($this->mediaPath . '/subdir/back-in-black.ogg')->first();
         self::assertNotNull($song->album->cover);
 
         // File search shouldn't be case-sensitive.
-        self::assertDatabaseHas('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
+        self::assertDatabaseHas('songs', ['path' => $this->mediaPath . '/subdir/no-name.mp3']);
 
         // Non-audio files shouldn't be recognized
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/rubbish.log']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/rubbish.log']);
 
         // Broken/corrupted audio files shouldn't be recognized
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/fake.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/fake.mp3']);
 
         // Artists should be created
         self::assertDatabaseHas('artists', ['name' => 'Cuckoo']);
@@ -168,7 +168,7 @@ class MediaSyncTest extends TestCase
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        $path = $this->mediaPath.'/blank.mp3';
+        $path = $this->mediaPath . '/blank.mp3';
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
 
         self::assertDatabaseHas('songs', ['path' => $path]);
@@ -194,9 +194,9 @@ class MediaSyncTest extends TestCase
 
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR {$this->mediaPath}/subdir"));
 
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/subdir/sic.mp3']);
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/subdir/no-name.mp3']);
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath.'/subdir/back-in-black.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/subdir/sic.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/subdir/no-name.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/subdir/back-in-black.mp3']);
     }
 
     public function testHtmlEntities(): void
@@ -217,7 +217,7 @@ class MediaSyncTest extends TestCase
 
         /** @var FileSynchronizer $fileSynchronizer */
         $fileSynchronizer = app(FileSynchronizer::class);
-        $info = $fileSynchronizer->setFile(__DIR__.'/songs/blank.mp3')->getFileInfo();
+        $info = $fileSynchronizer->setFile(__DIR__ . '/songs/blank.mp3')->getFileInfo();
 
         self::assertEquals('佐倉綾音 Unknown', $info['artist']);
         self::assertEquals('小岩井こ Random', $info['album']);

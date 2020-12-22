@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Application;
-use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Log\Logger;
+use Throwable;
 
 class ApplicationInformationService
 {
@@ -33,7 +33,7 @@ class ApplicationInformationService
                 return json_decode(
                     $this->client->get('https://api.github.com/repos/phanan/koel/tags')->getBody()
                 )[0]->name;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->logger->error($e);
 
                 return Application::KOEL_VERSION;

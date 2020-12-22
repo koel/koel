@@ -9,15 +9,15 @@ class CreateVariousArtists extends Migration
     /**
      * Create the "Various Artists".
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         // Make sure modified artists cascade the album's artist_id field.
-        Schema::table('albums', function (Blueprint $table) {
+        Schema::table('albums', static function (Blueprint $table): void {
             if (DB::getDriverName() !== 'sqlite') {
                 $table->dropForeign('albums_artist_id_foreign');
             }
+
             $table->foreign('artist_id')->references('id')->on('artists')->onUpdate('cascade')->onDelete('cascade');
         });
 
@@ -49,9 +49,8 @@ class CreateVariousArtists extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
     }
 }

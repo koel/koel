@@ -9,11 +9,10 @@ class RenameContributingArtistId extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('songs', function (Blueprint $table) {
+        Schema::table('songs', static function (Blueprint $table): void {
             if (DB::getDriverName() !== 'sqlite') {
                 $table->dropForeign(['contributing_artist_id']);
             }
@@ -26,11 +25,10 @@ class RenameContributingArtistId extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('songs', function (Blueprint $table) {
+        Schema::table('songs', static function (Blueprint $table): void {
             if (DB::getDriverName() !== 'sqlite') {
                 $table->dropForeign(['contributing_artist_id']);
             }

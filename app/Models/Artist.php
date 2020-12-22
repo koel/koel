@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Facades\Util;
-use function App\Helpers\artist_image_path;
-use function App\Helpers\artist_image_url;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,6 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+
+use function App\Helpers\artist_image_path;
+use function App\Helpers\artist_image_url;
 
 /**
  * @property int         $id
@@ -34,10 +35,10 @@ class Artist extends Model
     use HasFactory;
     use SupportsDeleteWhereIDsNotIn;
 
-    const UNKNOWN_ID = 1;
-    const UNKNOWN_NAME = 'Unknown Artist';
-    const VARIOUS_ID = 2;
-    const VARIOUS_NAME = 'Various Artists';
+    public const UNKNOWN_ID = 1;
+    public const UNKNOWN_NAME = 'Unknown Artist';
+    public const VARIOUS_ID = 2;
+    public const VARIOUS_NAME = 'Various Artists';
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
@@ -87,7 +88,9 @@ class Artist extends Model
     public static function getOrCreate(?string $name = null): self
     {
         // Remove the BOM from UTF-8/16/32, as it will mess up the database constraints.
-        if ($encoding = Util::detectUTFEncoding($name)) {
+        $encoding = Util::detectUTFEncoding($name);
+
+        if ($encoding) {
             $name = mb_convert_encoding($name, 'UTF-8', $encoding);
         }
 

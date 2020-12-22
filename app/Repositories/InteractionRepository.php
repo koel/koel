@@ -17,9 +17,7 @@ class InteractionRepository extends AbstractRepository
         return Interaction::class;
     }
 
-    /**
-     * Get all songs favorited by a user.
-     */
+    /** @return Collection|array<Interaction> */
     public function getUserFavorites(User $user): Collection
     {
         return $this->model->where([
@@ -31,9 +29,7 @@ class InteractionRepository extends AbstractRepository
             ->pluck('song');
     }
 
-    /**
-     * @return Interaction[]
-     */
+    /** @return array<Interaction> */
     public function getRecentlyPlayed(User $user, ?int $count = null): array
     {
         /** @var Builder $query */

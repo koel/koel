@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use Exception;
+use Throwable;
 
-class iTunesService extends AbstractApiClient implements ApiConsumerInterface
+class ITunesService extends AbstractApiClient implements ApiConsumerInterface
 {
     /**
      * Determines whether to use iTunes services.
@@ -29,7 +29,7 @@ class iTunesService extends AbstractApiClient implements ApiConsumerInterface
                 24 * 60 * 7,
                 function () use ($term, $album, $artist): ?string {
                     $params = [
-                        'term' => $term.($album ? " $album" : '').($artist ? " $artist" : ''),
+                        'term' => $term . ($album ? " $album" : '') . ($artist ? " $artist" : ''),
                         'media' => 'music',
                         'entity' => 'song',
                         'limit' => 1,
@@ -45,12 +45,10 @@ class iTunesService extends AbstractApiClient implements ApiConsumerInterface
 
                     $trackUrl = $response->results[0]->trackViewUrl;
                     $connector = parse_url($trackUrl, PHP_URL_QUERY) ? '&' : '?';
-                    $trackUrl .= "{$connector}at=".config('koel.itunes.affiliate_id');
-
-                    return $trackUrl;
+                    return $trackUrl . "{$connector}at=" . config('koel.itunes.affiliate_id');
                 }
             );
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
 
             return null;

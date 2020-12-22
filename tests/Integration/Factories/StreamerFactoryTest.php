@@ -21,6 +21,7 @@ class StreamerFactoryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->streamerFactory = app(StreamerFactory::class);
         PHPMockery::mock('App\Services\Streamers', 'file_exists')->andReturn(true);
     }
@@ -44,7 +45,7 @@ class StreamerFactoryTest extends TestCase
 
         /** @var Song $song */
         $song = Song::factory()->make();
-        self::assertInstanceOf(TranscodingStreamer::class, $streamerFactory->createStreamer($song, null));
+        self::assertInstanceOf(TranscodingStreamer::class, $streamerFactory->createStreamer($song));
     }
 
     public function testCreateTranscodingStreamerIfForced(): void
@@ -60,6 +61,7 @@ class StreamerFactoryTest extends TestCase
         self::assertInstanceOf(TranscodingStreamer::class, $streamerFactory->createStreamer($song, true));
     }
 
+    /** @return array<mixed> */
     public function provideStreamingConfigData(): array
     {
         return [
@@ -73,7 +75,7 @@ class StreamerFactoryTest extends TestCase
      * @dataProvider provideStreamingConfigData
      *
      * @param string|null $config
-     * @param string      $expectedClass
+     * @param string $expectedClass
      */
     public function testCreatePHPStreamer($config, $expectedClass): void
     {

@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use function App\Helpers\album_cover_path;
-use function App\Helpers\artist_image_path;
 use App\Models\Album;
 use App\Models\Artist;
-use Exception;
 use Psr\Log\LoggerInterface;
+use Throwable;
+
+use function App\Helpers\album_cover_path;
+use function App\Helpers\artist_image_path;
 
 class MediaMetadataService
 {
@@ -52,7 +53,7 @@ class MediaMetadataService
 
             $album->update(['cover' => basename($destination)]);
             $this->createThumbnailForAlbum($album);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
         }
     }
@@ -88,7 +89,7 @@ class MediaMetadataService
             }
 
             $artist->update(['image' => basename($destination)]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
         }
     }

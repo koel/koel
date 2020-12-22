@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class SettingTableSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         Setting::set('media_path', '');
     }

@@ -2,11 +2,12 @@
 
 namespace Tests\Integration\Services;
 
-use function App\Helpers\album_cover_path;
-use function App\Helpers\album_cover_url;
 use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Tests\TestCase;
+
+use function App\Helpers\album_cover_path;
+use function App\Helpers\album_cover_url;
 
 class MediaMetadataServiceTest extends TestCase
 {
@@ -19,7 +20,7 @@ class MediaMetadataServiceTest extends TestCase
 
     public function testGetAlbumThumbnailUrl(): void
     {
-        copy(__DIR__.'/../../blobs/cover.png', album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        copy(__DIR__ . '/../../blobs/cover.png', album_cover_path('album-cover-for-thumbnail-test.jpg'));
 
         $album = Album::factory()->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
 
@@ -48,6 +49,7 @@ class MediaMetadataServiceTest extends TestCase
     protected function tearDown(): void
     {
         $this->cleanUp();
+
         parent::tearDown();
     }
 }

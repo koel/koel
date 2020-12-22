@@ -30,7 +30,6 @@ class User extends Authenticatable
     /**
      * The preferences that we don't want to show to the client.
      *
-     * @var array
      */
     private const HIDDEN_PREFERENCES = ['lastfm_session_key'];
 
@@ -114,7 +113,7 @@ class User extends Authenticatable
     /**
      * User preferences are stored as a serialized associative array.
      *
-     * @param mixed[] $value
+     * @param array<mixed> $value
      */
     public function setPreferencesAttribute(array $value): void
     {
@@ -124,7 +123,7 @@ class User extends Authenticatable
     /**
      * Unserialize the user preferences back to an array before returning.
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
     public function getPreferencesAttribute(?string $value): array
     {

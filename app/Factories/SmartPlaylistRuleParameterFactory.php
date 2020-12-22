@@ -10,11 +10,11 @@ use Throwable;
 class SmartPlaylistRuleParameterFactory
 {
     /**
-     * @param mixed[] $value
+     * @param array<mixed> $value
      *
      * @throws Throwable
      *
-     * @return string[]
+     * @return array<string>
      */
     public function createParameters(string $model, string $operator, array $value): array
     {

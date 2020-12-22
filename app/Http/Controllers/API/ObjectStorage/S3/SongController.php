@@ -38,9 +38,14 @@ class SongController extends Controller
 
         $compilation = (bool) trim(array_get($tags, 'albumartist'));
         $album = Album::getOrCreate($artist, array_get($tags, 'album'), $compilation);
+        $cover = array_get($tags, 'cover');
 
-        if ($cover = array_get($tags, 'cover')) {
-            $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data']), $cover['extension']);
+        if ($cover) {
+            $this->mediaMetadataService->writeAlbumCover(
+                $album,
+                base64_decode($cover['data'], true),
+                $cover['extension']
+            );
         }
 
         $song = Song::updateOrCreate(['id' => $this->helperService->getFileHash($path)], [

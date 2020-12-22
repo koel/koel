@@ -17,6 +17,7 @@ class UserUpdateRequest extends Request
         return auth()->user()->is_admin;
     }
 
+    /** @return array<mixed> */
     public function rules(): array
     {
         /** @var User $user */
@@ -24,7 +25,7 @@ class UserUpdateRequest extends Request
 
         return [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
         ];
     }
 }

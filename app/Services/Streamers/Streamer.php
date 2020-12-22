@@ -6,14 +6,10 @@ use App\Models\Song;
 
 class Streamer
 {
-    /**
-     * @var Song|string
-     */
+    /** @var Song|string */
     protected $song;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $contentType;
 
     public function __construct()
@@ -31,7 +27,7 @@ class Streamer
         // Hard code the content type instead of relying on PHP's fileinfo()
         // or even Symfony's MIMETypeGuesser, since they appear to be wrong sometimes.
         if (!$this->song->s3_params) {
-            $this->contentType = 'audio/'.pathinfo($this->song->path, PATHINFO_EXTENSION);
+            $this->contentType = 'audio/' . pathinfo($this->song->path, PATHINFO_EXTENSION);
         }
     }
 }

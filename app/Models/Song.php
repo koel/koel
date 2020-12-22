@@ -14,19 +14,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
- * @property string   $path
- * @property string   $title
- * @property Album    $album
- * @property Artist   $artist
- * @property string[] $s3_params
- * @property float    $length
- * @property string   $lyrics
- * @property int      $track
- * @property int      $disc
- * @property int      $album_id
- * @property string   $id
- * @property int      $artist_id
- * @property int      $mtime
+ * @property string $path
+ * @property string $title
+ * @property Album $album
+ * @property Artist $artist
+ * @property array<string> $s3_params
+ * @property float $length
+ * @property string $lyrics
+ * @property int $track
+ * @property int $disc
+ * @property int $album_id
+ * @property string $id
+ * @property int $artist_id
+ * @property int $mtime
  *
  * @method static self updateOrCreate(array $where, array $params)
  * @method static Builder select(string $string)
@@ -48,14 +48,9 @@ class Song extends Model
      * Attributes to be hidden from JSON outputs.
      * Here we specify to hide lyrics as well to save some bandwidth (actually, lots of it).
      * Lyrics can then be queried on demand.
-     *
-     * @var array
      */
     protected $hidden = ['lyrics', 'updated_at', 'path', 'mtime'];
 
-    /**
-     * @var array
-     */
     protected $casts = [
         'length' => 'float',
         'mtime' => 'int',
@@ -64,12 +59,6 @@ class Song extends Model
     ];
 
     protected $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
     public $incrementing = false;
 
     public function artist(): BelongsTo
@@ -95,14 +84,16 @@ class Song extends Model
     /**
      * Update song info.
      *
-     * @param string[] $ids
-     * @param string[] $data the data array, with these supported fields:
-     *                       - title
-     *                       - artistName
-     *                       - albumName
-     *                       - lyrics
-     *                       All of these are optional, in which case the info will not be changed
-     *                       (except for lyrics, which will be emptied)
+     * @param array<string> $ids
+     * @param array<string> $data the data array, with these supported fields:
+     * - title
+     * - artistName
+     * - albumName
+     * - lyrics
+     * All of these are optional, in which case the info will not be changed
+     * (except for lyrics, which will be emptied)
+     *
+     * @return Collection|array<Song>
      */
     public static function updateInfo(array $ids, array $data): Collection
     {
@@ -164,9 +155,11 @@ class Song extends Model
             case 1: // ALL, or forcing compilation status to be Yes
                 $isCompilation = true;
                 break;
+
             case 2: // Keep current compilation status
                 $isCompilation = $this->album->artist_id === Artist::VARIOUS_ID;
                 break;
+
             default:
                 $isCompilation = false;
                 break;
@@ -197,7 +190,7 @@ class Song extends Model
     public function scopeInDirectory(Builder $query, string $path): Builder
     {
         // Make sure the path ends with a directory separator.
-        $path = rtrim(trim($path), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $path = rtrim(trim($path), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         return $query->where('path', 'LIKE', "$path%");
     }
@@ -234,7 +227,7 @@ class Song extends Model
     /**
      * Get the bucket and key name of an S3 object.
      *
-     * @return string[]|null
+     * @return array<string>|null
      */
     public function getS3ParamsAttribute(): ?array
     {
@@ -247,10 +240,7 @@ class Song extends Model
         return compact('bucket', 'key');
     }
 
-    /**
-     * Return the ID of the song when it's converted to string.
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->id;
     }

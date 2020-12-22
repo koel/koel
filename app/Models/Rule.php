@@ -89,7 +89,13 @@ class Rule
     private function validateOperator(string $operator): void
     {
         if (!in_array($operator, self::VALID_OPERATORS, true)) {
-            throw new InvalidArgumentException(sprintf('%s is not a valid value for operators. Valid values are: %s', $operator, implode(', ', self::VALID_OPERATORS)));
+            throw new InvalidArgumentException(
+                sprintf(
+                    '%s is not a valid value for operators. Valid values are: %s',
+                    $operator,
+                    implode(', ', self::VALID_OPERATORS)
+                )
+            );
         }
     }
 }

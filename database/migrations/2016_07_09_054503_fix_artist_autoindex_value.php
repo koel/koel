@@ -8,9 +8,8 @@ class FixArtistAutoindexValue extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         // This is to fix the auto increment bug caused by 2016_04_16_082627_create_various_artists
 
@@ -20,15 +19,14 @@ class FixArtistAutoindexValue extends Migration
         }
 
         $latestArtist = Artist::orderBy('id', 'DESC')->first();
-        DB::statement('ALTER TABLE artists AUTO_INCREMENT='.($latestArtist->id + 1));
+        DB::statement('ALTER TABLE artists AUTO_INCREMENT=' . ($latestArtist->id + 1));
     }
 
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
     }
 }

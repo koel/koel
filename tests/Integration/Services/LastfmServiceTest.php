@@ -21,7 +21,7 @@ class LastfmServiceTest extends TestCase
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist.json')),
+            'get' => new Response(200, [], file_get_contents(__DIR__ . '../../../blobs/lastfm/artist.json')),
         ]);
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
@@ -46,7 +46,7 @@ class LastfmServiceTest extends TestCase
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
-            'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/artist-notfound.json')),
+            'get' => new Response(400, [], file_get_contents(__DIR__ . '../../../blobs/lastfm/artist-notfound.json')),
         ]);
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
@@ -64,7 +64,7 @@ class LastfmServiceTest extends TestCase
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album.json')),
+            'get' => new Response(200, [], file_get_contents(__DIR__ . '../../../blobs/lastfm/album.json')),
         ]);
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
@@ -102,7 +102,7 @@ class LastfmServiceTest extends TestCase
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
-            'get' => new Response(400, [], file_get_contents(__DIR__.'../../../blobs/lastfm/album-notfound.json')),
+            'get' => new Response(400, [], file_get_contents(__DIR__ . '../../../blobs/lastfm/album-notfound.json')),
         ]);
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));

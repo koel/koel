@@ -17,8 +17,9 @@ class LoveTrackOnLastfm
 
     public function handle(SongLikeToggled $event): void
     {
-        if (!$this->lastfm->enabled() ||
-            !($sessionKey = $event->user->lastfm_session_key) ||
+        if (
+            !$this->lastfm->enabled() ||
+            !$event->user->lastfm_session_key ||
             $event->interaction->song->artist->is_unknown
         ) {
             return;

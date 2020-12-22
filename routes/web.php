@@ -1,6 +1,6 @@
 <?php
 
-use App\Facades\iTunes;
+use App\Facades\ITunes;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', static function () {
@@ -20,8 +20,8 @@ Route::group(['middleware' => 'auth'], static function (): void {
         Route::get('callback', 'LastfmController@callback')->name('lastfm.callback');
     });
 
-    if (iTunes::used()) {
-        Route::get('itunes/song/{album}', 'iTunesController@viewSong')->name('iTunes.viewSong');
+    if (ITunes::used()) {
+        Route::get('itunes/song/{album}', 'ITunesController@viewSong')->name('iTunes.viewSong');
     }
 
     Route::group(['prefix' => 'download', 'namespace' => 'Download'], static function (): void {

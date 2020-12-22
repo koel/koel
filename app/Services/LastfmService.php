@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use Exception;
+use Throwable;
 
 class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 {
     /**
      * Override the key param, since, again, Lastfm wants to be different.
-     *
-     * @var string
      */
     protected $keyParam = 'api_key';
 
@@ -32,9 +30,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Get information about an artist.
      *
-     * @param string $name Name of the artist
-     *
-     * @return mixed[]|null
+     * @return array<mixed>|null
      */
     public function getArtistInformation(string $name): ?array
     {
@@ -54,7 +50,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
                 return $this->buildArtistInformation($response->artist);
             });
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
 
             return null;
@@ -64,9 +60,9 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Build a Koel-usable array of artist information using the data from Last.fm.
      *
-     * @param object $data
+     * @param mixed $data
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
     private function buildArtistInformation($data): array
     {
@@ -83,7 +79,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Get information about an album.
      *
-     * @return mixed[]|null
+     * @return array<mixed>|null
      */
     public function getAlbumInformation(string $albumName, string $artistName): ?array
     {
@@ -107,7 +103,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
                 return $this->buildAlbumInformation($response->album);
             });
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
 
             return null;
@@ -117,9 +113,9 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Build a Koel-usable array of album information using the data from Last.fm.
      *
-     * @param object $data
+     * @param mixed $data
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
     private function buildAlbumInformation($data): array
     {
@@ -156,7 +152,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
         try {
             return $this->get("/?$query&format=json", [], false)->session->key;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
 
             return null;
@@ -166,11 +162,11 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Scrobble a song.
      *
-     * @param string     $artist    The artist name
-     * @param string     $track     The track name
+     * @param string $artist The artist name
+     * @param string $track The track name
      * @param string|int $timestamp The UNIX timestamp
-     * @param string     $album     The album name
-     * @param string     $sk        The session key
+     * @param string $album The album name
+     * @param string $sk The session key
      */
     public function scrobble(string $artist, string $track, $timestamp, string $album, string $sk): void
     {
@@ -184,7 +180,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
         try {
             $this->post('/', $this->buildAuthCallParams($params), false);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
         }
     }
@@ -192,10 +188,10 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Love or unlove a track on Last.fm.
      *
-     * @param string $track  The track name
+     * @param string $track The track name
      * @param string $artist The artist's name
-     * @param string $sk     The session key
-     * @param bool   $love   Whether to love or unlove. Such cheesy terms... urrgggh
+     * @param string $sk The session key
+     * @param bool $love Whether to love or unlove. Such cheesy terms... urrgggh
      */
     public function toggleLoveTrack(string $track, string $artist, string $sk, ?bool $love = true): void
     {
@@ -204,7 +200,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
         try {
             $this->post('/', $this->buildAuthCallParams($params), false);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
         }
     }
@@ -212,11 +208,11 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Update a track's "now playing" on Last.fm.
      *
-     * @param string    $artist   Name of the artist
-     * @param string    $track    Name of the track
-     * @param string    $album    Name of the album
+     * @param string $artist Name of the artist
+     * @param string $track Name of the track
+     * @param string $album Name of the album
      * @param int|float $duration Duration of the track, in seconds
-     * @param string    $sk       The session key
+     * @param string $sk The session key
      */
     public function updateNowPlaying(string $artist, string $track, string $album, $duration, string $sk): void
     {
@@ -229,7 +225,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
         try {
             $this->post('/', $this->buildAuthCallParams($params), false);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e);
         }
     }
@@ -242,12 +238,12 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
      *
      * @see http://www.last.fm/api/webauth#5
      *
-     * @param array $params   the array of parameters
-     * @param bool  $toString Whether to turn the array into a query string
+     * @param array $params the array of parameters
+     * @param bool $toString Whether to turn the array into a query string
      *
-     * @return array|string
+     * @return array<mixed>|string
      */
-    public function buildAuthCallParams(array $params, bool $toString = false)
+    public function buildAuthCallParams(array $params, bool $toString = false): string
     {
         $params['api_key'] = $this->getKey();
         ksort($params);
@@ -257,7 +253,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         $str = '';
 
         foreach ($params as $name => $value) {
-            $str .= $name.$value;
+            $str .= $name . $value;
         }
 
         $str .= $this->getSecret();
@@ -268,6 +264,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         }
 
         $query = '';
+
         foreach ($params as $key => $value) {
             $query .= "$key=$value&";
         }
@@ -277,8 +274,6 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
     /**
      * Correctly format a value returned by Last.fm.
-     *
-     * @param string|array $value
      */
     protected function formatText(?string $value): string
     {

@@ -16,6 +16,7 @@ class TidyLibraryCommand extends Command
     public function __construct(MediaSyncService $mediaSyncService)
     {
         parent::__construct();
+
         $this->mediaSyncService = $mediaSyncService;
     }
 

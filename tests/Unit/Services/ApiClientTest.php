@@ -37,6 +37,7 @@ class ApiClientTest extends TestCase
         self::assertEquals('http://baz.com/?key=bar', $api->buildUrl('http://baz.com/'));
     }
 
+    /** @return array<mixed> */
     public function provideRequestData(): array
     {
         return [
@@ -47,9 +48,7 @@ class ApiClientTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideRequestData
-     */
+    /** @dataProvider provideRequestData */
     public function testRequest(string $method, string $responseBody): void
     {
         /** @var Client $client */

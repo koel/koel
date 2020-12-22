@@ -7,6 +7,7 @@ namespace App\Http\Requests\API;
  */
 class ScrobbleStoreRequest extends Request
 {
+    /** @return array<mixed> */
     public function rules(): array
     {
         return ['timestamp' => 'required|numeric'];

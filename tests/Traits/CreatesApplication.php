@@ -9,7 +9,7 @@ use Illuminate\Foundation\Application;
 
 trait CreatesApplication
 {
-    protected $mediaPath = __DIR__.'/../songs';
+    protected $mediaPath = __DIR__ . '/../songs';
 
     /** @var Kernel */
     private $artisan;
@@ -21,10 +21,10 @@ trait CreatesApplication
      */
     protected $baseUrl = 'http://localhost';
 
-    public function createApplication()
+    public function createApplication(): Application
     {
         /** @var Application $app */
-        $app = require __DIR__.'/../../bootstrap/app.php';
+        $app = require __DIR__ . '/../../bootstrap/app.php';
 
         $this->artisan = $app->make(Artisan::class);
         $this->artisan->bootstrap();

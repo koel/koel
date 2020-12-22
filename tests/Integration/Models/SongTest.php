@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class SongTest extends TestCase
 {
-    public function testLyricsHaveNewlinesReplacedByBrTags()
+    public function testLyricsHaveNewlinesReplacedByBrTags(): void
     {
         /** @var Song $song */
         $song = Song::factory()->create([

@@ -22,10 +22,11 @@ class SmartPlaylistService
         $this->songRepository = $songRepository;
     }
 
+    /** @return Collection|array<Song> */
     public function getSongs(Playlist $playlist): Collection
     {
         if (!$playlist->is_smart) {
-            throw new RuntimeException($playlist->name.' is not a smart playlist.');
+            throw new RuntimeException($playlist->name . ' is not a smart playlist.');
         }
 
         $rules = $this->addRequiresUserRules($playlist->rules, $playlist->user);
@@ -53,7 +54,7 @@ class SmartPlaylistService
      * (basically everything related to interactions).
      * For those, we create an additional "user_id" rule.
      *
-     * @param array[] $rules
+     * @return array<mixed>
      */
     public function addRequiresUserRules(array $rules, User $user): array
     {
@@ -75,10 +76,11 @@ class SmartPlaylistService
         return $rules;
     }
 
+    /** @return array<mixed> */
     private function createRequireUserRule(User $user, string $modelPrefix): array
     {
         return [
-            'model' => $modelPrefix.'user_id',
+            'model' => $modelPrefix . 'user_id',
             'operator' => 'is',
             'value' => [$user->id],
         ];

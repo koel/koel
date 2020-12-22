@@ -4,10 +4,10 @@ namespace App\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class ITunes extends Facade
+class YouTube extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'iTunes';
+        return 'YouTube';
     }
 }

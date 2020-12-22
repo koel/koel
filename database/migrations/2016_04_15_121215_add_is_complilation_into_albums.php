@@ -8,11 +8,10 @@ class AddIsComplilationIntoAlbums extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('albums', function (Blueprint $table) {
+        Schema::table('albums', static function (Blueprint $table): void {
             $table->boolean('is_compilation')->nullable()->defaults(false)->after('cover');
         });
     }
@@ -20,9 +19,8 @@ class AddIsComplilationIntoAlbums extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
     }
 }

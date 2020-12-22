@@ -12,6 +12,7 @@ class SettingRequest extends Request
         return auth()->user()->is_admin;
     }
 
+    /** @return array<mixed> */
     public function rules(): array
     {
         return [

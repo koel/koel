@@ -13,6 +13,7 @@ class FavoritesController extends Controller
     public function __construct(DownloadService $downloadService, InteractionRepository $interactionRepository)
     {
         parent::__construct($downloadService);
+
         $this->interactionRepository = $interactionRepository;
     }
 

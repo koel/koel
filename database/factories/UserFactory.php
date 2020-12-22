@@ -10,6 +10,7 @@ class UserFactory extends Factory
 {
     protected $model = User::class;
 
+    /** @return array<mixed> */
     public function definition(): array
     {
         return [
@@ -22,9 +23,9 @@ class UserFactory extends Factory
         ];
     }
 
-    public function admin()
+    public function admin(): self
     {
-        return $this->state(function (): array {
+        return $this->state(static function (): array {
             return ['is_admin' => true];
         });
     }

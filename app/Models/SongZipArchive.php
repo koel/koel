@@ -3,17 +3,15 @@
 namespace App\Models;
 
 use App\Facades\Download;
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use Throwable;
 use ZipArchive;
 
 class SongZipArchive
 {
-    /**
-     * @var ZipArchive
-     */
+    /** @var ZipArchive */
     private $archive;
 
     /**
@@ -60,7 +58,7 @@ class SongZipArchive
         try {
             $path = Download::fromSong($song);
             $this->archive->addFile($path, $this->generateZipContentFileNameFromPath($path));
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             Log::error($e);
         }
 
@@ -95,7 +93,7 @@ class SongZipArchive
             ++$this->fileNames[$name];
             $parts = explode('.', $name);
             $ext = $parts[count($parts) - 1];
-            $parts[count($parts) - 1] = $this->fileNames[$name].".$ext";
+            $parts[count($parts) - 1] = $this->fileNames[$name] . ".$ext";
             $name = implode('.', $parts);
         } else {
             $this->fileNames[$name] = 1;

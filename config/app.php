@@ -139,7 +139,7 @@ return [
         App\Providers\YouTubeServiceProvider::class,
         App\Providers\DownloadServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
-        App\Providers\iTunesServiceProvider::class,
+        App\Providers\ITunesServiceProvider::class,
         App\Providers\StreamerServiceProvider::class,
         App\Providers\ObjectStorageServiceProvider::class,
     ],
@@ -189,11 +189,11 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
         'Image' => Intervention\Image\Facades\Image::class,
+        'AWS' => Aws\Laravel\AwsFacade::class,
 
         'Util' => App\Facades\Util::class,
         'YouTube' => App\Facades\YouTube::class,
         'Download' => App\Facades\Download::class,
-        'AWS' => Aws\Laravel\AwsFacade::class,
-        'iTunes' => App\Facades\iTunes::class,
+        'ITunes' => App\Facades\ITunes::class,
     ],
 ];

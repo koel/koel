@@ -21,11 +21,13 @@ class SmartPlaylistServiceTest extends TestCase
         Carbon::setTestNow(new Carbon('2018-07-15'));
     }
 
+    /** @return array<mixed> */
     private function readFixtureFile(string $fileName): array
     {
-        return json_decode(file_get_contents(__DIR__.'/../../blobs/rules/'.$fileName), true);
+        return json_decode(file_get_contents(__DIR__ . '/../../blobs/rules/' . $fileName), true);
     }
 
+    /** @return array<array<mixed>> */
     public function provideRules(): array
     {
         return [
@@ -81,17 +83,17 @@ class SmartPlaylistServiceTest extends TestCase
             ],
             [
                 $this->readFixtureFile('is and isNot.json'),
-                'select * from "songs" where ("title" = ? and exists (select * from "artists" where "songs"."artist_id" = "artists"."id" and "name" <> ?))',
+                'select * from "songs" where ("title" = ? and exists (select * from "artists" where "songs"."artist_id" = "artists"."id" and "name" <> ?))', // @phpcs-ignore-line
                 ['Foo', 'Bar'],
             ],
             [
                 $this->readFixtureFile('(is and isNot) or (is and isGreaterThan).json'),
-                'select * from "songs" where ("title" = ? and exists (select * from "albums" where "songs"."album_id" = "albums"."id" and "name" <> ?)) or ("genre" = ? and "bit_rate" > ?)',
+                'select * from "songs" where ("title" = ? and exists (select * from "albums" where "songs"."album_id" = "albums"."id" and "name" <> ?)) or ("genre" = ? and "bit_rate" > ?)', // @phpcs-ignore-line
                 ['Foo', 'Bar', 'Metal', '128'],
             ],
             [
                 $this->readFixtureFile('is or is.json'),
-                'select * from "songs" where ("title" = ?) or (exists (select * from "artists" where "songs"."artist_id" = "artists"."id" and "name" = ?))',
+                'select * from "songs" where ("title" = ?) or (exists (select * from "artists" where "songs"."artist_id" = "artists"."id" and "name" = ?))', // @phpcs-ignore-line
                 ['Foo', 'Bar'],
             ],
         ];
@@ -100,8 +102,8 @@ class SmartPlaylistServiceTest extends TestCase
     /**
      * @dataProvider provideRules
      *
-     * @param string[] $rules
-     * @param mixed[]  $bindings
+     * @param array<string> $rules
+     * @param array<mixed> $bindings
      */
     public function testBuildQueryForRules(array $rules, string $sql, array $bindings): void
     {

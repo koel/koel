@@ -4,7 +4,7 @@ namespace App\Libraries\WatchRecord;
 
 interface WatchRecordInterface
 {
-    public function parse(string $string);
+    public function parse(string $string): void;
 
     public function getPath(): string;
 

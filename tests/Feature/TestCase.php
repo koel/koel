@@ -12,7 +12,7 @@ abstract class TestCase extends BaseTestCase
     {
         $user = $user ?: User::factory()->create();
         $headers['X-Requested-With'] = 'XMLHttpRequest';
-        $headers['Authorization'] = 'Bearer '.$user->createToken('koel')->plainTextToken;
+        $headers['Authorization'] = 'Bearer ' . $user->createToken('koel')->plainTextToken;
 
         return parent::json($method, $uri, $data, $headers);
     }

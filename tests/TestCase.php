@@ -6,7 +6,6 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
-use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use ReflectionClass;
@@ -33,21 +32,16 @@ abstract class TestCase extends BaseTestCase
     protected function tearDown(): void
     {
         self::destroySandbox();
+
         parent::tearDown();
     }
 
-    /**
-     * Create a sample media set, with a complete artist+album+song trio.
-     *
-     * @throws Exception
-     */
     protected static function createSampleMediaSet(): void
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
-        // Sample 3 albums
-        /** @var Album[] $albums */
+        /** @var array<Album> $albums */
         $albums = Album::factory(3)->create([
             'artist_id' => $artist->id,
         ]);
@@ -61,6 +55,7 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    /** @return mixed */
     protected static function getNonPublicProperty($object, string $property)
     {
         $reflection = new ReflectionClass($object);

@@ -7,9 +7,9 @@ abstract class Event
     /**
      * Get the channels the event should be broadcast on.
      *
-     * @return array
+     * @return array<mixed>
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         return [];
     }

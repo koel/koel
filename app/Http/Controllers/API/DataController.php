@@ -9,7 +9,7 @@ use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\UserRepository;
 use App\Services\ApplicationInformationService;
-use App\Services\iTunesService;
+use App\Services\ITunesService;
 use App\Services\LastfmService;
 use App\Services\MediaCacheService;
 use App\Services\YouTubeService;
@@ -35,7 +35,7 @@ class DataController extends Controller
     public function __construct(
         LastfmService $lastfmService,
         YouTubeService $youTubeService,
-        iTunesService $iTunesService,
+        ITunesService $iTunesService,
         MediaCacheService $mediaCacheService,
         SettingRepository $settingRepository,
         PlaylistRepository $playlistRepository,

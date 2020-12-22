@@ -23,15 +23,13 @@ class Setting extends Model
     /**
      * Get a setting value.
      *
-     * @return mixed|string
+     * @return mixed
      */
     public static function get(string $key)
     {
-        if ($record = self::find($key)) {
-            return $record->value;
-        }
+        $record = self::find($key);
 
-        return null;
+        return $record ? $record->value :  null;
     }
 
     /**
@@ -39,7 +37,6 @@ class Setting extends Model
      *
      * @param string|array $key   the key of the setting, or an associative array of settings,
      *                            in which case $value will be discarded
-     * @param mixed        $value
      */
     public static function set($key, $value = null): void
     {
@@ -57,8 +54,6 @@ class Setting extends Model
     /**
      * Serialize the setting value before saving into the database.
      * This makes settings more flexible.
-     *
-     * @param mixed $value
      */
     public function setValueAttribute($value): void
     {
@@ -67,8 +62,6 @@ class Setting extends Model
 
     /**
      * Get the unserialized setting value.
-     *
-     * @param mixed $value
      *
      * @return mixed
      */

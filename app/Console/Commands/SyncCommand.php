@@ -25,14 +25,13 @@ class SyncCommand extends Command
     private $mediaSyncService;
     private $settingRepository;
 
-    /**
-     * @var ProgressBar
-     */
+    /** @var ProgressBar */
     private $progressBar;
 
     public function __construct(MediaSyncService $mediaSyncService, SettingRepository $settingRepository)
     {
         parent::__construct();
+
         $this->mediaSyncService = $mediaSyncService;
         $this->settingRepository = $settingRepository;
     }
@@ -43,8 +42,9 @@ class SyncCommand extends Command
     public function handle(): void
     {
         $this->ensureMediaPath();
+        $record = $this->argument('record');
 
-        if (!$record = $this->argument('record')) {
+        if (!$record) {
             $this->syncAll();
 
             return;
@@ -60,7 +60,7 @@ class SyncCommand extends Command
      */
     protected function syncAll(): void
     {
-        $this->info('Syncing media from '.Setting::get('media_path').PHP_EOL);
+        $this->info('Syncing media from ' . Setting::get('media_path') . PHP_EOL);
 
         // Get the tags to sync.
         // Notice that this is only meaningful for existing records.
@@ -70,10 +70,10 @@ class SyncCommand extends Command
         $this->mediaSyncService->sync(null, $tags, $this->option('force'), $this);
 
         $this->output->writeln(
-            PHP_EOL.PHP_EOL
-            ."<info>Completed! {$this->synced} new or updated song(s)</info>, "
-            ."{$this->ignored} unchanged song(s), "
-            ."and <comment>{$this->invalid} invalid file(s)</comment>."
+            PHP_EOL . PHP_EOL
+            . "<info>Completed! {$this->synced} new or updated song(s)</info>, "
+            . "{$this->ignored} unchanged song(s), "
+            . "and <comment>{$this->invalid} invalid file(s)</comment>."
         );
     }
 
@@ -107,7 +107,7 @@ class SyncCommand extends Command
             ++$this->ignored;
         } elseif ($result === FileSynchronizer::SYNC_RESULT_BAD_FILE) {
             if ($this->option('verbose')) {
-                $this->error(PHP_EOL."'$name' is not a valid media file: ".$reason);
+                $this->error(PHP_EOL . "'$name' is not a valid media file: " . $reason);
             }
 
             ++$this->invalid;

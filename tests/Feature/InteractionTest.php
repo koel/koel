@@ -5,21 +5,17 @@ namespace Tests\Feature;
 use App\Events\SongLikeToggled;
 use App\Models\Song;
 use App\Models\User;
-use Exception;
 
 class InteractionTest extends TestCase
 {
-    /**
-     * @throws Exception
-     */
     public function setUp(): void
     {
         parent::setUp();
+
         static::createSampleMediaSet();
     }
 
-    /** @test */
-    public function play_count_is_increased(): void
+    public function testIncreasePlayCount(): void
     {
         $this->withoutEvents();
         $user = User::factory()->create();
@@ -43,12 +39,7 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function user_can_like_and_unlike_a_song(): void
+    public function testToggle(): void
     {
         $this->expectsEvents(SongLikeToggled::class);
 
@@ -73,12 +64,7 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function user_can_like_and_unlike_songs_in_batch(): void
+    public function testToggleBatch(): void
     {
         $this->expectsEvents(SongLikeToggled::class);
 

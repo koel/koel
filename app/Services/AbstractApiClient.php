@@ -48,7 +48,7 @@ abstract class AbstractApiClient
      * @param bool    $appendKey Whether to automatically append the API key into the URI.
      *                           While it's usually the case, some services (like Last.fm) requires
      *                           an "API signature" of the request. Appending an API key will break the request.
-     * @param mixed[] $params    An array of parameters
+     * @param array<mixed> $params An array of parameters
      *
      * @return mixed|SimpleXMLElement|null
      */
@@ -77,7 +77,7 @@ abstract class AbstractApiClient
      * Make an HTTP call to the external resource.
      *
      * @param string  $method The HTTP method
-     * @param mixed[] $args   An array of parameters
+     * @param array<mixed> $args An array of parameters
      *
      * @throws InvalidArgumentException
      *
@@ -90,8 +90,8 @@ abstract class AbstractApiClient
         }
 
         $uri = $args[0];
-        $opts = isset($args[1]) ? $args[1] : [];
-        $appendKey = isset($args[2]) ? $args[2] : true;
+        $opts = $args[1] ?? [];
+        $appendKey = $args[2] ?? true;
 
         return $this->request($method, $uri, $appendKey, $opts);
     }
@@ -108,14 +108,14 @@ abstract class AbstractApiClient
                 $uri = "/$uri";
             }
 
-            $uri = $this->getEndpoint().$uri;
+            $uri = $this->getEndpoint() . $uri;
         }
 
         if ($appendKey) {
             if (parse_url($uri, PHP_URL_QUERY)) {
-                $uri .= "&{$this->keyParam}=".$this->getKey();
+                $uri .= "&{$this->keyParam}=" . $this->getKey();
             } else {
-                $uri .= "?{$this->keyParam}=".$this->getKey();
+                $uri .= "?{$this->keyParam}=" . $this->getKey();
             }
         }
 

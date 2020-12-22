@@ -20,8 +20,10 @@ class StreamerServiceProvider extends ServiceProvider
             switch (config('koel.streaming.method')) {
                 case 'x-sendfile':
                     return new XSendFileStreamer();
+
                 case 'x-accel-redirect':
                     return new XAccelRedirectStreamer();
+
                 default:
                     return new PHPStreamer();
             }

@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Events\ArtistInformationFetched;
 use App\Services\MediaMetadataService;
-use Exception;
+use Throwable;
 
 class DownloadArtistImage
 {
@@ -26,7 +26,7 @@ class DownloadArtistImage
         if (!$artist->has_image && $image && ini_get('allow_url_fopen')) {
             try {
                 $this->mediaMetadataService->downloadArtistImage($artist, $image);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
             }
         }
     }

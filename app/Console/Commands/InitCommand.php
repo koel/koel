@@ -8,12 +8,12 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\SettingRepository;
 use App\Services\MediaCacheService;
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as Artisan;
-use Illuminate\Contracts\Hashing\Hasher	as Hash;
+use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Database\DatabaseManager as DB;
 use Jackiedo\DotenvEditor\DotenvEditor;
+use Throwable;
 
 class InitCommand extends Command
 {
@@ -51,7 +51,7 @@ class InitCommand extends Command
     {
         $this->comment('Attempting to install or upgrade Koel.');
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
-        $this->info('📙  '.config('koel.misc.docs_url').PHP_EOL);
+        $this->info('📙  ' . config('koel.misc.docs_url') . PHP_EOL);
 
         if ($this->inNoInteractionMode()) {
             $this->info('Running in no-interaction mode');
@@ -64,25 +64,25 @@ class InitCommand extends Command
             $this->maybeSeedDatabase();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->error("Oops! Koel installation or upgrade didn't finish successfully.");
-            $this->error('Please try again, or visit '.config('koel.misc.docs_url').' for manual installation.');
+            $this->error('Please try again, or visit ' . config('koel.misc.docs_url') . ' for manual installation.');
             $this->error('😥 Sorry for this. You deserve better.');
 
             return;
         }
 
-        $this->comment(PHP_EOL.'🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
+        $this->comment(PHP_EOL . '🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
 
         if (Setting::get('media_path')) {
             $this->comment('You can also scan for media with `php artisan koel:sync`.');
         }
 
-        $this->comment('Again, visit 📙 '.config('koel.misc.docs_url').' for the official documentation.');
+        $this->comment('Again, visit 📙 ' . config('koel.misc.docs_url') . ' for the official documentation.');
         $this->comment(
             "Feeling generous and want to support Koel's development? Check out "
-            .config('koel.misc.sponsor_github_url')
-            .' 🤗'
+            . config('koel.misc.sponsor_github_url')
+            . ' 🤗'
         );
         $this->comment('Thanks for using Koel. You rock! 🤘');
     }
@@ -175,7 +175,7 @@ class InitCommand extends Command
             return;
         }
 
-        $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.');
+        $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.'); // @phpcs-ignore-line
 
         while (true) {
             $path = $this->ask('Media path', config('koel.media_path'));
@@ -224,9 +224,9 @@ class InitCommand extends Command
                 $this->db->reconnect()->getPdo();
 
                 break;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->error($e->getMessage());
-                $this->warn(PHP_EOL."Koel cannot connect to the database. Let's set it up.");
+                $this->warn(PHP_EOL . "Koel cannot connect to the database. Let's set it up.");
                 $this->setUpDatabase();
             }
         }

@@ -21,6 +21,7 @@ class ArtistTest extends TestCase
         self::assertSame('Foo', Artist::getOrCreate('Foo')->name);
     }
 
+    /** @return array<mixed> */
     public function provideEmptyNames(): array
     {
         return [
@@ -39,7 +40,7 @@ class ArtistTest extends TestCase
 
     public function testArtistsWithNameInUtf16EncodingAreRetrievedCorrectly(): void
     {
-        $name = file_get_contents(__DIR__.'../../../blobs/utf16');
+        $name = file_get_contents(__DIR__ . '../../../blobs/utf16');
         $artist = Artist::getOrCreate($name);
 
         self::assertTrue(Artist::getOrCreate($name)->is($artist));
