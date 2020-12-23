@@ -26,7 +26,8 @@
         "intervention/image": "^2.5",
         "laravel/sanctum": "^2.6",
         "doctrine/dbal": "^2.10",
-        "lstrojny/functional-php": "^1.14"
+        "lstrojny/functional-php": "^1.14",
+        "teamtnt/laravel-scout-tntsearch-driver": "^11.1"
     },
     "require-dev": {
         "mockery/mockery": "~1.0",

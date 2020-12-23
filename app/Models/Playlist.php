@@ -9,15 +9,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laravel\Scout\Searchable;
 
 /**
- * @property int        $user_id
+ * @property int $user_id
  * @property Collection $songs
- * @property int        $id
- * @property array      $rules
- * @property bool       $is_smart
- * @property string     $name
- * @property user       $user
+ * @property int $id
+ * @property array $rules
+ * @property bool $is_smart
+ * @property string $name
+ * @property user $user
  *
  * @method static Builder orderBy(string $field, string $order = 'asc')
  */
@@ -25,6 +26,7 @@ class Playlist extends Model
 {
     use CanFilterByUser;
     use HasFactory;
+    use Searchable;
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
     protected $guarded = ['id'];
@@ -47,5 +49,14 @@ class Playlist extends Model
     public function getIsSmartAttribute(): bool
     {
         return (bool) $this->rules;
+    }
+
+    /** @return array<mixed> */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
     }
 }
