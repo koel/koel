@@ -29,7 +29,6 @@
         "lstrojny/functional-php": "^1.14"
     },
     "require-dev": {
-        "filp/whoops": "~2.0",
         "mockery/mockery": "~1.0",
         "phpunit/phpunit": "^9.0",
         "laravel/tinker": "^2.0",
