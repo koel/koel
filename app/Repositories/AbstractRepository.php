@@ -9,17 +9,19 @@ use Throwable;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
+    /** @var string */
+    private $modelClass;
+
     /** @var Model */
     protected $model;
 
     /** @var Guard */
     protected $auth;
 
-    abstract public function getModelClass(): string;
-
-    public function __construct()
+    public function __construct(?string $modelClass = null)
     {
-        $this->model = app($this->getModelClass());
+        $this->modelClass = $modelClass ?: self::guessModelClass();
+        $this->model = app($this->modelClass);
 
         // This instantiation may fail during a console command if e.g. APP_KEY is empty,
         // rendering the whole installation failing.
@@ -27,6 +29,11 @@ abstract class AbstractRepository implements RepositoryInterface
             $this->auth = app(Guard::class);
         } catch (Throwable $e) {
         }
+    }
+
+    private static function guessModelClass(): string
+    {
+        return preg_replace('/(.+)\\\\Repositories\\\\(.+)Repository$/m', '$1\Models\\\$2', static::class);
     }
 
     public function getOneById($id): ?Model

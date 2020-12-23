@@ -2,15 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Models\Album;
 use App\Models\Song;
+use App\Repositories\Traits\Searchable;
 
 class AlbumRepository extends AbstractRepository
 {
-    public function getModelClass(): string
-    {
-        return Album::class;
-    }
+    use Searchable;
 
     /** @return array<int> */
     public function getNonEmptyAlbumIds(): array
