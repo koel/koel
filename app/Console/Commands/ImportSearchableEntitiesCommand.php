@@ -17,7 +17,7 @@ class ImportSearchableEntitiesCommand extends Command
         Playlist::class,
     ];
 
-    protected $signature = 'search:import';
+    protected $signature = 'koel:search:import';
     protected $description = 'Import all searchable entities with Scout';
 
     public function handle(): int
