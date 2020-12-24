@@ -57,4 +57,9 @@ abstract class AbstractRepository implements RepositoryInterface
     {
         return $this->model->where(...$params)->first();
     }
+
+    public function getModelClass(): string
+    {
+        return $this->modelClass;
+    }
 }

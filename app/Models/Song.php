@@ -255,10 +255,6 @@ class Song extends Model
             $array['artist'] = $this->artist->name;
         }
 
-        if (!$this->album->is_unknown) {
-            $array['album'] = $this->album->name;
-        }
-
         return $array;
     }
 

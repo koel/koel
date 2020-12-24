@@ -75,6 +75,10 @@ Route::group(['namespace' => 'API'], static function (): void {
         Route::put('artist/{artist}/image', 'ArtistImageController@update');
 
         Route::get('album/{album}/thumbnail', 'AlbumThumbnailController@get');
+
+        Route::group(['namespace' => 'Search', 'prefix' => 'search'], static function (): void {
+            Route::get('/', 'ExcerptSearchController@index');
+        });
     });
 
     Route::group([
