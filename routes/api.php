@@ -78,6 +78,7 @@ Route::group(['namespace' => 'API'], static function (): void {
 
         Route::group(['namespace' => 'Search', 'prefix' => 'search'], static function (): void {
             Route::get('/', 'ExcerptSearchController@index');
+            Route::get('songs', 'SongSearchController@index');
         });
     });
 

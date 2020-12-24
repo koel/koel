@@ -40,4 +40,9 @@ class SearchService
     {
         return $query->take($count)->get();
     }
+
+    public function searchSongs(string $keywords): Builder
+    {
+        return $this->songRepository->search($keywords);
+    }
 }
