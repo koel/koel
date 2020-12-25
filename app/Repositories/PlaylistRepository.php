@@ -10,11 +10,6 @@ class PlaylistRepository extends AbstractRepository
 {
     use ByCurrentUser;
 
-    public function getModelClass(): string
-    {
-        return Playlist::class;
-    }
-
     /** @return Collection|array<Playlist> */
     public function getAllByCurrentUser(): Collection
     {

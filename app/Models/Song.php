@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Laravel\Scout\Searchable;
 
 /**
  * @property string $path
@@ -41,6 +42,7 @@ use Illuminate\Support\Collection;
 class Song extends Model
 {
     use HasFactory;
+    use Searchable;
     use SupportsDeleteWhereIDsNotIn;
 
     protected $guarded = [];
@@ -239,6 +241,21 @@ class Song extends Model
         [$bucket, $key] = explode('/', $matches[1], 2);
 
         return compact('bucket', 'key');
+    }
+
+    /** @return array<mixed> */
+    public function toSearchableArray(): array
+    {
+        $array = [
+            'id' => $this->id,
+            'title' => $this->title,
+        ];
+
+        if (!$this->artist->is_unknown && !$this->artist->is_various) {
+            $array['artist'] = $this->artist->name;
+        }
+
+        return $array;
     }
 
     public function __toString(): string

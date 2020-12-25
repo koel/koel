@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 interface RepositoryInterface
 {
-    public function getModelClass(): string;
-
     public function getOneById($id): ?Model;
 
     /** @return Collection|array<Model> */

@@ -10,15 +10,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Laravel\Scout\Searchable;
 
 /**
- * @property int         $id
- * @property string      $name
- * @property string|null $image      Public URL to the artist's image
- * @property bool        $is_unknown If the artist is Unknown Artist
- * @property bool        $is_various If the artist is Various Artist
- * @property Collection  $songs
- * @property bool        $has_image  If the artist has a (non-default) image
+ * @property int $id
+ * @property string $name
+ * @property string|null $image Public URL to the artist's image
+ * @property bool $is_unknown If the artist is Unknown Artist
+ * @property bool $is_various If the artist is Various Artist
+ * @property Collection $songs
+ * @property bool $has_image If the artist has a (non-default) image
  * @property string|null $image_path Absolute path to the artist's image
  *
  * @method static self find(int $id)
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Artist extends Model
 {
     use HasFactory;
+    use Searchable;
     use SupportsDeleteWhereIDsNotIn;
 
     public const UNKNOWN_ID = 1;
@@ -121,5 +123,14 @@ class Artist extends Model
         }
 
         return file_exists(artist_image_path($image));
+    }
+
+    /** @return array<mixed> */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
     }
 }

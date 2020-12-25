@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * @property int        $user_id
+ * @property int $user_id
  * @property Collection $songs
- * @property int        $id
- * @property array      $rules
- * @property bool       $is_smart
- * @property string     $name
- * @property user       $user
+ * @property int $id
+ * @property array $rules
+ * @property bool $is_smart
+ * @property string $name
+ * @property user $user
  *
  * @method static Builder orderBy(string $field, string $order = 'asc')
  */

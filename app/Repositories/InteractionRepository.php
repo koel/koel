@@ -12,11 +12,6 @@ class InteractionRepository extends AbstractRepository
 {
     use ByCurrentUser;
 
-    public function getModelClass(): string
-    {
-        return Interaction::class;
-    }
-
     /** @return Collection|array<Interaction> */
     public function getUserFavorites(User $user): Collection
     {
