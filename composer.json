@@ -27,7 +27,8 @@
         "laravel/sanctum": "^2.6",
         "doctrine/dbal": "^2.10",
         "lstrojny/functional-php": "^1.14",
-        "teamtnt/laravel-scout-tntsearch-driver": "^11.1"
+        "teamtnt/laravel-scout-tntsearch-driver": "^11.1",
+        "algolia/algoliasearch-client-php": "^2.7"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
