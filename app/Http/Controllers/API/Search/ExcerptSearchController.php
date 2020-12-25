@@ -22,8 +22,14 @@ class ExcerptSearchController extends Controller
             throw new InvalidArgumentException('A search query is required.');
         }
 
+        $count = (int) $request->get('count', SearchService::DEFAULT_EXCERPT_RESULT_COUNT);
+
+        if ($count < 0) {
+            throw new InvalidArgumentException('Invalid count parameter.');
+        }
+
         return [
-            'results' => $this->searchService->excerptSearch($request->get('q')),
+            'results' => $this->searchService->excerptSearch($request->get('q'), $count),
         ];
     }
 }

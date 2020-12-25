@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\Search;
 
 use App\Http\Controllers\API\Controller;
-use App\Models\Song;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
@@ -24,11 +23,7 @@ class SongSearchController extends Controller
         }
 
         return [
-            'songs' => $this->searchService->searchSongs($request->get('q'))
-                ->get()
-                ->map(static function (Song $song): string {
-                    return $song->id;
-                }),
+            'songs' => $this->searchService->searchSongs($request->get('q')),
         ];
     }
 }

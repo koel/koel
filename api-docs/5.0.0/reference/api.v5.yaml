@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Koel API
   version: 5.0.0
-  description: 'The API for [Koel](http://koel.dev), the music streaming application that works.'
+  description: 'The API for [Koel](https://koel.dev), the music streaming application that works.'
   contact:
     name: An Phan
     url: 'https://phanan.net'
@@ -11,7 +11,7 @@ info:
     name: MIT
     url: 'https://github.com/koel/koel/blob/master/LICENSE.md'
 servers:
-  - url: 'http://localhost:8000'
+  - url: 'https://koel.test'
     description: Local
 tags:
   - name: interaction
@@ -852,8 +852,7 @@ paths:
                 $ref: '#/components/schemas/Song'
       operationId: post-os-s3-song
       description: Create a new song or update an existing one with data sent from AWS
-      security:
-        - appKey: []
+      security: []
       requestBody:
         content:
           application/json:
@@ -908,8 +907,7 @@ paths:
         '204':
           description: No Content
       description: Remove a song whose information matches the data sent from AWS S3 (`bucket` and `key`)
-      security:
-        - appKey: []
+      security: []
       requestBody:
         content:
           application/json:
@@ -1103,6 +1101,84 @@ paths:
       description: Download a whole playlist. This is NOT an XmlHttpRequest. The response will be a download response of either one media file or a zip file containg multiple media files.
       security:
         - api-token: []
+  /api/search:
+    get:
+      summary: 'Search for songs, albums, and artists'
+      tags:
+        - search
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    required:
+                      - songs
+                      - artists
+                      - albums
+                    properties:
+                      songs:
+                        type: array
+                        description: An array of max 6 best-matching songs' IDs
+                        items:
+                          type: string
+                      artists:
+                        type: array
+                        description: An array of max 6 best-matching artists' IDs
+                        items:
+                          type: integer
+                      albums:
+                        type: array
+                        description: An array of max 6 best-matching albums' IDs
+                        items:
+                          type: number
+                required:
+                  - results
+      operationId: get-api-search
+      description: 'Seach for songs, albums, and artists, with a maximum of {count} results each.'
+      security:
+        - Bearer Token: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: q
+          description: The keywords to search
+          required: true
+        - schema:
+            type: integer
+            minimum: 1
+            default: 6
+          in: query
+          name: count
+          description: 'The maximum number of results for songs, artists, and albums'
+    parameters: []
+  /api/search/songs:
+    get:
+      summary: Search for songs
+      tags:
+        - search
+      responses: {}
+      operationId: get-api-search-songs
+      description: Get all songs that matches a search query.
+      security:
+        - Bearer Token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                songs:
+                  type: array
+                  description: An array of matching songs' IDs
+                  items: {}
+              required:
+                - songs
 components:
   schemas:
     User:
@@ -1638,10 +1714,6 @@ components:
     Bearer Token:
       type: http
       scheme: bearer
-    appKey:
-      name: The applcation key (APP_KEY in .env)
-      type: apiKey
-      in: query
     api-token:
       name: The API token as a query parameter
       type: apiKey
