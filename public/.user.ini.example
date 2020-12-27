@@ -1,0 +1,6 @@
+; If your server uses a CGI/FastCGI SAPI, PHP supports per-directory configuration
+; via .user.ini files. For example, you can increase the upload file and post size
+; limits by setting the desired values here renaming this file into .user.ini.
+
+upload_max_filesize = 20M
+post_max_size = 21M
