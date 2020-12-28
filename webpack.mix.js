@@ -8,7 +8,7 @@ mix.webpackConfig({
   plugins,
   output: {
     chunkFilename: mix.inProduction() ? 'js/[name].[chunkhash].js' : 'js/[name].js',
-    publicPath: 'http://127.0.0.1:8080/'
+    publicPath: mix.inProduction() ? '/' : 'http://127.0.0.1:8080/'
   },
   devServer: {
     port: 8080,
