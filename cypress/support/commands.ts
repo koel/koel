@@ -19,3 +19,10 @@ Cypress.Commands.add('$loginAsNonAdmin', (redirectTo = '/') => _login('data-non-
 Cypress.Commands.add('$each', (dataset: Array<Array<any>>, callback: Function) => {
   dataset.forEach(args => callback(...args))
 })
+
+Cypress.Commands.add('$confirm', () => {
+  cy.clock()
+  cy.tick(100) // wait for the alert to show up
+  cy.get('.alertify .ok')
+    .click()
+})
