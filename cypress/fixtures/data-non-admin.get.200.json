@@ -428,7 +428,7 @@
   "playlists": [
     {
       "id": 1,
-      "name": "Sample Playlist",
+      "name": "Simple Playlist",
       "rules": null,
       "is_smart": false
     }
@@ -615,33 +615,12 @@
     "14680f3ffef690f8521200e82f9ebb30"
   ],
   "users": [
-    {
-      "id": 1,
-      "name": "Admin",
-      "email": "admin@koel.test",
-      "is_admin": true,
-      "preferences": []
-    },
-    {
-      "id": 2,
-      "name": "Alice",
-      "email": "alice@koel.test",
-      "is_admin": false,
-      "preferences": []
-    },
-    {
-      "id": 3,
-      "name": "Bob",
-      "email": "bob@koel.test",
-      "is_admin": false,
-      "preferences": []
-    }
   ],
   "currentUser": {
-    "id": 1,
-    "name": "Admin",
-    "email": "admin@koel.test",
-    "is_admin": true,
+    "id": 2,
+    "name": "Alice",
+    "email": "alice@koel.test",
+    "is_admin": false,
     "preferences": []
   },
   "useLastfm": true,

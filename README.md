@@ -35,7 +35,7 @@ For the **client application** itself, run this command:
 yarn hot
 ```
 
-A development version of Koel, with full support for hot module reloading etc., should now be available at `http://localhost:8080`.
+A development version of Koel should now be available at `http://localhost:8080` with full support for hot module reloading.
 
 Alternatively, you can start both the PHP server and the client application in one go with `yarn dev`, which uses [`start-server-and-test`](https://github.com/bahmutov/start-server-and-test) under the hood.
 

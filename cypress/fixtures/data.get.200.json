@@ -1,0 +1,655 @@
+{
+  "albums": [
+    {
+      "id": 8,
+      "artist_id": 3,
+      "name": "Abstract",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:46",
+      "is_compilation": false
+    },
+    {
+      "id": 2,
+      "artist_id": 3,
+      "name": "Bar",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:44",
+      "is_compilation": false
+    },
+    {
+      "id": 9,
+      "artist_id": 3,
+      "name": "Baz",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 07:09:14",
+      "is_compilation": false
+    },
+    {
+      "id": 3,
+      "artist_id": 3,
+      "name": "Foo",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
+    },
+    {
+      "id": 4,
+      "artist_id": 3,
+      "name": "Qux",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
+    },
+    {
+      "id": 6,
+      "artist_id": 3,
+      "name": "Random Album",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
+    },
+    {
+      "id": 5,
+      "artist_id": 3,
+      "name": "The Wall",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
+    },
+    {
+      "id": 1,
+      "artist_id": 1,
+      "name": "Unknown Album",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 04:49:33",
+      "is_compilation": false
+    }
+  ],
+  "artists": [
+    {
+      "id": 3,
+      "name": "The Band",
+      "image": null
+    },
+    {
+      "id": 1,
+      "name": "Unknown Artist",
+      "image": null
+    },
+    {
+      "id": 2,
+      "name": "Various Artists",
+      "image": null
+    }
+  ],
+  "songs": [
+    {
+      "id": "03bebf17f54e2afc7c0513fb1d931009",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Instinct",
+      "length": 204.11,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "1326f8a4fc90843f07ef550c54cd88f9",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Better Days",
+      "length": 153.84,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "14680f3ffef690f8521200e82f9ebb30",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Acoustic Breeze",
+      "length": 157.2,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "17ffc7188449c6e937e4600677414032",
+      "album_id": 3,
+      "artist_id": 3,
+      "title": "Funny Song",
+      "length": 187.14,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "1a4c590a6ea550d243328b5e26dced2b",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Country Boy",
+      "length": 207.16,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "2625510a2ed87d758010f6bac14fb622",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "Rumble",
+      "length": 154.79,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "29e2deb6e0ba21784a45aabf71b6bb25",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Cute",
+      "length": 194.17,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "2a16e2477b3c6a292b89c68d94a7fc85",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "House",
+      "length": 259.57,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "2e59423cd94c809fbd5639b6745fce37",
+      "album_id": 3,
+      "artist_id": 3,
+      "title": "Jazz Comedy",
+      "length": 193.97,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "2e8f1fadf1544522b1cd4efb97adedf8",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Groovy Hiphop",
+      "length": 240.58,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "307aa9124cc7f223a8e64ba19f90c196",
+      "album_id": 8,
+      "artist_id": 3,
+      "title": "Memories",
+      "length": 230.31,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "312efc46c3ef5a09f625870d83321f11",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Energy",
+      "length": 179.58,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "44b395ba4e760f149b542aafc0451534",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Funky Suspense",
+      "length": 267.52,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "49bcc0e4346df1a13f57d3a7ccd09a00",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "Funky Element",
+      "length": 189.04,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "4cf008da0ad2349a5b8aaeb037f306bf",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "Tomorrow",
+      "length": 294.83,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "51c6a0573b7fc82854afd48059da0c21",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "The Elevator Bossanova",
+      "length": 254.81,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "60a3f37eaa83e7cb8508f7513ae46bf7",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Epic",
+      "length": 178.57,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "6d66b9c4c967ad2d27b32974adc482a6",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Buddy",
+      "length": 122.15,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "79bdde00e9c9b34bffe06fd4026f9551",
+      "album_id": 8,
+      "artist_id": 3,
+      "title": "Ofelia's Dream",
+      "length": 298.78,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "7e1769e4713d68fb77739bf01e346f37",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "Ukulele",
+      "length": 146.44,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "7ed14ff6778a7f2d332503cefb0d5f62",
+      "album_id": 8,
+      "artist_id": 3,
+      "title": "November",
+      "length": 212.08,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "81d48670ee43f7eee30fc6c1f01d7ba8",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Badass",
+      "length": 109.1,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "ae35c0d97d8da2a91c32dae61ca7b49f",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "India",
+      "length": 253.87,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "af651d9c5e27dae14e1d7822663cc8a5",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "Little Planet",
+      "length": 396.81,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "b38fc5cbb0fd41ee8ff512adcc8b07f0",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Sunny",
+      "length": 140.06,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "b6fb60327d38f9e09e565849a267c06f",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Pop Dance",
+      "length": 162.08,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "b8e26d5c822c43edfbf056c5840af700",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Romantic",
+      "length": 236.61,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "c780bf93374edcbac4b5df762b6b8c2c",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Extreme Action Sport",
+      "length": 483.4,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "d0bfd0f2f1d7e5ddcb9b141897d577e5",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "Tenderness",
+      "length": 123.83,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "d14b6dc2acfbc2ac8ffd7781c4657645",
+      "album_id": 3,
+      "artist_id": 3,
+      "title": "Dubstep",
+      "length": 124.97,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "ea5a1b1dc6da09e9eefb452fb7b36727",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Sweet",
+      "length": 307.69,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "f33affed478896835bbd1df6235b2e12",
+      "album_id": 3,
+      "artist_id": 3,
+      "title": "Brazil Samba",
+      "length": 240.82,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "fef0c2ea06ab75368923b1983b4ede52",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "Little Idea",
+      "length": 169.3,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "ffb3bce333e6a5e0561097d85ef4ae6b",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Slow Motion",
+      "length": 207.01,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    }
+  ],
+  "settings": [],
+  "playlists": [
+    {
+      "id": 1,
+      "name": "Simple Playlist",
+      "rules": null,
+      "is_smart": false
+    }
+  ],
+  "interactions": [
+    {
+      "song_id": "6d66b9c4c967ad2d27b32974adc482a6",
+      "liked": false,
+      "play_count": 3450
+    },
+    {
+      "song_id": "29e2deb6e0ba21784a45aabf71b6bb25",
+      "liked": false,
+      "play_count": 3134
+    },
+    {
+      "song_id": "44b395ba4e760f149b542aafc0451534",
+      "liked": false,
+      "play_count": 3046
+    },
+    {
+      "song_id": "b8e26d5c822c43edfbf056c5840af700",
+      "liked": false,
+      "play_count": 3086
+    },
+    {
+      "song_id": "1a4c590a6ea550d243328b5e26dced2b",
+      "liked": false,
+      "play_count": 3215
+    },
+    {
+      "song_id": "49bcc0e4346df1a13f57d3a7ccd09a00",
+      "liked": true,
+      "play_count": 16065
+    },
+    {
+      "song_id": "b6fb60327d38f9e09e565849a267c06f",
+      "liked": true,
+      "play_count": 3495
+    },
+    {
+      "song_id": "2a16e2477b3c6a292b89c68d94a7fc85",
+      "liked": false,
+      "play_count": 50143
+    },
+    {
+      "song_id": "c780bf93374edcbac4b5df762b6b8c2c",
+      "liked": false,
+      "play_count": 2459
+    },
+    {
+      "song_id": "14680f3ffef690f8521200e82f9ebb30",
+      "liked": false,
+      "play_count": 19532
+    },
+    {
+      "song_id": "f33affed478896835bbd1df6235b2e12",
+      "liked": false,
+      "play_count": 3814
+    },
+    {
+      "song_id": "b38fc5cbb0fd41ee8ff512adcc8b07f0",
+      "liked": true,
+      "play_count": 3863
+    },
+    {
+      "song_id": "ffb3bce333e6a5e0561097d85ef4ae6b",
+      "liked": true,
+      "play_count": 2598
+    },
+    {
+      "song_id": "2e59423cd94c809fbd5639b6745fce37",
+      "liked": false,
+      "play_count": 4425
+    },
+    {
+      "song_id": "2e8f1fadf1544522b1cd4efb97adedf8",
+      "liked": false,
+      "play_count": 2978
+    },
+    {
+      "song_id": "7ed14ff6778a7f2d332503cefb0d5f62",
+      "liked": true,
+      "play_count": 3525
+    },
+    {
+      "song_id": "ae35c0d97d8da2a91c32dae61ca7b49f",
+      "liked": true,
+      "play_count": 10788
+    },
+    {
+      "song_id": "2625510a2ed87d758010f6bac14fb622",
+      "liked": true,
+      "play_count": 5336
+    },
+    {
+      "song_id": "ea5a1b1dc6da09e9eefb452fb7b36727",
+      "liked": false,
+      "play_count": 2721
+    },
+    {
+      "song_id": "307aa9124cc7f223a8e64ba19f90c196",
+      "liked": true,
+      "play_count": 8997
+    },
+    {
+      "song_id": "1326f8a4fc90843f07ef550c54cd88f9",
+      "liked": false,
+      "play_count": 5629
+    },
+    {
+      "song_id": "312efc46c3ef5a09f625870d83321f11",
+      "liked": false,
+      "play_count": 2904
+    },
+    {
+      "song_id": "03bebf17f54e2afc7c0513fb1d931009",
+      "liked": false,
+      "play_count": 6376
+    },
+    {
+      "song_id": "d14b6dc2acfbc2ac8ffd7781c4657645",
+      "liked": true,
+      "play_count": 4388
+    },
+    {
+      "song_id": "fef0c2ea06ab75368923b1983b4ede52",
+      "liked": false,
+      "play_count": 4788
+    },
+    {
+      "song_id": "af651d9c5e27dae14e1d7822663cc8a5",
+      "liked": true,
+      "play_count": 6479
+    },
+    {
+      "song_id": "17ffc7188449c6e937e4600677414032",
+      "liked": true,
+      "play_count": 8200
+    },
+    {
+      "song_id": "60a3f37eaa83e7cb8508f7513ae46bf7",
+      "liked": true,
+      "play_count": 2670
+    },
+    {
+      "song_id": "7e1769e4713d68fb77739bf01e346f37",
+      "liked": false,
+      "play_count": 2640
+    },
+    {
+      "song_id": "81d48670ee43f7eee30fc6c1f01d7ba8",
+      "liked": true,
+      "play_count": 4376
+    },
+    {
+      "song_id": "51c6a0573b7fc82854afd48059da0c21",
+      "liked": false,
+      "play_count": 2690
+    },
+    {
+      "song_id": "4cf008da0ad2349a5b8aaeb037f306bf",
+      "liked": true,
+      "play_count": 3200
+    },
+    {
+      "song_id": "d0bfd0f2f1d7e5ddcb9b141897d577e5",
+      "liked": false,
+      "play_count": 2465
+    },
+    {
+      "song_id": "79bdde00e9c9b34bffe06fd4026f9551",
+      "liked": false,
+      "play_count": 4247
+    }
+  ],
+  "recentlyPlayed": [
+    "1326f8a4fc90843f07ef550c54cd88f9",
+    "2625510a2ed87d758010f6bac14fb622",
+    "1a4c590a6ea550d243328b5e26dced2b",
+    "ffb3bce333e6a5e0561097d85ef4ae6b",
+    "af651d9c5e27dae14e1d7822663cc8a5",
+    "49bcc0e4346df1a13f57d3a7ccd09a00",
+    "14680f3ffef690f8521200e82f9ebb30"
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "email": "admin@koel.test",
+      "is_admin": true,
+      "preferences": []
+    },
+    {
+      "id": 2,
+      "name": "Alice",
+      "email": "alice@koel.test",
+      "is_admin": false,
+      "preferences": []
+    },
+    {
+      "id": 3,
+      "name": "Bob",
+      "email": "bob@koel.test",
+      "is_admin": false,
+      "preferences": []
+    }
+  ],
+  "currentUser": {
+    "id": 1,
+    "name": "Admin",
+    "email": "admin@koel.test",
+    "is_admin": true,
+    "preferences": []
+  },
+  "useLastfm": true,
+  "useYouTube": true,
+  "useiTunes": true,
+  "allowDownload": true,
+  "supportsTranscoding": false,
+  "cdnUrl": "http://localhost:8088",
+  "currentVersion": "v5.0.0",
+  "latestVersion": "v5.0.1"
+}

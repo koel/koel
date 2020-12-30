@@ -2,15 +2,19 @@ import '@testing-library/cypress/add-commands'
 import AUTWindow = Cypress.AUTWindow
 import Chainable = Cypress.Chainable
 
-Cypress.Commands.add('$login', (redirectTo = '/'): Chainable<AUTWindow> => {
+function _login(dataFixture, redirectTo = '/'): Chainable<AUTWindow> {
   window.localStorage.setItem('api-token', 'mock-token')
 
   cy.intercept('api/data', {
-    fixture: 'data.json'
+    fixture: dataFixture
   })
 
   return cy.visit(redirectTo)
-})
+}
+
+Cypress.Commands.add('$login', (redirectTo = '/') => _login('data.get.200.json', redirectTo))
+
+Cypress.Commands.add('$loginAsNonAdmin', (redirectTo = '/') => _login('data-non-admin.get.200.json', redirectTo))
 
 Cypress.Commands.add('$each', (dataset: Array<Array<any>>, callback: Function) => {
   dataset.forEach(args => callback(...args))

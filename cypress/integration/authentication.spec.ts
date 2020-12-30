@@ -1,5 +1,5 @@
 context('Authentication', () => {
-  const submitLoginForm = () => {
+  function submitLoginForm () {
     cy.get('[type=email]').type('admin@koel.test')
     cy.get('[type=password]').type('super-secret')
     cy.get('[type=submit]').click()
