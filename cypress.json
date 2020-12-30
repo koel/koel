@@ -1,5 +1,7 @@
 {
   "baseUrl": "http://localhost:8088",
+  "pluginsFile": "cypress/plugins/index.ts",
   "viewportWidth": 1440,
-  "viewportHeight": 900
+  "viewportHeight": 768,
+  "video": false
 }

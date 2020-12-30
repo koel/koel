@@ -12,15 +12,58 @@ For system requirements, installation/upgrade guides, troubleshooting etc., head
 
 ## API Docs
 
-If you're interested in the development of a client, Koel's offical API documentation is available [here](https://api-docs.koel.dev).
+If you're interested in the development of a client, Koel's official API documentation is available [here](https://api-docs.koel.dev).
 
-## Contribute
+## Development
 
-All contributions, big or small, are warm-heartedly welcome! Please note, however, that if you want to work on a new feature, first open an issue to make sure it's something desired – doing this will greatly save time for all of us.
+Since Koel makes use of [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), you'll want to make sure the submodule is up-to-date:
 
-A quick and easy way to start hacking on koel is to open and run this repo in Gitpod, an online IDE with full Laravel support.
+```bash
+git pull
+git submodule update --init --recursive --remote
+```
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/koel/koel)
+To start the **PHP dev server**, which serves as the API of the application, run the following command. By default, the server will listen at port `8000`.
+
+```bash
+php artisan serve
+```
+
+For the **client application** itself, run this command:
+
+```bash
+yarn hot
+```
+
+A development version of Koel, with full support for hot module reloading etc., should now be available at `http://localhost:8080`.
+
+Alternatively, you can start both the PHP server and the client application in one go with `yarn dev`, which uses [`start-server-and-test`](https://github.com/bahmutov/start-server-and-test) under the hood.
+
+## Testing, Linting, Static Analysis and Stuff
+
+```bash
+# PHP-related code quality tasks
+# Basically, take a look at the "scripts" section in composer.json
+composer test        # Run the PHP test suite
+composer cs          # Run code style checker
+composer cs:fix      # Run code style fixer 
+composer analyze     # Run PHP static analysis
+
+yarn build # Build a production version of the client application
+
+# Client/E2E code quality tasks
+# You may want to run `yarn build` first.
+yarn test:e2e        # Run the Cypress test suite interactively
+yarn test:e2e:ci     # Run the Cypress test suite non-interactively (CI mode)
+# These commands need to be run from within the submodule (resources/assets)
+yarn lint            # Lint
+yarn type-check      # TypeScript type checking
+yarn test            # Unit testing
+```
+
+> A quick and easy way to start hacking on koel is to open and run this repo in Gitpod, an online IDE with full Laravel support.
+> 
+> [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/koel/koel)
 
 ## Backers
 
@@ -62,7 +105,6 @@ A quick and easy way to start hacking on koel is to open and run this repo in Gi
 #### GitHub Sponsors
 
 * Eduardo San Martin Morote ([@posva](https://github.com/posva))
-* Nina Reynolds ([@cutecycle](https://github.com/cutecycle))
 * [You](https://github.com/users/phanan/sponsorship)?
 
 #### OpenCollective

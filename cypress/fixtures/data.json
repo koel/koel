@@ -1,1393 +1,655 @@
 {
-  "albums":[
+  "albums": [
     {
-      "id":917,
-      "artist_id":471,
-      "name":"Epica",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
-      "created_at":"2019-04-14 13:47:40",
-      "is_compilation":false
+      "id": 8,
+      "artist_id": 3,
+      "name": "Abstract",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:46",
+      "is_compilation": false
     },
     {
-      "id":928,
-      "artist_id":475,
-      "name":"Gutter Ballet",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
-      "created_at":"2019-04-14 13:51:20",
-      "is_compilation":false
+      "id": 2,
+      "artist_id": 3,
+      "name": "Bar",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:44",
+      "is_compilation": false
     },
     {
-      "id":915,
-      "artist_id":470,
-      "name":"Iron",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fbcbf9e9.89185391.jpeg",
-      "created_at":"2019-04-14 13:47:39",
-      "is_compilation":false
+      "id": 9,
+      "artist_id": 3,
+      "name": "Baz",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 07:09:14",
+      "is_compilation": false
     },
     {
-      "id":923,
-      "artist_id":473,
-      "name":"Skid Row",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fc9ff711.65820502.jpeg",
-      "created_at":"2019-04-14 13:47:40",
-      "is_compilation":false
+      "id": 3,
+      "artist_id": 3,
+      "name": "Foo",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
     },
     {
-      "id":924,
-      "artist_id":473,
-      "name":"Slave To The Grind",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fca1f200.50942329.jpeg",
-      "created_at":"2019-04-14 13:47:40",
-      "is_compilation":false
+      "id": 4,
+      "artist_id": 3,
+      "name": "Qux",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
     },
     {
-      "id":922,
-      "artist_id":473,
-      "name":"Subhuman Race",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fc9df9c4.46591349.jpeg",
-      "created_at":"2019-04-14 13:47:40",
-      "is_compilation":false
+      "id": 6,
+      "artist_id": 3,
+      "name": "Random Album",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
     },
     {
-      "id":926,
-      "artist_id":471,
-      "name":"The Black Halo",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
-      "created_at":"2019-04-14 13:49:34",
-      "is_compilation":false
+      "id": 5,
+      "artist_id": 3,
+      "name": "The Wall",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
     },
     {
-      "id":916,
-      "artist_id":471,
-      "name":"The Fourth Legacy",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
-      "created_at":"2019-04-14 13:47:39",
-      "is_compilation":false
-    },
-    {
-      "id":927,
-      "artist_id":472,
-      "name":"The Wall",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/unknown-album.png",
-      "created_at":"2019-04-14 13:49:54",
-      "is_compilation":false
-    },
-    {
-      "id":1,
-      "artist_id":1,
-      "name":"Unknown Album",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/5b865325d77e87.43753375.jpg",
-      "created_at":"2018-08-29 02:59:42",
-      "is_compilation":false
-    },
-    {
-      "id":914,
-      "artist_id":470,
-      "name":"Victory Songs",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fbae3801.97073873.jpeg",
-      "created_at":"2019-04-14 13:47:39",
-      "is_compilation":false
-    },
-    {
-      "id":921,
-      "artist_id":472,
-      "name":"Wish You Were Here",
-      "cover":"https:\/\/localhost:8088\/img\/covers\/5cb339fc935a73.87216239.jpeg",
-      "created_at":"2019-04-14 13:47:40",
-      "is_compilation":false
+      "id": 1,
+      "artist_id": 1,
+      "name": "Unknown Album",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 04:49:33",
+      "is_compilation": false
     }
   ],
-  "artists":[
+  "artists": [
     {
-      "id":470,
-      "name":"Ensiferum",
-      "image":null
+      "id": 3,
+      "name": "The Band",
+      "image": null
     },
     {
-      "id":471,
-      "name":"Kamelot",
-      "image":null
+      "id": 1,
+      "name": "Unknown Artist",
+      "image": null
     },
     {
-      "id":472,
-      "name":"Pink Floyd",
-      "image":null
-    },
-    {
-      "id":475,
-      "name":"Savatage",
-      "image":null
-    },
-    {
-      "id":473,
-      "name":"Skid Row",
-      "image":null
-    },
-    {
-      "id":1,
-      "name":"Unknown Artist",
-      "image":null
-    },
-    {
-      "id":2,
-      "name":"Various Artists",
-      "image":null
+      "id": 2,
+      "name": "Various Artists",
+      "image": null
     }
   ],
-  "songs":[
-    {
-      "id":"0067cd9569bde60d56867aa3a117d816",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Lai Lai Hei",
-      "length":435.25,
-      "track":9,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"00cc6877a55aa10956b6b76b9cccad16",
-      "album_id":922,
-      "artist_id":473,
-      "title":"My enemy",
-      "length":218.64,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"015c49b86893a859f28abc6c12474e36",
-      "album_id":928,
-      "artist_id":475,
-      "title":"Mentally Yours",
-      "length":319.73,
-      "track":9,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"03ac62fa8f76e5a2645c48f2ba49ed46",
-      "album_id":924,
-      "artist_id":473,
-      "title":"Wasted time",
-      "length":348.81,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"03e313cc7bbc6044956852ddba78e653",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Nothing Ever Dies",
-      "length":285.83,
-      "track":11,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"055f1e09c1846e960cf9099645af35d3",
-      "album_id":922,
-      "artist_id":473,
-      "title":"Into another",
-      "length":242.57,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"0725f52de436eb8e57ed293fe144fadf",
-      "album_id":927,
-      "artist_id":472,
-      "title":"In The Flesh?",
-      "length":199.99,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"0774240b1842289186b1210f41fb8fe1",
-      "album_id":923,
-      "artist_id":473,
-      "title":"I remember you",
-      "length":314.51,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"077cd4373da9c0251933d99184dfe9b8",
-      "album_id":917,
-      "artist_id":471,
-      "title":"On The Coldest Winter Night",
-      "length":243.88,
-      "track":11,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"086394a0c8cd0bf7f3904239cdb1bb63",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Wander",
-      "length":264.28,
-      "track":6,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
+  "songs": [
+    {
+      "id": "03bebf17f54e2afc7c0513fb1d931009",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Instinct",
+      "length": 204.11,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "1326f8a4fc90843f07ef550c54cd88f9",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Better Days",
+      "length": 153.84,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "14680f3ffef690f8521200e82f9ebb30",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Acoustic Breeze",
+      "length": 157.2,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "17ffc7188449c6e937e4600677414032",
+      "album_id": 3,
+      "artist_id": 3,
+      "title": "Funny Song",
+      "length": 187.14,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "1a4c590a6ea550d243328b5e26dced2b",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Country Boy",
+      "length": 207.16,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "2625510a2ed87d758010f6bac14fb622",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "Rumble",
+      "length": 154.79,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "29e2deb6e0ba21784a45aabf71b6bb25",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Cute",
+      "length": 194.17,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "2a16e2477b3c6a292b89c68d94a7fc85",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "House",
+      "length": 259.57,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "2e59423cd94c809fbd5639b6745fce37",
+      "album_id": 3,
+      "artist_id": 3,
+      "title": "Jazz Comedy",
+      "length": 193.97,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "2e8f1fadf1544522b1cd4efb97adedf8",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Groovy Hiphop",
+      "length": 240.58,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
     {
-      "id":"0adc9c48bf62c2930adaf4ea65f5024c",
-      "album_id":921,
-      "artist_id":472,
-      "title":"Have A Cigar",
-      "length":308.79,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"0b27c3b3902f699cc84e20617ac28b1b",
-      "album_id":916,
-      "artist_id":471,
-      "title":"Silent Goddess",
-      "length":255.56,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"0bc94544c4df7e4e6b099f7736fb2291",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Outside The Wall",
-      "length":104.28,
-      "track":13,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"0c651deb022d30e9eb7e94b35a60b1f6",
-      "album_id":916,
-      "artist_id":471,
-      "title":"Glory",
-      "length":222.41,
-      "track":10,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"0ce28741cb54d8547c2cccd34f4cc030",
-      "album_id":923,
-      "artist_id":473,
-      "title":"Youth gone wild",
-      "length":200.65,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"0dd422cb73dc950162cfda65fcd6fe1f",
-      "album_id":916,
-      "artist_id":471,
-      "title":"The Fourth Legacy",
-      "length":295.97,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"110d5dde3f8d051528bdafb169c69f5a",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Another Brick In The Wall Part 1",
-      "length":190.01,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"11a47640176c4feffa05527422830312",
-      "album_id":921,
-      "artist_id":472,
-      "title":"Shine On You Crazy Diamond (Part VI-IX)",
-      "length":751.36,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"11f28af76443139ae7115306615c7426",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Nobody Home",
-      "length":204.98,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"11f2c6e82b9394c1b0697c3f29fbd874",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Abandoned",
-      "length":247.22,
-      "track":6,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"124abee0a00a8200f3672eff8d35b23b",
-      "album_id":928,
-      "artist_id":475,
-      "title":"When The Crowds Are Gone",
-      "length":346.03,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"12a61f690f079f160e091196e0a5c570",
-      "album_id":928,
-      "artist_id":475,
-      "title":"Gutter Ballet",
-      "length":380.02,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"13cb5d86606c09e1f2fe8928cc666348",
-      "album_id":914,
-      "artist_id":470,
-      "title":"Ahti",
-      "length":235.94,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"171a62ceaca59a0f768e978f41bafec7",
-      "album_id":916,
-      "artist_id":471,
-      "title":"A Sailorman's Hymn",
-      "length":245.63,
-      "track":7,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"17685d3f0c57336e8056364b34a90cbf",
-      "album_id":926,
-      "artist_id":471,
-      "title":"When The Lights Are Down",
-      "length":221.52,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"1a8d4fc4d2266707b91a03b73242cadb",
-      "album_id":916,
-      "artist_id":471,
-      "title":"New Allegiance",
-      "length":54.78,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"1c463b04da05de392d07a54a59184761",
-      "album_id":923,
-      "artist_id":473,
-      "title":"18 and life",
-      "length":232.39,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"1c59dceae2b2bb0c5e0afe663939722a",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Goodbye Blue Sky",
-      "length":168.31,
-      "track":7,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"20e92804c3584fb6492f671939d0117b",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Sword Chant",
-      "length":284.73,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"21e64bff6ccf99f0a9b0c6f87b23e772",
-      "album_id":928,
-      "artist_id":475,
-      "title":"Temptation Revelation",
-      "length":176.28,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"23c8909317b262fea5d67cbcc798be52",
-      "album_id":916,
-      "artist_id":471,
-      "title":"Nights Of Arabia",
-      "length":326.4,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"25ad86f38771d489da9ba7451155d94e",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Hey You",
-      "length":282.28,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"29fabdb961f3ad9c100962c39072017d",
-      "album_id":917,
-      "artist_id":471,
-      "title":"The Mourning After (Carry On)",
-      "length":299.26,
-      "track":15,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"2c51c01b3c5290177b7780c2faaa922c",
-      "album_id":927,
-      "artist_id":472,
-      "title":"In The Flesh",
-      "length":257.75,
-      "track":8,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"2f94350994128da66602331c00bf0d18",
-      "album_id":921,
-      "artist_id":472,
-      "title":"Wish You Were Here",
-      "length":334.42,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"31a860387d1e21f4ca30bb1172f598e5",
-      "album_id":926,
-      "artist_id":471,
-      "title":"The Black Halo",
-      "length":223.32,
-      "track":10,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"34eec60753929bf1f548bd92104a6792",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Mother",
-      "length":336.69,
-      "track":6,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"3909865d6065161e1219f082643d345c",
-      "album_id":914,
-      "artist_id":470,
-      "title":"Wanderer",
-      "length":392.93,
-      "track":6,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"40c813fec8fb8581a386804b00c83e13",
-      "album_id":927,
-      "artist_id":472,
-      "title":"The Show Must Go On",
-      "length":95.92,
-      "track":7,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"41262ac7c6f5df9ead9d0a7b7a0d21e5",
-      "album_id":928,
-      "artist_id":475,
-      "title":"She's In Love",
-      "length":231.77,
-      "track":6,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"447284cfad1ea20c2578999b4fb2511c",
-      "album_id":914,
-      "artist_id":470,
-      "title":"Deathbringer From The Sky",
-      "length":310.78,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"464028ae3203fcb680584d17eebd4339",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Comfortably Numb",
-      "length":384.13,
-      "track":6,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"4940b4bc2f7aaddc884b35645f4a966f",
-      "album_id":916,
-      "artist_id":471,
-      "title":"The Shadow Of Uther",
-      "length":285.39,
-      "track":6,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"4b97b265ec80f8b8bf28770df26f832d",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Interlude I (Opiate Soul)",
-      "length":70.06,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"4c76766dd9bb013170a63cb81d63af68",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Goodbye Cruel World",
-      "length":77.04,
-      "track":13,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"4cec7b5c04bca3ac22202cc8b9a04ccd",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Moonlight",
-      "length":310.36,
-      "track":8,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"519eec2f5ac3863247aaff5564191944",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Into Battle",
-      "length":352.52,
-      "track":8,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"5593d8b014ff4e76e60b3588b754605d",
-      "album_id":916,
-      "artist_id":471,
-      "title":"Until Kingdom Come",
-      "length":251.69,
-      "track":11,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"567839a308ca6cdb8e278c4fe2e71d74",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Tears",
-      "length":199.24,
-      "track":10,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"567c0ff16eeb4324aa8ed447988cd532",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Center Of The Universe",
-      "length":327,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"5b2cdbf6153d5787a3111559e3698667",
-      "album_id":926,
-      "artist_id":471,
-      "title":"March Of Mephisto (Radio Edit - Bonus Track)",
-      "length":210.36,
-      "track":16,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"5dd0030b257be3213299e4b62f0d1231",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Memento Mori",
-      "length":534.54,
-      "track":12,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"6311cb1afbf99e22985d76d18fb42861",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Interlude II (Omen)",
-      "length":40.93,
-      "track":7,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"64231cced2882ab4f1ca4111825d6b56",
-      "album_id":924,
-      "artist_id":473,
-      "title":"In a darkened room",
-      "length":231.94,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"64e0d3873a022036f1b6f717c4ed8adb",
-      "album_id":928,
-      "artist_id":475,
-      "title":"Silk And Steel",
-      "length":178.39,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"654312d3907bfdf06e733e9db43cb336",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Don't Leave Me Now",
-      "length":257.04,
-      "track":11,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"66c4d399ba106239ceb210070d2e248d",
-      "album_id":916,
-      "artist_id":471,
-      "title":"Desert Reign",
-      "length":99.37,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"6d6e92d5f232d671242004004e190bd8",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Serenade",
-      "length":273.06,
-      "track":14,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"719df69b6fd228aa8894270b1896011d",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Is There Anybody Out There?",
-      "length":160.68,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"75cf826fe3269bd16be79035c4634610",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Another Brick In The Wall Part 3",
-      "length":75.02,
-      "track":12,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"7896fe919d6aa3940547498edb7a90bd",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Mourning Heart (Interlude)",
-      "length":83.93,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"797726ad136cc3605ada5e5376dccf6f",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Interlude I: Dei Gratia",
-      "length":57.36,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"79cf8ba28a64aa9b0c8ce8961326825c",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Helena's Theme",
-      "length":111.31,
-      "track":13,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"7bebadbd1aee177aeaf26475637fbff8",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Farewell",
-      "length":221.47,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"7f7cd623f15d74d70002673ace716b3a",
-      "album_id":916,
-      "artist_id":471,
-      "title":"Alexandria",
-      "length":233.85,
-      "track":8,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"7fced2073ba994214f4c561f7185754a",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Descent Of The Archangel",
-      "length":275.72,
-      "track":8,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"82ce953f6619c5afd9b7ae80db5f9f0d",
-      "album_id":921,
-      "artist_id":472,
-      "title":"Shine On You Crazy Diamond (Part I-V)",
-      "length":820.32,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"848cec561df39a7d02f3d70e643f2d00",
-      "album_id":914,
-      "artist_id":470,
-      "title":"Raised By The Sword",
-      "length":370.78,
-      "track":7,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"86c020cbb91941b25dae3af65d54f465",
-      "album_id":917,
-      "artist_id":471,
-      "title":"The Edge Of Paradise",
-      "length":249.81,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"92fb33558603aca0431408eaa08f1ddd",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Stop",
-      "length":30.51,
-      "track":11,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"95b4b5be82064f4ac911e914e84e716f",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Waiting For The Worms",
-      "length":238.45,
-      "track":10,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"9616819a23970adb716c3b5276de412a",
-      "album_id":914,
-      "artist_id":470,
-      "title":"Ad Victoriam",
-      "length":190.96,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"9710b1243ea6bed4810200e3f9e16fa2",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Interlude III (At The Banquet)",
-      "length":30.62,
-      "track":9,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"9747523bef2865fa8cd4a15c88268384",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Interlude II: Un Assassinio Molto Silenzioso",
-      "length":40.8,
-      "track":9,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"974eb6e13e9690bd414075ca6d55c64e",
-      "album_id":916,
-      "artist_id":471,
-      "title":"The Inquisitor",
-      "length":275.38,
-      "track":9,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"999f0c0ce579c74aac3a1448a9c405cd",
-      "album_id":926,
-      "artist_id":471,
-      "title":"March Of Mephisto",
-      "length":329.04,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"9c04d01dcb3a313d47d872d361cb9162",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Bring The Boys Back Home",
-      "length":87.12,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"9e5b207aa6e993e6cb845e3be54eb52b",
-      "album_id":914,
-      "artist_id":470,
-      "title":"One More Magic Potion",
-      "length":321.33,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"a51c0b06e9714da5e6b70d22d012f429",
-      "album_id":914,
-      "artist_id":470,
-      "title":"Blood Is The Price Of Glory",
-      "length":317.36,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"ae8d101c7b378ca574d7b069f1e301c8",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Tale Of Revenge",
-      "length":270.71,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"af80acbfd0aca6810ea36b80a31496d8",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Ferrum Aeternum",
-      "length":208.09,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"b9a65fcb3b8fba0be975b5b6bb933be8",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Iron",
-      "length":233.22,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"bacc28e259dcaa3ddb890fe294eb46d6",
-      "album_id":927,
-      "artist_id":472,
-      "title":"The Trial",
-      "length":320.21,
-      "track":12,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"bbd9a3f19a5c51d8fbb0ad67ed795e7d",
-      "album_id":927,
-      "artist_id":472,
-      "title":"One Of My Turns",
-      "length":217.78,
-      "track":10,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"be993907454096b9b87109b763163b6a",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Run Like Hell",
-      "length":264.75,
-      "track":9,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"c05806022ffc15d43f7a0941d9d30be6",
-      "album_id":917,
-      "artist_id":471,
-      "title":"III Ways To Epica",
-      "length":377.34,
-      "track":16,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"c065ed053dff9c90ce98430d175a24b8",
-      "album_id":914,
-      "artist_id":470,
-      "title":"Victory Song",
-      "length":638.56,
-      "track":9,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"c11075cf178b1d71a78c4fa7760e5dfa",
-      "album_id":922,
-      "artist_id":473,
-      "title":"Breakin' Down",
-      "length":267.51,
-      "track":12,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"c38d313f5b19fcfc3d498ca4c86a2791",
-      "album_id":927,
-      "artist_id":472,
-      "title":"The Thin Ice",
-      "length":149.92,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"cbb21919c4ce6882980cc5587947e778",
-      "album_id":928,
-      "artist_id":475,
-      "title":"Thorazine Shuffle",
-      "length":283.16,
-      "track":11,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"cc0239b411c3f8ff342cde8227a2f29a",
-      "album_id":926,
-      "artist_id":471,
-      "title":"The Haunting (Somewhere In Time)",
-      "length":340.43,
-      "track":3,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"cc843aff3fa0538fd5e520a2bef001f4",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Empty Spaces",
-      "length":128.26,
-      "track":8,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"cdbdc1d9fd4b6bbd6a915b39303f3078",
-      "album_id":916,
-      "artist_id":471,
-      "title":"Lunar Sanctum",
-      "length":357.54,
-      "track":12,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"d42b2b4b3ae32c5f1095f08fc7055c18",
-      "album_id":928,
-      "artist_id":475,
-      "title":"The Unholy",
-      "length":277.1,
-      "track":8,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"d44ee1bc3a87123e040f505be0735199",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Interlude III: Twelve Tolls For A New Day",
-      "length":81.35,
-      "track":13,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"d452c4bae6d9817526cbabeeebb87e11",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Another Brick In The Wall Part 2",
-      "length":239.99,
-      "track":5,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"d57c61063929d75ec74cae02e381726c",
-      "album_id":928,
-      "artist_id":475,
-      "title":"Summer's Rain",
-      "length":273.08,
-      "track":10,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"d6473035b53ce603b532b996e6689bf6",
-      "album_id":917,
-      "artist_id":471,
-      "title":"A Feast For The Vain",
-      "length":237.56,
-      "track":10,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"d84aecfbebe5caa3da6778802f1beedb",
-      "album_id":927,
-      "artist_id":472,
-      "title":"The Happiest Days Of Our Lives",
-      "length":111.46,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"d91d91c4130f3e48d07973af6b462423",
-      "album_id":915,
-      "artist_id":470,
-      "title":"Lost In Despair",
-      "length":337.74,
-      "track":6,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"d947235265aa28f3ae33ad7c807f27e0",
-      "album_id":926,
-      "artist_id":471,
-      "title":"This Pain",
-      "length":239.23,
-      "track":7,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"d9a7a88db37be87db2e7ea41908af393",
-      "album_id":928,
-      "artist_id":475,
-      "title":"Hounds",
-      "length":388.39,
-      "track":7,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"df6d3ade11da48e5866ee48c756e4eb1",
-      "album_id":921,
-      "artist_id":472,
-      "title":"Welcome To The Machine",
-      "length":451.21,
-      "track":2,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"e31379cdc9b2848fe77b45c51b43f307",
-      "album_id":928,
-      "artist_id":475,
-      "title":"Of Rage And War",
-      "length":286.71,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:51:20"
-    },
-    {
-      "id":"e68e24d153f231359724be9ce3d99439",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Snow (Bonus Track)",
-      "length":261.77,
-      "track":17,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"e75f63be52d5e50592895690da10aefb",
-      "album_id":924,
-      "artist_id":473,
-      "title":"Monkey business",
-      "length":258.32,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"ec01bb524a3f719f78d284511f60ca6c",
-      "album_id":924,
-      "artist_id":473,
-      "title":"Quicksand Jesus",
-      "length":321.49,
-      "track":0,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"edb03fc11f5f252949413aed4babbb20",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Interlude IV (Dawn)",
-      "length":27.66,
-      "track":14,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"f1732ae8157082291aa7315585cb49fa",
-      "album_id":926,
-      "artist_id":471,
-      "title":"Soul Society",
-      "length":257.72,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"f1c8ec014b2ef5e2e67e1b886e6ba527",
-      "album_id":926,
-      "artist_id":471,
-      "title":"The Haunting (Radio Edit - Bonus Track)",
-      "length":222.01,
-      "track":15,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"f5783ae092735b33b4dc2cb608c66fab",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Young Lust",
-      "length":210.91,
-      "track":9,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"f769f9bf29bbb7467eee920dc8073716",
-      "album_id":914,
-      "artist_id":470,
-      "title":"The New Dawn",
-      "length":222.3,
-      "track":8,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:39"
-    },
-    {
-      "id":"f9cfe5421661e5709d655f13dedd6848",
-      "album_id":927,
-      "artist_id":472,
-      "title":"Vera",
-      "length":93.83,
-      "track":4,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"fa0a988eef6e77c5168485b62e64fa82",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Prologue",
-      "length":67.27,
-      "track":1,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
-    },
-    {
-      "id":"fac0f9123ca42140d9bfe022178662ec",
-      "album_id":917,
-      "artist_id":471,
-      "title":"Lost & Damned",
-      "length":295.39,
-      "track":12,
-      "disc":1,
-      "created_at":"2019-04-14 13:47:40"
+      "id": "307aa9124cc7f223a8e64ba19f90c196",
+      "album_id": 8,
+      "artist_id": 3,
+      "title": "Memories",
+      "length": 230.31,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "312efc46c3ef5a09f625870d83321f11",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Energy",
+      "length": 179.58,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "44b395ba4e760f149b542aafc0451534",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Funky Suspense",
+      "length": 267.52,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "49bcc0e4346df1a13f57d3a7ccd09a00",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "Funky Element",
+      "length": 189.04,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "4cf008da0ad2349a5b8aaeb037f306bf",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "Tomorrow",
+      "length": 294.83,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "51c6a0573b7fc82854afd48059da0c21",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "The Elevator Bossanova",
+      "length": 254.81,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "60a3f37eaa83e7cb8508f7513ae46bf7",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Epic",
+      "length": 178.57,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "6d66b9c4c967ad2d27b32974adc482a6",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Buddy",
+      "length": 122.15,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "79bdde00e9c9b34bffe06fd4026f9551",
+      "album_id": 8,
+      "artist_id": 3,
+      "title": "Ofelia's Dream",
+      "length": 298.78,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "7e1769e4713d68fb77739bf01e346f37",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "Ukulele",
+      "length": 146.44,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "7ed14ff6778a7f2d332503cefb0d5f62",
+      "album_id": 8,
+      "artist_id": 3,
+      "title": "November",
+      "length": 212.08,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "81d48670ee43f7eee30fc6c1f01d7ba8",
+      "album_id": 6,
+      "artist_id": 3,
+      "title": "Badass",
+      "length": 109.1,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "ae35c0d97d8da2a91c32dae61ca7b49f",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "India",
+      "length": 253.87,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "af651d9c5e27dae14e1d7822663cc8a5",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "Little Planet",
+      "length": 396.81,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "b38fc5cbb0fd41ee8ff512adcc8b07f0",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Sunny",
+      "length": 140.06,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "b6fb60327d38f9e09e565849a267c06f",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Pop Dance",
+      "length": 162.08,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "b8e26d5c822c43edfbf056c5840af700",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Romantic",
+      "length": 236.61,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "c780bf93374edcbac4b5df762b6b8c2c",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Extreme Action Sport",
+      "length": 483.4,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "d0bfd0f2f1d7e5ddcb9b141897d577e5",
+      "album_id": 4,
+      "artist_id": 3,
+      "title": "Tenderness",
+      "length": 123.83,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "d14b6dc2acfbc2ac8ffd7781c4657645",
+      "album_id": 3,
+      "artist_id": 3,
+      "title": "Dubstep",
+      "length": 124.97,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "ea5a1b1dc6da09e9eefb452fb7b36727",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Sweet",
+      "length": 307.69,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "f33affed478896835bbd1df6235b2e12",
+      "album_id": 3,
+      "artist_id": 3,
+      "title": "Brazil Samba",
+      "length": 240.82,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "fef0c2ea06ab75368923b1983b4ede52",
+      "album_id": 2,
+      "artist_id": 3,
+      "title": "Little Idea",
+      "length": 169.3,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "ffb3bce333e6a5e0561097d85ef4ae6b",
+      "album_id": 9,
+      "artist_id": 3,
+      "title": "Slow Motion",
+      "length": 207.01,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
     }
   ],
-  "settings":{
-    "media_path":"\/media\/koel"
+  "settings": [],
+  "playlists": [
+    {
+      "id": 1,
+      "name": "Sample Playlist",
+      "rules": null,
+      "is_smart": false
+    }
+  ],
+  "interactions": [
+    {
+      "song_id": "6d66b9c4c967ad2d27b32974adc482a6",
+      "liked": false,
+      "play_count": 3450
+    },
+    {
+      "song_id": "29e2deb6e0ba21784a45aabf71b6bb25",
+      "liked": false,
+      "play_count": 3134
+    },
+    {
+      "song_id": "44b395ba4e760f149b542aafc0451534",
+      "liked": false,
+      "play_count": 3046
+    },
+    {
+      "song_id": "b8e26d5c822c43edfbf056c5840af700",
+      "liked": false,
+      "play_count": 3086
+    },
+    {
+      "song_id": "1a4c590a6ea550d243328b5e26dced2b",
+      "liked": false,
+      "play_count": 3215
+    },
+    {
+      "song_id": "49bcc0e4346df1a13f57d3a7ccd09a00",
+      "liked": true,
+      "play_count": 16065
+    },
+    {
+      "song_id": "b6fb60327d38f9e09e565849a267c06f",
+      "liked": true,
+      "play_count": 3495
+    },
+    {
+      "song_id": "2a16e2477b3c6a292b89c68d94a7fc85",
+      "liked": false,
+      "play_count": 50143
+    },
+    {
+      "song_id": "c780bf93374edcbac4b5df762b6b8c2c",
+      "liked": false,
+      "play_count": 2459
+    },
+    {
+      "song_id": "14680f3ffef690f8521200e82f9ebb30",
+      "liked": false,
+      "play_count": 19532
+    },
+    {
+      "song_id": "f33affed478896835bbd1df6235b2e12",
+      "liked": false,
+      "play_count": 3814
+    },
+    {
+      "song_id": "b38fc5cbb0fd41ee8ff512adcc8b07f0",
+      "liked": true,
+      "play_count": 3863
+    },
+    {
+      "song_id": "ffb3bce333e6a5e0561097d85ef4ae6b",
+      "liked": true,
+      "play_count": 2598
+    },
+    {
+      "song_id": "2e59423cd94c809fbd5639b6745fce37",
+      "liked": false,
+      "play_count": 4425
+    },
+    {
+      "song_id": "2e8f1fadf1544522b1cd4efb97adedf8",
+      "liked": false,
+      "play_count": 2978
+    },
+    {
+      "song_id": "7ed14ff6778a7f2d332503cefb0d5f62",
+      "liked": true,
+      "play_count": 3525
+    },
+    {
+      "song_id": "ae35c0d97d8da2a91c32dae61ca7b49f",
+      "liked": true,
+      "play_count": 10788
+    },
+    {
+      "song_id": "2625510a2ed87d758010f6bac14fb622",
+      "liked": true,
+      "play_count": 5336
+    },
+    {
+      "song_id": "ea5a1b1dc6da09e9eefb452fb7b36727",
+      "liked": false,
+      "play_count": 2721
+    },
+    {
+      "song_id": "307aa9124cc7f223a8e64ba19f90c196",
+      "liked": true,
+      "play_count": 8997
+    },
+    {
+      "song_id": "1326f8a4fc90843f07ef550c54cd88f9",
+      "liked": false,
+      "play_count": 5629
+    },
+    {
+      "song_id": "312efc46c3ef5a09f625870d83321f11",
+      "liked": false,
+      "play_count": 2904
+    },
+    {
+      "song_id": "03bebf17f54e2afc7c0513fb1d931009",
+      "liked": false,
+      "play_count": 6376
+    },
+    {
+      "song_id": "d14b6dc2acfbc2ac8ffd7781c4657645",
+      "liked": true,
+      "play_count": 4388
+    },
+    {
+      "song_id": "fef0c2ea06ab75368923b1983b4ede52",
+      "liked": false,
+      "play_count": 4788
+    },
+    {
+      "song_id": "af651d9c5e27dae14e1d7822663cc8a5",
+      "liked": true,
+      "play_count": 6479
+    },
+    {
+      "song_id": "17ffc7188449c6e937e4600677414032",
+      "liked": true,
+      "play_count": 8200
+    },
+    {
+      "song_id": "60a3f37eaa83e7cb8508f7513ae46bf7",
+      "liked": true,
+      "play_count": 2670
+    },
+    {
+      "song_id": "7e1769e4713d68fb77739bf01e346f37",
+      "liked": false,
+      "play_count": 2640
+    },
+    {
+      "song_id": "81d48670ee43f7eee30fc6c1f01d7ba8",
+      "liked": true,
+      "play_count": 4376
+    },
+    {
+      "song_id": "51c6a0573b7fc82854afd48059da0c21",
+      "liked": false,
+      "play_count": 2690
+    },
+    {
+      "song_id": "4cf008da0ad2349a5b8aaeb037f306bf",
+      "liked": true,
+      "play_count": 3200
+    },
+    {
+      "song_id": "d0bfd0f2f1d7e5ddcb9b141897d577e5",
+      "liked": false,
+      "play_count": 2465
+    },
+    {
+      "song_id": "79bdde00e9c9b34bffe06fd4026f9551",
+      "liked": false,
+      "play_count": 4247
+    }
+  ],
+  "recentlyPlayed": [
+    "1326f8a4fc90843f07ef550c54cd88f9",
+    "2625510a2ed87d758010f6bac14fb622",
+    "1a4c590a6ea550d243328b5e26dced2b",
+    "ffb3bce333e6a5e0561097d85ef4ae6b",
+    "af651d9c5e27dae14e1d7822663cc8a5",
+    "49bcc0e4346df1a13f57d3a7ccd09a00",
+    "14680f3ffef690f8521200e82f9ebb30"
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "email": "admin@koel.test",
+      "is_admin": true,
+      "preferences": []
+    },
+    {
+      "id": 2,
+      "name": "Alice",
+      "email": "alice@koel.test",
+      "is_admin": false,
+      "preferences": []
+    },
+    {
+      "id": 3,
+      "name": "Bob",
+      "email": "bob@koel.test",
+      "is_admin": false,
+      "preferences": []
+    }
+  ],
+  "currentUser": {
+    "id": 1,
+    "name": "Admin",
+    "email": "admin@koel.test",
+    "is_admin": true,
+    "preferences": []
   },
-  "playlists":[
-    {
-      "id":24,
-      "name":"Wishing Well",
-      "rules":[
-        {
-          "id":1555250224506,
-          "rules":[
-            {
-              "id":1555250225439,
-              "model":"title",
-              "operator":"contains",
-              "value":[
-                "wish"
-              ]
-            }
-          ]
-        }
-      ],
-      "is_smart":true
-    }
-  ],
-  "interactions":[
-    {
-      "song_id":"0067cd9569bde60d56867aa3a117d816",
-      "liked":true,
-      "play_count":2
-    },
-    {
-      "song_id":"03e313cc7bbc6044956852ddba78e653",
-      "liked":true,
-      "play_count":0
-    },
-    {
-      "song_id":"055f1e09c1846e960cf9099645af35d3",
-      "liked":true,
-      "play_count":0
-    },
-    {
-      "song_id":"0774240b1842289186b1210f41fb8fe1",
-      "liked":true,
-      "play_count":3
-    },
-    {
-      "song_id":"0c651deb022d30e9eb7e94b35a60b1f6",
-      "liked":true,
-      "play_count":1
-    },
-    {
-      "song_id":"03ac62fa8f76e5a2645c48f2ba49ed46",
-      "liked":false,
-      "play_count":2
-    },
-    {
-      "song_id":"b9a65fcb3b8fba0be975b5b6bb933be8",
-      "liked":false,
-      "play_count":2
-    }
-  ],
-  "recentlyPlayed":[
-    "0774240b1842289186b1210f41fb8fe1",
-    "b9a65fcb3b8fba0be975b5b6bb933be8",
-    "0067cd9569bde60d56867aa3a117d816",
-    "03ac62fa8f76e5a2645c48f2ba49ed46",
-    "0c651deb022d30e9eb7e94b35a60b1f6"
-  ],
-  "users":[
-    {
-      "id":1,
-      "name":"Phan An",
-      "email":"me@phanan.net",
-      "is_admin":true,
-      "preferences":{
-        "lastfm_session_key":"hidden"
-      }
-    },
-    {
-      "id":2,
-      "name":"Foo",
-      "email":"foo@bar.com",
-      "is_admin":false,
-      "preferences":{}
-    }
-  ],
-  "currentUser":{
-    "id":1,
-    "name":"Phan An",
-    "email":"me@phanan.net",
-    "is_admin":true,
-    "preferences":{
-      "lastfm_session_key":"hidden"
-    }
-  },
-  "useLastfm":false,
-  "useYouTube":false,
-  "useiTunes":false,
-  "allowDownload":true,
-  "supportsTranscoding":false,
-  "cdnUrl":"https:\/\/localhost:8088\/",
-  "currentVersion":"v3.7.2",
-  "latestVersion":"v3.7.2"
+  "useLastfm": true,
+  "useYouTube": true,
+  "useiTunes": true,
+  "allowDownload": true,
+  "supportsTranscoding": false,
+  "cdnUrl": "http://localhost:8088",
+  "currentVersion": "v5.0.0",
+  "latestVersion": "v5.0.1"
 }

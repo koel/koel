@@ -14,8 +14,9 @@
     "url": "https://github.com/koel/koel"
   },
   "devDependencies": {
+    "@testing-library/cypress": "^7.0.3",
     "cross-env": "^3.2.3",
-    "cypress": "^3.2.0",
+    "cypress": "^6.2.0",
     "font-awesome": "^4.7.0",
     "husky": "^4.2.5",
     "laravel-mix": "^5.0.4",
@@ -23,6 +24,7 @@
     "resolve-url-loader": "^3.1.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
+    "start-server-and-test": "^1.11.7",
     "ts-loader": "^7.0.1",
     "typescript": "^3.8.3",
     "vue-template-compiler": "^2.6.11",
@@ -30,13 +32,15 @@
     "webpack-node-externals": "^1.6.0"
   },
   "scripts": {
-    "dev": "yarn hot",
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch-poll": "yarn watch -- --watch-poll",
     "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "cy": "kill-port 8088 && php artisan serve --port=8088 & wait-on http://localhost:8088 && cypress run --browser chrome",
-    "build": "yarn production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "dev": "start-test 'php artisan serve --port=8000 --quiet' :8000 hot",
+
+    "test:e2e": "start-test 'php artisan serve --port=8088 --quiet' :8088 'cypress open'",
+    "test:e2e:ci": "start-test 'php artisan serve --port=8088 --quiet' :8088 'cypress run'",
+
+    "build": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "build-demo": "cross-env NODE_ENV=demo node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "dependencies": {},
