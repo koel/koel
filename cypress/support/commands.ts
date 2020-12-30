@@ -11,3 +11,7 @@ Cypress.Commands.add('$login', (redirectTo = '/'): Chainable<AUTWindow> => {
 
   return cy.visit(redirectTo)
 })
+
+Cypress.Commands.add('$each', (dataset: Array<Array<any>>, callback: Function) => {
+  dataset.forEach(args => callback(...args))
+})

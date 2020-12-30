@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 context('Authentication', () => {
   const submitLoginForm = () => {
     cy.get('[type=email]').type('admin@koel.test')
@@ -35,7 +33,7 @@ context('Authentication', () => {
 
   it('logs out', () => {
     cy.intercept('DELETE', '/api/me', {})
-    cy.$login('/')
+    cy.$login()
     cy.findByTestId('btn-logout').click()
     cy.findByTestId('login-form').should('be.visible')
   })
