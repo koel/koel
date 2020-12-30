@@ -1,10 +1,6 @@
 /// <reference types="cypress" />
 
 context('Authentication', () => {
-  beforeEach(() => {
-    cy.visit('/')
-  })
-
   const submitLoginForm = () => {
     cy.get('[type=email]').type('admin@koel.test')
     cy.get('[type=password]').type('super-secret')
@@ -20,6 +16,7 @@ context('Authentication', () => {
       fixture: 'data.json'
     })
 
+    cy.visit('/')
     submitLoginForm()
     cy.get('[id=main]').should('be.visible')
   })
@@ -29,9 +26,17 @@ context('Authentication', () => {
       statusCode: 401
     })
 
+    cy.visit('/')
     submitLoginForm()
     cy.findByTestId('login-form')
       .should('be.visible')
       .and('have.class', 'error')
+  })
+
+  it('logs out', () => {
+    cy.intercept('DELETE', '/api/me', {})
+    cy.$login('/')
+    cy.findByTestId('btn-logout').click()
+    cy.findByTestId('login-form').should('be.visible')
   })
 })
