@@ -11,7 +11,7 @@ context('Authentication', () => {
     })
 
     cy.intercept('/api/data', {
-      fixture: 'data.json'
+      fixture: 'data.get.200.json'
     })
 
     cy.visit('/')
