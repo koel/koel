@@ -29,7 +29,7 @@ context('Playlists', () => {
     })
   })
 
-  it('deletes a playlist', () => {
+  it('deletes a playlist', async () => {
     cy.intercept('GET', '/api/playlist/1/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
@@ -37,7 +37,6 @@ context('Playlists', () => {
     cy.intercept('DELETE', '/api/playlist/1', {})
 
     cy.$login()
-    cy.clock()
 
     cy.get('#sidebar')
       .findByText('Simple Playlist')
@@ -63,11 +62,8 @@ context('Playlists', () => {
     })
 
     cy.$login()
-    cy.clock()
     cy.findByTestId('sidebar-create-playlist-btn')
       .click()
-
-    cy.tick(1)
 
     cy.findByTestId('playlist-context-menu-create-simple')
       .click()
@@ -79,8 +75,6 @@ context('Playlists', () => {
     cy.get('@nameInput')
       .clear()
       .type('A New Playlist{enter}')
-
-    cy.tick(50)
 
     cy.get('#sidebar')
       .findByText('A New Playlist')
@@ -105,10 +99,6 @@ context('Playlists', () => {
       fixture: 'playlist-songs.get.200.json'
     })
 
-    cy.clock()
-    cy.$login()
-    cy.tick(1)
-
     cy.get('#sidebar')
       .findByText('Simple Playlist')
       .as('menuItem')
@@ -122,16 +112,12 @@ context('Playlists', () => {
       .clear()
       .type('A New Name{enter}')
 
-    cy.tick(50)
-
     cy.get('@menuItem')
       .should('contain', 'A New Name')
       .and('have.class', 'active')
 
     cy.findByText('Updated playlist "A New Name".')
       .should('be.visible')
-
-    cy.tick(50)
 
     cy.get('#playlistWrapper .heading-wrapper')
       .should('be.visible')
