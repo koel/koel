@@ -204,4 +204,53 @@ context('Playlists', () => {
       .findByText('My Smart Playlist')
       .should('have.class', 'active')
   })
+
+  it('updates a smart playlist', () => {
+    cy.intercept('GET', '/api/playlist/2/songs', {
+      fixture: 'playlist-songs.get.200.json'
+    })
+
+    cy.intercept('GET', '/api/playlist/2/songs', {
+      fixture: 'playlist-songs.get.200.json'
+    })
+
+    cy.intercept('PUT', '/api/playlist/2', {})
+
+    cy.$login()
+
+    cy.get('#sidebar')
+      .findByText('Smart Playlist')
+      .rightclick()
+
+    cy.findByTestId('playlist-context-menu-edit-2').click()
+
+    cy.findByTestId('edit-smart-playlist-form')
+      .should('be.visible')
+      .within(() => {
+        cy.get('[name=name]')
+          .should('be.focused')
+          .and('contain.value', 'Smart Playlist')
+          .clear()
+          .type('A Different Name')
+
+        cy.get('[data-test=smart-playlist-rule-group]').should('have.length', 2)
+
+        // Add another rule into the second group
+        cy.get('[data-test=smart-playlist-rule-group]:nth-child(2) .btn-add-rule').click()
+        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="model[]"]').select('Album')
+        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="operator[]"]').select('contains')
+        cy.wait(0)
+        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="value[]"]').type('keyword')
+        cy.get('[data-test=smart-playlist-rule-group]:nth-child(2) [data-test=smart-playlist-rule-row]')
+          .should('have.length', 2)
+
+        cy.findByText('Save').click()
+      })
+
+    cy.findByText('Updated playlist "A Different Name".').should('be.visible')
+
+    cy.get('#playlistWrapper .heading-wrapper')
+      .should('be.visible')
+      .and('contain', 'A Different Name')
+  })
 })
