@@ -431,6 +431,40 @@
       "name": "Simple Playlist",
       "rules": null,
       "is_smart": false
+    },
+    {
+      "name": "Smart Playlist",
+      "rules": [
+        {
+          "id": 1609438260491,
+          "rules": [
+            {
+              "id": 1609438270184,
+              "model": "length",
+              "operator": "isGreaterThan",
+              "value": [
+                "40"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1609438286276,
+          "rules": [
+            {
+              "id": 1609438289914,
+              "model": "title",
+              "operator": "is",
+              "value": [
+                "Whatever"
+              ]
+            }
+          ]
+        }
+      ],
+      "id": 2,
+      "is_smart": true,
+      "songs": []
     }
   ],
   "interactions": [
