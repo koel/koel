@@ -1,4 +1,4 @@
-# koel [![GitHub Actions](https://github.com/koel/koel/workflows/main/badge.svg)](https://github.com/koel/koel/actions) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![codecov](https://codecov.io/gh/koel/koel/branch/master/graph/badge.svg)](https://codecov.io/gh/koel/koel) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
+# koel [![GitHub Actions](https://github.com/koel/koel/workflows/unit/badge.svg)](https://github.com/koel/koel/actions) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![codecov](https://codecov.io/gh/koel/koel/branch/master/graph/badge.svg)](https://codecov.io/gh/koel/koel) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
 
 ![Showcase](https://koel.dev/img/showcase.png)
 
@@ -21,9 +21,13 @@ Since Koel makes use of [git submodules](https://git-scm.com/book/en/v2/Git-Tool
 ```bash
 git pull
 git submodule update --init --recursive --remote
+
+# install the submodule dependencies
+cd resources/assets
+yarn install
 ```
 
-To start the **PHP dev server**, which serves as the API of the application, run the following command. By default, the server will listen at port `8000`.
+To start the **PHP dev server**, which serves as the API of the application, run the following command from the root directory. By default, the server will listen at port `8000`.
 
 ```bash
 php artisan serve

@@ -1,0 +1,31 @@
+name: e2e
+on: [ push ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: composer:v2
+      - name: Prepare the API
+        run: |
+          composer install --prefer-dist --no-interaction --no-scripts --no-progress
+          php artisan key:generate --quiet
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Install submodule dependencies
+        working-directory: ./resources/assets
+        run: yarn install
+      - name: Build the client application
+        run: |
+          yarn install
+          yarn build --no-progress
+      - name: Run E2E tests
+        run: yarn test:e2e:ci

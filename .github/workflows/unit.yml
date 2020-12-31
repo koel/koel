@@ -1,4 +1,4 @@
-name: main
+name: unit
 on: [ push ]
 jobs:
   test:
