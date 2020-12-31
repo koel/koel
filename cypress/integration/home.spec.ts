@@ -2,7 +2,7 @@ context('Home Screen', () => {
   beforeEach(() => {
     cy.clock()
     cy.$login()
-    cy.tick(1)
+    cy.tick(0)
   })
 
   it('renders', () => {

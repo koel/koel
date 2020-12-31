@@ -24,3 +24,9 @@ Cypress.Commands.add('$confirm', () => {
   cy.get('.alertify .ok')
     .click()
 })
+
+Cypress.Commands.add('$findInTestId', (selector: string) => {
+  const [testId, ...rest] = selector.split(' ')
+
+  return cy.findByTestId(testId.trim()).find(rest.join(' '))
+})

@@ -11,21 +11,17 @@ context('Playlists', () => {
       .as('menuItem')
       .click()
 
-    cy.get('#playlistWrapper .heading-wrapper')
-      .should('be.visible')
-      .and('contain', 'Simple Playlist')
-
-    cy.get('#playlistWrapper tr.song-item')
-      .should('be.visible')
-      .and('have.length', 3)
-
-    cy.get('#playlistWrapper')
-      .findByText('Download All')
-      .should('be.visible')
-
-    ;['.btn-shuffle-all', '.btn-delete-playlist'].forEach(selector => {
-      cy.get(`#playlistWrapper ${selector}`)
+    cy.get('#playlistWrapper').within(() => {
+      cy.get('.heading-wrapper')
         .should('be.visible')
+        .and('contain', 'Simple Playlist')
+
+      cy.get('tr.song-item')
+        .should('be.visible')
+        .and('have.length', 3)
+
+      cy.findByText('Download All').should('be.visible')
+      ;['.btn-shuffle-all', '.btn-delete-playlist'].forEach(selector => cy.get(selector).should('be.visible'))
     })
   })
 
@@ -47,11 +43,8 @@ context('Playlists', () => {
       .click()
       .$confirm()
 
-    cy.url()
-      .should('contain', '/#!/home')
-
-    cy.get('@menuItem')
-      .should('not.exist')
+    cy.url().should('contain', '/#!/home')
+    cy.get('@menuItem').should('not.exist')
   })
 
   it('creates a simple playlist from the sidebar', () => {
@@ -62,11 +55,8 @@ context('Playlists', () => {
     })
 
     cy.$login()
-    cy.findByTestId('sidebar-create-playlist-btn')
-      .click()
-
-    cy.findByTestId('playlist-context-menu-create-simple')
-      .click()
+    cy.findByTestId('sidebar-create-playlist-btn').click()
+    cy.findByTestId('playlist-context-menu-create-simple').click()
 
     cy.get('[name=create-simple-playlist-form] [name=name]')
       .as('nameInput')
@@ -81,8 +71,7 @@ context('Playlists', () => {
       .should('exist')
       .and('have.class', 'active')
 
-    cy.findByText('Created playlist "A New Playlist".')
-      .should('be.visible')
+    cy.findByText('Created playlist "A New Playlist".').should('be.visible')
 
     cy.get('#playlistWrapper .heading-wrapper')
       .should('be.visible')
@@ -116,11 +105,84 @@ context('Playlists', () => {
       .should('contain', 'A New Name')
       .and('have.class', 'active')
 
-    cy.findByText('Updated playlist "A New Name".')
-      .should('be.visible')
+    cy.findByText('Updated playlist "A New Name".').should('be.visible')
 
     cy.get('#playlistWrapper .heading-wrapper')
       .should('be.visible')
       .and('contain', 'A New Name')
+  })
+
+  it('creates a smart playlist', () => {
+    cy.intercept('GET', '/api/playlist/2/songs', [])
+
+    cy.intercept('POST', '/api/playlist', {
+      fixture: 'playlist-smart.post.200.json'
+    })
+
+    cy.intercept('GET', '/api/playlist/1/songs', {
+      fixture: 'playlist-songs.get.200.json'
+    })
+
+    cy.$login()
+    cy.findByTestId('sidebar-create-playlist-btn').click()
+    cy.findByTestId('playlist-context-menu-create-smart').click()
+
+    cy.findByTestId('create-smart-playlist-form')
+      .should('be.visible')
+      .within(() => {
+        cy.get('[name=name]')
+          .should('be.focused')
+          .type('My Smart Playlist')
+
+        cy.get('.btn-add-group').click()
+
+        // Add the first rule
+        cy.get('.btn-add-rule').click()
+        cy.get('[name="model[]"]').select('Album')
+        cy.get('[name="operator[]"]').select('is not')
+        cy.wait(0) // the "value" text box is rendered asynchronously
+        cy.get('[name="value[]"]').type('Foo')
+
+        // Add a second rule
+        cy.get('.btn-add-rule').click()
+        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="model[]"]').select('Length')
+        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="operator[]"]').select('is greater than')
+        cy.wait(0)
+        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="value[]"]').type('180')
+
+        // Add another group (and rule)
+        cy.get('.btn-add-group').click()
+        cy.get('[data-test=smart-playlist-rule-group]:nth-child(2) .btn-add-rule').click()
+        cy.wait(0)
+        cy.get('[data-test=smart-playlist-rule-group]:nth-child(2) [name="value[]"]').type('Whatever')
+
+        // Remove a rule from the first group
+        cy.get(`
+          [data-test=smart-playlist-rule-group]:first-child
+          [data-test=smart-playlist-rule-row]:nth-child(2)
+          .remove-rule
+        `).click()
+
+        cy.get('[data-test=smart-playlist-rule-group]:first-child [data-test=smart-playlist-rule-row]')
+          .should('have.length', 1)
+
+        cy.findByText('Save').click()
+      })
+
+    cy.findByText('Created playlist "My Smart Playlist".').should('be.visible')
+
+    cy.get('#playlistWrapper').within(() => {
+      cy.get('.heading-wrapper')
+        .should('be.visible')
+        .and('contain', 'My Smart Playlist')
+
+      cy.get('tr.song-item')
+        .should('be.visible')
+        .and('have.length', 3)
+    })
+
+    cy.get('#sidebar')
+      .findByText('My Smart Playlist')
+      .should('have.class', 'active')
   })
 })
