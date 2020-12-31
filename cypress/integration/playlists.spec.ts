@@ -25,7 +25,7 @@ context('Playlists', () => {
     })
   })
 
-  it('deletes a playlist', async () => {
+  it('deletes a playlist', () => {
     cy.intercept('GET', '/api/playlist/1/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
@@ -42,6 +42,27 @@ context('Playlists', () => {
     cy.get('#playlistWrapper .btn-delete-playlist')
       .click()
       .$confirm()
+
+    cy.url().should('contain', '/#!/home')
+    cy.get('@menuItem').should('not.exist')
+  })
+
+  it('deletes a playlist from the sidebar', () => {
+    cy.intercept('GET', '/api/playlist/2/songs', {
+      fixture: 'playlist-songs.get.200.json'
+    })
+
+    cy.intercept('DELETE', '/api/playlist/2', {})
+
+    cy.$login()
+
+    cy.get('#sidebar')
+      .findByText('Smart Playlist')
+      .as('menuItem')
+      .rightclick()
+
+    cy.findByTestId('playlist-context-menu-delete-2').click()
+    cy.$confirm()
 
     cy.url().should('contain', '/#!/home')
     cy.get('@menuItem').should('not.exist')
