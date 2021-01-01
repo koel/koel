@@ -36,3 +36,17 @@ Cypress.Commands.add('$clickSidebarItem', (sidebarItemText: string): Chainable<J
     .findByText(sidebarItemText)
     .click()
 })
+
+Cypress.Commands.add('$mockPlayback', () => {
+  cy.intercept('GET', '/play/**?api_token=mock-token', {
+    fixture: 'sample.mp3'
+  })
+
+  cy.intercept('GET', '/api/album/**/thumbnail', {
+    fixture: 'album-thumbnail.get.200.json'
+  })
+
+  cy.intercept('GET', '/api/**/info', {
+    fixture: 'info.get.200.json'
+  })
+})

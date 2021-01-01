@@ -1,0 +1,117 @@
+{
+  "lyrics": "Sample song lyrics",
+  "album_info": {
+    "url": "https://www.last.fm/music/Sample+Artist/Sample+Album",
+    "image": "http://localhost:8080/test/images/sample.png",
+    "wiki": {
+      "summary": "Album summary",
+      "full": "Album full wiki"
+    },
+    "tracks": [
+      {
+        "title": "Album track #1",
+        "length": 156,
+        "url": "https://www.last.fm/music/Sample-Artist/Album+track+1"
+      },
+      {
+        "title": "Album track #2",
+        "length": 247,
+        "url": "https://www.last.fm/music/Sample+Artist/Album+track+2"
+      },
+      {
+        "title": "Album track #3",
+        "length": 237,
+        "url": "https://www.last.fm/music/Sample+Artist/Album+track+3"
+      }
+    ],
+    "cover": "http://localhost:8080/test/images/sample.png"
+  },
+  "artist_info": {
+    "url": "https://www.last.fm/music/Sample+Artist",
+    "image": "http://localhost:8080/test/images/sample.png",
+    "bio": {
+      "summary": "Artist summary",
+      "full": "Artist full bio"
+    }
+  },
+  "youtube": {
+    "kind": "youtube#searchListResponse",
+    "etag": "xlATxAWpLP1mZdYFUuaCReqT_5E",
+    "nextPageToken": "CAoQAA",
+    "regionCode": "DE",
+    "pageInfo": {
+      "totalResults": 1000000,
+      "resultsPerPage": 10
+    },
+    "items": [
+      {
+        "kind": "youtube#searchResult",
+        "etag": "rlsZALtflq8Sdba4Nia7uPC-l5k",
+        "id": {
+          "kind": "youtube#video",
+          "videoId": "L397TWLwrUU"
+        },
+        "snippet": {
+          "publishedAt": "2009-11-24T13:38:04Z",
+          "channelId": "UCStHqF-8YWv8x6SJcTFkEXA",
+          "title": "YouTube Video #1",
+          "description": "Description for YouTube Video #1",
+          "thumbnails": {
+            "default": {
+              "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+              "width": 120,
+              "height": 90
+            },
+            "medium": {
+              "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+              "width": 320,
+              "height": 180
+            },
+            "high": {
+              "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+              "width": 480,
+              "height": 360
+            }
+          },
+          "channelTitle": "SampleArtistVEVO",
+          "liveBroadcastContent": "none",
+          "publishTime": "2009-11-24T13:38:04Z"
+        }
+      },
+      {
+        "kind": "youtube#searchResult",
+        "etag": "AwvO6Y5jkF0O-lDHehMYTy7Hims",
+        "id": {
+          "kind": "youtube#video",
+          "videoId": "AMfG3sMo34s"
+        },
+        "snippet": {
+          "publishedAt": "2017-01-26T03:19:52Z",
+          "channelId": "UCy6-RHgm74I8CCCvMu4NPJQ",
+          "title": "YouTube Video #2",
+          "description": "Description for YouTube Video #2",
+          "thumbnails": {
+            "default": {
+              "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+              "width": 120,
+              "height": 90
+            },
+            "medium": {
+              "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+              "width": 320,
+              "height": 180
+            },
+            "high": {
+              "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+              "width": 480,
+              "height": 360
+            }
+          },
+          "channelTitle": "Sample Artist - Topic",
+          "liveBroadcastContent": "none",
+          "publishTime": "2017-01-26T03:19:52Z"
+        }
+      }
+    ]
+  }
+}

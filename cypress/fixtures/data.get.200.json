@@ -528,7 +528,7 @@
   "useiTunes": true,
   "allowDownload": true,
   "supportsTranscoding": false,
-  "cdnUrl": "http://localhost:8088",
+  "cdnUrl": "http://localhost:8088/",
   "currentVersion": "v5.0.0",
   "latestVersion": "v5.0.1"
 }

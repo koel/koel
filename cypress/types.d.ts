@@ -7,6 +7,11 @@ declare namespace Cypress {
     $clickSidebarItem(sidebarItemText: string): Chainable<JQuery>
 
     /**
+     * Mock audio playback, including intercepting the media request, album thumbnail, media info etc.
+     */
+    $mockPlayback(): void
+
+    /**
      * Support finding an element within an element identified with a test ID.
      * For example, given a DOM like this:
      *   <form data-testid="my-form">
