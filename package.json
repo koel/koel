@@ -40,7 +40,8 @@
     "test:e2e": "kill-port 8080 && start-test dev :8080 'cypress open'",
     "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' :8080 'cypress run'",
     "build": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "build-demo": "cross-env NODE_ENV=demo node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "build-demo": "cross-env NODE_ENV=demo node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "yarn build"
   },
   "dependencies": {},
   "husky": {
