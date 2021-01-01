@@ -1,6 +1,11 @@
 context('Playlists', () => {
   beforeEach(() => cy.$login())
 
+  const assertPlaylistSongCount = (name: string, count: number) => {
+    cy.$clickSidebarItem(name)
+    cy.get('#playlistWrapper tr.song-item').should('have.length', count)
+  }
+
   it('displays a playlist when sidebar menu item is clicked', () => {
     cy.intercept('GET', '/api/playlist/1/songs', {
       fixture: 'playlist-songs.get.200.json'
@@ -101,12 +106,7 @@ context('Playlists', () => {
       fixture: 'playlist.post.200.json'
     })
 
-    const assertPlaylistSongCount = (count: number) => {
-      cy.$clickSidebarItem('Simple Playlist')
-      cy.get('#playlistWrapper tr.song-item').should('have.length', count)
-    }
-
-    assertPlaylistSongCount(3)
+    assertPlaylistSongCount('Simple Playlist', 3)
 
     cy.$clickSidebarItem('All Songs')
 
@@ -121,7 +121,34 @@ context('Playlists', () => {
     })
 
     cy.findByText('Added 2 songs into "Simple Playlist".').should('be.visible')
-    assertPlaylistSongCount(5)
+    assertPlaylistSongCount('Simple Playlist', 5)
+  })
+
+  it('creates a playlist directly from songs', () => {
+    cy.intercept('POST', '/api/playlist', {
+      fixture: 'playlist.post.200.json'
+    })
+
+    cy.intercept('GET', '/api/playlist/3/songs', {
+      fixture: 'playlist-songs.get.200.json'
+    })
+
+    cy.$clickSidebarItem('All Songs')
+
+    cy.get('#songsWrapper').within(() => {
+      cy.get('tr.song-item:first-child').click()
+      cy.get('tr.song-item:nth-child(3)').click({ shiftKey: true })
+      cy.get('[data-test=add-to-btn]').click()
+      cy.get('[data-test=new-playlist-name]').type('A New Playlist{enter}')
+    })
+
+    cy.get('#sidebar')
+      .findByText('A New Playlist')
+      .should('exist')
+      .and('have.class', 'active')
+
+    cy.findByText('Created playlist "A New Playlist".').should('be.visible')
+    assertPlaylistSongCount('A New Playlist', 3)
   })
 
   it('updates a simple playlist from the sidebar', () => {
@@ -210,19 +237,15 @@ context('Playlists', () => {
 
     cy.findByText('Created playlist "My Smart Playlist".').should('be.visible')
 
-    cy.get('#playlistWrapper').within(() => {
-      cy.get('.heading-wrapper')
+    cy.get('#playlistWrapper .heading-wrapper')
         .should('be.visible')
         .and('contain', 'My Smart Playlist')
-
-      cy.get('tr.song-item')
-        .should('be.visible')
-        .and('have.length', 3)
-    })
 
     cy.get('#sidebar')
       .findByText('My Smart Playlist')
       .should('have.class', 'active')
+
+    assertPlaylistSongCount('My Smart Playlist', 3)
   })
 
   it('updates a smart playlist', () => {
