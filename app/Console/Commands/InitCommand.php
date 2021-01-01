@@ -267,7 +267,7 @@ class InitCommand extends Command
         $this->info('└── Compiling assets');
 
         $runOkOrThrow('yarn install --colors');
-        $runOkOrThrow('yarn production --colors');
+        $runOkOrThrow('yarn build --colors');
     }
 
     /** @return array<string> */
