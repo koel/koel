@@ -30,3 +30,9 @@ Cypress.Commands.add('$findInTestId', (selector: string) => {
 
   return cy.findByTestId(testId.trim()).find(rest.join(' '))
 })
+
+Cypress.Commands.add('$clickSidebarItem', (sidebarItemText: string): Chainable<JQuery> => {
+  return cy.get('#sidebar')
+    .findByText(sidebarItemText)
+    .click()
+})

@@ -1,15 +1,12 @@
 context('Playlists', () => {
+  beforeEach(() => cy.$login())
+
   it('displays a playlist when sidebar menu item is clicked', () => {
     cy.intercept('GET', '/api/playlist/1/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
-    cy.$login()
-
-    cy.get('#sidebar')
-      .findByText('Simple Playlist')
-      .as('menuItem')
-      .click()
+    cy.$clickSidebarItem('Simple Playlist')
 
     cy.get('#playlistWrapper').within(() => {
       cy.get('.heading-wrapper')
@@ -32,12 +29,7 @@ context('Playlists', () => {
 
     cy.intercept('DELETE', '/api/playlist/1', {})
 
-    cy.$login()
-
-    cy.get('#sidebar')
-      .findByText('Simple Playlist')
-      .as('menuItem')
-      .click()
+    cy.$clickSidebarItem('Simple Playlist').as('menuItem')
 
     cy.get('#playlistWrapper .btn-delete-playlist')
       .click()
@@ -53,8 +45,6 @@ context('Playlists', () => {
     })
 
     cy.intercept('DELETE', '/api/playlist/2', {})
-
-    cy.$login()
 
     cy.get('#sidebar')
       .findByText('Smart Playlist')
@@ -75,7 +65,6 @@ context('Playlists', () => {
       fixture: 'playlist.post.200.json'
     })
 
-    cy.$login()
     cy.findByTestId('sidebar-create-playlist-btn').click()
     cy.findByTestId('playlist-context-menu-create-simple').click()
 
@@ -142,7 +131,6 @@ context('Playlists', () => {
       fixture: 'playlist-songs.get.200.json'
     })
 
-    cy.$login()
     cy.findByTestId('sidebar-create-playlist-btn').click()
     cy.findByTestId('playlist-context-menu-create-smart').click()
 
@@ -215,8 +203,6 @@ context('Playlists', () => {
     })
 
     cy.intercept('PUT', '/api/playlist/2', {})
-
-    cy.$login()
 
     cy.get('#sidebar')
       .findByText('Smart Playlist')

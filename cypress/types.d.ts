@@ -1,9 +1,10 @@
 declare namespace Cypress {
   interface Chainable {
-    $login(redirectTo?: string): Chainable
-    $loginAsNonAdmin(redirectTo?: string): Chainable
+    $login(redirectTo?: string): Chainable<AUTWindow>
+    $loginAsNonAdmin(redirectTo?: string): Chainable<AUTWindow>
     $each(dataset: Array<Array<any>>, callback: Function): void
     $confirm(): void
+    $clickSidebarItem(sidebarItemText: string): Chainable<JQuery>
 
     /**
      * Support finding an element within an element identified with a test ID.

@@ -8,12 +8,12 @@ context('Home Screen', () => {
   it('renders', () => {
     cy.get('.screen-header').should('be.visible')
     cy.$each([
-      ['.top-song-list', 7],
+      ['.top-song-list', 3],
       ['.recent-song-list', 7],
       ['.recently-added-album-list', 6],
       ['.recently-added-song-list', 10],
       ['.top-artist-list', 1],
-      ['.top-album-list', 6]
+      ['.top-album-list', 3]
     ], (selector: string, itemCount: number) => {
       cy.get(selector)
         .should('exist')

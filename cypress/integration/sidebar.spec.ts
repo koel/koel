@@ -18,11 +18,8 @@ context('Sidebar Functionalities', () => {
   ]
 
   function assertMenuItem (text: string, url: string) {
-    cy.get('#sidebar')
-      .findByText(text)
-      .click()
-      .url()
-      .should('contain', url)
+    cy.$clickSidebarItem(text)
+    cy.url().should('contain', url)
   }
 
   it('contains menu items', () => {
