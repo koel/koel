@@ -92,6 +92,38 @@ context('Playlists', () => {
       .and('contain', 'The playlist is currently empty.')
   })
 
+  it('creates a playlist directly from a song list', () => {
+    cy.intercept('GET', '/api/playlist/1/songs', {
+      fixture: 'playlist-songs.get.200.json'
+    })
+
+    cy.intercept('PUT', '/api/playlist/1/sync', {
+      fixture: 'playlist.post.200.json'
+    })
+
+    const assertPlaylistSongCount = (count: number) => {
+      cy.$clickSidebarItem('Simple Playlist')
+      cy.get('#playlistWrapper tr.song-item').should('have.length', count)
+    }
+
+    assertPlaylistSongCount(3)
+
+    cy.$clickSidebarItem('All Songs')
+
+    cy.get('#songsWrapper').within(() => {
+      cy.get('tr.song-item:first-child').click()
+      cy.get('tr.song-item:nth-child(2)').click({ shiftKey: true })
+      cy.get('[data-test=add-to-btn]').click()
+      cy.get('[data-test=add-to-menu]')
+        .should('be.visible')
+        .within(() => cy.findByText('Simple Playlist').click())
+        .should('not.be.visible')
+    })
+
+    cy.findByText('Added 2 songs into "Simple Playlist".').should('be.visible')
+    assertPlaylistSongCount(5)
+  })
+
   it('updates a simple playlist from the sidebar', () => {
     cy.intercept('PUT', '/api/playlist/1', {})
     cy.intercept('GET', '/api/playlist/1/songs', {
