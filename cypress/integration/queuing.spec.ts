@@ -82,7 +82,7 @@ context('Queuing', { scrollBehavior: false }, () => {
   ;([
     { menuItem: 'After Current Song', queuedPosition: 2 },
     { menuItem: 'Bottom of Queue', queuedPosition: 4 },
-    { menuItem: 'Top of Queue', queuedPosition: 1 },
+    { menuItem: 'Top of Queue', queuedPosition: 1 }
   ]).forEach(config => {
     it(`queues a song to ${config.menuItem}`, () => {
       queueSomeFromSongList()
@@ -111,6 +111,30 @@ context('Queuing', { scrollBehavior: false }, () => {
         cy.get('tr.song-item').should('have.length', 4)
         cy.get(`tr.song-item:nth-child(${config.queuedPosition}) .title`).should('have.text', songTitle)
       })
+    })
+  })
+
+  it('queues a song when plays it', () => {
+    queueSomeFromSongList()
+
+    cy.$clickSidebarItem('All Songs')
+
+    let songTitle
+    cy.get('#songsWrapper').within(() => {
+      cy.get('tr.song-item:nth-child(4) .title')
+        .invoke('text')
+        .then(text => {
+          songTitle = text
+        })
+
+      cy.get('tr.song-item:nth-child(4)').dblclick()
+    })
+
+    cy.$clickSidebarItem('Current Queue')
+    cy.get('#queueWrapper').within(() => {
+      cy.get('tr.song-item').should('have.length', 4)
+      cy.get(`tr.song-item:nth-child(2) .title`).should('have.text', songTitle)
+      cy.get('tr.song-item:nth-child(2)').should('have.class', 'playing')
     })
   })
 })
