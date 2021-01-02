@@ -50,3 +50,29 @@ Cypress.Commands.add('$mockPlayback', () => {
     fixture: 'info.get.200.json'
   })
 })
+
+Cypress.Commands.add('$queueSeveralSongs', (count = 3) => {
+  cy.$mockPlayback()
+  cy.$clickSidebarItem('All Songs')
+
+  cy.get('#songsWrapper').within(() => {
+    cy.get('tr.song-item:nth-child(1)').click()
+    cy.get(`tr.song-item:nth-child(${count})`).click({
+      shiftKey: true
+    })
+
+    cy.get('.screen-header [data-test=btn-shuffle-selected]').click()
+  })
+})
+
+Cypress.Commands.add('$assertPlaylistSongCount', (name: string, count: number) => {
+  cy.$clickSidebarItem(name)
+  cy.get('#playlistWrapper tr.song-item').should('have.length', count)
+  cy.go('back')
+})
+
+Cypress.Commands.add('$assertFavoriteSongCount', (count: number) => {
+  cy.$clickSidebarItem('Favorites')
+  cy.get('#favoritesWrapper').within(() => cy.get('tr.song-item').should('have.length', count))
+  cy.go('back')
+})

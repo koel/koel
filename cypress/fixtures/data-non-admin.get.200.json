@@ -69,17 +69,17 @@
     {
       "id": 3,
       "name": "The Band",
-      "image": null
+      "image": "http://localhost:8088/test/images/sample.png"
     },
     {
       "id": 1,
       "name": "Unknown Artist",
-      "image": null
+      "image": "http://localhost:8088/test/images/sample.png"
     },
     {
       "id": 2,
       "name": "Various Artists",
-      "image": null
+      "image": "http://localhost:8088/test/images/sample.png"
     }
   ],
   "songs": [

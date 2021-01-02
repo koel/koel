@@ -47,21 +47,8 @@ context('Queuing', { scrollBehavior: false }, () => {
     })
   })
 
-  function queueSomeFromSongList (count = 3) {
-    cy.$clickSidebarItem('All Songs')
-
-    cy.get('#songsWrapper').within(() => {
-      cy.get('tr.song-item:nth-child(1)').click()
-      cy.get(`tr.song-item:nth-child(${count})`).click({
-        shiftKey: true
-      })
-
-      cy.get('.screen-header [data-test=btn-shuffle-selected]').click()
-    })
-  }
-
   it('creates a queue from selected songs', () => {
-    queueSomeFromSongList()
+    cy.$queueSeveralSongs()
 
     cy.get('#queueWrapper').within(() => {
       cy.get('tr.song-item').should('have.length', 3)
@@ -70,7 +57,7 @@ context('Queuing', { scrollBehavior: false }, () => {
   })
 
   it('deletes a song from queue', () => {
-    queueSomeFromSongList()
+    cy.$queueSeveralSongs()
 
     cy.get('#queueWrapper').within(() => {
       cy.get('tr.song-item').should('have.length', 3)
@@ -79,44 +66,8 @@ context('Queuing', { scrollBehavior: false }, () => {
     })
   })
 
-  ;([
-    { menuItem: 'After Current Song', queuedPosition: 2 },
-    { menuItem: 'Bottom of Queue', queuedPosition: 4 },
-    { menuItem: 'Top of Queue', queuedPosition: 1 }
-  ]).forEach(config => {
-    it(`queues a song to ${config.menuItem}`, () => {
-      queueSomeFromSongList()
-
-      cy.$clickSidebarItem('All Songs')
-
-      let songTitle
-      cy.get('#songsWrapper').within(() => {
-        cy.get('tr.song-item:nth-child(4) .title')
-          .invoke('text')
-          .then(text => {
-            songTitle = text
-          })
-
-        cy.get('tr.song-item:nth-child(4)').rightclick()
-      })
-
-      cy.findByTestId('song-context-menu').should('be.visible')
-        .within(() => {
-          cy.findByText('Add To').click()
-          cy.findByText(config.menuItem).click()
-        })
-
-      cy.$clickSidebarItem('Current Queue')
-      cy.get('#queueWrapper').within(() => {
-        cy.get('tr.song-item').should('have.length', 4)
-        cy.get(`tr.song-item:nth-child(${config.queuedPosition}) .title`).should('have.text', songTitle)
-      })
-    })
-  })
-
   it('queues a song when plays it', () => {
-    queueSomeFromSongList()
-
+    cy.$queueSeveralSongs()
     cy.$clickSidebarItem('All Songs')
 
     let songTitle

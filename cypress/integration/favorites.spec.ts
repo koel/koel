@@ -1,11 +1,6 @@
 context('Favorites', { scrollBehavior: false }, () => {
   beforeEach(() => cy.$login())
 
-  function assertFavoriteCount (count: number) {
-    cy.$clickSidebarItem('Favorites')
-    cy.get('#favoritesWrapper').within(() => cy.get('tr.song-item').should('have.length', count))
-  }
-
   it('loads the list of favorites', () => {
     cy.$clickSidebarItem('Favorites')
 
@@ -37,7 +32,7 @@ context('Favorites', { scrollBehavior: false }, () => {
           .within(() => cy.get('[data-test=btn-like-liked]').should('be.visible'))
       })
 
-    assertFavoriteCount(4)
+    cy.$assertFavoriteSongCount(4)
   })
 
   it('adds a favorite song from Add To dropdown', () => {
@@ -57,24 +52,9 @@ context('Favorites', { scrollBehavior: false }, () => {
           .should('not.be.visible')
       })
 
-    assertFavoriteCount(4)
+    cy.$assertFavoriteSongCount(4)
   })
 
-  it('adds a favorite song from context menu', () => {
-    cy.intercept('POST', '/api/interaction/like', {
-      fixture: 'like.post.200.json'
-    })
-
-    cy.$clickSidebarItem('All Songs')
-
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
-    cy.findByTestId('song-context-menu').within(() => {
-      cy.findByText('Add To').click()
-      cy.findByText('Favorites').click()
-    })
-
-    assertFavoriteCount(4)
-  })
 
   it('deletes a favorite with Unlike button', () => {
     cy.intercept('POST', '/api/interaction/like', {})

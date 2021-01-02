@@ -12,6 +12,15 @@ declare namespace Cypress {
     $mockPlayback(): void
 
     /**
+     * Queue several songs from the All Song screen.
+     * @param count
+     */
+    $queueSeveralSongs(count?: number): void
+
+    $assertPlaylistSongCount(name: string, count: number): void
+    $assertFavoriteSongCount(count: number): void
+
+    /**
      * Support finding an element within an element identified with a test ID.
      * For example, given a DOM like this:
      *   <form data-testid="my-form">
