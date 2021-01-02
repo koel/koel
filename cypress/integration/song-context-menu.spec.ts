@@ -96,13 +96,11 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
 
       cy.$assertPlaylistSongCount('Simple Playlist', 3)
       cy.get('#songsWrapper').within(() => {
-        cy.get('tr.song-item:first-child').click()
-
         if (config.songCount > 1) {
-          cy.get(`tr.song-item:nth-child(${config.songCount})`).click({ shiftKey: true })
+          cy.$selectSongRange(1, config.songCount).rightclick()
+        } else {
+          cy.get('tr.song-item:first-child').rightclick()
         }
-
-        cy.get('tr.song-item:first-child').rightclick()
       })
 
       cy.findByTestId('song-context-menu')

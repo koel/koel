@@ -104,8 +104,7 @@ context('Playlists', () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
-      cy.get('tr.song-item:first-child').click()
-      cy.get('tr.song-item:nth-child(2)').click({ shiftKey: true })
+      cy.$selectSongRange(1, 2)
       cy.get('[data-test=add-to-btn]').click()
       cy.get('[data-test=add-to-menu]')
         .should('be.visible')
@@ -129,8 +128,7 @@ context('Playlists', () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
-      cy.get('tr.song-item:first-child').click()
-      cy.get('tr.song-item:nth-child(3)').click({ shiftKey: true })
+      cy.$selectSongRange(1, 3)
       cy.get('[data-test=add-to-btn]').click()
       cy.get('[data-test=new-playlist-name]').type('A New Playlist{enter}')
     })

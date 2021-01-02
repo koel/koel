@@ -1,8 +1,9 @@
 import '@testing-library/cypress/add-commands'
 import AUTWindow = Cypress.AUTWindow
 import Chainable = Cypress.Chainable
+import scrollBehaviorOptions = Cypress.scrollBehaviorOptions
 
-function _login(dataFixture, redirectTo = '/'): Chainable<AUTWindow> {
+function _login (dataFixture, redirectTo = '/'): Chainable<AUTWindow> {
   window.localStorage.setItem('api-token', 'mock-token')
 
   cy.intercept('api/data', {
@@ -76,3 +77,13 @@ Cypress.Commands.add('$assertFavoriteSongCount', (count: number) => {
   cy.get('#favoritesWrapper').within(() => cy.get('tr.song-item').should('have.length', count))
   cy.go('back')
 })
+
+Cypress.Commands.add(
+  '$selectSongRange',
+  (start: number, end: number, scrollBehavior: scrollBehaviorOptions = false): Chainable<JQuery> => {
+    cy.get(`tr.song-item:nth-child(${start})`).click()
+    return cy.get(`tr.song-item:nth-child(${end})`).click({
+      scrollBehavior,
+      shiftKey: true
+    })
+  })

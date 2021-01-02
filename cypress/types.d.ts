@@ -19,6 +19,7 @@ declare namespace Cypress {
 
     $assertPlaylistSongCount(name: string, count: number): void
     $assertFavoriteSongCount(count: number): void
+    $selectSongRange(start: number, end: number, scrollBehavior?: scrollBehaviorOptions): Chainable<JQuery>
 
     /**
      * Support finding an element within an element identified with a test ID.

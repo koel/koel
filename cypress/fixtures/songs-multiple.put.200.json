@@ -1,0 +1,51 @@
+{
+  "artists": [
+    {
+      "id": 3,
+      "name": "The Band",
+      "image": "http://localhost:8088/test/images/sample.png"
+    }
+  ],
+  "albums": [
+    {
+      "id": 5,
+      "artist_id": 3,
+      "name": "The Wall",
+      "cover": "http://localhost:8088/test/images/sample.png",
+      "created_at": "2016-02-01 06:48:45",
+      "is_compilation": false
+    }
+  ],
+  "songs": [
+    {
+      "id": "03bebf17f54e2afc7c0513fb1d931009",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Instinct",
+      "length": 204.11,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "1326f8a4fc90843f07ef550c54cd88f9",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Better Days",
+      "length": 153.84,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    },
+    {
+      "id": "14680f3ffef690f8521200e82f9ebb30",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Acoustic Breeze",
+      "length": 157.2,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35"
+    }
+  ]
+}
