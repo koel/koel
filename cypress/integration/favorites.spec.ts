@@ -1,7 +1,5 @@
-context('Favorites', () => {
-  beforeEach(() => {
-    cy.$login()
-  })
+context('Favorites', { scrollBehavior: false }, () => {
+  beforeEach(() => cy.$login())
 
   function assertFavoriteCount (count: number) {
     cy.$clickSidebarItem('Favorites')
@@ -58,6 +56,22 @@ context('Favorites', () => {
           .within(() => cy.findByText('Favorites').click())
           .should('not.be.visible')
       })
+
+    assertFavoriteCount(4)
+  })
+
+  it('adds a favorite song from context menu', () => {
+    cy.intercept('POST', '/api/interaction/like', {
+      fixture: 'like.post.200.json'
+    })
+
+    cy.$clickSidebarItem('All Songs')
+
+    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.findByTestId('song-context-menu').within(() => {
+      cy.findByText('Add To').click()
+      cy.findByText('Favorites').click()
+    })
 
     assertFavoriteCount(4)
   })
