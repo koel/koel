@@ -150,4 +150,20 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').click())
     cy.findByTestId('edit-song-form').should('be.visible')
   })
+
+  it('downloads a song', () => {
+    cy.intercept('/download/songs').as('download')
+
+    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.findByTestId('song-context-menu').within(() => cy.findByText('Download').click())
+
+    cy.wait('@download')
+  })
+
+  it("copies a song's URL", () => {
+    cy.window().then(window => cy.spy(window.document, 'execCommand').as('copy'));
+    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.findByTestId('song-context-menu').within(() => cy.findByText('Copy Shareable URL').click())
+    cy.get('@copy').should('be.calledWithExactly', 'copy');
+  })
 })
