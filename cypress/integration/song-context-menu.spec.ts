@@ -11,9 +11,11 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
       cy.get('tr.song-item:first-child').dblclick()
       cy.get('tr.song-item:first-child').should('have.class', 'playing')
     })
+
+    cy.$assertPlaying()
   })
 
-  it('plays a song via context menu', () => {
+  it('plays and pauses a song via context menu', () => {
     cy.$mockPlayback()
 
     cy.get('#songsWrapper').within(() => {
@@ -24,6 +26,11 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
 
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Play').click())
     cy.get('@item').should('have.class', 'playing')
+    cy.$assertPlaying()
+
+    cy.get('@item').rightclick()
+    cy.findByTestId('song-context-menu').within(() => cy.findByText('Pause').click())
+    cy.$assertNotPlaying()
   })
 
   it('goes to album', () => {
@@ -87,7 +94,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     { name: 'one song', songCount: 1 },
     { name: 'several songs', songCount: 2 }
   ].forEach((config) => {
-    it(`add ${config.name} into a simple playlist`, () => {
+    it(`adds ${config.name} into a simple playlist`, () => {
       cy.intercept('GET', '/api/playlist/1/songs', {
         fixture: 'playlist-songs.get.200.json'
       })

@@ -17,6 +17,8 @@ context('Queuing', { scrollBehavior: false }, () => {
       cy.get('tr.song-item').should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
       cy.get('tr.song-item:first-child').should('have.class', 'playing')
     })
+
+    cy.$assertPlaying()
   })
 
   it('clears the queue', () => {
@@ -45,6 +47,8 @@ context('Queuing', { scrollBehavior: false }, () => {
       cy.get('tr.song-item').should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
       cy.get('tr.song-item:first-child').should('have.class', 'playing')
     })
+
+    cy.$assertPlaying()
   })
 
   it('creates a queue from selected songs', () => {
@@ -87,5 +91,7 @@ context('Queuing', { scrollBehavior: false }, () => {
       cy.get(`tr.song-item:nth-child(2) .title`).should('have.text', songTitle)
       cy.get('tr.song-item:nth-child(2)').should('have.class', 'playing')
     })
+
+    cy.$assertPlaying()
   })
 })
