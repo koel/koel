@@ -28,4 +28,18 @@ context('Home Screen', () => {
       .url()
       .should('contain', '/#!/recently-played')
   })
+
+  it('a song item can be played', () => {
+    cy.$mockPlayback()
+
+    cy.get('.top-song-list [data-test=song-card]:first-child').within(() => {
+      cy.get('a.control').invoke('show').click()
+    }).should('have.class', 'playing')
+    cy.$assertPlaying()
+  })
+
+  it('a song item has a context menu', () => {
+    cy.get('.top-song-list [data-test=song-card]:first-child').rightclick()
+    cy.findByTestId('song-context-menu').should('be.visible')
+  })
 })

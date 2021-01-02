@@ -87,3 +87,15 @@ Cypress.Commands.add(
       shiftKey: true
     })
   })
+
+Cypress.Commands.add('$assertPlaying', () => {
+  cy.findByTestId('pause-btn').should('exist')
+  cy.findByTestId('play-btn').should('not.exist')
+  cy.findByTestId('sound-bar-play').should('be.visible')
+})
+
+Cypress.Commands.add('$assertNotPlaying', () => {
+  cy.findByTestId('pause-btn').should('not.exist')
+  cy.findByTestId('play-btn').should('exist')
+  cy.findByTestId('sound-bar-play').should('not.exist')
+})
