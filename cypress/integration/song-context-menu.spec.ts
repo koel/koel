@@ -141,7 +141,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$assertFavoriteSongCount(4)
   })
 
-  it.only('initiates editing a song', () => {
+  it('initiates editing a song', () => {
     cy.intercept('GET', '/api/**/info', {
       fixture: 'info.get.200.json'
     })
