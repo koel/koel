@@ -17,6 +17,7 @@
     "@testing-library/cypress": "^7.0.3",
     "cross-env": "^3.2.3",
     "cypress": "^6.2.0",
+    "cypress-file-upload": "^4.1.1",
     "font-awesome": "^4.7.0",
     "husky": "^4.2.5",
     "kill-port": "^1.6.1",

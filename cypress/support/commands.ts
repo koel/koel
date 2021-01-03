@@ -1,4 +1,5 @@
 import '@testing-library/cypress/add-commands'
+import 'cypress-file-upload'
 import Chainable = Cypress.Chainable
 import scrollBehaviorOptions = Cypress.scrollBehaviorOptions
 
@@ -16,8 +17,6 @@ Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}): Chainable<
 
   cy.fixture(mergedOptions.asAdmin ? 'data.get.200.json' : 'data-non-admin.get.200.json').then(data => {
     delete mergedOptions.asAdmin
-
-    console.log(Object.assign(data, mergedOptions))
 
     cy.intercept('GET', 'api/data', {
       statusCode: 200,
