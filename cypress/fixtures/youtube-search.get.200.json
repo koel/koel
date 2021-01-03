@@ -1,0 +1,81 @@
+{
+  "kind": "youtube#searchListResponse",
+  "etag": "onWmIRofIp1TZOvsf_4ol1evZlI",
+  "nextPageToken": "CBQQAA",
+  "prevPageToken": "CAoQAQ",
+  "regionCode": "DE",
+  "pageInfo": {
+    "totalResults": 1000000,
+    "resultsPerPage": 10
+  },
+  "items": [
+    {
+      "kind": "youtube#searchResult",
+      "etag": "rlsZALtflq8Sdba4Nia7uPC-l5k",
+      "id": {
+        "kind": "youtube#video",
+        "videoId": "L397TWLwrUU"
+      },
+      "snippet": {
+        "publishedAt": "2009-11-24T13:38:04Z",
+        "channelId": "UCStHqF-8YWv8x6SJcTFkEXA",
+        "title": "YouTube Video #3",
+        "description": "Description for YouTube Video #3",
+        "thumbnails": {
+          "default": {
+            "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "SampleArtistVEVO",
+        "liveBroadcastContent": "none",
+        "publishTime": "2009-11-24T13:38:04Z"
+      }
+    },
+    {
+      "kind": "youtube#searchResult",
+      "etag": "AwvO6Y5jkF0O-lDHehMYTy7Hims",
+      "id": {
+        "kind": "youtube#video",
+        "videoId": "AMfG3sMo34s"
+      },
+      "snippet": {
+        "publishedAt": "2017-01-26T03:19:52Z",
+        "channelId": "UCy6-RHgm74I8CCCvMu4NPJQ",
+        "title": "YouTube Video #4",
+        "description": "Description for YouTube Video #4",
+        "thumbnails": {
+          "default": {
+            "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "http://localhost:8080/test/images/youtube-thumbnail.png",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "Sample Artist - Topic",
+        "liveBroadcastContent": "none",
+        "publishTime": "2017-01-26T03:19:52Z"
+      }
+    }
+  ]
+}
