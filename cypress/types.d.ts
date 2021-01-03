@@ -31,6 +31,7 @@ declare namespace Cypress {
     $selectSongRange(start: number, end: number, scrollBehavior?: scrollBehaviorOptions): Chainable<JQuery>
     $assertPlaying(): void
     $assertNotPlaying(): void
+    $assertMenuItemActive(text: string): void
 
     /**
      * Support finding an element within an element identified with a test ID.

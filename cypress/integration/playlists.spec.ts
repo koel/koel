@@ -232,10 +232,7 @@ context('Playlists', () => {
         .should('be.visible')
         .and('contain', 'My Smart Playlist')
 
-    cy.get('#sidebar')
-      .findByText('My Smart Playlist')
-      .should('have.class', 'active')
-
+    cy.$assertMenuItemActive('My Smart Playlist')
     cy.$assertPlaylistSongCount('My Smart Playlist', 3)
   })
 
