@@ -3,5 +3,8 @@
   "pluginsFile": "cypress/plugins/index.ts",
   "viewportWidth": 1440,
   "viewportHeight": 768,
+  "retries": {
+    "runMode": 3
+  },
   "video": false
 }
