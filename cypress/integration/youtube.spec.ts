@@ -39,7 +39,7 @@ context('YouTube', () => {
     })
 
     cy.url().should('contain', '/#!/youtube')
-    cy.$assertMenuItemActive('YouTube Video')
+    cy.$assertSidebarItemActive('YouTube Video')
     cy.get('#youtubeWrapper .screen-header').should('contain', 'YouTube Video #2')
   })
 })

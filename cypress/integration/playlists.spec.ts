@@ -232,7 +232,7 @@ context('Playlists', () => {
         .should('be.visible')
         .and('contain', 'My Smart Playlist')
 
-    cy.$assertMenuItemActive('My Smart Playlist')
+    cy.$assertSidebarItemActive('My Smart Playlist')
     cy.$assertPlaylistSongCount('My Smart Playlist', 3)
   })
 

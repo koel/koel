@@ -113,7 +113,7 @@ Cypress.Commands.add('$assertNotPlaying', () => {
   cy.findByTestId('sound-bar-play').should('not.exist')
 })
 
-Cypress.Commands.add('$assertMenuItemActive', (text: string) => {
+Cypress.Commands.add('$assertSidebarItemActive', (text: string) => {
   cy.get('#sidebar')
     .findByText(text)
     .should('have.class', 'active')
