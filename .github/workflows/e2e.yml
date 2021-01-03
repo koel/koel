@@ -20,14 +20,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
-      - name: Lint
-        run: yarn lint
+      - name: Yarn install and lint
+        run: |
+          yarn install
+          yarn lint
       - name: Install submodule dependencies
         working-directory: ./resources/assets
         run: yarn install
       - name: Build the client application
-        run: |
-          yarn install
-          yarn build --no-progress
+        run: yarn build --no-progress
       - name: Run E2E tests
         run: yarn test:e2e:ci
