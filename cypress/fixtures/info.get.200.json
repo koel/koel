@@ -1,7 +1,7 @@
 {
   "lyrics": "Sample song lyrics",
   "album_info": {
-    "url": "https://www.last.fm/music/Sample+Artist/Sample+Album",
+    "url": "https://www.last.fm/music/The+Band/Sample+Album",
     "image": "http://localhost:8080/test/images/sample.png",
     "wiki": {
       "summary": "Album summary",
@@ -11,23 +11,23 @@
       {
         "title": "Album track #1",
         "length": 156,
-        "url": "https://www.last.fm/music/Sample-Artist/Album+track+1"
+        "url": "https://www.last.fm/music/The+Band/Album+track+1"
       },
       {
         "title": "Album track #2",
         "length": 247,
-        "url": "https://www.last.fm/music/Sample+Artist/Album+track+2"
+        "url": "https://www.last.fm/music/The+Band/Album+track+2"
       },
       {
         "title": "Album track #3",
         "length": 237,
-        "url": "https://www.last.fm/music/Sample+Artist/Album+track+3"
+        "url": "https://www.last.fm/music/The+Band/Album+track+3"
       }
     ],
     "cover": "http://localhost:8080/test/images/sample.png"
   },
   "artist_info": {
-    "url": "https://www.last.fm/music/Sample+Artist",
+    "url": "https://www.last.fm/music/The+Band",
     "image": "http://localhost:8080/test/images/sample.png",
     "bio": {
       "summary": "Artist summary",

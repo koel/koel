@@ -1,0 +1,31 @@
+{
+  "url": "https://www.last.fm/music/The+Band/Abstract",
+  "image": "http://localhost:8080/test/images/sample.png",
+  "wiki": {
+    "summary": "Album summary",
+    "full": "Album full wiki"
+  },
+  "tracks": [
+    {
+      "title": "Memories",
+      "length": 156,
+      "url": "https://www.last.fm/music/The+Band/Memories"
+    },
+    {
+      "title": "Ofelia's Dream",
+      "length": 247,
+      "url": "https://www.last.fm/music/The+Band/Ofelia's+Dream"
+    },
+    {
+      "title": "November",
+      "length": 237,
+      "url": "https://www.last.fm/music/The+Band/November"
+    },
+    {
+      "title": "Extra Song",
+      "length": 237,
+      "url": "https://www.last.fm/music/The+Band/Extra+Song"
+    }
+  ],
+  "cover": "http://localhost:8080/test/images/sample.png"
+}
