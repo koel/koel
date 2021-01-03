@@ -1,5 +1,7 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.0.0/workbox-sw.js')
 
+workbox.setConfig({ debug: false })
+
 workbox.routing.registerRoute(
   new RegExp('.*\.js'),
   new workbox.strategies.NetworkFirst()
