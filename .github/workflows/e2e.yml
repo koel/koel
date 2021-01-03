@@ -30,4 +30,9 @@ jobs:
       - name: Build the client application
         run: yarn build --no-progress
       - name: Run E2E tests
-        run: yarn test:e2e:ci
+        run: |
+          ./node_modules/kill-port/cli.js 8080
+          ./node_modules/start-server-and-test/src/bin/start.js \
+            'php artisan serve --port=8080 --quiet' \
+            8080 \
+            './node_modules/cypress/bin/cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}'

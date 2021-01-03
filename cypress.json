@@ -1,4 +1,5 @@
 {
+  "projectId": "t39zbg",
   "baseUrl": "http://localhost:8080",
   "pluginsFile": "cypress/plugins/index.ts",
   "viewportWidth": 1440,
@@ -6,5 +7,5 @@
   "retries": {
     "runMode": 3
   },
-  "video": false
+  "video": true
 }
