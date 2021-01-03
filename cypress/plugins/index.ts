@@ -9,7 +9,7 @@
 // https://on.cypress.io/plugins-guide
 // ***********************************************************
 
-export default (on, config) => {
+export default (on: () => void, config: Record<string, unknown>): Record<string, unknown> => {
   return Object.assign({}, config, {
     supportFile: 'cypress/support/index.ts'
   })

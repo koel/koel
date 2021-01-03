@@ -57,7 +57,7 @@ context('Song Editing', { scrollBehavior: false }, () => {
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').click())
 
     cy.findByTestId('edit-song-form').within(() => {
-      ;['title', 'track'].forEach(selector => {
+      ['title', 'track'].forEach(selector => {
         cy.get(`[name=${selector}]`).should('not.exist')
       })
 

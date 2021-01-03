@@ -20,6 +20,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
+      - name: Lint
+        run: yarn lint
       - name: Install submodule dependencies
         working-directory: ./resources/assets
         run: yarn install

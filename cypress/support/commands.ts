@@ -32,7 +32,7 @@ Cypress.Commands.add('$loginAsNonAdmin', (options: Partial<LoginOptions> = {}): 
   return cy.$login(options)
 })
 
-Cypress.Commands.add('$each', (dataset: Array<Array<any>>, callback: Function) => {
+Cypress.Commands.add('$each', (dataset: Array<Array<any>>, callback: (...args) => void) => {
   dataset.forEach(args => callback(...args))
 })
 
