@@ -1,7 +1,16 @@
+interface LoginOptions {
+  asAdmin: boolean
+  useiTunes: boolean
+  useYouTube: boolean
+  useLastfm: boolean
+  allowDownload: boolean
+  supportsTranscoding: false
+}
+
 declare namespace Cypress {
   interface Chainable {
-    $login(redirectTo?: string): Chainable<AUTWindow>
-    $loginAsNonAdmin(redirectTo?: string): Chainable<AUTWindow>
+    $login(options?: Partial<LoginOptions>): Chainable<AUTWindow>
+    $loginAsNonAdmin(options?: Partial<LoginOptions>): Chainable<AUTWindow>
     $each(dataset: Array<Array<any>>, callback: Function): void
     $confirm(): void
     $clickSidebarItem(sidebarItemText: string): Chainable<JQuery>

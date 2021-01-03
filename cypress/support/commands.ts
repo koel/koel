@@ -1,30 +1,43 @@
 import '@testing-library/cypress/add-commands'
-import AUTWindow = Cypress.AUTWindow
 import Chainable = Cypress.Chainable
 import scrollBehaviorOptions = Cypress.scrollBehaviorOptions
 
-function _login (dataFixture, redirectTo = '/'): Chainable<AUTWindow> {
+Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}): Chainable<Cypress.AUTWindow> => {
   window.localStorage.setItem('api-token', 'mock-token')
 
-  cy.intercept('api/data', {
-    fixture: dataFixture
+  const mergedOptions = Object.assign({
+    asAdmin: true,
+    useiTunes: true,
+    useYouTube: true,
+    useLastfm: true,
+    allowDownload: true,
+    supportsTranscoding: true
+  }, options) as LoginOptions
+
+  cy.fixture(mergedOptions.asAdmin ? 'data.get.200.json' : 'data-non-admin.get.200.json').then(data => {
+    delete mergedOptions.asAdmin
+
+    console.log(Object.assign(data, mergedOptions))
+
+    cy.intercept('GET', 'api/data', {
+      statusCode: 200,
+      body: Object.assign(data, mergedOptions)
+    })
   })
 
-  return cy.visit(redirectTo)
-}
+  return cy.visit('/')
+})
 
-Cypress.Commands.add('$login', (redirectTo = '/') => _login('data.get.200.json', redirectTo))
-
-Cypress.Commands.add('$loginAsNonAdmin', (redirectTo = '/') => _login('data-non-admin.get.200.json', redirectTo))
+Cypress.Commands.add('$loginAsNonAdmin', (options: Partial<LoginOptions> = {}): Chainable<Cypress.AUTWindow> => {
+  options.asAdmin = false
+  return cy.$login(options)
+})
 
 Cypress.Commands.add('$each', (dataset: Array<Array<any>>, callback: Function) => {
   dataset.forEach(args => callback(...args))
 })
 
-Cypress.Commands.add('$confirm', () => {
-  cy.get('.alertify .ok')
-    .click()
-})
+Cypress.Commands.add('$confirm', () => cy.get('.alertify .ok').click())
 
 Cypress.Commands.add('$findInTestId', (selector: string) => {
   const [testId, ...rest] = selector.split(' ')

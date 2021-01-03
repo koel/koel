@@ -1,11 +1,8 @@
 context('Song Context Menu', { scrollBehavior: false }, () => {
-  beforeEach(() => {
-    cy.$login()
-    cy.$clickSidebarItem('All Songs')
-  })
-
   it('plays a song via double-clicking', () => {
     cy.$mockPlayback()
+    cy.$login()
+    cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
       cy.get('tr.song-item:first-child').dblclick()
@@ -17,6 +14,8 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
 
   it('plays and pauses a song via context menu', () => {
     cy.$mockPlayback()
+    cy.$login()
+    cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
       cy.get('tr.song-item:first-child')
@@ -34,6 +33,9 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   })
 
   it('goes to album', () => {
+    cy.$login()
+    cy.$clickSidebarItem('All Songs')
+
     cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Go to Album').click())
 
@@ -46,6 +48,9 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   })
 
   it('goes to artist', () => {
+    cy.$login()
+    cy.$clickSidebarItem('All Songs')
+
     cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Go to Artist').click())
 
@@ -63,6 +68,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     { menuItem: 'Top of Queue', queuedPosition: 1 }
   ]).forEach(config => {
     it(`queues a song to ${config.menuItem}`, () => {
+      cy.$login()
       cy.$queueSeveralSongs()
       cy.$clickSidebarItem('All Songs')
 
@@ -101,6 +107,9 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
 
       cy.intercept('PUT', '/api/playlist/1/sync', {})
 
+      cy.$login()
+      cy.$clickSidebarItem('All Songs')
+
       cy.$assertPlaylistSongCount('Simple Playlist', 3)
       cy.get('#songsWrapper').within(() => {
         if (config.songCount > 1) {
@@ -121,6 +130,8 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   })
 
   it('does not have smart playlists as target for adding songs', () => {
+    cy.$login()
+    cy.$clickSidebarItem('All Songs')
     cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
 
     cy.findByTestId('song-context-menu')
@@ -135,6 +146,8 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
       fixture: 'like.post.200.json'
     })
 
+    cy.$login()
+    cy.$clickSidebarItem('All Songs')
     cy.$assertFavoriteSongCount(3)
 
     cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
@@ -159,13 +172,35 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   it('downloads a song', () => {
     cy.intercept('/download/songs').as('download')
 
+    cy.$login()
+    cy.$clickSidebarItem('All Songs')
+
     cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Download').click())
 
     cy.wait('@download')
   })
 
+  it('does not have a Download item if download is not allowed', () => {
+    cy.$login({ allowDownload: false })
+    cy.$clickSidebarItem('All Songs')
+
+    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.findByTestId('song-context-menu').within(() => cy.findByText('Download').should('not.exist'))
+  })
+
+  it.only('does not have an Edit item if user is not an admin', () => {
+    cy.$loginAsNonAdmin()
+    cy.$clickSidebarItem('All Songs')
+
+    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').should('not.exist'))
+  })
+
   it("copies a song's URL", () => {
+    cy.$login()
+    cy.$clickSidebarItem('All Songs')
+
     cy.window().then(window => cy.spy(window.document, 'execCommand').as('copy'));
     cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Copy Shareable URL').click())

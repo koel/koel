@@ -38,4 +38,11 @@ context('Sidebar Functionalities', () => {
         .should('not.exist')
     })
   })
+
+  it.only('does not have a YouTube item if YouTube is not used', () => {
+    cy.$login({ useYouTube: false })
+    cy.get('#sidebar')
+      .findByText('YouTube')
+      .should('not.exist')
+  })
 })
