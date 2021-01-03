@@ -4,7 +4,7 @@ context('Settings', () => {
     cy.$clickSidebarItem('Settings')
   })
 
-  it('rescans and reloads', () => {
+  it('rescans media', () => {
     cy.intercept('GET', '/api/settings', {})
 
     cy.get('#settingsWrapper').within(() => {
@@ -13,14 +13,10 @@ context('Settings', () => {
         .and('contain.text', 'Settings')
 
       cy.get('[name=media_path]').should('have.value', '/media/koel/')
-
-      // @ts-ignore
-      cy.window().then(window => window.beforeReload = true)
-      cy.window().should('have.prop', 'beforeReload', true)
-
       cy.get('[type=submit]').click()
-      cy.window().should('not.have.prop', 'beforeReload')
     })
+
+    cy.get('#overlay').should('be.visible')
   })
 
   it('confirms before rescanning if media path is changed', () => {
@@ -34,5 +30,6 @@ context('Settings', () => {
     })
 
     cy.$confirm()
+    cy.get('#overlay').should('be.visible')
   })
 })
