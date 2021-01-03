@@ -1,0 +1,8 @@
+{
+  "url": "https://www.last.fm/music/The+Band",
+  "image": "http://localhost:8080/test/images/sample.png",
+  "bio": {
+    "summary": "Artist summary",
+    "full": "Artist full bio"
+  }
+}
