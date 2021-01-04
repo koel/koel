@@ -24,9 +24,8 @@ jobs:
       - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
-          build: |
-            composer install --prefer-dist --no-interaction --no-scripts --no-progress
-            php artisan key:generate --quiet
+          build: composer install --prefer-dist --no-interaction --no-scripts --no-progress && \
+            php artisan key:generate --quiet && \
             yarn build --no-progress
           start: php artisan serve --port=8080
           wait-on: 'http://localhost:8080'
