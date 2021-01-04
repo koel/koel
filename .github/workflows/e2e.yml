@@ -31,6 +31,7 @@ jobs:
           build: yarn build --no-progress
           start: php artisan serve --port=8080
           wait-on: 'http://localhost:8080'
+          quiet: true
           record: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
