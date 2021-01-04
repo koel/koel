@@ -69,7 +69,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   ]).forEach(config => {
     it(`queues a song to ${config.menuItem}`, () => {
       cy.$login()
-      cy.$queueSeveralSongs()
+      cy.$shuffleSeveralSongs()
       cy.$clickSidebarItem('All Songs')
 
       let songTitle

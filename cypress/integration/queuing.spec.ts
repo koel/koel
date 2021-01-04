@@ -52,7 +52,7 @@ context('Queuing', { scrollBehavior: false }, () => {
   })
 
   it('creates a queue from selected songs', () => {
-    cy.$queueSeveralSongs()
+    cy.$shuffleSeveralSongs()
 
     cy.get('#queueWrapper').within(() => {
       cy.get('tr.song-item').should('have.length', 3)
@@ -61,7 +61,7 @@ context('Queuing', { scrollBehavior: false }, () => {
   })
 
   it('deletes a song from queue', () => {
-    cy.$queueSeveralSongs()
+    cy.$shuffleSeveralSongs()
 
     cy.get('#queueWrapper').within(() => {
       cy.get('tr.song-item').should('have.length', 3)
@@ -71,7 +71,7 @@ context('Queuing', { scrollBehavior: false }, () => {
   })
 
   it('queues a song when plays it', () => {
-    cy.$queueSeveralSongs()
+    cy.$shuffleSeveralSongs()
     cy.$clickSidebarItem('All Songs')
 
     let songTitle
@@ -92,6 +92,50 @@ context('Queuing', { scrollBehavior: false }, () => {
       cy.get('tr.song-item:nth-child(2)').should('have.class', 'playing')
     })
 
+    cy.$assertPlaying()
+  })
+
+  it('navigates through the queue', () => {
+    cy.$shuffleSeveralSongs()
+    cy.get('#queueWrapper tr.song-item:nth-child(1)').should('have.class', 'playing')
+
+    cy.findByTestId('play-next-btn').click({ force: true })
+    cy.get('#queueWrapper tr.song-item:nth-child(2)').should('have.class', 'playing')
+    cy.$assertPlaying()
+
+    cy.findByTestId('play-prev-btn').click({ force: true })
+    cy.get('#queueWrapper tr.song-item:nth-child(1)').should('have.class', 'playing')
+    cy.$assertPlaying()
+  })
+
+  it('stops playing if reaches end of queue in no-repeat mode', () => {
+    cy.$shuffleSeveralSongs()
+    cy.findByTestId('play-next-btn').click({ force: true })
+    cy.findByTestId('play-next-btn').click({ force: true })
+    cy.findByTestId('play-next-btn').click({ force: true })
+    cy.$assertNotPlaying()
+  })
+
+  it('rotates if reaches end of queue in repeat-all mode', () => {
+    cy.findByTestId('repeat-mode-switch').click()
+
+    cy.$shuffleSeveralSongs()
+    cy.findByTestId('play-next-btn').click({ force: true })
+    cy.findByTestId('play-next-btn').click({ force: true })
+    cy.findByTestId('play-next-btn').click({ force: true })
+
+    cy.get('#queueWrapper tr.song-item:nth-child(1)').should('have.class', 'playing')
+    cy.$assertPlaying()
+  })
+
+  it('still moves to next song in repeat-one mode', () => {
+    cy.findByTestId('repeat-mode-switch').click()
+    cy.findByTestId('repeat-mode-switch').click()
+
+    cy.$shuffleSeveralSongs()
+    cy.findByTestId('play-next-btn').click({ force: true })
+
+    cy.get('#queueWrapper tr.song-item:nth-child(2)').should('have.class', 'playing')
     cy.$assertPlaying()
   })
 })

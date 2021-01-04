@@ -11,7 +11,7 @@ declare namespace Cypress {
   interface Chainable {
     $login(options?: Partial<LoginOptions>): Chainable<AUTWindow>
     $loginAsNonAdmin(options?: Partial<LoginOptions>): Chainable<AUTWindow>
-    $each(dataset: Array<Array<any>>, callback: Function): void
+    $each(dataset: Array<Array<any>>, callback: (...args) => void): void
     $confirm(): void
     $clickSidebarItem(sidebarItemText: string): Chainable<JQuery>
 
@@ -24,7 +24,7 @@ declare namespace Cypress {
      * Queue several songs from the All Song screen.
      * @param count
      */
-    $queueSeveralSongs(count?: number): void
+    $shuffleSeveralSongs(count?: number): void
 
     $assertPlaylistSongCount(name: string, count: number): void
     $assertFavoriteSongCount(count: number): void

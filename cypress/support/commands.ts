@@ -64,7 +64,7 @@ Cypress.Commands.add('$mockPlayback', () => {
   })
 })
 
-Cypress.Commands.add('$queueSeveralSongs', (count = 3) => {
+Cypress.Commands.add('$shuffleSeveralSongs', (count = 3) => {
   cy.$mockPlayback()
   cy.$clickSidebarItem('All Songs')
 
