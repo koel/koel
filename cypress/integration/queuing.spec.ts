@@ -74,21 +74,15 @@ context('Queuing', { scrollBehavior: false }, () => {
     cy.$shuffleSeveralSongs()
     cy.$clickSidebarItem('All Songs')
 
-    let songTitle
-    cy.get('#songsWrapper').within(() => {
-      cy.get('tr.song-item:nth-child(4) .title')
-        .invoke('text')
-        .then(text => {
-          songTitle = text
-        })
-
+    cy.get('#songsWrapper').within(function () {
+      cy.get('tr.song-item:nth-child(4) .title').invoke('text').as('title')
       cy.get('tr.song-item:nth-child(4)').dblclick()
     })
 
     cy.$clickSidebarItem('Current Queue')
-    cy.get('#queueWrapper').within(() => {
+    cy.get('#queueWrapper').within(function () {
       cy.get('tr.song-item').should('have.length', 4)
-      cy.get(`tr.song-item:nth-child(2) .title`).should('have.text', songTitle)
+      cy.get(`tr.song-item:nth-child(2) .title`).should('have.text', this.title)
       cy.get('tr.song-item:nth-child(2)').should('have.class', 'playing')
     })
 
