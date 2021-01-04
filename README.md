@@ -65,7 +65,7 @@ yarn type-check      # TypeScript type checking
 yarn test            # Unit testing
 ```
 
-> Note: If you're already running `yarn test:e2e`, there's no need to start a dev server. `yarn test:e2e` calls `yarn dev` internally and will eliminate the existing `yarn-dev` process, if any. 
+> Note: If you're already running `yarn test:e2e`, there's no need to start a dev server. `yarn test:e2e` calls `yarn dev` internally and will eliminate the existing `yarn dev` process, if any. 
 
 > A quick and easy way to start hacking on koel is to open and run this repo in Gitpod, an online IDE with full Laravel support.
 > 
