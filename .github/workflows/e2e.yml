@@ -3,6 +3,10 @@ on: [ push ]
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -12,7 +16,7 @@ jobs:
         with:
           php-version: 7.4
           tools: composer:v2
-      - name: Prepare the API
+      - name: Install PHP dependencies
         run: |
           composer install --prefer-dist --no-interaction --no-scripts --no-progress
           php artisan key:generate --quiet
@@ -20,19 +24,20 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
-      - name: Yarn install and lint
-        run: |
-          yarn install
-          yarn lint
       - name: Install submodule dependencies
         working-directory: ./resources/assets
         run: yarn install
-      - name: Build the client application
-        run: yarn build --no-progress
+      - name: Yarn install and lint
+        run: yarn install && yarn lint
       - name: Run E2E tests
-        run: |
-          ./node_modules/kill-port/cli.js 8080
-          ./node_modules/start-server-and-test/src/bin/start.js \
-            'php artisan serve --port=8080 --quiet' \
-            8080 \
-            './node_modules/cypress/bin/cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}'
+        uses: cypress-io/github-action@v2
+        with:
+          build: yarn build --no-progress
+          start: php artisan serve --port=8080 --quiet
+          wait-on: 'http://localhost:8080'
+          quiet: true
+          record: true
+          parallel: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
