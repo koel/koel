@@ -3,6 +3,10 @@ on: [ push ]
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [ 1, 2, 3, 4 ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -33,6 +37,7 @@ jobs:
           wait-on: 'http://localhost:8080'
           quiet: true
           record: true
+          parallel: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
