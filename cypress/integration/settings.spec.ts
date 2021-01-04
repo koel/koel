@@ -2,11 +2,10 @@ context('Settings', () => {
   beforeEach(() => {
     cy.$login()
     cy.$clickSidebarItem('Settings')
+    cy.intercept('POST', '/api/settings', {}).as('save')
   })
 
   it('rescans media', () => {
-    cy.intercept('GET', '/api/settings', {})
-
     cy.get('#settingsWrapper').within(() => {
       cy.get('.screen-header')
         .should('be.visible')
@@ -16,7 +15,7 @@ context('Settings', () => {
       cy.get('[type=submit]').click()
     })
 
-    cy.get('#overlay').should('be.visible')
+    cy.wait('@save')
   })
 
   it('confirms before rescanning if media path is changed', () => {
@@ -30,6 +29,6 @@ context('Settings', () => {
     })
 
     cy.$confirm()
-    cy.get('#overlay').should('be.visible')
+    cy.wait('@save')
   })
 })
