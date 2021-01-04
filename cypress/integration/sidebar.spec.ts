@@ -39,7 +39,7 @@ context('Sidebar Functionalities', () => {
     })
   })
 
-  it.only('does not have a YouTube item if YouTube is not used', () => {
+  it('does not have a YouTube item if YouTube is not used', () => {
     cy.$login({ useYouTube: false })
     cy.get('#sidebar')
       .findByText('YouTube Video')

@@ -189,7 +189,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Download').should('not.exist'))
   })
 
-  it.only('does not have an Edit item if user is not an admin', () => {
+  it('does not have an Edit item if user is not an admin', () => {
     cy.$loginAsNonAdmin()
     cy.$clickSidebarItem('All Songs')
 
