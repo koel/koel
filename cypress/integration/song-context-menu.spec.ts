@@ -32,7 +32,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$assertNotPlaying()
   })
 
-  it('goes to album', () => {
+  it('invokes album screen', () => {
     cy.$login()
     cy.$clickSidebarItem('All Songs')
 
@@ -47,7 +47,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
       })
   })
 
-  it('goes to artist', () => {
+  it('invokes artist screen', () => {
     cy.$login()
     cy.$clickSidebarItem('All Songs')
 

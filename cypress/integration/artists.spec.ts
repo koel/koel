@@ -44,7 +44,7 @@ context('Artists', { scrollBehavior: false }, () => {
     cy.$assertPlaying()
   })
 
-  it('goes to artist screen', () => {
+  it('invokes artist screen', () => {
     cy.intercept('GET', '/api/artist/3/info', {
       fixture: 'artist-info.get.200.json'
     })

@@ -44,7 +44,7 @@ context('Albums', { scrollBehavior: false }, () => {
     cy.$assertPlaying()
   })
 
-  it('goes to album screen', () => {
+  it('invokes album screen', () => {
     cy.intercept('GET', '/api/album/8/info', {
       fixture: 'album-info.get.200.json'
     })
@@ -78,7 +78,7 @@ context('Albums', { scrollBehavior: false }, () => {
     })
   })
 
-  it('goes to artist screen', () => {
+  it('invokes artist screen', () => {
     cy.get('#albumsWrapper').within(() => {
       cy.get('[data-test=album-card]:first-child .artist').click()
       cy.url().should('contain', '/#!/artist/3')
