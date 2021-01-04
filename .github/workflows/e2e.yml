@@ -12,6 +12,10 @@ jobs:
         with:
           php-version: 7.4
           tools: composer:v2
+      - name: Install PHP dependencies
+        run: |
+          composer install --prefer-dist --no-interaction --no-scripts --no-progress
+          php artisan key:generate --quiet
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
@@ -24,9 +28,7 @@ jobs:
       - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
-          build: composer install --prefer-dist --no-interaction --no-scripts --no-progress && \
-            php artisan key:generate --quiet && \
-            yarn build --no-progress
+          build: yarn build --no-progress
           start: php artisan serve --port=8080
           wait-on: 'http://localhost:8080'
           record: true
