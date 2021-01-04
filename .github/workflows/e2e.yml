@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [ 1, 2, 3, 4 ]
+        containers: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -33,7 +33,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           build: yarn build --no-progress
-          start: php artisan serve --port=8080
+          start: php artisan serve --port=8080 --quiet
           wait-on: 'http://localhost:8080'
           quiet: true
           record: true
