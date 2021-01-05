@@ -6,7 +6,7 @@ context('Searching', () => {
 
   it('shows the search screen when search box receives focus', () => {
     cy.get('@searchInput').focus()
-    cy.get('#searchExcerptsWrapper').within(() => cy.get('[data-test=placeholder]').should('be.visible'))
+    cy.get('#searchExcerptsWrapper').within(() => cy.get('[data-test=screen-placeholder]').should('be.visible'))
   })
 
   it('performs an excerpt search', () => {

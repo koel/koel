@@ -87,7 +87,7 @@ context('Playlists', () => {
       .should('be.visible')
       .and('contain', 'A New Playlist')
 
-    cy.get('#playlistWrapper .none')
+    cy.get('#playlistWrapper [data-test=screen-placeholder]')
       .should('be.visible')
       .and('contain', 'The playlist is currently empty.')
   })
