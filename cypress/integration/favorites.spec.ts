@@ -1,7 +1,7 @@
 context('Favorites', { scrollBehavior: false }, () => {
   beforeEach(() => cy.$login())
 
-  it('loads the list of favorites', () => {
+  it.only('loads the list of favorites', () => {
     cy.$clickSidebarItem('Favorites')
 
     cy.get('#favoritesWrapper')
