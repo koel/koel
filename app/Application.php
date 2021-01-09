@@ -12,7 +12,7 @@ class Application extends IlluminateApplication
     /**
      * Current Koel version. Must start with a v, and is synced with git tags/releases.
      *
-     * @see https://github.com/phanan/koel/releases
+     * @see https://github.com/koel/koel/releases
      */
-    public const KOEL_VERSION = 'v4.4.0';
+    public const KOEL_VERSION = 'v5.0.0';
 }
