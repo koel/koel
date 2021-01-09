@@ -10,10 +10,6 @@
 
 For system requirements, installation/upgrade guides, troubleshooting etc., head over to the [Official Documentation](https://docs.koel.dev).
 
-## API Docs
-
-If you're interested in the development of a client, Koel's official API documentation is available [here](https://api-docs.koel.dev).
-
 ## Development
 
 Since Koel makes use of [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), you'll want to make sure the submodule is up-to-date:
