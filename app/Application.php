@@ -14,5 +14,5 @@ class Application extends IlluminateApplication
      *
      * @see https://github.com/koel/koel/releases
      */
-    public const KOEL_VERSION = 'v5.0.0';
+    public const KOEL_VERSION = 'v5.0.1';
 }
