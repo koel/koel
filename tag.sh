@@ -13,13 +13,13 @@ fi
 TAG=$1
 echo $TAG > .version
 cd ./resources/assets
-git tag $TAG
-git push --tags
+git -c color.ui=always tag $TAG
+git -c color.ui=always push --tags
 
 cd ../..
-git add .
-git commit -m "chore: bump version to ${TAG}"
-git push
-git tag $TAG
-git tag latest -f
-git push --tags -f
+git -c color.ui=always add .
+git -c color.ui=always commit -m "chore: bump version to ${TAG}"
+git -c color.ui=always push
+git -c color.ui=always tag $TAG
+git -c color.ui=always tag latest -f
+git -c color.ui=always push --tags -f
