@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Application;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Log\Logger;
@@ -36,7 +35,7 @@ class ApplicationInformationService
             } catch (Throwable $e) {
                 $this->logger->error($e);
 
-                return Application::KOEL_VERSION;
+                return koel_version();
             }
         });
     }

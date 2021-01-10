@@ -65,3 +65,8 @@ function artist_image_url(string $fileName): string
 {
     return static_url(config('koel.artist_image_dir') . $fileName);
 }
+
+function koel_version(): string
+{
+    return trim(file_get_contents(base_path('.version')));
+}

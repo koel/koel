@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Application;
 use App\Models\User;
 use App\Repositories\InteractionRepository;
 use App\Repositories\PlaylistRepository;
@@ -75,10 +74,10 @@ class DataController extends Controller
             'supportsTranscoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdnUrl' => static_url(),
-            'currentVersion' => Application::KOEL_VERSION,
+            'currentVersion' => koel_version(),
             'latestVersion' => $this->currentUser->is_admin
                 ? $this->applicationInformationService->getLatestVersionNumber()
-                : Application::KOEL_VERSION,
+                : koel_version(),
         ]);
     }
 }
