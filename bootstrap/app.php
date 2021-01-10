@@ -11,7 +11,9 @@
 |
 */
 
-$app = new App\Application(dirname(__DIR__));
+use Illuminate\Foundation\Application;
+
+$app = new Application(dirname(__DIR__));
 
 /*
 |--------------------------------------------------------------------------
