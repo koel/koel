@@ -25,7 +25,7 @@ jobs:
           php artisan koel:init --no-interaction
           sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=sqlite-persistent/' .env
           sed -i 's/DB_DATABASE=koel/DB_DATABASE=koel.db/' .env
-          rm -rf .git ./node_modules ./resources/assets/.git ./resources/assets/node_modules ./koel.db ./.env
+          rm -rf .git ./node_modules ./resources/assets/.git ./resources/assets/node_modules ./storage/search-indexes ./koel.db ./.env
           cd ../
           zip -r /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip koel/
           tar -zcvf /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz koel/
@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          release_name: ${{ steps.get_version.outputs.VERSION }}
           draft: true
           prerelease: false
       - name: Upload Release Asset Zip
@@ -45,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip
           asset_name: koel-${{ steps.get_version.outputs.VERSION }}.zip
           asset_content_type: application/zip
@@ -55,7 +55,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz
           asset_name: koel-${{ steps.get_version.outputs.VERSION }}.tar.gz
           asset_content_type: application/gzip
