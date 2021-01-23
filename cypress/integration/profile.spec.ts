@@ -15,7 +15,6 @@ context('Profiles & Preferences', () => {
         'confirm_password',
         'notify',
         'show_album_art_overlay',
-        'transcode_on_mobile',
         'confirm_closing'
       ].forEach(inputName => cy.get(`[name=${inputName}]`).should('exist'))
 
@@ -100,5 +99,14 @@ context('Profiles & Preferences', () => {
     cy.findByTestId('album-art-overlay').should('not.exist')
     cy.get('#profileWrapper [name=show_album_art_overlay]').scrollIntoView().check()
     cy.findByTestId('album-art-overlay').should('exist')
+  })
+
+  it('sets a theme', () => {
+    cy.$login()
+    cy.findByTestId('view-profile-link').click()
+    cy.findByTestId('theme-card-violet').click()
+    cy.get('html').should('have.attr', 'data-theme', 'violet')
+    cy.reload()
+    cy.get('html').should('have.attr', 'data-theme', 'violet')
   })
 })
