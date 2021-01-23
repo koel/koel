@@ -19,6 +19,10 @@ class InitCommand extends Command
 {
     use AskForPassword;
 
+    private const DEFAULT_ADMIN_NAME = 'Koel';
+    private const DEFAULT_ADMIN_EMAIL = 'admin@koel.dev';
+    private const DEFAULT_ADMIN_PASSWORD = 'KoelIsCool';
+
     protected $signature = 'koel:init {--no-assets}';
     protected $description = 'Install or upgrade Koel';
 
@@ -28,6 +32,7 @@ class InitCommand extends Command
     private $hash;
     private $db;
     private $settingRepository;
+    private $adminSeeded = false;
 
     public function __construct(
         MediaCacheService $mediaCacheService,
@@ -73,6 +78,12 @@ class InitCommand extends Command
         }
 
         $this->comment(PHP_EOL . '🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
+
+        if ($this->adminSeeded) {
+            $this->comment(
+                sprintf('Log in with email %s and password %s', self::DEFAULT_ADMIN_EMAIL, self::DEFAULT_ADMIN_PASSWORD)
+            );
+        }
 
         if (Setting::get('media_path')) {
             $this->comment('You can also scan for media with `php artisan koel:sync`.');
@@ -151,16 +162,16 @@ class InitCommand extends Command
 
     private function setUpAdminAccount(): void
     {
-        $this->info("Let's create the admin account.");
-
-        [$name, $email, $password] = $this->gatherAdminAccountCredentials();
+        $this->info("Creating default admin account");
 
         User::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => $this->hash->make($password),
+            'name' => self::DEFAULT_ADMIN_NAME,
+            'email' => self::DEFAULT_ADMIN_EMAIL,
+            'password' => $this->hash->make(self::DEFAULT_ADMIN_PASSWORD),
             'is_admin' => true,
         ]);
+
+        $this->adminSeeded = true;
     }
 
     private function maybeSetMediaPath(): void
@@ -268,20 +279,6 @@ class InitCommand extends Command
 
         $runOkOrThrow('yarn install --colors');
         $runOkOrThrow('yarn build --colors');
-    }
-
-    /** @return array<string> */
-    private function gatherAdminAccountCredentials(): array
-    {
-        if ($this->inNoInteractionMode()) {
-            return [config('koel.admin.name'), config('koel.admin.email'), config('koel.admin.password')];
-        }
-
-        $name = $this->ask('Your name', config('koel.admin.name'));
-        $email = $this->ask('Your email address', config('koel.admin.email'));
-        $password = $this->askForPassword();
-
-        return [$name, $email, $password];
     }
 
     private function isValidMediaPath(string $path): bool

@@ -42,9 +42,6 @@
         <env name="LASTFM_API_KEY" value="foo"/>
         <env name="LASTFM_API_SECRET" value="bar"/>
         <env name="YOUTUBE_API_KEY" value="foo"/>
-        <env name="ADMIN_EMAIL" value="koel@example.com"/>
-        <env name="ADMIN_NAME" value="Koel"/>
-        <env name="ADMIN_PASSWORD" value="SoSecureK0el"/>
         <env name="BROADCAST_DRIVER" value="log"/>
         <env name="CACHE_MEDIA" value="true"/>
         <ini name="memory_limit" value="512M"/>
