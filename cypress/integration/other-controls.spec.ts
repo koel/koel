@@ -40,10 +40,4 @@ context('Other Controls', () => {
     cy.findByTestId('toggle-equalizer-btn').click()
     cy.findByTestId('equalizer').should('not.be.visible')
   })
-
-  it('downloads the current song', () => {
-    cy.intercept('/download/songs').as('download')
-    cy.$findInTestId('other-controls [data-test=download-btn]').click()
-    cy.wait('@download')
-  })
 })
