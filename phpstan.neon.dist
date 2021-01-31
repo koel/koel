@@ -26,7 +26,7 @@ parameters:
         # Laravel factories allow declaration of dynamic methods as "states"
         - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factories\\Factory::#'
 
-    excludes_analyse:
+    excludePaths:
         - ./routes/console.php
         - ./app/Services/Util.php
 
