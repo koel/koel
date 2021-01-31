@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Services\Streamers\DirectStreamerInterface;
 use App\Services\Streamers\ObjectStorageStreamerInterface;
-use App\Services\Streamers\PHPStreamer;
+use App\Services\Streamers\PhpStreamer;
 use App\Services\Streamers\S3Streamer;
 use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\TranscodingStreamerInterface;
@@ -25,7 +25,7 @@ class StreamerServiceProvider extends ServiceProvider
                     return new XAccelRedirectStreamer();
 
                 default:
-                    return new PHPStreamer();
+                    return new PhpStreamer();
             }
         });
 

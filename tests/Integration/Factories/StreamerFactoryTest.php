@@ -4,7 +4,7 @@ namespace Tests\Integration\Factories;
 
 use App\Factories\StreamerFactory;
 use App\Models\Song;
-use App\Services\Streamers\PHPStreamer;
+use App\Services\Streamers\PhpStreamer;
 use App\Services\Streamers\S3Streamer;
 use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
@@ -66,7 +66,7 @@ class StreamerFactoryTest extends TestCase
     public function provideStreamingConfigData(): array
     {
         return [
-            [null, PHPStreamer::class],
+            [null, PhpStreamer::class],
             ['x-sendfile', XSendFileStreamer::class],
             ['x-accel-redirect', XAccelRedirectStreamer::class],
         ];
@@ -78,7 +78,7 @@ class StreamerFactoryTest extends TestCase
      * @param string|null $config
      * @param string $expectedClass
      */
-    public function testCreatePHPStreamer($config, $expectedClass): void
+    public function testCreatePhpStreamer($config, $expectedClass): void
     {
         $this->swap(TranscodingService::class, Mockery::mock(TranscodingService::class, [
             'songShouldBeTranscoded' => false,

@@ -39,7 +39,8 @@
         "dms/phpunit-arraysubset-asserts": "^0.2.1",
         "fakerphp/faker": "^1.13",
         "slevomat/coding-standard": "^6.4",
-        "nunomaduro/larastan": "^0.6.11"
+        "nunomaduro/larastan": "^0.6.11",
+        "nunomaduro/collision": "^5.3"
     },
     "suggest": {
         "ext-zip": "Allow downloading multiple songs as Zip archives"
@@ -85,8 +86,8 @@
         "post-create-project-cmd": [
             "@php artisan key:generate"
         ],
-        "test": "phpunit --colors=always --order-by=defects",
-        "coverage": "phpunit --colors=always --coverage-clover=coverage.xml",
+        "test": "@php artisan test",
+        "coverage": "@php artisan test --coverage-clover=coverage.xml",
         "cs": "phpcs --standard=ruleset.xml",
         "cs:fix": "phpcbf --standard=ruleset.xml",
         "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi"
