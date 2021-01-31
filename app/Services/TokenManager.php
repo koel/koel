@@ -33,4 +33,11 @@ class TokenManager
 
         return $token ? $token->tokenable : null;
     }
+
+    public function refreshToken(User $user): NewAccessToken
+    {
+        $this->destroyTokens($user);
+
+        return $this->createToken($user);
+    }
 }

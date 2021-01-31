@@ -4,20 +4,22 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\ProfileUpdateRequest;
 use App\Models\User;
+use App\Services\TokenManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
-use Illuminate\Http\Response;
 
 class ProfileController extends Controller
 {
     private $hash;
+    private $tokenManager;
 
     /** @var User */
     private $currentUser;
 
-    public function __construct(Hash $hash, ?Authenticatable $currentUser)
+    public function __construct(Hash $hash, TokenManager $tokenManager, ?Authenticatable $currentUser)
     {
         $this->hash = $hash;
+        $this->tokenManager = $tokenManager;
         $this->currentUser = $currentUser;
     }
 
@@ -40,6 +42,10 @@ class ProfileController extends Controller
 
         $this->currentUser->update($data);
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        $responseData = $request->password
+            ? ['token' => $this->tokenManager->refreshToken($this->currentUser)->plainTextToken]
+            : [];
+
+        return response()->json($responseData);
     }
 }

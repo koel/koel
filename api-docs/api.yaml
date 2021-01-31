@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Koel API
-  version: 5.0.0
+  version: 5.1.0
   description: 'The API for [Koel](https://koel.dev), the music streaming application that works.'
   contact:
     name: An Phan
@@ -164,8 +164,16 @@ paths:
       tags:
         - authentication
       responses:
-        '204':
-          description: No Content
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: New API token if the password is changed.
       operationId: put-me
       description: Update the current user's profile
       security:

@@ -42,7 +42,8 @@ class ProfileTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'qux',
-        ], $user);
+        ], $user)
+            ->assertJsonStructure(['token']);
 
         self::assertDatabaseHas('users', [
             'id' => $user->id,
