@@ -15,8 +15,11 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
           coverage: xdebug
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction --no-scripts --no-progress
+          extensions: pdo_sqlite, zip, gd
+      - name: Install PHP dependencies
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: --prefer-dist
       - name: Generate app key
         run: php artisan key:generate --quiet
       - name: Run code style checker
