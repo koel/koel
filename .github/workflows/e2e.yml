@@ -16,19 +16,21 @@ jobs:
         with:
           php-version: 7.4
           tools: composer:v2
+          extensions: pdo_sqlite
       - name: Install PHP dependencies
-        run: |
-          composer install --prefer-dist --no-interaction --no-scripts --no-progress
-          php artisan key:generate --quiet
-      - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: ramsey/composer-install@v1
         with:
-          node-version: 14
-      - name: Install submodule dependencies
-        working-directory: ./resources/assets
-        run: yarn install
-      - name: Yarn install and lint
-        run: yarn install && yarn lint
+          composer-options: --prefer-dist
+      - name: Generate app key
+        run: php artisan key:generate --quiet
+      - name: Install JavaScript dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          working-directory: |
+            ./resources/assets
+            .
+      - name: Lint
+        run: yarn lint
       - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
