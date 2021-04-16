@@ -22,6 +22,7 @@ class InitCommand extends Command
     private const DEFAULT_ADMIN_NAME = 'Koel';
     private const DEFAULT_ADMIN_EMAIL = 'admin@koel.dev';
     private const DEFAULT_ADMIN_PASSWORD = 'KoelIsCool';
+    private const NON_INTERACTION_MAX_ATTEMPT_COUNT = 10;
 
     protected $signature = 'koel:init {--no-assets}';
     protected $description = 'Install or upgrade Koel';
@@ -228,7 +229,19 @@ class InitCommand extends Command
 
     private function maybeSetUpDatabase(): void
     {
+        $attemptCount = 0;
+
         while (true) {
+            // In non-interactive mode, we must not endlessly attempt to connect.
+            // Doing so will just end up with a huge amount of "failed to connect" logs.
+            // We do retry a little, though, just in case there's some kind of temporary failure.
+            if ($this->inNoInteractionMode() && $attemptCount >= self::NON_INTERACTION_MAX_ATTEMPT_COUNT) {
+                $this->warn("Maximum database connection attempts reached. Giving up.");
+                break;
+            }
+
+            $attemptCount++;
+
             try {
                 // Make sure the config cache is cleared before another attempt.
                 $this->artisan->call('config:clear');
@@ -237,8 +250,22 @@ class InitCommand extends Command
                 break;
             } catch (Throwable $e) {
                 $this->error($e->getMessage());
-                $this->warn(PHP_EOL . "Koel cannot connect to the database. Let's set it up.");
-                $this->setUpDatabase();
+
+                // We only try to update credentials if running in interactive mode.
+                // Otherwise, we require admin intervention to fix them.
+                // This avoids inadvertently wiping credentials if there's a connection failure.
+                if ($this->inNoInteractionMode()) {
+                    $warning = sprintf(
+                        "%sKoel cannot connect to the database. Attempt: %d/%d",
+                        PHP_EOL,
+                        $attemptCount,
+                        self::NON_INTERACTION_MAX_ATTEMPT_COUNT
+                    );
+                    $this->warn($warning);
+                } else {
+                    $this->warn(sprintf("%sKoel cannot connect to the database. Let's set it up.", PHP_EOL));
+                    $this->setUpDatabase();
+                }
             }
         }
     }
