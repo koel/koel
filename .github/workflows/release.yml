@@ -25,7 +25,7 @@ jobs:
           php artisan koel:init --no-interaction
           sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=sqlite-persistent/' .env
           sed -i 's/DB_DATABASE=koel/DB_DATABASE=koel.db/' .env
-          rm -rf .git ./node_modules ./resources/assets/.git ./resources/assets/node_modules ./storage/search-indexes ./koel.db ./.env
+          rm -rf .git ./node_modules ./resources/assets/.git ./resources/assets/node_modules ./storage/search-indexes/*.index ./koel.db ./.env
           cd ../
           zip -r /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip koel/
           tar -zcvf /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz koel/
