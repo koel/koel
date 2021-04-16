@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants;
 use App\Facades\ITunes;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +29,7 @@ Route::group(['middleware' => 'auth'], static function (): void {
         Route::get('songs', 'SongController@show');
         Route::get('album/{album}', 'AlbumController@show');
         Route::get('artist/{artist}', 'ArtistController@show');
-        Route::get('playlist/{playlist}', 'PlaylistController@show');
+        Route::get('playlist/{playlist}', 'PlaylistController@show')->where(['playlist' => Constants::UUID_REGEX]);
         Route::get('favorites', 'FavoritesController@show');
     });
 });

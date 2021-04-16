@@ -58,7 +58,7 @@ class DownloadTest extends TestCase
             }))
             ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get("download/songs?songs[]={$song->id}&api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/songs?songs[]=$song->id&api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -102,7 +102,7 @@ class DownloadTest extends TestCase
             }))
             ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get("download/album/{$album->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/album/$album->id?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -121,7 +121,7 @@ class DownloadTest extends TestCase
             }))
             ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get("download/artist/{$artist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/artist/$artist->id?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -143,7 +143,7 @@ class DownloadTest extends TestCase
             ->once()
             ->andReturn($this->mediaPath . '/blank.mp3');
 
-        $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/playlist/$playlist->id?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -155,7 +155,7 @@ class DownloadTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
-        $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/playlist/$playlist->id?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 

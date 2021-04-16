@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants;
 use Illuminate\Http\Request;
 
 Route::group(['namespace' => 'API'], static function (): void {
@@ -45,8 +46,10 @@ Route::group(['namespace' => 'API'], static function (): void {
 
         // Playlist routes
         Route::resource('playlist', 'PlaylistController')->only(['index', 'store', 'update', 'destroy']);
-        Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
-        Route::get('playlist/{playlist}/songs', 'PlaylistController@getSongs')->where(['playlist' => '\d+']);
+        Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => Constants::UUID_REGEX]);
+        Route::get('playlist/{playlist}/songs', 'PlaylistController@getSongs')->where([
+            'playlist' => Constants::UUID_REGEX,
+        ]);
 
         // User and user profile routes
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);

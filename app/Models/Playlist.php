@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
 /**
  * @property int $user_id
  * @property Collection $songs
- * @property int $id
+ * @property string $id
  * @property array $rules
  * @property bool $is_smart
  * @property string $name
@@ -28,13 +29,22 @@ class Playlist extends Model
     use CanFilterByUser;
     use HasFactory;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
-    protected $guarded = ['id'];
+    protected $guarded = [];
     protected $casts = [
         'user_id' => 'int',
         'rules' => 'array',
     ];
     protected $appends = ['is_smart'];
+
+    protected static function booted(): void
+    {
+        static::creating(static function (self $playlist): void {
+            $playlist->id = $playlist->id ?: Str::uuid()->toString();
+        });
+    }
 
     public function songs(): BelongsToMany
     {

@@ -32,6 +32,7 @@ class PlaylistTest extends TestCase
             'name' => 'Foo Bar',
         ]);
 
+        /** @var Playlist $playlist */
         $playlist = Playlist::orderBy('id', 'desc')->first();
 
         foreach ($songs as $song) {
@@ -53,7 +54,7 @@ class PlaylistTest extends TestCase
             'name' => 'Foo',
         ]);
 
-        $this->putAsUser("api/playlist/{$playlist->id}", ['name' => 'Bar'], $user);
+        $this->putAsUser("api/playlist/$playlist->id", ['name' => 'Bar'], $user);
 
         self::assertSame('Bar', $playlist->refresh()->name);
     }
@@ -65,7 +66,7 @@ class PlaylistTest extends TestCase
             'name' => 'Foo',
         ]);
 
-        $response = $this->putAsUser("api/playlist/{$playlist->id}", ['name' => 'Qux']);
+        $response = $this->putAsUser("api/playlist/$playlist->id", ['name' => 'Qux']);
         $response->assertStatus(403);
     }
 
@@ -84,7 +85,7 @@ class PlaylistTest extends TestCase
 
         $removedSong = $songs->pop();
 
-        $this->putAsUser("api/playlist/{$playlist->id}/sync", [
+        $this->putAsUser("api/playlist/$playlist->id/sync", [
             'songs' => $songs->pluck('id')->toArray(),
         ], $user);
 
@@ -112,7 +113,7 @@ class PlaylistTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $this->deleteAsUser("api/playlist/{$playlist->id}", [], $user);
+        $this->deleteAsUser("api/playlist/$playlist->id", [], $user);
         self::assertDatabaseMissing('playlists', ['id' => $playlist->id]);
     }
 
@@ -121,7 +122,7 @@ class PlaylistTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
-        $this->deleteAsUser("api/playlist/{$playlist->id}")
+        $this->deleteAsUser("api/playlist/$playlist->id")
             ->assertStatus(403);
     }
 
@@ -138,7 +139,7 @@ class PlaylistTest extends TestCase
         $songs = Song::factory(2)->create();
         $playlist->songs()->saveMany($songs);
 
-        $this->getAsUser("api/playlist/{$playlist->id}/songs", $user)
+        $this->getAsUser("api/playlist/$playlist->id/songs", $user)
             ->assertJson($songs->pluck('id')->all());
     }
 }
