@@ -1,6 +1,6 @@
 # koel [![e2e](https://github.com/koel/koel/workflows/e2e/badge.svg)](https://github.com/koel/koel/actions?query=workflow%3Ae2e) [![unit](https://github.com/koel/koel/workflows/unit/badge.svg)](https://github.com/koel/koel/actions?query=workflow%3Aunit) ![Code Quality](https://scrutinizer-ci.com/g/phanan/koel/badges/quality-score.png?b=master) [![codecov](https://codecov.io/gh/koel/koel/branch/master/graph/badge.svg)](https://codecov.io/gh/koel/koel) [![OpenCollective](https://opencollective.com/koel/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/koel/sponsors/badge.svg)](#sponsors)
 
-![Showcase](https://koel.dev/img/showcase.png)
+![Showcase](https://user-images.githubusercontent.com/8056274/115028055-bc02a280-9ec4-11eb-991c-69cd2a45b69c.png)
 
 ## Intro
 
