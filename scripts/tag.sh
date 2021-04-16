@@ -10,6 +10,8 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
+cd ..
+
 TAG=$1
 echo $TAG > .version
 cd ./resources/assets
@@ -18,8 +20,10 @@ git -c color.ui=always push --tags
 
 cd ../..
 git -c color.ui=always add .
-git -c color.ui=always commit -m "chore: bump version to ${TAG}"
+git -c color.ui=always commit -m "chore(release): bump version to ${TAG}"
 git -c color.ui=always push
 git -c color.ui=always tag $TAG
 git -c color.ui=always tag latest -f
 git -c color.ui=always push --tags -f
+
+echo "${TAG} tagged. Now go to https://github.com/koel/koel/releases and finish the draft release."
