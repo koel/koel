@@ -20,7 +20,7 @@ class UploadRequest extends AbstractRequest
             'file' => [
                 'required',
                 'file',
-                'mimetypes:audio/mpeg,audio/ogg,audio/x-flac,audio/x-aac',
+                'mimetypes:audio/flac,audio/mpeg,audio/ogg,audio/x-flac,audio/x-aac',
             ],
         ];
     }
