@@ -81,7 +81,7 @@ context('Playlists', () => {
       .should('exist')
       .and('have.class', 'active')
 
-    cy.findByText('Created playlist "A New Playlist".').should('be.visible')
+    cy.findByText('Created playlist "A New Playlist."').should('be.visible')
 
     cy.get('#playlistWrapper .heading-wrapper')
       .should('be.visible')
@@ -112,7 +112,7 @@ context('Playlists', () => {
         .should('not.be.visible')
     })
 
-    cy.findByText('Added 2 songs into "Simple Playlist".').should('be.visible')
+    cy.findByText('Added 2 songs into "Simple Playlist."').should('be.visible')
     cy.$assertPlaylistSongCount('Simple Playlist', 5)
   })
 
@@ -138,7 +138,7 @@ context('Playlists', () => {
       .should('exist')
       .and('have.class', 'active')
 
-    cy.findByText('Created playlist "A New Playlist".').should('be.visible')
+    cy.findByText('Created playlist "A New Playlist."').should('be.visible')
     cy.$assertPlaylistSongCount('A New Playlist', 3)
   })
 
@@ -165,7 +165,7 @@ context('Playlists', () => {
       .should('contain', 'A New Name')
       .and('have.class', 'active')
 
-    cy.findByText('Updated playlist "A New Name".').should('be.visible')
+    cy.findByText('Updated playlist "A New Name."').should('be.visible')
 
     cy.get('#playlistWrapper .heading-wrapper')
       .should('be.visible')
@@ -226,7 +226,7 @@ context('Playlists', () => {
         cy.findByText('Save').click()
       })
 
-    cy.findByText('Created playlist "My Smart Playlist".').should('be.visible')
+    cy.findByText('Created playlist "My Smart Playlist."').should('be.visible')
 
     cy.get('#playlistWrapper .heading-wrapper')
         .should('be.visible')
@@ -276,7 +276,7 @@ context('Playlists', () => {
         cy.findByText('Save').click()
       })
 
-    cy.findByText('Updated playlist "A Different Name".').should('be.visible')
+    cy.findByText('Updated playlist "A Different Name."').should('be.visible')
 
     cy.get('#playlistWrapper .heading-wrapper')
       .should('be.visible')
