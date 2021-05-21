@@ -14,7 +14,7 @@ cd ..
 
 TAG=$1
 echo "$TAG" > .version
-cd ./resources/assets || exit
+cd resources/assets || exit
 git -c color.ui=always tag "$TAG"
 git -c color.ui=always push --tags
 
