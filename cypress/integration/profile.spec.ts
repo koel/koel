@@ -9,10 +9,10 @@ context('Profiles & Preferences', () => {
       cy.findByTestId('update-profile-form').should('be.visible')
 
       ;[
+        'current_password',
         'name',
         'email',
-        'password',
-        'confirm_password',
+        'new_password',
         'notify',
         'show_album_art_overlay',
         'confirm_closing'
@@ -45,6 +45,7 @@ context('Profiles & Preferences', () => {
     cy.findByTestId('view-profile-link').click()
 
     cy.get('#profileWrapper').within(() => {
+      cy.get('[name=current_password]').clear().type('current-secrEt')
       cy.get('[name=name]').clear().type('Admin No. 2')
       cy.get('[name=email]').clear().type('admin.2@koel.test')
       cy.get('[type=submit]').click()
@@ -60,31 +61,15 @@ context('Profiles & Preferences', () => {
     cy.findByTestId('view-profile-link').click()
 
     cy.get('#profileWrapper').within(() => {
+      cy.get('[name=current_password]').clear().type('current-secrEt')
       cy.get('[name=name]').clear().type('Admin No. 2')
       cy.get('[name=email]').clear().type('admin.2@koel.test')
-      cy.get('[name=password]').type('new-password')
-      cy.get('[name=confirm_password]').type('new-password')
+      cy.get('[name=new_password]').type('new-password')
       cy.get('[type=submit]').click()
     })
 
     cy.findByText('Profile updated.').should('be.visible')
     cy.findByTestId('view-profile-link').should('contain.text', 'Admin No. 2')
-  })
-
-  it('does not update the profile if password does not match', () => {
-    cy.$login()
-    cy.findByTestId('view-profile-link').click()
-
-    cy.get('#profileWrapper').within(() => {
-      cy.get('[name=name]').clear().type('Admin No. 2')
-      cy.get('[name=email]').clear().type('admin.2@koel.test')
-      cy.get('[name=password]').as('password').type('new-password')
-      cy.get('[name=confirm_password]').as('confirmPassword').type('not-matching-password')
-      cy.get('[type=submit]').click()
-      cy.get('@password').should('have.class', 'error')
-      cy.get('@confirmPassword').should('have.class', 'error')
-      cy.findByText('Profile updated.').should('not.exist')
-    })
   })
 
   it('has an option to show/hide album art overlay', () => {

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rules\Password;
+
 /**
  * @property string $password
  * @property string $name
@@ -21,7 +23,7 @@ class UserStoreRequest extends Request
         return [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required',
+            'password' => ['required', Password::defaults()],
             'is_admin' => 'required',
         ];
     }

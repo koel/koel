@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\TokenManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -34,15 +35,20 @@ class ProfileController extends Controller
             return response()->json();
         }
 
+        throw_unless(
+            $this->hash->check($request->current_password, $this->currentUser->password),
+            ValidationException::withMessages(['current_password' => 'Invalid current password'])
+        );
+
         $data = $request->only('name', 'email');
 
-        if ($request->password) {
-            $data['password'] = $this->hash->make($request->password);
+        if ($request->new_password) {
+            $data['password'] = $this->hash->make($request->new_password);
         }
 
         $this->currentUser->update($data);
 
-        $responseData = $request->password
+        $responseData = $request->new_password
             ? ['token' => $this->tokenManager->refreshToken($this->currentUser)->plainTextToken]
             : [];
 

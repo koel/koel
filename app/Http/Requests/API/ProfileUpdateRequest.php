@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rules\Password;
+
 /**
- * @property string $password
+ * @property-read string|null $current_password
+ * @property-read string|null $new_password
  */
 class ProfileUpdateRequest extends Request
 {
@@ -13,6 +16,8 @@ class ProfileUpdateRequest extends Request
         return [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . auth()->user()->id,
+            'current_password' => 'required',
+            'new_password' => ['sometimes', Password::defaults()],
         ];
     }
 }

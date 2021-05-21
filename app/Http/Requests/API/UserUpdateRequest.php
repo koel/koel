@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Models\User;
+use Illuminate\Validation\Rules\Password;
 
 /**
  * @property string $password
@@ -26,6 +27,7 @@ class UserUpdateRequest extends Request
         return [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => ['sometimes', Password::defaults()],
         ];
     }
 }

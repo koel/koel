@@ -14,6 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int    $id
  * @property bool   $is_admin
  * @property string $lastfm_session_key
+ * @property string $name
  * @property string $email
  * @property string $password
  *

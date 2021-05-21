@@ -3,53 +3,59 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileTest extends TestCase
 {
-    private $hash;
+    /** @var User */
+    private $user;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->hash = self::mock(Hasher::class);
+        $this->user = User::factory()->create(['password' => Hash::make('secret')]);
     }
 
-    public function testUpdateProfileWithoutPassword(): void
+    public function testUpdateProfileRequiresCurrentPassword(): void
     {
-        $user = User::factory()->create();
-
-        $this->hash->shouldReceive('make')->never();
-
-        $this->putAsUser('api/me', ['name' => 'Foo', 'email' => 'bar@baz.com'], $user);
-
-        self::assertDatabaseHas('users', ['name' => 'Foo', 'email' => 'bar@baz.com']);
-    }
-
-    public function testUpdateProfileWithPassword(): void
-    {
-        /** @var User $user */
-        $user = User::factory()->create();
-
-        $this->hash
-            ->shouldReceive('make')
-            ->once()
-            ->with('qux')
-            ->andReturn('hashed');
-
         $this->putAsUser('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
-            'password' => 'qux',
-        ], $user)
-            ->assertJsonStructure(['token']);
+        ], $this->user)
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 
-        self::assertDatabaseHas('users', [
-            'id' => $user->id,
+    public function testUpdateProfileWithoutNewPassword(): void
+    {
+        $this->putAsUser('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
-            'password' => 'hashed',
-        ]);
+            'current_password' => 'secret',
+        ], $this->user);
+
+        $this->user->refresh();
+
+        self::assertSame('Foo', $this->user->name);
+        self::assertSame('bar@baz.com', $this->user->email);
+        self::assertTrue(Hash::check('secret', $this->user->password));
+    }
+
+    public function testUpdateProfileWithNewPassword(): void
+    {
+        $this->putAsUser('api/me', [
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'new_password' => 'new-secret',
+            'current_password' => 'secret',
+        ], $this->user)
+            ->assertJsonStructure(['token']);
+
+        $this->user->refresh();
+
+        self::assertSame('Foo', $this->user->name);
+        self::assertSame('bar@baz.com', $this->user->email);
+        self::assertTrue(Hash::check('new-secret', $this->user->password));
     }
 }

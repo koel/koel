@@ -3,17 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Support\Facades\Hash;
 
 class UserTest extends TestCase
 {
-    private $hash;
-
     public function setUp(): void
     {
         parent::setUp();
-
-        $this->hash = self::mock(Hasher::class);
     }
 
     public function testNonAdminCannotCreateUser(): void
@@ -21,64 +17,48 @@ class UserTest extends TestCase
         $this->postAsUser('api/user', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
-            'password' => 'qux',
+            'password' => 'secret',
             'is_admin' => false,
-        ])->assertStatus(403);
+        ])->assertForbidden();
     }
 
     public function testAdminCreatesUser(): void
     {
-        $this->hash
-            ->shouldReceive('make')
-            ->once()
-            ->with('qux')
-            ->andReturn('hashed');
-
         $this->postAsUser('api/user', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
-            'password' => 'qux',
+            'password' => 'secret',
             'is_admin' => true,
-        ], User::factory()->admin()->create());
+        ], User::factory()->admin()->create())
+            ->assertOk();
 
-        self::assertDatabaseHas('users', [
-            'name' => 'Foo',
-            'email' => 'bar@baz.com',
-            'password' => 'hashed',
-            'is_admin' => true,
-        ]);
+        /** @var User $user */
+        $user = User::firstWhere('email', 'bar@baz.com');
+
+        self::assertTrue(Hash::check('secret', $user->password));
+        self::assertSame('Foo', $user->name);
+        self::assertSame('bar@baz.com', $user->email);
+        self::assertTrue($user->is_admin);
     }
 
     public function testAdminUpdatesUser(): void
     {
         /** @var User $user */
-        $user = User::factory()->create([
-            'name' => 'John',
-            'email' => 'john@doe.com',
-            'password' => 'nope',
-            'is_admin' => true,
-        ]);
+        $user = User::factory()->admin()->create(['password' => 'secret']);
 
-        $this->hash
-            ->shouldReceive('make')
-            ->once()
-            ->with('qux')
-            ->andReturn('hashed');
-
-        $this->putAsUser("api/user/{$user->id}", [
+        $this->putAsUser("api/user/$user->id", [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
-            'password' => 'qux',
+            'password' => 'new-secret',
             'is_admin' => false,
         ], User::factory()->admin()->create());
 
-        self::assertDatabaseHas('users', [
-            'id' => $user->id,
-            'name' => 'Foo',
-            'email' => 'bar@baz.com',
-            'password' => 'hashed',
-            'is_admin' => false,
-        ]);
+        $user->refresh();
+
+        self::assertTrue(Hash::check('new-secret', $user->password));
+        self::assertSame('Foo', $user->name);
+        self::assertSame('bar@baz.com', $user->email);
+        self::assertFalse($user->is_admin);
     }
 
     public function testAdminDeletesUser(): void
@@ -87,7 +67,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
-        $this->deleteAsUser("api/user/{$user->id}", [], $admin);
+        $this->deleteAsUser("api/user/$user->id", [], $admin);
         self::assertDatabaseMissing('users', ['id' => $user->id]);
     }
 
@@ -97,7 +77,7 @@ class UserTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         // A user can't delete himself
-        $this->deleteAsUser("api/user/{$admin->id}", [], $admin)
+        $this->deleteAsUser("api/user/$admin->id", [], $admin)
             ->assertStatus(403);
 
         self::assertDatabaseHas('users', ['id' => $admin->id]);
@@ -105,6 +85,7 @@ class UserTest extends TestCase
 
     public function testUpdateUserProfile(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         self::assertNull($user->getPreference('foo'));
 

@@ -10,6 +10,7 @@ use App\Services\TokenManager;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,17 @@ class AuthServiceProvider extends ServiceProvider
             $tokenManager = app(TokenManager::class);
 
             return $tokenManager->getUserFromPlainTextToken($request->api_token ?: '');
+        });
+
+        $this->setPasswordDefaultRules();
+    }
+
+    private function setPasswordDefaultRules(): void
+    {
+        Password::defaults(function (): Password {
+            return $this->app->isProduction()
+                ? Password::min(10)->letters()->numbers()->symbols()->uncompromised()
+                : Password::min(6);
         });
     }
 }

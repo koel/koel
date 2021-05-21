@@ -15,7 +15,7 @@ class AlbumThumbnailController extends Controller
         $this->mediaMetadataService = $mediaMetadataService;
     }
 
-    public function get(Album $album): JsonResponse
+    public function show(Album $album): JsonResponse
     {
         return response()->json(['thumbnailUrl' => $this->mediaMetadataService->getAlbumThumbnailUrl($album)]);
     }
