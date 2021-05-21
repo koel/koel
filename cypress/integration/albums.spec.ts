@@ -45,7 +45,7 @@ context('Albums', { scrollBehavior: false }, () => {
   })
 
   it('invokes album screen', () => {
-    cy.intercept('GET', '/api/album/8/info', {
+    cy.intercept('/api/album/8/info', {
       fixture: 'album-info.get.200.json'
     })
 

@@ -14,11 +14,11 @@
     "url": "https://github.com/koel/koel"
   },
   "devDependencies": {
-    "@testing-library/cypress": "^7.0.3",
+    "@testing-library/cypress": "^7.0.6",
     "@typescript-eslint/eslint-plugin": "^4.11.1",
     "@typescript-eslint/parser": "^4.11.1",
     "cross-env": "^3.2.3",
-    "cypress": "6.3.0",
+    "cypress": "^7.3.0",
     "cypress-file-upload": "^4.1.1",
     "eslint": "^7.17.0",
     "font-awesome": "^4.7.0",

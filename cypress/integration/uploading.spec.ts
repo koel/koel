@@ -13,14 +13,8 @@ context('Uploading', () => {
   }
 
   function executeFailedUpload () {
-    // cy.intercept() doesn't allow overriding previous interceptors yet,
-    // so in the mean time, we need to resort to the deprecated cy.route().
-    // See https://github.com/cypress-io/cypress/issues/9302.
-    cy.server()
-    cy.route({
-      method: 'POST',
-      url: '/api/upload',
-      status: 413
+    cy.intercept('POST', '/api/upload', {
+      statusCode: 413
     }).as('failedUpload')
 
     cy.get('[type=file]').attachFile('sample.mp3')

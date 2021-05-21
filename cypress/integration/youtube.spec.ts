@@ -12,7 +12,7 @@ context('YouTube', () => {
   it('searches for videos when a song is played', () => {
     cy.$mockPlayback()
 
-    cy.intercept('GET', '/api/youtube/search/song/**', {
+    cy.intercept('/api/youtube/search/song/**', {
       fixture: 'youtube-search.get.200.json'
     })
 
