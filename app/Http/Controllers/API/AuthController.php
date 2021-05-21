@@ -7,11 +7,14 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\TokenManager;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Hashing\HashManager;
 use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
+    use ThrottlesLogins;
+
     private $userRepository;
     private $hash;
     private $tokenManager;
