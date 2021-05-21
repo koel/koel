@@ -10,11 +10,10 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-cd ..
-
 TAG=$1
 echo "$TAG" > .version
-cd resources/assets || exit
+# shellcheck disable=SC2164
+cd ./resources/assets
 git -c color.ui=always tag "$TAG"
 git -c color.ui=always push --tags
 
