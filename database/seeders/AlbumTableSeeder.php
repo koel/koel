@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AlbumTableSeeder extends Seeder
 {
@@ -17,5 +18,16 @@ class AlbumTableSeeder extends Seeder
             'name' => Album::UNKNOWN_NAME,
             'cover' => Album::UNKNOWN_COVER,
         ]);
+
+        self::maybeResetPgsqlSerialValue();
+    }
+
+    private static function maybeResetPgsqlSerialValue(): void
+    {
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement(
+                "SELECT setval(pg_get_serial_sequence('albums', 'id'), coalesce(max(id), 0) + 1, false) FROM albums"
+            );
+        }
     }
 }
