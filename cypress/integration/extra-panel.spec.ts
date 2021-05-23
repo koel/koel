@@ -10,13 +10,15 @@ context('Extra Information Panel', () => {
     cy.fixture('info.get.200.json').then(data => {
       data.lyrics = null
 
-      cy.intercept('/api/**/info', {
+      cy.intercept('GET', '/api/**/info', {
         statusCode: 200,
         body: data
       })
     })
 
-    cy.$shuffleSeveralSongs()
+    cy.$clickSidebarItem('All Songs')
+    cy.get('#songsWrapper tr.song-item:first-child').dblclick()
+
     cy.get('#extraPanelLyrics').should('be.visible').and('contain.text', 'No lyrics found.')
     cy.get('#extraPanelLyrics [data-test=add-lyrics-btn]').click()
     cy.findByTestId('edit-song-form').should('be.visible').within(() => {
