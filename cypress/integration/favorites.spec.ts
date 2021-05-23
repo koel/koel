@@ -36,8 +36,8 @@ context('Favorites', { scrollBehavior: false }, () => {
   })
 
   it('adds a favorite song from Add To dropdown', () => {
-    cy.intercept('POST', '/api/interaction/like', {
-      fixture: 'like.post.200.json'
+    cy.intercept('POST', '/api/interaction/batch/like', {
+      fixture: 'batch-like.post.200.json'
     })
 
     cy.$clickSidebarItem('All Songs')

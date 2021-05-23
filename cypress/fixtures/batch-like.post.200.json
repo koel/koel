@@ -1,0 +1,21 @@
+[
+  {
+    "song_id": "03bebf17f54e2afc7c0513fb1d931009",
+    "liked": true,
+    "song": {
+      "id": "03bebf17f54e2afc7c0513fb1d931009",
+      "album_id": 5,
+      "artist_id": 3,
+      "title": "Instinct",
+      "length": 204.11,
+      "track": null,
+      "disc": 1,
+      "created_at": "2019-08-24 18:03:35",
+      "artist": {
+        "id": 3,
+        "name": "The Band",
+        "image": null
+      }
+    }
+  }
+]
