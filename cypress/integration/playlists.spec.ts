@@ -2,7 +2,7 @@ context('Playlists', () => {
   beforeEach(() => cy.$login())
 
   it('displays a playlist when sidebar menu item is clicked', () => {
-    cy.intercept('GET', '/api/playlist/1/songs', {
+    cy.intercept('/api/playlist/1/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
@@ -23,7 +23,7 @@ context('Playlists', () => {
   })
 
   it('deletes a playlist', () => {
-    cy.intercept('GET', '/api/playlist/1/songs', {
+    cy.intercept('/api/playlist/1/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
@@ -40,7 +40,7 @@ context('Playlists', () => {
   })
 
   it('deletes a playlist from the sidebar', () => {
-    cy.intercept('GET', '/api/playlist/2/songs', {
+    cy.intercept('/api/playlist/2/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
@@ -59,7 +59,7 @@ context('Playlists', () => {
   })
 
   it('creates a simple playlist from the sidebar', () => {
-    cy.intercept('GET', '/api/playlist/3/songs', [])
+    cy.intercept('/api/playlist/3/songs', [])
 
     cy.intercept('POST', '/api/playlist', {
       fixture: 'playlist.post.200.json'
@@ -93,7 +93,7 @@ context('Playlists', () => {
   })
 
   it('creates a playlist directly from a song list', () => {
-    cy.intercept('GET', '/api/playlist/1/songs', {
+    cy.intercept('/api/playlist/1/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
@@ -121,7 +121,7 @@ context('Playlists', () => {
       fixture: 'playlist.post.200.json'
     })
 
-    cy.intercept('GET', '/api/playlist/3/songs', {
+    cy.intercept('/api/playlist/3/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
@@ -144,7 +144,7 @@ context('Playlists', () => {
 
   it('updates a simple playlist from the sidebar', () => {
     cy.intercept('PUT', '/api/playlist/1', {})
-    cy.intercept('GET', '/api/playlist/1/songs', {
+    cy.intercept('/api/playlist/1/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
@@ -177,7 +177,7 @@ context('Playlists', () => {
       fixture: 'playlist-smart.post.200.json'
     })
 
-    cy.intercept('GET', '/api/playlist/3/songs', {
+    cy.intercept('/api/playlist/3/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
@@ -237,11 +237,11 @@ context('Playlists', () => {
   })
 
   it('updates a smart playlist', () => {
-    cy.intercept('GET', '/api/playlist/2/songs', {
+    cy.intercept('/api/playlist/2/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 
-    cy.intercept('GET', '/api/playlist/2/songs', {
+    cy.intercept('/api/playlist/2/songs', {
       fixture: 'playlist-songs.get.200.json'
     })
 

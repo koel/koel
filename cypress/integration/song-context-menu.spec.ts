@@ -101,7 +101,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     { name: 'several songs', songCount: 2 }
   ].forEach((config) => {
     it(`adds ${config.name} into a simple playlist`, () => {
-      cy.intercept('GET', '/api/playlist/1/songs', {
+      cy.intercept('/api/playlist/1/songs', {
         fixture: 'playlist-songs.get.200.json'
       })
 
@@ -160,7 +160,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   })
 
   it('initiates editing a song', () => {
-    cy.intercept('GET', '/api/**/info', {
+    cy.intercept('/api/**/info', {
       fixture: 'info.get.200.json'
     })
 
@@ -170,7 +170,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   })
 
   it('downloads a song', () => {
-    cy.intercept('/download/songs').as('download')
+    cy.intercept('/download/songs?*').as('download')
 
     cy.$login()
     cy.$clickSidebarItem('All Songs')

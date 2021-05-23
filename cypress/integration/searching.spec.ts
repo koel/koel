@@ -10,7 +10,7 @@ context('Searching', () => {
   })
 
   it('performs an excerpt search', () => {
-    cy.intercept('GET', '/api/search?q=foo', {
+    cy.intercept('/api/search?q=foo', {
       fixture: 'search-excerpts.get.200.json'
     })
 
@@ -24,11 +24,11 @@ context('Searching', () => {
   })
 
   it('has a button to view all matching songs', () => {
-    cy.intercept('GET', '/api/search?q=foo', {
+    cy.intercept('/api/search?q=foo', {
       fixture: 'search-excerpts.get.200.json'
     })
 
-    cy.intercept('GET', '/api/search/songs?q=foo', {
+    cy.intercept('/api/search/songs?q=foo', {
       fixture: 'search-songs.get.200.json'
     })
 
@@ -46,7 +46,7 @@ context('Searching', () => {
     cy.fixture('search-excerpts.get.200.json').then(data => {
       data.results.songs = []
 
-      cy.intercept('GET', '/api/search?q=foo', {
+      cy.intercept('/api/search?q=foo', {
         statusCode: 200,
         body: data
       }).as('search')

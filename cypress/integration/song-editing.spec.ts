@@ -1,6 +1,6 @@
 context('Song Editing', { scrollBehavior: false }, () => {
   beforeEach(() => {
-    cy.intercept('GET', '/api/**/info', {
+    cy.intercept('/api/**/info', {
       fixture: 'info.get.200.json'
     })
 

@@ -45,7 +45,7 @@ context('Artists', { scrollBehavior: false }, () => {
   })
 
   it('invokes artist screen', () => {
-    cy.intercept('GET', '/api/artist/3/info', {
+    cy.intercept('/api/artist/3/info', {
       fixture: 'artist-info.get.200.json'
     })
 
