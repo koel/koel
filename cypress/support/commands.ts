@@ -22,9 +22,12 @@ Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}): Chainable<
       statusCode: 200,
       body: Object.assign(data, mergedOptions)
     })
-  })
+  }).as('fetchData')
 
-  return cy.visit('/')
+  const win = cy.visit('/')
+  cy.wait('@fetchData')
+
+  return win
 })
 
 Cypress.Commands.add('$loginAsNonAdmin', (options: Partial<LoginOptions> = {}): Chainable<Cypress.AUTWindow> => {

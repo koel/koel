@@ -170,7 +170,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   })
 
   it('downloads a song', () => {
-    cy.intercept('/download/songs').as('download')
+    cy.intercept('/download/songs?*').as('download')
 
     cy.$login()
     cy.$clickSidebarItem('All Songs')
