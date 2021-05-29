@@ -15,6 +15,20 @@ mix.webpackConfig({
     proxy: {
       '/': 'http://127.0.0.1:8000/'
     }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        loader: "sass-loader",
+        options: {
+          prependData: `
+          @import "resources/assets/sass/partials/_vars.scss";
+          @import "resources/assets/sass/partials/_mixins.scss";
+          `
+        }
+      }
+    ]
   }
 })
 
