@@ -3,6 +3,8 @@
 namespace Tests\Integration\Services;
 
 use App\Events\SongLikeToggled;
+use App\Events\SongsBatchLiked;
+use App\Events\SongsBatchUnliked;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
@@ -18,7 +20,7 @@ class InteractionServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->interactionService = new InteractionService(new Interaction());
+        $this->interactionService = new InteractionService();
     }
 
     public function testIncreasePlayCount(): void
@@ -47,7 +49,7 @@ class InteractionServiceTest extends TestCase
 
     public function testLikeMultipleSongs(): void
     {
-        $this->expectsEvents(SongLikeToggled::class);
+        $this->expectsEvents(SongsBatchLiked::class);
 
         /** @var Collection $songs */
         $songs = Song::factory(2)->create();
@@ -64,8 +66,9 @@ class InteractionServiceTest extends TestCase
 
     public function testUnlikeMultipleSongs(): void
     {
-        $this->expectsEvents(SongLikeToggled::class);
+        $this->expectsEvents(SongsBatchUnliked::class);
 
+        /** @var User $user */
         $user = User::factory()->create();
 
         /** @var Collection $interactions */

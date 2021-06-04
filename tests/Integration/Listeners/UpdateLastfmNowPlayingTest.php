@@ -3,40 +3,27 @@
 namespace Tests\Integration\Listeners;
 
 use App\Events\SongStartedPlaying;
-use App\Jobs\UpdateLastfmNowPlayingJob;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
-use Illuminate\Support\Facades\Queue;
 use Mockery;
-use Mockery\MockInterface;
 use Tests\Feature\TestCase;
 
 class UpdateLastfmNowPlayingTest extends TestCase
 {
     public function testUpdateNowPlayingStatus(): void
     {
-        static::createSampleMediaSet();
+        /** @var User $user */
+        $user = User::factory()->create();
 
-        $user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'bar']]);
-        $song = Song::first();
+        /** @var Song $song */
+        $song = Song::factory()->create();
 
-        $queue = Queue::fake();
-
-        /** @var LastfmService|MockInterface $lastfm */
         $lastfm = Mockery::mock(LastfmService::class, ['enabled' => true]);
+        $lastfm->shouldReceive('updateNowPlaying')
+            ->with($song->artist->name, $song->title, $song->album->name, $song->length, $user->lastfm_session_key);
 
         (new UpdateLastfmNowPlaying($lastfm))->handle(new SongStartedPlaying($song, $user));
-
-        $queue->assertPushed(
-            UpdateLastfmNowPlayingJob::class,
-            static function (UpdateLastfmNowPlayingJob $job) use ($user, $song): bool {
-                self::assertSame($user, static::getNonPublicProperty($job, 'user'));
-                self::assertSame($song, static::getNonPublicProperty($job, 'song'));
-
-                return true;
-            }
-        );
     }
 }

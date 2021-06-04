@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Events\SongLikeToggled;
+use App\Events\SongsBatchLiked;
 use App\Models\Song;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class InteractionTest extends TestCase
 {
@@ -66,10 +68,12 @@ class InteractionTest extends TestCase
 
     public function testToggleBatch(): void
     {
-        $this->expectsEvents(SongLikeToggled::class);
+        $this->expectsEvents(SongsBatchLiked::class);
 
+        /** @var User $user */
         $user = User::factory()->create();
 
+        /** @var Collection|array<Song> $songs */
         $songs = Song::orderBy('id')->take(2)->get();
         $songIds = array_pluck($songs->toArray(), 'id');
 

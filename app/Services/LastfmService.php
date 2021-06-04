@@ -2,12 +2,16 @@
 
 namespace App\Services;
 
+use App\Values\LastfmLoveTrackParameters;
+use GuzzleHttp\Promise\Promise;
+use GuzzleHttp\Promise\Utils;
+use Illuminate\Support\Collection;
 use Throwable;
 
 class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 {
     /**
-     * Override the key param, since, again, Lastfm wants to be different.
+     * Override the key param, since, again, Last.fm wants to be different.
      */
     protected $keyParam = 'api_key';
 
@@ -27,11 +31,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         return $this->getKey() && $this->getSecret();
     }
 
-    /**
-     * Get information about an artist.
-     *
-     * @return array<mixed>|null
-     */
+    /** @return array<mixed>|null */
     public function getArtistInformation(string $name): ?array
     {
         if (!$this->enabled()) {
@@ -76,11 +76,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         ];
     }
 
-    /**
-     * Get information about an album.
-     *
-     * @return array<mixed>|null
-     */
+    /** @return array<mixed>|null */
     public function getAlbumInformation(string $albumName, string $artistName): ?array
     {
         if (!$this->enabled()) {
@@ -159,24 +155,24 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         }
     }
 
-    /**
-     * Scrobble a song.
-     *
-     * @param string $artist The artist name
-     * @param string $track The track name
-     * @param string|int $timestamp The UNIX timestamp
-     * @param string $album The album name
-     * @param string $sk The session key
-     */
-    public function scrobble(string $artist, string $track, $timestamp, string $album, string $sk): void
-    {
-        $params = compact('artist', 'track', 'timestamp', 'sk');
+    public function scrobble(
+        string $artistName,
+        string $trackName,
+        $timestamp,
+        string $albumName,
+        string $sessionKey
+    ): void {
+        $params = [
+            'artist' => $artistName,
+            'track' => $trackName,
+            'timestamp' => $timestamp,
+            'sk' => $sessionKey,
+            'method' => 'track.scrobble',
+        ];
 
-        if ($album) {
-            $params['album'] = $album;
+        if ($albumName) {
+            $params['album'] = $albumName;
         }
-
-        $params['method'] = 'track.scrobble';
 
         try {
             $this->post('/', $this->buildAuthCallParams($params), false);
@@ -185,42 +181,63 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         }
     }
 
-    /**
-     * Love or unlove a track on Last.fm.
-     *
-     * @param string $track The track name
-     * @param string $artist The artist's name
-     * @param string $sk The session key
-     * @param bool $love Whether to love or unlove. Such cheesy terms... urrgggh
-     */
-    public function toggleLoveTrack(string $track, string $artist, string $sk, ?bool $love = true): void
+    public function toggleLoveTrack(LastfmLoveTrackParameters $params, string $sessionKey, bool $love = true): void
     {
-        $params = compact('track', 'artist', 'sk');
-        $params['method'] = $love ? 'track.love' : 'track.unlove';
-
         try {
-            $this->post('/', $this->buildAuthCallParams($params), false);
+            $this->post('/', $this->buildAuthCallParams([
+                'track' => $params->getTrackName(),
+                'artist' => $params->getArtistName(),
+                'sk' => $sessionKey,
+                'method' => $love ? 'track.love' : 'track.unlove',
+            ]), false);
         } catch (Throwable $e) {
             $this->logger->error($e);
         }
     }
 
     /**
-     * Update a track's "now playing" on Last.fm.
-     *
-     * @param string $artist Name of the artist
-     * @param string $track Name of the track
-     * @param string $album Name of the album
+     * @param Collection|array<LastfmLoveTrackParameters> $parameterCollection
+     */
+    public function batchToggleLoveTracks(Collection $parameterCollection, string $sessionKey, bool $love = true): void
+    {
+        $promises = $parameterCollection->map(
+            function (LastfmLoveTrackParameters $params) use ($sessionKey, $love): Promise {
+                return $this->postAsync('/', $this->buildAuthCallParams([
+                    'track' => $params->getTrackName(),
+                    'artist' => $params->getArtistName(),
+                    'sk' => $sessionKey,
+                    'method' => $love ? 'track.love' : 'track.unlove',
+                ]), false);
+            }
+        );
+
+        try {
+            Utils::unwrap($promises);
+        } catch (Throwable $e) {
+            $this->logger->error($e);
+        }
+    }
+
+    /**
      * @param int|float $duration Duration of the track, in seconds
-     * @param string $sk The session key
      */
-    public function updateNowPlaying(string $artist, string $track, string $album, $duration, string $sk): void
-    {
-        $params = compact('artist', 'track', 'duration', 'sk');
-        $params['method'] = 'track.updateNowPlaying';
+    public function updateNowPlaying(
+        string $artistName,
+        string $trackName,
+        string $albumName,
+        $duration,
+        string $sessionKey
+    ): void {
+        $params = [
+            'artist' => $artistName,
+            'track' => $trackName,
+            'duration' => $duration,
+            'sk' => $sessionKey,
+            'method' => 'track.updateNowPlaying',
+        ];
 
-        if ($album) {
-            $params['album'] = $album;
+        if ($albumName) {
+            $params['album'] = $albumName;
         }
 
         try {

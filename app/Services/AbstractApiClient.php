@@ -4,21 +4,45 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Promise\Promise;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Log\Logger;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use SimpleXMLElement;
+use Webmozart\Assert\Assert;
 
 /**
- * @method object get($uri, ...$args)
- * @method object post($uri, ...$data)
- * @method object put($uri, ...$data)
- * @method object patch($uri, ...$data)
- * @method object head($uri, ...$data)
- * @method object delete($uri)
+ * @method object get(string $uri, array $data = [], bool $appendKey = true)
+ * @method object post($uri, array $data = [], bool $appendKey = true)
+ * @method object put($uri, array $data = [], bool $appendKey = true)
+ * @method object patch($uri, array $data = [], bool $appendKey = true)
+ * @method object head($uri, array $data = [], bool $appendKey = true)
+ * @method object delete($uri, array $data = [], bool $appendKey = true)
+ * @method Promise getAsync(string $uri, array $data = [], bool $appendKey = true)
+ * @method Promise postAsync($uri, array $data = [], bool $appendKey = true)
+ * @method Promise putAsync($uri, array $data = [], bool $appendKey = true)
+ * @method Promise patchAsync($uri, array $data = [], bool $appendKey = true)
+ * @method Promise headAsync($uri, array $data = [], bool $appendKey = true)
+ * @method Promise deleteAsync($uri, array $data = [], bool $appendKey = true)
  */
 abstract class AbstractApiClient
 {
+    private const MAGIC_METHODS = [
+        'get',
+        'post',
+        'put',
+        'patch',
+        'head',
+        'delete',
+        'getAsync',
+        'postAsync',
+        'putAsync',
+        'patchAsync',
+        'headAsync',
+        'deleteAsync',
+    ];
+
     protected $responseFormat = 'json';
     protected $client;
     protected $cache;
@@ -50,7 +74,7 @@ abstract class AbstractApiClient
      *                           an "API signature" of the request. Appending an API key will break the request.
      * @param array<mixed> $params An array of parameters
      *
-     * @return mixed|SimpleXMLElement|null
+     * @return mixed|SimpleXMLElement|void
      */
     public function request(string $method, string $uri, bool $appendKey = true, array $params = [])
     {
@@ -73,6 +97,11 @@ abstract class AbstractApiClient
         }
     }
 
+    public function requestAsync(string $method, string $uri, bool $appendKey = true, array $params = []): Promise
+    {
+        return $this->getClient()->$method($this->buildUrl($uri, $appendKey), ['form_params' => $params]);
+    }
+
     /**
      * Make an HTTP call to the external resource.
      *
@@ -81,19 +110,25 @@ abstract class AbstractApiClient
      *
      * @throws InvalidArgumentException
      *
-     * @return mixed|SimpleXMLElement|null
+     * @return mixed|SimpleXMLElement|void
      */
     public function __call(string $method, array $args)
     {
+        Assert::inArray($method, self::MAGIC_METHODS);
+
         if (count($args) < 1) {
             throw new InvalidArgumentException('Magic request methods require a URI and optional options array');
         }
 
         $uri = $args[0];
-        $opts = $args[1] ?? [];
+        $params = $args[1] ?? [];
         $appendKey = $args[2] ?? true;
 
-        return $this->request($method, $uri, $appendKey, $opts);
+        if (Str::endsWith($method, 'Async')) {
+            return $this->requestAsync($method, $uri, $appendKey, $params);
+        } else {
+            return $this->request($method, $uri, $appendKey, $params);
+        }
     }
 
     /**
@@ -113,9 +148,9 @@ abstract class AbstractApiClient
 
         if ($appendKey) {
             if (parse_url($uri, PHP_URL_QUERY)) {
-                $uri .= "&{$this->keyParam}=" . $this->getKey();
+                $uri .= "&$this->keyParam=" . $this->getKey();
             } else {
-                $uri .= "?{$this->keyParam}=" . $this->getKey();
+                $uri .= "?$this->keyParam=" . $this->getKey();
             }
         }
 

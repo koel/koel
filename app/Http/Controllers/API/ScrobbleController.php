@@ -26,7 +26,7 @@ class ScrobbleController extends Controller
     public function store(ScrobbleStoreRequest $request, Song $song)
     {
         if (!$song->artist->is_unknown && $this->currentUser->connectedToLastfm()) {
-            ScrobbleJob::dispatch($this->currentUser, $song, (int) $request->timestamp);
+            ScrobbleJob::dispatch($this->currentUser, $song, $request->timestamp);
         }
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

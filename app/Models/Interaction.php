@@ -15,9 +15,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User $user
  * @property int  $id
  *
- * @method self   firstOrCreate(array $where, array $params = [])
+ * @method static self firstOrCreate(array $where, array $params = [])
  * @method static self find(int $id)
  * @method static Builder whereSongIdAndUserId(string $songId, string $userId)
+ * @method static Builder whereIn(...$params)
  */
 class Interaction extends Model
 {

@@ -3,10 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\SongStartedPlaying;
-use App\Jobs\UpdateLastfmNowPlayingJob;
 use App\Services\LastfmService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdateLastfmNowPlaying
+class UpdateLastfmNowPlaying implements ShouldQueue
 {
     private $lastfm;
 
@@ -21,6 +21,12 @@ class UpdateLastfmNowPlaying
             return;
         }
 
-        UpdateLastfmNowPlayingJob::dispatch($event->user, $event->song);
+        $this->lastfm->updateNowPlaying(
+            $event->song->artist->name,
+            $event->song->title,
+            $event->song->album->is_unknown ? '' : $event->song->album->name,
+            $event->song->length,
+            $event->user->lastfm_session_key
+        );
     }
 }

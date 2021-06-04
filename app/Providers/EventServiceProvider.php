@@ -7,12 +7,16 @@ use App\Events\ArtistInformationFetched;
 use App\Events\LibraryChanged;
 use App\Events\MediaCacheObsolete;
 use App\Events\SongLikeToggled;
+use App\Events\SongsBatchLiked;
+use App\Events\SongsBatchUnliked;
 use App\Events\SongStartedPlaying;
 use App\Listeners\ClearMediaCache;
 use App\Listeners\DownloadAlbumCover;
 use App\Listeners\DownloadArtistImage;
+use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\TidyLibrary;
+use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Album;
 use App\Models\Song;
@@ -30,6 +34,14 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         SongLikeToggled::class => [
             LoveTrackOnLastfm::class,
+        ],
+
+        SongsBatchLiked::class => [
+            LoveMultipleTracksOnLastfm::class,
+        ],
+
+        SongsBatchUnliked::class => [
+            UnloveMultipleTracksOnLastfm::class,
         ],
 
         SongStartedPlaying::class => [

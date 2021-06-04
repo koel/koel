@@ -36,7 +36,7 @@ use Laravel\Scout\Searchable;
  * @method static self first()
  * @method static EloquentCollection orderBy(...$args)
  * @method static int count()
- * @method static self|null find($id)
+ * @method static self|Collection|null find($id)
  * @method static Builder take(int $count)
  */
 class Song extends Model

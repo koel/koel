@@ -3,18 +3,15 @@
 namespace App\Services;
 
 use App\Events\SongLikeToggled;
+use App\Events\SongsBatchLiked;
+use App\Events\SongsBatchUnliked;
 use App\Models\Interaction;
+use App\Models\Song;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class InteractionService
 {
-    private $interaction;
-
-    public function __construct(Interaction $interaction)
-    {
-        $this->interaction = $interaction;
-    }
-
     /**
      * Increase the number of times a song is played by a user.
      *
@@ -22,7 +19,7 @@ class InteractionService
      */
     public function increasePlayCount(string $songId, User $user): Interaction
     {
-        return tap($this->interaction->firstOrCreate([
+        return tap(Interaction::firstOrCreate([
             'song_id' => $songId,
             'user_id' => $user->id,
         ]), static function (Interaction $interaction): void {
@@ -42,7 +39,7 @@ class InteractionService
      */
     public function toggleLike(string $songId, User $user): Interaction
     {
-        return tap($this->interaction->firstOrCreate([
+        return tap(Interaction::firstOrCreate([
             'song_id' => $songId,
             'user_id' => $user->id,
         ]), static function (Interaction $interaction): void {
@@ -60,10 +57,10 @@ class InteractionService
      *
      * @return array<Interaction> the array of Interaction objects
      */
-    public function batchLike(array $songIds, User $user): array
+    public function batchLike(array $songIds, User $user): Collection
     {
-        return collect($songIds)->map(function ($songId) use ($user): Interaction {
-            return tap($this->interaction->firstOrCreate([
+        $interactions = collect($songIds)->map(static function ($songId) use ($user): Interaction {
+            return tap(Interaction::firstOrCreate([
                 'song_id' => $songId,
                 'user_id' => $user->id,
             ]), static function (Interaction $interaction): void {
@@ -73,10 +70,14 @@ class InteractionService
 
                 $interaction->liked = true;
                 $interaction->save();
-
-                event(new SongLikeToggled($interaction));
             });
-        })->all();
+        });
+
+        event(new SongsBatchLiked($interactions->map(static function (Interaction $interaction): Song {
+            return $interaction->song;
+        }), $user));
+
+        return $interactions;
     }
 
     /**
@@ -86,17 +87,10 @@ class InteractionService
      */
     public function batchUnlike(array $songIds, User $user): void
     {
-        $this->interaction
-            ->whereIn('song_id', $songIds)
+        Interaction::whereIn('song_id', $songIds)
             ->where('user_id', $user->id)
-            ->get()
-            ->each(
-                static function (Interaction $interaction): void {
-                    $interaction->liked = false;
-                    $interaction->save();
+            ->update(['liked' => false]);
 
-                    event(new SongLikeToggled($interaction));
-                }
-            );
+        event(new SongsBatchUnliked(Song::find($songIds), $user));
     }
 }
