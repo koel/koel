@@ -11,22 +11,21 @@ class ScrobbleTest extends TestCase
     public function testLastfmScrobble(): void
     {
         $this->withoutEvents();
-        static::createSampleMediaSet();
 
-        $song = Song::first();
         /** @var User $user */
         $user = User::factory()->create();
-        $user->setPreference('lastfm_session_key', 'foo');
+
+        /** @var Song $song */
+        $song = Song::factory()->create();
 
         $timestamp = time();
 
         self::mock(LastfmService::class)
             ->shouldReceive('scrobble')
-            ->with($song->album->artist->name, $song->title, $timestamp, $song->album->name, 'foo')
+            ->with($song->album->artist->name, $song->title, $timestamp, $song->album->name, $user->lastfm_session_key)
             ->once();
 
-        $response = $this->postAsUser("/api/{$song->id}/scrobble", ['timestamp' => $timestamp], $user);
-
-        $response->assertStatus(204);
+        $this->postAsUser("/api/$song->id/scrobble", ['timestamp' => $timestamp], $user)
+            ->assertNoContent();
     }
 }

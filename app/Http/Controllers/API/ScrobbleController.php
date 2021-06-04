@@ -6,20 +6,16 @@ use App\Http\Requests\API\ScrobbleStoreRequest;
 use App\Jobs\ScrobbleJob;
 use App\Models\Song;
 use App\Models\User;
-use App\Services\LastfmService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 
 class ScrobbleController extends Controller
 {
-    private $lastfmService;
-
     /** @var User */
     private $currentUser;
 
-    public function __construct(LastfmService $lastfmService, Authenticatable $currentUser)
+    public function __construct(Authenticatable $currentUser)
     {
-        $this->lastfmService = $lastfmService;
         $this->currentUser = $currentUser;
     }
 

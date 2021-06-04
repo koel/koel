@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
+use App\Casts\UserPreferencesCast;
+use App\Values\UserPreferences;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * @property array  $preferences
- * @property int    $id
- * @property bool   $is_admin
+ * @property UserPreferences $preferences
+ * @property int $id
+ * @property bool $is_admin
  * @property string $lastfm_session_key
  * @property string $name
  * @property string $email
@@ -20,7 +22,7 @@ use Laravel\Sanctum\HasApiTokens;
  *
  * @method static self create(array $params)
  * @method static int count()
- * @method static Collection where(string $key, $val)
+ * @method static Builder where(...$params)
  */
 class User extends Authenticatable
 {
@@ -28,18 +30,14 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
 
-    /**
-     * The preferences that we don't want to show to the client.
-     *
-     */
-    private const HIDDEN_PREFERENCES = ['lastfm_session_key'];
-
     protected $guarded = ['id'];
+    protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at'];
+
     protected $casts = [
         'id' => 'int',
         'is_admin' => 'bool',
+        'preferences' => UserPreferencesCast::class,
     ];
-    protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at'];
 
     public function playlists(): HasMany
     {
@@ -49,48 +47,6 @@ class User extends Authenticatable
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function getPreference(string $key)
-    {
-        // We can't use $this->preferences directly, since the data has been tampered
-        // by getPreferencesAttribute().
-        return array_get((array) unserialize($this->attributes['preferences']), $key);
-    }
-
-    /**
-     * @param mixed $val
-     */
-    public function savePreference(string $key, $val): void
-    {
-        $preferences = $this->preferences;
-        $preferences[$key] = $val;
-        $this->preferences = $preferences;
-
-        $this->save();
-    }
-
-    /**
-     * An alias to savePreference().
-     *
-     * @param mixed $val
-     *
-     * @see self::savePreference
-     */
-    public function setPreference(string $key, $val): void
-    {
-        $this->savePreference($key, $val);
-    }
-
-    public function deletePreference(string $key): void
-    {
-        $preferences = $this->preferences;
-        array_forget($preferences, $key);
-
-        $this->update(compact('preferences'));
     }
 
     /**
@@ -108,35 +64,6 @@ class User extends Authenticatable
      */
     public function getLastfmSessionKeyAttribute(): ?string
     {
-        return $this->getPreference('lastfm_session_key');
-    }
-
-    /**
-     * User preferences are stored as a serialized associative array.
-     *
-     * @param array<mixed> $value
-     */
-    public function setPreferencesAttribute(array $value): void
-    {
-        $this->attributes['preferences'] = serialize($value);
-    }
-
-    /**
-     * Unserialize the user preferences back to an array before returning.
-     *
-     * @return array<mixed>
-     */
-    public function getPreferencesAttribute(?string $value): array
-    {
-        $preferences = unserialize($value) ?: [];
-
-        // Hide sensitive data from returned preferences.
-        foreach (self::HIDDEN_PREFERENCES as $key) {
-            if (array_key_exists($key, $preferences)) {
-                $preferences[$key] = 'hidden';
-            }
-        }
-
-        return $preferences;
+        return $this->preferences->lastFmSessionKey;
     }
 }

@@ -11,15 +11,15 @@ use Illuminate\Http\Response;
 
 class LastfmController extends Controller
 {
-    private $lastfmService;
+    private $lastfm;
     private $tokenManager;
 
     /** @var User */
     private $currentUser;
 
-    public function __construct(LastfmService $lastfmService, TokenManager $tokenManager, ?Authenticatable $currentUser)
+    public function __construct(LastfmService $lastfm, TokenManager $tokenManager, ?Authenticatable $currentUser)
     {
-        $this->lastfmService = $lastfmService;
+        $this->lastfm = $lastfm;
         $this->tokenManager = $tokenManager;
         $this->currentUser = $currentUser;
     }
@@ -27,7 +27,7 @@ class LastfmController extends Controller
     public function connect()
     {
         abort_unless(
-            $this->lastfmService->enabled(),
+            $this->lastfm->enabled(),
             Response::HTTP_NOT_IMPLEMENTED,
             'Koel is not configured to use with Last.fm yet.'
         );
@@ -39,17 +39,17 @@ class LastfmController extends Controller
             $this->tokenManager->createToken($this->currentUser)->plainTextToken
         ));
 
-        $url = sprintf('https://www.last.fm/api/auth/?api_key=%s&cb=%s', $this->lastfmService->getKey(), $callbackUrl);
+        $url = sprintf('https://www.last.fm/api/auth/?api_key=%s&cb=%s', $this->lastfm->getKey(), $callbackUrl);
 
         return redirect($url);
     }
 
     public function callback(LastfmCallbackRequest $request)
     {
-        $sessionKey = $this->lastfmService->getSessionKey($request->token);
+        $sessionKey = $this->lastfm->getSessionKey($request->token);
         abort_unless($sessionKey, Response::HTTP_INTERNAL_SERVER_ERROR, 'Invalid token key.');
 
-        $this->currentUser->savePreference('lastfm_session_key', $sessionKey);
+        $this->lastfm->setUserSessionKey($this->currentUser, $sessionKey);
 
         // delete the tmp. token we created earlier
         $this->tokenManager->deleteTokenByPlainTextToken($request->api_token);

@@ -72,12 +72,14 @@ class LastfmTest extends TestCase
 
         self::assertNotNull(PersonalAccessToken::findToken($token));
 
-        $lastfm = self::mock(LastfmService::class);
+        $lastfm = Mockery::mock(LastfmService::class)->makePartial();
 
         $lastfm->shouldReceive('getSessionKey')
             ->with('lastfm-token')
             ->once()
             ->andReturn('my-session-key');
+
+        app()->instance(LastfmService::class, $lastfm);
 
         $this->get('lastfm/callback?token=lastfm-token&api_token=' . urlencode($token))
             ->assertOk();
@@ -92,13 +94,17 @@ class LastfmTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
-        $lastfm = self::mock(LastfmService::class);
+        $lastfm = Mockery::mock(LastfmService::class)->makePartial();
+
         $lastfm->shouldReceive('getSessionKey')
             ->once()
             ->with('foo')
-            ->andReturn('bar');
+            ->andReturn('my-session-key');
+
+        app()->instance(LastfmService::class, $lastfm);
 
         $tokenManager = self::mock(TokenManager::class);
+
         $tokenManager->shouldReceive('getUserFromPlainTextToken')
             ->once()
             ->with('my-token')
@@ -106,13 +112,14 @@ class LastfmTest extends TestCase
 
         $this->get('lastfm/callback?token=foo&api_token=my-token');
 
-        self::assertEquals('bar', $user->refresh()->lastfm_session_key);
+        self::assertEquals('my-session-key', $user->refresh()->lastfm_session_key);
     }
 
     public function testDisconnectUser(): void
     {
         /** @var User $user */
-        $user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'bar']]);
+        $user = User::factory()->create();
+        self::assertNotNull($user->lastfm_session_key);
         $this->deleteAsUser('api/lastfm/disconnect', [], $user);
         $user->refresh();
 

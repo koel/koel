@@ -82,17 +82,4 @@ class UserTest extends TestCase
 
         self::assertDatabaseHas('users', ['id' => $admin->id]);
     }
-
-    public function testUpdateUserProfile(): void
-    {
-        /** @var User $user */
-        $user = User::factory()->create();
-        self::assertNull($user->getPreference('foo'));
-
-        $user->setPreference('foo', 'bar');
-        self::assertEquals('bar', $user->getPreference('foo'));
-
-        $user->deletePreference('foo');
-        self::assertNull($user->getPreference('foo'));
-    }
 }

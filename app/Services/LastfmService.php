@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Values\LastfmLoveTrackParameters;
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\Utils;
@@ -314,5 +315,11 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     public function getSecret(): ?string
     {
         return config('koel.lastfm.secret');
+    }
+
+    public function setUserSessionKey(User $user, ?string $sessionKey): void
+    {
+        $user->preferences->lastFmSessionKey = $sessionKey;
+        $user->save();
     }
 }
