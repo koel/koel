@@ -55,7 +55,7 @@ class InteractionService
      *
      * @param array<string> $songIds
      *
-     * @return array<Interaction> the array of Interaction objects
+     * @return array<Interaction>|Collection The array of Interaction objects
      */
     public function batchLike(array $songIds, User $user): Collection
     {
