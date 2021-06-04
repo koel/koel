@@ -15,12 +15,7 @@ class YouTubeService extends AbstractApiClient implements ApiConsumerInterface
         return (bool) $this->getKey();
     }
 
-    /**
-     * Search for YouTube videos related to a song.
-     *
-     * @return mixed|null
-     */
-    public function searchVideosRelatedToSong(Song $song, string $pageToken = '')
+    public function searchVideosRelatedToSong(Song $song, string $pageToken = '') // @phpcs:ignore
     {
         $q = $song->title;
 
@@ -35,13 +30,12 @@ class YouTubeService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Search for YouTube videos by a query string.
      *
-     * @param string $q         The query string
+     * @param string $q The query string
      * @param string $pageToken YouTube page token (e.g. for next/previous page)
-     * @param int    $perPage   Number of results per page
+     * @param int $perPage Number of results per page
      *
-     * @return mixed|null
      */
-    public function search(string $q, string $pageToken = '', int $perPage = 10)
+    public function search(string $q, string $pageToken = '', int $perPage = 10) // @phpcs:ignore
     {
         if (!$this->enabled()) {
             return null;
@@ -55,9 +49,7 @@ class YouTubeService extends AbstractApiClient implements ApiConsumerInterface
         );
 
         try {
-            return $this->cache->remember(md5("youtube_$uri"), 60 * 24 * 7, function () use ($uri) {
-                return $this->get($uri);
-            });
+            return $this->cache->remember(md5("youtube_$uri"), 60 * 24 * 7, fn () => $this->get($uri));
         } catch (Throwable $e) {
             $this->logger->error($e);
 

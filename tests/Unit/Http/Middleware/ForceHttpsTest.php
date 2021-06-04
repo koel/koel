@@ -12,7 +12,7 @@ use Tests\TestCase;
 class ForceHttpsTest extends TestCase
 {
     private $url;
-    private $middleware;
+    private ForceHttps $middleware;
 
     public function setUp(): void
     {
@@ -31,7 +31,13 @@ class ForceHttpsTest extends TestCase
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('getClientIp')->andReturn('127.0.0.1');
         $request->shouldReceive('setTrustedProxies')
-            ->with(['127.0.0.1'], Request::HEADER_X_FORWARDED_ALL);
+            ->with(
+                ['127.0.0.1'],
+                Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO
+            );
 
         $response = Mockery::mock(Response::class);
 

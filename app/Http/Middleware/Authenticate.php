@@ -8,15 +8,14 @@ use Illuminate\Http\Request;
 
 class Authenticate
 {
-    protected $auth;
+    protected Guard $auth;
 
     public function __construct(Guard $auth)
     {
         $this->auth = $auth;
     }
 
-    /** @return mixed */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next) // @phpcs:ignore
     {
         if ($this->auth->guest()) {
             if ($request->ajax() || $request->route()->getName() === 'play') {

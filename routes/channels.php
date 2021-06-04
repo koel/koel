@@ -12,6 +12,4 @@ use Illuminate\Support\Facades\Broadcast;
 | used to check if an authenticated user can listen to the channel.
 |
 */
-Broadcast::channel('App.User.{id}', static function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
+Broadcast::channel('App.User.{id}', static fn ($user, $id) => (int) $user->id === (int) $id);

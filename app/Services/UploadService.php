@@ -14,17 +14,13 @@ class UploadService
 {
     private const UPLOAD_DIRECTORY = '__KOEL_UPLOADS__';
 
-    private $fileSynchronizer;
+    private FileSynchronizer $fileSynchronizer;
 
     public function __construct(FileSynchronizer $fileSynchronizer)
     {
         $this->fileSynchronizer = $fileSynchronizer;
     }
 
-    /**
-     * @throws MediaPathNotSetException
-     * @throws SongUploadFailedException
-     */
     public function handleUploadedFile(UploadedFile $file): Song
     {
         $targetFileName = $this->getTargetFileName($file);
@@ -42,9 +38,6 @@ class UploadService
         return $this->fileSynchronizer->getSong();
     }
 
-    /**
-     * @throws MediaPathNotSetException
-     */
     private function getUploadDirectory(): string
     {
         return memoize(static function (): string {
@@ -58,9 +51,6 @@ class UploadService
         });
     }
 
-    /**
-     * @throws MediaPathNotSetException
-     */
     private function getTargetFileName(UploadedFile $file): string
     {
         // If there's no existing file with the same name in the upload directory, use the original name.

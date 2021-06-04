@@ -9,13 +9,11 @@ use App\Repositories\ArtistRepository;
 
 class SongController extends Controller
 {
-    private $artistRepository;
-    private $albumRepository;
+    private ArtistRepository $artistRepository;
+    private AlbumRepository $albumRepository;
 
-    public function __construct(
-        ArtistRepository $artistRepository,
-        AlbumRepository $albumRepository
-    ) {
+    public function __construct(ArtistRepository $artistRepository, AlbumRepository $albumRepository)
+    {
         $this->artistRepository = $artistRepository;
         $this->albumRepository = $albumRepository;
     }

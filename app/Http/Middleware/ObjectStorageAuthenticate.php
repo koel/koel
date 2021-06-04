@@ -11,8 +11,7 @@ use Illuminate\Http\Request;
  */
 class ObjectStorageAuthenticate
 {
-    /** @return mixed */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next) // @phpcs:ignore
     {
         if ($request->appKey !== config('app.key')) {
             return response('Unauthorized.', 401);

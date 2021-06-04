@@ -2,9 +2,8 @@
 
 namespace App\Traits;
 
-use Exception;
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
 /**
@@ -22,9 +21,7 @@ trait SupportsDeleteWhereIDsNotIn
      * Deletes all records whose IDs are not in an array.
      *
      * @param array<string>|array<int> $ids the array of IDs
-     * @param string         $key name of the primary key
-     *
-     * @throws Exception
+     * @param string $key name of the primary key
      */
     public static function deleteWhereIDsNotIn(array $ids, string $key = 'id'): void
     {
@@ -57,25 +54,22 @@ trait SupportsDeleteWhereIDsNotIn
      * Delete records chunk by chunk.
      *
      * @param array<string>|array<int> $ids The array of record IDs to delete
-     * @param string         $key       Name of the primary key
-     * @param int            $chunkSize Size of each chunk. Defaults to 2^16-1 (65535)
-     *
-     * @throws Exception
+     * @param string $key Name of the primary key
+     * @param int $chunkSize Size of each chunk. Defaults to 2^16-1 (65535)
      */
     public static function deleteByChunk(array $ids, string $key = 'id', int $chunkSize = 65535): void
     {
-        /** @var DatabaseManager $db */
-        $db = app(DatabaseManager::class);
-        $db->beginTransaction();
+        DB::beginTransaction();
 
         try {
             foreach (array_chunk($ids, $chunkSize) as $chunk) {
                 static::whereIn($key, $chunk)->delete();
             }
 
-            $db->commit();
+            DB::commit();
         } catch (Throwable $e) {
-            $db->rollBack();
+            DB::rollBack();
+            throw $e;
         }
     }
 }

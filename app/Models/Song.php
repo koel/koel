@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Events\LibraryChanged;
 use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,7 +33,7 @@ use Laravel\Scout\Searchable;
  * @method static Builder select(string $string)
  * @method static Builder inDirectory(string $path)
  * @method static self first()
- * @method static EloquentCollection orderBy(...$args)
+ * @method static Builder orderBy(...$args)
  * @method static int count()
  * @method static self|Collection|null find($id)
  * @method static Builder take(int $count)
@@ -45,6 +44,7 @@ class Song extends Model
     use Searchable;
     use SupportsDeleteWhereIDsNotIn;
 
+    public $incrementing = false;
     protected $guarded = [];
 
     /**
@@ -62,27 +62,6 @@ class Song extends Model
     ];
 
     protected $keyType = 'string';
-    public $incrementing = false;
-
-    public function artist(): BelongsTo
-    {
-        return $this->belongsTo(Artist::class);
-    }
-
-    public function album(): BelongsTo
-    {
-        return $this->belongsTo(Album::class);
-    }
-
-    public function playlists(): BelongsToMany
-    {
-        return $this->belongsToMany(Playlist::class);
-    }
-
-    public function interactions(): HasMany
-    {
-        return $this->hasMany(Interaction::class);
-    }
 
     /**
      * Update song info.
@@ -185,6 +164,26 @@ class Song extends Model
         $this->makeVisible('lyrics');
 
         return $this;
+    }
+
+    public function artist(): BelongsTo
+    {
+        return $this->belongsTo(Artist::class);
+    }
+
+    public function album(): BelongsTo
+    {
+        return $this->belongsTo(Album::class);
+    }
+
+    public function playlists(): BelongsToMany
+    {
+        return $this->belongsToMany(Playlist::class);
+    }
+
+    public function interactions(): HasMany
+    {
+        return $this->hasMany(Interaction::class);
     }
 
     /**

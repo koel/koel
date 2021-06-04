@@ -8,7 +8,7 @@ use App\Services\YouTubeService;
 
 class YouTubeController extends Controller
 {
-    private $youTubeService;
+    private YouTubeService $youTubeService;
 
     public function __construct(YouTubeService $youTubeService)
     {

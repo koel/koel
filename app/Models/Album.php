@@ -32,6 +32,7 @@ use Laravel\Scout\Searchable;
  * @method static Builder where(...$params)
  * @method static self first()
  * @method static Builder whereArtistIdAndName(int $id, string $name)
+ * @method static orderBy(...$params)
  */
 class Album extends Model
 {
@@ -48,21 +49,6 @@ class Album extends Model
     protected $casts = ['artist_id' => 'integer'];
     protected $appends = ['is_compilation'];
 
-    public function artist(): BelongsTo
-    {
-        return $this->belongsTo(Artist::class);
-    }
-
-    public function songs(): HasMany
-    {
-        return $this->hasMany(Song::class);
-    }
-
-    public function getIsUnknownAttribute(): bool
-    {
-        return $this->id === self::UNKNOWN_ID;
-    }
-
     /**
      * Get an album using some provided information.
      * If such is not found, a new album will be created using the information.
@@ -78,6 +64,21 @@ class Album extends Model
             'artist_id' => $artist->id,
             'name' => trim($name) ?: self::UNKNOWN_NAME,
         ]);
+    }
+
+    public function artist(): BelongsTo
+    {
+        return $this->belongsTo(Artist::class);
+    }
+
+    public function songs(): HasMany
+    {
+        return $this->hasMany(Song::class);
+    }
+
+    public function getIsUnknownAttribute(): bool
+    {
+        return $this->id === self::UNKNOWN_ID;
     }
 
     public function setCoverAttribute(?string $value): void

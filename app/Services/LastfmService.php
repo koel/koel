@@ -14,7 +14,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     /**
      * Override the key param, since, again, Last.fm wants to be different.
      */
-    protected $keyParam = 'api_key';
+    protected string $keyParam = 'api_key';
 
     /**
      * Determine if our application is using Last.fm.
@@ -42,15 +42,19 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         $name = urlencode($name);
 
         try {
-            return $this->cache->remember(md5("lastfm_artist_$name"), 24 * 60 * 7, function () use ($name): ?array {
-                $response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
+            return $this->cache->remember(
+                md5("lastfm_artist_$name"),
+                now()->addWeek(),
+                function () use ($name): ?array {
+                    $response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
 
-                if (!$response || !isset($response->artist)) {
-                    return null;
+                    if (!$response || !isset($response->artist)) {
+                        return null;
+                    }
+
+                    return $this->buildArtistInformation($response->artist);
                 }
-
-                return $this->buildArtistInformation($response->artist);
-            });
+            );
         } catch (Throwable $e) {
             $this->logger->error($e);
 
@@ -90,16 +94,20 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         try {
             $cacheKey = md5("lastfm_album_{$albumName}_{$artistName}");
 
-            return $this->cache->remember($cacheKey, 24 * 60 * 7, function () use ($albumName, $artistName): ?array {
-                $response = $this
-                    ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
+            return $this->cache->remember(
+                $cacheKey,
+                now()->addWeek(),
+                function () use ($albumName, $artistName): ?array {
+                    $response = $this
+                        ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
 
-                if (!$response || !isset($response->album)) {
-                    return null;
+                    if (!$response || !isset($response->album)) {
+                        return null;
+                    }
+
+                    return $this->buildAlbumInformation($response->album);
                 }
-
-                return $this->buildAlbumInformation($response->album);
-            });
+            );
         } catch (Throwable $e) {
             $this->logger->error($e);
 
@@ -123,13 +131,11 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
                 'summary' => isset($data->wiki) ? $this->formatText($data->wiki->summary) : '',
                 'full' => isset($data->wiki) ? $this->formatText($data->wiki->content) : '',
             ],
-            'tracks' => array_map(static function ($track): array {
-                return [
-                    'title' => $track->name,
-                    'length' => (int) $track->duration,
-                    'url' => $track->url,
-                ];
-            }, isset($data->tracks) ? $data->tracks->track : []),
+            'tracks' => array_map(static fn ($track): array => [
+                'title' => $track->name,
+                'length' => (int) $track->duration,
+                'url' => $track->url,
+            ], isset($data->tracks) ? $data->tracks->track : []),
         ];
     }
 
@@ -202,14 +208,12 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     public function batchToggleLoveTracks(Collection $parameterCollection, string $sessionKey, bool $love = true): void
     {
         $promises = $parameterCollection->map(
-            function (LastfmLoveTrackParameters $params) use ($sessionKey, $love): Promise {
-                return $this->postAsync('/', $this->buildAuthCallParams([
-                    'track' => $params->getTrackName(),
-                    'artist' => $params->getArtistName(),
-                    'sk' => $sessionKey,
-                    'method' => $love ? 'track.love' : 'track.unlove',
-                ]), false);
-            }
+            fn (LastfmLoveTrackParameters $params): Promise => $this->postAsync('/', $this->buildAuthCallParams([
+                'track' => $params->getTrackName(),
+                'artist' => $params->getArtistName(),
+                'sk' => $sessionKey,
+                'method' => $love ? 'track.love' : 'track.unlove',
+            ]), false)
         );
 
         try {
@@ -261,7 +265,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
      *
      * @return array<mixed>|string
      */
-    public function buildAuthCallParams(array $params, bool $toString = false)
+    public function buildAuthCallParams(array $params, bool $toString = false) // @phpcs:ignore
     {
         $params['api_key'] = $this->getKey();
         ksort($params);

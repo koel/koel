@@ -9,8 +9,6 @@ class ITunesServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        app()->singleton('iTunes', static function (): ITunesService {
-            return app(ITunesService::class);
-        });
+        app()->singleton('iTunes', static fn (): ITunesService => app(ITunesService::class));
     }
 }

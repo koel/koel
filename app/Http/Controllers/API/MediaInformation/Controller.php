@@ -7,7 +7,7 @@ use App\Services\MediaInformationService;
 
 class Controller extends BaseController
 {
-    protected $mediaInformationService;
+    protected MediaInformationService $mediaInformationService;
 
     public function __construct(MediaInformationService $mediaInformationService)
     {

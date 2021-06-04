@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class InteractionServiceTest extends TestCase
 {
-    private $interactionService;
+    private InteractionService $interactionService;
 
     public function setUp(): void
     {

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class RedirectIfAuthenticated
 {
-    protected $auth;
+    protected Guard $auth;
 
     public function __construct(Guard $auth)
     {
@@ -16,7 +16,7 @@ class RedirectIfAuthenticated
     }
 
     /** @return mixed */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next) // @phpcs:ignore
     {
         if ($this->auth->check()) {
             return redirect('/');

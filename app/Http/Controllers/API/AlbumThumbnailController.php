@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 
 class AlbumThumbnailController extends Controller
 {
-    private $mediaMetadataService;
+    private MediaMetadataService $mediaMetadataService;
 
     public function __construct(MediaMetadataService $mediaMetadataService)
     {

@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property bool $liked
- * @property int  $play_count
+ * @property int $play_count
  * @property Song $song
  * @property User $user
- * @property int  $id
+ * @property int $id
  *
  * @method static self firstOrCreate(array $where, array $params = [])
  * @method static self find(int $id)
@@ -29,6 +29,7 @@ class Interaction extends Model
         'liked' => 'boolean',
         'play_count' => 'integer',
     ];
+
     protected $guarded = ['id'];
     protected $hidden = ['id', 'user_id', 'created_at', 'updated_at'];
 

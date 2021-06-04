@@ -11,9 +11,7 @@ use App\Models\Setting;
 use App\Models\Song;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
-use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
-use Exception;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
@@ -37,44 +35,36 @@ class MediaSyncService
         'compilation',
     ];
 
-    private $mediaMetadataService;
-    private $songRepository;
-    private $helperService;
-    private $fileSynchronizer;
-    private $finder;
-    private $artistRepository;
-    private $albumRepository;
-    private $settingRepository;
-    private $logger;
+    private SongRepository $songRepository;
+    private HelperService $helperService;
+    private FileSynchronizer $fileSynchronizer;
+    private Finder $finder;
+    private ArtistRepository $artistRepository;
+    private AlbumRepository $albumRepository;
+    private LoggerInterface $logger;
 
     public function __construct(
-        MediaMetadataService $mediaMetadataService,
         SongRepository $songRepository,
         ArtistRepository $artistRepository,
         AlbumRepository $albumRepository,
-        SettingRepository $settingRepository,
         HelperService $helperService,
         FileSynchronizer $fileSynchronizer,
         Finder $finder,
         LoggerInterface $logger
     ) {
-        $this->mediaMetadataService = $mediaMetadataService;
         $this->songRepository = $songRepository;
         $this->helperService = $helperService;
         $this->fileSynchronizer = $fileSynchronizer;
         $this->finder = $finder;
         $this->artistRepository = $artistRepository;
         $this->albumRepository = $albumRepository;
-        $this->settingRepository = $settingRepository;
         $this->logger = $logger;
     }
 
     /**
      * Tags to be synced.
-     *
-     * @var array
      */
-    protected $tags = [];
+    protected array $tags = [];
 
     /**
      * Sync the media. Oh sync the media.
@@ -84,8 +74,6 @@ class MediaSyncService
      * New records will have all tags synced in regardless.
      * @param bool $force Whether to force syncing even unchanged files
      * @param SyncCommand $syncCommand the SyncMedia command object, to log to console if executed by artisan
-     *
-     * @throws Exception
      */
     public function sync(
         ?string $mediaPath = null,
@@ -132,9 +120,10 @@ class MediaSyncService
         }
 
         // Delete non-existing songs.
-        $hashes = array_map(function (string $path): string {
-            return $this->helperService->getFileHash($path);
-        }, array_merge($results['unmodified'], $results['success']));
+        $hashes = array_map(
+            fn (string $path): string => $this->helperService->getFileHash($path),
+            array_merge($results['unmodified'], $results['success'])
+        );
 
         Song::deleteWhereIDsNotIn($hashes);
 

@@ -15,7 +15,7 @@ class S3ServiceTest extends TestCase
 {
     private $s3Client;
     private $cache;
-    private $s3Service;
+    private S3Service $s3Service;
 
     public function setUp(): void
     {

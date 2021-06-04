@@ -7,7 +7,7 @@ use App\Services\DownloadService;
 
 abstract class Controller extends BaseController
 {
-    protected $downloadService;
+    protected DownloadService $downloadService;
 
     public function __construct(DownloadService $downloadService)
     {

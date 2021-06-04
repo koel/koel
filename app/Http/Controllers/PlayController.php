@@ -5,16 +5,13 @@ namespace App\Http\Controllers;
 use App\Factories\StreamerFactory;
 use App\Http\Requests\SongPlayRequest;
 use App\Models\Song;
-use App\Services\TokenManager;
 
 class PlayController extends Controller
 {
-    private $tokenManager;
-    private $streamerFactory;
+    private StreamerFactory $streamerFactory;
 
-    public function __construct(TokenManager $tokenManager, StreamerFactory $streamerFactory)
+    public function __construct(StreamerFactory $streamerFactory)
     {
-        $this->tokenManager = $tokenManager;
         $this->streamerFactory = $streamerFactory;
     }
 

@@ -6,17 +6,13 @@ class TranscodingStreamer extends Streamer implements TranscodingStreamerInterfa
 {
     /**
      * Bit rate the stream should be transcoded at.
-     *
-     * @var int
      */
-    private $bitRate;
+    private ?int $bitRate = null;
 
     /**
      * Time point to start transcoding from.
-     *
-     * @var float
      */
-    private $startTime;
+    private ?float $startTime = null;
 
     /**
      * On-the-fly stream the current song while transcoding.

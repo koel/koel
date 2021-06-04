@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class UpdateLastfmNowPlaying implements ShouldQueue
 {
-    private $lastfm;
+    private LastfmService $lastfm;
 
     public function __construct(LastfmService $lastfm)
     {

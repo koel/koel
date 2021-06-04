@@ -7,12 +7,12 @@ use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\SongZipArchive;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
 class DownloadService
 {
-    private $s3Service;
+    private S3Service $s3Service;
 
     public function __construct(S3Service $s3Service)
     {
@@ -56,7 +56,7 @@ class DownloadService
             // The song is hosted on Amazon S3.
             // We download it back to our local server first.
             $url = $this->s3Service->getSongPublicUrl($song);
-            abort_unless($url, 404);
+            abort_unless((bool) $url, 404);
 
             $localPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . basename($song->s3_params['key']);
 

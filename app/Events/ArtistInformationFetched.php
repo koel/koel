@@ -9,8 +9,8 @@ class ArtistInformationFetched
 {
     use SerializesModels;
 
-    private $artist;
-    private $information;
+    private Artist $artist;
+    private array $information;
 
     public function __construct(Artist $artist, array $information)
     {
@@ -23,9 +23,7 @@ class ArtistInformationFetched
         return $this->artist;
     }
 
-    /**
-     * @return array<mixed>
-     */
+    /** @return array<mixed> */
     public function getInformation(): array
     {
         return $this->information;

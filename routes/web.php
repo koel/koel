@@ -3,13 +3,9 @@
 use App\Facades\ITunes;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', static function () {
-    return view('index');
-});
+Route::get('/', static fn () => view('index'));
 
-Route::get('/remote', static function () {
-    return view('remote');
-});
+Route::get('/remote', static fn () => view('remote'));
 
 Route::group(['middleware' => 'auth'], static function (): void {
     Route::get('play/{song}/{transcode?}/{bitrate?}', 'PlayController@show')

@@ -20,39 +20,27 @@ class FileSynchronizer
     public const SYNC_RESULT_BAD_FILE = 2;
     public const SYNC_RESULT_UNMODIFIED = 3;
 
-    private $getID3;
-    private $mediaMetadataService;
-    private $helperService;
-    private $songRepository;
-    private $cache;
-    private $finder;
-
-    /** @var SplFileInfo */
-    private $splFileInfo;
-
-    /** @var int */
-    private $fileModifiedTime;
-
-    /** @var string */
-    private $filePath;
+    private getID3 $getID3;
+    private MediaMetadataService $mediaMetadataService;
+    private HelperService $helperService;
+    private SongRepository $songRepository;
+    private Cache $cache;
+    private Finder $finder;
+    private ?int $fileModifiedTime = null;
+    private ?string $filePath = null;
 
     /**
      * A (MD5) hash of the file's path.
      * This value is unique, and can be used to query a Song record.
-     *
-     * @var string
      */
-    private $fileHash;
+    private ?string $fileHash = null;
 
     /**
      * The song model that's associated with the current file.
-     *
-     * @var Song|null
      */
-    private $song;
+    private ?Song $song;
 
-    /** @var string|null */
-    private $syncError;
+    private ?string $syncError;
 
     public function __construct(
         getID3 $getID3,
@@ -73,19 +61,20 @@ class FileSynchronizer
     /** @param string|SplFileInfo $path */
     public function setFile($path): self
     {
-        $this->splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
+        $splFileInfo = null;
+        $splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
 
         // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
         try {
-            $this->fileModifiedTime = $this->splFileInfo->getMTime();
+            $this->fileModifiedTime = $splFileInfo->getMTime();
         } catch (Throwable $e) {
             // Not worth logging the error. Just use current stamp for mtime.
             $this->fileModifiedTime = time();
         }
 
-        $this->filePath = $this->splFileInfo->getPathname();
+        $this->filePath = $splFileInfo->getPathname();
         $this->fileHash = $this->helperService->getFileHash($this->filePath);
-        $this->song = $this->songRepository->getOneById($this->fileHash);
+        $this->song = $this->songRepository->getOneById($this->fileHash); // @phpstan-ignore-line
         $this->syncError = null;
 
         return $this;
@@ -247,7 +236,7 @@ class FileSynchronizer
     private function getCoverFileUnderSameDirectory(): ?string
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        return $this->cache->remember(md5($this->filePath . '_cover'), 24 * 60, function (): ?string {
+        return $this->cache->remember(md5($this->filePath . '_cover'), now()->addDay(), function (): ?string {
             $matches = array_keys(
                 iterator_to_array(
                     $this->finder->create()

@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-    private $hash;
+    private Hash $hash;
 
     public function __construct(Hash $hash)
     {

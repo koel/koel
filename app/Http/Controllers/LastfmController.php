@@ -11,11 +11,11 @@ use Illuminate\Http\Response;
 
 class LastfmController extends Controller
 {
-    private $lastfm;
-    private $tokenManager;
+    private LastfmService $lastfm;
+    private TokenManager $tokenManager;
 
     /** @var User */
-    private $currentUser;
+    private ?Authenticatable $currentUser;
 
     public function __construct(LastfmService $lastfm, TokenManager $tokenManager, ?Authenticatable $currentUser)
     {
@@ -47,7 +47,7 @@ class LastfmController extends Controller
     public function callback(LastfmCallbackRequest $request)
     {
         $sessionKey = $this->lastfm->getSessionKey($request->token);
-        abort_unless($sessionKey, Response::HTTP_INTERNAL_SERVER_ERROR, 'Invalid token key.');
+        abort_unless((bool) $sessionKey, Response::HTTP_INTERNAL_SERVER_ERROR, 'Invalid token key.');
 
         $this->lastfm->setUserSessionKey($this->currentUser, $sessionKey);
 

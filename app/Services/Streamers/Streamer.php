@@ -6,11 +6,9 @@ use App\Models\Song;
 
 class Streamer
 {
-    /** @var Song|string */
-    protected $song;
+    protected ?Song $song = null;
 
-    /** @var string */
-    protected $contentType;
+    protected ?string $contentType = null;
 
     public function __construct()
     {

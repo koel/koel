@@ -9,7 +9,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "laravel/framework": "^8.42",
         "james-heinrich/getid3": "^1.9",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -40,7 +40,7 @@
         "php-mock/php-mock-mockery": "^1.3",
         "dms/phpunit-arraysubset-asserts": "^0.2.1",
         "fakerphp/faker": "^1.13",
-        "slevomat/coding-standard": "^6.4",
+        "slevomat/coding-standard": "^7.0",
         "nunomaduro/larastan": "^0.6.11",
         "nunomaduro/collision": "^5.3"
     },

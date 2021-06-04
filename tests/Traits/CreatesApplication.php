@@ -9,17 +9,9 @@ use Illuminate\Foundation\Application;
 
 trait CreatesApplication
 {
-    protected $mediaPath = __DIR__ . '/../songs';
-
-    /** @var Kernel */
-    private $artisan;
-
-    /**
-     * The base URL to use while testing the application.
-     *
-     * @var string
-     */
-    protected $baseUrl = 'http://localhost';
+    protected string $mediaPath = __DIR__ . '/../songs';
+    private Kernel $artisan;
+    protected string $baseUrl = 'http://localhost';
 
     public function createApplication(): Application
     {

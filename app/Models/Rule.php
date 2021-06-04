@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Factories\SmartPlaylistRuleParameterFactory;
 use Illuminate\Database\Eloquent\Builder;
-use InvalidArgumentException;
+use Webmozart\Assert\Assert;
 
 class Rule
 {
@@ -37,11 +37,11 @@ class Rule
     private $operator;
     private $value;
     private $model;
-    private $parameterFactory;
+    private SmartPlaylistRuleParameterFactory $parameterFactory;
 
     private function __construct(array $config)
     {
-        $this->validateOperator($config['operator']);
+        Assert::oneOf($config['operator'], self::VALID_OPERATORS);
 
         $this->value = $config['value'];
         $this->model = $config['model'];
@@ -72,9 +72,7 @@ class Rule
         // If the model is something like 'artist.name' or 'interactions.play_count', we have a subquery to deal with.
         // We handle such a case with a recursive call which, in theory, should work with an unlimited level of nesting,
         // though in practice we only have one level max.
-        return $query->whereHas($fragments[0], function (Builder $subQuery) use ($fragments): Builder {
-            return $this->build($subQuery, $fragments[1]);
-        });
+        return $query->whereHas($fragments[0], fn (Builder $subQuery) => $this->build($subQuery, $fragments[1]));
     }
 
     /**
@@ -84,18 +82,5 @@ class Rule
     private function resolveLogic(): string
     {
         return $this->operator === self::OPERATOR_IS_BETWEEN ? 'whereBetween' : 'where';
-    }
-
-    private function validateOperator(string $operator): void
-    {
-        if (!in_array($operator, self::VALID_OPERATORS, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    '%s is not a valid value for operators. Valid values are: %s',
-                    $operator,
-                    implode(', ', self::VALID_OPERATORS)
-                )
-            );
-        }
     }
 }

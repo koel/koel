@@ -9,7 +9,6 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
-use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Mockery;
@@ -20,9 +19,6 @@ class DownloadTest extends TestCase
     /** @var MockInterface|DownloadService */
     private $downloadService;
 
-    /**
-     * @throws Exception
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -39,7 +35,7 @@ class DownloadTest extends TestCase
             ->shouldReceive('from')
             ->never();
 
-        $this->get("download/songs?songs[]={$song->id}")
+        $this->get("download/songs?songs[]=$song->id")
             ->assertRedirect('/');
     }
 
@@ -67,6 +63,7 @@ class DownloadTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
+        /** @var array<Song>|Collection $songs */
         $songs = Song::take(2)->orderBy('id')->get();
 
         $this->downloadService

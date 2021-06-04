@@ -9,8 +9,6 @@ class MediaCacheServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        app()->singleton('MediaCache', static function (): MediaCacheService {
-            return app(MediaCacheService::class);
-        });
+        app()->singleton('MediaCache', static fn (): MediaCacheService => app(MediaCacheService::class));
     }
 }

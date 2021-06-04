@@ -16,9 +16,9 @@ class SearchService
 {
     public const DEFAULT_EXCERPT_RESULT_COUNT = 6;
 
-    private $songRepository;
-    private $albumRepository;
-    private $artistRepository;
+    private SongRepository $songRepository;
+    private AlbumRepository $albumRepository;
+    private ArtistRepository $artistRepository;
 
     public function __construct(
         SongRepository $songRepository,
@@ -35,17 +35,11 @@ class SearchService
     {
         return [
             'songs' => self::getTopResults($this->songRepository->search($keywords), $count)
-                ->map(static function (Song $song): string {
-                    return $song->id;
-                }),
+                ->map(static fn (Song $song): string => $song->id),
             'artists' => self::getTopResults($this->artistRepository->search($keywords), $count)
-                ->map(static function (Artist $artist): int {
-                    return $artist->id;
-                }),
+                ->map(static fn (Artist $artist): int => $artist->id),
             'albums' => self::getTopResults($this->albumRepository->search($keywords), $count)
-                ->map(static function (Album $album): int {
-                    return $album->id;
-                }),
+                ->map(static fn (Album $album): int => $album->id),
         ];
     }
 
@@ -61,8 +55,6 @@ class SearchService
         return $this->songRepository
             ->search($keywords)
             ->get()
-            ->map(static function (Song $song): string {
-                return $song->id;
-            });
+            ->map(static fn (Song $song): string => $song->id);
     }
 }

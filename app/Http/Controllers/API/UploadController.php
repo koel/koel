@@ -12,7 +12,7 @@ use Illuminate\Http\Response;
 
 class UploadController extends Controller
 {
-    private $uploadService;
+    private UploadService $uploadService;
 
     public function __construct(UploadService $uploadService)
     {

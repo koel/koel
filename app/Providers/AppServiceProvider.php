@@ -25,9 +25,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // Add some custom validation rules
-        $validator->extend('path.valid', static function ($attribute, $value): bool {
-            return is_dir($value) && is_readable($value);
-        });
+        $validator->extend('path.valid', static fn ($attribute, $value): bool => is_dir($value) && is_readable($value));
     }
 
     /**

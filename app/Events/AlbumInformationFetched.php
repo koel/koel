@@ -9,8 +9,8 @@ class AlbumInformationFetched extends Event
 {
     use SerializesModels;
 
-    private $album;
-    private $information;
+    private Album $album;
+    private array $information;
 
     public function __construct(Album $album, array $information)
     {
@@ -23,9 +23,7 @@ class AlbumInformationFetched extends Event
         return $this->album;
     }
 
-    /**
-     * @return array<mixed>
-     */
+    /** @return array<mixed> */
     public function getInformation(): array
     {
         return $this->information;

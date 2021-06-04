@@ -9,7 +9,7 @@ use Illuminate\Http\Response;
 
 class SettingController extends Controller
 {
-    private $mediaSyncService;
+    private MediaSyncService $mediaSyncService;
 
     public function __construct(MediaSyncService $mediaSyncService)
     {

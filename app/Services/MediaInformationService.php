@@ -9,7 +9,7 @@ use App\Models\Artist;
 
 class MediaInformationService
 {
-    private $lastfmService;
+    private LastfmService $lastfmService;
 
     public function __construct(LastfmService $lastfmService)
     {

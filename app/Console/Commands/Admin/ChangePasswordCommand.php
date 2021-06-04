@@ -15,7 +15,7 @@ class ChangePasswordCommand extends Command
                             {email? : The user's email. If empty, will get the default admin user.}";
     protected $description = "Change a user's password";
 
-    private $hash;
+    private Hash $hash;
 
     public function __construct(Hash $hash)
     {
@@ -37,7 +37,7 @@ class ChangePasswordCommand extends Command
             return;
         }
 
-        $this->comment("Changing the user's password (ID: {$user->id}, email: {$user->email})");
+        $this->comment("Changing the user's password (ID: $user->id, email: $user->email)");
 
         $user->password = $this->hash->make($this->askForPassword());
         $user->save();

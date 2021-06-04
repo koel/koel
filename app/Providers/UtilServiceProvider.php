@@ -9,8 +9,6 @@ class UtilServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        app()->singleton('Util', static function (): Util {
-            return app(Util::class);
-        });
+        app()->singleton('Util', static fn (): Util => app(Util::class));
     }
 }

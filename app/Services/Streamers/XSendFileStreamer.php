@@ -10,7 +10,7 @@ class XSendFileStreamer extends Streamer implements DirectStreamerInterface
     public function stream(): void
     {
         header("X-Sendfile: {$this->song->path}");
-        header("Content-Type: {$this->contentType}");
+        header("Content-Type: $this->contentType");
         header('Content-Disposition: inline; filename="' . basename($this->song->path) . '"');
 
         exit;

@@ -14,7 +14,7 @@ use Tests\TestCase;
 class MediaInformationServiceTest extends TestCase
 {
     private $lastFmService;
-    private $mediaInformationService;
+    private MediaInformationService $mediaInformationService;
 
     public function setUp(): void
     {

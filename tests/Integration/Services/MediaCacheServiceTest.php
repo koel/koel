@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class MediaCacheServiceTest extends TestCase
 {
-    private $mediaCacheService;
+    private MediaCacheService $mediaCacheService;
     private $cache;
 
     public function setUp(): void

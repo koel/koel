@@ -31,11 +31,11 @@ function asset_rev(string $file, ?string $manifestFile = null): string
 
     if (isset($manifest[$file])) {
         return file_exists(public_path('hot'))
-            ? "http://localhost:8080{$manifest[$file]}"
+            ? "http://localhost:8080$manifest[$file]"
             : static_url($manifest[$file]);
     }
 
-    throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
+    throw new InvalidArgumentException("File $file not defined in asset manifest.");
 }
 
 function album_cover_path(string $fileName): string
@@ -46,14 +46,6 @@ function album_cover_path(string $fileName): string
 function album_cover_url(string $fileName): string
 {
     return static_url(config('koel.album_cover_dir') . $fileName);
-}
-
-/**
- * @see album_cover_url()
- */
-function album_thumbnail_url(string $fileName): string
-{
-    return album_cover_url($fileName);
 }
 
 function artist_image_path(string $fileName): string

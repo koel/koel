@@ -11,16 +11,15 @@ use ZipArchive;
 
 class SongZipArchive
 {
-    /** @var ZipArchive */
-    private $archive;
+    private ZipArchive $archive;
 
-    private $path;
+    private string $path;
 
     /**
      * Names of the files in the archive
      * Format: [file-name.mp3' => currentFileIndex].
      */
-    private $fileNames = [];
+    private array $fileNames = [];
 
     public function __construct(string $path = '')
     {

@@ -59,19 +59,17 @@ class InteractionService
      */
     public function batchLike(array $songIds, User $user): Collection
     {
-        $interactions = collect($songIds)->map(static function ($songId) use ($user): Interaction {
-            return tap(Interaction::firstOrCreate([
-                'song_id' => $songId,
-                'user_id' => $user->id,
-            ]), static function (Interaction $interaction): void {
-                if (!$interaction->exists) {
-                    $interaction->play_count = 0;
-                }
+        $interactions = collect($songIds)->map(static fn ($songId): Interaction => tap(Interaction::firstOrCreate([
+            'song_id' => $songId,
+            'user_id' => $user->id,
+        ]), static function (Interaction $interaction): void {
+            if (!$interaction->exists) {
+                $interaction->play_count = 0;
+            }
 
-                $interaction->liked = true;
-                $interaction->save();
-            });
-        });
+            $interaction->liked = true;
+            $interaction->save();
+        }));
 
         event(new SongsBatchLiked($interactions->map(static function (Interaction $interaction): Song {
             return $interaction->song;

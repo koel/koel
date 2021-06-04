@@ -27,13 +27,13 @@ class InitCommand extends Command
     protected $signature = 'koel:init {--no-assets}';
     protected $description = 'Install or upgrade Koel';
 
-    private $mediaCacheService;
-    private $artisan;
-    private $dotenvEditor;
-    private $hash;
-    private $db;
-    private $settingRepository;
-    private $adminSeeded = false;
+    private MediaCacheService $mediaCacheService;
+    private Artisan $artisan;
+    private DotenvEditor $dotenvEditor;
+    private Hash $hash;
+    private DB $db;
+    private SettingRepository $settingRepository;
+    private bool $adminSeeded = false;
 
     public function __construct(
         MediaCacheService $mediaCacheService,

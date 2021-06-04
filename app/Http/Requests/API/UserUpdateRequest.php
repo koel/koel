@@ -9,7 +9,7 @@ use Illuminate\Validation\Rules\Password;
  * @property string $password
  * @property string $name
  * @property string $email
- * @property bool   $is_admin
+ * @property bool $is_admin
  */
 class UserUpdateRequest extends Request
 {

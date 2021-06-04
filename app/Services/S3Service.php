@@ -8,8 +8,8 @@ use Illuminate\Cache\Repository as Cache;
 
 class S3Service implements ObjectStorageInterface
 {
-    private $s3Client;
-    private $cache;
+    private ?S3ClientInterface $s3Client;
+    private Cache $cache;
 
     public function __construct(?S3ClientInterface $s3Client, Cache $cache)
     {
@@ -19,7 +19,7 @@ class S3Service implements ObjectStorageInterface
 
     public function getSongPublicUrl(Song $song): string
     {
-        return $this->cache->remember("OSUrl/{$song->id}", 60, function () use ($song): string {
+        return $this->cache->remember("OSUrl/$song->id", now()->addHour(), function () use ($song): string {
             $cmd = $this->s3Client->getCommand('GetObject', [
                 'Bucket' => $song->s3_params['bucket'],
                 'Key' => $song->s3_params['key'],

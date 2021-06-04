@@ -13,11 +13,11 @@ use Illuminate\Http\Request;
 
 class PlaylistController extends Controller
 {
-    private $playlistRepository;
-    private $smartPlaylistService;
+    private PlaylistRepository $playlistRepository;
+    private SmartPlaylistService $smartPlaylistService;
 
     /** @var User */
-    private $currentUser;
+    private ?Authenticatable $currentUser;
 
     public function __construct(
         PlaylistRepository $playlistRepository,
