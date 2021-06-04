@@ -11,12 +11,12 @@ use App\Values\LastfmLoveTrackParameters;
 use Mockery;
 use Tests\Feature\TestCase;
 
-class LoveTrackOnLastFmTest extends TestCase
+class LoveTrackOnLastfmTest extends TestCase
 {
     public function testHandle(): void
     {
         /** @var User $user */
-        $user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'bar']]);
+        $user = User::factory()->create();
 
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();
@@ -30,7 +30,7 @@ class LoveTrackOnLastFmTest extends TestCase
 
                     return true;
                 }),
-                'bar',
+                $user->lastfm_session_key,
                 $interaction->liked
             );
 

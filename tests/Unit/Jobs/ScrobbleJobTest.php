@@ -11,26 +11,22 @@ use Tests\TestCase;
 
 class ScrobbleJobTest extends TestCase
 {
-    private $job;
-    private $user;
-    private $song;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->user = User::factory()->create(['preferences' => ['lastfm_session_key' => 'foo']]);
-        $this->song = Song::factory()->make();
-        $this->job = new ScrobbleJob($this->user, $this->song, 100);
-    }
-
     public function testHandle(): void
     {
-        $lastFm = Mockery::mock(LastfmService::class);
-        $lastFm->shouldReceive('scrobble')
-            ->once()
-            ->with($this->song->artist->name, $this->song->title, 100, $this->song->album->name, 'foo');
+        /** @var User $user */
+        $user = User::factory()->create();
 
-        $this->job->handle($lastFm);
+        /** @var Song $song */
+        $song = Song::factory()->make();
+
+        $job = new ScrobbleJob($user, $song, 100);
+
+        $lastfm = Mockery::mock(LastfmService::class);
+
+        $lastfm->shouldReceive('scrobble')
+            ->once()
+            ->with($song->artist->name, $song->title, 100, $song->album->name, $user->lastfm_session_key);
+
+        $job->handle($lastfm);
     }
 }
