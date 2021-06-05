@@ -2,10 +2,10 @@
 
 namespace App\Values;
 
-class LastfmLoveTrackParameters
+final class LastfmLoveTrackParameters
 {
-    private $trackName;
-    private $artistName;
+    private string $trackName;
+    private string $artistName;
 
     private function __construct(string $trackName, string $artistName)
     {

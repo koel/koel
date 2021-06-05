@@ -16,8 +16,7 @@ use Tests\TestCase;
 
 class StreamerFactoryTest extends TestCase
 {
-    /** @var StreamerFactory */
-    private $streamerFactory;
+    private StreamerFactory $streamerFactory;
 
     public function setUp(): void
     {

@@ -8,7 +8,7 @@ use App\Services\DownloadService;
 
 class FavoritesController extends Controller
 {
-    private $interactionRepository;
+    private InteractionRepository $interactionRepository;
 
     public function __construct(DownloadService $downloadService, InteractionRepository $interactionRepository)
     {

@@ -9,10 +9,10 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class Controller extends BaseController
 {
-    protected $interactionService;
+    protected InteractionService $interactionService;
 
     /** @var User */
-    protected $currentUser;
+    protected ?Authenticatable $currentUser = null;
 
     public function __construct(InteractionService $interactionService, ?Authenticatable $currentUser)
     {

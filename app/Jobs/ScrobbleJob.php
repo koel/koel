@@ -19,9 +19,9 @@ class ScrobbleJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private $user;
-    private $song;
-    private $timestamp;
+    private User $user;
+    private Song $song;
+    private int $timestamp;
 
     public function __construct(User $user, Song $song, int $timestamp)
     {

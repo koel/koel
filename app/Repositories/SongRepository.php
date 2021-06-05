@@ -10,7 +10,7 @@ class SongRepository extends AbstractRepository
 {
     use Searchable;
 
-    private $helperService;
+    private HelperService $helperService;
 
     public function __construct(HelperService $helperService)
     {

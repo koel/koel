@@ -12,9 +12,9 @@ use Illuminate\Http\Response;
 class ScrobbleController extends Controller
 {
     /** @var User */
-    private $currentUser;
+    private ?Authenticatable $currentUser;
 
-    public function __construct(Authenticatable $currentUser)
+    public function __construct(?Authenticatable $currentUser)
     {
         $this->currentUser = $currentUser;
     }

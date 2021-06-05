@@ -11,7 +11,7 @@ class MediaCacheService
 {
     private const CACHE_KEY = 'media_cache';
 
-    private $cache;
+    private Cache $cache;
 
     public function __construct(Cache $cache)
     {
@@ -30,9 +30,7 @@ class MediaCacheService
             return $this->query();
         }
 
-        return $this->cache->rememberForever(self::CACHE_KEY, function (): array {
-            return $this->query();
-        });
+        return $this->cache->rememberForever(self::CACHE_KEY, fn (): array => $this->query());
     }
 
     /**
@@ -49,9 +47,6 @@ class MediaCacheService
         ];
     }
 
-    /**
-     * Clear the media cache.
-     */
     public function clear(): void
     {
         $this->cache->forget(self::CACHE_KEY);

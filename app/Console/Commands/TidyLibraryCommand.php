@@ -11,7 +11,7 @@ class TidyLibraryCommand extends Command
     protected $signature = 'koel:tidy';
     protected $description = 'Tidy up the library by deleting empty artists and albums';
 
-    private $mediaSyncService;
+    private MediaSyncService $mediaSyncService;
 
     public function __construct(MediaSyncService $mediaSyncService)
     {

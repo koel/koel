@@ -4,10 +4,8 @@ namespace App\Console\Commands;
 
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Setting;
-use App\Repositories\SettingRepository;
 use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
-use Exception;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -19,26 +17,20 @@ class SyncCommand extends Command
         {--force : Force re-syncing even unchanged files}';
 
     protected $description = 'Sync songs found in configured directory against the database.';
-    private $ignored = 0;
-    private $invalid = 0;
-    private $synced = 0;
-    private $mediaSyncService;
-    private $settingRepository;
+    private int $ignored = 0;
+    private int $invalid = 0;
+    private int $synced = 0;
+    private MediaSyncService $mediaSyncService;
 
-    /** @var ProgressBar */
-    private $progressBar;
+    private ?ProgressBar $progressBar = null;
 
-    public function __construct(MediaSyncService $mediaSyncService, SettingRepository $settingRepository)
+    public function __construct(MediaSyncService $mediaSyncService)
     {
         parent::__construct();
 
         $this->mediaSyncService = $mediaSyncService;
-        $this->settingRepository = $settingRepository;
     }
 
-    /**
-     * @throws Exception
-     */
     public function handle(): void
     {
         $this->ensureMediaPath();
@@ -55,8 +47,6 @@ class SyncCommand extends Command
 
     /**
      * Sync all files in the configured media path.
-     *
-     * @throws Exception
      */
     protected function syncAll(): void
     {
@@ -71,9 +61,9 @@ class SyncCommand extends Command
 
         $this->output->writeln(
             PHP_EOL . PHP_EOL
-            . "<info>Completed! {$this->synced} new or updated song(s)</info>, "
-            . "{$this->ignored} unchanged song(s), "
-            . "and <comment>{$this->invalid} invalid file(s)</comment>."
+            . "<info>Completed! $this->synced new or updated song(s)</info>, "
+            . "$this->ignored unchanged song(s), "
+            . "and <comment>$this->invalid invalid file(s)</comment>."
         );
     }
 
@@ -88,8 +78,6 @@ class SyncCommand extends Command
      *                       - "MOVED_TO /var/www/media/new_dir"
      *
      * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
-     *
-     * @throws Exception
      */
     public function syngle(string $record): void
     {

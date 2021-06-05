@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class PlaylistTest extends TestCase
 {
@@ -19,6 +20,8 @@ class PlaylistTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
+
+        /** @var array<Song>|Collection $songs */
         $songs = Song::orderBy('id')->take(3)->get();
 
         $this->postAsUser('api/playlist', [
@@ -32,6 +35,7 @@ class PlaylistTest extends TestCase
             'name' => 'Foo Bar',
         ]);
 
+        /** @var Playlist $playlist */
         $playlist = Playlist::orderBy('id', 'desc')->first();
 
         foreach ($songs as $song) {
@@ -79,9 +83,11 @@ class PlaylistTest extends TestCase
             'user_id' => $user->id,
         ]);
 
+        /** @var array<Song>|Collection $songs */
         $songs = Song::orderBy('id')->take(4)->get();
         $playlist->songs()->attach($songs->pluck('id')->toArray());
 
+        /** @var Song $removedSong */
         $removedSong = $songs->pop();
 
         $this->putAsUser("api/playlist/{$playlist->id}/sync", [

@@ -18,18 +18,18 @@ class DataController extends Controller
 {
     private const RECENTLY_PLAYED_EXCERPT_COUNT = 7;
 
-    private $lastfmService;
-    private $youTubeService;
-    private $iTunesService;
-    private $mediaCacheService;
-    private $settingRepository;
-    private $playlistRepository;
-    private $interactionRepository;
-    private $userRepository;
-    private $applicationInformationService;
+    private LastfmService $lastfmService;
+    private YouTubeService $youTubeService;
+    private ITunesService $iTunesService;
+    private MediaCacheService $mediaCacheService;
+    private SettingRepository $settingRepository;
+    private PlaylistRepository $playlistRepository;
+    private InteractionRepository $interactionRepository;
+    private UserRepository $userRepository;
+    private ApplicationInformationService $applicationInformationService;
 
     /** @var User */
-    private $currentUser;
+    private ?Authenticatable $currentUser;
 
     public function __construct(
         LastfmService $lastfmService,

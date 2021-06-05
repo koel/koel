@@ -66,7 +66,6 @@
     <rule ref="SlevomatCodingStandard.Classes.DisallowMultiConstantDefinition"/>
     <rule ref="SlevomatCodingStandard.Classes.DisallowMultiPropertyDefinition"/>
     <rule ref="SlevomatCodingStandard.Classes.MethodSpacing"/>
-    <rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference"/>
     <rule ref="SlevomatCodingStandard.Classes.ParentCallSpacing"/>
     <rule ref="SlevomatCodingStandard.Classes.PropertySpacing"/>
     <rule ref="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>

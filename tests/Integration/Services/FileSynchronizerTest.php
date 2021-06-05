@@ -7,8 +7,7 @@ use Tests\TestCase;
 
 class FileSynchronizerTest extends TestCase
 {
-    /** @var FileSynchronizer */
-    private $fileSynchronizer;
+    private FileSynchronizer $fileSynchronizer;
 
     public function setUp(): void
     {

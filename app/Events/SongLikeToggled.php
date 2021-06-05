@@ -10,8 +10,8 @@ class SongLikeToggled extends Event
 {
     use SerializesModels;
 
-    public $interaction;
-    public $user;
+    public Interaction $interaction;
+    public ?User $user = null;
 
     public function __construct(Interaction $interaction, ?User $user = null)
     {

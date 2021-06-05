@@ -8,7 +8,7 @@ use App\Services\DownloadService;
 
 class SongController extends Controller
 {
-    private $songRepository;
+    private SongRepository $songRepository;
 
     public function __construct(DownloadService $downloadService, SongRepository $songRepository)
     {

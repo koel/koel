@@ -9,8 +9,8 @@ use Throwable;
 
 class MediaMetadataService
 {
-    private $imageWriter;
-    private $logger;
+    private ImageWriter $imageWriter;
+    private LoggerInterface $logger;
 
     public function __construct(ImageWriter $imageWriter, LoggerInterface $logger)
     {
@@ -18,9 +18,6 @@ class MediaMetadataService
         $this->logger = $logger;
     }
 
-    /**
-     * Download a copy of the album cover.
-     */
     public function downloadAlbumCover(Album $album, string $imageUrl): void
     {
         $extension = explode('.', $imageUrl);
@@ -55,9 +52,6 @@ class MediaMetadataService
         }
     }
 
-    /**
-     * Download a copy of the artist image.
-     */
     public function downloadArtistImage(Artist $artist, string $imageUrl): void
     {
         $extension = explode('.', $imageUrl);

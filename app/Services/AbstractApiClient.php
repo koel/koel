@@ -43,19 +43,17 @@ abstract class AbstractApiClient
         'deleteAsync',
     ];
 
-    protected $responseFormat = 'json';
-    protected $client;
-    protected $cache;
-    protected $logger;
+    protected string $responseFormat = 'json';
+    protected Client $client;
+    protected Cache $cache;
+    protected Logger $logger;
 
     /**
      * The query parameter name for the key.
      * For example, Last.fm use api_key, like this:
      * https://ws.audioscrobbler.com/2.0?method=artist.getInfo&artist=Kamelot&api_key=API_KEY.
-     *
-     * @var string
      */
-    protected $keyParam = 'key';
+    protected string $keyParam = 'key';
 
     public function __construct(Client $client, Cache $cache, Logger $logger)
     {
@@ -67,16 +65,16 @@ abstract class AbstractApiClient
     /**
      * Make a request to the API.
      *
-     * @param string  $method    The HTTP method
-     * @param string  $uri       The API URI (segment)
-     * @param bool    $appendKey Whether to automatically append the API key into the URI.
+     * @param string $method The HTTP method
+     * @param string $uri The API URI (segment)
+     * @param bool $appendKey Whether to automatically append the API key into the URI.
      *                           While it's usually the case, some services (like Last.fm) requires
      *                           an "API signature" of the request. Appending an API key will break the request.
-     * @param array<mixed> $params An array of parameters
+     * @param array $params An array of parameters
      *
      * @return mixed|SimpleXMLElement|void
      */
-    public function request(string $method, string $uri, bool $appendKey = true, array $params = [])
+    public function request(string $method, string $uri, bool $appendKey = true, array $params = []) // @phpcs:ignore
     {
         try {
             $body = (string) $this->getClient()
@@ -105,14 +103,14 @@ abstract class AbstractApiClient
     /**
      * Make an HTTP call to the external resource.
      *
-     * @param string  $method The HTTP method
+     * @param string $method The HTTP method
      * @param array<mixed> $args An array of parameters
      *
+     * @return mixed|SimpleXMLElement|void
      * @throws InvalidArgumentException
      *
-     * @return mixed|SimpleXMLElement|void
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args) // @phpcs:ignore
     {
         Assert::inArray($method, self::MAGIC_METHODS);
 

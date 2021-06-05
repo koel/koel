@@ -15,12 +15,12 @@ class AuthController extends Controller
 {
     use ThrottlesLogins;
 
-    private $userRepository;
-    private $hash;
-    private $tokenManager;
+    private UserRepository $userRepository;
+    private HashManager $hash;
+    private TokenManager $tokenManager;
 
-    /** @var User|null */
-    private $currentUser;
+    /** @var User */
+    private ?Authenticatable $currentUser = null;
 
     public function __construct(
         UserRepository $userRepository,

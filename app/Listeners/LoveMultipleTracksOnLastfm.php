@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class LoveMultipleTracksOnLastfm implements ShouldQueue
 {
-    private $lastfm;
+    private LastfmService $lastfm;
 
     public function __construct(LastfmService $lastfm)
     {

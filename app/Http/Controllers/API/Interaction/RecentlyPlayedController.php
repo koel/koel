@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class RecentlyPlayedController extends Controller
 {
-    private $interactionRepository;
+    private InteractionRepository $interactionRepository;
 
     public function __construct(
         InteractionService $interactionService,

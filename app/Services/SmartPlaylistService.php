@@ -6,7 +6,6 @@ use App\Models\Playlist;
 use App\Models\Rule;
 use App\Models\Song;
 use App\Models\User;
-use App\Repositories\SongRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use RuntimeException;
@@ -14,13 +13,6 @@ use RuntimeException;
 class SmartPlaylistService
 {
     private const RULE_REQUIRES_USER_PREFIXES = ['interactions.'];
-
-    private $songRepository;
-
-    public function __construct(SongRepository $songRepository)
-    {
-        $this->songRepository = $songRepository;
-    }
 
     /** @return Collection|array<Song> */
     public function getSongs(Playlist $playlist): Collection
@@ -61,7 +53,7 @@ class SmartPlaylistService
         foreach ($rules as &$ruleGroup) {
             $additionalRules = [];
 
-            foreach ($ruleGroup['rules'] as &$config) {
+            foreach ($ruleGroup['rules'] as $config) {
                 foreach (self::RULE_REQUIRES_USER_PREFIXES as $modelPrefix) {
                     if (starts_with($config['model'], $modelPrefix)) {
                         $additionalRules[] = $this->createRequireUserRule($user, $modelPrefix);

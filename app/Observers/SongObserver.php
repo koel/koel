@@ -7,7 +7,7 @@ use App\Services\HelperService;
 
 class SongObserver
 {
-    private $helperService;
+    private HelperService $helperService;
 
     public function __construct(HelperService $helperService)
     {

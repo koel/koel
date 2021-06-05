@@ -15,9 +15,9 @@ use Illuminate\Http\Response;
 
 class SongController extends Controller
 {
-    private $mediaMetadataService;
-    private $songRepository;
-    private $helperService;
+    private MediaMetadataService $mediaMetadataService;
+    private SongRepository $songRepository;
+    private HelperService $helperService;
 
     public function __construct(
         MediaMetadataService $mediaMetadataService,
@@ -31,7 +31,7 @@ class SongController extends Controller
 
     public function put(PutSongRequest $request)
     {
-        $path = "s3://{$request->bucket}/{$request->key}";
+        $path = "s3://$request->bucket/$request->key";
 
         $tags = $request->tags;
         $artist = Artist::getOrCreate(array_get($tags, 'artist'));
@@ -66,7 +66,7 @@ class SongController extends Controller
 
     public function remove(RemoveSongRequest $request)
     {
-        $song = $this->songRepository->getOneByPath("s3://{$request->bucket}/{$request->key}");
+        $song = $this->songRepository->getOneByPath("s3://$request->bucket/$request->key");
         abort_unless((bool) $song, Response::HTTP_NOT_FOUND);
 
         $song->delete();

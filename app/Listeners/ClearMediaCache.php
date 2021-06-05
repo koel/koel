@@ -6,7 +6,7 @@ use App\Services\MediaCacheService;
 
 class ClearMediaCache
 {
-    private $mediaCacheService;
+    private MediaCacheService $mediaCacheService;
 
     public function __construct(MediaCacheService $mediaCacheService)
     {

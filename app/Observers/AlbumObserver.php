@@ -8,7 +8,7 @@ use Throwable;
 
 class AlbumObserver
 {
-    private $logger;
+    private Logger $logger;
 
     public function __construct(Logger $logger)
     {

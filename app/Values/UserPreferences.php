@@ -7,7 +7,7 @@ use JsonSerializable;
 
 final class UserPreferences implements Arrayable, JsonSerializable
 {
-    public $lastFmSessionKey;
+    public ?string $lastFmSessionKey = null;
 
     private function __construct(?string $lastFmSessionKey)
     {

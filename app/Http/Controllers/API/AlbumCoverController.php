@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class AlbumCoverController extends Controller
 {
-    private $mediaMetadataService;
+    private MediaMetadataService $mediaMetadataService;
 
     public function __construct(MediaMetadataService $mediaMetadataService)
     {

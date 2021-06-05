@@ -8,7 +8,7 @@ use Throwable;
 
 class DownloadArtistImage
 {
-    private $mediaMetadataService;
+    private MediaMetadataService $mediaMetadataService;
 
     public function __construct(MediaMetadataService $mediaMetadataService)
     {

@@ -10,7 +10,7 @@ class ImageWriter
     private const DEFAULT_MAX_WIDTH = 500;
     private const DEFAULT_QUALITY = 80;
 
-    private $imageManager;
+    private ImageManager $imageManager;
 
     public function __construct(ImageManager $imageManager)
     {

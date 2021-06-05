@@ -10,10 +10,10 @@ use Illuminate\Http\Response;
 
 class LastfmController extends Controller
 {
-    private $lastfm;
+    private LastfmService $lastfm;
 
     /** @var User */
-    private $currentUser;
+    private ?Authenticatable $currentUser;
 
     public function __construct(LastfmService $lastfm, ?Authenticatable $currentUser)
     {

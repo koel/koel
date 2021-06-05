@@ -9,14 +9,9 @@ use Throwable;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
-    /** @var string */
-    private $modelClass;
-
-    /** @var Model */
-    protected $model;
-
-    /** @var Guard */
-    protected $auth;
+    private string $modelClass;
+    protected Model $model;
+    protected Guard $auth;
 
     public function __construct(?string $modelClass = null)
     {
@@ -44,7 +39,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /** @return Collection|array<Model> */
     public function getByIds(array $ids): Collection
     {
-        return $this->model->whereIn($this->model->getKeyName(), $ids)->get();
+        return $this->model->find($ids);
     }
 
     /** @return Collection|array<Model> */
@@ -55,7 +50,7 @@ abstract class AbstractRepository implements RepositoryInterface
 
     public function getFirstWhere(...$params): ?Model
     {
-        return $this->model->where(...$params)->first();
+        return $this->model->firstWhere(...$params);
     }
 
     public function getModelClass(): string

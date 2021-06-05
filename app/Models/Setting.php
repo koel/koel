@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string $key
- * @property mixed  $value
+ * @property mixed $value
  *
  * @method static self find(string $key)
  * @method static self updateOrCreate(array $where, array $params)
@@ -22,20 +22,18 @@ class Setting extends Model
 
     /**
      * Get a setting value.
-     *
-     * @return mixed
      */
-    public static function get(string $key)
+    public static function get(string $key) // @phpcs:ignore
     {
         $record = self::find($key);
 
-        return $record ? $record->value :  null;
+        return $record ? $record->value : null;
     }
 
     /**
      * Set a setting (no pun) value.
      *
-     * @param string|array $key   the key of the setting, or an associative array of settings,
+     * @param string|array $key the key of the setting, or an associative array of settings,
      *                            in which case $value will be discarded
      */
     public static function set($key, $value = null): void
@@ -62,10 +60,8 @@ class Setting extends Model
 
     /**
      * Get the unserialized setting value.
-     *
-     * @return mixed
      */
-    public function getValueAttribute($value)
+    public function getValueAttribute($value) // @phpcs:ignore
     {
         return unserialize($value);
     }

@@ -8,7 +8,7 @@ use Illuminate\Routing\Redirector;
 
 class S3Streamer extends Streamer implements ObjectStorageStreamerInterface
 {
-    private $s3Service;
+    private S3Service $s3Service;
 
     public function __construct(S3Service $s3Service)
     {
@@ -22,8 +22,9 @@ class S3Streamer extends Streamer implements ObjectStorageStreamerInterface
      * Actually, we just redirect the request to the S3 object's location.
      *
      * @return Redirector|RedirectResponse
+     *
      */
-    public function stream()
+    public function stream() // @phpcs:ignore
     {
         // Get and redirect to the actual presigned-url
         return redirect($this->s3Service->getSongPublicUrl($this->song));

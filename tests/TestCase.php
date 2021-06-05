@@ -53,8 +53,7 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    /** @return mixed */
-    protected static function getNonPublicProperty($object, string $property)
+    protected static function getNonPublicProperty($object, string $property) // @phpcs:ignore
     {
         $reflection = new ReflectionClass($object);
         $property = $reflection->getProperty($property);

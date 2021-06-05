@@ -11,11 +11,11 @@ use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
-    private $hash;
-    private $tokenManager;
+    private Hash $hash;
+    private TokenManager $tokenManager;
 
     /** @var User */
-    private $currentUser;
+    private ?Authenticatable $currentUser;
 
     public function __construct(Hash $hash, TokenManager $tokenManager, ?Authenticatable $currentUser)
     {

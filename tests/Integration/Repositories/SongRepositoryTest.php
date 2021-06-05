@@ -9,15 +9,13 @@ use Tests\TestCase;
 
 class SongRepositoryTest extends TestCase
 {
-    private $helperService;
-    private $songRepository;
+    private SongRepository $songRepository;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->helperService = new HelperService();
-        $this->songRepository = new SongRepository($this->helperService);
+        $this->songRepository = new SongRepository(new HelperService());
     }
 
     public function testGetOneByPath(): void

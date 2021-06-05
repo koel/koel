@@ -11,9 +11,9 @@ class ApplicationInformationService
 {
     private const CACHE_KEY = 'latestKoelVersion';
 
-    private $client;
-    private $cache;
-    private $logger;
+    private Client $client;
+    private Cache $cache;
+    private Logger $logger;
 
     public function __construct(Client $client, Cache $cache, Logger $logger)
     {
@@ -27,11 +27,10 @@ class ApplicationInformationService
      */
     public function getLatestVersionNumber(): string
     {
-        return $this->cache->remember(self::CACHE_KEY, 1 * 24 * 60, function (): string {
+        return $this->cache->remember(self::CACHE_KEY, now()->addDay(), function (): string {
             try {
-                return json_decode(
-                    $this->client->get('https://api.github.com/repos/phanan/koel/tags')->getBody()
-                )[0]->name;
+                return json_decode($this->client->get('https://api.github.com/repos/koel/koel/tags')->getBody())[0]
+                    ->name;
             } catch (Throwable $e) {
                 $this->logger->error($e);
 

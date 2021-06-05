@@ -9,7 +9,7 @@ use InvalidArgumentException;
 
 class SongSearchController extends Controller
 {
-    private $searchService;
+    private SearchService $searchService;
 
     public function __construct(SearchService $searchService)
     {

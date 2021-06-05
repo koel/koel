@@ -10,8 +10,7 @@ use Tests\TestCase;
 
 class SmartPlaylistServiceTest extends TestCase
 {
-    /** @var SmartPlaylistService */
-    private $service;
+    private SmartPlaylistService $service;
 
     public function setUp(): void
     {

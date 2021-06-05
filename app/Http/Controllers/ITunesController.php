@@ -10,8 +10,8 @@ use Illuminate\Http\Response;
 
 class ITunesController extends Controller
 {
-    private $iTunesService;
-    private $tokenManager;
+    private ITunesService $iTunesService;
+    private TokenManager $tokenManager;
 
     public function __construct(ITunesService $iTunesService, TokenManager $tokenManager)
     {
@@ -27,7 +27,7 @@ class ITunesController extends Controller
         );
 
         $url = $this->iTunesService->getTrackUrl($request->q, $album->name, $album->artist->name);
-        abort_unless($url, 404, "Koel can't find such a song on iTunes Store.");
+        abort_unless((bool) $url, 404, "Koel can't find such a song on iTunes Store.");
 
         return redirect($url);
     }

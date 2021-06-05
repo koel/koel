@@ -28,8 +28,6 @@ class UserFactory extends Factory
 
     public function admin(): self
     {
-        return $this->state(function (): array { // phpcs:ignore
-            return ['is_admin' => true];
-        });
+        return $this->state(fn () => ['is_admin' => true]); // @phpcs:ignore
     }
 }
