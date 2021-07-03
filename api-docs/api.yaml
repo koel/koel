@@ -486,7 +486,7 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/SmartPlaylistRule'
-  '/api/playlist/{playlistId}':
+  '/api/playlist/{playlistId}/songs':
     parameters:
       - schema:
           type: integer
