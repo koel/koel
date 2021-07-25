@@ -67,6 +67,12 @@ yarn test            # Unit testing
 > 
 > [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/koel/koel)
 
+## Koel Player
+
+![Koel Player screenshots](https://user-images.githubusercontent.com/8056274/126907318-f3e1e09d-556e-4696-8277-29fd5332aaa1.jpg)
+
+[Koel Player](https://github.com/koel/player) is the official mobile app for Koel, which supports both iOS and Android without the limitations of the mobile web version. For more information on the project, visit [its repository](https://github.com/koel/player).
+
 ## Backers
 
 [Support me on OpenCollective](https://opencollective.com/koel#backer) with a monthly donation and help me continue building Koel.
