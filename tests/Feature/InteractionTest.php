@@ -20,8 +20,11 @@ class InteractionTest extends TestCase
     public function testIncreasePlayCount(): void
     {
         $this->withoutEvents();
+
+        /** @var User $user */
         $user = User::factory()->create();
 
+        /** @var Song $song */
         $song = Song::orderBy('id')->first();
         $this->postAsUser('api/interaction/play', ['song' => $song->id], $user);
 
@@ -45,8 +48,10 @@ class InteractionTest extends TestCase
     {
         $this->expectsEvents(SongLikeToggled::class);
 
+        /** @var User $user */
         $user = User::factory()->create();
 
+        /** @var Song $song */
         $song = Song::orderBy('id')->first();
         $this->postAsUser('api/interaction/like', ['song' => $song->id], $user);
 

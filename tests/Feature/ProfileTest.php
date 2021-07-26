@@ -15,6 +15,7 @@ class ProfileTest extends TestCase
     {
         parent::setUp();
 
+        // @phpstan-ignore-next-line
         $this->user = User::factory()->create(['password' => Hash::make('secret')]);
     }
 

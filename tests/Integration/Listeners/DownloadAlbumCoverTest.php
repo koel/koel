@@ -24,6 +24,7 @@ class DownloadAlbumCoverTest extends TestCase
 
     public function testHandle(): void
     {
+        /** @var Album $album */
         $album = Album::factory()->make(['cover' => null]);
         $event = new AlbumInformationFetched($album, ['image' => 'https://foo.bar/baz.jpg']);
 

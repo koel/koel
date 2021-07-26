@@ -10,6 +10,7 @@ abstract class TestCase extends BaseTestCase
 {
     private function jsonAsUser(?User $user, string $method, $uri, array $data = [], array $headers = []): TestResponse
     {
+        /** @var User $user */
         $user = $user ?: User::factory()->create();
         $headers['X-Requested-With'] = 'XMLHttpRequest';
         $headers['Authorization'] = 'Bearer ' . $user->createToken('koel')->plainTextToken;

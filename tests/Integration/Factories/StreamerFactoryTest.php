@@ -57,6 +57,7 @@ class StreamerFactoryTest extends TestCase
         /** @var StreamerFactory $streamerFactory */
         $streamerFactory = app(StreamerFactory::class);
 
+        /** @var Song $song */
         $song = Song::factory()->make();
         self::assertInstanceOf(TranscodingStreamer::class, $streamerFactory->createStreamer($song, true));
     }
@@ -88,6 +89,7 @@ class StreamerFactoryTest extends TestCase
         /** @var StreamerFactory $streamerFactory */
         $streamerFactory = app(StreamerFactory::class);
 
+        /** @var Song $song */
         $song = Song::factory()->make();
         self::assertInstanceOf($expectedClass, $streamerFactory->createStreamer($song));
     }

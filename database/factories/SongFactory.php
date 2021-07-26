@@ -19,7 +19,7 @@ class SongFactory extends Factory
         return [
             'album_id' => $album->id,
             'artist_id' => $album->artist->id,
-            'title' => ucwords($this->faker->words(random_int(2, 5), true)),
+            'title' => $this->faker->sentence,
             'length' => $this->faker->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),
             'lyrics' => $this->faker->paragraph(),

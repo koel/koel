@@ -38,11 +38,11 @@ class InteractionServiceTest extends TestCase
     {
         $this->expectsEvents(SongLikeToggled::class);
 
+        /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();
 
         $this->interactionService->toggleLike($interaction->song, $interaction->user);
 
-        /** @var Interaction $interaction */
         $updatedInteraction = Interaction::find($interaction->id);
         self::assertNotSame($interaction->liked, $updatedInteraction->liked);
     }

@@ -28,6 +28,7 @@ class S3ServiceTest extends TestCase
 
     public function testGetSongPublicUrl(): void
     {
+        /** @var Song $song */
         $song = Song::factory()->create(['path' => 's3://foo/bar']);
 
         $cmd = Mockery::mock(CommandInterface::class);

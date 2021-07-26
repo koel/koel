@@ -56,9 +56,12 @@ class LastfmServiceTest extends TestCase
 
     public function testGetAlbumInformation(): void
     {
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create(['name' => 'bar']);
+
         /** @var Album $album */
         $album = Album::factory()->create([
-            'artist_id' => Artist::factory()->create(['name' => 'bar'])->id,
+            'artist_id' => $artist->id,
             'name' => 'foo',
         ]);
 

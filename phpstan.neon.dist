@@ -25,6 +25,7 @@ parameters:
         - '#should return App\\Models\\.*(\|null)? but returns Illuminate\\Database\\Eloquent\\Model(\|null)?#'
         # Laravel factories allow declaration of dynamic methods as "states"
         - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factories\\Factory::#'
+        - '#expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Collection\|Illuminate\\Database\\Eloquent\\Model given#'
 
     excludePaths:
         - ./routes/console.php

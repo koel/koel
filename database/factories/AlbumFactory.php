@@ -15,7 +15,7 @@ class AlbumFactory extends Factory
     {
         return [
             'artist_id' => Artist::factory(),
-            'name' => ucwords($this->faker->words(random_int(2, 5), true)),
+            'name' => $this->faker->colorName,
             'cover' => md5(uniqid()) . '.jpg',
         ];
     }

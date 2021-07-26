@@ -19,6 +19,7 @@ class MediaMetadataServiceTest extends TestCase
     {
         copy(__DIR__ . '/../../blobs/cover.png', album_cover_path('album-cover-for-thumbnail-test.jpg'));
 
+        /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
 
         self::assertSame(
@@ -31,6 +32,7 @@ class MediaMetadataServiceTest extends TestCase
 
     public function testGetAlbumThumbnailUrlWithNoCover(): void
     {
+        /** @var Album $album */
         $album = Album::factory()->create(['cover' => null]);
         self::assertNull(app(MediaMetadataService::class)->getAlbumThumbnailUrl($album));
     }
