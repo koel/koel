@@ -1,5 +1,8 @@
 name: e2e
-on: [ push ]
+on:
+  push:
+    tags-ingore:
+      - '**'
 jobs:
   test:
     runs-on: ubuntu-latest
