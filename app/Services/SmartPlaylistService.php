@@ -41,7 +41,9 @@ class SmartPlaylistService
 
         $ruleGroups->each(function (SmartPlaylistRuleGroup $group) use ($query): void {
             $query->orWhere(function (Builder $subQuery) use ($group): void {
-                $group->rules->each(fn (SmartPlaylistRule $rule) => $this->buildQueryForRule($subQuery, $rule));
+                $group->rules->each(function (SmartPlaylistRule $rule) use ($subQuery): void {
+                    $this->buildQueryForRule($subQuery, $rule);
+                });
             });
         });
 

@@ -15,7 +15,7 @@ use Laravel\Scout\Searchable;
 
 /**
  * @property int $user_id
- * @property Collection $songs
+ * @property Collection|array $songs
  * @property int $id
  * @property Collection|array<SmartPlaylistRuleGroup> $rule_groups
  * @property bool $is_smart
