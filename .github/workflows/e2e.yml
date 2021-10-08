@@ -1,8 +1,10 @@
 name: e2e
 on:
   push:
-    tags-ingore:
-      - '**'
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest
