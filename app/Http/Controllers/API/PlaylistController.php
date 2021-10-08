@@ -7,6 +7,7 @@ use App\Http\Requests\API\PlaylistSyncRequest;
 use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\PlaylistRepository;
+use App\Services\PlaylistService;
 use App\Services\SmartPlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 class PlaylistController extends Controller
 {
     private PlaylistRepository $playlistRepository;
+    private PlaylistService $playlistService;
     private SmartPlaylistService $smartPlaylistService;
 
     /** @var User */
@@ -21,10 +23,12 @@ class PlaylistController extends Controller
 
     public function __construct(
         PlaylistRepository $playlistRepository,
+        PlaylistService $playlistService,
         SmartPlaylistService $smartPlaylistService,
         ?Authenticatable $currentUser
     ) {
         $this->playlistRepository = $playlistRepository;
+        $this->playlistService = $playlistService;
         $this->smartPlaylistService = $smartPlaylistService;
         $this->currentUser = $currentUser;
     }
@@ -36,24 +40,16 @@ class PlaylistController extends Controller
 
     public function store(PlaylistStoreRequest $request)
     {
-        /** @var Playlist $playlist */
-        $playlist = $this->currentUser->playlists()->create([
-            'name' => $request->name,
-            'rules' => $request->rules,
-        ]);
+        $playlist = $this->playlistService->createPlaylist(
+            $request->name,
+            $this->currentUser,
+            (array) $request->songs,
+            $request->rules
+        );
 
-        if (!$playlist->is_smart) {
-            $songs = (array) $request->songs;
+        $playlist->songs = $playlist->songs->pluck('id')->toArray();
 
-            if ($songs) {
-                $playlist->songs()->sync($songs);
-            }
-        }
-
-        $playlistAsArray = $playlist->toArray();
-        $playlistAsArray['songs'] = $playlist->songs->pluck('id');
-
-        return response()->json($playlistAsArray);
+        return response()->json($playlist);
     }
 
     public function update(Request $request, Playlist $playlist)

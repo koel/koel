@@ -2,39 +2,46 @@
 
 namespace App\Services;
 
+use App\Exceptions\NonSmartPlaylistException;
+use App\Factories\SmartPlaylistRuleParameterFactory;
 use App\Models\Playlist;
-use App\Models\Rule;
 use App\Models\Song;
 use App\Models\User;
+use App\Values\SmartPlaylistRule;
+use App\Values\SmartPlaylistRuleGroup;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use RuntimeException;
+use Illuminate\Support\Collection;
 
 class SmartPlaylistService
 {
-    private const RULE_REQUIRES_USER_PREFIXES = ['interactions.'];
+    private const USER_REQUIRING_RULE_PREFIXES = ['interactions.'];
+
+    private SmartPlaylistRuleParameterFactory $parameterFactory;
+
+    public function __construct(SmartPlaylistRuleParameterFactory $parameterFactory)
+    {
+        $this->parameterFactory = $parameterFactory;
+    }
 
     /** @return Collection|array<Song> */
     public function getSongs(Playlist $playlist): Collection
     {
-        if (!$playlist->is_smart) {
-            throw new RuntimeException($playlist->name . ' is not a smart playlist.');
-        }
+        throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
-        $rules = $this->addRequiresUserRules($playlist->rules, $playlist->user);
+        $ruleGroups = $this->addRequiresUserRules($playlist->rule_groups, $playlist->user);
 
-        return $this->buildQueryFromRules($rules)->get();
+        return $this->buildQueryFromRules($ruleGroups)->get();
     }
 
-    public function buildQueryFromRules(array $rules): Builder
+    public function buildQueryFromRules(Collection $ruleGroups): Builder
     {
         $query = Song::query();
 
-        collect($rules)->each(static function (array $ruleGroup) use ($query): void {
-            $query->orWhere(static function (Builder $subQuery) use ($ruleGroup): void {
-                foreach ($ruleGroup['rules'] as $config) {
-                    Rule::create($config)->build($subQuery);
-                }
+        $ruleGroups->each(function (SmartPlaylistRuleGroup $group) use ($query): void {
+            $query->orWhere(function (Builder $subQuery) use ($group): void {
+                $group->rules->each(function (SmartPlaylistRule $rule) use ($subQuery): void {
+                    $this->buildQueryForRule($subQuery, $rule);
+                });
             });
         });
 
@@ -46,35 +53,67 @@ class SmartPlaylistService
      * (basically everything related to interactions).
      * For those, we create an additional "user_id" rule.
      *
-     * @return array<mixed>
+     * @return Collection|array<SmartPlaylistRuleGroup>
      */
-    public function addRequiresUserRules(array $rules, User $user): array
+    public function addRequiresUserRules(Collection $ruleGroups, User $user): Collection
     {
-        foreach ($rules as &$ruleGroup) {
-            $additionalRules = [];
+        return $ruleGroups->map(function (SmartPlaylistRuleGroup $group) use ($user): SmartPlaylistRuleGroup {
+            $clonedGroup = clone $group;
+            $additionalRules = collect();
 
-            foreach ($ruleGroup['rules'] as $config) {
-                foreach (self::RULE_REQUIRES_USER_PREFIXES as $modelPrefix) {
-                    if (starts_with($config['model'], $modelPrefix)) {
-                        $additionalRules[] = $this->createRequireUserRule($user, $modelPrefix);
+            $group->rules->each(function (SmartPlaylistRule $rule) use ($additionalRules, $user): void {
+                foreach (self::USER_REQUIRING_RULE_PREFIXES as $modelPrefix) {
+                    if (starts_with($rule->model, $modelPrefix)) {
+                        $additionalRules->add($this->createRequiresUserRule($user, $modelPrefix));
                     }
                 }
-            }
+            });
 
-            // make sure all those additional rules are unique.
-            $ruleGroup['rules'] = array_merge($ruleGroup['rules'], collect($additionalRules)->unique('model')->all());
-        }
+            // Make sure all those additional rules are unique.
+            $clonedGroup->rules = $clonedGroup->rules->merge($additionalRules->unique('model')->collect());
 
-        return $rules;
+            return $clonedGroup;
+        });
     }
 
-    /** @return array<mixed> */
-    private function createRequireUserRule(User $user, string $modelPrefix): array
+    private function createRequiresUserRule(User $user, string $modelPrefix): SmartPlaylistRule
     {
-        return [
+        return SmartPlaylistRule::create([
             'model' => $modelPrefix . 'user_id',
             'operator' => 'is',
             'value' => [$user->id],
-        ];
+        ]);
+    }
+
+    public function buildQueryForRule(Builder $query, SmartPlaylistRule $rule, ?string $model = null): Builder
+    {
+        if (!$model) {
+            $model = $rule->model;
+        }
+
+        $fragments = explode('.', $model, 2);
+
+        if (count($fragments) === 1) {
+            return $query->{$this->resolveWhereLogic($rule)}(
+                ...$this->parameterFactory->createParameters($model, $rule->operator, $rule->value)
+            );
+        }
+
+        // If the model is something like 'artist.name' or 'interactions.play_count', we have a subquery to deal with.
+        // We handle such a case with a recursive call which, in theory, should work with an unlimited level of nesting,
+        // though in practice we only have one level max.
+        return $query->whereHas(
+            $fragments[0],
+            fn (Builder $subQuery) => $this->buildQueryForRule($subQuery, $rule, $fragments[1])
+        );
+    }
+
+    /**
+     * Resolve the logic of a (sub)query base on the configured operator.
+     * Basically, if the operator is "between," we use "whereBetween". Otherwise, it's "where". Simple.
+     */
+    private function resolveWhereLogic(SmartPlaylistRule $rule): string
+    {
+        return $rule->operator === SmartPlaylistRule::OPERATOR_IS_BETWEEN ? 'whereBetween' : 'where';
     }
 }

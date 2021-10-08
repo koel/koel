@@ -11,7 +11,7 @@ use App\Values\LastfmLoveTrackParameters;
 use Mockery;
 use Tests\Feature\TestCase;
 
-class LoveTrackOnLastfmTest extends TestCase
+class LoveTrackOnLastFmTest extends TestCase
 {
     public function testHandle(): void
     {

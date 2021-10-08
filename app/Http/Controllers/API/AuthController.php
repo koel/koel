@@ -20,7 +20,7 @@ class AuthController extends Controller
     private TokenManager $tokenManager;
 
     /** @var User */
-    private ?Authenticatable $currentUser = null;
+    private ?Authenticatable $currentUser;
 
     public function __construct(
         UserRepository $userRepository,
@@ -30,8 +30,8 @@ class AuthController extends Controller
     ) {
         $this->userRepository = $userRepository;
         $this->hash = $hash;
-        $this->currentUser = $currentUser;
         $this->tokenManager = $tokenManager;
+        $this->currentUser = $currentUser;
     }
 
     public function login(UserLoginRequest $request)

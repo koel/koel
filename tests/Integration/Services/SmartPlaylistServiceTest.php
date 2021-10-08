@@ -2,10 +2,12 @@
 
 namespace Tests\Integration\Services;
 
-use App\Models\Rule;
 use App\Models\User;
 use App\Services\SmartPlaylistService;
+use App\Values\SmartPlaylistRule;
+use App\Values\SmartPlaylistRuleGroup;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class SmartPlaylistServiceTest extends TestCase
@@ -27,7 +29,7 @@ class SmartPlaylistServiceTest extends TestCase
     }
 
     /** @return array<array<mixed>> */
-    public function provideRules(): array
+    public function provideRuleConfigs(): array
     {
         return [
             [
@@ -98,15 +100,14 @@ class SmartPlaylistServiceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideRules
-     *
-     * @param array<string> $rules
-     * @param array<mixed> $bindings
-     */
-    public function testBuildQueryForRules(array $rules, string $sql, array $bindings): void
+    /** @dataProvider provideRuleConfigs */
+    public function testBuildQueryForRules(array $rawRules, string $sql, array $bindings): void
     {
-        $query = $this->service->buildQueryFromRules($rules);
+        $ruleGroups = collect($rawRules)->map(static function (array $group): SmartPlaylistRuleGroup {
+            return SmartPlaylistRuleGroup::create($group);
+        });
+
+        $query = $this->service->buildQueryFromRules($ruleGroups);
         self::assertSame($sql, $query->toSql());
         $queryBinding = $query->getBindings();
 
@@ -120,22 +121,30 @@ class SmartPlaylistServiceTest extends TestCase
 
     public function testAddRequiresUserRules(): void
     {
-        $rules = $this->readFixtureFile('requiresUser.json');
+        $ruleGroups = collect($this->readFixtureFile('requiresUser.json'))->map(
+            static function (array $group): SmartPlaylistRuleGroup {
+                return SmartPlaylistRuleGroup::create($group);
+            }
+        );
 
         /** @var User $user */
         $user = User::factory()->create();
 
-        self::assertEquals([
+        /** @var Collection|array<SmartPlaylistRule> $finalRules */
+        $finalRules = $this->service->addRequiresUserRules($ruleGroups, $user)->first()->rules;
+
+        self::assertCount(2, $finalRules);
+        self::assertTrue($finalRules[1]->equals([
             'model' => 'interactions.user_id',
             'operator' => 'is',
             'value' => [$user->id],
-        ], $this->service->addRequiresUserRules($rules, $user)[0]['rules'][1]);
+        ]));
     }
 
     public function testAllOperatorsAreCovered(): void
     {
-        $rules = collect($this->provideRules())->map(static function (array $providedRule): array {
-            return $providedRule[0];
+        $rules = collect($this->provideRuleConfigs())->map(static function (array $config): array {
+            return $config[0];
         });
 
         $operators = [];
@@ -148,6 +157,6 @@ class SmartPlaylistServiceTest extends TestCase
             }
         }
 
-        self::assertSame(count(Rule::VALID_OPERATORS), count(array_unique($operators)));
+        self::assertSame(count(SmartPlaylistRule::VALID_OPERATORS), count(array_unique($operators)));
     }
 }

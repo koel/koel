@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'API'], static function (): void {
     Route::post('me', 'AuthController@login')->name('auth.login');
