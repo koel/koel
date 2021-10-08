@@ -42,10 +42,12 @@ class PlaylistController extends Controller
             'rules' => $request->rules,
         ]);
 
-        $songs = (array) $request->songs;
+        if (!$playlist->is_smart) {
+            $songs = (array) $request->songs;
 
-        if ($songs) {
-            $playlist->songs()->sync($songs);
+            if ($songs) {
+                $playlist->songs()->sync($songs);
+            }
         }
 
         $playlistAsArray = $playlist->toArray();

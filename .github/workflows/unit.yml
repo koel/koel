@@ -1,8 +1,10 @@
 name: unit
 on:
   push:
-    tags-ignore:
-      - '**'
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest

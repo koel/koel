@@ -486,6 +486,14 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/SmartPlaylistRule'
+                songs:
+                  type: array
+                  description: An array of song IDs to populate the playlist. Only used if the playlist is not a smart one (i.e. `rules` are empty).
+                  items:
+                    type: string
+                    format: md5
+              required:
+                - name
   '/api/playlist/{playlistId}/songs':
     parameters:
       - schema:

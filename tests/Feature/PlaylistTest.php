@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Playlist;
+use App\Models\Rule;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -44,6 +45,56 @@ class PlaylistTest extends TestCase
                 'song_id' => $song->id,
             ]);
         }
+    }
+
+    public function testCreatingSmartPlaylist(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $rule = Rule::create([
+            'model' => 'artist.name',
+            'operator' => Rule::OPERATOR_IS,
+            'value' => 'Bob Dylan',
+        ]);
+
+        $this->postAsUser('api/playlist', [
+            'name' => 'Smart Foo Bar',
+            'rules' => [$rule->toArray()],
+        ], $user);
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::orderBy('id', 'desc')->first();
+
+        self::assertSame('Smart Foo Bar', $playlist->name);
+        self::assertTrue($playlist->user->is($user));
+        self::assertTrue($playlist->is_smart);
+        self::assertCount(1, $playlist->rules);
+        self::assertTrue(Rule::create($playlist->rules[0])->equals($rule));
+    }
+
+    public function testCreatingSmartPlaylistIgnoresSongs(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $this->postAsUser('api/playlist', [
+            'name' => 'Smart Foo Bar',
+            'rules' => [
+                Rule::create([
+                    'model' => 'artist.name',
+                    'operator' => Rule::OPERATOR_IS,
+                    'value' => 'Bob Dylan',
+                ])->toArray(),
+            ],
+            'songs' => Song::orderBy('id')->take(3)->get()->pluck('id')->toArray(),
+        ], $user);
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::orderBy('id', 'desc')->first();
+
+        self::assertSame('Smart Foo Bar', $playlist->name);
+        self::assertEmpty($playlist->songs);
     }
 
     public function testUpdatePlaylistName(): void
