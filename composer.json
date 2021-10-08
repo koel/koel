@@ -24,13 +24,13 @@
         "daverandom/resume": "^0.0.3",
         "laravel/helpers": "^1.0",
         "intervention/image": "^2.5",
-        "laravel/sanctum": "^2.6",
         "doctrine/dbal": "^2.10",
         "lstrojny/functional-php": "^1.14",
         "teamtnt/laravel-scout-tntsearch-driver": "^11.1",
         "algolia/algoliasearch-client-php": "^2.7",
         "laravel/ui": "^3.2",
-        "webmozart/assert": "^1.10"
+        "webmozart/assert": "^1.10",
+        "laravel/sanctum": "^2.11"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

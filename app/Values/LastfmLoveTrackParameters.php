@@ -15,7 +15,7 @@ final class LastfmLoveTrackParameters
 
     public static function make(string $trackName, string $artistName): self
     {
-        return new static($trackName, $artistName);
+        return new self($trackName, $artistName);
     }
 
     public function getTrackName(): string
