@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\NonSmartPlaylistException;
 use App\Factories\SmartPlaylistRuleParameterFactory;
 use App\Models\Playlist;
 use App\Models\Song;
@@ -10,7 +11,6 @@ use App\Values\SmartPlaylistRule;
 use App\Values\SmartPlaylistRuleGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use RuntimeException;
 
 class SmartPlaylistService
 {
@@ -26,9 +26,7 @@ class SmartPlaylistService
     /** @return Collection|array<Song> */
     public function getSongs(Playlist $playlist): Collection
     {
-        if (!$playlist->is_smart) {
-            throw new RuntimeException($playlist->name . ' is not a smart playlist.');
-        }
+        throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
         $ruleGroups = $this->addRequiresUserRules($playlist->rule_groups, $playlist->user);
 
