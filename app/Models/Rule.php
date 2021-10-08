@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use App\Factories\SmartPlaylistRuleParameterFactory;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Webmozart\Assert\Assert;
 
-class Rule
+class Rule implements Arrayable
 {
     public const OPERATOR_IS = 'is';
     public const OPERATOR_IS_NOT = 'isNot';
@@ -82,5 +83,22 @@ class Rule
     private function resolveLogic(): string
     {
         return $this->operator === self::OPERATOR_IS_BETWEEN ? 'whereBetween' : 'where';
+    }
+
+    /** @return array<mixed> */
+    public function toArray(): array
+    {
+        return [
+            'model' => $this->model,
+            'operator' => $this->operator,
+            'value' => $this->value,
+        ];
+    }
+
+    public function equals(Rule $rule): bool
+    {
+        return $this->operator === $rule->operator
+            && $this->value === $rule->value
+            && $this->model === $rule->model;
     }
 }

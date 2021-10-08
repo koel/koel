@@ -30,6 +30,8 @@ class SmartPlaylistRuleParameterFactory
 
         Assert::keyExists($ruleParameterMap, $operator);
 
-        return is_array($ruleParameterMap[$operator]) ? $ruleParameterMap[$operator] : $ruleParameterMap[$operator]();
+        return is_callable($ruleParameterMap[$operator])
+            ? $ruleParameterMap[$operator]()
+            : $ruleParameterMap[$operator];
     }
 }
