@@ -12,7 +12,7 @@ class SmartPlaylistRulesCast implements CastsAttributes
     public function get($model, string $key, $value, array $attributes): Collection
     {
         return collect(json_decode($value, true) ?: [])->map(static function (array $group): ?SmartPlaylistRuleGroup {
-            return SmartPlaylistRuleGroup::create($group);
+            return SmartPlaylistRuleGroup::tryCreate($group);
         });
     }
 

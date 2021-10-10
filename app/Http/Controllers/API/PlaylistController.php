@@ -4,13 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Http\Requests\API\PlaylistSyncRequest;
+use App\Http\Requests\API\PlaylistUpdateRequest;
 use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\PlaylistRepository;
 use App\Services\PlaylistService;
 use App\Services\SmartPlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\Request;
 
 class PlaylistController extends Controller
 {
@@ -52,7 +52,7 @@ class PlaylistController extends Controller
         return response()->json($playlist);
     }
 
-    public function update(Request $request, Playlist $playlist)
+    public function update(PlaylistUpdateRequest $request, Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
 

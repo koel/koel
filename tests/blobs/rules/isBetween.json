@@ -4,11 +4,11 @@
     "rules": [
       {
         "id": 1541356313181,
-        "model": "bit_rate",
+        "model": "created_at",
         "operator": "isBetween",
         "value": [
-          "192",
-          "256"
+          "2021.10.01",
+          "2021.11.01"
         ]
       }
     ]
