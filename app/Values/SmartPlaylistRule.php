@@ -33,6 +33,27 @@ final class SmartPlaylistRule implements Arrayable
         self::OPERATOR_NOT_IN_LAST,
     ];
 
+    public const MODEL_TITLE = 'title';
+    public const MODEL_ALBUM_NAME = 'album.name';
+    public const MODEL_ARTIST_NAME = 'artist.name';
+    public const MODEL_PLAY_COUNT = 'interactions.play_count';
+    public const MODEL_LAST_PLAYED = 'interactions.updated_at';
+    public const MODEL_USER_ID = 'interactions.user_id';
+    public const MODEL_LENGTH = 'length';
+    public const MODEL_DATE_ADDED = 'created_at';
+    public const MODEL_DATE_MODIFIED = 'updated_at';
+
+    public const VALID_MODELS = [
+        self::MODEL_TITLE,
+        self::MODEL_ALBUM_NAME,
+        self::MODEL_ARTIST_NAME,
+        self::MODEL_PLAY_COUNT,
+        self::MODEL_LAST_PLAYED,
+        self::MODEL_LENGTH,
+        self::MODEL_DATE_ADDED,
+        self::MODEL_DATE_MODIFIED,
+    ];
+
     public ?int $id;
     public string $operator;
     public array $value;
@@ -40,7 +61,7 @@ final class SmartPlaylistRule implements Arrayable
 
     private function __construct(array $config)
     {
-        Assert::oneOf($config['operator'], self::VALID_OPERATORS);
+        self::assertConfig($config);
 
         $this->id = $config['id'] ?? null;
         $this->value = $config['value'];
@@ -48,9 +69,20 @@ final class SmartPlaylistRule implements Arrayable
         $this->operator = $config['operator'];
     }
 
+    public static function assertConfig(array $config, bool $allowUserIdModel = true): void
+    {
+        Assert::oneOf($config['operator'], self::VALID_OPERATORS);
+        Assert::oneOf(
+            $config['model'],
+            $allowUserIdModel ? array_prepend(self::VALID_MODELS, self::MODEL_USER_ID) : self::VALID_MODELS
+        );
+        Assert::isArray($config['value']);
+        Assert::countBetween($config['value'], 1, 2);
+    }
+
     public static function create(array $config): self
     {
-        return new static($config);
+        return new self($config);
     }
 
     /** @return array<mixed> */

@@ -13,21 +13,25 @@ final class SmartPlaylistRuleGroup implements Arrayable
     /** @var Collection|array<SmartPlaylistRule> */
     public Collection $rules;
 
-    public static function create(array $jsonArray): ?self
+    public static function tryCreate(array $jsonArray): ?self
     {
-        $group = new self();
-
         try {
-            $group->id = $jsonArray['id'] ?? null;
-
-            $group->rules = collect(array_map(static function (array $rawRuleConfig) {
-                return SmartPlaylistRule::create($rawRuleConfig);
-            }, $jsonArray['rules']));
-
-            return $group;
+            return self::create($jsonArray);
         } catch (Throwable $exception) {
             return null;
         }
+    }
+
+    public static function create(array $jsonArray): self
+    {
+        $group = new self();
+        $group->id = $jsonArray['id'] ?? null;
+
+        $group->rules = collect(array_map(static function (array $rawRuleConfig) {
+            return SmartPlaylistRule::create($rawRuleConfig);
+        }, $jsonArray['rules']));
+
+        return $group;
     }
 
     /** @return array<mixed> */

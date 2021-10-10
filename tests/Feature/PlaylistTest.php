@@ -74,26 +74,39 @@ class PlaylistTest extends TestCase
 
     public function testCreatingSmartPlaylistIgnoresSongs(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
         $this->postAsUser('api/playlist', [
             'name' => 'Smart Foo Bar',
             'rules' => [
-                SmartPlaylistRule::create([
-                    'model' => 'artist.name',
-                    'operator' => SmartPlaylistRule::OPERATOR_IS,
-                    'value' => ['Bob Dylan'],
-                ])->toArray(),
+                [
+                    'id' => 12345,
+                    'rules' => [
+                        SmartPlaylistRule::create([
+                            'model' => 'artist.name',
+                            'operator' => SmartPlaylistRule::OPERATOR_IS,
+                            'value' => ['Bob Dylan'],
+                        ])->toArray(),
+                    ],
+                ],
             ],
             'songs' => Song::orderBy('id')->take(3)->get()->pluck('id')->all(),
-        ], $user);
+        ]);
 
         /** @var Playlist $playlist */
         $playlist = Playlist::orderBy('id', 'desc')->first();
 
         self::assertSame('Smart Foo Bar', $playlist->name);
         self::assertEmpty($playlist->songs);
+    }
+
+    public function testCreatingPlaylistWithNonExistentSongsFails(): void
+    {
+        $response = $this->postAsUser('api/playlist', [
+            'name' => 'Foo Bar',
+            'rules' => [],
+            'songs' => ['foo'],
+        ]);
+
+        $response->assertUnprocessable();
     }
 
     public function testUpdatePlaylistName(): void
