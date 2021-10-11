@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 /**
  * @property array<string> $songs
  */
-class PlaylistSyncRequest extends Request
+class PlaylistSongUpdateRequest extends Request
 {
     /** @return array<mixed> */
     public function rules(): array

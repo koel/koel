@@ -1,5 +1,6 @@
 <?php
 
+use App\Facades\YouTube;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,9 +46,13 @@ Route::group(['namespace' => 'API'], static function (): void {
         ]);
 
         // Playlist routes
-        Route::resource('playlist', 'PlaylistController')->only(['index', 'store', 'update', 'destroy']);
-        Route::put('playlist/{playlist}/sync', 'PlaylistController@sync')->where(['playlist' => '\d+']);
-        Route::get('playlist/{playlist}/songs', 'PlaylistController@getSongs')->where(['playlist' => '\d+']);
+        Route::apiResource('playlist', 'PlaylistController');
+
+        Route::put('playlist/{playlist}/sync', 'PlaylistSongController@update');
+
+        Route::apiResource('playlist.songs', 'PlaylistSongController')->only('index', 'update');
+        Route::put('playlist/{playlist}/songs', 'PlaylistSongController@update');
+        Route::get('playlist/{playlist}/songs', 'PlaylistSongController@index');
 
         // User and user profile routes
         Route::resource('user', 'UserController', ['only' => ['store', 'update', 'destroy']]);
