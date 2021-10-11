@@ -41,7 +41,7 @@ class DataController extends Controller
         InteractionRepository $interactionRepository,
         UserRepository $userRepository,
         ApplicationInformationService $applicationInformationService,
-        Authenticatable $currentUser
+        ?Authenticatable $currentUser
     ) {
         $this->lastfmService = $lastfmService;
         $this->youTubeService = $youTubeService;

@@ -48,7 +48,7 @@ class PlaylistSongTest extends TestCase
 
         $this->putAsUser($path, [
             'songs' => $songs->pluck('id')->all(),
-        ], $user);
+        ], $user)->assertOk();
 
         // We should still see the first 3 songs, but not the removed one
         foreach ($songs as $song) {
