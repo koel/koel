@@ -3,20 +3,17 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\PlaylistStoreRequest;
-use App\Http\Requests\API\PlaylistSyncRequest;
 use App\Http\Requests\API\PlaylistUpdateRequest;
 use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\PlaylistRepository;
 use App\Services\PlaylistService;
-use App\Services\SmartPlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class PlaylistController extends Controller
 {
     private PlaylistRepository $playlistRepository;
     private PlaylistService $playlistService;
-    private SmartPlaylistService $smartPlaylistService;
 
     /** @var User */
     private ?Authenticatable $currentUser;
@@ -24,12 +21,10 @@ class PlaylistController extends Controller
     public function __construct(
         PlaylistRepository $playlistRepository,
         PlaylistService $playlistService,
-        SmartPlaylistService $smartPlaylistService,
         ?Authenticatable $currentUser
     ) {
         $this->playlistRepository = $playlistRepository;
         $this->playlistService = $playlistService;
-        $this->smartPlaylistService = $smartPlaylistService;
         $this->currentUser = $currentUser;
     }
 
@@ -59,28 +54,6 @@ class PlaylistController extends Controller
         $playlist->update($request->only('name', 'rules'));
 
         return response()->json($playlist);
-    }
-
-    public function sync(PlaylistSyncRequest $request, Playlist $playlist)
-    {
-        $this->authorize('owner', $playlist);
-
-        abort_if($playlist->is_smart, 403, 'A smart playlist\'s content cannot be updated manually.');
-
-        $playlist->songs()->sync((array) $request->songs);
-
-        return response()->json();
-    }
-
-    public function getSongs(Playlist $playlist)
-    {
-        $this->authorize('owner', $playlist);
-
-        return response()->json(
-            $playlist->is_smart
-                ? $this->smartPlaylistService->getSongs($playlist)->pluck('id')
-                : $playlist->songs->pluck('id')
-        );
     }
 
     public function destroy(Playlist $playlist)
