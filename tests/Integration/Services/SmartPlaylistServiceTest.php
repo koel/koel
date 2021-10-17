@@ -32,67 +32,67 @@ class SmartPlaylistServiceTest extends TestCase
     public function provideRuleConfigs(): array
     {
         return [
-            [
+            'is' => [
                 $this->readFixtureFile('is.json'),
                 'select * from "songs" where ("title" = ?)',
                 ['Foo'],
             ],
-            [
+            'is not' => [
                 $this->readFixtureFile('isNot.json'),
                 'select * from "songs" where ("title" <> ?)',
                 ['Foo'],
             ],
-            [
+            'contains' => [
                 $this->readFixtureFile('contains.json'),
                 'select * from "songs" where ("title" LIKE ?)',
                 ['%Foo%'],
             ],
-            [
+            'does not contain' => [
                 $this->readFixtureFile('doesNotContain.json'),
                 'select * from "songs" where ("title" NOT LIKE ?)',
                 ['%Foo%'],
             ],
-            [
+            'begins with' => [
                 $this->readFixtureFile('beginsWith.json'),
                 'select * from "songs" where ("title" LIKE ?)',
                 ['Foo%'],
             ],
-            [
+            'ends with' => [
                 $this->readFixtureFile('endsWith.json'),
                 'select * from "songs" where ("title" LIKE ?)',
                 ['%Foo'],
             ],
-            [
+            'is between' => [
                 $this->readFixtureFile('isBetween.json'),
-                'select * from "songs" where ("bit_rate" between ? and ?)',
-                ['192', '256'],
+                'select * from "songs" where ("created_at" between ? and ?)',
+                ['2021.10.01', '2021.11.01'],
             ],
-            [
+            'in last' => [
                 $this->readFixtureFile('inLast.json'),
                 'select * from "songs" where ("created_at" >= ?)',
                 ['2018-07-08 00:00:00'],
             ],
-            [
+            'not in last' => [
                 $this->readFixtureFile('notInLast.json'),
                 'select * from "songs" where ("created_at" < ?)',
                 ['2018-07-08 00:00:00'],
             ],
-            [
+            'is less than' => [
                 $this->readFixtureFile('isLessThan.json'),
                 'select * from "songs" where ("length" < ?)',
                 ['300'],
             ],
-            [
+            'is and is not' => [
                 $this->readFixtureFile('is and isNot.json'),
                 'select * from "songs" where ("title" = ? and exists (select * from "artists" where "songs"."artist_id" = "artists"."id" and "name" <> ?))', // @phpcs-ignore-line
                 ['Foo', 'Bar'],
             ],
-            [
+            '(is and is not) or (is and is greater than)' => [
                 $this->readFixtureFile('(is and isNot) or (is and isGreaterThan).json'),
-                'select * from "songs" where ("title" = ? and exists (select * from "albums" where "songs"."album_id" = "albums"."id" and "name" <> ?)) or ("genre" = ? and "bit_rate" > ?)', // @phpcs-ignore-line
-                ['Foo', 'Bar', 'Metal', '128'],
+                'select * from "songs" where ("title" = ? and exists (select * from "albums" where "songs"."album_id" = "albums"."id" and "name" <> ?)) or ("title" = ? and "created_at" > ?)', // @phpcs-ignore-line
+                ['Foo', 'Bar', 'Baz', '2021.10.01'],
             ],
-            [
+            'is or is' => [
                 $this->readFixtureFile('is or is.json'),
                 'select * from "songs" where ("title" = ?) or (exists (select * from "artists" where "songs"."artist_id" = "artists"."id" and "name" = ?))', // @phpcs-ignore-line
                 ['Foo', 'Bar'],
@@ -104,7 +104,7 @@ class SmartPlaylistServiceTest extends TestCase
     public function testBuildQueryForRules(array $rawRules, string $sql, array $bindings): void
     {
         $ruleGroups = collect($rawRules)->map(static function (array $group): SmartPlaylistRuleGroup {
-            return SmartPlaylistRuleGroup::create($group);
+            return SmartPlaylistRuleGroup::tryCreate($group);
         });
 
         $query = $this->service->buildQueryFromRules($ruleGroups);
@@ -123,7 +123,7 @@ class SmartPlaylistServiceTest extends TestCase
     {
         $ruleGroups = collect($this->readFixtureFile('requiresUser.json'))->map(
             static function (array $group): SmartPlaylistRuleGroup {
-                return SmartPlaylistRuleGroup::create($group);
+                return SmartPlaylistRuleGroup::tryCreate($group);
             }
         );
 

@@ -25,18 +25,18 @@
     "rules": [
       {
         "id": 1542573972485,
-        "model": "genre",
+        "model": "title",
         "operator": "is",
         "value": [
-          "Metal"
+          "Baz"
         ]
       },
       {
         "id": 1542573978609,
-        "model": "bit_rate",
+        "model": "created_at",
         "operator": "isGreaterThan",
         "value": [
-          "128"
+          "2021.10.01"
         ]
       }
     ]

@@ -74,26 +74,39 @@ class PlaylistTest extends TestCase
 
     public function testCreatingSmartPlaylistIgnoresSongs(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
         $this->postAsUser('api/playlist', [
             'name' => 'Smart Foo Bar',
             'rules' => [
-                SmartPlaylistRule::create([
-                    'model' => 'artist.name',
-                    'operator' => SmartPlaylistRule::OPERATOR_IS,
-                    'value' => ['Bob Dylan'],
-                ])->toArray(),
+                [
+                    'id' => 12345,
+                    'rules' => [
+                        SmartPlaylistRule::create([
+                            'model' => 'artist.name',
+                            'operator' => SmartPlaylistRule::OPERATOR_IS,
+                            'value' => ['Bob Dylan'],
+                        ])->toArray(),
+                    ],
+                ],
             ],
             'songs' => Song::orderBy('id')->take(3)->get()->pluck('id')->all(),
-        ], $user);
+        ]);
 
         /** @var Playlist $playlist */
         $playlist = Playlist::orderBy('id', 'desc')->first();
 
         self::assertSame('Smart Foo Bar', $playlist->name);
         self::assertEmpty($playlist->songs);
+    }
+
+    public function testCreatingPlaylistWithNonExistentSongsFails(): void
+    {
+        $response = $this->postAsUser('api/playlist', [
+            'name' => 'Foo Bar',
+            'rules' => [],
+            'songs' => ['foo'],
+        ]);
+
+        $response->assertUnprocessable();
     }
 
     public function testUpdatePlaylistName(): void
@@ -123,41 +136,6 @@ class PlaylistTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testSyncPlaylist(): void
-    {
-        /** @var User $user */
-        $user = User::factory()->create();
-
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'user_id' => $user->id,
-        ]);
-
-        /** @var array<Song>|Collection $songs */
-        $songs = Song::orderBy('id')->take(4)->get();
-        $playlist->songs()->attach($songs->pluck('id')->all());
-
-        /** @var Song $removedSong */
-        $removedSong = $songs->pop();
-
-        $this->putAsUser("api/playlist/$playlist->id/sync", [
-            'songs' => $songs->pluck('id')->all(),
-        ], $user);
-
-        // We should still see the first 3 songs, but not the removed one
-        foreach ($songs as $song) {
-            self::assertDatabaseHas('playlist_song', [
-                'playlist_id' => $playlist->id,
-                'song_id' => $song->id,
-            ]);
-        }
-
-        self::assertDatabaseMissing('playlist_song', [
-            'playlist_id' => $playlist->id,
-            'song_id' => $removedSong->id,
-        ]);
-    }
-
     public function testDeletePlaylist(): void
     {
         /** @var User $user */
@@ -179,22 +157,5 @@ class PlaylistTest extends TestCase
 
         $this->deleteAsUser("api/playlist/$playlist->id")
             ->assertStatus(403);
-    }
-
-    public function testGetPlaylist(): void
-    {
-        /** @var User $user */
-        $user = User::factory()->create();
-
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'user_id' => $user->id,
-        ]);
-
-        $songs = Song::factory(2)->create();
-        $playlist->songs()->saveMany($songs);
-
-        $this->getAsUser("api/playlist/$playlist->id/songs", $user)
-            ->assertJson($songs->pluck('id')->all());
     }
 }
