@@ -7,7 +7,7 @@ use App\Models\User;
 
 class PlaylistService
 {
-    public function createPlaylist(string $name, User $user, array $songs, array $ruleGroups): Playlist
+    public function createPlaylist(string $name, User $user, array $songs, ?array $ruleGroups = null): Playlist
     {
         /** @var Playlist $playlist */
         $playlist = $user->playlists()->create([
