@@ -33,8 +33,8 @@ class PlaylistServiceTest extends TestCase
                 'id' => 1634756491129,
                 'model' => 'title',
                 'operator' => 'is',
-                'value' => ['foobar']
-            ]
+                'value' => ['foobar'],
+            ],
         ];
 
         /** @var User $user */
