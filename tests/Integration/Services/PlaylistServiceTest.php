@@ -43,5 +43,4 @@ class PlaylistServiceTest extends TestCase
         $playlist = $this->service->createPlaylist('foo', $user, [], $rules);
         self::assertTrue($playlist->getIsSmartAttribute());
     }
-
 }
