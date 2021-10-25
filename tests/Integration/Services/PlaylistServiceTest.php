@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Services\PlaylistService;
 use Tests\TestCase;
 
-final class PlaylistServiceTest extends TestCase
+class PlaylistServiceTest extends TestCase
 {
     private PlaylistService $service;
 
