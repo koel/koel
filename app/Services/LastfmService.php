@@ -267,6 +267,11 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
      */
     public function buildAuthCallParams(array $params, bool $toString = false) // @phpcs:ignore
     {
+        if(empty($params))
+        {
+            return false;
+        }
+        
         $params['api_key'] = $this->getKey();
         ksort($params);
 

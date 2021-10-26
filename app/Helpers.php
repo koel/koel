@@ -38,26 +38,55 @@ function asset_rev(string $file, ?string $manifestFile = null): string
     throw new InvalidArgumentException("File $file not defined in asset manifest.");
 }
 
+/**
+ * Get path to the album's cover image
+ *
+ * @param string $fileName
+ * @return string
+ */
 function album_cover_path(string $fileName): string
 {
     return public_path(config('koel.album_cover_dir') . $fileName);
 }
 
+/**
+ * Get URL to the album's cover image
+ *
+ * @param string $fileName
+ * @return string
+ */
 function album_cover_url(string $fileName): string
 {
     return static_url(config('koel.album_cover_dir') . $fileName);
 }
 
+/**
+ * Get path to the artist's image
+ *
+ * @param string $fileName
+ * @return string
+ */
 function artist_image_path(string $fileName): string
 {
     return public_path(config('koel.artist_image_dir') . $fileName);
 }
 
+/**
+ * Get URL to the artist's image
+ *
+ * @param string $fileName
+ * @return string
+ */
 function artist_image_url(string $fileName): string
 {
     return static_url(config('koel.artist_image_dir') . $fileName);
 }
 
+/**
+ * Get App Version
+ *
+ * @return string
+ */
 function koel_version(): string
 {
     return trim(file_get_contents(base_path('.version')));
