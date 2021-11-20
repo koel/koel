@@ -15,6 +15,8 @@ return [
     | http://docs.aws.amazon.com/aws-sdk-php/v3/guide/guide/configuration.html
     |
     */
+    'endpoint' => env('AWS_ENDPOINT', 'https://s3.amazonaws.com'),
+
     'credentials' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
