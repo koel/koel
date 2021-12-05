@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Console\Commands\SyncCommand;
 use App\Events\LibraryChanged;
+use App\Events\MediaSyncCompleted;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Album;
 use App\Models\Artist;
@@ -12,6 +13,7 @@ use App\Models\Song;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\SongRepository;
+use App\Values\SyncResult;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
@@ -36,7 +38,6 @@ class MediaSyncService
     ];
 
     private SongRepository $songRepository;
-    private HelperService $helperService;
     private FileSynchronizer $fileSynchronizer;
     private Finder $finder;
     private ArtistRepository $artistRepository;
@@ -47,13 +48,11 @@ class MediaSyncService
         SongRepository $songRepository,
         ArtistRepository $artistRepository,
         AlbumRepository $albumRepository,
-        HelperService $helperService,
         FileSynchronizer $fileSynchronizer,
         Finder $finder,
         LoggerInterface $logger
     ) {
         $this->songRepository = $songRepository;
-        $this->helperService = $helperService;
         $this->fileSynchronizer = $fileSynchronizer;
         $this->finder = $finder;
         $this->artistRepository = $artistRepository;
@@ -73,7 +72,7 @@ class MediaSyncService
      * Only taken into account for existing records.
      * New records will have all tags synced in regardless.
      * @param bool $force Whether to force syncing even unchanged files
-     * @param SyncCommand $syncCommand the SyncMedia command object, to log to console if executed by artisan
+     * @param SyncCommand $syncCommand The SyncMedia command object, to log to console if executed by artisan
      */
     public function sync(
         ?string $mediaPath = null,
@@ -84,11 +83,7 @@ class MediaSyncService
         $this->setSystemRequirements();
         $this->setTags($tags);
 
-        $results = [
-            'success' => [],
-            'bad_files' => [],
-            'unmodified' => [],
-        ];
+        $syncResult = SyncResult::init();
 
         $songPaths = $this->gatherFiles($mediaPath ?: Setting::get('media_path'));
 
@@ -101,15 +96,15 @@ class MediaSyncService
 
             switch ($result) {
                 case FileSynchronizer::SYNC_RESULT_SUCCESS:
-                    $results['success'][] = $path;
+                    $syncResult->success->add($path);
                     break;
 
                 case FileSynchronizer::SYNC_RESULT_UNMODIFIED:
-                    $results['unmodified'][] = $path;
+                    $syncResult->unmodified->add($path);
                     break;
 
                 default:
-                    $results['bad_files'][] = $path;
+                    $syncResult->bad->add($path);
                     break;
             }
 
@@ -119,13 +114,7 @@ class MediaSyncService
             }
         }
 
-        // Delete non-existing songs.
-        $hashes = array_map(
-            fn (string $path): string => $this->helperService->getFileHash($path),
-            array_merge($results['unmodified'], $results['success'])
-        );
-
-        Song::deleteWhereIDsNotIn($hashes);
+        event(new MediaSyncCompleted($syncResult));
 
         // Trigger LibraryChanged, so that TidyLibrary handler is fired to, erm, tidy our library.
         event(new LibraryChanged());

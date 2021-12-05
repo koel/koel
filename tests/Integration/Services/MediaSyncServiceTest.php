@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Integration\Services;
 
 use App\Events\LibraryChanged;
+use App\Events\MediaSyncCompleted;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
 use App\Models\Artist;
@@ -12,8 +13,9 @@ use App\Services\MediaSyncService;
 use getID3;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery;
+use Tests\Feature\TestCase;
 
-class MediaSyncTest extends TestCase
+class MediaSyncServiceTest extends TestCase
 {
     use WithoutMiddleware;
 
@@ -29,12 +31,12 @@ class MediaSyncTest extends TestCase
 
     public function testSync(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
+        $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
 
         $this->mediaService->sync($this->mediaPath);
 
         // Standard mp3 files under root path should be recognized
-        self::assertDatabaseHas('songs', [
+        self::assertDatabaseHas(Song::class, [
             'path' => $this->mediaPath . '/full.mp3',
             // Track # should be recognized
             'track' => 5,
@@ -90,11 +92,12 @@ class MediaSyncTest extends TestCase
 
     public function testForceSync(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
+        $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
 
         $this->mediaService->sync($this->mediaPath);
 
         // Make some modification to the records
+        /** @var Song $song */
         $song = Song::orderBy('id', 'desc')->first();
         $originalTitle = $song->title;
         $originalLyrics = $song->lyrics;
@@ -108,6 +111,7 @@ class MediaSyncTest extends TestCase
         $this->mediaService->sync($this->mediaPath);
 
         // Validate that the changes are not lost
+        /** @var Song $song */
         $song = Song::orderBy('id', 'desc')->first();
         self::assertEquals("It's John Cena!", $song->title);
         self::assertEquals('Booom Wroooom', $song->lyrics);
@@ -116,6 +120,7 @@ class MediaSyncTest extends TestCase
         $this->mediaService->sync($this->mediaPath, [], true);
 
         // All is lost.
+        /** @var Song $song */
         $song = Song::orderBy('id', 'desc')->first();
         self::assertEquals($originalTitle, $song->title);
         self::assertEquals($originalLyrics, $song->lyrics);
@@ -123,11 +128,12 @@ class MediaSyncTest extends TestCase
 
     public function testSelectiveSync(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
+        $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
 
         $this->mediaService->sync($this->mediaPath);
 
         // Make some modification to the records
+        /** @var Song $song */
         $song = Song::orderBy('id', 'desc')->first();
         $originalTitle = $song->title;
 
@@ -189,11 +195,11 @@ class MediaSyncTest extends TestCase
 
     public function testSyncDeletedDirectoryViaWatch(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
+        $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
 
         $this->mediaService->sync($this->mediaPath);
 
-        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR {$this->mediaPath}/subdir"));
+        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR $this->mediaPath/subdir"));
 
         self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/subdir/sic.mp3']);
         self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/subdir/no-name.mp3']);
