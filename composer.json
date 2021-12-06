@@ -10,7 +10,7 @@
     "type": "project",
     "require": {
         "php": ">=7.4",
-        "laravel/framework": "^8.74",
+        "laravel/framework": "^8.42",
         "james-heinrich/getid3": "^1.9",
         "guzzlehttp/guzzle": "^7.0.1",
         "aws/aws-sdk-php-laravel": "^3.1",
