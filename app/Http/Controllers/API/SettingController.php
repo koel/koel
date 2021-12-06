@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\SettingRequest;
 use App\Models\Setting;
 use App\Services\MediaSyncService;
-use Illuminate\Http\Response;
 
 class SettingController extends Controller
 {
@@ -25,6 +24,6 @@ class SettingController extends Controller
         // but let's just do this async now.
         $this->mediaSyncService->sync();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }

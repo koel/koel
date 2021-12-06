@@ -6,7 +6,6 @@ use App\Http\Requests\API\LastfmSetSessionKeyRequest;
 use App\Models\User;
 use App\Services\LastfmService;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\Response;
 
 class LastfmController extends Controller
 {
@@ -25,13 +24,13 @@ class LastfmController extends Controller
     {
         $this->lastfm->setUserSessionKey($this->currentUser, trim($request->key));
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 
     public function disconnect()
     {
         $this->lastfm->setUserSessionKey($this->currentUser, null);
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }

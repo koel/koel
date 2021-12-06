@@ -6,7 +6,6 @@ use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
-use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
@@ -46,6 +45,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }

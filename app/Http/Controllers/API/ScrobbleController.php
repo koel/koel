@@ -7,7 +7,6 @@ use App\Jobs\ScrobbleJob;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\Response;
 
 class ScrobbleController extends Controller
 {
@@ -25,6 +24,6 @@ class ScrobbleController extends Controller
             ScrobbleJob::dispatch($this->currentUser, $song, $request->timestamp);
         }
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }
