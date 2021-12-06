@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Events\LibraryChanged;
-use App\Traits\SupportsDeleteWhereIDsNotIn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +17,6 @@ use Laravel\Scout\Searchable;
  * @property string $title
  * @property Album $album
  * @property Artist $artist
- * @property array<string> $s3_params
  * @property float $length
  * @property string $lyrics
  * @property int $track
@@ -43,6 +41,7 @@ class Song extends Model
     use HasFactory;
     use Searchable;
     use SupportsDeleteWhereIDsNotIn;
+    use SupportsS3;
 
     public $incrementing = false;
     protected $guarded = [];
@@ -224,22 +223,6 @@ class Song extends Model
         // it just _appends_ a "<br />" after each of them. This would cause our client
         // implementation of br2nl to fail with duplicated line breaks.
         return str_replace(["\r\n", "\r", "\n"], '<br />', $value);
-    }
-
-    /**
-     * Get the bucket and key name of an S3 object.
-     *
-     * @return array<string>|null
-     */
-    public function getS3ParamsAttribute(): ?array
-    {
-        if (!preg_match('/^s3:\\/\\/(.*)/', $this->path, $matches)) {
-            return null;
-        }
-
-        [$bucket, $key] = explode('/', $matches[1], 2);
-
-        return compact('bucket', 'key');
     }
 
     /** @return array<mixed> */

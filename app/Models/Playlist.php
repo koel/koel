@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Casts\SmartPlaylistRulesCast;
-use App\Traits\CanFilterByUser;
 use App\Values\SmartPlaylistRuleGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,7 +26,6 @@ use Laravel\Scout\Searchable;
 class Playlist extends Model
 {
     use Searchable;
-    use CanFilterByUser;
     use HasFactory;
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];

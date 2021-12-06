@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Listeners;
+namespace Tests\Unit\Listeners;
 
 use App\Events\SongStartedPlaying;
 use App\Listeners\UpdateLastfmNowPlaying;

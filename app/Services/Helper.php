@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class HelperService
+class Helper
 {
     /**
      * Get a unique hash from a file path.

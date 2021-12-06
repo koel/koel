@@ -33,7 +33,15 @@ class S3Test extends TestCase
             ],
         ]);
 
-        self::assertDatabaseHas('songs', ['path' => 's3://koel/sample.mp3']);
+        /** @var Song $song */
+        $song = Song::where('path', 's3://koel/sample.mp3')->firstOrFail();
+
+        self::assertSame('A Koel Song', $song->title);
+        self::assertSame('Koel Testing Vol. 1', $song->album->name);
+        self::assertSame('Koel', $song->artist->name);
+        self::assertSame('When you wake up, turn your radio on, and you\'ll hear this simple song', $song->lyrics);
+        self::assertEquals(10, $song->length);
+        self::assertSame(5, $song->track);
     }
 
     public function testRemovingASong(): void
@@ -49,6 +57,6 @@ class S3Test extends TestCase
             'key' => 'sample.mp3',
         ]);
 
-        self::assertDatabaseMissing('songs', ['path' => 's3://koel/sample.mp3']);
+        self::assertDatabaseMissing(Song::class, ['path' => 's3://koel/sample.mp3']);
     }
 }

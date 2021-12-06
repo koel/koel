@@ -22,7 +22,7 @@ class FileSynchronizer
 
     private getID3 $getID3;
     private MediaMetadataService $mediaMetadataService;
-    private HelperService $helperService;
+    private Helper $helper;
     private SongRepository $songRepository;
     private Cache $cache;
     private Finder $finder;
@@ -45,14 +45,14 @@ class FileSynchronizer
     public function __construct(
         getID3 $getID3,
         MediaMetadataService $mediaMetadataService,
-        HelperService $helperService,
+        Helper $helper,
         SongRepository $songRepository,
         Cache $cache,
         Finder $finder
     ) {
         $this->getID3 = $getID3;
         $this->mediaMetadataService = $mediaMetadataService;
-        $this->helperService = $helperService;
+        $this->helper = $helper;
         $this->songRepository = $songRepository;
         $this->cache = $cache;
         $this->finder = $finder;
@@ -73,7 +73,7 @@ class FileSynchronizer
         }
 
         $this->filePath = $splFileInfo->getPathname();
-        $this->fileHash = $this->helperService->getFileHash($this->filePath);
+        $this->fileHash = $this->helper->getFileHash($this->filePath);
         $this->song = $this->songRepository->getOneById($this->fileHash); // @phpstan-ignore-line
         $this->syncError = null;
 

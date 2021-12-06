@@ -1,8 +1,11 @@
 <?php
 
-namespace Tests\Integration\Services;
+namespace Tests\Unit\Services;
 
 use App\Models\Song;
+use App\Repositories\SongRepository;
+use App\Services\Helper;
+use App\Services\MediaMetadataService;
 use App\Services\S3Service;
 use Aws\CommandInterface;
 use Aws\S3\S3ClientInterface;
@@ -15,6 +18,9 @@ class S3ServiceTest extends TestCase
 {
     private $s3Client;
     private $cache;
+    private $metadataService;
+    private $songRepository;
+    private $helper;
     private S3Service $s3Service;
 
     public function setUp(): void
@@ -23,7 +29,17 @@ class S3ServiceTest extends TestCase
 
         $this->s3Client = Mockery::mock(S3ClientInterface::class);
         $this->cache = Mockery::mock(Cache::class);
-        $this->s3Service = new S3Service($this->s3Client, $this->cache);
+        $this->metadataService = Mockery::mock(MediaMetadataService::class);
+        $this->songRepository = Mockery::mock(SongRepository::class);
+        $this->helper = Mockery::mock(Helper::class);
+
+        $this->s3Service = new S3Service(
+            $this->s3Client,
+            $this->cache,
+            $this->metadataService,
+            $this->songRepository,
+            $this->helper
+        );
     }
 
     public function testGetSongPublicUrl(): void
