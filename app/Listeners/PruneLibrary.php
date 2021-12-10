@@ -15,6 +15,6 @@ class PruneLibrary
 
     public function handle(): void
     {
-        $this->mediaSyncService->tidy();
+        $this->mediaSyncService->prune();
     }
 }

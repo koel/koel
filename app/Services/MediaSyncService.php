@@ -116,7 +116,7 @@ class MediaSyncService
 
         event(new MediaSyncCompleted($syncResult));
 
-        // Trigger LibraryChanged, so that TidyLibrary handler is fired to, erm, tidy our library.
+        // Trigger LibraryChanged, so that PruneLibrary handler is fired to prune the lib.
         event(new LibraryChanged());
     }
 
