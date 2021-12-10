@@ -17,7 +17,7 @@ use App\Listeners\DownloadAlbumCover;
 use App\Listeners\DownloadArtistImage;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
-use App\Listeners\TidyLibrary;
+use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Album;
@@ -46,7 +46,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         LibraryChanged::class => [
-            TidyLibrary::class,
+            PruneLibrary::class,
             ClearMediaCache::class,
         ],
 

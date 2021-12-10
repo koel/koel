@@ -187,7 +187,7 @@ class MediaSyncService
         }
     }
 
-    public function tidy(): void
+    public function prune(): void
     {
         $inUseAlbums = $this->albumRepository->getNonEmptyAlbumIds();
         $inUseAlbums[] = Album::UNKNOWN_ID;
