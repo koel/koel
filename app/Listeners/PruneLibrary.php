@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Services\MediaSyncService;
 
-class TidyLibrary
+class PruneLibrary
 {
     private MediaSyncService $mediaSyncService;
 
@@ -15,6 +15,6 @@ class TidyLibrary
 
     public function handle(): void
     {
-        $this->mediaSyncService->tidy();
+        $this->mediaSyncService->prune();
     }
 }

@@ -52,6 +52,6 @@ class AuthController extends Controller
     {
         $this->tokenManager->destroyTokens($this->currentUser);
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }

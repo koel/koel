@@ -3,15 +3,15 @@
 namespace App\Observers;
 
 use App\Models\Song;
-use App\Services\HelperService;
+use App\Services\Helper;
 
 class SongObserver
 {
-    private HelperService $helperService;
+    private Helper $helper;
 
-    public function __construct(HelperService $helperService)
+    public function __construct(Helper $helper)
     {
-        $this->helperService = $helperService;
+        $this->helper = $helper;
     }
 
     public function creating(Song $song): void
@@ -21,6 +21,6 @@ class SongObserver
 
     private function setFileHashAsId(Song $song): void
     {
-        $song->id = $this->helperService->getFileHash($song->path);
+        $song->id = $this->helper->getFileHash($song->path);
     }
 }

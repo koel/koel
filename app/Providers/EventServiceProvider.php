@@ -6,16 +6,18 @@ use App\Events\AlbumInformationFetched;
 use App\Events\ArtistInformationFetched;
 use App\Events\LibraryChanged;
 use App\Events\MediaCacheObsolete;
+use App\Events\MediaSyncCompleted;
 use App\Events\SongLikeToggled;
 use App\Events\SongsBatchLiked;
 use App\Events\SongsBatchUnliked;
 use App\Events\SongStartedPlaying;
 use App\Listeners\ClearMediaCache;
+use App\Listeners\DeleteNonExistingRecordsPostSync;
 use App\Listeners\DownloadAlbumCover;
 use App\Listeners\DownloadArtistImage;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
-use App\Listeners\TidyLibrary;
+use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Album;
@@ -44,7 +46,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         LibraryChanged::class => [
-            TidyLibrary::class,
+            PruneLibrary::class,
             ClearMediaCache::class,
         ],
 
@@ -58,6 +60,10 @@ class EventServiceProvider extends ServiceProvider
 
         ArtistInformationFetched::class => [
             DownloadArtistImage::class,
+        ],
+
+        MediaSyncCompleted::class => [
+            DeleteNonExistingRecordsPostSync::class,
         ],
     ];
 

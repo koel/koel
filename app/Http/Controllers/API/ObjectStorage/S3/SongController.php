@@ -2,76 +2,47 @@
 
 namespace App\Http\Controllers\API\ObjectStorage\S3;
 
-use App\Events\LibraryChanged;
+use App\Exceptions\SongPathNotFoundException;
 use App\Http\Requests\API\ObjectStorage\S3\PutSongRequest;
 use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
-use App\Models\Album;
-use App\Models\Artist;
-use App\Models\Song;
-use App\Repositories\SongRepository;
-use App\Services\HelperService;
-use App\Services\MediaMetadataService;
+use App\Services\S3Service;
 use Illuminate\Http\Response;
 
 class SongController extends Controller
 {
-    private MediaMetadataService $mediaMetadataService;
-    private SongRepository $songRepository;
-    private HelperService $helperService;
+    private S3Service $s3Service;
 
-    public function __construct(
-        MediaMetadataService $mediaMetadataService,
-        HelperService $helperService,
-        SongRepository $songRepository
-    ) {
-        $this->mediaMetadataService = $mediaMetadataService;
-        $this->songRepository = $songRepository;
-        $this->helperService = $helperService;
+    public function __construct(S3Service $s3Service)
+    {
+        $this->s3Service = $s3Service;
     }
 
     public function put(PutSongRequest $request)
     {
-        $path = "s3://$request->bucket/$request->key";
-
-        $tags = $request->tags;
-        $artist = Artist::getOrCreate(array_get($tags, 'artist'));
-
-        $compilation = (bool) trim(array_get($tags, 'albumartist'));
-        $album = Album::getOrCreate($artist, array_get($tags, 'album'), $compilation);
-        $cover = array_get($tags, 'cover');
-
-        if ($cover) {
-            $this->mediaMetadataService->writeAlbumCover(
-                $album,
-                base64_decode($cover['data'], true),
-                $cover['extension']
-            );
-        }
-
-        $song = Song::updateOrCreate(['id' => $this->helperService->getFileHash($path)], [
-            'path' => $path,
-            'album_id' => $album->id,
-            'artist_id' => $artist->id,
-            'title' => trim(array_get($tags, 'title', '')),
-            'length' => array_get($tags, 'duration', 0) ?: 0,
-            'track' => (int) array_get($tags, 'track'),
-            'lyrics' => array_get($tags, 'lyrics', '') ?: '',
-            'mtime' => time(),
-        ]);
-
-        event(new LibraryChanged());
+        $song = $this->s3Service->createSongEntry(
+            $request->bucket,
+            $request->key,
+            array_get($request->tags, 'artist'),
+            array_get($request->tags, 'album'),
+            (bool) trim(array_get($request->tags, 'albumartist')),
+            array_get($request->tags, 'cover'),
+            trim(array_get($request->tags, 'title', '')),
+            (int) array_get($request->tags, 'duration', 0),
+            (int) array_get($request->tags, 'track'),
+            (string) array_get($request->tags, 'lyrics', '')
+        );
 
         return response()->json($song);
     }
 
     public function remove(RemoveSongRequest $request)
     {
-        $song = $this->songRepository->getOneByPath("s3://$request->bucket/$request->key");
-        abort_unless((bool) $song, Response::HTTP_NOT_FOUND);
+        try {
+            $this->s3Service->deleteSongEntry($request->bucket, $request->key);
+        } catch (SongPathNotFoundException $exception) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
 
-        $song->delete();
-        event(new LibraryChanged());
-
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }

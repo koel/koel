@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Traits;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Throwable;
 
 /**
  * With reference to GitHub issue #463.
@@ -59,17 +58,10 @@ trait SupportsDeleteWhereIDsNotIn
      */
     public static function deleteByChunk(array $ids, string $key = 'id', int $chunkSize = 65535): void
     {
-        DB::beginTransaction();
-
-        try {
+        DB::transaction(static function () use ($ids, $key, $chunkSize): void {
             foreach (array_chunk($ids, $chunkSize) as $chunk) {
                 static::whereIn($key, $chunk)->delete();
             }
-
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        });
     }
 }

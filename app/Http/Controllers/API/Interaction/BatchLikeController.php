@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\Interaction;
 
 use App\Http\Requests\API\BatchInteractionRequest;
-use Illuminate\Http\Response;
 
 class BatchLikeController extends Controller
 {
@@ -18,6 +17,6 @@ class BatchLikeController extends Controller
     {
         $this->interactionService->batchUnlike((array) $request->songs, $this->currentUser);
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }
