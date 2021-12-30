@@ -1,35 +1,49 @@
 on:
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
     - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
-name: Upload Release Asset
+name: Upload Release Assets
 
 jobs:
   build:
-    name: Upload Release Asset
+    name: Upload Release Assets
     runs-on: ubuntu-latest
     steps:
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build project # This would actually build your project, using zip for an example artifact
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: composer:v2
+          extensions: pdo_sqlite
+      - name: Install PHP dependencies
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: --prefer-dist
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Build project
         run: |
-          sudo apt install php7.4 composer php7.4-sqlite3 php7.4-intl php7.4-gd pngquant zip unzip
-          git submodule update --init --recursive
-          composer install --no-dev -o
+          sudo apt install pngquant zip unzip
           sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=sqlite/' .env
           php artisan koel:init --no-interaction
+      - name: Create archives
+        run: |
           sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=sqlite-persistent/' .env
           sed -i 's/DB_DATABASE=koel/DB_DATABASE=koel.db/' .env
           rm -rf .git ./node_modules ./resources/assets/.git ./resources/assets/node_modules ./storage/search-indexes/*.index ./koel.db ./.env
           cd ../
           zip -r /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip koel/
           tar -zcvf /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz koel/
-      - name: Create Release
+      - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -39,7 +53,7 @@ jobs:
           release_name: ${{ steps.get_version.outputs.VERSION }}
           draft: true
           prerelease: false
-      - name: Upload Release Asset Zip
+      - name: Upload release asset zip
         id: upload-release-asset-zip
         uses: actions/upload-release-asset@v1
         env:
@@ -49,7 +63,7 @@ jobs:
           asset_path: /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip
           asset_name: koel-${{ steps.get_version.outputs.VERSION }}.zip
           asset_content_type: application/zip
-      - name: Upload Release Asset Gzip
+      - name: Upload release asset gzip
         id: upload-release-asset-gzip
         uses: actions/upload-release-asset@v1
         env:
