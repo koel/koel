@@ -28,12 +28,14 @@ jobs:
           composer-options: --prefer-dist
       - name: Generate app key
         run: php artisan key:generate --quiet
-      - name: Install JavaScript dependencies
-        uses: bahmutov/npm-install@v1
+      - name: Set up Node
+        uses: actions/setup-node@v2
         with:
-          working-directory: |
-            ./resources/assets
-            .
+          node-version: '14'
+      - name: Install JavaScript dependencies
+        run: |
+            cd ./resources/assets && yarn install --no-progress
+            cd ../.. && yarn install --no-progress
       - name: Lint
         run: yarn lint
       - name: Run E2E tests
