@@ -7,6 +7,7 @@ use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\SongZipArchive;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
@@ -35,6 +36,7 @@ class DownloadService
                 return $this->fromSong($mixed);
 
             case Collection::class:
+            case EloquentCollection::class:
                 return $this->fromMultipleSongs($mixed);
 
             case Album::class:
