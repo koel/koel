@@ -53,7 +53,7 @@ class S3Service implements ObjectStorageInterface
         string $key,
         string $artistName,
         string $albumName,
-        bool $compilation,
+        string $albumartist,
         ?array $cover,
         string $title,
         float $duration,
@@ -63,7 +63,7 @@ class S3Service implements ObjectStorageInterface
         $path = Song::getPathFromS3BucketAndKey($bucket, $key);
 
         $artist = Artist::getOrCreate($artistName);
-        $album = Album::getOrCreate($artist, $albumName, $compilation);
+        $album = Album::getOrCreate($artist, $albumName, $albumartist);
 
         if ($cover) {
             $this->mediaMetadataService->writeAlbumCover(
