@@ -1,0 +1,19 @@
+<VirtualHost koel.dev:443>
+    ServerAdmin admin@koel.dev
+    # user koel with a copy of koel in their home directory
+    # koel/public is the document root
+    DocumentRoot "/home/koel/koel/public"
+    DirectoryIndex index.php
+    ServerName koel.dev
+    ErrorLog "/var/log/httpd/koel.dev-error_log"
+    CustomLog "/var/log/httpd/koel.dev-access_log" common
+    <Directory "/home/koel/koel/public">
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride all
+    </Directory>
+    # Let's Encrypt is free!
+    SSLCertificateFile /etc/letsencrypt/live/koel.dev/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/koel.dev/privkey.pem
+    Include /etc/letsencrypt/options-ssl-apache.conf
+</VirtualHost>
+
