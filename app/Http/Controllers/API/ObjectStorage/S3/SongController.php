@@ -26,7 +26,7 @@ class SongController extends Controller
             $request->key,
             $artist,
             array_get($request->tags, 'album'),
-            (bool) $albumartist && $albumartist != $artist,
+            (bool) $albumartist && $albumartist !== $artist,
             array_get($request->tags, 'cover'),
             trim(array_get($request->tags, 'title', '')),
             (int) array_get($request->tags, 'duration', 0),
