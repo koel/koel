@@ -9,7 +9,7 @@ class IncreaseStringColumnsLength extends Migration
     public function up(): void
     {
         Schema::table('artists', static function (Blueprint $table): void {
-            $table->dropIndex('artists_name_unique');
+            $table->dropUnique('artists_name_unique');
         });
 
         Schema::table('artists', static function (Blueprint $table): void {
