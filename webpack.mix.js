@@ -1,11 +1,13 @@
 const mix = require('laravel-mix')
-const fs = require('fs')
 const { externals, resolve, plugins } = require('./webpack.config.js')
 
 mix.webpackConfig({
   externals,
   resolve,
   plugins,
+  // stats: {
+  //   children: true // Show child compilation errors (e.g., those from Tailwind)
+  // },
   output: {
     chunkFilename: mix.inProduction() ? 'js/[name].[chunkhash].js' : 'js/[name].js',
     publicPath: mix.inProduction() ? '/' : 'http://127.0.0.1:8080/'
@@ -15,43 +17,25 @@ mix.webpackConfig({
     proxy: {
       '/': 'http://127.0.0.1:8000/'
     }
-  },
-  module: {
-    rules: [
-      {
-        test: /\.scss$/,
-        loader: "sass-loader",
-        options: {
-          prependData: `
-          @import "resources/assets/sass/partials/_vars.scss";
-          @import "resources/assets/sass/partials/_mixins.scss";
-          `
-        }
-      }
-    ]
   }
 })
 
 mix.setResourceRoot('./')
 
-if (mix.config.hmr) {
-  // Somehow public/hot isn't being removed by Mix. We'll handle it ourselves.
-  process.on('SIGINT', () => {
-    try {
-      fs.unlinkSync(mix.config.publicPath + '/hot')
-    } catch (e) {
-    }
-    process.exit()
-  })
-} else {
-  mix.copy('resources/assets/img', 'public/img', false)
-    .copy('node_modules/font-awesome/fonts', 'public/fonts', false)
+const sassOptions = {
+  additionalData: `
+    @import "resources/assets/sass/partials/_vars.scss";
+    @import "resources/assets/sass/partials/_mixins.scss";
+  `
 }
 
-mix.ts('resources/assets/js/app.ts', 'public/js')
-  .sass('resources/assets/sass/app.scss', 'public/css')
-  .ts('resources/assets/js/remote/app.ts', 'public/js/remote')
-  .sass('resources/assets/sass/remote.scss', 'public/css')
+mix.copy('resources/assets/img', 'public/img')
+  .copy('node_modules/font-awesome/fonts', 'public/fonts')
+
+mix.ts('resources/assets/js/app.ts', 'public/js').vue({ version: 3 })
+  .sass('resources/assets/sass/app.scss', 'public/css', sassOptions)
+  // .ts('resources/assets/js/remote/app.ts', 'public/js/remote').vue({ version: 3 })
+  // .sass('resources/assets/sass/remote.scss', 'public/css', sassOptions)
 
 if (mix.inProduction()) {
   mix.version()

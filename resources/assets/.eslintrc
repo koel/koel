@@ -1,0 +1,40 @@
+{
+  "parser": "vue-eslint-parser",
+  "env": {
+    "browser": true
+  },
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "ecmaVersion": 2020
+  },
+  "extends": [
+    "plugin:vue/essential",
+    "@vue/standard",
+    "@vue/typescript/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "globals": {
+    "KOEL_ENV": true,
+    "NODE_ENV": true,
+    "HTMLElement": true,
+    "FileReader": true
+  },
+  "rules": {
+    "camelcase": 0,
+    "no-multi-str": 0,
+    "no-empty": 0,
+    "quotes": 0,
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/camelcase": 0,
+    "@typescript-eslint/member-delimiter-style": 0,
+    "@typescript-eslint/consistent-type-assertions": 0,
+    "@typescript-eslint/no-inferrable-types": 0,
+    "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/ban-ts-ignore": 0,
+    "vue/no-side-effects-in-computed-properties": 0,
+    "vue/valid-v-on": 0
+  }
+}

@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/song/list-controls-toggler renders properly 1`] = `<span class="controls-toggler text-orange"><i class="fa fa-angle-up toggler"></i></span>`;

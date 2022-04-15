@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/song/list-controls renders properly 1`] = `
+<div data-test="song-list-controls" class="song-list-controls">
+  <!---->
+  <addtomenu-stub config="[object Object]" songs=""></addtomenu-stub>
+</div>
+`;

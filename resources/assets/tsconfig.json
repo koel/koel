@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es6",
+    "strict": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowJs": true, // for some external modules
+    "paths": {
+      "@/*": ["js/*"]
+    }
+  },
+  "include": [
+    "js/**/*"
+  ],
+  "exclude": [
+    "js/__tests__/**/*"
+  ]
+}

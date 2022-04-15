@@ -1,0 +1,6 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/ui/to-top-button renders properly 1`] = `
+<div class="to-top-btn-wrapper" style="display: none;" name="fade"><button title="Scroll to top"><i class="fa fa-arrow-circle-up"></i> Top
+  </button></div>
+`;

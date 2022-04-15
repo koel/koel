@@ -1,0 +1,106 @@
+:root {
+  --color-text-primary: #fff;
+  --color-text-secondary: rgba(255, 255, 255, .7);
+  --color-bg-primary: #181818;
+  --color-bg-secondary: rgba(255, 255, 255, .025);
+  --color-highlight: #ff7d2e;
+
+  --bg-image: none;
+  --bg-position: center;
+  --bg-attachment: fixed;
+  --bg-size: cover;
+
+  --font-family: system, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+  --font-weight-thin: 100;
+  --font-weight-light: 300;
+  --font-weight-normal: 500;
+
+  --header-height: 48px;
+  --footer-height: 64px;
+  --footer-height-mobile: 74px;
+  --extra-panel-width: 334px;
+
+  --color-black: #181818;
+  --color-maroon: #bf2043;
+  --color-green: #56a052;
+  --color-blue: #0191f7;
+  --color-red: #c34848;
+
+  &[data-theme=violet] {
+    --color-bg-primary: #31094e;
+  }
+
+  &[data-theme=oak] {
+    --color-bg-primary: #560d25;
+  }
+
+  &[data-theme=slate] {
+    --color-bg-primary: #29434e;
+  }
+
+  &[data-theme=madison] {
+    --color-bg-primary: #0e3463;
+    --color-highlight: #fbab18;
+  }
+
+  &[data-theme=astronaut] {
+    --color-bg-primary: #2a3074;
+  }
+
+  &[data-theme=chocolate] {
+    --color-bg-primary: #3f2724;
+  }
+
+  &[data-theme=laura] {
+    --color-bg-primary: #126673;
+    --color-highlight: rgba(10, 244, 255, .64);
+  }
+
+  &[data-theme=rose-petals] {
+    --bg-image: url("/img/themes/bg-rose-petals.svg");
+    --color-bg-primary: #7d083b;
+    /* background by SVGBackgrounds.com */
+  }
+
+  &[data-theme=purple-waves] {
+    --color-bg-primary: #44115c;
+    --bg-image: url("/img/themes/bg-purple-waves.svg");
+    /* background by SVGBackgrounds.com */
+  }
+
+  &[data-theme=cat] {
+    --bg-image: url("/img/themes/bg-cat.jpg");
+    --bg-position: left;
+    --color-bg-primary: #000;
+  }
+
+  &[data-theme=pop-culture] {
+    --bg-image: url("/img/themes/bg-pop-culture.jpg");
+    --color-bg-primary: #ad0937;
+    --color-highlight: rgba(234, 208, 110, .9);
+  }
+
+  &[data-theme=jungle] {
+    --bg-image: url("/img/themes/bg-jungle.jpg");
+    --color-bg-primary: #0f0f03;
+  }
+
+  &[data-theme=mountains] {
+    --bg-image: url("/img/themes/bg-mountains.jpg");
+    --color-bg-primary: #0e2656;
+  }
+
+  &[data-theme=pines] {
+    --bg-image: url("/img/themes/bg-pines.jpg");
+    --color-bg-primary: #06090c;
+    --color-highlight: #5984b9;
+  }
+
+  &[data-theme=nemo] {
+    --bg-image: url("/img/themes/bg-nemo.jpg");
+    --color-bg-primary: #031724;
+  }
+}
+
+$plyr-blue: var(--color-highlight);

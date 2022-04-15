@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/shared/overlay allows option overriding 1`] = `
+<div id="overlay" class="overlay warning">
+  <div class="display">
+    <!---->
+    <!----> <i class="fa fa-exclamation-triangle"></i>
+    <!---->
+    <!----> <span class="message">Foo</span></div> <button class="btn-dismiss">Close</button>
+</div>
+`;
+
+exports[`components/shared/overlay hides 1`] = ``;
+
+exports[`components/shared/overlay shows 1`] = `
+<div id="overlay" class="overlay loading">
+  <div class="display">
+    <div data-test="soundbars" class="bars"><img src="@/../img/bars.gif" alt="Sound bars" height="13" width="auto"></div>
+    <!---->
+    <!---->
+    <!---->
+    <!----> <span class="message"></span>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`components/shared/overlay shows with default options 1`] = `
+<div id="overlay" class="overlay loading">
+  <div class="display">
+    <div data-test="soundbars" class="bars"><img src="@/../img/bars.gif" alt="Sound bars" height="13" width="auto"></div>
+    <!---->
+    <!---->
+    <!---->
+    <!----> <span class="message"></span>
+  </div>
+  <!---->
+</div>
+`;

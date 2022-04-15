@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/ui/lyrics displays a fallback message if the song has no lyrics 1`] = `
+<article id="lyrics">
+  <div class="content">
+    <div style="display: none;">
+      <div></div>
+      <textzoomer-stub></textzoomer-stub>
+    </div>
+    <p class="none text-secondary"><span>No lyrics available. Are you listening to Bach?</span></p>
+  </div>
+</article>
+`;
+
+exports[`components/ui/lyrics displays lyrics if the song has lyrics 1`] = `
+<article id="lyrics">
+  <div class="content">
+    <div>
+      <div>Foo and bar</div>
+      <textzoomer-stub></textzoomer-stub>
+    </div>
+    <!---->
+  </div>
+</article>
+`;

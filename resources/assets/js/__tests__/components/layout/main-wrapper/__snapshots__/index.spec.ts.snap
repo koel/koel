@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`component/layout/main-wrapper/index renders properly 1`] = `
+<div id="mainWrapper">
+  <nav id="sidebar" class="side side-nav showing">
+    <section class="music">
+      <h1>Your Music</h1>
+      <ul class="menu">
+        <li><a href="#!/home" class="home active">Home</a></li>
+        <li><a href="#!/queue" class="queue">Current Queue</a></li>
+        <li><a href="#!/songs" class="songs">All Songs</a></li>
+        <li><a href="#!/albums" class="albums">Albums</a></li>
+        <li><a href="#!/artists" class="artists">
+            Artists
+          </a></li>
+        <!---->
+      </ul>
+    </section>
+    <!---->
+    <!---->
+  </nav>
+  <section id="mainContent">
+    <!---->
+    <!---->
+    <section id="homeWrapper">
+      <!---->
+      <div class="main-scroll-wrap">
+        <div class="two-cols">
+          <!---->
+          <section class="recent">
+            <h1>
+              Recently Played
+              <!---->
+            </h1>
+            <!---->
+            <p class="text-secondary">
+              Your recently played songs will be displayed here.<br>
+              Start listening!
+            </p>
+          </section>
+        </div>
+        <!---->
+        <!---->
+        <!---->
+        <!---->
+      </div>
+    </section>
+    <section id="queueWrapper" style="display: none;">
+      <!---->
+      <!---->
+    </section>
+    <section id="songsWrapper" style="display: none;">
+      <!---->
+      <div tabindex="0" class="song-list-wrap main-scroll-wrap all-songs">
+        <table class="song-list-header sortable">
+          <thead>
+            <tr>
+              <th class="track-number">
+                #
+                <i class="fa fa-angle-down" style="display: none;"></i> <i class="fa fa-angle-up" style="display: none;"></i></th>
+              <th class="title">
+                Title
+                <i class="fa fa-angle-down" style="display: none;"></i> <i class="fa fa-angle-up" style="display: none;"></i></th>
+              <th class="artist">
+                Artist
+                <i class="fa fa-angle-down" style="display: none;"></i> <i class="fa fa-angle-up" style="display: none;"></i></th>
+              <th class="album">
+                Album
+                <i class="fa fa-angle-down" style="display: none;"></i> <i class="fa fa-angle-up" style="display: none;"></i></th>
+              <th class="time">
+                Time
+                <i class="fa fa-angle-down" style="display: none;"></i> <i class="fa fa-angle-up" style="display: none;"></i></th>
+              <th class="favorite"></th>
+              <th class="play"></th>
+            </tr>
+          </thead>
+        </table>
+        <div data-v-3eef485a="" class="virtual-scroller scroller">
+          <div data-v-3eef485a="" class="item-container">
+            <table data-v-3eef485a="" class="items"></table>
+          </div>
+          <div data-v-b329ee4c="" data-v-3eef485a="" tabindex="-1" class="resize-observer"><object style="display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;" aria-hidden="true" tabindex="-1" type="text/html" data="about:blank"></object></div>
+        </div>
+      </div>
+    </section>
+    <section id="albumsWrapper" style="display: none;">
+      <!---->
+      <div class="albums main-scroll-wrap as-null">
+        <!---->
+      </div>
+    </section>
+    <section id="artistsWrapper" style="display: none;">
+      <!---->
+      <div class="artists main-scroll-wrap as-null">
+        <!---->
+      </div>
+    </section>
+    <section id="playlistWrapper" style="display: none;">
+      <!---->
+      <!---->
+    </section>
+    <section id="favoritesWrapper" style="display: none;">
+      <!---->
+      <!---->
+    </section>
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+  </section>
+  <section id="extra" data-testid="extra-panel" class="text-secondary showing">
+    <div class="tabs">
+      <div role="tablist" class="clear"><button aria-selected="true" aria-controls="extraPanelLyrics" id="extraTabLyrics" role="tab">
+          Lyrics
+        </button> <button aria-controls="extraPanelArtist" id="extraTabArtist" role="tab">
+          Artist
+        </button> <button aria-controls="extraPanelAlbum" id="extraTabAlbum" role="tab">
+          Album
+        </button>
+        <!---->
+      </div>
+      <div class="panes">
+        <div aria-labelledby="extraTabLyrics" id="extraPanelLyrics" role="tabpanel" tabindex="0">
+          <!---->
+        </div>
+        <div aria-labelledby="extraTabArtist" id="extraPanelArtist" role="tabpanel" tabindex="0" style="display: none;">
+          <!---->
+        </div>
+        <div aria-labelledby="extraTabAlbum" id="extraPanelAlbum" role="tabpanel" tabindex="0" style="display: none;">
+          <!---->
+        </div>
+        <div aria-labelledby="extraTabYouTube" id="extraPanelYouTube" role="tabpanel" tabindex="0" style="display: none;">
+          <!---->
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="modal-wrapper">
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+  </div>
+</div>
+`;

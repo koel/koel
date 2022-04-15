@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/auth/login-form renders properly 1`] = `
+<form data-testid="login-form" class="">
+  <div class="logo"><img src="@/../img/logo.svg" width="156" height="auto" alt="Koel's logo"></div>
+  <!----> <input type="email" placeholder="Email Address" autofocus="autofocus" required="required"> <input type="password" placeholder="Password" required="required">
+  <btn-stub type="submit">Log In</btn-stub>
+</form>
+`;

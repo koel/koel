@@ -2,10 +2,6 @@ const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
-  externals: {
-    electron: 'electron',
-    'vue-electron': 'vue-electron'
-  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'resources/assets/js'),
@@ -17,27 +13,7 @@ module.exports = {
       KOEL_ENV: '"web"',
       NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
     })
-  ],
-  module: {
-    rules: [
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader'
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
-        }
-      }
-    ]
-  }
+  ]
 }
 
 // test specific setups

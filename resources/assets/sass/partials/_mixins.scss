@@ -1,0 +1,320 @@
+@mixin vertical-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin artist-album-wrapper() {
+  display: grid;
+  grid-gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+  &.as-list {
+    grid-gap: 0.7em 1em;;
+    align-content: start;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+
+    @media only screen and (max-width : 667px) {
+      display: block;
+
+      > * + * {
+        margin-top: .7rem;
+      }
+    }
+  }
+}
+
+@mixin artist-album-card() {
+  .item {
+    position: relative;
+    max-width: 256px;
+
+    @media only screen and (max-width: 768px) {
+      max-width: 100%;
+    }
+
+    &:hover .right, &:focus-within .right {
+      display: block !important;
+    }
+
+    &.compact {
+      display: flex;
+      flex-direction: row;
+      max-width: 100%;
+      overflow: hidden;
+      min-height: 80px;
+
+      .thumbnail-wrapper {
+        width: 80px;
+      }
+
+      footer {
+        max-height: 80px;
+        flex: 1;
+      }
+
+      .info {
+        margin-bottom: 12px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      a.name, a.artist, .sep {
+        display: inline;
+        white-space: inherit;
+      }
+    }
+
+    footer {
+      padding: 16px;
+      background: var(--color-bg-secondary);
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .name {
+      font-weight: var(--font-weight-normal);
+    }
+
+    .meta {
+      color: var(--color-text-secondary);
+      margin-top: 4px;
+      font-size: .9rem;
+      display: flex;
+      justify-content: space-between;
+
+      .right {
+        display: none;
+
+        @media (hover: none) {
+          display: block;
+        }
+
+        a {
+          margin-left: 4px;
+        }
+      }
+    }
+
+    a.name, a.artist {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &:link, &:visited {
+        color: var(--color-text-primary);
+      }
+
+      &:focus, &:hover {
+        color: var(--color-highlight);
+      }
+    }
+
+    .info {
+      .compact & {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+@mixin artist-album-info-wrapper() {
+  .loading {
+    @include vertical-center();
+    height: 100%;
+  }
+
+  .info-wrapper {
+    color: var(--color-text-secondary);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--color-bg-primary);
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+
+    .inner {
+      overflow: auto;
+      height: 100%;
+      padding: 24px 24px 48px;
+
+      @media only screen and (max-width: 768px) {
+        padding: 16px;
+      }
+    }
+  }
+}
+
+@mixin artist-album-info() {
+  h1 {
+    font-weight: var(--font-weight-thin);
+    line-height: 2.8rem;
+
+    &.name {
+      font-size: 2rem;
+    }
+
+    @include vertical-center();
+    align-items: initial;
+
+    span {
+      flex: 1;
+      margin-right: 12px;
+    }
+
+    a {
+      font-size: 14px;
+
+      &:hover {
+        color: var(--color-highlight);
+      }
+    }
+  }
+
+  .bio {
+    margin-top: 16px;
+  }
+
+  .more {
+    margin-top: .75rem;
+    border-radius: .23rem;
+    background: var(--color-blue);
+    color: var(--color-text-primary);
+    padding: .3rem .6rem;
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: .8rem;
+  }
+
+  img.cover, img.cool-guys-posing {
+    width: 100%;
+    height: auto;
+  }
+
+  .wiki {
+    margin-top: 16px;
+  }
+
+  .track-listing {
+    margin-top: 16px;
+
+    ul {
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 0;
+      display: block;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+
+      &:nth-child(even) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .no {
+        flex: 0 0 24px;
+        opacity: .5;
+      }
+
+      .title {
+        flex: 1;
+      }
+
+      .length {
+        flex: 0 0 44px;
+        text-align: right;
+        opacity: .5;
+      }
+
+      &.available {
+        color: var(--color-text-primary);
+        cursor: pointer;
+
+        &:hover {
+          color: var(--color-highlight);
+        }
+      }
+    }
+  }
+
+  footer {
+    margin-top: 24px;
+    font-size: .9rem;
+    text-align: right;
+    clear: both;
+
+    a {
+      color: var(--color-text-primary);
+      font-weight: var(--font-weight-normal);
+
+      &:hover {
+        color: var(--color-text-secondary);
+      }
+    }
+  }
+
+  &.full {
+    .cover {
+      width: 300px;
+      max-width: 100%;
+      float: left;
+      margin: 0 16px 16px 0;
+    }
+
+    h1.name {
+      font-size: 2.4rem;
+
+      a.shuffle {
+        display: none;
+      }
+    }
+  }
+}
+
+@mixin inset-when-pressed() {
+  &:active {
+    box-shadow: inset 0px 10px 10px -10px rgba(0,0,0,1);
+  }
+}
+
+@mixin context-menu() {
+  padding: .4rem 0;
+  min-width: 144px;
+  background-color: var(--color-bg-primary);
+  position: fixed;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1001;
+  align-items: stretch;
+  text-align: left;
+  box-shadow: inset 0 0 0 rgba(255, 255, 255, 0.6), 0 2px 15px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
+
+  input[type="search"], input[type="text"], input[type="email"], input[type="url"] {
+    background: var(--color-text-primary);
+
+    &:focus {
+      background: var(--color-text-primary);
+    }
+  }
+}
+
+@mixin themed-background() {
+  background-color: var(--color-bg-primary);
+  background-image: var(--bg-image);
+  background-attachment: var(--bg-attachment);
+  background-size: var(--bg-size);
+  background-position: var(--bg-position);
+}

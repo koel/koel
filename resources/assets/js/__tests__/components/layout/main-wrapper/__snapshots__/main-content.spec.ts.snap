@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/layout/main-wrapper/main-content has a translucent image per song/album 1`] = `
+<section id="mainContent">
+  <!---->
+  <!---->
+  <homescreen-stub></homescreen-stub>
+  <queuescreen-stub style="display: none;"></queuescreen-stub>
+  <allsongsscreen-stub style="display: none;"></allsongsscreen-stub>
+  <albumlistscreen-stub style="display: none;"></albumlistscreen-stub>
+  <artistlistscreen-stub style="display: none;"></artistlistscreen-stub>
+  <playlistscreen-stub style="display: none;"></playlistscreen-stub>
+  <favoritesscreen-stub style="display: none;"></favoritesscreen-stub>
+  <recentlyplayedscreen-stub style="display: none;"></recentlyplayedscreen-stub>
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+</section>
+`;

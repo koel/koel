@@ -1,0 +1,13 @@
+{
+  "plugins": ["jest"],
+  "env": {
+    "jest/globals": true
+  },
+  "globals": {
+    "noop": true,
+    "shallow": true,
+    "mount": true,
+    "Vue": true,
+    "Event": true
+  }
+}
