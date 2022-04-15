@@ -1,11 +1,11 @@
 <template>
   <section id="albumWrapper">
-    <screen-header>
+    <ScreenHeader>
       {{ album.name }}
-      <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:thumbnail>
-        <album-thumbnail :entity="album"/>
+        <AlbumThumbnail :entity="album"/>
       </template>
 
       <template v-slot:meta>
@@ -14,7 +14,7 @@
           <a class="artist" v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
-          {{ album.songs.length | pluralize('song') }}
+          {{ pluralize(album.songs.length, 'song') }}
           •
           {{ fmtLength }}
 
@@ -32,7 +32,7 @@
       </template>
 
       <template v-slot:controls>
-        <song-list-controls
+        <SongListControls
           v-if="album.songs.length && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
@@ -41,108 +41,96 @@
           :selectedSongs="selectedSongs"
         />
       </template>
-    </screen-header>
+    </ScreenHeader>
 
-    <song-list :items="album.songs" type="album" :config="listConfig" ref="songList"/>
+    <SongList :items="album.songs" type="album" :config="listConfig" ref="songList"/>
 
-    <section class="info-wrapper" v-if="sharedState.useLastfm && meta.showing">
-      <close-modal-btn @click="meta.showing = false"/>
+    <section class="info-wrapper" v-if="sharedState.useLastfm && showing">
+      <CloseModalBtn @click="showing = false"/>
       <div class="inner">
-        <div class="loading" v-if="meta.loading">
-          <sound-bar/>
+        <div class="loading" v-if="loading">
+          <SoundBar/>
         </div>
-        <album-info :album="album" mode="full" v-else/>
+        <AlbumInfo :album="album" mode="full" v-else/>
       </div>
     </section>
   </section>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, reactive, ref, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { artistStore, sharedStore } from '@/stores'
-import { download, albumInfo as albumInfoService } from '@/services'
+import { albumInfo as albumInfoService, download as downloadService } from '@/services'
 import router from '@/router'
-import hasSongList from '@/mixins/has-song-list.ts'
-import albumAttributes from '@/mixins/album-attributes.ts'
-import { SongListConfig } from '@/components/song/list.vue'
+import { useAlbumAttributes, useSongList } from '@/composables'
 
-export default mixins(hasSongList, albumAttributes).extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    AlbumInfo: () => import('@/components/album/info.vue'),
-    SoundBar: () => import('@/components/ui/sound-bar.vue'),
-    AlbumThumbnail: () => import('@/components/ui/album-artist-thumbnail.vue'),
-    CloseModalBtn: () => import('@/components/ui/close-modal-btn.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const AlbumInfo = defineAsyncComponent(() => import('@/components/album/info.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/album-artist-thumbnail.vue'))
+const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
 
-  filters: { pluralize },
+const {
+  SongList,
+  SongListControls,
+  ControlsToggler,
+  songList,
+  selectedSongs,
+  showingControls,
+  songListControlConfig,
+  isPhone,
+  playAll,
+  playSelected,
+  toggleControls
+} = useSongList()
 
-  data: () => ({
-    sharedState: sharedStore.state,
+const props = defineProps<{ album: Album }>()
+const { album } = toRefs(props)
 
-    listConfig: {
-      columns: ['track', 'title', 'length']
-    } as Partial<SongListConfig>,
+const { length, fmtLength } = useAlbumAttributes(album.value)
 
-    meta: {
-      showing: false,
-      loading: true
-    }
-  }),
+const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'length'] }
+const sharedState = reactive(sharedStore.state)
+const showing = ref(false)
+const loading = ref(true)
 
-  computed: {
-    isNormalArtist (): boolean {
-      return !artistStore.isVariousArtists(this.album.artist) &&
-        !artistStore.isUnknownArtist(this.album.artist)
-    }
-  },
-
-  watch: {
-    /**
-     * Watch the album's song count.
-     * If this is changed to 0, the user has edit the songs in this album
-     * and move all of them into another album.
-     * We should then go back to the album list.
-     */
-    'album.songs.length': (newSongCount: number): void => {
-      if (!newSongCount) {
-        router.go('albums')
-      }
-    },
-
-    album (): void {
-      this.meta.showing = false
-      // #530
-      if (this.$refs.songList) {
-        (this.$refs.songList as any).sort()
-      }
-    }
-  },
-
-  methods: {
-    download (): void {
-      download.fromAlbum(this.album)
-    },
-
-    async showInfo (): Promise<void> {
-      this.meta.showing = true
-
-      if (!this.album.info) {
-        try {
-          await albumInfoService.fetch(this.album)
-        } catch (e) {
-          /* eslint no-console: 0 */
-          console.error(e)
-        } finally {
-          this.meta.loading = false
-        }
-      } else {
-        this.meta.loading = false
-      }
-    }
-  }
+const isNormalArtist = computed(() => {
+  return !artistStore.isVariousArtists(album.value.artist) && !artistStore.isUnknownArtist(album.value.artist)
 })
+
+/**
+ * Watch the album's song count.
+ * If this is changed to 0, the user has edited the songs on this album
+ * and moved all of them into another album.
+ * We should then go back to the album list.
+ */
+watch(() => album.value.songs.length, newSongCount => newSongCount || router.go('albums'))
+
+watch(album, () => {
+  showing.value = false
+  // @ts-ignore
+  songList.value?.sort()
+})
+
+const download = () => downloadService.fromAlbum(album.value)
+
+const showInfo = async () => {
+  showing.value = true
+
+  if (!album.value.info) {
+    try {
+      await albumInfoService.fetch(album.value)
+    } catch (e) {
+      /* eslint no-console: 0 */
+      console.error(e)
+    } finally {
+      loading.value = false
+    }
+  } else {
+    loading.value = false
+  }
+}
 </script>
 
 <style lang="scss" scoped>

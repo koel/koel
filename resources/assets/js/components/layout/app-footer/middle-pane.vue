@@ -16,16 +16,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { toRefs } from 'vue'
 
-export default Vue.extend({
-  props: {
-    song: {
-      type: Object
-    } as PropOptions<Song>
-  }
-})
+const props = defineProps<{ song: Song }>()
+const { song } = toRefs(props)
 </script>
 
 <style lang="scss">/* no scoping here because we're overriding some plyr classes */

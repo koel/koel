@@ -22,10 +22,10 @@
         </a>.
       </p>
       <div class="buttons">
-        <btn @click.prevent="connect" class="connect">
+        <Btn @click.prevent="connect" class="connect">
           <i class="fa fa-lastfm"></i>
           {{ currentUserConnected ? 'Reconnect' : 'Connect' }}
-        </btn>
+        </Btn>
 
         <btn v-if="currentUserConnected" @click.prevent="disconnect" class="disconnect" gray>Disconnect</btn>
       </div>
@@ -47,50 +47,31 @@
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, reactive } from 'vue'
 import { sharedStore, userStore } from '@/stores'
 import { auth, http } from '@/services'
 import { forceReloadWindow } from '@/utils'
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  data: () => ({
-    userState: userStore.state,
-    sharedState: sharedStore.state
-  }),
+const userState = reactive(userStore.state)
+const sharedState = reactive(sharedStore.state)
 
-  computed: {
-    currentUserConnected (): boolean {
-      return this.userState?.current.preferences.lastfm_session_key
-    }
-  },
+const currentUserConnected = computed(() => Boolean(userState.current.preferences.lastfm_session_key))
 
-  methods: {
-    /**
-     * Connect the current user to Last.fm.
-     * This method opens a new window.
-     * Koel will reload once the connection is successful.
-     */
-    connect: (): void => {
-      window.open(
-        `${window.BASE_URL}lastfm/connect?api_token=${auth.getToken()}`,
-        '_blank',
-        'toolbar=no,titlebar=no,location=no,width=1024,height=640'
-      )
-    },
+/**
+ * Connect the current user to Last.fm.
+ * This method opens a new window.
+ * Koel will reload once the connection is successful.
+ */
+const connect = () => window.open(
+  `${window.BASE_URL}lastfm/connect?api_token=${auth.getToken()}`,
+  '_blank',
+  'toolbar=no,titlebar=no,location=no,width=1024,height=640'
+)
 
-    /**
-     * Disconnect the current user from Last.fm.
-     */
-    disconnect: (): void => {
-      http.delete('lastfm/disconnect').then(forceReloadWindow)
-    }
-  }
-})
+const disconnect = () => http.delete('lastfm/disconnect').then(forceReloadWindow)
 </script>
 
 <style lang="scss" scoped>

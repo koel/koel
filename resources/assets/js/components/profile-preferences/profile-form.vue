@@ -40,7 +40,7 @@
     </div>
 
     <div class="form-row">
-      <btn type="submit" class="btn-submit">Save</btn>
+      <Btn type="submit" class="btn-submit">Save</Btn>
       <span v-if="demo" style="font-size:.95rem; opacity:.7; margin-left:5px">
         Changes will not be saved in the demo version.
       </span>
@@ -48,45 +48,40 @@
   </form>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { preferenceStore as preferences, sharedStore, UpdateCurrentProfileData, userStore } from '@/stores'
+<script lang="ts" setup>
+import { defineAsyncComponent, onMounted, reactive, ref } from 'vue'
+import { sharedStore, UpdateCurrentProfileData, userStore } from '@/stores'
 import { alerts, parseValidationError } from '@/utils'
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  data: () => ({
-    preferences,
-    demo: NODE_ENV === 'demo',
-    state: userStore.state,
-    sharedState: sharedStore.state,
-    profile: {} as UpdateCurrentProfileData
-  }),
+const demo = NODE_ENV === 'demo'
+const state = reactive(userStore.state)
+const sharedState = reactive(sharedStore.state)
+const profile = ref<UpdateCurrentProfileData>({} as unknown as UpdateCurrentProfileData)
 
-  methods: {
-    async update (): Promise<void> {
-      try {
-        await userStore.updateProfile(this.profile)
-        this.profile.current_password = null
-        delete this.profile.new_password
-      } catch (err) {
-        const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-        alerts.error(msg)
-      }
-    }
-  },
-
-  mounted () {
-    this.profile = {
-      name: userStore.current.name,
-      email: userStore.current.email,
-      current_password: null
-    }
+onMounted(() => {
+  profile.value = {
+    name: userStore.current.name,
+    email: userStore.current.email,
+    current_password: null
   }
 })
+
+const update = async () => {
+  if (!profile.value) {
+    throw Error()
+  }
+
+  try {
+    await userStore.updateProfile(profile.value)
+    profile.value.current_password = null
+    delete profile.value.new_password
+  } catch (err: any) {
+    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
+    alerts.error(msg)
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -104,7 +99,7 @@ input {
   margin-top: .75rem;
 }
 
-@media only screen and (max-width : 667px) {
+@media only screen and (max-width: 667px) {
   input {
     &[type="text"], &[type="email"], &[type="password"] {
       width: 100%;

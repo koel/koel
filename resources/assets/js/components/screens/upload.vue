@@ -1,21 +1,21 @@
 <template>
   <section id="uploadWrapper">
-    <screen-header>
+    <ScreenHeader>
       Upload Media <sup>Beta</sup>
 
       <template v-slot:controls>
-        <btn-group uppercased v-if="hasUploadFailures">
-          <btn @click="retryAll" green data-testid="upload-retry-all-btn">
+        <BtnGroup uppercased v-if="hasUploadFailures">
+          <Btn @click="retryAll" green data-testid="upload-retry-all-btn">
             <i class="fa fa-repeat"></i>
             Retry All
-          </btn>
-          <btn @click="removeFailedEntries" orange data-testid="upload-remove-all-btn">
+          </Btn>
+          <Btn @click="removeFailedEntries" orange data-testid="upload-remove-all-btn">
             <i class="fa fa-times"></i>
             Remove Failed
-          </btn>
-        </btn-group>
+          </Btn>
+        </BtnGroup>
       </template>
-    </screen-header>
+    </ScreenHeader>
 
     <div class="main-scroll-wrap">
       <div
@@ -28,10 +28,10 @@
         v-if="mediaPath"
       >
         <div class="upload-files" v-if="uploadState.files.length">
-          <upload-item v-for="file in uploadState.files" :key="file.id" :file="file" data-test="upload-item"/>
+          <UploadItem v-for="file in uploadState.files" :key="file.id" :file="file" data-test="upload-item"/>
         </div>
 
-        <screen-placeholder v-else>
+        <ScreenPlaceholder v-else>
           <template v-slot:icon>
             <i class="fa fa-upload"></i>
           </template>
@@ -40,135 +40,101 @@
           <span class="secondary d-block">
             <a class="or-click d-block" role="button">
               or click here to select songs
-              <input type="file" name="file[]" multiple  @change="onFileInputChange"/>
+              <input type="file" name="file[]" multiple @change="onFileInputChange"/>
             </a>
           </span>
-        </screen-placeholder>
+        </ScreenPlaceholder>
       </div>
 
-      <screen-placeholder v-else>
+      <ScreenPlaceholder v-else>
         <template v-slot:icon>
           <i class="fa fa-exclamation-triangle"></i>
         </template>
         No media path set.
-      </screen-placeholder>
+      </ScreenPlaceholder>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, reactive, ref, toRef } from 'vue'
 import ismobile from 'ismobilejs'
 import md5 from 'blueimp-md5'
 
 import { settingStore, userStore } from '@/stores'
-import { getAllFileEntries, eventBus, isDirectoryReadingSupported } from '@/utils'
-import { UploadFile, validMediaMimeTypes, events } from '@/config'
+import { eventBus, getAllFileEntries, isDirectoryReadingSupported } from '@/utils'
+import { UploadFile, validMediaMimeTypes } from '@/config'
 import { upload } from '@/services'
 
 import UploadItem from '@/components/ui/upload/upload-item.vue'
 import BtnGroup from '@/components/ui/btn-group.vue'
 import Btn from '@/components/ui/btn.vue'
 
-export default Vue.extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ScreenPlaceholder: () => import('@/components/ui/screen-placeholder.vue'),
-    UploadItem,
-    BtnGroup,
-    Btn
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
-  data: () => ({
-    settingsState: settingStore.state,
-    droppable: false,
-    userState: userStore.state,
-    uploadState: upload.state,
-    hasUploadFailures: false
-  }),
+const mediaPath = toRef(settingStore.state, 'media_path')
+const droppable = ref(false)
+const userState = reactive(userStore.state)
+const uploadState = reactive(upload.state)
+const hasUploadFailures = ref(false)
 
-  computed: {
-    mediaPath (): string | undefined {
-      return this.settingsState.settings.media_path
-    },
+const allowsUpload = computed(() => userState.current.is_admin && !ismobile.any)
 
-    allowsUpload (): boolean {
-      return this.userState.current.is_admin && !ismobile.any
-    },
+const instructionText = computed(() => isDirectoryReadingSupported
+  ? 'Drop files or folders to upload'
+  : 'Drop files to upload'
+)
 
-    instructionText (): string {
-      return isDirectoryReadingSupported
-        ? 'Drop files or folders to upload'
-        : 'Drop files to upload'
-    }
-  },
+const onDragEnter = () => (droppable.value = allowsUpload.value)
+const onDragLeave = () => (droppable.value = false)
 
-  methods: {
-    onDragEnter (): void {
-      this.droppable = this.allowsUpload
-    },
+const handleFiles = (files: Array<File>) => {
+  const uploadCandidates = files
+    .filter(file => validMediaMimeTypes.includes(file.type))
+    .map((file): UploadFile => ({
+      file,
+      id: md5(`${file.name}-${file.size}`), // for simplicity, a file's identity is determined by its name and size
+      status: 'Ready',
+      name: file.name,
+      progress: 0
+    }))
 
-    onDragLeave (): void {
-      this.droppable = false
-    },
+  upload.queue(uploadCandidates)
+}
 
-    onFileInputChange (event: InputEvent): void {
-      const selectedFileList = (event.target as HTMLInputElement).files
-
-      if (!selectedFileList) {
-        return
-      }
-
-      this.handleFiles(Array.from(selectedFileList))
-    },
-
-    async onDrop (e: DragEvent): Promise<void> {
-      this.droppable = false
-
-      if (!e.dataTransfer) {
-        return
-      }
-
-      const fileEntries = await getAllFileEntries(e.dataTransfer.items)
-      const files = await Promise.all(fileEntries.map(async entry => await this.fileEntryToFile(entry)))
-      this.handleFiles(files)
-    },
-
-    handleFiles: (files: Array<File>) => {
-      const uploadCandidates = files
-        .filter(file => validMediaMimeTypes.includes(file.type))
-        .map((file: File): UploadFile => ({
-          file,
-          id: md5(`${file.name}-${file.size}`), // for simplicity, a file's identity is determined by its name and size
-          status: 'Ready',
-          name: file.name,
-          progress: 0
-        }))
-
-      upload.queue(uploadCandidates)
-    },
-
-    fileEntryToFile: async (entry: FileSystemEntry): Promise<File> => new Promise(resolve => {
-      entry.file((file: File) => resolve(file))
-    }),
-
-    retryAll (): void {
-      upload.retryAll()
-      this.hasUploadFailures = false
-    },
-
-    removeFailedEntries (): void {
-      upload.removeFailed()
-      this.hasUploadFailures = false
-    }
-  },
-
-  created (): void {
-    eventBus.on('UPLOAD_QUEUE_FINISHED', (): void => {
-      this.hasUploadFailures = upload.getFilesByStatus('Errored').length !== 0
-    })
-  }
+const fileEntryToFile = async (entry: FileSystemEntry): Promise<File> => new Promise(resolve => {
+  entry.file(resolve)
 })
+
+const onFileInputChange = (event: InputEvent) => {
+  const selectedFileList = (event.target as HTMLInputElement).files
+  selectedFileList && handleFiles(Array.from(selectedFileList))
+}
+
+const onDrop = async (event: DragEvent) => {
+  droppable.value = false
+
+  if (!event.dataTransfer) {
+    return
+  }
+
+  const fileEntries = await getAllFileEntries(event.dataTransfer.items)
+  const files = await Promise.all(fileEntries.map(async entry => await fileEntryToFile(entry)))
+  handleFiles(files)
+}
+
+const retryAll = () => {
+  upload.retryAll()
+  hasUploadFailures.value = false
+}
+
+const removeFailedEntries = () => {
+  upload.removeFailed()
+  hasUploadFailures.value = false
+}
+
+eventBus.on('UPLOAD_QUEUE_FINISHED', () => (hasUploadFailures.value = upload.getFilesByStatus('Errored').length !== 0))
 </script>
 
 <style lang="scss">

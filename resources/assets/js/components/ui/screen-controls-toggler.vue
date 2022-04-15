@@ -1,32 +1,16 @@
 <template>
-  <span class="controls-toggler text-orange" v-if="isPhone" @click="toggleControls">
+  <span class="controls-toggler text-orange" v-if="isMobile.phone" @click="$emit('toggleControls')">
     <i class="fa fa-angle-up toggler" v-if="showingControls"/>
     <i class="fa fa-angle-down toggler" v-else/>
   </span>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
 import isMobile from 'ismobilejs'
+import { toRefs } from 'vue'
 
-export default Vue.extend({
-  props: {
-    showingControls: {
-      type: Boolean,
-      default: true
-    }
-  },
-
-  data: () => ({
-    isPhone: isMobile.phone
-  }),
-
-  methods: {
-    toggleControls (): void {
-      this.$emit('toggleControls')
-    }
-  }
-})
+const props = withDefaults(defineProps<{ showingControls: boolean }>(), { showingControls: true })
+const { showingControls } = toRefs(props)
 </script>
 
 <style lang="scss" scoped>

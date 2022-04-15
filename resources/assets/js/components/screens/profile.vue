@@ -1,28 +1,24 @@
 <template>
   <section id="profileWrapper">
-    <screen-header>Profile &amp; Preferences</screen-header>
+    <ScreenHeader>Profile &amp; Preferences</ScreenHeader>
 
     <div class="main-scroll-wrap">
-      <profile-form/>
-      <themes/>
-      <preferences/>
-      <lastfm-integration/>
+      <ProfileForm/>
+      <Themes/>
+      <Preferences/>
+      <LastfmIntegration/>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent } from 'vue'
 
-export default Vue.extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ProfileForm: () => import('@/components/profile-preferences/profile-form.vue'),
-    LastfmIntegration: () => import('@/components/profile-preferences/lastfm-integration.vue'),
-    Preferences: () => import('@/components/profile-preferences/preferences.vue'),
-    Themes: () => import('@/components/profile-preferences/themes.vue')
-  }
-})
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ProfileForm = defineAsyncComponent(() => import('@/components/profile-preferences/profile-form.vue'))
+const LastfmIntegration = defineAsyncComponent(() => import('@/components/profile-preferences/lastfm-integration.vue'))
+const Preferences = defineAsyncComponent(() => import('@/components/profile-preferences/preferences.vue'))
+const Themes = defineAsyncComponent(() => import('@/components/profile-preferences/themes.vue'))
 </script>
 
 <style lang="scss">

@@ -3,47 +3,31 @@
     :class="{ fullscreen: isFullscreen }"
     @dblclick="toggleFullscreen"
     id="vizContainer"
-    ref="visualizerContainer"
+    ref="el"
     data-testid="visualizer"
   >
     <close-modal-btn class="close" @click="hide"/>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, onMounted, ref } from 'vue'
 import initVisualizer from '@/utils/visualizer'
 import { eventBus } from '@/utils'
 
-export default Vue.extend({
-  components: {
-    CloseModalBtn: () => import('@/components/ui/close-modal-btn.vue')
-  },
+const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
 
-  data: () => ({
-    isFullscreen: false
-  }),
+const el = ref(null as unknown as HTMLElement)
+const isFullscreen = ref(false)
 
-  methods: {
-    toggleFullscreen (): void {
-      if (this.isFullscreen) {
-        document.exitFullscreen()
-      } else {
-        (this.$refs.visualizerContainer as HTMLElement).requestFullscreen()
-      }
+const toggleFullscreen = () => {
+  isFullscreen.value ? document.exitFullscreen() : el.value.requestFullscreen()
+  isFullscreen.value = !isFullscreen.value
+}
 
-      this.isFullscreen = !this.isFullscreen
-    },
+const hide = () => eventBus.emit('TOGGLE_VISUALIZER')
 
-    hide: (): void => {
-      eventBus.emit('TOGGLE_VISUALIZER')
-    }
-  },
-
-  mounted (): void {
-    initVisualizer(this.$refs.visualizerContainer as HTMLElement)
-  }
-})
+onMounted(() => initVisualizer(el.value))
 </script>
 
 <style lang="scss" scoped>

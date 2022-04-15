@@ -1,5 +1,5 @@
 <template>
-  <div id="equalizer" data-testid="equalizer">
+  <div id="equalizer" data-testid="equalizer" ref="root">
     <div class="presets">
       <label class="select-wrapper">
         <select v-model="selectedPresetIndex">
@@ -27,11 +27,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
 import nouislider from 'nouislider'
+import { nextTick, onMounted, ref, watch } from 'vue'
 
-import { eventBus, $ } from '@/utils'
+import { eventBus } from '@/utils'
 import { equalizerStore, preferenceStore as preferences } from '@/stores'
 import { audio as audioService } from '@/services'
 import { SliderElement } from 'koel/types/ui'
@@ -41,169 +41,151 @@ interface Band {
   filter: BiquadFilterNode
 }
 
-let context: AudioContext
+let context: AudioContext|null = null
+let preampGainNode: GainNode|null = null
 
-export default Vue.extend({
-  data: () => ({
-    bands: [] as Band[],
-    preampGainValue: 0,
-    selectedPresetIndex: -1,
-    preampGainNode: null as unknown as GainNode
-  }),
+const root = ref(null as unknown as HTMLElement)
+const bands = ref<Band[]>([])
+const preampGainValue = ref(0)
+const selectedPresetIndex = ref(-1)
 
-  computed: {
-    presets (): EqualizerPreset[] {
-      const clonedPresets = Object.assign([], equalizerStore.presets)
+const presets: EqualizerPreset[] = Object.assign([], equalizerStore.presets)
 
-      // Prepend an empty option for instruction purpose.
-      clonedPresets.unshift({
-        id: -1,
-        name: 'Preset',
-        preamp: 0,
-        gains: []
-      })
+// Prepend an empty option for instruction purpose.`
+presets.unshift({
+  id: -1,
+  name: 'Preset',
+  preamp: 0,
+  gains: []
+})
 
-      return clonedPresets
+const changePreampGain = (dbValue: number) => {
+  preampGainValue.value = dbValue
+  preampGainNode!.gain.setTargetAtTime(Math.pow(10, dbValue / 20), context!.currentTime, 0.01)
+}
+
+const changeFilterGain = (filter: BiquadFilterNode, value: number) => {
+  filter.gain.setTargetAtTime(value, context!.currentTime, 0.01)
+}
+
+const createSliders = () => {
+  const config = equalizerStore.get()
+
+  Array.from(root.value.querySelectorAll('.slider') as NodeListOf<SliderElement>).forEach((el, i) => {
+    if (el.noUiSlider) {
+      el.noUiSlider.destroy()
     }
-  },
 
-  watch: {
-    selectedPresetIndex (val: number): void {
-      // Save the selected preset (index) every time the value's changed.
-      preferences.selectedPreset = val
+    nouislider.create(el, {
+      connect: [false, true],
+      // the first element is the preamp. The rest are gains.
+      start: i === 0 ? config.preamp : config.gains[i - 1],
+      range: { min: -20, max: 20 },
+      orientation: 'vertical',
+      direction: 'rtl'
+    })
 
-      if (~~val !== -1) {
-        this.loadPreset(equalizerStore.getPresetById(val))
+    if (!el.noUiSlider) {
+      throw new Error(`Failed to initialize slider on element ${i}`)
+    }
+
+    el.noUiSlider.on('slide', (values, handle) => {
+      const value = values[handle]
+      if (el.parentElement!.matches('.preamp')) {
+        changePreampGain(value)
+      } else {
+        changeFilterGain(bands.value[i - 1].filter, value)
       }
+    })
+
+    el.noUiSlider.on('change', () => {
+      // User has customized the equalizer. No preset should be selected.
+      selectedPresetIndex.value = -1
+      save()
+    })
+  })
+
+  // Now we set this value to trigger the audio processing.
+  selectedPresetIndex.value = preferences.selectedPreset
+}
+
+const init = async () => {
+  const config: EqualizerPreset = equalizerStore.get()
+
+  context = audioService.getContext()
+  preampGainNode = context.createGain()
+  changePreampGain(config.preamp)
+
+  const source = audioService.getSource()
+  source.connect(preampGainNode)
+
+  let prevFilter: BiquadFilterNode
+
+  // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
+  const frequencies = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000]
+
+  frequencies.forEach((frequency, i) => {
+    const filter = context!.createBiquadFilter()
+
+    if (i === 0) {
+      filter.type = 'lowshelf'
+    } else if (i === 9) {
+      filter.type = 'highshelf'
+    } else {
+      filter.type = 'peaking'
     }
-  },
 
-  methods: {
-    init (): void {
-      const config: EqualizerPreset = equalizerStore.get()
+    filter.gain.setTargetAtTime(0, context!.currentTime, 0.01)
+    filter.Q.setTargetAtTime(1, context!.currentTime, 0.01)
+    filter.frequency.setTargetAtTime(frequency, context!.currentTime, 0.01)
 
-      context = audioService.getContext()
-      this.preampGainNode = context.createGain()
-      this.changePreampGain(config.preamp)
+    prevFilter ? prevFilter.connect(filter) : preampGainNode!.connect(filter)
+    prevFilter = filter
 
-      const source = audioService.getSource()
-      source.connect(this.preampGainNode)
+    bands.value.push({
+      filter,
+      label: String(frequency).replace('000', 'K')
+    })
+  })
 
-      let prevFilter: BiquadFilterNode
+  prevFilter!.connect(context.destination)
 
-      // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
-      const frequencies = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000]
-      frequencies.forEach((frequency: number, i: number): void => {
-        const filter = context.createBiquadFilter()
+  await nextTick()
+  createSliders()
+}
 
-        if (i === 0) {
-          filter.type = 'lowshelf'
-        } else if (i === 9) {
-          filter.type = 'highshelf'
-        } else {
-          filter.type = 'peaking'
-        }
+const save = () => equalizerStore.set(preampGainValue.value, bands.value.map(band => band.filter.gain.value))
 
-        filter.gain.setTargetAtTime(0, context.currentTime, 0.01)
-        filter.Q.setTargetAtTime(1, context.currentTime, 0.01)
-        filter.frequency.setTargetAtTime(frequency, context.currentTime, 0.01)
-
-        prevFilter ? prevFilter.connect(filter) : this.preampGainNode.connect(filter)
-        prevFilter = filter
-
-        this.bands.push({
-          filter,
-          label: String(frequency).replace('000', 'K')
-        })
-      })
-
-      prevFilter!.connect(context.destination)
-
-      this.$nextTick((): void => this.createSliders())
-    },
-
-    createSliders (): void {
-      const config = equalizerStore.get()
-
-      Array.from(document.querySelectorAll('#equalizer .slider') as NodeListOf<SliderElement>)
-        .forEach((el: SliderElement, i: number): void => {
-          if (el.noUiSlider) {
-            el.noUiSlider.destroy()
-          }
-
-          nouislider.create(el, {
-            connect: [false, true],
-            // the first element is the preamp. The rest are gains.
-            start: i === 0 ? config.preamp : config.gains[i - 1],
-            range: { min: -20, max: 20 },
-            orientation: 'vertical',
-            direction: 'rtl'
-          })
-
-          if (!el.noUiSlider) {
-            throw new Error(`Failed to initialize slider on element ${i}`)
-          }
-
-          el.noUiSlider.on('slide', (values: number[], handle: number): void => {
-            const value = values[handle]
-            if (el.parentElement!.matches('.preamp')) {
-              this.changePreampGain(value)
-            } else {
-              this.changeFilterGain(this.bands[i - 1].filter, value)
-            }
-          })
-
-          el.noUiSlider.on('change', (): void => {
-            // User has customized the equalizer. No preset should be selected.
-            this.selectedPresetIndex = -1
-            this.save()
-          })
-        })
-
-      // Now we set this value to trigger the audio processing.
-      this.selectedPresetIndex = preferences.selectedPreset
-    },
-
-    changePreampGain (dbValue: number): void {
-      this.preampGainValue = dbValue
-      this.preampGainNode.gain.setTargetAtTime(Math.pow(10, dbValue / 20), context.currentTime, 0.01)
-    },
-
-    changeFilterGain: (filter: BiquadFilterNode, value: number): void => {
-      filter.gain.setTargetAtTime(value, context.currentTime, 0.01)
-    },
-
-    loadPreset (preset: EqualizerPreset): void {
-      Array.from(document.querySelectorAll('#equalizer .slider') as NodeListOf<SliderElement>)
-        .forEach((el: SliderElement, i: number): void => {
-          if (!el.noUiSlider) {
-            throw new Error('Preset can only be loaded after sliders have been set up')
-          }
-
-          // We treat our preamp slider differently.
-          if ($.is(el.parentElement!, '.preamp')) {
-            this.changePreampGain(preset.preamp)
-            // Update the slider values into GUI.
-            el.noUiSlider.set(preset.preamp)
-          } else {
-            this.changeFilterGain(this.bands[i - 1].filter, preset.gains[i - 1])
-            // Update the slider values into GUI.
-            el.noUiSlider.set(preset.gains[i - 1])
-          }
-        })
-
-      this.save()
-    },
-
-    save (): void {
-      equalizerStore.set(this.preampGainValue, this.bands.map((band: Band): number => band.filter.gain.value))
+const loadPreset = (preset: EqualizerPreset) => {
+  Array.from(root.value.querySelectorAll('.slider') as NodeListOf<SliderElement>).forEach((el, i) => {
+    if (!el.noUiSlider) {
+      throw new Error('Preset can only be loaded after sliders have been set up')
     }
-  },
 
-  mounted (): void {
-    eventBus.on('INIT_EQUALIZER', (): void => this.init())
+    // We treat our preamp slider differently.
+    if (el.parentElement!.matches('.preamp')) {
+      changePreampGain(preset.preamp)
+      // Update the slider values into GUI.
+      el.noUiSlider.set(preset.preamp)
+    } else {
+      changeFilterGain(bands.value[i - 1].filter, preset.gains[i - 1])
+      // Update the slider values into GUI.
+      el.noUiSlider.set(preset.gains[i - 1])
+    }
+  })
+
+  save()
+}
+
+watch(selectedPresetIndex, () => {
+  preferences.selectedPreset = selectedPresetIndex.value
+
+  if (~~selectedPresetIndex.value !== -1) {
+    loadPreset(equalizerStore.getPresetById(selectedPresetIndex.value))
   }
 })
+
+onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
 </script>
 
 <style lang="scss">
@@ -313,6 +295,7 @@ export default Vue.extend({
     &-connect {
       background: none;
       box-shadow: none;
+
       &::after {
         content: " ";
         position: absolute;
@@ -363,7 +346,7 @@ export default Vue.extend({
     }
   }
 
-  @media only screen and (max-width : 768px) {
+  @media only screen and (max-width: 768px) {
     position: fixed;
     max-width: 414px;
     left: auto;

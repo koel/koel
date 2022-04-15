@@ -3,34 +3,34 @@
     <!--
       Most of the views are render-expensive and have their own UI states (viewport/scroll position), e.g. the song
       lists), so we use v-show.
-      For those that don't need to maintain their own UI state, we use v-if and enjoy some codesplitting juice.
+      For those that don't need to maintain their own UI state, we use v-if and enjoy some code-splitting juice.
     -->
-    <visualizer v-if="showingVisualizer"/>
-    <album-art-overlay :song="currentSong" v-if="preferences.showAlbumArtOverlay"/>
+    <Visualizer v-if="showingVisualizer"/>
+    <AlbumArtOverlay :song="currentSong" v-if="preferences.showAlbumArtOverlay"/>
 
-    <home-screen v-show="view === 'Home'"/>
-    <queue-screen v-show="view === 'Queue'"/>
-    <all-songs-screen v-show="view === 'Songs'"/>
-    <album-list-screen v-show="view === 'Albums'"/>
-    <artist-list-screen v-show="view === 'Artists'"/>
-    <playlist-screen v-show="view === 'Playlist'"/>
-    <favorites-screen v-show="view === 'Favorites'"/>
-    <recently-played-screen v-show="view === 'RecentlyPlayed'"/>
-    <upload-screen v-show="view === 'Upload'"/>
-    <search-excerpts-screen v-show="view === 'Search.Excerpt'"/>
+    <HomeScreen v-show="view === 'Home'"/>
+    <QueueScreen v-show="view === 'Queue'"/>
+    <AllSongsScreen v-show="view === 'Songs'"/>
+    <AlbumListScreen v-show="view === 'Albums'"/>
+    <ArtistListScreen v-show="view === 'Artists'"/>
+    <PlaylistScreen v-show="view === 'Playlist'"/>
+    <FavoritesScreen v-show="view === 'Favorites'"/>
+    <RecentlyPlayedScreen v-show="view === 'RecentlyPlayed'"/>
+    <UploadScreen v-show="view === 'Upload'"/>
+    <SearchExcerptsScreen v-show="view === 'Search.Excerpt'"/>
 
-    <search-song-results-screen v-if="view === 'Search.Songs'" :q="screenProps" />
-    <album-screen v-if="view === 'Album'" :album="screenProps"/>
-    <artist-screen v-if="view === 'Artist'" :artist="screenProps"/>
-    <settings-screen v-if="view === 'Settings'"/>
-    <profile-screen v-if="view === 'Profile'"/>
-    <user-list-screen v-if="view === 'Users'"/>
-    <youtube-screen v-if="sharedState.useYouTube" v-show="view === 'YouTube'"/>
+    <SearchSongResultsScreen v-if="view === 'Search.Songs'" :q="screenProps"/>
+    <AlbumScreen v-if="view === 'Album'" :album="screenProps"/>
+    <ArtistScreen v-if="view === 'Artist'" :artist="screenProps"/>
+    <SettingsScreen v-if="view === 'Settings'"/>
+    <ProfileScreen v-if="view === 'Profile'"/>
+    <UserListScreen v-if="view === 'Users'"/>
+    <YoutubeScreen v-if="sharedState.useYouTube" v-show="view === 'YouTube'"/>
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, reactive, ref } from 'vue'
 import { eventBus } from '@/utils'
 import { preferenceStore, sharedStore } from '@/stores'
 import HomeScreen from '@/components/screens/home.vue'
@@ -41,54 +41,34 @@ import AllSongsScreen from '@/components/screens/all-songs.vue'
 import PlaylistScreen from '@/components/screens/playlist.vue'
 import FavoritesScreen from '@/components/screens/favorites.vue'
 
-export default Vue.extend({
-  components: {
-    HomeScreen,
-    QueueScreen,
-    AllSongsScreen,
-    AlbumListScreen,
-    ArtistListScreen,
-    PlaylistScreen,
-    FavoritesScreen,
-    RecentlyPlayedScreen: () => import('@/components/screens/recently-played.vue'),
-    UserListScreen: () => import('@/components/screens/user-list.vue'),
-    AlbumArtOverlay: () => import('@/components/ui/album-art-overlay.vue'),
-    AlbumScreen: () => import('@/components/screens/album.vue'),
-    ArtistScreen: () => import('@/components/screens/artist.vue'),
-    SettingsScreen: () => import('@/components/screens/settings.vue'),
-    ProfileScreen: () => import('@/components/screens/profile.vue'),
-    YoutubeScreen: () => import('@/components/screens/youtube.vue'),
-    UploadScreen: () => import('@/components/screens/upload.vue'),
-    SearchExcerptsScreen: () => import('@/components/screens/search/excerpts.vue'),
-    SearchSongResultsScreen: () => import('@/components/screens/search/song-results.vue'),
-    Visualizer: () => import('@/components/ui/visualizer.vue')
+const RecentlyPlayedScreen = defineAsyncComponent(() => import('@/components/screens/recently-played.vue'))
+const UserListScreen = defineAsyncComponent(() => import('@/components/screens/user-list.vue'))
+const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/album-art-overlay.vue'))
+const AlbumScreen = defineAsyncComponent(() => import('@/components/screens/album.vue'))
+const ArtistScreen = defineAsyncComponent(() => import('@/components/screens/artist.vue'))
+const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/settings.vue'))
+const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/profile.vue'))
+const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/youtube.vue'))
+const UploadScreen = defineAsyncComponent(() => import('@/components/screens/upload.vue'))
+const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/excerpts.vue'))
+const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/song-results.vue'))
+const Visualizer = defineAsyncComponent(() => import('@/components/ui/visualizer.vue'))
+
+const preferences = reactive(preferenceStore.state)
+const sharedState = reactive(sharedStore.state)
+const showingVisualizer = ref(false)
+const screenProps = ref<any>(null)
+const view = ref<MainViewName>('Home')
+const currentSong = ref<Song | null>(null)
+
+eventBus.on({
+  LOAD_MAIN_CONTENT (_view: MainViewName, data: any) {
+    screenProps.value = data
+    view.value = _view
   },
 
-  data: () => ({
-    preferences: preferenceStore.state,
-    sharedState: sharedStore.state,
-    showingVisualizer: false,
-    screenProps: null,
-    view: 'Home' as MainViewName,
-    currentSong: null as Song | null
-  }),
-
-  created (): void {
-    eventBus.on({
-      'LOAD_MAIN_CONTENT': (view: MainViewName, data: any): void => {
-        this.screenProps = data
-        this.view = view
-      },
-
-      'TOGGLE_VISUALIZER': (): void => {
-        this.showingVisualizer = !this.showingVisualizer
-      },
-
-      'SONG_STARTED': (song: Song): void => {
-        this.currentSong = song
-      }
-    })
-  }
+  'TOGGLE_VISUALIZER': () => (showingVisualizer.value = !showingVisualizer.value),
+  'SONG_STARTED': (song: Song) => (currentSong.value = song)
 })
 </script>
 

@@ -1,10 +1,12 @@
-/// <reference path="./types.d.ts"/>
-import Vue, { createApp } from 'vue'
+import './static-loader'
+import { createApp } from 'vue'
 import App from './app.vue'
 import { http } from '@/services'
 import { clickaway, droppable, focus } from '@/directives'
+import router from '@/router'
 
 http.init()
+router.init()
 
 const app = createApp(App)
 

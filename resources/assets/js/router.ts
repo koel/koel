@@ -1,57 +1,31 @@
 import isMobile from 'ismobilejs'
 
 import { loadMainView } from './utils'
-import { artistStore, albumStore, songStore, queueStore, playlistStore, userStore } from './stores'
+import { albumStore, artistStore, playlistStore, queueStore, songStore, userStore } from './stores'
 import { playback } from './services'
 import { use } from '@/utils'
 
 const router = {
   routes: {
-    '/home': (): void => loadMainView('Home'),
-    '/queue': (): void => loadMainView('Queue'),
-    '/songs': (): void => loadMainView('Songs'),
-    '/albums': (): void => loadMainView('Albums'),
-    '/artists': (): void => loadMainView('Artists'),
-    '/favorites': (): void => loadMainView('Favorites'),
-    '/recently-played': (): void => loadMainView('RecentlyPlayed'),
-    '/search': (): void => loadMainView('Search.Excerpt'),
+    '/home': () => loadMainView('Home'),
+    '/queue': () => loadMainView('Queue'),
+    '/songs': () => loadMainView('Songs'),
+    '/albums': () => loadMainView('Albums'),
+    '/artists': () => loadMainView('Artists'),
+    '/favorites': () => loadMainView('Favorites'),
+    '/recently-played': () => loadMainView('RecentlyPlayed'),
+    '/search': () => loadMainView('Search.Excerpt'),
     '/search/songs/(.+)': (q: string) => loadMainView('Search.Songs', q),
-
-    '/upload': (): void => {
-      if (userStore.current.is_admin) {
-        loadMainView('Upload')
-      }
-    },
-
-    '/settings': (): void => {
-      if (userStore.current.is_admin) {
-        loadMainView('Settings')
-      }
-    },
-
-    '/users': (): void => {
-      if (userStore.current.is_admin) {
-        loadMainView('Users')
-      }
-    },
-
-    '/youtube': (): void => loadMainView('YouTube'),
-    '/visualizer': (): void => loadMainView('Visualizer'),
-    '/profile': (): void => loadMainView('Profile'),
-
-    '/album/(\\d+)': (id: number) => use(albumStore.byId(~~id)!, (album: Album): void => {
-      loadMainView('Album', album)
-    }),
-
-    '/artist/(\\d+)': (id: number) => use(artistStore.byId(~~id)!, (artist: Artist): void => {
-      loadMainView('Artist', artist)
-    }),
-
-    '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id)!, (playlist: Playlist): void => {
-      loadMainView('Playlist', playlist)
-    }),
-
-    '/song/([a-z0-9]{32})': (id: string): void => use(songStore.byId(id)!, (song: Song): void => {
+    '/upload': () => userStore.current.is_admin && loadMainView('Upload'),
+    '/settings': () => userStore.current.is_admin && loadMainView('Settings'),
+    '/users': () => userStore.current.is_admin && loadMainView('Users'),
+    '/youtube': () => loadMainView('YouTube'),
+    '/visualizer': () => loadMainView('Visualizer'),
+    '/profile': () => loadMainView('Profile'),
+    '/album/(\\d+)': (id: number) => use(albumStore.byId(~~id)!, album => loadMainView('Album', album)),
+    '/artist/(\\d+)': (id: number) => use(artistStore.byId(~~id)!, artist => loadMainView('Artist', artist)),
+    '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id)!, playlist => loadMainView('Playlist', playlist)),
+    '/song/([a-z0-9]{32})': (id: string) => use(songStore.byId(id)!, song => {
       if (isMobile.apple.device) {
         // Mobile Safari doesn't allow autoplay, so we just queue.
         queueStore.queue(song)
@@ -60,19 +34,19 @@ const router = {
         playback.queueAndPlay([song])
       }
     })
-  } as { [path: string]: Function },
+  } as { [path: string]: TAnyFunction },
 
-  init (): void {
+  init () {
     this.loadState()
-    window.addEventListener('popstate', (): void => this.loadState(), true)
+    window.addEventListener('popstate', () => this.loadState(), true)
   },
 
-  loadState (): void {
+  loadState () {
     if (!window.location.hash) {
       return this.go('home')
     }
 
-    Object.keys(this.routes).forEach((route: string): void => {
+    Object.keys(this.routes).forEach(route => {
       const matches = window.location.hash.match(new RegExp(`^#!${route}$`))
 
       if (matches) {
@@ -85,7 +59,7 @@ const router = {
   /**
    * Navigate to a (relative, hash-bang'ed) path.
    */
-  go: (path: string | number): void => {
+  go: (path: string | number) => {
     if (window.__UNIT_TESTING__) {
       return
     }

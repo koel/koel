@@ -16,16 +16,20 @@
     "@typescript-eslint"
   ],
   "globals": {
-    "KOEL_ENV": true,
-    "NODE_ENV": true,
-    "HTMLElement": true,
-    "FileReader": true
+    "KOEL_ENV": "readonly",
+    "NODE_ENV": "readonly",
+    "FileReader": "readonly",
+    "defineProps": "readonly",
+    "defineEmits": "readonly",
+    "defineExpose": "readonly",
+    "withDefaults": "readonly"
   },
   "rules": {
     "camelcase": 0,
     "no-multi-str": 0,
     "no-empty": 0,
     "quotes": 0,
+    "no-use-before-define": 0,
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/camelcase": 0,
     "@typescript-eslint/member-delimiter-style": 0,
@@ -33,8 +37,10 @@
     "@typescript-eslint/no-inferrable-types": 0,
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
-    "@typescript-eslint/ban-ts-ignore": 0,
+    "@typescript-eslint/ban-ts-comment": 0,
     "vue/no-side-effects-in-computed-properties": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "standard/no-callback-literal": 0,
     "vue/valid-v-on": 0
   }
 }

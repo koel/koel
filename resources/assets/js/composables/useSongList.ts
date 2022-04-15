@@ -1,8 +1,7 @@
 /**
  * Add necessary functionalities into a view that contains a song-list component.
  */
-
-import { ComponentInternalInstance, getCurrentInstance, ref, watchEffect } from 'vue'
+import { ComponentInternalInstance, getCurrentInstance, reactive, ref, watchEffect } from 'vue'
 import isMobile from 'ismobilejs'
 
 import { playback } from '@/services'
@@ -13,27 +12,27 @@ import SongList from '@/components/song/list.vue'
 import SongListControls from '@/components/song/list-controls.vue'
 import { songStore } from '@/stores'
 
-export const useSongList = () => {
+export const useSongList = (controlsConfig: Partial<SongListControlsConfig> = {}) => {
   const songList = ref(null)
-  const state = ref<SongListState>({ songs: [] })
+  const state = reactive<SongListState>({ songs: [] })
 
-  const meta = ref<SongListMeta>({
+  const meta = reactive<SongListMeta>({
     songCount: 0,
     totalLength: '00:00'
   })
 
   const selectedSongs = ref<Song[]>([])
   const showingControls = ref(false)
-  const songListControlConfig = ref<Partial<SongListControlsConfig>>({})
+  const songListControlConfig = reactive(controlsConfig)
   const isPhone = isMobile.phone
 
   watchEffect(() => {
-    if (!state.value.songs.length) {
+    if (!state.songs.length) {
       return
     }
 
-    meta.value.songCount = state.value.songs.length
-    meta.value.totalLength = songStore.getFormattedLength(state.value.songs)
+    meta.songCount = state.songs.length
+    meta.totalLength = songStore.getFormattedLength(state.songs)
   })
 
   const getSongsToPlay = (): Song[] => (songList.value as any).getAllSongsWithSort()
@@ -42,7 +41,7 @@ export const useSongList = () => {
   const toggleControls = () => (showingControls.value = !showingControls.value)
 
   eventBus.on({
-    'SET_SELECTED_SONGS': (songs: Song[], target: ComponentInternalInstance) => {
+    SET_SELECTED_SONGS (songs: Song[], target: ComponentInternalInstance) {
       target === getCurrentInstance() && (selectedSongs.value = songs)
     }
   })

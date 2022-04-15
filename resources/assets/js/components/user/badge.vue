@@ -1,12 +1,12 @@
 <template>
   <span class="profile" id="userBadge">
     <a class="view-profile" href="/#!/profile" title="View/edit user profile" data-testid="view-profile-link">
-      <img class="avatar" :src="state.current.avatar" :alt="`Avatar of ${state.current.name}`"/>
-      <span class="name">{{ state.current.name }}</span>
+      <img class="avatar" :src="user.avatar" :alt="`Avatar of ${user.name}`"/>
+      <span class="name">{{ user.name }}</span>
     </a>
 
     <a
-      :title="`Log ${state.current.name} out`"
+      :title="`Log ${user.name} out`"
       @click.prevent="logout"
       class="logout control"
       data-testid="btn-logout"
@@ -18,22 +18,14 @@
   </span>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { toRef } from 'vue'
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
 
-export default Vue.extend({
-  data: () => ({
-    state: userStore.state
-  }),
+const user = toRef(userStore.state, 'current')
 
-  methods: {
-    logout: (): void => {
-      eventBus.emit('LOG_OUT')
-    }
-  }
-})
+const logout = () => eventBus.emit('LOG_OUT')
 </script>
 
 <style lang="scss">
@@ -64,7 +56,7 @@ export default Vue.extend({
     @include vertical-center();
   }
 
-  @media only screen and (max-width : 667px) {
+  @media only screen and (max-width: 667px) {
     flex: 0 0 96px;
     margin-right: 0;
     padding-right: 0;

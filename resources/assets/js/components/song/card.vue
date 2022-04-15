@@ -1,7 +1,7 @@
 <template>
   <article
     :class="{ playing: song.playbackState === 'Playing' || song.playbackState === 'Paused' }"
-    @contextmenu.prevent="requestContextMenu"
+    @contextmenu.stop.prevent="requestContextMenu"
     @dblclick.prevent="play"
     @dragstart="dragStart"
     draggable="true"
@@ -20,7 +20,7 @@
         {{ song.title }}
         <span class="by text-secondary">
           <a :href="`#!/artist/${song.artist.id}`">{{ song.artist.name }}</a>
-          <template v-if="showPlayCount">- {{ song.playCount | pluralize('play') }}</template>
+          <template v-if="showPlayCount"> - {{ pluralize(song.playCount, 'play') }}</template>
         </span>
       </span>
       <span class="favorite">
@@ -30,62 +30,36 @@
   </article>
 </template>
 
-<script lang="ts">
-import { eventBus, startDragging, pluralize } from '@/utils'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, toRefs } from 'vue'
+import { eventBus, pluralize, startDragging } from '@/utils'
 import { queueStore } from '@/stores'
 import { playback } from '@/services'
-import Vue, { PropOptions } from 'vue'
 
-export default Vue.extend({
-  components: {
-    LikeButton: () => import('@/components/song/like-button.vue')
-  },
+const LikeButton = defineAsyncComponent(() => import('@/components/song/like-button.vue'))
 
-  props: {
-    song: {
-      type: Object,
-      required: true
-    } as PropOptions<Song>,
+const props = withDefaults(defineProps<{ song: Song, topPlayCount: number }>(), { topPlayCount: 0 })
+const { song, topPlayCount } = toRefs(props)
 
-    topPlayCount: {
-      type: Number,
-      default: 0
-    }
-  },
+const showPlayCount = computed(() => Boolean(topPlayCount && song.value.playCount))
 
-  filters: { pluralize },
+const requestContextMenu = (event: MouseEvent) => eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
+const dragStart = (event: DragEvent) => startDragging(event, song.value, 'Song')
 
-  computed: {
-    showPlayCount (): boolean {
-      return Boolean(this.topPlayCount && this.song.playCount)
-    }
-  },
+const play = () => {
+  queueStore.contains(song.value) || queueStore.queueAfterCurrent(song.value)
+  playback.play(song.value)
+}
 
-  methods: {
-    requestContextMenu (e: MouseEvent): void {
-      eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', e, this.song)
-    },
-
-    play (): void {
-      queueStore.contains(this.song) || queueStore.queueAfterCurrent(this.song)
-      playback.play(this.song)
-    },
-
-    changeSongState (): void {
-      if (this.song.playbackState === 'Stopped') {
-        this.play()
-      } else if (this.song.playbackState === 'Paused') {
-        playback.resume()
-      } else {
-        playback.pause()
-      }
-    },
-
-    dragStart (event: DragEvent): void {
-      startDragging(event, this.song, 'Song')
-    }
+const changeSongState = () => {
+  if (song.value.playbackState === 'Stopped') {
+    play()
+  } else if (song.value.playbackState === 'Paused') {
+    playback.resume()
+  } else {
+    playback.pause()
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>

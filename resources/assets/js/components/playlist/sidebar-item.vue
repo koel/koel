@@ -9,14 +9,14 @@
       v-koel-droppable="handleDrop"
     >{{ playlist.name }}</a>
 
-    <name-editor
+    <NameEditor
       :playlist="playlist"
       @cancelled="cancelEditing"
       @updated="onPlaylistNameUpdated"
       v-if="nameEditable && editing"
     />
 
-    <context-menu
+    <ContextMenu
       v-if="hasContextMenu"
       v-show="showingContextMenu"
       :playlist="playlist"
@@ -26,149 +26,122 @@
   </li>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, nextTick, ref, toRefs } from 'vue'
 import { BaseContextMenu } from 'koel/types/ui'
 import { eventBus } from '@/utils'
 import router from '@/router'
-import { songStore, playlistStore, favoriteStore } from '@/stores'
+import { favoriteStore, playlistStore, songStore } from '@/stores'
 
-const VALID_PLAYLIST_TYPES = ['playlist', 'favorites', 'recently-played']
+type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
 
-export default Vue.extend({
-  components: {
-    ContextMenu: () => import('@/components/playlist/item-context-menu.vue'),
-    NameEditor: () => import('@/components/playlist/name-editor.vue')
-  },
+const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/item-context-menu.vue'))
+const NameEditor = defineAsyncComponent(() => import('@/components/playlist/name-editor.vue'))
 
-  props: {
-    playlist: {
-      type: Object,
-      required: true
-    } as PropOptions<Playlist>,
+const contextMenu = ref<BaseContextMenu | null>(null)
 
-    type: {
-      type: String,
-      default: 'playlist',
-      validator: value => VALID_PLAYLIST_TYPES.includes(value)
-    }
-  },
+const props = withDefaults(defineProps<{ playlist: Playlist, type: PlaylistType }>(), { type: 'playlist' })
+const { playlist, type } = toRefs(props)
 
-  data: () => ({
-    editing: false,
-    active: false,
-    showingContextMenu: false
-  }),
+const editing = ref(false)
+const active = ref(false)
+const showingContextMenu = ref(false)
 
-  computed: {
-    url (): string {
-      switch (this.type) {
-        case 'playlist':
-          return `#!/playlist/${this.playlist.id}`
+const url = computed(() => {
+  switch (type.value) {
+    case 'playlist':
+      return `#!/playlist/${playlist.value.id}`
 
-        case 'favorites':
-          return '#!/favorites'
+    case 'favorites':
+      return '#!/favorites'
 
-        case 'recently-played':
-          return '#!/recently-played'
+    case 'recently-played':
+      return '#!/recently-played'
 
-        default:
-          throw new Error('Invalid playlist type')
-      }
-    },
+    default:
+      throw new Error('Invalid playlist type')
+  }
+})
 
-    nameEditable (): boolean {
-      return this.type === 'playlist'
-    },
+const nameEditable = computed(() => type.value === 'playlist')
+const hasContextMenu = computed(() => type.value === 'playlist')
 
-    contentEditable (): boolean {
-      if (this.playlist.is_smart) {
-        return false
-      }
+const contentEditable = computed(() => {
+  if (playlist.value.is_smart) {
+    return false
+  }
 
-      return this.type === 'playlist' || this.type === 'favorites'
-    },
+  return type.value === 'playlist' || type.value === 'favorites'
+})
 
-    hasContextMenu (): boolean {
-      return this.type === 'playlist'
-    }
-  },
+const makeEditable = () => {
+  if (!nameEditable.value) {
+    return
+  }
 
-  methods: {
-    makeEditable (): void {
-      if (!this.nameEditable) {
-        return
-      }
+  editing.value = true
+}
 
-      this.editing = true
-    },
+/**
+ * Handle songs dropped to our favorite or playlist menu item.
+ */
+const handleDrop = (event: DragEvent) => {
+  if (!contentEditable.value) {
+    return false
+  }
 
-    /**
-     * Handle songs dropped to our favorite or playlist menu item.
-     */
-    handleDrop (e: DragEvent): boolean {
-      if (!this.contentEditable) {
-        return false
-      }
+  if (!event.dataTransfer?.getData('application/x-koel.text+plain')) {
+    return false
+  }
 
-      if (!e.dataTransfer?.getData('application/x-koel.text+plain')) {
-        return false
-      }
+  const songs = songStore.byIds(event.dataTransfer.getData('application/x-koel.text+plain').split(','))
 
-      const songs = songStore.byIds(e.dataTransfer.getData('application/x-koel.text+plain').split(','))
+  if (!songs.length) {
+    return false
+  }
 
-      if (!songs.length) {
-        return false
-      }
+  if (type.value === 'favorites') {
+    favoriteStore.like(songs)
+  } else if (type.value === 'playlist') {
+    playlistStore.addSongs(playlist.value, songs)
+  }
 
-      if (this.type === 'favorites') {
-        favoriteStore.like(songs)
-      } else if (this.type === 'playlist') {
-        playlistStore.addSongs(this.playlist, songs)
-      }
+  return false
+}
 
-      return false
-    },
+const openContextMenu = async (event: MouseEvent) => {
+  if (hasContextMenu.value) {
+    showingContextMenu.value = true
+    await nextTick()
+    router.go(`/playlist/${playlist.value.id}`)
+    contextMenu.value?.open(event.pageY, event.pageX)
+  }
+}
 
-    async openContextMenu (event: MouseEvent) {
-      if (this.hasContextMenu) {
-        this.showingContextMenu = true
-        await this.$nextTick()
-        router.go(`/playlist/${this.playlist.id}`)
-        ;(this.$refs.contextMenu as BaseContextMenu).open(event.pageY, event.pageX)
-      }
-    },
+const cancelEditing = () => (editing.value = false)
 
-    cancelEditing (): void {
-      this.editing = false
-    },
+const onPlaylistNameUpdated = (mutatedPlaylist: Playlist) => {
+  playlist.value.name = mutatedPlaylist.name
+  editing.value = false
+}
 
-    onPlaylistNameUpdated (mutatedPlaylist: Playlist): void {
-      this.playlist.name = mutatedPlaylist.name
-      this.editing = false
-    }
-  },
+eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void => {
+  switch (view) {
+    case 'Favorites':
+      active.value = type.value === 'favorites'
+      break
 
-  created (): void {
-    eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, playlist: Playlist): void => {
-      switch (view) {
-        case 'Favorites':
-          this.active = this.type === 'favorites'
-          break
+    case 'RecentlyPlayed':
+      active.value = type.value === 'recently-played'
 
-        case 'RecentlyPlayed':
-          this.active = this.type === 'recently-played'
+      break
+    case 'Playlist':
+      active.value = playlist.value === _playlist
+      break
 
-          break
-        case 'Playlist':
-          this.active = this.playlist === playlist
-          break
-
-        default:
-          this.active = false
-          break
-      }
-    })
+    default:
+      active.value = false
+      break
   }
 })
 </script>

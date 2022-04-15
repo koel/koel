@@ -19,128 +19,91 @@
   </span>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, reactive, ref, toRefs } from 'vue'
 import { orderBy } from 'lodash'
-import { queueStore, albumStore, artistStore, userStore } from '@/stores'
+import { albumStore, artistStore, queueStore, userStore } from '@/stores'
 import { playback } from '@/services'
-import { getDefaultCover, fileReader } from '@/utils'
+import { fileReader, getDefaultCover } from '@/utils'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png']
 
-export default Vue.extend({
-  props: {
-    entity: {
-      type: Object,
-      required: true
-    } as PropOptions<Album | Artist>
-  },
+const props = defineProps<{ entity: Album | Artist }>()
+const { entity } = toRefs(props)
 
-  data: () => ({
-    droppable: false,
-    userState: userStore.state
-  }),
+const droppable = ref(false)
+const userState = reactive(userStore.state)
 
-  computed: {
-    forAlbum (): boolean {
-      return 'artist' in this.entity
-    },
+const forAlbum = computed(() => 'artist' in entity)
+const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
 
-    sortFields (): string[] {
-      return this.forAlbum ? ['disc', 'track'] : ['album_id', 'disc', 'track']
-    },
+const backgroundImageUrl = computed(() => forAlbum.value
+  ? (entity.value as Album).cover ? (entity.value as Album).cover : getDefaultCover()
+  : (entity.value as Artist).image ? (entity.value as Artist).image : getDefaultCover()
+)
 
-    backgroundImageUrl (): string {
-      if (this.forAlbum) {
-        const entity = this.entity as Album
-        return entity.cover ? entity.cover : getDefaultCover()
-      } else {
-        const entity = this.entity as Artist
-        return entity.image ? entity.image : getDefaultCover()
-      }
-    },
+const buttonLabel = computed(() => forAlbum.value
+  ? `Play all songs in the album ${entity.value.name}`
+  : `Play all songs by the artist ${entity.value.name}`
+)
 
-    buttonLabel (): string {
-      return this.forAlbum
-        ? `Play all songs in the album ${this.entity.name}`
-        : `Play all songs by the artist ${this.entity.name}`
-    },
+const playbackFunc = computed(() => forAlbum.value ? playback.playAllInAlbum : playback.playAllByArtist)
 
-    playbackFunc (): Function {
-      return this.forAlbum ? playback.playAllInAlbum : playback.playAllByArtist
-    },
+const allowsUpload = computed(() => userState.current.is_admin)
 
-    allowsUpload (): boolean {
-      return this.userState.current.is_admin
-    }
-  },
-
-  methods: {
-    playOrQueue (e: KeyboardEvent) {
-      if (e.metaKey || e.ctrlKey) {
-        queueStore.queue(orderBy(this.entity.songs, this.sortFields))
-      } else {
-        this.playbackFunc.call(playback, this.entity, false)
-      }
-    },
-
-    onDragEnter (): void {
-      this.droppable = this.allowsUpload
-    },
-
-    onDragLeave (): void {
-      this.droppable = false
-    },
-
-    async onDrop (e: DragEvent): Promise<void> {
-      this.droppable = false
-
-      if (!this.allowsUpload) {
-        return
-      }
-
-      if (!this.validImageDropEvent(e)) {
-        return
-      }
-
-      try {
-        const fileData = await fileReader.readAsDataUrl(e.dataTransfer!.files[0])
-
-        if (this.forAlbum) {
-          // Replace the image right away to create a swift effect
-          (this.entity as Album).cover = fileData
-          albumStore.uploadCover(this.entity as Album, fileData)
-        } else {
-          (this.entity as Artist).image = fileData
-          artistStore.uploadImage(this.entity as Artist, fileData)
-        }
-      } catch (exception) {
-        /* eslint no-console: 0 */
-        console.error(exception)
-      }
-    },
-
-    validImageDropEvent: (e: DragEvent): boolean => {
-      if (!e.dataTransfer || !e.dataTransfer.items) {
-        return false
-      }
-
-      if (e.dataTransfer.items.length !== 1) {
-        return false
-      }
-
-      if (e.dataTransfer.items[0].kind !== 'file') {
-        return false
-      }
-
-      if (!VALID_IMAGE_TYPES.includes(e.dataTransfer.items[0].getAsFile()!.type)) {
-        return false
-      }
-
-      return true
-    }
+const playOrQueue = (event: KeyboardEvent) => {
+  if (event.metaKey || event.ctrlKey) {
+    queueStore.queue(orderBy(entity.value.songs, sortFields.value))
+  } else {
+    playbackFunc.value.call(playback, entity.value, false)
   }
-})
+}
+
+const onDragEnter = () => (droppable.value = allowsUpload.value)
+const onDragLeave = () => (droppable.value = false)
+
+const validImageDropEvent = (event: DragEvent) => {
+  if (!event.dataTransfer || !event.dataTransfer.items) {
+    return false
+  }
+
+  if (event.dataTransfer.items.length !== 1) {
+    return false
+  }
+
+  if (event.dataTransfer.items[0].kind !== 'file') {
+    return false
+  }
+
+  return VALID_IMAGE_TYPES.includes(event.dataTransfer.items[0].getAsFile()!.type)
+}
+
+const onDrop = async (event: DragEvent) => {
+  droppable.value = false
+
+  if (!allowsUpload.value) {
+    return
+  }
+
+  if (!validImageDropEvent(event)) {
+    return
+  }
+
+  try {
+    const fileData = await fileReader.readAsDataUrl(event.dataTransfer!.files[0])
+
+    if (forAlbum.value) {
+      // Replace the image right away to create a swift effect
+      (entity.value as Album).cover = fileData
+      await albumStore.uploadCover(entity.value as Album, fileData)
+    } else {
+      (entity.value as Artist).image = fileData
+      await artistStore.uploadImage(entity.value as Artist, fileData)
+    }
+  } catch (exception) {
+    console.error(exception)
+  }
+}
 </script>
 
 <style lang="scss" scoped>

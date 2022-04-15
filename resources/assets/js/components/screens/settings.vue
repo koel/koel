@@ -1,6 +1,6 @@
 <template>
   <section id="settingsWrapper">
-    <screen-header>Settings</screen-header>
+    <ScreenHeader>Settings</ScreenHeader>
 
     <form @submit.prevent="confirmThenSave" class="main-scroll-wrap">
       <div class="form-row">
@@ -16,73 +16,63 @@
           aria-describedby="mediaPathHelp"
           id="inputSettingsPath"
           type="text"
-          v-model="state.settings.media_path"
+          v-model="state.media_path"
           name="media_path"
         >
       </div>
 
       <div class="form-row">
-        <btn type="submit">Scan</btn>
+        <Btn type="submit">Scan</Btn>
       </div>
     </form>
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, reactive } from 'vue'
 import { settingStore, sharedStore } from '@/stores'
-import { parseValidationError, forceReloadWindow, showOverlay, hideOverlay, alerts } from '@/utils'
+import { alerts, forceReloadWindow, hideOverlay, parseValidationError, showOverlay } from '@/utils'
 import router from '@/router'
 
-export default Vue.extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  data: () => ({
-    state: settingStore.state,
-    sharedState: sharedStore.state
-  }),
+const state = settingStore.state
+const sharedState = reactive(sharedStore.state)
 
-  computed: {
-    shouldWarn (): boolean {
-      // Warn the user if the media path is not empty and about to change.
-      if (!this.sharedState.originalMediaPath || !this.state.settings.media_path) {
-        return false
-      }
-
-      return this.sharedState.originalMediaPath !== this.state.settings.media_path.trim()
-    }
-  },
-
-  methods: {
-    confirmThenSave (): void {
-      if (this.shouldWarn) {
-        alerts.confirm('Warning: Changing the media path will essentially remove all existing data – songs, artists, \
-          albums, favorites, everything – and empty your playlists! Sure you want to proceed?', this.save)
-      } else {
-        this.save()
-      }
-    },
-
-    save: async (): Promise<void> => {
-      showOverlay()
-
-      try {
-        await settingStore.update()
-        // Make sure we're back to home first.
-        router.go('home')
-        forceReloadWindow()
-      } catch (err) {
-        hideOverlay()
-
-        const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-        alerts.error(msg)
-      }
-    }
+const shouldWarn = computed(() => {
+  // Warn the user if the media path is not empty and about to change.
+  if (!sharedState.originalMediaPath || !state.media_path) {
+    return false
   }
+
+  return sharedState.originalMediaPath !== state.media_path.trim()
 })
+
+const save = async () => {
+  showOverlay()
+
+  try {
+    await settingStore.update()
+    // Make sure we're back to home first.
+    router.go('home')
+    forceReloadWindow()
+  } catch (err: any) {
+    hideOverlay()
+
+    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
+    alerts.error(msg)
+  }
+}
+
+const confirmThenSave = () => {
+  if (shouldWarn.value) {
+    alerts.confirm('Warning: Changing the media path will essentially remove all existing data – songs, artists, \
+          albums, favorites, everything – and empty your playlists! Sure you want to proceed?', save)
+  } else {
+    save()
+  }
+}
 </script>
 
 <style lang="scss">
@@ -92,7 +82,7 @@ export default Vue.extend({
     margin-top: 1rem;
   }
 
-  @media only screen and (max-width : 667px) {
+  @media only screen and (max-width: 667px) {
     input[type="text"] {
       width: 100%;
     }

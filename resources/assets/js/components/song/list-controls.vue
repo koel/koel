@@ -1,9 +1,9 @@
 <template>
-  <div class="song-list-controls" data-test="song-list-controls">
-    <btn-group uppercased>
+  <div class="song-list-controls" data-test="song-list-controls" ref="el">
+    <BtnGroup uppercased>
       <template v-if="mergedConfig.play">
         <template v-if="altPressed">
-          <btn
+          <Btn
             @click.prevent="playAll"
             class="btn-play-all"
             orange
@@ -12,9 +12,9 @@
             data-test="btn-play-all"
           >
             <i class="fa fa-play"></i> All
-          </btn>
+          </Btn>
 
-          <btn
+          <Btn
             @click.prevent="playSelected"
             class="btn-play-selected"
             orange
@@ -23,11 +23,11 @@
             data-test="btn-play-selected"
           >
             <i class="fa fa-play"></i> Selected
-          </btn>
+          </Btn>
         </template>
 
         <template v-else>
-          <btn
+          <Btn
             @click.prevent="shuffle"
             class="btn-shuffle-all"
             orange
@@ -36,9 +36,9 @@
             data-test="btn-shuffle-all"
           >
             <i class="fa fa-random"></i> All
-          </btn>
+          </Btn>
 
-          <btn
+          <Btn
             @click.prevent="shuffleSelected"
             class="btn-shuffle-selected"
             orange
@@ -47,11 +47,11 @@
             data-test="btn-shuffle-selected"
           >
             <i class="fa fa-random"></i> Selected
-          </btn>
+          </Btn>
         </template>
       </template>
 
-      <btn
+      <Btn
         :title="`${showingAddToMenu ? 'Cancel' : 'Add selected songs to…'}`"
         @click.prevent.stop="toggleAddToMenu"
         class="btn-add-to"
@@ -60,9 +60,9 @@
         data-test="add-to-btn"
       >
         {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
-      </btn>
+      </Btn>
 
-      <btn
+      <Btn
         @click.prevent="clearQueue"
         class="btn-clear-queue"
         red
@@ -70,9 +70,9 @@
         title="Clear current queue"
       >
         Clear
-      </btn>
+      </Btn>
 
-      <btn
+      <Btn
         @click.prevent="deletePlaylist"
         class="del btn-delete-playlist"
         red
@@ -80,11 +80,11 @@
         v-if="showDeletePlaylistButton"
       >
         <i class="fa fa-times"></i> Playlist
-      </btn>
+      </Btn>
 
-    </btn-group>
+    </BtnGroup>
 
-    <add-to-menu
+    <AddToMenu
       @closing="closeAddToMenu"
       :config="mergedConfig.addTo"
       :songs="selectedSongs"
@@ -94,131 +94,79 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
 
-const KEYCODE_ALT = 18
+const AddToMenu = defineAsyncComponent(() => import('./add-to-menu.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const BtnGroup = defineAsyncComponent(() => import('@/components/ui/btn-group.vue'))
 
-export default Vue.extend({
-  props: {
-    config: {
-      type: Object
-    } as PropOptions<Partial<SongListControlsConfig>>,
-    songs: {
-      type: Array,
-      default: () => []
-    } as PropOptions<Song[]>,
+const props = withDefaults(defineProps<{ songs: Song[], selectedSongs: Song[], config: Partial<SongListControlsConfig> }>(), {
+  songs: () => [],
+  selectedSongs: () => [],
+  config: () => ({})
+})
 
-    selectedSongs: {
-      type: Array,
-      default: () => []
-    } as PropOptions<Song[]>
-  },
+const { config, songs, selectedSongs } = toRefs(props)
 
-  components: {
-    AddToMenu: () => import('./add-to-menu.vue'),
-    Btn: () => import('@/components/ui/btn.vue'),
-    BtnGroup: () => import('@/components/ui/btn-group.vue')
-  },
+const el = ref(null as unknown as HTMLElement)
+const showingAddToMenu = ref(false)
+const numberOfQueuedSongs = ref(0)
+const altPressed = ref(false)
 
-  data: () => ({
-    showingAddToMenu: false,
-    numberOfQueuedSongs: 0,
-    altPressed: false
-  }),
-
-  computed: {
-    showClearQueueButton (): boolean {
-      return this.mergedConfig.clearQueue
+const mergedConfig = computed((): SongListControlsConfig => Object.assign({
+    play: true,
+    addTo: {
+      queue: true,
+      favorites: true,
+      playlists: true,
+      newPlaylist: true
     },
+    clearQueue: false,
+    deletePlaylist: false
+  }, config)
+)
 
-    showDeletePlaylistButton (): boolean {
-      return this.mergedConfig.deletePlaylist
-    },
+const showClearQueueButton = computed(() => mergedConfig.value.clearQueue)
+const showDeletePlaylistButton = computed(() => mergedConfig.value.deletePlaylist)
 
-    mergedConfig (): SongListControlsConfig {
-      return Object.assign({
-        play: true,
-        addTo: {
-          queue: true,
-          favorites: true,
-          playlists: true,
-          newPlaylist: true
-        },
-        clearQueue: false,
-        deletePlaylist: false
-      }, this.config)
-    }
-  },
+const emit = defineEmits(['playAll', 'playSelected', 'clearQueue', 'deletePlaylist'])
 
-  methods: {
-    shuffle (): void {
-      this.$emit('playAll', true)
-    },
+const shuffle = () => emit('playAll', true)
+const shuffleSelected = () => emit('playSelected', true)
+const playAll = () => emit('playAll', false)
+const playSelected = () => emit('playSelected', false)
+const clearQueue = () => emit('clearQueue')
+const deletePlaylist = () => emit('deletePlaylist')
+const closeAddToMenu = () => (showingAddToMenu.value = false)
+const registerKeydown = (event: KeyboardEvent) => event.altKey && (altPressed.value = true)
+const registerKeyup = (event: KeyboardEvent) => event.altKey && (altPressed.value = false)
 
-    shuffleSelected (): void {
-      this.$emit('playSelected', true)
-    },
+const toggleAddToMenu = async () => {
+  showingAddToMenu.value = !showingAddToMenu.value
 
-    playAll (): void {
-      this.$emit('playAll', false)
-    },
-
-    playSelected (): void {
-      this.$emit('playSelected', false)
-    },
-
-    clearQueue (): void {
-      this.$emit('clearQueue')
-    },
-
-    deletePlaylist (): void {
-      this.$emit('deletePlaylist')
-    },
-
-    closeAddToMenu (): void {
-      this.showingAddToMenu = false
-    },
-
-    registerKeydown (event: KeyboardEvent): void {
-      if (event.keyCode === KEYCODE_ALT) {
-        this.altPressed = true
-      }
-    },
-
-    registerKeyup (event: KeyboardEvent): void {
-      if (event.keyCode === KEYCODE_ALT) {
-        this.altPressed = false
-      }
-    },
-
-    toggleAddToMenu () {
-      this.showingAddToMenu = !this.showingAddToMenu
-
-      if (!this.showingAddToMenu) {
-        return
-      }
-
-      this.$nextTick(() => {
-        const btnAddTo = this.$el.querySelector<HTMLButtonElement>('.btn-add-to')!
-        const { left: btnLeft, bottom: btnBottom, width: btnWidth } = btnAddTo.getBoundingClientRect()
-        const contextMenu = this.$el.querySelector<HTMLElement>('.add-to')!
-        const menuWidth = contextMenu.getBoundingClientRect().width
-        contextMenu.style.top = `${btnBottom + 10}px`
-        contextMenu.style.left = `${btnLeft + btnWidth / 2 - menuWidth / 2}px`
-      })
-    }
-  },
-
-  mounted (): void {
-    window.addEventListener('keydown', this.registerKeydown)
-    window.addEventListener('keyup', this.registerKeyup)
-  },
-
-  destroyed (): void {
-    window.removeEventListener('keydown', this.registerKeydown)
-    window.removeEventListener('keyup', this.registerKeyup)
+  if (!showingAddToMenu.value) {
+    return
   }
+
+  await nextTick()
+
+  const btnAddTo = el.value.querySelector<HTMLButtonElement>('.btn-add-to')!
+  const { left: btnLeft, bottom: btnBottom, width: btnWidth } = btnAddTo.getBoundingClientRect()
+  const contextMenu = el.value.querySelector<HTMLElement>('.add-to')!
+  const menuWidth = contextMenu.getBoundingClientRect().width
+  contextMenu.style.top = `${btnBottom + 10}px`
+  contextMenu.style.left = `${btnLeft + btnWidth / 2 - menuWidth / 2}px`
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', registerKeydown)
+  window.addEventListener('keyup', registerKeyup)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', registerKeydown)
+  window.removeEventListener('keyup', registerKeyup)
 })
 </script>
 

@@ -6560,11 +6560,6 @@ mitt@^2.1.0:
   resolved "https://registry.yarnpkg.com/mitt/-/mitt-2.1.0.tgz#f740577c23176c6205b121b2973514eade1b2230"
   integrity sha512-ILj2TpLiysu2wkBbWjAmww7TkZb65aiQO+DkVdUTBpBXq+MHYiETENkKFMtsJZX1Lf4pe4QOrTSjIfUwN5lRdg==
 
-mitt@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.0.tgz#69ef9bd5c80ff6f57473e8d89326d01c414be0bd"
-  integrity sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==
-
 mkdirp@^0.5.5, mkdirp@~0.5.1:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.6.tgz#7def03d2432dcae4ba1d611445c48396062255f6"
@@ -9598,10 +9593,10 @@ vue-eslint-parser@^7.0.0:
     lodash "^4.17.21"
     semver "^6.3.0"
 
-vue-global-events@^1.0.2:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/vue-global-events/-/vue-global-events-1.2.1.tgz#4c1398a1f67854c73290f5c1cedb5109116c2b50"
-  integrity sha512-035Su/+5GUFnj9potJThJXu9DnayRKSENbuBw5k5sMa6hetiY+6Yu+5zUtPXT4X0S9y8tX7uSxGZJMMYiqhFfg==
+vue-global-events@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/vue-global-events/-/vue-global-events-2.1.1.tgz#348a2ec4dfc06b58fc8ed46f3dbe86642bf1da50"
+  integrity sha512-iYgBmtbj/yLPADpB86p7MMjMEsiR/G/sYMbl9F85irjVBK7Q1TdqLRR10IfnZ6llNVrH/u91lGvNbE6s7u729Q==
 
 vue-loader@^16.2.0:
   version "16.8.3"

@@ -1,15 +1,15 @@
 <template>
   <section id="songsWrapper">
-    <screen-header>
+    <ScreenHeader>
       All Songs
-      <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
-        <span v-if="meta.songCount">{{ meta.songCount | pluralize('song') }} • {{ meta.totalLength }}</span>
+        <span v-if="meta.songCount">{{ pluralize(meta.songCount, 'song') }} • {{ meta.totalLength }}</span>
       </template>
 
       <template v-slot:controls>
-        <song-list-controls
+        <SongListControls
           v-if="state.songs.length && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
@@ -18,27 +18,33 @@
           :selectedSongs="selectedSongs"
         />
       </template>
-    </screen-header>
+    </ScreenHeader>
 
-    <song-list :items="state.songs" type="all-songs" ref="songList"/>
+    <SongList :items="state.songs" type="all-songs" ref="songList"/>
   </section>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
+<script lang="ts" setup>
 import { pluralize } from '@/utils'
 import { songStore } from '@/stores'
-import hasSongList from '@/mixins/has-song-list.ts'
+import { useSongList } from '@/composables'
+import { defineAsyncComponent, reactive } from 'vue'
 
-export default mixins(hasSongList).extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue')
-  },
+const {
+  SongList,
+  SongListControls,
+  ControlsToggler,
+  songList,
+  meta,
+  selectedSongs,
+  showingControls,
+  songListControlConfig,
+  isPhone,
+  playAll,
+  playSelected,
+  toggleControls
+} = useSongList()
 
-  filters: { pluralize },
-
-  data: () => ({
-    state: songStore.state
-  })
-})
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const state = reactive(songStore.state)
 </script>

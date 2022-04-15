@@ -342,3 +342,47 @@ label {
     display: inline-grid;
   }
 }
+
+.context-menu, .submenu {
+  @include context-menu();
+  position: fixed;
+
+  li {
+    position: relative;
+    padding: 4px 12px;
+    cursor: default;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--color-highlight);
+      color: var(--color-text-primary);
+    }
+
+    &.separator {
+      pointer-events: none;
+      padding: 1px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    &.has-sub {
+      padding-right: 24px;
+
+      &:after {
+        position: absolute;
+        right: 12px;
+        top: 4px;
+        content: "‎▶";
+        font-size: .9rem;
+        width: 16px;
+        text-align: right;
+      }
+    }
+  }
+
+  .submenu {
+    position: absolute;
+    display: none;
+    left: 100%;
+    top: 0;
+  }
+}

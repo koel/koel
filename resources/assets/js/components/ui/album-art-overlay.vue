@@ -2,33 +2,21 @@
   <div :style="{ backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none' }" data-testid="album-art-overlay"/>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { ref, toRefs, watchEffect } from 'vue'
 import { albumStore } from '@/stores'
 
-export default Vue.extend({
-  props: {
-    song: {
-      type: Object
-    } as PropOptions<Song | null>
-  },
+const props = defineProps<{ song: Song | null }>()
+const { song } = toRefs(props)
 
-  data: () => ({
-    thumbnailUrl: null as string | null
-  }),
+const thumbnailUrl = ref<String | null>(null)
 
-  watch: {
-    song: {
-      immediate: true,
-      async handler (): Promise<void> {
-        if (this.song) {
-          try {
-            this.thumbnailUrl = await albumStore.getThumbnail(this.song.album)
-          } catch (e) {
-            this.thumbnailUrl = null
-          }
-        }
-      }
+watchEffect(async () => {
+  if (song.value) {
+    try {
+      thumbnailUrl.value = await albumStore.getThumbnail(song.value.album)
+    } catch (e) {
+      thumbnailUrl.value = null
     }
   }
 })

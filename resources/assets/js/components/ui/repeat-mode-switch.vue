@@ -10,29 +10,20 @@
   </button>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { computed, reactive } from 'vue'
 import { playback } from '@/services'
 import { preferenceStore } from '@/stores'
 
-export default Vue.extend({
-  data: () => ({
-    preferences: preferenceStore.state
-  }),
+const preferences = reactive(preferenceStore.state)
 
-  computed: {
-    readableRepeatMode (): string {
-      return this.preferences.repeatMode
-        .split('_')
-        .map((part: string) => part[0].toUpperCase() + part.substr(1).toLowerCase())
-        .join(' ')
-    }
-  },
+const readableRepeatMode = computed(() => preferences.repeatMode
+  .split('_')
+  .map(part => part[0].toUpperCase() + part.substring(1).toLowerCase())
+  .join(' ')
+)
 
-  methods: {
-    changeRepeatMode: (): void => playback.changeRepeatMode()
-  }
-})
+const changeRepeatMode = () => playback.changeRepeatMode()
 </script>
 
 <style lang="scss" scoped>

@@ -34,7 +34,6 @@ import Overlay from '@/components/ui/overlay.vue'
 import { $, eventBus, hideOverlay, showOverlay } from '@/utils'
 import { favoriteStore, preferenceStore as preferences, queueStore, sharedStore } from '@/stores'
 import { auth, playback, socket } from '@/services'
-import { BaseContextMenu } from 'koel/types/ui'
 
 const SongContextMenu = defineAsyncComponent(() => import('@/components/song/context-menu.vue'))
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/context-menu.vue'))
@@ -43,12 +42,13 @@ const SupportKoel = defineAsyncComponent(() => import('@/components/meta/support
 
 const authenticated = ref(false)
 const contextMenuSongs = ref<Song[]>([])
-const contextMenuAlbum = ref<Album | null>(null)
-const contextMenuArtist = ref<Artist | null>(null)
+const contextMenuAlbum = ref<Album>()
+const contextMenuArtist = ref<Artist>()
 
-const songContextMenu = ref<BaseContextMenu | null>(null)
-const albumContextMenu = ref<BaseContextMenu | null>(null)
-const artistContextMenu = ref<BaseContextMenu | null>(null)
+const overlay = ref<HTMLElement>()
+const songContextMenu = ref<InstanceType<typeof SongContextMenu>>()
+const albumContextMenu = ref<InstanceType<typeof AlbumContextMenu>>()
+const artistContextMenu = ref<InstanceType<typeof ArtistContextMenu>>()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
@@ -138,7 +138,7 @@ const init = async () => {
 </script>
 
 <style lang="scss">
-@import "~#/app.scss";
+@import "#/app.scss";
 
 #dragGhost {
   display: inline-block;
@@ -179,13 +179,7 @@ const init = async () => {
 
 .login-wrapper {
   @include vertical-center();
-  -webkit-app-region: drag;
   user-select: none;
-
-  input, button {
-    -webkit-app-region: no-drag;
-  }
-
   padding-bottom: 0;
 }
 </style>

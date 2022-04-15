@@ -11,16 +11,16 @@
         data-test="youtube-search-result"
       >
         <div class="thumb">
-          <img :src="video.snippet.thumbnails.default.url" width="90">
+          <img :src="video.snippet.thumbnails.default.url" width="90" :alt="video.snippet.title">
         </div>
         <div class="meta">
           <h3 class="title">{{ video.snippet.title }}</h3>
           <p class="desc">{{ video.snippet.description }}</p>
         </div>
       </a>
-      <btn @click.prevent="loadMore" v-if="!loading" class="more" data-testid="youtube-search-more-btn">
+      <Btn @click.prevent="loadMore" v-if="!loading" class="more" data-testid="youtube-search-more-btn">
         Load More
-      </btn>
+      </Btn>
     </template>
 
     <p class="nope" v-else>Play a song to retrieve related YouTube videos.</p>
@@ -28,56 +28,37 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, ref, toRefs, watchEffect } from 'vue'
 import { youtube as youtubeService } from '@/services'
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  props: {
-    song: {
-      type: Object,
-      required: true
-    } as PropOptions<Song>
-  },
+const props = defineProps<{ song: Song }>()
+const { song } = toRefs(props)
 
-  data: () => ({
-    loading: false,
-    videos: [] as YouTubeVideo[]
-  }),
+const loading = ref(false)
+const videos = ref<YouTubeVideo[]>([])
 
-  watch: {
-    song: {
-      immediate: true,
-      handler (val: Song): void {
-        this.videos = val.youtube ? val.youtube.items : []
-      }
-    }
-  },
+watchEffect(() => (videos.value = song.value.youtube ? song.value.youtube.items : []))
 
-  methods: {
-    play: (video: YouTubeVideo): void => youtubeService.play(video),
+const play = (video: YouTubeVideo) => youtubeService.play(video)
 
-    async loadMore (): Promise<void> {
-      this.loading = true
+const loadMore = async () => {
+  loading.value = true
 
-      try {
-        this.song.youtube = this.song.youtube || { nextPageToken: '', items: [] }
+  try {
+    song.value.youtube = song.value.youtube || { nextPageToken: '', items: [] }
 
-        const result = await youtubeService.searchVideosRelatedToSong(this.song, this.song.youtube.nextPageToken!)
-        this.song.youtube.nextPageToken = result.nextPageToken
-        this.song.youtube.items.push(...result.items as YouTubeVideo[])
+    const result = await youtubeService.searchVideosRelatedToSong(song.value, song.value.youtube.nextPageToken!)
+    song.value.youtube.nextPageToken = result.nextPageToken
+    song.value.youtube.items.push(...result.items as YouTubeVideo[])
 
-        this.videos = this.song.youtube.items
-      } finally {
-        this.loading = false
-      }
-    }
+    videos.value = song.value.youtube.items
+  } finally {
+    loading.value = false
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>

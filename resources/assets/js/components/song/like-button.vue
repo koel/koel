@@ -5,30 +5,16 @@
   </button>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, toRefs } from 'vue'
 import { favoriteStore } from '@/stores'
 
-export default Vue.extend({
-  props: {
-    song: {
-      type: Object,
-      required: true
-    } as PropOptions<Song>
-  },
+const props = defineProps<{ song: Song }>()
+const { song } = toRefs(props)
 
-  computed: {
-    title (): string {
-      return `${this.song.liked ? 'Unlike' : 'Like'} ${this.song.title} by ${this.song.artist.name}`
-    }
-  },
+const title = computed(() => `${song.value.liked ? 'Unlike' : 'Like'} ${song.value.title} by ${song.value.artist.name}`)
 
-  methods: {
-    toggleLike () {
-      favoriteStore.toggleOne(this.song)
-    }
-  }
-})
+const toggleLike = () => favoriteStore.toggleOne(song.value)
 </script>
 
 <style lang="scss" scoped>

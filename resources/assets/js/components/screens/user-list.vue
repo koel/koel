@@ -1,63 +1,47 @@
 <template>
   <section id="usersWrapper">
-    <screen-header>
+    <ScreenHeader>
       Users
-      <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:controls>
-        <btn-group uppercased v-if="showingControls || !isPhone">
-          <btn class="btn-add" @click="showAddUserForm" green data-testid="add-user-btn">
+        <BtnGroup uppercased v-if="showingControls || !isPhone">
+          <Btn class="btn-add" @click="showAddUserForm" green data-testid="add-user-btn">
             <i class="fa fa-plus"></i>
             Add
-          </btn>
-        </btn-group>
+          </Btn>
+        </BtnGroup>
       </template>
-    </screen-header>
+    </ScreenHeader>
 
     <div class="main-scroll-wrap">
       <div class="users">
-        <user-card v-for="user in state.users" :user="user" @editUser="showEditUserForm" :key="user.id"/>
+        <UserCard v-for="user in state.users" :user="user" @editUser="showEditUserForm" :key="user.id"/>
       </div>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, reactive, ref } from 'vue'
 import isMobile from 'ismobilejs'
 
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
 
-export default Vue.extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ControlsToggler: () => import('@/components/ui/screen-controls-toggler.vue'),
-    Btn: () => import('@/components/ui/btn.vue'),
-    BtnGroup: () => import('@/components/ui/btn-group.vue'),
-    UserCard: () => import('@/components/user/card.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ControlsToggler = defineAsyncComponent(() => import('@/components/ui/screen-controls-toggler.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const BtnGroup = defineAsyncComponent(() => import('@/components/ui/btn-group.vue'))
+const UserCard = defineAsyncComponent(() => import('@/components/user/card.vue'))
 
-  data: () => ({
-    state: userStore.state,
-    isPhone: isMobile.phone,
-    showingControls: false
-  }),
+const state = reactive(userStore.state)
+const isPhone = isMobile.phone
+const showingControls = ref(false)
 
-  methods: {
-    toggleControls (): void {
-      this.showingControls = !this.showingControls
-    },
-
-    showAddUserForm: (): void => {
-      eventBus.emit('MODAL_SHOW_ADD_USER_FORM')
-    },
-
-    showEditUserForm: (user: User): void => {
-      eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user)
-    }
-  }
-})
+const toggleControls = () => (showingControls.value = !showingControls.value)
+const showAddUserForm = () => eventBus.emit('MODAL_SHOW_ADD_USER_FORM')
+const showEditUserForm = (user: User) => eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user)
 </script>
 
 <style lang="scss">

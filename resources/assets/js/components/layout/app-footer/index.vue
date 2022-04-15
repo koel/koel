@@ -1,59 +1,40 @@
 <template>
   <footer id="mainFooter" @contextmenu.prevent="requestContextMenu">
-    <player-controls :song="song"/>
+    <PlayerControls :song="song"/>
 
     <div class="media-info-wrap">
-      <middle-pane :song="song"/>
-      <other-controls :song="song"/>
+      <MiddlePane :song="song"/>
+      <OtherControls :song="song"/>
     </div>
   </footer>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { ref } from 'vue'
 import { eventBus } from '@/utils'
+
 import OtherControls from '@/components/layout/app-footer/other-controls.vue'
 import MiddlePane from '@/components/layout/app-footer/middle-pane.vue'
 import PlayerControls from '@/components/layout/app-footer/player-controls.vue'
 
-export default Vue.extend({
-  data: () => ({
-    song: null as unknown as Song,
-    viewingQueue: false
-  }),
+const song = ref<Song | null>(null)
+const viewingQueue = ref(false)
 
-  components: {
-    MiddlePane,
-    PlayerControls,
-    OtherControls
-  },
+const requestContextMenu = (event: MouseEvent) => {
+  song.value?.id && eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
+}
 
-  methods: {
-    requestContextMenu (e: MouseEvent): void {
-      if (this.song?.id) {
-        eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', e, this.song)
-      }
-    }
-  },
+eventBus.on({
+  /**
+   * Listen to song:played event to set the current playing song.
+   */
+  'SONG_STARTED': (newSong: Song) => (song.value = newSong),
 
-  created (): void {
-    eventBus.on({
-      /**
-       * Listen to song:played event to set the current playing song.
-       */
-      'SONG_STARTED': (song: Song): void => {
-        this.song = song
-      },
-
-      /**
-       * Listen to main-content-view:load event and highlight the Queue icon if
-       * the Queue screen is being loaded.
-       */
-      'LOAD_MAIN_CONTENT': (view: MainViewName): void => {
-        this.viewingQueue = view === 'Queue'
-      }
-    })
-  }
+  /**
+   * Listen to main-content-view:load event and highlight the Queue icon if
+   * the Queue screen is being loaded.
+   */
+  'LOAD_MAIN_CONTENT': (view: MainViewName) => (viewingQueue.value = view === 'Queue')
 })
 </script>
 

@@ -10,50 +10,41 @@
       <span class="message" v-html="state.message"></span>
     </div>
 
-    <button class="btn-dismiss" v-if="state.dismissible" @click.prevent="state.showing = false">Close</button>
+    <button class="btn-dismiss" v-if="state.dismissible" @click.prevent="hide">Close</button>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
 import { assign } from 'lodash'
 import { eventBus } from '@/utils'
+import { defineAsyncComponent, reactive } from 'vue'
 
-export default Vue.extend({
-  components: {
-    SoundBar: () => import('@/components/ui/sound-bar.vue')
-  },
+export type OverlayState = {
+  showing: boolean
+  dismissible: boolean
+  type: 'loading' | 'success' | 'info' | 'warning' | 'error'
+  message: string
+}
 
-  data: () => ({
-    state: {
-      showing: true,
-      dismissible: false,
-      /**
-       * Either 'loading', 'success', 'info', 'warning', or 'error'.
-       * This dictates the icon as well as possibly other visual appearances.
-       */
-      type: 'loading',
-      message: ''
-    }
-  }),
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
 
-  methods: {
-    show (options: object): void {
-      assign(this.state, options)
-      this.state.showing = true
-    },
+const state = reactive<OverlayState>({
+  showing: true,
+  dismissible: false,
+  type: 'loading',
+  message: ''
+})
 
-    hide (): void {
-      this.state.showing = false
-    }
-  },
+const show = (options: Partial<OverlayState>) => {
+  assign(state, options)
+  state.showing = true
+}
 
-  created (): void {
-    eventBus.on({
-      'SHOW_OVERLAY': (options: object): void => this.show(options),
-      'HIDE_OVERLAY': (): void => this.hide()
-    })
-  }
+const hide = () => (state.showing = false)
+
+eventBus.on({
+  'SHOW_OVERLAY': show,
+  'HIDE_OVERLAY': hide
 })
 </script>
 

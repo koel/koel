@@ -1,16 +1,16 @@
 <template>
   <section id="searchExcerptsWrapper">
-    <screen-header>
+    <ScreenHeader>
       <span v-if="q">Search Results for <strong>{{ q }}</strong></span>
       <span v-else>Search</span>
-    </screen-header>
+    </ScreenHeader>
 
     <div class="main-scroll-wrap" ref="wrapper">
       <div class="results" v-if="q">
         <section class="songs" data-testid="song-excerpts">
           <h1>
             Songs
-            <btn
+            <Btn
               v-if="searchState.excerpt.songs.length"
               @click.prevent="goToSongResults"
               rounded
@@ -19,10 +19,10 @@
               data-test="view-all-songs-btn"
             >
               View All
-            </btn>
+            </Btn>
           </h1>
           <ul v-if="searchState.excerpt.songs.length">
-            <li v-for="song in searchState.excerpt.songs" :key="song.id" :song="song" is="song-card"/>
+            <li v-for="song in searchState.excerpt.songs" :key="song.id" :song="song" is="SongCard"/>
           </ul>
           <p v-else>None found.</p>
         </section>
@@ -31,7 +31,7 @@
           <h1>Artists</h1>
           <ul v-if="searchState.excerpt.artists.length">
             <li v-for="artist in searchState.excerpt.artists" :key="artist.id">
-              <artist-card :artist="artist" layout="compact"/>
+              <ArtistCard :artist="artist" layout="compact"/>
             </li>
           </ul>
           <p v-else>None found.</p>
@@ -41,57 +41,45 @@
           <h1>Albums</h1>
           <ul v-if="searchState.excerpt.albums.length">
             <li v-for="album in searchState.excerpt.albums" :key="album.id">
-              <album-card :album="album" layout="compact"/>
+              <AlbumCard :album="album" layout="compact"/>
             </li>
           </ul>
           <p v-else>None found.</p>
         </section>
       </div>
 
-      <screen-placeholder v-else>
+      <ScreenPlaceholder v-else>
         <template v-slot:icon>
           <i class="fa fa-search"></i>
         </template>
         Find songs, artists, and albums,
         <span class="secondary d-block">all in one place.</span>
-      </screen-placeholder>
+      </ScreenPlaceholder>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, reactive, ref } from 'vue'
 import { eventBus } from '@/utils'
 import { searchStore } from '@/stores'
 import router from '@/router'
 
-export default Vue.extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ScreenPlaceholder: () => import('@/components/ui/screen-placeholder.vue'),
-    SongCard: () => import('@/components/song/card.vue'),
-    ArtistCard: () => import('@/components/artist/card.vue'),
-    AlbumCard: () => import('@/components/album/card.vue'),
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+const SongCard = defineAsyncComponent(() => import('@/components/song/card.vue'))
+const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))
+const AlbumCard = defineAsyncComponent(() => import('@/components/album/card.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  data: () => ({
-    searchState: searchStore.state,
-    q: ''
-  }),
+const searchState = reactive(searchStore.state)
+const q = ref('')
 
-  methods: {
-    goToSongResults () {
-      router.go(`search/songs/${this.q}`)
-    }
-  },
+const goToSongResults = () => router.go(`search/songs/${q.value}`)
 
-  created () {
-    eventBus.on('SEARCH_KEYWORDS_CHANGED', (q: string) => {
-      this.q = q
-      searchStore.excerptSearch(q)
-    })
-  }
+eventBus.on('SEARCH_KEYWORDS_CHANGED', (_q: string) => {
+  q.value = _q
+  searchStore.excerptSearch(q.value)
 })
 </script>
 
@@ -113,7 +101,7 @@ section ul {
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   grid-gap: .7em 1em;
 
-  @media only screen and (max-width : 667px) {
+  @media only screen and (max-width: 667px) {
     display: block;
 
     > * + * {

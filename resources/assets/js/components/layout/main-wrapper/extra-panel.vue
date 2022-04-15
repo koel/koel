@@ -50,7 +50,7 @@
           tabindex="0"
           v-show="currentTab === 'Lyrics'"
         >
-          <lyrics-pane :song="song" />
+          <lyrics-pane :song="song"/>
         </div>
 
         <div
@@ -60,7 +60,7 @@
           tabindex="0"
           v-show="currentTab === 'Artist'"
         >
-          <artist-info v-if="artist" :artist="artist" mode="sidebar"/>
+          <ArtistInfo v-if="artist" :artist="artist" mode="sidebar"/>
         </div>
 
         <div
@@ -70,7 +70,7 @@
           tabindex="0"
           v-show="currentTab === 'Album'"
         >
-          <album-info v-if="album" :album="album" mode="sidebar"/>
+          <AlbumInfo v-if="album" :album="album" mode="sidebar"/>
         </div>
 
         <div
@@ -80,94 +80,66 @@
           tabindex="0"
           v-show="currentTab === 'YouTube'"
         >
-          <you-tube-video-list v-if="sharedState.useYouTube && song" :song="song"/>
+          <YouTubeVideoList v-if="sharedState.useYouTube && song" :song="song"/>
         </div>
       </div>
     </div>
   </section>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import Vue from 'vue'
-import { eventBus, $ } from '@/utils'
-import { sharedStore, songStore, preferenceStore as preferences } from '@/stores'
+import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
+import { $, eventBus } from '@/utils'
+import { preferenceStore as preferences, sharedStore, songStore } from '@/stores'
 import { songInfo } from '@/services'
 
 type Tab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
 const defaultTab: Tab = 'Lyrics'
 
-export default Vue.extend({
-  components: {
-    LyricsPane: () => import('@/components/ui/lyrics-pane.vue'),
-    ArtistInfo: () => import('@/components/artist/info.vue'),
-    AlbumInfo: () => import('@/components/album/info.vue'),
-    YouTubeVideoList: () => import('@/components/ui/youtube-video-list.vue')
-  },
+const LyricsPane = defineAsyncComponent(() => import('@/components/ui/lyrics-pane.vue'))
+const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/info.vue'))
+const AlbumInfo = defineAsyncComponent(() => import('@/components/album/info.vue'))
+const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/youtube-video-list.vue'))
 
-  data: () => ({
-    song: null as Song | null,
-    state: preferences.state,
-    sharedState: sharedStore.state,
-    currentTab: defaultTab
-  }),
+const song = ref<Song | null>(null)
+const state = reactive(preferences.state)
+const sharedState = reactive(sharedStore.state)
+const currentTab = ref(defaultTab)
 
-  computed: {
-    artist (): Artist | null {
-      return this.song ? this.song.artist : null
-    },
+const artist = computed(() => song.value?.artist)
+const album = computed(() => song.value?.album)
 
-    album (): Album | null {
-      return this.song ? this.song.album : null
-    }
-  },
+watch(() => state.showExtraPanel, (showingExtraPanel) => {
+  if (showingExtraPanel && !isMobile.any) {
+    $.addClass(document.documentElement, 'with-extra-panel')
+  } else {
+    $.removeClass(document.documentElement, 'with-extra-panel')
+  }
+})
 
-  watch: {
-    /**
-     * Watch the "showExtraPanel" property to add/remove the corresponding class
-     * to/from the html tag.
-     * Some element's CSS can then be controlled based on this class.
-     */
-    'state.showExtraPanel': (showingExtraPanel: boolean): void => {
-      if (showingExtraPanel && !isMobile.any) {
-        $.addClass(document.documentElement, 'with-extra-panel')
-      } else {
-        $.removeClass(document.documentElement, 'with-extra-panel')
-      }
-    }
-  },
+const resetState = () => {
+  currentTab.value = defaultTab
+  song.value = songStore.stub
+}
 
-  methods: {
-    resetState (): void {
-      this.currentTab = defaultTab
-      this.song = songStore.stub
-    },
+const fetchSongInfo = async (_song: Song) =>{
+  try {
+    song.value = await songInfo.fetch(_song)
+  } catch (err) {
+    song.value = _song
+    throw err
+  }
+}
 
-    async fetchSongInfo (song: Song): Promise<void> {
-      try {
-        this.song = await songInfo.fetch(song)
-      } catch (err) {
-        this.song = song
-        throw err
-      }
-    }
-  },
+eventBus.on({
+  'SONG_STARTED': async (song: Song): Promise<void> => await fetchSongInfo(song),
+  'LOAD_MAIN_CONTENT': (): void => {
+    // On ready, add 'with-extra-panel' class.
+    isMobile.any || $.addClass(document.documentElement, 'with-extra-panel')
 
-  created (): void {
-    eventBus.on({
-      'SONG_STARTED': async (song: Song): Promise<void> => await this.fetchSongInfo(song),
-      'LOAD_MAIN_CONTENT': (): void => {
-        // On ready, add 'with-extra-panel' class.
-        if (!isMobile.any) {
-          $.addClass(document.documentElement, 'with-extra-panel')
-        }
-
-        // Hide the extra panel if on mobile
-        if (isMobile.phone) {
-          this.state.showExtraPanel = false
-        }
-      }
-    })
+    // Hide the extra panel if on mobile
+    isMobile.phone && (state.showExtraPanel = false)
   }
 })
 </script>
@@ -198,7 +170,7 @@ export default Vue.extend({
     line-height: 2.8rem;
   }
 
-  @media only screen and (max-width : 1024px) {
+  @media only screen and (max-width: 1024px) {
     position: fixed;
     height: calc(100vh - var(--header-height));
     width: var(--extra-panel-width);
@@ -212,7 +184,7 @@ export default Vue.extend({
     }
   }
 
-  @media only screen and (max-width : 667px) {
+  @media only screen and (max-width: 667px) {
     @include themed-background();
 
     width: 100%;

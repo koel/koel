@@ -3,29 +3,20 @@
     <h1>Theme</h1>
     <ul class="themes">
       <li v-for="theme in themes" :key="theme.id">
-        <theme-card :theme="theme" :key="theme.id" @selected="setTheme"/>
+        <ThemeCard :theme="theme" :key="theme.id" @selected="setTheme"/>
       </li>
     </ul>
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, reactive } from 'vue'
 import { themeStore } from '@/stores'
 
-export default Vue.extend({
-  components: {
-    ThemeCard: () => import('@/components/profile-preferences/theme-card.vue')
-  },
+const ThemeCard = defineAsyncComponent(() => import('@/components/profile-preferences/theme-card.vue'))
+const themes = reactive(themeStore.state.themes)
 
-  data: () => ({
-    themes: themeStore.state.themes
-  }),
-
-  methods: {
-    setTheme: (theme: Theme): void => themeStore.setTheme(theme)
-  }
-})
+const setTheme = (theme: Theme) => themeStore.setTheme(theme)
 </script>
 
 <style lang="scss" scoped>

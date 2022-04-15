@@ -4,7 +4,7 @@
       <template v-if="song">
         <div v-show="song.lyrics">
           <div ref="lyricsContainer" v-html="song.lyrics"></div>
-          <text-zoomer :target="textZoomTarget"/>
+          <TextZoomer :target="textZoomTarget"/>
         </div>
         <p class="none text-secondary" v-if="song.id && !song.lyrics">
           <template v-if="isAdmin">
@@ -25,43 +25,27 @@
   </article>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, onUpdated, reactive, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 import { userStore } from '@/stores'
 
-export default Vue.extend({
-  props: {
-    song: {
-      type: Object
-    } as PropOptions<Song | null>
-  },
+const TextZoomer = defineAsyncComponent(() => import('@/components/ui/text-zoomer.vue'))
 
-  components: {
-    TextZoomer: () => import('@/components/ui/text-zoomer.vue')
-  },
+const props = defineProps<{ song: Song | null }>()
+const { song } = toRefs(props)
 
-  data: () => ({
-    textZoomTarget: null as unknown as Element,
-    userState: userStore.state
-  }),
+const lyricsContainer = ref(null as unknown as HTMLElement)
+const textZoomTarget = ref(null as unknown as HTMLElement)
+const userState = reactive(userStore.state)
 
-  methods: {
-    showEditSongForm (): void {
-      eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', this.song, 'lyrics')
-    }
-  },
+const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', [song], 'lyrics')
 
-  computed: {
-    isAdmin (): boolean {
-      return this.userState.current.is_admin
-    }
-  },
+const isAdmin = computed(() => userState.current.is_admin)
 
-  updated (): void {
-    // Since Vue's $refs are not reactive, we work around by assigning to a data property
-    this.textZoomTarget = this.$refs.lyricsContainer as Element
-  }
+onUpdated(() => {
+  // Since Vue's $refs are not reactive, we work around by assigning to a data property
+  textZoomTarget.value = lyricsContainer.value
 })
 </script>
 

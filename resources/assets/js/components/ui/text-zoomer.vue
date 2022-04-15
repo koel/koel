@@ -5,34 +5,27 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { toRefs } from 'vue'
 
-export default Vue.extend({
-  props: {
-    target: {
-      type: HTMLElement
-    }
-  },
+const props = defineProps<{ target: HTMLElement | null }>()
+const { target } = toRefs(props)
 
-  methods: {
-    zoom (multiplier: number): void {
-      if (!this.target) {
-        return
-      }
-
-      const style = this.target.style
-
-      if (style.fontSize === '') {
-        style.fontSize = '1em'
-        style.lineHeight = '1.6'
-      }
-
-      style.fontSize = parseFloat(style.fontSize) + multiplier * 0.2 + 'em'
-      style.lineHeight = String(parseFloat(style.lineHeight) + multiplier * 0.15)
-    }
+const zoom = (level: number) => {
+  if (!target.value) {
+    return
   }
-})
+
+  const style = target.value.style
+
+  if (style.fontSize === '') {
+    style.fontSize = '1em'
+    style.lineHeight = '1.6'
+  }
+
+  style.fontSize = parseFloat(style.fontSize) + level * 0.2 + 'em'
+  style.lineHeight = String(parseFloat(style.lineHeight) + level * 0.15)
+}
 </script>
 
 <style lang="scss" scoped>

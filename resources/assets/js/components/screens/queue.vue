@@ -6,7 +6,7 @@
 
       <template v-slot:meta>
         <span v-if="meta.songCount" data-test="list-meta">
-          {{ meta.songCount | pluralize('song') }} • {{ meta.totalLength }}
+          {{ pluralize(meta.songCount, 'song') }} • {{ meta.totalLength }}
         </span>
       </template>
 
@@ -45,42 +45,42 @@
   </section>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
+<script lang="ts" setup>
 import { pluralize } from '@/utils'
 import { queueStore, songStore } from '@/stores'
 import { playback } from '@/services'
-import hasSongList from '@/mixins/has-song-list.ts'
+import { useSongList } from '@/composables'
+import { computed, defineAsyncComponent, reactive } from 'vue'
 
-export default mixins(hasSongList).extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ScreenPlaceholder: () => import('@/components/ui/screen-placeholder.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
-  filters: { pluralize },
-
-  data: () => ({
-    state: queueStore.state,
-    songState: songStore.state,
-    songListControlConfig: {
-      clearQueue: true
-    }
-  }),
-
-  computed: {
-    shouldShowShufflingAllLink (): boolean {
-      return this.songState.songs.length > 0
-    }
-  },
-
-  methods: {
-    getSongsToPlay (): Song[] {
-      return this.state.songs.length ? (this.$refs.songList as any).getAllSongsWithSort() : songStore.all
-    },
-
-    shuffleAll: async () => await playback.queueAndPlay(songStore.all, true),
-    clearQueue: (): void => queueStore.clear()
-  }
+const {
+  SongList,
+  SongListControls,
+  ControlsToggler,
+  songList,
+  meta,
+  selectedSongs,
+  showingControls,
+  songListControlConfig,
+  isPhone,
+  playSelected,
+  toggleControls
+} = useSongList({
+  clearQueue: true
 })
+
+const state = reactive(queueStore.state)
+const songState = reactive(songStore.state)
+
+const shouldShowShufflingAllLink = computed(() => songState.songs.length > 0)
+
+const playAll = () => {
+  // @ts-ignore
+  playback.queueAndPlay(state.songs.length ? songList.value?.getAllSongsWithSort() : songStore.all)
+}
+
+const shuffleAll = async () => await playback.queueAndPlay(songStore.all, true)
+const clearQueue = () => queueStore.clear()
 </script>

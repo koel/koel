@@ -33,7 +33,7 @@
       </ul>
     </section>
 
-    <playlist-list :current-view="currentView"/>
+    <PlaylistList :current-view="currentView"/>
 
     <section v-if="userState.current.is_admin" class="manage">
       <h1>Manage</h1>
@@ -53,69 +53,44 @@
   </nav>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, reactive, ref } from 'vue'
 import isMobile from 'ismobilejs'
-
 import { eventBus } from '@/utils'
-import { sharedStore, userStore, songStore, queueStore } from '@/stores'
+import { queueStore, sharedStore, songStore, userStore } from '@/stores'
 
-export default Vue.extend({
-  components: {
-    PlaylistList: () => import('@/components/playlist/sidebar-list.vue')
-  },
+const PlaylistList = defineAsyncComponent(() => import('@/components/playlist/sidebar-list.vue'))
 
-  data: () => ({
-    currentView: 'Home',
-    userState: userStore.state,
-    showing: !isMobile.phone,
-    sharedState: sharedStore.state
-  }),
+const currentView = ref<MainViewName>('Home')
+const userState = reactive(userStore.state)
+const showing = ref(!isMobile.phone)
+const sharedState = reactive(sharedStore.state)
 
-  methods: {
-    /**
-     * Handle songs dropped to our Queue menu item.
-     */
-    handleDrop: (e: DragEvent): boolean => {
-      if (!e.dataTransfer) {
-        return false
-      }
+const handleDrop = (event: DragEvent) => {
+  if (!event.dataTransfer?.getData('application/x-koel.text+plain')) {
+    return false
+  }
 
-      if (!e.dataTransfer.getData('application/x-koel.text+plain')) {
-        return false
-      }
+  const songs = songStore.byIds(event.dataTransfer.getData('application/x-koel.text+plain').split(','))
+  songs.length && queueStore.queue(songs)
 
-      const songs = songStore.byIds(e.dataTransfer.getData('application/x-koel.text+plain').split(','))
+  return false
+}
 
-      if (!songs.length) {
-        return false
-      }
+eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName): void => {
+  currentView.value = view
 
-      queueStore.queue(songs)
-
-      return false
-    }
-  },
-
-  created (): void {
-    eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName): void => {
-      this.currentView = view
-
-      // Hide the sidebar if on mobile
-      if (isMobile.phone) {
-        this.showing = false
-      }
-    })
-
-    /**
-     * Listen to sidebar:toggle event to show or hide the sidebar.
-     * This should only be triggered on a mobile device.
-     */
-    eventBus.on('TOGGLE_SIDEBAR', (): void => {
-      this.showing = !this.showing
-    })
+  // Hide the sidebar if on mobile
+  if (isMobile.phone) {
+    showing.value = false
   }
 })
+
+/**
+ * Listen to sidebar:toggle event to show or hide the sidebar.
+ * This should only be triggered on a mobile device.
+ */
+eventBus.on('TOGGLE_SIDEBAR', () => (showing.value = !showing.value))
 </script>
 
 <style lang="scss">
@@ -226,7 +201,7 @@ export default Vue.extend({
     }
   }
 
-  @media only screen and (max-width : 667px) {
+  @media only screen and (max-width: 667px) {
     @include themed-background();
 
     position: fixed;

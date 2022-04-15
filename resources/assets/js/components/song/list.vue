@@ -8,83 +8,81 @@
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="handleA"
   >
-    <table class="song-list-header" :class="mergedConfig.sortable ? 'sortable' : 'unsortable'">
-      <thead>
-        <tr>
-          <th @click="sort('song.track')" class="track-number" v-if="mergedConfig.columns.includes('track')">
-            #
-            <i class="fa fa-angle-down" v-show="primarySortField === 'song.track' && sortOrder > 0"></i>
-            <i class="fa fa-angle-up" v-show="primarySortField === 'song.track' && sortOrder < 0"></i>
-          </th>
-          <th @click="sort('song.title')" class="title" v-if="mergedConfig.columns.includes('title')">
-            Title
-            <i class="fa fa-angle-down" v-show="primarySortField === 'song.title' && sortOrder > 0"></i>
-            <i class="fa fa-angle-up" v-show="primarySortField === 'song.title' && sortOrder < 0"></i>
-          </th>
-          <th
-            @click="sort(['song.album.artist.name', 'song.album.name', 'song.track'])"
-            class="artist"
-            v-if="mergedConfig.columns.includes('artist')"
-          >
-            Artist
-            <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.artist.name' && sortOrder > 0"></i>
-            <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.artist.name' && sortOrder < 0"></i>
-          </th>
-          <th
-            @click="sort(['song.album.name', 'song.track'])"
-            class="album"
-            v-if="mergedConfig.columns.includes('album')"
-          >
-            Album
-            <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.name' && sortOrder > 0"></i>
-            <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.name' && sortOrder < 0"></i>
-          </th>
-          <th @click="sort('song.length')" class="time" v-if="mergedConfig.columns.includes('length')">
-            Time
-            <i class="fa fa-angle-down" v-show="primarySortField === 'song.length' && sortOrder > 0"></i>
-            <i class="fa fa-angle-up" v-show="primarySortField === 'song.length' && sortOrder < 0"></i>
-          </th>
-          <th class="favorite"></th>
-          <th class="play"></th>
-        </tr>
-      </thead>
-    </table>
+    <div class="song-list-header" :class="mergedConfig.sortable ? 'sortable' : 'unsortable'">
+        <span @click="sort('song.track')" class="track-number" v-if="mergedConfig.columns.includes('track')">
+          #
+          <i class="fa fa-angle-down" v-show="primarySortField === 'song.track' && sortOrder === 'Asc'"></i>
+          <i class="fa fa-angle-up" v-show="primarySortField === 'song.track' && sortOrder === 'Desc'"></i>
+        </span>
+      <span @click="sort('song.title')" class="title" v-if="mergedConfig.columns.includes('title')">
+          Title
+          <i class="fa fa-angle-down" v-show="primarySortField === 'song.title' && sortOrder === 'Asc'"></i>
+          <i class="fa fa-angle-up" v-show="primarySortField === 'song.title' && sortOrder === 'Desc'"></i>
+        </span>
+      <span
+        @click="sort(['song.album.artist.name', 'song.album.name', 'song.track'])"
+        class="artist"
+        v-if="mergedConfig.columns.includes('artist')"
+      >
+          Artist
+          <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Asc'"></i>
+          <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Desc'"></i>
+        </span>
+      <span
+        @click="sort(['song.album.name', 'song.track'])"
+        class="album"
+        v-if="mergedConfig.columns.includes('album')"
+      >
+          Album
+          <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.name' && sortOrder === 'Asc'"></i>
+          <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.name' && sortOrder === 'Desc'"></i>
+        </span>
+      <span @click="sort('song.length')" class="time" v-if="mergedConfig.columns.includes('length')">
+          Time
+          <i class="fa fa-angle-down" v-show="primarySortField === 'song.length' && sortOrder === 'Asc'"></i>
+          <i class="fa fa-angle-up" v-show="primarySortField === 'song.length' && sortOrder === 'Desc'"></i>
+        </span>
+      <span class="favorite"></span>
+      <span class="play"></span>
+    </div>
 
-    <virtual-scroller
+    <RecycleScroller
       class="scroller"
-      content-tag="table"
       :items="songProxies"
-      item-height="35"
-      key-field="song.id"
+      :item-size="35"
+      key-field="id"
+      v-slot="{ item }"
     >
-      <template slot-scope="props">
-        <song-item :item="props.item" :columns="mergedConfig.columns" />
-      </template>
-    </virtual-scroller>
+      <SongItem :item="item" :columns="mergedConfig.columns"/>
+    </RecycleScroller>
   </div>
 </template>
 
 <script lang="ts">
-import isMobile from 'ismobilejs'
+export default {
+  name: 'SongList'
+}
+</script>
 
-import Vue, { PropOptions } from 'vue'
-import { VirtualScroller } from 'vue-virtual-scroller'
-import { orderBy, eventBus, startDragging, $ } from '@/utils'
-import { playlistStore, queueStore, favoriteStore } from '@/stores'
+<script lang="ts" setup>
+import isMobile from 'ismobilejs'
+import {
+  computed,
+  defineAsyncComponent,
+  getCurrentInstance,
+  nextTick,
+  onMounted,
+  PropType,
+  ref,
+  toRefs,
+  watch
+} from 'vue'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import { $, eventBus, orderBy, startDragging } from '@/utils'
+import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import { playback } from '@/services'
 import router from '@/router'
-import { SongListRowComponent } from 'koel/types/ui'
-
-export type SongListType = 'all-songs'
-  | 'queue'
-  | 'playlist'
-  | 'favorites'
-  | 'recently-played'
-  | 'artist'
-  | 'album'
-  | 'search-results'
-
-export type SongListColumn = 'track' | 'title' | 'album' | 'artist' | 'length'
 
 type SortField = 'song.track'
   | 'song.disc'
@@ -93,347 +91,307 @@ type SortField = 'song.track'
   | 'song.album.name'
   | 'song.length'
 
-export interface SongListConfig {
-  sortable: boolean
-  columns: SongListColumn[]
-}
+type SortOrder = 'Asc' | 'Desc' | 'None'
 
-const enum SortOrder {
-  Asc = 1,
-  Desc = -1,
-  None = 0
-}
-
-export default Vue.extend({
-  name: 'song-list',
-
+interface SongRow {
   props: {
-    items: {
-      type: Array,
-      required: true
-    } as PropOptions<Song[]>,
+    item: SongProxy
+  }
+}
 
-    type: {
-      type: String,
-      default: 'all-songs'
-    } as PropOptions<SongListType>,
+const SongItem = defineAsyncComponent(() => import('@/components/song/item.vue'))
 
-    config: {
-      type: Object,
-      default: (): Partial<SongListConfig> => ({})
-    } as PropOptions<Partial<SongListConfig>>,
+// @ts-ignore
+getCurrentInstance()!.__IS_SONG_LIST__ = true
 
-    playlist: {
-      type: Object
-    } as PropOptions<Playlist>
+const props = defineProps({
+  items: {
+    type: Array as PropType<Song[]>,
+    required: true
   },
-
-  components: {
-    VirtualScroller,
-    SongItem: () => import('@/components/song/item.vue')
+  playlist: {
+    type: Object as PropType<Playlist>
   },
-
-  data: () => ({
-    lastSelectedRow: null as unknown as SongListRowComponent,
-    sortFields: [] as SortField[],
-    sortOrder: SortOrder.None,
-    songProxies: [] as SongProxy[]
-  }),
-
-  watch: {
-    items (): void {
-      this.render()
-    },
-
-    selectedSongs (val: Song[]): void {
-      eventBus.emit('SET_SELECTED_SONGS', val, this.$parent)
-    }
+  type: {
+    type: String as PropType<SongListType>,
+    default: 'all-songs'
   },
+  config: {
+    type: Object as PropType<Partial<SongListConfig>>,
+    default: () => ({})
+  }
+})
 
-  computed: {
-    allowSongReordering (): boolean {
-      return this.type === 'queue'
-    },
+const { items, playlist, type, config } = toRefs(props)
 
-    selectedSongs (): Song[] {
-      return this.songProxies.filter(row => row.selected).map(row => row.song)
-    },
+const lastSelectedRow = ref<SongRow>()
+const sortFields = ref<SortField[]>([])
+const sortOrder = ref<SortOrder>('None')
+const songProxies = ref<SongProxy[]>([])
 
-    mergedConfig (): SongListConfig {
-      return Object.assign({
-        sortable: true,
-        columns: ['track', 'title', 'artist', 'album', 'length']
-      }, this.config)
-    },
+const allowSongReordering = computed(() => type.value === 'queue')
+const selectedSongs = computed(() => songProxies.value.filter(row => row.selected).map(row => row.song))
+const primarySortField = computed(() => sortFields.value.length === 0 ? null : sortFields.value[0])
 
-    primarySortField (): string | null {
-      return this.sortFields.length === 0 ? null : this.sortFields[0]
-    }
-  },
+const mergedConfig = computed((): SongListConfig => {
+  return Object.assign({
+    sortable: true,
+    columns: ['track', 'title', 'artist', 'album', 'length']
+  }, config.value)
+})
 
-  methods: {
-    render (): void {
-      if (!this.mergedConfig.sortable) {
-        this.sortFields = []
-      }
+/**
+ * Since song objects themselves are shared by all song lists, we can't use them directly to
+ * determine their selection status (selected/unselected). Therefore, for each song list, we
+ * maintain an array of "song proxies," each containing the song itself and the "selected" flag.
+ * To comply with virtual-scroller, a "type" attribute also presents.
+ */
+const generateSongProxies = () => {
+  // Since this method re-generates the song wrappers, we need to keep track of  the
+  // selected songs manually.
+  const selectedSongIds = selectedSongs.value.map(song => song.id)
 
-      this.songProxies = this.generateSongProxies()
-      this.sort(this.sortFields, this.sortOrder)
-    },
+  return items.value.map(song => ({
+    id: song.id,
+    song,
+    selected: selectedSongIds.includes(song.id)
+  }))
+}
 
-    /**
-     * Since song objects themselves are shared by all song lists, we can't use them directly to
-     * determine their selection status (selected/unselected). Therefore, for each song list, we
-     * maintain an array of "song proxies," each containing the song itself and the "selected" flag.
-     * To comply with virtual-scroller, a "type" attribute also presents.
-     */
-    generateSongProxies (): SongProxy[] {
-      // Since this method re-generates the song wrappers, we need to keep track of  the
-      // selected songs manually.
-      const selectedSongIds = this.selectedSongs.map((song: Song): string => song.id)
+const nextSortOrder = computed<SortOrder>(() => {
+  if (sortOrder.value === 'None') return 'Asc'
+  if (sortOrder.value === 'Asc') return 'Desc'
+  return 'None'
+})
 
-      return this.items.map((song): SongProxy => ({
-        song,
-        selected: selectedSongIds.includes(song.id)
-      }))
-    },
+const sort = (field: SortField | SortField[] = [], order: SortOrder | null = null) => {
+  // there are certain circumstances where sorting is simply disallowed, e.g. in Queue
+  if (!mergedConfig.value.sortable) {
+    return
+  }
 
-    sort (field: SortField | SortField[] = [], order: SortOrder | null = null) {
-      // there are certain circumstances where sorting is simply disallowed, e.g. in Queue
-      if (!this.mergedConfig.sortable) {
-        return
-      }
+  sortFields.value = ([] as SortField[]).concat(field)
 
-      this.sortFields = ([] as SortField[]).concat(field)
+  if (!sortFields.value.length && ['album', 'artist'].includes(type.value)) {
+    // by default, sort Album/Artist by track numbers for a more friendly UX
+    sortFields.value.push('song.track')
+    order = 'Asc'
+  }
 
-      if (!this.sortFields.length && ['album', 'artist'].includes(this.type)) {
-        // by default, sort Album/Artist by track numbers for a more friendly UX
-        this.sortFields.push('song.track')
-        order = SortOrder.Asc
-      }
+  if (sortFields.value.includes('song.track') && !sortFields.value.includes('song.disc')) {
+    // Track numbers should always go in conjunction with disc numbers.
+    sortFields.value.push('song.disc')
+  }
 
-      if (this.sortFields.includes('song.track') && !this.sortFields.includes('song.disc')) {
-        // Track numbers should always go in conjunction with disc numbers.
-        this.sortFields.push('song.disc')
-      }
+  sortOrder.value = order === null ? nextSortOrder.value : order
 
-      this.sortOrder = order === null ? this.nextSortOrder() : order
+  songProxies.value = sortOrder.value === 'None'
+    ? generateSongProxies()
+    : orderBy(songProxies.value, sortFields.value, sortOrder.value === 'Desc')
+}
 
-      this.songProxies = this.sortOrder === SortOrder.None
-        ? this.generateSongProxies()
-        : orderBy(this.songProxies, this.sortFields, this.sortOrder)
-    },
+const render = () => {
+  mergedConfig.value.sortable || (sortFields.value = [])
+  songProxies.value = generateSongProxies()
+  sort(sortFields.value, sortOrder.value)
+}
 
-    nextSortOrder (): SortOrder {
-      if (this.sortOrder === SortOrder.None) return SortOrder.Asc
-      if (this.sortOrder === SortOrder.Asc) return SortOrder.Desc
-      return SortOrder.None
-    },
+watch(items, () => render())
 
-    handleDelete (): void {
-      if (!this.selectedSongs.length) {
-        return
-      }
+watch(selectedSongs, () => eventBus.emit('SET_SELECTED_SONGS', selectedSongs, getCurrentInstance()?.parent))
 
-      switch (this.type) {
-        case 'queue':
-          queueStore.unqueue(this.selectedSongs)
-          break
+const handleDelete = () => {
+  if (!selectedSongs.value.length) {
+    return
+  }
 
-        case 'favorites':
-          favoriteStore.unlike(this.selectedSongs)
-          break
+  switch (type.value) {
+    case 'queue':
+      queueStore.unqueue(selectedSongs.value)
+      break
 
-        case 'playlist':
-          playlistStore.removeSongs(this.playlist, this.selectedSongs)
-          break
+    case 'favorites':
+      favoriteStore.unlike(selectedSongs.value)
+      break
 
-        default:
-          return
-      }
+    case 'playlist':
+      playlistStore.removeSongs(playlist!.value!, selectedSongs.value)
+      break
 
-      this.clearSelection()
-    },
+    default:
+      return
+  }
 
-    handleEnter (event: DragEvent): void {
-      if (!this.selectedSongs.length) {
-        return
-      }
+  clearSelection()
+}
 
-      if (this.selectedSongs.length === 1) {
-        // Just play the song
-        playback.play(this.selectedSongs[0])
-        return
-      }
+const handleEnter = (event: DragEvent) => {
+  if (!selectedSongs.value.length) {
+    return
+  }
 
-      switch (this.type) {
-        case 'queue':
-          // Play the first song selected if we're in Queue screen.
-          playback.play(this.selectedSongs[0])
-          break
+  if (selectedSongs.value.length === 1) {
+    // Just play the song
+    playback.play(selectedSongs.value[0])
+    return
+  }
 
-        default:
-          //
-          // --------------------------------------------------------------------
-          // For other screens, follow this map:
-          //
-          //  • Enter: Queue songs to bottom
-          //  • Shift+Enter: Queues song to top
-          //  • Cmd/Ctrl+Enter: Queues song to bottom and play the first selected song
-          //  • Cmd/Ctrl+Shift+Enter: Queue songs to top and play the first queued song
-          // --------------------------------------------------------------------
-          //
-          if (event.shiftKey) {
-            queueStore.queueToTop(this.selectedSongs)
-          } else {
-            queueStore.queue(this.selectedSongs)
-          }
+  switch (type.value) {
+    case 'queue':
+      // Play the first song selected if we're in Queue screen.
+      playback.play(selectedSongs.value[0])
+      break
 
-          if (event.ctrlKey || event.metaKey) {
-            playback.play(this.selectedSongs[0])
-          }
-
-          router.go('queue')
-
-          break
-      }
-    },
-
-    handleA (event: KeyboardEvent): void {
-      if (!event.metaKey && !event.ctrlKey) {
-        return
-      }
-
-      this.selectAllRows()
-    },
-
-    /**
-     * Select all (filtered) rows in the current list.
-     */
-    selectAllRows (): void {
-      this.songProxies.forEach(row => (row.selected = true))
-    },
-
-    rowClicked (rowVm: SongListRowComponent, event: MouseEvent): void {
-      // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
-      if (isMobile.any) {
-        this.toggleRow(rowVm)
-        return
+    default:
+      //
+      // --------------------------------------------------------------------
+      // For other screens, follow this map:
+      //
+      //  • Enter: Queue songs to bottom
+      //  • Shift+Enter: Queues song to top
+      //  • Cmd/Ctrl+Enter: Queues song to bottom and play the first selected song
+      //  • Cmd/Ctrl+Shift+Enter: Queue songs to top and play the first queued song
+      // --------------------------------------------------------------------
+      //
+      if (event.shiftKey) {
+        queueStore.queueToTop(selectedSongs.value)
+      } else {
+        queueStore.queue(selectedSongs.value)
       }
 
       if (event.ctrlKey || event.metaKey) {
-        this.toggleRow(rowVm)
+        playback.play(selectedSongs.value[0])
       }
 
-      if (event.button === 0) {
-        if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
-          this.clearSelection()
-          this.toggleRow(rowVm)
-        }
+      router.go('queue')
 
-        if (event.shiftKey && this.lastSelectedRow) {
-          this.selectRowsBetween(this.lastSelectedRow, rowVm)
-        }
-      }
-    },
+      break
+  }
+}
 
-    toggleRow (rowVm: SongListRowComponent): void {
-      rowVm.item.selected = !rowVm.item.selected
-      this.lastSelectedRow = rowVm
-    },
+/**
+ * Select all (filtered) rows in the current list.
+ */
+const selectAllRows = () => songProxies.value.forEach(row => (row.selected = true))
+const clearSelection = () => songProxies.value.forEach(row => (row.selected = false))
 
-    selectRowsBetween (firstRowVm: SongListRowComponent, secondRowVm: SongListRowComponent): void {
-      const indexes = [
-        this.songProxies.indexOf(firstRowVm.item),
-        this.songProxies.indexOf(secondRowVm.item)
-      ]
+const handleA = (event: KeyboardEvent) => (event.ctrlKey || event.metaKey) && selectAllRows()
 
-      indexes.sort((a, b) => a - b)
+const rowClicked = (rowVm: SongRow, event: MouseEvent) => {
+  // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
+  if (isMobile.any) {
+    toggleRow(rowVm)
+    return
+  }
 
-      for (let i = indexes[0]; i <= indexes[1]; ++i) {
-        this.songProxies[i].selected = true
-      }
-    },
+  if (event.ctrlKey || event.metaKey) {
+    toggleRow(rowVm)
+  }
 
-    clearSelection (): void {
-      this.songProxies.forEach((row: SongProxy): void => {
-        row.selected = false
-      })
-    },
-
-    /**
-     * Enable dragging songs by capturing the dragstart event on a table row.
-     * Even though the event is triggered on one row only, we'll collect other
-     * selected rows, if any, as well.
-     */
-    dragStart (rowVm: SongListRowComponent, event: DragEvent): void {
-      // If the user is dragging an unselected row, clear the current selection.
-      if (!rowVm.item.selected) {
-        this.clearSelection()
-        rowVm.item.selected = true
-      }
-
-      startDragging(event, this.selectedSongs, 'Song')
-    },
-
-    /**
-     * Add a "droppable" class and set the drop effect when other songs are dragged over a row.
-     */
-    allowDrop (event: DragEvent) {
-      if (!this.allowSongReordering) {
-        return
-      }
-
-      $.addClass((event.target as Element).parentElement, 'droppable')
-      event.dataTransfer!.dropEffect = 'move'
-
-      return false
-    },
-
-    /**
-     * Perform reordering songs upon dropping if the current song list is of type Queue.
-     */
-    handleDrop (rowVm: SongListRowComponent, event: DragEvent): boolean {
-      if (
-        !this.allowSongReordering ||
-        !event.dataTransfer!.getData('application/x-koel.text+plain') ||
-        !this.selectedSongs.length
-      ) {
-        return this.removeDroppableState(event)
-      }
-
-      queueStore.move(this.selectedSongs, rowVm.item.song)
-      return this.removeDroppableState(event)
-    },
-
-    removeDroppableState: (event: DragEvent): boolean => {
-      $.removeClass((event.target as Element).parentElement, 'droppable')
-      return false
-    },
-
-    openContextMenu (rowVm: SongListRowComponent, e: MouseEvent): void {
-      // If the user is right-clicking an unselected row,
-      // clear the current selection and select it instead.
-      if (!rowVm.item.selected) {
-        this.clearSelection()
-        this.toggleRow(rowVm)
-      }
-
-      this.$nextTick((): void => {
-        eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', e, this.selectedSongs)
-      })
-    },
-
-    getAllSongsWithSort (): Song[] {
-      return this.songProxies.map(proxy => proxy.song)
+  if (event.button === 0) {
+    if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
+      clearSelection()
+      toggleRow(rowVm)
     }
-  },
 
-  mounted (): void {
-    if (this.items) {
-      this.render()
+    if (event.shiftKey && lastSelectedRow.value) {
+      selectRowsBetween(lastSelectedRow.value, rowVm)
     }
   }
+}
+
+const toggleRow = (rowVm: SongRow) => {
+  rowVm.props.item.selected = !rowVm.props.item.selected
+  lastSelectedRow.value = rowVm
+}
+
+const selectRowsBetween = (firstRowVm: SongRow, secondRowVm: SongRow) => {
+  const indexes = [
+    songProxies.value.indexOf(firstRowVm.props.item),
+    songProxies.value.indexOf(secondRowVm.props.item)
+  ]
+
+  indexes.sort((a, b) => a - b)
+
+  for (let i = indexes[0]; i <= indexes[1]; ++i) {
+    songProxies.value[i].selected = true
+  }
+}
+
+/**
+ * Enable dragging songs by capturing the dragstart event on a table row.
+ * Even though the event is triggered on one row only, we'll collect other
+ * selected rows, if any, as well.
+ */
+const dragStart = (rowVm: SongRow, event: DragEvent) => {
+  // If the user is dragging an unselected row, clear the current selection.
+  if (!rowVm.props.item.selected) {
+    clearSelection()
+    rowVm.props.item.selected = true
+  }
+
+  startDragging(event, selectedSongs.value, 'Song')
+}
+
+/**
+ * Add a "droppable" class and set the drop effect when other songs are dragged over a row.
+ */
+const allowDrop = (event: DragEvent) => {
+  if (!allowSongReordering.value) {
+    return
+  }
+
+  $.addClass((event.target as Element).parentElement, 'droppable')
+  event.dataTransfer!.dropEffect = 'move'
+
+  return false
+}
+
+/**
+ * Perform reordering songs upon dropping if the current song list is of type Queue.
+ */
+const handleDrop = (rowVm: SongRow, event: DragEvent) => {
+  if (
+    !allowSongReordering.value ||
+    !event.dataTransfer!.getData('application/x-koel.text+plain') ||
+    !selectedSongs.value.length
+  ) {
+    return removeDroppableState(event)
+  }
+
+  queueStore.move(selectedSongs.value, rowVm.props.item.song)
+  return removeDroppableState(event)
+}
+
+const removeDroppableState = (event: DragEvent) => {
+  $.removeClass((event.target as Element).parentElement, 'droppable')
+  return false
+}
+
+const openContextMenu = async (rowVm: SongRow, event: MouseEvent) => {
+  // If the user is right-clicking an unselected row,
+  // clear the current selection and select it instead.
+  if (!rowVm.props.item.selected) {
+    clearSelection()
+    toggleRow(rowVm)
+  }
+
+  await nextTick()
+  eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, selectedSongs.value)
+}
+
+const getAllSongsWithSort = () => songProxies.value.map(proxy => proxy.song)
+
+onMounted(() => items.value && render())
+
+defineExpose({
+  rowClicked,
+  dragStart,
+  allowDrop,
+  handleDrop,
+  removeDroppableState,
+  openContextMenu,
+  getAllSongsWithSort
 })
 </script>
 
@@ -449,21 +407,15 @@ export default Vue.extend({
     right: 0;
     background: var(--color-bg-secondary);
     z-index: 1;
-    width: 100%;
+    display: flex;
   }
 
-  table {
-    width: 100%;
-    table-layout: fixed;
-  }
-
-  tr.droppable {
+  div.droppable {
     border-bottom-width: 3px;
     border-bottom-color: var(--color-green);
   }
 
-  td,
-  th {
+  .song-list-header span, .song-item span {
     text-align: left;
     padding: 8px;
     vertical-align: middle;
@@ -472,26 +424,26 @@ export default Vue.extend({
     white-space: nowrap;
 
     &.time {
-      width: 96px;
+      flex-basis: 96px;
       padding-right: 24px;
       text-align: right;
     }
 
     &.track-number {
-      width: 66px;
+      flex-basis: 66px;
       padding-left: 24px;
     }
 
     &.artist {
-      width: 23%;
+      flex-basis: 23%;
     }
 
     &.album {
-      width: 27%;
+      flex-basis: 27%;
     }
 
     &.favorite {
-      width: 36px;
+      flex-basis: 36px;
     }
 
     &.play {
@@ -504,9 +456,13 @@ export default Vue.extend({
         right: 4px;
       }
     }
+
+    &.title {
+      flex: 1;
+    }
   }
 
-  th {
+  .song-list-header {
     color: var(--color-text-secondary);
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -518,7 +474,7 @@ export default Vue.extend({
     }
   }
 
-  .unsortable th {
+  .unsortable span {
     cursor: default;
   }
 
@@ -545,14 +501,7 @@ export default Vue.extend({
   }
 
   @media only screen and (max-width: 768px) {
-    table,
-    tbody,
-    tr {
-      display: block;
-    }
-
-    thead,
-    tfoot {
+    .song-list-header {
       display: none;
     }
 
@@ -566,7 +515,7 @@ export default Vue.extend({
       }
     }
 
-    tr {
+    .song-item {
       padding: 8px 32px 8px 4px;
       position: relative;
       white-space: nowrap;
@@ -576,7 +525,7 @@ export default Vue.extend({
       width: 100%;
     }
 
-    td {
+    .song-item span {
       display: none;
       padding: 0;
       vertical-align: bottom;

@@ -1,8 +1,8 @@
 <template>
-  <form-base>
+  <FormBase>
     <template slot="default">
       <div @keydown.esc="maybeClose">
-        <sound-bar v-if="meta.loading"/>
+        <SoundBar v-if="loading"/>
         <form @submit.prevent="submit" v-else data-testid="create-smart-playlist-form">
           <header>
             <h1>New Smart Playlist</h1>
@@ -15,87 +15,65 @@
             </div>
 
             <div class="form-row rules">
-              <rule-group
+              <RuleGroup
                 :group="group"
                 :isFirstGroup="index === 0"
                 :key="group.id"
                 @input="onGroupChanged"
                 v-for="(group, index) in ruleGroups"
               />
-              <btn @click.prevent="addGroup" class="btn-add-group" green small uppercase>
+              <Btn @click.prevent="addGroup" class="btn-add-group" green small uppercase>
                 <i class="fa fa-plus"></i> Group
-              </btn>
+              </Btn>
             </div>
           </div>
 
           <footer>
-            <btn type="submit">Save</btn>
-            <btn class="btn-cancel" @click.prevent="maybeClose" white>Cancel</btn>
+            <Btn type="submit">Save</Btn>
+            <Btn class="btn-cancel" @click.prevent="maybeClose" white>Cancel</Btn>
           </footer>
         </form>
       </div>
     </template>
-  </form-base>
+  </FormBase>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { nextTick, ref } from 'vue'
 import { playlistStore } from '@/stores'
 import { alerts } from '@/utils'
 import router from '@/router'
+import { useSmartPlaylistForms } from '@/components/playlist/smart-playlist/useSmartPlaylistForms'
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue'),
-    FormBase: () => import('@/components/playlist/smart-playlist/form-base.vue'),
-    RuleGroup: () => import('@/components/playlist/smart-playlist/rule-group.vue'),
-    SoundBar: () => import('@/components/ui/sound-bar.vue')
-  },
+const {
+  Btn,
+  FormBase,
+  RuleGroup,
+  SoundBar,
+  ruleGroups,
+  loading,
+  addGroup,
+  onGroupChanged,
+  close
+} = useSmartPlaylistForms([playlistStore.createEmptySmartPlaylistRuleGroup()])
 
-  data: () => ({
-    name: '',
-    ruleGroups: [playlistStore.createEmptySmartPlaylistRuleGroup()] as SmartPlaylistRuleGroup[],
-    meta: {
-      loading: false
-    }
-  }),
+const name = ref('')
 
-  methods: {
-    addGroup (): void {
-      this.ruleGroups.push(this.createGroup())
-    },
-
-    onGroupChanged (data: SmartPlaylistRuleGroup): void {
-      const changedGroup = Object.assign(this.ruleGroups.find(g => g.id === data.id), data)
-
-      // Remove empty group
-      if (changedGroup.rules.length === 0) {
-        this.ruleGroups = this.ruleGroups.filter(group => group.id !== changedGroup.id)
-      }
-    },
-
-    close (): void {
-      this.$emit('close')
-    },
-
-    maybeClose (): void {
-      if (!this.name && !this.ruleGroups.length) {
-        this.close()
-        return
-      }
-
-      alerts.confirm('Discard all changes?', () => this.close())
-    },
-
-    async submit (): Promise<void> {
-      this.meta.loading = true
-      const playlist = await playlistStore.store(this.name, [], this.ruleGroups)
-      this.meta.loading = false
-      this.close()
-      this.$nextTick(() => router.go(`playlist/${playlist.id}`))
-    },
-
-    createGroup: (): SmartPlaylistRuleGroup => playlistStore.createEmptySmartPlaylistRuleGroup()
+const maybeClose = () => {
+  if (!name.value && !ruleGroups.value.length) {
+    close()
+    return
   }
-})
+
+  alerts.confirm('Discard all changes?', close)
+}
+
+const submit = async () => {
+  loading.value = true
+  const playlist = await playlistStore.store(name.value, [], ruleGroups.value)
+  loading.value = false
+  close()
+  await nextTick()
+  router.go(`playlist/${playlist.id}`)
+}
 </script>

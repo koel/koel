@@ -1,11 +1,11 @@
-import { isObject, isNumber, get } from 'lodash'
+import { get, isNumber, isObject } from 'lodash'
 
-export const orderBy = <T>(arr: T[], sortKey?: string | string[], reverse?: number): T[] => {
+export const orderBy = <T> (arr: T[], sortKey?: string | string[], reverse?: boolean): T[] => {
   if (!sortKey) {
     return arr
   }
 
-  const order = (reverse && reverse < 0) ? -1 : 1
+  const order = reverse ? -1 : 1
 
   const compareRecordsByKey = (a: T, b: T, key: any): number => {
     let aKey = isObject(a) ? get(a, key) : a
@@ -49,9 +49,9 @@ export const orderBy = <T>(arr: T[], sortKey?: string | string[], reverse?: numb
   })
 }
 
-export const limitBy = <T>(arr: T[], n: number, offset: number = 0): T[] => arr.slice(offset, offset + n)
+export const limitBy = <T> (arr: T[], n: number, offset: number = 0): T[] => arr.slice(offset, offset + n)
 
-export const filterBy = <T>(arr: T[], search: string, ...keys: string[]): T[] => {
+export const filterBy = <T> (arr: T[], search: string, ...keys: string[]): T[] => {
   if (!search) {
     return arr
   }
@@ -65,10 +65,5 @@ export const filterBy = <T>(arr: T[], search: string, ...keys: string[]): T[] =>
   }, [])
 }
 
-export const pluralize = (...args: any[]): string => {
-  if (!args[0] || args[0] > 1) {
-    return `${args[0]} ${args[1]}s`
-  }
-
-  return `${args[0]} ${args[1]}`
-}
+export const pluralize = (count: number, singular: string): string =>
+  count === 1 ? `${count} ${singular}` : `${count} ${singular}s`

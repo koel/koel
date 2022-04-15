@@ -4,6 +4,7 @@ import md5 from 'blueimp-md5'
 import { http } from '@/services'
 import { alerts } from '@/utils'
 import stub from '@/stubs/user'
+import { reactive } from 'vue'
 
 export interface UpdateCurrentProfileData {
   current_password: string|null
@@ -29,10 +30,10 @@ export interface UpdateUserData extends UserFormData {
 export const userStore = {
   stub,
 
-  state: {
+  state: reactive({
     users: [] as User[],
     current: stub
-  },
+  }),
 
   init (users: User[], currentUser: User): void {
     this.all = users

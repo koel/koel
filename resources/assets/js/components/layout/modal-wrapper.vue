@@ -1,26 +1,26 @@
 <template>
   <div class="modal-wrapper" :class="{ overlay: showingModalName }">
-    <create-smart-playlist-form v-if="showingModalName === 'create-smart-playlist-form'" @close="close"/>
-    <edit-smart-playlist-form
+    <CreateSmartPlaylistForm v-if="showingModalName === 'create-smart-playlist-form'" @close="close"/>
+    <EditSmartPlaylistForm
       v-if="showingModalName === 'edit-smart-playlist-form'"
       @close="close"
       :playlist="boundData.playlist"
     />
-    <add-user-form v-if="showingModalName === 'add-user-form'" @close="close"/>
-    <edit-user-form v-if="showingModalName === 'edit-user-form'" :user="boundData.user" @close="close"/>
-    <edit-song-form
+    <AddUserForm v-if="showingModalName === 'add-user-form'" @close="close"/>
+    <EditUserForm v-if="showingModalName === 'edit-user-form'" :user="boundData.user" @close="close"/>
+    <EditSongForm
       :songs="boundData.songs"
       :initialTab="boundData.initialTab"
       @close="close"
       v-if="showingModalName === 'edit-song-form'"
     />
-    <about-dialog v-if="showingModalName === 'about-dialog'" @close="close"/>
+    <AboutDialog v-if="showingModalName === 'about-dialog'" @close="close"/>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
 import { eventBus } from '@/utils'
+import { defineAsyncComponent, ref } from 'vue'
 
 interface ModalWrapperBoundData {
   playlist?: Playlist
@@ -37,58 +37,40 @@ declare type ModalName =
   | 'edit-song-form'
   | 'about-dialog'
 
-export default Vue.extend({
-  components: {
-    CreateSmartPlaylistForm: () => import('@/components/playlist/smart-playlist/create-form.vue'),
-    EditSmartPlaylistForm: () => import('@/components/playlist/smart-playlist/edit-form.vue'),
-    AddUserForm: () => import('@/components/user/add-form.vue'),
-    EditUserForm: () => import('@/components/user/edit-form.vue'),
-    EditSongForm: () => import('@/components/song/edit-form.vue'),
-    AboutDialog: () => import('@/components/meta/about-dialog.vue')
+const CreateSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/create-form.vue'))
+const EditSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/edit-form.vue'))
+const AddUserForm = defineAsyncComponent(() => import('@/components/user/add-form.vue'))
+const EditUserForm = defineAsyncComponent(() => import('@/components/user/edit-form.vue'))
+const EditSongForm = defineAsyncComponent(() => import('@/components/song/edit-form.vue'))
+const AboutDialog = defineAsyncComponent(() => import('@/components/meta/about-dialog.vue'))
+
+const showingModalName = ref<ModalName | null>(null)
+const boundData = ref<ModalWrapperBoundData>({})
+
+const close = () => {
+  showingModalName.value = null
+  boundData.value = {}
+}
+
+eventBus.on({
+  'MODAL_SHOW_ABOUT_DIALOG': () => (showingModalName.value = 'about-dialog'),
+  'MODAL_SHOW_ADD_USER_FORM': () => (showingModalName.value = 'add-user-form'),
+  'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM': () => (showingModalName.value = 'create-smart-playlist-form'),
+
+  'MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM': (playlist: Playlist) => {
+    boundData.value.playlist = playlist
+    showingModalName.value = 'edit-smart-playlist-form'
   },
 
-  data: () => ({
-    showingModalName: null as ModalName | null,
-    boundData: {} as ModalWrapperBoundData
-  }),
-
-  methods: {
-    close (): void {
-      this.showingModalName = null
-      this.boundData = {}
-    }
+  'MODAL_SHOW_EDIT_USER_FORM': (user: User) => {
+    boundData.value.user = user
+    showingModalName.value = 'edit-user-form'
   },
 
-  created (): void {
-    eventBus.on({
-      'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM': (): void => {
-        this.showingModalName = 'create-smart-playlist-form'
-      },
-
-      'MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM': (playlist: Playlist): void => {
-        this.boundData.playlist = playlist
-        this.showingModalName = 'edit-smart-playlist-form'
-      },
-
-      'MODAL_SHOW_ADD_USER_FORM': (): void => {
-        this.showingModalName = 'add-user-form'
-      },
-
-      'MODAL_SHOW_EDIT_USER_FORM': (user: User): void => {
-        this.boundData.user = user
-        this.showingModalName = 'edit-user-form'
-      },
-
-      'MODAL_SHOW_EDIT_SONG_FORM': (songs: Song[], initialTab: string = 'details'): void => {
-        this.boundData.songs = songs
-        this.boundData.initialTab = initialTab
-        this.showingModalName = 'edit-song-form'
-      },
-
-      'MODAL_SHOW_ABOUT_DIALOG': (): void => {
-        this.showingModalName = 'about-dialog'
-      }
-    })
+  'MODAL_SHOW_EDIT_SONG_FORM': (songs: Song[], initialTab: string = 'details'): void => {
+    boundData.value.songs = songs
+    boundData.value.initialTab = initialTab
+    showingModalName.value = 'edit-song-form'
   }
 })
 </script>

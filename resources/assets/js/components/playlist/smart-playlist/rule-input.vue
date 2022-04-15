@@ -2,37 +2,18 @@
   <input :type="type" v-model="mutableValue" name="value[]" required>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { toRefs, watch } from 'vue'
 import types from '@/config/smart-playlist/types'
 
-export default Vue.extend({
-  props: {
-    type: {
-      type: String,
-      validator: value => Object.keys(types).includes(value)
-    },
+const props = withDefaults(defineProps<{ type: keyof typeof types, value: string }>(), { value: '' })
+const { type, value } = toRefs(props)
 
-    value: {
-      type: String,
-      default: ''
-    }
-  },
+const mutableValue = value.value
 
-  data: () => ({
-    mutableValue: ''
-  }),
+const emit = defineEmits(['input'])
 
-  watch: {
-    mutableValue (): void {
-      this.$emit('input', this.mutableValue)
-    }
-  },
-
-  created (): void {
-    this.mutableValue = this.value
-  }
-})
+watch(() => mutableValue, () => emit('input', mutableValue))
 </script>
 
 <style lang="scss" scoped>

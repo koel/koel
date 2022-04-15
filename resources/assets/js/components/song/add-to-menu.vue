@@ -9,7 +9,7 @@
     data-test="add-to-menu"
   >
     <section class="existing-playlists">
-      <p>Add {{ songs.length | pluralize('song') }} to</p>
+      <p>Add {{ pluralize(songs.length, 'song') }} to</p>
 
       <ul>
         <template v-if="config.queue">
@@ -53,81 +53,61 @@
           v-model="newPlaylistName"
           data-test="new-playlist-name"
         >
-        <btn type="submit" title="Save">⏎</btn>
+        <Btn type="submit" title="Save">⏎</Btn>
       </form>
     </section>
   </div>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, nextTick, reactive, ref, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { playlistStore } from '@/stores'
 import router from '@/router'
-import songMenuMethods from '@/mixins/song-menu-methods.ts'
-import { PropOptions } from 'vue'
+import { useSongMenuMethods } from '@/composables'
 
-export default mixins(songMenuMethods).extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  props: {
-    showing: {
-      type: Boolean,
-      default: false
-    },
-    config: {
-      type: Object
-    } as PropOptions<AddToMenuConfig>
-  },
+const props = defineProps<{ songs: Song[], showing: Boolean, config: AddToMenuConfig }>()
+const { songs, showing, config } = toRefs(props)
 
-  filters: { pluralize },
+const newPlaylistName = ref('')
+const playlistState = reactive(playlistStore.state)
 
-  data: () => ({
-    newPlaylistName: '',
-    playlistState: playlistStore.state
-  }),
+const emit = defineEmits(['closing'])
+const close = () => emit('closing')
 
-  watch: {
-    songs (): void {
-      if (!this.songs.length) {
-        this.close()
-      }
-    }
-  },
+const {
+  queueSongsAfterCurrent,
+  queueSongsToBottom,
+  queueSongsToTop,
+  addSongsToFavorite,
+  addSongsToExistingPlaylist
+} = useSongMenuMethods(songs.value, close)
 
-  computed: {
-    playlists (): Playlist[] {
-      return this.playlistState.playlists.filter(playlist => !playlist.is_smart)
-    }
-  },
+watch(songs, () => songs.value.length || close())
 
-  methods: {
-    /**
-     * Save the selected songs as a playlist.
-     * As of current we don't have selective save.
-     */
-    async createNewPlaylistFromSongs (): Promise<void> {
-      this.newPlaylistName = this.newPlaylistName.trim()
+const playlists = computed(() => playlistState.playlists.filter(playlist => !playlist.is_smart))
 
-      if (!this.newPlaylistName) {
-        return
-      }
+/**
+ * Save the selected songs as a playlist.
+ * As of current we don't have selective save.
+ */
+const createNewPlaylistFromSongs = async () => {
+  newPlaylistName.value = newPlaylistName.value.trim()
 
-      const playlist = await playlistStore.store(this.newPlaylistName, this.songs)
-      this.newPlaylistName = ''
-      // Activate the new playlist right away
-      this.$nextTick((): void => router.go(`playlist/${playlist.id}`))
-
-      this.close()
-    },
-
-    close (): void {
-      this.$emit('closing')
-    }
+  if (!newPlaylistName.value) {
+    return
   }
-})
+
+  const playlist = await playlistStore.store(newPlaylistName.value, songs.value)
+  newPlaylistName.value = ''
+  // Activate the new playlist right away
+  await nextTick()
+  router.go(`playlist/${playlist.id}`)
+
+  close()
+}
 </script>
 
 <style lang="scss" scoped>

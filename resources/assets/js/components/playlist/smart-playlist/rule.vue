@@ -1,6 +1,6 @@
 <template>
   <div class="row" data-test="smart-playlist-rule-row">
-    <btn @click.prevent="removeRule" class="remove-rule" red><i class="fa fa-times"></i></btn>
+    <Btn @click.prevent="removeRule" class="remove-rule" red><i class="fa fa-times"></i></Btn>
 
     <select v-model="selectedModel" name="model[]">
       <option v-for="model in models" :key="model.name" :value="model">{{ model.label }}</option>
@@ -11,10 +11,10 @@
     </select>
 
     <span class="value-wrapper">
-      <rule-input
+      <RuleInput
         v-for="input in availableInputs"
         :key="input.id"
-        :type="selectedOperator.type || selectedModel.type"
+        :type="selectedOperator.type || selectedModel?.type"
         v-model="input.value"
         @input="onInput"
       />
@@ -24,111 +24,85 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import models from '@/config/smart-playlist/models'
 import types from '@/config/smart-playlist/types'
 
-export default Vue.extend({
-  name: 'SmartPlaylistRule',
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const RuleInput = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/rule-input.vue'))
 
-  components: {
-    Btn: () => import('@/components/ui/btn.vue'),
-    RuleInput: () => import('@/components/playlist/smart-playlist/rule-input.vue')
-  },
+const props = defineProps<{ rule: SmartPlaylistRule }>()
+const { rule } = toRefs(props)
 
-  props: {
-    rule: {
-      type: Object,
-      required: true
-    } as PropOptions<SmartPlaylistRule>
-  },
+const mutatedRule = Object.assign({}, rule.value)
 
-  data: () => ({
-    models,
-    selectedModel: null as unknown as SmartPlaylistModel,
-    selectedOperator: null as unknown as SmartPlaylistOperator,
-    inputValues: [],
-    mutatedRule: null as unknown as SmartPlaylistRule
-  }),
+const selectedModel = ref<SmartPlaylistModel | null>(null)
+const selectedOperator = ref(null as unknown as SmartPlaylistOperator)
+const inputValues = ref([])
 
-  watch: {
-    options (): void {
-      if (this.selectedModel.name === this.mutatedRule.model.name) {
-        this.selectedOperator = this.options.find(o => o.operator === this.mutatedRule.operator)!
-      } else {
-        this.selectedOperator = this.options[0]
-      }
-    }
-  },
+const model = models.find(m => m.name === mutatedRule.model.name)
 
-  computed: {
-    options (): SmartPlaylistOperator[] {
-      return this.selectedModel ? types[this.selectedModel.type] : []
-    },
+if (!model) {
+  throw new Error(`Invalid smart playlist model: ${mutatedRule.model.name}`)
+}
 
-    availableInputs (): { id: string, value: any }[] {
-      if (!this.selectedOperator) {
-        return []
-      }
+mutatedRule.model = selectedModel.value = model
 
-      const inputs: Array<{ id: string, value: string }> = []
+const options = computed<SmartPlaylistOperator[]>(() => selectedModel.value ? types[selectedModel.value.type] : [])
 
-      for (let i = 0, inputCount = this.selectedOperator.inputs || 1; i < inputCount; ++i) {
-        inputs.push({
-          id: `${this.mutatedRule.model}_${this.selectedOperator.operator}_${i}`,
-          value: this.isOriginalOperatorSelected ? this.mutatedRule.value[i] : ''
-        })
-      }
+const operator = options.value.find(o => o.operator === mutatedRule.operator)
 
-      return inputs
-    },
+if (!operator) {
+  throw new Error(`Invalid smart playlist operator: ${mutatedRule.operator}`)
+}
 
-    isOriginalOperatorSelected (): boolean {
-      return this.selectedModel.name === this.mutatedRule.model.name &&
-        this.selectedOperator.operator === this.mutatedRule.operator
-    },
+selectedOperator.value = operator
 
-    valueSuffix (): string | undefined {
-      return this.selectedOperator.unit || this.selectedModel.unit
-    }
-  },
+const isOriginalOperatorSelected = computed(() => {
+  return selectedModel.value?.name === mutatedRule.model.name &&
+    selectedOperator.value.operator === mutatedRule.operator
+})
 
-  created (): void {
-    this.mutatedRule = Object.assign({}, this.rule)
+const availableInputs = computed<{ id: string, value: any }[]>(() => {
+  if (!selectedOperator.value) {
+    return []
+  }
 
-    const model = this.models.find((m: SmartPlaylistModel) => m.name === this.mutatedRule.model.name)
+  const inputs: Array<{ id: string, value: string }> = []
 
-    if (!model) {
-      throw new Error(`Invalid smart playlist model: ${this.mutatedRule.model.name}`)
-    }
+  for (let i = 0, inputCount = selectedOperator.value.inputs || 1; i < inputCount; ++i) {
+    inputs.push({
+      id: `${mutatedRule.model}_${selectedOperator.value.operator}_${i}`,
+      value: isOriginalOperatorSelected.value ? mutatedRule.value[i] : ''
+    })
+  }
 
-    this.mutatedRule.model = this.selectedModel = model
+  return inputs
+})
 
-    const operator = this.options.find(o => o.operator === this.mutatedRule.operator)
-
-    if (!operator) {
-      throw new Error(`Invalid smart playlist operator: ${this.mutatedRule.operator}`)
-    }
-
-    this.selectedOperator = operator
-  },
-
-  methods: {
-    onInput (): void {
-      this.$emit('input', {
-        id: this.mutatedRule.id,
-        model: this.selectedModel,
-        operator: this.selectedOperator.operator,
-        value: this.availableInputs.map(input => input.value)
-      } as SmartPlaylistRule)
-    },
-
-    removeRule (): void {
-      this.$emit('remove')
-    }
+watch(options, () => {
+  if (selectedModel.value?.name === mutatedRule.model.name) {
+    selectedOperator.value = options.value.find(o => o.operator === mutatedRule.operator)!
+  } else {
+    selectedOperator.value = options.value[0]
   }
 })
+
+const valueSuffix = computed(() => selectedOperator.value.unit || selectedModel.value?.unit)
+
+const emit = defineEmits(['input', 'remove'])
+
+const onInput = () => {
+  emit('input', {
+    id: mutatedRule.id,
+    model: selectedModel.value,
+    operator: selectedOperator.value.operator,
+    value: availableInputs.value.map(input => input.value)
+  } as SmartPlaylistRule)
+}
+
+const removeRule = () => emit('remove')
 </script>
 
 <style lang="scss" scoped>

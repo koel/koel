@@ -1,5 +1,5 @@
 <template>
-  <article class="user-card" :class="{ me: isCurrentUser }" data-test="user-card">
+  <article class="user-card" :class="{ me: isCurrentUser }" data-test="user-card" v-if="showing">
     <div class="info">
       <img :src="user.avatar" width="96" height="96" :alt="`${user.name}'s avatar`">
 
@@ -24,8 +24,8 @@
         </div>
 
         <div class="buttons">
-          <btn class="btn-edit" @click="edit" small data-test="edit-user-btn">{{ editButtonLabel }}</btn>
-          <btn
+          <Btn class="btn-edit" @click="edit" small data-test="edit-user-btn">{{ editButtonLabel }}</Btn>
+          <Btn
             v-if="!isCurrentUser"
             class="btn-delete"
             red
@@ -34,68 +34,38 @@
             data-test="delete-user-btn"
           >
             Delete
-          </btn>
+          </Btn>
         </div>
       </div>
     </div>
   </article>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, ref, toRefs } from 'vue'
 import { userStore } from '@/stores'
 import router from '@/router'
 import { alerts } from '@/utils'
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  props: {
-    user: {
-      type: Object,
-      required: true
-    } as PropOptions<User>
-  },
+const props = defineProps<{ user: User }>()
+const { user } = toRefs(props)
 
-  data: () => ({
-    confirmingDelete: false
-  }),
+const showing = ref(true)
 
-  computed: {
-    isCurrentUser (): boolean {
-      return this.user.id === userStore.current.id
-    },
+const isCurrentUser = computed(() => user.value.id === userStore.current.id)
+const editButtonLabel = computed(() => isCurrentUser.value ? 'Update Profile' : 'Edit')
 
-    editButtonLabel (): string {
-      return this.isCurrentUser ? 'Update Profile' : 'Edit'
-    }
-  },
+const emit = defineEmits(['editUser'])
 
-  methods: {
-    /**
-     * Trigger editing a user.
-     * If the user is the current logged-in user, redirect to the profile screen instead.
-     */
-    edit (): void {
-      if (this.isCurrentUser) {
-        router.go('profile')
-      } else {
-        this.$emit('editUser', this.user)
-      }
-    },
+const edit = () => isCurrentUser.value ? router.go('profile') : emit('editUser', user.value)
+const confirmDelete = () => alerts.confirm(`You’re about to unperson ${user.value.name}. Are you sure?`, destroy)
 
-    confirmDelete (): void {
-      alerts.confirm(`You’re about to unperson ${this.user.name}. Are you sure?`, this.destroy)
-    },
-
-    destroy (): void {
-      userStore.destroy(this.user)
-      this.$destroy()
-    }
-  }
-})
+const destroy = () => {
+  userStore.destroy(user.value)
+  showing.value = false
+}
 </script>
 
 <style lang="scss" scoped>

@@ -8,26 +8,18 @@
         :key="idx"
         :index="idx"
         :track="track"
-        is="track-list-item"
+        is="TrackListItem"
         v-for="(track, idx) in album.info.tracks"
       />
     </ul>
   </section>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, toRefs } from 'vue'
 
-export default Vue.extend({
-  props: {
-    album: {
-      type: Object,
-      required: true
-    } as PropOptions<Album>
-  },
+const TrackListItem = defineAsyncComponent(() => import('./track-list-item.vue'))
 
-  components: {
-    TrackListItem: () => import('./track-list-item.vue')
-  }
-})
+const props = defineProps<{ album: Album }>()
+const { album } = toRefs(props)
 </script>

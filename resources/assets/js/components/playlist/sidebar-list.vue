@@ -24,9 +24,9 @@
     </form>
 
     <ul>
-      <playlist-item type="favorites" :playlist="{ name: 'Favorites', songs: favoriteState.songs }"/>
-      <playlist-item type="recently-played" :playlist="{ name: 'Recently Played', songs: [] }"/>
-      <playlist-item
+      <PlaylistItem type="favorites" :playlist="{ name: 'Favorites', songs: favoriteState.songs }"/>
+      <PlaylistItem type="recently-played" :playlist="{ name: 'Recently Played', songs: [] }"/>
+      <PlaylistItem
         :playlist="playlist"
         :key="playlist.id"
         type="playlist"
@@ -34,51 +34,44 @@
       />
     </ul>
 
-    <context-menu ref="contextMenu" @createPlaylist="creating = true"/>
+    <ContextMenu ref="contextMenu" @createPlaylist="creating = true"/>
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, nextTick, reactive, ref } from 'vue'
 import { BaseContextMenu } from 'koel/types/ui'
-import { playlistStore, favoriteStore, recentlyPlayedStore } from '@/stores'
+import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 
-export default Vue.extend({
-  components: {
-    PlaylistItem: () => import('@/components/playlist/sidebar-item.vue'),
-    ContextMenu: () => import('@/components/playlist/create-new-context-menu.vue')
-  },
+const PlaylistItem = defineAsyncComponent(() => import('@/components/playlist/sidebar-item.vue'))
+const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/create-new-context-menu.vue'))
 
-  data: () => ({
-    playlistState: playlistStore.state,
-    favoriteState: favoriteStore.state,
-    recentlyPlayedState: recentlyPlayedStore.state,
-    creating: false,
-    newName: ''
-  }),
+const contextMenu = ref<BaseContextMenu | null>(null)
 
-  methods: {
-    async createPlaylist (): Promise<void> {
-      this.creating = false
+const playlistState = reactive(playlistStore.state)
+const favoriteState = reactive(favoriteStore.state)
+const creating = ref(false)
+const newName = ref('')
 
-      const playlist = await playlistStore.store(this.newName)
-      this.newName = ''
-      // Activate the new playlist right away
-      this.$nextTick(() => router.go(`playlist/${playlist.id}`))
-    },
+const createPlaylist = async () => {
+  creating.value = false
 
-    toggleContextMenu (event: MouseEvent): void {
-      this.$nextTick((): void => {
-        if (this.creating) {
-          this.creating = false
-        } else {
-          (this.$refs.contextMenu as BaseContextMenu).open(event.pageY, event.pageX)
-        }
-      })
-    }
+  const playlist = await playlistStore.store(newName.value)
+  newName.value = ''
+  // Activate the new playlist right away
+  await nextTick()
+  router.go(`playlist/${playlist.id}`)
+}
+
+const toggleContextMenu = async (event: MouseEvent) => {
+  await nextTick()
+  if (creating) {
+    creating.value = false
+  } else {
+    contextMenu.value?.open(event.pageY, event.pageX)
   }
-})
+}
 </script>
 
 <style lang="scss">

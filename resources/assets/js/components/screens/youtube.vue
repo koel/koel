@@ -16,65 +16,47 @@
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, ref } from 'vue'
 import { YouTubePlayer } from 'youtube-player/dist/types'
 import { eventBus } from '@/utils'
 import { playback } from '@/services'
 import createYouTubePlayer from 'youtube-player'
 
-let player: YouTubePlayer
+let player: YouTubePlayer|null = null
 
-export default Vue.extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ScreenPlaceholder: () => import('@/components/ui/screen-placeholder.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
-  data: () => ({
-    title: 'YouTube Video'
-  }),
+const title = ref('YouTube Video')
 
-  methods: {
-    /**
-     * Initialize the YouTube player. This should only be called once.
-     */
-    initPlayer (): void {
-      if (!player) {
-        player = createYouTubePlayer('player', {
-          width: '100%',
-          height: '100%'
-        })
-
-        // Pause song playback when video is played
-        player.on('stateChange', (event: any): void => {
-          if (event.data === 1) {
-            playback.pause()
-          }
-        })
-      }
-    }
-  },
-
-  created (): void {
-    eventBus.on({
-      'PLAY_YOUTUBE_VIDEO': ({ id, title }: { id: string, title: string }): void => {
-        this.title = title
-        this.initPlayer()
-        player.loadVideoById(id)
-        player.playVideo()
-      },
-
-      /**
-       * Stop video playback when a song is played/resumed.
-       */
-      'SONG_STARTED': (): void => {
-        if (player) {
-          player.pauseVideo()
-        }
-      }
+/**
+ * Initialize the YouTube player. This should only be called once.
+ */
+const maybeInitPlayer = () => {
+  if (!player) {
+    player = createYouTubePlayer('player', {
+      width: '100%',
+      height: '100%'
     })
+
+    // Pause song playback when video is played
+    player.on('stateChange', ({ data }) => data === 1 && playback.pause())
   }
+}
+
+eventBus.on({
+  'PLAY_YOUTUBE_VIDEO': (payload: { id: string, title: string }) => {
+    title.value = payload.title
+    maybeInitPlayer()
+    player!.loadVideoById(payload.id)
+    player!.playVideo()
+  },
+
+  /**
+   * Stop video playback when a song is played/resumed.
+   */
+  'SONG_STARTED': () => player && player.pauseVideo()
 })
 </script>
 

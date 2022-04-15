@@ -12,55 +12,42 @@
   >
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { reactive, ref, toRefs } from 'vue'
 import { playlistStore } from '@/stores'
 
-export default Vue.extend({
-  props: {
-    playlist: {
-      type: Object,
-      required: true
-    } as PropOptions<Playlist>
-  },
+const props = defineProps<{ playlist: Playlist }>()
+const { playlist } = toRefs(props)
 
-  data: () => ({
-    mutatedPlaylist: null as unknown as Playlist,
-    updating: false
-  }),
+const updating = ref(false)
 
-  methods: {
-    async update (): Promise<void> {
-      this.mutatedPlaylist.name = this.mutatedPlaylist.name.trim()
+const mutatedPlaylist = reactive<Playlist>(Object.assign({}, playlist.value))
 
-      if (!this.mutatedPlaylist.name) {
-        this.cancel()
-        return
-      }
+const emit = defineEmits(['updated', 'cancelled'])
 
-      if (this.mutatedPlaylist.name === this.playlist.name) {
-        this.cancel()
-        return
-      }
+const update = async () => {
+  mutatedPlaylist.name = mutatedPlaylist.name.trim()
 
-      // prevent duplicate updating from Enter and Blur
-      if (this.updating) {
-        return
-      }
-
-      this.updating = true
-
-      await playlistStore.update(this.mutatedPlaylist)
-      this.$emit('updated', this.mutatedPlaylist)
-    },
-
-    cancel (): void {
-      this.$emit('cancelled')
-    }
-  },
-
-  created (): void {
-    this.mutatedPlaylist = Object.assign({}, this.playlist)
+  if (!mutatedPlaylist.name) {
+    cancel()
+    return
   }
-})
+
+  if (mutatedPlaylist.name === playlist.value.name) {
+    cancel()
+    return
+  }
+
+  // prevent duplicate updating from Enter and Blur
+  if (updating.value) {
+    return
+  }
+
+  updating.value = true
+
+  await playlistStore.update(mutatedPlaylist)
+  emit('updated', mutatedPlaylist)
+}
+
+const cancel = () => emit('cancelled')
 </script>

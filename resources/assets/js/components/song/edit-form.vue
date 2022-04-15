@@ -1,6 +1,6 @@
 <template>
   <div class="edit-song" data-testid="edit-song-form" @keydown.esc="maybeClose" tabindex="0">
-    <sound-bar v-if="loading"/>
+    <SoundBar v-if="loading"/>
     <form v-else @submit.prevent="submit">
       <header>
         <img :src="coverUrl" width="96" height="96" alt="Album's cover">
@@ -101,21 +101,21 @@
       </div>
 
       <footer>
-        <btn type="submit">Update</btn>
-        <btn @click.prevent="maybeClose" class="btn-cancel" white>Cancel</btn>
+        <Btn type="submit">Update</Btn>
+        <Btn @click.prevent="maybeClose" class="btn-cancel" white>Cancel</Btn>
       </footer>
     </form>
   </div>
 </template>
 
-<script lang="ts">
-import { union, isEqual } from 'lodash'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, nextTick, reactive, ref, toRefs } from 'vue'
+import { isEqual, union } from 'lodash'
 
-import { br2nl, getDefaultCover, alerts } from '@/utils'
+import { alerts, br2nl, getDefaultCover } from '@/utils'
 import { songInfo } from '@/services/info'
-import { artistStore, albumStore, songStore } from '@/stores'
+import { albumStore, artistStore, songStore } from '@/stores'
 
-import Vue, { PropOptions } from 'vue'
 import { TypeAheadConfig } from 'koel/types/ui'
 
 interface EditFormData {
@@ -127,225 +127,188 @@ interface EditFormData {
   compilationState: number
 }
 
+type TabName = 'details' | 'lyrics'
+
 const COMPILATION_STATES = {
   NONE: 0, // No songs belong to a compilation album
   ALL: 1, // All songs belong to compilation album(s)
-  SOME: 2 // Some of the songs belong to compilation album(s)
+  SOME: 2 // Some songs belong to compilation album(s)
 }
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue'),
-    SoundBar: () => import('@/components/ui/sound-bar.vue'),
-    Typeahead: () => import('@/components/ui/typeahead.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+const Typeahead = defineAsyncComponent(() => import('@/components/ui/typeahead.vue'))
 
-  props: {
-    songs: {
-      required: true,
-      type: [Array, Object]
-    } as PropOptions<Song | Song[]>,
+const props = withDefaults(defineProps<{ songs: Song[], initialTab: TabName }>(), { songs: [], initialTab: 'details' })
+const { songs, initialTab } = toRefs(props)
 
-    initialTab: {
-      type: String,
-      default: 'details',
-      validator: (value: string): boolean => ['details', 'lyrics'].includes(value)
-    }
-  },
+const compilationStateChk = ref(null as unknown as HTMLInputElement)
+const mutatedSongs = ref<Song[]>([])
+const currentView = ref(null as unknown as TabName)
+const loading = ref(true)
+const artistState = reactive(artistStore.state)
+const albumState = reactive(albumStore.state)
 
-  data: () => ({
-    mutatedSongs: [] as Song[],
-    currentView: '',
-    loading: true,
+const artistTypeAheadConfig: TypeAheadConfig = {
+  displayKey: 'name',
+  filterKey: 'name',
+  name: 'artist'
+}
 
-    artistState: artistStore.state,
-    artistTypeAheadConfig: {
-      displayKey: 'name',
-      filterKey: 'name',
-      name: 'artist'
-    } as TypeAheadConfig,
+const albumTypeAheadConfig: TypeAheadConfig = {
+  displayKey: 'name',
+  filterKey: 'name',
+  name: 'album'
+}
 
-    albumState: albumStore.state,
-    albumTypeAheadConfig: {
-      displayKey: 'name',
-      filterKey: 'name',
-      name: 'album'
-    } as TypeAheadConfig,
+/**
+ * In order not to mess up the original songs, we manually assign and manipulate their attributes.
+ */
+const formData = reactive<EditFormData>({
+  title: '',
+  albumName: '',
+  artistName: '',
+  lyrics: '',
+  track: null,
+  compilationState: COMPILATION_STATES.NONE
+})
 
-    /**
-     * In order not to mess up the original songs, we manually assign and manipulate
-     * their attributes.
-     */
-    formData: {
-      title: '',
-      albumName: '',
-      artistName: '',
-      lyrics: '',
-      track: null,
-      compilationState: 0
-    } as EditFormData,
+const initialFormData = ref(null as unknown as EditFormData)
 
-    initialFormData: null as unknown as EditFormData
-  }),
+const editingOnlyOneSong = computed(() => mutatedSongs.value.length === 1)
+const allSongsAreFromSameArtist = computed(() => new Set(mutatedSongs.value.map(song => song.artist.id)).size === 1)
+const allSongsAreInSameAlbum = computed(() => new Set(mutatedSongs.value.map(song => song.album.id)).size === 1)
+const coverUrl = computed(() => allSongsAreInSameAlbum.value ? mutatedSongs.value[0].album.cover : getDefaultCover())
 
-  computed: {
-    editingOnlyOneSong (): boolean {
-      return this.mutatedSongs.length === 1
-    },
+const compilationState = computed(() => {
+  const albums = mutatedSongs.value.reduce((acc: Album[], song): Album[] => union(acc, [song.album]), [])
+  const compiledAlbums = albums.filter(album => album.is_compilation)
 
-    allSongsAreFromSameArtist (): boolean {
-      return this.mutatedSongs.every((song: Song): boolean => song.artist.id === this.mutatedSongs[0].artist.id)
-    },
+  if (!compiledAlbums.length) {
+    formData.compilationState = COMPILATION_STATES.NONE
+  } else if (compiledAlbums.length === albums.length) {
+    formData.compilationState = COMPILATION_STATES.ALL
+  } else {
+    formData.compilationState = COMPILATION_STATES.SOME
+  }
 
-    allSongsAreInSameAlbum (): boolean {
-      return this.mutatedSongs.every((song: Song): boolean => song.album.id === this.mutatedSongs[0].album.id)
-    },
+  return formData.compilationState
+})
 
-    coverUrl (): string {
-      return this.allSongsAreInSameAlbum ? this.mutatedSongs[0].album.cover : getDefaultCover()
-    },
+const displayedTitle = computed(() => {
+  return editingOnlyOneSong.value ? formData.title : `${mutatedSongs.value.length} songs selected`
+})
 
-    compilationState (): number {
-      const albums = this.mutatedSongs.reduce((acc: Album[], song: Song): Album[] => union(acc, [song.album]), [])
-      const compiledAlbums = albums.filter((album: Album): boolean => album.is_compilation)
+const displayedArtistName = computed(() => {
+  return allSongsAreFromSameArtist.value || formData.artistName ? formData.artistName : 'Mixed Artists'
+})
 
-      if (!compiledAlbums.length) {
-        this.formData.compilationState = COMPILATION_STATES.NONE
-      } else if (compiledAlbums.length === albums.length) {
-        this.formData.compilationState = COMPILATION_STATES.ALL
-      } else {
-        this.formData.compilationState = COMPILATION_STATES.SOME
-      }
+const displayedAlbumName = computed(() => {
+  return allSongsAreInSameAlbum.value || formData.albumName ? formData.albumName : 'Mixed Albums'
+})
 
-      return this.formData.compilationState
-    },
+const isPristine = computed(() => isEqual(formData, initialFormData.value))
 
-    displayedTitle (): string {
-      return this.editingOnlyOneSong ? this.formData.title : `${this.mutatedSongs.length} songs selected`
-    },
+const initCompilationStateCheckbox = async () => {
+  // Wait for the next DOM update, because the form is dynamically
+  // attached into DOM in conjunction with `this.loading` data binding.
+  await nextTick()
+  const checkbox = compilationStateChk.value
 
-    displayedArtistName (): string {
-      return this.allSongsAreFromSameArtist || this.formData.artistName
-        ? this.formData.artistName
-        : 'Mixed Artists'
-    },
+  switch (compilationState.value) {
+    case COMPILATION_STATES.ALL:
+      checkbox.checked = true
+      checkbox.indeterminate = false
+      break
 
-    displayedAlbumName (): string {
-      return this.allSongsAreInSameAlbum || this.formData.albumName
-        ? this.formData.albumName
-        : 'Mixed Albums'
-    },
+    case COMPILATION_STATES.NONE:
+      checkbox.checked = false
+      checkbox.indeterminate = false
+      break
 
-    isPristine (): boolean {
-      return isEqual(this.formData, this.initialFormData)
-    }
-  },
+    default:
+      checkbox.checked = false
+      checkbox.indeterminate = true
+      break
+  }
+}
 
-  methods: {
-    async open (): Promise<void> {
-      this.mutatedSongs = ([] as Song[]).concat(this.songs)
-      this.currentView = this.initialTab
+const open = async () => {
+  mutatedSongs.value = ([] as Song[]).concat(songs.value)
+  currentView.value = initialTab!.value
+  const firstSong = mutatedSongs.value[0]
 
-      if (this.editingOnlyOneSong) {
-        this.formData.title = this.mutatedSongs[0].title
-        this.formData.albumName = this.mutatedSongs[0].album.name
-        this.formData.artistName = this.mutatedSongs[0].artist.name
+  if (editingOnlyOneSong.value) {
+    formData.title = firstSong.title
+    formData.albumName = firstSong.album.name
+    formData.artistName = firstSong.artist.name
 
-        // If we're editing only one song and the song's info (including lyrics)
-        // hasn't been loaded, load it now.
-        if (!this.mutatedSongs[0].infoRetrieved) {
-          this.loading = true
-
-          try {
-            await songInfo.fetch(this.mutatedSongs[0])
-            this.formData.lyrics = br2nl(this.mutatedSongs[0].lyrics)
-            this.formData.track = this.mutatedSongs[0].track || null
-          } catch (e) {
-            console.error(e)
-          } finally {
-            this.loading = false
-            this.initCompilationStateCheckbox()
-          }
-        } else {
-          this.loading = false
-          this.formData.lyrics = br2nl(this.mutatedSongs[0].lyrics)
-          this.formData.track = this.mutatedSongs[0].track || null
-          this.initCompilationStateCheckbox()
-        }
-      } else {
-        this.formData.albumName = this.allSongsAreInSameAlbum ? this.mutatedSongs[0].album.name : ''
-        this.formData.artistName = this.allSongsAreFromSameArtist ? this.mutatedSongs[0].artist.name : ''
-        this.loading = false
-        this.initCompilationStateCheckbox()
-      }
-    },
-
-    initCompilationStateCheckbox (): void {
-      // This must be wrapped in a $nextTick callback, because the form is dynamically
-      // attached into DOM in conjunction with `this.loading` data binding.
-      this.$nextTick((): void => {
-        const checkbox = this.$refs.compilationStateChk as HTMLInputElement
-
-        switch (this.compilationState) {
-          case COMPILATION_STATES.ALL:
-            checkbox.checked = true
-            checkbox.indeterminate = false
-            break
-
-          case COMPILATION_STATES.NONE:
-            checkbox.checked = false
-            checkbox.indeterminate = false
-            break
-
-          default:
-            checkbox.checked = false
-            checkbox.indeterminate = true
-            break
-        }
-      })
-    },
-
-    /**
-     * Manually set the compilation state.
-     * We can't use v-model here due to the tri-state nature of the property.
-     * Also, following iTunes style, we don't support circular switching of the states -
-     * once the user clicks the checkbox, there's no going back to indeterminate state.
-     */
-    changeCompilationState (): void {
-      const checkbox = this.$refs.compilationStateChk as HTMLInputElement
-      this.formData.compilationState = checkbox.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE
-    },
-
-    close (): void {
-      this.$emit('close')
-    },
-
-    maybeClose (): void {
-      if (this.isPristine) {
-        this.close()
-        return
-      }
-
-      alerts.confirm('Discard all changes?', () => this.close())
-    },
-
-    async submit (): Promise<void> {
-      this.loading = true
+    // If we're editing only one song and the song's info (including lyrics)
+    // hasn't been loaded, load it now.
+    if (!firstSong.infoRetrieved) {
+      loading.value = true
 
       try {
-        await songStore.update(this.mutatedSongs, this.formData)
-        this.close()
+        await songInfo.fetch(firstSong)
+        formData.lyrics = br2nl(firstSong.lyrics)
+        formData.track = firstSong.track || null
+      } catch (e) {
+        console.error(e)
       } finally {
-        this.loading = false
+        loading.value = false
+        await initCompilationStateCheckbox()
       }
+    } else {
+      loading.value = false
+      formData.lyrics = br2nl(firstSong.lyrics)
+      formData.track = firstSong.track || null
+      await initCompilationStateCheckbox()
     }
-  },
-
-  async created (): Promise<void> {
-    await this.open()
-    this.initialFormData = Object.assign({}, this.formData)
+  } else {
+    formData.albumName = allSongsAreInSameAlbum.value ? firstSong.album.name : ''
+    formData.artistName = allSongsAreFromSameArtist.value ? firstSong.artist.name : ''
+    loading.value = false
+    await initCompilationStateCheckbox()
   }
-})
+}
+
+/**
+ * Manually set the compilation state.
+ * We can't use v-model here due to the tri-state nature of the property.
+ * Also, following iTunes style, we don't support circular switching of the states -
+ * once the user clicks the checkbox, there's no going back to indeterminate state.
+ */
+const changeCompilationState = () => {
+  const checkbox = compilationStateChk.value
+  formData.compilationState = checkbox.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE
+}
+
+const emit = defineEmits(['close'])
+
+const close = () => emit('close')
+
+const maybeClose = () => {
+  if (isPristine.value) {
+    close()
+    return
+  }
+
+  alerts.confirm('Discard all changes?', close)
+}
+
+const submit = async () => {
+  loading.value = true
+
+  try {
+    await songStore.update(mutatedSongs.value, formData)
+    close()
+  } finally {
+    loading.value = false
+  }
+}
+
+open()
+initialFormData.value = Object.assign({}, formData)
 </script>
 
 <style lang="scss" scoped>

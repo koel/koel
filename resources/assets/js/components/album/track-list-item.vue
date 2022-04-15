@@ -15,56 +15,29 @@
   </li>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import { songStore, queueStore, sharedStore } from '@/stores'
+<script lang="ts" setup>
+import { computed, ref, toRefs } from 'vue'
+import { queueStore, sharedStore, songStore } from '@/stores'
 import { auth, playback } from '@/services'
 
-export default Vue.extend({
-  props: {
-    album: {
-      type: Object,
-      required: true
-    } as PropOptions<Album>,
+const props = defineProps<{ album: Album, track: AlbumTrack, index: number }>()
+const { album, track, index } = toRefs(props)
 
-    track: {
-      type: Object,
-      required: true
-    } as PropOptions<AlbumTrack>,
+const useiTunes = ref(sharedStore.state.useiTunes)
 
-    index: {
-      type: Number,
-      required: true
-    }
-  },
+const song = computed(() => songStore.guess(track.value.title, album.value))
+const tooltip = computed(() => song.value ? 'Click to play' : '')
 
-  data: () => ({
-    useiTunes: sharedStore.state.useiTunes
-  }),
-
-  computed: {
-    song (): Song | null {
-      return songStore.guess(this.track.title, this.album)
-    },
-
-    tooltip (): string {
-      return this.song ? 'Click to play' : ''
-    },
-
-    iTunesUrl (): string {
-      return `${window.BASE_URL}itunes/song/${this.album.id}?q=${encodeURIComponent(this.track.title)}&api_token=${auth.getToken()}`
-    }
-  },
-
-  methods: {
-    play (): void {
-      if (this.song) {
-        queueStore.contains(this.song) || queueStore.queueAfterCurrent(this.song)
-        playback.play(this.song)
-      }
-    }
-  }
+const iTunesUrl = computed(() => {
+  return `${window.BASE_URL}itunes/song/${album.value.id}?q=${encodeURIComponent(track.value.title)}&api_token=${auth.getToken()}`
 })
+
+const play = () => {
+  if (song.value) {
+    queueStore.contains(song.value) || queueStore.queueAfterCurrent(song.value)
+    playback.play(song.value)
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -87,7 +60,7 @@ export default Vue.extend({
     margin-left: 4px;
 
     &:hover, &:focus {
-      background: linear-gradient(27deg, #fe5c52 0%,#c74bd5 50%,#2daaff 100%);
+      background: linear-gradient(27deg, #fe5c52 0%, #c74bd5 50%, #2daaff 100%);
       color: var(--color-text-primary);
     }
 

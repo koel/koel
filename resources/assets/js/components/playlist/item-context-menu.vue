@@ -1,50 +1,29 @@
 <template>
-  <base-context-menu extra-class="playlist-item-menu" ref="base">
+  <BaseContextMenu extra-class="playlist-item-menu" ref="base">
     <li @click="editPlaylist" :data-testid="`playlist-context-menu-edit-${playlist.id}`">Edit</li>
     <li @click="deletePlaylist" :data-testid="`playlist-context-menu-delete-${playlist.id}`">Delete</li>
-  </base-context-menu>
+  </BaseContextMenu>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import { BasePlaylistMenu } from 'koel/types/ui'
+<script lang="ts" setup>
+import { toRefs } from 'vue'
 import { eventBus } from '@/utils'
+import { useContextMenu } from '@/composables'
 
-export default Vue.extend({
-  components: {
-    BaseContextMenu: () => import('@/components/ui/context-menu.vue')
-  },
+const { base, BaseContextMenu, open, close } = useContextMenu()
 
-  props: {
-    playlist: {
-      required: true,
-      type: Object
-    } as PropOptions<Playlist>
-  },
+const props = defineProps<{ playlist: Playlist }>()
+const { playlist } = toRefs(props)
 
-  methods: {
-    open (top: number, left: number): void {
-      (this.$refs.base as BasePlaylistMenu).open(top, left)
-    },
+const emit = defineEmits(['edit'])
 
-    close (): void {
-      (this.$refs.base as BasePlaylistMenu).close()
-    },
+const editPlaylist = () => {
+  playlist.value.is_smart ? eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', playlist.value) : emit('edit')
+  close()
+}
 
-    editPlaylist (): void {
-      if (this.playlist.is_smart) {
-        eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', this.playlist)
-      } else {
-        this.$emit('edit')
-      }
-
-      this.close()
-    },
-
-    deletePlaylist (): void {
-      eventBus.emit('PLAYLIST_DELETE', this.playlist)
-      this.close()
-    }
-  }
-})
+const deletePlaylist = () => {
+  eventBus.emit('PLAYLIST_DELETE', playlist.value)
+  close()
+}
 </script>

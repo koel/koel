@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="to-top-btn-wrapper" v-show="showing">
+    <div class="to-top-btn-wrapper" v-show="showing" ref="el">
       <button @click="scrollToTop" title="Scroll to top">
         <i class="fa fa-arrow-circle-up"></i> Top
       </button>
@@ -8,28 +8,19 @@
   </transition>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue'
 import { $ } from '@/utils'
 
-export default Vue.extend({
-  data: () => ({
-    showing: false
-  }),
+const el = ref(null as unknown as HTMLElement)
+const showing = ref(false)
 
-  methods: {
-    scrollToTop (): void {
-      $.scrollTo(this.$el.parentElement!, 0, 500, (): void => {
-        this.showing = false
-      })
-    }
-  },
+const scrollToTop = () => $.scrollTo(el.value.parentElement!, 0, 500, () => (showing.value = false))
 
-  mounted (): void {
-    this.$el.parentElement && this.$el.parentElement.addEventListener('scroll', (e: Event): void => {
-      this.showing = (e.target as HTMLElement).scrollTop > 64
-    })
-  }
+onMounted(() => {
+  el.value.parentElement?.addEventListener('scroll', event => {
+    showing.value = (event.target as HTMLElement).scrollTop > 64
+  })
 })
 </script>
 

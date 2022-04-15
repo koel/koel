@@ -1,3 +1,5 @@
+@use "sass:math";
+
 // ==========================================================================
 // Plyr styles
 // https://github.com/selz/plyr
@@ -90,7 +92,7 @@ $plyr-bp-captions-large: 768px !default; // When captions jump to the larger fon
   height: $plyr-volume-track-height;
   background: $plyr-volume-track-bg;
   border: 0;
-  border-radius: ($plyr-volume-track-height / 2);
+  border-radius: math.div($plyr-volume-track-height, 2);
 }
 
 @mixin seek-thumb() {
@@ -259,7 +261,7 @@ $plyr-bp-captions-large: 768px !default; // When captions jump to the larger fon
       display: inline-block;
       vertical-align: middle;
       margin: 0 2px;
-      padding: ($plyr-control-spacing / 2) $plyr-control-spacing;
+      padding: math.div($plyr-control-spacing, 2) $plyr-control-spacing;
       overflow: hidden;
       border: 0;
       background: transparent;
@@ -576,7 +578,7 @@ $plyr-bp-captions-large: 768px !default; // When captions jump to the larger fon
 
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
-      margin-top: -(($plyr-volume-thumb-height - $plyr-volume-track-height) / 2);
+      margin-top: -(math.div($plyr-volume-thumb-height - $plyr-volume-track-height, 2));
       @include volume-thumb();
     }
 
@@ -594,7 +596,7 @@ $plyr-bp-captions-large: 768px !default; // When captions jump to the larger fon
       height: $plyr-volume-track-height;
       background: transparent;
       border-color: transparent;
-      border-width: (($plyr-volume-thumb-height - $plyr-volume-track-height) / 2) 0;
+      border-width: math.div($plyr-volume-thumb-height - $plyr-volume-track-height, 2) 0;
       color: transparent;
     }
 
@@ -684,12 +686,12 @@ $plyr-bp-captions-large: 768px !default; // When captions jump to the larger fon
   &--fullscreen-active.plyr--fullscreen--hide-controls.plyr--playing,
   &.plyr--fullscreen.plyr--fullscreen--hide-controls.plyr--playing {
     .plyr__controls {
-      transform: translateY(100%) translateY($plyr-control-spacing / 2);
+      transform: translateY(100%) translateY(math.div($plyr-control-spacing, 2));
       transition: transform .3s .2s ease;
     }
 
     .plyr__captions {
-      bottom: ($plyr-control-spacing / 2);
+      bottom: math.div($plyr-control-spacing, 2);
       transition: bottom .3s .2s ease;
     }
 

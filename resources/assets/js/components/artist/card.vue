@@ -8,11 +8,11 @@
     tabindex="0"
     data-test="artist-card"
     v-if="showing"
-    @contextmenu.prevent="requestContextMenu"
+    @contextmenu.prevent.stop="requestContextMenu"
     @dblclick="shuffle"
   >
     <span class="thumbnail-wrapper">
-      <artist-thumbnail :entity="artist" />
+      <ArtistThumbnail :entity="artist"/>
     </span>
 
     <footer>
@@ -23,11 +23,11 @@
       </div>
       <p class="meta">
         <span class="left">
-          {{ artist.albums.length | pluralize('album') }}
+          {{ pluralize(artist.albums.length, 'album') }}
           •
-          {{ artist.songs.length | pluralize('song') }}
+          {{ pluralize(artist.songs.length, 'song') }}
           •
-          {{ artist.playCount | pluralize('play') }}
+          {{ pluralize(artist.playCount, 'play') }}
         </span>
         <span class="right">
           <a
@@ -55,56 +55,28 @@
   </article>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
-import { startDragging, pluralize, eventBus } from '@/utils'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, reactive, toRefs } from 'vue'
+import { eventBus, pluralize, startDragging } from '@/utils'
 import { artistStore, sharedStore } from '@/stores'
-import { playback, download } from '@/services'
-import artistAttributes from '@/mixins/artist-attributes.ts'
-import { PropOptions } from 'vue'
+import { download as downloadService, playback } from '@/services'
+import { useArtistAttributes } from '@/composables'
 
-export default mixins(artistAttributes).extend({
-  props: {
-    layout: {
-      type: String,
-      default: 'full'
-    } as PropOptions<ArtistAlbumCardLayout>
-  },
+const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/album-artist-thumbnail.vue'))
 
-  components: {
-    ArtistThumbnail: () => import('@/components/ui/album-artist-thumbnail.vue')
-  },
+const props = withDefaults(defineProps<{ artist: Artist, layout: ArtistAlbumCardLayout }>(), { layout: 'full' })
+const { artist, layout } = toRefs(props)
 
-  filters: { pluralize },
+const { length, fmtLength, image } = useArtistAttributes(artist.value)
 
-  data: () => ({
-    sharedState: sharedStore.state
-  }),
+const sharedState = reactive(sharedStore.state)
 
-  computed: {
-    showing (): boolean {
-      return Boolean(this.artist.songs.length && !artistStore.isVariousArtists(this.artist))
-    }
-  },
+const showing = computed(() => artist.value.songs.length && !artistStore.isVariousArtists(artist.value))
 
-  methods: {
-    shuffle (): void {
-      playback.playAllByArtist(this.artist, true /* shuffled */)
-    },
-
-    download (): void {
-      download.fromArtist(this.artist)
-    },
-
-    dragStart (event: DragEvent): void {
-      startDragging(event, this.artist, 'Artist')
-    },
-
-    requestContextMenu (e: MouseEvent): void {
-      eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', e, this.artist)
-    }
-  }
-})
+const shuffle = () => playback.playAllByArtist(artist.value, true /* shuffled */)
+const download = () => downloadService.fromArtist(artist.value)
+const dragStart = (event: DragEvent) => startDragging(event, artist.value, 'Artist')
+const requestContextMenu = (event: MouseEvent) => eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', event, artist.value)
 </script>
 
 <style lang="scss">

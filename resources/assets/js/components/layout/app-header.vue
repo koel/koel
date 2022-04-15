@@ -1,6 +1,6 @@
 <template>
-  <header id="mainHeader" @dblclick="triggerMaximize">
-    <h1 class="brand" v-once>{{ appName }}</h1>
+  <header id="mainHeader">
+    <h1 class="brand" v-once>{{ appConfig.name }}</h1>
     <span class="hamburger" @click="toggleSidebar" role="button" title="Show or hide the sidebar">
       <i class="fa fa-bars"></i>
     </span>
@@ -10,7 +10,13 @@
     <search-form/>
     <div class="header-right">
       <user-badge/>
-      <button @click.prevent="showAboutDialog" class="about control" title="About Koel" data-testid="about-btn">
+      <button
+        type="button"
+        @click.prevent="showAboutDialog"
+        class="about control"
+        title="About Koel"
+        data-testid="about-btn"
+      >
         <span v-if="shouldDisplayVersionUpdate && hasNewVersion" class="new-version" data-test="new-version-available">
           {{ sharedState.latestVersion }} available!
         </span>
@@ -21,53 +27,28 @@
 
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, reactive } from 'vue'
 import compareVersions from 'compare-versions'
-import { eventBus, app } from '@/utils'
-import { app as appConfig, events } from '@/config'
+import { eventBus } from '@/utils'
+import { app as appConfig } from '@/config'
 import { sharedStore, userStore } from '@/stores'
 
-export default Vue.extend({
-  components: {
-    SearchForm: () => import('@/components/ui/search-form.vue'),
-    UserBadge: () => import('@/components/user/badge.vue')
-  },
+const SearchForm = defineAsyncComponent(() => import('@/components/ui/search-form.vue'))
+const UserBadge = defineAsyncComponent(() => import('@/components/user/badge.vue'))
 
-  data: () => ({
-    appName: appConfig.name,
-    userState: userStore.state,
-    sharedState: sharedStore.state
-  }),
+const userState = reactive(userStore.state)
+const sharedState = reactive(sharedStore.state)
 
-  computed: {
-    shouldDisplayVersionUpdate (): boolean {
-      return this.userState.current.is_admin
-    },
+const shouldDisplayVersionUpdate = computed(() => userState.current.is_admin)
 
-    hasNewVersion (): boolean {
-      return compareVersions.compare(this.sharedState.latestVersion, this.sharedState.currentVersion, '>')
-    }
-  },
-
-  methods: {
-    toggleSidebar: (): void => {
-      eventBus.emit('TOGGLE_SIDEBAR')
-    },
-
-    toggleSearchForm: (): void => {
-      eventBus.emit('TOGGLE_SEARCH_FORM')
-    },
-
-    triggerMaximize: (): void => {
-      app.triggerMaximize()
-    },
-
-    showAboutDialog: (): void => {
-      eventBus.emit('MODAL_SHOW_ABOUT_DIALOG')
-    }
-  }
+const hasNewVersion = computed(() => {
+  return compareVersions.compare(sharedState.latestVersion, sharedState.currentVersion, '>')
 })
+
+const toggleSidebar = () => eventBus.emit('TOGGLE_SIDEBAR')
+const toggleSearchForm = () => eventBus.emit('TOGGLE_SEARCH_FORM')
+const showAboutDialog = () => eventBus.emit('MODAL_SHOW_ABOUT_DIALOG')
 </script>
 
 <style lang="scss">

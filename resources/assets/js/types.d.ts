@@ -1,19 +1,16 @@
-declare module 'vue-virtual-scroller' {
-  const VirtualScroller: any
-  export { VirtualScroller }
-}
+declare type TAnyFunction = (...args: Array<unknown|any>) => unknown|any
 
-declare module 'vue-global-events' {
-  // @ts-ignore
-  export default any
+declare module 'vue-virtual-scroller' {
+  const RecycleScroller: any
+  export { RecycleScroller }
 }
 
 declare module 'alertify.js' {
   function alert(msg: string): void
-  function confirm(msg: string, okFunc: Function, cancelFunc?: Function): void
-  function success(msg: string, cb?: Function): void
-  function error(msg: string, cb?: Function): void
-  function log(msg: string, cb?: Function): void
+  function confirm(msg: string, okFunc: TAnyFunction, cancelFunc?: TAnyFunction): void
+  function success(msg: string, cb?: TAnyFunction): void
+  function error(msg: string, cb?: TAnyFunction): void
+  function log(msg: string, cb?: TAnyFunction): void
   function logPosition(position: string): void
   function closeLogOnClick(close: boolean): void
 }
@@ -44,7 +41,7 @@ interface Plyr {
 }
 
 declare module 'plyr' {
-  function setup(el: HTMLMediaElement | HTMLMediaElement[], options: object): Plyr[]
+  function setup(el: HTMLMediaElement | HTMLMediaElement[], options: Record<string, any>): Plyr[]
 }
 
 declare module 'ismobilejs' {
@@ -88,11 +85,46 @@ interface Window {
   readonly mozAudioContext: Constructable<AudioContext>
   readonly oAudioContext: Constructable<AudioContext>
   readonly msAudioContext: Constructable<AudioContext>
-  readonly MediaMetadata: Constructable<object>
+  readonly MediaMetadata: Constructable<Record<string, any>>
 }
 
 interface FileSystemDirectoryReader {
-  readEntries(successCallback: Function, errorCallback?: Function): FileSystemEntry[]
+  readEntries(successCallback: TAnyFunction, errorCallback?: TAnyFunction): FileSystemEntry[]
+}
+
+interface FileSystemEntry {
+  readonly isFile: boolean
+  readonly isDirectory: boolean
+  readonly name: string
+  readonly fullPath: string
+  readonly filesystem: FileSystem
+  createReader(): FileSystemDirectoryReader
+  file(successCallback: TAnyFunction): void
+}
+
+interface AlbumTrack {
+  readonly title: string
+  readonly length: number
+  fmtLength: string
+}
+
+interface AlbumInfo {
+  image: string | null
+  readonly tracks: AlbumTrack[]
+  wiki?: {
+    summary: string
+    full: string
+  }
+  url?: string
+}
+
+interface ArtistInfo {
+  image: string | null
+  bio?: {
+    summary: string
+    full: string
+  }
+  url?: string
 }
 
 interface Artist {
@@ -145,31 +177,6 @@ interface Song {
   liked: boolean
   playStartTime?: number
   fmtLength?: string
-}
-
-interface AlbumInfo {
-  image: string | null
-  readonly tracks: AlbumTrack[]
-  wiki?: {
-    summary: string
-    full: string
-  }
-  url?: string
-}
-
-interface AlbumTrack {
-  readonly title: string
-  readonly length: number
-  fmtLength: string
-}
-
-interface ArtistInfo {
-  image: string | null
-  bio?: {
-    summary: string
-    full: string
-  }
-  url?: string
 }
 
 interface SmartPlaylistRule {
@@ -266,29 +273,25 @@ interface SongListMeta {
 }
 
 declare module 'koel/types/ui' {
-  import { Component } from 'vue'
+  import { ComponentInternalInstance } from 'vue'
 
-  export type BaseContextMenu = Component & {
+  export type BaseContextMenu = ComponentInternalInstance & {
     open(y: number, x: number): void
     close(): void
   }
 
-  export type BasePlaylistMenu = Component & {
+  export type BasePlaylistMenu = ComponentInternalInstance & {
     open(top: number, left: number): void
     close(): void
   }
 
-  export type SongListComponent = Component & {
-    rowClicked(songItem: Component, event: MouseEvent): void
-    openContextMenu(songItem: Component, event: MouseEvent): void
+  export type SongListComponent = ComponentInternalInstance & {
+    rowClicked(songItem: ComponentInternalInstance, event: MouseEvent): void
+    openContextMenu(songItem: ComponentInternalInstance, event: MouseEvent): void
     removeDroppableState(event: DragEvent): void
-    handleDrop(songItem: Component, event: DragEvent): void
+    handleDrop(songItem: ComponentInternalInstance, event: DragEvent): void
     allowDrop(event: DragEvent): void
-    dragStart(songItem: Component, event: DragEvent): void
-  }
-
-  export type SongListRowComponent = Component & {
-    item: SongProxy
+    dragStart(songItem: ComponentInternalInstance, event: DragEvent): void
   }
 
   export interface TypeAheadConfig {
@@ -300,13 +303,14 @@ declare module 'koel/types/ui' {
   interface SliderElement extends HTMLElement {
     noUiSlider?: {
       destroy(): void
-      on(eventName: 'change' | 'slide', handler: Function): void
+      on(eventName: 'change' | 'slide', handler: (value: number[], handle: number) => unknown): void
       set(options: number | any[]): void
     }
   }
 }
 
 interface SongProxy {
+  id: string,
   song: Song
   selected: boolean
 }
@@ -388,3 +392,19 @@ type Theme = {
 type ArtistAlbumViewMode = 'list' | 'thumbnails'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
+
+type SongListType = 'all-songs'
+  | 'queue'
+  | 'playlist'
+  | 'favorites'
+  | 'recently-played'
+  | 'artist'
+  | 'album'
+  | 'search-results'
+
+type SongListColumn = 'track' | 'title' | 'album' | 'artist' | 'length'
+
+interface SongListConfig {
+  sortable: boolean
+  columns: SongListColumn[]
+}

@@ -31,44 +31,21 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { UploadFile } from '@/config'
 import { upload } from '@/services'
 
-export default Vue.extend({
-  props: {
-    file: {
-      type: Object,
-      required: true
-    } as PropOptions<UploadFile>
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const props = defineProps<{ file: UploadFile }>()
+const { file } = toRefs(props)
 
-  computed: {
-    canRetry (): boolean {
-      return this.file.status === 'Canceled' || this.file.status === 'Errored'
-    },
+const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
+const canRemove = computed(() => file.value.status !== 'Uploading') // we're not supporting cancel tokens (yet).
 
-    canRemove (): boolean {
-      // we're not supporting cancel tokens (yet).
-      return this.file.status !== 'Uploading'
-    }
-  },
-
-  methods: {
-    remove (): void {
-      upload.remove(this.file)
-    },
-
-    retry (): void {
-      upload.retry(this.file)
-    }
-  }
-})
+const remove = () => upload.remove(file.value)
+const retry = () => upload.retry(file.value)
 </script>
 
 <style lang="scss" scoped>

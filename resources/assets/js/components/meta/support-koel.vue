@@ -14,52 +14,34 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import Vue from 'vue'
+import { computed, ref } from 'vue'
 import { eventBus } from '@/utils'
 import { preferenceStore as preferences } from '@/stores'
 
 const DELAY_UNTIL_SHOWN = 30 * 60 * 1000
 let SUPPORT_BAR_TIMEOUT_HANDLE = 0
 
-export default Vue.extend({
-  data: () => ({
-    shown: false
-  }),
+const shown = ref(false)
 
-  computed: {
-    canNag (): boolean {
-      return !isMobile.any && !preferences.supportBarNoBugging
-    }
-  },
+const canNag = computed(() => !isMobile.any && !preferences.supportBarNoBugging)
 
-  created (): void {
-    eventBus.on({
-      'KOEL_READY': (): void => {
-        if (this.canNag) {
-          this.setUpShowBarTimeout()
-        }
-      }
-    })
-  },
+const setUpShowBarTimeout = () => {
+  SUPPORT_BAR_TIMEOUT_HANDLE = window.setTimeout(() => (shown.value = true), DELAY_UNTIL_SHOWN)
+}
 
-  methods: {
-    setUpShowBarTimeout (): void {
-      SUPPORT_BAR_TIMEOUT_HANDLE = window.setTimeout(() => (this.shown = true), DELAY_UNTIL_SHOWN)
-    },
+const close = () => {
+  shown.value = false
+  window.clearTimeout(SUPPORT_BAR_TIMEOUT_HANDLE)
+}
 
-    close (): void {
-      this.shown = false
-      window.clearTimeout(SUPPORT_BAR_TIMEOUT_HANDLE)
-    },
+const stopBugging = () => {
+  preferences.supportBarNoBugging = true
+  close()
+}
 
-    stopBugging (): void {
-      preferences.supportBarNoBugging = true
-      this.close()
-    }
-  }
-})
+eventBus.on('KOEL_READY', () => canNag.value && setUpShowBarTimeout())
 </script>
 
 <style lang="scss" scoped>

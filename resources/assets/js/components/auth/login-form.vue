@@ -3,80 +3,44 @@
     <div class="logo">
       <img src="@/../img/logo.svg" width="156" height="auto" alt="Koel's logo">
     </div>
-    <input v-if="isDesktopApp" v-model="url" type="text" placeholder="Koel's Host" autofocus required>
     <input v-model="email" type="email" placeholder="Email Address" autofocus required>
     <input v-model="password" type="password" placeholder="Password" required>
     <btn type="submit">Log In</btn>
   </form>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import axios from 'axios'
+<script lang="ts" setup>
+import { defineAsyncComponent, ref } from 'vue'
 import { userStore } from '@/stores'
-import { ls } from '@/services'
 
 const DEMO_ACCOUNT = {
   email: 'demo@koel.dev',
   password: 'demo'
 }
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  data: () => ({
-    url: '',
-    email: NODE_ENV === 'demo' ? DEMO_ACCOUNT.email : '',
-    password: NODE_ENV === 'demo' ? DEMO_ACCOUNT.password : '',
-    failed: false,
-    isDesktopApp: KOEL_ENV === 'app'
-  }),
+const url = ref('')
+const email = ref(NODE_ENV === 'demo' ? DEMO_ACCOUNT.email : '')
+const password = ref(NODE_ENV === 'demo' ? DEMO_ACCOUNT.password : '')
+const failed = ref(false)
 
-  methods: {
-    async login (): Promise<void> {
-      if (KOEL_ENV === 'app') {
-        if (this.url.indexOf('http://') !== 0 && this.url.indexOf('https://') !== 0) {
-          this.url = `https://${this.url}`
-        }
+const emit = defineEmits(['loggedin'])
 
-        if (!this.url.endsWith('/')) {
-          this.url = `${this.url}/`
-        }
+const login = async () => {
+  try {
+    await userStore.login(email.value, password.value)
+    failed.value = false
 
-        axios.defaults.baseURL = `${this.url}api`
-      }
+    // Reset the password so that the next login will have this field empty.
+    password.value = ''
 
-      try {
-        await userStore.login(this.email, this.password)
-        this.failed = false
-
-        // Reset the password so that the next login will have this field empty.
-        this.password = ''
-
-        if (KOEL_ENV === 'app') {
-          ls.set('koelHost', this.url)
-          ls.set('lastLoginEmail', this.email)
-        }
-
-        this.$emit('loggedin')
-      } catch (err) {
-        this.failed = true
-        window.setTimeout((): void => {
-          this.failed = false
-        }, 2000)
-      }
-    }
-  },
-
-  mounted (): void {
-    if (KOEL_ENV === 'app') {
-      this.url = window.BASE_URL = String(ls.get<string>('koelHost'))
-      this.email = String(ls.get('lastLoginEmail'))
-    }
+    emit('loggedin')
+  } catch (err) {
+    failed.value = true
+    window.setTimeout(() => (failed.value = false), 2000)
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -125,7 +89,7 @@ form {
     text-align: center;
   }
 
-  @media only screen and (max-width : 414px) {
+  @media only screen and (max-width: 414px) {
     border: 0;
     background: transparent;
   }

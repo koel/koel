@@ -1,12 +1,12 @@
 <template>
   <section id="favoritesWrapper">
-    <screen-header>
+    <ScreenHeader>
       Songs You Love
-      <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
         <span v-if="meta.songCount">
-          {{ meta.songCount | pluralize('song') }}
+          {{ pluralize(meta.songCount, 'song') }}
           •
           {{ meta.totalLength }}
           <template v-if="sharedState.allowDownload && state.songs.length">
@@ -19,7 +19,7 @@
       </template>
 
       <template v-slot:controls>
-        <song-list-controls
+        <SongListControls
           v-if="state.songs.length && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
@@ -28,11 +28,11 @@
           :selectedSongs="selectedSongs"
         />
       </template>
-    </screen-header>
+    </ScreenHeader>
 
-    <song-list v-if="state.songs.length" :items="state.songs" type="favorites" ref="songList"/>
+    <SongList v-if="state.songs.length" :items="state.songs" type="favorites" ref="songList"/>
 
-    <screen-placeholder v-else>
+    <ScreenPlaceholder v-else>
       <template v-slot:icon>
         <i class="fa fa-frown-o"></i>
       </template>
@@ -42,32 +42,37 @@
         <i class="fa fa-heart-o"></i>
         icon to mark a song as favorite.
       </span>
-    </screen-placeholder>
+    </ScreenPlaceholder>
   </section>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
+<script lang="ts" setup>
 import { pluralize } from '@/utils'
 import { favoriteStore, sharedStore } from '@/stores'
-import { download } from '@/services'
-import hasSongList from '@/mixins/has-song-list.ts'
+import { download as downloadService } from '@/services'
+import { useSongList } from '@/composables'
+import { defineAsyncComponent, reactive } from 'vue'
 
-export default mixins(hasSongList).extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ScreenPlaceholder: () => import('@/components/ui/screen-placeholder.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
-  filters: { pluralize },
+const {
+  SongList,
+  SongListControls,
+  ControlsToggler,
+  songList,
+  meta,
+  selectedSongs,
+  showingControls,
+  songListControlConfig,
+  isPhone,
+  playAll,
+  playSelected,
+  toggleControls
+} = useSongList()
 
-  data: () => ({
-    state: favoriteStore.state,
-    sharedState: sharedStore.state
-  }),
+const state = reactive(favoriteStore.state)
+const sharedState = reactive(sharedStore.state)
 
-  methods: {
-    download: (): void => download.fromFavorites()
-  }
-})
+const download = () => downloadService.fromFavorites()
 </script>

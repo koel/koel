@@ -10,35 +10,25 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { computed, toRefs } from 'vue'
 import { slugToTitle } from '@/utils'
 
-export default Vue.extend({
-  props: {
-    theme: {
-      type: Object,
-      required: true
-    } as PropOptions<Theme>
-  },
+const props = defineProps<{ theme: Theme }>()
+const { theme } = toRefs(props)
 
-  computed: {
-    name (): string {
-      return this.theme.name ? this.theme.name : slugToTitle(this.theme.id)
-    },
+const name = computed(() => theme.value.name ? theme.value.name : slugToTitle(theme.value.id))
 
-    thumbnailStyles (): Record<string, string> {
-      const styles = {
-        'background-color': this.theme.thumbnailColor
-      } as Record<string, string>
-
-      if (this.theme.thumbnailUrl) {
-        styles['background-image'] = `url(${this.theme.thumbnailUrl})`
-      }
-
-      return styles
-    }
+const thumbnailStyles = computed((): Record<string, string> => {
+  const styles: Record<string, string> = {
+    'background-color': theme.value.thumbnailColor
   }
+
+  if (theme.value.thumbnailUrl) {
+    styles['background-image'] = `url(${theme.value.thumbnailUrl})`
+  }
+
+  return styles
 })
 </script>
 

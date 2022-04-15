@@ -1,22 +1,29 @@
 import { EventName } from '@/config'
 
 export const eventBus = {
-  all: new Map,
+  all: new Map(),
 
-  on (name: EventName | Partial<{ [K in EventName]: Function }>, callback?: Function) {
+  on (name: EventName | Partial<{ [K in EventName]: TAnyFunction }>, callback?: TAnyFunction) {
     if (typeof name === 'object') {
-      for (let k in name) {
+      for (const k in name) {
         this.on(k as EventName, name[k as EventName])
       }
       return
     }
 
-    this.all.set(name, callback)
+    if (this.all.has(name)) {
+      this.all.get(name).push(callback)
+      return
+    }
+
+    this.all.set(name, [callback])
   },
 
-  emit (name: EventName, ...args: any): void {
+  emit (name: EventName, ...args: any) {
     if (this.all.has(name)) {
-      this.all.get(name)(...args)
+      this.all.get(name).forEach((cb: TAnyFunction) => cb(...args))
+    } else {
+      console.warn(`Event ${name} is not listened by any component`)
     }
   }
 }

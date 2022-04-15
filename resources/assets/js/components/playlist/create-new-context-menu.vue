@@ -1,38 +1,25 @@
 <template>
-  <base-context-menu extra-class="playlist-menu" ref="base">
+  <BaseContextMenu extra-class="playlist-menu" ref="base">
     <li @click="createPlaylist" data-testid="playlist-context-menu-create-simple">New Playlist</li>
     <li @click="createSmartPlaylist" data-testid="playlist-context-menu-create-smart">New Smart Playlist</li>
-  </base-context-menu>
+  </BaseContextMenu>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { BasePlaylistMenu } from 'koel/types/ui'
+<script lang="ts" setup>
 import { eventBus } from '@/utils'
+import { useContextMenu } from '@/composables'
 
-export default Vue.extend({
-  components: {
-    BaseContextMenu: () => import('@/components/ui/context-menu.vue')
-  },
+const { base, BaseContextMenu, open, close } = useContextMenu()
 
-  methods: {
-    open (top: number, left: number): void {
-      (this.$refs.base as BasePlaylistMenu).open(top, left)
-    },
+const emit = defineEmits(['createPlaylist'])
 
-    close (): void {
-      (this.$refs.base as BasePlaylistMenu).close()
-    },
+const createPlaylist = () => {
+  emit('createPlaylist')
+  close()
+}
 
-    createPlaylist (): void {
-      this.$emit('createPlaylist')
-      this.close()
-    },
-
-    createSmartPlaylist (): void {
-      eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM')
-      this.close()
-    }
-  }
-})
+const createSmartPlaylist = () => {
+  eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM')
+  close()
+}
 </script>

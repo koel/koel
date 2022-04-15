@@ -1,62 +1,60 @@
 <template>
   <section id="songResultsWrapper">
-    <screen-header>
+    <ScreenHeader>
       Showing Songs for <strong>{{ decodedQ }}</strong>
-      <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
-        <span v-if="meta.songCount">{{ meta.songCount | pluralize('song') }} • {{ meta.totalLength }}</span>
+        <span v-if="meta.songCount">{{ pluralize(meta.songCount, 'song') }} • {{ meta.totalLength }}</span>
       </template>
 
       <template v-slot:controls>
-        <song-list-controls
+        <SongListControls
           v-if="state.songs.length && (!isPhone || showingControls)"
-          @playAll="playAll"
-          @playSelected="playSelected"
-          :songs="state.songs"
           :config="songListControlConfig"
           :selectedSongs="selectedSongs"
+          :songs="state.songs"
+          @playAll="playAll"
+          @playSelected="playSelected"
         />
       </template>
-    </screen-header>
+    </ScreenHeader>
 
-    <song-list :items="state.songs" type="search-results" ref="songList"/>
+    <SongList ref="songList" :items="state.songs" type="search-results"/>
   </section>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { searchStore } from '@/stores'
-import mixins from 'vue-typed-mixins'
-import hasSongList from '@/mixins/has-song-list'
+import { computed, defineAsyncComponent, reactive, toRefs } from 'vue'
+import { useSongList } from '@/composables'
 import { pluralize } from '@/utils'
 
-export default mixins(hasSongList).extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
 
-  filters: { pluralize },
+const {
+  SongList,
+  SongListControls,
+  ControlsToggler,
+  songList,
+  state: songListState,
+  meta,
+  selectedSongs,
+  showingControls,
+  songListControlConfig,
+  isPhone,
+  playAll,
+  playSelected,
+  toggleControls
+} = useSongList()
 
-  props: {
-    q: {
-      type: String,
-      required: true
-    }
-  },
+const props = defineProps<{ q: string }>()
+const { q } = toRefs(props)
 
-  data: () => ({
-    state: searchStore.state
-  }),
+const state = reactive(searchStore.state)
 
-  computed: {
-    decodedQ (): string {
-      return decodeURIComponent(this.q)
-    }
-  },
+const decodedQ = computed(() => decodeURIComponent(q.value))
 
-  created () {
-    searchStore.resetSongResultState()
-    searchStore.songSearch(this.decodedQ)
-  }
-})
+searchStore.resetSongResultState()
+searchStore.songSearch(decodedQ.value)
 </script>

@@ -28,48 +28,33 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent, reactive, toRefs } from 'vue'
 import { playlistStore } from '@/stores'
 
-export default Vue.extend({
-  props: ['group', 'isFirstGroup'],
+const props = defineProps<{ group: SmartPlaylistRuleGroup, isFirstGroup: boolean }>()
+const { group, isFirstGroup } = toRefs(props)
 
-  components: {
-    Btn: () => import('@/components/ui/btn.vue'),
-    Rule: () => import('@/components/playlist/smart-playlist/rule.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Rule = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/rule.vue'))
 
-  data: () => ({
-    mutatedGroup: null as unknown as SmartPlaylistRuleGroup
-  }),
+const mutatedGroup = reactive<SmartPlaylistRuleGroup>(JSON.parse(JSON.stringify(group)))
 
-  created (): void {
-    this.mutatedGroup = JSON.parse(JSON.stringify(this.group))
-  },
+const emit = defineEmits(['input'])
 
-  methods: {
-    onRuleChanged (data: SmartPlaylistRule): void {
-      Object.assign(this.mutatedGroup.rules.find(r => r.id === data.id), data)
-      this.notifyParentForUpdate()
-    },
+const notifyParentForUpdate = () => emit('input', mutatedGroup)
 
-    addRule (): void {
-      this.mutatedGroup.rules.push(this.createRule())
-    },
+const addRule = () => mutatedGroup.rules.push(playlistStore.createEmptySmartPlaylistRule())
 
-    removeRule (rule: SmartPlaylistRule): void {
-      this.mutatedGroup.rules = this.mutatedGroup.rules.filter(r => r.id !== rule.id)
-      this.notifyParentForUpdate()
-    },
+const onRuleChanged = (data: SmartPlaylistRule) => {
+  Object.assign(mutatedGroup.rules.find(r => r.id === data.id), data)
+  notifyParentForUpdate()
+}
 
-    notifyParentForUpdate (): void {
-      this.$emit('input', this.mutatedGroup)
-    },
-
-    createRule: (): SmartPlaylistRule => playlistStore.createEmptySmartPlaylistRule()
-  }
-})
+const removeRule = (rule: SmartPlaylistRule) => {
+  mutatedGroup.rules = mutatedGroup.rules.filter(r => r.id !== rule.id)
+  notifyParentForUpdate()
+}
 </script>
 
 <style lang="scss" scoped>

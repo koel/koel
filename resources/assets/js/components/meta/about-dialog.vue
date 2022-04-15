@@ -13,7 +13,7 @@
 
       <p v-if="shouldDisplayVersionUpdate && hasNewVersion" class="new-version">
         <a :href="latestVersionUrl" target="_blank">
-            A new Koel version is available ({{ sharedState.latestVersion }}).
+          A new Koel version is available ({{ sharedState.latestVersion }}).
         </a>
       </p>
 
@@ -39,47 +39,31 @@
     </main>
 
     <footer>
-      <btn @click.prevent="close" red rounded data-test="close-modal-btn">Close</btn>
+      <Btn @click.prevent="close" red rounded data-test="close-modal-btn">Close</Btn>
     </footer>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, reactive } from 'vue'
 import compareVersions from 'compare-versions'
 import { sharedStore, userStore } from '@/stores'
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
-  data: () => ({
-    userState: userStore.state,
-    sharedState: sharedStore.state,
-    demo: NODE_ENV === 'demo'
-  }),
+const userState = reactive(userStore.state)
+const sharedState = reactive(sharedStore.state)
+const demo = NODE_ENV === 'demo'
 
-  computed: {
-    latestVersionUrl (): string {
-      return `https://github.com/phanan/koel/releases/tag/${this.sharedState.latestVersion}`
-    },
+const latestVersionUrl = computed(() => `https://github.com/phanan/koel/releases/tag/${sharedState.latestVersion}`)
+const shouldDisplayVersionUpdate = computed(() => userState.current.is_admin)
 
-    shouldDisplayVersionUpdate (): boolean {
-      return this.userState.current.is_admin
-    },
-
-    hasNewVersion (): boolean {
-      return compareVersions.compare(this.sharedState.latestVersion, this.sharedState.currentVersion, '>')
-    }
-  },
-
-  methods: {
-    close (): void {
-      this.$emit('close')
-    }
-  }
+const hasNewVersion = computed(() => {
+  return compareVersions.compare(sharedState.latestVersion, sharedState.currentVersion, '>')
 })
+
+const emit = defineEmits(['close'])
+const close = () => emit('close')
 </script>
 
 <style lang="scss" scoped>

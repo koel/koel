@@ -1,23 +1,19 @@
 <template>
   <div id="mainWrapper">
-    <sidebar/>
-    <main-content/>
-    <extra-panel/>
-    <modal-wrapper/>
+    <Sidebar/>
+    <MainContent/>
+    <ExtraPanel/>
+    <ModalWrapper/>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent } from 'vue'
 
-export default Vue.extend({
-  components: {
-    Sidebar: () => import('@/components/layout/main-wrapper/sidebar.vue'),
-    MainContent: () => import('@/components/layout/main-wrapper/main-content.vue'),
-    ExtraPanel: () => import('@/components/layout/main-wrapper/extra-panel.vue'),
-    ModalWrapper: () => import('@/components/layout/modal-wrapper.vue')
-  }
-})
+const Sidebar = defineAsyncComponent(() => import('@/components/layout/main-wrapper/sidebar.vue'))
+const MainContent = defineAsyncComponent(() => import('@/components/layout/main-wrapper/main-content.vue'))
+const ExtraPanel = defineAsyncComponent(() => import('@/components/layout/main-wrapper/extra-panel.vue'))
+const ModalWrapper = defineAsyncComponent(() => import('@/components/layout/modal-wrapper.vue'))
 </script>
 
 <style lang="scss">

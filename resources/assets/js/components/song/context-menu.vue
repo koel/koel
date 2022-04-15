@@ -1,6 +1,6 @@
 <template>
-  <base-context-menu extra-class="song-menu" ref="base" data-testid="song-context-menu">
-    <template v-show="onlyOneSongSelected">
+  <BaseContextMenu extra-class="song-menu" ref="base" data-testid="song-context-menu">
+    <template v-if="onlyOneSongSelected">
       <li class="playback" @click.stop.prevent="doPlayback">
         <span v-if="firstSongPlaying">Pause</span>
         <span v-else>Play</span>
@@ -35,107 +35,89 @@
     >
       Copy Shareable URL
     </li>
-  </base-context-menu>
+  </BaseContextMenu>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
-import { BaseContextMenu } from 'koel/types/ui'
-import { eventBus, isClipboardSupported, copyText } from '@/utils'
-import { sharedStore, songStore, queueStore, userStore, playlistStore } from '@/stores'
-import { playback, download } from '@/services'
+<script lang="ts" setup>
+import { computed, reactive, toRefs } from 'vue'
+import { copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
+import { playlistStore, queueStore, sharedStore, songStore, userStore } from '@/stores'
+import { download as downloadService, playback } from '@/services'
 import router from '@/router'
-import songMenuMethods from '@/mixins/song-menu-methods.ts'
+import { useContextMenu, useSongMenuMethods } from '@/composables'
 
-export default mixins(songMenuMethods).extend({
-  components: {
-    BaseContextMenu: () => import('@/components/ui/context-menu.vue')
-  },
+const props = defineProps<{ songs: Song[] }>()
+const { songs } = toRefs(props)
 
-  data: () => ({
-    playlistState: playlistStore.state,
-    sharedState: sharedStore.state,
-    copyable: isClipboardSupported,
-    userState: userStore.state
-  }),
+const {
+  base,
+  BaseContextMenu,
+  open,
+  close
+} = useContextMenu()
 
-  computed: {
-    onlyOneSongSelected (): boolean {
-      return this.songs.length === 1
-    },
+const {
+  queueSongsAfterCurrent,
+  queueSongsToBottom,
+  queueSongsToTop,
+  addSongsToFavorite,
+  addSongsToExistingPlaylist
+} = useSongMenuMethods(songs.value, close)
 
-    firstSongPlaying (): boolean {
-      return this.songs[0] ? this.songs[0].playbackState === 'Playing' : false
-    },
+const playlistState = reactive(playlistStore.state)
+const sharedState = reactive(sharedStore.state)
+const userState = reactive(userStore.state)
 
-    normalPlaylists (): Playlist[] {
-      return this.playlistState.playlists.filter(playlist => !playlist.is_smart)
-    },
+const onlyOneSongSelected = computed(() => songs.value.length === 1)
+const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playbackState === 'Playing' : false)
+const normalPlaylists = computed(() => playlistState.playlists.filter(playlist => !playlist.is_smart))
+const isAdmin = computed(() => userState.current.is_admin)
 
-    isAdmin (): boolean {
-      return this.userState.current.is_admin
-    }
-  },
+const doPlayback = () => {
+  if (!songs.value.length) return
 
-  methods: {
-    open (top: number, left: number): void {
-      if (!this.songs.length) {
-        return
-      }
+  switch (songs.value[0].playbackState) {
+    case 'Playing':
+      playback.pause()
+      break
 
-      (this.$refs.base as BaseContextMenu).open(top, left)
-    },
+    case 'Paused':
+      playback.resume()
+      break
 
-    close (): void {
-      (this.$refs.base as BaseContextMenu).close()
-    },
-
-    doPlayback (): void {
-      switch (this.songs[0].playbackState) {
-        case 'Playing':
-          playback.pause()
-          break
-
-        case 'Paused':
-          playback.resume()
-          break
-
-        default:
-          queueStore.contains(this.songs[0]) || queueStore.queueAfterCurrent(this.songs[0])
-          playback.play(this.songs[0])
-          break
-      }
-
-      this.close()
-    },
-
-    openEditForm (): void {
-      if (this.songs.length) {
-        eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', this.songs)
-      }
-
-      this.close()
-    },
-
-    viewAlbumDetails (album: Album): void {
-      router.go(`album/${album.id}`)
-      this.close()
-    },
-
-    viewArtistDetails (artist: Artist): void {
-      router.go(`artist/${artist.id}`)
-      this.close()
-    },
-
-    download (): void {
-      download.fromSongs(this.songs)
-      this.close()
-    },
-
-    copyUrl (): void {
-      copyText(songStore.getShareableUrl(this.songs[0]))
-      this.close()
-    }
+    default:
+      queueStore.contains(songs.value[0]) || queueStore.queueAfterCurrent(songs.value[0])
+      playback.play(songs.value[0])
+      break
   }
-})
+
+  close()
+}
+
+const openEditForm = () => {
+  songs.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', songs)
+  close()
+}
+
+const viewAlbumDetails = (album: Album) => {
+  router.go(`album/${album.id}`)
+  close()
+}
+
+const viewArtistDetails = (artist: Artist) => {
+  router.go(`artist/${artist.id}`)
+  close()
+}
+
+const download = () => {
+  downloadService.fromSongs(songs.value)
+  close()
+}
+
+const copyUrl = () => {
+  copyText(songStore.getShareableUrl(songs.value[0]))
+  close()
+}
+
+defineExpose({ open, close })
 </script>

@@ -1,15 +1,15 @@
 <template>
   <section id="recentlyPlayedWrapper">
-    <screen-header>
+    <ScreenHeader>
       Recently Played
-      <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
-        <span v-if="meta.songCount">{{ meta.songCount | pluralize('song') }} • {{ meta.totalLength }}</span>
+        <span v-if="meta.songCount">{{ pluralize(meta.songCount, 'song') }} • {{ meta.totalLength }}</span>
       </template>
 
       <template v-slot:controls>
-        <song-list-controls
+        <SongListControls
           v-if="state.songs.length && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
@@ -18,11 +18,11 @@
           :selectedSongs="selectedSongs"
         />
       </template>
-    </screen-header>
+    </ScreenHeader>
 
-    <song-list v-if="state.songs.length" :items="state.songs" type="recently-played" :sortable="false"/>
+    <SongList v-if="state.songs.length" :items="state.songs" type="recently-played" :sortable="false"/>
 
-    <screen-placeholder v-else>
+    <ScreenPlaceholder v-else>
       <template v-slot:icon>
         <i class="fa fa-clock-o"></i>
       </template>
@@ -30,43 +30,40 @@
       <span class="secondary d-block">
         Start playing to populate this playlist.
       </span>
-    </screen-placeholder>
+    </ScreenPlaceholder>
   </section>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { eventBus, pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
-import hasSongList from '@/mixins/has-song-list.ts'
-import mixins from 'vue-typed-mixins'
+import { useSongList } from '@/composables'
+import { defineAsyncComponent, reactive } from 'vue'
+import { playback } from '@/services'
 
-export default mixins(hasSongList).extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ScreenPlaceholder: () => import('@/components/ui/screen-placeholder.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
-  filters: { pluralize },
+const {
+  SongList,
+  SongListControls,
+  ControlsToggler,
+  songList,
+  meta,
+  selectedSongs,
+  showingControls,
+  songListControlConfig,
+  isPhone,
+  playSelected,
+  toggleControls
+} = useSongList()
 
-  data: () => ({
-    state: recentlyPlayedStore.state
-  }),
+const state = reactive(recentlyPlayedStore.state)
 
-  methods: {
-    getSongsToPlay (): Song[] {
-      return this.state.songs
-    }
-  },
+const playAll = () => playback.queueAndPlay(state.songs)
 
-  created (): void {
-    eventBus.on({
-      'LOAD_MAIN_CONTENT': (view: MainViewName): void => {
-        if (view === 'RecentlyPlayed') {
-          recentlyPlayedStore.fetchAll()
-        }
-      }
-    })
-  }
+eventBus.on({
+  'LOAD_MAIN_CONTENT': (view: MainViewName) => view === 'RecentlyPlayed' && recentlyPlayedStore.fetchAll()
 })
 </script>
 

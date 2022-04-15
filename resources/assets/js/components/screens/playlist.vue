@@ -1,12 +1,12 @@
 <template>
   <section id="playlistWrapper">
-    <screen-header>
+    <ScreenHeader>
       {{ playlist.name }}
-      <controls-toggler v-if="playlist.populated" :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggler v-if="playlist.populated" :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
         <span class="meta" v-if="playlist.populated && meta.songCount">
-          {{ meta.songCount | pluralize('song') }}
+          {{ pluralize(meta.songCount, 'song') }}
           •
           {{ meta.totalLength }}
           <template v-if="sharedState.allowDownload && playlist.songs.length">
@@ -19,7 +19,7 @@
       </template>
 
       <template v-slot:controls>
-        <song-list-controls
+        <SongListControls
           v-if="playlist.populated && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
@@ -29,10 +29,10 @@
           :selectedSongs="selectedSongs"
         />
       </template>
-    </screen-header>
+    </ScreenHeader>
 
     <template v-if="playlist.populated">
-      <song-list
+      <SongList
         v-if="playlist.songs.length"
         :items="playlist.songs"
         :playlist="playlist"
@@ -40,7 +40,7 @@
         ref="songList"
       />
 
-      <screen-placeholder v-else>
+      <ScreenPlaceholder v-else>
         <template v-slot:icon>
           <i class="fa fa-file-o"></i>
         </template>
@@ -56,75 +56,69 @@
             or use the &quot;Add To…&quot; button to fill it up.
           </span>
         </template>
-      </screen-placeholder>
+      </ScreenPlaceholder>
     </template>
   </section>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
-import { pluralize, eventBus } from '@/utils'
+<script lang="ts" setup>
+import { eventBus } from '@/utils'
 import { playlistStore, sharedStore } from '@/stores'
-import { download } from '@/services'
-import hasSongList from '@/mixins/has-song-list.ts'
+import { download as downloadService } from '@/services'
+import { useSongList } from '@/composables'
+import { defineAsyncComponent, nextTick, reactive, ref } from 'vue'
+import { pluralize } from '@/utils'
 
-export default mixins(hasSongList).extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    ScreenPlaceholder: () => import('@/components/ui/screen-placeholder.vue')
-  },
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
-  filters: { pluralize },
+const {
+  SongList,
+  SongListControls,
+  ControlsToggler,
+  songList,
+  meta,
+  state,
+  selectedSongs,
+  showingControls,
+  songListControlConfig,
+  isPhone,
+  playAll,
+  playSelected,
+  toggleControls
+} = useSongList({
+  deletePlaylist: true
+})
 
-  data: () => ({
-    playlist: playlistStore.stub,
-    sharedState: sharedStore.state,
-    songListControlConfig: {
-      deletePlaylist: true
-    }
-  }),
+const playlist = ref<Playlist>(playlistStore.stub)
+const sharedState = reactive(sharedStore.state)
 
-  created (): void {
-    /**
-     * Listen to 'main-content-view:load' event to load the requested
-     * playlist into view if applicable.
-     */
-    eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, playlist: Playlist): void => {
-      if (view !== 'Playlist') {
-        return
-      }
+const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value)
+const download = () => downloadService.fromPlaylist(playlist.value)
+const editSmartPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', playlist.value)
 
-      if (playlist.populated) {
-        this.playlist = playlist
-        this.state = playlist
-      } else {
-        this.populate(playlist)
-      }
-    })
-  },
+/**
+ * Fetch a playlist's content from the server, populate it, and use it afterwards.
+ */
+const populate = async (_playlist: Playlist) => {
+  await playlistStore.fetchSongs(_playlist)
+  playlist.value = _playlist
+  state.songs = playlist.value.songs
+  await nextTick()
+  // @ts-ignore
+  songList.value?.sort()
+}
 
-  methods: {
-    destroy (): void {
-      eventBus.emit('PLAYLIST_DELETE', this.playlist)
-    },
+eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void => {
+  if (view !== 'Playlist') {
+    return
+  }
 
-    download (): void {
-      return download.fromPlaylist(this.playlist)
-    },
-
-    editSmartPlaylist (): void {
-      eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', this.playlist)
-    },
-
-    /**
-     * Fetch a playlist's content from the server, populate it, and use it afterwards.
-     */
-    async populate (playlist: Playlist): Promise<void> {
-      await playlistStore.fetchSongs(playlist)
-      this.playlist = playlist
-      this.state = playlist
-      this.$nextTick(() => this.$refs.songList && (this.$refs.songList as any).sort())
-    }
+  if (_playlist.populated) {
+    playlist.value = _playlist
+    state.songs = playlist.value.songs
+  } else {
+    populate(_playlist)
   }
 })
 </script>

@@ -17,18 +17,15 @@
   </header>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { onUpdated, ref } from 'vue'
 
-export default Vue.extend({
-  data: () => ({
-    hasThumbnail: false
-  }),
+const thumbnailWrapper = ref(null as unknown as HTMLElement)
+const hasThumbnail = ref(false)
 
-  updated () {
-    // until :empty is supported, we'll have to resort to this manual check
-    this.hasThumbnail = Boolean((this.$refs.thumbnailWrapper as HTMLElement).children.length)
-  }
+onUpdated(() => {
+  // until :empty is supported, we'll have to resort to this manual check
+  hasThumbnail.value = Boolean(thumbnailWrapper.value.children.length)
 })
 </script>
 
@@ -45,7 +42,7 @@ header {
   line-height: normal;
   gap: 1.5rem;
 
-  .thumbnail-wrapper{
+  .thumbnail-wrapper {
     width: 64px;
     display: none;
 

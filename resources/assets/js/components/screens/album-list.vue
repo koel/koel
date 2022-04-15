@@ -1,68 +1,56 @@
 <template>
   <section id="albumsWrapper">
-    <screen-header>
+    <ScreenHeader>
       Albums
       <template v-slot:controls>
-        <view-mode-switch v-model="viewMode"/>
+        <ViewModeSwitch v-model="viewMode"/>
       </template>
-    </screen-header>
+    </ScreenHeader>
 
     <div ref="scroller" class="albums main-scroll-wrap" :class="`as-${viewMode}`" @scroll="scrolling">
-      <album-card v-for="item in displayedItems" :album="item" :layout="itemLayout" :key="item.id" />
-      <to-top-button/>
+      <AlbumCard v-for="item in displayedItems" :album="item" :layout="itemLayout" :key="item.id"/>
+      <ToTopButton/>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import mixins from 'vue-typed-mixins'
-import { limitBy, eventBus } from '@/utils'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue'
+import { eventBus, limitBy } from '@/utils'
 import { albumStore, preferenceStore as preferences } from '@/stores'
-import infiniteScroll from '@/mixins/infinite-scroll.ts'
+import { useInfiniteScroll } from '@/composables'
 
-export default mixins(infiniteScroll).extend({
-  components: {
-    ScreenHeader: () => import('@/components/ui/screen-header.vue'),
-    AlbumCard: () => import('@/components/album/card.vue'),
-    ViewModeSwitch: () => import('@/components/ui/view-mode-switch.vue')
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const AlbumCard = defineAsyncComponent(() => import('@/components/album/card.vue'))
+const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/view-mode-switch.vue'))
+
+const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
+const albums = ref<Album[]>([])
+
+const {
+  ToTopButton,
+  displayedItemCount,
+  scroller,
+  scrolling,
+  makeScrollable
+} = useInfiniteScroll(9)
+
+const displayedItems = computed(() => limitBy(albums.value, displayedItemCount.value))
+const itemLayout = computed<ArtistAlbumCardLayout>(() => viewMode.value === 'thumbnails' ? 'full' : 'compact')
+
+watch(viewMode, () => preferences.albumsViewMode = viewMode.value)
+
+eventBus.on({
+  KOEL_READY () {
+    albums.value = albumStore.all
+    viewMode.value = preferences.albumsViewMode || 'thumbnails'
   },
 
-  data: () => ({
-    perPage: 9,
-    displayedItemCount: 9,
-    viewMode: null as ArtistAlbumViewMode | null,
-    albums: [] as Album[]
-  }),
-
-  computed: {
-    displayedItems (): Album[] {
-      return limitBy(this.albums, this.displayedItemCount)
-    },
-
-    itemLayout (): ArtistAlbumCardLayout {
-      return this.viewMode === 'thumbnails' ? 'full' : 'compact'
+  async LOAD_MAIN_CONTENT (view: MainViewName) {
+    if (view === 'Albums') {
+      await nextTick()
+      makeScrollable(albums.value.length)
     }
-  },
-
-  watch: {
-    viewMode (): void {
-      preferences.albumsViewMode = this.viewMode
-    }
-  },
-
-  created (): void {
-    eventBus.on({
-      'KOEL_READY': (): void => {
-        this.albums = albumStore.all
-        this.viewMode = preferences.albumsViewMode || 'thumbnails'
-      },
-
-      'LOAD_MAIN_CONTENT': (view: MainViewName): void => {
-        if (view === 'Albums') {
-          this.$nextTick((): void => this.makeScrollable(this.$refs.scroller as HTMLElement, this.albums.length))
-        }
-      }
-    })
   }
 })
 </script>

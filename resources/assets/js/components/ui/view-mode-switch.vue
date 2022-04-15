@@ -2,57 +2,40 @@
   <span class="view-modes">
     <label
       class="thumbnails"
-      :class="{ active: mutatedValue === 'thumbnails' }"
+      :class="{ active: modelValue === 'thumbnails' }"
       title="View as thumbnails"
       data-test="view-mode-thumbnail"
     >
-      <input class="hidden" type="radio" value="thumbnails" v-model="mutatedValue" @input="onInput">
+      <input class="hidden" type="radio" value="thumbnails" v-model="modelValue" @input="onInput">
       <i class="fa fa-th-large"></i>
       <span class="hidden">View as thumbnails</span>
     </label>
 
     <label
       class="list"
-      :class="{ active: mutatedValue === 'list' }"
+      :class="{ active: modelValue === 'list' }"
       title="View as list"
       data-test="view-mode-list"
     >
-      <input class="hidden" type="radio" value="list" v-model="mutatedValue" @input="onInput">
+      <input class="hidden" type="radio" v-model="modelValue" @input="onInput">
       <i class="fa fa-list"></i>
       <span class="hidden">View as list</span>
     </label>
   </span>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
+<script lang="ts" setup>
+import { ref, toRefs, watchEffect } from 'vue'
 
-export default Vue.extend({
-  props: {
-    value: {
-      type: String
-    } as PropOptions<ArtistAlbumViewMode>
-  },
+const props = defineProps<{ value: ArtistAlbumViewMode }>()
+const { value } = toRefs(props)
 
-  data: () => ({
-    mutatedValue: null as ArtistAlbumViewMode | null
-  }),
+let modelValue = ref<ArtistAlbumViewMode>(null as unknown as ArtistAlbumViewMode)
 
-  watch: {
-    value: {
-      handler (mode: ArtistAlbumViewMode) {
-        this.mutatedValue = mode
-      },
-      immediate: true
-    }
-  },
+watchEffect(() => (modelValue.value = value.value))
 
-  methods: {
-    onInput (e: InputEvent): void {
-      this.$emit('input', (e.target as HTMLInputElement).value)
-    }
-  }
-})
+const emit = defineEmits(['update:modelValue'])
+const onInput = (e: InputEvent) => emit('update:modelValue', (e.target as HTMLInputElement).value)
 </script>
 
 <style lang="scss" scoped>

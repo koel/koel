@@ -27,17 +27,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { preferenceStore as preferences } from '@/stores'
 
-export default Vue.extend({
-  data: () => ({
-    preferences,
-    isPhone: isMobile.phone
-  })
-})
+const isPhone = isMobile.phone
 </script>
 
 <style lang="scss" scoped>

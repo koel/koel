@@ -1,6 +1,6 @@
 <template>
   <div class="edit-user" @keydown.esc="maybeClose">
-    <sound-bar v-if="loading"/>
+    <SoundBar v-if="loading"/>
     <form class="user-edit" @submit.prevent="submit" v-else data-testid="edit-user-form">
       <header>
         <h1>Edit User</h1>
@@ -29,83 +29,71 @@
         <div class="form-row">
           <label>
             <input type="checkbox" name="is_admin" v-model="updateData.is_admin"> User is an admin
-            <tooltip-icon title="Admins can perform administrative tasks like managing users and uploading songs."/>
+            <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
           </label>
         </div>
       </div>
 
       <footer>
-        <btn class="btn-update" type="submit">Update</btn>
-        <btn class="btn-cancel" @click.prevent="maybeClose" white data-test="cancel-btn">Cancel</btn>
+        <Btn class="btn-update" type="submit">Update</Btn>
+        <Btn class="btn-cancel" @click.prevent="maybeClose" white data-test="cancel-btn">Cancel</Btn>
       </footer>
     </form>
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { defineAsyncComponent, onMounted, reactive, ref, toRefs } from 'vue'
 import { isEqual } from 'lodash'
 import { alerts, parseValidationError } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
-import Vue, { PropOptions } from 'vue'
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue'),
-    SoundBar: () => import('@/components/ui/sound-bar.vue'),
-    TooltipIcon: () => import('@/components/ui/tooltip-icon.vue')
-  },
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+const TooltipIcon = defineAsyncComponent(() => import('@/components/ui/tooltip-icon.vue'))
 
-  props: {
-    user: {
-      type: Object,
-      required: true
-    } as PropOptions<User>
-  },
+const props = defineProps<{ user: User }>()
+const { user } = toRefs(props)
 
-  data: () => ({
-    loading: false,
-    updateData: {} as UpdateUserData,
-    originalData: {} as UpdateUserData
-  }),
+const loading = ref(false)
+const updateData = reactive({} as unknown as UpdateUserData)
+const originalData = reactive({} as unknown as UpdateUserData)
 
-  methods: {
-    async submit (): Promise<void> {
-      this.loading = true
+const submit = async () => {
+  loading.value = true
 
-      try {
-        await userStore.update(this.user, this.updateData)
-        this.close()
-      } catch (err) {
-        const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-        alerts.error(msg)
-      } finally {
-        this.loading = false
-      }
-    },
-
-    close (): void {
-      this.$emit('close')
-    },
-
-    maybeClose (): void {
-      if (isEqual(this.originalData, this.updateData)) {
-        this.close()
-        return
-      }
-
-      alerts.confirm('Discard all changes?', () => this.close())
-    }
-  },
-
-  mounted (): void {
-    this.updateData = {
-      name: this.user.name,
-      email: this.user.email,
-      is_admin: this.user.is_admin
-    }
-
-    Object.assign(this.originalData, this.updateData)
+  try {
+    await userStore.update(user.value, updateData)
+    close()
+  } catch (err: any) {
+    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
+    alerts.error(msg)
+  } finally {
+    loading.value = false
   }
+}
+
+const emit = defineEmits(['close'])
+
+const close = () => emit('close')
+
+const maybeClose = () => {
+  if (isEqual(originalData, updateData)) {
+    close()
+    return
+  }
+
+  alerts.confirm('Discard all changes?', close)
+}
+
+onMounted(() => {
+  Object.assign(updateData, {
+    name: user.value.name,
+    email: user.value.email,
+    is_admin: user.value.is_admin
+  })
+
+  Object.assign(originalData, updateData)
 })
 </script>
 

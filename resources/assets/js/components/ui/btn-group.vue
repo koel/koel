@@ -1,21 +1,17 @@
 <template>
   <span class="btn-group">
     <slot>
-      <btn green>Foo</btn>
-      <btn orange>Bar</btn>
-      <btn red>Baz</btn>
+      <Btn green>Foo</Btn>
+      <Btn orange>Bar</Btn>
+      <Btn red>Baz</Btn>
     </slot>
   </span>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
+import { defineAsyncComponent } from 'vue'
 
-export default Vue.extend({
-  components: {
-    Btn: () => import('@/components/ui/btn.vue')
-  }
-})
+const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 </script>
 
 <style lang="scss" scoped>

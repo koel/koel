@@ -1,5 +1,5 @@
 <template>
-  <div class="side search" id="searchForm" :class="{ showing: showing }" role="search">
+  <div class="side search" id="searchForm" :class="{ showing }" role="search">
     <input
       type="search"
       :class="{ dirty: q }"
@@ -15,43 +15,31 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
 import isMobile from 'ismobilejs'
+import { ref } from 'vue'
 import { debounce } from 'lodash'
 
 import { eventBus } from '@/utils'
 import router from '@/router'
 
-export default Vue.extend({
-  data: () => ({
-    q: '',
-    showing: !isMobile.phone
-  }),
+const input = ref(null as unknown as HTMLInputElement)
+const q = ref('')
+const showing = ref(!isMobile.phone)
 
-  methods: {
-    onInput: debounce(function (): void {
-      // @ts-ignore because of `this`
-      const q = this.q.trim()
-      if (q) {
-        eventBus.emit('SEARCH_KEYWORDS_CHANGED', q)
-      }
-    }, 500),
+const onInput = debounce(() => {
+  const _q = q.value.trim()
+  _q && eventBus.emit('SEARCH_KEYWORDS_CHANGED', _q)
+}, 500)
 
-    goToSearchScreen: () => router.go('/search')
-  },
+const goToSearchScreen = () => router.go('/search')
 
-  created (): void {
-    eventBus.on({
-      'TOGGLE_SEARCH_FORM': (): void => {
-        this.showing = !this.showing
-      },
+eventBus.on({
+  'TOGGLE_SEARCH_FORM': () => (showing.value = !showing.value),
 
-      'FOCUS_SEARCH_FIELD': (): void => {
-        (this.$refs.input as HTMLInputElement).focus()
-        ;(this.$refs.input as HTMLInputElement).select()
-      }
-    })
+  FOCUS_SEARCH_FIELD () {
+    input.value.focus()
+    input.value.select()
   }
 })
 </script>
@@ -67,7 +55,7 @@ export default Vue.extend({
     margin-top: 0;
   }
 
-  @media only screen and (max-width : 667px) {
+  @media only screen and (max-width: 667px) {
     z-index: -1;
     position: absolute;
     left: 0;

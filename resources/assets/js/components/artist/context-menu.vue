@@ -1,5 +1,5 @@
 <template>
-  <base-context-menu extra-class="artist-menu" ref="base" data-testid="artist-context-menu">
+  <BaseContextMenu extra-class="artist-menu" ref="base" data-testid="artist-context-menu">
     <template v-if="artist">
       <li data-test="play" @click="play">Play All</li>
       <li data-test="shuffle" @click="shuffle">Shuffle All</li>
@@ -12,63 +12,40 @@
         <li data-test="download" @click="download">Download</li>
       </template>
     </template>
-  </base-context-menu>
+  </BaseContextMenu>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import { BaseContextMenu } from 'koel/types/ui'
+<script lang="ts" setup>
+import { computed, reactive, toRefs } from 'vue'
 import { artistStore, sharedStore } from '@/stores'
-import { download, playback } from '@/services'
+import { download as downloadService, playback } from '@/services'
+import { useContextMenu } from '@/composables'
 import router from '@/router'
 
-export default Vue.extend({
-  components: {
-    BaseContextMenu: () => import('@/components/ui/context-menu.vue')
-  },
+const { base, BaseContextMenu, open, close } = useContextMenu()
 
-  props: {
-    artist: {
-      type: Object
-    } as PropOptions<Artist>
-  },
+const props = defineProps<{ artist: Artist }>()
+const { artist } = toRefs(props)
 
-  data: () => ({
-    sharedState: sharedStore.state
-  }),
+const sharedState = reactive(sharedStore.state)
 
-  computed: {
-    isStandardArtist (): boolean {
-      return !artistStore.isUnknownArtist(this.artist) && !artistStore.isVariousArtists(this.artist)
-    }
-  },
+const isStandardArtist = computed(() =>
+  !artistStore.isUnknownArtist(artist.value)
+  && !artistStore.isVariousArtists(artist.value)
+)
 
-  methods: {
-    open (top: number, left: number): void {
-      (this.$refs.base as BaseContextMenu).open(top, left)
-    },
+const play = () => playback.playAllByArtist(artist.value)
+const shuffle = () => playback.playAllByArtist(artist.value, true /* shuffled */)
 
-    play (): void {
-      playback.playAllByArtist(this.artist)
-    },
+const viewArtistDetails = () => {
+  router.go(`artist/${artist.value.id}`)
+  close()
+}
 
-    shuffle (): void {
-      playback.playAllByArtist(this.artist, true /* shuffled */)
-    },
+const download = () => {
+  downloadService.fromArtist(artist.value)
+  close()
+}
 
-    viewArtistDetails (): void {
-      router.go(`artist/${this.artist.id}`)
-      this.close()
-    },
-
-    download (): void {
-      download.fromArtist(this.artist)
-      this.close()
-    },
-
-    close (): void {
-      (this.$refs.base as BaseContextMenu).close()
-    }
-  }
-})
+defineExpose({ open, close })
 </script>
