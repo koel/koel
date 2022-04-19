@@ -1,6 +1,6 @@
 <template>
   <div class="bars" data-test="soundbars">
-    <img src="@/../img/bars.gif" alt="Sound bars" height="13" width="auto">
+    <img src="@/../img/bars.gif" alt="Sound bars" height="13">
   </div>
 </template>
 

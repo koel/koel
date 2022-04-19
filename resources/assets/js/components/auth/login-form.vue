@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="login" :class="{ error: failed }" data-testid="login-form">
     <div class="logo">
-      <img src="@/../img/logo.svg" width="156" height="auto" alt="Koel's logo">
+      <img src="@/../img/logo.svg" width="156" alt="Koel's logo">
     </div>
     <input v-model="email" type="email" placeholder="Email Address" autofocus required>
     <input v-model="password" type="password" placeholder="Password" required>

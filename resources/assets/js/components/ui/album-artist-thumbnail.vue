@@ -42,6 +42,7 @@ const backgroundImageUrl = computed(() => forAlbum.value
   : (entity.value as Artist).image ? (entity.value as Artist).image : getDefaultCover()
 )
 
+
 const buttonLabel = computed(() => forAlbum.value
   ? `Play all songs in the album ${entity.value.name}`
   : `Play all songs by the artist ${entity.value.name}`

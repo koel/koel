@@ -1,6 +1,6 @@
 import select from 'select'
 import { eventBus, noop, pluralize } from '@/utils'
-import { sharedStore } from '@/stores'
+import defaultCover from '@/../img/covers/unknown-album.png'
 
 /**
  * Load (display) a main panel (view).
@@ -48,7 +48,7 @@ export const copyText = (text: string): void => {
   document.execCommand('copy')
 }
 
-export const getDefaultCover = (): string => require('@/../img/covers/unknown-album.png')
+export const getDefaultCover = () => defaultCover
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
   if (!event.dataTransfer) {

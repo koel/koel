@@ -1,3 +1,6 @@
+declare module '*.jpg'
+declare module '*.png'
+
 declare type TAnyFunction = (...args: Array<unknown|any>) => unknown|any
 
 declare module 'vue-virtual-scroller' {

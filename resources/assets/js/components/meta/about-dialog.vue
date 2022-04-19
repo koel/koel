@@ -6,7 +6,7 @@
 
     <main>
       <div class="logo">
-        <img src="@/../img/logo.svg" width="128" height="auto" alt="Koel's logo">
+        <img src="@/../img/logo.svg" width="128" alt="Koel's logo">
       </div>
 
       <p class="current-version">{{ sharedState.currentVersion }}</p>
@@ -18,10 +18,10 @@
       </p>
 
       <p class="author">
-        Made with ❤️ by
+        Made with ❤️ by&nbsp;
         <a href="https://github.com/phanan" target="_blank" rel="noopener">Phan An</a>
         and quite a few
-        <a href="https://github.com/koel/core/graphs/contributors" target="_blank" rel="noopener">awesome</a>
+        <a href="https://github.com/koel/core/graphs/contributors" target="_blank" rel="noopener">awesome</a>&nbsp;
         <a href="https://github.com/koel/koel/graphs/contributors" target="_blank" rel="noopener">contributors</a>.
       </p>
 

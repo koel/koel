@@ -391,7 +391,8 @@ defineExpose({
   handleDrop,
   removeDroppableState,
   openContextMenu,
-  getAllSongsWithSort
+  getAllSongsWithSort,
+  sort
 })
 </script>
 
