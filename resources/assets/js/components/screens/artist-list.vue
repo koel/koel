@@ -3,7 +3,7 @@
     <ScreenHeader>
       Artists
       <template v-slot:controls>
-        <ViewModeSwitch v-model="viewMode"/>
+        <ViewModeSwitch v-model="viewMode" :value="viewMode"/>
       </template>
     </ScreenHeader>
 

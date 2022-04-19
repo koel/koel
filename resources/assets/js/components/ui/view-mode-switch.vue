@@ -17,7 +17,7 @@
       title="View as list"
       data-test="view-mode-list"
     >
-      <input class="hidden" type="radio" v-model="modelValue" @input="onInput">
+      <input class="hidden" type="radio" value="list" v-model="modelValue" @input="onInput">
       <i class="fa fa-list"></i>
       <span class="hidden">View as list</span>
     </label>
@@ -25,12 +25,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRefs, watchEffect } from 'vue'
+import { PropType, ref, toRefs, watchEffect } from 'vue'
 
-const props = defineProps<{ value: ArtistAlbumViewMode }>()
+const props = defineProps({
+  value: {
+    type: String as PropType<ArtistAlbumViewMode>,
+    default: 'thumbnails'
+  }
+})
+
 const { value } = toRefs(props)
 
-let modelValue = ref<ArtistAlbumViewMode>(null as unknown as ArtistAlbumViewMode)
+let modelValue = ref<ArtistAlbumViewMode>()
 
 watchEffect(() => (modelValue.value = value.value))
 
