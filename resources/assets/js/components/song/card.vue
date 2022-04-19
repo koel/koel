@@ -31,14 +31,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRefs } from 'vue'
+import { computed, defineAsyncComponent, PropType, toRefs } from 'vue'
 import { eventBus, pluralize, startDragging } from '@/utils'
 import { queueStore } from '@/stores'
 import { playback } from '@/services'
 
 const LikeButton = defineAsyncComponent(() => import('@/components/song/like-button.vue'))
 
-const props = withDefaults(defineProps<{ song: Song, topPlayCount: number }>(), { topPlayCount: 0 })
+const props = defineProps({
+  song: {
+    type: Object as PropType<Song>,
+    required: true
+  },
+  topPlayCount: {
+    type: Number,
+    default: 0
+  }
+})
+
 const { song, topPlayCount } = toRefs(props)
 
 const showPlayCount = computed(() => Boolean(topPlayCount && song.value.playCount))
