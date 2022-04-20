@@ -79,7 +79,7 @@ import {
 } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { $, eventBus, orderBy, startDragging } from '@/utils'
+import { $, eventBus, orderBy, startDragging, arrayify } from '@/utils'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import { playback } from '@/services'
 import router from '@/router'
@@ -101,26 +101,10 @@ interface SongRow {
 
 const SongItem = defineAsyncComponent(() => import('@/components/song/item.vue'))
 
-// @ts-ignore
-getCurrentInstance()!.__IS_SONG_LIST__ = true
-
-const props = defineProps({
-  items: {
-    type: Array as PropType<Song[]>,
-    required: true
-  },
-  playlist: {
-    type: Object as PropType<Playlist>
-  },
-  type: {
-    type: String as PropType<SongListType>,
-    default: 'all-songs'
-  },
-  config: {
-    type: Object as PropType<Partial<SongListConfig>>,
-    default: () => ({})
-  }
-})
+const props = withDefaults(
+  defineProps<{ items: Song[], playlist?: Playlist, type?: SongListType, config?: Partial<SongListConfig> }>(),
+  { type: 'all-songs', config: () => ({}) }
+)
 
 const { items, playlist, type, config } = toRefs(props)
 
@@ -170,7 +154,7 @@ const sort = (field: SortField | SortField[] = [], order: SortOrder | null = nul
     return
   }
 
-  sortFields.value = ([] as SortField[]).concat(field)
+  sortFields.value = arrayify(field)
 
   if (!sortFields.value.length && ['album', 'artist'].includes(type.value)) {
     // by default, sort Album/Artist by track numbers for a more friendly UX

@@ -25,15 +25,9 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, ref, toRefs, watchEffect } from 'vue'
+import { ref, toRefs, watchEffect } from 'vue'
 
-const props = defineProps({
-  value: {
-    type: String as PropType<ArtistAlbumViewMode>,
-    default: 'thumbnails'
-  }
-})
-
+const props = withDefaults(defineProps<{ value?: ArtistAlbumViewMode }>(), { value: 'thumbnails' })
 const { value } = toRefs(props)
 
 let modelValue = ref<ArtistAlbumViewMode>()

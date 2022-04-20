@@ -38,6 +38,7 @@
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/no-empty-function": 0,
     "vue/no-side-effects-in-computed-properties": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "standard/no-callback-literal": 0,

@@ -13,7 +13,7 @@ import SongListControls from '@/components/song/list-controls.vue'
 import { songStore } from '@/stores'
 
 export const useSongList = (controlsConfig: Partial<SongListControlsConfig> = {}) => {
-  const songList = ref(null)
+  const songList = ref<InstanceType<typeof SongList>>()
   const state = reactive<SongListState>({ songs: [] })
 
   const meta = reactive<SongListMeta>({
@@ -35,7 +35,7 @@ export const useSongList = (controlsConfig: Partial<SongListControlsConfig> = {}
     meta.totalLength = songStore.getFormattedLength(state.songs)
   })
 
-  const getSongsToPlay = (): Song[] => (songList.value as any).getAllSongsWithSort()
+  const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
   const playAll = (shuffled: boolean) => playback.queueAndPlay(getSongsToPlay(), shuffled)
   const playSelected = (shuffled: boolean) => playback.queueAndPlay(selectedSongs.value, shuffled)
   const toggleControls = () => (showingControls.value = !showingControls.value)

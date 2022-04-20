@@ -1,16 +1,10 @@
-import { playlistStore, favoriteStore } from '@/stores'
+import { favoriteStore, playlistStore } from '@/stores'
 import { auth } from '.'
-import { alerts } from '@/utils'
-
-let events: any
-
-if (KOEL_ENV === 'app') {
-  events = require('&/events').default
-}
+import { alerts, arrayify } from '@/utils'
 
 export const download = {
   fromSongs (songs: Song | Song[]): void {
-    const query = (<Song[]>[]).concat(songs).reduce((q, song) => `songs[]=${song.id}&${q}`, '')
+    const query = arrayify(songs).reduce((q, song) => `songs[]=${song.id}&${q}`, '')
     this.trigger(`songs?${query}`)
   },
 

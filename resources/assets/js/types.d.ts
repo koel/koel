@@ -1,5 +1,6 @@
 declare module '*.jpg'
 declare module '*.png'
+declare module '*.svg'
 
 declare type TAnyFunction = (...args: Array<unknown|any>) => unknown|any
 

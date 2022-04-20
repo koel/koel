@@ -4,7 +4,7 @@ import { union, difference, take, orderBy } from 'lodash'
 import stub from '@/stubs/album'
 import { artistStore } from '.'
 import { http } from '@/services'
-import { use } from '@/utils'
+import { arrayify, use } from '@/utils'
 
 const UNKNOWN_ALBUM_ID = 1
 
@@ -53,7 +53,7 @@ export const albumStore = {
   },
 
   add (albums: Album | Album[]): void {
-    (<Album[]>[]).concat(albums).forEach(album => {
+    arrayify(albums).forEach(album => {
       this.setupAlbum(album)
       album.playCount = album.songs.reduce((count, song) => count + song.playCount, 0)
       this.all.push(album)

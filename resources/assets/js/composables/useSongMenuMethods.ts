@@ -5,6 +5,8 @@ import { favoriteStore, playlistStore, queueStore } from '@/stores'
  * Each component including this mixin must have a `songs` array as either data, prop, or computed.
  */
 export const useSongMenuMethods = (songs: Song[], close: TAnyFunction) => {
+  console.log(songs)
+
   const queueSongsAfterCurrent = () => {
     queueStore.queueAfterCurrent(songs)
     close()

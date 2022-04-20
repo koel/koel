@@ -112,7 +112,7 @@
 import { computed, defineAsyncComponent, nextTick, reactive, ref, toRefs } from 'vue'
 import { isEqual, union } from 'lodash'
 
-import { alerts, br2nl, getDefaultCover } from '@/utils'
+import { alerts, br2nl, getDefaultCover, arrayify } from '@/utils'
 import { songInfo } from '@/services/info'
 import { albumStore, artistStore, songStore } from '@/stores'
 
@@ -234,7 +234,7 @@ const initCompilationStateCheckbox = async () => {
 }
 
 const open = async () => {
-  mutatedSongs.value = ([] as Song[]).concat(songs.value)
+  mutatedSongs.value = arrayify(songs.value)
   currentView.value = initialTab!.value
   const firstSong = mutatedSongs.value[0]
 

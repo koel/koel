@@ -2,7 +2,7 @@ import { difference, union, orderBy } from 'lodash'
 
 import stub from '@/stubs/playlist'
 import { http } from '@/services'
-import { alerts, pluralize } from '@/utils'
+import { alerts, pluralize, arrayify } from '@/utils'
 import { songStore } from '.'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
@@ -79,7 +79,7 @@ export const playlistStore = {
    * Add a playlist/playlists into the store.
    */
   add (playlists: Playlist | Playlist[]) {
-    const playlistsToAdd = (<Playlist[]>[]).concat(playlists)
+    const playlistsToAdd = arrayify(playlists)
     playlistsToAdd.forEach(playlist => this.setupPlaylist(playlist))
     this.all = this.sort(union(this.all, playlistsToAdd))
   },
@@ -88,7 +88,7 @@ export const playlistStore = {
    * Remove a playlist/playlists from the store.
    */
   remove (playlists: Playlist | Playlist[]) {
-    this.all = difference(this.all, (<Playlist[]>[]).concat(playlists))
+    this.all = difference(this.all, arrayify(playlists))
   },
 
   async store (name: string, songs: Song[] = [], rules: SmartPlaylistRuleGroup[] = []): Promise<Playlist> {
@@ -169,7 +169,7 @@ export const playlistStore = {
   /**
    * Serialize the rule (groups) to be ready for database.
    */
-  serializeSmartPlaylistRulesForStorage: (ruleGroups: SmartPlaylistRuleGroup[]): object[] | null => {
+  serializeSmartPlaylistRulesForStorage: (ruleGroups: SmartPlaylistRuleGroup[]): any[] | null => {
     if (!ruleGroups || !ruleGroups.length) {
       return null
     }

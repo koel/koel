@@ -1,5 +1,5 @@
 import select from 'select'
-import { eventBus, noop, pluralize } from '@/utils'
+import { eventBus, noop, pluralize, arrayify } from '@/utils'
 import defaultCover from '@/../img/covers/unknown-album.png'
 
 /**
@@ -81,7 +81,7 @@ export const startDragging = (event: DragEvent, dragged: Song | Song[] | Album |
 
   switch (type) {
     case 'Song':
-      dragged = (<Song[]>[]).concat(<Song>dragged)
+      dragged = arrayify(<Song>dragged)
       text = dragged.length === 1
         ? `${dragged[0].title} by ${dragged[0].artist.name}`
         : pluralize(dragged.length, 'song')

@@ -31,7 +31,7 @@ import LoginForm from '@/components/auth/login-form.vue'
 import MainWrapper from '@/components/layout/main-wrapper/index.vue'
 import Overlay from '@/components/ui/overlay.vue'
 
-import { $, eventBus, hideOverlay, showOverlay } from '@/utils'
+import { $, eventBus, hideOverlay, showOverlay, arrayify } from '@/utils'
 import { favoriteStore, preferenceStore as preferences, queueStore, sharedStore } from '@/stores'
 import { auth, playback, socket } from '@/services'
 
@@ -84,8 +84,8 @@ onMounted(async () => {
   $.addClass(document.documentElement, navigator.userAgent.includes('Mac') ? 'mac' : 'non-mac')
 })
 
-eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, songs: Song[]) => {
-  contextMenuSongs.value = ([] as Song[]).concat(songs)
+eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, songs: Song | Song[]) => {
+  contextMenuSongs.value = arrayify(songs)
   await nextTick()
   songContextMenu.value?.open(e.pageY, e.pageX)
 })

@@ -1,10 +1,12 @@
 import { union, difference, shuffle } from 'lodash'
+import { reactive } from 'vue'
+import { arrayify } from '@/utils'
 
 export const queueStore = {
-  state: {
+  state: reactive({
     songs: [] as Song[],
     current: undefined as Song | undefined
-  },
+  }),
 
   init () {
     // We don't have anything to do here yet.
@@ -57,7 +59,7 @@ export const queueStore = {
    */
   queue (songs: Song | Song[]): void {
     this.unqueue(songs)
-    this.all = union(this.all, (<Song[]>[]).concat(songs))
+    this.all = union(this.all, arrayify(songs))
   },
 
   /**
@@ -65,7 +67,7 @@ export const queueStore = {
    * @param {Song|Song[]} songs The song, or an array of songs
    */
   queueToTop (songs: Song | Song[]): void {
-    this.all = union((<Song[]>[]).concat(songs), this.all)
+    this.all = union(arrayify(songs), this.all)
   },
 
   /**
@@ -73,7 +75,7 @@ export const queueStore = {
    * @param {Song|Song[]} songs The song, or an array of songs
    */
   replaceQueueWith (songs: Song | Song[]): void {
-    this.all = (<Song[]>[]).concat(songs)
+    this.all = arrayify(songs)
   },
 
   /**
@@ -81,7 +83,7 @@ export const queueStore = {
    * @param {Song|Song[]} songs The song, or an array of songs
    */
   queueAfterCurrent (songs: Song | Song[]): void {
-    songs = (<Song[]>[]).concat(songs)
+    songs = arrayify(songs)
 
     if (!this.current || !this.all.length) {
       return this.queue(songs)
@@ -95,7 +97,7 @@ export const queueStore = {
   },
 
   unqueue (songs: Song | Song[]): void {
-    this.all = difference(this.all, (<Song[]>[]).concat(songs))
+    this.all = difference(this.all, arrayify(songs))
   },
 
   /**
@@ -106,7 +108,7 @@ export const queueStore = {
    */
   move (songs: Song | Song[], target: Song): void {
     const targetIndex = this.indexOf(target)
-    const movedSongs = (<Song[]>[]).concat(songs)
+    const movedSongs = arrayify(songs)
 
     movedSongs.forEach(song => {
       this.all.splice(this.indexOf(song), 1)

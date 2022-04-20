@@ -1,5 +1,6 @@
 import { difference, union } from 'lodash'
 import { http } from '@/services'
+import { arrayify } from '@/utils'
 
 export const favoriteStore = {
   state: {
@@ -29,14 +30,14 @@ export const favoriteStore = {
    * Add a song/songs into the store.
    */
   add (songs: Song | Song[]): void {
-    this.all = union(this.all, (<Song[]>[]).concat(songs))
+    this.all = union(this.all, arrayify(songs))
   },
 
   /**
    * Remove a song/songs from the store.
    */
   remove (songs: Song | Song[]): void {
-    this.all = difference(this.all, (<Song[]>[]).concat(songs))
+    this.all = difference(this.all, arrayify(songs))
   },
 
   clear (): void {

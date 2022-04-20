@@ -1,11 +1,11 @@
-import Vue from 'vue'
+import { reactive } from 'vue'
 import slugify from 'slugify'
-import { without, take, remove, orderBy, unionBy } from 'lodash'
+import { orderBy, remove, take, unionBy, without } from 'lodash'
 import isMobile from 'ismobilejs'
 
-import { secondsToHis, alerts, pluralize, use } from '@/utils'
-import { http, auth, ls } from '@/services'
-import { sharedStore, favoriteStore, albumStore, artistStore, preferenceStore } from '.'
+import { alerts, arrayify, pluralize, secondsToHis, use } from '@/utils'
+import { auth, http, ls } from '@/services'
+import { albumStore, artistStore, favoriteStore, preferenceStore, sharedStore } from '.'
 import stub from '@/stubs/song'
 
 interface BroadcastSongData {
@@ -34,10 +34,10 @@ export const songStore = {
   stub,
   cache: {} as { [key: string]: Song },
 
-  state: {
+  state: reactive({
     songs: [] as Song[],
     recentlyPlayed: [] as Song[]
-  },
+  }),
 
   init (songs: Song[]): void {
     this.all = songs
@@ -107,7 +107,7 @@ export const songStore = {
   },
 
   getFormattedLength (songs: Song[]): string {
-    return <string>this.getLength(songs, true)
+    return String(this.getLength(songs, true))
   },
 
   get all (): Song[] {
@@ -124,7 +124,7 @@ export const songStore = {
 
   byIds (ids: string[]): Song[] {
     const songs = [] as Song[]
-    ([] as string[]).concat(ids).forEach(id => use(this.byId(id), song => songs.push(song!)))
+    arrayify(ids).forEach(id => use(this.byId(id), song => songs.push(song!)))
     return songs
   },
 

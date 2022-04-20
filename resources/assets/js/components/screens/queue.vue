@@ -1,8 +1,8 @@
 <template>
   <section id="queueWrapper">
-    <screen-header>
+    <ScreenHeader>
       Current Queue
-      <controls-toggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
         <span v-if="meta.songCount" data-test="list-meta">
@@ -11,27 +11,27 @@
       </template>
 
       <template v-slot:controls>
-        <song-list-controls
-          v-if="state.songs.length && (!isPhone || showingControls)"
+        <SongListControls
+          v-if="songs.length && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
           @clearQueue="clearQueue"
-          :songs="state.songs"
+          :songs="songs"
           :config="songListControlConfig"
           :selectedSongs="selectedSongs"
         />
       </template>
-    </screen-header>
+    </ScreenHeader>
 
-    <song-list
-      v-if="state.songs.length"
-      :items="state.songs"
+    <SongList
+      v-if="songs.length"
+      :items="songs"
       :config="{ sortable: false }"
       type="queue"
       ref="songList"
     />
 
-    <screen-placeholder v-else>
+    <ScreenPlaceholder v-else>
       <template v-slot:icon>
         <i class="fa fa-coffee"></i>
       </template>
@@ -41,7 +41,7 @@
         How about
         <a class="start" @click.prevent="shuffleAll">shuffling all songs</a>?
       </span>
-    </screen-placeholder>
+    </ScreenPlaceholder>
   </section>
 </template>
 
@@ -50,7 +50,7 @@ import { pluralize } from '@/utils'
 import { queueStore, songStore } from '@/stores'
 import { playback } from '@/services'
 import { useSongList } from '@/composables'
-import { computed, defineAsyncComponent, reactive } from 'vue'
+import { computed, defineAsyncComponent, reactive, toRef } from 'vue'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
 const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
@@ -71,14 +71,13 @@ const {
   clearQueue: true
 })
 
-const state = reactive(queueStore.state)
+const songs = toRef(queueStore.state, 'songs')
 const songState = reactive(songStore.state)
 
 const shouldShowShufflingAllLink = computed(() => songState.songs.length > 0)
 
 const playAll = () => {
-  // @ts-ignore
-  playback.queueAndPlay(state.songs.length ? songList.value?.getAllSongsWithSort() : songStore.all)
+  playback.queueAndPlay(songs.value.length ? songList.value.getAllSongsWithSort() : songStore.all)
 }
 
 const shuffleAll = async () => await playback.queueAndPlay(songStore.all, true)

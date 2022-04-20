@@ -2,7 +2,7 @@ import { difference, take, orderBy } from 'lodash'
 
 import { http } from '@/services'
 import stub from '@/stubs/artist'
-import { use } from '@/utils'
+import { arrayify, use } from '@/utils'
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
@@ -50,7 +50,7 @@ export const artistStore = {
   },
 
   add (artists: Artist | Artist[]) {
-    (<Artist[]>[]).concat(artists).forEach(artist => {
+    arrayify(artists).forEach(artist => {
       this.setupArtist(artist)
       artist.playCount = artist.songs.reduce((count, song) => count + song.playCount, 0)
       this.all.push(artist)
