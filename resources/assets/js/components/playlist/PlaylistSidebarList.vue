@@ -4,7 +4,7 @@
       <i
         :class="{ creating }"
         @click.prevent.stop="toggleContextMenu"
-        class="fa fa-plus-circle create"
+        class="fa fa-plus-circle control create"
         role="button"
         title="Create a new playlist"
         data-testid="sidebar-create-playlist-btn"

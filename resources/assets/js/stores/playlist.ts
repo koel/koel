@@ -20,7 +20,7 @@ export const playlistStore = {
     this.all.forEach(playlist => this.setupPlaylist(playlist))
   },
 
-  setupPlaylist (playlist: Playlist): void {
+  setupPlaylist (playlist: Playlist) {
     playlist.songs = []
 
     if (playlist.is_smart) {
@@ -31,7 +31,7 @@ export const playlistStore = {
   /**
    * Set up a smart playlist by properly construct its structure from serialized database values.
    */
-  setupSmartPlaylist: (playlist: Playlist): void => {
+  setupSmartPlaylist: (playlist: Playlist) => {
     playlist.rules.forEach(group => {
       group.rules.forEach(rule => {
         const model = models.find(model => model.name === rule.model as unknown as string)
@@ -54,7 +54,7 @@ export const playlistStore = {
     this.state.playlists = value
   },
 
-  async fetchSongs (playlist: Playlist): Promise<Playlist> {
+  async fetchSongs (playlist: Playlist) {
     const songIds = await http.get<string[]>(`playlist/${playlist.id}/songs`)
     playlist.songs = songStore.byIds(songIds)
     playlist.populated = true
@@ -62,7 +62,7 @@ export const playlistStore = {
     return playlist
   },
 
-  byId (id: number): Playlist | undefined {
+  byId (id: number) {
     return this.all.find(playlist => playlist.id === id)
   },
 
@@ -70,7 +70,7 @@ export const playlistStore = {
    * Populate the playlist content by "objectifying" all songs in the playlist.
    * (Initially, a playlist only contain the song IDs).
    */
-  populateContent: (playlist: Playlist): void => {
+  populateContent: (playlist: Playlist) => {
     playlist.songs = songStore.byIds(<string[]><unknown>playlist.songs)
   },
 
@@ -92,7 +92,7 @@ export const playlistStore = {
     this.all = difference(this.all, arrayify(playlists))
   },
 
-  async store (name: string, songs: Song[] = [], rules: SmartPlaylistRuleGroup[] = []): Promise<Playlist> {
+  async store (name: string, songs: Song[] = [], rules: SmartPlaylistRuleGroup[] = []) {
     const songIds = songs.map(song => song.id)
     const serializedRules = this.serializeSmartPlaylistRulesForStorage(rules)
 
@@ -105,12 +105,12 @@ export const playlistStore = {
     return playlist
   },
 
-  async delete (playlist: Playlist): Promise<void> {
+  async delete (playlist: Playlist) {
     await http.delete(`playlist/${playlist.id}`)
     this.remove(playlist)
   },
 
-  async addSongs (playlist: Playlist, songs: Song[]): Promise<Playlist> {
+  async addSongs (playlist: Playlist, songs: Song[]) {
     if (playlist.is_smart) {
       return playlist
     }
@@ -132,7 +132,7 @@ export const playlistStore = {
     return playlist
   },
 
-  removeSongs: async (playlist: Playlist, songs: Song[]): Promise<Playlist> => {
+  removeSongs: async (playlist: Playlist, songs: Song[]) => {
     if (playlist.is_smart) {
       return playlist
     }
@@ -144,7 +144,7 @@ export const playlistStore = {
     return playlist
   },
 
-  async update (playlist: Playlist): Promise<Playlist> {
+  async update (playlist: Playlist) {
     const serializedRules = this.serializeSmartPlaylistRulesForStorage(playlist.rules)
 
     await http.put(`playlist/${playlist.id}`, { name: playlist.name, rules: serializedRules })
@@ -186,7 +186,7 @@ export const playlistStore = {
     return serializedGroups
   },
 
-  sort: (playlists: Playlist[]): Playlist[] => {
+  sort: (playlists: Playlist[]) => {
     return orderBy(playlists, ['is_smart', 'name'], ['desc', 'asc'])
   }
 }

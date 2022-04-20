@@ -75,7 +75,7 @@ const submit = async () => {
   loading.value = true
   mutatedPlaylist.rules = collectedRuleGroups.value
   await playlistStore.update(mutatedPlaylist)
-  Object.assign(playlist, mutatedPlaylist)
+  Object.assign(playlist.value, mutatedPlaylist)
   loading.value = false
   close()
   await playlistStore.fetchSongs(playlist.value)
