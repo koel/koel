@@ -13,7 +13,7 @@ import { defineAsyncComponent } from 'vue'
 const Sidebar = defineAsyncComponent(() => import('@/components/layout/main-wrapper/sidebar.vue'))
 const MainContent = defineAsyncComponent(() => import('@/components/layout/main-wrapper/main-content.vue'))
 const ExtraPanel = defineAsyncComponent(() => import('@/components/layout/main-wrapper/extra-panel.vue'))
-const ModalWrapper = defineAsyncComponent(() => import('@/components/layout/modal-wrapper.vue'))
+const ModalWrapper = defineAsyncComponent(() => import('@/components/layout/ModalWrapper.vue'))
 </script>
 
 <style lang="scss">

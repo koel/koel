@@ -8,8 +8,8 @@
 </script>
 
 <style lang="scss" scoped>
-form {
-  width: 520px;
+.smart-playlist-form {
+  width: 560px;
 }
 
 .rules {

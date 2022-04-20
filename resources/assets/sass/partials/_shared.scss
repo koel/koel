@@ -231,7 +231,7 @@ label {
 
   form {
     position: relative;
-    width: 460px;
+    min-width: 460px;
     background: var(--color-bg-primary);
     border-radius: 4px;
 

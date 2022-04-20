@@ -209,7 +209,7 @@ interface SmartPlaylistModel {
   unit?: string
 }
 
-interface SmartPlaylistTypes {
+interface SmartPlaylistInputTypes {
   [propName: string]: any[]
 }
 

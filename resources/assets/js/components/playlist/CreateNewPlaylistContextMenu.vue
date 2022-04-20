@@ -22,4 +22,6 @@ const createSmartPlaylist = () => {
   eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM')
   close()
 }
+
+defineExpose({ open })
 </script>

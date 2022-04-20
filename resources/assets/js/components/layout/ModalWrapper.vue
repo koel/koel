@@ -37,8 +37,8 @@ declare type ModalName =
   | 'edit-song-form'
   | 'about-dialog'
 
-const CreateSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/create-form.vue'))
-const EditSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/edit-form.vue'))
+const CreateSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistCreateForm.vue'))
+const EditSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistEditForm.vue'))
 const AddUserForm = defineAsyncComponent(() => import('@/components/user/add-form.vue'))
 const EditUserForm = defineAsyncComponent(() => import('@/components/user/edit-form.vue'))
 const EditSongForm = defineAsyncComponent(() => import('@/components/song/edit-form.vue'))

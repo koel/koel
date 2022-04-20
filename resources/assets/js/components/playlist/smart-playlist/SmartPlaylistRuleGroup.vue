@@ -2,18 +2,14 @@
   <div class="rule-group" data-test="smart-playlist-rule-group">
     <div class="group-banner">
       <span v-if="isFirstGroup">
-        Include songs that match
-        <strong>all</strong>
-        of these criteria
+        Include songs that match <strong>all</strong> of these criteria
       </span>
       <span v-else>
-        or
-        <strong>all</strong>
-        of these criteria
+        or <strong>all</strong> of these criteria
       </span>
     </div>
 
-    <rule
+    <Rule
       :key="rule.id"
       :rule="rule"
       @input="onRuleChanged"
@@ -21,10 +17,10 @@
       v-for="rule in mutatedGroup.rules"
     />
 
-    <btn @click.prevent="addRule" class="btn-add-rule" green small uppercase>
+    <Btn @click.prevent="addRule" class="btn-add-rule" green small uppercase>
       <i class="fa fa-plus"></i>
       Rule
-    </btn>
+    </Btn>
   </div>
 </template>
 
@@ -36,9 +32,9 @@ const props = defineProps<{ group: SmartPlaylistRuleGroup, isFirstGroup: boolean
 const { group, isFirstGroup } = toRefs(props)
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
-const Rule = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/rule.vue'))
+const Rule = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRule.vue'))
 
-const mutatedGroup = reactive<SmartPlaylistRuleGroup>(JSON.parse(JSON.stringify(group)))
+const mutatedGroup = reactive<SmartPlaylistRuleGroup>(JSON.parse(JSON.stringify(group.value)))
 
 const emit = defineEmits(['input'])
 
@@ -48,6 +44,7 @@ const addRule = () => mutatedGroup.rules.push(playlistStore.createEmptySmartPlay
 
 const onRuleChanged = (data: SmartPlaylistRule) => {
   Object.assign(mutatedGroup.rules.find(r => r.id === data.id), data)
+  console.log(mutatedGroup)
   notifyParentForUpdate()
 }
 

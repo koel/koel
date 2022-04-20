@@ -1,0 +1,25 @@
+<template>
+  <input :type="type" v-model="value" name="value[]" required>
+</template>
+
+<script lang="ts" setup>
+import { computed, toRefs } from 'vue'
+import inputTypes from '@/config/smart-playlist/inputTypes'
+
+const props = withDefaults(defineProps<{ type?: keyof typeof inputTypes, value?: any }>(), { value: undefined })
+const { type } = toRefs(props)
+
+const emit = defineEmits(['update:modelValue'])
+
+const value = computed({
+  get: () => props.value,
+  set: value => emit('update:modelValue', value)
+})
+</script>
+
+<style lang="scss" scoped>
+input {
+  display: inline-block;
+  width: 140px !important;
+}
+</style>

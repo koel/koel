@@ -3,7 +3,7 @@
     <h1>Playlists
       <i
         :class="{ creating }"
-        @click="toggleContextMenu"
+        @click.prevent.stop="toggleContextMenu"
         class="fa fa-plus-circle create"
         role="button"
         title="Create a new playlist"
@@ -40,14 +40,13 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, reactive, ref } from 'vue'
-import { BaseContextMenu } from 'koel/types/ui'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 
 const PlaylistItem = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarItem.vue'))
-const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/create-new-context-menu.vue'))
+const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreateNewPlaylistContextMenu.vue'))
 
-const contextMenu = ref<BaseContextMenu | null>(null)
+const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
 const playlistState = reactive(playlistStore.state)
 const favoriteState = reactive(favoriteStore.state)
@@ -66,7 +65,7 @@ const createPlaylist = async () => {
 
 const toggleContextMenu = async (event: MouseEvent) => {
   await nextTick()
-  if (creating) {
+  if (creating.value) {
     creating.value = false
   } else {
     contextMenu.value?.open(event.pageY, event.pageX)

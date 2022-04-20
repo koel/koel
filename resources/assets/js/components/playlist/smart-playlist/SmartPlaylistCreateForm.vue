@@ -2,24 +2,24 @@
   <FormBase>
     <div @keydown.esc="maybeClose">
       <SoundBar v-if="loading"/>
-      <form @submit.prevent="submit" v-else data-testid="edit-smart-playlist-form">
+      <form @submit.prevent="submit" v-else data-testid="create-smart-playlist-form">
         <header>
-          <h1>Edit Smart Playlist</h1>
+          <h1>New Smart Playlist</h1>
         </header>
 
         <div>
           <div class="form-row">
             <label>Name</label>
-            <input type="text" v-model="mutatedPlaylist.name" name="name" v-koel-focus required>
+            <input type="text" v-model="name" name="name" v-koel-focus required>
           </div>
 
           <div class="form-row rules">
             <RuleGroup
-              v-for="(group, index) in mutatedPlaylist.rules"
+              :group="group"
               :isFirstGroup="index === 0"
               :key="group.id"
-              :group="group"
               @input="onGroupChanged"
+              v-for="(group, index) in collectedRuleGroups"
             />
             <Btn @click.prevent="addGroup" class="btn-add-group" green small uppercase>
               <i class="fa fa-plus"></i> Group
@@ -29,7 +29,7 @@
 
         <footer>
           <Btn type="submit">Save</Btn>
-          <Btn white class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
+          <Btn class="btn-cancel" @click.prevent="maybeClose" white>Cancel</Btn>
         </footer>
       </form>
     </div>
@@ -37,31 +37,30 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs } from 'vue'
-import { cloneDeep, isEqual } from 'lodash'
+import { nextTick, ref } from 'vue'
 import { playlistStore } from '@/stores'
 import { alerts } from '@/utils'
-import { useSmartPlaylistForms } from '@/components/playlist/smart-playlist/useSmartPlaylistForms'
-
-const props = defineProps<{ playlist: Playlist }>()
-const { playlist } = toRefs(props)
-
-const mutatedPlaylist = reactive<Playlist>(cloneDeep(playlist.value))
+import router from '@/router'
+import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
 
 const {
   Btn,
   FormBase,
   RuleGroup,
   SoundBar,
-  ruleGroups,
+  collectedRuleGroups,
   loading,
   addGroup,
-  onGroupChanged,
-  close
-} = useSmartPlaylistForms(mutatedPlaylist.rules)
+  onGroupChanged
+} = useSmartPlaylistForm()
+
+const name = ref('')
+
+const emit = defineEmits(['close'])
+const close = () => emit('close')
 
 const maybeClose = () => {
-  if (isEqual(playlist, mutatedPlaylist)) {
+  if (!name.value && !collectedRuleGroups.value.length) {
     close()
     return
   }
@@ -71,11 +70,10 @@ const maybeClose = () => {
 
 const submit = async () => {
   loading.value = true
-  mutatedPlaylist.rules = ruleGroups.value
-  await playlistStore.update(mutatedPlaylist)
-  Object.assign(playlist, mutatedPlaylist)
+  const playlist = await playlistStore.store(name.value, [], collectedRuleGroups.value)
   loading.value = false
   close()
-  await playlistStore.fetchSongs(playlist.value)
+  await nextTick()
+  router.go(`playlist/${playlist.id}`)
 }
 </script>
