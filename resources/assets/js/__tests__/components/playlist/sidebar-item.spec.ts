@@ -1,4 +1,4 @@
-import Component from '@/components/playlist/sidebar-item.vue'
+import Component from '@/components/playlist/PlaylistSidebarItem.vue'
 import factory from '@/__tests__/factory'
 import { shallow, mount } from '@/__tests__/adapter'
 

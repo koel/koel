@@ -6,14 +6,12 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from 'vue'
+import { Ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { useContextMenu } from '@/composables'
 
-const { base, BaseContextMenu, open, close } = useContextMenu()
-
-const props = defineProps<{ playlist: Playlist }>()
-const { playlist } = toRefs(props)
+const { context, base, BaseContextMenu, open, close } = useContextMenu()
+const playlist = toRef(context, 'playlist') as Ref<Playlist>
 
 const emit = defineEmits(['edit'])
 
@@ -26,4 +24,6 @@ const deletePlaylist = () => {
   eventBus.emit('PLAYLIST_DELETE', playlist.value)
   close()
 }
+
+defineExpose({ open })
 </script>

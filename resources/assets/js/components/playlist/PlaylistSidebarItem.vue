@@ -5,7 +5,7 @@
     <a
       :class="{ active }"
       :href="url"
-      @contextmenu.prevent="openContextMenu"
+      @contextmenu.prevent.stop="openContextMenu"
       v-koel-droppable="handleDrop"
     >{{ playlist.name }}</a>
 
@@ -28,17 +28,16 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, nextTick, ref, toRefs } from 'vue'
-import { BaseContextMenu } from 'koel/types/ui'
 import { eventBus } from '@/utils'
 import router from '@/router'
 import { favoriteStore, playlistStore, songStore } from '@/stores'
 
 type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
 
-const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/item-context-menu.vue'))
+const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 const NameEditor = defineAsyncComponent(() => import('@/components/playlist/name-editor.vue'))
 
-const contextMenu = ref<BaseContextMenu | null>(null)
+const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
 const props = withDefaults(defineProps<{ playlist: Playlist, type: PlaylistType }>(), { type: 'playlist' })
 const { playlist, type } = toRefs(props)
@@ -114,7 +113,7 @@ const openContextMenu = async (event: MouseEvent) => {
     showingContextMenu.value = true
     await nextTick()
     router.go(`/playlist/${playlist.value.id}`)
-    contextMenu.value?.open(event.pageY, event.pageX)
+    contextMenu.value?.open(event.pageY, event.pageX, { playlist })
   }
 }
 

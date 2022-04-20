@@ -44,7 +44,7 @@ import { BaseContextMenu } from 'koel/types/ui'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 
-const PlaylistItem = defineAsyncComponent(() => import('@/components/playlist/sidebar-item.vue'))
+const PlaylistItem = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarItem.vue'))
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/create-new-context-menu.vue'))
 
 const contextMenu = ref<BaseContextMenu | null>(null)
