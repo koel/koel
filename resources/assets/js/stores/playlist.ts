@@ -6,13 +6,14 @@ import { alerts, pluralize, arrayify } from '@/utils'
 import { songStore } from '.'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
+import { reactive } from 'vue'
 
 export const playlistStore = {
   stub,
 
-  state: {
+  state: reactive({
     playlists: [] as Playlist[]
-  },
+  }),
 
   init (playlists: Playlist[]) {
     this.all = this.sort(playlists)

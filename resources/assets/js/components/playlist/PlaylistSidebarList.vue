@@ -30,7 +30,7 @@
         :playlist="playlist"
         :key="playlist.id"
         type="playlist"
-        v-for="playlist in playlistState.playlists"
+        v-for="playlist in playlists"
       />
     </ul>
 
@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, reactive, ref } from 'vue'
+import { defineAsyncComponent, nextTick, reactive, ref, toRef } from 'vue'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 
@@ -48,7 +48,7 @@ const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/Cre
 
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
-const playlistState = reactive(playlistStore.state)
+const playlists = toRef(playlistStore.state, 'playlists')
 const favoriteState = reactive(favoriteStore.state)
 const creating = ref(false)
 const newName = ref('')

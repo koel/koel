@@ -44,7 +44,6 @@ const addRule = () => mutatedGroup.rules.push(playlistStore.createEmptySmartPlay
 
 const onRuleChanged = (data: SmartPlaylistRule) => {
   Object.assign(mutatedGroup.rules.find(r => r.id === data.id), data)
-  console.log(mutatedGroup)
   notifyParentForUpdate()
 }
 

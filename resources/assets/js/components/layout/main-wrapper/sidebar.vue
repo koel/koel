@@ -59,7 +59,7 @@ import isMobile from 'ismobilejs'
 import { eventBus } from '@/utils'
 import { queueStore, sharedStore, songStore, userStore } from '@/stores'
 
-const PlaylistList = defineAsyncComponent(() => import('@/components/playlist/sidebar-list.vue'))
+const PlaylistList = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarList.vue'))
 
 const currentView = ref<MainViewName>('Home')
 const userState = reactive(userStore.state)
