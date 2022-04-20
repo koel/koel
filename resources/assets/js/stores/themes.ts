@@ -1,5 +1,14 @@
 import { preferenceStore as preferences } from '@/stores/preference'
 
+import bgRosePetal from '@/../img/themes/bg-rose-petals.svg'
+import bgPurpleWaves from '@/../img/themes/bg-purple-waves.svg'
+import bgPopCulture from '@/../img/themes/bg-pop-culture.jpg'
+import bgJungle from '@/../img/themes/bg-jungle.jpg'
+import bgMountains from '@/../img/themes/bg-mountains.jpg'
+import bgPines from '@/../img/themes/bg-pines.jpg'
+import bgNemo from '@/../img/themes/bg-nemo.jpg'
+import bgCat from '@/../img/themes/bg-cat.jpg'
+
 export const themeStore = {
   state: {
     themes: [
@@ -39,47 +48,47 @@ export const themeStore = {
         id: 'rose-petals',
         name: '…Has Its Thorns',
         thumbnailColor: '#7d083b',
-        thumbnailUrl: require('@/../img/themes/bg-rose-petals.svg')
+        thumbnailUrl: bgRosePetal
       },
       {
         id: 'purple-waves',
         name: 'Waves of Fortune',
         thumbnailColor: '#44115c',
-        thumbnailUrl: require('@/../img/themes/bg-purple-waves.svg')
+        thumbnailUrl: bgPurpleWaves
       },
       {
         id: 'pop-culture',
         thumbnailColor: '#ad0937',
-        thumbnailUrl: require('@/../img/themes/bg-pop-culture.jpg')
+        thumbnailUrl: bgPopCulture
       },
       {
         id: 'jungle',
         name: 'Welcome to the Jungle',
         thumbnailColor: '#0f0f03',
-        thumbnailUrl: require('@/../img/themes/bg-jungle.jpg')
+        thumbnailUrl: bgJungle
       },
       {
         id: 'mountains',
         name: 'Rocky Mountain High',
         thumbnailColor: '#0e2656',
-        thumbnailUrl: require('@/../img/themes/bg-mountains.jpg')
+        thumbnailUrl: bgMountains
       },
       {
         id: 'pines',
         name: 'In the Pines',
         thumbnailColor: '#06090c',
-        thumbnailUrl: require('@/../img/themes/bg-pines.jpg')
+        thumbnailUrl: bgPines
       },
       {
         id: 'nemo',
         thumbnailColor: '#031724',
-        thumbnailUrl: require('@/../img/themes/bg-nemo.jpg')
+        thumbnailUrl: bgNemo
       },
       {
         id: 'cat',
         name: 'What\'s New Pussycat?',
         thumbnailColor: '#000',
-        thumbnailUrl: require('@/../img/themes/bg-cat.jpg')
+        thumbnailUrl: bgCat
       }
     ] as Theme[]
   },
