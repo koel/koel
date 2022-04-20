@@ -16,8 +16,8 @@
   </template>
 
   <SongContextMenu ref="songContextMenu"/>
-  <AlbumContextMenu :album="contextMenuAlbum" ref="albumContextMenu"/>
-  <ArtistContextMenu :artist="contextMenuArtist" ref="artistContextMenu"/>
+  <AlbumContextMenu ref="albumContextMenu"/>
+  <ArtistContextMenu ref="artistContextMenu"/>
 </template>
 
 <script lang="ts" setup>
@@ -36,18 +36,16 @@ import { favoriteStore, preferenceStore as preferences, queueStore, sharedStore 
 import { auth, playback, socket } from '@/services'
 
 const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
-const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/context-menu.vue'))
-const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/context-menu.vue'))
+const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
+const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/support-koel.vue'))
-
-const authenticated = ref(false)
-const contextMenuAlbum = ref<Album>()
-const contextMenuArtist = ref<Artist>()
 
 const overlay = ref<HTMLElement>()
 const songContextMenu = ref<InstanceType<typeof SongContextMenu>>()
 const albumContextMenu = ref<InstanceType<typeof AlbumContextMenu>>()
 const artistContextMenu = ref<InstanceType<typeof ArtistContextMenu>>()
+
+const authenticated = ref(false)
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
@@ -89,15 +87,13 @@ eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, songs: Song | S
 })
 
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, album: Album) => {
-  contextMenuAlbum.value = album
   await nextTick()
-  albumContextMenu.value?.open(e.pageY, e.pageX)
+  albumContextMenu.value?.open(e.pageY, e.pageX, { album })
 })
 
 eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, artist: Artist) => {
-  contextMenuArtist.value = artist
   await nextTick()
-  artistContextMenu.value?.open(e.pageY, e.pageX)
+  artistContextMenu.value?.open(e.pageY, e.pageX, { artist })
 })
 
 const init = async () => {

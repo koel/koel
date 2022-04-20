@@ -15,16 +15,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, toRefs } from 'vue'
+import { computed, reactive, Ref, toRef } from 'vue'
 import { albumStore, artistStore, sharedStore } from '@/stores'
 import { download as downloadService, playback } from '@/services'
 import { useContextMenu } from '@/composables'
 import router from '@/router'
 
-const { base, BaseContextMenu, open, close } = useContextMenu()
+const { context, base, BaseContextMenu, open, close } = useContextMenu()
 
-const props = defineProps<{ album: Album }>()
-const { album } = toRefs(props)
+const album = toRef(context, 'album') as Ref<Album>
 
 const sharedState = reactive(sharedStore.state)
 

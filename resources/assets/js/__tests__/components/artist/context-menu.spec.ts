@@ -1,4 +1,4 @@
-import Component from '@/components/artist/context-menu.vue'
+import Component from '@/components/artist/ArtistContextMenu.vue'
 import factory from '@/__tests__/factory'
 import { playback, download } from '@/services'
 import { sharedStore } from '@/stores'
