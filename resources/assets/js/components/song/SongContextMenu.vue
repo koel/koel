@@ -39,22 +39,22 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, toRefs } from 'vue'
+import { computed, reactive, Ref, toRef, toRefs, watchEffect } from 'vue'
 import { copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
 import { playlistStore, queueStore, sharedStore, songStore, userStore } from '@/stores'
 import { download as downloadService, playback } from '@/services'
 import router from '@/router'
 import { useContextMenu, useSongMenuMethods } from '@/composables'
 
-const props = defineProps<{ songs: Song[] }>()
-const { songs } = toRefs(props)
-
 const {
+  context,
   base,
   BaseContextMenu,
   open,
   close
 } = useContextMenu()
+
+const songs = toRef(context, 'songs') as Ref<Song[]>
 
 const {
   queueSongsAfterCurrent,
@@ -62,7 +62,7 @@ const {
   queueSongsToTop,
   addSongsToFavorite,
   addSongsToExistingPlaylist
-} = useSongMenuMethods(songs.value, close)
+} = useSongMenuMethods(songs, close)
 
 const playlistState = reactive(playlistStore.state)
 const sharedState = reactive(sharedStore.state)

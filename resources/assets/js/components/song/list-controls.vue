@@ -97,7 +97,7 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
 
-const AddToMenu = defineAsyncComponent(() => import('./add-to-menu.vue'))
+const AddToMenu = defineAsyncComponent(() => import('./AddToMenu.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/btn-group.vue'))
 

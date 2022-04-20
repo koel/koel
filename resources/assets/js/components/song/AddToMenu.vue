@@ -13,9 +13,9 @@
 
       <ul>
         <template v-if="config.queue">
-          <li class="after-current" @click="queueSongsAfterCurrent" role="button" tabindex="0">After Current Song</li>
-          <li class="bottom-queue" @click="queueSongsToBottom" role="button" tabindex="0">Bottom of Queue</li>
-          <li class="top-queue" @click="queueSongsToTop" role="button" tabindex="0">Top of Queue</li>
+          <li class="after-current" role="button" tabindex="0" @click="queueSongsAfterCurrent">After Current Song</li>
+          <li class="bottom-queue" role="button" tabindex="0" @click="queueSongsToBottom">Bottom of Queue</li>
+          <li class="top-queue" role="button" tabindex="0" @click="queueSongsToTop">Top of Queue</li>
         </template>
 
         <li
@@ -83,7 +83,7 @@ const {
   queueSongsToTop,
   addSongsToFavorite,
   addSongsToExistingPlaylist
-} = useSongMenuMethods(songs.value, close)
+} = useSongMenuMethods(songs, close)
 
 watch(songs, () => songs.value.length || close())
 

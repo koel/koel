@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import Component from '@/components/song/add-to-menu.vue'
+import Component from '@/components/song/AddToMenu.vue'
 import factory from '@/__tests__/factory'
 import { playlistStore, queueStore, favoriteStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'

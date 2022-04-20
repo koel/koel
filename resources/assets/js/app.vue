@@ -15,7 +15,7 @@
     </div>
   </template>
 
-  <SongContextMenu :songs="contextMenuSongs" ref="songContextMenu"/>
+  <SongContextMenu ref="songContextMenu"/>
   <AlbumContextMenu :album="contextMenuAlbum" ref="albumContextMenu"/>
   <ArtistContextMenu :artist="contextMenuArtist" ref="artistContextMenu"/>
 </template>
@@ -35,13 +35,12 @@ import { $, eventBus, hideOverlay, showOverlay, arrayify } from '@/utils'
 import { favoriteStore, preferenceStore as preferences, queueStore, sharedStore } from '@/stores'
 import { auth, playback, socket } from '@/services'
 
-const SongContextMenu = defineAsyncComponent(() => import('@/components/song/context-menu.vue'))
+const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/context-menu.vue'))
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/context-menu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/support-koel.vue'))
 
 const authenticated = ref(false)
-const contextMenuSongs = ref<Song[]>([])
 const contextMenuAlbum = ref<Album>()
 const contextMenuArtist = ref<Artist>()
 
@@ -85,9 +84,8 @@ onMounted(async () => {
 })
 
 eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, songs: Song | Song[]) => {
-  contextMenuSongs.value = arrayify(songs)
   await nextTick()
-  songContextMenu.value?.open(e.pageY, e.pageX)
+  songContextMenu.value?.open(e.pageY, e.pageX, { songs: arrayify(songs) })
 })
 
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, album: Album) => {

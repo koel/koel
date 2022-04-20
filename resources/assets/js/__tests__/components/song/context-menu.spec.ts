@@ -1,4 +1,4 @@
-import Component from '@/components/song/context-menu.vue'
+import Component from '@/components/song/SongContextMenu.vue'
 import { download } from '@/services'
 import { songStore, playlistStore, queueStore, favoriteStore, sharedStore, userStore } from '@/stores'
 import { eventBus } from '@/utils'
