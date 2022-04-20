@@ -1,7 +1,7 @@
 <template>
   <button
     class="control"
-    :class="preferences.repeatMode"
+    :class="mode"
     @click.prevent="changeRepeatMode"
     :title="`Change repeat mode (current mode: ${readableRepeatMode})`"
     data-testid="repeat-mode-switch"
@@ -11,13 +11,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive, toRef } from 'vue'
 import { playback } from '@/services'
 import { preferenceStore } from '@/stores'
 
-const preferences = reactive(preferenceStore.state)
+const mode = toRef(preferenceStore.state, 'repeatMode')
 
-const readableRepeatMode = computed(() => preferences.repeatMode
+const readableRepeatMode = computed(() => mode.value
   .split('_')
   .map(part => part[0].toUpperCase() + part.substring(1).toLowerCase())
   .join(' ')

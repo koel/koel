@@ -24,7 +24,7 @@
         </span>
       </span>
       <span class="favorite">
-        <like-button :song="song"/>
+        <LikeButton :song="song"/>
       </span>
     </span>
   </article>
@@ -36,7 +36,7 @@ import { eventBus, pluralize, startDragging } from '@/utils'
 import { queueStore } from '@/stores'
 import { playback } from '@/services'
 
-const LikeButton = defineAsyncComponent(() => import('@/components/song/like-button.vue'))
+const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
 
 const props = withDefaults(defineProps<{ song: Song, topPlayCount?: number }>(), { topPlayCount: 0 })
 

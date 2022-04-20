@@ -1,10 +1,10 @@
 <template>
-  <footer id="mainFooter" @contextmenu.prevent="requestContextMenu">
+  <footer id="mainFooter" @contextmenu.stop.prevent="requestContextMenu">
     <PlayerControls :song="song"/>
 
     <div class="media-info-wrap">
       <MiddlePane :song="song"/>
-      <OtherControls :song="song"/>
+      <ExtraControls :song="song"/>
     </div>
   </footer>
 </template>
@@ -13,9 +13,9 @@
 import { ref } from 'vue'
 import { eventBus } from '@/utils'
 
-import OtherControls from '@/components/layout/app-footer/other-controls.vue'
-import MiddlePane from '@/components/layout/app-footer/middle-pane.vue'
-import PlayerControls from '@/components/layout/app-footer/player-controls.vue'
+import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
+import MiddlePane from '@/components/layout/app-footer/FooterMiddlePane.vue'
+import PlayerControls from '@/components/layout/app-footer/FooterPlayerControls.vue'
 
 const song = ref<Song | null>(null)
 const viewingQueue = ref(false)

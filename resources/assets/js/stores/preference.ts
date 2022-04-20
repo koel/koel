@@ -1,5 +1,6 @@
 import { userStore } from '.'
 import { ls } from '@/services'
+import { reactive } from 'vue'
 
 interface Preferences extends Record<string, any> {
   volume: number
@@ -20,7 +21,7 @@ interface Preferences extends Record<string, any> {
 const preferenceStore = {
   storeKey: '',
 
-  state: {
+  state: reactive<Preferences>({
     volume: 7,
     notify: true,
     repeatMode: 'NO_REPEAT',
@@ -37,19 +38,19 @@ const preferenceStore = {
     supportBarNoBugging: false,
     showAlbumArtOverlay: true,
     theme: null
-  } as Preferences,
+  }),
 
   init (user?: User): void {
     const initUser = user || userStore.current
     this.storeKey = `preferences_${initUser.id}`
-    this.state = Object.assign(this.state, ls.get(this.storeKey, this.state))
+    Object.assign(this.state, ls.get(this.storeKey, this.state))
     this.setupProxy()
   },
 
   /**
    * Proxy the state properties, so that each can be directly accessed using the key.
    */
-  setupProxy (): void {
+  setupProxy () {
     Object.keys(this.state).forEach(key => {
       Object.defineProperty(this, key, {
         get: (): any => this.get(key),
@@ -59,16 +60,16 @@ const preferenceStore = {
     })
   },
 
-  set (key: keyof Preferences, val: any): void {
+  set (key: keyof Preferences, val: any) {
     this.state[key] = val
     this.save()
   },
 
-  get (key: string): any {
+  get (key: string) {
     return key in this.state ? this.state[key] : null
   },
 
-  save (): void {
+  save () {
     ls.set(this.storeKey, this.state)
   }
 }

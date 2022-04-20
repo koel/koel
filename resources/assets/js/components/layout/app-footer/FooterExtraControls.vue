@@ -1,68 +1,70 @@
 <template>
   <div class="other-controls" data-testid="other-controls">
-    <div class="wrapper" v-koel-clickaway="closeEqualizer">
-      <equalizer v-show="showEqualizer" v-if="useEqualizer"/>
+    <div v-koel-clickaway="closeEqualizer" class="wrapper">
+      <Equalizer v-show="showEqualizer" v-if="useEqualizer"/>
 
       <button
-        v-if="song && song.playbackState === 'Playing'"
-        @click.prevent="toggleVisualizer"
-        title="Click for a marvelous visualizer!"
+        v-if="song?.playbackState === 'Playing'"
         data-testid="toggle-visualizer-btn"
+        title="Click for a marvelous visualizer!"
+        type="button"
+        @click.prevent="toggleVisualizer"
       >
-        <sound-bar data-testid="sound-bar-play"/>
+        <SoundBar data-testid="sound-bar-play"/>
       </button>
 
-      <like-button v-if="song" :song="song" class="like"/>
+      <LikeButton v-if="song" :song="song" class="like"/>
 
       <button
-        :class="{ active: preferences.showExtraPanel }"
-        @click.prevent="toggleExtraPanel"
+        :class="{ active: showExtraPanel }"
         class="control text-uppercase"
-        title="View song information"
         data-testid="toggle-extra-panel-btn"
+        title="View song information"
+        type="button"
+        @click.prevent="toggleExtraPanel"
       >
         Info
       </button>
 
       <button
-        @click.prevent="toggleEqualizer"
         v-if="useEqualizer"
-        class="control equalizer"
-        :title="`${ showEqualizer ? 'Hide' : 'Show'} equalizer`"
         :class="{ active: showEqualizer }"
+        :title="`${ showEqualizer ? 'Hide' : 'Show'} equalizer`"
+        class="control equalizer"
         data-testid="toggle-equalizer-btn"
+        type="button"
+        @click.prevent="toggleEqualizer"
       >
         <i class="fa fa-sliders"></i>
       </button>
 
-      <a v-else class="queue control" :class="{ active: viewingQueue }" href="#!/queue">
+      <a v-else :class="{ active: viewingQueue }" class="queue control" href="#!/queue">
         <i class="fa fa-list-ol"></i>
       </a>
 
-      <repeat-mode-switch/>
-      <volume/>
+      <RepeatModeSwitch/>
+      <Volume/>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref, toRefs } from 'vue'
+import { defineAsyncComponent, reactive, ref, toRef, toRefs } from 'vue'
+import isMobile from 'ismobilejs'
 import { socket } from '@/services'
 import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'
-import { favoriteStore, preferenceStore, sharedStore, songStore } from '@/stores'
-import isMobile from 'ismobilejs'
+import { favoriteStore, preferenceStore, songStore } from '@/stores'
 
-const Equalizer = defineAsyncComponent(() => import('@/components/ui/equalizer.vue'))
+const Equalizer = defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
-const Volume = defineAsyncComponent(() => import('@/components/ui/volume.vue'))
-const LikeButton = defineAsyncComponent(() => import('@/components/song/like-button.vue'))
-const RepeatModeSwitch = defineAsyncComponent(() => import('@/components/ui/repeat-mode-switch.vue'))
+const Volume = defineAsyncComponent(() => import('@/components/ui/Volume.vue'))
+const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
+const RepeatModeSwitch = defineAsyncComponent(() => import('@/components/ui/RepeatModeSwitch.vue'))
 
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
-const sharedState = reactive(sharedStore.state)
-const preferences = reactive(preferenceStore.state)
+const showExtraPanel = toRef(preferenceStore.state, 'showExtraPanel')
 const showEqualizer = ref(false)
 const viewingQueue = ref(false)
 
@@ -73,7 +75,7 @@ const like = () => {
   }
 }
 
-const toggleExtraPanel = () => (preferenceStore.showExtraPanel = !preferences.showExtraPanel)
+const toggleExtraPanel = () => (preferenceStore.showExtraPanel = !showExtraPanel.value)
 const toggleEqualizer = () => (showEqualizer.value = !showEqualizer.value)
 const closeEqualizer = () => showEqualizer.value = false
 const toggleVisualizer = () => isMobile.any || eventBus.emit('TOGGLE_VISUALIZER')

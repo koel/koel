@@ -32,7 +32,7 @@ import { ComponentInternalInstance, computed, defineAsyncComponent, getCurrentIn
 import { playback } from '@/services'
 import { queueStore } from '@/stores'
 
-const LikeButton = defineAsyncComponent(() => import('@/components/song/like-button.vue'))
+const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
 
 const props = defineProps<{ item: SongProxy, columns: SongListColumn[] }>()
 const { item, columns } = toRefs(props)

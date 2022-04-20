@@ -12,6 +12,7 @@ import {
   queueStore,
   settingStore, themeStore
 } from '.'
+import { reactive } from 'vue'
 
 interface SharedState {
   albums: Album[]
@@ -36,12 +37,12 @@ interface SharedState {
 }
 
 export const sharedStore = {
-  state: {
+  state: reactive<SharedState>({
     albums: [],
     allowDownload: false,
     artists: [],
     cdnUrl: '',
-    currentUser: null as User | null,
+    currentUser: undefined,
     currentVersion: '',
     favorites: [],
     interactions: [],
@@ -56,7 +57,7 @@ export const sharedStore = {
     useLastfm: false,
     users: [],
     useYouTube: false
-  } as SharedState,
+  }),
 
   async init (): Promise<SharedState> {
     this.state = Object.assign(this.state, await http.get<SharedState>('data'))

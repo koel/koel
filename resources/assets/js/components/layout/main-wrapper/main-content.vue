@@ -52,7 +52,7 @@ const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/yo
 const UploadScreen = defineAsyncComponent(() => import('@/components/screens/upload.vue'))
 const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/excerpts.vue'))
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/song-results.vue'))
-const Visualizer = defineAsyncComponent(() => import('@/components/ui/visualizer.vue'))
+const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
 const preferences = reactive(preferenceStore.state)
 const sharedState = reactive(sharedStore.state)

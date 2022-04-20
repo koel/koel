@@ -320,8 +320,8 @@ interface SongProxy {
 }
 
 interface EqualizerPreset {
-  id: number
-  name: string
+  id?: number
+  name?: string
   preamp: number
   gains: number[]
 }

@@ -340,7 +340,7 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
       .noUi-handle {
         width: 16px;
         height: 2px;
-        left: 0;
+        left: -16px;
         top: 0;
       }
     }
