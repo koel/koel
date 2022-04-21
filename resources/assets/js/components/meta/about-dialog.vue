@@ -1,66 +1,62 @@
 <template>
-  <div class="about text-secondary" tabindex="0" v-koel-focus @keydown.esc="close" data-testid="about-modal">
+  <div v-koel-focus class="about text-secondary" data-testid="about-modal" tabindex="0" @keydown.esc="close">
     <header>
       <h1 class="text-white">About Koel</h1>
     </header>
 
     <main>
       <div class="logo">
-        <img src="@/../img/logo.svg" width="128" alt="Koel's logo">
+        <img alt="Koel's logo" src="@/../img/logo.svg" width="128">
       </div>
 
-      <p class="current-version">{{ sharedState.currentVersion }}</p>
+      <p class="current-version">{{ sharedStore.state.currentVersion }}</p>
 
       <p v-if="shouldDisplayVersionUpdate && hasNewVersion" class="new-version">
         <a :href="latestVersionUrl" target="_blank">
-          A new Koel version is available ({{ sharedState.latestVersion }}).
+          A new Koel version is available ({{ sharedStore.state.latestVersion }}).
         </a>
       </p>
 
       <p class="author">
-        Made with ❤️ by&nbsp;
-        <a href="https://github.com/phanan" target="_blank" rel="noopener">Phan An</a>
+        Made with ❤️ by
+        <a href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a>
         and quite a few
-        <a href="https://github.com/koel/core/graphs/contributors" target="_blank" rel="noopener">awesome</a>&nbsp;
-        <a href="https://github.com/koel/koel/graphs/contributors" target="_blank" rel="noopener">contributors</a>.
+        <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;
+        <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
       </p>
 
-      <p class="demo-credits" v-if="demo">
+      <p v-if="demo" class="demo-credits">
         Demo music provided by
-        <a href="https://www.bensound.com" target="_blank" rel="noopener">Bensound</a>.
+        <a href="https://www.bensound.com" rel="noopener" target="_blank">Bensound</a>.
       </p>
 
       <p>
         Loving Koel? Please consider supporting its development via
-        <a href="https://github.com/users/phanan/sponsorship" target="_blank" rel="noopener">GitHub Sponsors</a>
+        <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a>
         and/or
-        <a href="https://opencollective.com/koel" target="_blank" rel="noopener">OpenCollective</a>.
+        <a href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>.
       </p>
     </main>
 
     <footer>
-      <Btn @click.prevent="close" red rounded data-test="close-modal-btn">Close</Btn>
+      <Btn data-test="close-modal-btn" red rounded @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive } from 'vue'
 import compareVersions from 'compare-versions'
+import { defineAsyncComponent } from 'vue'
 import { sharedStore, userStore } from '@/stores'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
-const userState = reactive(userStore.state)
-const sharedState = reactive(sharedStore.state)
 const demo = NODE_ENV === 'demo'
 
-const latestVersionUrl = computed(() => `https://github.com/phanan/koel/releases/tag/${sharedState.latestVersion}`)
-const shouldDisplayVersionUpdate = computed(() => userState.current.is_admin)
+const latestVersionUrl = `https://github.com/phanan/koel/releases/tag/${sharedStore.state.latestVersion}`
+const shouldDisplayVersionUpdate = userStore.state.current.is_admin
 
-const hasNewVersion = computed(() => {
-  return compareVersions.compare(sharedState.latestVersion, sharedState.currentVersion, '>')
-})
+const hasNewVersion = compareVersions.compare(sharedStore.state.latestVersion, sharedStore.state.currentVersion, '>')
 
 const emit = defineEmits(['close'])
 const close = () => emit('close')
