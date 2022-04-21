@@ -1,5 +1,5 @@
 import Component from '@/components/album/info.vue'
-import AlbumThumbnail from '@/components/ui/album-artist-thumbnail.vue'
+import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 import factory from '@/__tests__/factory'
 import { shallow, mount } from '@/__tests__/adapter'
 

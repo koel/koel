@@ -34,7 +34,7 @@ import { playback } from '@/services'
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 
 const TrackList = defineAsyncComponent(() => import('./track-list.vue'))
-const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/album-artist-thumbnail.vue'))
+const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
 type DisplayMode = 'sidebar' | 'full'
 

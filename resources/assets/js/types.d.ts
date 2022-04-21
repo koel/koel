@@ -1,8 +1,19 @@
-declare module '*.jpg'
-declare module '*.png'
-declare module '*.svg'
+declare module '*.jpg' {
+  const value: string
+  export default value
+}
 
-declare type TAnyFunction = (...args: Array<unknown|any>) => unknown|any
+declare module '*.png' {
+  const value: string
+  export default value
+}
+
+declare module '*.svg' {
+  const value: string
+  export default value
+}
+
+declare type TAnyFunction = (...args: Array<unknown | any>) => unknown | any
 
 declare module 'vue-virtual-scroller' {
   const RecycleScroller: any
@@ -10,42 +21,55 @@ declare module 'vue-virtual-scroller' {
 }
 
 declare module 'alertify.js' {
-  function alert(msg: string): void
-  function confirm(msg: string, okFunc: TAnyFunction, cancelFunc?: TAnyFunction): void
-  function success(msg: string, cb?: TAnyFunction): void
-  function error(msg: string, cb?: TAnyFunction): void
-  function log(msg: string, cb?: TAnyFunction): void
-  function logPosition(position: string): void
-  function closeLogOnClick(close: boolean): void
+  function alert (msg: string): void
+
+  function confirm (msg: string, okFunc: TAnyFunction, cancelFunc?: TAnyFunction): void
+
+  function success (msg: string, cb?: TAnyFunction): void
+
+  function error (msg: string, cb?: TAnyFunction): void
+
+  function log (msg: string, cb?: TAnyFunction): void
+
+  function logPosition (position: string): void
+
+  function closeLogOnClick (close: boolean): void
 }
 
 declare module 'select' {
-  function select(el: HTMLElement): void
+  function select (el: HTMLElement): void
+
   export default select
 }
 
 declare module 'sketch-js' {
-  function create(o: { [key: string]: any }): any
+  function create (o: { [key: string]: any }): any
 }
 
 declare module 'youtube-player' {
   import { YouTubePlayer } from 'youtube-player/dist/types'
 
-  function createYouTubePlayer(name: string, options: { [propName: string]: any }): YouTubePlayer
+  function createYouTubePlayer (name: string, options: { [propName: string]: any }): YouTubePlayer
+
   export default createYouTubePlayer
 }
 
 interface Plyr {
   media: HTMLMediaElement
-  restart(): void
-  play(): void
-  pause(): void
-  seek(position: number): void
-  setVolume(volume: number): void
+
+  restart (): void
+
+  play (): void
+
+  pause (): void
+
+  seek (position: number): void
+
+  setVolume (volume: number): void
 }
 
 declare module 'plyr' {
-  function setup(el: HTMLMediaElement | HTMLMediaElement[], options: Record<string, any>): Plyr[]
+  function setup (el: HTMLMediaElement | HTMLMediaElement[], options: Record<string, any>): Plyr[]
 }
 
 declare module 'ismobilejs' {
@@ -55,7 +79,7 @@ declare module 'ismobilejs' {
 }
 
 declare module 'nouislider' {
-  function create(el: HTMLElement, config: {
+  function create (el: HTMLElement, config: {
     connect: boolean[]
     start: number
     range: {
@@ -77,7 +101,7 @@ declare module '*.vue' {
 }
 
 interface Constructable<T> {
-  new(...args: any): T
+  new (...args: any): T
 }
 
 interface Window {
@@ -93,7 +117,7 @@ interface Window {
 }
 
 interface FileSystemDirectoryReader {
-  readEntries(successCallback: TAnyFunction, errorCallback?: TAnyFunction): FileSystemEntry[]
+  readEntries (successCallback: TAnyFunction, errorCallback?: TAnyFunction): FileSystemEntry[]
 }
 
 interface FileSystemEntry {
@@ -102,8 +126,10 @@ interface FileSystemEntry {
   readonly name: string
   readonly fullPath: string
   readonly filesystem: FileSystem
-  createReader(): FileSystemDirectoryReader
-  file(successCallback: TAnyFunction): void
+
+  createReader (): FileSystemDirectoryReader
+
+  file (successCallback: TAnyFunction): void
 }
 
 interface AlbumTrack {
@@ -268,6 +294,7 @@ interface Interaction {
 
 interface SongListState {
   songs: Song[]
+
   [propName: string]: any
 }
 
@@ -280,22 +307,22 @@ declare module 'koel/types/ui' {
   import { ComponentInternalInstance } from 'vue'
 
   export type BaseContextMenu = ComponentInternalInstance & {
-    open(y: number, x: number): void
-    close(): void
+    open (y: number, x: number): void
+    close (): void
   }
 
   export type BasePlaylistMenu = ComponentInternalInstance & {
-    open(top: number, left: number): void
-    close(): void
+    open (top: number, left: number): void
+    close (): void
   }
 
   export type SongListComponent = ComponentInternalInstance & {
-    rowClicked(songItem: ComponentInternalInstance, event: MouseEvent): void
-    openContextMenu(songItem: ComponentInternalInstance, event: MouseEvent): void
-    removeDroppableState(event: DragEvent): void
-    handleDrop(songItem: ComponentInternalInstance, event: DragEvent): void
-    allowDrop(event: DragEvent): void
-    dragStart(songItem: ComponentInternalInstance, event: DragEvent): void
+    rowClicked (songItem: ComponentInternalInstance, event: MouseEvent): void
+    openContextMenu (songItem: ComponentInternalInstance, event: MouseEvent): void
+    removeDroppableState (event: DragEvent): void
+    handleDrop (songItem: ComponentInternalInstance, event: DragEvent): void
+    allowDrop (event: DragEvent): void
+    dragStart (songItem: ComponentInternalInstance, event: DragEvent): void
   }
 
   export interface TypeAheadConfig {
@@ -306,9 +333,9 @@ declare module 'koel/types/ui' {
 
   interface SliderElement extends HTMLElement {
     noUiSlider?: {
-      destroy(): void
-      on(eventName: 'change' | 'slide', handler: (value: number[], handle: number) => unknown): void
-      set(options: number | any[]): void
+      destroy (): void
+      on (eventName: 'change' | 'slide', handler: (value: number[], handle: number) => unknown): void
+      set (options: number | any[]): void
     }
   }
 }

@@ -1,5 +1,5 @@
 import Component from '@/components/artist/card.vue'
-import Thumbnail from '@/components/ui/album-artist-thumbnail.vue'
+import Thumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 import factory from '@/__tests__/factory'
 import { playback, download } from '@/services'
 import { sharedStore } from '@/stores'

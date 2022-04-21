@@ -1,4 +1,4 @@
-import Component from '@/components/ui/album-artist-thumbnail.vue'
+import Component from '@/components/ui/AlbumArtistThumbnail.vue'
 import factory from '@/__tests__/factory'
 import { playback } from '@/services'
 import { queueStore, sharedStore } from '@/stores'

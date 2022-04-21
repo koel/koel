@@ -1,6 +1,6 @@
 <template>
   <section id="artistWrapper">
-    <ScreenHeader>
+    <ScreenHeader has-thumbnail>
       {{ artist.name }}
       <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
@@ -93,7 +93,7 @@ const { length, fmtLength, image } = useArtistAttributes(artist.value)
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/info.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
-const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/album-artist-thumbnail.vue'))
+const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
 
 const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'album', 'length'] }

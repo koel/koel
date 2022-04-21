@@ -1,6 +1,6 @@
 <template>
   <section id="albumWrapper">
-    <ScreenHeader>
+    <ScreenHeader has-thumbnail>
       {{ album.name }}
       <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
@@ -68,7 +68,7 @@ import { useAlbumAttributes, useSongList } from '@/composables'
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/info.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
-const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/album-artist-thumbnail.vue'))
+const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
 
 const {

@@ -67,7 +67,7 @@ import { eventBus, pluralize, startDragging } from '@/utils'
 import { artistStore, sharedStore } from '@/stores'
 import { download as downloadService, playback } from '@/services'
 
-const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/album-artist-thumbnail.vue'))
+const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
 const props = withDefaults(defineProps<{ album: Album, layout: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { album, layout } = toRefs(props)

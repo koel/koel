@@ -33,7 +33,7 @@ import { playback } from '@/services'
 
 type DisplayMode = 'sidebar' | 'full'
 
-const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/album-artist-thumbnail.vue'))
+const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
 const props = withDefaults(defineProps<{ artist: Artist, mode: DisplayMode }>(), { mode: 'sidebar' })
 const { artist, mode } = toRefs(props)

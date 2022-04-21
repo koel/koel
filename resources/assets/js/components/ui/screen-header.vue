@@ -1,6 +1,6 @@
 <template>
   <header class="screen-header">
-    <div class="thumbnail-wrapper" :class="{ 'non-empty': hasThumbnail }" ref="thumbnailWrapper">
+    <div class="thumbnail-wrapper" :class="{ 'non-empty': hasThumbnail }">
       <slot name="thumbnail"></slot>
     </div>
 
@@ -18,15 +18,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onUpdated, ref } from 'vue'
+import { toRefs } from 'vue'
 
-const thumbnailWrapper = ref(null as unknown as HTMLElement)
-const hasThumbnail = ref(false)
-
-onUpdated(() => {
-  // until :empty is supported, we'll have to resort to this manual check
-  hasThumbnail.value = Boolean(thumbnailWrapper.value.children.length)
-})
+const props = withDefaults(defineProps<{ hasThumbnail?: boolean }>(), { hasThumbnail: false })
+const { hasThumbnail } = toRefs(props)
 </script>
 
 <style lang="scss" scoped>

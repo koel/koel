@@ -1,14 +1,10 @@
 <template>
-  <span
-    :style="{ backgroundImage: `url(${backgroundImageUrl})` }"
-    class="cover"
-    :class="{ droppable }"
-  >
+  <span :class="{ droppable }" :style="{ backgroundImage: `url(${image})` }" class="cover">
     <a
-      @click.prevent="playOrQueue"
       class="control control-play font-size-0"
       href
       role="button"
+      @click.prevent="playOrQueue"
       @dragenter.prevent="onDragEnter"
       @dragleave.prevent="onDragLeave"
       @drop.stop.prevent="onDrop"
@@ -20,8 +16,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, toRefs } from 'vue'
 import { orderBy } from 'lodash'
+import { computed, reactive, ref, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, userStore } from '@/stores'
 import { playback } from '@/services'
 import { fileReader, getDefaultCover } from '@/utils'
@@ -34,14 +30,16 @@ const { entity } = toRefs(props)
 const droppable = ref(false)
 const userState = reactive(userStore.state)
 
-const forAlbum = computed(() => 'artist' in entity)
+const forAlbum = computed(() => 'artist' in entity.value)
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
 
-const backgroundImageUrl = computed(() => forAlbum.value
-  ? (entity.value as Album).cover ? (entity.value as Album).cover : getDefaultCover()
-  : (entity.value as Artist).image ? (entity.value as Artist).image : getDefaultCover()
-)
+const image = computed(() => {
+  if (forAlbum.value) {
+    return (entity.value as Album).cover ? (entity.value as Album).cover : getDefaultCover()
+  }
 
+  return (entity.value as Artist).image ? (entity.value as Artist).image : getDefaultCover()
+})
 
 const buttonLabel = computed(() => forAlbum.value
   ? `Play all songs in the album ${entity.value.name}`
