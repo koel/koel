@@ -37,7 +37,7 @@ import HomeScreen from '@/components/screens/home.vue'
 import QueueScreen from '@/components/screens/queue.vue'
 import AlbumListScreen from '@/components/screens/album-list.vue'
 import ArtistListScreen from '@/components/screens/artist-list.vue'
-import AllSongsScreen from '@/components/screens/all-songs.vue'
+import AllSongsScreen from '@/components/screens/AllSongsScreen.vue'
 import PlaylistScreen from '@/components/screens/playlist.vue'
 import FavoritesScreen from '@/components/screens/favorites.vue'
 

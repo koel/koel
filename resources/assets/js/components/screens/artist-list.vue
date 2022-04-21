@@ -28,7 +28,7 @@ const {
   makeScrollable
 } = useInfiniteScroll(9)
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))
 const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/view-mode-switch.vue'))
 

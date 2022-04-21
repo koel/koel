@@ -1,5 +1,5 @@
 import router from '@/router'
-import Component from '@/components/song/list.vue'
+import Component from '@/components/song/SongList.vue'
 import factory from '@/__tests__/factory'
 import { queueStore } from '@/stores'
 import { playback } from '@/services'

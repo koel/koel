@@ -34,7 +34,7 @@ import { settingStore, sharedStore } from '@/stores'
 import { alerts, forceReloadWindow, hideOverlay, parseValidationError, showOverlay } from '@/utils'
 import router from '@/router'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 
 const state = settingStore.state

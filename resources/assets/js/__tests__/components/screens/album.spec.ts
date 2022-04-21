@@ -1,6 +1,6 @@
 import Component from '@/components/screens/album.vue'
-import SongList from '@/components/song/list.vue'
-import { download, albumInfo as albumInfoService, playback } from '@/services'
+import SongList from '@/components/song/SongList.vue'
+import { albumInfo as albumInfoService, download } from '@/services'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
 import { mount, shallow } from '@/__tests__/adapter'

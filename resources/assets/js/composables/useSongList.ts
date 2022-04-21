@@ -1,20 +1,20 @@
 /**
  * Add necessary functionalities into a view that contains a song-list component.
  */
-import { ComponentInternalInstance, getCurrentInstance, reactive, ref, watchEffect } from 'vue'
+import { ComponentInternalInstance, getCurrentInstance, reactive, Ref, ref, watchEffect } from 'vue'
 import isMobile from 'ismobilejs'
 
 import { playback } from '@/services'
 import { eventBus } from '@/utils'
 
-import ControlsToggler from '@/components/ui/screen-controls-toggler.vue'
-import SongList from '@/components/song/list.vue'
-import SongListControls from '@/components/song/list-controls.vue'
+import ControlsToggler from '@/components/ui/ScreenControlsToggler.vue'
+import SongList from '@/components/song/SongList.vue'
+import SongListControls from '@/components/song/SongListControls.vue'
 import { songStore } from '@/stores'
 
-export const useSongList = (controlsConfig: Partial<SongListControlsConfig> = {}) => {
+export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongListControlsConfig> = {}) => {
   const songList = ref<InstanceType<typeof SongList>>()
-  const state = reactive<SongListState>({ songs: [] })
+  const vm = getCurrentInstance()
 
   const meta = reactive<SongListMeta>({
     songCount: 0,
@@ -27,12 +27,12 @@ export const useSongList = (controlsConfig: Partial<SongListControlsConfig> = {}
   const isPhone = isMobile.phone
 
   watchEffect(() => {
-    if (!state.songs.length) {
+    if (!songs.value.length) {
       return
     }
 
-    meta.songCount = state.songs.length
-    meta.totalLength = songStore.getFormattedLength(state.songs)
+    meta.songCount = songs.value.length
+    meta.totalLength = songStore.getFormattedLength(songs.value)
   })
 
   const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
@@ -42,7 +42,7 @@ export const useSongList = (controlsConfig: Partial<SongListControlsConfig> = {}
 
   eventBus.on({
     SET_SELECTED_SONGS (songs: Song[], target: ComponentInternalInstance) {
-      target === getCurrentInstance() && (selectedSongs.value = songs)
+      target === vm && (selectedSongs.value = songs)
     }
   })
 
@@ -50,8 +50,8 @@ export const useSongList = (controlsConfig: Partial<SongListControlsConfig> = {}
     SongList,
     SongListControls,
     ControlsToggler,
+    songs,
     songList,
-    state,
     meta,
     selectedSongs,
     showingControls,

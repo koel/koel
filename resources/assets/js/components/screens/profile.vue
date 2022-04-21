@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ProfileForm = defineAsyncComponent(() => import('@/components/profile-preferences/profile-form.vue'))
 const LastfmIntegration = defineAsyncComponent(() => import('@/components/profile-preferences/lastfm-integration.vue'))
 const Preferences = defineAsyncComponent(() => import('@/components/profile-preferences/preferences.vue'))

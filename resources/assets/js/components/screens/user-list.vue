@@ -29,10 +29,10 @@ import isMobile from 'ismobilejs'
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
-const ControlsToggler = defineAsyncComponent(() => import('@/components/ui/screen-controls-toggler.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
+const ControlsToggler = defineAsyncComponent(() => import('@/components/ui/ScreenControlsToggler.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
-const BtnGroup = defineAsyncComponent(() => import('@/components/ui/btn-group.vue'))
+const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 const UserCard = defineAsyncComponent(() => import('@/components/user/card.vue'))
 
 const state = reactive(userStore.state)

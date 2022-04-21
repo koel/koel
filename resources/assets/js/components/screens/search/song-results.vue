@@ -10,34 +10,37 @@
 
       <template v-slot:controls>
         <SongListControls
-          v-if="state.songs.length && (!isPhone || showingControls)"
+          v-if="songs.length && (!isPhone || showingControls)"
           :config="songListControlConfig"
           :selectedSongs="selectedSongs"
-          :songs="state.songs"
+          :songs="songs"
           @playAll="playAll"
           @playSelected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" :items="state.songs" type="search-results"/>
+    <SongList ref="songList" :items="songs" type="search-results"/>
   </section>
 </template>
 
 <script lang="ts" setup>
+import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
 import { searchStore } from '@/stores'
-import { computed, defineAsyncComponent, reactive, toRefs } from 'vue'
 import { useSongList } from '@/composables'
 import { pluralize } from '@/utils'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
+
+const props = defineProps<{ q: string }>()
+const { q } = toRefs(props)
 
 const {
   SongList,
   SongListControls,
   ControlsToggler,
+  songs,
   songList,
-  state: songListState,
   meta,
   selectedSongs,
   showingControls,
@@ -46,12 +49,7 @@ const {
   playAll,
   playSelected,
   toggleControls
-} = useSongList()
-
-const props = defineProps<{ q: string }>()
-const { q } = toRefs(props)
-
-const state = reactive(searchStore.state)
+} = useSongList(toRef(searchStore.state, 'songs'))
 
 const decodedQ = computed(() => decodeURIComponent(q.value))
 

@@ -1,15 +1,16 @@
 import { difference, union } from 'lodash'
 import { http } from '@/services'
 import { arrayify } from '@/utils'
+import { reactive } from 'vue'
 
 export const favoriteStore = {
-  state: {
+  state: reactive({
     songs: [] as Song[],
     length: 0,
     fmtLength: ''
-  },
+  }),
 
-  get all (): Song[] {
+  get all () {
     return this.state.songs
   },
 
@@ -17,7 +18,7 @@ export const favoriteStore = {
     this.state.songs = value
   },
 
-  async toggleOne (song: Song): Promise<void> {
+  async toggleOne (song: Song) {
     // Don't wait for the HTTP response to update the status, just toggle right away.
     // This may cause a minor problem if the request fails somehow, but do we care?
     song.liked = !song.liked
@@ -26,17 +27,11 @@ export const favoriteStore = {
     await http.post<Song>('interaction/like', { song: song.id })
   },
 
-  /**
-   * Add a song/songs into the store.
-   */
-  add (songs: Song | Song[]): void {
+  add (songs: Song | Song[]) {
     this.all = union(this.all, arrayify(songs))
   },
 
-  /**
-   * Remove a song/songs from the store.
-   */
-  remove (songs: Song | Song[]): void {
+  remove (songs: Song | Song[]) {
     this.all = difference(this.all, arrayify(songs))
   },
 
@@ -44,7 +39,7 @@ export const favoriteStore = {
     this.all = []
   },
 
-  async like (songs: Song[]): Promise<void> {
+  async like (songs: Song[]) {
     // Don't wait for the HTTP response to update the status, just set them to Liked right away.
     // This may cause a minor problem if the request fails somehow, but do we care?
     songs.forEach(song => { song.liked = true })
@@ -53,7 +48,7 @@ export const favoriteStore = {
     await http.post('interaction/batch/like', { songs: songs.map(song => song.id) })
   },
 
-  async unlike (songs: Song[]): Promise<void> {
+  async unlike (songs: Song[]) {
     songs.forEach(song => { song.liked = false })
     this.remove(songs)
 

@@ -46,19 +46,20 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, defineAsyncComponent, reactive, toRef } from 'vue'
 import { pluralize } from '@/utils'
 import { queueStore, songStore } from '@/stores'
 import { playback } from '@/services'
 import { useSongList } from '@/composables'
-import { computed, defineAsyncComponent, reactive, toRef } from 'vue'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
 const {
   SongList,
   SongListControls,
   ControlsToggler,
+  songs,
   songList,
   meta,
   selectedSongs,
@@ -67,19 +68,13 @@ const {
   isPhone,
   playSelected,
   toggleControls
-} = useSongList({
-  clearQueue: true
-})
+} = useSongList(toRef(queueStore.state, 'songs'), { clearQueue: true })
 
-const songs = toRef(queueStore.state, 'songs')
 const songState = reactive(songStore.state)
 
 const shouldShowShufflingAllLink = computed(() => songState.songs.length > 0)
 
-const playAll = () => {
-  playback.queueAndPlay(songs.value.length ? songList.value.getAllSongsWithSort() : songStore.all)
-}
-
+const playAll = () => playback.queueAndPlay(songs.value.length ? songList.value.getAllSongsWithSort() : songStore.all)
 const shuffleAll = async () => await playback.queueAndPlay(songStore.all, true)
 const clearQueue = () => queueStore.clear()
 </script>

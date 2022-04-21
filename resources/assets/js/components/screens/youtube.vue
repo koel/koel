@@ -25,7 +25,7 @@ import createYouTubePlayer from 'youtube-player'
 
 let player: YouTubePlayer|null = null
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
 const title = ref('YouTube Video')

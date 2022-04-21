@@ -89,7 +89,7 @@ import router from '@/router'
 import { useInfiniteScroll } from '@/composables'
 import { computed, defineAsyncComponent, reactive, ref } from 'vue'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/card.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))
 const SongCard = defineAsyncComponent(() => import('@/components/song/card.vue'))

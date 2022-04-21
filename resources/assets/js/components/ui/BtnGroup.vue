@@ -14,7 +14,7 @@ import { defineAsyncComponent } from 'vue'
 const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .btn-group {
   display: flex;
   position: relative;

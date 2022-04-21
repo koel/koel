@@ -67,10 +67,10 @@ import { UploadFile, validMediaMimeTypes } from '@/config'
 import { upload } from '@/services'
 
 import UploadItem from '@/components/ui/upload/upload-item.vue'
-import BtnGroup from '@/components/ui/btn-group.vue'
+import BtnGroup from '@/components/ui/BtnGroup.vue'
 import Btn from '@/components/ui/btn.vue'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
 const mediaPath = toRef(settingStore.state, 'media_path')

@@ -1,4 +1,4 @@
-import Component from '@/components/song/list-controls.vue'
+import Component from '@/components/songSongListControls.vue'
 import factory from '@/__tests__/factory'
 import { take } from 'lodash'
 import { shallow, mount } from '@/__tests__/adapter'

@@ -10,30 +10,33 @@
 
       <template v-slot:controls>
         <SongListControls
-          v-if="state.songs.length && (!isPhone || showingControls)"
+          v-if="songs.length && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
-          :songs="state.songs"
+          :songs="songs"
           :config="songListControlConfig"
           :selectedSongs="selectedSongs"
         />
       </template>
     </ScreenHeader>
 
-    <SongList :items="state.songs" type="all-songs" ref="songList"/>
+    <SongList :items="songs" type="all-songs" ref="songList"/>
   </section>
 </template>
 
 <script lang="ts" setup>
+import { defineAsyncComponent, toRef } from 'vue'
 import { pluralize } from '@/utils'
 import { songStore } from '@/stores'
 import { useSongList } from '@/composables'
-import { defineAsyncComponent, reactive } from 'vue'
+
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 
 const {
   SongList,
   SongListControls,
   ControlsToggler,
+  songs,
   songList,
   meta,
   selectedSongs,
@@ -43,8 +46,5 @@ const {
   playAll,
   playSelected,
   toggleControls
-} = useSongList()
-
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
-const state = reactive(songStore.state)
+} = useSongList(toRef(songStore.state, 'songs'))
 </script>

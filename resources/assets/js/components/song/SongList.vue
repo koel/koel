@@ -72,7 +72,6 @@ import {
   getCurrentInstance,
   nextTick,
   onMounted,
-  PropType,
   ref,
   toRefs,
   watch
@@ -182,7 +181,8 @@ const render = () => {
 
 watch(items, () => render())
 
-watch(selectedSongs, () => eventBus.emit('SET_SELECTED_SONGS', selectedSongs, getCurrentInstance()?.parent))
+const vm = getCurrentInstance()
+watch(selectedSongs, () => eventBus.emit('SET_SELECTED_SONGS', selectedSongs.value, vm?.parent))
 
 const handleDelete = () => {
   if (!selectedSongs.value.length) {

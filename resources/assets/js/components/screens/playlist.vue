@@ -1,5 +1,5 @@
 <template>
-  <section id="playlistWrapper">
+  <section id="playlistWrapper" v-if="playlist">
     <ScreenHeader>
       {{ playlist.name }}
       <ControlsToggler v-if="playlist.populated" :showing-controls="showingControls" @toggleControls="toggleControls"/>
@@ -33,11 +33,11 @@
 
     <template v-if="playlist.populated">
       <SongList
-        v-if="playlist.songs.length"
-        :items="playlist.songs"
+        v-if="songs.length"
+        ref="songList"
+        :items="songs"
         :playlist="playlist"
         type="playlist"
-        ref="songList"
       />
 
       <ScreenPlaceholder v-else>
@@ -62,23 +62,24 @@
 </template>
 
 <script lang="ts" setup>
-import { eventBus } from '@/utils'
+import { defineAsyncComponent, nextTick, ref } from 'vue'
+import { eventBus, pluralize } from '@/utils'
 import { playlistStore, sharedStore } from '@/stores'
 import { download as downloadService } from '@/services'
 import { useSongList } from '@/composables'
-import { defineAsyncComponent, nextTick, reactive, ref } from 'vue'
-import { pluralize } from '@/utils'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+
+const playlist = ref<Playlist>()
 
 const {
   SongList,
   SongListControls,
   ControlsToggler,
+  songs,
   songList,
   meta,
-  state,
   selectedSongs,
   showingControls,
   songListControlConfig,
@@ -86,15 +87,12 @@ const {
   playAll,
   playSelected,
   toggleControls
-} = useSongList({
-  deletePlaylist: true
-})
+} = useSongList(ref(playlist.value?.songs || []), { deletePlaylist: true })
 
-const playlist = ref<Playlist>(playlistStore.stub)
-const sharedState = reactive(sharedStore.state)
+const sharedState = sharedStore.state
 
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value)
-const download = () => downloadService.fromPlaylist(playlist.value)
+const download = () => downloadService.fromPlaylist(playlist.value!)
 const editSmartPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', playlist.value)
 
 /**
@@ -103,9 +101,8 @@ const editSmartPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FO
 const populate = async (_playlist: Playlist) => {
   await playlistStore.fetchSongs(_playlist)
   playlist.value = _playlist
-  state.songs = playlist.value.songs
+  songs.value = playlist.value.songs
   await nextTick()
-  // @ts-ignore
   songList.value?.sort()
 }
 
@@ -116,7 +113,7 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void
 
   if (_playlist.populated) {
     playlist.value = _playlist
-    state.songs = playlist.value.songs
+    songs.value = playlist.value.songs
   } else {
     populate(_playlist)
   }

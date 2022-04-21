@@ -9,22 +9,22 @@
       </template>
 
       <template v-slot:meta>
-        <span v-if="album.songs.length">
+        <span v-if="songs.length">
           by
-          <a class="artist" v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`">{{ album.artist.name }}</a>
+          <a v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`" class="artist">{{ album.artist.name }}</a>
           <span class="nope" v-else>{{ album.artist.name }}</span>
           •
-          {{ pluralize(album.songs.length, 'song') }}
+          {{ pluralize(songs.length, 'song') }}
           •
           {{ fmtLength }}
 
           <template v-if="sharedState.useLastfm">
             •
-            <a class="info" href @click.prevent="showInfo" title="View album's extra information">Info</a>
+            <a class="info" href title="View album's extra information" @click.prevent="showInfo">Info</a>
           </template>
           <template v-if="sharedState.allowDownload">
             •
-            <a class="download" href @click.prevent="download" title="Download all songs in album" role="button">
+            <a class="download" href role="button" title="Download all songs in album" @click.prevent="download">
               Download All
             </a>
           </template>
@@ -33,19 +33,19 @@
 
       <template v-slot:controls>
         <SongListControls
-          v-if="album.songs.length && (!isPhone || showingControls)"
-          @playAll="playAll"
-          @playSelected="playSelected"
-          :songs="album.songs"
+          v-if="songs.length && (!isPhone || showingControls)"
           :config="songListControlConfig"
           :selectedSongs="selectedSongs"
+          :songs="songs"
+          @playAll="playAll"
+          @playSelected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongList :items="album.songs" type="album" :config="listConfig" ref="songList"/>
+    <SongList :items="songs" type="album" :config="listConfig" ref="songList"/>
 
-    <section class="info-wrapper" v-if="sharedState.useLastfm && showing">
+    <section v-if="sharedState.useLastfm && showing" class="info-wrapper">
       <CloseModalBtn @click="showing = false"/>
       <div class="inner">
         <div class="loading" v-if="loading">
@@ -65,16 +65,20 @@ import { albumInfo as albumInfoService, download as downloadService } from '@/se
 import router from '@/router'
 import { useAlbumAttributes, useSongList } from '@/composables'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
 const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
 
+const props = defineProps<{ album: Album }>()
+const { album } = toRefs(props)
+
 const {
   SongList,
   SongListControls,
   ControlsToggler,
+  songs,
   songList,
   selectedSongs,
   showingControls,
@@ -83,10 +87,7 @@ const {
   playAll,
   playSelected,
   toggleControls
-} = useSongList()
-
-const props = defineProps<{ album: Album }>()
-const { album } = toRefs(props)
+} = useSongList(ref(album.value.songs))
 
 const { length, fmtLength } = useAlbumAttributes(album.value)
 

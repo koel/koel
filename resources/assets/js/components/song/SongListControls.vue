@@ -4,23 +4,23 @@
       <template v-if="mergedConfig.play">
         <template v-if="altPressed">
           <Btn
-            @click.prevent="playAll"
+            v-if="selectedSongs.length < 2 && songs.length"
             class="btn-play-all"
+            data-test="btn-play-all"
             orange
             title="Play all songs"
-            v-if="selectedSongs.length < 2 && songs.length"
-            data-test="btn-play-all"
+            @click.prevent="playAll"
           >
             <i class="fa fa-play"></i> All
           </Btn>
 
           <Btn
-            @click.prevent="playSelected"
+            v-if="selectedSongs.length > 1"
             class="btn-play-selected"
+            data-test="btn-play-selected"
             orange
             title="Play selected songs"
-            v-if="selectedSongs.length > 1"
-            data-test="btn-play-selected"
+            @click.prevent="playSelected"
           >
             <i class="fa fa-play"></i> Selected
           </Btn>
@@ -28,23 +28,23 @@
 
         <template v-else>
           <Btn
-            @click.prevent="shuffle"
+            v-if="selectedSongs.length < 2 && songs.length"
             class="btn-shuffle-all"
+            data-test="btn-shuffle-all"
             orange
             title="Shuffle all songs"
-            v-if="selectedSongs.length < 2 && songs.length"
-            data-test="btn-shuffle-all"
+            @click.prevent="shuffle"
           >
             <i class="fa fa-random"></i> All
           </Btn>
 
           <Btn
-            @click.prevent="shuffleSelected"
+            v-if="selectedSongs.length > 1"
             class="btn-shuffle-selected"
+            data-test="btn-shuffle-selected"
             orange
             title="Shuffle selected songs"
-            v-if="selectedSongs.length > 1"
-            data-test="btn-shuffle-selected"
+            @click.prevent="shuffleSelected"
           >
             <i class="fa fa-random"></i> Selected
           </Btn>
@@ -63,21 +63,21 @@
       </Btn>
 
       <Btn
-        @click.prevent="clearQueue"
+        v-if="showClearQueueButton"
         class="btn-clear-queue"
         red
-        v-if="showClearQueueButton"
         title="Clear current queue"
+        @click.prevent="clearQueue"
       >
         Clear
       </Btn>
 
       <Btn
-        @click.prevent="deletePlaylist"
+        v-if="showDeletePlaylistButton"
         class="del btn-delete-playlist"
         red
         title="Delete this playlist"
-        v-if="showDeletePlaylistButton"
+        @click.prevent="deletePlaylist"
       >
         <i class="fa fa-times"></i> Playlist
       </Btn>
@@ -85,11 +85,11 @@
     </BtnGroup>
 
     <AddToMenu
-      @closing="closeAddToMenu"
-      :config="mergedConfig.addTo"
-      :songs="selectedSongs"
-      :showing="showingAddToMenu"
       v-koel-clickaway="closeAddToMenu"
+      :config="mergedConfig.addTo"
+      :showing="showingAddToMenu"
+      :songs="selectedSongs"
+      @closing="closeAddToMenu"
     />
   </div>
 </template>
@@ -99,17 +99,20 @@ import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, 
 
 const AddToMenu = defineAsyncComponent(() => import('./AddToMenu.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
-const BtnGroup = defineAsyncComponent(() => import('@/components/ui/btn-group.vue'))
+const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 
-const props = withDefaults(defineProps<{ songs: Song[], selectedSongs: Song[], config: Partial<SongListControlsConfig> }>(), {
-  songs: () => [],
-  selectedSongs: () => [],
-  config: () => ({})
-})
+const props = withDefaults(
+  defineProps<{ songs: Song[], selectedSongs: Song[], config: Partial<SongListControlsConfig> }>(),
+  {
+    songs: () => [],
+    selectedSongs: () => [],
+    config: () => ({})
+  }
+)
 
 const { config, songs, selectedSongs } = toRefs(props)
 
-const el = ref(null as unknown as HTMLElement)
+const el = ref<HTMLElement>()
 const showingAddToMenu = ref(false)
 const numberOfQueuedSongs = ref(0)
 const altPressed = ref(false)
@@ -124,7 +127,7 @@ const mergedConfig = computed((): SongListControlsConfig => Object.assign({
     },
     clearQueue: false,
     deletePlaylist: false
-  }, config)
+  }, config.value)
 )
 
 const showClearQueueButton = computed(() => mergedConfig.value.clearQueue)
@@ -151,9 +154,9 @@ const toggleAddToMenu = async () => {
 
   await nextTick()
 
-  const btnAddTo = el.value.querySelector<HTMLButtonElement>('.btn-add-to')!
+  const btnAddTo = el.value?.querySelector<HTMLButtonElement>('.btn-add-to')!
   const { left: btnLeft, bottom: btnBottom, width: btnWidth } = btnAddTo.getBoundingClientRect()
-  const contextMenu = el.value.querySelector<HTMLElement>('.add-to')!
+  const contextMenu = el.value?.querySelector<HTMLElement>('.add-to')!
   const menuWidth = contextMenu.getBoundingClientRect().width
   contextMenu.style.top = `${btnBottom + 10}px`
   contextMenu.style.left = `${btnLeft + btnWidth / 2 - menuWidth / 2}px`

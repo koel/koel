@@ -65,7 +65,7 @@ import { eventBus } from '@/utils'
 import { searchStore } from '@/stores'
 import router from '@/router'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 const SongCard = defineAsyncComponent(() => import('@/components/song/card.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))

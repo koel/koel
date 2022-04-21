@@ -10,26 +10,24 @@
 
       <template v-slot:controls>
         <SongListControls
-          v-if="state.songs.length && (!isPhone || showingControls)"
-          @playAll="playAll"
-          @playSelected="playSelected"
-          :songs="state.songs"
+          v-if="songs.length && (!isPhone || showingControls)"
           :config="songListControlConfig"
           :selectedSongs="selectedSongs"
+          :songs="songs"
+          @playAll="playAll"
+          @playSelected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongList v-if="state.songs.length" :items="state.songs" type="recently-played" :sortable="false"/>
+    <SongList v-if="songs.length" :items="songs" :sortable="false" type="recently-played"/>
 
     <ScreenPlaceholder v-else>
       <template v-slot:icon>
         <i class="fa fa-clock-o"></i>
       </template>
       No songs recently played.
-      <span class="secondary d-block">
-        Start playing to populate this playlist.
-      </span>
+      <span class="secondary d-block">Start playing to populate this playlist.</span>
     </ScreenPlaceholder>
   </section>
 </template>
@@ -38,16 +36,17 @@
 import { eventBus, pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
 import { useSongList } from '@/composables'
-import { defineAsyncComponent, reactive } from 'vue'
+import { defineAsyncComponent, reactive, toRef } from 'vue'
 import { playback } from '@/services'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
 
 const {
   SongList,
   SongListControls,
   ControlsToggler,
+  songs,
   songList,
   meta,
   selectedSongs,
@@ -56,11 +55,9 @@ const {
   isPhone,
   playSelected,
   toggleControls
-} = useSongList()
+} = useSongList(toRef(recentlyPlayedStore.state, 'songs'))
 
-const state = reactive(recentlyPlayedStore.state)
-
-const playAll = () => playback.queueAndPlay(state.songs)
+const playAll = () => playback.queueAndPlay(songs.value)
 
 eventBus.on({
   'LOAD_MAIN_CONTENT': (view: MainViewName) => view === 'RecentlyPlayed' && recentlyPlayedStore.fetchAll()

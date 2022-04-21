@@ -1,4 +1,4 @@
-import Component from '@/components/ui/screen-controls-toggler.vue'
+import Component from '@/components/ui/ScreenControlsToggler.vue'
 import isMobile from 'ismobilejs'
 import { shallow } from '@/__tests__/adapter'
 

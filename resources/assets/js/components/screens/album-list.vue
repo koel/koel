@@ -20,7 +20,7 @@ import { eventBus, limitBy } from '@/utils'
 import { albumStore, preferenceStore as preferences } from '@/stores'
 import { useInfiniteScroll } from '@/composables'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/card.vue'))
 const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/view-mode-switch.vue'))
 

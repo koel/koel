@@ -1,5 +1,5 @@
-import Component from '@/components/screens/all-songs.vue'
-import SongList from '@/components/song/list.vue'
+import Component from '@/components/screens/AllSongsScreen.vue'
+import SongList from '@/components/song/SongList.vue'
 import factory from '@/__tests__/factory'
 import { songStore } from '@/stores'
 import { mount } from '@/__tests__/adapter'

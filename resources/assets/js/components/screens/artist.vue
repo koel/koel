@@ -9,26 +9,26 @@
       </template>
 
       <template v-slot:meta>
-        <span v-if="artist.songs.length">
+        <span v-if="songs.length">
           {{ pluralize(artist.albums.length, 'album') }}
           •
-          {{ pluralize(artist.songs.length, 'song') }}
+          {{ pluralize(songs.length, 'song') }}
           •
           {{ fmtLength }}
 
           <template v-if="sharedState.useLastfm">
             •
-            <a class="info" href @click.prevent="showInfo" title="View artist's extra information">Info</a>
+            <a class="info" href title="View artist's extra information" @click.prevent="showInfo">Info</a>
           </template>
 
           <template v-if="sharedState.allowDownload">
             •
             <a
-              @click.prevent="download"
               class="download"
               href
               role="button"
               title="Download all songs by this artist"
+              @click.prevent="download"
             >
               Download All
             </a>
@@ -38,17 +38,17 @@
 
       <template v-slot:controls>
         <SongListControls
-          v-if="artist.songs.length && (!isPhone || showingControls)"
-          @playAll="playAll"
-          @playSelected="playSelected"
-          :songs="artist.songs"
+          v-if="songs.length && (!isPhone || showingControls)"
           :config="songListControlConfig"
           :selectedSongs="selectedSongs"
+          :songs="songs"
+          @playAll="playAll"
+          @playSelected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongList :items="artist.songs" type="artist" :config="listConfig" ref="songList"/>
+    <SongList :items="songs" type="artist" :config="listConfig" ref="songList"/>
 
     <section class="info-wrapper" v-if="sharedState.useLastfm && showing">
       <CloseModalBtn @click="showing = false"/>
@@ -70,12 +70,15 @@ import { artistInfo as artistInfoService, download as downloadService } from '@/
 import router from '@/router'
 import { useArtistAttributes, useSongList } from '@/composables'
 
+const props = defineProps<{ artist: Artist }>()
+const { artist } = toRefs(props)
+
 const {
   SongList,
   SongListControls,
   ControlsToggler,
   songList,
-  state,
+  songs,
   meta,
   selectedSongs,
   showingControls,
@@ -84,13 +87,11 @@ const {
   playAll,
   playSelected,
   toggleControls
-} = useSongList()
+} = useSongList(ref(artist.value.songs))
 
-const props = defineProps<{ artist: Artist }>()
-const { artist } = toRefs(props)
 const { length, fmtLength, image } = useArtistAttributes(artist.value)
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/info.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
 const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
@@ -112,7 +113,6 @@ watch(() => artist.value.albums.length, newAlbumCount => newAlbumCount || router
 
 watch(artist, () => {
   showing.value = false
-  // @ts-ignore
   songList.value?.sort()
 })
 

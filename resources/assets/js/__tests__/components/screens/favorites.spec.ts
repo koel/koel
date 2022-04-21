@@ -1,6 +1,6 @@
 import Component from '@/components/screens/favorites.vue'
-import SongList from '@/components/song/list.vue'
-import SongListControls from '@/components/song/list-controls.vue'
+import SongList from '@/components/song/SongList.vue'
+import SongListControls from '@/components/songSongListControls.vue'
 import { download } from '@/services'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
@@ -45,7 +45,7 @@ describe('components/screens/favorites', () => {
     shallow(Component, {
       data: () => ({
         state: {
-          songs: factory('song', 5),
+          songs: factory('song', 5)
         },
         sharedState: { allowDownload: true },
         meta: {
