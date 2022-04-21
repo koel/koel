@@ -1,28 +1,33 @@
-import { difference, take, orderBy } from 'lodash'
+import { difference, orderBy, take } from 'lodash'
 
 import { http } from '@/services'
 import stub from '@/stubs/artist'
 import { arrayify, use } from '@/utils'
+import { reactive } from 'vue'
+
+interface ArtistStoreState {
+  artists: Artist[]
+}
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
 
 export const artistStore = {
   stub,
-  cache: {} as { [key: number]: Artist },
+  cache: {} as Record<number, Artist>,
 
-  state: {
-    artists: [] as Artist[]
-  },
+  state: reactive<ArtistStoreState>({
+    artists: []
+  }),
 
-  init (artists: Artist[]): void {
+  init (artists: Artist[]) {
     this.all = artists
 
     // Traverse through artists array to get the cover and number of songs for each.
     this.all.forEach(artist => this.setupArtist(artist))
   },
 
-  setupArtist (artist: Artist): void {
+  setupArtist (artist: Artist) {
     artist.playCount = 0
     artist.info = null
     artist.albums = []
@@ -43,7 +48,7 @@ export const artistStore = {
     return this.cache[id]
   },
 
-  byIds (ids: number[]): Artist[] {
+  byIds (ids: number[]) {
     const artists = [] as Artist[]
     ids.forEach(id => use(this.byId(id), artist => artists.push(artist!)))
     return artists
@@ -57,14 +62,10 @@ export const artistStore = {
     })
   },
 
-  purify (): void {
-    this.compact()
-  },
-
   /**
    * Remove empty artists from the store.
    */
-  compact (): void {
+  compact () {
     const emptyArtists = this.all.filter(artist => artist.songs.length === 0)
 
     if (!emptyArtists.length) {
@@ -79,9 +80,7 @@ export const artistStore = {
 
   isUnknownArtist: (artist: Artist) => artist.id === UNKNOWN_ARTIST_ID,
 
-  getSongsByArtist: (artist: Artist) => artist.songs,
-
-  getMostPlayed (n: number = 6): Artist[] {
+  getMostPlayed (count = 6): Artist[] {
     // Only non-unknown artists with actual play count are applicable.
     // Also, "Various Artists" doesn't count.
     const applicable = this.all.filter(artist => {
@@ -90,7 +89,7 @@ export const artistStore = {
         !this.isVariousArtists(artist)
     })
 
-    return take(orderBy(applicable, 'playCount', 'desc'), n)
+    return take(orderBy(applicable, 'playCount', 'desc'), count)
   },
 
   /**
@@ -99,7 +98,7 @@ export const artistStore = {
    * @param {Artist} artist The artist object
    * @param {string} image The content data string of the image
    */
-  uploadImage: async (artist: Artist, image: string): Promise<string> => {
+  uploadImage: async (artist: Artist, image: string) => {
     const { imageUrl } = await http.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })
     artist.image = imageUrl
     return artist.image

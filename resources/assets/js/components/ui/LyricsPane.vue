@@ -6,14 +6,10 @@
           <div ref="lyricsContainer" v-html="song.lyrics"></div>
           <TextZoomer :target="textZoomTarget"/>
         </div>
-        <p class="none text-secondary" v-if="song.id && !song.lyrics">
+        <p v-if="song.id && !song.lyrics" class="none text-secondary">
           <template v-if="isAdmin">
             No lyrics found.
-            <button
-              class="text-orange"
-              @click.prevent="showEditSongForm"
-              data-test="add-lyrics-btn"
-            >
+            <button class="text-orange" data-test="add-lyrics-btn" type="button" @click.prevent="showEditSongForm">
               Click here
             </button>
             to add lyrics.
@@ -39,7 +35,7 @@ const lyricsContainer = ref(null as unknown as HTMLElement)
 const textZoomTarget = ref(null as unknown as HTMLElement)
 const userState = reactive(userStore.state)
 
-const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', [song], 'lyrics')
+const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', [song.value], 'lyrics')
 
 const isAdmin = computed(() => userState.current.is_admin)
 

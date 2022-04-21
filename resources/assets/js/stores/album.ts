@@ -1,20 +1,24 @@
-/* eslint camelcase: ["error", {properties: "never"}] */
-import { union, difference, take, orderBy } from 'lodash'
+import { difference, orderBy, take, union } from 'lodash'
 
 import stub from '@/stubs/album'
 import { artistStore } from '.'
 import { http } from '@/services'
 import { arrayify, use } from '@/utils'
+import { reactive } from 'vue'
+
+interface AlbumStoreState {
+  albums: Album[]
+}
 
 const UNKNOWN_ALBUM_ID = 1
 
 export const albumStore = {
   stub,
-  cache: {} as { [key: string]: Album },
+  cache: {} as Record<number, Album>,
 
-  state: {
-    albums: [stub]
-  },
+  state: reactive<AlbumStoreState>({
+    albums: []
+  }),
 
   init (albums: Album[]) {
     // Traverse through the artists array and add their albums into our master album list.
@@ -22,7 +26,7 @@ export const albumStore = {
     this.all.forEach(album => this.setupAlbum(album))
   },
 
-  setupAlbum (album: Album): void {
+  setupAlbum (album: Album) {
     const artist = artistStore.byId(album.artist_id)!
     artist.albums = union(artist.albums, [album])
 
@@ -42,17 +46,17 @@ export const albumStore = {
     this.state.albums = value
   },
 
-  byId (id: number): Album | undefined {
+  byId (id: number) {
     return this.cache[id]
   },
 
-  byIds (ids: number[]): Album[] {
+  byIds (ids: number[]) {
     const albums = [] as Album[]
     ids.forEach(id => use(this.byId(id), album => albums.push(album!)))
     return albums
   },
 
-  add (albums: Album | Album[]): void {
+  add (albums: Album | Album[]) {
     arrayify(albums).forEach(album => {
       this.setupAlbum(album)
       album.playCount = album.songs.reduce((count, song) => count + song.playCount, 0)
@@ -60,14 +64,10 @@ export const albumStore = {
     })
   },
 
-  purify (): void {
-    this.compact()
-  },
-
   /**
    * Remove empty albums from the store.
    */
-  compact (): void {
+  compact () {
     const emptyAlbums = this.all.filter(album => album.songs.length === 0)
     if (!emptyAlbums.length) {
       return
@@ -77,15 +77,15 @@ export const albumStore = {
     emptyAlbums.forEach(album => delete this.cache[album.id])
   },
 
-  getMostPlayed (n: number = 6): Album[] {
+  getMostPlayed (count = 6): Album[] {
     // Only non-unknown albums with actual play count are applicable.
     const applicable = this.all.filter(album => album.playCount && album.id !== 1)
-    return take(orderBy(applicable, 'playCount', 'desc'), n)
+    return take(orderBy(applicable, 'playCount', 'desc'), count)
   },
 
-  getRecentlyAdded (n: number = 6): Album[] {
+  getRecentlyAdded (count = 6): Album[] {
     const applicable = this.all.filter(album => album.id !== 1)
-    return take(orderBy(applicable, 'created_at', 'desc'), n)
+    return take(orderBy(applicable, 'created_at', 'desc'), count)
   },
 
   /**
@@ -94,7 +94,7 @@ export const albumStore = {
    * @param {Album} album The album object
    * @param {string} cover The content data string of the cover
    */
-  uploadCover: async (album: Album, cover: string): Promise<string> => {
+  uploadCover: async (album: Album, cover: string) => {
     const { coverUrl } = await http.put<{ coverUrl: string }>(`album/${album.id}/cover`, { cover })
     album.cover = coverUrl
     return album.cover
@@ -103,7 +103,7 @@ export const albumStore = {
   /**
    * Get the (blurry) thumbnail-sized version of an album's cover.
    */
-  getThumbnail: async (album: Album): Promise<string | null> => {
+  getThumbnail: async (album: Album) => {
     if (album.thumbnail === undefined) {
       const { thumbnailUrl } = await http.get<{ thumbnailUrl: string }>(`album/${album.id}/thumbnail`)
 

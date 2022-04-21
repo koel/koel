@@ -1,4 +1,4 @@
-import Lyrics from '@/components/ui/lyrics-pane.vue'
+import Lyrics from '@/components/ui/LyricsPane.vue'
 import factory from '@/__tests__/factory'
 import { shallow } from '@/__tests__/adapter'
 

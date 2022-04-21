@@ -1,14 +1,14 @@
 <template>
-  <div class="edit-song" data-testid="edit-song-form" @keydown.esc="maybeClose" tabindex="0">
+  <div class="edit-song" data-testid="edit-song-form" tabindex="0" @keydown.esc="maybeClose">
     <SoundBar v-if="loading"/>
     <form v-else @submit.prevent="submit">
       <header>
-        <img :src="coverUrl" width="96" height="96" alt="Album's cover">
-        <hgroup class="meta">
+        <img :src="coverUrl" alt="Album's cover" height="96" width="96">
+        <div class="meta">
           <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
           <h2 :class="{ mixed: !allSongsAreFromSameArtist && !formData.artistName }">{{ displayedArtistName }}</h2>
           <h2 :class="{ mixed: !allSongsAreInSameAlbum && !formData.albumName }">{{ displayedAlbumName }}</h2>
-        </hgroup>
+        </div>
       </header>
 
       <div class="tabs">
@@ -37,64 +37,61 @@
 
         <div class="panes">
           <div
-            aria-labelledby="editSongTabDetails"
+            v-show="currentView === 'details'"
             id="editSongPanelDetails"
+            aria-labelledby="editSongTabDetails"
             role="tabpanel"
             tabindex="0"
-            v-show="currentView === 'details'"
           >
             <div class="form-row" v-if="editingOnlyOneSong">
               <label>Title</label>
-              <input title="Title" name="title" type="text" v-model="formData.title" v-koel-focus>
+              <input v-model="formData.title" v-koel-focus name="title" title="Title" type="text">
             </div>
 
             <div class="form-row">
               <label>Artist</label>
-              <typeahead
-                :items="artistState.artists"
-                :config="artistTypeAheadConfig"
-                v-model="formData.artistName"
-              />
+              <input v-model="formData.artistName" :placeholder="artistNamePlaceholder" list="artistNames" type="text">
+              <datalist id="artistNames">
+                <option v-for="name in artistNames" :key="name" :value="name"></option>
+              </datalist>
             </div>
 
             <div class="form-row">
               <label>Album</label>
-              <typeahead
-                :items="albumState.albums"
-                :config="albumTypeAheadConfig"
-                v-model="formData.albumName"
-              />
+              <input v-model="formData.albumName" :placeholder="albumNamePlaceholder" list="albumNames" type="text">
+              <datalist id="albumNames">
+                <option v-for="name in albumNames" :key="name" :value="name"></option>
+              </datalist>
             </div>
 
             <div class="form-row">
               <label class="small">
                 <input
-                  type="checkbox"
+                  ref="compilationStateCheckbox"
                   name="is_compilation"
+                  type="checkbox"
                   @change="changeCompilationState"
-                  ref="compilationStateChk"
                 />
                 Album is a compilation of songs by various artists
               </label>
             </div>
 
-            <div class="form-row" v-if="editingOnlyOneSong">
+            <div v-if="editingOnlyOneSong" class="form-row">
               <label>Track</label>
-              <input name="track" type="text" pattern="\d*" v-model="formData.track"
-                     title="Empty or a number">
+              <input v-model="formData.track" name="track" pattern="\d*" title="Empty or a number" type="text">
             </div>
           </div>
 
           <div
-            aria-labelledby="editSongTabLyrics"
-            id="editSongPanelLyrics"
-            role="tabpanel"
-            tabindex="0"
             v-if="editingOnlyOneSong"
             v-show="currentView === 'lyrics'"
+            id="editSongPanelLyrics"
+            aria-labelledby="editSongTabLyrics"
+            role="tabpanel"
+            tabindex="0"
           >
             <div class="form-row">
-              <textarea title="Lyrics" name="lyrics" v-model="formData.lyrics" v-koel-focus></textarea>
+              <textarea v-model="formData.lyrics" v-koel-focus name="lyrics" title="Lyrics"></textarea>
             </div>
           </div>
         </div>
@@ -102,21 +99,19 @@
 
       <footer>
         <Btn type="submit">Update</Btn>
-        <Btn @click.prevent="maybeClose" class="btn-cancel" white>Cancel</Btn>
+        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
       </footer>
     </form>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, nextTick, reactive, ref, toRefs } from 'vue'
+import { computed, defineAsyncComponent, nextTick, reactive, ref, toRef, toRefs } from 'vue'
 import { isEqual, union } from 'lodash'
 
-import { alerts, br2nl, getDefaultCover, arrayify } from '@/utils'
+import { alerts, arrayify, br2nl, getDefaultCover } from '@/utils'
 import { songInfo } from '@/services/info'
 import { albumStore, artistStore, songStore } from '@/stores'
-
-import { TypeAheadConfig } from 'koel/types/ui'
 
 interface EditFormData {
   title: string
@@ -132,34 +127,25 @@ type TabName = 'details' | 'lyrics'
 const COMPILATION_STATES = {
   NONE: 0, // No songs belong to a compilation album
   ALL: 1, // All songs belong to compilation album(s)
-  SOME: 2 // Some songs belong to compilation album(s)
+  MIXED: 2 // Some songs belong to compilation album(s)
 }
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
-const Typeahead = defineAsyncComponent(() => import('@/components/ui/typeahead.vue'))
 
-const props = withDefaults(defineProps<{ songs: Song[], initialTab: TabName }>(), { songs: [], initialTab: 'details' })
+const props = withDefaults(defineProps<{ songs: Song[], initialTab: TabName }>(), { initialTab: 'details' })
 const { songs, initialTab } = toRefs(props)
 
-const compilationStateChk = ref(null as unknown as HTMLInputElement)
+const compilationStateCheckbox = ref<HTMLInputElement>()
 const mutatedSongs = ref<Song[]>([])
-const currentView = ref(null as unknown as TabName)
+const currentView = ref<TabName>()
 const loading = ref(true)
-const artistState = reactive(artistStore.state)
-const albumState = reactive(albumStore.state)
 
-const artistTypeAheadConfig: TypeAheadConfig = {
-  displayKey: 'name',
-  filterKey: 'name',
-  name: 'artist'
-}
+const artists = toRef(artistStore.state, 'artists')
+const artistNames = computed(() => new Set(artists.value.map(artist => artist.name)))
 
-const albumTypeAheadConfig: TypeAheadConfig = {
-  displayKey: 'name',
-  filterKey: 'name',
-  name: 'album'
-}
+const albums = toRef(albumStore.state, 'albums')
+const albumNames = computed(() => new Set(albums.value.map(album => album.name)))
 
 /**
  * In order not to mess up the original songs, we manually assign and manipulate their attributes.
@@ -173,12 +159,14 @@ const formData = reactive<EditFormData>({
   compilationState: COMPILATION_STATES.NONE
 })
 
-const initialFormData = ref(null as unknown as EditFormData)
+let initialFormData = {}
 
 const editingOnlyOneSong = computed(() => mutatedSongs.value.length === 1)
 const allSongsAreFromSameArtist = computed(() => new Set(mutatedSongs.value.map(song => song.artist.id)).size === 1)
 const allSongsAreInSameAlbum = computed(() => new Set(mutatedSongs.value.map(song => song.album.id)).size === 1)
 const coverUrl = computed(() => allSongsAreInSameAlbum.value ? mutatedSongs.value[0].album.cover : getDefaultCover())
+const artistNamePlaceholder = computed(() => editingOnlyOneSong.value ? 'Unknown Artist' : 'Leave unchanged')
+const albumNamePlaceholder = computed(() => editingOnlyOneSong.value ? 'Unknown Album' : 'Leave unchanged')
 
 const compilationState = computed(() => {
   const albums = mutatedSongs.value.reduce((acc: Album[], song): Album[] => union(acc, [song.album]), [])
@@ -189,7 +177,7 @@ const compilationState = computed(() => {
   } else if (compiledAlbums.length === albums.length) {
     formData.compilationState = COMPILATION_STATES.ALL
   } else {
-    formData.compilationState = COMPILATION_STATES.SOME
+    formData.compilationState = COMPILATION_STATES.MIXED
   }
 
   return formData.compilationState
@@ -207,35 +195,21 @@ const displayedAlbumName = computed(() => {
   return allSongsAreInSameAlbum.value || formData.albumName ? formData.albumName : 'Mixed Albums'
 })
 
-const isPristine = computed(() => isEqual(formData, initialFormData.value))
+const isPristine = computed(() => isEqual(formData, initialFormData))
 
 const initCompilationStateCheckbox = async () => {
   // Wait for the next DOM update, because the form is dynamically
   // attached into DOM in conjunction with `this.loading` data binding.
   await nextTick()
-  const checkbox = compilationStateChk.value
 
-  switch (compilationState.value) {
-    case COMPILATION_STATES.ALL:
-      checkbox.checked = true
-      checkbox.indeterminate = false
-      break
-
-    case COMPILATION_STATES.NONE:
-      checkbox.checked = false
-      checkbox.indeterminate = false
-      break
-
-    default:
-      checkbox.checked = false
-      checkbox.indeterminate = true
-      break
-  }
+  const checkbox = compilationStateCheckbox.value!
+  checkbox.checked = compilationState.value === COMPILATION_STATES.ALL
+  checkbox.indeterminate = compilationState.value === COMPILATION_STATES.MIXED
 }
 
 const open = async () => {
   mutatedSongs.value = arrayify(songs.value)
-  currentView.value = initialTab!.value
+  currentView.value = initialTab.value
   const firstSong = mutatedSongs.value[0]
 
   if (editingOnlyOneSong.value) {
@@ -270,6 +244,8 @@ const open = async () => {
     loading.value = false
     await initCompilationStateCheckbox()
   }
+
+  initialFormData = Object.assign(formData)
 }
 
 /**
@@ -279,8 +255,7 @@ const open = async () => {
  * once the user clicks the checkbox, there's no going back to indeterminate state.
  */
 const changeCompilationState = () => {
-  const checkbox = compilationStateChk.value
-  formData.compilationState = checkbox.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE
+  formData.compilationState = compilationStateCheckbox.value!.checked ? COMPILATION_STATES.ALL : COMPILATION_STATES.NONE
 }
 
 const emit = defineEmits(['close'])
@@ -308,7 +283,6 @@ const submit = async () => {
 }
 
 open()
-initialFormData.value = Object.assign({}, formData)
 </script>
 
 <style lang="scss" scoped>

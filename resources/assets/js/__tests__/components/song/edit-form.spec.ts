@@ -1,4 +1,4 @@
-import Component from '@/components/song/edit-form.vue'
+import Component from '@/components/song/SongEditForm.vue'
 import Typeahead from '@/components/ui/typeahead.vue'
 import factory from '@/__tests__/factory'
 import { songStore } from '@/stores'
