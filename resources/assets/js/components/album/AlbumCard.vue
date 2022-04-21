@@ -1,15 +1,15 @@
 <template>
   <article
-    :title="`${album.name} by ${album.artist.name}`"
-    @dragstart="dragStart"
-    class="item"
+    v-if="album.songs.length"
     :class="layout"
+    :title="`${album.name} by ${album.artist.name}`"
+    class="item"
+    data-test="album-card"
     draggable="true"
     tabindex="0"
-    data-test="album-card"
-    v-if="album.songs.length"
-    @contextmenu.prevent.stop="requestContextMenu"
     @dblclick="shuffle"
+    @dragstart="dragStart"
+    @contextmenu.prevent.stop="requestContextMenu"
   >
     <span class="thumbnail-wrapper">
       <AlbumThumbnail :entity="album"/>
@@ -17,13 +17,9 @@
 
     <footer>
       <div class="info">
-        <a class="name" :href="`#!/album/${album.id}`">{{ album.name }}</a>
+        <a :href="`#!/album/${album.id}`" class="name">{{ album.name }}</a>
         <span class="sep text-secondary"> by </span>
-        <a
-          class="artist"
-          v-if="isNormalArtist"
-          :href="`#!/artist/${album.artist.id}`"
-        >{{ album.artist.name }}</a>
+        <a v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`" class="artist">{{ album.artist.name }}</a>
         <span class="artist nope" v-else>{{ album.artist.name }}</span>
       </div>
       <p class="meta">
@@ -37,20 +33,20 @@
         <span class="right">
           <a
             :title="`Shuffle all songs in the album ${album.name}`"
-            @click.prevent="shuffle"
             class="shuffle-album"
             href
             role="button"
+            @click.prevent="shuffle"
           >
             <i class="fa fa-random"></i>
           </a>
           <a
+            v-if="allowDownload"
             :title="`Download all songs in the album ${album.name}`"
-            @click.prevent="download"
             class="download-album"
             href
             role="button"
-            v-if="sharedState.allowDownload"
+            @click.prevent="download"
           >
             <i class="fa fa-download"></i>
           </a>
@@ -61,7 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive, toRefs } from 'vue'
+import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
 import { useAlbumAttributes } from '@/composables'
 import { eventBus, pluralize, startDragging } from '@/utils'
 import { artistStore, sharedStore } from '@/stores'
@@ -74,7 +70,7 @@ const { album, layout } = toRefs(props)
 
 const { length, fmtLength } = useAlbumAttributes(album.value)
 
-const sharedState = reactive(sharedStore.state)
+const allowDownload = toRef(sharedStore.state, 'allowDownload')
 
 const isNormalArtist = computed(() => {
   return !artistStore.isVariousArtists(album.value.artist) && !artistStore.isUnknownArtist(album.value.artist)

@@ -1,4 +1,4 @@
-import Component from '@/components/artist/info.vue'
+import Component from '@/components/artist/ArtistInfo.vue'
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 import factory from '@/__tests__/factory'
 import { shallow, mount } from '@/__tests__/adapter'

@@ -1,15 +1,15 @@
 <template>
   <article
-    :title="artist.name"
-    @dragstart="dragStart"
-    class="item"
+    v-if="showing"
     :class="layout"
+    :title="artist.name"
+    class="item"
+    data-test="artist-card"
     draggable="true"
     tabindex="0"
-    data-test="artist-card"
-    v-if="showing"
-    @contextmenu.prevent.stop="requestContextMenu"
     @dblclick="shuffle"
+    @dragstart="dragStart"
+    @contextmenu.prevent.stop="requestContextMenu"
   >
     <span class="thumbnail-wrapper">
       <ArtistThumbnail :entity="artist"/>
@@ -17,9 +17,7 @@
 
     <footer>
       <div class="info">
-        <a class="name" :href="`#!/artist/${artist.id}`">
-          {{ artist.name }}
-        </a>
+        <a class="name" :href="`#!/artist/${artist.id}`">{{ artist.name }}</a>
       </div>
       <p class="meta">
         <span class="left">
@@ -32,20 +30,20 @@
         <span class="right">
           <a
             :title="`Shuffle all songs by ${artist.name}`"
-            @click.prevent="shuffle"
             class="shuffle-artist"
             href
             role="button"
+            @click.prevent="shuffle"
           >
             <i class="fa fa-random"></i>
           </a>
           <a
+            v-if="allowDownload"
             :title="`Download all songs by ${artist.name}`"
-            @click.prevent="download"
             class="download-artist"
             href
             role="button"
-            v-if="sharedState.allowDownload"
+            @click.prevent="download"
           >
             <i class="fa fa-download"></i>
           </a>
@@ -56,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive, toRefs } from 'vue'
+import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
 import { eventBus, pluralize, startDragging } from '@/utils'
 import { artistStore, sharedStore } from '@/stores'
 import { download as downloadService, playback } from '@/services'
@@ -69,7 +67,7 @@ const { artist, layout } = toRefs(props)
 
 const { length, fmtLength, image } = useArtistAttributes(artist.value)
 
-const sharedState = reactive(sharedStore.state)
+const allowDownload = toRef(sharedStore.state, 'allowDownload')
 
 const showing = computed(() => artist.value.songs.length && !artistStore.isVariousArtists(artist.value))
 

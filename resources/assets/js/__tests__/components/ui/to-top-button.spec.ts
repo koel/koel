@@ -1,9 +1,9 @@
-import Component from '@/components/ui/to-top-button.vue'
+import Component from '@/components/ui/ScrollToTopButton.vue'
 import { $ } from '@/utils'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow } from '@/__tests__/adapter'
 
-describe('components/ui/to-top-button', () => {
+describe('components/ui/ScrollToTopButton', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()

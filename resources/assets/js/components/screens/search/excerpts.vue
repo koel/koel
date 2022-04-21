@@ -68,8 +68,8 @@ import router from '@/router'
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 const SongCard = defineAsyncComponent(() => import('@/components/song/card.vue'))
-const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))
-const AlbumCard = defineAsyncComponent(() => import('@/components/album/card.vue'))
+const ArtistCard = defineAsyncComponent(() => import('@/components/artist/ArtistCard.vue'))
+const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const searchState = reactive(searchStore.state)

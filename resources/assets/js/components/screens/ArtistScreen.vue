@@ -93,7 +93,7 @@ const {
 const { length, fmtLength, image } = useArtistAttributes(artist.value)
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/info.vue'))
+const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
 const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))

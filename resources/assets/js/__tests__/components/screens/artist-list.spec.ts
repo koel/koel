@@ -1,4 +1,4 @@
-import List from '@/components/screens/artist-list.vue'
+import List from '@/components/screens/ArtistListScreen.vue'
 import factory from '@/__tests__/factory'
 import { mount } from '@/__tests__/adapter'
 

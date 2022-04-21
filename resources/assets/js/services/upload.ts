@@ -66,8 +66,7 @@ export const upload = {
       this.proceed() // upload the next file
       window.setTimeout(() => this.remove(file), 1000)
       eventBus.emit('SONG_UPLOADED')
-    } catch (error) {
-      // @ts-ignore
+    } catch (error: any) {
       file.message = `Upload failed: ${error.response?.data?.message || 'Unknown error'}`
       file.status = 'Errored'
       this.proceed() // upload the next file

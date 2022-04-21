@@ -7,8 +7,8 @@
       </template>
     </ScreenHeader>
 
-    <div ref="scroller" class="artists main-scroll-wrap" :class="`as-${viewMode}`" @scroll="scrolling">
-      <ArtistCard v-for="item in displayedItems" :artist="item" :layout="itemLayout" :key="item.id"/>
+    <div ref="scroller" :class="`as-${viewMode}`" class="artists main-scroll-wrap" @scroll="scrolling">
+      <ArtistCard v-for="item in displayedItems" :key="item.id" :artist="item" :layout="itemLayout"/>
       <ToTopButton/>
     </div>
   </section>
@@ -29,7 +29,7 @@ const {
 } = useInfiniteScroll(9)
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))
+const ArtistCard = defineAsyncComponent(() => import('@/components/artist/ArtistCard.vue'))
 const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/view-mode-switch.vue'))
 
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
