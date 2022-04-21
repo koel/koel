@@ -66,7 +66,7 @@ import router from '@/router'
 import { useAlbumAttributes, useSongList } from '@/composables'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/screen-header.vue'))
-const AlbumInfo = defineAsyncComponent(() => import('@/components/album/info.vue'))
+const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
 const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))

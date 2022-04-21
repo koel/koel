@@ -1,12 +1,11 @@
 <template>
-  <li :class="{ available: song }" :title="tooltip" @click="play" role="button" tabindex="0">
-    <span class="no">{{ index + 1 }}</span>
+  <li :class="{ available: song }" :title="tooltip" role="button" tabindex="0" @click="play">
     <span class="title">{{ track.title }}</span>
     <a
-      :href="iTunesUrl"
       v-if="useiTunes && !song"
-      target="_blank"
+      :href="iTunesUrl"
       class="view-on-itunes"
+      target="_blank"
       title="View on iTunes"
     >
       iTunes
@@ -16,14 +15,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRefs } from 'vue'
+import { computed, toRef, toRefs } from 'vue'
 import { queueStore, sharedStore, songStore } from '@/stores'
 import { auth, playback } from '@/services'
 
-const props = defineProps<{ album: Album, track: AlbumTrack, index: number }>()
-const { album, track, index } = toRefs(props)
+const props = defineProps<{ album: Album, track: AlbumTrack }>()
+const { album, track } = toRefs(props)
 
-const useiTunes = ref(sharedStore.state.useiTunes)
+const useiTunes = toRef(sharedStore.state, 'useiTunes')
 
 const song = computed(() => songStore.guess(track.value.title, album.value))
 const tooltip = computed(() => song.value ? 'Click to play' : '')

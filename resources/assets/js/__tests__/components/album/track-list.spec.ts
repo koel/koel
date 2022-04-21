@@ -1,4 +1,4 @@
-import Component from '@/components/album/track-list.vue'
+import Component from '@/components/album/AlbumTrackList.vue'
 import TrackListItem from '@/components/album/track-list-item.vue'
 import factory from '@/__tests__/factory'
 import { mount } from '@/__tests__/adapter'

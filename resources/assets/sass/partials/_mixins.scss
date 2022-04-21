@@ -222,7 +222,8 @@
         background: rgba(255, 255, 255, 0.05);
       }
 
-      .no {
+      &::before {
+        // the track counter
         flex: 0 0 24px;
         opacity: .5;
       }

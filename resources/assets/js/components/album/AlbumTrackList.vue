@@ -4,12 +4,11 @@
 
     <ul class="tracks">
       <li
+        is="vue:TrackListItem"
+        v-for="(track, index) in album.info.tracks"
+        :key="index"
         :album="album"
-        :key="idx"
-        :index="idx"
         :track="track"
-        is="TrackListItem"
-        v-for="(track, idx) in album.info.tracks"
       />
     </ul>
   </section>
@@ -18,8 +17,22 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, toRefs } from 'vue'
 
-const TrackListItem = defineAsyncComponent(() => import('./track-list-item.vue'))
+const TrackListItem = defineAsyncComponent(() => import('./AlbumTrackListItem.vue'))
 
 const props = defineProps<{ album: Album }>()
 const { album } = toRefs(props)
 </script>
+
+<style lang="scss" scoped>
+ul {
+  counter-reset: trackCounter;
+}
+
+li {
+  counter-increment: trackCounter;
+
+  &::before {
+    content: counter(trackCounter);
+  }
+}
+</style>

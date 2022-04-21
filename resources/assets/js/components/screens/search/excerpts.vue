@@ -22,7 +22,7 @@
             </Btn>
           </h1>
           <ul v-if="searchState.excerpt.songs.length">
-            <li v-for="song in searchState.excerpt.songs" :key="song.id" :song="song" is="SongCard"/>
+            <li v-for="song in searchState.excerpt.songs" :key="song.id" :song="song" is="vue:SongCard"/>
           </ul>
           <p v-else>None found.</p>
         </section>

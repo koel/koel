@@ -99,7 +99,7 @@ const defaultTab: Tab = 'Lyrics'
 
 const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/info.vue'))
-const AlbumInfo = defineAsyncComponent(() => import('@/components/album/info.vue'))
+const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/youtube-video-list.vue'))
 
 const song = ref<Song | null>(null)
