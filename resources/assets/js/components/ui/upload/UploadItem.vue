@@ -36,7 +36,7 @@ import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { UploadFile } from '@/config'
 import { upload } from '@/services'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const props = defineProps<{ file: UploadFile }>()
 const { file } = toRefs(props)

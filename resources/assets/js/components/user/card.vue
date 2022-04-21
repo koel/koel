@@ -47,7 +47,7 @@ import { userStore } from '@/stores'
 import router from '@/router'
 import { alerts } from '@/utils'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)

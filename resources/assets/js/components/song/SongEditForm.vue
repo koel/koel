@@ -130,7 +130,7 @@ const COMPILATION_STATES = {
   MIXED: 2 // Some songs belong to compilation album(s)
 }
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
 
 const props = withDefaults(defineProps<{ songs: Song[], initialTab: TabName }>(), { initialTab: 'details' })

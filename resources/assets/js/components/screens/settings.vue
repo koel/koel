@@ -35,7 +35,7 @@ import { alerts, forceReloadWindow, hideOverlay, parseValidationError, showOverl
 import router from '@/router'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const state = settingStore.state
 const sharedState = reactive(sharedStore.state)

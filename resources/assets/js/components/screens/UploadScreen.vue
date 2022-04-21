@@ -5,11 +5,11 @@
 
       <template v-slot:controls>
         <BtnGroup uppercased v-if="hasUploadFailures">
-          <Btn @click="retryAll" green data-testid="upload-retry-all-btn">
+          <Btn data-testid="upload-retry-all-btn" green @click="retryAll">
             <i class="fa fa-repeat"></i>
             Retry All
           </Btn>
-          <Btn @click="removeFailedEntries" orange data-testid="upload-remove-all-btn">
+          <Btn data-testid="upload-remove-all-btn" orange @click="removeFailedEntries">
             <i class="fa fa-times"></i>
             Remove Failed
           </Btn>
@@ -19,16 +19,16 @@
 
     <div class="main-scroll-wrap">
       <div
+        v-if="mediaPath"
+        :class="{ droppable }"
         class="upload-panel"
         @dragenter.prevent="onDragEnter"
         @dragleave.prevent="onDragLeave"
         @drop.stop.prevent="onDrop"
         @dragover.prevent
-        :class="{ droppable }"
-        v-if="mediaPath"
       >
-        <div class="upload-files" v-if="uploadState.files.length">
-          <UploadItem v-for="file in uploadState.files" :key="file.id" :file="file" data-test="upload-item"/>
+        <div class="upload-files" v-if="files.length">
+          <UploadItem v-for="file in files" :key="file.id" :file="file" data-test="upload-item"/>
         </div>
 
         <ScreenEmptyState v-else>
@@ -40,7 +40,7 @@
           <span class="secondary d-block">
             <a class="or-click d-block" role="button">
               or click here to select songs
-              <input type="file" name="file[]" multiple @change="onFileInputChange"/>
+              <input :accept="acceptAttribute" multiple name="file[]" type="file" @change="onFileInputChange"/>
             </a>
           </span>
         </ScreenEmptyState>
@@ -57,34 +57,35 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive, ref, toRef } from 'vue'
 import ismobile from 'ismobilejs'
 import md5 from 'blueimp-md5'
+import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { settingStore, userStore } from '@/stores'
 import { eventBus, getAllFileEntries, isDirectoryReadingSupported } from '@/utils'
 import { UploadFile, validMediaMimeTypes } from '@/config'
 import { upload } from '@/services'
 
-import UploadItem from '@/components/ui/upload/upload-item.vue'
+import UploadItem from '@/components/ui/upload/UploadItem.vue'
 import BtnGroup from '@/components/ui/BtnGroup.vue'
-import Btn from '@/components/ui/btn.vue'
+import Btn from '@/components/ui/Btn.vue'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
+const acceptAttribute = validMediaMimeTypes.join(',')
+
+const userState = userStore.state
 const mediaPath = toRef(settingStore.state, 'media_path')
+const files = toRef(upload.state, 'files')
 const droppable = ref(false)
-const userState = reactive(userStore.state)
-const uploadState = reactive(upload.state)
 const hasUploadFailures = ref(false)
 
 const allowsUpload = computed(() => userState.current.is_admin && !ismobile.any)
 
-const instructionText = computed(() => isDirectoryReadingSupported
+const instructionText = isDirectoryReadingSupported
   ? 'Drop files or folders to upload'
   : 'Drop files to upload'
-)
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 const onDragLeave = () => (droppable.value = false)

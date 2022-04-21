@@ -70,7 +70,7 @@ const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/Scre
 const SongCard = defineAsyncComponent(() => import('@/components/song/card.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/card.vue'))
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const searchState = reactive(searchStore.state)
 const q = ref('')

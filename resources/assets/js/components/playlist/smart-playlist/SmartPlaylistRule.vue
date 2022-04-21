@@ -30,7 +30,7 @@ import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import models from '@/config/smart-playlist/models'
 import inputTypes from '@/config/smart-playlist/inputTypes'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const RuleInput = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRuleInput.vue'))
 
 const props = defineProps<{ rule: SmartPlaylistRule }>()

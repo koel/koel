@@ -31,7 +31,7 @@ import { playlistStore } from '@/stores'
 const props = defineProps<{ group: SmartPlaylistRuleGroup, isFirstGroup: boolean }>()
 const { group, isFirstGroup } = toRefs(props)
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const Rule = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRule.vue'))
 
 const mutatedGroup = reactive<SmartPlaylistRuleGroup>(JSON.parse(JSON.stringify(group.value)))

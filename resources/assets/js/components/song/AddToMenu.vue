@@ -66,7 +66,7 @@ import { playlistStore } from '@/stores'
 import router from '@/router'
 import { useSongMenuMethods } from '@/composables'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const props = defineProps<{ songs: Song[], showing: Boolean, config: AddToMenuConfig }>()
 const { songs, showing, config } = toRefs(props)

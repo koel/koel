@@ -32,7 +32,7 @@
 import { defineAsyncComponent, ref, toRefs, watchEffect } from 'vue'
 import { youtube as youtubeService } from '@/services'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)

@@ -53,7 +53,7 @@ import { defineAsyncComponent, onMounted, reactive, ref } from 'vue'
 import { sharedStore, UpdateCurrentProfileData, userStore } from '@/stores'
 import { alerts, parseValidationError } from '@/utils'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const demo = NODE_ENV === 'demo'
 const state = reactive(userStore.state)

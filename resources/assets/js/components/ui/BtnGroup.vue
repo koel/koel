@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 </script>
 
 <style lang="scss">

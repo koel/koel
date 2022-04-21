@@ -49,7 +49,7 @@ const ArtistScreen = defineAsyncComponent(() => import('@/components/screens/Art
 const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/settings.vue'))
 const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/profile.vue'))
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/youtube.vue'))
-const UploadScreen = defineAsyncComponent(() => import('@/components/screens/upload.vue'))
+const UploadScreen = defineAsyncComponent(() => import('@/components/screens/UploadScreen.vue'))
 const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/excerpts.vue'))
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/song-results.vue'))
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))

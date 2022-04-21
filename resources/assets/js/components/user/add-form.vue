@@ -49,7 +49,7 @@ import { isEqual } from 'lodash'
 import { CreateUserData, userStore } from '@/stores'
 import { alerts, parseValidationError } from '@/utils'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
 const TooltipIcon = defineAsyncComponent(() => import('@/components/ui/tooltip-icon.vue'))
 

@@ -93,7 +93,7 @@ const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHe
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/card.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))
 const SongCard = defineAsyncComponent(() => import('@/components/song/card.vue'))
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const { ToTopButton, scrolling } = useInfiniteScroll()
 

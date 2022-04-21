@@ -2,7 +2,7 @@ import { defineAsyncComponent, ref } from 'vue'
 import { playlistStore } from '@/stores'
 
 export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[] = []) => {
-  const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+  const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
   const FormBase = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistFormBase.vue'))
   const RuleGroup = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRuleGroup.vue'))
   const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))

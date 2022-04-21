@@ -49,7 +49,7 @@ import { computed, defineAsyncComponent, reactive } from 'vue'
 import compareVersions from 'compare-versions'
 import { sharedStore, userStore } from '@/stores'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const userState = reactive(userStore.state)
 const sharedState = reactive(sharedStore.state)

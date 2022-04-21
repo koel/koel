@@ -18,7 +18,7 @@ const DEMO_ACCOUNT = {
   password: 'demo'
 }
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const url = ref('')
 const email = ref(NODE_ENV === 'demo' ? DEMO_ACCOUNT.email : '')
