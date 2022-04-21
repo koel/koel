@@ -3,7 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\SongsBatchUnliked;
+use App\Models\Song;
 use App\Services\LastfmService;
+use App\Values\LastfmLoveTrackParameters;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class UnloveMultipleTracksOnLastfm implements ShouldQueue
@@ -17,6 +19,12 @@ class UnloveMultipleTracksOnLastfm implements ShouldQueue
 
     public function handle(SongsBatchUnliked $event): void
     {
-        $this->lastfm->batchToggleLoveTracks($event->songs, $event->user, false);
+        $this->lastfm->batchToggleLoveTracks(
+            $event->songs->map(static function (Song $song): LastfmLoveTrackParameters {
+                return LastfmLoveTrackParameters::make($song->title, $song->artist->name);
+            }),
+            $event->user,
+            false
+        );
     }
 }
