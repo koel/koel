@@ -126,7 +126,7 @@ export const upload = {
         songs: []
       })
 
-      artistStore.add(artist)
+      artistStore.all.unshift(artist)
     }
 
     if (!album) {
@@ -139,7 +139,7 @@ export const upload = {
         info: null
       })
 
-      albumStore.add(album)
+      albumStore.all.unshift(album)
     }
 
     const song: Song = {
@@ -158,6 +158,6 @@ export const upload = {
     }
 
     songStore.setupSong(song)
-    songStore.all.push(song)
+    songStore.all.unshift(song)
   }
 }
