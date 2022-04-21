@@ -38,14 +38,14 @@ import QueueScreen from '@/components/screens/QueueScreen.vue'
 import AlbumListScreen from '@/components/screens/album-list.vue'
 import ArtistListScreen from '@/components/screens/artist-list.vue'
 import AllSongsScreen from '@/components/screens/AllSongsScreen.vue'
-import PlaylistScreen from '@/components/screens/playlist.vue'
-import FavoritesScreen from '@/components/screens/favorites.vue'
+import PlaylistScreen from '@/components/screens/PlaylistScreen.vue'
+import FavoritesScreen from '@/components/screens/FavoritesScreen.vue'
 
-const RecentlyPlayedScreen = defineAsyncComponent(() => import('@/components/screens/recently-played.vue'))
+const RecentlyPlayedScreen = defineAsyncComponent(() => import('@/components/screens/RecentlyPlayedScreen.vue'))
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/user-list.vue'))
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/album-art-overlay.vue'))
-const AlbumScreen = defineAsyncComponent(() => import('@/components/screens/album.vue'))
-const ArtistScreen = defineAsyncComponent(() => import('@/components/screens/artist.vue'))
+const AlbumScreen = defineAsyncComponent(() => import('@/components/screens/AlbumScreen.vue'))
+const ArtistScreen = defineAsyncComponent(() => import('@/components/screens/ArtistScreen.vue'))
 const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/settings.vue'))
 const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/profile.vue'))
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/youtube.vue'))

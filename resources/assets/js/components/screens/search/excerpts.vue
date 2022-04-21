@@ -48,13 +48,13 @@
         </section>
       </div>
 
-      <ScreenPlaceholder v-else>
+      <ScreenEmptyState v-else>
         <template v-slot:icon>
           <i class="fa fa-search"></i>
         </template>
         Find songs, artists, and albums,
         <span class="secondary d-block">all in one place.</span>
-      </ScreenPlaceholder>
+      </ScreenEmptyState>
     </div>
   </section>
 </template>
@@ -66,7 +66,7 @@ import { searchStore } from '@/stores'
 import router from '@/router'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 const SongCard = defineAsyncComponent(() => import('@/components/song/card.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/card.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/card.vue'))

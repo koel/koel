@@ -31,7 +31,7 @@
           <UploadItem v-for="file in uploadState.files" :key="file.id" :file="file" data-test="upload-item"/>
         </div>
 
-        <ScreenPlaceholder v-else>
+        <ScreenEmptyState v-else>
           <template v-slot:icon>
             <i class="fa fa-upload"></i>
           </template>
@@ -43,15 +43,15 @@
               <input type="file" name="file[]" multiple @change="onFileInputChange"/>
             </a>
           </span>
-        </ScreenPlaceholder>
+        </ScreenEmptyState>
       </div>
 
-      <ScreenPlaceholder v-else>
+      <ScreenEmptyState v-else>
         <template v-slot:icon>
           <i class="fa fa-exclamation-triangle"></i>
         </template>
         No media path set.
-      </ScreenPlaceholder>
+      </ScreenEmptyState>
     </div>
   </section>
 </template>
@@ -71,7 +71,7 @@ import BtnGroup from '@/components/ui/BtnGroup.vue'
 import Btn from '@/components/ui/btn.vue'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
 const mediaPath = toRef(settingStore.state, 'media_path')
 const droppable = ref(false)

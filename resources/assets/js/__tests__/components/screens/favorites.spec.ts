@@ -1,4 +1,4 @@
-import Component from '@/components/screens/favorites.vue'
+import Component from '@/components/screens/FavoritesScreen.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/songSongListControls.vue'
 import { download } from '@/services'
@@ -36,7 +36,7 @@ describe('components/screens/favorites', () => {
     })
 
     await wrapper.vm.$nextTick()
-    expect(wrapper.has('[data-test=screen-placeholder]')).toBe(true)
+    expect(wrapper.has('[data-test=screen-empty-state]')).toBe(true)
   })
 
   it('allows downloading', () => {

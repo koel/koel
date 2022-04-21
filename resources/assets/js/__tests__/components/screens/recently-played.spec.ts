@@ -1,4 +1,4 @@
-import Component from '@/components/screens/recently-played.vue'
+import Component from '@/components/screens/RecentlyPlayedScreen.vue'
 import SongList from '@/components/song/SongList.vue'
 import factory from '@/__tests__/factory'
 import { recentlyPlayedStore } from '@/stores'

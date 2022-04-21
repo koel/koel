@@ -20,15 +20,22 @@
       </template>
     </ScreenHeader>
 
-    <SongList v-if="songs.length" :items="songs" :sortable="false" type="recently-played"/>
+    <SongList
+      v-if="songs.length"
+      ref="songList"
+      :items="songs"
+      :sortable="false"
+      type="recently-played"
+      @press:enter="onPressEnter"
+    />
 
-    <ScreenPlaceholder v-else>
+    <ScreenEmptyState v-else>
       <template v-slot:icon>
         <i class="fa fa-clock-o"></i>
       </template>
       No songs recently played.
       <span class="secondary d-block">Start playing to populate this playlist.</span>
-    </ScreenPlaceholder>
+    </ScreenEmptyState>
   </section>
 </template>
 
@@ -36,11 +43,10 @@
 import { eventBus, pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
 import { useSongList } from '@/composables'
-import { defineAsyncComponent, reactive, toRef } from 'vue'
-import { playback } from '@/services'
+import { defineAsyncComponent, toRef } from 'vue'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
 const {
   SongList,
@@ -53,11 +59,11 @@ const {
   showingControls,
   songListControlConfig,
   isPhone,
+  onPressEnter,
+  playAll,
   playSelected,
   toggleControls
 } = useSongList(toRef(recentlyPlayedStore.state, 'songs'))
-
-const playAll = () => playback.queueAndPlay(songs.value)
 
 eventBus.on({
   'LOAD_MAIN_CONTENT': (view: MainViewName) => view === 'RecentlyPlayed' && recentlyPlayedStore.fetchAll()

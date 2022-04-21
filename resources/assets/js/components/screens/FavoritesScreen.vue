@@ -30,9 +30,16 @@
       </template>
     </ScreenHeader>
 
-    <SongList v-if="songs.length" ref="songList" :items="songs" type="favorites"/>
+    <SongList
+      v-if="songs.length"
+      ref="songList"
+      :items="songs"
+      type="favorites"
+      @press:delete="removeSelected"
+      @press:enter="onPressEnter"
+    />
 
-    <ScreenPlaceholder v-else>
+    <ScreenEmptyState v-else>
       <template v-slot:icon>
         <i class="fa fa-frown-o"></i>
       </template>
@@ -42,7 +49,7 @@
         <i class="fa fa-heart-o"></i>&nbsp;
         icon to mark a song as favorite.
       </span>
-    </ScreenPlaceholder>
+    </ScreenEmptyState>
   </section>
 </template>
 
@@ -54,7 +61,7 @@ import { useSongList } from '@/composables'
 import { defineAsyncComponent, toRef } from 'vue'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
 const {
   SongList,
@@ -67,6 +74,7 @@ const {
   showingControls,
   songListControlConfig,
   isPhone,
+  onPressEnter,
   playAll,
   playSelected,
   toggleControls
@@ -75,4 +83,5 @@ const {
 const allowDownload = toRef(sharedStore.state, 'allowDownload')
 
 const download = () => downloadService.fromFavorites()
+const removeSelected = () => selectedSongs.value.length && favoriteStore.unlike(selectedSongs.value)
 </script>

@@ -10,7 +10,8 @@ import { eventBus } from '@/utils'
 import ControlsToggler from '@/components/ui/ScreenControlsToggler.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
-import { songStore } from '@/stores'
+import { queueStore, songStore } from '@/stores'
+import router from '@/router'
 
 export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongListControlsConfig> = {}) => {
   const songList = ref<InstanceType<typeof SongList>>()
@@ -36,9 +37,29 @@ export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongList
   })
 
   const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
-  const playAll = (shuffled: boolean) => playback.queueAndPlay(getSongsToPlay(), shuffled)
-  const playSelected = (shuffled: boolean) => playback.queueAndPlay(selectedSongs.value, shuffled)
+  const playAll = (shuffle: boolean) => playback.queueAndPlay(getSongsToPlay(), shuffle)
+  const playSelected = (shuffle: boolean) => playback.queueAndPlay(selectedSongs.value, shuffle)
   const toggleControls = () => (showingControls.value = !showingControls.value)
+
+  const onPressEnter = async (event: KeyboardEvent) => {
+    if (selectedSongs.value.length === 1) {
+      queueStore.queueIfNotQueued(selectedSongs.value[0])
+      await playback.play(selectedSongs.value[0])
+      return
+    }
+
+    //  • Only Enter: Queue songs to bottom
+    //  • Shift+Enter: Queues song to top
+    //  • Cmd/Ctrl+Enter: Queues song to bottom and play the first selected song
+    //  • Cmd/Ctrl+Shift+Enter: Queue songs to top and play the first queued song
+    event.shiftKey ? queueStore.queueToTop(selectedSongs.value) : queueStore.queue(selectedSongs.value)
+
+    if (event.ctrlKey || event.metaKey) {
+      await playback.play(selectedSongs.value[0])
+    }
+
+    router.go('/queue')
+  }
 
   eventBus.on({
     SET_SELECTED_SONGS (songs: Song[], target: ComponentInternalInstance) {
@@ -57,6 +78,7 @@ export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongList
     showingControls,
     songListControlConfig,
     isPhone,
+    onPressEnter,
     playAll,
     playSelected,
     toggleControls

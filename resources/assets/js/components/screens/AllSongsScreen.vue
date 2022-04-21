@@ -20,7 +20,7 @@
       </template>
     </ScreenHeader>
 
-    <SongList :items="songs" type="all-songs" ref="songList"/>
+    <SongList ref="songList" :items="songs" type="all-songs" @press:enter="onPressEnter"/>
   </section>
 </template>
 
@@ -43,6 +43,7 @@ const {
   showingControls,
   songListControlConfig,
   isPhone,
+  onPressEnter,
   playAll,
   playSelected,
   toggleControls

@@ -120,7 +120,7 @@
     "**/*.php": [
       "composer cs"
     ],
-    "**/*.ts": [
+    "resources/assets/**/*.ts": [
       "eslint"
     ]
   }

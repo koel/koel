@@ -43,7 +43,7 @@
       </template>
     </ScreenHeader>
 
-    <SongList :items="songs" type="album" :config="listConfig" ref="songList"/>
+    <SongList ref="songList" :config="listConfig" :items="songs" type="album" @press:enter="onPressEnter"/>
 
     <section v-if="sharedState.useLastfm && showing" class="info-wrapper">
       <CloseModalBtn @click="showing = false"/>
@@ -84,6 +84,7 @@ const {
   showingControls,
   songListControlConfig,
   isPhone,
+  onPressEnter,
   playAll,
   playSelected,
   toggleControls

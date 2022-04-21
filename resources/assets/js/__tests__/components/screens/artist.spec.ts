@@ -1,4 +1,4 @@
-import Component from '@/components/screens/artist.vue'
+import Component from '@/components/screens/ArtistScreen.vue'
 import SongList from '@/components/song/SongList.vue'
 import { artistInfo as artistInfoService, download } from '@/services'
 import factory from '@/__tests__/factory'

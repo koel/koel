@@ -3,7 +3,7 @@
     <screen-header>{{ title }}</screen-header>
 
     <div id="player">
-      <screen-placeholder data-testid="youtube-placeholder">
+      <ScreenEmptyState data-testid="youtube-placeholder">
         <template v-slot:icon>
           <i class="fa fa-youtube-play"></i>
         </template>
@@ -11,7 +11,7 @@
         <span class="d-block instruction">
           Start a video playback from the right sidebar.
         </span>
-      </screen-placeholder>
+      </ScreenEmptyState>
     </div>
   </section>
 </template>
@@ -26,7 +26,7 @@ import createYouTubePlayer from 'youtube-player'
 let player: YouTubePlayer|null = null
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
 const title = ref('YouTube Video')
 

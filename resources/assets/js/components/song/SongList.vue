@@ -79,9 +79,7 @@ import {
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { $, eventBus, orderBy, startDragging, arrayify } from '@/utils'
-import { favoriteStore, playlistStore, queueStore } from '@/stores'
-import { playback } from '@/services'
-import router from '@/router'
+import { queueStore } from '@/stores'
 
 type SortField = 'song.track'
   | 'song.disc'
@@ -101,11 +99,11 @@ interface SongRow {
 const SongItem = defineAsyncComponent(() => import('@/components/song/item.vue'))
 
 const props = withDefaults(
-  defineProps<{ items: Song[], playlist?: Playlist, type?: SongListType, config?: Partial<SongListConfig> }>(),
+  defineProps<{ items: Song[], type?: SongListType, config?: Partial<SongListConfig> }>(),
   { type: 'all-songs', config: () => ({}) }
 )
 
-const { items, playlist, type, config } = toRefs(props)
+const { items, type, config } = toRefs(props)
 
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SortField[]>([])
@@ -127,7 +125,6 @@ const mergedConfig = computed((): SongListConfig => {
  * Since song objects themselves are shared by all song lists, we can't use them directly to
  * determine their selection status (selected/unselected). Therefore, for each song list, we
  * maintain an array of "song proxies," each containing the song itself and the "selected" flag.
- * To comply with virtual-scroller, a "type" attribute also presents.
  */
 const generateSongProxies = () => {
   // Since this method re-generates the song wrappers, we need to keep track of  the
@@ -184,73 +181,16 @@ watch(items, () => render())
 const vm = getCurrentInstance()
 watch(selectedSongs, () => eventBus.emit('SET_SELECTED_SONGS', selectedSongs.value, vm?.parent))
 
+const emit = defineEmits(['press:enter', 'press:delete'])
+
 const handleDelete = () => {
-  if (!selectedSongs.value.length) {
-    return
-  }
-
-  switch (type.value) {
-    case 'queue':
-      queueStore.unqueue(selectedSongs.value)
-      break
-
-    case 'favorites':
-      favoriteStore.unlike(selectedSongs.value)
-      break
-
-    case 'playlist':
-      playlistStore.removeSongs(playlist!.value!, selectedSongs.value)
-      break
-
-    default:
-      return
-  }
-
+  emit('press:delete')
   clearSelection()
 }
 
-const handleEnter = (event: DragEvent) => {
-  if (!selectedSongs.value.length) {
-    return
-  }
-
-  if (selectedSongs.value.length === 1) {
-    // Just play the song
-    playback.play(selectedSongs.value[0])
-    return
-  }
-
-  switch (type.value) {
-    case 'queue':
-      // Play the first song selected if we're in Queue screen.
-      playback.play(selectedSongs.value[0])
-      break
-
-    default:
-      //
-      // --------------------------------------------------------------------
-      // For other screens, follow this map:
-      //
-      //  • Enter: Queue songs to bottom
-      //  • Shift+Enter: Queues song to top
-      //  • Cmd/Ctrl+Enter: Queues song to bottom and play the first selected song
-      //  • Cmd/Ctrl+Shift+Enter: Queue songs to top and play the first queued song
-      // --------------------------------------------------------------------
-      //
-      if (event.shiftKey) {
-        queueStore.queueToTop(selectedSongs.value)
-      } else {
-        queueStore.queue(selectedSongs.value)
-      }
-
-      if (event.ctrlKey || event.metaKey) {
-        playback.play(selectedSongs.value[0])
-      }
-
-      router.go('queue')
-
-      break
-  }
+const handleEnter = (event: KeyboardEvent) => {
+  emit('press:enter', event)
+  clearSelection()
 }
 
 /**

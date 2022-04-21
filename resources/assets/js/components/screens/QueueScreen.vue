@@ -25,20 +25,22 @@
 
     <SongList
       v-if="songs.length"
-      :items="songs"
-      :config="{ sortable: false }"
-      type="queue"
       ref="songList"
+      :config="{ sortable: false }"
+      :items="songs"
+      type="queue"
+      @press:delete="removeSelected"
+      @press:enter="onPressEnter"
     />
 
-    <ScreenPlaceholder v-else>
+    <ScreenEmptyState v-else>
       <template v-slot:icon>
         <i class="fa fa-coffee"></i>
       </template>
 
       No songs queued.
       <a v-if="showShuffleLibraryButton" class="start" @click.prevent="playAll(true)">Shuffle the whole library</a>?
-    </ScreenPlaceholder>
+    </ScreenEmptyState>
   </section>
 </template>
 
@@ -50,7 +52,7 @@ import { playback } from '@/services'
 import { useSongList } from '@/composables'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
 const {
   SongList,
@@ -73,6 +75,8 @@ const showShuffleLibraryButton = computed(() => songState.songs.length > 0)
 
 const playAll = (shuffle: boolean) => playback.queueAndPlay(songs.value.length ? songs.value : songStore.all, shuffle)
 const clearQueue = () => queueStore.clear()
+const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(selectedSongs.value)
+const onPressEnter = () => selectedSongs.value.length && playback.play(selectedSongs.value[0])
 </script>
 
 <style lang="scss" scoped>

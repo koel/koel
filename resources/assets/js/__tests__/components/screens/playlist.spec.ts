@@ -1,4 +1,4 @@
-import Component from '@/components/screens/playlist.vue'
+import Component from '@/components/screens/PlaylistScreen.vue'
 import SongList from '@/components/song/SongList.vue'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
@@ -39,7 +39,7 @@ describe('components/screens/playlist', () => {
       })
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.has('[data-test=screen-placeholder]')).toBe(true)
+    expect(wrapper.has('[data-test=screen-empty-state]')).toBe(true)
   })
 
   it('emits an event to delete the playlist', () => {

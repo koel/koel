@@ -1,5 +1,5 @@
 <template>
-  <div class="screen-placeholder" data-test="screen-placeholder">
+  <div class="screen-empty-state" data-test="screen-empty-state">
     <div>
       <span class="jumbo-icon">
         <slot name="icon">
@@ -13,11 +13,8 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-</script>
-
-<style lang="scss" scoped>
-.screen-placeholder {
+<style lang="scss">
+.screen-empty-state {
   display: flex;
   place-content: center;
   place-items: center;
@@ -58,6 +55,7 @@
     }
 
     .secondary {
+      margin-top: .2rem;
       font-size: 1.5rem;
     }
   }

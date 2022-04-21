@@ -36,11 +36,12 @@
         v-if="songs.length"
         ref="songList"
         :items="songs"
-        :playlist="playlist"
         type="playlist"
+        @press:delete="removeSelected"
+        @press:enter="onPressEnter"
       />
 
-      <ScreenPlaceholder v-else>
+      <ScreenEmptyState v-else>
         <template v-slot:icon>
           <i class="fa fa-file-o"></i>
         </template>
@@ -56,20 +57,21 @@
             or use the &quot;Add To…&quot; button to fill it up.
           </span>
         </template>
-      </ScreenPlaceholder>
+      </ScreenEmptyState>
     </template>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, ref } from 'vue'
+import { defineAsyncComponent, nextTick, ref, watch } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { playlistStore, sharedStore } from '@/stores'
 import { download as downloadService } from '@/services'
 import { useSongList } from '@/composables'
+import { difference } from 'lodash'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenPlaceholder = defineAsyncComponent(() => import('@/components/ui/screen-placeholder.vue'))
+const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
 const playlist = ref<Playlist>()
 
@@ -84,6 +86,7 @@ const {
   showingControls,
   songListControlConfig,
   isPhone,
+  onPressEnter,
   playAll,
   playSelected,
   toggleControls
@@ -94,6 +97,13 @@ const sharedState = sharedStore.state
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value)
 const download = () => downloadService.fromPlaylist(playlist.value!)
 const editSmartPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', playlist.value)
+
+const removeSelected = () => {
+  if (!selectedSongs.value.length) return
+
+  playlistStore.removeSongs(playlist.value!, selectedSongs.value)
+  songs.value = difference(songs.value, selectedSongs.value)
+}
 
 /**
  * Fetch a playlist's content from the server, populate it, and use it afterwards.
