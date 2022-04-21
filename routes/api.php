@@ -52,7 +52,7 @@ Route::middleware('auth')->group(static function (): void {
 
     Route::get('data', [DataController::class, 'index']);
 
-    Route::post('settings', [SettingController::class, 'store']);
+    Route::put('settings', [SettingController::class, 'update']);
 
     Route::post('{song}/scrobble', [ScrobbleController::class, 'store']);
     Route::put('songs', [SongController::class, 'update']);

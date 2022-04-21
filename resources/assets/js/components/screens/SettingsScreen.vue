@@ -2,22 +2,22 @@
   <section id="settingsWrapper">
     <ScreenHeader>Settings</ScreenHeader>
 
-    <form @submit.prevent="confirmThenSave" class="main-scroll-wrap">
+    <form class="main-scroll-wrap" @submit.prevent="confirmThenSave">
       <div class="form-row">
         <label for="inputSettingsPath">Media Path</label>
 
-        <p class="help" id="mediaPathHelp">
+        <p id="mediaPathHelp" class="help">
           The <em>absolute</em> path to the server directory containing your media.
           Koel will scan this directory for songs and extract any available information.<br>
           Scanning may take a while, especially if you have a lot of songs, so be patient.
         </p>
 
         <input
-          aria-describedby="mediaPathHelp"
           id="inputSettingsPath"
-          type="text"
-          v-model="state.media_path"
+          v-model="mediaPath"
+          aria-describedby="mediaPathHelp"
           name="media_path"
+          type="text"
         >
       </div>
 
@@ -29,39 +29,40 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive } from 'vue'
-import { settingStore, sharedStore } from '@/stores'
+import { computed, defineAsyncComponent, ref } from 'vue'
+import { settingStore } from '@/stores'
 import { alerts, forceReloadWindow, hideOverlay, parseValidationError, showOverlay } from '@/utils'
 import router from '@/router'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
-const state = settingStore.state
-const sharedState = reactive(sharedStore.state)
+const mediaPath = ref(settingStore.state.media_path)
+const originalMediaPath = mediaPath.value
 
 const shouldWarn = computed(() => {
   // Warn the user if the media path is not empty and about to change.
-  if (!sharedState.originalMediaPath || !state.media_path) {
+  if (!originalMediaPath || !mediaPath.value) {
     return false
   }
 
-  return sharedState.originalMediaPath !== state.media_path.trim()
+  return originalMediaPath !== mediaPath.value.trim()
 })
 
 const save = async () => {
   showOverlay()
 
   try {
-    await settingStore.update()
+    await settingStore.update({ media_path: mediaPath.value })
+    alerts.success('Settings saved.')
     // Make sure we're back to home first.
     router.go('home')
     forceReloadWindow()
   } catch (err: any) {
-    hideOverlay()
-
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
     alerts.error(msg)
+  } finally {
+    hideOverlay()
   }
 }
 

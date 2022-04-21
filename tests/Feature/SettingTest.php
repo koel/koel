@@ -5,10 +5,11 @@ namespace Tests\Feature;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\MediaSyncService;
+use Mockery\MockInterface;
 
 class SettingTest extends TestCase
 {
-    private $mediaSyncService;
+    private MockInterface $mediaSyncService;
 
     public function setUp(): void
     {
@@ -22,7 +23,7 @@ class SettingTest extends TestCase
         $this->mediaSyncService->shouldReceive('sync')->once();
 
         $user = User::factory()->admin()->create();
-        $this->postAsUser('/api/settings', ['media_path' => __DIR__], $user);
+        $this->putAsUser('/api/settings', ['media_path' => __DIR__], $user);
 
         self::assertEquals(__DIR__, Setting::get('media_path'));
     }

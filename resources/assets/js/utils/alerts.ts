@@ -7,23 +7,23 @@ const encodeEntities = (str: string) => str.replace(/&/g, '&amp;')
   .replace(/>/g, '&gt;')
 
 export const alerts = {
-  alert: (msg: string): void => alertify.alert(encodeEntities(msg)),
+  alert: (msg: string) => alertify.alert(encodeEntities(msg)),
 
-  confirm: (msg: string, okFunc: TAnyFunction, cancelFunc?: TAnyFunction): void => {
+  confirm: (msg: string, okFunc: TAnyFunction, cancelFunc?: TAnyFunction) => {
     alertify.confirm(msg, okFunc, cancelFunc)
   },
 
-  log: (msg: string, type: logType = 'log', cb?: TAnyFunction): void => {
+  log: (msg: string, type: logType = 'log', cb?: TAnyFunction) => {
     alertify.logPosition('top right')
     alertify.closeLogOnClick(true)
     alertify[type](encodeEntities(msg), cb)
   },
 
-  success (msg: string, cb?: TAnyFunction): void {
+  success (msg: string, cb?: TAnyFunction) {
     this.log(msg, 'success', cb)
   },
 
-  error (msg: string, cb?: TAnyFunction): void {
+  error (msg: string, cb?: TAnyFunction) {
     this.log(msg, 'error', cb)
   }
 }

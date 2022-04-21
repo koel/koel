@@ -1,11 +1,7 @@
 import { reactive } from 'vue'
 import { http } from '@/services'
-import { alerts } from '@/utils'
-import stub from '@/stubs/settings'
 
 export const settingStore = {
-  stub,
-
   state: reactive<Settings>({
     media_path: ''
   }),
@@ -18,8 +14,8 @@ export const settingStore = {
     return this.state
   },
 
-  async update (): Promise<void> {
-    await http.post('settings', this.all)
-    alerts.success('Settings saved.')
+  async update (settings: Settings) {
+    await http.put('settings', settings)
+    Object.assign(this.state, settings)
   }
 }

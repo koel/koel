@@ -282,7 +282,7 @@ interface User {
   avatar: string
 }
 
-interface Settings extends Object {
+interface Settings {
   media_path?: string
 }
 
@@ -305,11 +305,6 @@ interface SongListMeta {
 
 declare module 'koel/types/ui' {
   import { ComponentInternalInstance } from 'vue'
-
-  export type BaseContextMenu = ComponentInternalInstance & {
-    open (y: number, x: number): void
-    close (): void
-  }
 
   export type BasePlaylistMenu = ComponentInternalInstance & {
     open (top: number, left: number): void

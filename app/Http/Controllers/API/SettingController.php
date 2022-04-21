@@ -15,8 +15,7 @@ class SettingController extends Controller
         $this->mediaSyncService = $mediaSyncService;
     }
 
-    // @TODO: This should be a PUT request
-    public function store(SettingRequest $request)
+    public function update(SettingRequest $request)
     {
         Setting::set('media_path', rtrim(trim($request->media_path), '/'));
 
