@@ -2,10 +2,10 @@
   <section class="text-secondary">
     <h1>Last.fm Integration</h1>
 
-    <div v-if="sharedState.useLastfm" data-testid="lastfm-integrated">
+    <div v-if="useLastfm" data-testid="lastfm-integrated">
       <p>
         This installation of Koel integrates with Last.fm.
-        <span v-if="currentUserConnected">
+        <span v-if="connected">
           It appears that you have connected your Last.fm account as well – Perfect!
         </span>
         <span v-else>It appears that you haven’t connected to your Last.fm account though.</span>
@@ -15,26 +15,26 @@
         <a
           class="text-orange"
           href="https://www.last.fm/about/trackmymusic"
-          target="_blank"
           rel="noopener"
+          target="_blank"
         >
           scrobbling
         </a>.
       </p>
       <div class="buttons">
-        <Btn @click.prevent="connect" class="connect">
+        <Btn class="connect" @click.prevent="connect">
           <i class="fa fa-lastfm"></i>
-          {{ currentUserConnected ? 'Reconnect' : 'Connect' }}
+          {{ connected ? 'Reconnect' : 'Connect' }}
         </Btn>
 
-        <btn v-if="currentUserConnected" @click.prevent="disconnect" class="disconnect" gray>Disconnect</btn>
+        <Btn v-if="connected" class="disconnect" gray @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>
 
     <div v-else data-testid="lastfm-not-integrated">
       <p>
         This installation of Koel has no Last.fm integration.
-        <span v-if="userState.current.is_admin" data-testid="lastfm-admin-instruction">
+        <span v-if="currentUser.is_admin" data-testid="lastfm-admin-instruction">
           Visit
           <a href="https://docs.koel.dev/3rd-party.html#last-fm" class="text-orange" target="_blank">Koel’s Wiki</a>
           for a quick how-to.
@@ -48,17 +48,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive } from 'vue'
+import { computed, defineAsyncComponent, toRef } from 'vue'
 import { sharedStore, userStore } from '@/stores'
 import { auth, http } from '@/services'
 import { forceReloadWindow } from '@/utils'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
-const userState = reactive(userStore.state)
-const sharedState = reactive(sharedStore.state)
+const currentUser = toRef(userStore.state, 'current')
+const useLastfm = toRef(sharedStore.state, 'useLastfm')
 
-const currentUserConnected = computed(() => Boolean(userState.current.preferences.lastfm_session_key))
+const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_session_key))
 
 /**
  * Connect the current user to Last.fm.
@@ -71,7 +71,10 @@ const connect = () => window.open(
   'toolbar=no,titlebar=no,location=no,width=1024,height=640'
 )
 
-const disconnect = () => http.delete('lastfm/disconnect').then(forceReloadWindow)
+const disconnect = async () => {
+  await http.delete('lastfm/disconnect')
+  forceReloadWindow()
+}
 </script>
 
 <style lang="scss" scoped>

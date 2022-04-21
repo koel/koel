@@ -1,3 +1,4 @@
+import { reactive } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preference'
 
 import bgRosePetal from '@/../img/themes/bg-rose-petals.svg'
@@ -10,7 +11,7 @@ import bgNemo from '@/../img/themes/bg-nemo.jpg'
 import bgCat from '@/../img/themes/bg-cat.jpg'
 
 export const themeStore = {
-  state: {
+  state: reactive({
     themes: [
       {
         id: 'classic',
@@ -91,7 +92,7 @@ export const themeStore = {
         thumbnailUrl: bgCat
       }
     ] as Theme[]
-  },
+  }),
 
   init () {
     this.applyThemeFromPreference()
@@ -101,12 +102,10 @@ export const themeStore = {
     document.documentElement.setAttribute('data-theme', theme.id)
     preferences.theme = theme.id
 
-    this.state.themes.forEach(t => {
-      t.selected = t.id === theme.id
-    })
+    this.state.themes.forEach(t => (t.selected = t.id === theme.id))
   },
 
-  getThemeById (id: string): Theme | undefined {
+  getThemeById (id: string) {
     return this.state.themes.find(theme => theme.id === id)
   },
 

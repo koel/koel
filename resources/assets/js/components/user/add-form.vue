@@ -70,6 +70,7 @@ const submit = async () => {
 
   try {
     await userStore.store(newUser)
+    alerts.success(`New user "${newUser.name}" created.`)
     close()
   } catch (err: any) {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'

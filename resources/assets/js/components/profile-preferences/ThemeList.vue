@@ -3,18 +3,18 @@
     <h1>Theme</h1>
     <ul class="themes">
       <li v-for="theme in themes" :key="theme.id">
-        <ThemeCard :theme="theme" :key="theme.id" @selected="setTheme"/>
+        <ThemeCard :key="theme.id" :theme="theme" @selected="setTheme"/>
       </li>
     </ul>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive } from 'vue'
+import { defineAsyncComponent, toRef } from 'vue'
 import { themeStore } from '@/stores'
 
-const ThemeCard = defineAsyncComponent(() => import('@/components/profile-preferences/theme-card.vue'))
-const themes = reactive(themeStore.state.themes)
+const ThemeCard = defineAsyncComponent(() => import('@/components/profile-preferences/ThemeCard.vue'))
+const themes = toRef(themeStore.state, 'themes')
 
 const setTheme = (theme: Theme) => themeStore.setTheme(theme)
 </script>

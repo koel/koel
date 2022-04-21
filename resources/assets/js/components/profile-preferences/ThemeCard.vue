@@ -1,35 +1,31 @@
 <template>
   <div
-    class="theme"
     :class="{ selected: theme.selected }"
-    :style="thumbnailStyles"
-    @click="$emit('selected', theme)"
     :data-testid="`theme-card-${theme.id}`"
+    :style="thumbnailStyles"
+    class="theme"
+    @click="$emit('selected', theme)"
   >
     <div class="name">{{ name }}</div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
+import { toRefs } from 'vue'
 import { slugToTitle } from '@/utils'
 
 const props = defineProps<{ theme: Theme }>()
 const { theme } = toRefs(props)
 
-const name = computed(() => theme.value.name ? theme.value.name : slugToTitle(theme.value.id))
+const name = theme.value.name ? theme.value.name : slugToTitle(theme.value.id)
 
-const thumbnailStyles = computed((): Record<string, string> => {
-  const styles: Record<string, string> = {
-    'background-color': theme.value.thumbnailColor
-  }
+const thumbnailStyles: Record<string, string> = {
+  'background-color': theme.value.thumbnailColor
+}
 
-  if (theme.value.thumbnailUrl) {
-    styles['background-image'] = `url(${theme.value.thumbnailUrl})`
-  }
-
-  return styles
-})
+if (theme.value.thumbnailUrl) {
+  thumbnailStyles['background-image'] = `url(${theme.value.thumbnailUrl})`
+}
 </script>
 
 <style lang="scss" scoped>

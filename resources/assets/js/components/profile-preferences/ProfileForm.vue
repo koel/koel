@@ -1,46 +1,47 @@
 <template>
-  <form @submit.prevent="update" data-testid="update-profile-form">
+  <form data-testid="update-profile-form" @submit.prevent="update">
     <div class="form-row">
       <label for="inputProfileCurrentPassword">Current Password</label>
       <input
-        v-model="profile.current_password"
-        name="current_password"
-        type="password"
         id="inputProfileCurrentPassword"
+        v-model="profile.current_password"
         v-koel-focus
+        name="current_password"
+        placeholder="Required to update your profile"
         required
+        type="password"
       >
     </div>
 
     <div class="form-row">
       <label for="inputProfileName">Name</label>
-      <input type="text" name="name" id="inputProfileName" v-model="profile.name" required>
+      <input id="inputProfileName" v-model="profile.name" name="name" required type="text">
     </div>
 
     <div class="form-row">
       <label for="inputProfileEmail">Email Address</label>
-      <input type="email" name="email" id="inputProfileEmail" v-model="profile.email" required>
+      <input id="inputProfileEmail" v-model="profile.email" name="email" required type="email">
     </div>
 
     <div class="change-password">
       <div class="form-row">
         <label for="inputProfileNewPassword">New Password</label>
         <input
-          v-model="profile.new_password"
-          name="new_password"
-          type="password"
           id="inputProfileNewPassword"
+          v-model="profile.new_password"
           autocomplete="new-password"
+          name="new_password"
+          placeholder="Leave empty to keep current password"
+          type="password"
         >
         <p class="password-rules help">
-          Min. 10 characters. Must be a mix of characters, numbers, and symbols.<br>
-          Leave this empty to keep the current password.
+          Min. 10 characters. Should be a mix of characters, numbers, and symbols.<br>
         </p>
       </div>
     </div>
 
     <div class="form-row">
-      <Btn type="submit" class="btn-submit">Save</Btn>
+      <Btn class="btn-submit" type="submit">Save</Btn>
       <span v-if="demo" style="font-size:.95rem; opacity:.7; margin-left:5px">
         Changes will not be saved in the demo version.
       </span>
@@ -49,15 +50,13 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, reactive, ref } from 'vue'
-import { sharedStore, UpdateCurrentProfileData, userStore } from '@/stores'
+import { defineAsyncComponent, onMounted, ref } from 'vue'
+import { UpdateCurrentProfileData, userStore } from '@/stores'
 import { alerts, parseValidationError } from '@/utils'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const demo = NODE_ENV === 'demo'
-const state = reactive(userStore.state)
-const sharedState = reactive(sharedStore.state)
 const profile = ref<UpdateCurrentProfileData>({} as unknown as UpdateCurrentProfileData)
 
 onMounted(() => {
@@ -77,6 +76,7 @@ const update = async () => {
     await userStore.updateProfile(profile.value)
     profile.value.current_password = null
     delete profile.value.new_password
+    alerts.success('Profile updated.')
   } catch (err: any) {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
     alerts.error(msg)

@@ -2,12 +2,11 @@ import { without } from 'lodash'
 import md5 from 'blueimp-md5'
 
 import { http } from '@/services'
-import { alerts } from '@/utils'
 import stub from '@/stubs/user'
 import { reactive } from 'vue'
 
 export interface UpdateCurrentProfileData {
-  current_password: string|null
+  current_password: string | null
   name: string
   email: string
   new_password?: string
@@ -28,14 +27,12 @@ export interface UpdateUserData extends UserFormData {
 }
 
 export const userStore = {
-  stub,
-
   state: reactive({
     users: [] as User[],
     current: stub
   }),
 
-  init (users: User[], currentUser: User): void {
+  init (users: User[], currentUser: User) {
     this.all = users
     this.current = currentUser
 
@@ -46,7 +43,7 @@ export const userStore = {
     this.setAvatar()
   },
 
-  get all (): User[] {
+  get all () {
     return this.state.users
   },
 
@@ -54,8 +51,8 @@ export const userStore = {
     this.state.users = value
   },
 
-  byId (id: number): User {
-    return <User> this.all.find(user => user.id === id)
+  byId (id: number) {
+    return this.all.find(user => user.id === id)
   },
 
   get current () {
@@ -71,53 +68,40 @@ export const userStore = {
    *
    * @param {?User} user The user. If null, the current user.
    */
-  setAvatar (user?: User): void {
+  setAvatar (user?: User) {
     user = user || this.current
     user.avatar = `https://www.gravatar.com/avatar/${md5(user.email)}?s=256&d=mp`
   },
 
-  login: async (email: string, password: string): Promise<User> => {
-    return await http.post<User>('me', { email, password })
-  },
+  login: async (email: string, password: string) => await http.post<User>('me', { email, password }),
+  logout: async () => await http.delete('me'),
+  getProfile: async () => await http.get<User>('me'),
 
-  logout: async (): Promise<void> => {
-    await http.delete('me')
-  },
-
-  getProfile: async (): Promise<User> => {
-    return await http.get<User>('me')
-  },
-
-  async updateProfile (data: UpdateCurrentProfileData): Promise<void> {
+  async updateProfile (data: UpdateCurrentProfileData) {
     await http.put('me', data)
 
     this.current.name = data.name
     this.current.email = data.email
     this.setAvatar()
-
-    alerts.success('Profile updated.')
   },
 
-  async store (data: CreateUserData): Promise<User> {
+  async store (data: CreateUserData) {
     const user = await http.post<User>('user', data)
     this.setAvatar(user)
     this.all.unshift(user)
-    alerts.success(`New user "${data.name}" created.`)
 
     return user
   },
 
-  async update (user: User, data: UpdateUserData): Promise<void> {
+  async update (user: User, data: UpdateUserData) {
     await http.put(`user/${user.id}`, data)
     this.setAvatar(user)
     ;[user.name, user.email, user.is_admin] = [data.name, data.email, data.is_admin]
-    alerts.success('User profile updated.')
   },
 
-  async destroy (user: User): Promise<void> {
+  async destroy (user: User) {
     await http.delete(`user/${user.id}`)
     this.all = without(this.all, user)
-    alerts.success(`User "${user.name}" deleted.`)
 
     // Mama, just killed a man
     // Put a gun against his head

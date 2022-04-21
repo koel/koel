@@ -47,7 +47,7 @@ const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/album
 const AlbumScreen = defineAsyncComponent(() => import('@/components/screens/AlbumScreen.vue'))
 const ArtistScreen = defineAsyncComponent(() => import('@/components/screens/ArtistScreen.vue'))
 const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/SettingsScreen.vue'))
-const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/profile.vue'))
+const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/ProfileScreen.vue'))
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/youtube.vue'))
 const UploadScreen = defineAsyncComponent(() => import('@/components/screens/UploadScreen.vue'))
 const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/excerpts.vue'))

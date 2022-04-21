@@ -65,6 +65,7 @@ const confirmDelete = () => alerts.confirm(`You’re about to unperson ${user.va
 const destroy = () => {
   userStore.destroy(user.value)
   showing.value = false
+  alerts.success(`User "${user.value.name}" deleted.`)
 }
 </script>
 

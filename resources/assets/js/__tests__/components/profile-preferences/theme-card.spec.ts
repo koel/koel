@@ -1,5 +1,5 @@
 import { shallow } from '@/__tests__/adapter'
-import Component from '@/components/profile-preferences/theme-card.vue'
+import Component from '@/components/profile-preferences/ThemeCard.vue'
 
 describe('profile-preferences/profile-form', () => {
   afterEach(() => {

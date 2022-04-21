@@ -15,10 +15,10 @@
 import { defineAsyncComponent } from 'vue'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ProfileForm = defineAsyncComponent(() => import('@/components/profile-preferences/profile-form.vue'))
-const LastfmIntegration = defineAsyncComponent(() => import('@/components/profile-preferences/lastfm-integration.vue'))
-const Preferences = defineAsyncComponent(() => import('@/components/profile-preferences/preferences.vue'))
-const Themes = defineAsyncComponent(() => import('@/components/profile-preferences/themes.vue'))
+const ProfileForm = defineAsyncComponent(() => import('@/components/profile-preferences/ProfileForm.vue'))
+const LastfmIntegration = defineAsyncComponent(() => import('@/components/profile-preferences/LastfmIntegration.vue'))
+const Preferences = defineAsyncComponent(() => import('@/components/profile-preferences/PreferencesForm.vue'))
+const Themes = defineAsyncComponent(() => import('@/components/profile-preferences/ThemeList.vue'))
 </script>
 
 <style lang="scss">

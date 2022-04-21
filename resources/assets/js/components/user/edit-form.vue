@@ -64,6 +64,7 @@ const submit = async () => {
 
   try {
     await userStore.update(user.value, updateData)
+    alerts.success('User profile updated.')
     close()
   } catch (err: any) {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
