@@ -1,28 +1,28 @@
 <template>
-  <div class="upload-item" :class="[file.status]" :title="file.message">
-    <span class="progress" :style="{ width: `${file.progress}%` }"></span>
+  <div :class="[file.status]" :title="file.message" class="upload-item">
+    <span :style="{ width: `${file.progress}%` }" class="progress"></span>
     <span class="details">
       <span class="name">{{ file.name }}</span>
       <span class="controls">
         <Btn
-          @click="retry"
+          v-if="canRetry"
+          data-test="retry-upload-btn"
+          icon-only
           title="Retry upload"
           transparent
           unrounded
-          icon-only
-          v-if="canRetry"
-          data-test="retry-upload-btn"
+          @click="retry"
         >
           <i class="fa fa-repeat"></i>
         </Btn>
         <Btn
-          @click="remove"
+          v-if="canRemove"
+          data-test="remove-upload-btn"
+          icon-only
           title="Remove"
           transparent
           unrounded
-          icon-only
-          v-if="canRemove"
-          data-test="remove-upload-btn"
+          @click="remove"
         >
           <i class="fa fa-times"></i>
         </Btn>

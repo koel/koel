@@ -75,13 +75,12 @@ const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/Scre
 
 const acceptAttribute = validMediaMimeTypes.join(',')
 
-const userState = userStore.state
 const mediaPath = toRef(settingStore.state, 'media_path')
 const files = toRef(upload.state, 'files')
 const droppable = ref(false)
 const hasUploadFailures = ref(false)
 
-const allowsUpload = computed(() => userState.current.is_admin && !ismobile.any)
+const allowsUpload = computed(() => userStore.state.current.is_admin && !ismobile.any)
 
 const instructionText = isDirectoryReadingSupported
   ? 'Drop files or folders to upload'

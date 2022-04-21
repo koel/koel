@@ -82,12 +82,12 @@
 
 <script lang="ts" setup>
 import { sample } from 'lodash'
+import { computed, defineAsyncComponent, reactive, ref } from 'vue'
 
 import { eventBus } from '@/utils'
 import { albumStore, artistStore, preferenceStore, recentlyPlayedStore, songStore, userStore } from '@/stores'
-import router from '@/router'
 import { useInfiniteScroll } from '@/composables'
-import { computed, defineAsyncComponent, reactive, ref } from 'vue'
+import router from '@/router'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
