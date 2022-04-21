@@ -19,12 +19,14 @@ class SongController extends Controller
 
     public function put(PutSongRequest $request)
     {
+        $artist = array_get($request->tags, 'artist', '');
+        $albumartist = trim(array_get($request->tags, 'albumartist', ''));
         $song = $this->s3Service->createSongEntry(
             $request->bucket,
             $request->key,
-            array_get($request->tags, 'artist'),
+            $artist,
             array_get($request->tags, 'album'),
-            (bool) trim(array_get($request->tags, 'albumartist')),
+            (bool) $albumartist && $albumartist !== $artist,
             array_get($request->tags, 'cover'),
             trim(array_get($request->tags, 'title', '')),
             (int) array_get($request->tags, 'duration', 0),
