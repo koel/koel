@@ -37,10 +37,7 @@
       </template>
 
       No songs queued.
-      <span class="secondary d-block" v-if="shouldShowShufflingAllLink">
-        How about
-        <a class="start" @click.prevent="shuffleAll">shuffling all songs</a>?
-      </span>
+      <a v-if="showShuffleLibraryButton" class="start" @click.prevent="playAll(true)">Shuffle the whole library</a>?
     </ScreenPlaceholder>
   </section>
 </template>
@@ -72,9 +69,14 @@ const {
 
 const songState = reactive(songStore.state)
 
-const shouldShowShufflingAllLink = computed(() => songState.songs.length > 0)
+const showShuffleLibraryButton = computed(() => songState.songs.length > 0)
 
-const playAll = () => playback.queueAndPlay(songs.value.length ? songList.value.getAllSongsWithSort() : songStore.all)
-const shuffleAll = async () => await playback.queueAndPlay(songStore.all, true)
+const playAll = (shuffle: boolean) => playback.queueAndPlay(songs.value.length ? songs.value : songStore.all, shuffle)
 const clearQueue = () => queueStore.clear()
 </script>
+
+<style lang="scss" scoped>
+.start {
+  color: var(--color-highlight);
+}
+</style>

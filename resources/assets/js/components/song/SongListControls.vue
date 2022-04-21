@@ -142,8 +142,8 @@ const playSelected = () => emit('playSelected', false)
 const clearQueue = () => emit('clearQueue')
 const deletePlaylist = () => emit('deletePlaylist')
 const closeAddToMenu = () => (showingAddToMenu.value = false)
-const registerKeydown = (event: KeyboardEvent) => event.altKey && (altPressed.value = true)
-const registerKeyup = (event: KeyboardEvent) => event.altKey && (altPressed.value = false)
+const registerKeydown = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = true)
+const registerKeyup = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = false)
 
 const toggleAddToMenu = async () => {
   showingAddToMenu.value = !showingAddToMenu.value
