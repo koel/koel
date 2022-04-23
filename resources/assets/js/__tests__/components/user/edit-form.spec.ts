@@ -1,10 +1,10 @@
-import Component from '@/components/user/edit-form.vue'
+import Component from '@/components/user/UserEditForm.vue'
 import { userStore } from '@/stores'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow, mount } from '@/__tests__/adapter'
 
-describe('components/user/edit-form', () => {
+describe('components/user/UserEditForm', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()

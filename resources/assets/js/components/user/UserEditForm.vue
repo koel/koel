@@ -1,7 +1,7 @@
 <template>
   <div class="edit-user" @keydown.esc="maybeClose">
     <SoundBar v-if="loading"/>
-    <form class="user-edit" @submit.prevent="submit" v-else data-testid="edit-user-form">
+    <form v-else class="user-edit" data-testid="edit-user-form" @submit.prevent="submit">
       <header>
         <h1>Edit User</h1>
       </header>
@@ -9,26 +9,26 @@
       <div>
         <div class="form-row">
           <label>Name</label>
-          <input title="Name" type="text" name="name" v-model="updateData.name" required v-koel-focus>
+          <input v-model="updateData.name" v-koel-focus name="name" required title="Name" type="text">
         </div>
         <div class="form-row">
           <label>Email</label>
-          <input title="Email" type="email" name="email" v-model="updateData.email" required>
+          <input v-model="updateData.email" name="email" required title="Email" type="email">
         </div>
         <div class="form-row">
           <label>Password</label>
           <input
+            v-model="updateData.password"
+            autocomplete="new-password"
             name="password"
             placeholder="Leave blank for no changes"
             type="password"
-            v-model="updateData.password"
-            autocomplete="new-password"
           >
-          <p class="help">Min. 10 characters. Must be a mix of characters, numbers, and symbols.</p>
+          <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
         </div>
         <div class="form-row">
           <label>
-            <input type="checkbox" name="is_admin" v-model="updateData.is_admin"> User is an admin
+            <input v-model="updateData.is_admin" name="is_admin" type="checkbox"> User is an admin
             <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
           </label>
         </div>
@@ -43,8 +43,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, reactive, ref, toRefs } from 'vue'
 import { isEqual } from 'lodash'
+import { defineAsyncComponent, reactive, ref, toRefs } from 'vue'
 import { alerts, parseValidationError } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
 
@@ -55,9 +55,15 @@ const TooltipIcon = defineAsyncComponent(() => import('@/components/ui/TooltipIc
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)
 
+const originalData: UpdateUserData = {
+  name: user.value.name,
+  email: user.value.email,
+  is_admin: user.value.is_admin
+}
+
+const updateData = reactive<UpdateUserData>(Object.assign({}, originalData))
+
 const loading = ref(false)
-const updateData = reactive({} as unknown as UpdateUserData)
-const originalData = reactive({} as unknown as UpdateUserData)
 
 const submit = async () => {
   loading.value = true
@@ -86,16 +92,6 @@ const maybeClose = () => {
 
   alerts.confirm('Discard all changes?', close)
 }
-
-onMounted(() => {
-  Object.assign(updateData, {
-    name: user.value.name,
-    email: user.value.email,
-    is_admin: user.value.is_admin
-  })
-
-  Object.assign(originalData, updateData)
-})
 </script>
 
 <style lang="scss" scoped>

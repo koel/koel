@@ -107,6 +107,10 @@ const destroy = () => {
       display: none;
       margin-top: .5rem;
 
+      > * + * {
+        margin-left: .25rem;
+      }
+
       @media (hover: none) {
         display: block;
       }

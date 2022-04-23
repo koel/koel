@@ -40,7 +40,7 @@ declare type ModalName =
 const CreateSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistCreateForm.vue'))
 const EditSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistEditForm.vue'))
 const AddUserForm = defineAsyncComponent(() => import('@/components/user/UserAddForm.vue'))
-const EditUserForm = defineAsyncComponent(() => import('@/components/user/edit-form.vue'))
+const EditUserForm = defineAsyncComponent(() => import('@/components/user/UserEditForm.vue'))
 const EditSongForm = defineAsyncComponent(() => import('@/components/song/SongEditForm.vue'))
 const AboutDialog = defineAsyncComponent(() => import('@/components/meta/about-dialog.vue'))
 
