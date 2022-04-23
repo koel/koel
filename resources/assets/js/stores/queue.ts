@@ -2,10 +2,14 @@ import { difference, shuffle, union } from 'lodash'
 import { reactive } from 'vue'
 import { arrayify } from '@/utils'
 
+interface QueueStoreState {
+  songs: Song[],
+  current?: Song
+}
+
 export const queueStore = {
-  state: reactive({
-    songs: [] as Song[],
-    current: undefined as Song | undefined
+  state: reactive<QueueStoreState>({
+    songs: [] as Song[]
   }),
 
   init () {
@@ -33,7 +37,7 @@ export const queueStore = {
     // Anything...
   },
 
-  get all (): Song[] {
+  get all () {
     return this.state.songs
   },
 
@@ -49,13 +53,12 @@ export const queueStore = {
     return this.all[this.all.length - 1]
   },
 
-  contains (song: Song): boolean {
+  contains (song: Song) {
     return this.all.includes(song)
   },
 
   /**
-   * Add a list of songs to the end of the current queue.
-   * @param {Song|Song[]} songs The song, or an array of songs
+   * Add song(s) to the end of the current queue.
    */
   queue (songs: Song | Song[]) {
     this.unqueue(songs)
@@ -68,26 +71,14 @@ export const queueStore = {
     }
   },
 
-  /**
-   * Add a list of songs to the top of the current queue.
-   * @param {Song|Song[]} songs The song, or an array of songs
-   */
   queueToTop (songs: Song | Song[]) {
     this.all = union(arrayify(songs), this.all)
   },
 
-  /**
-   * Replace the current queue with a list of songs.
-   * @param {Song|Song[]} songs The song, or an array of songs
-   */
   replaceQueueWith (songs: Song | Song[]) {
     this.all = arrayify(songs)
   },
 
-  /**
-   * Queue songs right after the currently played song.
-   * @param {Song|Song[]} songs The song, or an array of songs
-   */
   queueAfterCurrent (songs: Song | Song[]) {
     songs = arrayify(songs)
 
@@ -108,9 +99,6 @@ export const queueStore = {
 
   /**
    * Move some songs to after a target.
-   *
-   * @param {Song|Song[]} songs The song, or an array of songs
-   * @param {Song}     target The target song object
    */
   move (songs: Song | Song[], target: Song) {
     const targetIndex = this.indexOf(target)
@@ -126,7 +114,7 @@ export const queueStore = {
     this.all = []
   },
 
-  indexOf (song: Song): number {
+  indexOf (song: Song) {
     return this.all.indexOf(song)
   },
 

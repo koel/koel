@@ -2,25 +2,23 @@
   <div class="youtube-extra-wrapper">
     <template v-if="videos.length">
       <a
-        :href="`https://youtu.be/${video.id.videoId}`"
-        :key="video.id.videoId"
-        @click.prevent="play(video)"
-        class="video"
-        role="button"
         v-for="video in videos"
+        :key="video.id.videoId"
+        :href="`https://youtu.be/${video.id.videoId}`"
+        class="video"
         data-test="youtube-search-result"
+        role="button"
+        @click.prevent="play(video)"
       >
         <div class="thumb">
-          <img :src="video.snippet.thumbnails.default.url" width="90" :alt="video.snippet.title">
+          <img :alt="video.snippet.title" :src="video.snippet.thumbnails.default.url" width="90">
         </div>
         <div class="meta">
           <h3 class="title">{{ video.snippet.title }}</h3>
           <p class="desc">{{ video.snippet.description }}</p>
         </div>
       </a>
-      <Btn @click.prevent="loadMore" v-if="!loading" class="more" data-testid="youtube-search-more-btn">
-        Load More
-      </Btn>
+      <Btn v-if="!loading" class="more" data-testid="youtube-search-more-btn" @click.prevent="loadMore">Load More</Btn>
     </template>
 
     <p class="nope" v-else>Play a song to retrieve related YouTube videos.</p>
@@ -40,7 +38,7 @@ const { song } = toRefs(props)
 const loading = ref(false)
 const videos = ref<YouTubeVideo[]>([])
 
-watchEffect(() => (videos.value = song.value.youtube ? song.value.youtube.items : []))
+watchEffect(() => (videos.value = song.value.youtube?.items || []))
 
 const play = (video: YouTubeVideo) => youtubeService.play(video)
 

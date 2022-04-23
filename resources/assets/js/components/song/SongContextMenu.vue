@@ -86,7 +86,7 @@ const doPlayback = () => {
       break
 
     default:
-      queueStore.contains(songs.value[0]) || queueStore.queueAfterCurrent(songs.value[0])
+      queueStore.queueIfNotQueued(songs.value[0])
       playback.play(songs.value[0])
       break
   }

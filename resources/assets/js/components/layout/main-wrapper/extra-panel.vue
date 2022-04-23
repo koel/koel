@@ -100,7 +100,7 @@ const defaultTab: Tab = 'Lyrics'
 const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
-const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/youtube-video-list.vue'))
+const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/YouTubeVideoList.vue'))
 
 const song = ref<Song | null>(null)
 const state = reactive(preferences.state)

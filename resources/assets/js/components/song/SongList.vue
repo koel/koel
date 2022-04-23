@@ -96,7 +96,7 @@ interface SongRow {
   }
 }
 
-const SongItem = defineAsyncComponent(() => import('@/components/song/item.vue'))
+const SongItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
 
 const props = withDefaults(
   defineProps<{ items: Song[], type?: SongListType, config?: Partial<SongListConfig> }>(),

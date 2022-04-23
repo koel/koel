@@ -33,7 +33,7 @@ const iTunesUrl = computed(() => {
 
 const play = () => {
   if (song.value) {
-    queueStore.contains(song.value) || queueStore.queueAfterCurrent(song.value)
+    queueStore.queueIfNotQueued(song.value)
     playback.play(song.value)
   }
 }

@@ -1,22 +1,22 @@
 <template>
   <div
+    :class="{ playing, selected: item.selected }"
     class="song-item"
     draggable="true"
     @click="clicked"
-    @dblclick.prevent="playRightAwayyyyyyy"
-    @dragstart="dragStart"
     @dragleave="dragLeave"
+    @dragstart="dragStart"
+    @dblclick.prevent="play"
     @dragenter.prevent="dragEnter"
     @dragover.prevent
     @drop.stop.prevent="drop"
     @contextmenu.stop.prevent="contextMenu"
-    :class="{ playing, selected: item.selected }"
   >
-    <span class="track-number text-secondary" v-if="columns.includes('track')">{{ song.track || '' }}</span>
-    <span class="title" v-if="columns.includes('title')">{{ song.title }}</span>
-    <span class="artist" v-if="columns.includes('artist')">{{ song.artist.name }}</span>
-    <span class="album" v-if="columns.includes('album')">{{ song.album.name }}</span>
-    <span class="time text-secondary" v-if="columns.includes('length')">{{ song.fmtLength }}</span>
+    <span v-if="columns.includes('track')" class="track-number text-secondary">{{ song.track || '' }}</span>
+    <span v-if="columns.includes('title')" class="title">{{ song.title }}</span>
+    <span v-if="columns.includes('artist')" class="artist">{{ song.artist.name }}</span>
+    <span v-if="columns.includes('album')" class="album">{{ song.album.name }}</span>
+    <span v-if="columns.includes('length')" class="time text-secondary">{{ song.fmtLength }}</span>
     <span class="favorite">
       <LikeButton :song="song"/>
     </span>
@@ -40,8 +40,8 @@ const { item, columns } = toRefs(props)
 const song = computed(() => item.value.song)
 const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playbackState!))
 
-const playRightAwayyyyyyy = () => {
-  queueStore.contains(song.value) || queueStore.queueAfterCurrent(song.value)
+const play = () => {
+  queueStore.queueIfNotQueued(song.value)
   playback.play(song.value)
 }
 
@@ -56,7 +56,7 @@ const doPlayback = () => {
       break
 
     default:
-      playRightAwayyyyyyy()
+      play()
       break
   }
 }

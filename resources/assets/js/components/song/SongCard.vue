@@ -47,7 +47,7 @@ const requestContextMenu = (event: MouseEvent) => eventBus.emit('SONG_CONTEXT_ME
 const dragStart = (event: DragEvent) => startDragging(event, song.value, 'Song')
 
 const play = () => {
-  queueStore.contains(song.value) || queueStore.queueAfterCurrent(song.value)
+  queueStore.queueIfNotQueued(song.value)
   playback.play(song.value)
 }
 

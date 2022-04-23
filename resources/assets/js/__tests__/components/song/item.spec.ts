@@ -1,12 +1,12 @@
 import FunctionPropertyNames = jest.FunctionPropertyNames
-import Component from '@/components/song/item.vue'
+import Component from '@/components/song/SongListItem.vue'
 import factory from '@/__tests__/factory'
 import { playback } from '@/services'
 import { queueStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
-import { Wrapper, shallow } from '@/__tests__/adapter'
+import { shallow, Wrapper } from '@/__tests__/adapter'
 
-describe('components/song/item', () => {
+describe('components/song/SongListItem', () => {
   let item: SongProxy, song: Song, artist: Artist, album: Album, wrapper: Wrapper
 
   beforeEach(() => {
@@ -25,10 +25,12 @@ describe('components/song/item', () => {
     })
 
     item = { song, selected: false }
-    wrapper = shallow(Component, { propsData: {
-      item,
-      columns: ['track', 'title', 'artist', 'album', 'length']
-    }})
+    wrapper = shallow(Component, {
+      propsData: {
+        item,
+        columns: ['track', 'title', 'artist', 'album', 'length']
+      }
+    })
   })
 
   afterEach(() => {
@@ -46,10 +48,12 @@ describe('components/song/item', () => {
   })
 
   it('does not render some information if so configured', () => {
-    wrapper = shallow(Component, { propsData: {
-      item,
-      columns: ['track', 'title', 'length']
-    }})
+    wrapper = shallow(Component, {
+      propsData: {
+        item,
+        columns: ['track', 'title', 'length']
+      }
+    })
     expect(wrapper.has('.album')).toBe(false)
     expect(wrapper.has('.artist')).toBe(false)
   })
