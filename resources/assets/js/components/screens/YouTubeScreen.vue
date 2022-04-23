@@ -8,32 +8,27 @@
           <i class="fa fa-youtube-play"></i>
         </template>
         YouTube videos will be played here.
-        <span class="d-block instruction">
-          Start a video playback from the right sidebar.
-        </span>
+        <span class="d-block instruction">Start a video playback from the right sidebar.</span>
       </ScreenEmptyState>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
+import createYouTubePlayer from 'youtube-player'
 import { defineAsyncComponent, ref } from 'vue'
 import { YouTubePlayer } from 'youtube-player/dist/types'
-import { eventBus } from '@/utils'
+import { eventBus, use } from '@/utils'
 import { playback } from '@/services'
-import createYouTubePlayer from 'youtube-player'
 
-let player: YouTubePlayer|null = null
+let player: YouTubePlayer | null = null
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
 const title = ref('YouTube Video')
 
-/**
- * Initialize the YouTube player. This should only be called once.
- */
-const maybeInitPlayer = () => {
+const getPlayer = () => {
   if (!player) {
     player = createYouTubePlayer('player', {
       width: '100%',
@@ -43,14 +38,18 @@ const maybeInitPlayer = () => {
     // Pause song playback when video is played
     player.on('stateChange', ({ data }) => data === 1 && playback.pause())
   }
+
+  return player
 }
 
 eventBus.on({
-  'PLAY_YOUTUBE_VIDEO': (payload: { id: string, title: string }) => {
+  PLAY_YOUTUBE_VIDEO (payload: { id: string, title: string }) {
     title.value = payload.title
-    maybeInitPlayer()
-    player!.loadVideoById(payload.id)
-    player!.playVideo()
+
+    use(getPlayer(), player => {
+      player.loadVideoById(payload.id)
+      player.playVideo()
+    })
   },
 
   /**
