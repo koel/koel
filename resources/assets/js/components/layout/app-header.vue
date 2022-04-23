@@ -35,7 +35,7 @@ import { app as appConfig } from '@/config'
 import { sharedStore, userStore } from '@/stores'
 
 const SearchForm = defineAsyncComponent(() => import('@/components/ui/search-form.vue'))
-const UserBadge = defineAsyncComponent(() => import('@/components/user/badge.vue'))
+const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge.vue'))
 
 const userState = reactive(userStore.state)
 const sharedState = reactive(sharedStore.state)

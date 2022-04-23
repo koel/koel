@@ -1,17 +1,17 @@
 <template>
   <span class="profile" id="userBadge">
-    <a class="view-profile" href="/#!/profile" title="View/edit user profile" data-testid="view-profile-link">
-      <img class="avatar" :src="user.avatar" :alt="`Avatar of ${user.name}`"/>
+    <a class="view-profile" data-testid="view-profile-link" href="/#!/profile" title="View/edit user profile">
+      <img :alt="`Avatar of ${user.name}`" :src="user.avatar" class="avatar"/>
       <span class="name">{{ user.name }}</span>
     </a>
 
     <a
-      :title="`Log ${user.name} out`"
-      @click.prevent="logout"
+      title="Log out"
       class="logout control"
       data-testid="btn-logout"
       href
       role="button"
+      @click.prevent="logout"
     >
       <i class="fa fa-sign-out"></i>
     </a>
