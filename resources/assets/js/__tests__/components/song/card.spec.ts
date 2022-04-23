@@ -1,4 +1,4 @@
-import Component from '@/components/song/card.vue'
+import Component from '@/components/song/SongCard.vue'
 import factory from '@/__tests__/factory'
 import { queueStore } from '@/stores'
 import { playback } from '@/services'
@@ -6,7 +6,7 @@ import { mock } from '@/__tests__/__helpers__'
 import { Wrapper, shallow } from '@/__tests__/adapter'
 import FunctionPropertyNames = jest.FunctionPropertyNames
 
-describe('components/song/card', () => {
+describe('components/song/SongCard', () => {
   let propsData, song: Song, wrapper: Wrapper
 
   beforeEach(() => {

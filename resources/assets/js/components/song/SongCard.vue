@@ -1,16 +1,16 @@
 <template>
   <article
     :class="{ playing: song.playbackState === 'Playing' || song.playbackState === 'Paused' }"
+    data-test="song-card"
+    draggable="true"
+    tabindex="0"
+    @dragstart="dragStart"
     @contextmenu.stop.prevent="requestContextMenu"
     @dblclick.prevent="play"
-    @dragstart="dragStart"
-    draggable="true"
-    data-test="song-card"
-    tabindex="0"
   >
-    <span class="cover" :style="{ backgroundImage: `url(${song.album.cover})` }">
+    <span :style="{ backgroundImage: `url(${song.album.cover})` }" class="cover">
       <a class="control" @click.prevent="changeSongState">
-        <i class="fa fa-play" v-if="song.playbackState !== 'Playing'"/>
+        <i v-if="song.playbackState !== 'Playing'" class="fa fa-play"/>
         <i class="fa fa-pause" v-else/>
       </a>
     </span>
@@ -39,7 +39,6 @@ import { playback } from '@/services'
 const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
 
 const props = withDefaults(defineProps<{ song: Song, topPlayCount?: number }>(), { topPlayCount: 0 })
-
 const { song, topPlayCount } = toRefs(props)
 
 const showPlayCount = computed(() => Boolean(topPlayCount && song.value.playCount))

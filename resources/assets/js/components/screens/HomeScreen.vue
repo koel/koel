@@ -92,7 +92,7 @@ import router from '@/router'
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/ArtistCard.vue'))
-const SongCard = defineAsyncComponent(() => import('@/components/song/card.vue'))
+const SongCard = defineAsyncComponent(() => import('@/components/song/SongCard.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const { ToTopButton, scrolling } = useInfiniteScroll()
