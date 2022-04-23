@@ -58,14 +58,11 @@ import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
 import { eventBus, pluralize, startDragging } from '@/utils'
 import { artistStore, sharedStore } from '@/stores'
 import { download as downloadService, playback } from '@/services'
-import { useArtistAttributes } from '@/composables'
 
 const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
 const props = withDefaults(defineProps<{ artist: Artist, layout: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { artist, layout } = toRefs(props)
-
-const { length, fmtLength, image } = useArtistAttributes(artist.value)
 
 const allowDownload = toRef(sharedStore.state, 'allowDownload')
 

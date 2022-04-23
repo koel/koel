@@ -14,7 +14,7 @@
           •
           {{ pluralize(songs.length, 'song') }}
           •
-          {{ fmtLength }}
+          {{ duration }}
 
           <template v-if="sharedState.useLastfm">
             •
@@ -68,7 +68,7 @@ import { pluralize } from '@/utils'
 import { sharedStore } from '@/stores'
 import { artistInfo as artistInfoService, download as downloadService } from '@/services'
 import router from '@/router'
-import { useArtistAttributes, useSongList } from '@/composables'
+import { useSongList } from '@/composables'
 
 const props = defineProps<{ artist: Artist }>()
 const { artist } = toRefs(props)
@@ -79,7 +79,7 @@ const {
   ControlsToggler,
   songList,
   songs,
-  meta,
+  duration,
   selectedSongs,
   showingControls,
   songListControlConfig,
@@ -89,8 +89,6 @@ const {
   playSelected,
   toggleControls
 } = useSongList(ref(artist.value.songs))
-
-const { length, fmtLength, image } = useArtistAttributes(artist.value)
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))

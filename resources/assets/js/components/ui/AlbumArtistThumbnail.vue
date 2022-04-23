@@ -38,8 +38,24 @@ const image = computed(() => {
     return (entity.value as Album).cover ? (entity.value as Album).cover : getDefaultCover()
   }
 
-  return (entity.value as Artist).image ? (entity.value as Artist).image : getDefaultCover()
+  return getArtistImage(entity.value as Artist)
 })
+
+const getArtistImage = (artist: Artist) => {
+  // If the artist has no image, try getting the cover from one of their albums
+  if (!artist.image) {
+    artist.albums.every(album => {
+      if (album.cover !== getDefaultCover()) {
+        artist.image = album.cover
+        return false
+      }
+    })
+  }
+
+  artist.image = artist.image ?? getDefaultCover()
+
+  return artist.image
+}
 
 const buttonLabel = computed(() => forAlbum.value
   ? `Play all songs in the album ${entity.value.name}`

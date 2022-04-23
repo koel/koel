@@ -26,7 +26,7 @@
         <span class="left">
           {{ pluralize(album.songs.length, 'song') }}
           •
-          {{ fmtLength }}
+          {{ duration }}
           •
           {{ pluralize(album.playCount, 'play') }}
         </span>
@@ -58,9 +58,8 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
-import { useAlbumAttributes } from '@/composables'
 import { eventBus, pluralize, startDragging } from '@/utils'
-import { artistStore, sharedStore } from '@/stores'
+import { artistStore, sharedStore, songStore } from '@/stores'
 import { download as downloadService, playback } from '@/services'
 
 const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
@@ -68,9 +67,9 @@ const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumA
 const props = withDefaults(defineProps<{ album: Album, layout: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { album, layout } = toRefs(props)
 
-const { length, fmtLength } = useAlbumAttributes(album.value)
-
 const allowDownload = toRef(sharedStore.state, 'allowDownload')
+
+const duration = computed(() => songStore.getFormattedLength(album.value.songs))
 
 const isNormalArtist = computed(() => {
   return !artistStore.isVariousArtists(album.value.artist) && !artistStore.isUnknownArtist(album.value.artist)

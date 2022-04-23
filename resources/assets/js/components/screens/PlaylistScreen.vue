@@ -5,15 +5,13 @@
       <ControlsToggler v-if="playlist.populated" :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
-        <span class="meta" v-if="playlist.populated && meta.songCount">
-          {{ pluralize(meta.songCount, 'song') }}
+        <span class="meta" v-if="songs.length">
+          {{ pluralize(songs.length, 'song') }}
           •
-          {{ meta.totalLength }}
-          <template v-if="sharedState.allowDownload && playlist.songs.length">
+          {{ duration }}
+          <template v-if="allowDownload">
             •
-            <a href @click.prevent="download" title="Download all songs in playlist" role="button">
-              Download All
-            </a>
+            <a href role="button" title="Download all songs in playlist" @click.prevent="download">Download All</a>
           </template>
         </span>
       </template>
@@ -63,7 +61,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, ref, watch } from 'vue'
+import { defineAsyncComponent, nextTick, ref, toRef, watch } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { playlistStore, sharedStore } from '@/stores'
 import { download as downloadService } from '@/services'
@@ -81,7 +79,7 @@ const {
   ControlsToggler,
   songs,
   songList,
-  meta,
+  duration,
   selectedSongs,
   showingControls,
   songListControlConfig,
@@ -92,7 +90,7 @@ const {
   toggleControls
 } = useSongList(ref(playlist.value?.songs || []), { deletePlaylist: true })
 
-const sharedState = sharedStore.state
+const allowDownload = toRef(sharedStore.state, 'allowDownload')
 
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value)
 const download = () => downloadService.fromPlaylist(playlist.value!)

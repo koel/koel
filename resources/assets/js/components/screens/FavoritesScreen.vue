@@ -5,11 +5,11 @@
       <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
-        <span v-if="meta.songCount">
-          {{ pluralize(meta.songCount, 'song') }}
+        <span v-if="songs.length">
+          {{ pluralize(songs.length, 'song') }}
           •
-          {{ meta.totalLength }}
-          <template v-if="allowDownload && songs.length">
+          {{ duration }}
+          <template v-if="allowDownload">
             •
             <a class="download" href role="button" title="Download all songs in playlist" @click.prevent="download">
               Download All
@@ -69,7 +69,7 @@ const {
   ControlsToggler,
   songs,
   songList,
-  meta,
+  duration,
   selectedSongs,
   showingControls,
   songListControlConfig,

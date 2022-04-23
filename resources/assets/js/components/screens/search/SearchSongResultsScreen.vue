@@ -5,7 +5,7 @@
       <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
-        <span v-if="meta.songCount">{{ pluralize(meta.songCount, 'song') }} • {{ meta.totalLength }}</span>
+        <span v-if="songs.length">{{ pluralize(songs.length, 'song') }} • {{ duration }}</span>
       </template>
 
       <template v-slot:controls>
@@ -41,7 +41,7 @@ const {
   ControlsToggler,
   songs,
   songList,
-  meta,
+  duration,
   selectedSongs,
   showingControls,
   songListControlConfig,

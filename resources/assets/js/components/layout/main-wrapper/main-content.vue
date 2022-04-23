@@ -51,7 +51,7 @@ const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/Pr
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/youtube.vue'))
 const UploadScreen = defineAsyncComponent(() => import('@/components/screens/UploadScreen.vue'))
 const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/excerpts.vue'))
-const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/song-results.vue'))
+const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchSongResultsScreen.vue'))
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
 const preferences = reactive(preferenceStore.state)

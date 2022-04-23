@@ -1,7 +1,7 @@
 /**
  * Add necessary functionalities into a view that contains a song-list component.
  */
-import { ComponentInternalInstance, getCurrentInstance, reactive, Ref, ref, watchEffect } from 'vue'
+import { ComponentInternalInstance, computed, getCurrentInstance, reactive, Ref, ref, watchEffect } from 'vue'
 import isMobile from 'ismobilejs'
 
 import { playback } from '@/services'
@@ -14,27 +14,15 @@ import { queueStore, songStore } from '@/stores'
 import router from '@/router'
 
 export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongListControlsConfig> = {}) => {
-  const songList = ref<InstanceType<typeof SongList>>()
   const vm = getCurrentInstance()
+  const songList = ref<InstanceType<typeof SongList>>()
 
-  const meta = reactive<SongListMeta>({
-    songCount: 0,
-    totalLength: '00:00'
-  })
-
+  const isPhone = isMobile.phone
   const selectedSongs = ref<Song[]>([])
   const showingControls = ref(false)
   const songListControlConfig = reactive(controlsConfig)
-  const isPhone = isMobile.phone
 
-  watchEffect(() => {
-    if (!songs.value.length) {
-      return
-    }
-
-    meta.songCount = songs.value.length
-    meta.totalLength = songStore.getFormattedLength(songs.value)
-  })
+  const duration = computed(() => songStore.getFormattedLength(songs.value))
 
   const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
   const playAll = (shuffle: boolean) => playback.queueAndPlay(getSongsToPlay(), shuffle)
@@ -72,8 +60,8 @@ export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongList
     SongListControls,
     ControlsToggler,
     songs,
+    duration,
     songList,
-    meta,
     selectedSongs,
     showingControls,
     songListControlConfig,
