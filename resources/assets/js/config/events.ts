@@ -23,6 +23,7 @@ export type EventName =
   | 'MODAL_SHOW_EDIT_SONG_FORM'
   | 'MODAL_SHOW_ABOUT_DIALOG'
   | 'PLAYLIST_DELETE'
+  | 'SMART_PLAYLIST_UPDATED'
 
   // upload-related
   | 'SONG_UPLOADED'

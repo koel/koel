@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, ref, toRef, watch } from 'vue'
+import { defineAsyncComponent, nextTick, ref, toRef } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { playlistStore, sharedStore } from '@/stores'
 import { download as downloadService } from '@/services'
@@ -114,18 +114,23 @@ const populate = async (_playlist: Playlist) => {
   songList.value?.sort()
 }
 
-eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void => {
-  if (view !== 'Playlist') {
-    return
-  }
+eventBus.on({
+    LOAD_MAIN_CONTENT (view: MainViewName, playlistFromRoute: Playlist) {
+      if (view !== 'Playlist') {
+        return
+      }
 
-  if (_playlist.populated) {
-    playlist.value = _playlist
-    songs.value = playlist.value.songs
-  } else {
-    populate(_playlist)
+      if (playlistFromRoute.populated) {
+        playlist.value = playlistFromRoute
+        songs.value = playlist.value.songs
+      } else {
+        populate(playlistFromRoute)
+      }
+    },
+
+    'SMART_PLAYLIST_UPDATED': (updated: Playlist) => updated === playlist.value && populate(updated)
   }
-})
+)
 </script>
 
 <style lang="scss">

@@ -1,10 +1,10 @@
 <template>
-  <form @submit.prevent="login" :class="{ error: failed }" data-testid="login-form">
+  <form :class="{ error: failed }" data-testid="login-form" @submit.prevent="login">
     <div class="logo">
-      <img src="@/../img/logo.svg" width="156" alt="Koel's logo">
+      <img alt="Koel's logo" src="@/../img/logo.svg" width="156">
     </div>
-    <input v-model="email" type="email" placeholder="Email Address" autofocus required>
-    <input v-model="password" type="password" placeholder="Password" required>
+    <input v-model="email" autofocus placeholder="Email Address" required type="email">
+    <input v-model="password" placeholder="Password" required type="password">
     <btn type="submit">Log In</btn>
   </form>
 </template>

@@ -40,7 +40,7 @@
 import { reactive, toRefs } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'
-import { alerts } from '@/utils'
+import { alerts, eventBus } from '@/utils'
 import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
 
 const props = defineProps<{ playlist: Playlist }>()
@@ -77,7 +77,7 @@ const submit = async () => {
   await playlistStore.update(mutatedPlaylist)
   Object.assign(playlist.value, mutatedPlaylist)
   loading.value = false
+  eventBus.emit('SMART_PLAYLIST_UPDATED', playlist.value)
   close()
-  await playlistStore.fetchSongs(playlist.value)
 }
 </script>
