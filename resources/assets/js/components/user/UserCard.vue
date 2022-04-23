@@ -1,7 +1,7 @@
 <template>
-  <article class="user-card" :class="{ me: isCurrentUser }" data-test="user-card" v-if="showing">
+  <article v-if="showing" :class="{ me: isCurrentUser }" class="user-card" data-test="user-card">
     <div class="info">
-      <img :src="user.avatar" width="96" height="96" :alt="`${user.name}'s avatar`">
+      <img :alt="`${user.name}'s avatar`" :src="user.avatar" height="96" width="96">
 
       <div class="right">
         <div>
@@ -10,28 +10,28 @@
             <i
               v-if="isCurrentUser"
               class="you text-orange fa fa-check-circle"
-              title="This is you!"
               data-test="current-user-indicator"
+              title="This is you!"
             />
             <i
               v-if="user.is_admin"
               class="is-admin text-blue fa fa-shield"
-              title="User has admin privileges"
               data-test="admin-indicator"
+              title="User has admin privileges"
             />
           </h1>
           <p class="email" data-test="user-email">{{ user.email }}</p>
         </div>
 
         <div class="buttons">
-          <Btn class="btn-edit" @click="edit" small data-test="edit-user-btn">{{ editButtonLabel }}</Btn>
+          <Btn class="btn-edit" data-test="edit-user-btn" small @click="edit">{{ editButtonLabel }}</Btn>
           <Btn
             v-if="!isCurrentUser"
             class="btn-delete"
-            red
-            @click="confirmDelete"
-            small
             data-test="delete-user-btn"
+            red
+            small
+            @click="confirmDelete"
           >
             Delete
           </Btn>

@@ -33,7 +33,7 @@ const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHe
 const ControlsToggler = defineAsyncComponent(() => import('@/components/ui/ScreenControlsToggler.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
-const UserCard = defineAsyncComponent(() => import('@/components/user/card.vue'))
+const UserCard = defineAsyncComponent(() => import('@/components/user/UserCard.vue'))
 
 const state = reactive(userStore.state)
 const isPhone = isMobile.phone

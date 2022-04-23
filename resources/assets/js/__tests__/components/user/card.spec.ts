@@ -1,4 +1,4 @@
-import Component from '@/components/user/card.vue'
+import Component from '@/components/user/UserCard.vue'
 import { userStore } from '@/stores'
 import { alerts } from '@/utils'
 import factory from '@/__tests__/factory'
@@ -6,7 +6,7 @@ import router from '@/router'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow, mount } from '@/__tests__/adapter'
 
-describe('components/user/card', () => {
+describe('components/user/UserCard', () => {
   let user: User
 
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import Component from '@/components/screens/user-list.vue'
-import UserCard from '@/components/user/card.vue'
+import UserCard from '@/components/user/UserCard.vue'
 import factory from '@/__tests__/factory'
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
