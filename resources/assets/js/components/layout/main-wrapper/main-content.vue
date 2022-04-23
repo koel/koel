@@ -50,7 +50,7 @@ const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/S
 const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/ProfileScreen.vue'))
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/youtube.vue'))
 const UploadScreen = defineAsyncComponent(() => import('@/components/screens/UploadScreen.vue'))
-const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/excerpts.vue'))
+const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchExcerptsScreen.vue'))
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchSongResultsScreen.vue'))
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 

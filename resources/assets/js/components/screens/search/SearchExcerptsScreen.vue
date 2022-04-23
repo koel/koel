@@ -11,26 +11,26 @@
           <h1>
             Songs
             <Btn
-              v-if="searchState.excerpt.songs.length"
-              @click.prevent="goToSongResults"
+              v-if="state.excerpt.songs.length"
+              data-test="view-all-songs-btn"
+              orange
               rounded
               small
-              orange
-              data-test="view-all-songs-btn"
+              @click.prevent="goToSongResults"
             >
               View All
             </Btn>
           </h1>
-          <ul v-if="searchState.excerpt.songs.length">
-            <li v-for="song in searchState.excerpt.songs" :key="song.id" :song="song" is="vue:SongCard"/>
+          <ul v-if="state.excerpt.songs.length">
+            <li is="vue:SongCard" v-for="song in state.excerpt.songs" :key="song.id" :song="song"/>
           </ul>
           <p v-else>None found.</p>
         </section>
 
         <section class="artists" data-testid="artist-excerpts">
           <h1>Artists</h1>
-          <ul v-if="searchState.excerpt.artists.length">
-            <li v-for="artist in searchState.excerpt.artists" :key="artist.id">
+          <ul v-if="state.excerpt.artists.length">
+            <li v-for="artist in state.excerpt.artists" :key="artist.id">
               <ArtistCard :artist="artist" layout="compact"/>
             </li>
           </ul>
@@ -39,8 +39,8 @@
 
         <section class="albums" data-testid="album-excerpts">
           <h1>Albums</h1>
-          <ul v-if="searchState.excerpt.albums.length">
-            <li v-for="album in searchState.excerpt.albums" :key="album.id">
+          <ul v-if="state.excerpt.albums.length">
+            <li v-for="album in state.excerpt.albums" :key="album.id">
               <AlbumCard :album="album" layout="compact"/>
             </li>
           </ul>
@@ -72,7 +72,7 @@ const ArtistCard = defineAsyncComponent(() => import('@/components/artist/Artist
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
-const searchState = reactive(searchStore.state)
+const state = reactive(searchStore.state)
 const q = ref('')
 
 const goToSongResults = () => router.go(`search/songs/${q.value}`)
