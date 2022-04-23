@@ -1,6 +1,5 @@
 import { difference, orderBy, take, union } from 'lodash'
 
-import stub from '@/stubs/album'
 import { artistStore } from '.'
 import { http } from '@/services'
 import { arrayify, use } from '@/utils'
@@ -13,7 +12,6 @@ interface AlbumStoreState {
 const UNKNOWN_ALBUM_ID = 1
 
 export const albumStore = {
-  stub,
   cache: {} as Record<number, Album>,
 
   state: reactive<AlbumStoreState>({
@@ -79,12 +77,12 @@ export const albumStore = {
 
   getMostPlayed (count = 6): Album[] {
     // Only non-unknown albums with actual play count are applicable.
-    const applicable = this.all.filter(album => album.playCount && album.id !== 1)
+    const applicable = this.all.filter(album => album.playCount && !this.isUnknownAlbum(album))
     return take(orderBy(applicable, 'playCount', 'desc'), count)
   },
 
   getRecentlyAdded (count = 6): Album[] {
-    const applicable = this.all.filter(album => album.id !== 1)
+    const applicable = this.all.filter(album => !this.isUnknownAlbum(album))
     return take(orderBy(applicable, 'created_at', 'desc'), count)
   },
 
@@ -95,8 +93,7 @@ export const albumStore = {
    * @param {string} cover The content data string of the cover
    */
   uploadCover: async (album: Album, cover: string) => {
-    const { coverUrl } = await http.put<{ coverUrl: string }>(`album/${album.id}/cover`, { cover })
-    album.cover = coverUrl
+    album.cover = (await http.put<{ coverUrl: string }>(`album/${album.id}/cover`, { cover })).coverUrl
     return album.cover
   },
 
@@ -105,9 +102,7 @@ export const albumStore = {
    */
   getThumbnail: async (album: Album) => {
     if (album.thumbnail === undefined) {
-      const { thumbnailUrl } = await http.get<{ thumbnailUrl: string }>(`album/${album.id}/thumbnail`)
-
-      album.thumbnail = thumbnailUrl
+      album.thumbnail = (await http.get<{ thumbnailUrl: string }>(`album/${album.id}/thumbnail`)).thumbnailUrl
     }
 
     return album.thumbnail

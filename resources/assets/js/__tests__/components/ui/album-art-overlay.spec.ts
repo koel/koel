@@ -1,11 +1,11 @@
 import factory from '@/__tests__/factory'
-import Component from '@/components/ui/album-art-overlay.vue'
+import Component from '@/components/ui/AlbumArtOverlay.vue'
 import { albumStore } from '@/stores/album'
 import { shallow } from '@/__tests__/adapter'
 import { mock } from '@/__tests__/__helpers__'
 import { preferenceStore } from '@/stores'
 
-describe('components/ui/album-art-overlay', () => {
+describe('components/ui/AlbumArtOverlay', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()

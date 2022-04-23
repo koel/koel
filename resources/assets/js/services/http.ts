@@ -2,7 +2,7 @@ import Axios, { AxiosInstance, Method } from 'axios'
 import NProgress from 'nprogress'
 
 import { eventBus } from '@/utils'
-import { ls, auth } from '@/services'
+import { auth, ls } from '@/services'
 
 export const http = {
   client: null as AxiosInstance | null,
@@ -10,8 +10,8 @@ export const http = {
   setProgressBar: () => NProgress.start(),
   hideProgressBar: () => NProgress.done(true),
 
-  request<T> (method: Method, url: string, data: object = {}, onUploadProgress?: any): Promise<{ data: T }> {
-    return this.client?.request({
+  request<T> (method: Method, url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
+    return this.client!.request({
       url,
       data,
       method,
@@ -19,19 +19,19 @@ export const http = {
     }) as Promise<{ data: T }>
   },
 
-  async get<T> (url: string): Promise<T> {
+  async get<T> (url: string) {
     return (await this.request<T>('get', url)).data
   },
 
-  async post<T> (url: string, data: object, onUploadProgress?: any): Promise<T> {
+  async post<T> (url: string, data: Record<string, any>, onUploadProgress?: any) {
     return (await this.request<T>('post', url, data, onUploadProgress)).data
   },
 
-  async put<T> (url: string, data: object): Promise<T> {
+  async put<T> (url: string, data: Record<string, any>) {
     return (await this.request<T>('put', url, data)).data
   },
 
-  async delete<T> (url: string, data: object = {}): Promise<T> {
+  async delete<T> (url: string, data: Record<string, any> = {}) {
     return (await this.request<T>('delete', url, data)).data
   },
 

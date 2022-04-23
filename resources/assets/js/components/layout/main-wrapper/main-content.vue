@@ -43,7 +43,7 @@ import FavoritesScreen from '@/components/screens/FavoritesScreen.vue'
 
 const RecentlyPlayedScreen = defineAsyncComponent(() => import('@/components/screens/RecentlyPlayedScreen.vue'))
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
-const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/album-art-overlay.vue'))
+const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
 const AlbumScreen = defineAsyncComponent(() => import('@/components/screens/AlbumScreen.vue'))
 const ArtistScreen = defineAsyncComponent(() => import('@/components/screens/ArtistScreen.vue'))
 const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/SettingsScreen.vue'))

@@ -75,7 +75,7 @@ const DEFAULT_VOLUME = 7
 export default Vue.extend({
   components: {
     LoginForm,
-    AlbumArtOverlay: () => import('@/components/ui/album-art-overlay.vue')
+    AlbumArtOverlay: () => import('@/components/ui/AlbumArtOverlay.vue')
   },
 
   directives: {
