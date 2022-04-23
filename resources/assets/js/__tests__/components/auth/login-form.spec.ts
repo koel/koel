@@ -1,9 +1,9 @@
-import Component from '@/components/auth/login-form.vue'
+import Component from '@/components/auth/LoginForm.vue'
 import { userStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow } from '@/__tests__/adapter'
 
-describe('components/auth/login-form', () => {
+describe('components/auth/LoginForm', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()

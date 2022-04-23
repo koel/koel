@@ -27,7 +27,7 @@ import AppHeader from '@/components/layout/app-header.vue'
 import AppFooter from '@/components/layout/app-footer/index.vue'
 import EventListeners from '@/components/utils/event-listeners.vue'
 import Hotkeys from '@/components/utils/hotkeys.vue'
-import LoginForm from '@/components/auth/login-form.vue'
+import LoginForm from '@/components/auth/LoginForm.vue'
 import MainWrapper from '@/components/layout/main-wrapper/index.vue'
 import Overlay from '@/components/ui/overlay.vue'
 

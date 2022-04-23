@@ -64,7 +64,7 @@ import Vue from 'vue'
 import noUISlider from 'nouislider'
 import { socket, auth } from '@/services'
 import { userStore, preferenceStore } from '@/stores'
-import LoginForm from '@/components/auth/login-form.vue'
+import LoginForm from '@/components/auth/LoginForm.vue'
 import { SliderElement } from 'koel/types/ui'
 import { clickaway } from '@/directives'
 
