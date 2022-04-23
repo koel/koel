@@ -1,4 +1,4 @@
-import Component from '@/components/screens/user-list.vue'
+import Component from '@/components/screens/UserListScreen.vue'
 import UserCard from '@/components/user/UserCard.vue'
 import factory from '@/__tests__/factory'
 import { userStore } from '@/stores'
@@ -6,7 +6,7 @@ import { eventBus } from '@/utils'
 import { mock } from '@/__tests__/__helpers__'
 import { mount } from '@/__tests__/adapter'
 
-describe('components/screens/user-list', () => {
+describe('components/screens/UserListScreen', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()

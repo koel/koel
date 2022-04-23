@@ -6,7 +6,7 @@
 
       <template v-slot:controls>
         <BtnGroup uppercased v-if="showingControls || !isPhone">
-          <Btn class="btn-add" @click="showAddUserForm" green data-testid="add-user-btn">
+          <Btn class="btn-add" data-testid="add-user-btn" green @click="showAddUserForm">
             <i class="fa fa-plus"></i>
             Add
           </Btn>
@@ -16,15 +16,15 @@
 
     <div class="main-scroll-wrap">
       <div class="users">
-        <UserCard v-for="user in state.users" :user="user" @editUser="showEditUserForm" :key="user.id"/>
+        <UserCard v-for="user in users" :key="user.id" :user="user" @editUser="showEditUserForm"/>
       </div>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref } from 'vue'
 import isMobile from 'ismobilejs'
+import { defineAsyncComponent, ref, toRef } from 'vue'
 
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
@@ -35,7 +35,7 @@ const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 const UserCard = defineAsyncComponent(() => import('@/components/user/UserCard.vue'))
 
-const state = reactive(userStore.state)
+const users = toRef(userStore.state, 'users')
 const isPhone = isMobile.phone
 const showingControls = ref(false)
 
