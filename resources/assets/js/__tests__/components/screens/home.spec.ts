@@ -1,10 +1,10 @@
-import Home from '@/components/screens/home.vue'
+import Home from '@/components/screens/HomeScreen.vue'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { mock } from '@/__tests__/__helpers__'
 import { mount } from '@/__tests__/adapter'
 
-describe('components/screens/home', () => {
+describe('components/screens/HomeScreen', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()

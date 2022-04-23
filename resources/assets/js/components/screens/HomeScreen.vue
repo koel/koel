@@ -28,13 +28,13 @@
             </Btn>
           </h1>
 
-          <ol class="recent-song-list" v-if="recentSongs.length">
+          <ol v-if="recentSongs.length" class="recent-song-list">
             <li v-for="song in recentSongs" :key="song.id">
               <SongCard :song="song" :top-play-count="top.songs.length ? top.songs[0].playCount : 0"/>
             </li>
           </ol>
 
-          <p class="text-secondary" v-show="!recentSongs.length">
+          <p v-show="!recentSongs.length" class="text-secondary">
             Your recently played songs will be displayed here.<br/>
             Start listening!
           </p>
@@ -49,7 +49,7 @@
               <AlbumCard :album="album" layout="compact"/>
             </li>
           </ol>
-          <ol class="recently-added-song-list" v-show="recentlyAdded.songs.length">
+          <ol v-show="recentlyAdded.songs.length" class="recently-added-song-list">
             <li v-for="song in recentlyAdded.songs" :key="song.id">
               <SongCard :song="song"/>
             </li>
@@ -85,7 +85,7 @@ import { sample } from 'lodash'
 import { computed, defineAsyncComponent, reactive, ref } from 'vue'
 
 import { eventBus } from '@/utils'
-import { albumStore, artistStore, preferenceStore, recentlyPlayedStore, songStore, userStore } from '@/stores'
+import { albumStore, artistStore, recentlyPlayedStore, songStore, userStore } from '@/stores'
 import { useInfiniteScroll } from '@/composables'
 import router from '@/router'
 
@@ -122,8 +122,6 @@ const recentlyAdded = reactive({
   songs: [] as Song[]
 })
 
-const preferences = reactive(preferenceStore.state)
-
 const greeting = computed(() => sample(greetings)!.replace('%s', userStore.current.name))
 const showRecentlyAddedSection = computed(() => Boolean(recentlyAdded.albums.length || recentlyAdded.songs.length))
 
@@ -138,11 +136,7 @@ const refreshDashboard = () => {
 
 const goToRecentlyPlayedScreen = () => router.go('recently-played')
 
-eventBus.on({
-  'KOEL_READY': () => refreshDashboard(),
-  'SONG_STARTED': () => refreshDashboard(),
-  'SONG_UPLOADED': () => refreshDashboard()
-})
+eventBus.on(['KOEL_READY', 'SONG_STARTED', 'SONG_UPLOADED'], () => refreshDashboard())
 </script>
 
 <style lang="scss">

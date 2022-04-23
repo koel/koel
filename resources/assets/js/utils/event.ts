@@ -3,7 +3,12 @@ import { EventName } from '@/config'
 export const eventBus = {
   all: new Map(),
 
-  on (name: EventName | Partial<{ [K in EventName]: TAnyFunction }>, callback?: TAnyFunction) {
+  on (name: EventName | EventName[] | Partial<{ [K in EventName]: TAnyFunction }>, callback?: TAnyFunction) {
+    if (Array.isArray(name)) {
+      name.forEach(k => this.on(k, callback))
+      return
+    }
+
     if (typeof name === 'object') {
       for (const k in name) {
         this.on(k as EventName, name[k as EventName])

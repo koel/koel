@@ -33,7 +33,7 @@
 import { defineAsyncComponent, reactive, ref } from 'vue'
 import { eventBus } from '@/utils'
 import { preferenceStore, sharedStore } from '@/stores'
-import HomeScreen from '@/components/screens/home.vue'
+import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
 import AlbumListScreen from '@/components/screens/AlbumListScreen.vue'
 import ArtistListScreen from '@/components/screens/ArtistListScreen.vue'
