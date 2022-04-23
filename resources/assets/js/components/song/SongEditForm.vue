@@ -131,7 +131,7 @@ const COMPILATION_STATES = {
 }
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 
 const props = withDefaults(defineProps<{ songs: Song[], initialTab: TabName }>(), { initialTab: 'details' })
 const { songs, initialTab } = toRefs(props)

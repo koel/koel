@@ -49,8 +49,8 @@ import { alerts, parseValidationError } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
-const TooltipIcon = defineAsyncComponent(() => import('@/components/ui/tooltip-icon.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
+const TooltipIcon = defineAsyncComponent(() => import('@/components/ui/TooltipIcon.vue'))
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)

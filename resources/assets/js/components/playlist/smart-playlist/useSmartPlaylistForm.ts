@@ -5,7 +5,7 @@ export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[]
   const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
   const FormBase = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistFormBase.vue'))
   const RuleGroup = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRuleGroup.vue'))
-  const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+  const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 
   const collectedRuleGroups = ref<SmartPlaylistRuleGroup[]>(initialRuleGroups)
   const loading = ref(false)

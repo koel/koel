@@ -56,7 +56,7 @@ import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'
 import { favoriteStore, preferenceStore, songStore } from '@/stores'
 
 const Equalizer = defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 const Volume = defineAsyncComponent(() => import('@/components/ui/Volume.vue'))
 const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
 const RepeatModeSwitch = defineAsyncComponent(() => import('@/components/ui/RepeatModeSwitch.vue'))

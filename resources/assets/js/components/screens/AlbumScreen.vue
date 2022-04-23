@@ -67,7 +67,7 @@ import { useSongList } from '@/composables'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
 

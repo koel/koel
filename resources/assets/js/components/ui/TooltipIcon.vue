@@ -1,5 +1,5 @@
 <template>
-  <i class="fa fa-question-circle help-trigger text-blue" :title="title"/>
+  <i :title="title" class="fa fa-question-circle help-trigger text-blue"/>
 </template>
 
 <script lang="ts" setup>

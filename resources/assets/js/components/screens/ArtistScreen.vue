@@ -92,7 +92,7 @@ const {
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
 

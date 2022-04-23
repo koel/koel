@@ -26,7 +26,7 @@ export type OverlayState = {
   message: string
 }
 
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 
 const state = reactive<OverlayState>({
   showing: true,

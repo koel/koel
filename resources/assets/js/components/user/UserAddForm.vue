@@ -1,7 +1,7 @@
 <template>
   <div class="add-user" @keydown.esc="maybeClose">
     <SoundBar v-if="loading"/>
-    <form class="user-add" @submit.prevent="submit" v-else data-testid="add-user-form">
+    <form v-else class="user-add" data-testid="add-user-form" @submit.prevent="submit">
       <header>
         <h1>Add New User</h1>
       </header>
@@ -9,27 +9,27 @@
       <div>
         <div class="form-row">
           <label>Name</label>
-          <input title="Name" type="text" name="name" v-model="newUser.name" required v-koel-focus>
+          <input v-model="newUser.name" v-koel-focus name="name" required title="Name" type="text">
         </div>
         <div class="form-row">
           <label>Email</label>
-          <input title="Email" type="email" name="email" v-model="newUser.email" required>
+          <input v-model="newUser.email" name="email" required title="Email" type="email">
         </div>
         <div class="form-row">
           <label>Password</label>
           <input
-            title="Password"
-            type="password"
-            name="password"
             v-model="newUser.password"
             autocomplete="new-password"
+            name="password"
             required
+            title="Password"
+            type="password"
           >
-          <p class="help">Min. 10 characters. Must be a mix of characters, numbers, and symbols.</p>
+          <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
         </div>
         <div class="form-row">
           <label>
-            <input type="checkbox" name="is_admin" v-model="newUser.is_admin"> User is an admin
+            <input v-model="newUser.is_admin" name="is_admin" type="checkbox"> User is an admin
             <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
           </label>
         </div>
@@ -37,33 +37,32 @@
 
       <footer>
         <Btn class="btn-add" type="submit">Save</Btn>
-        <Btn class="btn-cancel" @click.prevent="maybeClose" white>Cancel</Btn>
+        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
       </footer>
     </form>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
+import { defineAsyncComponent, reactive, ref } from 'vue'
 import { CreateUserData, userStore } from '@/stores'
 import { alerts, parseValidationError } from '@/utils'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/sound-bar.vue'))
-const TooltipIcon = defineAsyncComponent(() => import('@/components/ui/tooltip-icon.vue'))
+const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
+const TooltipIcon = defineAsyncComponent(() => import('@/components/ui/TooltipIcon.vue'))
 
 const loading = ref(false)
-const emptyUserData = reactive<CreateUserData>({
+
+const emptyUserData: CreateUserData = {
   name: '',
   email: '',
   password: '',
   is_admin: false
-})
+}
 
-const newUser = reactive<CreateUserData>({} as unknown as CreateUserData)
-
-Object.assign(newUser, emptyUserData)
+const newUser = reactive<CreateUserData>(Object.assign({}, emptyUserData))
 
 const submit = async () => {
   loading.value = true
