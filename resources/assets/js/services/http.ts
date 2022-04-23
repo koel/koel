@@ -35,7 +35,7 @@ export const http = {
     return (await this.request<T>('delete', url, data)).data
   },
 
-  init (): void {
+  init () {
     this.client = Axios.create({
       baseURL: KOEL_ENV === 'app' ? `${ls.get('koelHost')}api` : `${window.BASE_URL}api`
     })
