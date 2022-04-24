@@ -1,6 +1,6 @@
 import { favoriteStore, playlistStore } from '@/stores'
 import { authService } from '.'
-import { alerts, arrayify } from '@/utils'
+import { arrayify } from '@/utils'
 
 export const downloadService = {
   fromSongs (songs: Song | Song[]): void {
@@ -38,14 +38,9 @@ export const downloadService = {
     const sep = uri.includes('?') ? '&' : '?'
     const url = `${window.BASE_URL}download/${uri}${sep}api_token=${authService.getToken()}`
 
-    if (KOEL_ENV === 'app') {
-      require('electron').ipcRenderer.send('DOWNLOAD', url)
-      alerts.success('Download started!')
-    } else {
-      const iframe = document.createElement('iframe')
-      iframe.style.display = 'none'
-      iframe.setAttribute('src', url)
-      document.body.appendChild(iframe)
-    }
+    const iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
+    iframe.setAttribute('src', url)
+    document.body.appendChild(iframe)
   }
 }

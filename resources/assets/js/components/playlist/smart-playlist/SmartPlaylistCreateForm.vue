@@ -73,6 +73,9 @@ const submit = async () => {
   const playlist = await playlistStore.store(name.value, [], collectedRuleGroups.value)
   loading.value = false
   close()
+
+  alerts.success(`Playlist "${playlist.name}" created.`)
+
   await nextTick()
   router.go(`playlist/${playlist.id}`)
 }

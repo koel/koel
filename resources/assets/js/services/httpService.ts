@@ -37,7 +37,7 @@ export const httpService = {
 
   init () {
     this.client = Axios.create({
-      baseURL: KOEL_ENV === 'app' ? `${localStorageService.get('koelHost')}api` : `${window.BASE_URL}api`
+      baseURL: `${window.BASE_URL}api`
     })
 
     // Intercept the request to make sure the token is injected into the header.

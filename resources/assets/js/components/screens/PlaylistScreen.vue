@@ -62,7 +62,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, ref, toRef } from 'vue'
-import { eventBus, pluralize } from '@/utils'
+import { alerts, eventBus, pluralize } from '@/utils'
 import { playlistStore, commonStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
@@ -101,6 +101,7 @@ const removeSelected = () => {
 
   playlistStore.removeSongs(playlist.value!, selectedSongs.value)
   songs.value = difference(songs.value, selectedSongs.value)
+  alerts.success(`Removed ${pluralize(selectedSongs.value.length, 'song')} from "${playlist.value!.name}."`)
 }
 
 /**

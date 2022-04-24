@@ -3,9 +3,9 @@ import slugify from 'slugify'
 import { orderBy, remove, take, unionBy, without } from 'lodash'
 import isMobile from 'ismobilejs'
 
-import { alerts, arrayify, pluralize, secondsToHis, use } from '@/utils'
-import { authService, httpService, localStorageService } from '@/services'
-import { albumStore, artistStore, favoriteStore, preferenceStore, commonStore } from '.'
+import { arrayify, secondsToHis, use } from '@/utils'
+import { authService, httpService } from '@/services'
+import { albumStore, artistStore, commonStore, favoriteStore, preferenceStore } from '.'
 import stub from '@/stubs/song'
 
 interface BroadcastSongData {
@@ -39,12 +39,12 @@ export const songStore = {
     recentlyPlayed: [] as Song[]
   }),
 
-  init (songs: Song[]): void {
+  init (songs: Song[]) {
     this.all = songs
     this.all.forEach(song => this.setupSong(song))
   },
 
-  setupSong (song: Song): void {
+  setupSong (song: Song) {
     song.fmtLength = secondsToHis(song.length)
 
     const album = albumStore.byId(song.album_id)!
@@ -75,7 +75,7 @@ export const songStore = {
    *
    * @param  {Interaction[]} interactions The array of interactions of the current user
    */
-  initInteractions (interactions: Interaction[]): void {
+  initInteractions (interactions: Interaction[]) {
     favoriteStore.clear()
 
     interactions.forEach(interaction => {
@@ -100,17 +100,17 @@ export const songStore = {
    * @param songs
    * @param {Boolean} formatted Whether to convert the duration into H:i:s format
    */
-  getLength: (songs: Song[], formatted: boolean = false): number | string => {
+  getLength: (songs: Song[], formatted: boolean = false) => {
     const duration = songs.reduce((length, song) => length + song.length, 0)
 
     return formatted ? secondsToHis(duration) : duration
   },
 
-  getFormattedLength (songs: Song[]): string {
+  getFormattedLength (songs: Song[]) {
     return String(this.getLength(songs, true))
   },
 
-  get all (): Song[] {
+  get all () {
     return this.state.songs
   },
 
@@ -118,11 +118,11 @@ export const songStore = {
     this.state.songs = value
   },
 
-  byId (id: string): Song | undefined {
+  byId (id: string) {
     return this.cache[id]
   },
 
-  byIds (ids: string[]): Song[] {
+  byIds (ids: string[]) {
     const songs = [] as Song[]
     arrayify(ids).forEach(id => use(this.byId(id), song => songs.push(song!)))
     return songs
@@ -132,7 +132,7 @@ export const songStore = {
    * Guess a song by its title and album.
    * Forget about Levenshtein distance, this implementation is good enough.
    */
-  guess: (title: string, album: Album): Song | null => {
+  guess: (title: string, album: Album) => {
     title = slugify(title.toLowerCase())
 
     for (const song of album.songs) {
@@ -147,7 +147,7 @@ export const songStore = {
   /**
    * Increase a play count for a song.
    */
-  registerPlay: async (song: Song): Promise<void> => {
+  registerPlay: async (song: Song) => {
     const oldCount = song.playCount
 
     const interaction = await httpService.post<Interaction>('interaction/play', { song: song.id })
@@ -158,11 +158,9 @@ export const songStore = {
     song.artist.playCount += song.playCount - oldCount
   },
 
-  scrobble: async (song: Song): Promise<void> => {
-    await httpService.post(`${song.id}/scrobble`, { timestamp: song.playStartTime })
-  },
+  scrobble: async (song: Song) => await httpService.post(`${song.id}/scrobble`, { timestamp: song.playStartTime }),
 
-  async update (songsToUpdate: Song[], data: any): Promise<Song[]> {
+  async update (songsToUpdate: Song[], data: any) {
     const { songs, artists, albums } = await httpService.put<SongUpdateResult>('songs', {
       data,
       songs: songsToUpdate.map(song => song.id)
@@ -193,27 +191,22 @@ export const songStore = {
     artistStore.compact()
     albumStore.compact()
 
-    alerts.success(`Updated ${pluralize(songs.length, 'song')}.`)
-
     return songs
   },
 
-  getSourceUrl: (song: Song): string => {
+  getSourceUrl: (song: Song) => {
     return isMobile.any && preferenceStore.transcodeOnMobile
       ? `${commonStore.state.cdnUrl}play/${song.id}/1/128?api_token=${authService.getToken()}`
       : `${commonStore.state.cdnUrl}play/${song.id}?api_token=${authService.getToken()}`
   },
 
-  getShareableUrl: (song: Song): string => {
-    const baseUrl = KOEL_ENV === 'app' ? localStorageService.get<string>('koelHost') : window.BASE_URL
-    return `${baseUrl}#!/song/${song.id}`
-  },
+  getShareableUrl: (song: Song) => `${window.BASE_URL}#!/song/${song.id}`,
 
-  get recentlyPlayed (): Song[] {
+  get recentlyPlayed () {
     return this.state.recentlyPlayed
   },
 
-  getMostPlayed (n = 10): Song[] {
+  getMostPlayed (n = 10) {
     const songs = take(orderBy(this.all, 'playCount', 'desc'), n)
 
     // Remove those with playCount=0
@@ -222,7 +215,7 @@ export const songStore = {
     return songs
   },
 
-  getRecentlyAdded (n = 10): Song[] {
+  getRecentlyAdded (n = 10) {
     return take(orderBy(this.all, 'created_at', 'desc'), n)
   },
 

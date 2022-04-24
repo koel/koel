@@ -1,16 +1,13 @@
-import { difference, union, orderBy } from 'lodash'
+import { difference, orderBy, union } from 'lodash'
 
-import stub from '@/stubs/playlist'
 import { httpService } from '@/services'
-import { alerts, pluralize, arrayify } from '@/utils'
+import { arrayify } from '@/utils'
 import { songStore } from '.'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
 import { reactive } from 'vue'
 
 export const playlistStore = {
-  stub,
-
   state: reactive({
     playlists: [] as Playlist[]
   }),
@@ -100,7 +97,6 @@ export const playlistStore = {
     playlist.songs = songs
     this.populateContent(playlist)
     this.add(playlist)
-    alerts.success(`Created playlist "${playlist.name}."`)
 
     return playlist
   },
@@ -127,7 +123,6 @@ export const playlistStore = {
     }
 
     await httpService.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) })
-    alerts.success(`Added ${pluralize(songs.length, 'song')} into "${playlist.name}."`)
 
     return playlist
   },
@@ -139,16 +134,13 @@ export const playlistStore = {
 
     playlist.songs = difference(playlist.songs, songs)
     await httpService.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) })
-    alerts.success(`Removed ${pluralize(songs.length, 'song')} from "${playlist.name}."`)
 
     return playlist
   },
 
   async update (playlist: Playlist) {
     const serializedRules = this.serializeSmartPlaylistRulesForStorage(playlist.rules)
-
     await httpService.put(`playlist/${playlist.id}`, { name: playlist.name, rules: serializedRules })
-    alerts.success(`Updated playlist "${playlist.name}."`)
 
     return playlist
   },

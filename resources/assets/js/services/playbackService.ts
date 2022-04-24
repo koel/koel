@@ -4,6 +4,7 @@ import { nextTick } from 'vue'
 import isMobile from 'ismobilejs'
 
 import { eventBus, isAudioContextSupported, isMediaSessionSupported } from '@/utils'
+
 import {
   commonStore,
   preferenceStore as preferences,
@@ -12,6 +13,7 @@ import {
   songStore,
   userStore
 } from '@/stores'
+
 import { audioService, socketService } from '@/services'
 import { app } from '@/config'
 import router from '@/router'
@@ -58,15 +60,11 @@ export const playbackService = {
       this.setMediaSessionActionHandlers()
     }
 
-    // As of current, only the web-based version of Koel supports the remote controller
-    if (KOEL_ENV !== 'app') {
-      this.listenToSocketEvents()
-    }
-
+    this.listenToSocketEvents()
     this.initialized = true
   },
 
-  listenToSocketEvents (): void {
+  listenToSocketEvents () {
     socketService.listen('SOCKET_TOGGLE_PLAYBACK', () => this.toggle())
       .listen('SOCKET_PLAY_NEXT', () => this.playNext())
       .listen('SOCKET_PLAY_PREV', () => this.playPrev())
@@ -87,7 +85,7 @@ export const playbackService = {
       .listen('SOCKET_SET_VOLUME', ({ volume }: { volume: number }) => this.setVolume(volume))
   },
 
-  setMediaSessionActionHandlers (): void {
+  setMediaSessionActionHandlers () {
     if (!isMediaSessionSupported) {
       return
     }
@@ -98,7 +96,7 @@ export const playbackService = {
     navigator.mediaSession!.setActionHandler('nexttrack', () => this.playNext())
   },
 
-  listenToMediaEvents (mediaElement: HTMLMediaElement): void {
+  listenToMediaEvents (mediaElement: HTMLMediaElement) {
     mediaElement.addEventListener('error', () => this.playNext(), true)
 
     mediaElement.addEventListener('ended', () => {
@@ -109,7 +107,7 @@ export const playbackService = {
       preferences.repeatMode === 'REPEAT_ONE' ? this.restart() : this.playNext()
     })
 
-    mediaElement.addEventListener('timeupdate', throttle((): void => {
+    mediaElement.addEventListener('timeupdate', throttle(() => {
       const currentSong = queueStore.current!
 
       if (!currentSong.playCountRegistered && !this.isTranscoding) {
@@ -132,18 +130,18 @@ export const playbackService = {
     }, 3000))
   },
 
-  get isTranscoding (): boolean {
+  get isTranscoding () {
     return isMobile.any && preferences.transcodeOnMobile
   },
 
-  registerPlay (song: Song): void {
+  registerPlay (song: Song) {
     recentlyPlayedStore.add(song)
     songStore.registerPlay(song)
     recentlyPlayedStore.fetchAll()
     song.playCountRegistered = true
   },
 
-  preload (song: Song): void {
+  preload (song: Song) {
     const audioElement = document.createElement('audio')
     audioElement.setAttribute('src', songStore.getSourceUrl(song))
     audioElement.setAttribute('preload', 'auto')
@@ -187,7 +185,7 @@ export const playbackService = {
     await this.restart()
   },
 
-  showNotification (song: Song): void {
+  showNotification (song: Song) {
     if (!window.Notification || !preferences.notify) {
       return
     }
@@ -198,7 +196,7 @@ export const playbackService = {
         body: `${song.album.name} – ${song.artist.name}`
       })
 
-      notif.onclick = () => KOEL_ENV === 'app' ? this.mainWin.focus() : window.focus()
+      notif.onclick = () => window.focus()
 
       window.setTimeout(() => notif.close(), 5000)
     } catch (e) {
@@ -247,7 +245,7 @@ export const playbackService = {
    * The next song in the queue.
    * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
    */
-  get next (): Song | undefined {
+  get next () {
     if (queueStore.next) {
       return queueStore.next
     }
@@ -275,7 +273,7 @@ export const playbackService = {
    * Circle through the repeat mode.
    * The selected mode will be stored into local storage as well.
    */
-  changeRepeatMode (): void {
+  changeRepeatMode () {
     let index = this.repeatModes.indexOf(preferences.repeatMode) + 1
 
     if (index >= this.repeatModes.length) {
@@ -321,7 +319,7 @@ export const playbackService = {
    * @param {Number}     volume   0-10
    * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
    */
-  setVolume (volume: number, persist = true): void {
+  setVolume (volume: number, persist = true) {
     this.getPlayer().setVolume(volume)
 
     if (persist) {
@@ -331,11 +329,11 @@ export const playbackService = {
     this.volumeInput.value = String(volume)
   },
 
-  mute (): void {
+  mute () {
     this.setVolume(0, false)
   },
 
-  unmute (): void {
+  unmute () {
     // If the saved volume is 0, we unmute to the default level (7).
     if (preferences.volume === 0) {
       preferences.volume = DEFAULT_VOLUME_VALUE
@@ -394,7 +392,7 @@ export const playbackService = {
    * @param {?Song[]} songs  An array of song objects. Defaults to all songs if null.
    * @param {Boolean=false}   shuffled Whether to shuffle the songs before playing.
    */
-  async queueAndPlay (songs?: Song[], shuffled: boolean = false) {
+  async queueAndPlay (songs?: Song[], shuffled = false) {
     if (!songs) {
       songs = shuffle(songStore.all)
     }
@@ -415,7 +413,7 @@ export const playbackService = {
     await this.play(queueStore.first)
   },
 
-  getPlayer (): Plyr {
+  getPlayer () {
     return this.player!
   },
 

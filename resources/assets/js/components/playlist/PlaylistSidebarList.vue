@@ -24,7 +24,7 @@
     </form>
 
     <ul>
-      <PlaylistItem type="favorites" :playlist="{ name: 'Favorites', songs: favoriteState.songs }"/>
+      <PlaylistItem type="favorites" :playlist="{ name: 'Favorites', songs: favorites }"/>
       <PlaylistItem type="recently-played" :playlist="{ name: 'Recently Played', songs: [] }"/>
       <PlaylistItem
         :playlist="playlist"
@@ -39,9 +39,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, reactive, ref, toRef } from 'vue'
+import { defineAsyncComponent, nextTick, ref, toRef } from 'vue'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
+import { alerts } from '@/utils'
 
 const PlaylistItem = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarItem.vue'))
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreateNewPlaylistContextMenu.vue'))
@@ -49,7 +50,7 @@ const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/Cre
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
 const playlists = toRef(playlistStore.state, 'playlists')
-const favoriteState = reactive(favoriteStore.state)
+const favorites = toRef(favoriteStore.state, 'songs')
 const creating = ref(false)
 const newName = ref('')
 
@@ -58,6 +59,9 @@ const createPlaylist = async () => {
 
   const playlist = await playlistStore.store(newName.value)
   newName.value = ''
+
+  alerts.success(`Playlist "${playlist.name}" created.`)
+
   // Activate the new playlist right away
   await nextTick()
   router.go(`playlist/${playlist.id}`)

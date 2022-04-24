@@ -109,7 +109,7 @@
 import { computed, defineAsyncComponent, nextTick, reactive, ref, toRef, toRefs } from 'vue'
 import { isEqual, union } from 'lodash'
 
-import { alerts, arrayify, br2nl, getDefaultCover } from '@/utils'
+import { alerts, arrayify, br2nl, getDefaultCover, pluralize } from '@/utils'
 import { songInfo } from '@/services/info'
 import { albumStore, artistStore, songStore } from '@/stores'
 
@@ -276,6 +276,7 @@ const submit = async () => {
 
   try {
     await songStore.update(mutatedSongs.value, formData)
+    alerts.success(`Updated ${pluralize(mutatedSongs.value.length, 'song')}.`)
     close()
   } finally {
     loading.value = false

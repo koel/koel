@@ -61,7 +61,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, nextTick, reactive, ref, toRefs, watch } from 'vue'
-import { pluralize } from '@/utils'
+import { alerts, pluralize } from '@/utils'
 import { playlistStore } from '@/stores'
 import router from '@/router'
 import { useSongMenuMethods } from '@/composables'
@@ -102,6 +102,9 @@ const createNewPlaylistFromSongs = async () => {
 
   const playlist = await playlistStore.store(newPlaylistName.value, songs.value)
   newPlaylistName.value = ''
+
+  alerts.success(`Playlist "${playlist.name}" created.`)
+
   // Activate the new playlist right away
   await nextTick()
   router.go(`playlist/${playlist.id}`)

@@ -15,6 +15,7 @@
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue'
 import { playlistStore } from '@/stores'
+import { alerts } from '@/utils'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
@@ -46,6 +47,7 @@ const update = async () => {
   updating.value = true
 
   await playlistStore.update(mutatedPlaylist)
+  alerts.success(`Updated playlist "${mutatedPlaylist.name}."`)
   emit('updated', mutatedPlaylist)
 }
 

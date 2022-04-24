@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, nextTick, ref, toRefs } from 'vue'
-import { eventBus } from '@/utils'
+import { alerts, eventBus, pluralize } from '@/utils'
 import router from '@/router'
 import { favoriteStore, playlistStore, songStore } from '@/stores'
 
@@ -103,6 +103,7 @@ const handleDrop = (event: DragEvent) => {
     favoriteStore.like(songs)
   } else if (type.value === 'playlist') {
     playlistStore.addSongs(playlist.value, songs)
+    alerts.success(`Added ${pluralize(songs.length, 'song')} into "${playlist.value.name}."`)
   }
 
   return false
