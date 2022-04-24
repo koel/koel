@@ -1,5 +1,5 @@
 <template>
-  <nav class="side side-nav" id="sidebar" :class="{ showing: showing }">
+  <nav id="sidebar" :class="{ showing }" class="side side-nav">
     <section class="music">
       <h1>Your Music</h1>
 
@@ -8,11 +8,9 @@
           <a :class="['home', currentView === 'Home' ? 'active' : '']" href="#!/home">Home</a>
         </li>
         <li>
-          <a
-            :class="['queue', currentView === 'Queue' ? 'active' : '']"
-            href="#!/queue"
-            v-koel-droppable="handleDrop"
-          >Current Queue</a>
+          <a v-koel-droppable="handleDrop" :class="['queue', currentView === 'Queue' ? 'active' : '']" href="#!/queue">
+            Current Queue
+          </a>
         </li>
         <li>
           <a :class="['songs', currentView === 'Songs' ? 'active' : '']" href="#!/songs">All Songs</a>
@@ -21,21 +19,17 @@
           <a :class="['albums', currentView === 'Albums' ? 'active' : '']" href="#!/albums">Albums</a>
         </li>
         <li>
-          <a :class="['artists', currentView === 'Artists' ? 'active' : '']" href="#!/artists">
-            Artists
-          </a>
+          <a :class="['artists', currentView === 'Artists' ? 'active' : '']" href="#!/artists">Artists</a>
         </li>
-        <li v-if="sharedState.useYouTube">
-          <a :class="['youtube', currentView === 'YouTube' ? 'active' : '']" href="#!/youtube">
-            YouTube Video
-          </a>
+        <li v-if="useYouTube">
+          <a :class="['youtube', currentView === 'YouTube' ? 'active' : '']" href="#!/youtube">YouTube Video</a>
         </li>
       </ul>
     </section>
 
     <PlaylistList :current-view="currentView"/>
 
-    <section v-if="userState.current.is_admin" class="manage">
+    <section v-if="user.is_admin" class="manage">
       <h1>Manage</h1>
 
       <ul class="menu">
@@ -54,17 +48,17 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref } from 'vue'
 import isMobile from 'ismobilejs'
+import { defineAsyncComponent, ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { queueStore, sharedStore, songStore, userStore } from '@/stores'
 
 const PlaylistList = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarList.vue'))
 
-const currentView = ref<MainViewName>('Home')
-const userState = reactive(userStore.state)
 const showing = ref(!isMobile.phone)
-const sharedState = reactive(sharedStore.state)
+const currentView = ref<MainViewName>('Home')
+const user = toRef(userStore.state, 'current')
+const useYouTube = toRef(sharedStore.state, 'useYouTube')
 
 const handleDrop = (event: DragEvent) => {
   if (!event.dataTransfer?.getData('application/x-koel.text+plain')) {
@@ -79,11 +73,8 @@ const handleDrop = (event: DragEvent) => {
 
 eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName): void => {
   currentView.value = view
-
   // Hide the sidebar if on mobile
-  if (isMobile.phone) {
-    showing.value = false
-  }
+  isMobile.phone && (showing.value = false)
 })
 
 /**

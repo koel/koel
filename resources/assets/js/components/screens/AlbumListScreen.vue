@@ -22,7 +22,7 @@ import { useInfiniteScroll } from '@/composables'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
-const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/view-mode-switch.vue'))
+const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/ViewModeSwitch.vue'))
 
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const albums = ref<Album[]>([])

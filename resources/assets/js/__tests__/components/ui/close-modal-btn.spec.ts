@@ -1,7 +1,7 @@
-import Component from '@/components/ui/close-modal-btn.vue'
+import Component from '@/components/ui/BtnCloseModal.vue'
 import { mount } from '@/__tests__/adapter'
 
-describe('components/ui/close-modal-btn', () => {
+describe('components/ui/BtnCloseModal', () => {
   it('emits a click event', () => {
     const wrapper = mount(Component)
     wrapper.click('button')

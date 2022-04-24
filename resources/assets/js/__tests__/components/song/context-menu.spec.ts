@@ -7,7 +7,7 @@ import { mock } from '@/__tests__/__helpers__'
 import { mount, Wrapper } from '@/__tests__/adapter'
 import FunctionPropertyNames = jest.FunctionPropertyNames
 
-describe('components/song/context-menu', () => {
+describe('components/song/ContextMenuBase', () => {
   let songs: Song[], wrapper: Wrapper
 
   beforeEach(() => {

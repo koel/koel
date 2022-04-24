@@ -1,5 +1,5 @@
 <template>
-  <div id="overlay" v-if="state.showing" class="overlay" :class="state.type">
+  <div v-if="state.showing" id="overlay" :class="state.type" class="overlay">
     <div class="display">
       <sound-bar v-if="state.type === 'loading'"/>
       <i class="fa fa-exclamation-circle" v-if="state.type === 'error'"></i>
@@ -10,7 +10,7 @@
       <span class="message" v-html="state.message"></span>
     </div>
 
-    <button class="btn-dismiss" v-if="state.dismissible" @click.prevent="hide">Close</button>
+    <button v-if="state.dismissible" class="btn-dismiss" @click.prevent="hide">Close</button>
   </div>
 </template>
 

@@ -23,13 +23,13 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, onMounted, ref } from 'vue'
 
-import AppHeader from '@/components/layout/app-header.vue'
+import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/app-footer/index.vue'
 import EventListeners from '@/components/utils/event-listeners.vue'
-import Hotkeys from '@/components/utils/hotkeys.vue'
+import Hotkeys from '@/components/utils/HotkeyListener.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import MainWrapper from '@/components/layout/main-wrapper/index.vue'
-import Overlay from '@/components/ui/overlay.vue'
+import Overlay from '@/components/ui/Overlay.vue'
 
 import { $, eventBus, hideOverlay, showOverlay, arrayify } from '@/utils'
 import { favoriteStore, preferenceStore as preferences, queueStore, sharedStore } from '@/stores'
@@ -38,7 +38,7 @@ import { auth, playback, socket } from '@/services'
 const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
-const SupportKoel = defineAsyncComponent(() => import('@/components/meta/support-koel.vue'))
+const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 
 const overlay = ref<HTMLElement>()
 const songContextMenu = ref<InstanceType<typeof SongContextMenu>>()

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/layout/extra-panel does not have a YouTube tab if not using YouTube 1`] = `
+exports[`components/layout/ExtraPanel does not have a YouTube tab if not using YouTube 1`] = `
 <section id="extra" data-testid="extra-panel" class="text-secondary showing">
   <div class="tabs">
     <div role="tablist" class="clear"><button aria-selected="true" aria-controls="extraPanelLyrics" id="extraTabLyrics" role="tab">
@@ -30,7 +30,7 @@ exports[`components/layout/extra-panel does not have a YouTube tab if not using 
 </section>
 `;
 
-exports[`components/layout/extra-panel renders properly 1`] = `
+exports[`components/layout/ExtraPanel renders properly 1`] = `
 <section id="extra" data-testid="extra-panel" class="text-secondary showing">
   <div class="tabs">
     <div role="tablist" class="clear"><button aria-selected="true" aria-controls="extraPanelLyrics" id="extraTabLyrics" role="tab">

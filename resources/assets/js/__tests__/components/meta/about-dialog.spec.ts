@@ -1,8 +1,8 @@
-import Component from '@/components/meta/about-dialog.vue'
+import Component from '@/components/meta/AboutKoelModal.vue'
 import factory from '@/__tests__/factory'
 import { shallow } from '@/__tests__/adapter'
 
-describe('components/meta/about-dialog', () => {
+describe('components/meta/AboutKoelModal', () => {
   const versionPermutations = [
     ['v4.0.0'/* latest ver */, 'v4.0.0-beta'/* this ver */, true/* admin */, true/* show new ver notification */],
     ['v4.0.0', 'v4.0.0', true, false],

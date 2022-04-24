@@ -10,9 +10,9 @@
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue'
 
-const Sidebar = defineAsyncComponent(() => import('@/components/layout/main-wrapper/sidebar.vue'))
-const MainContent = defineAsyncComponent(() => import('@/components/layout/main-wrapper/main-content.vue'))
-const ExtraPanel = defineAsyncComponent(() => import('@/components/layout/main-wrapper/extra-panel.vue'))
+const Sidebar = defineAsyncComponent(() => import('@/components/layout/main-wrapper/Sidebar.vue'))
+const MainContent = defineAsyncComponent(() => import('@/components/layout/main-wrapper/MainContent.vue'))
+const ExtraPanel = defineAsyncComponent(() => import('@/components/layout/main-wrapper/ExtraPanel.vue'))
 const ModalWrapper = defineAsyncComponent(() => import('@/components/layout/ModalWrapper.vue'))
 </script>
 

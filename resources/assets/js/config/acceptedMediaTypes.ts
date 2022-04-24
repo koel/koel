@@ -1,4 +1,4 @@
-export const validMediaMimeTypes = [
+export const acceptedMediaTypes = [
   'audio/flac',
   'audio/mp3',
   'audio/mpeg',

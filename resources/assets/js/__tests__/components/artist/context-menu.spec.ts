@@ -5,7 +5,7 @@ import { sharedStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow, mount } from '@/__tests__/adapter'
 
-describe('components/artist/context-menu', () => {
+describe('components/artist/ContextMenuBase', () => {
   let artist: Artist
 
   beforeEach(() => {

@@ -94,7 +94,7 @@ const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHe
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
-const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
+const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
 const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'album', 'length'] }
 const sharedState = reactive(sharedStore.state)

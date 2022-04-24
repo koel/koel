@@ -1,12 +1,12 @@
-import Component from '@/components/layout/app-header.vue'
+import Component from '@/components/layout/AppHeader.vue'
 import compareVersions from 'compare-versions'
 import { eventBus } from '@/utils'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow } from '@/__tests__/adapter'
-import { sharedStore, userStore } from '@/stores'
+import { userStore } from '@/stores'
 import factory from '@/__tests__/factory'
 
-describe('components/layout/app-header', () => {
+describe('components/layout/AppHeader', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()

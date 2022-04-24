@@ -1,7 +1,11 @@
 <template>
   <div class="text-zoomer">
-    <button @click.prevent="zoom(-1)" title="Zoom out"><i class="fa fa-search-minus"></i></button>
-    <button @click.prevent="zoom(1)" title="Zoom in"><i class="fa fa-search-plus"></i></button>
+    <button title="Zoom out" @click.prevent="zoom(-1)">
+      <i class="fa fa-search-minus"></i>
+    </button>
+    <button title="Zoom in" @click.prevent="zoom(1)">
+      <i class="fa fa-search-plus"></i>
+    </button>
   </div>
 </template>
 

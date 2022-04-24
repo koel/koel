@@ -1,14 +1,14 @@
 <template>
   <input
-    type="text"
-    name="name"
-    @keyup.esc="cancel"
-    @keyup.enter="update"
-    @blur="update"
     v-model="mutatedPlaylist.name"
     v-koel-focus
-    required
     data-testid="inline-playlist-name-input"
+    name="name"
+    required
+    type="text"
+    @blur="update"
+    @keyup.esc="cancel"
+    @keyup.enter="update"
   >
 </template>
 

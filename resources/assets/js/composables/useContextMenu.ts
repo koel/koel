@@ -3,8 +3,8 @@ import { defineAsyncComponent, reactive, ref } from 'vue'
 export type ContextMenuContext = Record<string, any>
 
 export const useContextMenu = () => {
-  const BaseContextMenu = defineAsyncComponent(() => import('@/components/ui/context-menu.vue'))
-  const base = ref<InstanceType<typeof BaseContextMenu>>()
+  const ContextMenuBase = defineAsyncComponent(() => import('@/components/ui/ContextMenuBase.vue'))
+  const base = ref<InstanceType<typeof ContextMenuBase>>()
 
   const context = reactive<ContextMenuContext>({})
 
@@ -17,7 +17,7 @@ export const useContextMenu = () => {
 
   return {
     base,
-    BaseContextMenu,
+    ContextMenuBase,
     open,
     close,
     context

@@ -1,10 +1,10 @@
-import Component from '@/components/playlist/name-editor.vue'
+import Component from '@/components/playlist/PlaylistNameEditor.vue'
 import factory from '@/__tests__/factory'
 import { playlistStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow } from '@/__tests__/adapter'
 
-describe('components/playlist/name-editor', () => {
+describe('components/playlist/PlaylistNameEditor', () => {
   let playlist: Playlist
   beforeEach(() => {
     playlist = factory<Playlist>('playlist', {

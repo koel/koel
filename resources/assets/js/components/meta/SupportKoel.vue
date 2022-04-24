@@ -2,11 +2,9 @@
   <div class="support-bar" v-if="shown">
     <p>
       Loving Koel? Please consider supporting its development via
-      <a href="https://github.com/users/phanan/sponsorship" target="_blank" rel="noopener">
-        GitHub Sponsors
-      </a>
+      <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a>
       and/or
-      <a href="https://opencollective.com/koel" target="_blank" rel="noopener">OpenCollective</a>.
+      <a href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>.
     </p>
     <button @click.prevent="close">Hide</button>
     <span class="sep"></span>

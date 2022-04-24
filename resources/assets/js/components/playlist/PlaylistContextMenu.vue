@@ -1,8 +1,8 @@
 <template>
-  <BaseContextMenu extra-class="playlist-item-menu" ref="base">
+  <ContextMenuBase extra-class="playlist-item-menu" ref="base">
     <li @click="editPlaylist" :data-testid="`playlist-context-menu-edit-${playlist.id}`">Edit</li>
     <li @click="deletePlaylist" :data-testid="`playlist-context-menu-delete-${playlist.id}`">Delete</li>
-  </BaseContextMenu>
+  </ContextMenuBase>
 </template>
 
 <script lang="ts" setup>
@@ -10,7 +10,7 @@ import { Ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { useContextMenu } from '@/composables'
 
-const { context, base, BaseContextMenu, open, close } = useContextMenu()
+const { context, base, ContextMenuBase, open, close } = useContextMenu()
 const playlist = toRef(context, 'playlist') as Ref<Playlist>
 
 const emit = defineEmits(['edit'])

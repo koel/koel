@@ -1,4 +1,4 @@
-import './static-loader'
+import './staticLoader'
 import { createApp } from 'vue'
 import App from './app.vue'
 import { http } from '@/services'

@@ -15,7 +15,7 @@ import { defineAsyncComponent, onMounted, ref } from 'vue'
 import initVisualizer from '@/utils/visualizer'
 import { eventBus } from '@/utils'
 
-const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/close-modal-btn.vue'))
+const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
 const el = ref(null as unknown as HTMLElement)
 const isFullscreen = ref(false)

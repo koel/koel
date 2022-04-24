@@ -1,7 +1,7 @@
-import Component from '@/components/ui/overlay.vue'
+import Component from '@/components/ui/Overlay.vue'
 import { mount } from '@/__tests__/adapter'
 
-describe('components/shared/overlay', () => {
+describe('components/shared/Overlay', () => {
   it('shows with default options', async () => {
     const wrapper = mount(Component)
     ;(wrapper.vm as any).show()

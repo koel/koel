@@ -1,11 +1,8 @@
 <template>
-  <button @click.prevent="$emit('click')" data-test="close-modal-btn">
+  <button data-test="close-modal-btn" @click.prevent="$emit('click')">
     <i class="fa fa-times"></i>
   </button>
 </template>
-
-<script lang="ts" setup>
-</script>
 
 <style lang="scss" scoped>
 button {

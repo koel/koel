@@ -1,24 +1,24 @@
 <template>
   <header id="mainHeader">
     <h1 class="brand" v-once>{{ appConfig.name }}</h1>
-    <span class="hamburger" @click="toggleSidebar" role="button" title="Show or hide the sidebar">
+    <span class="hamburger" role="button" title="Show or hide the sidebar" @click="toggleSidebar">
       <i class="fa fa-bars"></i>
     </span>
-    <span class="magnifier" @click="toggleSearchForm" role="button" title="Show or hide the search form">
+    <span class="magnifier" role="button" title="Show or hide the search form" @click="toggleSearchForm">
       <i class="fa fa-search"></i>
     </span>
     <search-form/>
     <div class="header-right">
       <user-badge/>
       <button
+        class="about control"
+        data-testid="about-btn"
+        title="About Koel"
         type="button"
         @click.prevent="showAboutDialog"
-        class="about control"
-        title="About Koel"
-        data-testid="about-btn"
       >
         <span v-if="shouldDisplayVersionUpdate && hasNewVersion" class="new-version" data-test="new-version-available">
-          {{ sharedState.latestVersion }} available!
+          {{ state.latestVersion }} available!
         </span>
         <i v-else class="fa fa-info-circle"></i>
       </button>
@@ -28,8 +28,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive } from 'vue'
 import compareVersions from 'compare-versions'
+import { computed, defineAsyncComponent, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { app as appConfig } from '@/config'
 import { sharedStore, userStore } from '@/stores'
@@ -37,18 +37,15 @@ import { sharedStore, userStore } from '@/stores'
 const SearchForm = defineAsyncComponent(() => import('@/components/ui/search-form.vue'))
 const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge.vue'))
 
-const userState = reactive(userStore.state)
-const sharedState = reactive(sharedStore.state)
+const user = toRef(userStore.state, 'current')
+const state = sharedStore.state
 
-const shouldDisplayVersionUpdate = computed(() => userState.current.is_admin)
-
-const hasNewVersion = computed(() => {
-  return compareVersions.compare(sharedState.latestVersion, sharedState.currentVersion, '>')
-})
+const shouldDisplayVersionUpdate = computed(() => user.value.is_admin)
+const hasNewVersion = computed(() => compareVersions.compare(state.latestVersion, state.currentVersion, '>'))
 
 const toggleSidebar = () => eventBus.emit('TOGGLE_SIDEBAR')
 const toggleSearchForm = () => eventBus.emit('TOGGLE_SEARCH_FORM')
-const showAboutDialog = () => eventBus.emit('MODAL_SHOW_ABOUT_DIALOG')
+const showAboutDialog = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
 </script>
 
 <style lang="scss">
@@ -56,12 +53,7 @@ const showAboutDialog = () => eventBus.emit('MODAL_SHOW_ABOUT_DIALOG')
   height: var(--header-height);
   background: var(--color-bg-secondary);
   display: flex;
-  -webkit-app-region: drag;
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, .4);
-
-  input, a {
-    -webkit-app-region: no-drag;
-  }
 
   h1.brand {
     flex: 1;

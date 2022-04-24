@@ -1,5 +1,5 @@
 <template>
-  <BaseContextMenu extra-class="song-menu" ref="base" data-testid="song-context-menu">
+  <ContextMenuBase extra-class="song-menu" ref="base" data-testid="song-context-menu">
     <template v-if="onlyOneSongSelected">
       <li class="playback" @click.stop.prevent="doPlayback">
         <span v-if="firstSongPlaying">Pause</span>
@@ -35,7 +35,7 @@
     >
       Copy Shareable URL
     </li>
-  </BaseContextMenu>
+  </ContextMenuBase>
 </template>
 
 <script lang="ts" setup>
@@ -49,7 +49,7 @@ import { useContextMenu, useSongMenuMethods } from '@/composables'
 const {
   context,
   base,
-  BaseContextMenu,
+  ContextMenuBase,
   open,
   close
 } = useContextMenu()

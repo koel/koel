@@ -1,5 +1,5 @@
 <template>
-  <BaseContextMenu extra-class="album-menu" data-testid="album-context-menu" ref="base">
+  <ContextMenuBase extra-class="album-menu" data-testid="album-context-menu" ref="base">
     <template v-if="album">
       <li data-test="play" @click="play">Play All</li>
       <li data-test="shuffle" @click="shuffle">Shuffle All</li>
@@ -11,7 +11,7 @@
         <li data-test="download" @click="download">Download</li>
       </template>
     </template>
-  </BaseContextMenu>
+  </ContextMenuBase>
 </template>
 
 <script lang="ts" setup>
@@ -21,7 +21,7 @@ import { download as downloadService, playback } from '@/services'
 import { useContextMenu } from '@/composables'
 import router from '@/router'
 
-const { context, base, BaseContextMenu, open, close } = useContextMenu()
+const { context, base, ContextMenuBase, open, close } = useContextMenu()
 
 const album = toRef(context, 'album') as Ref<Album>
 

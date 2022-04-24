@@ -35,7 +35,7 @@ import { favoriteStore, playlistStore, songStore } from '@/stores'
 type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
-const NameEditor = defineAsyncComponent(() => import('@/components/playlist/name-editor.vue'))
+const NameEditor = defineAsyncComponent(() => import('@/components/playlist/PlaylistNameEditor.vue'))
 
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 

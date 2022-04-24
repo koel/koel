@@ -1,9 +1,9 @@
-import Component from '@/components/layout/main-wrapper/main-content.vue'
+import Component from '@/components/layout/main-wrapper/MainContent.vue'
 import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import { shallow } from '@/__tests__/adapter'
 
-describe('components/layout/main-wrapper/main-content', () => {
+describe('components/layout/main-wrapper/MainContent', () => {
   it('has a translucent image per song/album', () => {
     const wrapper = shallow(Component)
     const song = factory('song', {

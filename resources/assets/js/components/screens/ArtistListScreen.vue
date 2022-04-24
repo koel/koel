@@ -30,7 +30,7 @@ const {
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/ArtistCard.vue'))
-const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/view-mode-switch.vue'))
+const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/ViewModeSwitch.vue'))
 
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const artists = ref<Artist[]>([])

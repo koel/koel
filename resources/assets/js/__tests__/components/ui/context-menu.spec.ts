@@ -1,11 +1,9 @@
-import Component from '@/components/ui/context-menu.vue'
-import { eventBus } from '@/utils'
-import { mock } from '@/__tests__/__helpers__'
+import Component from '@/components/ui/ContextMenuBase.vue'
 import { mount } from '@/__tests__/adapter'
 
 declare const global: any
 
-describe('components/ui/context-menu', () => {
+describe('components/ui/ContextMenuBase', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()

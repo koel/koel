@@ -1,15 +1,15 @@
 <template>
   <nav
-    class="menu context-menu"
-    :class="extraClass"
-    :style="{ top: `${top}px`, left: `${left}px` }"
-    @contextmenu.prevent
-    tabindex="0"
-    v-koel-focus
-    v-koel-clickaway="close"
-    @keydown.esc="close"
     v-if="shown"
     ref="el"
+    v-koel-clickaway="close"
+    v-koel-focus
+    :class="extraClass"
+    :style="{ top: `${top}px`, left: `${left}px` }"
+    class="menu context-menu"
+    tabindex="0"
+    @contextmenu.prevent
+    @keydown.esc="close"
   >
     <ul>
       <slot>Menu items go here.</slot>

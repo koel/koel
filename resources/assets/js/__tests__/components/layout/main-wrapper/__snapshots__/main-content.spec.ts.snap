@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/layout/main-wrapper/main-content has a translucent image per song/album 1`] = `
+exports[`components/layout/main-wrapper/MainContent has a translucent image per song/album 1`] = `
 <section id="mainContent">
   <!---->
   <!---->

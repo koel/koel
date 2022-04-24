@@ -26,7 +26,7 @@ import { computed, defineAsyncComponent, onUpdated, reactive, ref, toRefs } from
 import { eventBus } from '@/utils'
 import { userStore } from '@/stores'
 
-const TextZoomer = defineAsyncComponent(() => import('@/components/ui/text-zoomer.vue'))
+const TextZoomer = defineAsyncComponent(() => import('@/components/ui/TextMagnifier.vue'))
 
 const props = defineProps<{ song: Song | null }>()
 const { song } = toRefs(props)

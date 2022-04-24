@@ -63,7 +63,7 @@ import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { settingStore, userStore } from '@/stores'
 import { eventBus, getAllFileEntries, isDirectoryReadingSupported } from '@/utils'
-import { UploadFile, validMediaMimeTypes } from '@/config'
+import { UploadFile, acceptedMediaTypes } from '@/config'
 import { upload } from '@/services'
 
 import UploadItem from '@/components/ui/upload/UploadItem.vue'
@@ -73,7 +73,7 @@ import Btn from '@/components/ui/Btn.vue'
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
-const acceptAttribute = validMediaMimeTypes.join(',')
+const acceptAttribute = acceptedMediaTypes.join(',')
 
 const mediaPath = toRef(settingStore.state, 'media_path')
 const files = toRef(upload.state, 'files')
@@ -91,7 +91,7 @@ const onDragLeave = () => (droppable.value = false)
 
 const handleFiles = (files: Array<File>) => {
   const uploadCandidates = files
-    .filter(file => validMediaMimeTypes.includes(file.type))
+    .filter(file => acceptedMediaTypes.includes(file.type))
     .map((file): UploadFile => ({
       file,
       id: md5(`${file.name}-${file.size}`), // for simplicity, a file's identity is determined by its name and size
