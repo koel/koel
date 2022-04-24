@@ -9,39 +9,39 @@
     @keydown.a.prevent="handleA"
   >
     <div class="song-list-header" :class="mergedConfig.sortable ? 'sortable' : 'unsortable'">
-        <span @click="sort('song.track')" class="track-number" v-if="mergedConfig.columns.includes('track')">
-          #
-          <i class="fa fa-angle-down" v-show="primarySortField === 'song.track' && sortOrder === 'Asc'"></i>
-          <i class="fa fa-angle-up" v-show="primarySortField === 'song.track' && sortOrder === 'Desc'"></i>
-        </span>
+      <span @click="sort('song.track')" class="track-number" v-if="mergedConfig.columns.includes('track')">
+        #
+        <i class="fa fa-angle-down" v-show="primarySortField === 'song.track' && sortOrder === 'Asc'"></i>
+        <i class="fa fa-angle-up" v-show="primarySortField === 'song.track' && sortOrder === 'Desc'"></i>
+      </span>
       <span @click="sort('song.title')" class="title" v-if="mergedConfig.columns.includes('title')">
-          Title
-          <i class="fa fa-angle-down" v-show="primarySortField === 'song.title' && sortOrder === 'Asc'"></i>
-          <i class="fa fa-angle-up" v-show="primarySortField === 'song.title' && sortOrder === 'Desc'"></i>
-        </span>
+        Title
+        <i class="fa fa-angle-down" v-show="primarySortField === 'song.title' && sortOrder === 'Asc'"></i>
+        <i class="fa fa-angle-up" v-show="primarySortField === 'song.title' && sortOrder === 'Desc'"></i>
+      </span>
       <span
         @click="sort(['song.album.artist.name', 'song.album.name', 'song.track'])"
         class="artist"
         v-if="mergedConfig.columns.includes('artist')"
       >
-          Artist
-          <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Asc'"></i>
-          <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Desc'"></i>
-        </span>
+        Artist
+        <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Asc'"></i>
+        <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Desc'"></i>
+      </span>
       <span
         @click="sort(['song.album.name', 'song.track'])"
         class="album"
         v-if="mergedConfig.columns.includes('album')"
       >
-          Album
-          <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.name' && sortOrder === 'Asc'"></i>
-          <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.name' && sortOrder === 'Desc'"></i>
-        </span>
+        Album
+        <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.name' && sortOrder === 'Asc'"></i>
+        <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.name' && sortOrder === 'Desc'"></i>
+      </span>
       <span @click="sort('song.length')" class="time" v-if="mergedConfig.columns.includes('length')">
-          Time
-          <i class="fa fa-angle-down" v-show="primarySortField === 'song.length' && sortOrder === 'Asc'"></i>
-          <i class="fa fa-angle-up" v-show="primarySortField === 'song.length' && sortOrder === 'Desc'"></i>
-        </span>
+        <i class="fa fa-angle-down" v-show="primarySortField === 'song.length' && sortOrder === 'Asc'"></i>
+        <i class="fa fa-angle-up" v-show="primarySortField === 'song.length' && sortOrder === 'Desc'"></i>
+        &nbsp;<i class="duration-header fa fa-clock-o"></i>
+      </span>
       <span class="favorite"></span>
       <span class="play"></span>
     </div>
@@ -53,7 +53,7 @@
       key-field="id"
       v-slot="{ item }"
     >
-      <SongItem :item="item" :columns="mergedConfig.columns"/>
+      <SongListItem :item="item" :columns="mergedConfig.columns"/>
     </RecycleScroller>
   </div>
 </template>
@@ -96,7 +96,7 @@ interface SongRow {
   }
 }
 
-const SongItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
+const SongListItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
 
 const props = withDefaults(
   defineProps<{ items: Song[], type?: SongListType, config?: Partial<SongListConfig> }>(),
@@ -323,13 +323,9 @@ defineExpose({
 <style lang="scss">
 .song-list-wrap {
   position: relative;
-  padding: 8px 24px;
+  padding: 0 !important;
 
   .song-list-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     background: var(--color-bg-secondary);
     z-index: 1;
     display: flex;
@@ -393,7 +389,7 @@ defineExpose({
     text-transform: uppercase;
     cursor: pointer;
 
-    i {
+    i:not(.duration-header) {
       color: var(--color-highlight);
       font-size: 1.2rem;
     }
