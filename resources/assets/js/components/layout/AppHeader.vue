@@ -34,7 +34,7 @@ import { eventBus } from '@/utils'
 import { app as appConfig } from '@/config'
 import { commonStore, userStore } from '@/stores'
 
-const SearchForm = defineAsyncComponent(() => import('@/components/ui/search-form.vue'))
+const SearchForm = defineAsyncComponent(() => import('@/components/ui/SearchForm.vue'))
 const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge.vue'))
 
 const user = toRef(userStore.state, 'current')

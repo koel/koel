@@ -1,16 +1,16 @@
 <template>
   <div class="side search" id="searchForm" :class="{ showing }" role="search">
     <input
-      type="search"
-      :class="{ dirty: q }"
-      @input="onInput"
-      @focus="goToSearchScreen"
-      autocorrect="false"
-      placeholder="Press F to search"
       ref="input"
-      spellcheck="false"
-      name="q"
       v-model="q"
+      :class="{ dirty: q }"
+      autocorrect="false"
+      name="q"
+      placeholder="Press F to search"
+      spellcheck="false"
+      type="search"
+      @focus="goToSearchScreen"
+      @input="onInput"
     >
   </div>
 </template>
@@ -23,7 +23,7 @@ import { debounce } from 'lodash'
 import { eventBus } from '@/utils'
 import router from '@/router'
 
-const input = ref(null as unknown as HTMLInputElement)
+const input = ref<HTMLInputElement>()
 const q = ref('')
 const showing = ref(!isMobile.phone)
 
@@ -38,8 +38,8 @@ eventBus.on({
   'TOGGLE_SEARCH_FORM': () => (showing.value = !showing.value),
 
   FOCUS_SEARCH_FIELD () {
-    input.value.focus()
-    input.value.select()
+    input.value?.focus()
+    input.value?.select()
   }
 })
 </script>

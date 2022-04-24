@@ -1,9 +1,9 @@
-import Component from '@/components/ui/search-form.vue'
+import Component from '@/components/ui/SearchForm.vue'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow } from '@/__tests__/adapter'
 import { eventBus } from '@/utils'
 
-describe('components/ui/search-form', () => {
+describe('components/ui/SearchForm', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()
