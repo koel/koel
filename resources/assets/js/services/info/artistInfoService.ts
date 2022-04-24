@@ -1,9 +1,9 @@
-import { http } from '..'
+import { httpService } from '..'
 
-export const artistInfo = {
+export const artistInfoService = {
   async fetch (artist: Artist): Promise<Artist> {
     if (!artist.info) {
-      const info = await http.get<ArtistInfo|null>(`artist/${artist.id}/info`)
+      const info = await httpService.get<ArtistInfo|null>(`artist/${artist.id}/info`)
 
       if (info) {
         this.merge(artist, info)

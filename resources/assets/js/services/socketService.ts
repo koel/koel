@@ -1,9 +1,9 @@
 import Pusher from 'pusher-js'
 
 import { userStore } from '@/stores'
-import { auth } from '.'
+import { authService } from '.'
 
-export const socket = {
+export const socketService = {
   pusher: null as Pusher.Pusher | null,
   channel: null as Pusher.Channel | null,
 
@@ -17,7 +17,7 @@ export const socket = {
         authEndpoint: `${window.BASE_URL}api/broadcasting/auth`,
         auth: {
           headers: {
-            Authorization: `Bearer ${auth.getToken()}`
+            Authorization: `Bearer ${authService.getToken()}`
           }
         },
         cluster: window.PUSHER_APP_CLUSTER,
@@ -35,7 +35,7 @@ export const socket = {
     return this
   },
 
-  listen (eventName: string, cb: Function) {
+  listen (eventName: string, cb: TAnyFunction) {
     this.channel && this.channel.bind(`client-${eventName}.${userStore.current.id}`, data => cb(data))
     return this
   }

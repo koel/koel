@@ -1,10 +1,10 @@
 /**
  * Add necessary functionalities into a view that contains a song-list component.
  */
-import { ComponentInternalInstance, computed, getCurrentInstance, reactive, Ref, ref, watchEffect } from 'vue'
+import { ComponentInternalInstance, computed, getCurrentInstance, reactive, Ref, ref } from 'vue'
 import isMobile from 'ismobilejs'
 
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { eventBus } from '@/utils'
 
 import ControlsToggler from '@/components/ui/ScreenControlsToggler.vue'
@@ -25,14 +25,14 @@ export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongList
   const duration = computed(() => songStore.getFormattedLength(songs.value))
 
   const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
-  const playAll = (shuffle: boolean) => playback.queueAndPlay(getSongsToPlay(), shuffle)
-  const playSelected = (shuffle: boolean) => playback.queueAndPlay(selectedSongs.value, shuffle)
+  const playAll = (shuffle: boolean) => playbackService.queueAndPlay(getSongsToPlay(), shuffle)
+  const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedSongs.value, shuffle)
   const toggleControls = () => (showingControls.value = !showingControls.value)
 
   const onPressEnter = async (event: KeyboardEvent) => {
     if (selectedSongs.value.length === 1) {
       queueStore.queueIfNotQueued(selectedSongs.value[0])
-      await playback.play(selectedSongs.value[0])
+      await playbackService.play(selectedSongs.value[0])
       return
     }
 
@@ -43,7 +43,7 @@ export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongList
     event.shiftKey ? queueStore.queueToTop(selectedSongs.value) : queueStore.queue(selectedSongs.value)
 
     if (event.ctrlKey || event.metaKey) {
-      await playback.play(selectedSongs.value[0])
+      await playbackService.play(selectedSongs.value[0])
     }
 
     router.go('/queue')

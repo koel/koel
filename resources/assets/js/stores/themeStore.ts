@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { preferenceStore as preferences } from '@/stores/preference'
+import { preferenceStore as preferences } from '@/stores'
 
 import bgRosePetal from '@/../img/themes/bg-rose-petals.svg'
 import bgPurpleWaves from '@/../img/themes/bg-purple-waves.svg'

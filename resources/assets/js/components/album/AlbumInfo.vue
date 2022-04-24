@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 
 const TrackList = defineAsyncComponent(() => import('./AlbumTrackList.vue'))
@@ -51,7 +51,7 @@ watch(album, () => (showingFullWiki.value = false))
 const showSummary = computed(() => mode.value !== 'full' && !showingFullWiki.value)
 const showFull = computed(() => !showSummary.value)
 
-const shuffleAll = () => playback.playAllInAlbum(album.value)
+const shuffleAll = () => playbackService.playAllInAlbum(album.value)
 </script>
 
 <style lang="scss">

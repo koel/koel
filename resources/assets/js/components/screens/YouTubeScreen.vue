@@ -19,7 +19,7 @@ import createYouTubePlayer from 'youtube-player'
 import { defineAsyncComponent, ref } from 'vue'
 import { YouTubePlayer } from 'youtube-player/dist/types'
 import { eventBus, use } from '@/utils'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 
 let player: YouTubePlayer | null = null
 
@@ -36,7 +36,7 @@ const getPlayer = () => {
     })
 
     // Pause song playback when video is played
-    player.on('stateChange', ({ data }) => data === 1 && playback.pause())
+    player.on('stateChange', ({ data }) => data === 1 && playbackService.pause())
   }
 
   return player

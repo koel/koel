@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import { computed, reactive, toRef } from 'vue'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { preferenceStore } from '@/stores'
 
 const mode = toRef(preferenceStore.state, 'repeatMode')
@@ -23,7 +23,7 @@ const readableRepeatMode = computed(() => mode.value
   .join(' ')
 )
 
-const changeRepeatMode = () => playback.changeRepeatMode()
+const changeRepeatMode = () => playbackService.changeRepeatMode()
 </script>
 
 <style lang="scss" scoped>

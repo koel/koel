@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { ComponentInternalInstance, computed, defineAsyncComponent, getCurrentInstance, toRefs } from 'vue'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { queueStore } from '@/stores'
 
 const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
@@ -42,17 +42,17 @@ const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playbac
 
 const play = () => {
   queueStore.queueIfNotQueued(song.value)
-  playback.play(song.value)
+  playbackService.play(song.value)
 }
 
 const doPlayback = () => {
   switch (song.value.playbackState) {
     case 'Playing':
-      playback.pause()
+      playbackService.pause()
       break
 
     case 'Paused':
-      playback.resume()
+      playbackService.resume()
       break
 
     default:

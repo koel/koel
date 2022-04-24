@@ -1,6 +1,6 @@
 import Component from '@/components/album/track-list-item.vue'
-import { sharedStore, songStore, queueStore } from '@/stores'
-import { playback, ls } from '@/services'
+import { commonStore, songStore, queueStore } from '@/stores'
+import { playbackService, localStorageService } from '@/services'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow } from '@/__tests__/adapter'
@@ -15,9 +15,9 @@ describe('componnents/song/track-list-item', () => {
   window.BASE_URL = 'http://koel.local/'
 
   beforeEach(() => {
-    sharedStore.state.useiTunes = true
+    commonStore.state.useiTunes = true
     song = factory('song')
-    mock(ls, 'get', 'abcdef')
+    mock(localStorageService, 'get', 'abcdef')
   })
 
   afterEach(() => {
@@ -40,7 +40,7 @@ describe('componnents/song/track-list-item', () => {
     mock(songStore, 'guess', song)
     const containsStub = mock(queueStore, 'contains', false)
     const queueStub = mock(queueStore, 'queueAfterCurrent')
-    const playStub = mock(playback, 'play')
+    const playStub = mock(playbackService, 'play')
 
     shallow(Component, {
       propsData: {

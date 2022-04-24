@@ -1,6 +1,7 @@
 import isMobile from 'ismobilejs'
+import { reactive } from 'vue'
 
-import { http } from '@/services'
+import { httpService } from '@/services'
 import {
   userStore,
   preferenceStore,
@@ -10,11 +11,11 @@ import {
   playlistStore,
   recentlyPlayedStore,
   queueStore,
-  settingStore, themeStore
+  settingStore,
+  themeStore
 } from '.'
-import { reactive } from 'vue'
 
-interface SharedState {
+interface CommonStoreState {
   albums: Album[]
   allowDownload: boolean
   artists: Artist[]
@@ -36,8 +37,8 @@ interface SharedState {
   useYouTube: boolean
 }
 
-export const sharedStore = {
-  state: reactive<SharedState>({
+export const commonStore = {
+  state: reactive<CommonStoreState>({
     albums: [],
     allowDownload: false,
     artists: [],
@@ -59,8 +60,8 @@ export const sharedStore = {
     useYouTube: false
   }),
 
-  async init (): Promise<SharedState> {
-    this.state = Object.assign(this.state, await http.get<SharedState>('data'))
+  async init () {
+    Object.assign(this.state, await httpService.get<CommonStoreState>('data'))
 
     // Always disable YouTube integration on mobile.
     this.state.useYouTube = this.state.useYouTube && !isMobile.phone
@@ -79,9 +80,6 @@ export const sharedStore = {
     queueStore.init()
     settingStore.init(this.state.settings)
     themeStore.init()
-
-    // Keep a copy of the media path. We'll need this to properly warn the user later.
-    this.state.originalMediaPath = this.state.settings.media_path!
 
     return this.state
   }

@@ -1,6 +1,6 @@
 /* eslint no-undef: 0 */
 import Sketch from 'sketch-js'
-import { audio as audioService } from '@/services'
+import { audioService } from '@/services'
 import { random, sample } from 'lodash'
 
 // Audio visualization originally created by Justin Windle (@soulwire)
@@ -164,7 +164,7 @@ export default (container: HTMLElement): void => {
     setup () {
       // generate some particles
       for (let i = 0; i < NUM_PARTICLES; i++) {
-        let particle = new Particle(random(this.width), random(this.height))
+        const particle = new Particle(random(this.width), random(this.height))
         particle.energy = random(particle.band / 256)
 
         this.particles.push(particle)

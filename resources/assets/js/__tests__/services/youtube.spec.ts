@@ -1,4 +1,4 @@
-import { youtube } from '@/services'
+import { youtubeService } from '@/services'
 import { eventBus } from '@/utils'
 import router from '@/router'
 import factory from '@/__tests__/factory'
@@ -23,7 +23,7 @@ describe('services/youtube', () => {
     const emitMock = mock(eventBus, 'emit')
     const goMock = mock(router, 'go')
 
-    youtube.play(video)
+    youtubeService.play(video)
     expect(emitMock).toHaveBeenCalledWith('PLAY_YOUTUBE_VIDEO', { id: 'foo', title: 'Bar' })
     expect(goMock).toHaveBeenCalledWith('youtube')
   })

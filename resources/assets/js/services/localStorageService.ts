@@ -1,6 +1,6 @@
 import { get as baseGet, set as baseSet, remove as baseRemove } from 'local-storage'
 
-export const ls = {
+export const localStorageService = {
   get: <T>(key: string, defaultValue: T | null = null): T | null => {
     const value = baseGet<T>(key)
 

@@ -1,8 +1,8 @@
 import Component from '@/components/artist/ArtistCard.vue'
 import Thumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 import factory from '@/__tests__/factory'
-import { playback, download } from '@/services'
-import { sharedStore } from '@/stores'
+import { playbackService, downloadService } from '@/services'
+import { commonStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
 import { mount, shallow } from '@/__tests__/adapter'
 
@@ -11,7 +11,7 @@ describe('components/artist/card', () => {
 
   beforeEach(() => {
     // @ts-ignore
-    sharedStore.state = { allowDownload: true }
+    commonStore.state = { allowDownload: true }
     artist = factory<Artist>('artist', {
       id: 3, // make sure it's not "Various Artists"
       albums: factory<Album>('album', 4),
@@ -37,7 +37,7 @@ describe('components/artist/card', () => {
 
   it('shuffles', () => {
     const wrapper = shallow(Component, { propsData: { artist } })
-    const playStub = mock(playback, 'playAllByArtist')
+    const playStub = mock(playbackService, 'playAllByArtist')
 
     wrapper.click('.shuffle-artist')
     expect(playStub).toHaveBeenCalledWith(artist, true)
@@ -45,7 +45,7 @@ describe('components/artist/card', () => {
 
   it('downloads', () => {
     const wrapper = shallow(Component, { propsData: { artist } })
-    const downloadStub = mock(download, 'fromArtist')
+    const downloadStub = mock(downloadService, 'fromArtist')
 
     wrapper.click('.download-artist')
     expect(downloadStub).toHaveBeenCalledWith(artist)

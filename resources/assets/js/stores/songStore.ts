@@ -4,8 +4,8 @@ import { orderBy, remove, take, unionBy, without } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { alerts, arrayify, pluralize, secondsToHis, use } from '@/utils'
-import { auth, http, ls } from '@/services'
-import { albumStore, artistStore, favoriteStore, preferenceStore, sharedStore } from '.'
+import { authService, httpService, localStorageService } from '@/services'
+import { albumStore, artistStore, favoriteStore, preferenceStore, commonStore } from '.'
 import stub from '@/stubs/song'
 
 interface BroadcastSongData {
@@ -150,7 +150,7 @@ export const songStore = {
   registerPlay: async (song: Song): Promise<void> => {
     const oldCount = song.playCount
 
-    const interaction = await http.post<Interaction>('interaction/play', { song: song.id })
+    const interaction = await httpService.post<Interaction>('interaction/play', { song: song.id })
 
     // Use the data from the server to make sure we don't miss a play from another device.
     song.playCount = interaction.play_count
@@ -159,11 +159,11 @@ export const songStore = {
   },
 
   scrobble: async (song: Song): Promise<void> => {
-    await http.post(`${song.id}/scrobble`, { timestamp: song.playStartTime })
+    await httpService.post(`${song.id}/scrobble`, { timestamp: song.playStartTime })
   },
 
   async update (songsToUpdate: Song[], data: any): Promise<Song[]> {
-    const { songs, artists, albums } = await http.put<SongUpdateResult>('songs', {
+    const { songs, artists, albums } = await httpService.put<SongUpdateResult>('songs', {
       data,
       songs: songsToUpdate.map(song => song.id)
     })
@@ -200,12 +200,12 @@ export const songStore = {
 
   getSourceUrl: (song: Song): string => {
     return isMobile.any && preferenceStore.transcodeOnMobile
-      ? `${sharedStore.state.cdnUrl}play/${song.id}/1/128?api_token=${auth.getToken()}`
-      : `${sharedStore.state.cdnUrl}play/${song.id}?api_token=${auth.getToken()}`
+      ? `${commonStore.state.cdnUrl}play/${song.id}/1/128?api_token=${authService.getToken()}`
+      : `${commonStore.state.cdnUrl}play/${song.id}?api_token=${authService.getToken()}`
   },
 
   getShareableUrl: (song: Song): string => {
-    const baseUrl = KOEL_ENV === 'app' ? ls.get<string>('koelHost') : window.BASE_URL
+    const baseUrl = KOEL_ENV === 'app' ? localStorageService.get<string>('koelHost') : window.BASE_URL
     return `${baseUrl}#!/song/${song.id}`
   },
 

@@ -1,6 +1,6 @@
 import { difference, orderBy, take } from 'lodash'
 
-import { http } from '@/services'
+import { httpService } from '@/services'
 import stub from '@/stubs/artist'
 import { arrayify, use } from '@/utils'
 import { reactive } from 'vue'
@@ -99,7 +99,7 @@ export const artistStore = {
    * @param {string} image The content data string of the image
    */
   uploadImage: async (artist: Artist, image: string) => {
-    const { imageUrl } = await http.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })
+    const { imageUrl } = await httpService.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })
     artist.image = imageUrl
     return artist.image
   }

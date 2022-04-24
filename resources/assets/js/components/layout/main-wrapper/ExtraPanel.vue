@@ -91,7 +91,7 @@
 import isMobile from 'ismobilejs'
 import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
 import { $, eventBus } from '@/utils'
-import { preferenceStore as preferences, sharedStore, songStore } from '@/stores'
+import { preferenceStore as preferences, commonStore, songStore } from '@/stores'
 import { songInfo } from '@/services'
 
 type Tab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
@@ -104,7 +104,7 @@ const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/YouT
 
 const song = ref<Song | null>(null)
 const state = reactive(preferences.state)
-const sharedState = reactive(sharedStore.state)
+const sharedState = reactive(commonStore.state)
 const currentTab = ref(defaultTab)
 
 const artist = computed(() => song.value?.artist)

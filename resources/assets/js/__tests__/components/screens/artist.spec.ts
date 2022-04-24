@@ -1,6 +1,6 @@
 import Component from '@/components/screens/ArtistScreen.vue'
 import SongList from '@/components/song/SongList.vue'
-import { artistInfo as artistInfoService, download } from '@/services'
+import { artistInfoService, downloadService } from '@/services'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
 import { mount, shallow } from '@/__tests__/adapter'
@@ -56,7 +56,7 @@ describe('components/screens/artist', () => {
         sharedState: { allowDownload: true }
       })
     })
-    const m = mock(download, 'fromArtist')
+    const m = mock(downloadService, 'fromArtist')
     wrapper.click('a.download')
     expect(m).toHaveBeenCalledWith(artist)
   })

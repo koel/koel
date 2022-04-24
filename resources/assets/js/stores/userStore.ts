@@ -1,7 +1,7 @@
 import { without } from 'lodash'
 import md5 from 'blueimp-md5'
 
-import { http } from '@/services'
+import { httpService } from '@/services'
 import stub from '@/stubs/user'
 import { reactive } from 'vue'
 
@@ -73,12 +73,12 @@ export const userStore = {
     user.avatar = `https://www.gravatar.com/avatar/${md5(user.email)}?s=256&d=mp`
   },
 
-  login: async (email: string, password: string) => await http.post<User>('me', { email, password }),
-  logout: async () => await http.delete('me'),
-  getProfile: async () => await http.get<User>('me'),
+  login: async (email: string, password: string) => await httpService.post<User>('me', { email, password }),
+  logout: async () => await httpService.delete('me'),
+  getProfile: async () => await httpService.get<User>('me'),
 
   async updateProfile (data: UpdateCurrentProfileData) {
-    await http.put('me', data)
+    await httpService.put('me', data)
 
     this.current.name = data.name
     this.current.email = data.email
@@ -86,7 +86,7 @@ export const userStore = {
   },
 
   async store (data: CreateUserData) {
-    const user = await http.post<User>('user', data)
+    const user = await httpService.post<User>('user', data)
     this.setAvatar(user)
     this.all.unshift(user)
 
@@ -94,13 +94,13 @@ export const userStore = {
   },
 
   async update (user: User, data: UpdateUserData) {
-    await http.put(`user/${user.id}`, data)
+    await httpService.put(`user/${user.id}`, data)
     this.setAvatar(user)
     ;[user.name, user.email, user.is_admin] = [data.name, data.email, data.is_admin]
   },
 
   async destroy (user: User) {
-    await http.delete(`user/${user.id}`)
+    await httpService.delete(`user/${user.id}`)
     this.all = without(this.all, user)
 
     // Mama, just killed a man

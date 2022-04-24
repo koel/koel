@@ -1,5 +1,5 @@
 import { songStore } from '.'
-import { http } from '@/services'
+import { httpService } from '@/services'
 import { remove } from 'lodash'
 import { reactive } from 'vue'
 
@@ -22,7 +22,7 @@ export const recentlyPlayedStore = {
 
   async fetchAll () {
     if (!this.fetched) {
-      this.state.songs = songStore.byIds(await http.get<string[]>(`interaction/recently-played`))
+      this.state.songs = songStore.byIds(await httpService.get<string[]>(`interaction/recently-played`))
       this.fetched = true
     }
 

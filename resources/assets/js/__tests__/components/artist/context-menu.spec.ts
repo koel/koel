@@ -1,7 +1,7 @@
 import Component from '@/components/artist/ArtistContextMenu.vue'
 import factory from '@/__tests__/factory'
-import { playback, download } from '@/services'
-import { sharedStore } from '@/stores'
+import { playbackService, downloadService } from '@/services'
+import { commonStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow, mount } from '@/__tests__/adapter'
 
@@ -11,7 +11,7 @@ describe('components/artist/ContextMenuBase', () => {
   beforeEach(() => {
     artist = factory<Artist>('artist')
     // @ts-ignore
-    sharedStore.state = { allowDownload: true }
+    commonStore.state = { allowDownload: true }
   })
 
   afterEach(() => {
@@ -21,7 +21,7 @@ describe('components/artist/ContextMenuBase', () => {
 
   it('plays all', () => {
     const wrapper = shallow(Component, { propsData: { artist } })
-    const m = mock(playback, 'playAllByArtist')
+    const m = mock(playbackService, 'playAllByArtist')
 
     wrapper.click('[data-test=play]')
     expect(m).toHaveBeenCalledWith(artist)
@@ -29,7 +29,7 @@ describe('components/artist/ContextMenuBase', () => {
 
   it('shuffles', () => {
     const wrapper = shallow(Component, { propsData: { artist } })
-    const m = mock(playback, 'playAllByArtist')
+    const m = mock(playbackService, 'playAllByArtist')
 
     wrapper.click('[data-test=shuffle]')
     expect(m).toHaveBeenCalledWith(artist, true)
@@ -39,7 +39,7 @@ describe('components/artist/ContextMenuBase', () => {
     const wrapper = mount(Component, { propsData: { artist } })
     await wrapper.vm.$nextTick()
     await (wrapper.vm as any).open(0, 0)
-    const m = mock(download, 'fromArtist')
+    const m = mock(downloadService, 'fromArtist')
 
     wrapper.click('[data-test=download]')
     expect(m).toHaveBeenCalledWith(artist)
@@ -47,7 +47,7 @@ describe('components/artist/ContextMenuBase', () => {
 
   it('does not have a download item if not downloadable', () => {
     // @ts-ignore
-    sharedStore.state = { allowDownload: false }
+    commonStore.state = { allowDownload: false }
     const wrapper = shallow(Component, { propsData: { artist } })
     expect(wrapper.has('[data-test=download]')).toBe(false)
   })

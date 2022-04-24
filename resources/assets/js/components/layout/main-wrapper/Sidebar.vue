@@ -51,14 +51,14 @@
 import isMobile from 'ismobilejs'
 import { defineAsyncComponent, ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
-import { queueStore, sharedStore, songStore, userStore } from '@/stores'
+import { queueStore, commonStore, songStore, userStore } from '@/stores'
 
 const PlaylistList = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarList.vue'))
 
 const showing = ref(!isMobile.phone)
 const currentView = ref<MainViewName>('Home')
 const user = toRef(userStore.state, 'current')
-const useYouTube = toRef(sharedStore.state, 'useYouTube')
+const useYouTube = toRef(commonStore.state, 'useYouTube')
 
 const handleDrop = (event: DragEvent) => {
   if (!event.dataTransfer?.getData('application/x-koel.text+plain')) {

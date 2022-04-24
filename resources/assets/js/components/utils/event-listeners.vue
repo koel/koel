@@ -7,7 +7,7 @@
  */
 import isMobile from 'ismobilejs'
 import router from '@/router'
-import { auth } from '@/services'
+import { authService } from '@/services'
 import { playlistStore, preferenceStore, userStore } from '@/stores'
 import { alerts, eventBus, forceReloadWindow } from '@/utils'
 
@@ -31,7 +31,7 @@ eventBus.on({
    */
   async LOG_OUT () {
     await userStore.logout()
-    auth.destroy()
+    authService.destroy()
     forceReloadWindow()
   },
 

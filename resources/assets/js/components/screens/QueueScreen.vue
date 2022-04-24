@@ -51,7 +51,7 @@
 import { computed, defineAsyncComponent, reactive, toRef } from 'vue'
 import { pluralize } from '@/utils'
 import { queueStore, songStore } from '@/stores'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { useSongList } from '@/composables'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
@@ -76,10 +76,10 @@ const songState = reactive(songStore.state)
 
 const showShuffleLibraryButton = computed(() => songState.songs.length > 0)
 
-const playAll = (shuffle: boolean) => playback.queueAndPlay(songs.value.length ? songs.value : songStore.all, shuffle)
+const playAll = (shuffle: boolean) => playbackService.queueAndPlay(songs.value.length ? songs.value : songStore.all, shuffle)
 const clearQueue = () => queueStore.clear()
 const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(selectedSongs.value)
-const onPressEnter = () => selectedSongs.value.length && playback.play(selectedSongs.value[0])
+const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
 </script>
 
 <style lang="scss" scoped>

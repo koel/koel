@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { UploadFile } from '@/config'
-import { upload } from '@/services'
+import { uploadService } from '@/services'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
@@ -44,8 +44,8 @@ const { file } = toRefs(props)
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canRemove = computed(() => file.value.status !== 'Uploading') // we're not supporting cancel tokens (yet).
 
-const remove = () => upload.remove(file.value)
-const retry = () => upload.retry(file.value)
+const remove = () => uploadService.remove(file.value)
+const retry = () => uploadService.retry(file.value)
 </script>
 
 <style lang="scss" scoped>

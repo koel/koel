@@ -49,14 +49,14 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef } from 'vue'
-import { sharedStore, userStore } from '@/stores'
-import { auth, http } from '@/services'
+import { commonStore, userStore } from '@/stores'
+import { authService, httpService } from '@/services'
 import { forceReloadWindow } from '@/utils'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const currentUser = toRef(userStore.state, 'current')
-const useLastfm = toRef(sharedStore.state, 'useLastfm')
+const useLastfm = toRef(commonStore.state, 'useLastfm')
 
 const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_session_key))
 
@@ -66,13 +66,13 @@ const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_se
  * Koel will reload once the connection is successful.
  */
 const connect = () => window.open(
-  `${window.BASE_URL}lastfm/connect?api_token=${auth.getToken()}`,
+  `${window.BASE_URL}lastfm/connect?api_token=${authService.getToken()}`,
   '_blank',
   'toolbar=no,titlebar=no,location=no,width=1024,height=640'
 )
 
 const disconnect = async () => {
-  await http.delete('lastfm/disconnect')
+  await httpService.delete('lastfm/disconnect')
   forceReloadWindow()
 }
 </script>

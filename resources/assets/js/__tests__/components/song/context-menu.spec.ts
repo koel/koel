@@ -1,6 +1,6 @@
 import Component from '@/components/song/SongContextMenu.vue'
-import { download } from '@/services'
-import { songStore, playlistStore, queueStore, favoriteStore, sharedStore, userStore } from '@/stores'
+import { downloadService } from '@/services'
+import { songStore, playlistStore, queueStore, favoriteStore, commonStore, userStore } from '@/stores'
 import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
@@ -12,7 +12,7 @@ describe('components/song/ContextMenuBase', () => {
 
   beforeEach(() => {
     userStore.current.is_admin = true
-    sharedStore.state.allowDownload = true
+    commonStore.state.allowDownload = true
     songs = factory<Song>('song', 2)
 
     wrapper = mount(Component, {
@@ -77,7 +77,7 @@ describe('components/song/ContextMenuBase', () => {
   })
 
   it('downloads', async () => {
-    const m = mock(download, 'fromSongs')
+    const m = mock(downloadService, 'fromSongs')
     await (wrapper.vm as any).open(0, 0)
     wrapper.click('.download')
     expect(m).toHaveBeenCalledWith(songs)

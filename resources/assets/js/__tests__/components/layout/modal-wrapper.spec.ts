@@ -3,7 +3,7 @@ import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import { shallow } from '@/__tests__/adapter'
 import { mock } from '@/__tests__/__helpers__'
-import { http } from '@/services'
+import { httpService } from '@/services'
 
 describe('components/layout/modal-wrapper', () => {
   afterEach(() => {
@@ -19,7 +19,7 @@ describe('components/layout/modal-wrapper', () => {
   ])('shows %s modal', async (modalName, eventName, eventParams?) => {
     if (modalName === 'edit-song-form') {
       // mocking the songInfo.fetch() request made during edit-form modal opening
-      mock(http, 'request').mockReturnValue(Promise.resolve({ data: {} }))
+      mock(httpService, 'request').mockReturnValue(Promise.resolve({ data: {} }))
     }
 
     const wrapper = shallow(Component, {

@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { http } from '@/services'
+import { httpService } from '@/services'
 
 export const settingStore = {
   state: reactive<Settings>({
@@ -15,7 +15,7 @@ export const settingStore = {
   },
 
   async update (settings: Settings) {
-    await http.put('settings', settings)
+    await httpService.put('settings', settings)
     Object.assign(this.state, settings)
   }
 }

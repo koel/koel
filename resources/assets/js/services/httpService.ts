@@ -2,9 +2,9 @@ import Axios, { AxiosInstance, Method } from 'axios'
 import NProgress from 'nprogress'
 
 import { eventBus } from '@/utils'
-import { auth, ls } from '@/services'
+import { authService, localStorageService } from '@/services'
 
-export const http = {
+export const httpService = {
   client: null as AxiosInstance | null,
 
   setProgressBar: () => NProgress.start(),
@@ -37,13 +37,13 @@ export const http = {
 
   init () {
     this.client = Axios.create({
-      baseURL: KOEL_ENV === 'app' ? `${ls.get('koelHost')}api` : `${window.BASE_URL}api`
+      baseURL: KOEL_ENV === 'app' ? `${localStorageService.get('koelHost')}api` : `${window.BASE_URL}api`
     })
 
     // Intercept the request to make sure the token is injected into the header.
     this.client.interceptors.request.use(config => {
       this.setProgressBar()
-      config.headers.Authorization = `Bearer ${auth.getToken()}`
+      config.headers.Authorization = `Bearer ${authService.getToken()}`
       return config
     })
 
@@ -53,7 +53,7 @@ export const http = {
 
       // …get the token from the header or response data if exists, and save it.
       const token = response.headers.Authorization || response.data.token
-      token && auth.setToken(token)
+      token && authService.setToken(token)
 
       return response
     }, error => {

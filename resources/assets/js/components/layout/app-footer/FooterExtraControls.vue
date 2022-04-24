@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, reactive, ref, toRef, toRefs } from 'vue'
 import isMobile from 'ismobilejs'
-import { socket } from '@/services'
+import { socketService } from '@/services'
 import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'
 import { favoriteStore, preferenceStore, songStore } from '@/stores'
 
@@ -71,7 +71,7 @@ const viewingQueue = ref(false)
 const like = () => {
   if (song.value.id) {
     favoriteStore.toggleOne(song.value)
-    socket.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(song.value))
+    socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(song.value))
   }
 }
 

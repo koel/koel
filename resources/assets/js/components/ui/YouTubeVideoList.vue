@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, ref, toRefs, watchEffect } from 'vue'
-import { youtube as youtubeService } from '@/services'
+import { youTubeService } from '@/services'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
@@ -40,7 +40,7 @@ const videos = ref<YouTubeVideo[]>([])
 
 watchEffect(() => (videos.value = song.value.youtube?.items || []))
 
-const play = (video: YouTubeVideo) => youtubeService.play(video)
+const play = (video: YouTubeVideo) => youTubeService.play(video)
 
 const loadMore = async () => {
   loading.value = true
@@ -48,7 +48,7 @@ const loadMore = async () => {
   try {
     song.value.youtube = song.value.youtube || { nextPageToken: '', items: [] }
 
-    const result = await youtubeService.searchVideosRelatedToSong(song.value, song.value.youtube.nextPageToken!)
+    const result = await youTubeService.searchVideosRelatedToSong(song.value, song.value.youtube.nextPageToken!)
     song.value.youtube.nextPageToken = result.nextPageToken
     song.value.youtube.items.push(...result.items as YouTubeVideo[])
 

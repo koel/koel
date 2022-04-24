@@ -60,8 +60,8 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, reactive, ref, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
-import { artistStore, sharedStore } from '@/stores'
-import { albumInfo as albumInfoService, download as downloadService } from '@/services'
+import { artistStore, commonStore } from '@/stores'
+import { albumInfoService, downloadService } from '@/services'
 import router from '@/router'
 import { useSongList } from '@/composables'
 
@@ -92,7 +92,7 @@ const {
 } = useSongList(ref(album.value.songs))
 
 const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'length'] }
-const sharedState = reactive(sharedStore.state)
+const sharedState = reactive(commonStore.state)
 const showing = ref(false)
 const loading = ref(true)
 

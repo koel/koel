@@ -56,19 +56,19 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
 import { eventBus, pluralize, startDragging } from '@/utils'
-import { artistStore, sharedStore } from '@/stores'
-import { download as downloadService, playback } from '@/services'
+import { artistStore, commonStore } from '@/stores'
+import { downloadService, playbackService } from '@/services'
 
 const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
 const props = withDefaults(defineProps<{ artist: Artist, layout: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { artist, layout } = toRefs(props)
 
-const allowDownload = toRef(sharedStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allowDownload')
 
 const showing = computed(() => artist.value.songs.length && !artistStore.isVariousArtists(artist.value))
 
-const shuffle = () => playback.playAllByArtist(artist.value, true /* shuffled */)
+const shuffle = () => playbackService.playAllByArtist(artist.value, true /* shuffled */)
 const download = () => downloadService.fromArtist(artist.value)
 const dragStart = (event: DragEvent) => startDragging(event, artist.value, 'Artist')
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', event, artist.value)

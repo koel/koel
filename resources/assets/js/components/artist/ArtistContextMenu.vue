@@ -17,8 +17,8 @@
 
 <script lang="ts" setup>
 import { computed, reactive, Ref, toRef } from 'vue'
-import { artistStore, sharedStore } from '@/stores'
-import { download as downloadService, playback } from '@/services'
+import { artistStore, commonStore } from '@/stores'
+import { downloadService, playbackService } from '@/services'
 import { useContextMenu } from '@/composables'
 import router from '@/router'
 
@@ -26,15 +26,15 @@ const { context, base, ContextMenuBase, open, close } = useContextMenu()
 
 const artist = toRef(context, 'artist') as Ref<Artist>
 
-const sharedState = reactive(sharedStore.state)
+const sharedState = reactive(commonStore.state)
 
 const isStandardArtist = computed(() =>
   !artistStore.isUnknownArtist(artist.value)
   && !artistStore.isVariousArtists(artist.value)
 )
 
-const play = () => playback.playAllByArtist(artist.value)
-const shuffle = () => playback.playAllByArtist(artist.value, true /* shuffled */)
+const play = () => playbackService.playAllByArtist(artist.value)
+const shuffle = () => playbackService.playAllByArtist(artist.value, true /* shuffled */)
 
 const viewArtistDetails = () => {
   router.go(`artist/${artist.value.id}`)

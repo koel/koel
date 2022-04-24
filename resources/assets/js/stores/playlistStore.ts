@@ -1,7 +1,7 @@
 import { difference, union, orderBy } from 'lodash'
 
 import stub from '@/stubs/playlist'
-import { http } from '@/services'
+import { httpService } from '@/services'
 import { alerts, pluralize, arrayify } from '@/utils'
 import { songStore } from '.'
 import models from '@/config/smart-playlist/models'
@@ -55,7 +55,7 @@ export const playlistStore = {
   },
 
   async fetchSongs (playlist: Playlist) {
-    const songIds = await http.get<string[]>(`playlist/${playlist.id}/songs`)
+    const songIds = await httpService.get<string[]>(`playlist/${playlist.id}/songs`)
     playlist.songs = songStore.byIds(songIds)
     playlist.populated = true
 
@@ -96,7 +96,7 @@ export const playlistStore = {
     const songIds = songs.map(song => song.id)
     const serializedRules = this.serializeSmartPlaylistRulesForStorage(rules)
 
-    const playlist = await http.post<Playlist>('playlist', { name, songs: songIds, rules: serializedRules })
+    const playlist = await httpService.post<Playlist>('playlist', { name, songs: songIds, rules: serializedRules })
     playlist.songs = songs
     this.populateContent(playlist)
     this.add(playlist)
@@ -106,7 +106,7 @@ export const playlistStore = {
   },
 
   async delete (playlist: Playlist) {
-    await http.delete(`playlist/${playlist.id}`)
+    await httpService.delete(`playlist/${playlist.id}`)
     this.remove(playlist)
   },
 
@@ -126,7 +126,7 @@ export const playlistStore = {
       return playlist
     }
 
-    await http.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) })
+    await httpService.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) })
     alerts.success(`Added ${pluralize(songs.length, 'song')} into "${playlist.name}."`)
 
     return playlist
@@ -138,7 +138,7 @@ export const playlistStore = {
     }
 
     playlist.songs = difference(playlist.songs, songs)
-    await http.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) })
+    await httpService.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) })
     alerts.success(`Removed ${pluralize(songs.length, 'song')} from "${playlist.name}."`)
 
     return playlist
@@ -147,7 +147,7 @@ export const playlistStore = {
   async update (playlist: Playlist) {
     const serializedRules = this.serializeSmartPlaylistRulesForStorage(playlist.rules)
 
-    await http.put(`playlist/${playlist.id}`, { name: playlist.name, rules: serializedRules })
+    await httpService.put(`playlist/${playlist.id}`, { name: playlist.name, rules: serializedRules })
     alerts.success(`Updated playlist "${playlist.name}."`)
 
     return playlist

@@ -32,8 +32,8 @@ import MainWrapper from '@/components/layout/main-wrapper/index.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 
 import { $, eventBus, hideOverlay, showOverlay, arrayify } from '@/utils'
-import { favoriteStore, preferenceStore as preferences, queueStore, sharedStore } from '@/stores'
-import { auth, playback, socket } from '@/services'
+import { favoriteStore, preferenceStore as preferences, queueStore, commonStore } from '@/stores'
+import { authService, playbackService, socketService } from '@/services'
 
 const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
@@ -62,7 +62,7 @@ const onUserLoggedIn = () => {
 }
 
 const subscribeToBroadcastEvents = () => {
-  socket.listen('SOCKET_TOGGLE_FAVORITE', (): void => {
+  socketService.listen('SOCKET_TOGGLE_FAVORITE', (): void => {
     if (queueStore.current) {
       favoriteStore.toggleOne(queueStore.current)
     }
@@ -71,7 +71,7 @@ const subscribeToBroadcastEvents = () => {
 
 onMounted(async () => {
   // The app has just been initialized, check if we can get the user data with an already existing token
-  if (auth.hasToken()) {
+  if (authService.hasToken()) {
     authenticated.value = true
     await init()
   }
@@ -98,15 +98,15 @@ eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, artist: Artis
 
 const init = async () => {
   showOverlay()
-  await socket.init()
+  await socketService.init()
 
   // Make the most important HTTP request to get all necessary data from the server.
   // Afterwards, init all mandatory stores and services.
   try {
-    await sharedStore.init()
+    await commonStore.init()
 
     window.setTimeout(() => {
-      playback.init()
+      playbackService.init()
       hideOverlay()
       requestNotificationPermission()
 

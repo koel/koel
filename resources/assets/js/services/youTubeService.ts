@@ -1,15 +1,15 @@
-import { http } from '@/services'
+import { httpService } from '@/services'
 import { eventBus } from '@/utils'
 import router from '@/router'
 
 interface YouTubeSearchResult {
   nextPageToken: string
-  items: object[]
+  items: Array<Record<string, any>>
 }
 
-export const youtube = {
+export const youTubeService = {
   searchVideosRelatedToSong: async (song: Song, nextPageToken: string): Promise<YouTubeSearchResult> => {
-    return await http.get<YouTubeSearchResult>(`youtube/search/song/${song.id}?pageToken=${nextPageToken}`)
+    return await httpService.get<YouTubeSearchResult>(`youtube/search/song/${song.id}?pageToken=${nextPageToken}`)
   },
 
   play: (video: YouTubeVideo): void => {

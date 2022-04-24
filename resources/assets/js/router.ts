@@ -2,7 +2,7 @@ import isMobile from 'ismobilejs'
 
 import { loadMainView } from './utils'
 import { albumStore, artistStore, playlistStore, queueStore, songStore, userStore } from './stores'
-import { playback } from './services'
+import { playbackService } from './services'
 import { use } from '@/utils'
 
 const router = {
@@ -31,7 +31,7 @@ const router = {
         queueStore.queue(song)
         loadMainView('Queue')
       } else {
-        playback.queueAndPlay([song])
+        playbackService.queueAndPlay([song])
       }
     })
   } as { [path: string]: TAnyFunction },

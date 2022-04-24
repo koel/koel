@@ -1,7 +1,7 @@
 import Component from '@/components/ui/AlbumArtistThumbnail.vue'
 import factory from '@/__tests__/factory'
-import { playback } from '@/services'
-import { queueStore, sharedStore } from '@/stores'
+import { playbackService } from '@/services'
+import { queueStore, commonStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
 import { Wrapper, shallow } from '@/__tests__/adapter'
 
@@ -14,7 +14,7 @@ describe('components/ui/album-artist-thumbnail(album)', () => {
       songs: factory<Song>('song', 10)
     })
     // @ts-ignore
-    sharedStore.state = { allowDownload: true }
+    commonStore.state = { allowDownload: true }
     wrapper = shallow(Component, { propsData: { entity: album } })
   })
 
@@ -24,7 +24,7 @@ describe('components/ui/album-artist-thumbnail(album)', () => {
   })
 
   it('plays if clicked', () => {
-    const m = mock(playback, 'playAllInAlbum')
+    const m = mock(playbackService, 'playAllInAlbum')
     wrapper.click('.control-play')
     expect(m).toHaveBeenCalledWith(album, false)
   })
@@ -42,7 +42,7 @@ describe('components/ui/album-artist-thumbnail(artist)', () => {
 
   beforeEach(() => {
     // @ts-ignore
-    sharedStore.state = { allowDownload: true }
+    commonStore.state = { allowDownload: true }
     artist = factory<Artist>('artist', {
       id: 3, // make sure it's not "Various Artists"
       albums: factory<Album>('album', 4),
@@ -57,7 +57,7 @@ describe('components/ui/album-artist-thumbnail(artist)', () => {
   })
 
   it('plays if clicked', () => {
-    const m = mock(playback, 'playAllByArtist')
+    const m = mock(playbackService, 'playAllByArtist')
     wrapper.click('.control-play')
     expect(m).toHaveBeenCalledWith(artist, false)
   })

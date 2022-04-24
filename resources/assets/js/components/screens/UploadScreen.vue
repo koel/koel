@@ -64,7 +64,7 @@ import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 import { settingStore, userStore } from '@/stores'
 import { eventBus, getAllFileEntries, isDirectoryReadingSupported } from '@/utils'
 import { UploadFile, acceptedMediaTypes } from '@/config'
-import { upload } from '@/services'
+import { uploadService } from '@/services'
 
 import UploadItem from '@/components/ui/upload/UploadItem.vue'
 import BtnGroup from '@/components/ui/BtnGroup.vue'
@@ -76,7 +76,7 @@ const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/Scre
 const acceptAttribute = acceptedMediaTypes.join(',')
 
 const mediaPath = toRef(settingStore.state, 'media_path')
-const files = toRef(upload.state, 'files')
+const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
 const hasUploadFailures = ref(false)
 
@@ -100,7 +100,7 @@ const handleFiles = (files: Array<File>) => {
       progress: 0
     }))
 
-  upload.queue(uploadCandidates)
+  uploadService.queue(uploadCandidates)
 }
 
 const fileEntryToFile = async (entry: FileSystemEntry): Promise<File> => new Promise(resolve => {
@@ -125,16 +125,16 @@ const onDrop = async (event: DragEvent) => {
 }
 
 const retryAll = () => {
-  upload.retryAll()
+  uploadService.retryAll()
   hasUploadFailures.value = false
 }
 
 const removeFailedEntries = () => {
-  upload.removeFailed()
+  uploadService.removeFailed()
   hasUploadFailures.value = false
 }
 
-eventBus.on('UPLOAD_QUEUE_FINISHED', () => (hasUploadFailures.value = upload.getFilesByStatus('Errored').length !== 0))
+eventBus.on('UPLOAD_QUEUE_FINISHED', () => (hasUploadFailures.value = uploadService.getFilesByStatus('Errored').length !== 0))
 </script>
 
 <style lang="scss">

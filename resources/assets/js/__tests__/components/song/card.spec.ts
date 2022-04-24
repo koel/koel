@@ -1,7 +1,7 @@
 import Component from '@/components/song/SongCard.vue'
 import factory from '@/__tests__/factory'
 import { queueStore } from '@/stores'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { mock } from '@/__tests__/__helpers__'
 import { Wrapper, shallow } from '@/__tests__/adapter'
 import FunctionPropertyNames = jest.FunctionPropertyNames
@@ -36,7 +36,7 @@ describe('components/song/SongCard', () => {
   it.each([[true, false], [false, true]])('queuing and playing behavior', (shouldQueue, queued) => {
     const containsStub = mock(queueStore, 'contains', queued)
     const queueStub = mock(queueStore, 'queueAfterCurrent')
-    const playStub = mock(playback, 'play')
+    const playStub = mock(playbackService, 'play')
     wrapper.dblclick('[data-test=song-card]')
     expect(containsStub).toHaveBeenCalledWith(song)
     if (queued) {
@@ -47,12 +47,12 @@ describe('components/song/SongCard', () => {
     expect(playStub).toHaveBeenCalledWith(song)
   })
 
-  it.each<[PlaybackState, FunctionPropertyNames<typeof playback>]>([
+  it.each<[PlaybackState, FunctionPropertyNames<typeof playbackService>]>([
     ['Stopped', 'play'],
     ['Playing', 'pause'],
     ['Paused', 'resume']
   ])('if state is currently "%s", %s', (state, action) => {
-    const m = mock(playback, action)
+    const m = mock(playbackService, action)
     song.playbackState = state
     wrapper.click('.cover .control')
     expect(m).toHaveBeenCalled()

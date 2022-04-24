@@ -1,6 +1,6 @@
 import Component from '@/components/screens/AlbumScreen.vue'
 import SongList from '@/components/song/SongList.vue'
-import { albumInfo as albumInfoService, download } from '@/services'
+import { albumInfoService, downloadService } from '@/services'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
 import { mount, shallow } from '@/__tests__/adapter'
@@ -47,7 +47,7 @@ describe('components/screens/album', () => {
         sharedState: { allowDownload: true }
       })
     })
-    const m = mock(download, 'fromAlbum')
+    const m = mock(downloadService, 'fromAlbum')
     wrapper.click('a.download')
     expect(m).toHaveBeenCalledWith(album)
   })

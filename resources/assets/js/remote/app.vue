@@ -62,7 +62,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import noUISlider from 'nouislider'
-import { socket, auth } from '@/services'
+import { socketService, authService } from '@/services'
 import { userStore, preferenceStore } from '@/stores'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import { SliderElement } from 'koel/types/ui'
@@ -116,7 +116,7 @@ export default Vue.extend({
       volumeSlider.noUiSlider.on('change', (values: number[], handle: number): void => {
         const volume = values[handle]
         this.muted = !volume
-        socket.broadcast('SOCKET_SET_VOLUME', { volume })
+        socketService.broadcast('SOCKET_SET_VOLUME', { volume })
       })
     },
 
@@ -140,9 +140,9 @@ export default Vue.extend({
         const user = await userStore.getProfile()
         userStore.init([], user)
 
-        await socket.init()
+        await socketService.init()
 
-        socket
+        socketService
           .listen('SOCKET_SONG', ({ song }: { song: Song }): void => {
             this.song = song
           })
@@ -176,7 +176,7 @@ export default Vue.extend({
       }
 
       this.song.liked = !this.song.liked
-      socket.broadcast('SOCKET_TOGGLE_FAVORITE')
+      socketService.broadcast('SOCKET_TOGGLE_FAVORITE')
     },
 
     togglePlayback (): void {
@@ -184,19 +184,19 @@ export default Vue.extend({
         this.song.playbackState = this.song.playbackState === 'Playing' ? 'Paused' : 'Playing'
       }
 
-      socket.broadcast('SOCKET_TOGGLE_PLAYBACK')
+      socketService.broadcast('SOCKET_TOGGLE_PLAYBACK')
     },
 
     playNext: (): void => {
-      socket.broadcast('SOCKET_PLAY_NEXT')
+      socketService.broadcast('SOCKET_PLAY_NEXT')
     },
 
     playPrev: (): void => {
-      socket.broadcast('SOCKET_PLAY_PREV')
+      socketService.broadcast('SOCKET_PLAY_PREV')
     },
 
     getStatus: (): void => {
-      socket.broadcast('SOCKET_GET_STATUS')
+      socketService.broadcast('SOCKET_GET_STATUS')
     },
 
     scan (): void {
@@ -237,7 +237,7 @@ export default Vue.extend({
 
   mounted (): void {
     // The app has just been initialized, check if we can get the user data with an already existing token
-    if (auth.hasToken()) {
+    if (authService.hasToken()) {
       this.authenticated = true
       this.init()
     }

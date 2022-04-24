@@ -2,7 +2,7 @@ import router from '@/router'
 import Component from '@/components/song/SongList.vue'
 import factory from '@/__tests__/factory'
 import { queueStore } from '@/stores'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { mock } from '@/__tests__/__helpers__'
 import { mount } from '@/__tests__/adapter'
 
@@ -59,7 +59,7 @@ describe('components/song/list', () => {
     // select one row
     ;(wrapper.vm as any).songProxies[0].selected = true
 
-    const m = mock(playback, 'play')
+    const m = mock(playbackService, 'play')
     wrapper.find('.song-list-wrap').trigger('keydown.enter')
     expect(m).toHaveBeenCalledWith(songs[0])
   })
@@ -72,7 +72,7 @@ describe('components/song/list', () => {
       }
     })
 
-    const m = mock(playback, 'play')
+    const m = mock(playbackService, 'play')
     ;(wrapper.vm as any).songProxies[0].selected = true
     ;(wrapper.vm as any).songProxies[1].selected = true
     wrapper.find('.song-list-wrap').trigger('keydown.enter')
@@ -88,7 +88,7 @@ describe('components/song/list', () => {
     })
     const queueMock = mock(queueStore, 'queue')
     const goMock = mock(router, 'go')
-    const playMock = mock(playback, 'play')
+    const playMock = mock(playbackService, 'play')
 
     // select 2 rows
     ;(wrapper.vm as any).songProxies[0].selected = true

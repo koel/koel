@@ -1,7 +1,7 @@
 import './staticLoader'
-import { http } from '@/services'
+import { httpService } from '@/services'
 import App from './app.vue'
 import { createApp } from 'vue'
 
-http.init()
+httpService.init()
 createApp(App).mount('#app')

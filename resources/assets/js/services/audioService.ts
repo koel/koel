@@ -1,4 +1,4 @@
-export const audio = {
+export const audioService = {
   context: null as AudioContext | null,
   source: null as MediaElementAudioSourceNode | null,
   element: null as HTMLMediaElement | null,

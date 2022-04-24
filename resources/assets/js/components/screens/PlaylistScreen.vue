@@ -63,8 +63,8 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, ref, toRef } from 'vue'
 import { eventBus, pluralize } from '@/utils'
-import { playlistStore, sharedStore } from '@/stores'
-import { download as downloadService } from '@/services'
+import { playlistStore, commonStore } from '@/stores'
+import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
 import { difference } from 'lodash'
 
@@ -90,7 +90,7 @@ const {
   toggleControls
 } = useSongList(ref(playlist.value?.songs || []), { deletePlaylist: true })
 
-const allowDownload = toRef(sharedStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allowDownload')
 
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value)
 const download = () => downloadService.fromPlaylist(playlist.value!)

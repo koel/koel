@@ -2,7 +2,7 @@ import Component from '@/components/utils/event-listeners.vue'
 import factory from '@/__tests__/factory'
 import { playlistStore, userStore } from '@/stores'
 import router from '@/router'
-import { auth } from '@/services'
+import { authService } from '@/services'
 import { alerts, eventBus } from '@/utils'
 import { mock } from '@/__tests__/__helpers__'
 import { mount } from '@/__tests__/adapter'
@@ -43,7 +43,7 @@ describe('utils/event-listeners', () => {
 
   it('listens to log out event', () => {
     const wrapper = mount(Component)
-    const authDestroyMock = mock(auth, 'destroy')
+    const authDestroyMock = mock(authService, 'destroy')
     const logOutMock = mock(userStore, 'logout')
 
     eventBus.emit('LOG_OUT')

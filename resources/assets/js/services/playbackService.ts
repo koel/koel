@@ -1,18 +1,18 @@
-import { shuffle, orderBy, throttle } from 'lodash'
+import { orderBy, shuffle, throttle } from 'lodash'
 import plyr from 'plyr'
 import { nextTick } from 'vue'
 import isMobile from 'ismobilejs'
 
-import { eventBus, isMediaSessionSupported, isAudioContextSupported } from '@/utils'
+import { eventBus, isAudioContextSupported, isMediaSessionSupported } from '@/utils'
 import {
+  commonStore,
+  preferenceStore as preferences,
   queueStore,
-  sharedStore,
-  userStore,
-  songStore,
   recentlyPlayedStore,
-  preferenceStore as preferences
+  songStore,
+  userStore
 } from '@/stores'
-import { socket, audio as audioService } from '.'
+import { audioService, socketService } from '@/services'
 import { app } from '@/config'
 import router from '@/router'
 
@@ -24,7 +24,7 @@ const DEFAULT_VOLUME_VALUE = 7
 const VOLUME_INPUT_SELECTOR = '#volumeRange'
 const REPEAT_MODES: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
 
-export const playback = {
+export const playbackService = {
   player: null as Plyr | null,
   volumeInput: null as unknown as HTMLInputElement,
   repeatModes: REPEAT_MODES,
@@ -32,10 +32,6 @@ export const playback = {
   mainWin: null as any,
 
   init () {
-    if (KOEL_ENV === 'app') {
-      this.mainWin = require('electron').remote.getCurrentWindow()
-    }
-
     // We don't need to init this service twice, or the media events will be duplicated.
     if (this.initialized) {
       return
@@ -51,7 +47,8 @@ export const playback = {
     if (isAudioContextSupported) {
       try {
         this.setVolume(preferences.volume)
-      } catch (e) {}
+      } catch (e) {
+      }
 
       audioService.init(this.player.media)
       eventBus.emit('INIT_EQUALIZER')
@@ -70,17 +67,17 @@ export const playback = {
   },
 
   listenToSocketEvents (): void {
-    socket.listen('SOCKET_TOGGLE_PLAYBACK', () => this.toggle())
+    socketService.listen('SOCKET_TOGGLE_PLAYBACK', () => this.toggle())
       .listen('SOCKET_PLAY_NEXT', () => this.playNext())
       .listen('SOCKET_PLAY_PREV', () => this.playPrev())
       .listen('SOCKET_GET_STATUS', () => {
         const data = queueStore.current ? songStore.generateDataToBroadcast(queueStore.current) : {
           volume: this.volumeInput.value
         }
-        socket.broadcast('SOCKET_STATUS', data)
+        socketService.broadcast('SOCKET_STATUS', data)
       })
       .listen('SOCKET_GET_CURRENT_SONG', () => {
-        socket.broadcast(
+        socketService.broadcast(
           'SOCKET_SONG',
           queueStore.current
             ? songStore.generateDataToBroadcast(queueStore.current)
@@ -105,7 +102,7 @@ export const playback = {
     mediaElement.addEventListener('error', () => this.playNext(), true)
 
     mediaElement.addEventListener('ended', () => {
-      if (sharedStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
+      if (commonStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
         songStore.scrobble(queueStore.current!)
       }
 
@@ -234,7 +231,7 @@ export const playback = {
 
     eventBus.emit('SONG_STARTED', song)
 
-    socket.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(song))
+    socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(song))
 
     this.getPlayer().restart()
 
@@ -356,13 +353,13 @@ export const playback = {
       queueStore.current.playbackState = 'Stopped'
     }
 
-    socket.broadcast('SOCKET_PLAYBACK_STOPPED')
+    socketService.broadcast('SOCKET_PLAYBACK_STOPPED')
   },
 
   pause () {
     this.getPlayer().pause()
     queueStore.current!.playbackState = 'Paused'
-    socket.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current!))
+    socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current!))
   },
 
   async resume () {
@@ -374,7 +371,7 @@ export const playback = {
 
     queueStore.current!.playbackState = 'Playing'
     eventBus.emit('SONG_STARTED', queueStore.current)
-    socket.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current!))
+    socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current!))
   },
 
   async toggle () {
@@ -436,7 +433,7 @@ export const playback = {
       : await this.queueAndPlay(orderBy(songs, ['album_id', 'disc', 'track']))
   },
 
-  async playAllInAlbum ({ songs }: { songs: Song[]}, shuffled = true) {
+  async playAllInAlbum ({ songs }: { songs: Song[] }, shuffled = true) {
     shuffled
       ? await this.queueAndPlay(songs, true /* shuffled */)
       : await this.queueAndPlay(orderBy(songs, ['disc', 'track']))

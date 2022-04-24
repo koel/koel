@@ -1,7 +1,7 @@
 import { difference, orderBy, take, union } from 'lodash'
 
 import { artistStore } from '.'
-import { http } from '@/services'
+import { httpService } from '@/services'
 import { arrayify, use } from '@/utils'
 import { reactive } from 'vue'
 
@@ -93,7 +93,7 @@ export const albumStore = {
    * @param {string} cover The content data string of the cover
    */
   uploadCover: async (album: Album, cover: string) => {
-    album.cover = (await http.put<{ coverUrl: string }>(`album/${album.id}/cover`, { cover })).coverUrl
+    album.cover = (await httpService.put<{ coverUrl: string }>(`album/${album.id}/cover`, { cover })).coverUrl
     return album.cover
   },
 
@@ -102,7 +102,7 @@ export const albumStore = {
    */
   getThumbnail: async (album: Album) => {
     if (album.thumbnail === undefined) {
-      album.thumbnail = (await http.get<{ thumbnailUrl: string }>(`album/${album.id}/thumbnail`)).thumbnailUrl
+      album.thumbnail = (await httpService.get<{ thumbnailUrl: string }>(`album/${album.id}/thumbnail`)).thumbnailUrl
     }
 
     return album.thumbnail

@@ -1,5 +1,5 @@
 import Component from '@/components/ui/YouTubeVideoList.vue'
-import { youtube as youtubeService } from '@/services'
+import { youTubeService } from '@/services'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
 import { mount } from '@/__tests__/adapter'
@@ -34,7 +34,7 @@ describe('components/ui/youtube', () => {
       propsData: { song }
     })
 
-    const searchStub = mock(youtubeService, 'searchVideosRelatedToSong').mockReturnValue(Promise.resolve({
+    const searchStub = mock(youTubeService, 'searchVideosRelatedToSong').mockReturnValue(Promise.resolve({
       nextPageToken: 'bar',
       items: factory<YouTubeVideo>('video', 5)
     }))

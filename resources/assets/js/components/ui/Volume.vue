@@ -31,23 +31,23 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { playback, socket } from '@/services'
+import { playbackService, socketService } from '@/services'
 
 const muted = ref(false)
 
 const mute = () => {
   muted.value = true
-  playback.mute()
+  playbackService.mute()
 }
 
 const unmute = () => {
   muted.value = false
-  playback.unmute()
+  playbackService.unmute()
 }
 
 const setVolume = (e: InputEvent) => {
   const volume = parseFloat((e.target as HTMLInputElement).value)
-  playback.setVolume(volume)
+  playbackService.setVolume(volume)
   muted.value = volume === 0
 }
 
@@ -55,7 +55,7 @@ const setVolume = (e: InputEvent) => {
  * Broadcast the volume changed event to remote controller.
  */
 const broadcastVolume = (e: InputEvent) => {
-  socket.broadcast('SOCKET_VOLUME_CHANGED', parseFloat((e.target as HTMLInputElement).value))
+  socketService.broadcast('SOCKET_VOLUME_CHANGED', parseFloat((e.target as HTMLInputElement).value))
 }
 </script>
 

@@ -16,25 +16,25 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
-import { queueStore, sharedStore, songStore } from '@/stores'
-import { auth, playback } from '@/services'
+import { queueStore, commonStore, songStore } from '@/stores'
+import { authService, playbackService } from '@/services'
 
 const props = defineProps<{ album: Album, track: AlbumTrack }>()
 const { album, track } = toRefs(props)
 
-const useiTunes = toRef(sharedStore.state, 'useiTunes')
+const useiTunes = toRef(commonStore.state, 'useiTunes')
 
 const song = computed(() => songStore.guess(track.value.title, album.value))
 const tooltip = computed(() => song.value ? 'Click to play' : '')
 
 const iTunesUrl = computed(() => {
-  return `${window.BASE_URL}itunes/song/${album.value.id}?q=${encodeURIComponent(track.value.title)}&api_token=${auth.getToken()}`
+  return `${window.BASE_URL}itunes/song/${album.value.id}?q=${encodeURIComponent(track.value.title)}&api_token=${authService.getToken()}`
 })
 
 const play = () => {
   if (song.value) {
     queueStore.queueIfNotQueued(song.value)
-    playback.play(song.value)
+    playbackService.play(song.value)
   }
 }
 </script>

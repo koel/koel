@@ -34,7 +34,7 @@
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { eventBus, pluralize, startDragging } from '@/utils'
 import { queueStore } from '@/stores'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 
 const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
 
@@ -48,16 +48,16 @@ const dragStart = (event: DragEvent) => startDragging(event, song.value, 'Song')
 
 const play = () => {
   queueStore.queueIfNotQueued(song.value)
-  playback.play(song.value)
+  playbackService.play(song.value)
 }
 
 const changeSongState = () => {
   if (song.value.playbackState === 'Stopped') {
     play()
   } else if (song.value.playbackState === 'Paused') {
-    playback.resume()
+    playbackService.resume()
   } else {
-    playback.pause()
+    playbackService.pause()
   }
 }
 </script>

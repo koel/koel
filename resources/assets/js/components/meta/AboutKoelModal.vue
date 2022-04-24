@@ -9,11 +9,11 @@
         <img alt="Koel's logo" src="@/../img/logo.svg" width="128">
       </div>
 
-      <p class="current-version">{{ sharedStore.state.currentVersion }}</p>
+      <p class="current-version">{{ commonStore.state.currentVersion }}</p>
 
       <p v-if="shouldDisplayVersionUpdate && hasNewVersion" class="new-version">
         <a :href="latestVersionUrl" target="_blank">
-          A new Koel version is available ({{ sharedStore.state.latestVersion }}).
+          A new Koel version is available ({{ commonStore.state.latestVersion }}).
         </a>
       </p>
 
@@ -47,16 +47,16 @@
 <script lang="ts" setup>
 import compareVersions from 'compare-versions'
 import { defineAsyncComponent } from 'vue'
-import { sharedStore, userStore } from '@/stores'
+import { commonStore, userStore } from '@/stores'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const demo = NODE_ENV === 'demo'
 
-const latestVersionUrl = `https://github.com/phanan/koel/releases/tag/${sharedStore.state.latestVersion}`
+const latestVersionUrl = `https://github.com/phanan/koel/releases/tag/${commonStore.state.latestVersion}`
 const shouldDisplayVersionUpdate = userStore.state.current.is_admin
 
-const hasNewVersion = compareVersions.compare(sharedStore.state.latestVersion, sharedStore.state.currentVersion, '>')
+const hasNewVersion = compareVersions.compare(commonStore.state.latestVersion, commonStore.state.currentVersion, '>')
 
 const emit = defineEmits(['close'])
 const close = () => emit('close')

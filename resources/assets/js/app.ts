@@ -1,11 +1,11 @@
 import './staticLoader'
 import { createApp } from 'vue'
 import App from './app.vue'
-import { http } from '@/services'
+import { httpService } from '@/services'
 import { clickaway, droppable, focus } from '@/directives'
 import router from '@/router'
 
-http.init()
+httpService.init()
 router.init()
 
 const app = createApp(App)

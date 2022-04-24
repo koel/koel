@@ -32,7 +32,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, reactive, ref } from 'vue'
 import { eventBus } from '@/utils'
-import { preferenceStore, sharedStore } from '@/stores'
+import { preferenceStore, commonStore } from '@/stores'
 import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
 import AlbumListScreen from '@/components/screens/AlbumListScreen.vue'
@@ -55,7 +55,7 @@ const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
 const preferences = reactive(preferenceStore.state)
-const sharedState = reactive(sharedStore.state)
+const sharedState = reactive(commonStore.state)
 const showingVisualizer = ref(false)
 const screenProps = ref<any>(null)
 const view = ref<MainViewName>('Home')

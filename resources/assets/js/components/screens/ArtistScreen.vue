@@ -65,8 +65,8 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, reactive, ref, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
-import { sharedStore } from '@/stores'
-import { artistInfo as artistInfoService, download as downloadService } from '@/services'
+import { commonStore } from '@/stores'
+import { artistInfoService, downloadService } from '@/services'
 import router from '@/router'
 import { useSongList } from '@/composables'
 
@@ -97,7 +97,7 @@ const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/Album
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
 const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'album', 'length'] }
-const sharedState = reactive(sharedStore.state)
+const sharedState = reactive(commonStore.state)
 
 const showing = ref(false)
 const loading = ref(true)

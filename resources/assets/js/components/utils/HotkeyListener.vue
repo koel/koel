@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import { GlobalEvents } from 'vue-global-events'
 import { $, eventBus } from '@/utils'
-import { playback, socket } from '@/services'
+import { playbackService, socketService } from '@/services'
 import { favoriteStore, queueStore, songStore } from '@/stores'
 
 const togglePlayback = (e: KeyboardEvent) => {
@@ -27,7 +27,7 @@ const togglePlayback = (e: KeyboardEvent) => {
   }
 
   e.preventDefault()
-  playback.toggle()
+  playbackService.toggle()
 
   return false
 }
@@ -41,7 +41,7 @@ const playPrev = (e: KeyboardEvent) => {
   }
 
   e.preventDefault()
-  playback.playPrev()
+  playbackService.playPrev()
 
   return false
 }
@@ -55,7 +55,7 @@ const playNext = (e: KeyboardEvent) => {
   }
 
   e.preventDefault()
-  playback.playNext()
+  playbackService.playNext()
 
   return false
 }
@@ -94,7 +94,7 @@ const toggleLike = (e: KeyboardEvent) => {
   }
 
   favoriteStore.toggleOne(queueStore.current)
-  socket.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current))
+  socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current))
 
   return false
 }

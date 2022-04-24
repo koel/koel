@@ -41,8 +41,8 @@
 <script lang="ts" setup>
 import { computed, reactive, Ref, toRef, toRefs, watchEffect } from 'vue'
 import { copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
-import { playlistStore, queueStore, sharedStore, songStore, userStore } from '@/stores'
-import { download as downloadService, playback } from '@/services'
+import { playlistStore, queueStore, commonStore, songStore, userStore } from '@/stores'
+import { downloadService, playbackService } from '@/services'
 import router from '@/router'
 import { useContextMenu, useSongMenuMethods } from '@/composables'
 
@@ -65,7 +65,7 @@ const {
 } = useSongMenuMethods(songs, close)
 
 const playlistState = reactive(playlistStore.state)
-const sharedState = reactive(sharedStore.state)
+const sharedState = reactive(commonStore.state)
 const userState = reactive(userStore.state)
 
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
@@ -78,16 +78,16 @@ const doPlayback = () => {
 
   switch (songs.value[0].playbackState) {
     case 'Playing':
-      playback.pause()
+      playbackService.pause()
       break
 
     case 'Paused':
-      playback.resume()
+      playbackService.resume()
       break
 
     default:
       queueStore.queueIfNotQueued(songs.value[0])
-      playback.play(songs.value[0])
+      playbackService.play(songs.value[0])
       break
   }
 

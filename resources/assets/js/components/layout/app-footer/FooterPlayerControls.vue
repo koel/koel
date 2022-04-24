@@ -48,7 +48,7 @@
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { getDefaultCover } from '@/utils'
 
 const props = defineProps<{ song: Song | null }>()
@@ -57,9 +57,9 @@ const { song } = toRefs(props)
 const cover = computed(() => song.value?.album.cover ? song.value.album.cover : getDefaultCover())
 const shouldShowPlayButton = computed(() => !song || song.value?.playbackState !== 'Playing')
 
-const playPrev = async () => await playback.playPrev()
-const playNext = async () => await playback.playNext()
-const toggle = async () => await playback.toggle()
+const playPrev = async () => await playbackService.playPrev()
+const playNext = async () => await playbackService.playNext()
+const toggle = async () => await playbackService.toggle()
 </script>
 
 <style lang="scss" scoped>

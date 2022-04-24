@@ -1,4 +1,4 @@
-import { ls } from '@/services'
+import { localStorageService } from '@/services'
 import { preferenceStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
 import factory from '@/__tests__/factory'
@@ -16,7 +16,7 @@ describe('stores/preference', () => {
   })
 
   it('sets preferences', () => {
-    const m = mock(ls, 'set')
+    const m = mock(localStorageService, 'set')
     preferenceStore.set('volume', 5)
     expect(m).toHaveBeenCalledWith('preferences_1', expect.objectContaining({ volume: 5 }))
 

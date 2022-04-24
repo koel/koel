@@ -33,7 +33,7 @@ import { nextTick, onMounted, ref, watch } from 'vue'
 
 import { eventBus } from '@/utils'
 import { equalizerStore, preferenceStore as preferences } from '@/stores'
-import { audio as audioService } from '@/services'
+import { audioService as audioService } from '@/services'
 import { SliderElement } from 'koel/types/ui'
 
 interface Band {

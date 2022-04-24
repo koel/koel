@@ -32,13 +32,13 @@ import compareVersions from 'compare-versions'
 import { computed, defineAsyncComponent, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { app as appConfig } from '@/config'
-import { sharedStore, userStore } from '@/stores'
+import { commonStore, userStore } from '@/stores'
 
 const SearchForm = defineAsyncComponent(() => import('@/components/ui/search-form.vue'))
 const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge.vue'))
 
 const user = toRef(userStore.state, 'current')
-const state = sharedStore.state
+const state = commonStore.state
 
 const shouldDisplayVersionUpdate = computed(() => user.value.is_admin)
 const hasNewVersion = computed(() => compareVersions.compare(state.latestVersion, state.currentVersion, '>'))

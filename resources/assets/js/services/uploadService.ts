@@ -1,11 +1,11 @@
 import { without } from 'lodash'
 import { reactive } from 'vue'
 import { UploadFile, UploadStatus } from '@/config'
-import { http } from '@/services'
+import { httpService } from '@/services'
 import { albumStore, artistStore, songStore } from '@/stores'
 import { eventBus } from '@/utils'
 
-export const upload = {
+export const uploadService = {
   state: reactive({
     files: [] as UploadFile[]
   }),
@@ -57,7 +57,7 @@ export const upload = {
     file.status = 'Uploading'
 
     try {
-      const song = await http.post<SongUploadResult>('upload', formData, (progressEvent: ProgressEvent) => {
+      const song = await httpService.post<SongUploadResult>('upload', formData, (progressEvent: ProgressEvent) => {
         file.progress = progressEvent.loaded * 100 / progressEvent.total
       })
 

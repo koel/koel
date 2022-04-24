@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 
 type DisplayMode = 'sidebar' | 'full'
 
@@ -45,7 +45,7 @@ watch(artist, () => (showingFullBio.value = false))
 const showSummary = computed(() => mode.value !== 'full' && !showingFullBio)
 const showFull = computed(() => !showSummary.value)
 
-const shuffleAll = () => playback.playAllByArtist(artist.value, false)
+const shuffleAll = () => playbackService.playAllByArtist(artist.value, false)
 </script>
 
 <style lang="scss">

@@ -2,7 +2,7 @@ import Component from '@/components/screens/QueueScreen.vue'
 import SongList from '@/components/song/SongList.vue'
 import factory from '@/__tests__/factory'
 import { queueStore, songStore } from '@/stores'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { mock } from '@/__tests__/__helpers__'
 import { mount, shallow } from '@/__tests__/adapter'
 
@@ -50,7 +50,7 @@ describe('components/screens/queue', () => {
   })
 
   it('shuffles all songs in the queue if any', () => {
-    const m = mock(playback, 'queueAndPlay')
+    const m = mock(playbackService, 'queueAndPlay')
     const songs = factory<Song>('song', 10)
     const wrapper = mount(Component, {
       data: () => ({
@@ -65,7 +65,7 @@ describe('components/screens/queue', () => {
   it('shuffles all available songs if there are no songs queued', () => {
     const songs = factory<Song>('song', 10)
     songStore.state.songs = songs
-    const m = mock(playback, 'queueAndPlay')
+    const m = mock(playbackService, 'queueAndPlay')
     const c = shallow(Component, {
       data: () => ({
         state: {

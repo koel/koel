@@ -1,8 +1,8 @@
 import Component from '@/components/album/AlbumCard.vue'
 import Thumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 import factory from '@/__tests__/factory'
-import { playback, download } from '@/services'
-import { sharedStore } from '@/stores'
+import { playbackService, downloadService } from '@/services'
+import { commonStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
 import { mount, shallow } from '@/__tests__/adapter'
 
@@ -14,7 +14,7 @@ describe('components/album/card', () => {
       songs: factory<Song>('song', 10)
     })
     // @ts-ignore
-    sharedStore.state = { allowDownload: true }
+    commonStore.state = { allowDownload: true }
   })
 
   afterEach(() => {
@@ -34,7 +34,7 @@ describe('components/album/card', () => {
 
   it('shuffles', () => {
     const wrapper = shallow(Component, { propsData: { album } })
-    const m = mock(playback, 'playAllInAlbum')
+    const m = mock(playbackService, 'playAllInAlbum')
 
     wrapper.click('.shuffle-album')
     expect(m).toHaveBeenCalledWith(album, true)
@@ -42,7 +42,7 @@ describe('components/album/card', () => {
 
   it('downloads', () => {
     const wrapper = shallow(Component, { propsData: { album } })
-    const m = mock(download, 'fromAlbum')
+    const m = mock(downloadService, 'fromAlbum')
 
     wrapper.click('.download-album')
     expect(m).toHaveBeenCalledWith(album)

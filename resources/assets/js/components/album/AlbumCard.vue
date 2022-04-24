@@ -59,15 +59,15 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
 import { eventBus, pluralize, startDragging } from '@/utils'
-import { artistStore, sharedStore, songStore } from '@/stores'
-import { download as downloadService, playback } from '@/services'
+import { artistStore, commonStore, songStore } from '@/stores'
+import { downloadService, playbackService } from '@/services'
 
 const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
 const props = withDefaults(defineProps<{ album: Album, layout: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { album, layout } = toRefs(props)
 
-const allowDownload = toRef(sharedStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allowDownload')
 
 const duration = computed(() => songStore.getFormattedLength(album.value.songs))
 
@@ -75,7 +75,7 @@ const isNormalArtist = computed(() => {
   return !artistStore.isVariousArtists(album.value.artist) && !artistStore.isUnknownArtist(album.value.artist)
 })
 
-const shuffle = () => playback.playAllInAlbum(album.value, true /* shuffled */)
+const shuffle = () => playbackService.playAllInAlbum(album.value, true /* shuffled */)
 const download = () => downloadService.fromAlbum(album.value)
 const dragStart = (event: DragEvent) => startDragging(event, album.value, 'Album')
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', event, album.value)

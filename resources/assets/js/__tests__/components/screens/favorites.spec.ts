@@ -1,7 +1,7 @@
 import Component from '@/components/screens/FavoritesScreen.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/songSongListControls.vue'
-import { download } from '@/services'
+import { downloadService } from '@/services'
 import factory from '@/__tests__/factory'
 import { mock } from '@/__tests__/__helpers__'
 import { mount, shallow } from '@/__tests__/adapter'
@@ -40,7 +40,7 @@ describe('components/screens/favorites', () => {
   })
 
   it('allows downloading', () => {
-    const m = mock(download, 'fromFavorites')
+    const m = mock(downloadService, 'fromFavorites')
 
     shallow(Component, {
       data: () => ({

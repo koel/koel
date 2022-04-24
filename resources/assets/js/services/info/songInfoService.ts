@@ -1,4 +1,4 @@
-import { http, albumInfo, artistInfo } from '..'
+import { httpService, albumInfoService, artistInfoService } from '..'
 
 interface SongInfoResponse {
   artist_info: ArtistInfo,
@@ -13,11 +13,11 @@ interface SongInfoResponse {
 export const songInfo = {
   fetch: async (song: Song): Promise<Song> => {
     if (!song.infoRetrieved) {
-      const { lyrics, artist_info, album_info, youtube } = await http.get<SongInfoResponse>(`song/${song.id}/info`)
+      const { lyrics, artist_info, album_info, youtube } = await httpService.get<SongInfoResponse>(`song/${song.id}/info`)
 
       song.lyrics = lyrics
-      artist_info && artistInfo.merge(song.artist, artist_info)
-      album_info && albumInfo.merge(song.album, album_info)
+      artist_info && artistInfoService.merge(song.artist, artist_info)
+      album_info && albumInfoService.merge(song.album, album_info)
       song.youtube = youtube
       song.infoRetrieved = true
     }

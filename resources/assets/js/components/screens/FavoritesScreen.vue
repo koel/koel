@@ -55,8 +55,8 @@
 
 <script lang="ts" setup>
 import { pluralize } from '@/utils'
-import { favoriteStore, sharedStore } from '@/stores'
-import { download as downloadService } from '@/services'
+import { favoriteStore, commonStore } from '@/stores'
+import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
 import { defineAsyncComponent, toRef } from 'vue'
 
@@ -80,7 +80,7 @@ const {
   toggleControls
 } = useSongList(toRef(favoriteStore.state, 'songs'))
 
-const allowDownload = toRef(sharedStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allowDownload')
 
 const download = () => downloadService.fromFavorites()
 const removeSelected = () => selectedSongs.value.length && favoriteStore.unlike(selectedSongs.value)

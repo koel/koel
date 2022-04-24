@@ -1,5 +1,5 @@
 import Component from '@/components/screens/SettingsScreen.vue'
-import { sharedStore, settingStore } from '@/stores'
+import { commonStore, settingStore } from '@/stores'
 import { alerts } from '@/utils'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow } from '@/__tests__/adapter'
@@ -19,14 +19,14 @@ describe('components/screens/settings', () => {
   })
 
   it('warns if changing a non-empty media path', () => {
-    sharedStore.state.originalMediaPath = '/bar'
+    commonStore.state.originalMediaPath = '/bar'
     const m = mock(alerts, 'confirm')
     shallow(Component).submit('form')
     expect(m).toHaveBeenCalled()
   })
 
   it("doesn't warn if changing an empty media path", () => {
-    sharedStore.state.originalMediaPath = ''
+    commonStore.state.originalMediaPath = ''
     const confirmMock = mock(alerts, 'confirm')
     const updateMock = mock(settingStore, 'update')
     shallow(Component).submit('form')

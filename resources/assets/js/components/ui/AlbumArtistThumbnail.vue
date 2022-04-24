@@ -19,7 +19,7 @@
 import { orderBy } from 'lodash'
 import { computed, reactive, ref, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, userStore } from '@/stores'
-import { playback } from '@/services'
+import { playbackService } from '@/services'
 import { fileReader, getDefaultCover } from '@/utils'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png']
@@ -62,7 +62,7 @@ const buttonLabel = computed(() => forAlbum.value
   : `Play all songs by the artist ${entity.value.name}`
 )
 
-const playbackFunc = computed(() => forAlbum.value ? playback.playAllInAlbum : playback.playAllByArtist)
+const playbackFunc = computed(() => forAlbum.value ? playbackService.playAllInAlbum : playbackService.playAllByArtist)
 
 const allowsUpload = computed(() => userState.current.is_admin)
 
@@ -70,7 +70,7 @@ const playOrQueue = (event: KeyboardEvent) => {
   if (event.metaKey || event.ctrlKey) {
     queueStore.queue(orderBy(entity.value.songs, sortFields.value))
   } else {
-    playbackFunc.value.call(playback, entity.value, false)
+    playbackFunc.value.call(playbackService, entity.value, false)
   }
 }
 

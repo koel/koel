@@ -1,10 +1,10 @@
 import { secondsToHis } from '@/utils'
-import { http } from '..'
+import { httpService } from '..'
 
-export const albumInfo = {
+export const albumInfoService = {
   async fetch (album: Album): Promise<Album> {
     if (!album.info) {
-      const info = await http.get<AlbumInfo|null>(`album/${album.id}/info`)
+      const info = await httpService.get<AlbumInfo|null>(`album/${album.id}/info`)
 
       if (info) {
         this.merge(album, info)

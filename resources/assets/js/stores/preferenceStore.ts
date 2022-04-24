@@ -1,5 +1,5 @@
 import { userStore } from '.'
-import { ls } from '@/services'
+import { localStorageService } from '@/services'
 import { reactive } from 'vue'
 
 interface Preferences extends Record<string, any> {
@@ -43,7 +43,7 @@ const preferenceStore = {
   init (user?: User): void {
     const initUser = user || userStore.current
     this.storeKey = `preferences_${initUser.id}`
-    Object.assign(this.state, ls.get(this.storeKey, this.state))
+    Object.assign(this.state, localStorageService.get(this.storeKey, this.state))
     this.setupProxy()
   },
 
@@ -70,7 +70,7 @@ const preferenceStore = {
   },
 
   save () {
-    ls.set(this.storeKey, this.state)
+    localStorageService.set(this.storeKey, this.state)
   }
 }
 
