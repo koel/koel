@@ -40,7 +40,7 @@
 
 <script lang="ts" setup>
 import { computed, reactive, Ref, toRef, toRefs, watchEffect } from 'vue'
-import { copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
+import { alerts, copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
 import { playlistStore, queueStore, commonStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import router from '@/router'
@@ -116,6 +116,7 @@ const download = () => {
 
 const copyUrl = () => {
   copyText(songStore.getShareableUrl(songs.value[0]))
+  alerts.success('URL copied to clipboard.')
   close()
 }
 

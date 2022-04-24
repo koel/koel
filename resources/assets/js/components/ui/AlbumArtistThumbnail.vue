@@ -20,7 +20,7 @@ import { orderBy } from 'lodash'
 import { computed, reactive, ref, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
-import { fileReader, getDefaultCover } from '@/utils'
+import { defaultCover, fileReader } from '@/utils'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png']
 
@@ -35,7 +35,7 @@ const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_i
 
 const image = computed(() => {
   if (forAlbum.value) {
-    return (entity.value as Album).cover ? (entity.value as Album).cover : getDefaultCover()
+    return (entity.value as Album).cover ? (entity.value as Album).cover : defaultCover
   }
 
   return getArtistImage(entity.value as Artist)
@@ -45,14 +45,14 @@ const getArtistImage = (artist: Artist) => {
   // If the artist has no image, try getting the cover from one of their albums
   if (!artist.image) {
     artist.albums.every(album => {
-      if (album.cover !== getDefaultCover()) {
+      if (album.cover !== defaultCover) {
         artist.image = album.cover
         return false
       }
     })
   }
 
-  artist.image = artist.image ?? getDefaultCover()
+  artist.image = artist.image ?? defaultCover
 
   return artist.image
 }

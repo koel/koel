@@ -109,7 +109,7 @@
 import { computed, defineAsyncComponent, nextTick, reactive, ref, toRef, toRefs } from 'vue'
 import { isEqual, union } from 'lodash'
 
-import { alerts, arrayify, br2nl, getDefaultCover, pluralize } from '@/utils'
+import { alerts, arrayify, br2nl, defaultCover, pluralize } from '@/utils'
 import { songInfo } from '@/services/info'
 import { albumStore, artistStore, songStore } from '@/stores'
 
@@ -164,7 +164,7 @@ let initialFormData = {}
 const editingOnlyOneSong = computed(() => mutatedSongs.value.length === 1)
 const allSongsAreFromSameArtist = computed(() => new Set(mutatedSongs.value.map(song => song.artist.id)).size === 1)
 const allSongsAreInSameAlbum = computed(() => new Set(mutatedSongs.value.map(song => song.album.id)).size === 1)
-const coverUrl = computed(() => allSongsAreInSameAlbum.value ? mutatedSongs.value[0].album.cover : getDefaultCover())
+const coverUrl = computed(() => allSongsAreInSameAlbum.value ? mutatedSongs.value[0].album.cover : defaultCover)
 const artistNamePlaceholder = computed(() => editingOnlyOneSong.value ? 'Unknown Artist' : 'Leave unchanged')
 const albumNamePlaceholder = computed(() => editingOnlyOneSong.value ? 'Unknown Album' : 'Leave unchanged')
 

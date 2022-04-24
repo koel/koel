@@ -2,6 +2,8 @@ import select from 'select'
 import { eventBus, noop, pluralize, arrayify } from '@/utils'
 import defaultCover from '@/../img/covers/unknown-album.png'
 
+export { defaultCover }
+
 /**
  * Load (display) a main panel (view).
  *
@@ -47,8 +49,6 @@ export const copyText = (text: string): void => {
   select(copyArea)
   document.execCommand('copy')
 }
-
-export const getDefaultCover = () => defaultCover
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
   if (!event.dataTransfer) {
