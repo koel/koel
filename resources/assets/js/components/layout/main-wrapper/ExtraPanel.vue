@@ -1,42 +1,42 @@
 <template>
-  <section id="extra" :class="{ showing: state.showExtraPanel }" class="text-secondary" data-testid="extra-panel">
+  <section id="extra" :class="{ showing }" class="text-secondary" data-testid="extra-panel">
     <div class="tabs">
       <div class="clear" role="tablist">
         <button
-          :aria-selected="currentTab === 'Lyrics'"
-          @click.prevent="currentTab = 'Lyrics'"
-          aria-controls="extraPanelLyrics"
           id="extraTabLyrics"
+          :aria-selected="currentTab === 'Lyrics'"
+          aria-controls="extraPanelLyrics"
           role="tab"
+          @click.prevent="currentTab = 'Lyrics'"
         >
           Lyrics
         </button>
         <button
-          :aria-selected="currentTab === 'Artist'"
-          @click.prevent="currentTab = 'Artist'"
-          aria-controls="extraPanelArtist"
           id="extraTabArtist"
+          :aria-selected="currentTab === 'Artist'"
+          aria-controls="extraPanelArtist"
           role="tab"
+          @click.prevent="currentTab = 'Artist'"
         >
           Artist
         </button>
         <button
-          :aria-selected="currentTab === 'Album'"
-          @click.prevent="currentTab = 'Album'"
-          aria-controls="extraPanelAlbum"
           id="extraTabAlbum"
+          :aria-selected="currentTab === 'Album'"
+          aria-controls="extraPanelAlbum"
           role="tab"
+          @click.prevent="currentTab = 'Album'"
         >
           Album
         </button>
         <button
-          :aria-selected="currentTab === 'YouTube'"
-          @click.prevent="currentTab = 'YouTube'"
-          aria-controls="extraPanelYouTube"
+          v-if="useYouTube"
           id="extraTabYouTube"
+          :aria-selected="currentTab === 'YouTube'"
+          aria-controls="extraPanelYouTube"
           role="tab"
           title="YouTube"
-          v-if="sharedState.useYouTube"
+          @click.prevent="currentTab = 'YouTube'"
         >
           <i class="fa fa-youtube-play"></i>
         </button>
@@ -44,43 +44,43 @@
 
       <div class="panes">
         <div
-          aria-labelledby="extraTabLyrics"
+          v-show="currentTab === 'Lyrics'"
           id="extraPanelLyrics"
+          aria-labelledby="extraTabLyrics"
           role="tabpanel"
           tabindex="0"
-          v-show="currentTab === 'Lyrics'"
         >
           <lyrics-pane :song="song"/>
         </div>
 
         <div
-          aria-labelledby="extraTabArtist"
+          v-show="currentTab === 'Artist'"
           id="extraPanelArtist"
+          aria-labelledby="extraTabArtist"
           role="tabpanel"
           tabindex="0"
-          v-show="currentTab === 'Artist'"
         >
           <ArtistInfo v-if="artist" :artist="artist" mode="sidebar"/>
         </div>
 
         <div
-          aria-labelledby="extraTabAlbum"
+          v-show="currentTab === 'Album'"
           id="extraPanelAlbum"
+          aria-labelledby="extraTabAlbum"
           role="tabpanel"
           tabindex="0"
-          v-show="currentTab === 'Album'"
         >
           <AlbumInfo v-if="album" :album="album" mode="sidebar"/>
         </div>
 
         <div
-          aria-labelledby="extraTabYouTube"
+          v-show="currentTab === 'YouTube'"
           id="extraPanelYouTube"
+          aria-labelledby="extraTabYouTube"
           role="tabpanel"
           tabindex="0"
-          v-show="currentTab === 'YouTube'"
         >
-          <YouTubeVideoList v-if="sharedState.useYouTube && song" :song="song"/>
+          <YouTubeVideoList v-if="useYouTube && song" :song="song"/>
         </div>
       </div>
     </div>
@@ -89,9 +89,9 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { $, eventBus } from '@/utils'
-import { preferenceStore as preferences, commonStore, songStore } from '@/stores'
+import { commonStore, preferenceStore as preferences, songStore } from '@/stores'
 import { songInfo } from '@/services'
 
 type Tab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
@@ -103,14 +103,14 @@ const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInf
 const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/YouTubeVideoList.vue'))
 
 const song = ref<Song | null>(null)
-const state = reactive(preferences.state)
-const sharedState = reactive(commonStore.state)
+const showing = toRef(preferences.state, 'showExtraPanel')
+const useYouTube = toRef(commonStore.state, 'useYouTube')
 const currentTab = ref(defaultTab)
 
 const artist = computed(() => song.value?.artist)
 const album = computed(() => song.value?.album)
 
-watch(() => state.showExtraPanel, (showingExtraPanel) => {
+watch(showing, (showingExtraPanel) => {
   if (showingExtraPanel && !isMobile.any) {
     $.addClass(document.documentElement, 'with-extra-panel')
   } else {
@@ -123,7 +123,7 @@ const resetState = () => {
   song.value = songStore.stub
 }
 
-const fetchSongInfo = async (_song: Song) =>{
+const fetchSongInfo = async (_song: Song) => {
   try {
     song.value = await songInfo.fetch(_song)
   } catch (err) {
@@ -139,7 +139,7 @@ eventBus.on({
     isMobile.any || $.addClass(document.documentElement, 'with-extra-panel')
 
     // Hide the extra panel if on mobile
-    isMobile.phone && (state.showExtraPanel = false)
+    isMobile.phone && (showing.value = false)
   }
 })
 </script>

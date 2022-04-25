@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive, toRef } from 'vue'
+import { computed, defineAsyncComponent, toRef } from 'vue'
 import { pluralize } from '@/utils'
 import { queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
@@ -72,9 +72,7 @@ const {
   toggleControls
 } = useSongList(toRef(queueStore.state, 'songs'), { clearQueue: true })
 
-const songState = reactive(songStore.state)
-
-const showShuffleLibraryButton = computed(() => songState.songs.length > 0)
+const showShuffleLibraryButton = computed(() => songs.value.length > 0)
 
 const playAll = (shuffle: boolean) => playbackService.queueAndPlay(songs.value.length ? songs.value : songStore.all, shuffle)
 const clearQueue = () => queueStore.clear()

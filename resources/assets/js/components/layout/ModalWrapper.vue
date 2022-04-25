@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, ref } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus, arrayify } from '@/utils'
 
 interface ModalWrapperBoundData {
   playlist?: Playlist
@@ -67,8 +67,8 @@ eventBus.on({
     showingModalName.value = 'edit-user-form'
   },
 
-  MODAL_SHOW_EDIT_SONG_FORM (songs: Song[], initialTab = 'details') {
-    boundData.value.songs = songs
+  MODAL_SHOW_EDIT_SONG_FORM (songs: Song | Song[], initialTab = 'details') {
+    boundData.value.songs = arrayify(songs)
     boundData.value.initialTab = initialTab
     showingModalName.value = 'edit-song-form'
   }

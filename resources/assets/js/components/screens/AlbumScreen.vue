@@ -18,11 +18,11 @@
           •
           {{ duration }}
 
-          <template v-if="sharedState.useLastfm">
+          <template v-if="useLastfm">
             •
             <a class="info" href title="View album's extra information" @click.prevent="showInfo">Info</a>
           </template>
-          <template v-if="sharedState.allowDownload">
+          <template v-if="allowDownload">
             •
             <a class="download" href role="button" title="Download all songs in album" @click.prevent="download">
               Download All
@@ -45,7 +45,7 @@
 
     <SongList ref="songList" :config="listConfig" :items="songs" type="album" @press:enter="onPressEnter"/>
 
-    <section v-if="sharedState.useLastfm && showing" class="info-wrapper">
+    <section v-if="useLastfm && showing" class="info-wrapper">
       <CloseModalBtn @click="showing = false"/>
       <div class="inner">
         <div class="loading" v-if="loading">
@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive, ref, toRefs, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { artistStore, commonStore } from '@/stores'
 import { albumInfoService, downloadService } from '@/services'
@@ -92,7 +92,8 @@ const {
 } = useSongList(ref(album.value.songs))
 
 const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'length'] }
-const sharedState = reactive(commonStore.state)
+const useLastfm = toRef(commonStore.state, 'useLastfm')
+const allowDownload = toRef(commonStore.state, 'allowDownload')
 const showing = ref(false)
 const loading = ref(true)
 

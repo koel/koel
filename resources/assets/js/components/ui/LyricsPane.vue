@@ -4,7 +4,7 @@
       <template v-if="song">
         <div v-show="song.lyrics">
           <div ref="lyricsContainer" v-html="song.lyrics"></div>
-          <TextZoomer :target="textZoomTarget"/>
+          <Magnifier :target="lyricsContainer"/>
         </div>
         <p v-if="song.id && !song.lyrics" class="none text-secondary">
           <template v-if="isAdmin">
@@ -22,27 +22,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onUpdated, reactive, ref, toRefs } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 import { userStore } from '@/stores'
 
-const TextZoomer = defineAsyncComponent(() => import('@/components/ui/TextMagnifier.vue'))
+const Magnifier = defineAsyncComponent(() => import('@/components/ui/TextMagnifier.vue'))
 
 const props = defineProps<{ song: Song | null }>()
 const { song } = toRefs(props)
 
-const lyricsContainer = ref(null as unknown as HTMLElement)
-const textZoomTarget = ref(null as unknown as HTMLElement)
-const userState = reactive(userStore.state)
+const lyricsContainer = ref<HTMLElement>()
+const user = toRef(userStore.state, 'current')
 
-const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', [song.value], 'lyrics')
+const isAdmin = computed(() => user.value.is_admin)
 
-const isAdmin = computed(() => userState.current.is_admin)
-
-onUpdated(() => {
-  // Since Vue's $refs are not reactive, we work around by assigning to a data property
-  textZoomTarget.value = lyricsContainer.value
-})
+const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
 </script>
 
 <style lang="scss" scoped>

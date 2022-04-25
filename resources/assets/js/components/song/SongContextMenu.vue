@@ -27,7 +27,7 @@
       </ul>
     </li>
     <li class="open-edit-form" v-if="isAdmin" @click="openEditForm">Edit</li>
-    <li class="download" v-if="sharedState.allowDownload" @click="download">Download</li>
+    <li class="download" v-if="allowDownload" @click="download">Download</li>
     <li
       class="copy-url"
       v-if="copyable && onlyOneSongSelected"
@@ -39,9 +39,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, Ref, toRef, toRefs, watchEffect } from 'vue'
+import { computed, Ref, toRef } from 'vue'
 import { alerts, copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
-import { playlistStore, queueStore, commonStore, songStore, userStore } from '@/stores'
+import { commonStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import router from '@/router'
 import { useContextMenu, useSongMenuMethods } from '@/composables'
@@ -64,14 +64,14 @@ const {
   addSongsToExistingPlaylist
 } = useSongMenuMethods(songs, close)
 
-const playlistState = reactive(playlistStore.state)
-const sharedState = reactive(commonStore.state)
-const userState = reactive(userStore.state)
+const playlists = toRef(playlistStore.state, 'playlists')
+const allowDownload = toRef(commonStore.state, 'allowDownload')
+const user = toRef(userStore.state, 'current')
 
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playbackState === 'Playing' : false)
-const normalPlaylists = computed(() => playlistState.playlists.filter(playlist => !playlist.is_smart))
-const isAdmin = computed(() => userState.current.is_admin)
+const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
+const isAdmin = computed(() => user.value.is_admin)
 
 const doPlayback = () => {
   if (!songs.value.length) return

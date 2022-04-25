@@ -30,9 +30,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref, toRef } from 'vue'
+import { defineAsyncComponent, ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
-import { preferenceStore, commonStore } from '@/stores'
+import { commonStore, preferenceStore } from '@/stores'
 import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
 import AlbumListScreen from '@/components/screens/AlbumListScreen.vue'

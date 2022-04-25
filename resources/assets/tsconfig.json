@@ -3,11 +3,12 @@
     "baseUrl": ".",
     "target": "es6",
     "strict": true,
+    "noImplicitAny": false,
     "module": "esnext",
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "allowJs": true, // for some external modules
+    "allowJs": true,
     "paths": {
       "@/*": ["js/*"]
     }

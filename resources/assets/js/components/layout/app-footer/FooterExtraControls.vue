@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref, toRef, toRefs } from 'vue'
+import { defineAsyncComponent, ref, toRef, toRefs } from 'vue'
 import isMobile from 'ismobilejs'
 import { socketService } from '@/services'
 import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'

@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { orderBy } from 'lodash'
-import { computed, reactive, ref, toRefs } from 'vue'
+import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
 import { defaultCover, fileReader } from '@/utils'
@@ -28,7 +28,7 @@ const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)
 
 const droppable = ref(false)
-const userState = reactive(userStore.state)
+const user = toRef(userStore.state, 'current')
 
 const forAlbum = computed(() => 'artist' in entity.value)
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
@@ -64,7 +64,7 @@ const buttonLabel = computed(() => forAlbum.value
 
 const playbackFunc = computed(() => forAlbum.value ? playbackService.playAllInAlbum : playbackService.playAllByArtist)
 
-const allowsUpload = computed(() => userState.current.is_admin)
+const allowsUpload = computed(() => user.value.is_admin)
 
 const playOrQueue = (event: KeyboardEvent) => {
   if (event.metaKey || event.ctrlKey) {

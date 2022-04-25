@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, nextTick, reactive, ref, toRefs, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref, toRef, toRefs, watch } from 'vue'
 import { alerts, pluralize } from '@/utils'
 import { playlistStore } from '@/stores'
 import router from '@/router'
@@ -72,7 +72,9 @@ const props = defineProps<{ songs: Song[], showing: Boolean, config: AddToMenuCo
 const { songs, showing, config } = toRefs(props)
 
 const newPlaylistName = ref('')
-const playlistState = reactive(playlistStore.state)
+
+const allPlaylists = toRef(playlistStore.state, 'playlists')
+const playlists = computed(() => allPlaylists.value.filter(playlist => !playlist.is_smart))
 
 const emit = defineEmits(['closing'])
 const close = () => emit('closing')
@@ -86,8 +88,6 @@ const {
 } = useSongMenuMethods(songs, close)
 
 watch(songs, () => songs.value.length || close())
-
-const playlists = computed(() => playlistState.playlists.filter(playlist => !playlist.is_smart))
 
 /**
  * Save the selected songs as a playlist.

@@ -6,7 +6,7 @@
       <li class="separator"></li>
       <li data-test="view-album" @click="viewAlbumDetails" v-if="isStandardAlbum">Go to Album</li>
       <li data-test="view-artist" @click="viewArtistDetails" v-if="isStandardArtist">Go to Artist</li>
-      <template v-if="isStandardAlbum && sharedState.allowDownload">
+      <template v-if="isStandardAlbum && allowDownload">
         <li class="separator"></li>
         <li data-test="download" @click="download">Download</li>
       </template>
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, Ref, toRef } from 'vue'
+import { computed, Ref, toRef } from 'vue'
 import { albumStore, artistStore, commonStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useContextMenu } from '@/composables'
@@ -24,8 +24,7 @@ import router from '@/router'
 const { context, base, ContextMenuBase, open, close } = useContextMenu()
 
 const album = toRef(context, 'album') as Ref<Album>
-
-const sharedState = reactive(commonStore.state)
+const allowDownload = toRef(commonStore.state, 'allowDownload')
 
 const isStandardAlbum = computed(() => !albumStore.isUnknownAlbum(album.value))
 

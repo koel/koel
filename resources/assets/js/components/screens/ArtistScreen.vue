@@ -16,12 +16,12 @@
           •
           {{ duration }}
 
-          <template v-if="sharedState.useLastfm">
+          <template v-if="useLastfm">
             •
             <a class="info" href title="View artist's extra information" @click.prevent="showInfo">Info</a>
           </template>
 
-          <template v-if="sharedState.allowDownload">
+          <template v-if="allowDownload">
             •
             <a
               class="download"
@@ -50,7 +50,7 @@
 
     <SongList ref="songList" :config="listConfig" :items="songs" type="artist" @press:enter="onPressEnter"/>
 
-    <section class="info-wrapper" v-if="sharedState.useLastfm && showing">
+    <section class="info-wrapper" v-if="useLastfm && showing">
       <CloseModalBtn @click="showing = false"/>
       <div class="inner">
         <div class="loading" v-if="loading">
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref, toRefs, watch } from 'vue'
+import { defineAsyncComponent, ref, toRef, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { commonStore } from '@/stores'
 import { artistInfoService, downloadService } from '@/services'
@@ -97,7 +97,8 @@ const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/Album
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
 const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'album', 'length'] }
-const sharedState = reactive(commonStore.state)
+const useLastfm = toRef(commonStore.state, 'useLastfm')
+const allowDownload = toRef(commonStore.state, 'allowDownload')
 
 const showing = ref(false)
 const loading = ref(true)

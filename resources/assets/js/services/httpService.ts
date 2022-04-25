@@ -2,7 +2,7 @@ import Axios, { AxiosInstance, Method } from 'axios'
 import NProgress from 'nprogress'
 
 import { eventBus } from '@/utils'
-import { authService, localStorageService } from '@/services'
+import { authService } from '@/services'
 
 export const httpService = {
   client: null as AxiosInstance | null,
