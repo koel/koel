@@ -2,6 +2,20 @@ const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        loader: "sass-loader",
+        options: {
+          additionalData: `
+          @import "#/partials/_vars.scss";
+          @import "#/partials/_mixins.scss";
+          `
+        }
+      }
+    ]
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'resources/assets/js'),
@@ -13,7 +27,13 @@ module.exports = {
       KOEL_ENV: '"web"',
       NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
     })
-  ]
+  ],
+  devServer: {
+    port: 8080,
+    proxy: {
+      '/': 'http://127.0.0.1:8000/'
+    }
+  }
 }
 
 // test specific setups
