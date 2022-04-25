@@ -84,9 +84,9 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
       })
 
       cy.findByTestId('song-context-menu').within(() => {
-          cy.findByText('Add To').click()
-          cy.findByText(config.menuItem).click()
-        })
+        cy.findByText('Add To').click()
+        cy.findByText(config.menuItem).click()
+      })
 
       cy.$clickSidebarItem('Current Queue')
       cy.get('#queueWrapper').within(() => {
@@ -197,13 +197,13 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').should('not.exist'))
   })
 
-  it("copies a song's URL", () => {
+  it('copies a song\'s URL', () => {
     cy.$login()
     cy.$clickSidebarItem('All Songs')
 
-    cy.window().then(window => cy.spy(window.document, 'execCommand').as('copy'));
+    cy.window().then(window => cy.spy(window.document, 'execCommand').as('copy'))
     cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Copy Shareable URL').click())
-    cy.get('@copy').should('be.calledWithExactly', 'copy');
+    cy.get('@copy').should('be.calledWithExactly', 'copy')
   })
 })

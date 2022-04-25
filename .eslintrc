@@ -12,6 +12,11 @@
     "@vue/standard",
     "@vue/typescript/recommended"
   ],
+  "ignorePatterns": [
+    "cypress/fixtures",
+    "cypress/screenshots",
+    "resources/assets/js/tests/__coverage__"
+  ],
   "plugins": [
     "@typescript-eslint"
   ],

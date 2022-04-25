@@ -12,7 +12,7 @@ declare namespace NodeJS {
     Vue: any
     __UNIT_TESTING__: boolean
     _: any
-    noop: Function
+    noop: TAnyFunction,
     IntersectionObserver: any
 
     document: Document

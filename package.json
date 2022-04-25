@@ -94,15 +94,11 @@
     "webpack-node-externals": "^3.0.0"
   },
   "scripts": {
-    "lint": "eslint ./cypress/**/*.ts",
-    "watch.bak": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch-poll.bak": "yarn watch -- --watch-poll",
-    "hot.bak": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "lint": "eslint ./resources/assets/js/**/*.ts && eslint ./cypress/**/*.ts",
     "test:e2e": "kill-port 8080 && start-test dev :8080 'cypress open'",
     "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' :8080 'cypress run'",
     "build": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "build-demo": "cross-env NODE_ENV=demo node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js -p",
-    "production.bak": "yarn build",
     "dev": "start-test 'php artisan serve --port=8000 --quiet' :8000 hot",
     "development": "mix",
     "watch": "mix watch",
@@ -121,6 +117,9 @@
       "composer cs"
     ],
     "resources/assets/**/*.ts": [
+      "eslint"
+    ],
+    "cypress/**/*.ts": [
       "eslint"
     ]
   }

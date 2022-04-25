@@ -55,7 +55,6 @@ context('Favorites', { scrollBehavior: false }, () => {
     cy.$assertFavoriteSongCount(4)
   })
 
-
   it('deletes a favorite with Unlike button', () => {
     cy.intercept('POST', '/api/interaction/like', {})
     cy.$clickSidebarItem('Favorites')

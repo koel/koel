@@ -6,12 +6,12 @@ import isMobile from 'ismobilejs'
 
 import { playbackService } from '@/services'
 import { eventBus } from '@/utils'
+import { queueStore, songStore } from '@/stores'
+import router from '@/router'
 
 import ControlsToggler from '@/components/ui/ScreenControlsToggler.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
-import { queueStore, songStore } from '@/stores'
-import router from '@/router'
 
 export const useSongList = (songs: Ref<Song[]>, controlsConfig: Partial<SongListControlsConfig> = {}) => {
   const vm = getCurrentInstance()

@@ -229,8 +229,8 @@ context('Playlists', () => {
     cy.findByText('Created playlist "My Smart Playlist."').should('be.visible')
 
     cy.get('#playlistWrapper .heading-wrapper')
-        .should('be.visible')
-        .and('contain', 'My Smart Playlist')
+      .should('be.visible')
+      .and('contain', 'My Smart Playlist')
 
     cy.$assertSidebarItemActive('My Smart Playlist')
     cy.$assertPlaylistSongCount('My Smart Playlist', 3)

@@ -1,4 +1,3 @@
-/// <reference path="./types.d.ts"/>
 import '@babel/polyfill'
 import Vue from 'vue'
 import lodash from 'lodash'
