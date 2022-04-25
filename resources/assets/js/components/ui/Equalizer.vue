@@ -306,6 +306,10 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
       }
     }
 
+    &-touch-area {
+      cursor: ns-resize;
+    }
+
     &-target {
       background: transparent;
       border-radius: 0;

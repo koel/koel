@@ -1,17 +1,18 @@
 <template>
   <button
-    class="control"
     :class="mode"
-    @click.prevent="changeRepeatMode"
     :title="`Change repeat mode (current mode: ${readableRepeatMode})`"
+    class="control"
     data-testid="repeat-mode-switch"
+    type="button"
+    @click.prevent="changeRepeatMode"
   >
     <i class="fa fa-repeat"></i>
   </button>
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { playbackService } from '@/services'
 import { preferenceStore } from '@/stores'
 
