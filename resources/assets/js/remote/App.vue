@@ -1,12 +1,12 @@
 <template>
-  <div id="app" :class="{ 'standalone' : inStandaloneMode }">
+  <div id="wrapper" :class="{ 'standalone' : inStandaloneMode }">
     <template v-if="authenticated">
-      <album-art-overlay :album="album" v-if="preferences.showAlbumArtOverlay"/>
+      <AlbumArtOverlay v-if="showAlbumArtOverlay && album" :album="album"/>
 
       <main>
         <template v-if="connected">
           <div class="details" v-if="song">
-            <div class="cover" :style="{ backgroundImage: 'url('+song.album.cover+')' }"/>
+            <div :style="{ backgroundImage: `url(${song.album.cover})` }" class="cover"/>
             <div class="info">
               <div class="wrap">
                 <p class="title text">{{ song.title }}</p>
@@ -18,7 +18,7 @@
           <p class="none text-secondary" v-else>No song is playing.</p>
           <footer>
             <a class="favorite" @click.prevent="toggleFavorite">
-              <i class="fa fa-heart yep" v-if="song && song.liked"></i>
+              <i class="fa fa-heart yep" v-if="song?.liked"></i>
               <i class="fa fa-heart-o" v-else></i>
             </a>
             <a class="prev" @click="playPrev">
@@ -32,7 +32,12 @@
               <i class="fa fa-step-forward"></i>
             </a>
             <span class="volume">
-              <span id="volumeSlider" v-show="showingVolumeSlider" v-koel-clickaway="closeVolumeSlider"/>
+              <span
+                v-show="showingVolumeSlider"
+                ref="volumeSlider"
+                id="volumeSlider"
+                v-koel-clickaway="closeVolumeSlider"
+              />
               <span class="icon" @click.stop="toggleVolumeSlider">
                 <i class="fa fa-volume-off" v-if="muted"/>
                 <i class="fa fa-volume-up" v-else/>
@@ -47,7 +52,7 @@
           </div>
           <p v-else>
             No active Koel instance found.
-            <a @click.prevent="rescan" class="rescan text-orange">Rescan</a>
+            <a class="rescan text-orange" @click.prevent="rescan">Rescan</a>
           </p>
         </div>
       </main>
@@ -59,188 +64,139 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang="ts" setup>
 import noUISlider from 'nouislider'
-import { socketService, authService } from '@/services'
-import { userStore, preferenceStore } from '@/stores'
-import LoginForm from '@/components/auth/LoginForm.vue'
+import { authService, socketService } from '@/services'
+import { preferenceStore, userStore } from '@/stores'
 import { SliderElement } from 'koel/types/ui'
-import { clickaway } from '@/directives'
+import { computed, defineAsyncComponent, nextTick, onMounted, ref, toRef, watch } from 'vue'
 
-let volumeSlider: SliderElement
+import LoginForm from '@/components/auth/LoginForm.vue'
+
 const MAX_RETRIES = 10
 const DEFAULT_VOLUME = 7
 
-export default Vue.extend({
-  components: {
-    LoginForm,
-    AlbumArtOverlay: () => import('@/components/ui/AlbumArtOverlay.vue')
-  },
+const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
 
-  directives: {
-    'koel-clickaway': clickaway
-  },
+const volumeSlider = ref<SliderElement>()
+const authenticated = ref(false)
+const song = ref<Song | null>(null)
+const connected = ref(false)
+const muted = ref(false)
+const showingVolumeSlider = ref(false)
+const retries = ref(0)
+const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
+const volume = ref(DEFAULT_VOLUME)
 
-  data: () => ({
-    authenticated: false,
-    song: null as unknown as Song,
-    lastActiveTime: new Date().getTime(),
-    inStandaloneMode: false,
-    connected: false,
-    muted: false,
-    showingVolumeSlider: false,
-    retries: 0,
-    preferences: preferenceStore.state,
-    volume: DEFAULT_VOLUME
-  }),
+const inStandaloneMode = ref(
+  (window.navigator as any).standalone || window.matchMedia('(display-mode: standalone)').matches
+)
 
-  watch: {
-    async connected (): Promise<void> {
-      await this.$nextTick()
+watch(connected, async () => {
+  await nextTick()
 
-      volumeSlider = document.getElementById('volumeSlider') as SliderElement
+  if (!volumeSlider.value) return
 
-      noUISlider.create(volumeSlider, {
-        orientation: 'vertical',
-        connect: [true, false],
-        start: this.volume || DEFAULT_VOLUME,
-        range: { min: 0, max: 10 },
-        direction: 'rtl'
+  noUISlider.create(volumeSlider.value, {
+    orientation: 'vertical',
+    connect: [true, false],
+    start: volume.value || DEFAULT_VOLUME,
+    range: { min: 0, max: 10 },
+    direction: 'rtl'
+  })
+
+  if (!volumeSlider.value.noUiSlider) {
+    throw new Error('Failed to initialize noUISlider on element #volumeSlider')
+  }
+
+  volumeSlider.value.noUiSlider.on('change', (values: number[], handle: number): void => {
+    const volume = values[handle]
+    muted.value = !volume
+    socketService.broadcast('SOCKET_SET_VOLUME', { volume })
+  })
+})
+
+watch(volume, () => volumeSlider.value?.noUiSlider!.set(volume.value || DEFAULT_VOLUME))
+
+const onUserLoggedIn = () => {
+  authenticated.value = true
+  init()
+}
+
+const init = async () => {
+  try {
+    const user = await userStore.getProfile()
+    userStore.init([], user)
+
+    await socketService.init()
+
+    socketService
+      .listen('SOCKET_SONG', ({ song: _song }: { song: Song }) => (song.value = _song))
+      .listen('SOCKET_PLAYBACK_STOPPED', () => song.value && (song.value.playbackState = 'Stopped'))
+      .listen('SOCKET_VOLUME_CHANGED', (volume: number) => volumeSlider.value?.noUiSlider?.set(volume))
+      .listen('SOCKET_STATUS', ({ song: _song, volume: _volume }: { song: Song, volume: number }) => {
+        song.value = _song
+        volume.value = _volume || DEFAULT_VOLUME
+        connected.value = true
       })
 
-      if (!volumeSlider.noUiSlider) {
-        throw new Error('Failed to initialize noUISlider on element #volumeSlider')
-      }
+    scan()
+  } catch (e) {
+    console.error(e)
+    authenticated.value = false
+  }
+}
 
-      volumeSlider.noUiSlider.on('change', (values: number[], handle: number): void => {
-        const volume = values[handle]
-        this.muted = !volume
-        socketService.broadcast('SOCKET_SET_VOLUME', { volume })
-      })
-    },
+const toggleVolumeSlider = () => (showingVolumeSlider.value = !showingVolumeSlider.value)
+const closeVolumeSlider = () => (showingVolumeSlider.value = false)
 
-    volume: (value: number): void => {
-      if (!volumeSlider) {
-        return
-      }
+const toggleFavorite = () => {
+  if (!song.value) {
+    return
+  }
 
-      volumeSlider.noUiSlider!.set(value || DEFAULT_VOLUME)
+  song.value.liked = !song.value.liked
+  socketService.broadcast('SOCKET_TOGGLE_FAVORITE')
+}
+
+const togglePlayback = () => {
+  if (song.value) {
+    song.value.playbackState = song.value.playbackState === 'Playing' ? 'Paused' : 'Playing'
+  }
+
+  socketService.broadcast('SOCKET_TOGGLE_PLAYBACK')
+}
+
+const playNext = () => socketService.broadcast('SOCKET_PLAY_NEXT')
+const playPrev = () => socketService.broadcast('SOCKET_PLAY_PREV')
+const getStatus = () => socketService.broadcast('SOCKET_GET_STATUS')
+
+const scan = () => {
+  if (!connected.value) {
+    if (!maxRetriesReached.value) {
+      getStatus()
+      retries.value++
+      window.setTimeout(scan, 1000)
     }
-  },
+  } else {
+    retries.value = 0
+  }
+}
 
-  methods: {
-    onUserLoggedIn (): void {
-      this.authenticated = true
-      this.init()
-    },
+const rescan = () => {
+  retries.value = 0
+  scan()
+}
 
-    async init (): Promise<void> {
-      try {
-        const user = await userStore.getProfile()
-        userStore.init([], user)
+const playing = computed(() => Boolean(song.value?.playbackState === 'Playing'))
+const maxRetriesReached = computed(() => retries.value >= MAX_RETRIES)
+const album = computed(() => song.value?.album)
 
-        await socketService.init()
-
-        socketService
-          .listen('SOCKET_SONG', ({ song }: { song: Song }): void => {
-            this.song = song
-          })
-          .listen('SOCKET_PLAYBACK_STOPPED', (): void => {
-            this.song && (this.song.playbackState = 'Stopped')
-          })
-          .listen('SOCKET_VOLUME_CHANGED', (volume: number): void => volumeSlider.noUiSlider!.set(volume))
-          .listen('SOCKET_STATUS', ({ song, volume }: { song: Song, volume: number }): void => {
-            this.song = song
-            this.volume = volume || DEFAULT_VOLUME
-            this.connected = true
-          })
-
-        this.scan()
-      } catch (e) {
-        this.authenticated = false
-      }
-    },
-
-    toggleVolumeSlider (): void {
-      this.showingVolumeSlider = !this.showingVolumeSlider
-    },
-
-    closeVolumeSlider (): void {
-      this.showingVolumeSlider = false
-    },
-
-    toggleFavorite (): void {
-      if (!this.song) {
-        return
-      }
-
-      this.song.liked = !this.song.liked
-      socketService.broadcast('SOCKET_TOGGLE_FAVORITE')
-    },
-
-    togglePlayback (): void {
-      if (this.song) {
-        this.song.playbackState = this.song.playbackState === 'Playing' ? 'Paused' : 'Playing'
-      }
-
-      socketService.broadcast('SOCKET_TOGGLE_PLAYBACK')
-    },
-
-    playNext: (): void => {
-      socketService.broadcast('SOCKET_PLAY_NEXT')
-    },
-
-    playPrev: (): void => {
-      socketService.broadcast('SOCKET_PLAY_PREV')
-    },
-
-    getStatus: (): void => {
-      socketService.broadcast('SOCKET_GET_STATUS')
-    },
-
-    scan (): void {
-      if (!this.connected) {
-        if (!this.maxRetriesReached) {
-          this.getStatus()
-          this.retries++
-          window.setTimeout(this.scan, 1000)
-        }
-      } else {
-        this.retries = 0
-      }
-    },
-
-    rescan (): void {
-      this.retries = 0
-      this.scan()
-    }
-  },
-
-  computed: {
-    playing (): boolean {
-      return Boolean(this.song && this.song.playbackState === 'Playing')
-    },
-
-    maxRetriesReached (): boolean {
-      return this.retries >= MAX_RETRIES
-    },
-
-    album (): Album | null {
-      return this.song ? this.song.album : null
-    }
-  },
-
-  created (): void {
-    this.inStandaloneMode = (window.navigator as any).standalone
-  },
-
-  mounted (): void {
-    // The app has just been initialized, check if we can get the user data with an already existing token
-    if (authService.hasToken()) {
-      this.authenticated = true
-      this.init()
-    }
+onMounted(() => {
+  // The app has just been initialized, check if we can get the user data with an already existing token
+  if (authService.hasToken()) {
+    authenticated.value = true
+    init()
   }
 })
 </script>
@@ -252,7 +208,7 @@ body, html {
   height: 100vh;
 }
 
-#app {
+#wrapper {
   height: 100vh;
   background: var(--color-bg-primary);
 
@@ -315,7 +271,7 @@ body, html {
 }
 
 main {
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -404,13 +360,14 @@ main {
     }
 
     .play-pause {
-      display: inline-block;
       width: 16vmin;
       height: 16vmin;
       border: 1px solid var(--color-text-primary);
       border-radius: 50%;
-      line-height: 16vmin;
       font-size: 7vmin;
+      display: flex;
+      place-content: center;
+      place-items: center;
 
       &.fa-play {
         margin-left: 4px;
@@ -419,10 +376,10 @@ main {
   }
 }
 
-#app.standalone {
+#wrapper.standalone {
   padding-top: 20px;
 
-  #main {
+  main {
     .details {
       .cover {
         width: calc(80vw - 4px);
@@ -474,7 +431,7 @@ main {
   height: 16px;
   border-radius: 50%;
   border: 0;
-  left: -4px;
+  left: -12px;
   top: 0;
   background: var(--color-highlight);
   box-shadow: none;

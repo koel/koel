@@ -1,6 +1,6 @@
 import './staticLoader'
 import { createApp } from 'vue'
-import App from './app.vue'
+import App from './App.vue'
 import { httpService } from '@/services'
 import { clickaway, droppable, focus } from '@/directives'
 import router from '@/router'
@@ -22,6 +22,4 @@ app.directive('koel-droppable', droppable)
  */
 app.mount('#app')
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').then((): void => console.log('Service Worker Registered'))
-}
+navigator.serviceWorker.register('./sw.js').then((): void => console.log('Service Worker Registered'))

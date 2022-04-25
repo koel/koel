@@ -6,7 +6,7 @@
       For those that don't need to maintain their own UI state, we use v-if and enjoy some code-splitting juice.
     -->
     <Visualizer v-if="showingVisualizer"/>
-    <AlbumArtOverlay :song="currentSong" v-if="preferences.showAlbumArtOverlay"/>
+    <AlbumArtOverlay v-if="showAlbumArtOverlay && currentSong" :album="currentSong?.album"/>
 
     <HomeScreen v-show="view === 'Home'"/>
     <QueueScreen v-show="view === 'Queue'"/>
@@ -25,12 +25,12 @@
     <SettingsScreen v-if="view === 'Settings'"/>
     <ProfileScreen v-if="view === 'Profile'"/>
     <UserListScreen v-if="view === 'Users'"/>
-    <YoutubeScreen v-if="sharedState.useYouTube" v-show="view === 'YouTube'"/>
+    <YoutubeScreen v-if="useYouTube" v-show="view === 'YouTube'"/>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref } from 'vue'
+import { defineAsyncComponent, reactive, ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { preferenceStore, commonStore } from '@/stores'
 import HomeScreen from '@/components/screens/HomeScreen.vue'
@@ -54,8 +54,8 @@ const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/scr
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchSongResultsScreen.vue'))
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
-const preferences = reactive(preferenceStore.state)
-const sharedState = reactive(commonStore.state)
+const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
+const useYouTube = toRef(commonStore.state, 'useYouTube')
 const showingVisualizer = ref(false)
 const screenProps = ref<any>(null)
 const view = ref<MainViewName>('Home')

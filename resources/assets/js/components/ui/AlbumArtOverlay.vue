@@ -6,18 +6,16 @@
 import { ref, toRefs, watchEffect } from 'vue'
 import { albumStore } from '@/stores'
 
-const props = defineProps<{ song: Song | null }>()
-const { song } = toRefs(props)
+const props = defineProps<{ album: Album }>()
+const { album } = toRefs(props)
 
 const thumbnailUrl = ref<String | null>(null)
 
 watchEffect(async () => {
-  if (song.value) {
-    try {
-      thumbnailUrl.value = await albumStore.getThumbnail(song.value.album)
-    } catch (e) {
-      thumbnailUrl.value = null
-    }
+  try {
+    thumbnailUrl.value = await albumStore.getThumbnail(album.value)
+  } catch (e) {
+    thumbnailUrl.value = null
   }
 })
 </script>

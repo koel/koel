@@ -41,8 +41,8 @@ mix.copy('resources/assets/img', 'public/img')
 
 mix.ts('resources/assets/js/app.ts', 'public/js').vue({ version: 3 })
   .sass('resources/assets/sass/app.scss', 'public/css')
-  // .ts('resources/assets/js/remote/app.ts', 'public/js/remote').vue({ version: 3 })
-  // .sass('resources/assets/sass/remote.scss', 'public/css')
+  .ts('resources/assets/js/remote/app.ts', 'public/js/remote').vue({ version: 3 })
+  .sass('resources/assets/sass/remote.scss', 'public/css')
 
 if (mix.inProduction()) {
   mix.version()
