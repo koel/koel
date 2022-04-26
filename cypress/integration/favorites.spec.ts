@@ -8,7 +8,7 @@ context('Favorites', { scrollBehavior: false }, () => {
       .within(() => {
         cy.findByText('Songs You Love').should('be.visible')
         cy.findByText('Download All').should('be.visible')
-        cy.get('tr.song-item').should('have.length', 3)
+        cy.get('.song-item').should('have.length', 3)
           .each(row => {
             cy.wrap(row)
               .get('[data-test=btn-like-liked]')
@@ -26,7 +26,7 @@ context('Favorites', { scrollBehavior: false }, () => {
 
     cy.get('#songsWrapper')
       .within(() => {
-        cy.get('tr.song-item:first-child [data-test=like-btn]')
+        cy.get('.song-item:first-child [data-test=like-btn]')
           .within(() => cy.get('[data-test=btn-like-unliked]').should('be.visible'))
           .click()
           .within(() => cy.get('[data-test=btn-like-liked]').should('be.visible'))
@@ -44,7 +44,7 @@ context('Favorites', { scrollBehavior: false }, () => {
 
     cy.get('#songsWrapper')
       .within(() => {
-        cy.get('tr.song-item:first-child').click()
+        cy.get('.song-item:first-child').click()
         cy.get('[data-test=add-to-btn]').click()
         cy.get('[data-test=add-to-menu]')
           .should('be.visible')
@@ -61,12 +61,12 @@ context('Favorites', { scrollBehavior: false }, () => {
 
     cy.get('#favoritesWrapper')
       .within(() => {
-        cy.get('tr.song-item:first-child')
+        cy.get('.song-item:first-child')
           .should('contain.text', 'November')
           .within(() => cy.get('[data-test=like-btn]').click())
 
-        cy.get('tr.song-item').should('have.length', 2)
-        cy.get('tr.song-item:first-child').should('not.contain.text', 'November')
+        cy.get('.song-item').should('have.length', 2)
+        cy.get('.song-item:first-child').should('not.contain.text', 'November')
       })
   })
 
@@ -76,13 +76,13 @@ context('Favorites', { scrollBehavior: false }, () => {
 
     cy.get('#favoritesWrapper')
       .within(() => {
-        cy.get('tr.song-item:first-child')
+        cy.get('.song-item:first-child')
           .should('contain.text', 'November')
           .click()
           .type('{backspace}')
 
-        cy.get('tr.song-item').should('have.length', 2)
-        cy.get('tr.song-item:first-child').should('not.contain.text', 'November')
+        cy.get('.song-item').should('have.length', 2)
+        cy.get('.song-item:first-child').should('not.contain.text', 'November')
       })
   })
 })

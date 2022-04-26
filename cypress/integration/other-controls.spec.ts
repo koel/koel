@@ -7,9 +7,9 @@ context('Other Controls', () => {
 
   it('likes/unlikes the current song', () => {
     cy.$findInTestId('other-controls [data-test=like-btn]').as('like').click()
-    cy.get('#queueWrapper tr.song-item:first-child [data-test=btn-like-liked]').should('be.visible')
+    cy.get('#queueWrapper .song-item:first-child [data-test=btn-like-liked]').should('be.visible')
     cy.get('@like').click()
-    cy.get('#queueWrapper tr.song-item:first-child [data-test=btn-like-unliked]').should('be.visible')
+    cy.get('#queueWrapper .song-item:first-child [data-test=btn-like-unliked]').should('be.visible')
   })
 
   it('toggles the info panel', () => {

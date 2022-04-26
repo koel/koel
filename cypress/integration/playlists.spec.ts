@@ -13,7 +13,7 @@ context('Playlists', () => {
         .should('be.visible')
         .and('contain', 'Simple Playlist')
 
-      cy.get('tr.song-item')
+      cy.get('.song-item')
         .should('be.visible')
         .and('have.length', 3)
 

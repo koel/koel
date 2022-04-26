@@ -5,8 +5,8 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
-      cy.get('tr.song-item:first-child').dblclick()
-      cy.get('tr.song-item:first-child').should('have.class', 'playing')
+      cy.get('.song-item:first-child').dblclick()
+      cy.get('.song-item:first-child').should('have.class', 'playing')
     })
 
     cy.$assertPlaying()
@@ -18,7 +18,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
-      cy.get('tr.song-item:first-child')
+      cy.get('.song-item:first-child')
         .as('item')
         .rightclick()
     })
@@ -36,14 +36,14 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$login()
     cy.$clickSidebarItem('All Songs')
 
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Go to Album').click())
 
     cy.get('#albumWrapper')
       .should('be.visible')
       .within(() => {
         cy.get('.screen-header').should('be.visible')
-        cy.get('tr.song-item').should('have.length.at.least', 1)
+        cy.get('.song-item').should('have.length.at.least', 1)
       })
   })
 
@@ -51,14 +51,14 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$login()
     cy.$clickSidebarItem('All Songs')
 
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Go to Artist').click())
 
     cy.get('#artistWrapper')
       .should('be.visible')
       .within(() => {
         cy.get('.screen-header').should('be.visible')
-        cy.get('tr.song-item').should('have.length.at.least', 1)
+        cy.get('.song-item').should('have.length.at.least', 1)
       })
   })
 
@@ -74,13 +74,13 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
 
       let songTitle
       cy.get('#songsWrapper').within(() => {
-        cy.get('tr.song-item:nth-child(4) .title')
+        cy.get('.song-item:nth-child(4) .title')
           .invoke('text')
           .then(text => {
             songTitle = text
           })
 
-        cy.get('tr.song-item:nth-child(4)').rightclick()
+        cy.get('.song-item:nth-child(4)').rightclick()
       })
 
       cy.findByTestId('song-context-menu').within(() => {
@@ -90,8 +90,8 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
 
       cy.$clickSidebarItem('Current Queue')
       cy.get('#queueWrapper').within(() => {
-        cy.get('tr.song-item').should('have.length', 4)
-        cy.get(`tr.song-item:nth-child(${config.queuedPosition}) .title`).should('have.text', songTitle)
+        cy.get('.song-item').should('have.length', 4)
+        cy.get(`.song-item:nth-child(${config.queuedPosition}) .title`).should('have.text', songTitle)
       })
     })
   })
@@ -115,7 +115,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
         if (config.songCount > 1) {
           cy.$selectSongRange(1, config.songCount).rightclick()
         } else {
-          cy.get('tr.song-item:first-child').rightclick()
+          cy.get('.song-item:first-child').rightclick()
         }
       })
 
@@ -132,7 +132,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
   it('does not have smart playlists as target for adding songs', () => {
     cy.$login()
     cy.$clickSidebarItem('All Songs')
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
 
     cy.findByTestId('song-context-menu')
       .within(() => {
@@ -150,7 +150,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$clickSidebarItem('All Songs')
     cy.$assertFavoriteSongCount(3)
 
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => {
       cy.findByText('Add To').click()
       cy.findByText('Favorites').click()
@@ -161,10 +161,10 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
 
   it('initiates editing a song', () => {
     cy.intercept('/api/**/info', {
-      fixture: 'info.get.200.json'
+      fixture: 'song-info.get.200.json'
     })
 
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').click())
     cy.findByTestId('edit-song-form').should('be.visible')
   })
@@ -175,7 +175,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$login()
     cy.$clickSidebarItem('All Songs')
 
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Download').click())
 
     cy.wait('@download')
@@ -185,7 +185,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$login({ allowDownload: false })
     cy.$clickSidebarItem('All Songs')
 
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Download').should('not.exist'))
   })
 
@@ -193,7 +193,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$loginAsNonAdmin()
     cy.$clickSidebarItem('All Songs')
 
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').should('not.exist'))
   })
 
@@ -202,7 +202,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.window().then(window => cy.spy(window.document, 'execCommand').as('copy'))
-    cy.get('#songsWrapper').within(() => cy.get('tr.song-item:first-child').rightclick())
+    cy.get('#songsWrapper').within(() => cy.get('.song-item:first-child').rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Copy Shareable URL').click())
     cy.get('@copy').should('be.calledWithExactly', 'copy')
   })

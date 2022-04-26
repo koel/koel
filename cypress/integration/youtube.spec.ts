@@ -17,7 +17,7 @@ context('YouTube', () => {
     })
 
     cy.$clickSidebarItem('All Songs')
-    cy.get('#songsWrapper tr.song-item:first-child').dblclick()
+    cy.get('#songsWrapper .song-item:first-child').dblclick()
 
     cy.get('#extra').within(() => {
       cy.get('#extraTabYouTube').click()
@@ -31,7 +31,7 @@ context('YouTube', () => {
     cy.$mockPlayback()
 
     cy.$clickSidebarItem('All Songs')
-    cy.get('#songsWrapper tr.song-item:first-child').dblclick()
+    cy.get('#songsWrapper .song-item:first-child').dblclick()
 
     cy.get('#extra').within(() => {
       cy.get('#extraTabYouTube').click()

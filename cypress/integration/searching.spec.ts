@@ -38,7 +38,7 @@ context('Searching', () => {
 
     cy.get('#songResultsWrapper').within(() => {
       cy.get('.screen-header').should('contain.text', 'Showing Songs for foo')
-      cy.get('tr.song-item').should('have.length', 7)
+      cy.get('.song-item').should('have.length', 7)
     })
   })
 

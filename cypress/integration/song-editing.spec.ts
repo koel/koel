@@ -1,7 +1,7 @@
 context('Song Editing', { scrollBehavior: false }, () => {
   beforeEach(() => {
     cy.intercept('/api/**/info', {
-      fixture: 'info.get.200.json'
+      fixture: 'song-info.get.200.json'
     })
 
     cy.$login()
@@ -13,7 +13,7 @@ context('Song Editing', { scrollBehavior: false }, () => {
       fixture: 'songs.put.200.json'
     })
 
-    cy.get('#songsWrapper tr.song-item:first-child').rightclick()
+    cy.get('#songsWrapper .song-item:first-child').rightclick()
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').click())
 
     cy.findByTestId('edit-song-form').within(() => {
@@ -34,11 +34,11 @@ context('Song Editing', { scrollBehavior: false }, () => {
 
     cy.findByText('Updated 1 song.').should('be.visible')
     cy.findByTestId('edit-song-form').should('not.exist')
-    cy.get('#songsWrapper tr.song-item:first-child .title').should('have.text', 'New Title')
+    cy.get('#songsWrapper .song-item:first-child .title').should('have.text', 'New Title')
   })
 
   it('cancels editing', () => {
-    cy.get('#songsWrapper tr.song-item:first-child').rightclick()
+    cy.get('#songsWrapper .song-item:first-child').rightclick()
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').click())
 
     cy.$findInTestId('edit-song-form .btn-cancel').click()
@@ -79,8 +79,8 @@ context('Song Editing', { scrollBehavior: false }, () => {
     cy.findByText('Updated 3 songs.').should('be.visible')
     cy.findByTestId('edit-song-form').should('not.exist')
 
-    cy.get('#songsWrapper tr.song-item:nth-child(1) .album').should('have.text', 'The Wall')
-    cy.get('#songsWrapper tr.song-item:nth-child(2) .album').should('have.text', 'The Wall')
-    cy.get('#songsWrapper tr.song-item:nth-child(3) .album').should('have.text', 'The Wall')
+    cy.get('#songsWrapper .song-item:nth-child(1) .album').should('have.text', 'The Wall')
+    cy.get('#songsWrapper .song-item:nth-child(2) .album').should('have.text', 'The Wall')
+    cy.get('#songsWrapper .song-item:nth-child(3) .album').should('have.text', 'The Wall')
   })
 })

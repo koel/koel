@@ -41,7 +41,13 @@
       No songs queued.
       <span class="d-block secondary">
         How about
-        <a v-if="showShuffleLibraryButton" class="start" @click.prevent="playAll(true)">shuffling the whole library</a>?
+        <a
+          v-if="showShuffleLibraryButton"
+          data-testid="shuffle-library"
+          class="start" @click.prevent="playAll(true)"
+        >
+          shuffling the whole library
+        </a>?
       </span>
     </ScreenEmptyState>
   </section>

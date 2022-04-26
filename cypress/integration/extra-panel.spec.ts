@@ -7,7 +7,7 @@ context('Extra Information Panel', () => {
   })
 
   it('displays an option to add lyrics if blank', () => {
-    cy.fixture('info.get.200.json').then(data => {
+    cy.fixture('song-info.get.200.json').then(data => {
       data.lyrics = null
 
       cy.intercept('GET', '/api/**/info', {
@@ -17,7 +17,7 @@ context('Extra Information Panel', () => {
     })
 
     cy.$clickSidebarItem('All Songs')
-    cy.get('#songsWrapper tr.song-item:first-child').dblclick()
+    cy.get('#songsWrapper .song-item:first-child').dblclick()
 
     cy.get('#extraPanelLyrics').should('be.visible').and('contain.text', 'No lyrics found.')
     cy.get('#extraPanelLyrics [data-test=add-lyrics-btn]').click()
@@ -26,7 +26,7 @@ context('Extra Information Panel', () => {
     })
   })
 
-  it('displays the band information', () => {
+  it('displays the artist information', () => {
     cy.$shuffleSeveralSongs()
     cy.get('#extraTabArtist').click()
     cy.get('#extraPanelArtist').should('be.visible').within(() => {

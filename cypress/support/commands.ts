@@ -18,7 +18,7 @@ Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}): Chainable<
   cy.fixture(mergedOptions.asAdmin ? 'data.get.200.json' : 'data-non-admin.get.200.json').then(data => {
     delete mergedOptions.asAdmin
 
-    cy.intercept('GET', 'api/data', {
+    cy.intercept('api/data', {
       statusCode: 200,
       body: Object.assign(data, mergedOptions)
     })
@@ -54,16 +54,16 @@ Cypress.Commands.add('$clickSidebarItem', (sidebarItemText: string): Chainable<J
 })
 
 Cypress.Commands.add('$mockPlayback', () => {
-  cy.intercept('GET', '/play/**?api_token=mock-token', {
+  cy.intercept('/play/**?api_token=mock-token', {
     fixture: 'sample.mp3'
   })
 
-  cy.intercept('GET', '/api/album/**/thumbnail', {
+  cy.intercept('/api/album/**/thumbnail', {
     fixture: 'album-thumbnail.get.200.json'
   })
 
-  cy.intercept('GET', '/api/**/info', {
-    fixture: 'info.get.200.json'
+  cy.intercept('/api/song/**/info', {
+    fixture: 'song-info.get.200.json'
   })
 })
 
@@ -72,8 +72,8 @@ Cypress.Commands.add('$shuffleSeveralSongs', (count = 3) => {
   cy.$clickSidebarItem('All Songs')
 
   cy.get('#songsWrapper').within(() => {
-    cy.get('tr.song-item:nth-child(1)').click()
-    cy.get(`tr.song-item:nth-child(${count})`).click({
+    cy.get('.song-item:nth-child(1)').click()
+    cy.get(`.song-item:nth-child(${count})`).click({
       shiftKey: true
     })
 
@@ -83,21 +83,21 @@ Cypress.Commands.add('$shuffleSeveralSongs', (count = 3) => {
 
 Cypress.Commands.add('$assertPlaylistSongCount', (name: string, count: number) => {
   cy.$clickSidebarItem(name)
-  cy.get('#playlistWrapper tr.song-item').should('have.length', count)
+  cy.get('#playlistWrapper .song-item').should('have.length', count)
   cy.go('back')
 })
 
 Cypress.Commands.add('$assertFavoriteSongCount', (count: number) => {
   cy.$clickSidebarItem('Favorites')
-  cy.get('#favoritesWrapper').within(() => cy.get('tr.song-item').should('have.length', count))
+  cy.get('#favoritesWrapper').within(() => cy.get('.song-item').should('have.length', count))
   cy.go('back')
 })
 
 Cypress.Commands.add(
   '$selectSongRange',
   (start: number, end: number, scrollBehavior: scrollBehaviorOptions = false): Chainable<JQuery> => {
-    cy.get(`tr.song-item:nth-child(${start})`).click()
-    return cy.get(`tr.song-item:nth-child(${end})`).click({
+    cy.get(`.song-item:nth-child(${start})`).click()
+    return cy.get(`.song-item:nth-child(${end})`).click({
       scrollBehavior,
       shiftKey: true
     })
