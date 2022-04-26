@@ -55,7 +55,7 @@ Cypress.Commands.add('$clickSidebarItem', (sidebarItemText: string) => {
 
 Cypress.Commands.add('$mockPlayback', () => {
   cy.intercept('/play/**?api_token=mock-token', {
-    fixture: 'sample.mp3'
+    fixture: 'sample.mp3,null'
   })
 
   cy.intercept('/api/album/**/thumbnail', {
