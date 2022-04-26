@@ -72,8 +72,8 @@ Cypress.Commands.add('$shuffleSeveralSongs', (count = 3) => {
   cy.$clickSidebarItem('All Songs')
 
   cy.get('#songsWrapper').within(() => {
-    cy.get('.song-item:nth-child(1)').click()
-    cy.get(`.song-item:nth-child(${count})`).click({
+    cy.get('.vue-recycle-scroller__item-view:first-child .song-item').click()
+    cy.get(`.vue-recycle-scroller__item-view:nth-child(${count}) .song-item`).click({
       shiftKey: true
     })
 
@@ -96,8 +96,8 @@ Cypress.Commands.add('$assertFavoriteSongCount', (count: number) => {
 Cypress.Commands.add(
   '$selectSongRange',
   (start: number, end: number, scrollBehavior: scrollBehaviorOptions = false): Chainable<JQuery> => {
-    cy.get(`.song-item:nth-child(${start})`).click()
-    return cy.get(`.song-item:nth-child(${end})`).click({
+    cy.get(`.vue-recycle-scroller__item-view:nth-child(${start}) .song-item`).click()
+    return cy.get(`.vue-recycle-scroller__item-view:nth-child(${end}) .song-item`).click({
       scrollBehavior,
       shiftKey: true
     })
