@@ -3,7 +3,7 @@ import 'cypress-file-upload'
 import Chainable = Cypress.Chainable
 import scrollBehaviorOptions = Cypress.scrollBehaviorOptions
 
-Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}): Chainable<Cypress.AUTWindow> => {
+Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}) => {
   window.localStorage.setItem('api-token', 'mock-token')
 
   const mergedOptions = Object.assign({
@@ -30,7 +30,7 @@ Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}): Chainable<
   return win
 })
 
-Cypress.Commands.add('$loginAsNonAdmin', (options: Partial<LoginOptions> = {}): Chainable<Cypress.AUTWindow> => {
+Cypress.Commands.add('$loginAsNonAdmin', (options: Partial<LoginOptions> = {}) => {
   options.asAdmin = false
   return cy.$login(options)
 })
@@ -47,7 +47,7 @@ Cypress.Commands.add('$findInTestId', (selector: string) => {
   return cy.findByTestId(testId.trim()).find(rest.join(' '))
 })
 
-Cypress.Commands.add('$clickSidebarItem', (sidebarItemText: string): Chainable<JQuery> => {
+Cypress.Commands.add('$clickSidebarItem', (sidebarItemText: string) => {
   return cy.get('#sidebar')
     .findByText(sidebarItemText)
     .click()
@@ -72,10 +72,8 @@ Cypress.Commands.add('$shuffleSeveralSongs', (count = 3) => {
   cy.$clickSidebarItem('All Songs')
 
   cy.get('#songsWrapper').within(() => {
-    cy.get('.vue-recycle-scroller__item-view:first-child .song-item').click()
-    cy.get(`.vue-recycle-scroller__item-view:nth-child(${count}) .song-item`).click({
-      shiftKey: true
-    })
+    cy.$getVisibleSongRows().first().click()
+    cy.$getVisibleSongRows().eq(count - 1).click({ shiftKey: true })
 
     cy.get('.screen-header [data-test=btn-shuffle-selected]').click()
   })
@@ -95,9 +93,9 @@ Cypress.Commands.add('$assertFavoriteSongCount', (count: number) => {
 
 Cypress.Commands.add(
   '$selectSongRange',
-  (start: number, end: number, scrollBehavior: scrollBehaviorOptions = false): Chainable<JQuery> => {
-    cy.get(`.vue-recycle-scroller__item-view:nth-child(${start}) .song-item`).click()
-    return cy.get(`.vue-recycle-scroller__item-view:nth-child(${end}) .song-item`).click({
+  (start: number, end: number, scrollBehavior: scrollBehaviorOptions = false) => {
+    cy.$getVisibleSongRows().eq(start - 1).click()
+    return cy.$getVisibleSongRows().eq(end - 1).click({
       scrollBehavior,
       shiftKey: true
     })
@@ -120,3 +118,5 @@ Cypress.Commands.add('$assertSidebarItemActive', (text: string) => {
     .findByText(text)
     .should('have.class', 'active')
 })
+
+Cypress.Commands.add('$getVisibleSongRows', () => cy.get('.vue-recycle-scroller__item-view:visible').as('rows'))
