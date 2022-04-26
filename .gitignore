@@ -75,8 +75,9 @@ Temporary Items
 *~
 
 # Cypress
-cypress/screenshots
-cypress/videos
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
 
 /log
 coverage.xml
