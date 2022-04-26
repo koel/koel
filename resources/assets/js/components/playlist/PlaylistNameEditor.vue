@@ -47,7 +47,7 @@ const update = async () => {
   updating.value = true
 
   await playlistStore.update(mutatedPlaylist)
-  alerts.success(`Updated playlist "${mutatedPlaylist.name}."`)
+  alerts.success(`Playlist "${mutatedPlaylist.name}" updated.`)
   emit('updated', mutatedPlaylist)
 }
 

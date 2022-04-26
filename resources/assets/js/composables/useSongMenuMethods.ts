@@ -1,5 +1,6 @@
-import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import { Ref } from 'vue'
+import { favoriteStore, playlistStore, queueStore } from '@/stores'
+import { alerts, pluralize } from '@/utils'
 
 /**
  * Includes the methods trigger-able on a song (context) menu.
@@ -28,6 +29,7 @@ export const useSongMenuMethods = (songs: Ref<Song[]>, close: TAnyFunction) => {
 
   const addSongsToExistingPlaylist = async (playlist: Playlist) => {
     await playlistStore.addSongs(playlist, songs.value)
+    alerts.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
     close()
   }
 

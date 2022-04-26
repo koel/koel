@@ -77,7 +77,7 @@ const submit = async () => {
   await playlistStore.update(mutatedPlaylist)
   Object.assign(playlist.value, mutatedPlaylist)
   loading.value = false
-  alerts.success(`Updated playlist "${playlist.value.name}."`)
+  alerts.success(`Playlist "${playlist.value.name}" updated.`)
   eventBus.emit('SMART_PLAYLIST_UPDATED', playlist.value)
   close()
 }
