@@ -6,17 +6,9 @@ context('Artists', { scrollBehavior: false }, () => {
 
   it('loads the list of artists', () => {
     cy.get('#artistsWrapper').within(() => {
-      cy.get('.screen-header')
-        .should('be.visible')
-        .and('contain.text', 'Artists')
-
-      cy.get('[data-test=view-mode-thumbnail]')
-        .should('be.visible')
-        .and('have.class', 'active')
-
-      cy.get('[data-test=view-mode-list]')
-        .should('be.visible')
-        .and('not.have.class', 'active')
+      cy.get('.screen-header').should('be.visible').and('contain.text', 'Artists')
+      cy.get('[data-test=view-mode-thumbnail]').should('be.visible').and('have.class', 'active')
+      cy.get('[data-test=view-mode-list]').should('be.visible').and('not.have.class', 'active')
       cy.get('[data-test=artist-card]').should('have.length', 1)
     })
   })
@@ -55,7 +47,7 @@ context('Artists', { scrollBehavior: false }, () => {
     })
 
     cy.get('#artistWrapper').within(() => {
-      cy.get('.song-item').should('have.length.at.least', 1)
+      cy.$getVisibleSongRows().should('have.length.at.least', 1)
 
       cy.get('.screen-header').within(() => {
         cy.findByText('Download All').should('be.visible')

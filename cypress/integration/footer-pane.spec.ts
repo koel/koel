@@ -5,7 +5,7 @@ context('Footer Pane', () => {
 
     cy.$clickSidebarItem('All Songs')
 
-    cy.get('#songsWrapper .song-item:first-child').dblclick().within(function () {
+    cy.$getVisibleSongRows().first().dblclick().within(function () {
       cy.get('.title').invoke('text').as('title')
       cy.get('.album').invoke('text').as('album')
       cy.get('.artist').invoke('text').as('artist')

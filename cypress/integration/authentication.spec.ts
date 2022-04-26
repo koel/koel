@@ -26,9 +26,7 @@ context('Authentication', () => {
 
     cy.visit('/')
     submitLoginForm()
-    cy.findByTestId('login-form')
-      .should('be.visible')
-      .and('have.class', 'error')
+    cy.findByTestId('login-form').should('be.visible').and('have.class', 'error')
   })
 
   it('logs out', () => {
