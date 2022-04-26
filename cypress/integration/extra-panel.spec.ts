@@ -10,7 +10,7 @@ context('Extra Information Panel', () => {
     cy.fixture('song-info.get.200.json').then(data => {
       data.lyrics = null
 
-      cy.intercept('GET', '/api/**/info', {
+      cy.intercept('/api/**/info', {
         statusCode: 200,
         body: data
       })

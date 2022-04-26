@@ -42,7 +42,7 @@ const showingFullBio = ref(false)
 
 watch(artist, () => (showingFullBio.value = false))
 
-const showSummary = computed(() => mode.value !== 'full' && !showingFullBio)
+const showSummary = computed(() => mode.value !== 'full' && !showingFullBio.value)
 const showFull = computed(() => !showSummary.value)
 
 const shuffleAll = () => playbackService.playAllByArtist(artist.value, false)
