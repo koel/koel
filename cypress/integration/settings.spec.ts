@@ -2,7 +2,7 @@ context('Settings', () => {
   beforeEach(() => {
     cy.$login()
     cy.$clickSidebarItem('Settings')
-    cy.intercept('POST', '/api/settings', {}).as('save')
+    cy.intercept('PUT', '/api/settings', {}).as('save')
   })
 
   it('rescans media', () => {
