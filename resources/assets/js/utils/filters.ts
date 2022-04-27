@@ -66,4 +66,4 @@ export const filterBy = <T> (arr: T[], search: string, ...keys: string[]): T[] =
 }
 
 export const pluralize = (count: number, singular: string): string =>
-  count === 1 ? `${count} ${singular}` : `${count} ${singular}s`
+  count === 1 ? `${count} ${singular}` : `${count.toLocaleString()} ${singular}s`
