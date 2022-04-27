@@ -336,7 +336,6 @@ declare module 'koel/types/ui' {
 }
 
 interface SongProxy {
-  id: string,
   song: Song
   selected: boolean
 }

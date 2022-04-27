@@ -46,15 +46,9 @@
       <span class="play"></span>
     </div>
 
-    <RecycleScroller
-      class="scroller"
-      :items="songProxies"
-      :item-size="35"
-      key-field="id"
-      v-slot="{ item }"
-    >
-      <SongListItem :item="item" :columns="mergedConfig.columns"/>
-    </RecycleScroller>
+    <VirtualScroller v-slot="{ item }" :item-height="35" :items="songProxies">
+      <SongListItem :item="item" :columns="mergedConfig.columns" :key="item.song.id"/>
+    </VirtualScroller>
   </div>
 </template>
 
@@ -66,6 +60,7 @@ export default {
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
+
 import {
   computed,
   defineAsyncComponent,
@@ -76,8 +71,7 @@ import {
   toRefs,
   watch
 } from 'vue'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
 import { $, eventBus, orderBy, startDragging, arrayify } from '@/utils'
 import { queueStore } from '@/stores'
 
@@ -96,6 +90,7 @@ interface SongRow {
   }
 }
 
+const VirtualScroller = defineAsyncComponent(() => import('@/components/ui/VirtualScroller.vue'))
 const SongListItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
 
 const props = withDefaults(
@@ -104,6 +99,11 @@ const props = withDefaults(
 )
 
 const { items, type, config } = toRefs(props)
+
+onMounted(() => {
+  generateSongProxies()
+  render()
+})
 
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SortField[]>([])
@@ -132,7 +132,6 @@ const generateSongProxies = () => {
   const selectedSongIds = selectedSongs.value.map(song => song.id)
 
   return items.value.map(song => ({
-    id: song.id,
     song,
     selected: selectedSongIds.includes(song.id)
   }))
@@ -306,7 +305,7 @@ const openContextMenu = async (rowVm: SongRow, event: MouseEvent) => {
 
 const getAllSongsWithSort = () => songProxies.value.map(proxy => proxy.song)
 
-onMounted(() => items.value && render())
+// onMounted(() => items.value && render())
 
 defineExpose({
   rowClicked,
@@ -324,6 +323,8 @@ defineExpose({
 .song-list-wrap {
   position: relative;
   padding: 0 !important;
+  display: flex;
+  flex-direction: column;
 
   .song-list-header {
     background: var(--color-bg-secondary);

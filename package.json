@@ -32,7 +32,6 @@
     "slugify": "^1.0.2",
     "vue": "^3.2.32",
     "vue-global-events": "^2.1.1",
-    "vue-virtual-scroller": "^2.0.0-alpha.1",
     "vuequery": "~2.1.1",
     "youtube-player": "^3.0.4"
   },
