@@ -10,7 +10,7 @@ context('Playlists', () => {
 
     cy.get('#playlistWrapper').within(() => {
       cy.get('.heading-wrapper').should('be.visible').and('contain', 'Simple Playlist')
-      cy.$getVisibleSongRows().should('have.length', 3)
+      cy.$getSongRows().should('have.length', 3)
       cy.findByText('Download All').should('be.visible')
       ;['.btn-shuffle-all', '.btn-delete-playlist'].forEach(selector => cy.get(selector).should('be.visible'))
     })
@@ -77,7 +77,7 @@ context('Playlists', () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
-      cy.$selectSongRange(1, 2)
+      cy.$selectSongRange(0, 1)
       cy.get('[data-test=add-to-btn]').click()
       cy.get('[data-test=add-to-menu]')
         .should('be.visible')
@@ -101,7 +101,7 @@ context('Playlists', () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
-      cy.$selectSongRange(1, 3)
+      cy.$selectSongRange(0, 2)
       cy.get('[data-test=add-to-btn]').click()
       cy.get('[data-test=new-playlist-name]').type('A New Playlist{enter}')
     })

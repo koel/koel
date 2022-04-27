@@ -17,7 +17,7 @@ context('Extra Information Panel', () => {
     })
 
     cy.$clickSidebarItem('All Songs')
-    cy.$getVisibleSongRows().first().dblclick()
+    cy.$getSongRows().first().dblclick()
 
     cy.get('#extraPanelLyrics').should('be.visible').and('contain.text', 'No lyrics found.')
     cy.get('#extraPanelLyrics [data-test=add-lyrics-btn]').click()

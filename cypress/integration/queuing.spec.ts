@@ -14,8 +14,8 @@ context('Queuing', { scrollBehavior: false }, () => {
     cy.get('#queueWrapper').within(() => {
       cy.findByText('Current Queue').should('be.visible')
       cy.findByTestId('shuffle-library').click()
-      cy.get('.song-item').should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
-      cy.get('.song-item:first-child').should('have.class', 'playing')
+      cy.$getSongRows().should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
+      cy.get('@rows').first().should('have.class', 'playing')
     })
 
     cy.$assertPlaying()
@@ -27,12 +27,9 @@ context('Queuing', { scrollBehavior: false }, () => {
     cy.get('#queueWrapper').within(() => {
       cy.findByText('Current Queue').should('be.visible')
       cy.findByTestId('shuffle-library').click()
-      cy.get('').click()
-      cy.get('.song-item').should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
-      cy.get('.screen-header [data-test=song-list-controls]')
-        .findByText('Clear')
-        .click()
-      cy.get('.song-item').should('have.length', 0)
+      cy.$getSongRows().should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
+      cy.get('.screen-header [data-test=song-list-controls]').findByText('Clear').click()
+      cy.$getSongRows().should('have.length', 0)
     })
   })
 
@@ -45,29 +42,29 @@ context('Queuing', { scrollBehavior: false }, () => {
     })
 
     cy.get('#queueWrapper').within(() => {
-      cy.get('.song-item').should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
-      cy.get('.song-item:first-child').should('have.class', 'playing')
+      cy.$getSongRows().should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
+        .first().should('have.class', 'playing')
     })
 
     cy.$assertPlaying()
   })
 
   it('creates a queue from selected songs', () => {
-    cy.$shuffleSeveralSongs()
+    cy.$shuffleSeveralSongs(3)
 
     cy.get('#queueWrapper').within(() => {
-      cy.get('.song-item').should('have.length', 3)
-      cy.get('.song-item:first-child').should('have.class', 'playing')
+      cy.$getSongRows().should('have.length', 3)
+        .first().should('have.class', 'playing')
     })
   })
 
   it('deletes a song from queue', () => {
-    cy.$shuffleSeveralSongs()
+    cy.$shuffleSeveralSongs(3)
 
     cy.get('#queueWrapper').within(() => {
-      cy.get('.song-item').should('have.length', 3)
-      cy.get('.song-item:first-child').type('{backspace}')
-      cy.get('.song-item').should('have.length', 2)
+      cy.$getSongRows().should('have.length', 3)
+      cy.get('@rows').first().type('{backspace}')
+      cy.$getSongRows().should('have.length', 2)
     })
   })
 
@@ -76,15 +73,15 @@ context('Queuing', { scrollBehavior: false }, () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(function () {
-      cy.get('.song-item:nth-child(4) .title').invoke('text').as('title')
-      cy.get('.song-item:nth-child(4)').dblclick()
+      cy.$getSongRowAt(4).find('.title').invoke('text').as('title')
+      cy.$getSongRowAt(4).dblclick()
     })
 
     cy.$clickSidebarItem('Current Queue')
     cy.get('#queueWrapper').within(function () {
-      cy.get('.song-item').should('have.length', 4)
-      cy.get(`.song-item:nth-child(2) .title`).should('have.text', this.title)
-      cy.get('.song-item:nth-child(2)').should('have.class', 'playing')
+      cy.$getSongRows().should('have.length', 4)
+      cy.$getSongRowAt(1).find('.title').should('have.text', this.title)
+      cy.$getSongRowAt(1).should('have.class', 'playing')
     })
 
     cy.$assertPlaying()

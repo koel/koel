@@ -113,7 +113,7 @@ context('Song Context Menu', { scrollBehavior: false }, () => {
       cy.$assertPlaylistSongCount('Simple Playlist', 3)
       cy.get('#songsWrapper').within(() => {
         if (config.songCount > 1) {
-          cy.$selectSongRange(1, config.songCount).rightclick()
+          cy.$selectSongRange(0, config.songCount - 1).rightclick()
         } else {
           cy.get('.song-item:first-child').rightclick()
         }

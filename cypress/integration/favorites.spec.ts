@@ -9,7 +9,7 @@ context('Favorites', { scrollBehavior: false }, () => {
         cy.findByText('Songs You Love').should('be.visible')
         cy.findByText('Download All').should('be.visible')
 
-        cy.$getVisibleSongRows().should('have.length', 3)
+        cy.$getSongRows().should('have.length', 3)
           .each(row => cy.wrap(row).get('[data-test=btn-like-liked]').should('be.visible'))
       })
   })
@@ -23,7 +23,7 @@ context('Favorites', { scrollBehavior: false }, () => {
 
     cy.get('#songsWrapper')
       .within(() => {
-        cy.$getVisibleSongRows().first().within(() => {
+        cy.$getSongRows().first().within(() => {
           cy.get('[data-test=like-btn]')
             .within(() => cy.get('[data-test=btn-like-unliked]').should('be.visible')).click()
             .within(() => cy.get('[data-test=btn-like-liked]').should('be.visible'))
@@ -42,7 +42,7 @@ context('Favorites', { scrollBehavior: false }, () => {
 
     cy.get('#songsWrapper')
       .within(() => {
-        cy.$getVisibleSongRows().first().click()
+        cy.$getSongRows().first().click()
         cy.get('[data-test=add-to-btn]').click()
         cy.get('[data-test=add-to-menu]').should('be.visible')
           .within(() => cy.findByText('Favorites').click()).should('not.be.visible')
@@ -57,11 +57,11 @@ context('Favorites', { scrollBehavior: false }, () => {
 
     cy.get('#favoritesWrapper')
       .within(() => {
-        cy.$getVisibleSongRows().should('have.length', 3)
+        cy.$getSongRows().should('have.length', 3)
           .first().should('contain.text', 'November')
           .within(() => cy.get('[data-test=like-btn]').click())
 
-        cy.$getVisibleSongRows().should('have.length', 2)
+        cy.$getSongRows().should('have.length', 2)
           .first().should('not.contain.text', 'November')
       })
   })
@@ -72,11 +72,11 @@ context('Favorites', { scrollBehavior: false }, () => {
 
     cy.get('#favoritesWrapper')
       .within(() => {
-        cy.$getVisibleSongRows().should('have.length', 3)
+        cy.$getSongRows().should('have.length', 3)
           .first().should('contain.text', 'November')
           .click().type('{backspace}')
 
-        cy.$getVisibleSongRows().should('have.length', 2)
+        cy.$getSongRows().should('have.length', 2)
           .first().should('not.contain.text', 'November')
       })
   })

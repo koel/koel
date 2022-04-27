@@ -26,7 +26,8 @@ declare namespace Cypress {
      */
     $shuffleSeveralSongs(count?: number): void
 
-    $getVisibleSongRows(): Chainable<JQuery>
+    $getSongRows(): Chainable<JQuery>
+    $getSongRowAt(position: number): Chainable<JQuery>
 
     $assertPlaylistSongCount(name: string, count: number): void
     $assertFavoriteSongCount(count: number): void

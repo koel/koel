@@ -46,7 +46,7 @@ context('Albums', { scrollBehavior: false }, () => {
     })
 
     cy.get('#albumWrapper').within(() => {
-      cy.$getVisibleSongRows().should('have.length.at.least', 1)
+      cy.$getSongRows().should('have.length.at.least', 1)
 
       cy.get('.screen-header').within(() => {
         cy.findByText('Download All').should('be.visible')

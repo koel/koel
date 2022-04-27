@@ -1,6 +1,5 @@
 import '@testing-library/cypress/add-commands'
 import 'cypress-file-upload'
-import Chainable = Cypress.Chainable
 import scrollBehaviorOptions = Cypress.scrollBehaviorOptions
 
 Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}) => {
@@ -47,11 +46,7 @@ Cypress.Commands.add('$findInTestId', (selector: string) => {
   return cy.findByTestId(testId.trim()).find(rest.join(' '))
 })
 
-Cypress.Commands.add('$clickSidebarItem', (sidebarItemText: string) => {
-  return cy.get('#sidebar')
-    .findByText(sidebarItemText)
-    .click()
-})
+Cypress.Commands.add('$clickSidebarItem', (text: string) => cy.get('#sidebar').findByText(text).click())
 
 Cypress.Commands.add('$mockPlayback', () => {
   cy.intercept('/play/**?api_token=mock-token', {
@@ -72,8 +67,8 @@ Cypress.Commands.add('$shuffleSeveralSongs', (count = 3) => {
   cy.$clickSidebarItem('All Songs')
 
   cy.get('#songsWrapper').within(() => {
-    cy.$getVisibleSongRows().first().click()
-    cy.$getVisibleSongRows().eq(count - 1).click({ shiftKey: true })
+    cy.$getSongRowAt(0).click()
+    cy.$getSongRowAt(count - 1).click({ shiftKey: true })
 
     cy.get('.screen-header [data-test=btn-shuffle-selected]').click()
   })
@@ -94,8 +89,8 @@ Cypress.Commands.add('$assertFavoriteSongCount', (count: number) => {
 Cypress.Commands.add(
   '$selectSongRange',
   (start: number, end: number, scrollBehavior: scrollBehaviorOptions = false) => {
-    cy.$getVisibleSongRows().eq(start - 1).click()
-    return cy.$getVisibleSongRows().eq(end - 1).click({
+    cy.$getSongRowAt(start).click()
+    return cy.$getSongRowAt(end).click({
       scrollBehavior,
       shiftKey: true
     })
@@ -114,9 +109,8 @@ Cypress.Commands.add('$assertNotPlaying', () => {
 })
 
 Cypress.Commands.add('$assertSidebarItemActive', (text: string) => {
-  cy.get('#sidebar')
-    .findByText(text)
-    .should('have.class', 'active')
+  cy.get('#sidebar').findByText(text).should('have.class', 'active')
 })
 
-Cypress.Commands.add('$getVisibleSongRows', () => cy.get('.vue-recycle-scroller__item-view:visible').as('rows'))
+Cypress.Commands.add('$getSongRows', () => cy.get('.song-item').as('rows'))
+Cypress.Commands.add('$getSongRowAt', (position: number) => cy.$getSongRows().eq(position))

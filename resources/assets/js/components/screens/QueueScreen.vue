@@ -39,13 +39,9 @@
       </template>
 
       No songs queued.
-      <span class="d-block secondary">
+      <span class="d-block secondary" v-if="libraryNotEmpty">
         How about
-        <a
-          v-if="showShuffleLibraryButton"
-          data-testid="shuffle-library"
-          class="start" @click.prevent="playAll(true)"
-        >
+        <a data-testid="shuffle-library" class="start" @click.prevent="playAll(true)">
           shuffling the whole library
         </a>?
       </span>
@@ -78,7 +74,8 @@ const {
   toggleControls
 } = useSongList(toRef(queueStore.state, 'songs'), { clearQueue: true })
 
-const showShuffleLibraryButton = computed(() => songs.value.length > 0)
+const allSongs = toRef(songStore.state, 'songs')
+const libraryNotEmpty = computed(() => allSongs.value.length > 0)
 
 const playAll = (shuffle: boolean) => playbackService.queueAndPlay(songs.value.length ? songs.value : songStore.all, shuffle)
 const clearQueue = () => queueStore.clear()

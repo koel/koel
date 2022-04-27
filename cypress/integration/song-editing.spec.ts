@@ -50,10 +50,7 @@ context('Song Editing', { scrollBehavior: false }, () => {
       fixture: 'songs-multiple.put.200.json'
     })
 
-    cy.get('#songsWrapper').within(() => {
-      cy.$selectSongRange(1, 3).rightclick()
-    })
-
+    cy.get('#songsWrapper').within(() => cy.$selectSongRange(0, 2).rightclick())
     cy.findByTestId('song-context-menu').within(() => cy.findByText('Edit').click())
 
     cy.findByTestId('edit-song-form').within(() => {
