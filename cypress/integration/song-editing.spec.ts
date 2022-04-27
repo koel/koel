@@ -1,6 +1,6 @@
 context('Song Editing', { scrollBehavior: false }, () => {
   beforeEach(() => {
-    cy.intercept('/api/**/info', {
+    cy.intercept('/api/song/**/info', {
       fixture: 'song-info.get.200.json'
     })
 
@@ -23,11 +23,8 @@ context('Song Editing', { scrollBehavior: false }, () => {
 
       cy.get('[name=title]').clear().type('New Title')
       cy.findByTestId('edit-song-lyrics-tab').click()
-      cy.get('textarea[name=lyrics]')
-        .should('be.visible')
-        .and('contain.value', 'Sample song lyrics')
-        .clear()
-        .type('New lyrics{enter}Supports multiline.')
+      cy.get('textarea[name=lyrics]').should('be.visible').and('contain.value', 'Sample song lyrics')
+        .clear().type('New lyrics{enter}Supports multiline.')
 
       cy.get('button[type=submit]').click()
     })
@@ -61,14 +58,8 @@ context('Song Editing', { scrollBehavior: false }, () => {
       cy.get('textarea[name=lyrics]').should('not.exist')
       ;['3 songs selected', 'Mixed Albums'].forEach(text => cy.findByText(text).should('be.visible'))
 
-      cy.get('[name=album]').invoke('attr', 'placeholder').should('contain', 'No change')
-
-      // Test the typeahead/auto-complete feature
-      cy.get('[name=album]').type('A')
-      cy.findByText('Abstract').click()
-      cy.get('[name=album]').should('contain.value', 'Abstract')
-      cy.get('[name=album]').type('{downArrow}{downArrow}{downArrow}{downArrow}{enter}')
-      cy.get('[name=album]').should('contain.value', 'The Wall')
+      cy.get('[name=album]').invoke('attr', 'placeholder').should('contain', 'Leave unchanged')
+      cy.get('[name=album]').type('The Wall')
 
       cy.get('button[type=submit]').click()
     })
@@ -76,8 +67,6 @@ context('Song Editing', { scrollBehavior: false }, () => {
     cy.findByText('Updated 3 songs.').should('be.visible')
     cy.findByTestId('edit-song-form').should('not.exist')
 
-    cy.get('#songsWrapper .song-item:nth-child(1) .album').should('have.text', 'The Wall')
-    cy.get('#songsWrapper .song-item:nth-child(2) .album').should('have.text', 'The Wall')
-    cy.get('#songsWrapper .song-item:nth-child(3) .album').should('have.text', 'The Wall')
+    ;[1, 2, 3].forEach(i => cy.get(`#songsWrapper .song-item:nth-child(${i}) .album`).should('have.text', 'The Wall'))
   })
 })

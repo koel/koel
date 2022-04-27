@@ -95,7 +95,7 @@ const doPlayback = () => {
 }
 
 const openEditForm = () => {
-  songs.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', songs)
+  songs.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', songs.value)
   close()
 }
 

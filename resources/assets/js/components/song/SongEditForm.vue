@@ -50,7 +50,13 @@
 
             <div class="form-row">
               <label>Artist</label>
-              <input v-model="formData.artistName" :placeholder="artistNamePlaceholder" list="artistNames" type="text">
+              <input
+                v-model="formData.artistName"
+                :placeholder="artistNamePlaceholder"
+                list="artistNames"
+                name="artist"
+                type="text"
+              >
               <datalist id="artistNames">
                 <option v-for="name in artistNames" :key="name" :value="name"></option>
               </datalist>
@@ -58,7 +64,13 @@
 
             <div class="form-row">
               <label>Album</label>
-              <input v-model="formData.albumName" :placeholder="albumNamePlaceholder" list="albumNames" type="text">
+              <input
+                v-model="formData.albumName"
+                :placeholder="albumNamePlaceholder"
+                list="albumNames"
+                name="album"
+                type="text"
+              >
               <datalist id="albumNames">
                 <option v-for="name in albumNames" :key="name" :value="name"></option>
               </datalist>

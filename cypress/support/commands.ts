@@ -17,7 +17,7 @@ Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}) => {
   cy.fixture(mergedOptions.asAdmin ? 'data.get.200.json' : 'data-non-admin.get.200.json').then(data => {
     delete mergedOptions.asAdmin
 
-    cy.intercept('api/data', {
+    cy.intercept('/api/data', {
       statusCode: 200,
       body: Object.assign(data, mergedOptions)
     })

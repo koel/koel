@@ -6,9 +6,7 @@ context('User Management', () => {
 
   it('shows the list of users', () => {
     cy.get('#usersWrapper').within(() => {
-      cy.get('[data-test=user-card]')
-        .should('have.length', 3)
-        .and('be.visible')
+      cy.get('[data-test=user-card]').should('have.length', 3).and('be.visible')
 
       cy.get('[data-test=user-card].me').within(() => {
         cy.get('[data-test=current-user-indicator]').should('be.visible')
@@ -24,10 +22,8 @@ context('User Management', () => {
 
     cy.findByTestId('add-user-btn').click()
     cy.findByTestId('add-user-form').within(() => {
-      cy.get('[name=name]')
-        .should('be.focused')
+      cy.get('[name=name]').should('be.focused')
         .type('Charles')
-
       cy.get('[name=email]').type('charles@koel.test')
       cy.get('[name=password]').type('a-secure-password')
       cy.get('[name=is_admin]').check()
@@ -57,16 +53,11 @@ context('User Management', () => {
     cy.get('#usersWrapper [data-test=user-card]:nth-child(2) [data-test=edit-user-btn]').click({ force: true })
 
     cy.findByTestId('edit-user-form').within(() => {
-      cy.get('[name=name]')
-        .should('be.focused')
-        .and('have.value', 'Alice')
-        .clear()
-        .type('Adriana')
+      cy.get('[name=name]').should('be.focused').and('have.value', 'Alice')
+        .clear().type('Adriana')
 
-      cy.get('[name=email]')
-        .should('have.value', 'alice@koel.test')
-        .clear()
-        .type('adriana@koel.test')
+      cy.get('[name=email]').should('have.value', 'alice@koel.test')
+        .clear().type('adriana@koel.test')
 
       cy.get('[name=password]').should('have.value', '')
       cy.get('[type=submit]').click()
