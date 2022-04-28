@@ -100,11 +100,6 @@ const props = withDefaults(
 
 const { items, type, config } = toRefs(props)
 
-onMounted(() => {
-  generateSongProxies()
-  render()
-})
-
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SortField[]>([])
 const sortOrder = ref<SortOrder>('None')
@@ -305,8 +300,6 @@ const openContextMenu = async (rowVm: SongRow, event: MouseEvent) => {
 
 const getAllSongsWithSort = () => songProxies.value.map(proxy => proxy.song)
 
-// onMounted(() => items.value && render())
-
 defineExpose({
   rowClicked,
   dragStart,
@@ -317,6 +310,8 @@ defineExpose({
   getAllSongsWithSort,
   sort
 })
+
+onMounted(() => render())
 </script>
 
 <style lang="scss">
