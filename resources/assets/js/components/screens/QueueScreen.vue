@@ -31,6 +31,7 @@
       type="queue"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
+      @reorder="onReorder"
     />
 
     <ScreenEmptyState v-else>
@@ -81,6 +82,7 @@ const playAll = (shuffle: boolean) => playbackService.queueAndPlay(songs.value.l
 const clearQueue = () => queueStore.clear()
 const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(selectedSongs.value)
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
+const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
 </script>
 
 <style lang="scss" scoped>

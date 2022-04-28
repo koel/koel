@@ -73,7 +73,6 @@ import {
 } from 'vue'
 
 import { $, eventBus, orderBy, startDragging, arrayify } from '@/utils'
-import { queueStore } from '@/stores'
 
 type SortField = 'song.track'
   | 'song.disc'
@@ -170,12 +169,12 @@ const render = () => {
   sort(sortFields.value, sortOrder.value)
 }
 
-watch(items, () => render())
+watch(items, () => render(), { deep: true })
 
 const vm = getCurrentInstance()
 watch(selectedSongs, () => eventBus.emit('SET_SELECTED_SONGS', selectedSongs.value, vm?.parent))
 
-const emit = defineEmits(['press:enter', 'press:delete'])
+const emit = defineEmits(['press:enter', 'press:delete', 'reorder'])
 
 const handleDelete = () => {
   emit('press:delete')
@@ -265,9 +264,6 @@ const allowDrop = (event: DragEvent) => {
   return false
 }
 
-/**
- * Perform reordering songs upon dropping if the current song list is of type Queue.
- */
 const handleDrop = (rowVm: SongRow, event: DragEvent) => {
   if (
     !allowSongReordering.value ||
@@ -277,7 +273,7 @@ const handleDrop = (rowVm: SongRow, event: DragEvent) => {
     return removeDroppableState(event)
   }
 
-  queueStore.move(selectedSongs.value, rowVm.props.item.song)
+  emit('reorder', rowVm.props.item.song)
   return removeDroppableState(event)
 }
 
