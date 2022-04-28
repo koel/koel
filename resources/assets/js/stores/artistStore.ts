@@ -28,15 +28,17 @@ export const artistStore = {
   },
 
   setupArtist (artist: Artist) {
-    artist.playCount = 0
-    artist.info = null
-    artist.albums = []
-    artist.songs = []
+    artist.info = artist.info || null
+    artist.albums = artist.albums || []
+    artist.songs = artist.songs || []
+    artist.playCount = artist.songs.reduce((count, song) => count + song.playCount, 0)
 
     this.cache[artist.id] = artist
+
+    return artist
   },
 
-  get all (): Artist[] {
+  get all () {
     return this.state.artists
   },
 
@@ -55,11 +57,11 @@ export const artistStore = {
   },
 
   add (artists: Artist | Artist[]) {
-    arrayify(artists).forEach(artist => {
-      this.setupArtist(artist)
-      artist.playCount = artist.songs.reduce((count, song) => count + song.playCount, 0)
-      this.all.push(artist)
-    })
+    arrayify(artists).forEach(artist => this.all.push(this.setupArtist(artist)))
+  },
+
+  prepend (artists: Artist | Artist[]) {
+    arrayify(artists).forEach(artist => this.all.unshift(this.setupArtist(artist)))
   },
 
   /**

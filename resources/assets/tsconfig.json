@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "es6",
+    "target": "es2021",
+    "lib": ["es2021", "dom"],
     "strict": true,
     "noImplicitAny": false,
     "module": "esnext",

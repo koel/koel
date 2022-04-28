@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "baseUrl": ".",
-    "lib": ["es5", "dom"],
+    "lib": ["es2021", "dom"],
     "types": ["cypress", "@testing-library/cypress", "@types/node", "cypress-file-upload"]
   },
   "include": [

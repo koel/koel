@@ -19,8 +19,9 @@ export const albumStore = {
   }),
 
   init (albums: Album[]) {
-    // Traverse through the artists array and add their albums into our master album list.
     this.all = albums
+
+    // Traverse through the artists array and add their albums into our master album list.
     this.all.forEach(album => this.setupAlbum(album))
   },
 
@@ -29,11 +30,13 @@ export const albumStore = {
     artist.albums = union(artist.albums, [album])
 
     album.artist = artist
-    album.info = null
-    album.songs = []
-    album.playCount = 0
+    album.info = album.info || null
+    album.songs = album.songs || []
+    album.playCount = album.songs.reduce((count, song) => count + song.playCount, 0)
 
     this.cache[album.id] = album
+
+    return album
   },
 
   get all () {
@@ -55,11 +58,11 @@ export const albumStore = {
   },
 
   add (albums: Album | Album[]) {
-    arrayify(albums).forEach(album => {
-      this.setupAlbum(album)
-      album.playCount = album.songs.reduce((count, song) => count + song.playCount, 0)
-      this.all.push(album)
-    })
+    arrayify(albums).forEach(album => this.all.push(this.setupAlbum(album)))
+  },
+
+  prepend (albums: Album | Album[]) {
+    arrayify(albums).forEach(album => this.all.unshift(this.setupAlbum(album)))
   },
 
   /**

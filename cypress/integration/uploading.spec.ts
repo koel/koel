@@ -1,4 +1,6 @@
 context('Uploading', () => {
+  let interceptCounter = 0
+
   beforeEach(() => {
     cy.$login()
     cy.$clickSidebarItem('Upload')
@@ -12,16 +14,24 @@ context('Uploading', () => {
       .should('contain.text', 'Mendelssohn Violin Concerto in E minor, Op. 64')
   }
 
+  function selectFixtureFile (fileName = 'sample.mp3') {
+    // Cypress caches fixtures and apparently has a bug where consecutive fixture files yield an empty "type"
+    // which will fail our "audio type filter" (i.e. the file will not be considered an audio file).
+    // As a workaround, we pad the fixture file name with slashes to invalidate the cache.
+    // https://github.com/cypress-io/cypress/issues/4716#issuecomment-558305553
+    cy.fixture(fileName.padStart(fileName.length + interceptCounter, '/')).as('file')
+    cy.get('[type=file]').selectFile('@file')
+
+    interceptCounter++
+  }
+
   function executeFailedUpload () {
     cy.intercept('POST', '/api/upload', {
       statusCode: 413
     }).as('failedUpload')
 
-    cy.get('[type=file]').attachFile('sample.mp3')
-    cy.get('[data-test=upload-item]')
-      .should('have.length', 1)
-      .and('be.visible')
-
+    selectFixtureFile()
+    cy.get('[data-test=upload-item]').should('have.length', 1).and('be.visible')
     cy.wait('@failedUpload')
 
     cy.get('[data-test=upload-item]').should('have.length', 1)
@@ -34,10 +44,8 @@ context('Uploading', () => {
     }).as('upload')
 
     cy.get('#uploadWrapper').within(() => {
-      cy.get('[type=file]').attachFile('sample.mp3')
-      cy.get('[data-test=upload-item]')
-        .should('have.length', 1)
-        .and('be.visible')
+      selectFixtureFile()
+      cy.get('[data-test=upload-item]').should('have.length', 1).and('be.visible')
 
       cy.wait('@upload')
       cy.get('[data-test=upload-item]').should('have.length', 0)

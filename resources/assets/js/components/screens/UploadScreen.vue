@@ -63,7 +63,7 @@ import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { settingStore, userStore } from '@/stores'
 import { eventBus, getAllFileEntries, isDirectoryReadingSupported } from '@/utils'
-import { UploadFile, acceptedMediaTypes } from '@/config'
+import { acceptedMediaTypes, UploadFile } from '@/config'
 import { uploadService } from '@/services'
 
 import UploadItem from '@/components/ui/upload/UploadItem.vue'
@@ -103,13 +103,11 @@ const handleFiles = (files: Array<File>) => {
   uploadService.queue(uploadCandidates)
 }
 
-const fileEntryToFile = async (entry: FileSystemEntry): Promise<File> => new Promise(resolve => {
-  entry.file(resolve)
-})
+const fileEntryToFile = async (entry: FileSystemEntry): Promise<File> => new Promise(resolve => entry.file(resolve))
 
 const onFileInputChange = (event: InputEvent) => {
   const selectedFileList = (event.target as HTMLInputElement).files
-  selectedFileList && handleFiles(Array.from(selectedFileList))
+  selectedFileList?.length && handleFiles(Array.from(selectedFileList))
 }
 
 const onDrop = async (event: DragEvent) => {
@@ -134,7 +132,9 @@ const removeFailedEntries = () => {
   hasUploadFailures.value = false
 }
 
-eventBus.on('UPLOAD_QUEUE_FINISHED', () => (hasUploadFailures.value = uploadService.getFilesByStatus('Errored').length !== 0))
+eventBus.on('UPLOAD_QUEUE_FINISHED', () => {
+  hasUploadFailures.value = uploadService.getFilesByStatus('Errored').length !== 0
+})
 </script>
 
 <style lang="scss">

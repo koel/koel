@@ -67,6 +67,7 @@ export const uploadService = {
       window.setTimeout(() => this.remove(file), 1000)
       eventBus.emit('SONG_UPLOADED')
     } catch (error: any) {
+      console.error(error)
       file.message = `Upload failed: ${error.response?.data?.message || 'Unknown error'}`
       file.status = 'Errored'
       this.proceed() // upload the next file
@@ -121,24 +122,24 @@ export const uploadService = {
         length: 0,
         fmtLength: '',
         info: null,
-        albums: [],
-        songs: []
+        albums: [] as Album[],
+        songs: [] as Song[]
       })
 
-      artistStore.all.unshift(artist)
+      artistStore.prepend(artist)
     }
 
     if (!album) {
       album = Object.assign(uploadResult.album, {
         artist,
-        songs: [],
+        songs: [] as Song[],
         playCount: 0,
         length: 0,
         fmtLength: '',
         info: null
       })
 
-      albumStore.all.unshift(album)
+      albumStore.prepend(album)
     }
 
     const song: Song = {
