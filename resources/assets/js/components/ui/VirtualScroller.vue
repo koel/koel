@@ -22,12 +22,7 @@ const renderAhead = 5
 const scrollTop = ref(0)
 
 const totalHeight = computed(() => items.value.length * itemHeight.value)
-
-const startPosition = computed(() => {
-  const position = Math.floor(scrollTop.value / itemHeight.value) - renderAhead
-  return Math.max(0, position)
-})
-
+const startPosition = computed(() => Math.max(0, Math.floor(scrollTop.value / itemHeight.value) - renderAhead))
 const offsetY = computed(() => startPosition.value * itemHeight.value)
 
 const renderedItems = computed(() => {
@@ -44,7 +39,6 @@ onMounted(() => {
   observer.observe(scroller.value!)
   scrollerHeight.value = scroller.value!.offsetHeight
 })
-
 </script>
 
 <style lang="scss" scoped>
