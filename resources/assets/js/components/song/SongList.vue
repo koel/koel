@@ -108,6 +108,7 @@ const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SortField[]>([])
 const sortOrder = ref<SortOrder>('None')
 const songRows = ref<SongRow[]>([])
+let initialSortedSongRows: SongRow[] = []
 
 const allowReordering = computed(() => type.value === 'queue')
 const selectedSongs = computed(() => songRows.value.filter(row => row.selected).map(row => row.song))
@@ -164,13 +165,14 @@ const sort = (field: SortField | SortField[] = [], order: SortOrder | null = nul
   sortOrder.value = order === null ? nextSortOrder.value : order
 
   songRows.value = sortOrder.value === 'None'
-    ? generateSongRows()
-    : orderBy(songRows.value, sortFields.value, sortOrder.value === 'Desc')
+    ? initialSortedSongRows
+    : orderBy(songRows.value, sortFields.value, sortOrder.value === 'Desc' ? 'desc' : 'asc')
 }
 
 const render = () => {
   mergedConfig.value.sortable || (sortFields.value = [])
-  songRows.value = generateSongRows()
+  // keep a backup of the initial-sorted rows to revert to it when the sort order becomes "None"
+  songRows.value = initialSortedSongRows = generateSongRows()
   sort(sortFields.value, sortOrder.value)
 }
 
