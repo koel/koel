@@ -72,6 +72,7 @@ export default {
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
+import { orderBy } from 'lodash'
 
 import {
   computed,
@@ -83,7 +84,7 @@ import {
   watch
 } from 'vue'
 
-import { $, eventBus, orderBy, startDragging, arrayify } from '@/utils'
+import { $, eventBus, startDragging, arrayify } from '@/utils'
 
 type SortField = 'song.track'
   | 'song.disc'
