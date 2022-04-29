@@ -24,8 +24,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      KOEL_ENV: '"web"',
-      NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
+      KOEL_ENV: JSON.stringify(process.env.KOEL_ENV || '""')
     })
   ],
   devServer: {

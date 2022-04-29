@@ -91,8 +91,7 @@ declare module 'nouislider' {
   }): void
 }
 
-declare const KOEL_ENV: 'app' | 'web'
-declare const NODE_ENV: 'dev' | 'test' | 'prod' | 'demo'
+declare const KOEL_ENV: '' | 'demo'
 
 declare module '*.vue' {
   import { defineComponent } from 'vue'

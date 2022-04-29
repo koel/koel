@@ -42,7 +42,7 @@
 
     <div class="form-row">
       <Btn class="btn-submit" type="submit">Save</Btn>
-      <span v-if="demo" style="font-size:.95rem; opacity:.7; margin-left:5px">
+      <span v-if="isDemo" class="demo-notice">
         Changes will not be saved in the demo version.
       </span>
     </div>
@@ -52,11 +52,10 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, ref } from 'vue'
 import { UpdateCurrentProfileData, userStore } from '@/stores'
-import { alerts, parseValidationError } from '@/utils'
+import { alerts, isDemo, parseValidationError } from '@/utils'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
-const demo = NODE_ENV === 'demo'
 const profile = ref<UpdateCurrentProfileData>({} as unknown as UpdateCurrentProfileData)
 
 onMounted(() => {
@@ -70,6 +69,11 @@ onMounted(() => {
 const update = async () => {
   if (!profile.value) {
     throw Error()
+  }
+
+  if (isDemo) {
+    alerts.success('Profile updated.')
+    return
   }
 
   try {
@@ -97,6 +101,12 @@ input {
 
 .password-rules {
   margin-top: .75rem;
+}
+
+.demo-notice {
+  font-size: .95rem;
+  opacity: .7;
+  margin-left: 5px;
 }
 
 @media only screen and (max-width: 667px) {

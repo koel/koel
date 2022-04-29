@@ -12,6 +12,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, ref } from 'vue'
 import { userStore } from '@/stores'
+import { isDemo } from '@/utils'
 
 const DEMO_ACCOUNT = {
   email: 'demo@koel.dev',
@@ -21,8 +22,8 @@ const DEMO_ACCOUNT = {
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const url = ref('')
-const email = ref(NODE_ENV === 'demo' ? DEMO_ACCOUNT.email : '')
-const password = ref(NODE_ENV === 'demo' ? DEMO_ACCOUNT.password : '')
+const email = ref(isDemo ? DEMO_ACCOUNT.email : '')
+const password = ref(isDemo ? DEMO_ACCOUNT.password : '')
 const failed = ref(false)
 
 const emit = defineEmits(['loggedin'])

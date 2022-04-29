@@ -25,7 +25,7 @@
         <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
       </p>
 
-      <p v-if="demo" class="demo-credits">
+      <p v-if="isDemo" class="demo-credits">
         Demo music provided by
         <a href="https://www.bensound.com" rel="noopener" target="_blank">Bensound</a>.
       </p>
@@ -48,10 +48,9 @@
 import compareVersions from 'compare-versions'
 import { defineAsyncComponent } from 'vue'
 import { commonStore, userStore } from '@/stores'
+import { isDemo } from '@/utils'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-
-const demo = NODE_ENV === 'demo'
 
 const latestVersionUrl = `https://github.com/phanan/koel/releases/tag/${commonStore.state.latestVersion}`
 const shouldDisplayVersionUpdate = userStore.state.current.is_admin

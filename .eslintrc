@@ -22,7 +22,6 @@
   ],
   "globals": {
     "KOEL_ENV": "readonly",
-    "NODE_ENV": "readonly",
     "FileReader": "readonly",
     "defineProps": "readonly",
     "defineEmits": "readonly",

@@ -109,3 +109,5 @@ export const startDragging = (event: DragEvent, dragged: Song | Song[] | Album |
 
   createGhostDragImage(event, text)
 }
+
+export const isDemo = KOEL_ENV === 'demo'

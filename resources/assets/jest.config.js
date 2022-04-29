@@ -28,8 +28,7 @@ module.exports = {
     `node_modules/(?!(${forceTransformModules.join('|')})/)`
   ],
   globals: {
-    KOEL_ENV: 'web',
-    NODE_ENV: 'test'
+    KOEL_ENV: ''
   },
   setupFilesAfterEnv: ['<rootDir>/js/__tests__/setup.ts'],
   verbose: true,
