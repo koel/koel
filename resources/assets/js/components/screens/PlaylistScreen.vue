@@ -1,8 +1,8 @@
 <template>
   <section id="playlistWrapper" v-if="playlist">
     <ScreenHeader>
-      {{ playlist.name }}
-      <ControlsToggler v-if="playlist.populated" :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      {{ playlist?.name }}
+      <ControlsToggler v-if="playlist?.populated" :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
         <span class="meta" v-if="songs.length">
@@ -18,18 +18,18 @@
 
       <template v-slot:controls>
         <SongListControls
-          v-if="playlist.populated && (!isPhone || showingControls)"
+          v-if="playlist?.populated && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
           @deletePlaylist="destroy"
-          :songs="playlist.songs"
+          :songs="playlist?.songs"
           :config="songListControlConfig"
           :selectedSongs="selectedSongs"
         />
       </template>
     </ScreenHeader>
 
-    <template v-if="playlist.populated">
+    <template v-if="playlist?.populated">
       <SongList
         v-if="songs.length"
         ref="songList"
@@ -44,7 +44,7 @@
           <i class="fa fa-file-o"></i>
         </template>
 
-        <template v-if="playlist.is_smart">
+        <template v-if="playlist?.is_smart">
           No songs match the playlist's
           <a @click.prevent="editSmartPlaylist">criteria</a>.
         </template>
@@ -61,12 +61,12 @@
 </template>
 
 <script lang="ts" setup>
+import { difference } from 'lodash'
 import { defineAsyncComponent, nextTick, ref, toRef } from 'vue'
 import { alerts, eventBus, pluralize } from '@/utils'
 import { playlistStore, commonStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
-import { difference } from 'lodash'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))

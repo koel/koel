@@ -15,7 +15,7 @@
         v-for="input in availableInputs"
         :key="input.id"
         v-model="input.value"
-        :type="selectedOperator.type || selectedModel?.type"
+        :type="selectedOperator?.type || selectedModel?.type"
         :value="input.value"
         @update:modelValue="onInput"
       />

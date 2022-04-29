@@ -5,7 +5,7 @@
     <ul class="tracks">
       <li
         is="vue:TrackListItem"
-        v-for="(track, index) in album.info.tracks"
+        v-for="(track, index) in album.info?.tracks"
         :key="index"
         :album="album"
         :track="track"
