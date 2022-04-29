@@ -1,3 +1,7 @@
+declare const KOEL_ENV: '' | 'demo'
+
+declare module '*.vue'
+
 declare module '*.jpg' {
   const value: string
   export default value
@@ -15,11 +19,6 @@ declare module '*.svg' {
 
 declare type TAnyFunction = (...args: Array<unknown | any>) => unknown | any
 
-declare module 'vue-virtual-scroller' {
-  const RecycleScroller: any
-  export { RecycleScroller }
-}
-
 declare module 'alertify.js' {
   function alert (msg: string): void
 
@@ -36,20 +35,14 @@ declare module 'alertify.js' {
   function closeLogOnClick (close: boolean): void
 }
 
-declare module 'select' {
-  function select (el: HTMLElement): void
-
-  export default select
-}
-
 declare module 'sketch-js' {
-  function create (o: { [key: string]: any }): any
+  function create (config: Record<string, any>): any
 }
 
 declare module 'youtube-player' {
   import { YouTubePlayer } from 'youtube-player/dist/types'
 
-  function createYouTubePlayer (name: string, options: { [propName: string]: any }): YouTubePlayer
+  function createYouTubePlayer (name: string, options: Record<string, any>): YouTubePlayer
 
   export default createYouTubePlayer
 }
@@ -89,14 +82,6 @@ declare module 'nouislider' {
     orientation: 'horizontal' | 'vertical'
     direction: 'ltr' | 'rtl'
   }): void
-}
-
-declare const KOEL_ENV: '' | 'demo'
-
-declare module '*.vue' {
-  import { defineComponent } from 'vue'
-  const Component: ReturnType<typeof defineComponent>
-  export default Component
 }
 
 interface Constructable<T> {
@@ -208,20 +193,6 @@ interface Song {
   fmtLength?: string
 }
 
-interface SmartPlaylistRule {
-  id: number
-  model: SmartPlaylistModel
-  operator: string
-  value: any[]
-}
-
-interface SerializedSmartPlaylistRule {
-  id: number
-  model: string
-  operator: string
-  value: any[]
-}
-
 interface SmartPlaylistRuleGroup {
   id: number
   rules: SmartPlaylistRule[]
@@ -234,10 +205,6 @@ interface SmartPlaylistModel {
   unit?: string
 }
 
-interface SmartPlaylistInputTypes {
-  [propName: string]: any[]
-}
-
 interface SmartPlaylistOperator {
   operator: string
   label: string
@@ -245,6 +212,15 @@ interface SmartPlaylistOperator {
   unit?: string
   inputs?: number
 }
+
+interface SmartPlaylistRule {
+  id: number
+  model: SmartPlaylistModel
+  operator: string
+  value: any[]
+}
+
+type SmartPlaylistInputTypes = Record<string, SmartPlaylistOperator[]>
 
 interface Playlist {
   readonly id: number
@@ -271,13 +247,17 @@ interface YouTubeVideo {
   }
 }
 
+interface UserPreferences {
+  lastfm_session_key?: string
+}
+
 interface User {
   id: number
   name: string
   email: string
   password: string
   is_admin: boolean
-  preferences: { [key: string]: any }
+  preferences: UserPreferences
   avatar: string
 }
 
@@ -291,40 +271,7 @@ interface Interaction {
   play_count: number
 }
 
-interface SongListState {
-  songs: Song[]
-
-  [propName: string]: any
-}
-
-interface SongListMeta {
-  songCount: number
-  totalLength: string
-}
-
 declare module 'koel/types/ui' {
-  import { ComponentInternalInstance } from 'vue'
-
-  export type BasePlaylistMenu = ComponentInternalInstance & {
-    open (top: number, left: number): void
-    close (): void
-  }
-
-  export type SongListComponent = ComponentInternalInstance & {
-    rowClicked (songItem: ComponentInternalInstance, event: MouseEvent): void
-    openContextMenu (songItem: ComponentInternalInstance, event: MouseEvent): void
-    removeDroppableState (event: DragEvent): void
-    handleDrop (songItem: ComponentInternalInstance, event: DragEvent): void
-    allowDrop (event: DragEvent): void
-    dragStart (songItem: ComponentInternalInstance, event: DragEvent): void
-  }
-
-  export interface TypeAheadConfig {
-    displayKey: string
-    filterKey: string
-    name: string
-  }
-
   interface SliderElement extends HTMLElement {
     noUiSlider?: {
       destroy (): void
@@ -405,7 +352,7 @@ interface SongListControlsConfig {
   deletePlaylist: boolean
 }
 
-type Theme = {
+interface Theme {
   id: string
   name?: string
   thumbnailColor: string
