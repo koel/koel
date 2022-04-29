@@ -64,15 +64,9 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'SongList'
-}
-</script>
-
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { orderBy } from 'lodash'
+import { findIndex, orderBy } from 'lodash'
 
 import {
   computed,
@@ -231,8 +225,9 @@ const toggleRow = (row: SongRow) => {
 }
 
 const selectRowsBetween = (first: SongRow, second: SongRow) => {
-  const indexes = [songRows.value.indexOf(first), songRows.value.indexOf(second)]
-
+  const firstIndex = Math.max(0, findIndex(songRows.value, row => row.song.id === first.song.id))
+  const secondIndex = Math.max(0, findIndex(songRows.value, row => row.song.id === second.song.id))
+  const indexes = [firstIndex, secondIndex]
   indexes.sort((a, b) => a - b)
 
   for (let i = indexes[0]; i <= indexes[1]; ++i) {
