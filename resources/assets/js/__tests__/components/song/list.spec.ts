@@ -119,6 +119,6 @@ describe('components/song/list', () => {
       }
     })
     wrapper.find('.song-list-wrap').trigger('keydown.a', { ctrlKey: true })
-    ;(wrapper.vm as any).songProxies.forEach((item: SongProxy) => expect(item.selected).toBe(true))
+    ;(wrapper.vm as any).songProxies.forEach((item: SongRow) => expect(item.selected).toBe(true))
   })
 })

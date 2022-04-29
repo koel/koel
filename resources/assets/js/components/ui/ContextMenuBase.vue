@@ -79,7 +79,7 @@ const open = async (_top = 0, _left = 0) => {
     await preventOffScreen(el.value!)
     await initSubmenus()
   } catch (e) {
-    console.error(el.value, e)
+    console.error(e)
     // in a non-browser environment (e.g., unit testing), these two functions are broken due to calls to
     // getBoundingClientRect() and querySelectorAll
   }

@@ -46,8 +46,20 @@
       <span class="play"></span>
     </div>
 
-    <VirtualScroller v-slot="{ item }" :item-height="35" :items="songProxies">
-      <SongListItem :item="item" :columns="mergedConfig.columns" :key="item.song.id"/>
+    <VirtualScroller v-slot="{ item }" :item-height="35" :items="songRows">
+      <SongListItem
+        :key="item.song.id"
+        :columns="mergedConfig.columns"
+        :item="item"
+        draggable="true"
+        @click="rowClicked(item, $event)"
+        @dragleave="removeDroppableState"
+        @dragstart="rowDragStart(item, $event)"
+        @dragenter.prevent="allowDrop"
+        @dragover.prevent
+        @drop.stop.prevent="handleDrop(item, $event)"
+        @contextmenu.stop.prevent="openContextMenu(item, $event)"
+      />
     </VirtualScroller>
   </div>
 </template>
@@ -65,7 +77,6 @@ import {
   computed,
   defineAsyncComponent,
   getCurrentInstance,
-  nextTick,
   onMounted,
   ref,
   toRefs,
@@ -83,12 +94,6 @@ type SortField = 'song.track'
 
 type SortOrder = 'Asc' | 'Desc' | 'None'
 
-interface SongRow {
-  props: {
-    item: SongProxy
-  }
-}
-
 const VirtualScroller = defineAsyncComponent(() => import('@/components/ui/VirtualScroller.vue'))
 const SongListItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
 
@@ -102,10 +107,10 @@ const { items, type, config } = toRefs(props)
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SortField[]>([])
 const sortOrder = ref<SortOrder>('None')
-const songProxies = ref<SongProxy[]>([])
+const songRows = ref<SongRow[]>([])
 
-const allowSongReordering = computed(() => type.value === 'queue')
-const selectedSongs = computed(() => songProxies.value.filter(row => row.selected).map(row => row.song))
+const allowReordering = computed(() => type.value === 'queue')
+const selectedSongs = computed(() => songRows.value.filter(row => row.selected).map(row => row.song))
 const primarySortField = computed(() => sortFields.value.length === 0 ? null : sortFields.value[0])
 
 const mergedConfig = computed((): SongListConfig => {
@@ -118,9 +123,9 @@ const mergedConfig = computed((): SongListConfig => {
 /**
  * Since song objects themselves are shared by all song lists, we can't use them directly to
  * determine their selection status (selected/unselected). Therefore, for each song list, we
- * maintain an array of "song proxies," each containing the song itself and the "selected" flag.
+ * maintain an array of "song rows," each containing the song itself and the "selected" flag.
  */
-const generateSongProxies = () => {
+const generateSongRows = () => {
   // Since this method re-generates the song wrappers, we need to keep track of  the
   // selected songs manually.
   const selectedSongIds = selectedSongs.value.map(song => song.id)
@@ -158,14 +163,14 @@ const sort = (field: SortField | SortField[] = [], order: SortOrder | null = nul
 
   sortOrder.value = order === null ? nextSortOrder.value : order
 
-  songProxies.value = sortOrder.value === 'None'
-    ? generateSongProxies()
-    : orderBy(songProxies.value, sortFields.value, sortOrder.value === 'Desc')
+  songRows.value = sortOrder.value === 'None'
+    ? generateSongRows()
+    : orderBy(songRows.value, sortFields.value, sortOrder.value === 'Desc')
 }
 
 const render = () => {
   mergedConfig.value.sortable || (sortFields.value = [])
-  songProxies.value = generateSongProxies()
+  songRows.value = generateSongRows()
   sort(sortFields.value, sortOrder.value)
 }
 
@@ -189,49 +194,46 @@ const handleEnter = (event: KeyboardEvent) => {
 /**
  * Select all (filtered) rows in the current list.
  */
-const selectAllRows = () => songProxies.value.forEach(row => (row.selected = true))
-const clearSelection = () => songProxies.value.forEach(row => (row.selected = false))
-
+const selectAllRows = () => songRows.value.forEach(row => (row.selected = true))
+const clearSelection = () => songRows.value.forEach(row => (row.selected = false))
 const handleA = (event: KeyboardEvent) => (event.ctrlKey || event.metaKey) && selectAllRows()
+const getAllSongsWithSort = () => songRows.value.map(row => row.song)
 
-const rowClicked = (rowVm: SongRow, event: MouseEvent) => {
+const rowClicked = (row: SongRow, event: MouseEvent) => {
   // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
   if (isMobile.any) {
-    toggleRow(rowVm)
+    toggleRow(row)
     return
   }
 
   if (event.ctrlKey || event.metaKey) {
-    toggleRow(rowVm)
+    toggleRow(row)
   }
 
   if (event.button === 0) {
     if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
       clearSelection()
-      toggleRow(rowVm)
+      toggleRow(row)
     }
 
     if (event.shiftKey && lastSelectedRow.value) {
-      selectRowsBetween(lastSelectedRow.value, rowVm)
+      selectRowsBetween(lastSelectedRow.value, row)
     }
   }
 }
 
-const toggleRow = (rowVm: SongRow) => {
-  rowVm.props.item.selected = !rowVm.props.item.selected
-  lastSelectedRow.value = rowVm
+const toggleRow = (row: SongRow) => {
+  row.selected = !row.selected
+  lastSelectedRow.value = row
 }
 
-const selectRowsBetween = (firstRowVm: SongRow, secondRowVm: SongRow) => {
-  const indexes = [
-    songProxies.value.indexOf(firstRowVm.props.item),
-    songProxies.value.indexOf(secondRowVm.props.item)
-  ]
+const selectRowsBetween = (first: SongRow, second: SongRow) => {
+  const indexes = [songRows.value.indexOf(first), songRows.value.indexOf(second)]
 
   indexes.sort((a, b) => a - b)
 
   for (let i = indexes[0]; i <= indexes[1]; ++i) {
-    songProxies.value[i].selected = true
+    songRows.value[i].selected = true
   }
 }
 
@@ -240,11 +242,11 @@ const selectRowsBetween = (firstRowVm: SongRow, secondRowVm: SongRow) => {
  * Even though the event is triggered on one row only, we'll collect other
  * selected rows, if any, as well.
  */
-const dragStart = (rowVm: SongRow, event: DragEvent) => {
+const rowDragStart = (row: SongRow, event: DragEvent) => {
   // If the user is dragging an unselected row, clear the current selection.
-  if (!rowVm.props.item.selected) {
+  if (!row.selected) {
     clearSelection()
-    rowVm.props.item.selected = true
+    row.selected = true
   }
 
   startDragging(event, selectedSongs.value, 'Song')
@@ -254,7 +256,7 @@ const dragStart = (rowVm: SongRow, event: DragEvent) => {
  * Add a "droppable" class and set the drop effect when other songs are dragged over a row.
  */
 const allowDrop = (event: DragEvent) => {
-  if (!allowSongReordering.value) {
+  if (!allowReordering.value) {
     return
   }
 
@@ -264,16 +266,16 @@ const allowDrop = (event: DragEvent) => {
   return false
 }
 
-const handleDrop = (rowVm: SongRow, event: DragEvent) => {
+const handleDrop = (item: SongRow, event: DragEvent) => {
   if (
-    !allowSongReordering.value ||
+    !allowReordering.value ||
     !event.dataTransfer!.getData('application/x-koel.text+plain') ||
     !selectedSongs.value.length
   ) {
     return removeDroppableState(event)
   }
 
-  emit('reorder', rowVm.props.item.song)
+  emit('reorder', item.song)
   return removeDroppableState(event)
 }
 
@@ -282,27 +284,18 @@ const removeDroppableState = (event: DragEvent) => {
   return false
 }
 
-const openContextMenu = async (rowVm: SongRow, event: MouseEvent) => {
+const openContextMenu = async (row: SongRow, event: MouseEvent) => {
   // If the user is right-clicking an unselected row,
   // clear the current selection and select it instead.
-  if (!rowVm.props.item.selected) {
+  if (!row.selected) {
     clearSelection()
-    toggleRow(rowVm)
+    toggleRow(row)
   }
 
-  await nextTick()
   eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, selectedSongs.value)
 }
 
-const getAllSongsWithSort = () => songProxies.value.map(proxy => proxy.song)
-
 defineExpose({
-  rowClicked,
-  dragStart,
-  allowDrop,
-  handleDrop,
-  removeDroppableState,
-  openContextMenu,
   getAllSongsWithSort,
   sort
 })

@@ -7,7 +7,7 @@ import { mock } from '@/__tests__/__helpers__'
 import { shallow, Wrapper } from '@/__tests__/adapter'
 
 describe('components/song/SongListItem', () => {
-  let item: SongProxy, song: Song, artist: Artist, album: Album, wrapper: Wrapper
+  let item: SongRow, song: Song, artist: Artist, album: Album, wrapper: Wrapper
 
   beforeEach(() => {
     artist = factory<Artist>('artist')

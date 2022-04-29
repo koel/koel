@@ -111,7 +111,6 @@ watch(() => album.value.songs.length, newSongCount => newSongCount || router.go(
 
 watch(album, () => {
   showing.value = false
-  // @ts-ignore
   songList.value?.sort()
 })
 
