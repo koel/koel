@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "target": "es2021",
     "lib": ["es2021", "dom"],
+    "jsx": "preserve",
     "strict": true,
     "noImplicitAny": false,
     "module": "esnext",

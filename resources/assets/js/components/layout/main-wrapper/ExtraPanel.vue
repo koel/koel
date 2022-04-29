@@ -105,7 +105,7 @@ const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/YouT
 const song = ref<Song | null>(null)
 const showing = toRef(preferences.state, 'showExtraPanel')
 const useYouTube = toRef(commonStore.state, 'useYouTube')
-const currentTab = ref(defaultTab)
+const currentTab = ref<Tab>(defaultTab)
 
 const artist = computed(() => song.value?.artist)
 const album = computed(() => song.value?.album)
@@ -133,7 +133,7 @@ const fetchSongInfo = async (_song: Song) => {
 }
 
 eventBus.on({
-  'SONG_STARTED': async (song: Song): Promise<void> => await fetchSongInfo(song),
+  'SONG_STARTED': async (song: Song) => await fetchSongInfo(song),
   'LOAD_MAIN_CONTENT': (): void => {
     // On ready, add 'with-extra-panel' class.
     isMobile.any || $.addClass(document.documentElement, 'with-extra-panel')

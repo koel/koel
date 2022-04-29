@@ -1,5 +1,4 @@
 import '@testing-library/cypress/add-commands'
-import 'cypress-file-upload'
 import scrollBehaviorOptions = Cypress.scrollBehaviorOptions
 
 Cypress.Commands.add('$login', (options: Partial<LoginOptions> = {}) => {

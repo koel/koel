@@ -11,21 +11,20 @@
       <AlbumThumbnail :entity="album"/>
 
       <template v-if="album.info">
-        <div class="wiki" v-if="album.info.wiki?.summary">
-          <div class="summary" v-if="showSummary" v-html="album.info.wiki?.summary"></div>
-          <div class="full" v-if="showFull" v-html="album.info.wiki.full"></div>
+        <div class="wiki" v-if="album.info?.wiki?.summary">
+          <div class="summary" v-if="showSummary" v-html="album.info?.wiki?.summary"></div>
+          <div class="full" v-if="showFull" v-html="album.info?.wiki?.full"></div>
 
           <button class="more" v-if="showSummary" @click.prevent="showingFullWiki = true" data-test="more-btn">
             Full Wiki
           </button>
         </div>
 
-        <TrackList :album="album" v-if="album.info.tracks?.length" data-test="album-info-tracks"/>
+        <TrackList :album="album" v-if="album.info?.tracks?.length" data-test="album-info-tracks"/>
 
-        <footer>Data &copy; <a target="_blank" rel="noopener" :href="album.info.url">Last.fm</a></footer>
+        <footer>Data &copy; <a target="_blank" rel="noopener" :href="album.info?.url">Last.fm</a></footer>
       </template>
     </main>
-
   </article>
 </template>
 
@@ -38,7 +37,7 @@ const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumA
 
 type DisplayMode = 'sidebar' | 'full'
 
-const props = withDefaults(defineProps<{ album: Album, mode: DisplayMode }>(), { mode: 'sidebar' })
+const props = withDefaults(defineProps<{ album: Album, mode?: DisplayMode }>(), { mode: 'sidebar' })
 const { album, mode } = toRefs(props)
 
 const showingFullWiki = ref(false)

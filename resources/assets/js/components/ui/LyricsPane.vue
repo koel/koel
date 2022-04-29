@@ -28,7 +28,7 @@ import { userStore } from '@/stores'
 
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/TextMagnifier.vue'))
 
-const props = defineProps<{ song: Song | null }>()
+const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
 const lyricsContainer = ref<HTMLElement>()
