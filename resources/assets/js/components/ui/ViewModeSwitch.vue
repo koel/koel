@@ -1,23 +1,23 @@
 <template>
   <span class="view-modes">
     <label
+      :class="{ active: value === 'thumbnails' }"
       class="thumbnails"
-      :class="{ active: modelValue === 'thumbnails' }"
-      title="View as thumbnails"
       data-test="view-mode-thumbnail"
+      title="View as thumbnails"
     >
-      <input class="hidden" type="radio" value="thumbnails" v-model="modelValue" @input="onInput">
+      <input v-model="value" class="hidden" name="view-mode" type="radio" value="thumbnails">
       <i class="fa fa-th-large"></i>
       <span class="hidden">View as thumbnails</span>
     </label>
 
     <label
+      :class="{ active: value === 'list' }"
       class="list"
-      :class="{ active: modelValue === 'list' }"
-      title="View as list"
       data-test="view-mode-list"
+      title="View as list"
     >
-      <input class="hidden" type="radio" value="list" v-model="modelValue" @input="onInput">
+      <input v-model="value" class="hidden" name="view-mode" type="radio" value="list">
       <i class="fa fa-list"></i>
       <span class="hidden">View as list</span>
     </label>
@@ -25,17 +25,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRefs, watchEffect } from 'vue'
+import { computed} from 'vue'
 
-const props = withDefaults(defineProps<{ value?: ArtistAlbumViewMode }>(), { value: 'thumbnails' })
-const { value } = toRefs(props)
+const props = withDefaults(defineProps<{ mode?: ArtistAlbumViewMode }>(), { mode: 'thumbnails' })
+const emit = defineEmits(['update:mode'])
 
-let modelValue = ref<ArtistAlbumViewMode>()
-
-watchEffect(() => (modelValue.value = value.value))
-
-const emit = defineEmits(['update:modelValue'])
-const onInput = (e: InputEvent) => emit('update:modelValue', (e.target as HTMLInputElement).value)
+const value = computed({
+  get: () => props.mode,
+  set: value => emit('update:mode', value)
+})
 </script>
 
 <style lang="scss" scoped>

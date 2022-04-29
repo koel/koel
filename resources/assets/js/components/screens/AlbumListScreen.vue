@@ -3,7 +3,7 @@
     <ScreenHeader>
       Albums
       <template v-slot:controls>
-        <ViewModeSwitch v-model="viewMode" :value="viewMode"/>
+        <ViewModeSwitch v-model:mode="viewMode"/>
       </template>
     </ScreenHeader>
 
