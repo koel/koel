@@ -1,5 +1,5 @@
 <template>
-  <div ref="scroller" class="virtual-scroller" @scroll="onScroll">
+  <div ref="scroller" class="virtual-scroller" @scroll.passive="onScroll">
     <div :style="{ height: `${totalHeight}px` }">
       <div :style="{ transform: `translateY(${offsetY}px)`}">
         <template v-for="item in renderedItems">
@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRefs } from 'vue'
+import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue'
 
 const props = defineProps<{ items: any[], itemHeight: number }>()
 const { items, itemHeight } = toRefs(props)
@@ -31,7 +31,7 @@ const renderedItems = computed(() => {
   return items.value.slice(startPosition.value, startPosition.value + count)
 })
 
-const onScroll = e => requestAnimationFrame(() => scrollTop.value = (e.target as HTMLElement).scrollTop)
+const onScroll = e => requestAnimationFrame(() => (scrollTop.value = (e.target as HTMLElement).scrollTop))
 
 const observer = new ResizeObserver(entries => entries.forEach(el => scrollerHeight.value = el.contentRect.height))
 
@@ -39,6 +39,8 @@ onMounted(() => {
   observer.observe(scroller.value!)
   scrollerHeight.value = scroller.value!.offsetHeight
 })
+
+onUnmounted(() => observer.unobserve(scroller.value!))
 </script>
 
 <style lang="scss" scoped>
