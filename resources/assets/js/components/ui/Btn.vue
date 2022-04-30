@@ -1,12 +1,8 @@
 <template>
-  <button @click="$emit('click', $event)" type="button">
+  <button type="button">
     <slot>Click me</slot>
   </button>
 </template>
-
-<script lang="ts" setup>
-defineEmits(['click']) // prevent duplicate events: https://github.com/vuejs/core/issues/813
-</script>
 
 <style lang="scss" scoped>
 button {

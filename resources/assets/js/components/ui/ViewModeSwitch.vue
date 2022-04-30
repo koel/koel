@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed} from 'vue'
+import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{ mode?: ArtistAlbumViewMode }>(), { mode: 'thumbnails' })
 const emit = defineEmits(['update:mode'])
