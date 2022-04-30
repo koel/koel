@@ -58,7 +58,7 @@
         @dragenter.prevent="allowDrop"
         @dragover.prevent
         @drop.stop.prevent="handleDrop(item, $event)"
-        @contextmenu.stop.prevent="openContextMenu(item, $event)"
+        @contextmenu.prevent="openContextMenu(item, $event)"
       />
     </VirtualScroller>
   </div>

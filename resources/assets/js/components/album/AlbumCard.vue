@@ -9,7 +9,7 @@
     tabindex="0"
     @dblclick="shuffle"
     @dragstart="dragStart"
-    @contextmenu.stop.prevent="requestContextMenu"
+    @contextmenu.prevent="requestContextMenu"
   >
     <span class="thumbnail-wrapper">
       <AlbumThumbnail :entity="album"/>

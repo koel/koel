@@ -3,7 +3,7 @@
     <h1>Playlists
       <i
         :class="{ creating }"
-        @click.prevent.stop="toggleContextMenu"
+        @click.prevent="toggleContextMenu"
         class="fa fa-plus-circle control create"
         role="button"
         title="Create a new playlist"

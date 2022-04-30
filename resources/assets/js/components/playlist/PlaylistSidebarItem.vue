@@ -5,7 +5,7 @@
     <a
       :class="{ active }"
       :href="url"
-      @contextmenu.prevent.stop="openContextMenu"
+      @contextmenu.prevent="openContextMenu"
       v-koel-droppable="handleDrop"
     >{{ playlist.name }}</a>
 

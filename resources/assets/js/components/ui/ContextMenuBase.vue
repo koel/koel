@@ -19,6 +19,7 @@
 
 <script lang="ts" setup>
 import { nextTick, ref, toRefs } from 'vue'
+import { eventBus } from '@/utils'
 
 const props = defineProps<{ extraClass: string }>()
 const { extraClass } = toRefs(props)
@@ -83,11 +84,20 @@ const open = async (_top = 0, _left = 0) => {
     // in a non-browser environment (e.g., unit testing), these two functions are broken due to calls to
     // getBoundingClientRect() and querySelectorAll
   }
+
+  eventBus.emit('CONTEXT_MENU_OPENED', el)
 }
 
 const close = () => {
   shown.value = false
 }
+
+eventBus.on('CONTEXT_MENU_OPENED', target => {
+  // ensure there's only one context menu at any time
+  if (target !== el) {
+    close()
+  }
+})
 
 defineExpose({ open, close, shown })
 </script>

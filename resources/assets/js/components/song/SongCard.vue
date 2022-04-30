@@ -5,7 +5,7 @@
     draggable="true"
     tabindex="0"
     @dragstart="dragStart"
-    @contextmenu.stop.prevent="requestContextMenu"
+    @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
     <span :style="{ backgroundImage: `url(${song.album.cover})` }" class="cover">

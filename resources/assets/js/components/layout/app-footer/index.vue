@@ -1,5 +1,5 @@
 <template>
-  <footer id="mainFooter" @contextmenu.stop.prevent="requestContextMenu">
+  <footer id="mainFooter" @contextmenu.prevent="requestContextMenu">
     <PlayerControls :song="song"/>
 
     <div class="media-info-wrap">
