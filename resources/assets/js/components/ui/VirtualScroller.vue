@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue'
+import { computed, onBeforeUnmount, onMounted, onUnmounted, ref, toRefs } from 'vue'
 
 const props = defineProps<{ items: any[], itemHeight: number }>()
 const { items, itemHeight } = toRefs(props)
@@ -40,7 +40,7 @@ onMounted(() => {
   scrollerHeight.value = scroller.value!.offsetHeight
 })
 
-onUnmounted(() => observer.unobserve(scroller.value!))
+onBeforeUnmount(() => observer.unobserve(scroller.value!))
 </script>
 
 <style lang="scss" scoped>
