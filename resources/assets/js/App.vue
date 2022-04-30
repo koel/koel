@@ -25,7 +25,7 @@ import { defineAsyncComponent, nextTick, onMounted, ref } from 'vue'
 
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/app-footer/index.vue'
-import EventListeners from '@/components/utils/event-listeners.vue'
+import EventListeners from '@/components/utils/EventListeners.vue'
 import Hotkeys from '@/components/utils/HotkeyListener.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import MainWrapper from '@/components/layout/main-wrapper/index.vue'
