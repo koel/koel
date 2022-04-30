@@ -171,7 +171,7 @@ const formData = reactive<EditFormData>({
   compilationState: COMPILATION_STATES.NONE
 })
 
-let initialFormData = {}
+const initialFormData = {}
 
 const editingOnlyOneSong = computed(() => mutatedSongs.value.length === 1)
 const allSongsAreFromSameArtist = computed(() => new Set(mutatedSongs.value.map(song => song.artist.id)).size === 1)
@@ -257,7 +257,7 @@ const open = async () => {
     await initCompilationStateCheckbox()
   }
 
-  initialFormData = Object.assign(formData)
+  Object.assign(initialFormData, formData)
 }
 
 /**
