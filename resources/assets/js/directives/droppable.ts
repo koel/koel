@@ -1,10 +1,12 @@
-import { $ } from '@/utils'
 import { Directive } from 'vue'
+import { $ } from '@/utils'
 
 export const droppable: Directive = {
-  created: (el: HTMLElement, { value }: { value: TAnyFunction | never }) => {
-    if (!(value instanceof Function)) {
-      throw new Error(`Expect a function, received ${typeof value}`)
+  created: (el: HTMLElement, binding) => {
+    const acceptsDrops = binding.arg === undefined || Boolean(binding.arg)
+
+    if (!acceptsDrops) {
+      return
     }
 
     el.addEventListener('dragenter', (event: DragEvent) => {
@@ -15,15 +17,14 @@ export const droppable: Directive = {
       return false
     })
 
-    el.addEventListener('dragover', (event: DragEvent): void => event.preventDefault())
-
+    el.addEventListener('dragover', (event: DragEvent) => event.preventDefault())
     el.addEventListener('dragleave', () => $.removeClass(el, 'droppable'))
 
     el.addEventListener('drop', (event: DragEvent) => {
       event.preventDefault()
       event.stopPropagation()
       $.removeClass(el, 'droppable')
-      value(event)
+      binding.value(event)
     })
   }
 }

@@ -6,7 +6,7 @@
       :class="{ active }"
       :href="url"
       @contextmenu.prevent="openContextMenu"
-      v-koel-droppable="handleDrop"
+      v-koel-droppable:[contentEditable]="handleDrop"
     >{{ playlist.name }}</a>
 
     <NameEditor
@@ -29,8 +29,8 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, nextTick, ref, toRefs } from 'vue'
 import { alerts, eventBus, pluralize } from '@/utils'
-import router from '@/router'
 import { favoriteStore, playlistStore, songStore } from '@/stores'
+import router from '@/router'
 
 type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
 
