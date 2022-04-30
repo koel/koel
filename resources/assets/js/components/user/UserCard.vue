@@ -44,8 +44,9 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, toRefs } from 'vue'
 import { userStore } from '@/stores'
-import router from '@/router'
 import { alerts } from '@/utils'
+import { useAuthorization } from '@/composables'
+import router from '@/router'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
@@ -54,7 +55,9 @@ const { user } = toRefs(props)
 
 const showing = ref(true)
 
-const isCurrentUser = computed(() => user.value.id === userStore.current.id)
+const { currentUser } = useAuthorization()
+
+const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
 const editButtonLabel = computed(() => isCurrentUser.value ? 'Update Profile' : 'Edit')
 
 const emit = defineEmits(['editUser'])

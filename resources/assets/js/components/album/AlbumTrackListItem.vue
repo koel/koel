@@ -15,14 +15,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, toRef, toRefs } from 'vue'
-import { queueStore, commonStore, songStore } from '@/stores'
+import { computed, toRefs } from 'vue'
+import { queueStore, songStore } from '@/stores'
 import { authService, playbackService } from '@/services'
+import { useThirdPartyServices } from '@/composables'
 
 const props = defineProps<{ album: Album, track: AlbumTrack }>()
 const { album, track } = toRefs(props)
 
-const useiTunes = toRef(commonStore.state, 'useiTunes')
+const { useiTunes } = useThirdPartyServices()
 
 const song = computed(() => songStore.guess(track.value.title, album.value))
 const tooltip = computed(() => song.value ? 'Click to play' : '')

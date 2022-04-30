@@ -22,9 +22,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRef, toRefs } from 'vue'
+import { defineAsyncComponent, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
-import { userStore } from '@/stores'
+import { useAuthorization } from '@/composables'
 
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/TextMagnifier.vue'))
 
@@ -32,9 +32,8 @@ const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
 const lyricsContainer = ref<HTMLElement>()
-const user = toRef(userStore.state, 'current')
 
-const isAdmin = computed(() => user.value.is_admin)
+const { isAdmin } = useAuthorization()
 
 const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
 </script>

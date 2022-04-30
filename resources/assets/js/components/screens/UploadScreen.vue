@@ -65,6 +65,7 @@ import { settingStore, userStore } from '@/stores'
 import { eventBus, getAllFileEntries, isDirectoryReadingSupported } from '@/utils'
 import { acceptedMediaTypes, UploadFile } from '@/config'
 import { uploadService } from '@/services'
+import { useAuthorization } from '@/composables'
 
 import UploadItem from '@/components/ui/upload/UploadItem.vue'
 import BtnGroup from '@/components/ui/BtnGroup.vue'
@@ -80,7 +81,8 @@ const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
 const hasUploadFailures = ref(false)
 
-const allowsUpload = computed(() => userStore.state.current.is_admin && !ismobile.any)
+const { isAdmin } = useAuthorization()
+const allowsUpload = computed(() => isAdmin.value && !ismobile.any)
 
 const instructionText = isDirectoryReadingSupported
   ? 'Drop files or folders to upload'
@@ -103,7 +105,7 @@ const handleFiles = (files: Array<File>) => {
   uploadService.queue(uploadCandidates)
 }
 
-const fileEntryToFile = async (entry: FileSystemEntry): Promise<File> => new Promise(resolve => entry.file(resolve))
+const fileEntryToFile = async (entry: FileSystemEntry) => new Promise<File>(resolve => entry.file(resolve))
 
 const onFileInputChange = (event: InputEvent) => {
   const selectedFileList = (event.target as HTMLInputElement).files

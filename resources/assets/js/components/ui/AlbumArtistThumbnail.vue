@@ -21,6 +21,7 @@ import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
 import { defaultCover, fileReader } from '@/utils'
+import { useAuthorization } from '@/composables'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png']
 
@@ -62,7 +63,7 @@ const buttonLabel = computed(() => forAlbum.value
   : `Play all songs by the artist ${entity.value.name}`
 )
 
-const allowsUpload = computed(() => user.value.is_admin)
+const { isAdmin: allowsUpload } = useAuthorization()
 
 const playOrQueue = (event: KeyboardEvent) => {
   if (event.metaKey || event.ctrlKey) {

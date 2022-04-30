@@ -91,8 +91,9 @@
 import isMobile from 'ismobilejs'
 import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { $, eventBus } from '@/utils'
-import { commonStore, preferenceStore as preferences, songStore } from '@/stores'
+import { preferenceStore as preferences, songStore } from '@/stores'
 import { songInfo } from '@/services'
+import { useThirdPartyServices } from '@/composables'
 
 type Tab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
 const defaultTab: Tab = 'Lyrics'
@@ -104,8 +105,9 @@ const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/YouT
 
 const song = ref<Song | null>(null)
 const showing = toRef(preferences.state, 'showExtraPanel')
-const useYouTube = toRef(commonStore.state, 'useYouTube')
 const currentTab = ref<Tab>(defaultTab)
+
+const { useYouTube } = useThirdPartyServices()
 
 const artist = computed(() => song.value?.artist)
 const album = computed(() => song.value?.album)

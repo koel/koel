@@ -17,8 +17,8 @@
         type="button"
         @click.prevent="showAboutDialog"
       >
-        <span v-if="shouldDisplayVersionUpdate && hasNewVersion" class="new-version" data-test="new-version-available">
-          {{ state.latestVersion }} available!
+        <span v-if="shouldNotifyNewVersion" class="new-version" data-test="new-version-available">
+          {{ latestVersion }} available!
         </span>
         <i v-else class="fa fa-info-circle"></i>
       </button>
@@ -28,11 +28,11 @@
 </template>
 
 <script lang="ts" setup>
-import compareVersions from 'compare-versions'
-import { computed, defineAsyncComponent, toRef } from 'vue'
+import { defineAsyncComponent, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { app as appConfig } from '@/config'
 import { commonStore, userStore } from '@/stores'
+import { useNewVersionNotification } from '@/composables'
 
 const SearchForm = defineAsyncComponent(() => import('@/components/ui/SearchForm.vue'))
 const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge.vue'))
@@ -40,8 +40,7 @@ const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge
 const user = toRef(userStore.state, 'current')
 const state = commonStore.state
 
-const shouldDisplayVersionUpdate = computed(() => user.value.is_admin)
-const hasNewVersion = computed(() => compareVersions.compare(state.latestVersion, state.currentVersion, '>'))
+const { shouldNotifyNewVersion, latestVersion } = useNewVersionNotification()
 
 const toggleSidebar = () => eventBus.emit('TOGGLE_SIDEBAR')
 const toggleSearchForm = () => eventBus.emit('TOGGLE_SEARCH_FORM')

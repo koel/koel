@@ -44,7 +44,7 @@ import { alerts, copyText, eventBus, isClipboardSupported as copyable } from '@/
 import { commonStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import router from '@/router'
-import { useContextMenu, useSongMenuMethods } from '@/composables'
+import { useAuthorization, useContextMenu, useSongMenuMethods } from '@/composables'
 
 const {
   context,
@@ -71,7 +71,7 @@ const user = toRef(userStore.state, 'current')
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playbackState === 'Playing' : false)
 const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
-const isAdmin = computed(() => user.value.is_admin)
+const { isAdmin } = useAuthorization()
 
 const doPlayback = () => {
   if (!songs.value.length) return

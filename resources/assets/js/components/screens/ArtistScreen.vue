@@ -67,8 +67,8 @@ import { defineAsyncComponent, ref, toRef, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { commonStore } from '@/stores'
 import { artistInfoService, downloadService } from '@/services'
+import { useSongList, useThirdPartyServices } from '@/composables'
 import router from '@/router'
-import { useSongList } from '@/composables'
 
 const props = defineProps<{ artist: Artist }>()
 const { artist } = toRefs(props)
@@ -97,7 +97,7 @@ const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/Album
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
 const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'album', 'length'] }
-const useLastfm = toRef(commonStore.state, 'useLastfm')
+const { useLastfm } = useThirdPartyServices()
 const allowDownload = toRef(commonStore.state, 'allowDownload')
 
 const showing = ref(false)

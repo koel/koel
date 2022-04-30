@@ -62,8 +62,8 @@ import { computed, defineAsyncComponent, ref, toRef, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { artistStore, commonStore } from '@/stores'
 import { albumInfoService, downloadService } from '@/services'
-import router from '@/router'
 import { useSongList } from '@/composables'
+import router from '@/router'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))

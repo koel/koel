@@ -34,7 +34,7 @@
     <div v-else data-testid="lastfm-not-integrated">
       <p>
         This installation of Koel has no Last.fm integration.
-        <span v-if="currentUser.is_admin" data-testid="lastfm-admin-instruction">
+        <span v-if="isAdmin" data-testid="lastfm-admin-instruction">
           Visit
           <a href="https://docs.koel.dev/3rd-party.html#last-fm" class="text-orange" target="_blank">Koel’s Wiki</a>
           for a quick how-to.
@@ -48,15 +48,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRef } from 'vue'
-import { commonStore, userStore } from '@/stores'
+import { computed, defineAsyncComponent } from 'vue'
 import { authService, httpService } from '@/services'
 import { forceReloadWindow } from '@/utils'
+import { useAuthorization, useThirdPartyServices } from '@/composables'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
-const currentUser = toRef(userStore.state, 'current')
-const useLastfm = toRef(commonStore.state, 'useLastfm')
+const { currentUser, isAdmin } = useAuthorization()
+const { useLastfm } = useThirdPartyServices()
 
 const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_session_key))
 

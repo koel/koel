@@ -29,7 +29,7 @@
 
     <PlaylistList :current-view="currentView"/>
 
-    <section v-if="user.is_admin" class="manage">
+    <section v-if="isAdmin" class="manage">
       <h1>Manage</h1>
 
       <ul class="menu">
@@ -49,16 +49,17 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { defineAsyncComponent, ref, toRef } from 'vue'
+import { defineAsyncComponent, ref } from 'vue'
 import { eventBus } from '@/utils'
-import { queueStore, commonStore, songStore, userStore } from '@/stores'
+import { queueStore, songStore } from '@/stores'
+import { useAuthorization, useThirdPartyServices } from '@/composables'
 
 const PlaylistList = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarList.vue'))
 
 const showing = ref(!isMobile.phone)
 const currentView = ref<MainViewName>('Home')
-const user = toRef(userStore.state, 'current')
-const useYouTube = toRef(commonStore.state, 'useYouTube')
+const { useYouTube } = useThirdPartyServices()
+const { isAdmin } = useAuthorization()
 
 const handleDrop = (event: DragEvent) => {
   if (!event.dataTransfer?.getData('application/x-koel.text+plain')) {

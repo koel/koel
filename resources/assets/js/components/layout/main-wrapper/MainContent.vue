@@ -40,6 +40,7 @@ import ArtistListScreen from '@/components/screens/ArtistListScreen.vue'
 import AllSongsScreen from '@/components/screens/AllSongsScreen.vue'
 import PlaylistScreen from '@/components/screens/PlaylistScreen.vue'
 import FavoritesScreen from '@/components/screens/FavoritesScreen.vue'
+import { useThirdPartyServices } from '@/composables'
 
 const RecentlyPlayedScreen = defineAsyncComponent(() => import('@/components/screens/RecentlyPlayedScreen.vue'))
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
@@ -54,8 +55,9 @@ const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/scr
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchSongResultsScreen.vue'))
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
+const { useYouTube } = useThirdPartyServices()
+
 const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
-const useYouTube = toRef(commonStore.state, 'useYouTube')
 const showingVisualizer = ref(false)
 const screenProps = ref<any>(null)
 const view = ref<MainViewName>('Home')
