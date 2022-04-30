@@ -62,15 +62,18 @@ const buttonLabel = computed(() => forAlbum.value
   : `Play all songs by the artist ${entity.value.name}`
 )
 
-const playbackFunc = computed(() => forAlbum.value ? playbackService.playAllInAlbum : playbackService.playAllByArtist)
-
 const allowsUpload = computed(() => user.value.is_admin)
 
 const playOrQueue = (event: KeyboardEvent) => {
   if (event.metaKey || event.ctrlKey) {
     queueStore.queue(orderBy(entity.value.songs, sortFields.value))
+    return
+  }
+
+  if (forAlbum.value) {
+    playbackService.playAllInAlbum(entity.value as Album, false)
   } else {
-    playbackFunc.value.call(playbackService, entity.value, false)
+    playbackService.playAllByArtist(entity.value as Artist, false)
   }
 }
 

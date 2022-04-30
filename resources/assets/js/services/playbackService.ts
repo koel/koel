@@ -3,7 +3,7 @@ import plyr from 'plyr'
 import { nextTick } from 'vue'
 import isMobile from 'ismobilejs'
 
-import { eventBus, isAudioContextSupported, isMediaSessionSupported } from '@/utils'
+import { eventBus, isAudioContextSupported } from '@/utils'
 
 import {
   commonStore,
@@ -56,9 +56,7 @@ export const playbackService = {
       eventBus.emit('INIT_EQUALIZER')
     }
 
-    if (isMediaSessionSupported) {
-      this.setMediaSessionActionHandlers()
-    }
+    this.setMediaSessionActionHandlers()
 
     this.listenToSocketEvents()
     this.initialized = true
@@ -86,14 +84,10 @@ export const playbackService = {
   },
 
   setMediaSessionActionHandlers () {
-    if (!isMediaSessionSupported) {
-      return
-    }
-
-    navigator.mediaSession!.setActionHandler('play', () => this.resume())
-    navigator.mediaSession!.setActionHandler('pause', () => this.pause())
-    navigator.mediaSession!.setActionHandler('previoustrack', () => this.playPrev())
-    navigator.mediaSession!.setActionHandler('nexttrack', () => this.playNext())
+    navigator.mediaSession.setActionHandler('play', () => this.resume())
+    navigator.mediaSession.setActionHandler('pause', () => this.pause())
+    navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
+    navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
   },
 
   listenToMediaEvents (mediaElement: HTMLMediaElement) {
@@ -205,16 +199,14 @@ export const playbackService = {
       console.error(e)
     }
 
-    if (isMediaSessionSupported) {
-      navigator.mediaSession!.metadata = new MediaMetadata({
-        title: song.title,
-        artist: song.artist.name,
-        album: song.album.name,
-        artwork: [
-          { src: song.album.cover, sizes: '256x256', type: 'image/png' }
-        ]
-      })
-    }
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: song.title,
+      artist: song.artist.name,
+      album: song.album.name,
+      artwork: [
+        { src: song.album.cover, sizes: '256x256', type: 'image/png' }
+      ]
+    })
   },
 
   async restart () {
@@ -288,6 +280,7 @@ export const playbackService = {
    * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
    */
   async playPrev () {
+    console.log('called')
     // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
     // restart playing instead.
     if (this.getPlayer().media.currentTime > 5 && queueStore.current!.length > 5) {
@@ -334,11 +327,7 @@ export const playbackService = {
   },
 
   unmute () {
-    // If the saved volume is 0, we unmute to the default level (7).
-    if (preferences.volume === 0) {
-      preferences.volume = DEFAULT_VOLUME_VALUE
-    }
-
+    preferences.volume = preferences.volume || DEFAULT_VOLUME_VALUE
     this.setVolume(preferences.volume)
   },
 
@@ -364,7 +353,7 @@ export const playbackService = {
     try {
       await this.getPlayer().media.play()
     } catch (error) {
-      console.warn(error)
+      console.error(error)
     }
 
     queueStore.current!.playbackState = 'Playing'
@@ -413,6 +402,10 @@ export const playbackService = {
     await this.play(queueStore.first)
   },
 
+  async shuffleLibrary () {
+    await this.queueAndPlay(songStore.all, true)
+  },
+
   getPlayer () {
     return this.player!
   },
@@ -422,18 +415,18 @@ export const playbackService = {
    * If the current queue is empty, try creating it by shuffling all songs.
    */
   async playFirstInQueue () {
-    queueStore.all.length ? await this.play(queueStore.first) : await this.queueAndPlay()
+    queueStore.all.length ? await this.play(queueStore.first) : await this.shuffleLibrary()
   },
 
-  async playAllByArtist ({ songs }: { songs: Song[] }, shuffled = true) {
+  async playAllByArtist (artist: Artist, shuffled = true) {
     shuffled
-      ? await this.queueAndPlay(songs, true /* shuffled */)
-      : await this.queueAndPlay(orderBy(songs, ['album_id', 'disc', 'track']))
+      ? await this.queueAndPlay(artist.songs, true /* shuffled */)
+      : await this.queueAndPlay(orderBy(artist.songs, ['album_id', 'disc', 'track']))
   },
 
-  async playAllInAlbum ({ songs }: { songs: Song[] }, shuffled = true) {
+  async playAllInAlbum (album: Album, shuffled = true) {
     shuffled
-      ? await this.queueAndPlay(songs, true /* shuffled */)
-      : await this.queueAndPlay(orderBy(songs, ['disc', 'track']))
+      ? await this.queueAndPlay(album.songs, true /* shuffled */)
+      : await this.queueAndPlay(orderBy(album.songs, ['disc', 'track']))
   }
 }

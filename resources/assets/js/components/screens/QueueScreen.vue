@@ -42,7 +42,7 @@
       No songs queued.
       <span class="d-block secondary" v-if="libraryNotEmpty">
         How about
-        <a data-testid="shuffle-library" class="start" @click.prevent="playAll(true)">
+        <a data-testid="shuffle-library" class="start" @click.prevent="shuffleLibrary">
           shuffling the whole library
         </a>?
       </span>
@@ -78,7 +78,8 @@ const {
 const allSongs = toRef(songStore.state, 'songs')
 const libraryNotEmpty = computed(() => allSongs.value.length > 0)
 
-const playAll = (shuffle: boolean) => playbackService.queueAndPlay(songs.value.length ? songs.value : songStore.all, shuffle)
+const playAll = (shuffle = true) => playbackService.queueAndPlay(songs.value, shuffle)
+const shuffleLibrary = () => playbackService.shuffleLibrary()
 const clearQueue = () => queueStore.clear()
 const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(selectedSongs.value)
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])

@@ -5,9 +5,6 @@
     @keydown.k="playPrev"
     @keydown.f="search"
     @keydown.l="toggleLike"
-    @keydown.176="playPrev"
-    @keydown.177="playNext"
-    @keydown.179="togglePlayback"
   />
 </template>
 

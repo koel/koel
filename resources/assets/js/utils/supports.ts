@@ -34,11 +34,6 @@ export const isAudioContextSupported: boolean = ((): boolean => {
 export const isClipboardSupported: boolean = 'execCommand' in document
 
 /**
- * Checks if Media Session API is supported.
- */
-export const isMediaSessionSupported: boolean = 'mediaSession' in navigator
-
-/**
  * Checks if the browser supports reading (and thus uploading) a whole directory.
  */
 export const isDirectoryReadingSupported: boolean = window.DataTransferItem &&
