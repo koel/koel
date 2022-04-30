@@ -81,6 +81,10 @@ const disconnect = async () => {
 .buttons {
   margin-top: 1.25rem;
 
+  > * + * {
+    margin-left: 0.5rem;
+  }
+
   .connect {
     background: #d31f27; // Last.fm color yo!
   }
