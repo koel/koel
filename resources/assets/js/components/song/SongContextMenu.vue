@@ -11,9 +11,12 @@
     <li class="has-sub">
       Add To
       <ul class="menu submenu menu-add-to">
-        <li class="after-current" @click="queueSongsAfterCurrent">After Current Song</li>
-        <li class="bottom-queue" @click="queueSongsToBottom">Bottom of Queue</li>
-        <li class="top-queue" @click="queueSongsToTop">Top of Queue</li>
+        <template v-if="queue.length">
+          <li v-if="currentSong" class="after-current" @click="queueSongsAfterCurrent">After Current Song</li>
+          <li class="bottom-queue" @click="queueSongsToBottom">Bottom of Queue</li>
+          <li class="top-queue" @click="queueSongsToTop">Top of Queue</li>
+        </template>
+        <li v-else @click="queueSongsToBottom">Queue</li>
         <li class="separator"></li>
         <li class="favorite" @click="addSongsToFavorite">Favorites</li>
         <li class="separator" v-if="normalPlaylists.length"></li>
@@ -67,6 +70,8 @@ const {
 const playlists = toRef(playlistStore.state, 'playlists')
 const allowDownload = toRef(commonStore.state, 'allowDownload')
 const user = toRef(userStore.state, 'current')
+const queue = toRef(queueStore.state, 'songs')
+const currentSong = toRef(queueStore.state, 'current')
 
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playbackState === 'Playing' : false)

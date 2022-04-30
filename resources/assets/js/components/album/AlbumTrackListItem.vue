@@ -1,5 +1,5 @@
 <template>
-  <li :class="{ available: song }" :title="tooltip" role="button" tabindex="0" @click="play">
+  <li :class="{ available: song }" :title="tooltip" tabindex="0" @click="play">
     <span class="title">{{ track.title }}</span>
     <a
       v-if="useiTunes && !song"
@@ -41,7 +41,7 @@ const play = () => {
 </script>
 
 <style lang="scss" scoped>
-[role=button] {
+li {
   &:focus {
     span.title {
       color: var(--color-highlight);

@@ -13,9 +13,14 @@
 
       <ul>
         <template v-if="config.queue">
-          <li class="after-current" role="button" tabindex="0" @click="queueSongsAfterCurrent">After Current Song</li>
-          <li class="bottom-queue" role="button" tabindex="0" @click="queueSongsToBottom">Bottom of Queue</li>
-          <li class="top-queue" role="button" tabindex="0" @click="queueSongsToTop">Top of Queue</li>
+          <template v-if="queue.length">
+            <li v-if="currentSong" class="after-current" tabindex="0" @click="queueSongsAfterCurrent">
+              After Current Song
+            </li>
+            <li class="bottom-queue" tabindex="0" @click="queueSongsToBottom">Bottom of Queue</li>
+            <li class="top-queue" tabindex="0" @click="queueSongsToTop">Top of Queue</li>
+          </template>
+          <li v-else tabindex="0" @click="queueSongsToBottom">Queue</li>
         </template>
 
         <li
@@ -62,9 +67,9 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, nextTick, ref, toRef, toRefs, watch } from 'vue'
 import { alerts, pluralize } from '@/utils'
-import { playlistStore } from '@/stores'
-import router from '@/router'
+import { playlistStore, queueStore } from '@/stores'
 import { useSongMenuMethods } from '@/composables'
+import router from '@/router'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
@@ -72,6 +77,8 @@ const props = defineProps<{ songs: Song[], showing: Boolean, config: AddToMenuCo
 const { songs, showing, config } = toRefs(props)
 
 const newPlaylistName = ref('')
+const queue = toRef(queueStore.state, 'songs')
+const currentSong = toRef(queueStore.state, 'current')
 
 const allPlaylists = toRef(playlistStore.state, 'playlists')
 const playlists = computed(() => allPlaylists.value.filter(playlist => !playlist.is_smart))
