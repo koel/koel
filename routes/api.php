@@ -33,8 +33,9 @@ use Pusher\Pusher;
 Route::post('me', [AuthController::class, 'login'])->name('auth.login');
 Route::delete('me', [AuthController::class, 'logout']);
 
+Route::get('ping', static fn () => null);
+
 Route::middleware('auth')->group(static function (): void {
-    Route::get('ping', static fn () => null);
 
     Route::post('broadcasting/auth', static function (Request $request) {
         $pusher = new Pusher(
