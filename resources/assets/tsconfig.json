@@ -13,8 +13,7 @@
     "allowJs": true,
     "paths": {
       "@/*": ["js/*"]
-    },
-    "types": ["@types/node", "vitest/globals"]
+    }
   },
   "include": [
     "js/**/*"
