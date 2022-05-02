@@ -1,7 +1,8 @@
 import factory from 'factoria'
 import crypto from 'crypto-random-string'
+import { Faker } from '@faker-js/faker'
 
-export default (faker: Faker.FakerStatic): Song => {
+export default (faker: Faker): Song => {
   const artist = factory<Artist>('artist')
   const album = factory<Album>('album', {
     artist,
@@ -15,9 +16,9 @@ export default (faker: Faker.FakerStatic): Song => {
     album_id: album.id,
     id: crypto(32),
     title: faker.lorem.sentence(),
-    length: faker.random.number(),
-    track: faker.random.number(),
-    disc: faker.random.number({ min: 1, max: 2 }),
+    length: faker.datatype.number(),
+    track: faker.datatype.number(),
+    disc: faker.datatype.number({ min: 1, max: 2 }),
     lyrics: faker.lorem.paragraph(),
     playCount: 0,
     liked: true

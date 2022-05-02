@@ -1,11 +1,12 @@
 import factory from 'factoria'
+import { Faker } from '@faker-js/faker'
 
-export default (faker: Faker.FakerStatic): Album => {
+export default (faker: Faker): Album => {
   const artist = factory<Artist>('artist')
 
   return {
     artist,
-    id: faker.random.number(),
+    id: faker.datatype.number(),
     artist_id: artist.id,
     name: faker.lorem.sentence(),
     cover: faker.image.imageUrl(),

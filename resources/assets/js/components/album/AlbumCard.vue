@@ -17,7 +17,7 @@
 
     <footer>
       <div class="info">
-        <a :href="`#!/album/${album.id}`" class="name">{{ album.name }}</a>
+        <a :href="`#!/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
         <span class="sep text-secondary"> by </span>
         <a v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`" class="artist">{{ album.artist.name }}</a>
         <span class="artist nope" v-else>{{ album.artist.name }}</span>
@@ -34,6 +34,7 @@
           <a
             :title="`Shuffle all songs in the album ${album.name}`"
             class="shuffle-album"
+            data-testid="shuffleAlbum"
             href
             role="button"
             @click.prevent="shuffle"
@@ -44,6 +45,7 @@
             v-if="allowDownload"
             :title="`Download all songs in the album ${album.name}`"
             class="download-album"
+            data-testid="downloadAlbum"
             href
             role="button"
             @click.prevent="download"
@@ -64,7 +66,7 @@ import { downloadService, playbackService } from '@/services'
 
 const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
-const props = withDefaults(defineProps<{ album: Album, layout: ArtistAlbumCardLayout }>(), { layout: 'full' })
+const props = withDefaults(defineProps<{ album: Album, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { album, layout } = toRefs(props)
 
 const allowDownload = toRef(commonStore.state, 'allowDownload')

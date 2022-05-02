@@ -1,5 +1,7 @@
-export default (faker: Faker.FakerStatic): Artist => ({
-  id: faker.random.number(),
+import { Faker } from '@faker-js/faker'
+
+export default (faker: Faker): Artist => ({
+  id: faker.datatype.number(),
   name: faker.name.findName(),
   info: {
     image: faker.image.imageUrl(),

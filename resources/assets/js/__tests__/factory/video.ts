@@ -1,6 +1,7 @@
 import crypto from 'crypto-random-string'
+import { Faker } from '@faker-js/faker'
 
-export default (faker: Faker.FakerStatic): YouTubeVideo => ({
+export default (faker: Faker): YouTubeVideo => ({
   id: {
     videoId: crypto(16)
   },
