@@ -10,7 +10,7 @@ let album: Album
 
 beforeEach(() => {
   vi.restoreAllMocks()
-  mockHelper.restoreMocks()
+  mockHelper.restoreAllMocks()
   cleanup()
 
   album = factory<Album>('album', {

@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`componnents/song/track-list-item renders 1`] = `
-<li title="" role="button" tabindex="0" class=""><span class="no">2</span> <span class="title">Foo and bar</span> <a href="http://koel.local/itunes/song/42?q=Foo%20and%20bar&amp;api_token=abcdef" target="_blank" title="View on iTunes" class="view-on-itunes">
-    iTunes
-  </a> <span class="length">00:42</span></li>
-`;

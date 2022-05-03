@@ -47,7 +47,7 @@
     "@types/nprogress": "^0.2.0",
     "@types/pusher-js": "^4.2.2",
     "@types/youtube-player": "^5.5.2",
-    "@typescript-eslint/eslint-plugin": "^4.11.1",
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^4.11.1",
     "@vitejs/plugin-vue": "^2.3.1",
     "@vue/compiler-sfc": "^3.2.32",

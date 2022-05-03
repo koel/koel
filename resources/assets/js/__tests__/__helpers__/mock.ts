@@ -21,7 +21,7 @@ export const mockHelper = {
     return m
   },
 
-  restoreMocks () {
+  restoreAllMocks () {
     this.backup.forEach((fn, [obj, methodName]) => (obj[methodName] = fn))
     this.backup = new Map()
   }
