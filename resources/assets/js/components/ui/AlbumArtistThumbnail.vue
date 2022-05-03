@@ -1,5 +1,10 @@
 <template>
-  <span :class="{ droppable }" :style="{ backgroundImage: `url(${image})` }" class="cover">
+  <span
+    :class="{ droppable }"
+    :style="{ backgroundImage: `url(${image})` }"
+    class="cover"
+    data-testid="album-thumbnail"
+  >
     <a
       class="control control-play font-size-0"
       href

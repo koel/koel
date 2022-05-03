@@ -39,7 +39,7 @@
     </main>
 
     <footer>
-      <Btn data-test="close-modal-btn" red rounded @click.prevent="close">Close</Btn>
+      <Btn data-testid="close-modal-btn" red rounded @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>

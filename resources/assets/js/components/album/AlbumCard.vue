@@ -34,7 +34,7 @@
           <a
             :title="`Shuffle all songs in the album ${album.name}`"
             class="shuffle-album"
-            data-testid="shuffleAlbum"
+            data-testid="shuffle-album"
             href
             role="button"
             @click.prevent="shuffle"
@@ -45,7 +45,7 @@
             v-if="allowDownload"
             :title="`Download all songs in the album ${album.name}`"
             class="download-album"
-            data-testid="downloadAlbum"
+            data-testid="download-album"
             href
             role="button"
             @click.prevent="download"

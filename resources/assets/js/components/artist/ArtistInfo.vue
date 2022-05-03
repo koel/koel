@@ -1,5 +1,5 @@
 <template>
-  <article class="artist-info" :class="mode" data-test="artist-info">
+  <article class="artist-info" :class="mode" data-testid="artist-info">
     <h1 class="name">
       <span>{{ artist.name }}</span>
       <button :title="`Shuffle all songs by ${artist.name}`" class="shuffle control" @click.prevent="shuffleAll">
@@ -15,7 +15,7 @@
           <div v-if="showSummary" class="summary" v-html="artist.info?.bio?.summary"></div>
           <div v-if="showFull" class="full" v-html="artist.info?.bio?.full"></div>
 
-          <button v-show="showSummary" class="more" data-test="more-btn" @click.prevent="showingFullBio = true">
+          <button v-show="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullBio = true">
             Full Bio
           </button>
         </div>

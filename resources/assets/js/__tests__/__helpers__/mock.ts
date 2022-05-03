@@ -2,9 +2,7 @@ import { vi } from 'vitest'
 import { noop } from '@/utils'
 
 declare type Procedure = (...args: any[]) => any;
-declare type Methods<T> = {
-  [K in keyof T]: T[K] extends Procedure ? K : never;
-}[keyof T] & (string | symbol);
+declare type Methods<T> = { [K in keyof T]: T[K] extends Procedure ? K : never; }[keyof T] & (string | symbol);
 
 export const mockHelper = {
   backup: new Map(),
@@ -25,7 +23,6 @@ export const mockHelper = {
 
   restoreMocks () {
     this.backup.forEach((fn, [obj, methodName]) => (obj[methodName] = fn))
-
     this.backup = new Map()
   }
 }

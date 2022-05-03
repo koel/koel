@@ -9,6 +9,7 @@
         :key="index"
         :album="album"
         :track="track"
+        data-testid="album-track-item"
       />
     </ul>
   </section>

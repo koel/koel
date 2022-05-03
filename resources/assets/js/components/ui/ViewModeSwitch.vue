@@ -3,7 +3,7 @@
     <label
       :class="{ active: value === 'thumbnails' }"
       class="thumbnails"
-      data-test="view-mode-thumbnail"
+      data-testid="view-mode-thumbnail"
       title="View as thumbnails"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="thumbnails">
@@ -14,7 +14,7 @@
     <label
       :class="{ active: value === 'list' }"
       class="list"
-      data-test="view-mode-list"
+      data-testid="view-mode-list"
       title="View as list"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="list">

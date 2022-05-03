@@ -32,7 +32,7 @@ context('Extra Information Panel', () => {
     cy.get('#extraPanelArtist').should('be.visible').within(() => {
       cy.get('[data-test=artist-info]').should('be.visible')
       cy.findByText('Artist summary').should('be.visible')
-      cy.get('[data-test=more-btn]').click()
+      cy.findByTestId('more-btn').click()
       cy.findByText('Artist summary').should('not.exist')
       cy.findByText('Artist full bio').should('be.visible')
     })
@@ -44,7 +44,7 @@ context('Extra Information Panel', () => {
     cy.get('#extraPanelAlbum').should('be.visible').within(() => {
       cy.get('[data-test=album-info]').should('be.visible')
       cy.findByText('Album summary').should('be.visible')
-      cy.get('[data-test=more-btn]').click()
+      cy.findByTestId('more-btn').click()
       cy.findByText('Album summary').should('not.exist')
       cy.findByText('Album full wiki').should('be.visible')
     })

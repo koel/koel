@@ -53,11 +53,11 @@ context('Albums', { scrollBehavior: false }, () => {
         cy.findByText('Info').click()
       })
 
-      cy.get('[data-test=album-info]').should('be.visible').within(() => {
+      cy.findByTestId('album-info').should('be.visible').within(() => {
         cy.findByText('Album full wiki').should('be.visible')
         cy.get('.cover').should('be.visible')
 
-        cy.get('[data-test=album-info-tracks]').should('be.visible').within(() => {
+        cy.findByTestId('album-info-tracks').should('be.visible').within(() => {
           // out of 4 tracks, 3 are already available in Koel. The last one has a link to iTunes.
           cy.get('li').should('have.length', 4)
           cy.get('li.available').should('have.length', 3)
@@ -65,8 +65,8 @@ context('Albums', { scrollBehavior: false }, () => {
         })
       })
 
-      cy.get('[data-test=close-modal-btn]').click()
-      cy.get('[data-test=album-info]').should('not.exist')
+      cy.findByTestId('close-modal-btn').click()
+      cy.findByTestId('album-info').should('not.exist')
     })
   })
 

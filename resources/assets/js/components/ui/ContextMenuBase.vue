@@ -21,7 +21,7 @@
 import { nextTick, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 
-const props = defineProps<{ extraClass: string }>()
+const props = defineProps<{ extraClass?: string }>()
 const { extraClass } = toRefs(props)
 
 const el = ref<HTMLElement>()
