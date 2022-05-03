@@ -8,9 +8,7 @@
     "ecmaVersion": 2020
   },
   "extends": [
-    "plugin:vue/essential",
-    "@vue/standard",
-    "@vue/typescript/recommended"
+    "plugin:vue/vue3-recommended"
   ],
   "ignorePatterns": [
     "cypress/fixtures",
