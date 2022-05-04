@@ -1,10 +1,10 @@
-import AlbumCard from './AlbumCard.vue'
 import { cleanup, fireEvent } from '@testing-library/vue'
 import { beforeEach, expect, it, vi } from 'vitest'
 import { commonStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { mockHelper, render } from '@/__tests__/__helpers__'
 import factory from '@/__tests__/factory'
+import AlbumCard from './AlbumCard.vue'
 
 let album: Album
 
@@ -29,7 +29,7 @@ it('renders', () => {
   })
 
   expect(getByTestId('name').innerText).equal('IV')
-  getByText(/^10 songs • .+ 0 plays$/)
+  getByText(/^10 songs.+0 plays$/)
   getByTestId('shuffle-album')
   getByTestId('download-album')
 })
