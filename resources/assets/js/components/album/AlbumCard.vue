@@ -12,7 +12,7 @@
     @contextmenu.prevent="requestContextMenu"
   >
     <span class="thumbnail-wrapper">
-      <AlbumThumbnail :entity="album"/>
+      <AlbumThumbnail :entity="album" />
     </span>
 
     <footer>
@@ -20,7 +20,7 @@
         <a :href="`#!/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
         <span class="sep text-secondary"> by </span>
         <a v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`" class="artist">{{ album.artist.name }}</a>
-        <span class="artist nope" v-else>{{ album.artist.name }}</span>
+        <span v-else class="artist nope">{{ album.artist.name }}</span>
       </div>
       <p class="meta">
         <span class="left">
@@ -39,7 +39,7 @@
             role="button"
             @click.prevent="shuffle"
           >
-            <i class="fa fa-random"></i>
+            <i class="fa fa-random" />
           </a>
           <a
             v-if="allowDownload"
@@ -50,7 +50,7 @@
             role="button"
             @click.prevent="download"
           >
-            <i class="fa fa-download"></i>
+            <i class="fa fa-download" />
           </a>
         </span>
       </p>

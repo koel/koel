@@ -3,23 +3,25 @@
     <h1 class="name">
       <span>{{ artist.name }}</span>
       <button :title="`Shuffle all songs by ${artist.name}`" class="shuffle control" @click.prevent="shuffleAll">
-        <i class="fa fa-random"></i>
+        <i class="fa fa-random" />
       </button>
     </h1>
 
     <main v-if="artist.info">
-      <ArtistThumbnail :entity="artist"/>
+      <ArtistThumbnail :entity="artist" />
 
       <template v-if="artist.info">
         <div v-if="artist.info?.bio?.summary" class="bio">
-          <div v-if="showSummary" class="summary" v-html="artist.info?.bio?.summary"></div>
-          <div v-if="showFull" class="full" v-html="artist.info?.bio?.full"></div>
+          <div v-if="showSummary" class="summary" v-html="artist.info?.bio?.summary" />
+          <div v-if="showFull" class="full" v-html="artist.info?.bio?.full" />
 
           <button v-show="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullBio = true">
             Full Bio
           </button>
         </div>
-        <p v-else class="text-secondary none">This artist has no Last.fm biography – yet.</p>
+        <p v-else class="text-secondary none">
+          This artist has no Last.fm biography – yet.
+        </p>
 
         <footer>Data &copy; <a :href="artist.info?.url" rel="openener" target="_blank">Last.fm</a></footer>
       </template>

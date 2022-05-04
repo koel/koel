@@ -3,7 +3,7 @@
     :class="{ droppable }"
     :style="{ backgroundImage: `url(${image})` }"
     class="cover"
-    data-testid="album-thumbnail"
+    data-testid="album-artist-thumbnail"
   >
     <a
       class="control control-play font-size-0"

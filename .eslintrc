@@ -41,9 +41,11 @@
     "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/ban-ts-comment": 0,
     "@typescript-eslint/no-empty-function": 0,
-    "vue/no-side-effects-in-computed-properties": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "standard/no-callback-literal": 0,
-    "vue/valid-v-on": 0
+    "vue/valid-v-on": 0,
+    "vue/no-side-effects-in-computed-properties": 0,
+    "vue/max-attributes-per-line": 0,
+    "vue/no-v-html": 0
   }
 }

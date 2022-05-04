@@ -3,24 +3,24 @@
     <h1 class="name">
       <span>{{ album.name }}</span>
       <button :title="`Shuffle all songs in ${album.name}`" class="shuffle control" @click.prevent="shuffleAll">
-        <i class="fa fa-random"></i>
+        <i class="fa fa-random" />
       </button>
     </h1>
 
     <main>
-      <AlbumThumbnail :entity="album"/>
+      <AlbumThumbnail :entity="album" />
 
       <template v-if="album.info">
-        <div class="wiki" v-if="album.info?.wiki?.summary">
-          <div v-if="showSummary" class="summary" v-html="album.info?.wiki?.summary"></div>
-          <div v-if="showFull" class="full" v-html="album.info?.wiki?.full"></div>
+        <div v-if="album.info?.wiki?.summary" class="wiki">
+          <div v-if="showSummary" class="summary" v-html="album.info?.wiki?.summary" />
+          <div v-if="showFull" class="full" v-html="album.info?.wiki?.full" />
 
           <button v-if="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullWiki = true">
             Full Wiki
           </button>
         </div>
 
-        <TrackList v-if="album.info?.tracks?.length" :album="album" data-testid="album-info-tracks"/>
+        <TrackList v-if="album.info?.tracks?.length" :album="album" data-testid="album-info-tracks" />
 
         <footer>Data &copy; <a :href="album.info?.url" rel="noopener" target="_blank">Last.fm</a></footer>
       </template>
