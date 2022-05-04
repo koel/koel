@@ -5,7 +5,7 @@
     </div>
     <input v-model="email" autofocus placeholder="Email Address" required type="email">
     <input v-model="password" placeholder="Password" required type="password">
-    <btn type="submit">Log In</btn>
+    <Btn type="submit">Log In</Btn>
   </form>
 </template>
 
@@ -53,19 +53,19 @@ const login = async () => {
  */
 @keyframes shake {
   8%, 41% {
-    -webkit-transform: translateX(-10px);
+    transform: translateX(-10px);
   }
   25%, 58% {
-    -webkit-transform: translateX(10px);
+    transform: translateX(10px);
   }
   75% {
-    -webkit-transform: translateX(-5px);
+    transform: translateX(-5px);
   }
   92% {
-    -webkit-transform: translateX(5px);
+    transform: translateX(5px);
   }
   0%, 100% {
-    -webkit-transform: translateX(0);
+    transform: translateX(0);
   }
 }
 

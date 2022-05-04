@@ -1,4 +1,4 @@
-[*.{js,css,sass,scss,json,coffee,vue,html}]
+[*.{js,ts,css,sass,scss,json,coffee,vue,html}]
 indent_style = space
 indent_size = 2
 
