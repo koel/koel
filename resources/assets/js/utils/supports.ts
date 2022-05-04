@@ -3,7 +3,11 @@ import isMobile from 'ismobilejs'
 /**
  * Check if AudioContext is supported by the current browser.
  */
-export const isAudioContextSupported: boolean = ((): boolean => {
+export const isAudioContextSupported: boolean = (() => {
+  if (process.env.NODE_ENV === 'test') {
+    return false
+  }
+
   // Apple devices just don't love AudioContext that much.
   if (isMobile.apple.device) {
     return false
@@ -21,11 +25,7 @@ export const isAudioContextSupported: boolean = ((): boolean => {
 
   // Safari (MacOS & iOS alike) has webkitAudioContext, but is buggy.
   // @link http://caniuse.com/#search=audiocontext
-  if (!(new ContextClass()).createMediaElementSource) {
-    return false
-  }
-
-  return true
+  return Boolean((new ContextClass()).createMediaElementSource)
 })()
 
 /**

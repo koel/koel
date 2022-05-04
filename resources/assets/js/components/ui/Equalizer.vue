@@ -41,8 +41,8 @@ interface Band {
   filter: BiquadFilterNode
 }
 
-let context: AudioContext|null = null
-let preampGainNode: GainNode|null = null
+let context: AudioContext | null = null
+let preampGainNode: GainNode | null = null
 
 const root = ref(null as unknown as HTMLElement)
 const bands = ref<Band[]>([])

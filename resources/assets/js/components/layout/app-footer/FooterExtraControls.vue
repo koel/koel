@@ -1,7 +1,7 @@
 <template>
   <div class="other-controls" data-testid="other-controls">
     <div v-koel-clickaway="closeEqualizer" class="wrapper">
-      <Equalizer v-show="showEqualizer" v-if="useEqualizer"/>
+      <Equalizer v-if="useEqualizer" v-show="showEqualizer"/>
 
       <button
         v-if="song?.playbackState === 'Playing'"
@@ -51,9 +51,8 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, ref, toRef, toRefs } from 'vue'
 import isMobile from 'ismobilejs'
-import { socketService } from '@/services'
 import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'
-import { favoriteStore, preferenceStore, songStore } from '@/stores'
+import { preferenceStore } from '@/stores'
 
 const Equalizer = defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
@@ -68,16 +67,9 @@ const showExtraPanel = toRef(preferenceStore.state, 'showExtraPanel')
 const showEqualizer = ref(false)
 const viewingQueue = ref(false)
 
-const like = () => {
-  if (song.value.id) {
-    favoriteStore.toggleOne(song.value)
-    socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(song.value))
-  }
-}
-
 const toggleExtraPanel = () => (preferenceStore.showExtraPanel = !showExtraPanel.value)
 const toggleEqualizer = () => (showEqualizer.value = !showEqualizer.value)
-const closeEqualizer = () => showEqualizer.value = false
+const closeEqualizer = () => (showEqualizer.value = false)
 const toggleVisualizer = () => isMobile.any || eventBus.emit('TOGGLE_VISUALIZER')
 
 eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName) => (viewingQueue.value = view === 'Queue'))

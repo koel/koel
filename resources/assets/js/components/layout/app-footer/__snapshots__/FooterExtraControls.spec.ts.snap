@@ -1,0 +1,11 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+"<div class=\\"other-controls\\" data-testid=\\"other-controls\\" data-v-add48cbe=\\"\\">
+  <div class=\\"wrapper\\" data-v-add48cbe=\\"\\">
+    <!--v-if--><button data-testid=\\"toggle-visualizer-btn\\" title=\\"Click for a marvelous visualizer!\\" type=\\"button\\" data-v-add48cbe=\\"\\">
+      <div class=\\"bars\\" data-test=\\"soundbars\\" data-testid=\\"sound-bar-play\\" data-v-d983e410=\\"\\" data-v-add48cbe=\\"\\"><img alt=\\"Sound bars\\" height=\\"13\\" src=\\"/resources/assets/img/bars.gif\\" data-v-d983e410=\\"\\" /></div>
+    </button><button title=\\"Unlike Fahrstühl to Heaven by Led Zeppelin\\" class=\\"text-secondary like\\" data-test=\\"like-btn\\" data-v-5d366bb1=\\"\\" data-v-add48cbe=\\"\\"><i class=\\"fa fa-heart text-maroon\\" data-test=\\"btn-like-liked\\" data-v-5d366bb1=\\"\\"></i></button><button class=\\"active control text-uppercase\\" data-testid=\\"toggle-extra-panel-btn\\" title=\\"View song information\\" type=\\"button\\" data-v-add48cbe=\\"\\"> Info </button><a class=\\"queue control\\" href=\\"#!/queue\\" data-v-add48cbe=\\"\\"><i class=\\"fa fa-list-ol\\" data-v-add48cbe=\\"\\"></i></a><button class=\\"NO_REPEAT control\\" title=\\"Change repeat mode (current mode: No Repeat)\\" data-testid=\\"repeat-mode-switch\\" type=\\"button\\" data-v-651f1926=\\"\\" data-v-add48cbe=\\"\\"><i class=\\"fa fa-repeat\\" data-v-651f1926=\\"\\"></i></button><span id=\\"volume\\" class=\\"volume control\\" data-v-add48cbe=\\"\\"><i class=\\"fa fa-volume-up mute\\" role=\\"button\\" tabindex=\\"0\\" title=\\"Mute\\"></i><input id=\\"volumeRange\\" class=\\"plyr__volume\\" max=\\"10\\" step=\\"0.1\\" title=\\"Volume\\" type=\\"range\\"/></span>
+  </div>
+</div>"
+`;

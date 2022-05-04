@@ -2,10 +2,10 @@
   <div v-if="state.showing" id="overlay" :class="state.type" class="overlay">
     <div class="display">
       <sound-bar v-if="state.type === 'loading'"/>
-      <i class="fa fa-exclamation-circle" v-if="state.type === 'error'"></i>
-      <i class="fa fa-exclamation-triangle" v-if="state.type === 'warning'"></i>
-      <i class="fa fa-info-circle" v-if="state.type === 'info'"></i>
-      <i class="fa fa-check-circle" v-if="state.type === 'success'"></i>
+      <i v-if="state.type === 'error'" class="fa fa-exclamation-circle"></i>
+      <i v-if="state.type === 'warning'" class="fa fa-exclamation-triangle"></i>
+      <i v-if="state.type === 'info'" class="fa fa-info-circle"></i>
+      <i v-if="state.type === 'success'" class="fa fa-check-circle"></i>
 
       <span class="message" v-html="state.message"></span>
     </div>
