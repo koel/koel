@@ -1,47 +1,47 @@
 <template>
   <div class="side player-controls">
     <i
-      @click.prevent="playPrev"
       class="prev fa fa-step-backward control"
+      data-testid="play-prev-btn"
       role="button"
       tabindex="0"
       title="Play previous song"
-      data-testid="play-prev-btn"
+      @click.prevent="playPrev"
     />
 
     <span class="album-thumb-wrapper">
       <span :style="{ backgroundImage: `url('${cover}')` }" class="album-thumb"></span>
       <span
-        @click.prevent="toggle"
+        v-if="shouldShowPlayButton"
         class="play"
+        data-testid="play-btn"
         role="button"
         tabindex="0"
         title="Play or resume"
-        data-testid="play-btn"
-        v-if="shouldShowPlayButton"
+        @click.prevent="toggle"
       >
         <i class="fa fa-play"></i>
       </span>
       <span
-        @click.prevent="toggle"
+        v-else
         class="pause"
+        data-testid="pause-btn"
         role="button"
         tabindex="0"
         title="Pause"
-        data-testid="pause-btn"
-        v-else
+        @click.prevent="toggle"
       >
         <i class="fa fa-pause"></i>
       </span>
     </span>
 
     <i
-      @click.prevent="playNext"
       class="next fa fa-step-forward control"
+      data-testid="play-next-btn"
       role="button"
       tabindex="0"
       title="Play next song"
-      data-testid="play-next-btn"
+      @click.prevent="playNext"
     />
   </div>
 </template>

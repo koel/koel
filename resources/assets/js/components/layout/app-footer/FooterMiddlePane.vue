@@ -1,16 +1,16 @@
 <template>
   <div class="middle-pane" data-testid="footer-middle-pane">
-    <div class="progress" id="progressPane">
+    <div id="progressPane" class="progress">
       <template v-if="song">
         <h3 class="title">{{ song.title }}</h3>
         <p class="meta">
-          <a class="artist" :href="`/#!/artist/${song.artist.id}`">{{ song.artist.name }}</a> –
-          <a class="album" :href="`/#!/album/${song.album.id}`">{{ song.album.name }}</a>
+          <a :href="`/#!/artist/${song.artist.id}`" class="artist">{{ song.artist.name }}</a> –
+          <a :href="`/#!/album/${song.album.id}`" class="album">{{ song.album.name }}</a>
         </p>
       </template>
 
       <div class="plyr">
-        <audio crossorigin="anonymous" controls></audio>
+        <audio controls crossorigin="anonymous"></audio>
       </div>
     </div>
   </div>
@@ -19,7 +19,7 @@
 <script lang="ts" setup>
 import { toRefs } from 'vue'
 
-const props = defineProps<{ song: Song }>()
+const props = defineProps<{ song?: Song }>()
 const { song } = toRefs(props)
 </script>
 
