@@ -2,7 +2,6 @@
   <div class="side player-controls">
     <i
       class="prev fa fa-step-backward control"
-      data-testid="play-prev-btn"
       role="button"
       tabindex="0"
       title="Play previous song"
@@ -14,7 +13,6 @@
       <span
         v-if="shouldShowPlayButton"
         class="play"
-        data-testid="play-btn"
         role="button"
         tabindex="0"
         title="Play or resume"
@@ -37,7 +35,6 @@
 
     <i
       class="next fa fa-step-forward control"
-      data-testid="play-next-btn"
       role="button"
       tabindex="0"
       title="Play next song"

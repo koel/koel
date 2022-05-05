@@ -34,7 +34,7 @@ const router = {
         playbackService.queueAndPlay([song])
       }
     })
-  } as { [path: string]: TAnyFunction },
+  } as { [path: string]: Closure },
 
   init () {
     this.loadState()

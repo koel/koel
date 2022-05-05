@@ -3,7 +3,7 @@ import { EventName } from '@/config'
 export const eventBus = {
   all: new Map(),
 
-  on (name: EventName | EventName[] | Partial<{ [K in EventName]: TAnyFunction }>, callback?: TAnyFunction) {
+  on (name: EventName | EventName[] | Partial<{ [K in EventName]: Closure }>, callback?: Closure) {
     if (Array.isArray(name)) {
       name.forEach(k => this.on(k, callback))
       return
@@ -26,7 +26,7 @@ export const eventBus = {
 
   emit (name: EventName, ...args: any) {
     if (this.all.has(name)) {
-      this.all.get(name).forEach((cb: TAnyFunction) => cb(...args))
+      this.all.get(name).forEach((cb: Closure) => cb(...args))
     } else {
       console.warn(`Event ${name} is not listened by any component`)
     }

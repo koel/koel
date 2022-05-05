@@ -35,7 +35,7 @@ export const socketService = {
     return this
   },
 
-  listen (eventName: string, cb: TAnyFunction) {
+  listen (eventName: string, cb: Closure) {
     this.channel && this.channel.bind(`client-${eventName}.${userStore.current.id}`, data => cb(data))
     return this
   }

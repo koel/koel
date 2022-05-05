@@ -91,11 +91,11 @@ context('Queuing', { scrollBehavior: false }, () => {
     cy.$shuffleSeveralSongs()
     cy.get('#queueWrapper .song-item:nth-child(1)').should('have.class', 'playing')
 
-    cy.findByTestId('play-next-btn').click({ force: true })
+    cy.findByTitle('Play next song').click({ force: true })
     cy.get('#queueWrapper .song-item:nth-child(2)').should('have.class', 'playing')
     cy.$assertPlaying()
 
-    cy.findByTestId('play-prev-btn').click({ force: true })
+    cy.findByTitle('Play previous song').click({ force: true })
     cy.get('#queueWrapper .song-item:nth-child(1)').should('have.class', 'playing')
     cy.$assertPlaying()
   })

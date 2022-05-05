@@ -6,7 +6,7 @@ export const $ = {
   addClass: (el: Element | null, className: string) => el?.classList.add(className),
   removeClass: (el: Element | null, className: string) => el?.classList.remove(className),
 
-  scrollTo (el: Element, to: number, duration: number, cb?: TAnyFunction) {
+  scrollTo (el: Element, to: number, duration: number, cb?: Closure) {
     if (duration <= 0 || !el) {
       return
     }

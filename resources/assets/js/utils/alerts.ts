@@ -9,21 +9,21 @@ const encodeEntities = (str: string) => str.replace(/&/g, '&amp;')
 export const alerts = {
   alert: (msg: string) => alertify.alert(encodeEntities(msg)),
 
-  confirm: (msg: string, okFunc: TAnyFunction, cancelFunc?: TAnyFunction) => {
+  confirm: (msg: string, okFunc: Closure, cancelFunc?: Closure) => {
     alertify.confirm(msg, okFunc, cancelFunc)
   },
 
-  log: (msg: string, type: logType = 'log', cb?: TAnyFunction) => {
+  log: (msg: string, type: logType = 'log', cb?: Closure) => {
     alertify.logPosition('top right')
     alertify.closeLogOnClick(true)
     alertify[type](encodeEntities(msg), cb)
   },
 
-  success (msg: string, cb?: TAnyFunction) {
+  success (msg: string, cb?: Closure) {
     this.log(msg, 'success', cb)
   },
 
-  error (msg: string, cb?: TAnyFunction) {
+  error (msg: string, cb?: Closure) {
     this.log(msg, 'error', cb)
   }
 }

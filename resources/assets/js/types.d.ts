@@ -17,18 +17,18 @@ declare module '*.svg' {
   export default value
 }
 
-declare type TAnyFunction = (...args: Array<unknown | any>) => unknown | any
+declare type Closure = (...args: Array<unknown | any>) => unknown | any
 
 declare module 'alertify.js' {
   function alert (msg: string): void
 
-  function confirm (msg: string, okFunc: TAnyFunction, cancelFunc?: TAnyFunction): void
+  function confirm (msg: string, okFunc: Closure, cancelFunc?: Closure): void
 
-  function success (msg: string, cb?: TAnyFunction): void
+  function success (msg: string, cb?: Closure): void
 
-  function error (msg: string, cb?: TAnyFunction): void
+  function error (msg: string, cb?: Closure): void
 
-  function log (msg: string, cb?: TAnyFunction): void
+  function log (msg: string, cb?: Closure): void
 
   function logPosition (position: string): void
 
@@ -101,7 +101,7 @@ interface Window {
 }
 
 interface FileSystemDirectoryReader {
-  readEntries (successCallback: TAnyFunction, errorCallback?: TAnyFunction): FileSystemEntry[]
+  readEntries (successCallback: Closure, errorCallback?: Closure): FileSystemEntry[]
 }
 
 interface FileSystemEntry {
@@ -113,7 +113,7 @@ interface FileSystemEntry {
 
   createReader (): FileSystemDirectoryReader
 
-  file (successCallback: TAnyFunction): void
+  file (successCallback: Closure): void
 }
 
 interface AlbumTrack {

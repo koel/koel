@@ -1,8 +1,7 @@
 import { vi } from 'vitest'
 import { noop } from '@/utils'
 
-declare type Procedure = (...args: any[]) => any;
-declare type Methods<T> = { [K in keyof T]: T[K] extends Procedure ? K : never; }[keyof T] & (string | symbol);
+declare type Methods<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T] & (string | symbol);
 
 export const mockHelper = {
   backup: new Map(),
