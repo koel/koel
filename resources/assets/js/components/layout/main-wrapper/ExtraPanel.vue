@@ -50,7 +50,7 @@
           role="tabpanel"
           tabindex="0"
         >
-          <lyrics-pane :song="song"/>
+          <LyricsPane :song="song"/>
         </div>
 
         <div
@@ -60,7 +60,7 @@
           role="tabpanel"
           tabindex="0"
         >
-          <ArtistInfo v-if="artist" :artist="artist" mode="sidebar"/>
+          <ArtistInfo v-if="artist" :artist="artist" mode="aside"/>
         </div>
 
         <div
@@ -70,7 +70,7 @@
           role="tabpanel"
           tabindex="0"
         >
-          <AlbumInfo v-if="album" :album="album" mode="sidebar"/>
+          <AlbumInfo v-if="album" :album="album" mode="aside"/>
         </div>
 
         <div
@@ -91,7 +91,7 @@
 import isMobile from 'ismobilejs'
 import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { $, eventBus } from '@/utils'
-import { preferenceStore as preferences, songStore } from '@/stores'
+import { preferenceStore as preferences } from '@/stores'
 import { songInfo } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 
@@ -119,11 +119,6 @@ watch(showing, (showingExtraPanel) => {
     $.removeClass(document.documentElement, 'with-extra-panel')
   }
 })
-
-const resetState = () => {
-  currentTab.value = defaultTab
-  song.value = songStore.stub
-}
 
 const fetchSongInfo = async (_song: Song) => {
   try {

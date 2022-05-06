@@ -3,16 +3,16 @@ import { reactive } from 'vue'
 
 import { httpService } from '@/services'
 import {
-  userStore,
-  preferenceStore,
-  artistStore,
   albumStore,
-  songStore,
+  artistStore,
   playlistStore,
-  recentlyPlayedStore,
+  preferenceStore,
   queueStore,
+  recentlyPlayedStore,
   settingStore,
-  themeStore
+  songStore,
+  themeStore,
+  userStore
 } from '.'
 
 interface CommonStoreState {

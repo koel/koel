@@ -1,19 +1,19 @@
 <template>
-  <article class="artist-info" :class="mode" data-testid="artist-info">
+  <article :class="mode" class="artist-info" data-testid="artist-info">
     <h1 class="name">
       <span>{{ artist.name }}</span>
       <button :title="`Shuffle all songs by ${artist.name}`" class="shuffle control" @click.prevent="shuffleAll">
-        <i class="fa fa-random" />
+        <i class="fa fa-random"/>
       </button>
     </h1>
 
     <main v-if="artist.info">
-      <ArtistThumbnail :entity="artist" />
+      <ArtistThumbnail :entity="artist"/>
 
       <template v-if="artist.info">
         <div v-if="artist.info?.bio?.summary" class="bio">
-          <div v-if="showSummary" class="summary" v-html="artist.info?.bio?.summary" />
-          <div v-if="showFull" class="full" v-html="artist.info?.bio?.full" />
+          <div v-if="showSummary" class="summary" v-html="artist.info?.bio?.summary"/>
+          <div v-if="showFull" class="full" v-html="artist.info?.bio?.full"/>
 
           <button v-show="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullBio = true">
             Full Bio
@@ -33,11 +33,11 @@
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { playbackService } from '@/services'
 
-type DisplayMode = 'sidebar' | 'full'
+type DisplayMode = 'aside' | 'full'
 
 const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
-const props = withDefaults(defineProps<{ artist: Artist, mode?: DisplayMode }>(), { mode: 'sidebar' })
+const props = withDefaults(defineProps<{ artist: Artist, mode?: DisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)
 
 const showingFullBio = ref(false)
