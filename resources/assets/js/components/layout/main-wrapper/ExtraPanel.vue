@@ -6,6 +6,7 @@
           id="extraTabLyrics"
           :aria-selected="currentTab === 'Lyrics'"
           aria-controls="extraPanelLyrics"
+          data-testid="extra-tab-lyrics"
           role="tab"
           @click.prevent="currentTab = 'Lyrics'"
         >
@@ -15,6 +16,7 @@
           id="extraTabArtist"
           :aria-selected="currentTab === 'Artist'"
           aria-controls="extraPanelArtist"
+          data-testid="extra-tab-artist"
           role="tab"
           @click.prevent="currentTab = 'Artist'"
         >
@@ -24,6 +26,7 @@
           id="extraTabAlbum"
           :aria-selected="currentTab === 'Album'"
           aria-controls="extraPanelAlbum"
+          data-testid="extra-tab-album"
           role="tab"
           @click.prevent="currentTab = 'Album'"
         >
@@ -34,6 +37,7 @@
           id="extraTabYouTube"
           :aria-selected="currentTab === 'YouTube'"
           aria-controls="extraPanelYouTube"
+          data-testid="extra-tab-youtube"
           role="tab"
           title="YouTube"
           @click.prevent="currentTab = 'YouTube'"
@@ -92,7 +96,7 @@ import isMobile from 'ismobilejs'
 import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { $, eventBus } from '@/utils'
 import { preferenceStore as preferences } from '@/stores'
-import { songInfo } from '@/services'
+import { songInfoService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 
 type Tab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
@@ -122,7 +126,7 @@ watch(showing, (showingExtraPanel) => {
 
 const fetchSongInfo = async (_song: Song) => {
   try {
-    song.value = await songInfo.fetch(_song)
+    song.value = await songInfoService.fetch(_song)
   } catch (err) {
     song.value = _song
     throw err

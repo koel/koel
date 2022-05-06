@@ -2,7 +2,7 @@ import Component from '@/components/song/SongEditForm.vue'
 import Typeahead from '@/components/ui/typeahead.vue'
 import factory from '@/__tests__/factory'
 import { songStore } from '@/stores'
-import { songInfo } from '@/services/info'
+import { songInfoService } from '@/services/info'
 import { mock } from '@/__tests__/__helpers__'
 import { mount } from '@/__tests__/adapter'
 
@@ -37,7 +37,7 @@ describe('components/song/edit-form', () => {
 
   it('fetches song information on demand', () => {
     const song = factory('song', { infoRetrieved: false })
-    const fetchMock = mock(songInfo, 'fetch')
+    const fetchMock = mock(songInfoService, 'fetch')
     mount(Component, {
       propsData: { songs: song }
     })

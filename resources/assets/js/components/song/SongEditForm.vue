@@ -14,22 +14,22 @@
       <div class="tabs">
         <div class="clear" role="tablist">
           <button
-            :aria-selected="currentView === 'details'"
-            @click.prevent="currentView = 'details'"
-            aria-controls="editSongPanelDetails"
             id="editSongTabDetails"
+            :aria-selected="currentView === 'details'"
+            aria-controls="editSongPanelDetails"
             role="tab"
+            @click.prevent="currentView = 'details'"
           >
             Details
           </button>
           <button
-            @click.prevent="currentView = 'lyrics'"
             v-if="editingOnlyOneSong"
+            id="editSongTabLyrics"
             :aria-selected="currentView === 'lyrics'"
             aria-controls="editSongPanelLyrics"
-            id="editSongTabLyrics"
-            role="tab"
             data-testid="edit-song-lyrics-tab"
+            role="tab"
+            @click.prevent="currentView = 'lyrics'"
           >
             Lyrics
           </button>
@@ -43,7 +43,7 @@
             role="tabpanel"
             tabindex="0"
           >
-            <div class="form-row" v-if="editingOnlyOneSong">
+            <div v-if="editingOnlyOneSong" class="form-row">
               <label>Title</label>
               <input v-model="formData.title" v-koel-focus name="title" title="Title" type="text">
             </div>
@@ -122,7 +122,7 @@ import { computed, defineAsyncComponent, nextTick, reactive, ref, toRef, toRefs 
 import { isEqual, union } from 'lodash'
 
 import { alerts, arrayify, br2nl, defaultCover, pluralize } from '@/utils'
-import { songInfo } from '@/services/info'
+import { songInfoService } from '@/services/info'
 import { albumStore, artistStore, songStore } from '@/stores'
 
 interface EditFormData {
@@ -235,7 +235,7 @@ const open = async () => {
       loading.value = true
 
       try {
-        await songInfo.fetch(firstSong)
+        await songInfoService.fetch(firstSong)
         formData.lyrics = br2nl(firstSong.lyrics)
         formData.track = firstSong.track || null
       } catch (e) {
