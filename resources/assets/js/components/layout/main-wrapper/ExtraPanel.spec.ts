@@ -1,15 +1,15 @@
 import { beforeEach, expect, it } from 'vitest'
 import { cleanup, fireEvent } from '@testing-library/vue'
 import { mockHelper, render } from '@/__tests__/__helpers__'
+import factory from '@/__tests__/factory'
+import { commonStore } from '@/stores'
+import { songInfoService } from '@/services'
+import { eventBus } from '@/utils'
 import ExtraPanel from './ExtraPanel.vue'
 import LyricsPane from '@/__tests__/Stub.vue'
 import AlbumInfo from '@/__tests__/Stub.vue'
 import ArtistInfo from '@/__tests__/Stub.vue'
 import YouTubeVideoList from '@/__tests__/Stub.vue'
-import factory from '@/__tests__/factory'
-import { commonStore } from '@/stores'
-import { songInfoService } from '@/services'
-import { eventBus } from '@/utils'
 
 const renderComponent = () => {
   return render(ExtraPanel, {

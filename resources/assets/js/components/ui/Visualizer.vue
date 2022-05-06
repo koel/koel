@@ -1,12 +1,12 @@
 <template>
   <div
-    :class="{ fullscreen: isFullscreen }"
-    @dblclick="toggleFullscreen"
     id="vizContainer"
     ref="el"
+    :class="{ fullscreen: isFullscreen }"
     data-testid="visualizer"
+    @dblclick="toggleFullscreen"
   >
-    <close-modal-btn class="close" @click="hide"/>
+    <CloseModalBtn class="close" @click="hide"/>
   </div>
 </template>
 
@@ -17,17 +17,23 @@ import { eventBus } from '@/utils'
 
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
-const el = ref(null as unknown as HTMLElement)
+const el = ref<HTMLElement>()
 const isFullscreen = ref(false)
 
 const toggleFullscreen = () => {
-  isFullscreen.value ? document.exitFullscreen() : el.value.requestFullscreen()
+  isFullscreen.value ? document.exitFullscreen() : el.value?.requestFullscreen()
   isFullscreen.value = !isFullscreen.value
 }
 
 const hide = () => eventBus.emit('TOGGLE_VISUALIZER')
 
-onMounted(() => initVisualizer(el.value))
+onMounted(() => {
+  try {
+    initVisualizer(el.value!)
+  } catch (e) {
+    // in e.g., DOM testing, the call will fail due to the lack of proper API support
+  }
+})
 </script>
 
 <style lang="scss" scoped>

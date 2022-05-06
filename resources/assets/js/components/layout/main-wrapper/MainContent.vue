@@ -32,7 +32,8 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
-import { commonStore, preferenceStore } from '@/stores'
+import { preferenceStore } from '@/stores'
+import { useThirdPartyServices } from '@/composables'
 import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
 import AlbumListScreen from '@/components/screens/AlbumListScreen.vue'
@@ -40,7 +41,6 @@ import ArtistListScreen from '@/components/screens/ArtistListScreen.vue'
 import AllSongsScreen from '@/components/screens/AllSongsScreen.vue'
 import PlaylistScreen from '@/components/screens/PlaylistScreen.vue'
 import FavoritesScreen from '@/components/screens/FavoritesScreen.vue'
-import { useThirdPartyServices } from '@/composables'
 
 const RecentlyPlayedScreen = defineAsyncComponent(() => import('@/components/screens/RecentlyPlayedScreen.vue'))
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
