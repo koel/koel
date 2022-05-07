@@ -26,7 +26,7 @@
     "nprogress": "^0.2.0",
     "plyr": "1.5.x",
     "pusher-js": "^4.1.0",
-    "select": "^1.0.6",
+    "select": "^1.1.2",
     "sketch-js": "^1.1.3",
     "slugify": "^1.0.2",
     "vue": "^3.2.32",

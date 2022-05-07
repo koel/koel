@@ -11,7 +11,7 @@
 
       <p class="current-version">{{ currentVersion }}</p>
 
-      <p v-if="shouldNotifyNewVersion" class="new-version">
+      <p v-if="shouldNotifyNewVersion" data-testid="new-version-about">
         <a :href="latestVersionReleaseUrl" target="_blank">
           A new Koel version is available ({{ latestVersion }}).
         </a>
@@ -25,7 +25,7 @@
         <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
       </p>
 
-      <p v-if="isDemo" class="demo-credits">
+      <p v-if="isDemo" data-testid="demo-credits">
         Demo music provided by
         <a href="https://www.bensound.com" rel="noopener" target="_blank">Bensound</a>.
       </p>
