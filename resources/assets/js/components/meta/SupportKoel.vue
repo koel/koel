@@ -1,41 +1,40 @@
 <template>
-  <div class="support-bar" v-if="shown">
+  <div v-if="shown" class="support-bar" data-testid="support-bar">
     <p>
       Loving Koel? Please consider supporting its development via
       <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a>
       and/or
       <a href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>.
     </p>
-    <button @click.prevent="close">Hide</button>
+    <button data-testid="hide-support-koel" @click.prevent="close">Hide</button>
     <span class="sep"></span>
-    <button @click.prevent="stopBugging">Don't bug me again</button>
+    <button data-testid="stop-support-koel-bugging" @click.prevent="stopBugging">Don't bug me again</button>
   </div>
 </template>
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { computed, ref } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
-import { preferenceStore as preferences } from '@/stores'
+import { preferenceStore } from '@/stores'
 
-const DELAY_UNTIL_SHOWN = 30 * 60 * 1000
-let SUPPORT_BAR_TIMEOUT_HANDLE = 0
+const delayUntilShow = 30 * 60 * 1000
+let timeoutHandle = 0
 
 const shown = ref(false)
+const noBugging = toRef(preferenceStore.state, 'supportBarNoBugging')
 
-const canNag = computed(() => !isMobile.any && !preferences.supportBarNoBugging)
+const canNag = computed(() => !isMobile.any && !noBugging.value)
 
-const setUpShowBarTimeout = () => {
-  SUPPORT_BAR_TIMEOUT_HANDLE = window.setTimeout(() => (shown.value = true), DELAY_UNTIL_SHOWN)
-}
+const setUpShowBarTimeout = () => (timeoutHandle = window.setTimeout(() => (shown.value = true), delayUntilShow))
 
 const close = () => {
   shown.value = false
-  window.clearTimeout(SUPPORT_BAR_TIMEOUT_HANDLE)
+  window.clearTimeout(timeoutHandle)
 }
 
 const stopBugging = () => {
-  preferences.supportBarNoBugging = true
+  preferenceStore.set('supportBarNoBugging', true)
   close()
 }
 
