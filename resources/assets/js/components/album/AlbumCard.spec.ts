@@ -1,5 +1,5 @@
 import { cleanup, fireEvent } from '@testing-library/vue'
-import { beforeEach, expect, it, vi } from 'vitest'
+import { beforeEach, expect, it } from 'vitest'
 import { commonStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { mockHelper, render } from '@/__tests__/__helpers__'
@@ -9,7 +9,6 @@ import AlbumCard from './AlbumCard.vue'
 let album: Album
 
 beforeEach(() => {
-  vi.restoreAllMocks()
   mockHelper.restoreAllMocks()
   cleanup()
 

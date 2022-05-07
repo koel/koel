@@ -1,6 +1,6 @@
 import { mockHelper, render } from '@/__tests__/__helpers__'
 import { cleanup, fireEvent } from '@testing-library/vue'
-import { beforeEach, expect, it, vi } from 'vitest'
+import { beforeEach, expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { commonStore } from '@/stores'
 import ArtistCard from './ArtistCard.vue'
@@ -9,7 +9,6 @@ import { downloadService, playbackService } from '@/services'
 let artist: Artist
 
 beforeEach(() => {
-  vi.restoreAllMocks()
   mockHelper.restoreAllMocks()
   cleanup()
 

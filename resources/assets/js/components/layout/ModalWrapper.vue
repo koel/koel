@@ -14,7 +14,7 @@
       :songs="boundData.songs"
       @close="close"
     />
-    <AboutKoel v-if="showingModalName === 'about-dialog'" @close="close"/>
+    <AboutKoel v-if="showingModalName === 'about-koel'" @close="close"/>
   </div>
 </template>
 
@@ -35,7 +35,7 @@ declare type ModalName =
   | 'add-user-form'
   | 'edit-user-form'
   | 'edit-song-form'
-  | 'about-dialog'
+  | 'about-koel'
 
 const CreateSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistCreateForm.vue'))
 const EditSmartPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistEditForm.vue'))
@@ -53,7 +53,7 @@ const close = () => {
 }
 
 eventBus.on({
-  'MODAL_SHOW_ABOUT_KOEL': () => (showingModalName.value = 'about-dialog'),
+  'MODAL_SHOW_ABOUT_KOEL': () => (showingModalName.value = 'about-koel'),
   'MODAL_SHOW_ADD_USER_FORM': () => (showingModalName.value = 'add-user-form'),
   'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM': () => (showingModalName.value = 'create-smart-playlist-form'),
 
