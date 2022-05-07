@@ -1,5 +1,5 @@
 <template>
-  <div class="side search" id="searchForm" :class="{ showing }" role="search">
+  <div id="searchForm" class="side search" data-testid="search-form" role="search">
     <input
       ref="input"
       v-model="q"
@@ -16,16 +16,13 @@
 </template>
 
 <script lang="ts" setup>
-import isMobile from 'ismobilejs'
 import { ref } from 'vue'
 import { debounce } from 'lodash'
-
 import { eventBus } from '@/utils'
 import router from '@/router'
 
 const input = ref<HTMLInputElement>()
 const q = ref('')
-const showing = ref(!isMobile.phone)
 
 const onInput = debounce(() => {
   const _q = q.value.trim()
@@ -35,8 +32,6 @@ const onInput = debounce(() => {
 const goToSearchScreen = () => router.go('/search')
 
 eventBus.on({
-  'TOGGLE_SEARCH_FORM': () => (showing.value = !showing.value),
-
   FOCUS_SEARCH_FIELD () {
     input.value?.focus()
     input.value?.select()
@@ -56,19 +51,14 @@ eventBus.on({
   }
 
   @media only screen and (max-width: 667px) {
-    z-index: -1;
+    z-index: 100;
     position: absolute;
     left: 0;
     background: var(--color-bg-primary);
     width: 100%;
     padding: 12px;
-    top: 0;
-
-    &.showing {
-      top: var(--header-height);
-      border-bottom: 1px solid rgba(255, 255, 255, .1);
-      z-index: 100;
-    }
+    top: var(--header-height);
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
 
     input[type="search"] {
       width: 100%;

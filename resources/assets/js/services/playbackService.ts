@@ -15,7 +15,6 @@ import {
 } from '@/stores'
 
 import { audioService, socketService } from '@/services'
-import { app } from '@/config'
 import router from '@/router'
 
 /**
@@ -156,7 +155,7 @@ export const playbackService = {
       return
     }
 
-    document.title = `${song.title} ♫ ${app.name}`
+    document.title = `${song.title} ♫ Koel`
     this.player!.media.setAttribute('title', `${song.artist.name} - ${song.title}`)
 
     if (queueStore.current) {
@@ -332,7 +331,7 @@ export const playbackService = {
   },
 
   stop () {
-    document.title = app.name
+    document.title = 'Koel'
     this.getPlayer().pause()
     this.getPlayer().seek(0)
 

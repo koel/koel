@@ -4,7 +4,6 @@ export type EventName =
   | 'LOAD_MAIN_CONTENT'
   | 'LOG_OUT'
   | 'TOGGLE_SIDEBAR'
-  | 'TOGGLE_SEARCH_FORM'
   | 'SHOW_OVERLAY'
   | 'HIDE_OVERLAY'
   | 'FOCUS_SEARCH_FIELD'

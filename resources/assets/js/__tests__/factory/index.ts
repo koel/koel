@@ -5,7 +5,7 @@ import album from './album'
 import song from './song'
 import video from './video'
 import playlist from './playlist'
-import user from './user'
+import user, { states as userStates } from './user'
 
 factory
   .define('artist', (faker: Faker): Artist => artist(faker))
@@ -13,6 +13,6 @@ factory
   .define('song', (faker: Faker): Song => song(faker))
   .define('video', (faker: Faker): YouTubeVideo => video(faker))
   .define('playlist', (faker: Faker): Playlist => playlist(faker))
-  .define('user', (faker: Faker): User => user(faker))
+  .define('user', (faker: Faker): User => user(faker), userStates)
 
 export default factory

@@ -9,3 +9,9 @@ export default (faker: Faker): User => ({
   avatar: 'https://gravatar.com/foo',
   preferences: {}
 })
+
+export const states = {
+  admin: {
+    is_admin: true
+  }
+}

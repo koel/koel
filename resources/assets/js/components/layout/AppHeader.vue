@@ -1,15 +1,15 @@
 <template>
   <header id="mainHeader">
-    <h1 class="brand" v-once>{{ appConfig.name }}</h1>
+    <h1 class="brand">Koel</h1>
     <span class="hamburger" role="button" title="Show or hide the sidebar" @click="toggleSidebar">
       <i class="fa fa-bars"></i>
     </span>
     <span class="magnifier" role="button" title="Show or hide the search form" @click="toggleSearchForm">
       <i class="fa fa-search"></i>
     </span>
-    <search-form/>
+    <SearchForm v-if="showSearchForm"/>
     <div class="header-right">
-      <user-badge/>
+      <UserBadge/>
       <button
         class="about control"
         data-testid="about-btn"
@@ -17,33 +17,29 @@
         type="button"
         @click.prevent="showAboutDialog"
       >
-        <span v-if="shouldNotifyNewVersion" class="new-version" data-test="new-version-available">
+        <span v-if="shouldNotifyNewVersion" class="new-version" data-testid="new-version">
           {{ latestVersion }} available!
         </span>
         <i v-else class="fa fa-info-circle"></i>
       </button>
     </div>
   </header>
-
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, toRef } from 'vue'
+import { defineAsyncComponent, ref } from 'vue'
 import { eventBus } from '@/utils'
-import { app as appConfig } from '@/config'
-import { commonStore, userStore } from '@/stores'
 import { useNewVersionNotification } from '@/composables'
+import isMobile from 'ismobilejs'
 
 const SearchForm = defineAsyncComponent(() => import('@/components/ui/SearchForm.vue'))
 const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge.vue'))
 
-const user = toRef(userStore.state, 'current')
-const state = commonStore.state
-
+const showSearchForm = ref(!isMobile.any)
 const { shouldNotifyNewVersion, latestVersion } = useNewVersionNotification()
 
 const toggleSidebar = () => eventBus.emit('TOGGLE_SIDEBAR')
-const toggleSearchForm = () => eventBus.emit('TOGGLE_SEARCH_FORM')
+const toggleSearchForm = () => (showSearchForm.value = !showSearchForm.value)
 const showAboutDialog = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
 </script>
 
@@ -89,7 +85,7 @@ const showAboutDialog = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
   @media only screen and (max-width: 667px) {
     display: flex;
     align-content: stretch;
-    justify-content: flext-start;
+    justify-content: flex-start;
 
     .hamburger, .magnifier {
       display: inline-block;
