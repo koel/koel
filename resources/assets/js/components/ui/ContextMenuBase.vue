@@ -92,12 +92,8 @@ const close = () => {
   shown.value = false
 }
 
-eventBus.on('CONTEXT_MENU_OPENED', target => {
-  // ensure there's only one context menu at any time
-  if (target !== el) {
-    close()
-  }
-})
+// ensure there's only one context menu at any time
+eventBus.on('CONTEXT_MENU_OPENED', target => target === el || close())
 
 defineExpose({ open, close, shown })
 </script>

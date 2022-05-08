@@ -1,26 +1,26 @@
 <template>
   <li
-    @dblclick.prevent="makeEditable"
-    :class="['playlist', type, editing ? 'editing' : '', playlist.is_smart ? 'smart' : '']">
+    :class="['playlist', type, editing ? 'editing' : '', playlist.is_smart ? 'smart' : '']"
+    @dblclick.prevent="makeEditable">
     <a
+      v-koel-droppable:[contentEditable]="handleDrop"
       :class="{ active }"
       :href="url"
       @contextmenu.prevent="openContextMenu"
-      v-koel-droppable:[contentEditable]="handleDrop"
     >{{ playlist.name }}</a>
 
     <NameEditor
+      v-if="nameEditable && editing"
       :playlist="playlist"
       @cancelled="cancelEditing"
       @updated="onPlaylistNameUpdated"
-      v-if="nameEditable && editing"
     />
 
     <ContextMenu
       v-if="hasContextMenu"
       v-show="showingContextMenu"
-      :playlist="playlist"
       ref="contextMenu"
+      :playlist="playlist"
       @edit="makeEditable"
     />
   </li>

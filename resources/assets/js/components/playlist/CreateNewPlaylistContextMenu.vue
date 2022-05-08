@@ -1,7 +1,7 @@
 <template>
-  <ContextMenuBase extra-class="playlist-menu" ref="base">
-    <li @click="createPlaylist" data-testid="playlist-context-menu-create-simple">New Playlist</li>
-    <li @click="createSmartPlaylist" data-testid="playlist-context-menu-create-smart">New Smart Playlist</li>
+  <ContextMenuBase ref="base" extra-class="playlist-menu">
+    <li data-testid="playlist-context-menu-create-simple" @click="createPlaylist">New Playlist</li>
+    <li data-testid="playlist-context-menu-create-smart" @click="createSmartPlaylist">New Smart Playlist</li>
   </ContextMenuBase>
 </template>
 

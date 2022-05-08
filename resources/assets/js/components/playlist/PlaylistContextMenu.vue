@@ -1,7 +1,7 @@
 <template>
-  <ContextMenuBase extra-class="playlist-item-menu" ref="base">
-    <li @click="editPlaylist" :data-testid="`playlist-context-menu-edit-${playlist.id}`">Edit</li>
-    <li @click="deletePlaylist" :data-testid="`playlist-context-menu-delete-${playlist.id}`">Delete</li>
+  <ContextMenuBase ref="base" extra-class="playlist-item-menu">
+    <li :data-testid="`playlist-context-menu-edit-${playlist.id}`" @click="editPlaylist">Edit</li>
+    <li :data-testid="`playlist-context-menu-delete-${playlist.id}`" @click="deletePlaylist">Delete</li>
   </ContextMenuBase>
 </template>
 

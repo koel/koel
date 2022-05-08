@@ -40,7 +40,6 @@ const mutatedRule = Object.assign({}, rule.value)
 
 const selectedModel = ref<SmartPlaylistModel>()
 const selectedOperator = ref<SmartPlaylistOperator>()
-const inputValues = ref([])
 
 const model = models.find(m => m.name === mutatedRule.model.name)
 

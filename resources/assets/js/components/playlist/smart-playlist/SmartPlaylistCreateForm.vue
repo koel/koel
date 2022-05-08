@@ -2,7 +2,7 @@
   <FormBase>
     <div @keydown.esc="maybeClose">
       <SoundBar v-if="loading"/>
-      <form @submit.prevent="submit" v-else data-testid="create-smart-playlist-form">
+      <form v-else data-testid="create-smart-playlist-form" @submit.prevent="submit">
         <header>
           <h1>New Smart Playlist</h1>
         </header>
@@ -10,18 +10,18 @@
         <div>
           <div class="form-row">
             <label>Name</label>
-            <input type="text" v-model="name" name="name" v-koel-focus required>
+            <input v-model="name" v-koel-focus name="name" required type="text">
           </div>
 
           <div class="form-row rules">
             <RuleGroup
+              v-for="(group, index) in collectedRuleGroups"
+              :key="group.id"
               :group="group"
               :isFirstGroup="index === 0"
-              :key="group.id"
               @input="onGroupChanged"
-              v-for="(group, index) in collectedRuleGroups"
             />
-            <Btn @click.prevent="addGroup" class="btn-add-group" green small uppercase>
+            <Btn class="btn-add-group" green small uppercase @click.prevent="addGroup">
               <i class="fa fa-plus"></i> Group
             </Btn>
           </div>
@@ -29,7 +29,7 @@
 
         <footer>
           <Btn type="submit">Save</Btn>
-          <Btn class="btn-cancel" @click.prevent="maybeClose" white>Cancel</Btn>
+          <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
         </footer>
       </form>
     </div>

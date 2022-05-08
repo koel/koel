@@ -51,5 +51,8 @@ const update = async () => {
   emit('updated', mutatedPlaylist)
 }
 
-const cancel = () => emit('cancelled')
+const cancel = () => {
+  mutatedPlaylist.name = playlist.value.name
+  emit('cancelled')
+}
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <input :type="type" v-model="value" name="value[]" required>
+  <input v-model="value" :type="type" name="value[]" required>
 </template>
 
 <script lang="ts" setup>

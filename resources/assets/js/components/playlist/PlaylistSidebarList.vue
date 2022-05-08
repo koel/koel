@@ -3,34 +3,34 @@
     <h1>Playlists
       <i
         :class="{ creating }"
-        @click.prevent="toggleContextMenu"
         class="fa fa-plus-circle control create"
+        data-testid="sidebar-create-playlist-btn"
         role="button"
         title="Create a new playlist"
-        data-testid="sidebar-create-playlist-btn"
+        @click.prevent="toggleContextMenu"
       ></i>
     </h1>
 
     <form v-if="creating" @submit.prevent="createPlaylist" name="create-simple-playlist-form" class="create">
       <input
-        @keyup.esc.prevent="creating = false"
-        placeholder="↵ to save"
+        v-model="newName"
+        v-koel-focus
         name="name"
+        placeholder="↵ to save"
         required
         type="text"
-        v-koel-focus
-        v-model="newName"
+        @keyup.esc.prevent="creating = false"
       >
     </form>
 
     <ul>
-      <PlaylistItem type="favorites" :playlist="{ name: 'Favorites', songs: favorites }"/>
-      <PlaylistItem type="recently-played" :playlist="{ name: 'Recently Played', songs: [] }"/>
+      <PlaylistItem :playlist="{ name: 'Favorites', songs: favorites }" type="favorites"/>
+      <PlaylistItem :playlist="{ name: 'Recently Played', songs: [] }" type="recently-played"/>
       <PlaylistItem
-        :playlist="playlist"
-        :key="playlist.id"
-        type="playlist"
         v-for="playlist in playlists"
+        :key="playlist.id"
+        :playlist="playlist"
+        type="playlist"
       />
     </ul>
 
