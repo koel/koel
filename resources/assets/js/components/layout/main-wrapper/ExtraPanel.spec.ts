@@ -39,7 +39,7 @@ it('does not have a YouTube tab if not using YouTube', async () => {
   commonStore.state.useYouTube = false
   const { queryByTestId } = renderComponent()
 
-  expect(await queryByTestId('extra-tab-youtube')).toBe(null)
+  expect(await queryByTestId('extra-tab-youtube')).toBeNull()
 })
 
 it.each([['extra-tab-lyrics'], ['extra-tab-album'], ['extra-tab-artist']])('switches to "%s" tab', async (testId) => {

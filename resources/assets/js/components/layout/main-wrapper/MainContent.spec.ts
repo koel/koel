@@ -47,7 +47,7 @@ it('does not have a transluscent over if configured not so', async () => {
   await nextTick()
   await nextTick()
 
-  expect(await queryByTestId('album-art-overlay')).toBe(null)
+  expect(await queryByTestId('album-art-overlay')).toBeNull()
 })
 
 it('toggles visualizer', async () => {
@@ -65,5 +65,5 @@ it('toggles visualizer', async () => {
 
   eventBus.emit('TOGGLE_VISUALIZER')
   await nextTick()
-  expect(await queryByTestId('visualizer')).toBe(null)
+  expect(await queryByTestId('visualizer')).toBeNull()
 })

@@ -1,6 +1,7 @@
 <template>
   <span></span>
 </template>
+
 <script lang="ts" setup>
 /**
  * Global event listeners (basically, those without a Vue instance access) go here.
@@ -19,7 +20,7 @@ eventBus.on({
       router.go('home')
     }
 
-    if (!playlist.songs.length) {
+    if (!playlist.is_smart && !playlist.songs.length) {
       destroy()
     } else {
       alerts.confirm(`Delete the playlist "${playlist.name}"?`, destroy)

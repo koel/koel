@@ -1,13 +1,17 @@
 <template>
   <li
     :class="['playlist', type, editing ? 'editing' : '', playlist.is_smart ? 'smart' : '']"
-    @dblclick.prevent="makeEditable">
+    data-testid="playlist-sidebar-item"
+    @dblclick.prevent="makeEditable"
+  >
     <a
       v-koel-droppable:[contentEditable]="handleDrop"
       :class="{ active }"
       :href="url"
       @contextmenu.prevent="openContextMenu"
-    >{{ playlist.name }}</a>
+    >
+      {{ playlist.name }}
+    </a>
 
     <NameEditor
       v-if="nameEditable && editing"
@@ -16,13 +20,7 @@
       @updated="onPlaylistNameUpdated"
     />
 
-    <ContextMenu
-      v-if="hasContextMenu"
-      v-show="showingContextMenu"
-      ref="contextMenu"
-      :playlist="playlist"
-      @edit="makeEditable"
-    />
+    <ContextMenu v-if="hasContextMenu" ref="contextMenu" :playlist="playlist" @edit="makeEditable"/>
   </li>
 </template>
 
@@ -32,19 +30,16 @@ import { alerts, eventBus, pluralize } from '@/utils'
 import { favoriteStore, playlistStore, songStore } from '@/stores'
 import router from '@/router'
 
-type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
-
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 const NameEditor = defineAsyncComponent(() => import('@/components/playlist/PlaylistNameEditor.vue'))
 
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
-const props = withDefaults(defineProps<{ playlist: Playlist, type: PlaylistType }>(), { type: 'playlist' })
+const props = withDefaults(defineProps<{ playlist: Playlist, type?: PlaylistType }>(), { type: 'playlist' })
 const { playlist, type } = toRefs(props)
 
 const editing = ref(false)
 const active = ref(false)
-const showingContextMenu = ref(false)
 
 const url = computed(() => {
   switch (type.value) {
@@ -111,7 +106,6 @@ const handleDrop = (event: DragEvent) => {
 
 const openContextMenu = async (event: MouseEvent) => {
   if (hasContextMenu.value) {
-    showingContextMenu.value = true
     await nextTick()
     router.go(`/playlist/${playlist.value.id}`)
     contextMenu.value?.open(event.pageY, event.pageX, { playlist })

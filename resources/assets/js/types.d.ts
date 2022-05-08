@@ -222,6 +222,8 @@ interface SmartPlaylistRule {
 
 type SmartPlaylistInputTypes = Record<string, SmartPlaylistOperator[]>
 
+type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
+
 interface Playlist {
   readonly id: number
   name: string

@@ -36,7 +36,7 @@ it('does not show if user so demands', async () => {
   preferenceStore.state.supportBarNoBugging = true
   const { queryByTestId } = await mountComponent()
 
-  expect(await queryByTestId('support-bar')).toBe(null)
+  expect(await queryByTestId('support-bar')).toBeNull()
 })
 
 it('hides', async () => {
@@ -44,7 +44,7 @@ it('hides', async () => {
 
   await fireEvent.click(getByTestId('hide-support-koel'))
 
-  expect(await queryByTestId('support-bar')).toBe(null)
+  expect(await queryByTestId('support-bar')).toBeNull()
 })
 
 it('hides and does not bug again', async () => {
@@ -52,6 +52,6 @@ it('hides and does not bug again', async () => {
 
   await fireEvent.click(getByTestId('stop-support-koel-bugging'))
 
-  expect(await queryByTestId('btn-stop-support-koel-bugging')).toBe(null)
+  expect(await queryByTestId('btn-stop-support-koel-bugging')).toBeNull()
   expect(preferenceStore.state.supportBarNoBugging).toBe(true)
 })

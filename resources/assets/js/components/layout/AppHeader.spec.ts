@@ -37,7 +37,7 @@ it('toggles search form (mobile only)', async () => {
     }
   })
 
-  expect(await queryByTestId('search-form')).toBe(null)
+  expect(await queryByTestId('search-form')).toBeNull()
 
   await fireEvent.click(getByTitle('Show or hide the search form'))
   await nextTick()
