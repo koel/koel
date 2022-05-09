@@ -102,7 +102,7 @@ const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 
 const props = withDefaults(
-  defineProps<{ songs: Song[], selectedSongs: Song[], config: Partial<SongListControlsConfig> }>(),
+  defineProps<{ songs?: Song[], selectedSongs?: Song[], config?: Partial<SongListControlsConfig> }>(),
   {
     songs: () => [],
     selectedSongs: () => [],
@@ -114,7 +114,6 @@ const { config, songs, selectedSongs } = toRefs(props)
 
 const el = ref<HTMLElement>()
 const showingAddToMenu = ref(false)
-const numberOfQueuedSongs = ref(0)
 const altPressed = ref(false)
 
 const mergedConfig = computed((): SongListControlsConfig => Object.assign({

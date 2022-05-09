@@ -1,45 +1,63 @@
 <template>
   <div
-    class="song-list-wrap main-scroll-wrap"
-    :class="type"
     ref="wrapper"
+    :class="type"
+    class="song-list-wrap main-scroll-wrap"
+    data-testid="song-list"
     tabindex="0"
     @keydown.delete.prevent.stop="handleDelete"
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="handleA"
   >
-    <div class="song-list-header" :class="mergedConfig.sortable ? 'sortable' : 'unsortable'">
-      <span @click="sort('song.track')" class="track-number" v-if="mergedConfig.columns.includes('track')">
+    <div :class="mergedConfig.sortable ? 'sortable' : 'unsortable'" class="song-list-header">
+      <span
+        v-if="mergedConfig.columns.includes('track')"
+        class="track-number"
+        data-testid="header-track-number"
+        @click="sort('song.track')"
+      >
         #
-        <i class="fa fa-angle-down" v-show="primarySortField === 'song.track' && sortOrder === 'Asc'"></i>
-        <i class="fa fa-angle-up" v-show="primarySortField === 'song.track' && sortOrder === 'Desc'"></i>
-      </span>
-      <span @click="sort('song.title')" class="title" v-if="mergedConfig.columns.includes('title')">
-        Title
-        <i class="fa fa-angle-down" v-show="primarySortField === 'song.title' && sortOrder === 'Asc'"></i>
-        <i class="fa fa-angle-up" v-show="primarySortField === 'song.title' && sortOrder === 'Desc'"></i>
+        <i v-show="primarySortField === 'song.track' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
+        <i v-show="primarySortField === 'song.track' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
       </span>
       <span
-        @click="sort(['song.album.artist.name', 'song.album.name', 'song.track'])"
-        class="artist"
+        v-if="mergedConfig.columns.includes('title')"
+        class="title"
+        data-testid="header-title"
+        @click="sort('song.title')"
+      >
+        Title
+        <i v-show="primarySortField === 'song.title' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
+        <i v-show="primarySortField === 'song.title' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
+      </span>
+      <span
         v-if="mergedConfig.columns.includes('artist')"
+        class="artist"
+        data-testid="header-artist"
+        @click="sort(['song.album.artist.name', 'song.album.name', 'song.track'])"
       >
         Artist
-        <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Asc'"></i>
-        <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Desc'"></i>
+        <i v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
+        <i v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
       </span>
       <span
-        @click="sort(['song.album.name', 'song.track'])"
-        class="album"
         v-if="mergedConfig.columns.includes('album')"
+        class="album"
+        data-testid="header-album"
+        @click="sort(['song.album.name', 'song.track'])"
       >
         Album
-        <i class="fa fa-angle-down" v-show="primarySortField === 'song.album.name' && sortOrder === 'Asc'"></i>
-        <i class="fa fa-angle-up" v-show="primarySortField === 'song.album.name' && sortOrder === 'Desc'"></i>
+        <i v-show="primarySortField === 'song.album.name' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
+        <i v-show="primarySortField === 'song.album.name' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
       </span>
-      <span @click="sort('song.length')" class="time" v-if="mergedConfig.columns.includes('length')">
-        <i class="fa fa-angle-down" v-show="primarySortField === 'song.length' && sortOrder === 'Asc'"></i>
-        <i class="fa fa-angle-up" v-show="primarySortField === 'song.length' && sortOrder === 'Desc'"></i>
+      <span
+        v-if="mergedConfig.columns.includes('length')"
+        class="time"
+        data-testid="header-length"
+        @click="sort('song.length')"
+      >
+        <i v-show="primarySortField === 'song.length' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
+        <i v-show="primarySortField === 'song.length' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
         &nbsp;<i class="duration-header fa fa-clock-o"></i>
       </span>
       <span class="favorite"></span>
@@ -67,25 +85,8 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { findIndex, orderBy } from 'lodash'
-
-import {
-  computed,
-  defineAsyncComponent,
-  getCurrentInstance,
-  onMounted,
-  ref,
-  toRefs,
-  watch
-} from 'vue'
-
-import { $, eventBus, startDragging, arrayify } from '@/utils'
-
-type SortField = 'song.track'
-  | 'song.disc'
-  | 'song.title'
-  | 'song.album.artist.name'
-  | 'song.album.name'
-  | 'song.length'
+import { computed, defineAsyncComponent, getCurrentInstance, onMounted, ref, toRefs, watch } from 'vue'
+import { $, arrayify, eventBus, startDragging } from '@/utils'
 
 type SortOrder = 'Asc' | 'Desc' | 'None'
 
@@ -100,7 +101,7 @@ const props = withDefaults(
 const { items, type, config } = toRefs(props)
 
 const lastSelectedRow = ref<SongRow>()
-const sortFields = ref<SortField[]>([])
+const sortFields = ref<SongListSortField[]>([])
 const sortOrder = ref<SortOrder>('None')
 const songRows = ref<SongRow[]>([])
 let initialSortedSongRows: SongRow[] = []
@@ -138,7 +139,7 @@ const nextSortOrder = computed<SortOrder>(() => {
   return 'None'
 })
 
-const sort = (field: SortField | SortField[] = [], order: SortOrder | null = null) => {
+const sort = (field: SongListSortField | SongListSortField[] = [], order: SortOrder | null = null) => {
   // there are certain circumstances where sorting is simply disallowed, e.g. in Queue
   if (!mergedConfig.value.sortable) {
     return

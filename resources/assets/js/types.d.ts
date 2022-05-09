@@ -382,4 +382,11 @@ interface SongListConfig {
   columns: SongListColumn[]
 }
 
+type SongListSortField = 'song.track'
+  | 'song.disc'
+  | 'song.title'
+  | 'song.album.artist.name'
+  | 'song.album.name'
+  | 'song.length'
+
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T]
