@@ -24,9 +24,9 @@
     </form>
 
     <ul>
-      <PlaylistItem :playlist="{ name: 'Favorites', songs: favorites }" type="favorites"/>
-      <PlaylistItem :playlist="{ name: 'Recently Played', songs: [] }" type="recently-played"/>
-      <PlaylistItem
+      <PlaylistSidebarItem :playlist="{ name: 'Favorites', songs: favorites }" type="favorites"/>
+      <PlaylistSidebarItem :playlist="{ name: 'Recently Played', songs: [] }" type="recently-played"/>
+      <PlaylistSidebarItem
         v-for="playlist in playlists"
         :key="playlist.id"
         :playlist="playlist"
@@ -44,7 +44,7 @@ import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 import { alerts } from '@/utils'
 
-const PlaylistItem = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarItem.vue'))
+const PlaylistSidebarItem = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarItem.vue'))
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreateNewPlaylistContextMenu.vue'))
 
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()

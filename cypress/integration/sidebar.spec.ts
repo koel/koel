@@ -23,16 +23,12 @@ context('Sidebar Functionalities', () => {
   }
 
   it('contains menu items', () => {
-    cy.on('uncaught:exception', err => !err.message.includes('Request failed'))
-
     cy.$login()
     cy.$each(commonMenuItems, assertMenuItem)
     cy.$each(managementMenuItems, assertMenuItem)
   })
 
   it('does not contain management items for non-admins', () => {
-    cy.on('uncaught:exception', err => !err.message.includes('Request failed'))
-
     cy.$loginAsNonAdmin()
     cy.$each(commonMenuItems, assertMenuItem)
 
