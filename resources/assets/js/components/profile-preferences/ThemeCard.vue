@@ -3,7 +3,9 @@
     :class="{ selected: theme.selected }"
     :data-testid="`theme-card-${theme.id}`"
     :style="thumbnailStyles"
+    :title="`Set current them to ${name}`"
     class="theme"
+    role="button"
     @click="$emit('selected', theme)"
   >
     <div class="name">{{ name }}</div>

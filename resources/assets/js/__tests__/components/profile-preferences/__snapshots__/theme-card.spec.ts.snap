@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`profile-preferences/profile-form renders 1`] = `
-<div data-testid="theme-card-sample" class="theme" style="background-color: rgb(255, 0, 0);">
-  <div class="name">Sample</div>
-</div>
-`;
