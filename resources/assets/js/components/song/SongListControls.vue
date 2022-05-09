@@ -1,12 +1,11 @@
 <template>
-  <div class="song-list-controls" data-test="song-list-controls" ref="el">
+  <div class="song-list-controls" data-testid="song-list-controls" ref="el">
     <BtnGroup uppercased>
       <template v-if="mergedConfig.play">
         <template v-if="altPressed">
           <Btn
             v-if="selectedSongs.length < 2 && songs.length"
             class="btn-play-all"
-            data-test="btn-play-all"
             orange
             title="Play all songs"
             @click.prevent="playAll"
@@ -17,7 +16,6 @@
           <Btn
             v-if="selectedSongs.length > 1"
             class="btn-play-selected"
-            data-test="btn-play-selected"
             orange
             title="Play selected songs"
             @click.prevent="playSelected"
@@ -30,7 +28,7 @@
           <Btn
             v-if="selectedSongs.length < 2 && songs.length"
             class="btn-shuffle-all"
-            data-test="btn-shuffle-all"
+            data-testid="btn-shuffle-all"
             orange
             title="Shuffle all songs"
             @click.prevent="shuffle"
@@ -41,7 +39,6 @@
           <Btn
             v-if="selectedSongs.length > 1"
             class="btn-shuffle-selected"
-            data-test="btn-shuffle-selected"
             orange
             title="Shuffle selected songs"
             @click.prevent="shuffleSelected"
@@ -52,25 +49,17 @@
       </template>
 
       <Btn
-        :title="`${showingAddToMenu ? 'Cancel' : 'Add selected songs to…'}`"
-        @click.prevent.stop="toggleAddToMenu"
-        class="btn-add-to"
-        green
         v-if="selectedSongs.length"
+        :title="`${showingAddToMenu ? 'Cancel' : 'Add selected songs to…'}`"
+        class="btn-add-to"
         data-test="add-to-btn"
+        green
+        @click.prevent.stop="toggleAddToMenu"
       >
         {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
       </Btn>
 
-      <Btn
-        v-if="showClearQueueButton"
-        class="btn-clear-queue"
-        red
-        title="Clear current queue"
-        @click.prevent="clearQueue"
-      >
-        Clear
-      </Btn>
+      <Btn v-if="showClearQueueButton" red title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
 
       <Btn
         v-if="showDeletePlaylistButton"

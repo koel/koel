@@ -4,7 +4,7 @@
     v-koel-clickaway="close"
     v-koel-focus
     class="add-to"
-    data-test="add-to-menu"
+    data-testid="add-to-menu"
     tabindex="0"
     @keydown.esc="close"
   >

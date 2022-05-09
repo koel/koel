@@ -78,8 +78,8 @@ context('Playlists', () => {
 
     cy.get('#songsWrapper').within(() => {
       cy.$selectSongRange(0, 1)
-      cy.get('[data-test=add-to-btn]').click()
-      cy.get('[data-test=add-to-menu]')
+      cy.findByTestId('add-to-btn').click()
+      cy.findByTestId('add-to-menu')
         .should('be.visible')
         .within(() => cy.findByText('Simple Playlist').click())
         .should('not.be.visible')
@@ -102,7 +102,7 @@ context('Playlists', () => {
 
     cy.get('#songsWrapper').within(() => {
       cy.$selectSongRange(0, 2)
-      cy.get('[data-test=add-to-btn]').click()
+      cy.findByTestId('add-to-btn').click()
       cy.findByTestId('new-playlist-name').type('A New Playlist{enter}')
     })
 

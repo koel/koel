@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-"<div class=\\"add-to\\" data-test=\\"add-to-menu\\" tabindex=\\"0\\" data-v-0351ff38=\\"\\">
+"<div class=\\"add-to\\" data-testid=\\"add-to-menu\\" tabindex=\\"0\\" data-v-0351ff38=\\"\\">
   <section class=\\"existing-playlists\\" data-v-0351ff38=\\"\\">
     <p data-v-0351ff38=\\"\\">Add 5 songs to</p>
     <ul data-v-0351ff38=\\"\\">

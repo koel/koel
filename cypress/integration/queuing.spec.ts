@@ -28,7 +28,7 @@ context('Queuing', { scrollBehavior: false }, () => {
       cy.findByText('Current Queue').should('be.visible')
       cy.findByTestId('shuffle-library').click()
       cy.$getSongRows().should('have.length.at.least', MIN_SONG_ITEMS_SHOWN)
-      cy.get('.screen-header [data-test=song-list-controls]').findByText('Clear').click()
+      cy.get('.screen-header [data-testid=song-list-controls]').findByText('Clear').click()
       cy.$getSongRows().should('have.length', 0)
     })
   })
@@ -37,7 +37,7 @@ context('Queuing', { scrollBehavior: false }, () => {
     cy.$clickSidebarItem('All Songs')
 
     cy.get('#songsWrapper').within(() => {
-      cy.get('.screen-header [data-test=btn-shuffle-all]').click()
+      cy.get('.screen-header [data-testid=btn-shuffle-all]').click()
       cy.url().should('contains', '/#!/queue')
     })
 

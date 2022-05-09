@@ -43,8 +43,8 @@ context('Favorites', { scrollBehavior: false }, () => {
     cy.get('#songsWrapper')
       .within(() => {
         cy.$getSongRows().first().click()
-        cy.get('[data-test=add-to-btn]').click()
-        cy.get('[data-test=add-to-menu]').should('be.visible')
+        cy.findByTestId('add-to-btn').click()
+        cy.findByTestId('add-to-menu').should('be.visible')
           .within(() => cy.findByText('Favorites').click()).should('not.be.visible')
       })
 

@@ -10,6 +10,7 @@ let songs: Song[]
 
 new class extends ComponentTestCase {
   protected beforeEach () {
+    // suppress the warning
     super.beforeEach(() => eventBus.on('SET_SELECTED_SONGS', noop))
   }
 
