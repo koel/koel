@@ -5,19 +5,14 @@ import factory from '@/__tests__/factory'
 import ComponentTestCase from '@/__tests__/ComponentTestCase'
 import FooterPlayerControls from './FooterPlayerControls.vue'
 
-declare type PlaybackMethod = {
-  [K in keyof typeof playbackService]:
-  typeof playbackService[K] extends Closure ? K : never;
-}[keyof typeof playbackService]
-
 new class extends ComponentTestCase {
   protected test () {
-    it.each<[string, string, PlaybackMethod]>([
+    it.each<[string, string, MethodOf<typeof playbackService>]>([
       ['plays next song', 'Play next song', 'playNext'],
       ['plays previous song', 'Play previous song', 'playPrev'],
       ['plays/resumes current song', 'Play or resume', 'toggle']
-    ])('%s', async (_: string, title: string, method: PlaybackMethod) => {
-      const mock = this.mock(playbackService, method)
+    ])('%s', async (_: string, title: string, playbackMethod: MethodOf<typeof playbackService>) => {
+      const mock = this.mock(playbackService, playbackMethod)
 
       const { getByTitle } = this.render(FooterPlayerControls, {
         props: {

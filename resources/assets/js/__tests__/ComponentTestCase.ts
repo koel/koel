@@ -1,8 +1,7 @@
 import deepmerge from 'deepmerge'
 import isMobile from 'ismobilejs'
 import { cleanup, render, RenderOptions } from '@testing-library/vue'
-import { afterEach, beforeEach } from 'vitest'
-import { mockHelper } from '@/__tests__/__helpers__'
+import { afterEach, beforeEach, vi } from 'vitest'
 import { noop } from '@/utils'
 import { clickaway, droppable, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
@@ -11,14 +10,12 @@ import { commonStore } from '@/stores'
 declare type Methods<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T] & (string | symbol);
 
 export default abstract class ComponentTestCase {
+  private backupMethods = new Map()
+
   public constructor () {
     this.beforeEach()
     this.afterEach()
     this.test()
-  }
-
-  protected mock<T, M extends Methods<Required<T>>> (obj: T, methodName: M, implementation: any = noop) {
-    return mockHelper.mock(obj, methodName, implementation)
   }
 
   protected beforeEach (cb?: Closure) {
@@ -32,13 +29,26 @@ export default abstract class ComponentTestCase {
   protected afterEach (cb?: Closure) {
     afterEach(() => {
       cleanup()
-      mockHelper.restoreAllMocks()
+      this.restoreAllMocks()
       isMobile.any = false
       cb && cb()
     })
   }
 
-  protected abstract test ()
+  protected mock<T, M extends Methods<Required<T>>> (obj: T, methodName: M, implementation: any = noop) {
+    const mock = vi.fn().mockImplementation(implementation instanceof Function ? implementation : () => implementation)
+    this.backupMethods.set([obj, methodName], obj[methodName])
+
+    // @ts-ignore
+    obj[methodName] = mock
+
+    return mock
+  }
+
+  protected restoreAllMocks () {
+    this.backupMethods.forEach((fn, [obj, methodName]) => (obj[methodName] = fn))
+    this.backupMethods = new Map()
+  }
 
   protected render (component: any, options: RenderOptions = {}) {
     return render(component, deepmerge({
@@ -63,4 +73,6 @@ export default abstract class ComponentTestCase {
       await nextTick()
     }
   }
+
+  protected abstract test ()
 }

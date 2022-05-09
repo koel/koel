@@ -1,12 +1,12 @@
 <template>
   <div
-    class="add-to"
     v-show="showing"
-    tabindex="0"
     v-koel-clickaway="close"
     v-koel-focus
-    @keydown.esc="close"
+    class="add-to"
     data-test="add-to-menu"
+    tabindex="0"
+    @keydown.esc="close"
   >
     <section class="existing-playlists">
       <p>Add {{ pluralize(songs.length, 'song') }} to</p>
@@ -14,31 +14,41 @@
       <ul>
         <template v-if="config.queue">
           <template v-if="queue.length">
-            <li v-if="currentSong" class="after-current" tabindex="0" @click="queueSongsAfterCurrent">
+            <li
+              v-if="currentSong"
+              class="queue-after-current"
+              data-testid="queue-after-current"
+              tabindex="0"
+              @click="queueSongsAfterCurrent"
+            >
               After Current Song
             </li>
-            <li class="bottom-queue" tabindex="0" @click="queueSongsToBottom">Bottom of Queue</li>
-            <li class="top-queue" tabindex="0" @click="queueSongsToTop">Top of Queue</li>
+            <li class="bottom-queue" data-testid="queue-bottom" tabindex="0" @click="queueSongsToBottom">
+              Bottom of Queue
+            </li>
+            <li class="top-queue" data-testid="queue-top" tabindex="0" @click="queueSongsToTop">Top of Queue</li>
           </template>
-          <li v-else tabindex="0" @click="queueSongsToBottom">Queue</li>
+          <li v-else data-testid="queue" tabindex="0" @click="queueSongsToBottom">Queue</li>
         </template>
 
         <li
-          @click="addSongsToFavorite"
-          class="favorites"
-          tabindex="0"
           v-if="config.favorites"
+          class="favorites"
+          data-testid="add-to-favorites"
+          tabindex="0"
+          @click="addSongsToFavorite"
         >
           Favorites
         </li>
 
         <template v-if="config.playlists">
           <li
-            :key="playlist.id"
-            @click="addSongsToExistingPlaylist(playlist)"
-            class="playlist"
-            tabindex="0"
             v-for="playlist in playlists"
+            :key="playlist.id"
+            class="playlist"
+            data-testid="add-to-playlist"
+            tabindex="0"
+            @click="addSongsToExistingPlaylist(playlist)"
           >
             {{ playlist.name }}
           </li>
@@ -46,19 +56,19 @@
       </ul>
     </section>
 
-    <section class="new-playlist" v-if="config.newPlaylist">
+    <section v-if="config.newPlaylist" class="new-playlist" data-testid="new-playlist">
       <p>or create a new playlist</p>
 
       <form class="form-save form-simple form-new-playlist" @submit.prevent="createNewPlaylistFromSongs">
         <input
-          @keyup.esc.prevent="close"
+          v-model="newPlaylistName"
+          data-testid="new-playlist-name"
+          placeholder="Playlist name"
           required
           type="text"
-          placeholder="Playlist name"
-          v-model="newPlaylistName"
-          data-test="new-playlist-name"
+          @keyup.esc.prevent="close"
         >
-        <Btn type="submit" title="Save">⏎</Btn>
+        <Btn title="Save" type="submit">⏎</Btn>
       </form>
     </section>
   </div>

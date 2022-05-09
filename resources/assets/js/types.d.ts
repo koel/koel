@@ -381,3 +381,5 @@ interface SongListConfig {
   sortable: boolean
   columns: SongListColumn[]
 }
+
+type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T]

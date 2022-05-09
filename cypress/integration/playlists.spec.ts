@@ -103,7 +103,7 @@ context('Playlists', () => {
     cy.get('#songsWrapper').within(() => {
       cy.$selectSongRange(0, 2)
       cy.get('[data-test=add-to-btn]').click()
-      cy.get('[data-test=new-playlist-name]').type('A New Playlist{enter}')
+      cy.findByTestId('new-playlist-name').type('A New Playlist{enter}')
     })
 
     cy.get('#sidebar').findByText('A New Playlist').should('exist').and('have.class', 'active')
