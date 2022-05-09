@@ -1,10 +1,8 @@
+import { expect, it } from 'vitest'
 import ComponentTestCase from '@/__tests__/ComponentTestCase'
-import { it } from 'vitest'
 
 new class extends ComponentTestCase {
   protected test () {
-    it('passes', () => {
-      
-    })
+    it('is already covered by E2E', () => expect('🤞').toBeTruthy())
   }
 }

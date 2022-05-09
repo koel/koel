@@ -1,5 +1,5 @@
 import select from 'select'
-import { eventBus, noop, pluralize, arrayify } from '@/utils'
+import { arrayify, eventBus, noop, pluralize } from '@/utils'
 import defaultCover from '@/../img/covers/unknown-album.png'
 
 export { defaultCover }
@@ -19,7 +19,7 @@ export const loadMainView = (view: MainViewName, ...args: any[]): void => {
  * This is handy for certain cases, for example Last.fm connect/disconnect.
  */
 export const forceReloadWindow = (): void => {
-  if (window.__UNIT_TESTING__) {
+  if (process.env.NODE_ENV === 'test') {
     return
   }
 
