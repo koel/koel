@@ -1,3 +1,7 @@
 // Vitest Snapshot v1
 
-exports[`renders 1`] = `"<li class=\\"\\" title=\\"\\" tabindex=\\"0\\" data-v-d8ad5538=\\"\\"><span class=\\"title\\" data-v-d8ad5538=\\"\\">Fahrstuhl to Heaven</span><a href=\\"undefineditunes/song/42?q=Fahrstuhl%20to%20Heaven&amp;api_token=null\\" class=\\"view-on-itunes\\" target=\\"_blank\\" title=\\"View on iTunes\\" data-v-d8ad5538=\\"\\"> iTunes </a><span class=\\"length\\" data-v-d8ad5538=\\"\\">00:42</span></li>"`;
+exports[`renders 1`] = `
+"<li class=\\"\\" title=\\"\\" tabindex=\\"0\\" data-v-d8ad5538=\\"\\"><span class=\\"title\\" data-v-d8ad5538=\\"\\">Fahrstuhl to Heaven</span>
+  <!----><span class=\\"length\\" data-v-d8ad5538=\\"\\">00:42</span>
+</li>"
+`;

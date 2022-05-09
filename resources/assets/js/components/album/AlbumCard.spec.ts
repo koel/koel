@@ -1,60 +1,60 @@
-import { cleanup, fireEvent } from '@testing-library/vue'
-import { beforeEach, expect, it } from 'vitest'
-import { commonStore } from '@/stores'
+import { fireEvent } from '@testing-library/vue'
+import { expect, it } from 'vitest'
 import { downloadService, playbackService } from '@/services'
-import { mockHelper, render } from '@/__tests__/__helpers__'
 import factory from '@/__tests__/factory'
+import ComponentTestCase from '@/__tests__/ComponentTestCase'
 import AlbumCard from './AlbumCard.vue'
 
 let album: Album
 
-beforeEach(() => {
-  mockHelper.restoreAllMocks()
-  cleanup()
+new class extends ComponentTestCase {
+  protected beforeEach () {
+    super.beforeEach(() => {
+      album = factory<Album>('album', {
+        name: 'IV',
+        songs: factory<Song>('song', 10)
+      })
+    })
+  }
 
-  album = factory<Album>('album', {
-    name: 'IV',
-    songs: factory<Song>('song', 10)
-  })
+  protected test () {
+    it('renders', () => {
+      const { getByText, getByTestId } = this.render(AlbumCard, {
+        props: {
+          album
+        }
+      })
 
-  commonStore.state.allowDownload = true
-})
+      expect(getByTestId('name').innerText).equal('IV')
+      getByText(/^10 songs.+0 plays$/)
+      getByTestId('shuffle-album')
+      getByTestId('download-album')
+    })
 
-it('renders', () => {
-  const { getByText, getByTestId } = render(AlbumCard, {
-    props: {
-      album
-    }
-  })
+    it('downloads', async () => {
+      const mock = this.mock(downloadService, 'fromAlbum')
 
-  expect(getByTestId('name').innerText).equal('IV')
-  getByText(/^10 songs.+0 plays$/)
-  getByTestId('shuffle-album')
-  getByTestId('download-album')
-})
+      const { getByTestId } = this.render(AlbumCard, {
+        props: {
+          album
+        }
+      })
 
-it('downloads', async () => {
-  const mock = mockHelper.mock(downloadService, 'fromAlbum')
+      await fireEvent.click(getByTestId('download-album'))
+      expect(mock).toHaveBeenCalledTimes(1)
+    })
 
-  const { getByTestId } = render(AlbumCard, {
-    props: {
-      album
-    }
-  })
+    it('shuffles', async () => {
+      const mock = this.mock(playbackService, 'playAllInAlbum')
 
-  await fireEvent.click(getByTestId('download-album'))
-  expect(mock).toHaveBeenCalledTimes(1)
-})
+      const { getByTestId } = this.render(AlbumCard, {
+        props: {
+          album
+        }
+      })
 
-it('shuffles', async () => {
-  const mock = mockHelper.mock(playbackService, 'playAllInAlbum')
-
-  const { getByTestId } = render(AlbumCard, {
-    props: {
-      album
-    }
-  })
-
-  await fireEvent.click(getByTestId('shuffle-album'))
-  expect(mock).toHaveBeenCalled()
-})
+      await fireEvent.click(getByTestId('shuffle-album'))
+      expect(mock).toHaveBeenCalled()
+    })
+  }
+}

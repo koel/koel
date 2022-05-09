@@ -1,9 +1,9 @@
-import { cleanup, fireEvent } from '@testing-library/vue'
-import { beforeEach, expect, it } from 'vitest'
+import { fireEvent } from '@testing-library/vue'
+import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { mockHelper, render } from '@/__tests__/__helpers__'
-import { commonStore, queueStore, songStore } from '@/stores'
+import { queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
+import ComponentTestCase from '@/__tests__/ComponentTestCase'
 import AlbumTrackListItem from './AlbumTrackListItem.vue'
 
 let song: Song
@@ -15,40 +15,40 @@ const track = {
 
 const album = factory<Album>('album', { id: 42 })
 
-beforeEach(() => {
-  cleanup()
-  mockHelper.restoreAllMocks()
+new class extends ComponentTestCase {
+  protected beforeEach () {
+    super.beforeEach(() => (song = factory<Song>('song')))
+  }
 
-  song = factory<Song>('song')
-  commonStore.state.useiTunes = true
-})
+  protected test () {
+    it('renders', () => {
+      const { html } = this.render(AlbumTrackListItem, {
+        props: {
+          album,
+          track
+        }
+      })
 
-it('renders', () => {
-  const { html } = render(AlbumTrackListItem, {
-    props: {
-      album,
-      track
-    }
-  })
+      expect(html()).toMatchSnapshot()
+    })
 
-  expect(html()).toMatchSnapshot()
-})
+    it('plays', async () => {
+      const guessMock = this.mock(songStore, 'guess', song)
+      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
+      const playMock = this.mock(playbackService, 'play')
 
-it('plays', async () => {
-  const guessMock = mockHelper.mock(songStore, 'guess', song)
-  const queueMock = mockHelper.mock(queueStore, 'queueIfNotQueued')
-  const playMock = mockHelper.mock(playbackService, 'play')
+      const { getByTitle } = this.render(AlbumTrackListItem, {
+        props: {
+          album,
+          track
+        }
+      })
 
-  const { getByTitle } = render(AlbumTrackListItem, {
-    props: {
-      album,
-      track
-    }
-  })
+      await fireEvent.click(getByTitle('Click to play'))
 
-  await fireEvent.click(getByTitle('Click to play'))
-
-  expect(guessMock).toHaveBeenCalledWith('Fahrstuhl to Heaven', album)
-  expect(queueMock).toHaveBeenNthCalledWith(1, song)
-  expect(playMock).toHaveBeenNthCalledWith(1, song)
-})
+      expect(guessMock).toHaveBeenCalledWith('Fahrstuhl to Heaven', album)
+      expect(queueMock).toHaveBeenNthCalledWith(1, song)
+      expect(playMock).toHaveBeenNthCalledWith(1, song)
+    })
+  }
+}

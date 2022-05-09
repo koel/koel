@@ -1,62 +1,62 @@
-import { mockHelper, render } from '@/__tests__/__helpers__'
-import { cleanup, fireEvent } from '@testing-library/vue'
-import { beforeEach, expect, it } from 'vitest'
+import { fireEvent } from '@testing-library/vue'
+import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { commonStore } from '@/stores'
-import ArtistCard from './ArtistCard.vue'
 import { downloadService, playbackService } from '@/services'
+import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import ArtistCard from './ArtistCard.vue'
 
 let artist: Artist
 
-beforeEach(() => {
-  mockHelper.restoreAllMocks()
-  cleanup()
+new class extends ComponentTestCase {
+  protected beforeEach () {
+    super.beforeEach(() => {
+      artist = factory<Artist>('artist', {
+        id: 3, // make sure it's not "Various Artists"
+        name: 'Led Zeppelin',
+        albums: factory<Album>('album', 4),
+        songs: factory<Song>('song', 16)
+      })
+    })
+  }
 
-  artist = factory<Artist>('artist', {
-    id: 3, // make sure it's not "Various Artists"
-    name: 'Led Zeppelin',
-    albums: factory<Album>('album', 4),
-    songs: factory<Song>('song', 16)
-  })
+  protected test () {
+    it('renders', () => {
+      const { getByText, getByTestId } = this.render(ArtistCard, {
+        props: {
+          artist
+        }
+      })
 
-  commonStore.state.allowDownload = true
-})
+      expect(getByTestId('name').innerText).equal('Led Zeppelin')
+      getByText(/^4 albums\s+•\s+16 songs.+0 plays$/)
+      getByTestId('shuffle-artist')
+      getByTestId('download-artist')
+    })
 
-it('renders', () => {
-  const { getByText, getByTestId } = render(ArtistCard, {
-    props: {
-      artist
-    }
-  })
+    it('downloads', async () => {
+      const mock = this.mock(downloadService, 'fromArtist')
 
-  expect(getByTestId('name').innerText).equal('Led Zeppelin')
-  getByText(/^4 albums\s+•\s+16 songs.+0 plays$/)
-  getByTestId('shuffle-artist')
-  getByTestId('download-artist')
-})
+      const { getByTestId } = this.render(ArtistCard, {
+        props: {
+          artist
+        }
+      })
 
-it('downloads', async () => {
-  const mock = mockHelper.mock(downloadService, 'fromArtist')
+      await fireEvent.click(getByTestId('download-artist'))
+      expect(mock).toHaveBeenCalledTimes(1)
+    })
 
-  const { getByTestId } = render(ArtistCard, {
-    props: {
-      artist
-    }
-  })
+    it('shuffles', async () => {
+      const mock = this.mock(playbackService, 'playAllByArtist')
 
-  await fireEvent.click(getByTestId('download-artist'))
-  expect(mock).toHaveBeenCalledTimes(1)
-})
+      const { getByTestId } = this.render(ArtistCard, {
+        props: {
+          artist
+        }
+      })
 
-it('shuffles', async () => {
-  const mock = mockHelper.mock(playbackService, 'playAllByArtist')
-
-  const { getByTestId } = render(ArtistCard, {
-    props: {
-      artist
-    }
-  })
-
-  await fireEvent.click(getByTestId('shuffle-artist'))
-  expect(mock).toHaveBeenCalled()
-})
+      await fireEvent.click(getByTestId('shuffle-artist'))
+      expect(mock).toHaveBeenCalled()
+    })
+  }
+}

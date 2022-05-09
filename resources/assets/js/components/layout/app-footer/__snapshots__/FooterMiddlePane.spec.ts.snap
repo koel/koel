@@ -3,7 +3,7 @@
 exports[`renders with a song 1`] = `
 "<div class=\\"middle-pane\\" data-testid=\\"footer-middle-pane\\">
   <div id=\\"progressPane\\" class=\\"progress\\">
-    <h3 class=\\"title\\">Fahrstühl to Heaven</h3>
+    <h3 class=\\"title\\">Fahrstuhl to Heaven</h3>
     <p class=\\"meta\\"><a href=\\"/#!/artist/104\\" class=\\"artist\\">Led Zeppelin</a> – <a href=\\"/#!/album/42\\" class=\\"album\\">IV</a></p>
     <div class=\\"plyr\\"><audio controls=\\"\\" crossorigin=\\"anonymous\\"></audio></div>
   </div>

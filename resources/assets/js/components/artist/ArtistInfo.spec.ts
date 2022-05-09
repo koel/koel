@@ -1,42 +1,42 @@
-import { beforeEach, expect, it } from 'vitest'
-import { render } from '@/__tests__/__helpers__'
-import { cleanup, fireEvent } from '@testing-library/vue'
+import { expect, it } from 'vitest'
+import { fireEvent } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
+import ComponentTestCase from '@/__tests__/ComponentTestCase'
 import ArtistInfo from './ArtistInfo.vue'
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 
-let artist: Artist
+new class extends ComponentTestCase {
+  protected test () {
+    it.each([['sidebar'], ['full']])('renders in %s mode', async (mode: string) => {
+      const { getByTestId } = this.render(ArtistInfo, {
+        props: {
+          mode,
+          artist: factory<Artist>('artist')
+        },
+        global: {
+          stubs: {
+            ArtistThumbnail
+          }
+        }
+      })
 
-beforeEach(() => cleanup())
+      getByTestId('album-artist-thumbnail')
 
-it.each([['sidebar'], ['full']])('renders in %s mode', async (mode: string) => {
-  const { getByTestId } = render(ArtistInfo, {
-    props: {
-      artist: factory<Artist>('artist'),
-      mode
-    },
-    global: {
-      stubs: {
-        ArtistThumbnail
-      }
-    }
-  })
+      const element = getByTestId<HTMLElement>('artist-info')
+      expect(element.classList.contains(mode)).toBe(true)
+    })
 
-  getByTestId('album-artist-thumbnail')
+    it('triggers showing full wiki', async () => {
+      const artist = factory<Artist>('artist')
 
-  const element = getByTestId<HTMLElement>('artist-info')
-  expect(element.classList.contains(mode)).toBe(true)
-})
+      const { getByText } = this.render(ArtistInfo, {
+        props: {
+          artist
+        }
+      })
 
-it('triggers showing full wiki', async () => {
-  const artist = factory<Artist>('artist')
-
-  const { getByText } = render(ArtistInfo, {
-    props: {
-      artist
-    }
-  })
-
-  await fireEvent.click(getByText('Full Bio'))
-  getByText(artist.info!.bio!.full)
-})
+      await fireEvent.click(getByText('Full Bio'))
+      getByText(artist.info!.bio!.full)
+    })
+  }
+}
