@@ -1,7 +1,7 @@
 <template>
   <article
     :class="{ playing: song.playbackState === 'Playing' || song.playbackState === 'Paused' }"
-    data-test="song-card"
+    data-testid="song-card"
     draggable="true"
     tabindex="0"
     @dragstart="dragStart"
@@ -9,7 +9,7 @@
     @dblclick.prevent="play"
   >
     <span :style="{ backgroundImage: `url(${song.album.cover})` }" class="cover">
-      <a class="control" @click.prevent="changeSongState">
+      <a class="control" @click.prevent="changeSongState" data-testid="play-control">
         <i v-if="song.playbackState !== 'Playing'" class="fa fa-play"/>
         <i class="fa fa-pause" v-else/>
       </a>

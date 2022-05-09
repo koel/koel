@@ -27,7 +27,7 @@ context('Home Screen', () => {
   it('a song item can be played', () => {
     cy.$mockPlayback()
 
-    cy.get('.top-song-list li:first-child [data-test=song-card]').within(() => {
+    cy.get('.top-song-list li:first-child [data-testid=song-card]').within(() => {
       cy.get('a.control').invoke('show').click()
     }).should('have.class', 'playing')
     cy.$assertPlaying()

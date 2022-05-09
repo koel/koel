@@ -17,7 +17,7 @@ context('Searching', () => {
     cy.get('@searchInput').type('foo')
 
     cy.get('#searchExcerptsWrapper').within(() => {
-      cy.$findInTestId('song-excerpts [data-test=song-card]').should('have.length', 6)
+      cy.$findInTestId('song-excerpts [data-testid=song-card]').should('have.length', 6)
       cy.$findInTestId('artist-excerpts [data-test=artist-card]').should('have.length', 1)
       cy.$findInTestId('album-excerpts [data-test=album-card]').should('have.length', 3)
     })
