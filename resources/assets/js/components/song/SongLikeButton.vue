@@ -1,7 +1,7 @@
 <template>
-  <button @click.stop="toggleLike" :title="title" class="text-secondary" data-test="like-btn">
-    <i class="fa fa-heart text-maroon" v-if="song.liked" data-test="btn-like-liked"></i>
-    <i class="fa fa-heart-o" data-test="btn-like-unliked" v-else></i>
+  <button @click.stop="toggleLike" :title="title" class="text-secondary" data-testid="like-btn">
+    <i class="fa fa-heart text-maroon" v-if="song.liked" data-testid="btn-like-liked"></i>
+    <i class="fa fa-heart-o" data-testid="btn-like-unliked" v-else></i>
   </button>
 </template>
 

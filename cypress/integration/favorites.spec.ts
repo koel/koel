@@ -10,7 +10,7 @@ context('Favorites', { scrollBehavior: false }, () => {
         cy.findByText('Download All').should('be.visible')
 
         cy.$getSongRows().should('have.length', 3)
-          .each(row => cy.wrap(row).get('[data-test=btn-like-liked]').should('be.visible'))
+          .each(row => cy.wrap(row).findByTestId('btn-like-liked').should('be.visible'))
       })
   })
 
@@ -24,9 +24,9 @@ context('Favorites', { scrollBehavior: false }, () => {
     cy.get('#songsWrapper')
       .within(() => {
         cy.$getSongRows().first().within(() => {
-          cy.get('[data-test=like-btn]')
-            .within(() => cy.get('[data-test=btn-like-unliked]').should('be.visible')).click()
-            .within(() => cy.get('[data-test=btn-like-liked]').should('be.visible'))
+          cy.findByTestId('like-btn')
+            .within(() => cy.findByTestId('btn-like-unliked').should('be.visible')).click()
+            .within(() => cy.findByTestId('btn-like-liked').should('be.visible'))
         })
       })
 
@@ -59,7 +59,7 @@ context('Favorites', { scrollBehavior: false }, () => {
       .within(() => {
         cy.$getSongRows().should('have.length', 3)
           .first().should('contain.text', 'November')
-          .within(() => cy.get('[data-test=like-btn]').click())
+          .within(() => cy.findByTestId('like-btn').click())
 
         cy.$getSongRows().should('have.length', 2)
           .first().should('not.contain.text', 'November')
