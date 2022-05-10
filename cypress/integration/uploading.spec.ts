@@ -62,7 +62,7 @@ context('Uploading', () => {
         fixture: 'upload.post.200.json'
       }).as('successfulUpload')
 
-      cy.get('[data-test=upload-item]:first-child [data-test=retry-upload-btn]').click()
+      cy.get('[data-test=upload-item]:first-child').findByTitle('Retry').click()
       cy.wait('@successfulUpload')
       cy.get('[data-test=upload-item]').should('have.length', 0)
     })
@@ -89,7 +89,7 @@ context('Uploading', () => {
   it('allows removing individual failed uploads', () => {
     cy.get('#uploadWrapper').within(() => {
       executeFailedUpload()
-      cy.get('[data-test=upload-item]:first-child [data-test=remove-upload-btn]').click()
+      cy.get('[data-test=upload-item]:first-child').findByTitle('Remove').click()
       cy.get('[data-test=upload-item]').should('have.length', 0)
     })
   })

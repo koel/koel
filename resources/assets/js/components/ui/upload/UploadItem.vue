@@ -1,29 +1,13 @@
 <template>
-  <div :class="[file.status]" :title="file.message" class="upload-item">
-    <span :style="{ width: `${file.progress}%` }" class="progress"></span>
+  <div :class="cssClass" :title="file.message" class="upload-item">
+    <span :style="{ width: `${file.progress}%` }" class="progress"/>
     <span class="details">
       <span class="name">{{ file.name }}</span>
       <span class="controls">
-        <Btn
-          v-if="canRetry"
-          data-test="retry-upload-btn"
-          icon-only
-          title="Retry upload"
-          transparent
-          unrounded
-          @click="retry"
-        >
+        <Btn v-if="canRetry" icon-only title="Retry" transparent unrounded @click="retry">
           <i class="fa fa-repeat"></i>
         </Btn>
-        <Btn
-          v-if="canRemove"
-          data-test="remove-upload-btn"
-          icon-only
-          title="Remove"
-          transparent
-          unrounded
-          @click="remove"
-        >
+        <Btn v-if="canRemove" icon-only title="Remove" transparent unrounded @click="remove">
           <i class="fa fa-times"></i>
         </Btn>
       </span>
@@ -32,6 +16,7 @@
 </template>
 
 <script lang="ts" setup>
+import slugify from 'slugify'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { UploadFile } from '@/config'
 import { uploadService } from '@/services'
@@ -43,6 +28,7 @@ const { file } = toRefs(props)
 
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canRemove = computed(() => file.value.status !== 'Uploading') // we're not supporting cancel tokens (yet).
+const cssClass = computed(() => slugify(file.value.status).toLowerCase())
 
 const remove = () => uploadService.remove(file.value)
 const retry = () => uploadService.retry(file.value)
@@ -67,7 +53,7 @@ const retry = () => uploadService.retry(file.value)
     transition: .3s ease-out;
   }
 
-  &.Uploaded {
+  &.uploaded {
     background: var(--color-green);
 
     .progress {
@@ -75,7 +61,7 @@ const retry = () => uploadService.retry(file.value)
     }
   }
 
-  &.Errored {
+  &.errored {
     background: var(--color-red);
 
     .progress {
