@@ -1,5 +1,10 @@
 <template>
-  <div :class="{ playing, selected: item.selected }" class="song-item" @dblclick.prevent.stop="play">
+  <div
+    :class="{ playing, selected: item.selected }"
+    class="song-item"
+    data-testid="song-item"
+    @dblclick.prevent.stop="play"
+  >
     <span v-if="columns.includes('track')" class="track-number text-secondary">{{ song.track || '' }}</span>
     <span v-if="columns.includes('title')" class="title">{{ song.title }}</span>
     <span v-if="columns.includes('artist')" class="artist">{{ song.artist.name }}</span>
@@ -8,7 +13,7 @@
     <span class="favorite">
       <LikeButton :song="song"/>
     </span>
-    <span class="play" role="button" @click.stop="doPlayback">
+    <span class="play" data-testid="song-item-play" role="button" @click.stop="doPlayback">
       <i class="fa fa-pause-circle" v-if="song.playbackState === 'Playing'"></i>
       <i class="fa fa-play-circle" v-else></i>
     </span>
