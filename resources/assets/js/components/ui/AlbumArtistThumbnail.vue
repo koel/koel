@@ -25,7 +25,7 @@ import { orderBy } from 'lodash'
 import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
-import { defaultCover, fileReader } from '@/utils'
+import { alerts, defaultCover, fileReader } from '@/utils'
 import { useAuthorization } from '@/composables'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png']
@@ -71,8 +71,9 @@ const buttonLabel = computed(() => forAlbum.value
 const { isAdmin: allowsUpload } = useAuthorization()
 
 const playOrQueue = (event: KeyboardEvent) => {
-  if (event.metaKey || event.ctrlKey) {
+  if (event.altKey) {
     queueStore.queue(orderBy(entity.value.songs, sortFields.value))
+    alerts.success('Songs added to queue.')
     return
   }
 
@@ -117,15 +118,15 @@ const onDrop = async (event: DragEvent) => {
     const fileData = await fileReader.readAsDataUrl(event.dataTransfer!.files[0])
 
     if (forAlbum.value) {
-      // Replace the image right away to create a swift effect
+      // Replace the image right away to create an "instant" effect
       (entity.value as Album).cover = fileData
       await albumStore.uploadCover(entity.value as Album, fileData)
     } else {
       (entity.value as Artist).image = fileData
       await artistStore.uploadImage(entity.value as Artist, fileData)
     }
-  } catch (exception) {
-    console.error(exception)
+  } catch (e) {
+    console.error(e)
   }
 }
 </script>
@@ -207,7 +208,6 @@ const onDrop = async (event: DragEvent) => {
     position: absolute;
     width: 100%;
     height: 100%;
-    display: flex;
     place-content: center;
     place-items: center;
     background: rgba(0, 0, 0, .7);
