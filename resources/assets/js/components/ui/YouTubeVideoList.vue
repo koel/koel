@@ -6,7 +6,7 @@
         :key="video.id.videoId"
         :href="`https://youtu.be/${video.id.videoId}`"
         class="video"
-        data-test="youtube-search-result"
+        data-testid="youtube-search-result"
         role="button"
         @click.prevent="play(video)"
       >

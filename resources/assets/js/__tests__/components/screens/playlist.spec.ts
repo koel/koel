@@ -39,7 +39,7 @@ describe('components/screens/playlist', () => {
       })
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.has('[data-test=screen-empty-state]')).toBe(true)
+    expect(wrapper.has('[data-testid=screen-empty-state]')).toBe(true)
   })
 
   it('emits an event to delete the playlist', () => {

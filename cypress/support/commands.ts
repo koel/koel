@@ -69,7 +69,7 @@ Cypress.Commands.add('$shuffleSeveralSongs', (count = 3) => {
     cy.$getSongRowAt(0).click()
     cy.$getSongRowAt(count - 1).click({ shiftKey: true })
 
-    cy.get('.screen-header [data-test=btn-shuffle-selected]').click()
+    cy.get('.screen-header [data-testid=btn-shuffle-selected]').click()
   })
 })
 

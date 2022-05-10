@@ -28,7 +28,7 @@
         @dragover.prevent
       >
         <div class="upload-files" v-if="files.length">
-          <UploadItem v-for="file in files" :key="file.id" :file="file" data-test="upload-item"/>
+          <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item"/>
         </div>
 
         <ScreenEmptyState v-else>
@@ -61,7 +61,7 @@ import ismobile from 'ismobilejs'
 import md5 from 'blueimp-md5'
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
-import { settingStore, userStore } from '@/stores'
+import { settingStore } from '@/stores'
 import { eventBus, getAllFileEntries, isDirectoryReadingSupported } from '@/utils'
 import { acceptedMediaTypes, UploadFile } from '@/config'
 import { uploadService } from '@/services'

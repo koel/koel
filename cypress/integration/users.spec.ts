@@ -6,11 +6,11 @@ context('User Management', () => {
 
   it('shows the list of users', () => {
     cy.get('#usersWrapper').within(() => {
-      cy.get('[data-test=user-card]').should('have.length', 3).and('be.visible')
+      cy.findByTestId('user-card').should('have.length', 3).and('be.visible')
 
-      cy.get('[data-test=user-card].me').within(() => {
-        cy.get('[data-test=current-user-indicator]').should('be.visible')
-        cy.get('[data-test=admin-indicator]').should('be.visible')
+      cy.get('[data-testid=user-card].me').within(() => {
+        cy.findByTitle('This is you!').should('be.visible')
+        cy.findByTitle('User has admin privileges').should('be.visible')
       })
     })
   })
@@ -31,17 +31,17 @@ context('User Management', () => {
     })
 
     cy.findByText('New user "Charles" created.').should('be.visible')
-    cy.get('#usersWrapper [data-test=user-card]').should('have.length', 4)
+    cy.findByTestId('user-card').should('have.length', 4)
 
-    cy.get('#usersWrapper [data-test=user-card]:first-child').within(() => {
+    cy.get('#usersWrapper [data-testid=user-card]:first-child').within(() => {
       cy.findByText('Charles').should('be.visible')
       cy.findByText('charles@koel.test').should('be.visible')
-      cy.get('[data-test=admin-indicator]').should('be.visible')
+      cy.findByTitle('User has admin privileges').should('be.visible')
     })
   })
 
   it('redirects to profile for current user', () => {
-    cy.get('#usersWrapper [data-test=user-card].me [data-test=edit-user-btn]').click({ force: true })
+    cy.get('#usersWrapper [data-testid=user-card].me [data-testid=edit-user-btn]').click({ force: true })
     cy.url().should('contain', '/#!/profile')
   })
 
@@ -50,7 +50,7 @@ context('User Management', () => {
       fixture: 'user.put.200.json'
     })
 
-    cy.get('#usersWrapper [data-test=user-card]:nth-child(2) [data-test=edit-user-btn]').click({ force: true })
+    cy.get('#usersWrapper [data-testid=user-card]:nth-child(2) [data-testid=edit-user-btn]').click({ force: true })
 
     cy.findByTestId('edit-user-form').within(() => {
       cy.get('[name=name]').should('be.focused').and('have.value', 'Alice')
@@ -65,7 +65,7 @@ context('User Management', () => {
 
     cy.findByText('User profile updated.').should('be.visible')
 
-    cy.get('#usersWrapper [data-test=user-card]:nth-child(2)').within(() => {
+    cy.get('#usersWrapper [data-testid=user-card]:nth-child(2)').within(() => {
       cy.findByText('Adriana').should('be.visible')
       cy.findByText('adriana@koel.test').should('be.visible')
     })
@@ -74,9 +74,9 @@ context('User Management', () => {
   it('deletes a user', () => {
     cy.intercept('DELETE', '/api/user/2', {})
 
-    cy.get('#usersWrapper [data-test=user-card]:nth-child(2) [data-test=delete-user-btn]').click({ force: true })
+    cy.get('#usersWrapper [data-testid=user-card]:nth-child(2) [data-testid=delete-user-btn]').click({ force: true })
     cy.$confirm()
     cy.findByText('User "Alice" deleted.').should('be.visible')
-    cy.get('#usersWrapper [data-test=user-card]').should('have.length', 2)
+    cy.get('#usersWrapper [data-testid=user-card]').should('have.length', 2)
   })
 })

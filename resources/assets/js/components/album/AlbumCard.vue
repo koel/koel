@@ -4,7 +4,7 @@
     :class="layout"
     :title="`${album.name} by ${album.artist.name}`"
     class="item"
-    data-test="album-card"
+    data-testid="album-card"
     draggable="true"
     tabindex="0"
     @dblclick="shuffle"
@@ -12,7 +12,7 @@
     @contextmenu.prevent="requestContextMenu"
   >
     <span class="thumbnail-wrapper">
-      <AlbumThumbnail :entity="album" />
+      <AlbumThumbnail :entity="album"/>
     </span>
 
     <footer>
@@ -39,7 +39,7 @@
             role="button"
             @click.prevent="shuffle"
           >
-            <i class="fa fa-random" />
+            <i class="fa fa-random"/>
           </a>
           <a
             v-if="allowDownload"
@@ -50,7 +50,7 @@
             role="button"
             @click.prevent="download"
           >
-            <i class="fa fa-download" />
+            <i class="fa fa-download"/>
           </a>
         </span>
       </p>

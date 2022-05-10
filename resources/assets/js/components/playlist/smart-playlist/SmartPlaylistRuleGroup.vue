@@ -1,5 +1,5 @@
 <template>
-  <div class="rule-group" data-test="smart-playlist-rule-group">
+  <div class="rule-group" data-testid="smart-playlist-rule-group">
     <div class="group-banner">
       <span v-if="isFirstGroup">
         Include songs that match <strong>all</strong> of these criteria

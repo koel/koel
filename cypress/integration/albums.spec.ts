@@ -7,19 +7,19 @@ context('Albums', { scrollBehavior: false }, () => {
   it('loads the list of albums', () => {
     cy.get('#albumsWrapper').within(() => {
       cy.get('.screen-header').should('be.visible').and('contain.text', 'Albums')
-      cy.get('[data-test=view-mode-thumbnail]').should('be.visible').and('have.class', 'active')
-      cy.get('[data-test=view-mode-list]').should('be.visible').and('not.have.class', 'active')
-      cy.get('[data-test=album-card]').should('have.length', 7)
+      cy.findByTestId('view-mode-thumbnail').should('be.visible').and('have.class', 'active')
+      cy.findByTestId('view-mode-list').should('be.visible').and('not.have.class', 'active')
+      cy.findByTestId('album-card').should('have.length', 7)
     })
   })
 
   it('changes display mode', () => {
     cy.get('#albumsWrapper').should('be.visible').within(() => {
-      cy.get('[data-test=album-card]').should('have.length', 7)
-      cy.get('[data-test=view-mode-list]').click()
-      cy.get('[data-test=album-card].compact').should('have.length', 7)
-      cy.get('[data-test=view-mode-thumbnail]').click()
-      cy.get('[data-test=album-card].full').should('have.length', 7)
+      cy.findByTestId('album-card').should('have.length', 7)
+      cy.findByTestId('view-mode-list').click()
+      cy.get('[data-testid=album-card].compact').should('have.length', 7)
+      cy.findByTestId('view-mode-thumbnail').click()
+      cy.get('[data-testid=album-card].full').should('have.length', 7)
     })
   })
 
@@ -27,7 +27,7 @@ context('Albums', { scrollBehavior: false }, () => {
     cy.$mockPlayback()
 
     cy.get('#albumsWrapper').within(() => {
-      cy.get('[data-test=album-card]:first-child .control-play')
+      cy.get('[data-testid=album-card]:first-child .control-play')
         .invoke('show')
         .click()
     })
@@ -42,7 +42,7 @@ context('Albums', { scrollBehavior: false }, () => {
     })
 
     cy.get('#albumsWrapper').within(() => {
-      cy.get('[data-test=album-card]:first-child .name').click()
+      cy.get('[data-testid=album-card]:first-child .name').click()
     })
 
     cy.get('#albumWrapper').within(() => {
@@ -72,7 +72,7 @@ context('Albums', { scrollBehavior: false }, () => {
 
   it('invokes artist screen', () => {
     cy.get('#albumsWrapper').within(() => {
-      cy.get('[data-test=album-card]:first-child .artist').click()
+      cy.get('[data-testid=album-card]:first-child .artist').click()
       cy.url().should('contain', '/#!/artist/3')
       // rest of the assertions belong to the Artist spec
     })

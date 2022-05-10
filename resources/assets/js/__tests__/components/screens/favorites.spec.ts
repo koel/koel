@@ -36,7 +36,7 @@ describe('components/screens/favorites', () => {
     })
 
     await wrapper.vm.$nextTick()
-    expect(wrapper.has('[data-test=screen-empty-state]')).toBe(true)
+    expect(wrapper.has('[data-testid=screen-empty-state]')).toBe(true)
   })
 
   it('allows downloading', () => {

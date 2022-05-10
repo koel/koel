@@ -36,7 +36,7 @@
 
       <footer>
         <Btn class="btn-update" type="submit">Update</Btn>
-        <Btn class="btn-cancel" @click.prevent="maybeClose" white data-test="cancel-btn">Cancel</Btn>
+        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
       </footer>
     </form>
   </div>

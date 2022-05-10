@@ -1,5 +1,5 @@
 <template>
-  <div class="screen-empty-state" data-test="screen-empty-state">
+  <div class="screen-empty-state" data-testid="screen-empty-state">
     <div>
       <span class="jumbo-icon">
         <slot name="icon">

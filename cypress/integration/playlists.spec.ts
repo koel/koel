@@ -60,7 +60,7 @@ context('Playlists', () => {
     cy.findByText('Playlist "A New Playlist" created.').should('be.visible')
     cy.get('#playlistWrapper .heading-wrapper').should('be.visible').and('contain', 'A New Playlist')
 
-    cy.get('#playlistWrapper [data-test=screen-empty-state]')
+    cy.get('#playlistWrapper [data-testid=screen-empty-state]')
       .should('be.visible')
       .and('contain', 'The playlist is currently empty.')
   })
@@ -151,23 +151,23 @@ context('Playlists', () => {
 
         // Add a second rule
         cy.get('.btn-add-rule').click()
-        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="model[]"]').select('Length')
-        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="operator[]"]').select('is greater than')
+        cy.get('[data-testid=smart-playlist-rule-row]:nth-child(3) [name="model[]"]').select('Length')
+        cy.get('[data-testid=smart-playlist-rule-row]:nth-child(3) [name="operator[]"]').select('is greater than')
         cy.wait(0)
-        cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="value[]"]').type('180')
+        cy.get('[data-testid=smart-playlist-rule-row]:nth-child(3) [name="value[]"]').type('180')
 
         // Add another group (and rule)
         cy.get('.btn-add-group').click()
-        cy.get('[data-test=smart-playlist-rule-group]:nth-child(2) [name="value[]"]').type('Whatever')
+        cy.get('[data-testid=smart-playlist-rule-group]:nth-child(2) [name="value[]"]').type('Whatever')
 
         // Remove a rule from the first group
         cy.get(`
-          [data-test=smart-playlist-rule-group]:first-child
-          [data-test=smart-playlist-rule-row]:nth-child(2)
+          [data-testid=smart-playlist-rule-group]:first-child
+          [data-testid=smart-playlist-rule-row]:nth-child(2)
           .remove-rule
         `).click()
 
-        cy.get('[data-test=smart-playlist-rule-group]:first-child [data-test=smart-playlist-rule-row]')
+        cy.get('[data-testid=smart-playlist-rule-group]:first-child [data-testid=smart-playlist-rule-row]')
           .should('have.length', 1)
 
         cy.findByText('Save').click()
@@ -198,15 +198,15 @@ context('Playlists', () => {
       cy.get('[name=name]').should('be.focused').and('contain.value', 'Smart Playlist')
         .clear().type('A Different Name')
 
-      cy.get('[data-test=smart-playlist-rule-group]').should('have.length', 2)
+      cy.get('[data-testid=smart-playlist-rule-group]').should('have.length', 2)
 
       // Add another rule into the second group
-      cy.get('[data-test=smart-playlist-rule-group]:nth-child(2) .btn-add-rule').click()
-      cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="model[]"]').select('Album')
-      cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="operator[]"]').select('contains')
+      cy.get('[data-testid=smart-playlist-rule-group]:nth-child(2) .btn-add-rule').click()
+      cy.get('[data-testid=smart-playlist-rule-row]:nth-child(3) [name="model[]"]').select('Album')
+      cy.get('[data-testid=smart-playlist-rule-row]:nth-child(3) [name="operator[]"]').select('contains')
       cy.wait(0)
-      cy.get('[data-test=smart-playlist-rule-row]:nth-child(3) [name="value[]"]').type('keyword')
-      cy.get('[data-test=smart-playlist-rule-group]:nth-child(2) [data-test=smart-playlist-rule-row]')
+      cy.get('[data-testid=smart-playlist-rule-row]:nth-child(3) [name="value[]"]').type('keyword')
+      cy.get('[data-testid=smart-playlist-rule-group]:nth-child(2) [data-testid=smart-playlist-rule-row]')
         .should('have.length', 2)
 
       cy.findByText('Save').click()

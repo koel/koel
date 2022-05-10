@@ -12,7 +12,7 @@
             Songs
             <Btn
               v-if="excerpt.songs.length"
-              data-test="view-all-songs-btn"
+              data-testid="view-all-songs-btn"
               orange
               rounded
               small

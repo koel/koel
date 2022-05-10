@@ -1,9 +1,9 @@
 import Component from '@/components/album/AlbumContextMenu.vue'
 import factory from '@/__tests__/factory'
-import { playbackService, downloadService } from '@/services'
+import { downloadService, playbackService } from '@/services'
 import { commonStore } from '@/stores'
 import { mock } from '@/__tests__/__helpers__'
-import { shallow, mount } from '@/__tests__/adapter'
+import { mount, shallow } from '@/__tests__/adapter'
 
 describe('components/album/ContextMenuBase', () => {
   let album: Album
@@ -23,7 +23,7 @@ describe('components/album/ContextMenuBase', () => {
     const wrapper = shallow(Component, { propsData: { album } })
     const m = mock(playbackService, 'playAllInAlbum')
 
-    wrapper.click('[data-test=play]')
+    wrapper.click('[data-testid=play]')
     expect(m).toHaveBeenCalledWith(album)
   })
 
@@ -31,7 +31,7 @@ describe('components/album/ContextMenuBase', () => {
     const wrapper = shallow(Component, { propsData: { album } })
     const m = mock(playbackService, 'playAllInAlbum')
 
-    wrapper.click('[data-test=shuffle]')
+    wrapper.click('[data-testid=shuffle]')
     expect(m).toHaveBeenCalledWith(album, true)
   })
 
@@ -41,7 +41,7 @@ describe('components/album/ContextMenuBase', () => {
     await (wrapper.vm as any).open(0, 0)
     const m = mock(downloadService, 'fromAlbum')
 
-    wrapper.click('[data-test=download]')
+    wrapper.click('[data-testid=download]')
     expect(m).toHaveBeenCalledWith(album)
   })
 
@@ -49,6 +49,6 @@ describe('components/album/ContextMenuBase', () => {
     // @ts-ignore
     commonStore.state = { allowDownload: false }
     const wrapper = shallow(Component, { propsData: { album } })
-    expect(wrapper.has('[data-test=download]')).toBe(false)
+    expect(wrapper.has('[data-testid=download]')).toBe(false)
   })
 })

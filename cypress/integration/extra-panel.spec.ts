@@ -20,7 +20,7 @@ context('Extra Information Panel', () => {
     cy.$getSongRows().first().dblclick()
 
     cy.get('#extraPanelLyrics').should('be.visible').and('contain.text', 'No lyrics found.')
-    cy.get('#extraPanelLyrics [data-test=add-lyrics-btn]').click()
+    cy.findByTestId('add-lyrics-btn').click()
     cy.findByTestId('edit-song-form').should('be.visible').within(() => {
       cy.get('[name=lyrics]').should('have.focus')
     })
@@ -30,7 +30,7 @@ context('Extra Information Panel', () => {
     cy.$shuffleSeveralSongs()
     cy.get('#extraTabArtist').click()
     cy.get('#extraPanelArtist').should('be.visible').within(() => {
-      cy.get('[data-test=artist-info]').should('be.visible')
+      cy.findByTestId('artist-info').should('be.visible')
       cy.findByText('Artist summary').should('be.visible')
       cy.findByTestId('more-btn').click()
       cy.findByText('Artist summary').should('not.exist')
@@ -42,7 +42,7 @@ context('Extra Information Panel', () => {
     cy.$shuffleSeveralSongs()
     cy.get('#extraTabAlbum').click()
     cy.get('#extraPanelAlbum').should('be.visible').within(() => {
-      cy.get('[data-test=album-info]').should('be.visible')
+      cy.findByTestId('album-info').should('be.visible')
       cy.findByText('Album summary').should('be.visible')
       cy.findByTestId('more-btn').click()
       cy.findByText('Album summary').should('not.exist')

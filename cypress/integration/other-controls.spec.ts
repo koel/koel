@@ -21,10 +21,10 @@ context('Other Controls', () => {
   })
 
   it('toggles the "sound bars" icon when a song is played/paused', () => {
-    cy.$findInTestId('other-controls [data-test=soundbars]').should('be.visible')
+    cy.$findInTestId('other-controls [data-testid=soundbars]').should('be.visible')
     cy.get('body').type(' ')
     cy.$assertNotPlaying()
-    cy.$findInTestId('other-controls [data-test=soundbars]').should('not.exist')
+    cy.$findInTestId('other-controls [data-testid=soundbars]').should('not.exist')
   })
 
   it('toggles the visualizer', () => {

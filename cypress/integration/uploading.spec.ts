@@ -31,11 +31,10 @@ context('Uploading', () => {
     }).as('failedUpload')
 
     selectFixtureFile()
-    cy.get('[data-test=upload-item]').should('have.length', 1).and('be.visible')
+    cy.findByTestId('upload-item').should('have.length', 1).and('be.visible')
     cy.wait('@failedUpload')
 
-    cy.get('[data-test=upload-item]').should('have.length', 1)
-    cy.get('[data-test=upload-item]:first-child').should('have.class', 'Errored')
+    cy.findByTestId('upload-item').should('have.length', 1).should('have.class', 'Errored')
   }
 
   it('uploads songs', () => {
@@ -45,10 +44,10 @@ context('Uploading', () => {
 
     cy.get('#uploadWrapper').within(() => {
       selectFixtureFile()
-      cy.get('[data-test=upload-item]').should('have.length', 1).and('be.visible')
+      cy.findByTestId('upload-item').should('have.length', 1).and('be.visible')
 
       cy.wait('@upload')
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
 
     assertResultsAddedToHomeScreen()
@@ -62,9 +61,9 @@ context('Uploading', () => {
         fixture: 'upload.post.200.json'
       }).as('successfulUpload')
 
-      cy.get('[data-test=upload-item]:first-child').findByTitle('Retry').click()
+      cy.get('[data-testid=upload-item]:first-child').findByTitle('Retry').click()
       cy.wait('@successfulUpload')
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
 
     assertResultsAddedToHomeScreen()
@@ -80,7 +79,7 @@ context('Uploading', () => {
 
       cy.findByTestId('upload-retry-all-btn').click()
       cy.wait('@successfulUpload')
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
 
     assertResultsAddedToHomeScreen()
@@ -89,8 +88,8 @@ context('Uploading', () => {
   it('allows removing individual failed uploads', () => {
     cy.get('#uploadWrapper').within(() => {
       executeFailedUpload()
-      cy.get('[data-test=upload-item]:first-child').findByTitle('Remove').click()
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.get('[data-testid=upload-item]:first-child').findByTitle('Remove').click()
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
   })
 
@@ -98,7 +97,7 @@ context('Uploading', () => {
     cy.get('#uploadWrapper').within(() => {
       executeFailedUpload()
       cy.findByTestId('upload-remove-all-btn').click()
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
   })
 })

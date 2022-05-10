@@ -39,6 +39,7 @@
           <Btn
             v-if="selectedSongs.length > 1"
             class="btn-shuffle-selected"
+            data-testid="btn-shuffle-selected"
             orange
             title="Shuffle selected songs"
             @click.prevent="shuffleSelected"
@@ -52,7 +53,7 @@
         v-if="selectedSongs.length"
         :title="`${showingAddToMenu ? 'Cancel' : 'Add selected songs to…'}`"
         class="btn-add-to"
-        data-test="add-to-btn"
+        data-testid="add-to-btn"
         green
         @click.prevent.stop="toggleAddToMenu"
       >

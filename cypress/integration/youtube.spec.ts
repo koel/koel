@@ -21,9 +21,9 @@ context('YouTube', () => {
 
     cy.get('#extra').within(() => {
       cy.get('#extraTabYouTube').click()
-      cy.get('[data-test=youtube-search-result]').should('have.length', 2)
+      cy.findByTestId('youtube-search-result').should('have.length', 2)
       cy.findByTestId('youtube-search-more-btn').click()
-      cy.get('[data-test=youtube-search-result]').should('have.length', 4)
+      cy.findByTestId('youtube-search-result').should('have.length', 4)
     })
   })
 
@@ -35,7 +35,7 @@ context('YouTube', () => {
 
     cy.get('#extra').within(() => {
       cy.get('#extraTabYouTube').click()
-      cy.get('[data-test=youtube-search-result]:nth-child(2)').click()
+      cy.get('[data-testid=youtube-search-result]:nth-child(2)').click()
     })
 
     cy.url().should('contain', '/#!/youtube')

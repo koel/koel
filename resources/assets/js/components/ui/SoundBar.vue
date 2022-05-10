@@ -1,5 +1,5 @@
 <template>
-  <div class="bars" data-test="soundbars">
+  <div class="bars" data-testid="soundbars">
     <img alt="Sound bars" height="13" src="@/../img/bars.gif">
   </div>
 </template>

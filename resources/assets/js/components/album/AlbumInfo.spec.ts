@@ -22,7 +22,7 @@ new class extends ComponentTestCase {
 
       getByTestId('album-artist-thumbnail')
 
-      const element = getByTestId<HTMLElement>('album-info')
+      const element = getByTestId('album-info')
       expect(element.classList.contains(mode)).toBe(true)
     })
 

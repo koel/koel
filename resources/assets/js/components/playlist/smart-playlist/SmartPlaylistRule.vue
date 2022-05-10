@@ -1,5 +1,5 @@
 <template>
-  <div class="row" data-test="smart-playlist-rule-row">
+  <div class="row" data-testid="smart-playlist-rule-row">
     <Btn class="remove-rule" red @click.prevent="removeRule"><i class="fa fa-times"></i></Btn>
 
     <select v-model="selectedModel" name="model[]">

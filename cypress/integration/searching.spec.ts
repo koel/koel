@@ -6,7 +6,7 @@ context('Searching', () => {
 
   it('shows the search screen when search box receives focus', () => {
     cy.get('@searchInput').focus()
-    cy.get('#searchExcerptsWrapper').within(() => cy.get('[data-test=screen-empty-state]').should('be.visible'))
+    cy.get('#searchExcerptsWrapper').within(() => cy.findByTestId('screen-empty-state').should('be.visible'))
   })
 
   it('performs an excerpt search', () => {
@@ -18,8 +18,8 @@ context('Searching', () => {
 
     cy.get('#searchExcerptsWrapper').within(() => {
       cy.$findInTestId('song-excerpts [data-testid=song-card]').should('have.length', 6)
-      cy.$findInTestId('artist-excerpts [data-test=artist-card]').should('have.length', 1)
-      cy.$findInTestId('album-excerpts [data-test=album-card]').should('have.length', 3)
+      cy.$findInTestId('artist-excerpts [data-testid=artist-card]').should('have.length', 1)
+      cy.$findInTestId('album-excerpts [data-testid=album-card]').should('have.length', 3)
     })
   })
 
@@ -33,7 +33,7 @@ context('Searching', () => {
     })
 
     cy.get('@searchInput').type('foo')
-    cy.get('#searchExcerptsWrapper [data-test=view-all-songs-btn]').click()
+    cy.get('#searchExcerptsWrapper [data-testid=view-all-songs-btn]').click()
     cy.url().should('contain', '/#!/search/songs/foo')
 
     cy.get('#songResultsWrapper').within(() => {
@@ -54,7 +54,7 @@ context('Searching', () => {
 
     cy.get('@searchInput').type('foo')
     cy.wait('@search')
-    cy.get('#searchExcerptsWrapper [data-test=view-all-songs-btn]').should('not.exist')
+    cy.get('#searchExcerptsWrapper [data-testid=view-all-songs-btn]').should('not.exist')
     cy.findByTestId('song-excerpts').findByText('None found.').should('be.visible')
   })
 })

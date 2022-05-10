@@ -1,5 +1,5 @@
 <template>
-  <article v-if="showing" :class="{ me: isCurrentUser }" class="user-card" data-test="user-card">
+  <article v-if="showing" :class="{ me: isCurrentUser }" class="user-card" data-testid="user-card">
     <div class="info">
       <img :alt="`${user.name}'s avatar`" :src="user.avatar" height="96" width="96">
 
@@ -7,32 +7,15 @@
         <div>
           <h1>
             <span class="name">{{ user.name }}</span>
-            <i
-              v-if="isCurrentUser"
-              class="you text-orange fa fa-check-circle"
-              data-test="current-user-indicator"
-              title="This is you!"
-            />
-            <i
-              v-if="user.is_admin"
-              class="is-admin text-blue fa fa-shield"
-              data-test="admin-indicator"
-              title="User has admin privileges"
-            />
+            <i v-if="isCurrentUser" class="you text-orange fa fa-check-circle" title="This is you!"/>
+            <i v-if="user.is_admin" class="is-admin text-blue fa fa-shield" title="User has admin privileges"/>
           </h1>
-          <p class="email" data-test="user-email">{{ user.email }}</p>
+          <p class="email">{{ user.email }}</p>
         </div>
 
         <div class="buttons">
-          <Btn class="btn-edit" data-test="edit-user-btn" small @click="edit">{{ editButtonLabel }}</Btn>
-          <Btn
-            v-if="!isCurrentUser"
-            class="btn-delete"
-            data-test="delete-user-btn"
-            red
-            small
-            @click="confirmDelete"
-          >
+          <Btn class="btn-edit" data-testid="edit-user-btn" small @click="edit">{{ editButtonLabel }}</Btn>
+          <Btn v-if="!isCurrentUser" class="btn-delete" data-testid="delete-user-btn" small @click="confirmDelete">
             Delete
           </Btn>
         </div>

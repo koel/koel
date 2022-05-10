@@ -15,7 +15,7 @@ exports[`components/shared/Overlay hides 1`] = ``;
 exports[`components/shared/Overlay shows 1`] = `
 <div id="overlay" class="overlay loading">
   <div class="display">
-    <div data-test="soundbars" class="bars"><img src="@/../img/bars.gif" alt="Sound bars" height="13" width="auto"></div>
+    <div data-testid="soundbars" class="bars"><img src="@/../img/bars.gif" alt="Sound bars" height="13" width="auto"></div>
     <!---->
     <!---->
     <!---->
@@ -28,7 +28,7 @@ exports[`components/shared/Overlay shows 1`] = `
 exports[`components/shared/Overlay shows with default options 1`] = `
 <div id="overlay" class="overlay loading">
   <div class="display">
-    <div data-test="soundbars" class="bars"><img src="@/../img/bars.gif" alt="Sound bars" height="13" width="auto"></div>
+    <div data-testid="soundbars" class="bars"><img src="@/../img/bars.gif" alt="Sound bars" height="13" width="auto"></div>
     <!---->
     <!---->
     <!---->
