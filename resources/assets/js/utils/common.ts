@@ -1,4 +1,5 @@
 import select from 'select'
+import { OverlayState } from 'koel/types/ui'
 import { arrayify, eventBus, noop, pluralize } from '@/utils'
 import defaultCover from '@/../img/covers/unknown-album.png'
 
@@ -10,9 +11,7 @@ export { defaultCover }
  * @param view
  * @param {...*} args     Extra data to attach to the view.
  */
-export const loadMainView = (view: MainViewName, ...args: any[]): void => {
-  eventBus.emit('LOAD_MAIN_CONTENT', view, ...args)
-}
+export const loadMainView = (view: MainViewName, ...args: any[]) => eventBus.emit('LOAD_MAIN_CONTENT', view, ...args)
 
 /**
  * Force reloading window regardless of "Confirm before reload" setting.
@@ -27,13 +26,13 @@ export const forceReloadWindow = (): void => {
   window.location.reload()
 }
 
-export const showOverlay = (message = 'Just a little patience…', type = 'loading', dismissible = false) => {
-  eventBus.emit('SHOW_OVERLAY', { message, type, dismissible })
-}
+export const showOverlay = (
+  message = 'Just a little patience…',
+  type: OverlayState['type'] = 'loading',
+  dismissible = false
+) => eventBus.emit('SHOW_OVERLAY', { message, type, dismissible })
 
-export const hideOverlay = (): void => {
-  eventBus.emit('HIDE_OVERLAY')
-}
+export const hideOverlay = () => eventBus.emit('HIDE_OVERLAY')
 
 export const copyText = (text: string): void => {
   let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')

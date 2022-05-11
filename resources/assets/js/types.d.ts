@@ -281,6 +281,13 @@ declare module 'koel/types/ui' {
       set (options: number | any[]): void
     }
   }
+
+  type OverlayState = {
+    showing: boolean
+    dismissible: boolean
+    type: 'loading' | 'success' | 'info' | 'warning' | 'error'
+    message: string
+  }
 }
 
 interface SongRow {

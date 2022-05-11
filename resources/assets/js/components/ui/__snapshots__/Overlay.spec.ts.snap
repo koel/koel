@@ -1,0 +1,62 @@
+// Vitest Snapshot v1
+
+exports[`renders error type 1`] = `
+"<div id=\\"overlay\\" class=\\"error overlay\\" data-testid=\\"overlay\\">
+  <div class=\\"display\\">
+    <!--v-if--><i class=\\"fa fa-exclamation-circle\\"></i>
+    <!--v-if-->
+    <!--v-if-->
+    <!--v-if--><span class=\\"message\\">Look at me now</span>
+  </div>
+  <!--v-if-->
+</div>"
+`;
+
+exports[`renders info type 1`] = `
+"<div id=\\"overlay\\" class=\\"info overlay\\" data-testid=\\"overlay\\">
+  <div class=\\"display\\">
+    <!--v-if-->
+    <!--v-if-->
+    <!--v-if--><i class=\\"fa fa-info-circle\\"></i>
+    <!--v-if--><span class=\\"message\\">Look at me now</span>
+  </div>
+  <!--v-if-->
+</div>"
+`;
+
+exports[`renders loading type 1`] = `
+"<div id=\\"overlay\\" class=\\"loading overlay\\" data-testid=\\"overlay\\">
+  <div class=\\"display\\">
+    <div class=\\"bars\\" data-testid=\\"soundbars\\" data-v-d983e410=\\"\\"><img alt=\\"Sound bars\\" height=\\"13\\" src=\\"/resources/assets/img/bars.gif\\" data-v-d983e410=\\"\\" /></div>
+    <!--v-if-->
+    <!--v-if-->
+    <!--v-if-->
+    <!--v-if--><span class=\\"message\\">Look at me now</span>
+  </div>
+  <!--v-if-->
+</div>"
+`;
+
+exports[`renders success type 1`] = `
+"<div id=\\"overlay\\" class=\\"success overlay\\" data-testid=\\"overlay\\">
+  <div class=\\"display\\">
+    <!--v-if-->
+    <!--v-if-->
+    <!--v-if-->
+    <!--v-if--><i class=\\"fa fa-check-circle\\"></i><span class=\\"message\\">Look at me now</span>
+  </div>
+  <!--v-if-->
+</div>"
+`;
+
+exports[`renders warning type 1`] = `
+"<div id=\\"overlay\\" class=\\"warning overlay\\" data-testid=\\"overlay\\">
+  <div class=\\"display\\">
+    <!--v-if-->
+    <!--v-if--><i class=\\"fa fa-exclamation-triangle\\"></i>
+    <!--v-if-->
+    <!--v-if--><span class=\\"message\\">Look at me now</span>
+  </div>
+  <!--v-if-->
+</div>"
+`;

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="state.showing" id="overlay" :class="state.type" class="overlay">
+  <div v-if="state.showing" id="overlay" :class="state.type" class="overlay" data-testid="overlay">
     <div class="display">
       <SoundBar v-if="state.type === 'loading'"/>
       <i v-if="state.type === 'error'" class="fa fa-exclamation-circle"/>
@@ -15,16 +15,9 @@
 </template>
 
 <script lang="ts" setup>
-import { assign } from 'lodash'
+import { OverlayState } from 'koel/types/ui'
 import { eventBus } from '@/utils'
 import { defineAsyncComponent, reactive } from 'vue'
-
-export type OverlayState = {
-  showing: boolean
-  dismissible: boolean
-  type: 'loading' | 'success' | 'info' | 'warning' | 'error'
-  message: string
-}
 
 const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 
@@ -36,7 +29,7 @@ const state = reactive<OverlayState>({
 })
 
 const show = (options: Partial<OverlayState>) => {
-  assign(state, options)
+  Object.assign(state, options)
   state.showing = true
 }
 
