@@ -1,5 +1,5 @@
 <template>
-  <button data-testid="close-modal-btn" @click.prevent="$emit('click')">
+  <button data-testid="close-modal-btn" type="button" @click.prevent="$emit('click')">
     <i class="fa fa-times"></i>
   </button>
 </template>
