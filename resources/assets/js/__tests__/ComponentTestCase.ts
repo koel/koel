@@ -2,7 +2,6 @@ import deepmerge from 'deepmerge'
 import isMobile from 'ismobilejs'
 import { cleanup, render, RenderOptions } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
-import { noop } from '@/utils'
 import { clickaway, droppable, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore } from '@/stores'
@@ -35,8 +34,13 @@ export default abstract class ComponentTestCase {
     })
   }
 
-  protected mock<T, M extends Methods<Required<T>>> (obj: T, methodName: M, implementation: any = noop) {
-    const mock = vi.fn().mockImplementation(implementation instanceof Function ? implementation : () => implementation)
+  protected mock<T, M extends Methods<Required<T>>> (obj: T, methodName: M, implementation?: any) {
+    const mock = vi.fn()
+
+    if (implementation !== undefined) {
+      mock.mockImplementation(implementation instanceof Function ? implementation : () => implementation)
+    }
+
     this.backupMethods.set([obj, methodName], obj[methodName])
 
     // @ts-ignore
