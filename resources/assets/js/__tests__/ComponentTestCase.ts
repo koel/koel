@@ -4,7 +4,8 @@ import { cleanup, render, RenderOptions } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { clickaway, droppable, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
-import { commonStore } from '@/stores'
+import { commonStore, userStore } from '@/stores'
+import factory from '@/__tests__/factory'
 
 declare type Methods<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T] & (string | symbol);
 
@@ -32,6 +33,15 @@ export default abstract class ComponentTestCase {
       isMobile.any = false
       cb && cb()
     })
+  }
+
+  protected actingAs (user: User) {
+    userStore.state.current = user
+    return this
+  }
+
+  protected actingAsAdmin () {
+    return this.actingAs(factory.states('admin')<User>('user'))
   }
 
   protected mock<T, M extends Methods<Required<T>>> (obj: T, methodName: M, implementation?: any) {

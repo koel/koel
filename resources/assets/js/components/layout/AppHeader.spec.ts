@@ -3,8 +3,6 @@ import { fireEvent, queryAllByTestId } from '@testing-library/vue'
 import { eventBus } from '@/utils'
 import isMobile from 'ismobilejs'
 import compareVersions from 'compare-versions'
-import { userStore } from '@/stores'
-import factory from '@/__tests__/factory'
 import ComponentTestCase from '@/__tests__/ComponentTestCase'
 import AppHeader from './AppHeader.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
@@ -44,9 +42,8 @@ new class extends ComponentTestCase {
       'announces a new version if applicable',
       async (hasNewVersion, isAdmin, announcing) => {
         this.mock(compareVersions, 'compare', hasNewVersion)
-        userStore.state.current = factory<User>('user', { is_admin: isAdmin })
 
-        const { queryAllByTestId } = this.render(AppHeader)
+        const { queryAllByTestId } = this.actingAsAdmin().render(AppHeader)
 
         expect(await queryAllByTestId('new-version')).toHaveLength(announcing ? 1 : 0)
       }

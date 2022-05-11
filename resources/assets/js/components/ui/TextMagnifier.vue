@@ -1,12 +1,12 @@
 <template>
-  <div class="text-zoomer">
-    <button title="Zoom out" @click.prevent="zoom(-1)">
-      <i class="fa fa-search-minus"></i>
+  <span>
+    <button title="Zoom out" type="button" @click.prevent="zoom(-1)">
+      <i class="fa fa-search-minus"/>
     </button>
-    <button title="Zoom in" @click.prevent="zoom(1)">
-      <i class="fa fa-search-plus"></i>
+    <button title="Zoom in" type="button" @click.prevent="zoom(1)">
+      <i class="fa fa-search-plus"/>
     </button>
-  </div>
+  </span>
 </template>
 
 <script lang="ts" setup>
@@ -33,7 +33,7 @@ const zoom = (level: number) => {
 </script>
 
 <style lang="scss" scoped>
-.text-zoomer {
+span {
   display: flex;
   transition: .2s;
 
@@ -53,12 +53,12 @@ const zoom = (level: number) => {
       color: var(--color-text-primary);
     }
 
-    &:first-of-type {
+    &:first-child {
       border-radius: 4px 0 0 4px;
       border-right: 0;
     }
 
-    &:last-of-type {
+    &:last-child {
       border-radius: 0 4px 4px 0;
     }
   }

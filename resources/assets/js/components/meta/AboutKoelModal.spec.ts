@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest'
-import { commonStore, userStore } from '@/stores'
-import factory from '@/__tests__/factory'
+import { commonStore } from '@/stores'
 import ComponentTestCase from '@/__tests__/ComponentTestCase'
 import AboutKoelModel from './AboutKoelModal.vue'
 import Btn from '@/components/ui/Btn.vue'
@@ -29,8 +28,7 @@ new class extends ComponentTestCase {
     it('shows new version', () => {
       commonStore.state.currentVersion = 'v1.0.0'
       commonStore.state.latestVersion = 'v1.0.1'
-      userStore.state.current = factory.states('admin')<User>('user')
-      const { findByTestId } = this.render(AboutKoelModel)
+      const { findByTestId } = this.actingAsAdmin().render(AboutKoelModel)
 
       findByTestId('new-version-about')
     })

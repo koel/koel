@@ -4,7 +4,7 @@
       <template v-if="song">
         <div v-show="song.lyrics">
           <div ref="lyricsContainer" v-html="song.lyrics"></div>
-          <Magnifier :target="lyricsContainer"/>
+          <TextMagnifier :target="lyricsContainer" class="magnifier"/>
         </div>
         <p v-if="song.id && !song.lyrics" class="none text-secondary">
           <template v-if="isAdmin">
@@ -26,7 +26,7 @@ import { defineAsyncComponent, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 import { useAuthorization } from '@/composables'
 
-const Magnifier = defineAsyncComponent(() => import('@/components/ui/TextMagnifier.vue'))
+const TextMagnifier = defineAsyncComponent(() => import('@/components/ui/TextMagnifier.vue'))
 
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
@@ -43,7 +43,7 @@ const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.v
   line-height: 1.6;
   position: relative;
 
-  .text-zoomer {
+  .magnifier {
     opacity: 0;
     position: absolute;
     top: 0;
@@ -54,7 +54,7 @@ const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.v
     }
   }
 
-  &:hover .text-zoomer {
+  &:hover .magnifier {
     opacity: .5;
 
     &:hover {
