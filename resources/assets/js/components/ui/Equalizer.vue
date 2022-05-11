@@ -28,9 +28,8 @@
 </template>
 
 <script lang="ts" setup>
-import nouislider from 'nouislider'
+import noUiSlider from 'nouislider'
 import { nextTick, onMounted, ref, watch } from 'vue'
-
 import { eventBus } from '@/utils'
 import { equalizerStore, preferenceStore as preferences } from '@/stores'
 import { audioService as audioService } from '@/services'
@@ -41,8 +40,8 @@ interface Band {
   filter: BiquadFilterNode
 }
 
-let context: AudioContext | null = null
-let preampGainNode: GainNode | null = null
+let context!: AudioContext
+let preampGainNode!: GainNode
 
 const root = ref(null as unknown as HTMLElement)
 const bands = ref<Band[]>([])
@@ -61,22 +60,20 @@ presets.unshift({
 
 const changePreampGain = (dbValue: number) => {
   preampGainValue.value = dbValue
-  preampGainNode!.gain.setTargetAtTime(Math.pow(10, dbValue / 20), context!.currentTime, 0.01)
+  preampGainNode.gain.setTargetAtTime(Math.pow(10, dbValue / 20), context.currentTime, 0.01)
 }
 
 const changeFilterGain = (filter: BiquadFilterNode, value: number) => {
-  filter.gain.setTargetAtTime(value, context!.currentTime, 0.01)
+  filter.gain.setTargetAtTime(value, context.currentTime, 0.01)
 }
 
 const createSliders = () => {
   const config = equalizerStore.get()
 
-  Array.from(root.value.querySelectorAll('.slider') as NodeListOf<SliderElement>).forEach((el, i) => {
-    if (el.noUiSlider) {
-      el.noUiSlider.destroy()
-    }
+  root.value.querySelectorAll<SliderElement>('.slider').forEach((el, i) => {
+    el.noUiSlider?.destroy()
 
-    nouislider.create(el, {
+    noUiSlider.create(el, {
       connect: [false, true],
       // the first element is the preamp. The rest are gains.
       start: i === 0 ? config.preamp : config.gains[i - 1],
@@ -90,11 +87,10 @@ const createSliders = () => {
     }
 
     el.noUiSlider.on('slide', (values, handle) => {
-      const value = values[handle]
       if (el.parentElement!.matches('.preamp')) {
-        changePreampGain(value)
+        changePreampGain(values[handle])
       } else {
-        changeFilterGain(bands.value[i - 1].filter, value)
+        changeFilterGain(bands.value[i - 1].filter, values[handle])
       }
     })
 
@@ -110,7 +106,7 @@ const createSliders = () => {
 }
 
 const init = async () => {
-  const config: EqualizerPreset = equalizerStore.get()
+  const config = equalizerStore.get()
 
   context = audioService.getContext()
   preampGainNode = context.createGain()
@@ -122,10 +118,10 @@ const init = async () => {
   let prevFilter: BiquadFilterNode
 
   // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
-  const frequencies = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000]
+  const frequencies = [60, 170, 310, 600, 1_000, 3_000, 6_000, 12_000, 14_000, 16_000]
 
   frequencies.forEach((frequency, i) => {
-    const filter = context!.createBiquadFilter()
+    const filter = context.createBiquadFilter()
 
     if (i === 0) {
       filter.type = 'lowshelf'
@@ -135,11 +131,11 @@ const init = async () => {
       filter.type = 'peaking'
     }
 
-    filter.gain.setTargetAtTime(0, context!.currentTime, 0.01)
-    filter.Q.setTargetAtTime(1, context!.currentTime, 0.01)
-    filter.frequency.setTargetAtTime(frequency, context!.currentTime, 0.01)
+    filter.gain.setTargetAtTime(0, context.currentTime, 0.01)
+    filter.Q.setTargetAtTime(1, context.currentTime, 0.01)
+    filter.frequency.setTargetAtTime(frequency, context.currentTime, 0.01)
 
-    prevFilter ? prevFilter.connect(filter) : preampGainNode!.connect(filter)
+    prevFilter ? prevFilter.connect(filter) : preampGainNode.connect(filter)
     prevFilter = filter
 
     bands.value.push({
@@ -157,7 +153,7 @@ const init = async () => {
 const save = () => equalizerStore.set(preampGainValue.value, bands.value.map(band => band.filter.gain.value))
 
 const loadPreset = (preset: EqualizerPreset) => {
-  Array.from(root.value.querySelectorAll('.slider') as NodeListOf<SliderElement>).forEach((el, i) => {
+  root.value.querySelectorAll<SliderElement>('.slider').forEach((el, i) => {
     if (!el.noUiSlider) {
       throw new Error('Preset can only be loaded after sliders have been set up')
     }

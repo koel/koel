@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es2021",
-    "lib": ["es2021", "dom"],
+    "lib": ["es2021", "dom", "dom.iterable"],
     "jsx": "preserve",
     "strict": true,
     "noImplicitAny": false,

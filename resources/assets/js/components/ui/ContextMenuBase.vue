@@ -48,7 +48,7 @@ const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
 }
 
 const initSubmenus = () => {
-  Array.from(el.value?.querySelectorAll('.has-sub') as NodeListOf<HTMLElement>).forEach(item => {
+  el.value?.querySelectorAll('.has-sub').forEach(item => {
     const submenu = item.querySelector<HTMLElement>('.submenu')
 
     if (!submenu) {
