@@ -1,7 +1,7 @@
 <template>
-  <span class="controls-toggler text-orange" v-if="isMobile.phone" @click="$emit('toggleControls')">
-    <i class="fa fa-angle-up toggler" v-if="showingControls"/>
-    <i class="fa fa-angle-down toggler" v-else/>
+  <span v-if="isMobile.phone" class="text-orange" data-testid="controls-toggler" @click="$emit('toggleControls')">
+    <i v-if="showingControls" class="fa fa-angle-up toggler"/>
+    <i v-else class="fa fa-angle-down toggler"/>
   </span>
 </template>
 
@@ -9,7 +9,7 @@
 import isMobile from 'ismobilejs'
 import { toRefs } from 'vue'
 
-const props = withDefaults(defineProps<{ showingControls: boolean }>(), { showingControls: true })
+const props = withDefaults(defineProps<{ showingControls?: boolean }>(), { showingControls: true })
 const { showingControls } = toRefs(props)
 </script>
 
