@@ -10,7 +10,7 @@
         type="button"
         @click.prevent="toggleVisualizer"
       >
-        <SoundBar data-testid="sound-bar-play"/>
+        <SoundBar/>
       </button>
 
       <LikeButton v-if="song" :song="song" class="like"/>

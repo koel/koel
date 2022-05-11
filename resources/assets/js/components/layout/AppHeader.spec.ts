@@ -1,7 +1,8 @@
+import isMobile from 'ismobilejs'
 import { expect, it } from 'vitest'
 import { fireEvent, queryAllByTestId } from '@testing-library/vue'
 import { eventBus } from '@/utils'
-import isMobile from 'ismobilejs'
+import factory from '@/__tests__/factory'
 import compareVersions from 'compare-versions'
 import ComponentTestCase from '@/__tests__/ComponentTestCase'
 import AppHeader from './AppHeader.vue'
@@ -43,7 +44,7 @@ new class extends ComponentTestCase {
       async (hasNewVersion, isAdmin, announcing) => {
         this.mock(compareVersions, 'compare', hasNewVersion)
 
-        const { queryAllByTestId } = this.actingAsAdmin().render(AppHeader)
+        const { queryAllByTestId } = this.actingAs(factory<User>('user', { is_admin: isAdmin })).render(AppHeader)
 
         expect(await queryAllByTestId('new-version')).toHaveLength(announcing ? 1 : 0)
       }

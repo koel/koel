@@ -1,16 +1,16 @@
 <template>
   <div v-if="state.showing" id="overlay" :class="state.type" class="overlay">
     <div class="display">
-      <sound-bar v-if="state.type === 'loading'"/>
-      <i v-if="state.type === 'error'" class="fa fa-exclamation-circle"></i>
-      <i v-if="state.type === 'warning'" class="fa fa-exclamation-triangle"></i>
-      <i v-if="state.type === 'info'" class="fa fa-info-circle"></i>
-      <i v-if="state.type === 'success'" class="fa fa-check-circle"></i>
+      <SoundBar v-if="state.type === 'loading'"/>
+      <i v-if="state.type === 'error'" class="fa fa-exclamation-circle"/>
+      <i v-if="state.type === 'warning'" class="fa fa-exclamation-triangle"/>
+      <i v-if="state.type === 'info'" class="fa fa-info-circle"/>
+      <i v-if="state.type === 'success'" class="fa fa-check-circle"/>
 
-      <span class="message" v-html="state.message"></span>
+      <span class="message" v-html="state.message"/>
     </div>
 
-    <button v-if="state.dismissible" class="btn-dismiss" @click.prevent="hide">Close</button>
+    <button v-if="state.dismissible" class="btn-dismiss" type="button" @click.prevent="hide">Close</button>
   </div>
 </template>
 

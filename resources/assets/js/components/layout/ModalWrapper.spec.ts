@@ -1,5 +1,4 @@
 import factory from '@/__tests__/factory'
-import { mockHelper } from '@/__tests__/__helpers__'
 import { httpService } from '@/services'
 import { eventBus } from '@/utils'
 import { it } from 'vitest'
@@ -19,7 +18,7 @@ new class extends ComponentTestCase {
     ])('shows %s modal', async (modalName: string, eventName: EventName, eventParams?: any) => {
       if (modalName === 'edit-song-form') {
         // mocking the songInfoService.fetch() request made during edit-form modal opening
-        mockHelper.mock(httpService, 'request').mockReturnValue(Promise.resolve({ data: {} }))
+        this.mock(httpService, 'request').mockReturnValue(Promise.resolve({ data: {} }))
       }
 
       const { findByTestId } = this.render(ModalWrapper, {
