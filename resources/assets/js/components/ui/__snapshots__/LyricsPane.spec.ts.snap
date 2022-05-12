@@ -1,12 +1,12 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-"<article id=\\"lyrics\\" data-v-502c43f0=\\"\\">
-  <div class=\\"content\\" data-v-502c43f0=\\"\\">
-    <div data-v-502c43f0=\\"\\">
-      <div data-v-502c43f0=\\"\\">Foo bar baz qux</div><span class=\\"magnifier\\" data-v-4cadbfe6=\\"\\" data-v-502c43f0=\\"\\"><button title=\\"Zoom out\\" type=\\"button\\" data-v-4cadbfe6=\\"\\"><i class=\\"fa fa-search-minus\\" data-v-4cadbfe6=\\"\\"></i></button><button title=\\"Zoom in\\" type=\\"button\\" data-v-4cadbfe6=\\"\\"><i class=\\"fa fa-search-plus\\" data-v-4cadbfe6=\\"\\"></i></button></span>
+<article id="lyrics" data-v-502c43f0="">
+  <div class="content" data-v-502c43f0="">
+    <div data-v-502c43f0="">
+      <div data-v-502c43f0="">Foo bar baz qux</div><span class="magnifier" data-v-4cadbfe6="" data-v-502c43f0=""><button title="Zoom out" type="button" data-v-4cadbfe6=""><i class="fa fa-search-minus" data-v-4cadbfe6=""></i></button><button title="Zoom in" type="button" data-v-4cadbfe6=""><i class="fa fa-search-plus" data-v-4cadbfe6=""></i></button></span>
     </div>
     <!--v-if-->
   </div>
-</article>"
+</article>
 `;

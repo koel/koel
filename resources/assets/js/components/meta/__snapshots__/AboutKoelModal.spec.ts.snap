@@ -1,18 +1,18 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-"<div class=\\"about text-secondary\\" data-testid=\\"about-modal\\" tabindex=\\"0\\" data-v-0ef2b3f8=\\"\\">
-  <header data-v-0ef2b3f8=\\"\\">
-    <h1 class=\\"text-white\\" data-v-0ef2b3f8=\\"\\">About Koel</h1>
+<div class="about text-secondary" data-testid="about-modal" tabindex="0" data-v-0ef2b3f8="">
+  <header data-v-0ef2b3f8="">
+    <h1 class="text-white" data-v-0ef2b3f8="">About Koel</h1>
   </header>
-  <main data-v-0ef2b3f8=\\"\\">
-    <div class=\\"logo\\" data-v-0ef2b3f8=\\"\\"><img alt=\\"Koel&#x27;s logo\\" src=\\"/resources/assets/img/logo.svg\\" width=\\"128\\" data-v-0ef2b3f8=\\"\\" /></div>
-    <p class=\\"current-version\\" data-v-0ef2b3f8=\\"\\">v0.0.0</p>
+  <main data-v-0ef2b3f8="">
+    <div class="logo" data-v-0ef2b3f8=""><img alt="Koel&#x27;s logo" src="/resources/assets/img/logo.svg" width="128" data-v-0ef2b3f8="" /></div>
+    <p class="current-version" data-v-0ef2b3f8="">v0.0.0</p>
     <!--v-if-->
-    <p class=\\"author\\" data-v-0ef2b3f8=\\"\\"> Made with ❤️ by <a href=\\"https://github.com/phanan\\" rel=\\"noopener\\" target=\\"_blank\\" data-v-0ef2b3f8=\\"\\">Phan An</a> and quite a few <a href=\\"https://github.com/koel/core/graphs/contributors\\" rel=\\"noopener\\" target=\\"_blank\\" data-v-0ef2b3f8=\\"\\">awesome</a>  <a href=\\"https://github.com/koel/koel/graphs/contributors\\" rel=\\"noopener\\" target=\\"_blank\\" data-v-0ef2b3f8=\\"\\">contributors</a>. </p>
+    <p class="author" data-v-0ef2b3f8=""> Made with ❤️ by <a href="https://github.com/phanan" rel="noopener" target="_blank" data-v-0ef2b3f8="">Phan An</a> and quite a few <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank" data-v-0ef2b3f8="">awesome</a>  <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank" data-v-0ef2b3f8="">contributors</a>. </p>
     <!--v-if-->
-    <p data-v-0ef2b3f8=\\"\\"> Loving Koel? Please consider supporting its development via <a href=\\"https://github.com/users/phanan/sponsorship\\" rel=\\"noopener\\" target=\\"_blank\\" data-v-0ef2b3f8=\\"\\">GitHub Sponsors</a> and/or <a href=\\"https://opencollective.com/koel\\" rel=\\"noopener\\" target=\\"_blank\\" data-v-0ef2b3f8=\\"\\">OpenCollective</a>. </p>
+    <p data-v-0ef2b3f8=""> Loving Koel? Please consider supporting its development via <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank" data-v-0ef2b3f8="">GitHub Sponsors</a> and/or <a href="https://opencollective.com/koel" rel="noopener" target="_blank" data-v-0ef2b3f8="">OpenCollective</a>. </p>
   </main>
-  <footer data-v-0ef2b3f8=\\"\\"><button type=\\"button\\" data-testid=\\"close-modal-btn\\" red=\\"\\" rounded=\\"\\" data-v-27deb898=\\"\\" data-v-0ef2b3f8=\\"\\">Close</button></footer>
-</div>"
+  <footer data-v-0ef2b3f8=""><button type="button" data-testid="close-modal-btn" red="" rounded="" data-v-27deb898="" data-v-0ef2b3f8="">Close</button></footer>
+</div>
 `;

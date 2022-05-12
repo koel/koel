@@ -1,3 +1,3 @@
 // Vitest Snapshot v1
 
-exports[`renders 1`] = `"<button data-testid=\\"close-modal-btn\\" type=\\"button\\" data-v-8e854c66=\\"\\"><i class=\\"fa fa-times\\" data-v-8e854c66=\\"\\"></i></button>"`;
+exports[`renders 1`] = `<button data-testid="close-modal-btn" type="button" data-v-8e854c66=""><i class="fa fa-times" data-v-8e854c66=""></i></button>`;

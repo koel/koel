@@ -32,7 +32,9 @@ new class extends ComponentTestCase {
 
       await fireEvent.update(getByRole('searchbox'), 'hey')
 
+      vi.advanceTimersByTime(500)
       expect(mock).toHaveBeenCalledWith('SEARCH_KEYWORDS_CHANGED', 'hey')
+
       vi.useRealTimers()
     })
   }

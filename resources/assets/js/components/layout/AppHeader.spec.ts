@@ -36,7 +36,7 @@ new class extends ComponentTestCase {
       await fireEvent.click(getByTitle('Show or hide the search form'))
       await this.tick()
 
-      getByRole('search-form')
+      getByRole('search')
     })
 
     it.each([[true, true, true], [false, true, false], [true, false, false], [false, false, false]])(
