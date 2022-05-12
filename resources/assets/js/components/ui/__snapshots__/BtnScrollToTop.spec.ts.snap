@@ -1,0 +1,3 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `"<transition-stub data-v-e7b6c7f6=\\"\\"><button title=\\"Scroll to top\\" type=\\"button\\" data-v-e7b6c7f6=\\"\\" style=\\"display: none;\\"><i class=\\"fa fa-arrow-circle-up\\" data-v-e7b6c7f6=\\"\\"></i> Top </button></transition-stub>"`;

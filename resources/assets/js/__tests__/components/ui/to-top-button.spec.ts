@@ -1,4 +1,4 @@
-import Component from '@/components/ui/ScrollToTopButton.vue'
+import Component from '../../../components/ui/BtnScrollToTop.vue'
 import { $ } from '@/utils'
 import { mock } from '@/__tests__/__helpers__'
 import { shallow } from '@/__tests__/adapter'

@@ -6,7 +6,7 @@ import { defineAsyncComponent, ref } from 'vue'
  * the wrapper element: @scroll="scrolling"
  */
 export const useInfiniteScroll = (perPage = 30) => {
-  const ToTopButton = defineAsyncComponent(() => import('@/components/ui/ScrollToTopButton.vue'))
+  const ToTopButton = defineAsyncComponent(() => import('@/components/ui/BtnScrollToTop.vue'))
 
   const scroller = ref<HTMLElement>()
   const displayedItemCount = ref(perPage)
