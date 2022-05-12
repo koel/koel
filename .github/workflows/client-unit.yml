@@ -1,0 +1,24 @@
+name: Client Unit Tests
+on:
+  push:
+    branches:
+      - vue3
+  workflow_dispatch:
+    branches:
+      - vue3
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 14, 16, 17 ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Run unit tests
+        run: yarn test:unit
