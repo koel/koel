@@ -1,0 +1,10 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<a href="https://youtu.be/cLgJQ8Zj3AA" data-testid="youtube-search-result" role="button" data-v-da3db7c2=""><img alt="Guess what it is" src="https://i.ytimg.com/an_webp/cLgJQ8Zj3AA/mqdefault_6s.webp" width="90" data-v-da3db7c2="" />
+  <div class="meta" data-v-da3db7c2="">
+    <h3 class="title" data-v-da3db7c2="">Guess what it is</h3>
+    <p class="desc" data-v-da3db7c2="">From the LA Opening Gala 2014: John Williams Celebration</p>
+  </div>
+</a>
+`;

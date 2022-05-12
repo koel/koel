@@ -1,23 +1,7 @@
 <template>
   <div class="youtube-extra-wrapper">
     <template v-if="videos.length">
-      <a
-        v-for="video in videos"
-        :key="video.id.videoId"
-        :href="`https://youtu.be/${video.id.videoId}`"
-        class="video"
-        data-testid="youtube-search-result"
-        role="button"
-        @click.prevent="play(video)"
-      >
-        <div class="thumb">
-          <img :alt="video.snippet.title" :src="video.snippet.thumbnails.default.url" width="90">
-        </div>
-        <div class="meta">
-          <h3 class="title">{{ video.snippet.title }}</h3>
-          <p class="desc">{{ video.snippet.description }}</p>
-        </div>
-      </a>
+      <YouTubeVideo v-for="video in videos" :key="video.id.videoId" :video="video"/>
       <Btn v-if="!loading" class="more" data-testid="youtube-search-more-btn" @click.prevent="loadMore">Load More</Btn>
     </template>
 
@@ -31,6 +15,7 @@ import { defineAsyncComponent, ref, toRefs, watchEffect } from 'vue'
 import { youTubeService } from '@/services'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+const YouTubeVideo = defineAsyncComponent(() => import('@/components/ui/YouTubeVideoItem.vue'))
 
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
@@ -39,8 +24,6 @@ const loading = ref(false)
 const videos = ref<YouTubeVideo[]>([])
 
 watchEffect(() => (videos.value = song.value.youtube?.items || []))
-
-const play = (video: YouTubeVideo) => youTubeService.play(video)
 
 const loadMore = async () => {
   loading.value = true
@@ -63,30 +46,8 @@ const loadMore = async () => {
 .youtube-extra-wrapper {
   overflow-x: hidden;
 
-  .video {
-    display: flex;
-    padding: 12px 0;
-
-    .thumb {
-      margin-right: 10px;
-    }
-
-    .title {
-      font-size: 1.1rem;
-      margin-bottom: .4rem;
-    }
-
-    .desc {
-      font-size: .9rem;
-    }
-
-    &:hover, &:active, &:focus {
-      color: var(--color-text-primary);
-    }
-
-    &:last-of-type {
-      margin-bottom: 16px;
-    }
+  a:last-of-type {
+    margin-bottom: 16px;
   }
 }
 </style>
