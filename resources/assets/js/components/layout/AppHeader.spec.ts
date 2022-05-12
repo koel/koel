@@ -23,7 +23,7 @@ new class extends ComponentTestCase {
     it('toggles search form (mobile only)', async () => {
       isMobile.any = true
 
-      const { getByTitle, getByTestId, queryByTestId } = this.render(AppHeader, {
+      const { getByTitle, getByRole, queryByRole } = this.render(AppHeader, {
         global: {
           stubs: {
             SearchForm
@@ -31,12 +31,12 @@ new class extends ComponentTestCase {
         }
       })
 
-      expect(await queryByTestId('search-form')).toBeNull()
+      expect(await queryByRole('search')).toBeNull()
 
       await fireEvent.click(getByTitle('Show or hide the search form'))
       await this.tick()
 
-      getByTestId('search-form')
+      getByRole('search-form')
     })
 
     it.each([[true, true, true], [false, true, false], [true, false, false], [false, false, false]])(

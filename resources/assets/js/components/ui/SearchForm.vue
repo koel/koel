@@ -1,5 +1,5 @@
 <template>
-  <div id="searchForm" class="side search" data-testid="search-form" role="search">
+  <div id="searchForm" class="side search" role="search">
     <input
       ref="input"
       v-model="q"
@@ -29,7 +29,7 @@ const onInput = debounce(() => {
   _q && eventBus.emit('SEARCH_KEYWORDS_CHANGED', _q)
 }, 500)
 
-const goToSearchScreen = () => router.go('/search')
+const goToSearchScreen = () => router.go('search')
 
 eventBus.on({
   FOCUS_SEARCH_FIELD () {
