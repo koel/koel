@@ -2,4 +2,4 @@
 
 exports[`displays nothing if fetching fails 1`] = `"<div style=\\"background-image: none;\\" data-testid=\\"album-art-overlay\\" data-v-75d06710=\\"\\"></div>"`;
 
-exports[`fetches and displays the album thumbnail 1`] = `"<div style=\\"background-image: none;\\" data-testid=\\"album-art-overlay\\" data-v-75d06710=\\"\\"></div>"`;
+exports[`fetches and displays the album thumbnail 1`] = `"<div style=\\"background-image: url(https://localhost/thumb.jpg);\\" data-testid=\\"album-art-overlay\\" data-v-75d06710=\\"\\"></div>"`;

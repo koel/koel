@@ -1,0 +1,11 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+"<header class=\\"screen-header\\" data-v-661f8f0d=\\"\\">
+  <div class=\\"thumbnail-wrapper\\" data-v-661f8f0d=\\"\\"></div>
+  <div class=\\"heading-wrapper\\" data-v-661f8f0d=\\"\\">
+    <h1 data-v-661f8f0d=\\"\\">This Header</h1><span class=\\"meta text-secondary\\" data-v-661f8f0d=\\"\\"><p>Some meta</p></span>
+  </div>
+  <nav>Some controls</nav>
+</header>"
+`;

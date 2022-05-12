@@ -18,8 +18,7 @@ new class extends ComponentTestCase {
   }
 
   protected test () {
-    // skipping due to some weird EADDRINUSE error
-    it.skip('fetches and displays the album thumbnail', async () => {
+    it('fetches and displays the album thumbnail', async () => {
       const mock = this.mock(albumStore, 'getThumbnail')
       mock.mockResolvedValue('https://localhost/thumb.jpg')
 
