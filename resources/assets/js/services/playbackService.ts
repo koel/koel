@@ -22,7 +22,7 @@ import router from '@/router'
  */
 const PRELOAD_BUFFER = 30
 const DEFAULT_VOLUME_VALUE = 7
-const VOLUME_INPUT_SELECTOR = '#volumeRange'
+const VOLUME_INPUT_SELECTOR = '#volumeInput'
 const REPEAT_MODES: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
 
 export const playbackService = {

@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted, onUnmounted, ref, toRefs } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 
 const props = defineProps<{ items: any[], itemHeight: number }>()
 const { items, itemHeight } = toRefs(props)

@@ -1,25 +1,12 @@
 <template>
   <span id="volume" class="volume control">
-    <i
-      v-if="muted"
-      class="fa fa-volume-off unmute"
-      role="button"
-      tabindex="0"
-      title="Unmute"
-      @click="unmute"
-    ></i>
-    <i
-      v-else
-      class="fa fa-volume-up mute"
-      role="button"
-      tabindex="0"
-      title="Mute"
-      @click="mute"
-    ></i>
+    <i v-if="muted" class="fa fa-volume-off" role="button" tabindex="0" title="Unmute" @click="unmute"/>
+    <i v-else class="fa fa-volume-up" role="button" tabindex="0" title="Mute" @click="mute"/>
     <input
-      id="volumeRange"
+      id="volumeInput"
       class="plyr__volume"
       max="10"
+      role="slider"
       step="0.1"
       title="Volume"
       type="range"

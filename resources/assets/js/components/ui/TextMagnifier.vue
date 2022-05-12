@@ -15,7 +15,7 @@ import { toRefs } from 'vue'
 const props = defineProps<{ target: HTMLElement | null }>()
 const { target } = toRefs(props)
 
-const zoom = (level: number) => {
+const zoom = (delta: number) => {
   if (!target.value) {
     return
   }
@@ -27,8 +27,8 @@ const zoom = (level: number) => {
     style.lineHeight = '1.6'
   }
 
-  style.fontSize = parseFloat(style.fontSize) + level * 0.2 + 'em'
-  style.lineHeight = String(parseFloat(style.lineHeight) + level * 0.15)
+  style.fontSize = parseFloat(style.fontSize) + delta * 0.2 + 'em'
+  style.lineHeight = String(parseFloat(style.lineHeight) + delta * 0.15)
 }
 </script>
 

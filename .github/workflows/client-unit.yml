@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 14, 16, 17 ]
+        node-version: [ 14, 16, 17 ] # 15 conflicts with @typescript-eslint/eslint-plugin@5
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
