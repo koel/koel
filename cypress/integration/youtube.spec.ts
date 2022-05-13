@@ -21,9 +21,9 @@ context('YouTube', () => {
 
     cy.get('#extra').within(() => {
       cy.get('#extraTabYouTube').click()
-      cy.findByTestId('youtube-search-result').should('have.length', 2)
+      cy.findAllByTestId('youtube-search-result').should('have.length', 2)
       cy.findByTestId('youtube-search-more-btn').click()
-      cy.findByTestId('youtube-search-result').should('have.length', 4)
+      cy.findAllByTestId('youtube-search-result').should('have.length', 4)
     })
   })
 

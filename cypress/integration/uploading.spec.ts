@@ -34,7 +34,7 @@ context('Uploading', () => {
     cy.findByTestId('upload-item').should('have.length', 1).and('be.visible')
     cy.wait('@failedUpload')
 
-    cy.findByTestId('upload-item').should('have.length', 1).should('have.class', 'Errored')
+    cy.findByTestId('upload-item').should('have.length', 1).should('have.class', 'errored')
   }
 
   it('uploads songs', () => {

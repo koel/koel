@@ -9,13 +9,13 @@ context('Albums', { scrollBehavior: false }, () => {
       cy.get('.screen-header').should('be.visible').and('contain.text', 'Albums')
       cy.findByTestId('view-mode-thumbnail').should('be.visible').and('have.class', 'active')
       cy.findByTestId('view-mode-list').should('be.visible').and('not.have.class', 'active')
-      cy.findByTestId('album-card').should('have.length', 7)
+      cy.findAllByTestId('album-card').should('have.length', 7)
     })
   })
 
   it('changes display mode', () => {
     cy.get('#albumsWrapper').should('be.visible').within(() => {
-      cy.findByTestId('album-card').should('have.length', 7)
+      cy.findAllByTestId('album-card').should('have.length', 7)
       cy.findByTestId('view-mode-list').click()
       cy.get('[data-testid=album-card].compact').should('have.length', 7)
       cy.findByTestId('view-mode-thumbnail').click()
@@ -58,10 +58,10 @@ context('Albums', { scrollBehavior: false }, () => {
         cy.get('.cover').should('be.visible')
 
         cy.findByTestId('album-info-tracks').should('be.visible').within(() => {
-          // out of 4 tracks, 3 are already available in Koel. The last one has a link to iTunes.
+          // out of 4 tracks, 3 are already available in Koel. The last one has a link to Apple Music.
           cy.get('li').should('have.length', 4)
           cy.get('li.available').should('have.length', 3)
-          cy.get('li:last-child a.view-on-itunes').should('be.visible')
+          cy.get('li:last-child a[title="Preview and buy this song on Apple Music"]').should('be.visible')
         })
       })
 

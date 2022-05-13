@@ -6,7 +6,7 @@ context('User Management', () => {
 
   it('shows the list of users', () => {
     cy.get('#usersWrapper').within(() => {
-      cy.findByTestId('user-card').should('have.length', 3).and('be.visible')
+      cy.findAllByTestId('user-card').should('have.length', 3).and('be.visible')
 
       cy.get('[data-testid=user-card].me').within(() => {
         cy.findByTitle('This is you!').should('be.visible')
@@ -31,7 +31,7 @@ context('User Management', () => {
     })
 
     cy.findByText('New user "Charles" created.').should('be.visible')
-    cy.findByTestId('user-card').should('have.length', 4)
+    cy.findAllByTestId('user-card').should('have.length', 4)
 
     cy.get('#usersWrapper [data-testid=user-card]:first-child').within(() => {
       cy.findByText('Charles').should('be.visible')

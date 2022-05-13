@@ -9,17 +9,17 @@ context('Artists', { scrollBehavior: false }, () => {
       cy.get('.screen-header').should('be.visible').and('contain.text', 'Artists')
       cy.findByTestId('view-mode-thumbnail').should('be.visible').and('have.class', 'active')
       cy.findByTestId('view-mode-list').should('be.visible').and('not.have.class', 'active')
-      cy.findByTestId('artist-card').should('have.length', 1)
+      cy.findAllByTestId('artist-card').should('have.length', 1)
     })
   })
 
   it('changes display mode', () => {
     cy.get('#artistsWrapper').should('be.visible').within(() => {
-      cy.findByTestId('artist-card').should('have.length', 1)
+      cy.findAllByTestId('artist-card').should('have.length', 1)
       cy.findByTestId('view-mode-list').click()
-      cy.findByTestId('artist-card].compact').should('have.length', 1)
+      cy.get('[data-testid=artist-card].compact').should('have.length', 1)
       cy.findByTestId('view-mode-thumbnail').click()
-      cy.$findInTestId('artist-card .full').should('have.length', 1)
+      cy.get('[data-testid=artist-card].full').should('have.length', 1)
     })
   })
 
