@@ -2,13 +2,13 @@ import { take } from 'lodash'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { fireEvent } from '@testing-library/vue'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongListControls from './SongListControls.vue'
 import AddToMenu from '@/components/song/AddToMenu.vue'
 import Btn from '@/components/ui/Btn.vue'
 import BtnGroup from '@/components/ui/BtnGroup.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent (selectedSongCount = 1, config: Partial<SongListControlsConfig> = {}) {
     const songs = factory<Song>('song', 5)
 

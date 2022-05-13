@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import BtnCloseModal from './BtnCloseModal.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('renders', () => expect(this.render(BtnCloseModal).html()).toMatchSnapshot())
 

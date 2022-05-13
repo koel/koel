@@ -4,10 +4,10 @@ import factory from '@/__tests__/factory'
 import { commonStore } from '@/stores'
 import { songInfoService } from '@/services'
 import { eventBus } from '@/utils'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import ExtraPanel from './ExtraPanel.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent () {
     return this.render(ExtraPanel, {
       props: {

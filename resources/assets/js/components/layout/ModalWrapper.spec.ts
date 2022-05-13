@@ -3,10 +3,10 @@ import { httpService } from '@/services'
 import { eventBus } from '@/utils'
 import { it } from 'vitest'
 import { EventName } from '@/config'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import ModalWrapper from './ModalWrapper.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it.each<[string, EventName, User | Song | any]>([
       ['add-user-form', 'MODAL_SHOW_ADD_USER_FORM', undefined],

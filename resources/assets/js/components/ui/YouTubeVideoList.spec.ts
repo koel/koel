@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import YouTubeVideoList from './YouTubeVideoList.vue'
 import Btn from '@/components/ui/Btn.vue'
 import YouTubeVideo from '@/components/ui/YouTubeVideoItem.vue'
@@ -9,7 +9,7 @@ import { fireEvent } from '@testing-library/vue'
 
 let song: Song
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent () {
     song = factory<Song>('song', {
       youtube: {

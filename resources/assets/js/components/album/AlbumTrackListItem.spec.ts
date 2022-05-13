@@ -3,7 +3,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import AlbumTrackListItem from './AlbumTrackListItem.vue'
 
 let song: Song
@@ -15,7 +15,7 @@ const track = {
 
 const album = factory<Album>('album', { id: 42 })
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => (song = factory<Song>('song')))
   }

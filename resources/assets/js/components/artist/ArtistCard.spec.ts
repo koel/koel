@@ -2,12 +2,12 @@ import { fireEvent } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { downloadService, playbackService } from '@/services'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import ArtistCard from './ArtistCard.vue'
 
 let artist: Artist
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
       artist = factory<Artist>('artist', {

@@ -3,9 +3,9 @@ import { playlistStore } from '@/stores'
 import factory from '@/__tests__/factory'
 import PlaylistSidebarList from './PlaylistSidebarList.vue'
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('renders all playlists', () => {
       playlistStore.state.playlists = [

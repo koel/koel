@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import BtnGroup from './BtnGroup.vue'
 import Btn from './Btn.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderButtonToSlot (text: string) {
     return this.render(Btn, {
       slots: {

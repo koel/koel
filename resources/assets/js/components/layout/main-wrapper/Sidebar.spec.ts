@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('has already been tested in the integration suite', () => expect('😄').toBeTruthy())
   }

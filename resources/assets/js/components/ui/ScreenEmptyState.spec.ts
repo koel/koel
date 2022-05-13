@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import ScreenEmptyState from './ScreenEmptyState.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('renders', () => {
       expect(this.render(ScreenEmptyState, {

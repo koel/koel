@@ -1,10 +1,10 @@
 import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import AlbumTrackList from './AlbumTrackList.vue'
 import TrackListItem from './AlbumTrackListItem.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('lists the correct number of tracks', () => {
       const { queryAllByTestId } = this.render(AlbumTrackList, {

@@ -1,11 +1,11 @@
 import { fireEvent } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import { userStore } from '@/stores'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import LoginFrom from './LoginForm.vue'
 import Btn from '@/components/ui/Btn.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('renders', () => expect(this.render(LoginFrom, {
       global: {

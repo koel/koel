@@ -2,12 +2,12 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { albumStore, preferenceStore } from '@/stores'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import MainContent from '@/components/layout/main-wrapper/MainContent.vue'
 import AlbumArtOverlay from '@/components/ui/AlbumArtOverlay.vue'
 import Visualizer from '@/components/ui/Visualizer.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('has a translucent overlay per album', async () => {
       this.mock(albumStore, 'getThumbnail', 'https://foo/bar.jpg')

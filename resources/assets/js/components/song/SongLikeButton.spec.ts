@@ -2,10 +2,10 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { fireEvent } from '@testing-library/vue'
 import { favoriteStore } from '@/stores'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongLikeButton from './SongLikeButton.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it.each<[boolean, string]>([
       [true, 'btn-like-liked'],

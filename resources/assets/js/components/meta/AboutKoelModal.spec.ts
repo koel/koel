@@ -1,10 +1,10 @@
 import { expect, it } from 'vitest'
 import { commonStore } from '@/stores'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import AboutKoelModel from './AboutKoelModal.vue'
 import Btn from '@/components/ui/Btn.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => (KOEL_ENV = ''));
   }

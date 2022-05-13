@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import { youTubeService } from '@/services'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import YouTubeVideoItem from './YouTubeVideoItem.vue'
 
 let video: YouTubeVideo
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent () {
     video = {
       id: {

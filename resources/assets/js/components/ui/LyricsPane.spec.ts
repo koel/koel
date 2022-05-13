@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { fireEvent } from '@testing-library/vue'
 import LyricsPane from './LyricsPane.vue'
 import TextMagnifier from '@/components/ui/TextMagnifier.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent (song?: Song) {
     song = song || factory<Song>('song', {
       lyrics: 'Foo bar baz qux'

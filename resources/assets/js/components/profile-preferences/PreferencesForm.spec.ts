@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
 import isMobile from 'ismobilejs'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import PreferencesForm from './PreferencesForm.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('has "Transcode on mobile" option for mobile users', () => {
       isMobile.phone = true

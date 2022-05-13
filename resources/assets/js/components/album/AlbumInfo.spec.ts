@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import AlbumInfo from './AlbumInfo.vue'
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it.each([['sidebar'], ['full']])('renders in %s mode', async (mode: string) => {
       const { getByTestId } = this.render(AlbumInfo, {

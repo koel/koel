@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest'
 import { albumStore } from '@/stores'
 import factory from '@/__tests__/factory'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import AlbumArtOverlay from './AlbumArtOverlay.vue'
 
 let album: Album
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent () {
     album = factory<Album>('album')
 

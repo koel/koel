@@ -1,11 +1,11 @@
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import { OverlayState } from 'koel/types/ui'
 import { eventBus } from '@/utils'
 import Overlay from './Overlay.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private async showOverlay (type: OverlayState['type'] = 'loading') {
     const rendered = this.render(Overlay, {
       global: {

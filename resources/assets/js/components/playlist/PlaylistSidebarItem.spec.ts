@@ -1,10 +1,10 @@
 import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import PlaylistSidebarItem from '@/components/playlist/PlaylistSidebarItem.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   renderComponent (playlist: Record<string, any>, type: PlaylistType = 'playlist') {
     return this.render(PlaylistSidebarItem, {
       props: {

@@ -9,7 +9,7 @@ import factory from '@/__tests__/factory'
 
 declare type Methods<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T] & (string | symbol);
 
-export default abstract class ComponentTestCase {
+export default abstract class UnitTestCase {
   private backupMethods = new Map()
 
   public constructor () {

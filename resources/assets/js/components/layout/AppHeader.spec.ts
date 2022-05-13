@@ -4,11 +4,11 @@ import { fireEvent, queryAllByTestId } from '@testing-library/vue'
 import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import compareVersions from 'compare-versions'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import AppHeader from './AppHeader.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('toggles sidebar (mobile only)', async () => {
       isMobile.any = true

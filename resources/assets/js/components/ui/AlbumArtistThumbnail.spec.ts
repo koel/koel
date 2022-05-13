@@ -1,5 +1,5 @@
 import { orderBy } from 'lodash'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import { playbackService } from '@/services'
@@ -10,7 +10,7 @@ import Thumbnail from './AlbumArtistThumbnail.vue'
 let album: Album
 let artist: Artist
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderForAlbum () {
     album = factory<Album>('album', {
       name: 'IV',

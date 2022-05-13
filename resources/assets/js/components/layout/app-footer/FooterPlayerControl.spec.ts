@@ -2,10 +2,10 @@ import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import { playbackService } from '@/services'
 import factory from '@/__tests__/factory'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import FooterPlayerControls from './FooterPlayerControls.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it.each<[string, string, MethodOf<typeof playbackService>]>([
       ['plays next song', 'Play next song', 'playNext'],

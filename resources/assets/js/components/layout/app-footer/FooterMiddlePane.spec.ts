@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import FooterMiddlePane from './FooterMiddlePane.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('renders without a song', () => {
       expect(this.render(FooterMiddlePane).html()).toMatchSnapshot()

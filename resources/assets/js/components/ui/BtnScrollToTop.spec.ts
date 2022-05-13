@@ -1,10 +1,10 @@
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import { $ } from '@/utils'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import BtnScrollToTop from './BtnScrollToTop.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('renders', () => {
       expect(this.render(BtnScrollToTop).html()).toMatchSnapshot()

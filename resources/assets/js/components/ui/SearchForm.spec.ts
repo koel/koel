@@ -1,11 +1,11 @@
 import { expect, it, vi } from 'vitest'
 import router from '@/router'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import SearchForm from './SearchForm.vue'
 import { fireEvent } from '@testing-library/vue'
 import { eventBus } from '@/utils'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     // skipping because of unstable getRootNode() issues
     it.skip('sets focus into search box when requested', async () => {

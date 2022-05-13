@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
 import { searchStore } from '@/stores'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import SearchSongResultsScreen from './SearchSongResultsScreen.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('searches for prop query on created', () => {
       const resetResultMock = this.mock(searchStore, 'resetSongResultState')

@@ -2,10 +2,10 @@ import { expect, it, vi } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import { eventBus } from '@/utils'
 import { preferenceStore } from '@/stores'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import SupportKoel from './SupportKoel.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => vi.useFakeTimers());
   }

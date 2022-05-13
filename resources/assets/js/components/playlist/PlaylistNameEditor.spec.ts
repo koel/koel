@@ -3,9 +3,9 @@ import PlaylistNameEditor from '@/components/playlist/PlaylistNameEditor.vue'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import { playlistStore } from '@/stores'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private useEditor () {
     const updateMock = this.mock(playlistStore, 'update')
 

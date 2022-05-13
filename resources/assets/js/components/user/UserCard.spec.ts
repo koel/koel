@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import UserCard from './UserCard.vue'
 import Btn from '@/components/ui/Btn.vue'
 import { fireEvent } from '@testing-library/vue'
 import router from '@/router'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent (user: User) {
     return this.render(UserCard, {
       props: {

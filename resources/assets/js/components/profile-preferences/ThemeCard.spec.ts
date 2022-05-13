@@ -1,4 +1,4 @@
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import ThemeCard from './ThemeCard.vue'
@@ -8,7 +8,7 @@ const theme: Theme = {
   thumbnailColor: '#f00'
 }
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent () {
     return this.render(ThemeCard, {
       props: {

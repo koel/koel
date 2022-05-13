@@ -3,12 +3,12 @@ import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import { eventBus, noop } from '@/utils'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongList from './SongList.vue'
 
 let songs: Song[]
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected beforeEach () {
     // suppress the warning
     super.beforeEach(() => eventBus.on('SET_SELECTED_SONGS', noop))

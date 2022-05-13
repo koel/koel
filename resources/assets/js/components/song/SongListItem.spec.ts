@@ -5,11 +5,11 @@ import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { fireEvent } from '@testing-library/vue'
 import SongListItem from './SongListItem.vue'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 
 let row: SongRow
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent (columns: SongListColumn[] = ['track', 'title', 'artist', 'album', 'length']) {
     row = {
       song: factory<Song>('song'),

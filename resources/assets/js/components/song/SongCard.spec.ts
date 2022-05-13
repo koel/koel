@@ -3,12 +3,12 @@ import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongCard from './SongCard.vue'
 
 let song: Song
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent (playbackState: PlaybackState = 'Stopped') {
     song = factory<Song>('song', {
       playbackState,

@@ -1,10 +1,10 @@
 import { expect, it } from 'vitest'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import { fireEvent } from '@testing-library/vue'
 import { playbackService, socketService } from '@/services'
 import Volume from './Volume.vue'
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   protected test () {
     it('mutes and unmutes', async () => {
       const muteMock = this.mock(playbackService, 'mute')

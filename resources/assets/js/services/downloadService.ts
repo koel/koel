@@ -3,26 +3,26 @@ import { authService } from '.'
 import { arrayify } from '@/utils'
 
 export const downloadService = {
-  fromSongs (songs: Song | Song[]): void {
+  fromSongs (songs: Song | Song[]) {
     const query = arrayify(songs).reduce((q, song) => `songs[]=${song.id}&${q}`, '')
     this.trigger(`songs?${query}`)
   },
 
-  fromAlbum (album: Album): void {
+  fromAlbum (album: Album) {
     this.trigger(`album/${album.id}`)
   },
 
-  fromArtist (artist: Artist): void {
+  fromArtist (artist: Artist) {
     this.trigger(`artist/${artist.id}`)
   },
 
-  fromPlaylist (playlist: Playlist): void {
+  fromPlaylist (playlist: Playlist) {
     if (playlistStore.getSongs(playlist).length) {
       this.trigger(`playlist/${playlist.id}`)
     }
   },
 
-  fromFavorites (): void {
+  fromFavorites () {
     if (favoriteStore.all.length) {
       this.trigger('favorites')
     }

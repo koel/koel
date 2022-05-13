@@ -2,7 +2,7 @@ import { clone } from 'lodash'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import Btn from '@/components/ui/Btn.vue'
 import AddToMenu from './AddToMenu.vue'
 import { arrayify } from '@/utils'
@@ -17,7 +17,7 @@ const config: AddToMenuConfig = {
   newPlaylist: true
 }
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent (customConfig: Partial<AddToMenuConfig> = {}) {
     songs = factory<Song>('song', 5)
 

@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import { UploadFile, UploadStatus } from '@/config'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import { fireEvent } from '@testing-library/vue'
 import { uploadService } from '@/services'
 import Btn from '@/components/ui/Btn.vue'
@@ -8,7 +8,7 @@ import UploadItem from './UploadItem.vue'
 
 let file: UploadFile
 
-new class extends ComponentTestCase {
+new class extends UnitTestCase {
   private renderComponent (status: UploadStatus) {
     file = {
       status,
