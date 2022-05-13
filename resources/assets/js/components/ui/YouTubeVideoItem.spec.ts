@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
-import ComponentTestCase from '@/__tests__/ComponentTestCase'
-import YouTubeVideoItem from './YouTubeVideoItem.vue'
 import { fireEvent } from '@testing-library/vue'
 import { youTubeService } from '@/services'
+import ComponentTestCase from '@/__tests__/ComponentTestCase'
+import YouTubeVideoItem from './YouTubeVideoItem.vue'
 
 let video: YouTubeVideo
 
