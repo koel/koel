@@ -1,8 +1,9 @@
-name: e2e
+name: End to End Tests
 on:
   push:
     branches:
       - master
+      - vue3
   pull_request:
   workflow_dispatch:
 jobs:
@@ -34,8 +35,8 @@ jobs:
           node-version: '14'
       - name: Install JavaScript dependencies
         run: |
-            cd ./resources/assets && yarn install --no-progress
-            cd ../.. && yarn install --no-progress
+          cd ./resources/assets && yarn install --no-progress
+          cd ../.. && yarn install --no-progress
       - name: Lint
         run: yarn lint
       - name: Run E2E tests
