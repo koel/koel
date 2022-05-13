@@ -5,11 +5,15 @@
     @dblclick.prevent="makeEditable"
   >
     <a
-      v-koel-droppable:[contentEditable]="handleDrop"
+      v-if="contentEditable"
+      v-koel-droppable="handleDrop"
       :class="{ active }"
       :href="url"
       @contextmenu.prevent="openContextMenu"
     >
+      {{ playlist.name }}
+    </a>
+    <a v-else :class="{ active }" :href="url" @contextmenu.prevent="openContextMenu">
       {{ playlist.name }}
     </a>
 

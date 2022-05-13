@@ -3,12 +3,6 @@ import { $ } from '@/utils'
 
 export const droppable: Directive = {
   created: (el: HTMLElement, binding) => {
-    const acceptsDrops = binding.arg === undefined || Boolean(binding.arg)
-
-    if (!acceptsDrops) {
-      return
-    }
-
     el.addEventListener('dragenter', (event: DragEvent) => {
       event.preventDefault()
       $.addClass(el, 'droppable')
