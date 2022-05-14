@@ -1,6 +1,5 @@
-export * from './event'
+export * from './eventBus'
 export * from './alerts'
-export * from './filters'
 export * from './formatters'
 export * from './supports'
 export * from './common'

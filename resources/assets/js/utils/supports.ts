@@ -3,7 +3,7 @@ import isMobile from 'ismobilejs'
 /**
  * Check if AudioContext is supported by the current browser.
  */
-export const isAudioContextSupported: boolean = (() => {
+export const isAudioContextSupported = (() => {
   if (process.env.NODE_ENV === 'test') {
     return false
   }
@@ -31,10 +31,10 @@ export const isAudioContextSupported: boolean = (() => {
 /**
  * Checks if HTML5 clipboard can be used.
  */
-export const isClipboardSupported: boolean = 'execCommand' in document
+export const isClipboardSupported = 'execCommand' in document
 
 /**
  * Checks if the browser supports reading (and thus uploading) a whole directory.
  */
-export const isDirectoryReadingSupported: boolean = window.DataTransferItem &&
+export const isDirectoryReadingSupported = window.DataTransferItem &&
   typeof window.DataTransferItem.prototype.webkitGetAsEntry === 'function'

@@ -157,7 +157,7 @@ class Particle {
   }
 }
 
-export default (container: HTMLElement): void => {
+export default (container: HTMLElement) => {
   Sketch.create({
     container,
     particles: [],

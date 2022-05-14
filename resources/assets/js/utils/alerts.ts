@@ -1,6 +1,6 @@
 import alertify from 'alertify.js'
 
-type logType = 'success' | 'error' | 'log'
+type LogType = 'success' | 'error' | 'log'
 
 const encodeEntities = (str: string) => str.replace(/&/g, '&amp;')
   .replace(/</g, '&lt;')
@@ -13,7 +13,7 @@ export const alerts = {
     alertify.confirm(msg, okFunc, cancelFunc)
   },
 
-  log: (msg: string, type: logType = 'log', cb?: Closure) => {
+  log: (msg: string, type: LogType = 'log', cb?: Closure) => {
     alertify.logPosition('top right')
     alertify.closeLogOnClick(true)
     alertify[type](encodeEntities(msg), cb)

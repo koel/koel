@@ -16,12 +16,7 @@ export const eventBus = {
       return
     }
 
-    if (this.all.has(name)) {
-      this.all.get(name).push(callback)
-      return
-    }
-
-    this.all.set(name, [callback])
+    this.all.has(name) ? this.all.get(name).push(callback) : this.all.set(name, [callback])
   },
 
   emit (name: EventName, ...args: any) {

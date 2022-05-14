@@ -2,7 +2,7 @@
  * Convert a duration in seconds into H:i:s format.
  * If H is 0, it will be omitted.
  */
-export const secondsToHis = (d: number): string => {
+export const secondsToHis = (d: number) => {
   d = ~~d
 
   const s = d % 60
@@ -24,11 +24,11 @@ export type ServerValidationError = {
 /**
  * Parse the validation error from the server into a flattened array of messages.
  */
-export const parseValidationError = (serverError: ServerValidationError): string[] => {
-  let messages = [] as string[]
+export const parseValidationError = (error: ServerValidationError) => {
+  let messages: string[] = []
 
-  Object.keys(serverError.errors).forEach(key => {
-    messages = messages.concat(...serverError.errors[key])
+  Object.keys(error.errors).forEach(key => {
+    messages = messages.concat(...error.errors[key])
   })
 
   return messages
@@ -37,7 +37,10 @@ export const parseValidationError = (serverError: ServerValidationError): string
 /**
  * Turn <br> into new line characters.
  */
-export const br2nl = (str: string): string => str ? str.replace(/<br\s*[/]?>/gi, '\n') : ''
+export const br2nl = (str: string) => str ? str.replace(/<br\s*[/]?>/gi, '\n') : ''
 
-export const slugToTitle = (slug: string, separator = '-'): string =>
+export const slugToTitle = (slug: string, separator = '-') =>
   slug.split(separator).map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ')
+
+export const pluralize = (count: number, singular: string) =>
+  count === 1 ? `${count} ${singular}` : `${count.toLocaleString()} ${singular}s`
