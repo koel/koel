@@ -36,7 +36,7 @@ eventBus.on({
     forceReloadWindow()
   },
 
-  'KOEL_READY': () => router.init(),
+  'KOEL_READY': () => router.resolveRoute(),
 
   /**
    * Hide the panel away if a main view is triggered on mobile.
