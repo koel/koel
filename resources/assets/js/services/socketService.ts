@@ -1,7 +1,7 @@
 import Pusher from 'pusher-js'
 
 import { userStore } from '@/stores'
-import { authService } from '.'
+import { authService } from '@/services'
 
 export const socketService = {
   pusher: null as Pusher.Pusher | null,

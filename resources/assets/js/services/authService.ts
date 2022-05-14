@@ -1,21 +1,14 @@
-import { localStorageService } from '.'
+import { localStorageService } from '@/services'
+
+const STORAGE_KEY = 'api-token'
 
 export const authService = {
-  storageKey: 'api-token',
-
-  getToken () {
-    return localStorageService.get<string | null>(this.storageKey)
-  },
+  getToken: () => localStorageService.get<string | null>(STORAGE_KEY),
 
   hasToken () {
     return Boolean(this.getToken())
   },
 
-  setToken (token: string) {
-    localStorageService.set(this.storageKey, token)
-  },
-
-  destroy () {
-    localStorageService.remove(this.storageKey)
-  }
+  setToken: (token: string) => localStorageService.set(STORAGE_KEY, token),
+  destroy: () => localStorageService.remove(STORAGE_KEY)
 }

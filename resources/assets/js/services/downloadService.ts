@@ -1,5 +1,5 @@
 import { favoriteStore, playlistStore } from '@/stores'
-import { authService } from '.'
+import { authService } from '@/services'
 import { arrayify } from '@/utils'
 
 export const downloadService = {

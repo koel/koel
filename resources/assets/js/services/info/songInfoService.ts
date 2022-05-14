@@ -1,4 +1,4 @@
-import { albumInfoService, artistInfoService, httpService } from '..'
+import { albumInfoService, artistInfoService, httpService } from '@/services'
 
 interface SongInfoResponse {
   artist_info: ArtistInfo,

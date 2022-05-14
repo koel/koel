@@ -1,9 +1,9 @@
 export const audioService = {
-  context: null as AudioContext | null,
-  source: null as MediaElementAudioSourceNode | null,
-  element: null as HTMLMediaElement | null,
+  context: null as unknown as AudioContext,
+  source: null as unknown as MediaElementAudioSourceNode,
+  element: null as unknown as HTMLMediaElement,
 
-  init (element: HTMLMediaElement): void {
+  init (element: HTMLMediaElement) {
     const AudioContext = window.AudioContext ||
       window.webkitAudioContext ||
       window.mozAudioContext ||
@@ -15,15 +15,15 @@ export const audioService = {
     this.element = element
   },
 
-  getContext (): AudioContext {
-    return this.context!
+  getContext () {
+    return this.context
   },
 
-  getSource (): MediaElementAudioSourceNode {
-    return this.source!
+  getSource () {
+    return this.source
   },
 
-  getElement (): HTMLMediaElement {
-    return this.element!
+  getElement () {
+    return this.element
   }
 }

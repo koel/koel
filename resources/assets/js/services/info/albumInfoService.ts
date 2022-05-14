@@ -1,10 +1,10 @@
 import { secondsToHis } from '@/utils'
-import { httpService } from '..'
+import { httpService } from '@/services'
 
 export const albumInfoService = {
-  async fetch (album: Album): Promise<Album> {
+  async fetch (album: Album) {
     if (!album.info) {
-      const info = await httpService.get<AlbumInfo|null>(`album/${album.id}/info`)
+      const info = await httpService.get<AlbumInfo | null>(`album/${album.id}/info`)
 
       if (info) {
         this.merge(album, info)
@@ -17,7 +17,7 @@ export const albumInfoService = {
   /**
    * Merge the (fetched) info into an album.
    */
-  merge: (album: Album, info: AlbumInfo): void => {
+  merge: (album: Album, info: AlbumInfo) => {
     // Convert the duration into i:s
     if (info.tracks) {
       info.tracks.forEach(track => {

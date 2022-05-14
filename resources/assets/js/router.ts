@@ -1,9 +1,8 @@
 import isMobile from 'ismobilejs'
 
-import { loadMainView } from './utils'
-import { albumStore, artistStore, playlistStore, queueStore, songStore, userStore } from './stores'
-import { playbackService } from './services'
-import { use } from '@/utils'
+import { loadMainView, use } from '@/utils'
+import { albumStore, artistStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
+import { playbackService } from '@/services'
 
 const router = {
   routes: {
@@ -22,19 +21,19 @@ const router = {
     '/youtube': () => loadMainView('YouTube'),
     '/visualizer': () => loadMainView('Visualizer'),
     '/profile': () => loadMainView('Profile'),
-    '/album/(\\d+)': (id: number) => use(albumStore.byId(~~id)!, album => loadMainView('Album', album)),
-    '/artist/(\\d+)': (id: number) => use(artistStore.byId(~~id)!, artist => loadMainView('Artist', artist)),
-    '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id)!, playlist => loadMainView('Playlist', playlist)),
-    '/song/([a-z0-9]{32})': (id: string) => use(songStore.byId(id)!, song => {
+    '/album/(\\d+)': (id: number) => use(albumStore.byId(~~id), album => loadMainView('Album', album)),
+    '/artist/(\\d+)': (id: number) => use(artistStore.byId(~~id), artist => loadMainView('Artist', artist)),
+    '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
+    '/song/([a-z0-9]{32})': (id: string) => use(songStore.byId(id), async (song) => {
       if (isMobile.apple.device) {
         // Mobile Safari doesn't allow autoplay, so we just queue.
         queueStore.queue(song)
         loadMainView('Queue')
       } else {
-        playbackService.queueAndPlay([song])
+        await playbackService.queueAndPlay([song])
       }
     })
-  } as { [path: string]: Closure },
+  },
 
   init () {
     this.loadState()
@@ -60,20 +59,16 @@ const router = {
    * Navigate to a (relative, hash-bang'ed) path.
    */
   go: (path: string | number) => {
-    if (window.__UNIT_TESTING__) {
-      return
-    }
-
     if (typeof path === 'number') {
       window.history.go(path)
       return
     }
 
-    if (path[0] !== '/') {
+    if (!path.startsWith('/')) {
       path = `/${path}`
     }
 
-    if (path.indexOf('/#!') !== 0) {
+    if (!path.startsWith('/#!')) {
       path = `/#!${path}`
     }
 

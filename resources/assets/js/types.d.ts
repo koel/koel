@@ -90,7 +90,6 @@ interface Constructable<T> {
 
 interface Window {
   BASE_URL: string
-  __UNIT_TESTING__: boolean
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string
   readonly webkitAudioContext: Constructable<AudioContext>
