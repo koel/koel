@@ -12,4 +12,4 @@ export const arrayify = <T> (maybeArray: T | Array<T>) => ([] as Array<T>).conca
 export const noop = () => {
 }
 
-export const limitBy = <T> (arr: T[], n: number, offset: number = 0): T[] => arr.slice(offset, offset + n)
+export const limitBy = <T> (arr: T[], count: number, offset: number = 0): T[] => arr.slice(offset, offset + count)
