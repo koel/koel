@@ -37,10 +37,12 @@ export const parseValidationError = (error: ServerValidationError) => {
 /**
  * Turn <br> into new line characters.
  */
-export const br2nl = (str: string) => str ? str.replace(/<br\s*[/]?>/gi, '\n') : ''
+export const br2nl = (str: string) => str ? str.replace(/<br\s*\/?>/gi, '\n') : ''
 
-export const slugToTitle = (slug: string, separator = '-') =>
-  slug.split(separator).map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ')
+export const slugToTitle = (slug: string, separator = '-') => {
+  let title = slug.split(separator).map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ')
+  return title.replace(/\s+/g, ' ').trim()
+}
 
 export const pluralize = (count: number, singular: string) =>
   count === 1 ? `${count} ${singular}` : `${count.toLocaleString()} ${singular}s`

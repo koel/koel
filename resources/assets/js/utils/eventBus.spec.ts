@@ -4,7 +4,7 @@ import { eventBus } from './eventBus'
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => eventBus.all = new Map());
+    super.beforeEach(() => (eventBus.all = new Map()))
   }
 
   protected test () {
