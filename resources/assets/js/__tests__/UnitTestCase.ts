@@ -7,8 +7,6 @@ import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
 import factory from '@/__tests__/factory'
 
-declare type Methods<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T] & (string | symbol);
-
 export default abstract class UnitTestCase {
   private backupMethods = new Map()
 
@@ -44,7 +42,7 @@ export default abstract class UnitTestCase {
     return this.actingAs(factory.states('admin')<User>('user'))
   }
 
-  protected mock<T, M extends Methods<Required<T>>> (obj: T, methodName: M, implementation?: any) {
+  protected mock<T, M extends MethodOf<Required<T>>> (obj: T, methodName: M, implementation?: any) {
     const mock = vi.fn()
 
     if (implementation !== undefined) {
@@ -86,6 +84,12 @@ export default abstract class UnitTestCase {
     for (let i = 0; i < count; ++i) {
       await nextTick()
     }
+  }
+
+  protected setReadOnlyProperty<T> (obj: T, prop: keyof T, value: any) {
+    return Object.defineProperty(obj, prop, {
+      get: () => value
+    })
   }
 
   protected abstract test ()

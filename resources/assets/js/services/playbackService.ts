@@ -30,7 +30,6 @@ export const playbackService = {
   volumeInput: null as unknown as HTMLInputElement,
   repeatModes: REPEAT_MODES,
   initialized: false,
-  mainWin: null as any,
 
   init () {
     // We don't need to init this service twice, or the media events will be duplicated.
@@ -38,7 +37,7 @@ export const playbackService = {
       return
     }
 
-    this.player = plyr.setup(document.querySelector<HTMLMediaElement>('.plyr')!, {
+    this.player = plyr.setup('.plyr', {
       controls: []
     })[0]
 
@@ -83,6 +82,10 @@ export const playbackService = {
   },
 
   setMediaSessionActionHandlers () {
+    if (!navigator.mediaSession) {
+      return
+    }
+
     navigator.mediaSession.setActionHandler('play', () => this.resume())
     navigator.mediaSession.setActionHandler('pause', () => this.pause())
     navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
@@ -100,7 +103,7 @@ export const playbackService = {
       preferences.repeatMode === 'REPEAT_ONE' ? this.restart() : this.playNext()
     })
 
-    mediaElement.addEventListener('timeupdate', throttle(() => {
+    let timeUpdateHandler = () => {
       const currentSong = queueStore.current!
 
       if (!currentSong.playCountRegistered && !this.isTranscoding) {
@@ -120,7 +123,13 @@ export const playbackService = {
       if (mediaElement.duration && mediaElement.currentTime + PRELOAD_BUFFER > mediaElement.duration) {
         this.preload(nextSong)
       }
-    }, 3000))
+    }
+
+    if (process.env.NODE_ENV !== 'test') {
+      timeUpdateHandler = throttle(timeUpdateHandler, 3000)
+    }
+
+    mediaElement.addEventListener('timeupdate', timeUpdateHandler)
   },
 
   get isTranscoding () {
@@ -150,7 +159,7 @@ export const playbackService = {
    * So many dreams swinging out of the blue
    * We'll let them come true
    */
-  async play (song: Song | undefined) {
+  async play (song?: Song) {
     if (!song) {
       return
     }
@@ -184,14 +193,14 @@ export const playbackService = {
     }
 
     try {
-      const notif = new window.Notification(`♫ ${song.title}`, {
+      const notification = new window.Notification(`♫ ${song.title}`, {
         icon: song.album.cover,
         body: `${song.album.name} – ${song.artist.name}`
       })
 
-      notif.onclick = () => window.focus()
+      notification.onclick = () => window.focus()
 
-      window.setTimeout(() => notif.close(), 5000)
+      window.setTimeout(() => notification.close(), 5000)
     } catch (e) {
       // Notification fails.
       // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
@@ -203,7 +212,11 @@ export const playbackService = {
       artist: song.artist.name,
       album: song.album.name,
       artwork: [
-        { src: song.album.cover, sizes: '256x256', type: 'image/png' }
+        {
+          src: song.album.cover,
+          sizes: '256x256',
+          type: 'image/png'
+        }
       ]
     })
   },
@@ -250,7 +263,7 @@ export const playbackService = {
    * The previous song in the queue.
    * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
    */
-  get previous (): Song | undefined {
+  get previous () {
     if (queueStore.previous) {
       return queueStore.previous
     }
@@ -279,7 +292,6 @@ export const playbackService = {
    * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
    */
   async playPrev () {
-    console.log('called')
     // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
     // restart playing instead.
     if (this.getPlayer().media.currentTime > 5 && queueStore.current!.length > 5) {

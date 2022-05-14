@@ -62,7 +62,7 @@ interface Plyr {
 }
 
 declare module 'plyr' {
-  function setup (el: HTMLMediaElement | HTMLMediaElement[], options: Record<string, any>): Plyr[]
+  function setup (el: string | HTMLMediaElement | HTMLMediaElement[], options: Record<string, any>): Plyr[]
 }
 
 declare module 'ismobilejs' {

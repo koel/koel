@@ -25,7 +25,7 @@ export default defineConfig({
     KOEL_ENV: '""'
   },
   test: {
-    environment: 'happy-dom',
+    environment: 'jsdom',
     setupFiles: path.resolve(__dirname, './resources/assets/js/__tests__/setup.ts')
   },
 })
