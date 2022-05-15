@@ -25,7 +25,6 @@ interface CommonStoreState {
   favorites: Song[]
   interactions: Interaction[]
   latestVersion: string
-  originalMediaPath: string | undefined
   playlists: Playlist[]
   queued: Song[]
   recentlyPlayed: string[]
@@ -48,7 +47,6 @@ export const commonStore = {
     favorites: [],
     interactions: [],
     latestVersion: '',
-    originalMediaPath: '',
     playlists: [],
     queued: [],
     recentlyPlayed: [],

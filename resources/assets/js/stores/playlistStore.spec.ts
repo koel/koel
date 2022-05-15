@@ -1,5 +1,7 @@
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { playlistStore } from '@/stores'
+import { expect, it } from 'vitest'
 
 const ruleGroups: SmartPlaylistRuleGroup[] = [
   {
@@ -59,20 +61,21 @@ const serializedRuleGroups = [
   }
 ]
 
-describe('stores/playlist', () => {
-  it('serializes playlist for storage', () => {
-    expect(playlistStore.serializeSmartPlaylistRulesForStorage(ruleGroups)).toEqual(serializedRuleGroups)
-  })
-
-  it('set up a smart playlist with properly unserialized rules', () => {
-    // @ts-ignore because we're only using this factory here for convenience.
-    // By right, the database "serializedRuleGroups" can't be used for Playlist type.
-    const playlist = factory<Playlist>('playlist', {
-      is_smart: true,
-      rules: serializedRuleGroups
+new class extends UnitTestCase {
+  protected test () {
+    it('serializes playlist for storage', () => {
+      expect(playlistStore.serializeSmartPlaylistRulesForStorage(ruleGroups)).toEqual(serializedRuleGroups)
     })
 
-    playlistStore.setupSmartPlaylist(playlist)
-    expect(playlist.rules).toEqual(ruleGroups)
-  })
-})
+    it('sets up a smart playlist with properly unserialized rules', () => {
+      const playlist = factory<Playlist>('playlist', {
+        is_smart: true,
+        rules: serializedRuleGroups as unknown as SmartPlaylistRuleGroup[]
+      })
+
+      playlistStore.setupSmartPlaylist(playlist)
+
+      expect(playlist.rules).toEqual(ruleGroups)
+    })
+  }
+}
