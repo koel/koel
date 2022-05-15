@@ -1,18 +1,17 @@
-import { Faker } from '@faker-js/faker'
 import factory from 'factoria'
-import artist from './artist'
-import album from './album'
-import song from './song'
-import video from './video'
-import playlist from './playlist'
-import user, { states as userStates } from './user'
+import artistFactory from './artistFactory'
+import albumFactory from './albumFactory'
+import songFactory from './songFactory'
+import playlistFactory from './playlistFactory'
+import userFactory, { states as userStates } from './userFactory'
+import youTubeVideoFactory from './youTubeVideoFactory'
 
 factory
-  .define('artist', (faker: Faker): Artist => artist(faker))
-  .define('album', (faker: Faker): Album => album(faker))
-  .define('song', (faker: Faker): Song => song(faker))
-  .define('video', (faker: Faker): YouTubeVideo => video(faker))
-  .define('playlist', (faker: Faker): Playlist => playlist(faker))
-  .define('user', (faker: Faker): User => user(faker), userStates)
+  .define('artist', faker => artistFactory(faker))
+  .define('album', faker => albumFactory(faker))
+  .define('song', faker => songFactory(faker))
+  .define('video', faker => youTubeVideoFactory(faker))
+  .define('playlist', faker => playlistFactory(faker))
+  .define('user', faker => userFactory(faker), userStates)
 
 export default factory
