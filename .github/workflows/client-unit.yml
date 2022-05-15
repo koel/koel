@@ -22,3 +22,7 @@ jobs:
         run: yarn install
       - name: Run unit tests
         run: yarn test:unit
+      - name: Collect coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
