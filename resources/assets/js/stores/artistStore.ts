@@ -1,7 +1,6 @@
 import { difference, orderBy, take } from 'lodash'
 
 import { httpService } from '@/services'
-import stub from '@/stubs/artist'
 import { arrayify, use } from '@/utils'
 import { reactive } from 'vue'
 
@@ -13,7 +12,6 @@ const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
 
 export const artistStore = {
-  stub,
   cache: {} as Record<number, Artist>,
 
   state: reactive<ArtistStoreState>({

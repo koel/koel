@@ -1,8 +1,6 @@
 import { without } from 'lodash'
 import md5 from 'blueimp-md5'
-
 import { httpService } from '@/services'
-import stub from '@/stubs/user'
 import { reactive } from 'vue'
 
 export interface UpdateCurrentProfileData {
@@ -29,7 +27,7 @@ export interface UpdateUserData extends UserFormData {
 export const userStore = {
   state: reactive({
     users: [] as User[],
-    current: stub
+    current: null as unknown as User // there's always a current user
   }),
 
   init (users: User[], currentUser: User) {

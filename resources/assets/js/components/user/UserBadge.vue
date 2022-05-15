@@ -1,8 +1,8 @@
 <template>
-  <span class="profile" id="userBadge">
+  <span class="profile" id="userBadge" v-if="currentUser">
     <a class="view-profile" data-testid="view-profile-link" href="/#!/profile" title="View/edit user profile">
-      <img :alt="`Avatar of ${user.name}`" :src="user.avatar" class="avatar"/>
-      <span class="name">{{ user.name }}</span>
+      <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar" class="avatar"/>
+      <span class="name">{{ currentUser.name }}</span>
     </a>
 
     <a
@@ -19,11 +19,10 @@
 </template>
 
 <script lang="ts" setup>
-import { toRef } from 'vue'
-import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
+import { useAuthorization } from '@/composables'
 
-const user = toRef(userStore.state, 'current')
+const { currentUser } = useAuthorization()
 
 const logout = () => eventBus.emit('LOG_OUT')
 </script>

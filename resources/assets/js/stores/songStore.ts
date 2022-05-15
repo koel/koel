@@ -2,11 +2,9 @@ import { reactive } from 'vue'
 import slugify from 'slugify'
 import { orderBy, remove, take, unionBy, without } from 'lodash'
 import isMobile from 'ismobilejs'
-
 import { arrayify, secondsToHis, use } from '@/utils'
 import { authService, httpService } from '@/services'
 import { albumStore, artistStore, commonStore, favoriteStore, preferenceStore } from '.'
-import stub from '@/stubs/song'
 
 interface BroadcastSongData {
   song: {
@@ -33,7 +31,6 @@ interface SongUpdateResult {
 }
 
 export const songStore = {
-  stub,
   cache: {} as { [key: string]: Song },
 
   state: reactive({

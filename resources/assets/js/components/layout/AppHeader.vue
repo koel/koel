@@ -27,10 +27,10 @@
 </template>
 
 <script lang="ts" setup>
+import isMobile from 'ismobilejs'
 import { defineAsyncComponent, ref } from 'vue'
 import { eventBus } from '@/utils'
 import { useNewVersionNotification } from '@/composables'
-import isMobile from 'ismobilejs'
 
 const SearchForm = defineAsyncComponent(() => import('@/components/ui/SearchForm.vue'))
 const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge.vue'))

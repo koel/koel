@@ -109,6 +109,7 @@ const greetings = [
   'How have you been, %s?'
 ]
 
+const greeting = ref('')
 const recentSongs = ref<Song[]>([])
 
 const top = reactive({
@@ -122,7 +123,6 @@ const recentlyAdded = reactive({
   songs: [] as Song[]
 })
 
-const greeting = computed(() => sample(greetings)!.replace('%s', userStore.current.name))
 const showRecentlyAddedSection = computed(() => Boolean(recentlyAdded.albums.length || recentlyAdded.songs.length))
 
 const refreshDashboard = () => {
@@ -137,6 +137,7 @@ const refreshDashboard = () => {
 const goToRecentlyPlayedScreen = () => router.go('recently-played')
 
 eventBus.on(['KOEL_READY', 'SONG_STARTED', 'SONG_UPLOADED'], () => refreshDashboard())
+eventBus.on('KOEL_READY', () => (greeting.value = sample(greetings)!.replace('%s', userStore.current.name)))
 </script>
 
 <style lang="scss">
