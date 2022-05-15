@@ -14,7 +14,7 @@ exports[`renders 1`] = `
   </section>
   <section class="new-playlist" data-testid="new-playlist" data-v-0351ff38="">
     <p data-v-0351ff38="">or create a new playlist</p>
-    <form class="form-save form-simple form-new-playlist" data-v-0351ff38=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-0351ff38="" /><button type="submit" title="Save" data-v-27deb898="" data-v-0351ff38="">⏎</button></form>
+    <form class="form-save form-simple form-new-playlist" data-v-0351ff38=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-0351ff38=""><button type="submit" title="Save" data-v-27deb898="" data-v-0351ff38="">⏎</button></form>
   </section>
 </div>
 `;

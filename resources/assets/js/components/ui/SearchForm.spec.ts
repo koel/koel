@@ -1,4 +1,4 @@
-import { expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
 import router from '@/router'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SearchForm from './SearchForm.vue'
@@ -26,16 +26,12 @@ new class extends UnitTestCase {
     })
 
     it('emits an event when search query is changed', async () => {
-      vi.useFakeTimers()
       const mock = this.mock(eventBus, 'emit')
       const { getByRole } = this.render(SearchForm)
 
       await fireEvent.update(getByRole('searchbox'), 'hey')
 
-      vi.advanceTimersByTime(500)
       expect(mock).toHaveBeenCalledWith('SEARCH_KEYWORDS_CHANGED', 'hey')
-
-      vi.useRealTimers()
     })
   }
 }

@@ -27,7 +27,7 @@ new class extends UnitTestCase {
         }
       })
 
-      expect(getByTestId('name').innerText).equal('Led Zeppelin')
+      expect(getByTestId('name').textContent).toBe('Led Zeppelin')
       getByText(/^4 albums\s+•\s+16 songs.+0 plays$/)
       getByTestId('shuffle-artist')
       getByTestId('download-artist')

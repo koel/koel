@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import lodash from 'lodash'
 import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
@@ -33,7 +33,7 @@ new class extends UnitTestCase {
       ['header-album', ['song.album.name', 'song.track', 'song.disc']],
       ['header-length', ['song.length']]
     ])('sorts when "%s" header is clicked', async (testId: string, sortFields: SongListSortField[]) => {
-      const mock = this.mock(_, 'orderBy', [])
+      const mock = this.mock(lodash, 'orderBy', [])
       const { getByTestId } = this.renderComponent()
 
       await fireEvent.click(getByTestId(testId))

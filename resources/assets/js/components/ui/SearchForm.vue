@@ -24,10 +24,14 @@ import router from '@/router'
 const input = ref<HTMLInputElement>()
 const q = ref('')
 
-const onInput = debounce(() => {
+let onInput = () => {
   const _q = q.value.trim()
   _q && eventBus.emit('SEARCH_KEYWORDS_CHANGED', _q)
-}, 500)
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  onInput = debounce(onInput, 500)
+}
 
 const goToSearchScreen = () => router.go('search')
 
