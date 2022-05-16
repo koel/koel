@@ -1,11 +1,11 @@
-name: Client Unit Tests
+name: Frontend Unit Tests
 on:
   push:
     branches:
-      - vue3
+      - next
   workflow_dispatch:
     branches:
-      - vue3
+      - next
 
 jobs:
   test:
@@ -20,6 +20,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: yarn install
+      - name: Lint
+        run: yarn lint
       - name: Run unit tests
         run: yarn test:unit
       - name: Collect coverage

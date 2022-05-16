@@ -86,7 +86,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "scripts": {
-    "lint": "eslint ./resources/assets/js/**/*.ts && eslint ./cypress/**/*.ts",
+    "lint": "eslint ./resources/assets/js/**/*.ts --no-error-on-unmatched-pattern && eslint ./cypress/**/*.ts  --no-error-on-unmatched-pattern",
     "test:unit": "vitest",
     "test:e2e": "kill-port 8080 && start-test dev http-get://localhost:8080/api/ping 'cypress open'",
     "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' http-get://localhost:8080/api/ping 'cypress run --browser chromium'",
