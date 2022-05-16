@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref, toRef, watch } from 'vue'
 import { eventBus, limitBy } from '@/utils'
 import { artistStore, preferenceStore as preferences } from '@/stores'
 import { useInfiniteScroll } from '@/composables'
@@ -28,12 +28,12 @@ const {
   makeScrollable
 } = useInfiniteScroll(9)
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ArtistCard = defineAsyncComponent(() => import('@/components/artist/ArtistCard.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/ViewModeSwitch.vue'))
 
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
-const artists = ref<Artist[]>([])
+const artists = toRef(artistStore.state, 'artists')
 
 const displayedItems = computed(() => limitBy(artists.value, displayedItemCount.value))
 const itemLayout = computed<ArtistAlbumCardLayout>(() => viewMode.value === 'thumbnails' ? 'full' : 'compact')
@@ -42,7 +42,6 @@ watch(viewMode, () => preferences.artistsViewMode = viewMode.value)
 
 eventBus.on({
   KOEL_READY () {
-    artists.value = artistStore.all
     viewMode.value = preferences.artistsViewMode || 'thumbnails'
   },
 

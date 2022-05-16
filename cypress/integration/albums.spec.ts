@@ -1,4 +1,4 @@
-context('Albums', { scrollBehavior: false }, () => {
+context.only('Albums', { scrollBehavior: false }, () => {
   beforeEach(() => {
     cy.$login()
     cy.$clickSidebarItem('Albums')

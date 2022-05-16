@@ -88,8 +88,8 @@
   "scripts": {
     "lint": "eslint ./resources/assets/js/**/*.ts && eslint ./cypress/**/*.ts",
     "test:unit": "vitest",
-    "test:e2e": "kill-port 8080 && start-test dev :8080 'cypress open'",
-    "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' http-get://localhost:8080/api/ping 'cypress run'",
+    "test:e2e": "kill-port 8080 && start-test dev http-get://localhost:8080/api/ping 'cypress open'",
+    "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' http-get://localhost:8080/api/ping 'cypress run --browser chromium'",
     "build": "yarn prod",
     "build-demo": "cross-env KOEL_ENV=demo mix --production",
     "dev": "kill-port 8000 && start-test 'php artisan serve --port=8000 --quiet' http-get://localhost:8000/api/ping hot",

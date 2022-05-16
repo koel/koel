@@ -15,17 +15,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref, toRef, watch } from 'vue'
 import { eventBus, limitBy } from '@/utils'
 import { albumStore, preferenceStore as preferences } from '@/stores'
 import { useInfiniteScroll } from '@/composables'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
+const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/ViewModeSwitch.vue'))
 
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
-const albums = ref<Album[]>([])
+const albums = toRef(albumStore.state, 'albums')
 
 const {
   ToTopButton,
@@ -42,7 +42,6 @@ watch(viewMode, () => preferences.albumsViewMode = viewMode.value)
 
 eventBus.on({
   KOEL_READY () {
-    albums.value = albumStore.all
     viewMode.value = preferences.albumsViewMode || 'thumbnails'
   },
 

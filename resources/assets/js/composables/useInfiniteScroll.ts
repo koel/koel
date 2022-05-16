@@ -22,7 +22,13 @@ export const useInfiniteScroll = (perPage = 30) => {
   }
 
   const makeScrollable = (totalItemCount: number) => {
-    const container = scroller.value!
+    const container = scroller.value
+
+    if (!container) {
+      window.setTimeout(() => makeScrollable(totalItemCount), 200)
+      return
+    }
+
     if (container.scrollHeight <= container.clientHeight && displayedItemCount.value < totalItemCount) {
       displayMore()
       // we can't use $nextTick here because it's instant and scrollHeight wouldn't have been updated.
