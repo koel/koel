@@ -2,10 +2,6 @@ import { Ref } from 'vue'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import { alerts, pluralize } from '@/utils'
 
-/**
- * Includes the methods trigger-able on a song (context) menu.
- * Each component including this mixin must have a `songs` array as either data, prop, or computed.
- */
 export const useSongMenuMethods = (songs: Ref<Song[]>, close: Closure) => {
   const queueSongsAfterCurrent = () => {
     queueStore.queueAfterCurrent(songs.value)

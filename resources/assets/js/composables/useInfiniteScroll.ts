@@ -1,10 +1,5 @@
 import { defineAsyncComponent, ref } from 'vue'
 
-/**
- * Add an "infinite scroll" functionality to any component using this mixin.
- * Such a component should have a `scrolling` method bound to `scroll` event on
- * the wrapper element: @scroll="scrolling"
- */
 export const useInfiniteScroll = (perPage = 30) => {
   const ToTopButton = defineAsyncComponent(() => import('@/components/ui/BtnScrollToTop.vue'))
 

@@ -1,6 +1,3 @@
-/**
- * Add necessary functionalities into a view that contains a song-list component.
- */
 import { ComponentInternalInstance, computed, getCurrentInstance, reactive, Ref, ref } from 'vue'
 import isMobile from 'ismobilejs'
 
