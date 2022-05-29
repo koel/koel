@@ -27,12 +27,12 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{ mode?: ArtistAlbumViewMode }>(), { mode: 'thumbnails' })
-const emit = defineEmits(['update:mode'])
+const props = withDefaults(defineProps<{ modelValue?: ArtistAlbumViewMode }>(), { modelValue: 'thumbnails' })
+const emit = defineEmits(['update:modelValue'])
 
 const value = computed({
-  get: () => props.mode,
-  set: value => emit('update:mode', value)
+  get: () => props.modelValue,
+  set: value => emit('update:modelValue', value)
 })
 </script>
 
