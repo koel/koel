@@ -7,7 +7,7 @@
         data-testid="sidebar-create-playlist-btn"
         role="button"
         title="Create a new playlist"
-        @click.prevent="toggleContextMenu"
+        @click.stop.prevent="toggleContextMenu"
       ></i>
     </h1>
 
