@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs } from 'vue'
+import { computed, reactive, toRefs } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'
 import { alerts, eventBus } from '@/utils'
@@ -47,6 +47,10 @@ const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
 
 const mutatedPlaylist = reactive<Playlist>(cloneDeep(playlist.value))
+
+const isPristine = computed(() => {
+  return isEqual(mutatedPlaylist.rules, playlist.value.rules) && mutatedPlaylist.name.trim() === playlist.value.name
+})
 
 const {
   Btn,
@@ -63,13 +67,14 @@ const emit = defineEmits(['close'])
 const close = () => emit('close')
 
 const maybeClose = () => {
-  if (isEqual(playlist.value, mutatedPlaylist)) {
+  if (isPristine.value) {
     close()
     return
   }
 
   alerts.confirm('Discard all changes?', close)
 }
+
 
 const submit = async () => {
   loading.value = true
