@@ -50,7 +50,6 @@
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^4.11.1",
     "@vitejs/plugin-vue": "^2.3.1",
-    "@vue/compiler-sfc": "^3.2.32",
     "@vue/test-utils": "^2.0.0-rc.21",
     "cross-env": "^7.0.3",
     "crypto-random-string": "^1.0.0",
@@ -81,7 +80,7 @@
     "typescript": "^4.6.3",
     "vite": "^2.9.6",
     "vitest": "^0.10.0",
-    "vue-loader": "^17.0.0",
+    "vue-loader": "^16.2.0",
     "webpack": "^5.72.0",
     "webpack-node-externals": "^3.0.0"
   },
