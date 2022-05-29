@@ -6,7 +6,7 @@
     <MainWrapper/>
     <AppFooter/>
     <SupportKoel/>
-    <Overlay ref="overlay"/>
+    <Overlay/>
   </div>
 
   <template v-else>
@@ -31,8 +31,8 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 import MainWrapper from '@/components/layout/main-wrapper/index.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 
-import { $, eventBus, hideOverlay, showOverlay, arrayify } from '@/utils'
-import { favoriteStore, preferenceStore as preferences, queueStore, commonStore } from '@/stores'
+import { $, arrayify, eventBus, hideOverlay, showOverlay } from '@/utils'
+import { commonStore, favoriteStore, preferenceStore as preferences, queueStore } from '@/stores'
 import { authService, playbackService, socketService } from '@/services'
 
 const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
@@ -40,7 +40,6 @@ const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/A
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 
-const overlay = ref<HTMLElement>()
 const songContextMenu = ref<InstanceType<typeof SongContextMenu>>()
 const albumContextMenu = ref<InstanceType<typeof AlbumContextMenu>>()
 const artistContextMenu = ref<InstanceType<typeof ArtistContextMenu>>()
