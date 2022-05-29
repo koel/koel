@@ -75,7 +75,6 @@ const maybeClose = () => {
   alerts.confirm('Discard all changes?', close)
 }
 
-
 const submit = async () => {
   loading.value = true
   mutatedPlaylist.rules = collectedRuleGroups.value
