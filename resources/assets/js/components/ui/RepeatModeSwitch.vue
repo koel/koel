@@ -1,11 +1,11 @@
 <template>
   <button
     :class="mode"
-    :title="`Change repeat mode (current mode: ${readableRepeatMode})`"
+    :title="`Change repeat mode (current mode: ${readableMode})`"
     class="control"
     data-testid="repeat-mode-switch"
     type="button"
-    @click.prevent="changeRepeatMode"
+    @click.prevent="changeMode"
   >
     <i class="fa fa-repeat"></i>
   </button>
@@ -18,13 +18,13 @@ import { preferenceStore } from '@/stores'
 
 const mode = toRef(preferenceStore.state, 'repeatMode')
 
-const readableRepeatMode = computed(() => mode.value
+const readableMode = computed(() => mode.value
   .split('_')
   .map(part => part[0].toUpperCase() + part.substring(1).toLowerCase())
   .join(' ')
 )
 
-const changeRepeatMode = () => playbackService.changeRepeatMode()
+const changeMode = () => playbackService.changeRepeatMode()
 </script>
 
 <style lang="scss" scoped>
