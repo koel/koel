@@ -23,7 +23,7 @@
 <script lang="ts" setup>
 import { orderBy } from 'lodash'
 import { computed, ref, toRef, toRefs } from 'vue'
-import { albumStore, artistStore, queueStore, userStore } from '@/stores'
+import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
 import { alerts, defaultCover, fileReader } from '@/utils'
 import { useAuthorization } from '@/composables'
@@ -36,7 +36,7 @@ const { entity } = toRefs(props)
 const droppable = ref(false)
 const user = toRef(userStore.state, 'current')
 
-const forAlbum = computed(() => 'artist' in entity.value)
+const forAlbum = computed(() => entity.value.type === 'albums')
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
 
 const image = computed(() => {
@@ -48,16 +48,6 @@ const image = computed(() => {
 })
 
 const getArtistImage = (artist: Artist) => {
-  // If the artist has no image, try getting the cover from one of their albums
-  if (!artist.image) {
-    artist.albums.every(album => {
-      if (album.cover !== defaultCover) {
-        artist.image = album.cover
-        return false
-      }
-    })
-  }
-
   artist.image = artist.image ?? defaultCover
 
   return artist.image
@@ -70,18 +60,18 @@ const buttonLabel = computed(() => forAlbum.value
 
 const { isAdmin: allowsUpload } = useAuthorization()
 
-const playOrQueue = (event: KeyboardEvent) => {
+const playOrQueue = async (event: KeyboardEvent) => {
+  const songs = forAlbum.value
+    ? await songStore.fetchForAlbum(entity.value as Album)
+    : await songStore.fetchForArtist(entity.value as Artist)
+
   if (event.altKey) {
-    queueStore.queue(orderBy(entity.value.songs, sortFields.value))
+    queueStore.queue(orderBy(songs, sortFields.value))
     alerts.success('Songs added to queue.')
     return
   }
 
-  if (forAlbum.value) {
-    playbackService.playAllInAlbum(entity.value as Album, false)
-  } else {
-    playbackService.playAllByArtist(entity.value as Artist, false)
-  }
+  await playbackService.queueAndPlay(songs)
 }
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)

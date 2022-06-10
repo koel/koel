@@ -33,7 +33,7 @@ new class extends UnitTestCase {
     })
 
     it('plays', async () => {
-      const guessMock = this.mock(songStore, 'guess', song)
+      const guessMock = this.mock(songStore, 'match', song)
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
 

@@ -30,12 +30,14 @@ class SmartPlaylistService
 
         $ruleGroups = $this->addRequiresUserRules($playlist->rule_groups, $playlist->user);
 
-        return $this->buildQueryFromRules($ruleGroups)->get();
+        return $this->buildQueryFromRules($ruleGroups, $playlist->user)
+            ->orderBy('songs.title')
+            ->get();
     }
 
-    public function buildQueryFromRules(Collection $ruleGroups): Builder
+    public function buildQueryFromRules(Collection $ruleGroups, User $user): Builder
     {
-        $query = Song::query();
+        $query = Song::withMeta($user);
 
         $ruleGroups->each(function (SmartPlaylistRuleGroup $group) use ($query): void {
             $query->orWhere(function (Builder $subQuery) use ($group): void {

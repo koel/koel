@@ -8,11 +8,6 @@ use Illuminate\Http\UploadedFile;
 /** @property UploadedFile $file */
 class UploadRequest extends AbstractRequest
 {
-    public function authorize(): bool
-    {
-        return auth()->user()->is_admin;
-    }
-
     /** @return array<mixed> */
     public function rules(): array
     {
@@ -20,7 +15,7 @@ class UploadRequest extends AbstractRequest
             'file' => [
                 'required',
                 'file',
-                'mimetypes:audio/flac,audio/mpeg,audio/ogg,audio/x-flac,audio/x-aac',
+                'mimes:mp3,mpga,aac,flac,ogg,oga,opus',
             ],
         ];
     }

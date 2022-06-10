@@ -60,7 +60,6 @@ new class extends UnitTestCase {
     ])(
       'when playCountRegistered is %s, isTranscoding is %s, current media time is %d, media duration is %d, then registerPlay() should be call %d times',
       (playCountRegistered, isTranscoding, currentTime, duration, numberOfCalls) => {
-        queueStore.current = factory<Song>('song', { playCountRegistered })
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
         playbackService.init()
         const mediaElement = playbackService.player!.media
@@ -89,8 +88,7 @@ new class extends UnitTestCase {
     })
 
     it('scrobbles if current song ends', () => {
-      queueStore.current = factory<Song>('song')
-      commonStore.state.useLastfm = true
+      commonStore.state.use_last_fm = true
       userStore.current = factory<User>('user', {
         preferences: {
           lastfm_session_key: 'foo'
@@ -106,7 +104,7 @@ new class extends UnitTestCase {
     it.each<[RepeatMode, number, number]>([['REPEAT_ONE', 1, 0], ['NO_REPEAT', 0, 1], ['REPEAT_ALL', 0, 1]])(
       'when song ends, if repeat mode is %s then restart() is called %d times and playNext() is called %d times',
       (repeatMode, restartCalls, playNextCalls) => {
-        commonStore.state.useLastfm = false // so that no scrobbling is made unnecessarily
+        commonStore.state.use_last_fm = false // so that no scrobbling is made unnecessarily
         preferences.repeatMode = repeatMode
         playbackService.init()
         const restartMock = this.mock(playbackService, 'restart')
@@ -124,7 +122,6 @@ new class extends UnitTestCase {
     ])(
       'when next song preloaded is %s, isTranscoding is %s, current media time is %d, media duration is %d, then preload() should be called %d times',
       (preloaded, isTranscoding, currentTime, duration, numberOfCalls) => {
-        queueStore.current = factory<Song>('song', { playCountRegistered: true }) // avoid triggering play count logic
         this.setReadOnlyProperty(queueStore, 'next', factory<Song>('song', { preloaded }))
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
         playbackService.init()
@@ -151,7 +148,7 @@ new class extends UnitTestCase {
 
     it('registers play', () => {
       const recentlyPlayedStoreAddMock = this.mock(recentlyPlayedStore, 'add')
-      const recentlyPlayedStoreFetchAllMock = this.mock(recentlyPlayedStore, 'fetchAll')
+      const recentlyPlayedStoreFetchAllMock = this.mock(recentlyPlayedStore, 'fetch')
       const registerPlayMock = this.mock(songStore, 'registerPlay')
       const song = factory<Song>('song')
 
@@ -160,7 +157,7 @@ new class extends UnitTestCase {
       expect(recentlyPlayedStoreAddMock).toHaveBeenCalledWith(song)
       expect(recentlyPlayedStoreFetchAllMock).toHaveBeenCalled()
       expect(registerPlayMock).toHaveBeenCalledWith(song)
-      expect(song.playCountRegistered).toBe(true)
+      expect(song.play_count_registered).toBe(true)
     })
 
     it('preloads a song', () => {
@@ -184,7 +181,6 @@ new class extends UnitTestCase {
 
     it('restarts a song', async () => {
       const song = factory<Song>('song')
-      queueStore.current = song
       this.mock(Math, 'floor', 1000)
       const emitMock = this.mock(eventBus, 'emit')
       const broadcastMock = this.mock(socketService, 'broadcast')
@@ -196,8 +192,8 @@ new class extends UnitTestCase {
 
       await playbackService.restart()
 
-      expect(song.playStartTime).toEqual(1000)
-      expect(song.playCountRegistered).toBe(false)
+      expect(song.play_start_time).toEqual(1000)
+      expect(song.play_count_registered).toBe(false)
       expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', song)
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', dataToBroadcast)
       expect(showNotificationMock).toHaveBeenCalled()
@@ -219,7 +215,6 @@ new class extends UnitTestCase {
     it('restarts song if playPrev is triggered after 5 seconds', async () => {
       const mock = this.mock(playbackService.player!, 'restart')
       this.setReadOnlyProperty(playbackService.player!.media, 'currentTime', 6)
-      queueStore.current = factory<Song>('song', { length: 120 })
 
       await playbackService.playPrev()
 
@@ -230,7 +225,6 @@ new class extends UnitTestCase {
       const stopMock = this.mock(playbackService, 'stop')
       this.setReadOnlyProperty(playbackService.player!.media, 'currentTime', 4)
       this.setReadOnlyProperty(playbackService, 'previous', undefined)
-      queueStore.current = factory<Song>('song')
       preferences.repeatMode = 'NO_REPEAT'
 
       await playbackService.playPrev()
@@ -242,7 +236,6 @@ new class extends UnitTestCase {
       const previousSong = factory('song')
       this.setReadOnlyProperty(playbackService.player!.media, 'currentTime', 4)
       this.setReadOnlyProperty(playbackService, 'previous', previousSong)
-      queueStore.current = factory<Song>('song')
       const playMock = this.mock(playbackService, 'play')
 
       await playbackService.playPrev()
@@ -272,14 +265,13 @@ new class extends UnitTestCase {
 
     it('stops playback', () => {
       const currentSong = factory<Song>('song')
-      queueStore.current = currentSong
       const pauseMock = this.mock(playbackService.player!, 'pause')
       const seekMock = this.mock(playbackService.player!, 'seek')
       const broadcastMock = this.mock(socketService, 'broadcast')
 
       playbackService.stop()
 
-      expect(currentSong.playbackState).toEqual('Stopped')
+      expect(currentSong.playback_state).toEqual('Stopped')
       expect(pauseMock).toHaveBeenCalled()
       expect(seekMock).toHaveBeenCalledWith(0)
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_PLAYBACK_STOPPED')
@@ -288,7 +280,6 @@ new class extends UnitTestCase {
 
     it('pauses playback', () => {
       const currentSong = factory<Song>('song')
-      queueStore.current = currentSong
       const dataToBroadcast = {}
       this.mock(songStore, 'generateDataToBroadcast', dataToBroadcast)
       const pauseMock = this.mock(playbackService.player!, 'pause')
@@ -296,14 +287,13 @@ new class extends UnitTestCase {
 
       playbackService.pause()
 
-      expect(currentSong.playbackState).toEqual('Paused')
+      expect(currentSong.playback_state).toEqual('Paused')
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', dataToBroadcast)
       expect(pauseMock).toHaveBeenCalled()
     })
 
     it('resumes playback', async () => {
       const currentSong = factory<Song>('song')
-      queueStore.current = currentSong
       const dataToBroadcast = {}
       this.mock(songStore, 'generateDataToBroadcast', dataToBroadcast)
       const playMock = this.mock(window.HTMLMediaElement.prototype, 'play')
@@ -313,7 +303,7 @@ new class extends UnitTestCase {
       playbackService.init()
       await playbackService.resume()
 
-      expect(queueStore.current?.playbackState).toEqual('Playing')
+      expect(queueStore.current?.playback_state).toEqual('Playing')
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', dataToBroadcast)
       expect(playMock).toHaveBeenCalled()
       expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', currentSong)
@@ -321,7 +311,6 @@ new class extends UnitTestCase {
 
     it('plays first in queue if toggled when there is no current song', async () => {
       const playFirstInQueueMock = this.mock(playbackService, 'playFirstInQueue')
-      queueStore.current = undefined
 
       await playbackService.toggle()
 
@@ -334,31 +323,9 @@ new class extends UnitTestCase {
       ['pause', 'Playing']
     ])('%ss playback if toggled when current song playback state is %s', async (action, playbackState) => {
       const actionMock = this.mock(playbackService, action)
-      queueStore.current = factory<Song>('song', { playbackState })
-
       await playbackService.toggle()
 
       expect(actionMock).toHaveBeenCalled()
-    })
-
-    it('queues and plays all songs shuffled by default', async () => {
-      const allSongs = factory<Song>('song', 5)
-      const shuffledSongs = factory<Song>('song', 5)
-      songStore.all = allSongs
-      const firstSongInQueue = factory('song')
-      this.setReadOnlyProperty(queueStore, 'first', firstSongInQueue)
-      const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
-      const goMock = this.mock(router, 'go')
-      const playMock = this.mock(playbackService, 'play')
-      const shuffleMock = this.mock(lodash, 'shuffle', shuffledSongs)
-
-      await playbackService.queueAndPlay()
-      await nextTick()
-
-      expect(shuffleMock).toHaveBeenCalledWith(allSongs)
-      expect(replaceQueueMock).toHaveBeenCalledWith(shuffledSongs)
-      expect(goMock).toHaveBeenCalledWith('queue')
-      expect(playMock).toHaveBeenCalledWith(firstSongInQueue)
     })
 
     it('queues and plays songs without shuffling', async () => {
@@ -416,60 +383,6 @@ new class extends UnitTestCase {
       await playbackService.playFirstInQueue()
 
       expect(queueAndPlayMock).toHaveBeenCalled()
-    })
-
-    it('plays all songs by an artist, shuffled', async () => {
-      const artist = factory<Artist>('artist', {
-        songs: factory<Song>('song', 5)
-      })
-
-      const queueAndPlayMock = this.mock(playbackService, 'queueAndPlay')
-
-      await playbackService.playAllByArtist(artist)
-
-      expect(queueAndPlayMock).toHaveBeenCalledWith(artist.songs, true)
-    })
-
-    it('plays all songs by an artist in proper order', async () => {
-      const artist = factory<Artist>('artist', {
-        songs: factory<Song>('song', 5)
-      })
-
-      const orderedSongs = factory('song', 5)
-      const orderByMock = this.mock(lodash, 'orderBy', orderedSongs)
-      const queueAndPlayMock = this.mock(playbackService, 'queueAndPlay')
-
-      await playbackService.playAllByArtist(artist, false)
-
-      expect(orderByMock).toHaveBeenCalledWith(artist.songs, ['album_id', 'disc', 'track'])
-      expect(queueAndPlayMock).toHaveBeenCalledWith(orderedSongs)
-    })
-
-    it('plays all songs in an album, shuffled', async () => {
-      const album = factory<Album>('album', {
-        songs: factory<Song>('song', 5)
-      })
-
-      const queueAndPlayMock = this.mock(playbackService, 'queueAndPlay')
-
-      await playbackService.playAllInAlbum(album)
-
-      expect(queueAndPlayMock).toHaveBeenCalledWith(album.songs, true)
-    })
-
-    it('plays all songs in an album in proper order', async () => {
-      const album = factory<Album>('album', {
-        songs: factory<Song>('song', 5)
-      })
-
-      const orderedSongs = factory('song', 5)
-      const orderByMock = this.mock(lodash, 'orderBy', orderedSongs)
-      const queueAndPlayMock = this.mock(playbackService, 'queueAndPlay')
-
-      await playbackService.playAllInAlbum(album, false)
-
-      expect(orderByMock).toHaveBeenCalledWith(album.songs, ['disc', 'track'])
-      expect(queueAndPlayMock).toHaveBeenCalledWith(orderedSongs)
     })
   }
 }

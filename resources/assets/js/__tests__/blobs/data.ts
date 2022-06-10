@@ -14,7 +14,6 @@ const bobDylan = factory<Artist>('artist', { id: 4, name: 'Bob Dylan' })
 const jamesBlunt = factory<Artist>('artist', { id: 5, name: 'James Blunt' })
 
 const all4OneAlbum = factory<Album>('album', {
-  artist: all4One,
   id: 1193,
   artist_id: 3,
   name: 'All-4-One',
@@ -22,7 +21,6 @@ const all4OneAlbum = factory<Album>('album', {
 })
 
 const musicSpeaks = factory<Album>('album', {
-  artist: all4One,
   id: 1194,
   artist_id: 3,
   name: 'And The Music Speaks',
@@ -30,7 +28,6 @@ const musicSpeaks = factory<Album>('album', {
 })
 
 const spaceJam = factory<Album>('album', {
-  artist: all4One,
   id: 1195,
   artist_id: 3,
   name: 'Space Jam',
@@ -38,7 +35,6 @@ const spaceJam = factory<Album>('album', {
 })
 
 const highway = factory<Album>('album', {
-  artist: bobDylan,
   id: 1217,
   artist_id: 4,
   name: 'Highway 61 Revisited',
@@ -46,7 +42,6 @@ const highway = factory<Album>('album', {
 })
 
 const patGarrett = factory<Album>('album', {
-  artist: bobDylan,
   id: 1218,
   artist_id: 4,
   name: 'Pat Garrett & Billy the Kid',
@@ -54,15 +49,13 @@ const patGarrett = factory<Album>('album', {
 })
 
 const theTimes = factory<Album>('album', {
-  artist: bobDylan,
   id: 1219,
   artist_id: 4,
-  name: "The Times They Are A-Changin",
+  name: 'The Times They Are A-Changin',
   cover: '/img/covers/unknown-album.png'
 })
 
 const backToBedlam = factory<Album>('album', {
-  artist: jamesBlunt,
   id: 1268,
   artist_id: 5,
   name: 'Back To Bedlam',
@@ -83,28 +76,22 @@ export default {
 
   songs: [
     factory<Song>('song', {
-      artist: all4One,
-      album: all4OneAlbum,
       id: '39189f4545f9d5671fb3dc964f0080a0',
       album_id: all4OneAlbum.id,
       artist_id: all4One.id,
       title: 'I Swear',
       length: 259.92,
-      playCount: 4
+      play_count: 4
     }),
     factory<Song>('song', {
-      artist: all4One,
-      album: musicSpeaks,
       id: 'a6a550f7d950d2a2520f9bf1a60f025a',
       album_id: musicSpeaks.id,
       artist_id: all4One.id,
       title: 'I can love you like that',
       length: 262.61,
-      playCount: 2
+      play_count: 2
     }),
     factory<Song>('song', {
-      artist: all4One,
-      album: spaceJam,
       id: 'd86c30fd34f13c1aff8db59b7fc9c610',
       album_id: spaceJam.id,
       artist_id: all4One.id,
@@ -112,8 +99,6 @@ export default {
       length: 293.04
     }),
     factory<Song>('song', {
-      artist: bobDylan,
-      album: highway,
       id: 'e6d3977f3ffa147801ca5d1fdf6fa55e',
       album_id: highway.id,
       artist_id: bobDylan.id,
@@ -121,26 +106,20 @@ export default {
       length: 373.63
     }),
     factory<Song>('song', {
-      artist: bobDylan,
-      album: patGarrett,
       id: 'aa16bbef6a9710eb9a0f41ecc534fad5',
       album_id: patGarrett.id,
       artist_id: bobDylan.id,
-      title: "Knockin' on heaven's door",
+      title: 'Knockin\' on heaven\'s door',
       length: 151.9
     }),
     factory<Song>('song', {
-      artist: bobDylan,
-      album: theTimes,
       id: 'cb7edeac1f097143e65b1b2cde102482',
       album_id: theTimes.id,
       artist_id: bobDylan.id,
-      title: "The times they are a-changin'",
+      title: 'The times they are a-changin\'',
       length: 196
     }),
     factory<Song>('song', {
-      artist: jamesBlunt,
-      album: backToBedlam,
       id: '0ba9fb128427b32683b9eb9140912a70',
       album_id: backToBedlam.id,
       artist_id: jamesBlunt.id,
@@ -148,8 +127,6 @@ export default {
       length: 243.12
     }),
     factory<Song>('song', {
-      artist: jamesBlunt,
-      album: backToBedlam,
       id: '123fd1ad32240ecab28a4e86ed5173',
       album_id: backToBedlam.id,
       artist_id: jamesBlunt.id,
@@ -157,8 +134,6 @@ export default {
       length: 265.04
     }),
     factory<Song>('song', {
-      artist: jamesBlunt,
-      album: backToBedlam,
       id: '6a54c674d8b16732f26df73f59c63e21',
       album_id: backToBedlam.id,
       artist_id: jamesBlunt.id,
@@ -166,8 +141,6 @@ export default {
       length: 223.14
     }),
     factory<Song>('song', {
-      artist: jamesBlunt,
-      album: backToBedlam,
       id: '6df7d82a9a8701e40d1c291cf14a16bc',
       album_id: backToBedlam.id,
       artist_id: jamesBlunt.id,
@@ -175,8 +148,6 @@ export default {
       length: 258.61
     }),
     factory<Song>('song', {
-      artist: jamesBlunt,
-      album: backToBedlam,
       id: '74a2000d343e4587273d3ad14e2fd741',
       album_id: backToBedlam.id,
       artist_id: jamesBlunt.id,
@@ -184,17 +155,13 @@ export default {
       length: 245.86
     }),
     factory<Song>('song', {
-      artist: jamesBlunt,
-      album: backToBedlam,
       id: '7900ab518f51775fe6cf06092c074ee5',
       album_id: backToBedlam.id,
       artist_id: jamesBlunt.id,
-      title: "You're beautiful",
+      title: 'You\'re beautiful',
       length: 213.29
     }),
     factory<Song>('song', {
-      artist: jamesBlunt,
-      album: backToBedlam,
       id: '803910a51f9893347e087af851e38777',
       album_id: backToBedlam.id,
       artist_id: jamesBlunt.id,
@@ -202,8 +169,6 @@ export default {
       length: 246.91
     }),
     factory<Song>('song', {
-      artist: jamesBlunt,
-      album: backToBedlam,
       id: 'd82b0d4d4803ebbcb61000a5b6a868f5',
       album_id: backToBedlam.id,
       artist_id: jamesBlunt.id,
@@ -242,7 +207,7 @@ export default {
       liked: false,
       play_count: 4
     }
-  ],
+  ] as Interaction[],
   currentUser,
   users: [
     currentUser,

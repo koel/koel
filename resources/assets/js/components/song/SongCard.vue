@@ -1,6 +1,6 @@
 <template>
   <article
-    :class="{ playing: song.playbackState === 'Playing' || song.playbackState === 'Paused' }"
+    :class="{ playing: song.playback_state === 'Playing' || song.playback_state === 'Paused' }"
     data-testid="song-card"
     draggable="true"
     tabindex="0"
@@ -8,19 +8,19 @@
     @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
-    <span :style="{ backgroundImage: `url(${song.album.cover})` }" class="cover">
+    <span :style="{ backgroundImage: `url(${song.album_cover})` }" class="cover">
       <a class="control" @click.prevent="changeSongState" data-testid="play-control">
-        <i v-if="song.playbackState !== 'Playing'" class="fa fa-play"/>
+        <i v-if="song.playback_state !== 'Playing'" class="fa fa-play"/>
         <i class="fa fa-pause" v-else/>
       </a>
     </span>
     <span class="main">
       <span class="details">
-        <span v-if="showPlayCount" :style="{ width: `${song.playCount*100/topPlayCount}%` }" class="play-count"/>
+        <span v-if="showPlayCount" :style="{ width: `${song.play_count*100/topPlayCount}%` }" class="play-count"/>
         {{ song.title }}
         <span class="by text-secondary">
-          <a :href="`#!/artist/${song.artist.id}`">{{ song.artist.name }}</a>
-          <template v-if="showPlayCount"> - {{ pluralize(song.playCount, 'play') }}</template>
+          <a :href="`#!/artist/${song.artist_id}`">{{ song.artist_name }}</a>
+          <template v-if="showPlayCount"> - {{ pluralize(song.play_count, 'play') }}</template>
         </span>
       </span>
       <span class="favorite">
@@ -41,7 +41,7 @@ const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLike
 const props = withDefaults(defineProps<{ song: Song, topPlayCount?: number }>(), { topPlayCount: 0 })
 const { song, topPlayCount } = toRefs(props)
 
-const showPlayCount = computed(() => Boolean(topPlayCount && song.value.playCount))
+const showPlayCount = computed(() => Boolean(topPlayCount && song.value.play_count))
 
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
 const dragStart = (event: DragEvent) => startDragging(event, song.value, 'Song')
@@ -52,9 +52,9 @@ const play = () => {
 }
 
 const changeSongState = () => {
-  if (song.value.playbackState === 'Stopped') {
+  if (song.value.playback_state === 'Stopped') {
     play()
-  } else if (song.value.playbackState === 'Paused') {
+  } else if (song.value.playback_state === 'Paused') {
     playbackService.resume()
   } else {
     playbackService.pause()

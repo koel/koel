@@ -1,10 +1,10 @@
-import { reactive } from 'vue'
-import slugify from 'slugify'
-import { orderBy, remove, take, unionBy, without } from 'lodash'
 import isMobile from 'ismobilejs'
+import slugify from 'slugify'
+import { orderBy, take, union } from 'lodash'
+import { reactive, watch } from 'vue'
 import { arrayify, secondsToHis, use } from '@/utils'
 import { authService, httpService } from '@/services'
-import { albumStore, artistStore, commonStore, favoriteStore, preferenceStore } from '.'
+import { albumStore, artistStore, commonStore, overviewStore, preferenceStore } from '@/stores'
 
 interface BroadcastSongData {
   song: {
@@ -28,70 +28,18 @@ interface SongUpdateResult {
   songs: Song[]
   artists: Artist[]
   albums: Album[]
+  removed: {
+    albums: Pick<Album, 'id' | 'artist_id' | 'name' | 'cover' | 'created_at'>[]
+    artists: Pick<Artist, 'id' | 'name' | 'image' | 'created_at'>[]
+  }
 }
 
 export const songStore = {
-  cache: {} as { [key: string]: Song },
+  vault: new Map<string, Song>(),
 
   state: reactive({
-    songs: [] as Song[],
-    recentlyPlayed: [] as Song[]
+    songs: [] as Song[]
   }),
-
-  init (songs: Song[]) {
-    this.all = songs
-    this.all.forEach(song => this.setupSong(song))
-  },
-
-  setupSong (song: Song) {
-    song.fmtLength = secondsToHis(song.length)
-
-    const album = albumStore.byId(song.album_id)!
-    const artist = artistStore.byId(song.artist_id)!
-
-    song.playCount = song.playCount || 0
-    song.album = album
-    song.artist = artist
-    song.liked = song.liked || false
-    song.lyrics = song.lyrics || ''
-    song.playbackState = song.playbackState || 'Stopped'
-
-    artist.songs = unionBy(artist.songs || [], [song], 'id')
-    album.songs = unionBy(album.songs || [], [song], 'id')
-
-    // now if the song is part of a compilation album, the album must be added
-    // into its artist as well
-    if (album.is_compilation) {
-      artist.albums = unionBy(artist.albums, [album], 'id')
-    }
-
-    // Cache the song, so that byId() is faster
-    this.cache[song.id] = song
-  },
-
-  /**
-   * Initializes the interaction (like/play count) information.
-   *
-   * @param  {Interaction[]} interactions The array of interactions of the current user
-   */
-  initInteractions (interactions: Interaction[]) {
-    favoriteStore.clear()
-
-    interactions.forEach(interaction => {
-      const song = this.byId(interaction.song_id)
-
-      if (!song) {
-        return
-      }
-
-      song.liked = interaction.liked
-      song.playCount = interaction.play_count
-      song.album.playCount += song.playCount
-      song.artist.playCount += song.playCount
-
-      song.liked && favoriteStore.add(song)
-    })
-  },
 
   /**
    * Get the total duration of some songs.
@@ -109,32 +57,28 @@ export const songStore = {
     return String(this.getLength(songs, true))
   },
 
-  get all () {
-    return this.state.songs
-  },
-
-  set all (value: Song[]) {
-    this.state.songs = value
-  },
-
   byId (id: string) {
-    return this.cache[id]
+    return this.vault.get(id)
   },
 
   byIds (ids: string[]) {
     const songs = [] as Song[]
-    arrayify(ids).forEach(id => use(this.byId(id), song => songs.push(song!)))
+    ids.forEach(id => use(this.byId(id), song => songs.push(song!)))
     return songs
   },
 
+  byAlbum (album: Album) {
+    return Array.from(this.vault.values()).filter(song => song.album_id === album.id)
+  },
+
   /**
-   * Guess a song by its title and album.
+   * Match a title to a song.
    * Forget about Levenshtein distance, this implementation is good enough.
    */
-  guess: (title: string, album: Album) => {
+  match: (title: string, songs: Song[]) => {
     title = slugify(title.toLowerCase())
 
-    for (const song of album.songs) {
+    for (const song of songs) {
       if (slugify(song.title.toLowerCase()) === title) {
         return song
       }
@@ -147,92 +91,118 @@ export const songStore = {
    * Increase a play count for a song.
    */
   registerPlay: async (song: Song) => {
-    const oldCount = song.playCount
-
     const interaction = await httpService.post<Interaction>('interaction/play', { song: song.id })
 
     // Use the data from the server to make sure we don't miss a play from another device.
-    song.playCount = interaction.play_count
-    song.album.playCount += song.playCount - oldCount
-    song.artist.playCount += song.playCount - oldCount
+    song.play_count = interaction.play_count
   },
 
-  scrobble: async (song: Song) => await httpService.post(`${song.id}/scrobble`, { timestamp: song.playStartTime }),
+  scrobble: async (song: Song) => await httpService.post(`${song.id}/scrobble`, { timestamp: song.play_start_time }),
 
   async update (songsToUpdate: Song[], data: any) {
-    const { songs, artists, albums } = await httpService.put<SongUpdateResult>('songs', {
+    const { songs, artists, albums, removed } = await httpService.put<SongUpdateResult>('songs', {
       data,
       songs: songsToUpdate.map(song => song.id)
     })
 
-    // Add the artist and album into stores if they're new
-    artists.forEach(artist => !artistStore.byId(artist.id) && artistStore.add(artist))
-    albums.forEach(album => !albumStore.byId(album.id) && albumStore.add(album))
+    this.syncWithVault(songs)
 
-    songs.forEach(song => {
-      let originalSong = this.byId(song.id)!
+    albumStore.syncWithVault(albums)
+    artistStore.syncWithVault(artists)
 
-      if (originalSong.album_id !== song.album_id) {
-        // album has been changed. Remove the song from its old album.
-        originalSong.album.songs = without(originalSong.album.songs, originalSong)
-      }
+    albumStore.removeByIds(removed.albums.map(album => album.id))
+    artistStore.removeByIds(removed.artists.map(artist => artist.id))
 
-      if (originalSong.artist_id !== song.artist_id) {
-        // artist has been changed. Remove the song from its old artist
-        originalSong.artist.songs = without(originalSong.artist.songs, originalSong)
-      }
-
-      originalSong = Object.assign(originalSong, song)
-      // re-setup the song
-      this.setupSong(originalSong)
-    })
-
-    artistStore.compact()
-    albumStore.compact()
-
-    return songs
+    overviewStore.refresh()
   },
 
   getSourceUrl: (song: Song) => {
     return isMobile.any && preferenceStore.transcodeOnMobile
-      ? `${commonStore.state.cdnUrl}play/${song.id}/1/128?api_token=${authService.getToken()}`
-      : `${commonStore.state.cdnUrl}play/${song.id}?api_token=${authService.getToken()}`
+      ? `${commonStore.state.cdn_url}play/${song.id}/1/128?api_token=${authService.getToken()}`
+      : `${commonStore.state.cdn_url}play/${song.id}?api_token=${authService.getToken()}`
   },
 
   getShareableUrl: (song: Song) => `${window.BASE_URL}#!/song/${song.id}`,
-
-  get recentlyPlayed () {
-    return this.state.recentlyPlayed
-  },
-
-  getMostPlayed (n = 10) {
-    const songs = take(orderBy(this.all, 'playCount', 'desc'), n)
-
-    // Remove those with playCount=0
-    remove(songs, song => !song.playCount)
-
-    return songs
-  },
-
-  getRecentlyAdded (n = 10) {
-    return take(orderBy(this.all, 'created_at', 'desc'), n)
-  },
 
   generateDataToBroadcast: (song: Song): BroadcastSongData => ({
     song: {
       id: song.id,
       title: song.title,
       liked: song.liked,
-      playbackState: song.playbackState || 'Stopped',
+      playbackState: song.playback_state || 'Stopped',
       album: {
-        id: song.album.id,
-        name: song.album.name,
-        cover: song.album.cover
+        id: song.album_id,
+        name: song.album_name,
+        cover: song.album_cover
       },
       artist: {
-        id: song.artist.id,
-        name: song.artist.name
+        id: song.artist_id,
+        name: song.artist_name
       }
     }
-  })
+  }),
+
+  syncWithVault (songs: Song | Song[]) {
+    return arrayify(songs).map(song => {
+      let local = this.byId(song.id)
+
+      if (local) {
+        Object.assign(local, song)
+      } else {
+        song.playback_state = 'Stopped'
+        local = reactive(song)
+        this.trackPlayCount(local!)
+      }
+
+      this.vault.set(song.id, local)
+      return local
+    })
+  },
+
+  trackPlayCount: (song: Song) => {
+    watch(() => song.play_count, (newCount, oldCount) => {
+      const album = albumStore.byId(song.album_id)
+      album && (album.play_count += (newCount - oldCount))
+
+      const artist = artistStore.byId(song.artist_id)
+      artist && (artist.play_count += (newCount - oldCount))
+
+      if (song.album_artist_id !== song.artist_id) {
+        const albumArtist = artistStore.byId(song.album_artist_id)
+        albumArtist && (albumArtist.play_count += (newCount - oldCount))
+      }
+
+      overviewStore.refresh()
+    })
+  },
+
+  async fetchForAlbum (album: Album) {
+    return this.syncWithVault(await httpService.get<Song[]>(`albums/${album.id}/songs`))
+  },
+
+  async fetchForArtist (artist: Artist) {
+    return this.syncWithVault(await httpService.get<Song[]>(`artists/${artist.id}/songs`))
+  },
+
+  async fetchForPlaylist (playlist: Playlist) {
+    return this.syncWithVault(await httpService.get<Song[]>(`playlists/${playlist.id}/songs`))
+  },
+
+  async fetch (sortField: SongListSortField, sortOrder: SortOrder, page: number) {
+    const resource = await httpService.get<PaginatorResource>(
+      `songs?page=${page}&sort=${sortField}&order=${sortOrder}`
+    )
+
+    this.state.songs = union(this.state.songs, this.syncWithVault(resource.data))
+
+    return resource.links.next ? ++resource.meta.current_page : null
+  },
+
+  getMostPlayed (count: number) {
+    return take(orderBy(Array.from(this.vault.values()), 'play_count', 'desc'), count)
+  },
+
+  getRecentlyAdded (count: number) {
+    return take(orderBy(Array.from(this.vault.values()), 'created_at', 'desc'), count)
+  }
 }

@@ -4,76 +4,17 @@
 
     <div class="main-scroll-wrap" @scroll="scrolling">
       <div class="two-cols">
-        <section v-if="top.songs.length">
-          <h1>Most Played</h1>
-
-          <ol class="top-song-list">
-            <li v-for="song in top.songs" :key="song.id">
-              <SongCard :song="song" :top-play-count="top.songs.length ? top.songs[0].playCount : 0"/>
-            </li>
-          </ol>
-        </section>
-
-        <section class="recent">
-          <h1>
-            Recently Played
-            <Btn
-              data-testid="home-view-all-recently-played-btn"
-              @click.prevent="goToRecentlyPlayedScreen"
-              rounded
-              small
-              orange
-            >
-              View All
-            </Btn>
-          </h1>
-
-          <ol v-if="recentSongs.length" class="recent-song-list">
-            <li v-for="song in recentSongs" :key="song.id">
-              <SongCard :song="song" :top-play-count="top.songs.length ? top.songs[0].playCount : 0"/>
-            </li>
-          </ol>
-
-          <p v-show="!recentSongs.length" class="text-secondary">
-            Your recently played songs will be displayed here.<br/>
-            Start listening!
-          </p>
-        </section>
+        <MostPlayedSongs/>
+        <RecentlyPlayedSongs/>
       </div>
 
-      <section v-if="showRecentlyAddedSection">
-        <h1>Recently Added</h1>
-        <div class="two-cols">
-          <ol class="recently-added-album-list">
-            <li v-for="album in recentlyAdded.albums" :key="album.id">
-              <AlbumCard :album="album" layout="compact"/>
-            </li>
-          </ol>
-          <ol v-show="recentlyAdded.songs.length" class="recently-added-song-list">
-            <li v-for="song in recentlyAdded.songs" :key="song.id">
-              <SongCard :song="song"/>
-            </li>
-          </ol>
-        </div>
-      </section>
+      <div class="two-cols">
+        <RecentlyAddedAlbums/>
+        <RecentlyAddedSongs/>
+      </div>
 
-      <section v-if="top.artists.length">
-        <h1>Top Artists</h1>
-        <ol class="two-cols top-artist-list">
-          <li v-for="artist in top.artists" :key="artist.id">
-            <ArtistCard :artist="artist" layout="compact"/>
-          </li>
-        </ol>
-      </section>
-
-      <section v-if="top.albums.length">
-        <h1>Top Albums</h1>
-        <ol class="two-cols top-album-list">
-          <li v-for="album in top.albums" :key="album.id">
-            <AlbumCard :album="album" layout="compact"/>
-          </li>
-        </ol>
-      </section>
+      <MostPlayedArtists/>
+      <MostPlayedAlbum/>
 
       <ToTopButton/>
     </div>
@@ -82,20 +23,23 @@
 
 <script lang="ts" setup>
 import { sample } from 'lodash'
-import { computed, defineAsyncComponent, reactive, ref } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 
-import { eventBus } from '@/utils'
-import { albumStore, artistStore, recentlyPlayedStore, songStore, userStore } from '@/stores'
+import { eventBus, noop } from '@/utils'
+import { overviewStore, userStore } from '@/stores'
 import { useInfiniteScroll } from '@/composables'
-import router from '@/router'
+
+import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
+import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
+import RecentlyAddedAlbums from '@/components/screens/home/RecentlyAddedAlbums.vue'
+import RecentlyAddedSongs from '@/components/screens/home/RecentlyAddedSongs.vue'
+import MostPlayedArtists from '@/components/screens/home/MostPlayedArtists.vue'
+import MostPlayedAlbum from '@/components/screens/home/MostPlayedAlbum.vue'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
-const ArtistCard = defineAsyncComponent(() => import('@/components/artist/ArtistCard.vue'))
-const SongCard = defineAsyncComponent(() => import('@/components/song/SongCard.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
-const { ToTopButton, scrolling } = useInfiniteScroll()
+const { ToTopButton, scrolling } = useInfiniteScroll(() => noop())
 
 const greetings = [
   'Oh hai!',
@@ -109,35 +53,16 @@ const greetings = [
   'How have you been, %s?'
 ]
 
-const greeting = ref('')
-const recentSongs = ref<Song[]>([])
+const greeting = computed(() => sample(greetings)!.replace('%s', userStore.current.name))
 
-const top = reactive({
-  songs: [] as Song[],
-  albums: [] as Album[],
-  artists: [] as Artist[]
+let initialized = false
+
+eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
+  if (view === 'Home' && !initialized) {
+    await overviewStore.init()
+    initialized = true
+  }
 })
-
-const recentlyAdded = reactive({
-  albums: [] as Album[],
-  songs: [] as Song[]
-})
-
-const showRecentlyAddedSection = computed(() => Boolean(recentlyAdded.albums.length || recentlyAdded.songs.length))
-
-const refreshDashboard = () => {
-  top.songs = songStore.getMostPlayed(7)
-  top.albums = albumStore.getMostPlayed(6)
-  top.artists = artistStore.getMostPlayed(6)
-  recentlyAdded.albums = albumStore.getRecentlyAdded(6)
-  recentlyAdded.songs = songStore.getRecentlyAdded(10)
-  recentSongs.value = recentlyPlayedStore.excerptState.songs
-}
-
-const goToRecentlyPlayedScreen = () => router.go('recently-played')
-
-eventBus.on(['KOEL_READY', 'SONG_STARTED', 'SONG_UPLOADED'], () => refreshDashboard())
-eventBus.on('KOEL_READY', () => (greeting.value = sample(greetings)!.replace('%s', userStore.current.name)))
 </script>
 
 <style lang="scss">

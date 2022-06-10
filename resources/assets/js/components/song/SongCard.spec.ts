@@ -11,12 +11,8 @@ let song: Song
 new class extends UnitTestCase {
   private renderComponent (playbackState: PlaybackState = 'Stopped') {
     song = factory<Song>('song', {
-      playbackState,
-      artist: factory<Artist>('artist', {
-        id: 42,
-        name: 'Foo Fighter'
-      }),
-      playCount: 10,
+      playback_state: playbackState,
+      play_count: 10,
       title: 'Foo bar'
     })
 

@@ -10,19 +10,8 @@ new class extends UnitTestCase {
     })
 
     it('renders with a song', () => {
-      const album = factory<Album>('album', {
-        id: 42,
-        name: 'IV',
-        artist: factory<Artist>('artist', {
-          id: 104,
-          name: 'Led Zeppelin'
-        })
-      })
-
       const song = factory<Song>('song', {
-        album,
-        title: 'Fahrstuhl to Heaven',
-        artist: album.artist
+        title: 'Fahrstuhl to Heaven'
       })
 
       expect(this.render(FooterMiddlePane, {

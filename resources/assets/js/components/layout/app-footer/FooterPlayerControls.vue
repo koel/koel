@@ -54,8 +54,8 @@ import { defaultCover } from '@/utils'
 const props = defineProps<{ song: Song | null }>()
 const { song } = toRefs(props)
 
-const cover = computed(() => song.value?.album.cover ? song.value.album.cover : defaultCover)
-const shouldShowPlayButton = computed(() => !song || song.value?.playbackState !== 'Playing')
+const cover = computed(() => song.value?.album_cover ? song.value?.album_cover : defaultCover)
+const shouldShowPlayButton = computed(() => !song || song.value?.playback_state !== 'Playing')
 
 const playPrev = async () => await playbackService.playPrev()
 const playNext = async () => await playbackService.playNext()

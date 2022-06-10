@@ -2,8 +2,6 @@ import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { commonStore } from '@/stores'
-import { songInfoService } from '@/services'
-import { eventBus } from '@/utils'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import ExtraPanel from './ExtraPanel.vue'
 
@@ -26,14 +24,14 @@ new class extends UnitTestCase {
 
   protected test () {
     it('has a YouTube tab if using YouTube ', () => {
-      commonStore.state.useYouTube = true
+      commonStore.state.use_you_tube = true
       const { getByTestId } = this.renderComponent()
 
       getByTestId('extra-tab-youtube')
     })
 
     it('does not have a YouTube tab if not using YouTube', async () => {
-      commonStore.state.useYouTube = false
+      commonStore.state.use_you_tube = false
       const { queryByTestId } = this.renderComponent()
 
       expect(await queryByTestId('extra-tab-youtube')).toBeNull()
@@ -45,16 +43,6 @@ new class extends UnitTestCase {
       await fireEvent.click(getByTestId(id))
 
       expect(container.querySelector('[aria-selected=true]')).toBe(getByTestId(id))
-    })
-
-    it('fetches song info when a new song is played', () => {
-      this.renderComponent()
-      const song = factory<Song>('song')
-      const mock = this.mock(songInfoService, 'fetch', song)
-
-      eventBus.emit('SONG_STARTED', song)
-
-      expect(mock).toHaveBeenCalledWith(song)
     })
   }
 }

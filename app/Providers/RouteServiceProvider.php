@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Webmozart\Assert\Assert;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -11,17 +12,21 @@ class RouteServiceProvider extends ServiceProvider
 
     public function map(): void
     {
-        $this->mapApiRoutes();
-        $this->mapWebRoutes();
+        self::loadVersionAwareRoutes('web');
+        self::loadVersionAwareRoutes('api');
     }
 
-    protected function mapWebRoutes(): void
+    private static function loadVersionAwareRoutes(string $type): void
     {
-        Route::middleware('web')->group(base_path('routes/web.php'));
-    }
+        Assert::oneOf($type, ['web', 'api']);
 
-    protected function mapApiRoutes(): void
-    {
-        Route::prefix('api')->middleware('api')->group(base_path('routes/api.php'));
+        Route::group([], base_path(sprintf('routes/%s.base.php', $type)));
+
+        $apiVersion = request()->header('X-Api-Version');
+        $routeFile = $apiVersion ? base_path(sprintf('routes/%s.%s.php', $type, $apiVersion)) : null;
+
+        if ($routeFile && file_exists($routeFile)) {
+            Route::group([], $routeFile);
+        }
     }
 }

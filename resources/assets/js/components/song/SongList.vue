@@ -9,65 +9,65 @@
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="handleA"
   >
-    <div :class="mergedConfig.sortable ? 'sortable' : 'unsortable'" class="song-list-header">
+    <div :class="config.sortable ? 'sortable' : 'unsortable'" class="song-list-header">
       <span
-        v-if="mergedConfig.columns.includes('track')"
+        v-if="config.columns.includes('track')"
         class="track-number"
         data-testid="header-track-number"
-        @click="sort('song.track')"
+        @click="sort('track')"
       >
         #
-        <i v-show="primarySortField === 'song.track' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
-        <i v-show="primarySortField === 'song.track' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
+        <i v-show="currentSortField === 'track' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="currentSortField === 'track' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
-        v-if="mergedConfig.columns.includes('title')"
+        v-if="config.columns.includes('title')"
         class="title"
         data-testid="header-title"
-        @click="sort('song.title')"
+        @click="sort('title')"
       >
         Title
-        <i v-show="primarySortField === 'song.title' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
-        <i v-show="primarySortField === 'song.title' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
+        <i v-show="currentSortField === 'title' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="currentSortField === 'title' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
-        v-if="mergedConfig.columns.includes('artist')"
+        v-if="config.columns.includes('artist')"
         class="artist"
         data-testid="header-artist"
-        @click="sort(['song.album.artist.name', 'song.album.name', 'song.track'])"
+        @click="sort('artist_name')"
       >
         Artist
-        <i v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
-        <i v-show="primarySortField === 'song.album.artist.name' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
+        <i v-show="currentSortField === 'artistName' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="currentSortField === 'artistName' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
-        v-if="mergedConfig.columns.includes('album')"
+        v-if="config.columns.includes('album')"
         class="album"
         data-testid="header-album"
-        @click="sort(['song.album.name', 'song.track'])"
+        @click="sort('album_name')"
       >
         Album
-        <i v-show="primarySortField === 'song.album.name' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
-        <i v-show="primarySortField === 'song.album.name' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
+        <i v-show="currentSortField === 'albumName' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="currentSortField === 'albumName' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
-        v-if="mergedConfig.columns.includes('length')"
+        v-if="config.columns.includes('length')"
         class="time"
         data-testid="header-length"
-        @click="sort('song.length')"
+        @click="sort('length')"
       >
-        <i v-show="primarySortField === 'song.length' && sortOrder === 'Asc'" class="fa fa-angle-down"></i>
-        <i v-show="primarySortField === 'song.length' && sortOrder === 'Desc'" class="fa fa-angle-up"></i>
+        <i v-show="currentSortField === 'length' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="currentSortField === 'length' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
         &nbsp;<i class="duration-header fa fa-clock-o"></i>
       </span>
       <span class="favorite"></span>
       <span class="play"></span>
     </div>
 
-    <VirtualScroller v-slot="{ item }" :item-height="35" :items="songRows">
+    <VirtualScroller v-slot="{ item }" :item-height="35" :items="songRows" @scrolled-to-end="$emit('scrolled-to-end')">
       <SongListItem
         :key="item.song.id"
-        :columns="mergedConfig.columns"
+        :columns="config.columns"
         :item="item"
         draggable="true"
         @click="rowClicked(item, $event)"
@@ -84,38 +84,39 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { findIndex, orderBy } from 'lodash'
-import { computed, defineAsyncComponent, getCurrentInstance, onMounted, ref, toRefs, watch } from 'vue'
-import { $, arrayify, eventBus, startDragging } from '@/utils'
-
-type SortOrder = 'Asc' | 'Desc' | 'None'
+import { findIndex } from 'lodash'
+import { computed, defineAsyncComponent, getCurrentInstance, inject, onMounted, ref, watch } from 'vue'
+import { $, eventBus, startDragging } from '@/utils'
+import { SongListConfigKey, SongListTypeKey, SongsKey } from '@/symbols'
 
 const VirtualScroller = defineAsyncComponent(() => import('@/components/ui/VirtualScroller.vue'))
 const SongListItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
 
-const props = withDefaults(
-  defineProps<{ items: Song[], type?: SongListType, config?: Partial<SongListConfig> }>(),
-  { type: 'all-songs', config: () => ({}) }
-)
+const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scrolled-to-end'])
 
-const { items, type, config } = toRefs(props)
+const items = inject(SongsKey, ref([]))
+const type = inject(SongListTypeKey, 'all-songs')
 
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
-const sortOrder = ref<SortOrder>('None')
+const sortOrder = ref<SortOrder>('asc')
 const songRows = ref<SongRow[]>([])
-let initialSortedSongRows: SongRow[] = []
 
-const allowReordering = computed(() => type.value === 'queue')
+const allowReordering = type === 'queue'
 const selectedSongs = computed(() => songRows.value.filter(row => row.selected).map(row => row.song))
-const primarySortField = computed(() => sortFields.value.length === 0 ? null : sortFields.value[0])
 
-const mergedConfig = computed((): SongListConfig => {
+const config = computed((): SongListConfig => {
   return Object.assign({
     sortable: true,
     columns: ['track', 'title', 'artist', 'album', 'length']
-  }, config.value)
+  }, inject(SongListConfigKey, {}))
 })
+
+const currentSortField = ref<SongListSortField | null>((() => {
+  if (['album', 'artist'].includes(type)) return 'track'
+  if (type === 'search-results') return null
+  return config.value.sortable ? 'title' : null
+})())
 
 /**
  * Since song objects themselves are shared by all song lists, we can't use them directly to
@@ -133,51 +134,27 @@ const generateSongRows = () => {
   }))
 }
 
-const nextSortOrder = computed<SortOrder>(() => {
-  if (sortOrder.value === 'None') return 'Asc'
-  if (sortOrder.value === 'Asc') return 'Desc'
-  return 'None'
-})
-
-const sort = (field: SongListSortField | SongListSortField[] = [], order: SortOrder | null = null) => {
+const sort = (field: SongListSortField) => {
   // there are certain circumstances where sorting is simply disallowed, e.g. in Queue
-  if (!mergedConfig.value.sortable) {
+  if (!config.value.sortable) {
     return
   }
 
-  sortFields.value = arrayify(field)
+  currentSortField.value = field
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
 
-  if (!sortFields.value.length && ['album', 'artist'].includes(type.value)) {
-    // by default, sort Album/Artist by track numbers for a more friendly UX
-    sortFields.value.push('song.track')
-    order = 'Asc'
-  }
-
-  if (sortFields.value.includes('song.track') && !sortFields.value.includes('song.disc')) {
-    // Track numbers should always go in conjunction with disc numbers.
-    sortFields.value.push('song.disc')
-  }
-
-  sortOrder.value = order === null ? nextSortOrder.value : order
-
-  songRows.value = sortOrder.value === 'None'
-    ? initialSortedSongRows
-    : orderBy(songRows.value, sortFields.value, sortOrder.value === 'Desc' ? 'desc' : 'asc')
+  emit('sort', field, sortOrder.value)
 }
 
 const render = () => {
-  mergedConfig.value.sortable || (sortFields.value = [])
-  // keep a backup of the initial-sorted rows to revert to it when the sort order becomes "None"
-  songRows.value = initialSortedSongRows = generateSongRows()
-  sort(sortFields.value, sortOrder.value)
+  config.value.sortable || (sortFields.value = [])
+  songRows.value = generateSongRows()
 }
 
 watch(items, () => render(), { deep: true })
 
 const vm = getCurrentInstance()
 watch(selectedSongs, () => eventBus.emit('SET_SELECTED_SONGS', selectedSongs.value, vm?.parent))
-
-const emit = defineEmits(['press:enter', 'press:delete', 'reorder'])
 
 const handleDelete = () => {
   emit('press:delete')
@@ -255,9 +232,7 @@ const rowDragStart = (row: SongRow, event: DragEvent) => {
  * Add a "droppable" class and set the drop effect when other songs are dragged over a row.
  */
 const allowDrop = (event: DragEvent) => {
-  if (!allowReordering.value) {
-    return
-  }
+  if (!allowReordering) return
 
   $.addClass((event.target as Element).parentElement, 'droppable')
   event.dataTransfer!.dropEffect = 'move'
@@ -267,7 +242,7 @@ const allowDrop = (event: DragEvent) => {
 
 const handleDrop = (item: SongRow, event: DragEvent) => {
   if (
-    !allowReordering.value ||
+    !allowReordering ||
     !event.dataTransfer!.getData('application/x-koel.text+plain') ||
     !selectedSongs.value.length
   ) {

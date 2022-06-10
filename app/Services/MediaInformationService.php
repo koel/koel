@@ -6,14 +6,16 @@ use App\Events\AlbumInformationFetched;
 use App\Events\ArtistInformationFetched;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Repositories\AlbumRepository;
+use App\Repositories\ArtistRepository;
 
 class MediaInformationService
 {
-    private LastfmService $lastfmService;
-
-    public function __construct(LastfmService $lastfmService)
-    {
-        $this->lastfmService = $lastfmService;
+    public function __construct(
+        private LastfmService $lastfmService,
+        private AlbumRepository $albumRepository,
+        private ArtistRepository $artistRepository
+    ) {
     }
 
     /**
@@ -32,9 +34,8 @@ class MediaInformationService
         if ($info) {
             event(new AlbumInformationFetched($album, $info));
 
-            // The album may have been updated.
-            $album->refresh();
-            $info['cover'] = $album->cover;
+            // The album cover may have been updated.
+            $info['cover'] = $this->albumRepository->getOneById($album->id)->cover;
         }
 
         return $info;
@@ -56,9 +57,8 @@ class MediaInformationService
         if ($info) {
             event(new ArtistInformationFetched($artist, $info));
 
-            // The artist may have been updated.
-            $artist->refresh();
-            $info['image'] = $artist->image;
+            // The artist image may have been updated.
+            $info['image'] = $this->artistRepository->getOneById($artist->id)->image;
         }
 
         return $info;

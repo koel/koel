@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Laravel\Scout\Searchable;
 
@@ -35,6 +36,7 @@ use Laravel\Scout\Searchable;
  * @method static int count()
  * @method static self|Collection|null find($id)
  * @method static Builder take(int $count)
+ * @method static float|int sum(string $column)
  */
 class Song extends Model
 {
@@ -214,15 +216,30 @@ class Song extends Model
         return $value ?: pathinfo($this->path, PATHINFO_FILENAME);
     }
 
-    /**
-     * Prepare the lyrics for displaying.
-     */
-    public function getLyricsAttribute(string $value): string
+    public static function withMeta(User $scopedUser, ?Builder $query = null): Builder
     {
-        // We don't use nl2br() here, because the function actually preserves line breaks -
-        // it just _appends_ a "<br />" after each of them. This would cause our client
-        // implementation of br2nl to fail with duplicated line breaks.
-        return str_replace(["\r\n", "\r", "\n"], '<br />', $value);
+        $query ??= static::query();
+
+        return $query
+            ->with('artist', 'album', 'album.artist')
+            ->leftJoin('interactions', static function (JoinClause $join) use ($scopedUser): void {
+                $join->on('interactions.song_id', '=', 'songs.id')
+                    ->where('interactions.user_id', $scopedUser->id);
+            })
+            ->join('albums', 'songs.album_id', '=', 'albums.id')
+            ->join('artists', 'songs.artist_id', '=', 'artists.id')
+            ->select(
+                'songs.*',
+                'albums.name',
+                'artists.name',
+                'interactions.liked',
+                'interactions.play_count'
+            );
+    }
+
+    public function scopeWithMeta(Builder $query, User $scopedUser): Builder
+    {
+        return static::withMeta($scopedUser, $query);
     }
 
     /** @return array<mixed> */

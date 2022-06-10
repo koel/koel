@@ -118,7 +118,7 @@ interface FileSystemEntry {
 interface AlbumTrack {
   readonly title: string
   readonly length: number
-  fmtLength: string
+  fmt_length: string
 }
 
 interface AlbumInfo {
@@ -141,55 +141,62 @@ interface ArtistInfo {
 }
 
 interface Artist {
+  type: 'artists',
   readonly id: number
   name: string
   image: string | null
-  albums: Album[]
-  songs: Song[]
   info: ArtistInfo | null
-  playCount: number
+  play_count: number
+  album_count: number
+  song_count: number
   length: number
-  fmtLength: string
+  fmt_length: string
+  created_at: string
 }
 
 interface Album {
-  is_compilation: any
+  type: 'albums'
   readonly id: number
   artist_id: number
-  artist: Artist
+  artist_name: string
   name: string
   cover: string
   thumbnail?: string | null
-  songs: Song[]
   info: AlbumInfo | null
-  playCount: number
+  play_count: number
+  song_count: number
   length: number
-  fmtLength: string
+  fmt_length: string
+  created_at: string
 }
 
 interface Song {
+  type: 'songs'
   readonly id: string
   album_id: number
-  album: Album
+  album_name: string
+  album_cover: string
   artist_id: number
-  artist: Artist
+  artist_name: string
+  album_artist_id: number
+  album_artist_name: string
   title: string
   readonly length: number
-  track: number
-  disc: number
+  track: number | null
+  disc: number | null
   lyrics: string
   youtube?: {
     items: YouTubeVideo[]
     nextPageToken: string
   },
-  playCountRegistered?: boolean
+  play_count_registered?: boolean
   preloaded?: boolean
-  playbackState?: PlaybackState
-  infoRetrieved?: boolean
-  playCount: number
+  playback_state?: PlaybackState
+  play_count: number
   liked: boolean
-  playStartTime?: number
-  fmtLength?: string
+  play_start_time?: number
+  fmt_length?: string
+  created_at: string
 }
 
 interface SmartPlaylistRuleGroup {
@@ -227,7 +234,6 @@ interface Playlist {
   readonly id: number
   name: string
   songs: Song[]
-  populated?: boolean
   is_smart: boolean
   rules: SmartPlaylistRuleGroup[]
 }
@@ -256,9 +262,9 @@ interface User {
   id: number
   name: string
   email: string
-  password: string
   is_admin: boolean
-  preferences: UserPreferences
+  password?: string
+  preferences?: UserPreferences
   avatar: string
 }
 
@@ -267,26 +273,25 @@ interface Settings {
 }
 
 interface Interaction {
+  readonly id: number
   readonly song_id: string
   liked: boolean
   play_count: number
 }
 
-declare module 'koel/types/ui' {
-  interface SliderElement extends HTMLElement {
-    noUiSlider?: {
-      destroy (): void
-      on (eventName: 'change' | 'slide', handler: (value: number[], handle: number) => unknown): void
-      set (options: number | any[]): void
-    }
+interface SliderElement extends HTMLElement {
+  noUiSlider?: {
+    destroy (): void
+    on (eventName: 'change' | 'slide', handler: (value: number[], handle: number) => unknown): void
+    set (options: number | any[]): void
   }
+}
 
-  type OverlayState = {
-    showing: boolean
-    dismissible: boolean
-    type: 'loading' | 'success' | 'info' | 'warning' | 'error'
-    message: string
-  }
+type OverlayState = {
+  showing: boolean
+  dismissible: boolean
+  type: 'loading' | 'success' | 'info' | 'warning' | 'error'
+  message: string
 }
 
 interface SongRow {
@@ -301,7 +306,13 @@ interface EqualizerPreset {
   gains: number[]
 }
 
-declare type DragType = 'Song' | 'Album' | 'Artist'
+type DragType = 'Song' | 'Album' | 'Artist'
+
+type DragData = {
+  type: 'songs' | 'album' | 'artist'
+  value: string[] | number
+}
+
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
 declare type MainViewName =
   | 'Home'
@@ -325,26 +336,6 @@ declare type MainViewName =
   | 'Search.Songs'
 
 declare type ArtistAlbumCardLayout = 'full' | 'compact'
-
-interface SongUploadResult {
-  album: {
-    id: number
-    name: string
-    cover: string
-    is_compilation: boolean
-    artist_id: number
-  }
-  artist: {
-    id: number
-    name: string
-    image: string | null
-  }
-  id: string
-  title: string
-  length: number
-  disc: number
-  track: number
-}
 
 interface AddToMenuConfig {
   queue: boolean
@@ -388,11 +379,18 @@ interface SongListConfig {
   columns: SongListColumn[]
 }
 
-type SongListSortField = 'song.track'
-  | 'song.disc'
-  | 'song.title'
-  | 'song.album.artist.name'
-  | 'song.album.name'
-  | 'song.length'
+type SongListSortField = keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name'>
+
+type SortOrder = 'asc' | 'desc'
 
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T]
+
+interface PaginatorResource {
+  data: any[]
+  links: {
+    next: string | null
+  }
+  meta: {
+    current_page: number
+  }
+}

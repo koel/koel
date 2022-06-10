@@ -3,7 +3,7 @@
     <div class="content">
       <template v-if="song">
         <div v-show="song.lyrics">
-          <div ref="lyricsContainer" v-html="song.lyrics"></div>
+          <pre ref="lyricsContainer">{{ song.lyrics }}</pre>
           <TextMagnifier :target="lyricsContainer" class="magnifier"/>
         </div>
         <p v-if="song.id && !song.lyrics" class="none text-secondary">
@@ -61,5 +61,9 @@ const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.v
       opacity: 1;
     }
   }
+}
+
+pre {
+  white-space: pre-wrap;
 }
 </style>

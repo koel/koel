@@ -1,15 +1,13 @@
-import { difference, shuffle, union } from 'lodash'
 import { reactive } from 'vue'
+import { difference, shuffle, union } from 'lodash'
 import { arrayify } from '@/utils'
-
-interface QueueStoreState {
-  songs: Song[],
-  current?: Song
-}
+import { httpService } from '@/services'
+import { songStore } from '@/stores'
 
 export const queueStore = {
-  state: reactive<QueueStoreState>({
-    songs: [] as Song[]
+  state: reactive({
+    songs: [] as Song[],
+    current: null as Song
   }),
 
   init () {
@@ -76,7 +74,7 @@ export const queueStore = {
   },
 
   replaceQueueWith (songs: Song | Song[]) {
-    this.all = arrayify(songs)
+    this.state.songs = arrayify(songs)
   },
 
   queueAfterCurrent (songs: Song | Song[]) {
@@ -139,14 +137,20 @@ export const queueStore = {
   },
 
   get current () {
-    return this.state.current
-  },
-
-  set current (song) {
-    this.state.current = song
+    return this.all.find(song => song.playback_state !== 'Stopped')
   },
 
   shuffle () {
     this.all = shuffle(this.all)
+  },
+
+  async fetchRandom (limit = 500) {
+    const songs = await httpService.get<Song[]>(`queue/fetch?order=rand&limit=${limit}`)
+    this.state.songs = songStore.syncWithVault(songs)
+  },
+
+  async fetchInOrder (sortField: SongListSortField, order: SortOrder, limit = 500) {
+    const songs = await httpService.get<Song[]>(`queue/fetch?order=${order}&sort=${sortField}&limit=${limit}`)
+    this.state.songs = songStore.syncWithVault(songs)
   }
 }

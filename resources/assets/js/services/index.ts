@@ -1,5 +1,4 @@
 export * from './httpService'
-export * from './info'
 export * from './downloadService'
 export * from './localStorageService'
 export * from './playbackService'

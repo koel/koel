@@ -5,7 +5,6 @@
       <Btn v-if="!loading" class="more" data-testid="youtube-search-more-btn" @click.prevent="loadMore">Load More</Btn>
     </template>
 
-    <p class="nope" v-else>Play a song to retrieve related YouTube videos.</p>
     <p class="nope" v-show="loading">Loading…</p>
   </div>
 </template>
@@ -23,8 +22,6 @@ const { song } = toRefs(props)
 const loading = ref(false)
 const videos = ref<YouTubeVideo[]>([])
 
-watchEffect(() => (videos.value = song.value.youtube?.items || []))
-
 const loadMore = async () => {
   loading.value = true
 
@@ -36,10 +33,20 @@ const loadMore = async () => {
     song.value.youtube.items.push(...result.items as YouTubeVideo[])
 
     videos.value = song.value.youtube.items
+  } catch (err) {
+    console.error(err)
   } finally {
     loading.value = false
   }
 }
+
+watchEffect(() => {
+  videos.value = song.value.youtube?.items || []
+
+  if (videos.value.length === 0) {
+    loadMore()
+  }
+})
 </script>
 
 <style lang="scss" scoped>

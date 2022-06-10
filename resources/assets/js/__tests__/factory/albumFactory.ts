@@ -5,9 +5,11 @@ export default (faker: Faker): Album => {
   const artist = factory<Artist>('artist')
 
   return {
-    artist,
-    id: faker.datatype.number(),
+    type: 'albums',
     artist_id: artist.id,
+    artist_name: artist.name,
+    song_count: 0,
+    id: faker.datatype.number(),
     name: faker.lorem.sentence(),
     cover: faker.image.imageUrl(),
     info: {
@@ -20,20 +22,18 @@ export default (faker: Faker): Album => {
         {
           title: faker.lorem.sentence(),
           length: 222,
-          fmtLength: '3:42'
+          fmt_length: '3:42'
         },
         {
           title: faker.lorem.sentence(),
           length: 157,
-          fmtLength: '2:37'
+          fmt_length: '2:37'
         }
       ],
       url: faker.internet.url()
     },
-    songs: [],
-    is_compilation: false,
-    playCount: 0,
+    play_count: 0,
     length: 0,
-    fmtLength: '00:00:00'
+    fmt_length: '00:00:00'
   }
 }

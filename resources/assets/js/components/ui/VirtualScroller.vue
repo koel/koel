@@ -21,6 +21,8 @@ const scrollerHeight = ref(0)
 const renderAhead = 5
 const scrollTop = ref(0)
 
+const emit = defineEmits(['scrolled-to-end'])
+
 const totalHeight = computed(() => items.value.length * itemHeight.value)
 const startPosition = computed(() => Math.max(0, Math.floor(scrollTop.value / itemHeight.value) - renderAhead))
 const offsetY = computed(() => startPosition.value * itemHeight.value)
@@ -31,7 +33,15 @@ const renderedItems = computed(() => {
   return items.value.slice(startPosition.value, startPosition.value + count)
 })
 
-const onScroll = e => requestAnimationFrame(() => (scrollTop.value = (e.target as HTMLElement).scrollTop))
+const onScroll = e => requestAnimationFrame(() => {
+  scrollTop.value = (e.target as HTMLElement).scrollTop
+
+  if (!scroller.value) return
+
+  if (scroller.value.scrollTop + scroller.value.clientHeight + itemHeight.value >= scroller.value.scrollHeight) {
+    emit('scrolled-to-end')
+  }
+})
 
 const observer = new ResizeObserver(entries => entries.forEach(el => scrollerHeight.value = el.contentRect.height))
 

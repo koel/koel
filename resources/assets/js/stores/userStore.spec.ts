@@ -7,7 +7,7 @@ const { users, currentUser } = data
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => userStore.init(users, currentUser))
+    super.beforeEach(() => userStore.init(currentUser))
   }
 
   protected test () {
@@ -23,16 +23,6 @@ new class extends UnitTestCase {
     it('sets the current user', () => {
       userStore.current = users[1]
       expect(userStore.current.id).toBe(2)
-    })
-
-    it('sets the current user’s avatar', () => {
-      userStore.setAvatar()
-      expect(userStore.current.avatar).toBe('https://www.gravatar.com/avatar/b9611f1bba1aacbe6f5de5856695a202?s=256&d=mp')
-    })
-
-    it('sets a user’s avatar', () => {
-      userStore.setAvatar(users[1])
-      expect(users[1].avatar).toBe('https://www.gravatar.com/avatar/5024672cfe53f113b746e1923e373058?s=256&d=mp')
     })
   }
 }

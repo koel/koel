@@ -1,106 +1,78 @@
-import { difference, orderBy, take } from 'lodash'
-
-import { httpService } from '@/services'
-import { arrayify, use } from '@/utils'
 import { reactive } from 'vue'
-
-interface ArtistStoreState {
-  artists: Artist[]
-}
+import { difference, orderBy, take, union } from 'lodash'
+import { httpService } from '@/services'
+import { arrayify } from '@/utils'
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
 
 export const artistStore = {
-  cache: {} as Record<number, Artist>,
+  vault: new Map<number, Artist>(),
 
-  state: reactive<ArtistStoreState>({
+  state: reactive({
     artists: []
   }),
 
-  init (artists: Artist[]) {
-    this.all = artists
-
-    // Traverse through artists array to get the cover and number of songs for each.
-    this.all.forEach(artist => this.setupArtist(artist))
+  byId (id: number) {
+    return this.vault.get(id)
   },
 
-  setupArtist (artist: Artist) {
-    artist.info = artist.info || null
-    artist.albums = artist.albums || []
-    artist.songs = artist.songs || []
-    artist.playCount = artist.songs.reduce((count, song) => count + song.playCount, 0)
-
-    this.cache[artist.id] = artist
-
-    return artist
+  removeByIds (ids: number[]) {
+    this.state.artists = difference(this.state.artists, ids.map(id => this.byId(id)))
+    ids.forEach(id => this.vault.delete(id))
   },
 
-  get all () {
-    return this.state.artists
+  isVarious: (artist: Artist | number) => {
+    if (typeof artist === 'number') return artist === VARIOUS_ARTISTS_ID
+    return artist.id === VARIOUS_ARTISTS_ID
   },
 
-  set all (value: Artist[]) {
-    this.state.artists = value
+  isUnknown: (artist: Artist | number) => (typeof artist === 'number')
+    ? artist === UNKNOWN_ARTIST_ID
+    : artist.id === UNKNOWN_ARTIST_ID,
+
+  isStandard (artist: Artist | number) {
+    return !this.isVarious(artist) && !this.isUnknown(artist)
   },
 
-  byId (id: number): Artist | undefined {
-    return this.cache[id]
-  },
-
-  byIds (ids: number[]) {
-    const artists = [] as Artist[]
-    ids.forEach(id => use(this.byId(id), artist => artists.push(artist!)))
-    return artists
-  },
-
-  add (artists: Artist | Artist[]) {
-    arrayify(artists).forEach(artist => this.all.push(this.setupArtist(artist)))
-  },
-
-  prepend (artists: Artist | Artist[]) {
-    arrayify(artists).forEach(artist => this.all.unshift(this.setupArtist(artist)))
-  },
-
-  /**
-   * Remove empty artists from the store.
-   */
-  compact () {
-    const emptyArtists = this.all.filter(artist => artist.songs.length === 0)
-
-    if (!emptyArtists.length) {
-      return
-    }
-
-    this.all = difference(this.all, emptyArtists)
-    emptyArtists.forEach(artist => delete this.cache[artist.id])
-  },
-
-  isVariousArtists: (artist: Artist) => artist.id === VARIOUS_ARTISTS_ID,
-
-  isUnknownArtist: (artist: Artist) => artist.id === UNKNOWN_ARTIST_ID,
-
-  getMostPlayed (count = 6): Artist[] {
-    // Only non-unknown artists with actual play count are applicable.
-    // Also, "Various Artists" doesn't count.
-    const applicable = this.all.filter(artist => {
-      return artist.playCount &&
-        !this.isUnknownArtist(artist) &&
-        !this.isVariousArtists(artist)
-    })
-
-    return take(orderBy(applicable, 'playCount', 'desc'), count)
-  },
-
-  /**
-   * Upload an image for an artist.
-   *
-   * @param {Artist} artist The artist object
-   * @param {string} image The content data string of the image
-   */
   uploadImage: async (artist: Artist, image: string) => {
     const { imageUrl } = await httpService.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })
     artist.image = imageUrl
     return artist.image
+  },
+
+  syncWithVault (artists: Artist | Artist[]) {
+    return arrayify(artists).map(artist => {
+      let local = this.vault.get(artist.id)
+      local = local ? Object.assign(local, artist) : reactive(artist)
+      this.vault.set(artist.id, local)
+
+      return local
+    })
+  },
+
+  async resolve (id: number) {
+    let artist = this.byId(id)
+
+    if (!artist) {
+      artist = await httpService.get<Artist>(`artists/${id}`)
+      this.syncWithVault(artist)
+    }
+
+    return artist
+  },
+
+  async fetch (page: number) {
+    const resource = await httpService.get<PaginatorResource>(`artists?page=${page}`)
+    this.state.artists = union(this.state.artists, this.syncWithVault(resource.data))
+
+    return resource.links.next ? ++resource.meta.current_page : null
+  },
+
+  getMostPlayed (count: number) {
+    return take(
+      orderBy(Array.from(this.vault.values()).filter(artist => this.isStandard(artist)), 'play_count', 'desc'),
+      count
+    )
   }
 }

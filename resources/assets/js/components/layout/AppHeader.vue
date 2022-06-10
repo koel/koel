@@ -28,12 +28,12 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
 import { eventBus } from '@/utils'
 import { useNewVersionNotification } from '@/composables'
 
-const SearchForm = defineAsyncComponent(() => import('@/components/ui/SearchForm.vue'))
-const UserBadge = defineAsyncComponent(() => import('@/components/user/UserBadge.vue'))
+import SearchForm from '@/components/ui/SearchForm.vue'
+import UserBadge from '@/components/user/UserBadge.vue'
 
 const showSearchForm = ref(!isMobile.any)
 const { shouldNotifyNewVersion, latestVersion } = useNewVersionNotification()

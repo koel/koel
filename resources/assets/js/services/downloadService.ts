@@ -1,4 +1,4 @@
-import { favoriteStore, playlistStore } from '@/stores'
+import { favoriteStore } from '@/stores'
 import { authService } from '@/services'
 import { arrayify } from '@/utils'
 
@@ -17,9 +17,7 @@ export const downloadService = {
   },
 
   fromPlaylist (playlist: Playlist) {
-    if (playlistStore.getSongs(playlist).length) {
-      this.trigger(`playlist/${playlist.id}`)
-    }
+    this.trigger(`playlist/${playlist.id}`)
   },
 
   fromFavorites () {

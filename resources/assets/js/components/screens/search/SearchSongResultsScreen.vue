@@ -2,7 +2,7 @@
   <section id="songResultsWrapper">
     <ScreenHeader>
       Showing Songs for <strong>{{ decodedQ }}</strong>
-      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
         <span v-if="songs.length">{{ pluralize(songs.length, 'song') }} • {{ duration }}</span>
@@ -11,16 +11,13 @@
       <template v-slot:controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
-          :config="songListControlConfig"
-          :selectedSongs="selectedSongs"
-          :songs="songs"
           @playAll="playAll"
           @playSelected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" :items="songs" type="search-results" @press:enter="onPressEnter"/>
+    <SongList ref="songList" @press:enter="onPressEnter" @sort="sort"/>
   </section>
 </template>
 
@@ -38,19 +35,18 @@ const { q } = toRefs(props)
 const {
   SongList,
   SongListControls,
-  ControlsToggler,
+  ControlsToggle,
   songs,
   songList,
   duration,
-  selectedSongs,
   showingControls,
-  songListControlConfig,
   isPhone,
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls
-} = useSongList(toRef(searchStore.state, 'songs'))
+  toggleControls,
+  sort
+} = useSongList(toRef(searchStore.state, 'songs'), 'search-results')
 
 const decodedQ = computed(() => decodeURIComponent(q.value))
 

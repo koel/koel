@@ -2,7 +2,7 @@
   <section id="artistWrapper">
     <ScreenHeader has-thumbnail>
       {{ artist.name }}
-      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:thumbnail>
         <ArtistThumbnail :entity="artist"/>
@@ -10,7 +10,7 @@
 
       <template v-slot:meta>
         <span v-if="songs.length">
-          {{ pluralize(artist.albums.length, 'album') }}
+          {{ pluralize(artist.album_count, 'album') }}
           •
           {{ pluralize(songs.length, 'song') }}
           •
@@ -39,56 +39,50 @@
       <template v-slot:controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
-          :config="songListControlConfig"
-          :selectedSongs="selectedSongs"
-          :songs="songs"
           @playAll="playAll"
           @playSelected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" :config="listConfig" :items="songs" type="artist" @press:enter="onPressEnter"/>
+    <SongList ref="songList" @press:enter="onPressEnter"/>
 
-    <section class="info-wrapper" v-if="useLastfm && showing">
-      <CloseModalBtn @click="showing = false"/>
+    <section class="info-wrapper" v-if="useLastfm && showingInfo">
+      <CloseModalBtn @click="showingInfo = false"/>
       <div class="inner">
-        <div class="loading" v-if="loading">
-          <SoundBar/>
-        </div>
-        <ArtistInfo :artist="artist" mode="full" v-else/>
+        <ArtistInfo :artist="artist" mode="full"/>
       </div>
     </section>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, toRef, toRefs, watch } from 'vue'
+import { defineAsyncComponent, onMounted, ref, toRef, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
-import { commonStore } from '@/stores'
-import { artistInfoService, downloadService } from '@/services'
+import { commonStore, songStore } from '@/stores'
+import { downloadService } from '@/services'
 import { useSongList, useThirdPartyServices } from '@/composables'
 import router from '@/router'
 
 const props = defineProps<{ artist: Artist }>()
 const { artist } = toRefs(props)
 
+const artistSongs = ref<Song[]>([])
+
 const {
   SongList,
   SongListControls,
-  ControlsToggler,
+  ControlsToggle,
   songList,
   songs,
   duration,
-  selectedSongs,
   showingControls,
-  songListControlConfig,
   isPhone,
   onPressEnter,
   playAll,
   playSelected,
   toggleControls
-} = useSongList(ref(artist.value.songs))
+} = useSongList(artistSongs, 'artist', { columns: ['track', 'title', 'album', 'length'] })
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
@@ -96,12 +90,10 @@ const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue
 const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
-const listConfig: Partial<SongListConfig> = { columns: ['track', 'title', 'album', 'length'] }
 const { useLastfm } = useThirdPartyServices()
-const allowDownload = toRef(commonStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const showing = ref(false)
-const loading = ref(true)
+const showingInfo = ref(false)
 
 /**
  * Watch the artist's album count.
@@ -109,31 +101,14 @@ const loading = ref(true)
  * and moved all of them to another artist (thus deleted this artist entirely).
  * We should then go back to the artist list.
  */
-watch(() => artist.value.albums.length, newAlbumCount => newAlbumCount || router.go('artists'))
-
-watch(artist, () => {
-  showing.value = false
-  songList.value?.sort()
-})
+watch(() => artist.value.album_count, newAlbumCount => newAlbumCount || router.go('artists'))
 
 const download = () => downloadService.fromArtist(artist.value)
+const showInfo = () => (showingInfo.value = true)
 
-const showInfo = async () => {
-  showing.value = true
-
-  if (!artist.value.info) {
-    try {
-      await artistInfoService.fetch(artist.value)
-    } catch (e) {
-      /* eslint no-console: 0 */
-      console.error(e)
-    } finally {
-      loading.value = false
-    }
-  } else {
-    loading.value = false
-  }
-}
+onMounted(async () => {
+  artistSongs.value = await songStore.fetchForArtist(artist.value)
+})
 </script>
 
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
   <section id="usersWrapper">
     <ScreenHeader>
       Users
-      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:controls>
         <BtnGroup uppercased v-if="showingControls || !isPhone">
@@ -24,13 +24,13 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { defineAsyncComponent, ref, toRef } from 'vue'
+import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ControlsToggler = defineAsyncComponent(() => import('@/components/ui/ScreenControlsToggler.vue'))
+const ControlsToggle = defineAsyncComponent(() => import('@/components/ui/ScreenControlsToggle.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 const UserCard = defineAsyncComponent(() => import('@/components/user/UserCard.vue'))
@@ -42,6 +42,8 @@ const showingControls = ref(false)
 const toggleControls = () => (showingControls.value = !showingControls.value)
 const showAddUserForm = () => eventBus.emit('MODAL_SHOW_ADD_USER_FORM')
 const showEditUserForm = (user: User) => eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user)
+
+onMounted(async () => await userStore.fetch())
 </script>
 
 <style lang="scss">

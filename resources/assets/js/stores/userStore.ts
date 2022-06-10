@@ -1,12 +1,13 @@
-import { without } from 'lodash'
-import md5 from 'blueimp-md5'
+import { difference } from 'lodash'
 import { httpService } from '@/services'
 import { reactive } from 'vue'
+import { arrayify } from '@/utils'
 
 export interface UpdateCurrentProfileData {
   current_password: string | null
   name: string
   email: string
+  avatar?: string
   new_password?: string
 }
 
@@ -25,32 +26,34 @@ export interface UpdateUserData extends UserFormData {
 }
 
 export const userStore = {
+  vault: new Map<number, User>(),
+
   state: reactive({
     users: [] as User[],
-    current: null as unknown as User // there's always a current user
+    current: null as unknown as User
   }),
 
-  init (users: User[], currentUser: User) {
-    this.all = users
+  syncWithVault (users: User | User[]) {
+    return arrayify(users).map(user => {
+      let local = this.byId(user.id)
+      local = reactive(local ? Object.assign(local, user) : user)
+      this.vault.set(user.id, local)
+
+      return local
+    })
+  },
+
+  async fetch () {
+    this.state.users = this.syncWithVault(await httpService.get<User[]>('users'))
+  },
+
+  init (currentUser: User) {
     this.current = currentUser
-
-    // Set the avatar for each of the users…
-    this.all.forEach(user => this.setAvatar(user))
-
-    // …and the current user as well.
-    this.setAvatar()
-  },
-
-  get all () {
-    return this.state.users
-  },
-
-  set all (value: User[]) {
-    this.state.users = value
+    this.state.users = this.syncWithVault(this.current)
   },
 
   byId (id: number) {
-    return this.all.find(user => user.id === id)
+    return this.vault.get(id)
   },
 
   get current () {
@@ -61,45 +64,28 @@ export const userStore = {
     this.state.current = user
   },
 
-  /**
-   * Set a user's avatar using Gravatar's service.
-   *
-   * @param {?User} user The user. If null, the current user.
-   */
-  setAvatar (user?: User) {
-    user = user || this.current
-    user.avatar = `https://www.gravatar.com/avatar/${md5(user.email)}?s=256&d=mp`
-  },
-
   login: async (email: string, password: string) => await httpService.post<User>('me', { email, password }),
   logout: async () => await httpService.delete('me'),
   getProfile: async () => await httpService.get<User>('me'),
 
   async updateProfile (data: UpdateCurrentProfileData) {
-    await httpService.put('me', data)
-
-    this.current.name = data.name
-    this.current.email = data.email
-    this.setAvatar()
+    Object.assign(this.current, (await httpService.put<User>('me', data)))
   },
 
   async store (data: CreateUserData) {
     const user = await httpService.post<User>('user', data)
-    this.setAvatar(user)
-    this.all.unshift(user)
-
-    return user
+    this.state.users.push(...this.syncWithVault(user))
+    return this.byId(user.id)
   },
 
   async update (user: User, data: UpdateUserData) {
-    await httpService.put(`user/${user.id}`, data)
-    this.setAvatar(user)
-    ;[user.name, user.email, user.is_admin] = [data.name, data.email, data.is_admin]
+    this.syncWithVault(await httpService.put<User>(`user/${user.id}`, data))
   },
 
   async destroy (user: User) {
     await httpService.delete(`user/${user.id}`)
-    this.all = without(this.all, user)
+    this.state.users = difference(this.state.users, [user])
+    this.vault.delete(user.id)
 
     // Mama, just killed a man
     // Put a gun against his head

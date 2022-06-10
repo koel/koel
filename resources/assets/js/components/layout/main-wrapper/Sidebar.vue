@@ -50,8 +50,8 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { defineAsyncComponent, ref } from 'vue'
-import { eventBus } from '@/utils'
-import { queueStore, songStore } from '@/stores'
+import { eventBus, resolveSongsFromDragEvent } from '@/utils'
+import { queueStore } from '@/stores'
 import { useAuthorization, useThirdPartyServices } from '@/composables'
 
 const PlaylistList = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarList.vue'))
@@ -61,12 +61,8 @@ const currentView = ref<MainViewName>('Home')
 const { useYouTube } = useThirdPartyServices()
 const { isAdmin } = useAuthorization()
 
-const handleDrop = (event: DragEvent) => {
-  if (!event.dataTransfer?.getData('application/x-koel.text+plain')) {
-    return false
-  }
-
-  const songs = songStore.byIds(event.dataTransfer.getData('application/x-koel.text+plain').split(','))
+const handleDrop = async (event: DragEvent) => {
+  const songs = await resolveSongsFromDragEvent(event)
   songs.length && queueStore.queue(songs)
 
   return false

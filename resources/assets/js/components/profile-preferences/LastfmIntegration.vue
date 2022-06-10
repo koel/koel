@@ -58,7 +58,7 @@ const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const { currentUser, isAdmin } = useAuthorization()
 const { useLastfm } = useThirdPartyServices()
 
-const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_session_key))
+const connected = computed(() => Boolean(currentUser.value.preferences!.lastfm_session_key))
 
 /**
  * Connect the current user to Last.fm.

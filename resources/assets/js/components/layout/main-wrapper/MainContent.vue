@@ -6,7 +6,7 @@
       For those that don't need to maintain their own UI state, we use v-if and enjoy some code-splitting juice.
     -->
     <Visualizer v-if="showingVisualizer"/>
-    <AlbumArtOverlay v-if="showAlbumArtOverlay && currentSong" :album="currentSong?.album"/>
+    <AlbumArtOverlay v-if="showAlbumArtOverlay && currentSong" :album="currentSong?.album_id"/>
 
     <HomeScreen v-show="view === 'Home'"/>
     <QueueScreen v-show="view === 'Queue'"/>

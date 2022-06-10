@@ -1,6 +1,5 @@
 export type EventName =
   'KOEL_READY'
-  | 'SONG_STARTED'
   | 'LOAD_MAIN_CONTENT'
   | 'LOG_OUT'
   | 'TOGGLE_SIDEBAR'
@@ -24,6 +23,7 @@ export type EventName =
   | 'MODAL_SHOW_ABOUT_KOEL'
   | 'PLAYLIST_DELETE'
   | 'SMART_PLAYLIST_UPDATED'
+  | 'SONG_STARTED'
 
   // upload-related
   | 'SONG_UPLOADED'

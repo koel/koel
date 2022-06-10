@@ -1,6 +1,6 @@
 import { fireEvent } from '@testing-library/vue'
 import { expect, it } from 'vitest'
-import { downloadService, playbackService } from '@/services'
+import { downloadService } from '@/services'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import AlbumCard from './AlbumCard.vue'
@@ -11,8 +11,7 @@ new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
       album = factory<Album>('album', {
-        name: 'IV',
-        songs: factory<Song>('song', 10)
+        name: 'IV'
       })
     })
   }
@@ -45,16 +44,7 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
-      const mock = this.mock(playbackService, 'playAllInAlbum')
-
-      const { getByTestId } = this.render(AlbumCard, {
-        props: {
-          album
-        }
-      })
-
-      await fireEvent.click(getByTestId('shuffle-album'))
-      expect(mock).toHaveBeenCalled()
+      throw 'Unimplemented'
     })
   }
 }

@@ -9,19 +9,12 @@
 import { eventBus } from '@/utils'
 import { useContextMenu } from '@/composables'
 
-const { base, ContextMenuBase, open, close } = useContextMenu()
+const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
 const emit = defineEmits(['createPlaylist'])
 
-const createPlaylist = () => {
-  emit('createPlaylist')
-  close()
-}
-
-const createSmartPlaylist = () => {
-  eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM')
-  close()
-}
+const createPlaylist = () => trigger(() => emit('createPlaylist'))
+const createSmartPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM'))
 
 defineExpose({ open })
 </script>

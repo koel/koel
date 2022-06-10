@@ -1,8 +1,8 @@
 <template>
   <article
-    v-if="album.songs.length"
+    v-if="album.song_count"
     :class="layout"
-    :title="`${album.name} by ${album.artist.name}`"
+    :title="`${album.name} by ${album.artist_name}`"
     class="item"
     data-testid="album-card"
     draggable="true"
@@ -19,16 +19,16 @@
       <div class="info">
         <a :href="`#!/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
         <span class="sep text-secondary"> by </span>
-        <a v-if="isNormalArtist" :href="`#!/artist/${album.artist.id}`" class="artist">{{ album.artist.name }}</a>
-        <span v-else class="artist nope">{{ album.artist.name }}</span>
+        <a v-if="isNormalArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
+        <span v-else class="artist nope">{{ album.artist_name }}</span>
       </div>
       <p class="meta">
         <span class="left">
-          {{ pluralize(album.songs.length, 'song') }}
+          {{ pluralize(album.song_count, 'song') }}
           •
           {{ duration }}
           •
-          {{ pluralize(album.playCount, 'play') }}
+          {{ pluralize(album.play_count, 'play') }}
         </span>
         <span class="right">
           <a
@@ -60,7 +60,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
-import { eventBus, pluralize, startDragging } from '@/utils'
+import { eventBus, pluralize, secondsToHis, startDragging } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 
@@ -69,15 +69,18 @@ const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumA
 const props = withDefaults(defineProps<{ album: Album, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { album, layout } = toRefs(props)
 
-const allowDownload = toRef(commonStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const duration = computed(() => songStore.getFormattedLength(album.value.songs))
+const duration = computed(() => secondsToHis(album.value.length))
 
 const isNormalArtist = computed(() => {
-  return !artistStore.isVariousArtists(album.value.artist) && !artistStore.isUnknownArtist(album.value.artist)
+  return !artistStore.isVarious(album.value.artist_id) && !artistStore.isUnknown(album.value.artist_id)
 })
 
-const shuffle = () => playbackService.playAllInAlbum(album.value, true /* shuffled */)
+const shuffle = async () => {
+  await playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
+}
+
 const download = () => downloadService.fromAlbum(album.value)
 const dragStart = (event: DragEvent) => startDragging(event, album.value, 'Album')
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', event, album.value)

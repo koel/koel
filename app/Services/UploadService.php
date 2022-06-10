@@ -14,11 +14,8 @@ class UploadService
 {
     private const UPLOAD_DIRECTORY = '__KOEL_UPLOADS__';
 
-    private FileSynchronizer $fileSynchronizer;
-
-    public function __construct(FileSynchronizer $fileSynchronizer)
+    public function __construct(private FileSynchronizer $fileSynchronizer)
     {
-        $this->fileSynchronizer = $fileSynchronizer;
     }
 
     public function handleUploadedFile(UploadedFile $file): Song

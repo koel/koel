@@ -1,9 +1,5 @@
-import { orderBy } from 'lodash'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
-import { playbackService } from '@/services'
-import { queueStore } from '@/stores'
 import factory from '@/__tests__/factory'
 import Thumbnail from './AlbumArtistThumbnail.vue'
 
@@ -47,39 +43,19 @@ new class extends UnitTestCase {
     })
 
     it('plays album', async () => {
-      const mock = this.mock(playbackService, 'playAllInAlbum')
-      const { getByRole } = this.renderForAlbum()
-
-      await fireEvent.click(getByRole('button'))
-
-      expect(mock).toHaveBeenCalledWith(album, false)
+      throw 'Unimplemented'
     })
 
     it('queues album', async () => {
-      const mock = this.mock(queueStore, 'queue')
-      const { getByRole } = this.renderForAlbum()
-
-      await fireEvent.click(getByRole('button'), { altKey: true })
-
-      expect(mock).toHaveBeenCalledWith(orderBy(album.songs, ['disc', 'track']))
+      throw 'Unimplemented'
     })
 
     it('plays artist', async () => {
-      const mock = this.mock(playbackService, 'playAllByArtist')
-      const { getByRole } = this.renderForArtist()
-
-      await fireEvent.click(getByRole('button'))
-
-      expect(mock).toHaveBeenCalledWith(artist, false)
+      throw 'Unimplemented'
     })
 
     it('queues artist', async () => {
-      const mock = this.mock(queueStore, 'queue')
-      const { getByRole } = this.renderForArtist()
-
-      await fireEvent.click(getByRole('button'), { altKey: true })
-
-      expect(mock).toHaveBeenCalledWith(orderBy(artist.songs, ['album_id', 'disc', 'track']))
+      throw 'Unimplemented'
     })
   }
 }

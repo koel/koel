@@ -6,8 +6,8 @@ import { computed, toRef } from 'vue'
 export const useNewVersionNotification = () => {
   const { isAdmin } = useAuthorization()
 
-  const latestVersion = toRef(commonStore.state, 'latestVersion')
-  const currentVersion = toRef(commonStore.state, 'currentVersion')
+  const latestVersion = toRef(commonStore.state, 'latest_version')
+  const currentVersion = toRef(commonStore.state, 'current_version')
 
   const hasNewVersion = computed(() => compareVersions.compare(latestVersion.value, currentVersion.value, '>'))
   const shouldNotifyNewVersion = computed(() => isAdmin.value && hasNewVersion.value)

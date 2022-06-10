@@ -1,39 +1,38 @@
 import { defineAsyncComponent, ref } from 'vue'
 
-export const useInfiniteScroll = (perPage = 30) => {
+export const useInfiniteScroll = (loadMore: Closure) => {
   const ToTopButton = defineAsyncComponent(() => import('@/components/ui/BtnScrollToTop.vue'))
 
   const scroller = ref<HTMLElement>()
-  const displayedItemCount = ref(perPage)
-
-  const displayMore = () => (displayedItemCount.value += perPage)
 
   const scrolling = ({ target }: { target: HTMLElement }) => {
     // Here we check if the user has scrolled to the end of the wrapper (or 32px to the end).
     // If that's true, load more items.
     if (target.scrollTop + target.clientHeight >= target.scrollHeight - 32) {
-      displayMore()
+      loadMore()
     }
   }
 
-  const makeScrollable = (totalItemCount: number) => {
+  let tries = 0
+  const MAX_TRIES = 5
+
+  const makeScrollable = async () => {
     const container = scroller.value
 
     if (!container) {
-      window.setTimeout(() => makeScrollable(totalItemCount), 200)
+      window.setTimeout(() => makeScrollable(), 200)
       return
     }
 
-    if (container.scrollHeight <= container.clientHeight && displayedItemCount.value < totalItemCount) {
-      displayMore()
-      // we can't use $nextTick here because it's instant and scrollHeight wouldn't have been updated.
-      window.setTimeout(() => makeScrollable(totalItemCount), 200)
+    if (container.scrollHeight <= container.clientHeight && tries < MAX_TRIES) {
+      tries++
+      await loadMore()
+      window.setTimeout(() => makeScrollable(), 200)
     }
   }
 
   return {
     ToTopButton,
-    displayedItemCount,
     scroller,
     scrolling,
     makeScrollable

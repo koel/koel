@@ -16,12 +16,20 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, toRefs } from 'vue'
+import { defineAsyncComponent, onMounted, provide, ref, toRefs } from 'vue'
+import { songStore } from '@/stores'
+import { SongsKey } from '@/symbols'
 
 const TrackListItem = defineAsyncComponent(() => import('./AlbumTrackListItem.vue'))
 
 const props = defineProps<{ album: Album }>()
 const { album } = toRefs(props)
+
+const songs = ref<Song[]>([])
+
+provide(SongsKey, songs)
+
+onMounted(async () => songs.value = await songStore.fetchForAlbum(album.value))
 </script>
 
 <style lang="scss" scoped>

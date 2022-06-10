@@ -3,40 +3,36 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\ProfileUpdateRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\TokenManager;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Hashing\Hasher as Hash;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
-    private Hash $hash;
-    private TokenManager $tokenManager;
-
-    /** @var User */
-    private ?Authenticatable $currentUser;
-
-    public function __construct(Hash $hash, TokenManager $tokenManager, ?Authenticatable $currentUser)
-    {
-        $this->hash = $hash;
-        $this->tokenManager = $tokenManager;
-        $this->currentUser = $currentUser;
+    /** @param User $user */
+    public function __construct(
+        private Hasher $hash,
+        private TokenManager $tokenManager,
+        private ?Authenticatable $user
+    ) {
     }
 
     public function show()
     {
-        return response()->json($this->currentUser);
+        return UserResource::make($this->user);
     }
 
     public function update(ProfileUpdateRequest $request)
     {
         if (config('koel.misc.demo')) {
-            return response()->json();
+            return response()->noContent();
         }
 
         throw_unless(
-            $this->hash->check($request->current_password, $this->currentUser->password),
+            $this->hash->check($request->current_password, $this->user->password),
             ValidationException::withMessages(['current_password' => 'Invalid current password'])
         );
 
@@ -46,12 +42,14 @@ class ProfileController extends Controller
             $data['password'] = $this->hash->make($request->new_password);
         }
 
-        $this->currentUser->update($data);
+        $this->user->update($data);
 
-        $responseData = $request->new_password
-            ? ['token' => $this->tokenManager->refreshToken($this->currentUser)->plainTextToken]
-            : [];
+        $response = UserResource::make($this->user)->response();
 
-        return response()->json($responseData);
+        if ($request->new_password) {
+            $response->header('Authorization', $this->tokenManager->refreshToken($this->user)->plainTextToken);
+        }
+
+        return $response;
     }
 }

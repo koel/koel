@@ -30,7 +30,7 @@ new class extends UnitTestCase {
       const { getByTitle } = this.render(FooterPlayerControls, {
         props: {
           song: factory<Song>('song', {
-            playbackState: 'Playing'
+            playback_state: 'Playing'
           })
         }
       })

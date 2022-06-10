@@ -85,22 +85,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
+import { computed, defineAsyncComponent, inject, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
+import { SelectedSongsKey, SongsKey } from '@/symbols'
 
 const AddToMenu = defineAsyncComponent(() => import('./AddToMenu.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 
-const props = withDefaults(
-  defineProps<{ songs?: Song[], selectedSongs?: Song[], config?: Partial<SongListControlsConfig> }>(),
-  {
-    songs: () => [],
-    selectedSongs: () => [],
-    config: () => ({})
-  }
-)
+const props = withDefaults(defineProps<{ config?: Partial<SongListControlsConfig> }>(), { config: () => ({}) })
+const { config } = toRefs(props)
 
-const { config, songs, selectedSongs } = toRefs(props)
+const songs = inject(SongsKey, ref([]))
+const selectedSongs = inject(SelectedSongsKey, ref([]))
 
 const el = ref<HTMLElement>()
 const showingAddToMenu = ref(false)

@@ -2,7 +2,7 @@
   <section id="favoritesWrapper">
     <ScreenHeader>
       Songs You Love
-      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
         <span v-if="songs.length">
@@ -21,9 +21,6 @@
       <template v-slot:controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
-          :config="songListControlConfig"
-          :selectedSongs="selectedSongs"
-          :songs="songs"
           @playAll="playAll"
           @playSelected="playSelected"
         />
@@ -31,15 +28,14 @@
     </ScreenHeader>
 
     <SongList
-      v-if="songs.length"
+      v-show="songs.length"
       ref="songList"
-      :items="songs"
-      type="favorites"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
+      @sort="sort"
     />
 
-    <ScreenEmptyState v-else>
+    <ScreenEmptyState v-show="!songs.length">
       <template v-slot:icon>
         <i class="fa fa-frown-o"></i>
       </template>
@@ -54,11 +50,11 @@
 </template>
 
 <script lang="ts" setup>
-import { pluralize } from '@/utils'
-import { favoriteStore, commonStore } from '@/stores'
+import { eventBus, pluralize } from '@/utils'
+import { commonStore, favoriteStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
-import { defineAsyncComponent, toRef } from 'vue'
+import { defineAsyncComponent, nextTick, toRef } from 'vue'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
@@ -66,22 +62,37 @@ const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/Scre
 const {
   SongList,
   SongListControls,
-  ControlsToggler,
+  ControlsToggle,
   songs,
   songList,
   duration,
   selectedSongs,
   showingControls,
-  songListControlConfig,
   isPhone,
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls
-} = useSongList(toRef(favoriteStore.state, 'songs'))
+  toggleControls,
+  sort
+} = useSongList(toRef(favoriteStore.state, 'songs'), 'favorites')
 
-const allowDownload = toRef(commonStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allow_download')
 
 const download = () => downloadService.fromFavorites()
 const removeSelected = () => selectedSongs.value.length && favoriteStore.unlike(selectedSongs.value)
+
+let initialized = false
+
+const fetchSongs = async () => {
+  await favoriteStore.fetch()
+  await nextTick()
+  sort('title', 'asc')
+}
+
+eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
+  if (view === 'Favorites' && !initialized) {
+    await fetchSongs()
+    initialized = true
+  }
+})
 </script>

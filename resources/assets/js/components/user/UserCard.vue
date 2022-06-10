@@ -14,8 +14,8 @@
         </div>
 
         <div class="buttons">
-          <Btn class="btn-edit" data-testid="edit-user-btn" small @click="edit">{{ editButtonLabel }}</Btn>
-          <Btn v-if="!isCurrentUser" class="btn-delete" data-testid="delete-user-btn" small @click="confirmDelete">
+          <Btn class="btn-edit" data-testid="edit-user-btn" small orange @click="edit">{{ editButtonLabel }}</Btn>
+          <Btn v-if="!isCurrentUser" class="btn-delete" data-testid="delete-user-btn" small red @click="confirmDelete">
             Delete
           </Btn>
         </div>

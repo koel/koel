@@ -1,6 +1,7 @@
 import { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): Artist => ({
+  type: 'artists',
   id: faker.datatype.number(),
   name: faker.name.findName(),
   info: {
@@ -12,9 +13,9 @@ export default (faker: Faker): Artist => ({
     url: faker.internet.url()
   },
   image: 'foo.jpg',
-  albums: [],
-  songs: [],
-  playCount: 0,
+  play_count: 0,
+  album_count: 0,
+  song_count: 0,
   length: 0,
-  fmtLength: '00:00:00'
+  fmt_length: '00:00:00'
 })

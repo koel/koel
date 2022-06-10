@@ -1,7 +1,7 @@
-import { songStore } from '.'
+import { reactive } from 'vue'
 import { httpService } from '@/services'
 import { remove } from 'lodash'
-import { reactive } from 'vue'
+import { songStore } from '@/stores'
 
 const EXCERPT_COUNT = 7
 
@@ -14,22 +14,15 @@ export const recentlyPlayedStore = {
     songs: [] as Song[]
   }),
 
-  fetched: false,
-
-  initExcerpt (songIds: string[]) {
-    this.excerptState.songs = songStore.byIds(songIds)
+  async fetch () {
+    this.state.songs = songStore.syncWithVault(await httpService.get<Song[]>('recently-played'))
   },
 
-  async fetchAll () {
-    if (!this.fetched) {
-      this.state.songs = songStore.byIds(await httpService.get<string[]>(`interaction/recently-played`))
-      this.fetched = true
+  async add (song: Song) {
+    if (!this.state.songs.length) {
+      await this.fetch()
     }
 
-    return this.state.songs
-  },
-
-  add (song: Song) {
     [this.state, this.excerptState].forEach(state => {
       // make sure there's no duplicate
       remove(state.songs, s => s.id === song.id)

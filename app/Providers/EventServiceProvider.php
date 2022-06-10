@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Events\AlbumInformationFetched;
 use App\Events\ArtistInformationFetched;
 use App\Events\LibraryChanged;
-use App\Events\MediaCacheObsolete;
 use App\Events\MediaSyncCompleted;
 use App\Events\SongLikeToggled;
 use App\Events\SongsBatchLiked;
@@ -47,10 +46,6 @@ class EventServiceProvider extends ServiceProvider
 
         LibraryChanged::class => [
             PruneLibrary::class,
-            ClearMediaCache::class,
-        ],
-
-        MediaCacheObsolete::class => [
             ClearMediaCache::class,
         ],
 

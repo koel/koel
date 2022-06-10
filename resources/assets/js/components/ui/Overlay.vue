@@ -15,7 +15,6 @@
 </template>
 
 <script lang="ts" setup>
-import { OverlayState } from 'koel/types/ui'
 import { eventBus } from '@/utils'
 import { defineAsyncComponent, reactive } from 'vue'
 

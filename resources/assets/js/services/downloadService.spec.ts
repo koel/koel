@@ -1,4 +1,4 @@
-import { favoriteStore, playlistStore } from '@/stores'
+import { favoriteStore } from '@/stores'
 import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -28,25 +28,12 @@ new class extends UnitTestCase {
     })
 
     it('downloads a playlist', () => {
-      const getSongsMock = this.mock(playlistStore, 'getSongs', factory<Song>('song', 5))
       const mock = this.mock(downloadService, 'trigger')
       const playlist = factory<Playlist>('playlist', { id: 42 })
 
       downloadService.fromPlaylist(playlist)
 
-      expect(getSongsMock).toHaveBeenCalledWith(playlist)
       expect(mock).toHaveBeenCalledWith('playlist/42')
-    })
-
-    it('does not download an empty playlist', () => {
-      const getSongsMock = this.mock(playlistStore, 'getSongs', [])
-      const triggerMock = this.mock(downloadService, 'trigger')
-      const playlist = factory<Playlist>('playlist')
-
-      downloadService.fromPlaylist(playlist)
-
-      expect(getSongsMock).toHaveBeenCalledWith(playlist)
-      expect(triggerMock).not.toHaveBeenCalled()
     })
 
     it.each<[Song[], boolean]>([[[], false], [factory<Song>('song', 5), true]])(

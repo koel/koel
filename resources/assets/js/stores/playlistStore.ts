@@ -1,11 +1,9 @@
 import { difference, orderBy, union } from 'lodash'
+import { reactive, Ref } from 'vue'
 
 import { httpService } from '@/services'
-import { arrayify } from '@/utils'
-import { songStore } from '.'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
-import { reactive } from 'vue'
 
 export const playlistStore = {
   state: reactive({
@@ -13,16 +11,13 @@ export const playlistStore = {
   }),
 
   init (playlists: Playlist[]) {
-    this.all = this.sort(playlists)
-    this.all.forEach(playlist => this.setupPlaylist(playlist))
+    this.state.playlists = this.sort(playlists)
+    this.state.playlists.forEach(playlist => this.setupPlaylist(playlist))
   },
 
   setupPlaylist (playlist: Playlist) {
     playlist.songs = []
-
-    if (playlist.is_smart) {
-      this.setupSmartPlaylist(playlist)
-    }
+    playlist.is_smart && this.setupSmartPlaylist(playlist)
   },
 
   /**
@@ -43,50 +38,8 @@ export const playlistStore = {
     })
   },
 
-  get all (): Playlist[] {
-    return this.state.playlists
-  },
-
-  set all (value: Playlist[]) {
-    this.state.playlists = value
-  },
-
-  async fetchSongs (playlist: Playlist) {
-    const songIds = await httpService.get<string[]>(`playlist/${playlist.id}/songs`)
-    playlist.songs = songStore.byIds(songIds)
-    playlist.populated = true
-
-    return playlist
-  },
-
   byId (id: number) {
-    return this.all.find(playlist => playlist.id === id)
-  },
-
-  /**
-   * Populate the playlist content by "objectifying" all songs in the playlist.
-   * (Initially, a playlist only contain the song IDs).
-   */
-  populateContent: (playlist: Playlist) => {
-    playlist.songs = songStore.byIds(<string[]><unknown>playlist.songs)
-  },
-
-  getSongs: (playlist: Playlist): Song[] => playlist.songs,
-
-  /**
-   * Add a playlist/playlists into the store.
-   */
-  add (playlists: Playlist | Playlist[]) {
-    const playlistsToAdd = arrayify(playlists)
-    playlistsToAdd.forEach(playlist => this.setupPlaylist(playlist))
-    this.all = this.sort(union(this.all, playlistsToAdd))
-  },
-
-  /**
-   * Remove a playlist/playlists from the store.
-   */
-  remove (playlists: Playlist | Playlist[]) {
-    this.all = difference(this.all, arrayify(playlists))
+    return this.state.playlists.find(playlist => playlist.id === id)
   },
 
   async store (name: string, songs: Song[] = [], rules: SmartPlaylistRuleGroup[] = []) {
@@ -94,35 +47,30 @@ export const playlistStore = {
     const serializedRules = this.serializeSmartPlaylistRulesForStorage(rules)
 
     const playlist = await httpService.post<Playlist>('playlist', { name, songs: songIds, rules: serializedRules })
-    playlist.songs = songs
-    this.populateContent(playlist)
-    this.add(playlist)
+    this.state.playlists.push(playlist)
+    this.state.playlists = this.sort(this.state.playlists)
 
     return playlist
   },
 
   async delete (playlist: Playlist) {
     await httpService.delete(`playlist/${playlist.id}`)
-    this.remove(playlist)
+    this.state.playlists = difference(this.state.playlists, [playlist])
   },
 
-  async addSongs (playlist: Playlist, songs: Song[]) {
-    if (playlist.is_smart) {
+  async addSongs (playlist: Ref<Playlist>, songs: Song[]) {
+    if (playlist.value.is_smart) {
       return playlist
     }
 
-    if (!playlist.populated) {
-      await this.fetchSongs(playlist)
-    }
+    const count = playlist.value.songs.length
+    playlist.value.songs = union(playlist.value.songs, songs)
 
-    const count = playlist.songs.length
-    playlist.songs = union(playlist.songs, songs)
-
-    if (count === playlist.songs.length) {
+    if (count === playlist.value.songs.length) {
       return playlist
     }
 
-    await httpService.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) })
+    await httpService.put(`playlist/${playlist.value.id}/sync`, { songs: playlist.value.songs.map(song => song.id) })
 
     return playlist
   },
@@ -162,7 +110,7 @@ export const playlistStore = {
   /**
    * Serialize the rule (groups) to be ready for database.
    */
-  serializeSmartPlaylistRulesForStorage: (ruleGroups: SmartPlaylistRuleGroup[]): any[] | null => {
+  serializeSmartPlaylistRulesForStorage: (ruleGroups: SmartPlaylistRuleGroup[]) => {
     if (!ruleGroups || !ruleGroups.length) {
       return null
     }

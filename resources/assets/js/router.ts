@@ -23,10 +23,16 @@ class Router {
       '/youtube': () => loadMainView('YouTube'),
       '/visualizer': () => loadMainView('Visualizer'),
       '/profile': () => loadMainView('Profile'),
-      '/album/(\\d+)': (id: number) => use(albumStore.byId(~~id), album => loadMainView('Album', album)),
-      '/artist/(\\d+)': (id: number) => use(artistStore.byId(~~id), artist => loadMainView('Artist', artist)),
+      '/album/(\\d+)': async (id: number) => loadMainView('Album', await albumStore.resolve(id)),
+      '/artist/(\\d+)': async (id: number) => loadMainView('Artist', await artistStore.resolve(id)),
       '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
-      '/song/([a-z0-9]{32})': (id: string) => use(songStore.byId(id), async (song) => {
+      '/song/([a-z0-9]{32})': async (id: string) => {
+        const song = songStore.byId(id)
+        if (!song) {
+          this.go('home')
+          return
+        }
+
         if (isMobile.apple.device) {
           // Mobile Safari doesn't allow autoplay, so we just queue.
           queueStore.queue(song)
@@ -34,7 +40,7 @@ class Router {
         } else {
           await playbackService.queueAndPlay([song])
         }
-      })
+      }
     }
 
     window.addEventListener('popstate', () => this.resolveRoute(), true)

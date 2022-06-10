@@ -15,11 +15,17 @@ export const useContextMenu = () => {
 
   const close = () => base.value?.close()
 
+  const trigger = (func: Closure) => {
+    close()
+    func()
+  }
+
   return {
     base,
     ContextMenuBase,
     open,
     close,
+    trigger,
     context
   }
 }

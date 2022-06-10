@@ -10,20 +10,17 @@ import { Ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { useContextMenu } from '@/composables'
 
-const { context, base, ContextMenuBase, open, close } = useContextMenu()
+const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
 const playlist = toRef(context, 'playlist') as Ref<Playlist>
 
 const emit = defineEmits(['edit'])
 
-const editPlaylist = () => {
-  playlist.value.is_smart ? eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', playlist.value) : emit('edit')
-  close()
-}
+const editPlaylist = () => trigger(() => playlist.value.is_smart
+  ? eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', playlist.value)
+  : emit('edit')
+)
 
-const deletePlaylist = () => {
-  eventBus.emit('PLAYLIST_DELETE', playlist.value)
-  close()
-}
+const deletePlaylist = () => trigger(() => eventBus.emit('PLAYLIST_DELETE', playlist.value))
 
 defineExpose({ open })
 </script>

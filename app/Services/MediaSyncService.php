@@ -6,12 +6,8 @@ use App\Console\Commands\SyncCommand;
 use App\Events\LibraryChanged;
 use App\Events\MediaSyncCompleted;
 use App\Libraries\WatchRecord\WatchRecordInterface;
-use App\Models\Album;
-use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
-use App\Repositories\AlbumRepository;
-use App\Repositories\ArtistRepository;
 use App\Repositories\SongRepository;
 use App\Values\SyncResult;
 use Psr\Log\LoggerInterface;
@@ -37,27 +33,12 @@ class MediaSyncService
         'compilation',
     ];
 
-    private SongRepository $songRepository;
-    private FileSynchronizer $fileSynchronizer;
-    private Finder $finder;
-    private ArtistRepository $artistRepository;
-    private AlbumRepository $albumRepository;
-    private LoggerInterface $logger;
-
     public function __construct(
-        SongRepository $songRepository,
-        ArtistRepository $artistRepository,
-        AlbumRepository $albumRepository,
-        FileSynchronizer $fileSynchronizer,
-        Finder $finder,
-        LoggerInterface $logger
+        private SongRepository $songRepository,
+        private FileSynchronizer $fileSynchronizer,
+        private Finder $finder,
+        private LoggerInterface $logger
     ) {
-        $this->songRepository = $songRepository;
-        $this->fileSynchronizer = $fileSynchronizer;
-        $this->finder = $finder;
-        $this->artistRepository = $artistRepository;
-        $this->albumRepository = $albumRepository;
-        $this->logger = $logger;
     }
 
     /**
@@ -185,18 +166,6 @@ class MediaSyncService
         if (!in_array('mtime', $this->tags, true)) {
             $this->tags[] = 'mtime';
         }
-    }
-
-    public function prune(): void
-    {
-        $inUseAlbums = $this->albumRepository->getNonEmptyAlbumIds();
-        $inUseAlbums[] = Album::UNKNOWN_ID;
-        Album::deleteWhereIDsNotIn($inUseAlbums);
-
-        $inUseArtists = $this->artistRepository->getNonEmptyArtistIds();
-        $inUseArtists[] = Artist::UNKNOWN_ID;
-        $inUseArtists[] = Artist::VARIOUS_ID;
-        Artist::deleteWhereIDsNotIn(array_filter($inUseArtists));
     }
 
     private function setSystemRequirements(): void

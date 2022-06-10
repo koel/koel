@@ -27,11 +27,11 @@ new class extends UnitTestCase {
 
   protected test () {
     it.each<[string, SongListSortField[]]>([
-      ['header-track-number', ['song.track', 'song.disc']],
-      ['header-title', ['song.title']],
-      ['header-artist', ['song.album.artist.name', 'song.album.name', 'song.track', 'song.disc']],
-      ['header-album', ['song.album.name', 'song.track', 'song.disc']],
-      ['header-length', ['song.length']]
+      ['header-track-number', ['track', 'disc']],
+      ['header-title', ['title']],
+      ['header-artist', ['artist_name', 'album_name', 'track', 'disc']],
+      ['header-album', ['album_name', 'track', 'disc']],
+      ['header-length', ['length']]
     ])('sorts when "%s" header is clicked', async (testId: string, sortFields: SongListSortField[]) => {
       const mock = this.mock(lodash, 'orderBy', [])
       const { getByTestId } = this.renderComponent()

@@ -12,6 +12,6 @@ export default (faker: Faker): User => ({
 
 export const states = {
   admin: {
-    is_admin: true
+    isAdmin: true
   }
 }

@@ -4,7 +4,7 @@
       <Equalizer v-if="useEqualizer" v-show="showEqualizer"/>
 
       <button
-        v-if="song?.playbackState === 'Playing'"
+        v-if="song?.playback_state === 'Playing'"
         data-testid="toggle-visualizer-btn"
         title="Click for a marvelous visualizer!"
         type="button"
@@ -49,16 +49,16 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, toRef, toRefs } from 'vue'
+import { ref, toRef, toRefs } from 'vue'
 import isMobile from 'ismobilejs'
 import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'
 import { preferenceStore } from '@/stores'
 
-const Equalizer = defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
-const Volume = defineAsyncComponent(() => import('@/components/ui/Volume.vue'))
-const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
-const RepeatModeSwitch = defineAsyncComponent(() => import('@/components/ui/RepeatModeSwitch.vue'))
+import Equalizer from '@/components/ui/Equalizer.vue'
+import SoundBar from '@/components/ui/SoundBar.vue'
+import Volume from '@/components/ui/Volume.vue'
+import LikeButton from '@/components/song/SongLikeButton.vue'
+import RepeatModeSwitch from '@/components/ui/RepeatModeSwitch.vue'
 
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)

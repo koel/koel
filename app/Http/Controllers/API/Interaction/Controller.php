@@ -12,11 +12,11 @@ class Controller extends BaseController
     protected InteractionService $interactionService;
 
     /** @var User */
-    protected ?Authenticatable $currentUser = null;
+    protected ?Authenticatable $user = null;
 
     public function __construct(InteractionService $interactionService, ?Authenticatable $currentUser)
     {
         $this->interactionService = $interactionService;
-        $this->currentUser = $currentUser;
+        $this->user = $currentUser;
     }
 }

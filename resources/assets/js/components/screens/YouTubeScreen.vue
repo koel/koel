@@ -17,7 +17,7 @@
 <script lang="ts" setup>
 import createYouTubePlayer from 'youtube-player'
 import { defineAsyncComponent, ref } from 'vue'
-import { YouTubePlayer } from 'youtube-player/dist/types'
+import type { YouTubePlayer } from 'youtube-player/dist/types'
 import { eventBus, use } from '@/utils'
 import { playbackService } from '@/services'
 

@@ -1,81 +1,53 @@
 import isMobile from 'ismobilejs'
 import { reactive } from 'vue'
-
 import { httpService } from '@/services'
-import {
-  albumStore,
-  artistStore,
-  playlistStore,
-  preferenceStore,
-  queueStore,
-  recentlyPlayedStore,
-  settingStore,
-  songStore,
-  themeStore,
-  userStore
-} from '.'
+import { playlistStore, preferenceStore, settingStore, themeStore, userStore } from '@/stores'
 
 interface CommonStoreState {
-  albums: Album[]
-  allowDownload: boolean
-  artists: Artist[]
-  cdnUrl: string
-  currentUser: User | undefined
-  currentVersion: string
-  favorites: Song[]
-  interactions: Interaction[]
-  latestVersion: string
+  allow_download: boolean
+  cdn_url: string
+  current_user: User
+  current_version: string
+  latest_version: string
   playlists: Playlist[]
-  queued: Song[]
-  recentlyPlayed: string[]
   settings: Settings
-  songs: Song[]
-  useiTunes: boolean
-  useLastfm: boolean
+  use_i_tunes: boolean
+  use_last_fm: boolean
   users: User[]
-  useYouTube: boolean
+  use_you_tube: boolean,
+  song_count: number,
+  song_length: number
 }
 
 export const commonStore = {
   state: reactive<CommonStoreState>({
-    albums: [],
-    allowDownload: false,
-    artists: [],
-    cdnUrl: '',
-    currentUser: undefined,
-    currentVersion: '',
-    favorites: [],
-    interactions: [],
-    latestVersion: '',
+    allow_download: false,
+    cdn_url: '',
+    current_user: undefined as unknown as User,
+    current_version: '',
+    latest_version: '',
     playlists: [],
-    queued: [],
-    recentlyPlayed: [],
     settings: {} as Settings,
-    songs: [],
-    useiTunes: false,
-    useLastfm: false,
+    use_i_tunes: false,
+    use_last_fm: false,
     users: [],
-    useYouTube: false
+    use_you_tube: false,
+    song_count: 0,
+    song_length: 0
   }),
 
   async init () {
     Object.assign(this.state, await httpService.get<CommonStoreState>('data'))
 
     // Always disable YouTube integration on mobile.
-    this.state.useYouTube = this.state.useYouTube && !isMobile.phone
+    this.state.use_you_tube = this.state.use_you_tube && !isMobile.phone
 
     // If this is a new user, initialize his preferences to be an empty object.
-    this.state.currentUser!.preferences = this.state.currentUser!.preferences || {}
+    this.state.current_user.preferences = this.state.current_user.preferences || {}
 
-    userStore.init(this.state.users, this.state.currentUser!)
-    preferenceStore.init(this.state.currentUser)
-    artistStore.init(this.state.artists)
-    albumStore.init(this.state.albums)
-    songStore.init(this.state.songs)
-    songStore.initInteractions(this.state.interactions)
-    recentlyPlayedStore.initExcerpt(this.state.recentlyPlayed)
+    userStore.init(this.state.current_user)
+    preferenceStore.init(this.state.current_user)
     playlistStore.init(this.state.playlists)
-    queueStore.init()
     settingStore.init(this.state.settings)
     themeStore.init()
 

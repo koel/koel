@@ -2,7 +2,7 @@
   <section id="recentlyPlayedWrapper">
     <ScreenHeader>
       Recently Played
-      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
         <span v-if="songs.length">{{ pluralize(songs.length, 'song') }} • {{ duration }}</span>
@@ -11,23 +11,13 @@
       <template v-slot:controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
-          :config="songListControlConfig"
-          :selectedSongs="selectedSongs"
-          :songs="songs"
           @playAll="playAll"
           @playSelected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongList
-      v-if="songs.length"
-      ref="songList"
-      :items="songs"
-      :sortable="false"
-      type="recently-played"
-      @press:enter="onPressEnter"
-    />
+    <SongList v-if="songs.length" ref="songList" @press:enter="onPressEnter"/>
 
     <ScreenEmptyState v-else>
       <template v-slot:icon>
@@ -51,22 +41,27 @@ const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/Scre
 const {
   SongList,
   SongListControls,
-  ControlsToggler,
+  ControlsToggle,
   songs,
   songList,
   duration,
-  selectedSongs,
   showingControls,
-  songListControlConfig,
   isPhone,
   onPressEnter,
   playAll,
   playSelected,
   toggleControls
-} = useSongList(toRef(recentlyPlayedStore.state, 'songs'))
+} = useSongList(toRef(recentlyPlayedStore.state, 'songs'), 'recently-played', { sortable: false })
+
+let initialized = false
 
 eventBus.on({
-  'LOAD_MAIN_CONTENT': (view: MainViewName) => view === 'RecentlyPlayed' && recentlyPlayedStore.fetchAll()
+  'LOAD_MAIN_CONTENT': async (view: MainViewName) => {
+    if (view === 'RecentlyPlayed' && !initialized) {
+      await recentlyPlayedStore.fetch()
+      initialized = true
+    }
+  }
 })
 </script>
 

@@ -1,4 +1,4 @@
-import { orderBy, shuffle, throttle } from 'lodash'
+import { shuffle, throttle } from 'lodash'
 import plyr from 'plyr'
 import { nextTick } from 'vue'
 import isMobile from 'ismobilejs'
@@ -96,7 +96,7 @@ export const playbackService = {
     mediaElement.addEventListener('error', () => this.playNext(), true)
 
     mediaElement.addEventListener('ended', () => {
-      if (commonStore.state.useLastfm && userStore.current.preferences.lastfm_session_key) {
+      if (commonStore.state.use_last_fm && userStore.current.preferences!.lastfm_session_key) {
         songStore.scrobble(queueStore.current!)
       }
 
@@ -104,9 +104,11 @@ export const playbackService = {
     })
 
     let timeUpdateHandler = () => {
-      const currentSong = queueStore.current!
+      const currentSong = queueStore.current
 
-      if (!currentSong.playCountRegistered && !this.isTranscoding) {
+      if (!currentSong) return
+
+      if (!currentSong.play_count_registered && !this.isTranscoding) {
         // if we've passed 25% of the song, it's safe to say the song has been "played".
         // Refer to https://github.com/koel/koel/issues/1087
         if (!mediaElement.duration || mediaElement.currentTime * 4 >= mediaElement.duration) {
@@ -139,8 +141,7 @@ export const playbackService = {
   registerPlay (song: Song) {
     recentlyPlayedStore.add(song)
     songStore.registerPlay(song)
-    recentlyPlayedStore.fetchAll()
-    song.playCountRegistered = true
+    song.play_count_registered = true
   },
 
   preload (song: Song) {
@@ -159,20 +160,15 @@ export const playbackService = {
    * So many dreams swinging out of the blue
    * We'll let them come true
    */
-  async play (song?: Song) {
-    if (!song) {
-      return
-    }
-
+  async play (song: Song) {
     document.title = `${song.title} ♫ Koel`
-    this.player!.media.setAttribute('title', `${song.artist.name} - ${song.title}`)
+    this.player!.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
 
     if (queueStore.current) {
-      queueStore.current.playbackState = 'Stopped'
+      queueStore.current.playback_state = 'Stopped'
     }
 
-    song.playbackState = 'Playing'
-    queueStore.current = song
+    song.playback_state = 'Playing'
 
     // Manually set the `src` attribute of the audio to prevent plyr from resetting
     // the audio media object and cause our equalizer to malfunction.
@@ -194,8 +190,8 @@ export const playbackService = {
 
     try {
       const notification = new window.Notification(`♫ ${song.title}`, {
-        icon: song.album.cover,
-        body: `${song.album.name} – ${song.artist.name}`
+        icon: song.album_cover,
+        body: `${song.album_name} – ${song.artist_name}`
       })
 
       notification.onclick = () => window.focus()
@@ -209,11 +205,11 @@ export const playbackService = {
 
     navigator.mediaSession.metadata = new MediaMetadata({
       title: song.title,
-      artist: song.artist.name,
-      album: song.album.name,
+      artist: song.artist_name,
+      album: song.album_name,
       artwork: [
         {
-          src: song.album.cover,
+          src: song.album_cover,
           sizes: '256x256',
           type: 'image/png'
         }
@@ -227,9 +223,9 @@ export const playbackService = {
     this.showNotification(song)
 
     // Record the UNIX timestamp the song starts playing, for scrobbling purpose
-    song.playStartTime = Math.floor(Date.now() / 1000)
+    song.play_start_time = Math.floor(Date.now() / 1000)
 
-    song.playCountRegistered = false
+    song.play_count_registered = false
 
     eventBus.emit('SONG_STARTED', song)
 
@@ -301,9 +297,9 @@ export const playbackService = {
     }
 
     if (!this.previous && preferences.repeatMode === 'NO_REPEAT') {
-      this.stop()
+      await this.stop()
     } else {
-      await this.play(this.previous)
+      this.previous && await this.play(this.previous)
     }
   },
 
@@ -313,9 +309,9 @@ export const playbackService = {
    */
   async playNext () {
     if (!this.next && preferences.repeatMode === 'NO_REPEAT') {
-      this.stop() //  Nothing lasts forever, even cold November rain.
+      await this.stop() //  Nothing lasts forever, even cold November rain.
     } else {
-      await this.play(this.next)
+      this.next && await this.play(this.next)
     }
   },
 
@@ -342,13 +338,13 @@ export const playbackService = {
     this.setVolume(preferences.volume)
   },
 
-  stop () {
+  async stop () {
     document.title = 'Koel'
     this.getPlayer().pause()
     this.getPlayer().seek(0)
 
     if (queueStore.current) {
-      queueStore.current.playbackState = 'Stopped'
+      queueStore.current.playback_state = 'Stopped'
     }
 
     socketService.broadcast('SOCKET_PLAYBACK_STOPPED')
@@ -356,7 +352,7 @@ export const playbackService = {
 
   pause () {
     this.getPlayer().pause()
-    queueStore.current!.playbackState = 'Paused'
+    queueStore.current!.playback_state = 'Paused'
     socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current!))
   },
 
@@ -367,7 +363,7 @@ export const playbackService = {
       console.error(error)
     }
 
-    queueStore.current!.playbackState = 'Playing'
+    queueStore.current!.playback_state = 'Playing'
     eventBus.emit('SONG_STARTED', queueStore.current)
     socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current!))
   },
@@ -378,7 +374,7 @@ export const playbackService = {
       return
     }
 
-    if (queueStore.current.playbackState !== 'Playing') {
+    if (queueStore.current.playback_state !== 'Playing') {
       await this.resume()
       return
     }
@@ -392,19 +388,12 @@ export const playbackService = {
    * @param {?Song[]} songs  An array of song objects. Defaults to all songs if null.
    * @param {Boolean=false}   shuffled Whether to shuffle the songs before playing.
    */
-  async queueAndPlay (songs?: Song[], shuffled = false) {
-    if (!songs) {
-      songs = shuffle(songStore.all)
-    }
-
-    if (!songs.length) {
-      return
-    }
-
+  async queueAndPlay (songs: Song[], shuffled = false) {
     if (shuffled) {
       songs = shuffle(songs)
     }
 
+    await this.stop()
     queueStore.replaceQueueWith(songs)
 
     // Wait for the DOM to complete updating and play the first song in the queue.
@@ -413,31 +402,11 @@ export const playbackService = {
     await this.play(queueStore.first)
   },
 
-  async shuffleLibrary () {
-    await this.queueAndPlay(songStore.all, true)
-  },
-
   getPlayer () {
     return this.player!
   },
 
-  /**
-   * Play the first song in the queue.
-   * If the current queue is empty, try creating it by shuffling all songs.
-   */
   async playFirstInQueue () {
-    queueStore.all.length ? await this.play(queueStore.first) : await this.shuffleLibrary()
-  },
-
-  async playAllByArtist (artist: Artist, shuffled = true) {
-    shuffled
-      ? await this.queueAndPlay(artist.songs, true /* shuffled */)
-      : await this.queueAndPlay(orderBy(artist.songs, ['album_id', 'disc', 'track']))
-  },
-
-  async playAllInAlbum (album: Album, shuffled = true) {
-    shuffled
-      ? await this.queueAndPlay(album.songs, true /* shuffled */)
-      : await this.queueAndPlay(orderBy(album.songs, ['disc', 'track']))
+    queueStore.all.length && await this.play(queueStore.first)
   }
 }

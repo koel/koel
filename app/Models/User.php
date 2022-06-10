@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\UserPreferencesCast;
 use App\Values\UserPreferences;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
@@ -19,6 +20,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $name
  * @property string $email
  * @property string $password
+ * @property-read string $avatar
  *
  * @method static self create(array $params)
  * @method static int count()
@@ -32,6 +34,7 @@ class User extends Authenticatable
 
     protected $guarded = ['id'];
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at'];
+    protected $appends = ['avatar'];
 
     protected $casts = [
         'id' => 'int',
@@ -47,6 +50,13 @@ class User extends Authenticatable
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);
+    }
+
+    protected function avatar(): Attribute
+    {
+        return Attribute::get(
+            fn () => sprintf('https://www.gravatar.com/avatar/%s?s=192&d=robohash', md5($this->email))
+        );
     }
 
     /**

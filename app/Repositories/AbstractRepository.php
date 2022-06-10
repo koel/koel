@@ -22,7 +22,7 @@ abstract class AbstractRepository implements RepositoryInterface
         // rendering the whole installation failing.
         try {
             $this->auth = app(Guard::class);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
         }
     }
 

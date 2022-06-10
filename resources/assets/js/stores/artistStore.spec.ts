@@ -1,14 +1,8 @@
-import { cloneDeep } from 'lodash'
-import data from '@/__tests__/blobs/data'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { artistStore } from '@/stores'
 
 new class extends UnitTestCase {
-  protected beforeEach () {
-    super.beforeEach(() => artistStore.init(cloneDeep(data.artists)))
-  }
-
   protected afterEach () {
     super.afterEach(() => (artistStore.state.artists = []))
   }

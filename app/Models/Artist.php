@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Facades\Util;
+use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 
 /**
@@ -27,6 +29,7 @@ use Laravel\Scout\Searchable;
  * @method static self first()
  * @method static Builder whereName(string $name)
  * @method static Builder orderBy(...$params)
+ * @method static Builder join(...$params)
  */
 class Artist extends Model
 {
@@ -68,13 +71,9 @@ class Artist extends Model
         return $this->hasMany(Album::class);
     }
 
-    /**
-     * An artist can have many songs.
-     * Unless he is Rick Astley.
-     */
-    public function songs(): HasManyThrough
+    public function songs(): HasMany
     {
-        return $this->hasManyThrough(Song::class, Album::class);
+        return $this->hasMany(Song::class);
     }
 
     public function getIsUnknownAttribute(): bool
@@ -122,6 +121,25 @@ class Artist extends Model
         }
 
         return file_exists(artist_image_path($image));
+    }
+
+    public function scopeIsStandard(Builder $query): Builder
+    {
+        return $query->whereNotIn('artists.id', [self::UNKNOWN_ID, self::VARIOUS_ID]);
+    }
+
+    public static function withMeta(User $scopedUser): BuilderContract
+    {
+        return static::query()
+            ->leftJoin('songs', 'artists.id', '=', 'songs.artist_id')
+            ->leftJoin('interactions', static function (JoinClause $join) use ($scopedUser): void {
+                $join->on('interactions.song_id', '=', 'songs.id')
+                    ->where('interactions.user_id', $scopedUser->id);
+            })
+            ->groupBy('artists.id')
+            ->select(['artists.*', DB::raw('CAST(SUM(interactions.play_count) AS INTEGER) AS play_count')])
+            ->withCount('albums AS album_count', 'songs AS song_count')
+            ->withSum('songs AS length', 'length');
     }
 
     /** @return array<mixed> */

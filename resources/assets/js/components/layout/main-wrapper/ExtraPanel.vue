@@ -93,10 +93,9 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
+import { defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { $, eventBus } from '@/utils'
-import { preferenceStore as preferences } from '@/stores'
-import { songInfoService } from '@/services'
+import { albumStore, artistStore, preferenceStore as preferences } from '@/stores'
 import { useThirdPartyServices } from '@/composables'
 
 type Tab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
@@ -113,8 +112,8 @@ const currentTab = ref<Tab>(defaultTab)
 
 const { useYouTube } = useThirdPartyServices()
 
-const artist = computed(() => song.value?.artist)
-const album = computed(() => song.value?.album)
+const artist = ref<Artist>()
+const album = ref<Album>()
 
 watch(showing, (showingExtraPanel) => {
   if (showingExtraPanel && !isMobile.any) {
@@ -126,9 +125,10 @@ watch(showing, (showingExtraPanel) => {
 
 const fetchSongInfo = async (_song: Song) => {
   try {
-    song.value = await songInfoService.fetch(_song)
-  } catch (err) {
     song.value = _song
+    artist.value = await artistStore.resolve(_song.artist_id)
+    album.value = await albumStore.resolve(_song.album_id)
+  } catch (err) {
     throw err
   }
 }

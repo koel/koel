@@ -1,106 +1,106 @@
 {
-    "name": "phanan/koel",
-    "description": "Personal audio streaming service that works.",
-    "keywords": [
-        "audio",
-        "stream",
-        "mp3"
+  "name": "phanan/koel",
+  "description": "Personal audio streaming service that works.",
+  "keywords": [
+    "audio",
+    "stream",
+    "mp3"
+  ],
+  "license": "MIT",
+  "type": "project",
+  "require": {
+    "php": ">=8.0",
+    "laravel/framework": "^9.0",
+    "james-heinrich/getid3": "^1.9",
+    "guzzlehttp/guzzle": "^7.0.1",
+    "aws/aws-sdk-php-laravel": "^3.1",
+    "pusher/pusher-php-server": "^4.0",
+    "predis/predis": "~1.0",
+    "jackiedo/dotenv-editor": "^1.0",
+    "ext-exif": "*",
+    "ext-fileinfo": "*",
+    "ext-json": "*",
+    "ext-SimpleXML": "*",
+    "daverandom/resume": "^0.0.3",
+    "laravel/helpers": "^1.0",
+    "intervention/image": "^2.5",
+    "doctrine/dbal": "^2.10",
+    "lstrojny/functional-php": "^1.14",
+    "teamtnt/laravel-scout-tntsearch-driver": "^11.1",
+    "algolia/algoliasearch-client-php": "^2.7",
+    "laravel/ui": "^3.2",
+    "webmozart/assert": "^1.10",
+    "laravel/sanctum": "^2.15",
+    "laravel/scout": "^9.4",
+    "nunomaduro/collision": "^6.2"
+  },
+  "require-dev": {
+    "mockery/mockery": "~1.0",
+    "phpunit/phpunit": "^9.0",
+    "php-mock/php-mock-mockery": "^1.3",
+    "dms/phpunit-arraysubset-asserts": "^0.2.1",
+    "fakerphp/faker": "^1.13",
+    "slevomat/coding-standard": "^7.0",
+    "nunomaduro/larastan": "^2.1",
+    "laravel/tinker": "^2.7"
+  },
+  "suggest": {
+    "ext-zip": "Allow downloading multiple songs as Zip archives"
+  },
+  "autoload": {
+    "classmap": [
+      "database"
     ],
-    "license": "MIT",
-    "type": "project",
-    "require": {
-        "php": ">=7.4",
-        "laravel/framework": "^8.42",
-        "james-heinrich/getid3": "^1.9",
-        "guzzlehttp/guzzle": "^7.0.1",
-        "aws/aws-sdk-php-laravel": "^3.1",
-        "pusher/pusher-php-server": "^4.0",
-        "predis/predis": "~1.0",
-        "jackiedo/dotenv-editor": "^1.0",
-        "ext-exif": "*",
-        "ext-fileinfo": "*",
-        "ext-json": "*",
-        "ext-SimpleXML": "*",
-        "daverandom/resume": "^0.0.3",
-        "laravel/helpers": "^1.0",
-        "intervention/image": "^2.5",
-        "doctrine/dbal": "^2.10",
-        "lstrojny/functional-php": "^1.14",
-        "teamtnt/laravel-scout-tntsearch-driver": "^11.1",
-        "algolia/algoliasearch-client-php": "^2.7",
-        "laravel/ui": "^3.2",
-        "webmozart/assert": "^1.10",
-        "laravel/sanctum": "^2.11"
+    "psr-4": {
+      "App\\": "app/",
+      "Tests\\": "tests/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/"
     },
-    "require-dev": {
-        "facade/ignition": "^2.5",
-        "mockery/mockery": "~1.0",
-        "phpunit/phpunit": "^9.0",
-        "laravel/tinker": "^2.0",
-        "php-mock/php-mock-mockery": "^1.3",
-        "dms/phpunit-arraysubset-asserts": "^0.2.1",
-        "fakerphp/faker": "^1.13",
-        "slevomat/coding-standard": "^7.0",
-        "nunomaduro/larastan": "^0.6.11",
-        "nunomaduro/collision": "^5.3"
-    },
-    "suggest": {
-        "ext-zip": "Allow downloading multiple songs as Zip archives"
-    },
-    "autoload": {
-        "classmap": [
-            "database"
-        ],
-        "psr-4": {
-            "App\\": "app/",
-            "Tests\\": "tests/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
-        },
-        "files": [
-            "app/Helpers.php"
-        ]
-    },
-    "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
-    },
-    "scripts": {
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover"
-        ],
-        "post-install-cmd": [
-            "@php artisan clear-compiled",
-            "@php artisan cache:clear",
-            "@php -r \"if (!file_exists('.env')) copy('.env.example', '.env');\""
-        ],
-        "pre-update-cmd": [
-            "@php artisan clear-compiled"
-        ],
-        "post-update-cmd": [
-            "@php artisan cache:clear"
-        ],
-        "post-root-package-install": [
-            "@php -r \"copy('.env.example', '.env');\""
-        ],
-        "post-create-project-cmd": [
-            "@php artisan key:generate"
-        ],
-        "test": "@php artisan test",
-        "coverage": "@php artisan test --coverage-clover=coverage.xml",
-        "cs": "phpcs --standard=ruleset.xml",
-        "cs:fix": "phpcbf --standard=ruleset.xml",
-        "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi"
-    },
-    "config": {
-        "preferred-install": "dist",
-        "optimize-autoloader": true,
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": false
+    "files": [
+      "app/Helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/TestCase.php"
+    ]
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover"
+    ],
+    "post-install-cmd": [
+      "@php artisan clear-compiled",
+      "@php artisan cache:clear",
+      "@php -r \"if (!file_exists('.env')) copy('.env.example', '.env');\""
+    ],
+    "pre-update-cmd": [
+      "@php artisan clear-compiled"
+    ],
+    "post-update-cmd": [
+      "@php artisan cache:clear"
+    ],
+    "post-root-package-install": [
+      "@php -r \"copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "@php artisan key:generate"
+    ],
+    "test": "@php artisan test",
+    "coverage": "@php artisan test --coverage-clover=coverage.xml",
+    "cs": "phpcs --standard=ruleset.xml",
+    "cs:fix": "phpcbf --standard=ruleset.xml",
+    "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": false
 }

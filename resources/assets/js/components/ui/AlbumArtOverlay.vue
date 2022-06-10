@@ -6,14 +6,14 @@
 import { ref, toRefs, watchEffect } from 'vue'
 import { albumStore } from '@/stores'
 
-const props = defineProps<{ album: Album }>()
+const props = defineProps<{ album: number }>()
 const { album } = toRefs(props)
 
 const thumbnailUrl = ref<String | null>(null)
 
 watchEffect(async () => {
   try {
-    thumbnailUrl.value = await albumStore.getThumbnail(album.value)
+    thumbnailUrl.value = await albumStore.fetchThumbnail(album.value)
   } catch (e) {
     thumbnailUrl.value = null
   }

@@ -12,7 +12,7 @@
     @contextmenu.prevent="requestContextMenu"
   >
     <span class="thumbnail-wrapper">
-      <ArtistThumbnail :entity="artist" />
+      <ArtistThumbnail :entity="artist"/>
     </span>
 
     <footer>
@@ -21,13 +21,11 @@
       </div>
       <p class="meta">
         <span class="left">
-          {{ pluralize(artist.albums.length, 'album') }}
+          {{ pluralize(artist.album_count, 'album') }}
           •
-          {{ pluralize(artist.songs.length, 'song') }}
+          {{ pluralize(artist.song_count, 'song') }}
           •
-          {{ duration }}
-          •
-          {{ pluralize(artist.playCount, 'play') }}
+          {{ pluralize(artist.play_count, 'play') }}
         </span>
         <span class="right">
           <a
@@ -38,7 +36,7 @@
             data-testid="shuffle-artist"
             @click.prevent="shuffle"
           >
-            <i class="fa fa-random" />
+            <i class="fa fa-random"/>
           </a>
           <a
             v-if="allowDownload"
@@ -49,7 +47,7 @@
             data-testid="download-artist"
             @click.prevent="download"
           >
-            <i class="fa fa-download" />
+            <i class="fa fa-download"/>
           </a>
         </span>
       </p>
@@ -68,12 +66,14 @@ const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/Album
 const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { artist, layout } = toRefs(props)
 
-const allowDownload = toRef(commonStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const duration = computed(() => songStore.getFormattedLength(artist.value.songs))
-const showing = computed(() => artist.value.songs.length && !artistStore.isVariousArtists(artist.value))
+const showing = computed(() => artist.value.song_count && !artistStore.isVarious(artist.value))
 
-const shuffle = () => playbackService.playAllByArtist(artist.value, true /* shuffled */)
+const shuffle = async () => {
+  await playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value), true /* shuffled */)
+}
+
 const download = () => downloadService.fromArtist(artist.value)
 const dragStart = (event: DragEvent) => startDragging(event, artist.value, 'Artist')
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', event, artist.value)

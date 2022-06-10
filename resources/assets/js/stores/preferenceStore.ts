@@ -1,6 +1,6 @@
-import { userStore } from '.'
-import { localStorageService } from '@/services'
 import { reactive } from 'vue'
+import { userStore } from '@/stores'
+import { localStorageService } from '@/services'
 
 interface Preferences extends Record<string, any> {
   volume: number

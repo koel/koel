@@ -12,7 +12,7 @@ import { favoriteStore } from '@/stores'
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
-const title = computed(() => `${song.value.liked ? 'Unlike' : 'Like'} ${song.value.title} by ${song.value.artist.name}`)
+const title = computed(() => `${song.value.liked ? 'Unlike' : 'Like'} ${song.value.title} by ${song.value.artist_name}`)
 
 const toggleLike = () => favoriteStore.toggleOne(song.value)
 </script>

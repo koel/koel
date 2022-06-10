@@ -1,7 +1,7 @@
 import { fireEvent } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { downloadService, playbackService } from '@/services'
+import { downloadService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import ArtistCard from './ArtistCard.vue'
 
@@ -12,9 +12,7 @@ new class extends UnitTestCase {
     super.beforeEach(() => {
       artist = factory<Artist>('artist', {
         id: 3, // make sure it's not "Various Artists"
-        name: 'Led Zeppelin',
-        albums: factory<Album>('album', 4),
-        songs: factory<Song>('song', 16)
+        name: 'Led Zeppelin'
       })
     })
   }
@@ -47,16 +45,7 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
-      const mock = this.mock(playbackService, 'playAllByArtist')
-
-      const { getByTestId } = this.render(ArtistCard, {
-        props: {
-          artist
-        }
-      })
-
-      await fireEvent.click(getByTestId('shuffle-artist'))
-      expect(mock).toHaveBeenCalled()
+      throw 'Unimplemented'
     })
   }
 }

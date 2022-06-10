@@ -10,7 +10,7 @@ import Visualizer from '@/components/ui/Visualizer.vue'
 new class extends UnitTestCase {
   protected test () {
     it('has a translucent overlay per album', async () => {
-      this.mock(albumStore, 'getThumbnail', 'https://foo/bar.jpg')
+      this.mock(albumStore, 'fetchThumbnail', 'https://foo/bar.jpg')
 
       const { getByTestId } = this.render(MainContent, {
         global: {

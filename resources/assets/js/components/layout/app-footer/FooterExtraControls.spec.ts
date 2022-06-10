@@ -17,12 +17,9 @@ new class extends UnitTestCase {
       expect(this.render(FooterExtraControls, {
         props: {
           song: factory<Song>('song', {
-            playbackState: 'Playing',
+            playback_state: 'Playing',
             // Set these values for Like button's rendered HTML to be consistent
-            title: 'Fahrstuhl to Heaven',
-            artist: factory<Artist>('artist', {
-              name: 'Led Zeppelin'
-            })
+            title: 'Fahrstuhl to Heaven'
           })
         },
         global: {

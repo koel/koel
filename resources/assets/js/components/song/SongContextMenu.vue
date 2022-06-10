@@ -5,8 +5,8 @@
         <span v-if="firstSongPlaying">Pause</span>
         <span v-else>Play</span>
       </li>
-      <li class="go-to-album" @click="viewAlbumDetails(songs[0].album)">Go to Album</li>
-      <li class="go-to-artist" @click="viewArtistDetails(songs[0].artist)">Go to Artist</li>
+      <li class="go-to-album" @click="viewAlbumDetails(songs[0].album_id)">Go to Album</li>
+      <li class="go-to-artist" @click="viewArtistDetails(songs[0].artist_id)">Go to Artist</li>
     </template>
     <li class="has-sub">
       Add To
@@ -49,13 +49,7 @@ import { downloadService, playbackService } from '@/services'
 import router from '@/router'
 import { useAuthorization, useContextMenu, useSongMenuMethods } from '@/composables'
 
-const {
-  context,
-  base,
-  ContextMenuBase,
-  open,
-  close
-} = useContextMenu()
+const { context, base, ContextMenuBase, open, close, trigger } = useContextMenu()
 
 const songs = toRef(context, 'songs') as Ref<Song[]>
 
@@ -68,20 +62,20 @@ const {
 } = useSongMenuMethods(songs, close)
 
 const playlists = toRef(playlistStore.state, 'playlists')
-const allowDownload = toRef(commonStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allow_download')
 const user = toRef(userStore.state, 'current')
 const queue = toRef(queueStore.state, 'songs')
 const currentSong = toRef(queueStore.state, 'current')
 
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
-const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playbackState === 'Playing' : false)
+const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)
 const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
 const { isAdmin } = useAuthorization()
 
-const doPlayback = () => {
+const doPlayback = () => trigger(() => {
   if (!songs.value.length) return
 
-  switch (songs.value[0].playbackState) {
+  switch (songs.value[0].playback_state) {
     case 'Playing':
       playbackService.pause()
       break
@@ -95,35 +89,17 @@ const doPlayback = () => {
       playbackService.play(songs.value[0])
       break
   }
+})
 
-  close()
-}
+const openEditForm = () => trigger(() => songs.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', songs.value))
+const viewAlbumDetails = (albumId: number) => trigger(() => router.go(`album/${albumId}`))
+const viewArtistDetails = (artistId: number) => trigger(() => router.go(`artist/${artistId}`))
+const download = () => trigger(() => downloadService.fromSongs(songs.value))
 
-const openEditForm = () => {
-  songs.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', songs.value)
-  close()
-}
-
-const viewAlbumDetails = (album: Album) => {
-  router.go(`album/${album.id}`)
-  close()
-}
-
-const viewArtistDetails = (artist: Artist) => {
-  router.go(`artist/${artist.id}`)
-  close()
-}
-
-const download = () => {
-  downloadService.fromSongs(songs.value)
-  close()
-}
-
-const copyUrl = () => {
+const copyUrl = () => trigger(() => {
   copyText(songStore.getShareableUrl(songs.value[0]))
   alerts.success('URL copied to clipboard.')
-  close()
-}
+})
 
-defineExpose({ open, close })
+defineExpose({ open })
 </script>

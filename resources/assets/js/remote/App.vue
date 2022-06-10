@@ -1,17 +1,17 @@
 <template>
   <div id="wrapper" :class="{ 'standalone' : inStandaloneMode }">
     <template v-if="authenticated">
-      <AlbumArtOverlay v-if="showAlbumArtOverlay && album" :album="album"/>
+      <AlbumArtOverlay v-if="showAlbumArtOverlay && song" :album="song.album_id"/>
 
       <main>
         <template v-if="connected">
           <div class="details" v-if="song">
-            <div :style="{ backgroundImage: `url(${song.album.cover})` }" class="cover"/>
+            <div :style="{ backgroundImage: `url(${song.album_cover})` }" class="cover"/>
             <div class="info">
               <div class="wrap">
                 <p class="title text">{{ song.title }}</p>
-                <p class="artist text">{{ song.artist.name }}</p>
-                <p class="album text">{{ song.album.name }}</p>
+                <p class="artist text">{{ song.artist_name }}</p>
+                <p class="album text">{{ song.album_name }}</p>
               </div>
             </div>
           </div>
@@ -68,7 +68,6 @@
 import noUISlider from 'nouislider'
 import { authService, socketService } from '@/services'
 import { preferenceStore, userStore } from '@/stores'
-import { SliderElement } from 'koel/types/ui'
 import { computed, defineAsyncComponent, nextTick, onMounted, ref, toRef, watch } from 'vue'
 
 import LoginForm from '@/components/auth/LoginForm.vue'
@@ -125,14 +124,13 @@ const onUserLoggedIn = () => {
 
 const init = async () => {
   try {
-    const user = await userStore.getProfile()
-    userStore.init([], user)
+    userStore.init(await userStore.getProfile())
 
     await socketService.init()
 
     socketService
       .listen('SOCKET_SONG', ({ song: _song }: { song: Song }) => (song.value = _song))
-      .listen('SOCKET_PLAYBACK_STOPPED', () => song.value && (song.value.playbackState = 'Stopped'))
+      .listen('SOCKET_PLAYBACK_STOPPED', () => song.value && (song.value.playback_state = 'Stopped'))
       .listen('SOCKET_VOLUME_CHANGED', (volume: number) => volumeSlider.value?.noUiSlider?.set(volume))
       .listen('SOCKET_STATUS', ({ song: _song, volume: _volume }: { song: Song, volume: number }) => {
         song.value = _song
@@ -161,7 +159,7 @@ const toggleFavorite = () => {
 
 const togglePlayback = () => {
   if (song.value) {
-    song.value.playbackState = song.value.playbackState === 'Playing' ? 'Paused' : 'Playing'
+    song.value.playback_state = song.value.playback_state === 'Playing' ? 'Paused' : 'Playing'
   }
 
   socketService.broadcast('SOCKET_TOGGLE_PLAYBACK')
@@ -188,9 +186,8 @@ const rescan = () => {
   scan()
 }
 
-const playing = computed(() => Boolean(song.value?.playbackState === 'Playing'))
+const playing = computed(() => Boolean(song.value?.playback_state === 'Playing'))
 const maxRetriesReached = computed(() => retries.value >= MAX_RETRIES)
-const album = computed(() => song.value?.album)
 
 onMounted(() => {
   // The app has just been initialized, check if we can get the user data with an already existing token
@@ -202,7 +199,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-@import "~#/partials/_shared.scss";
+@import "#/partials/_shared.scss";
 
 body, html {
   height: 100vh;

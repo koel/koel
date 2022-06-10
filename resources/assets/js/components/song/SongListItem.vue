@@ -7,14 +7,14 @@
   >
     <span v-if="columns.includes('track')" class="track-number text-secondary">{{ song.track || '' }}</span>
     <span v-if="columns.includes('title')" class="title">{{ song.title }}</span>
-    <span v-if="columns.includes('artist')" class="artist">{{ song.artist.name }}</span>
-    <span v-if="columns.includes('album')" class="album">{{ song.album.name }}</span>
-    <span v-if="columns.includes('length')" class="time text-secondary">{{ song.fmtLength }}</span>
+    <span v-if="columns.includes('artist')" class="artist">{{ song.artist_name }}</span>
+    <span v-if="columns.includes('album')" class="album">{{ song.album_name }}</span>
+    <span v-if="columns.includes('length')" class="time text-secondary">{{ fmtLength }}</span>
     <span class="favorite">
       <LikeButton :song="song"/>
     </span>
     <span class="play" data-testid="song-item-play" role="button" @click.stop="doPlayback">
-      <i class="fa fa-pause-circle" v-if="song.playbackState === 'Playing'"></i>
+      <i class="fa fa-pause-circle" v-if="song.playback_state === 'Playing'"></i>
       <i class="fa fa-play-circle" v-else></i>
     </span>
   </div>
@@ -24,6 +24,7 @@
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore } from '@/stores'
+import { secondsToHis } from '@/utils'
 
 const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
 
@@ -31,7 +32,8 @@ const props = defineProps<{ item: SongRow, columns: SongListColumn[] }>()
 const { item, columns } = toRefs(props)
 
 const song = computed(() => item.value.song)
-const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playbackState!))
+const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playback_state!))
+const fmtLength = secondsToHis(song.value.length)
 
 const play = () => {
   queueStore.queueIfNotQueued(song.value)
@@ -39,7 +41,7 @@ const play = () => {
 }
 
 const doPlayback = () => {
-  switch (song.value.playbackState) {
+  switch (song.value.playback_state) {
     case 'Playing':
       playbackService.pause()
       break

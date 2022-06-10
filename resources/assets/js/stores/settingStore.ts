@@ -10,10 +10,6 @@ export const settingStore = {
     Object.assign(this.state, settings)
   },
 
-  get all () {
-    return this.state
-  },
-
   async update (settings: Settings) {
     await httpService.put('settings', settings)
     Object.assign(this.state, settings)

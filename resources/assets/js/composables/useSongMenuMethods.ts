@@ -1,32 +1,32 @@
-import { Ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import { alerts, pluralize } from '@/utils'
 
 export const useSongMenuMethods = (songs: Ref<Song[]>, close: Closure) => {
   const queueSongsAfterCurrent = () => {
-    queueStore.queueAfterCurrent(songs.value)
     close()
+    queueStore.queueAfterCurrent(songs.value)
   }
 
   const queueSongsToBottom = () => {
-    queueStore.queue(songs.value)
     close()
+    queueStore.queue(songs.value)
   }
 
   const queueSongsToTop = () => {
-    queueStore.queueToTop(songs.value)
     close()
+    queueStore.queueToTop(songs.value)
   }
 
   const addSongsToFavorite = async () => {
-    await favoriteStore.like(songs.value)
     close()
+    await favoriteStore.like(songs.value)
   }
 
   const addSongsToExistingPlaylist = async (playlist: Playlist) => {
-    await playlistStore.addSongs(playlist, songs.value)
-    alerts.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
     close()
+    await playlistStore.addSongs(ref(playlist), songs.value)
+    alerts.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
   }
 
   return {

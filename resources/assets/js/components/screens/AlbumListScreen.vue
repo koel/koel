@@ -8,15 +8,15 @@
     </ScreenHeader>
 
     <div ref="scroller" :class="`as-${viewMode}`" class="albums main-scroll-wrap" @scroll="scrolling">
-      <AlbumCard v-for="item in displayedItems" :key="item.id" :album="item" :layout="itemLayout"/>
+      <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout"/>
       <ToTopButton/>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, nextTick, ref, toRef, watch } from 'vue'
-import { eventBus, limitBy } from '@/utils'
+import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
+import { eventBus } from '@/utils'
 import { albumStore, preferenceStore as preferences } from '@/stores'
 import { useInfiniteScroll } from '@/composables'
 
@@ -29,27 +29,34 @@ const albums = toRef(albumStore.state, 'albums')
 
 const {
   ToTopButton,
-  displayedItemCount,
   scroller,
   scrolling,
   makeScrollable
-} = useInfiniteScroll(9)
+} = useInfiniteScroll(async () => await fetchAlbums())
 
-const displayedItems = computed(() => limitBy(albums.value, displayedItemCount.value))
 const itemLayout = computed<ArtistAlbumCardLayout>(() => viewMode.value === 'thumbnails' ? 'full' : 'compact')
 
-watch(viewMode, () => preferences.albumsViewMode = viewMode.value)
+watch(viewMode, () => (preferences.albumsViewMode = viewMode.value))
 
-eventBus.on({
-  KOEL_READY () {
-    viewMode.value = preferences.albumsViewMode || 'thumbnails'
-  },
+let initialized = false
+let loading = false
+const page = ref<number | null>(1)
+const moreAlbumsAvailable = computed(() => page.value !== null)
 
-  async LOAD_MAIN_CONTENT (view: MainViewName) {
-    if (view === 'Albums') {
-      await nextTick()
-      makeScrollable(albums.value.length)
-    }
+const fetchAlbums = async () => {
+  if (loading || !moreAlbumsAvailable.value) return
+
+  loading = true
+  page.value = await albumStore.fetch(page.value!)
+  loading = false
+}
+
+eventBus.on('KOEL_READY', () => (viewMode.value = preferences.albumsViewMode || 'thumbnails'))
+
+eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
+  if (view === 'Albums' && !initialized) {
+    await makeScrollable()
+    initialized = true
   }
 })
 </script>

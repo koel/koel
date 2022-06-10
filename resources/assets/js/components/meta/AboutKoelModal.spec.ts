@@ -6,13 +6,13 @@ import Btn from '@/components/ui/Btn.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => (KOEL_ENV = ''));
+    super.beforeEach(() => (KOEL_ENV = ''))
   }
 
   protected test () {
     it('renders', async () => {
-      commonStore.state.currentVersion = 'v0.0.0'
-      commonStore.state.latestVersion = 'v0.0.0'
+      commonStore.state.current_version = 'v0.0.0'
+      commonStore.state.latest_version = 'v0.0.0'
 
       const { html } = this.render(AboutKoelModel, {
         global: {
@@ -26,8 +26,8 @@ new class extends UnitTestCase {
     })
 
     it('shows new version', () => {
-      commonStore.state.currentVersion = 'v1.0.0'
-      commonStore.state.latestVersion = 'v1.0.1'
+      commonStore.state.current_version = 'v1.0.0'
+      commonStore.state.latest_version = 'v1.0.1'
       const { findByTestId } = this.actingAsAdmin().render(AboutKoelModel)
 
       findByTestId('new-version-about')

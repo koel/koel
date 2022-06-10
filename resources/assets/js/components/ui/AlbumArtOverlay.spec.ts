@@ -19,7 +19,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('fetches and displays the album thumbnail', async () => {
-      const mock = this.mock(albumStore, 'getThumbnail')
+      const mock = this.mock(albumStore, 'fetchThumbnail')
       mock.mockResolvedValue('https://localhost/thumb.jpg')
 
       const { html } = this.renderComponent()
@@ -30,7 +30,7 @@ new class extends UnitTestCase {
     })
 
     it('displays nothing if fetching fails', async () => {
-      const mock = this.mock(albumStore, 'getThumbnail', () => {
+      const mock = this.mock(albumStore, 'fetchThumbnail', () => {
         throw new Error()
       })
 

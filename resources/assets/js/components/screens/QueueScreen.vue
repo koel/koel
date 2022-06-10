@@ -2,7 +2,7 @@
   <section id="queueWrapper">
     <ScreenHeader>
       Current Queue
-      <ControlsToggler :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta>
         <span v-if="songs.length">
@@ -16,9 +16,7 @@
           @playAll="playAll"
           @playSelected="playSelected"
           @clearQueue="clearQueue"
-          :songs="songs"
-          :config="songListControlConfig"
-          :selectedSongs="selectedSongs"
+          :config="controlConfig"
         />
       </template>
     </ScreenHeader>
@@ -26,9 +24,6 @@
     <SongList
       v-if="songs.length"
       ref="songList"
-      :config="{ sortable: false }"
-      :items="songs"
-      type="queue"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
       @reorder="onReorder"
@@ -42,9 +37,7 @@
       No songs queued.
       <span class="d-block secondary" v-if="libraryNotEmpty">
         How about
-        <a data-testid="shuffle-library" class="start" @click.prevent="shuffleLibrary">
-          shuffling the whole library
-        </a>?
+        <a data-testid="shuffle-library" class="start" @click.prevent="shuffleSome">playing some random songs</a>?
       </span>
     </ScreenEmptyState>
   </section>
@@ -53,33 +46,38 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef } from 'vue'
 import { pluralize } from '@/utils'
-import { queueStore, songStore } from '@/stores'
+import { commonStore, queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useSongList } from '@/composables'
 
 const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
 
+const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
+
 const {
   SongList,
   SongListControls,
-  ControlsToggler,
+  ControlsToggle,
   songs,
   songList,
   duration,
   selectedSongs,
   showingControls,
-  songListControlConfig,
   isPhone,
   playSelected,
   toggleControls
-} = useSongList(toRef(queueStore.state, 'songs'), { clearQueue: true })
+} = useSongList(toRef(queueStore.state, 'songs'), 'queue', { sortable: false })
 
-const allSongs = toRef(songStore.state, 'songs')
-const libraryNotEmpty = computed(() => allSongs.value.length > 0)
+const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 
 const playAll = (shuffle = true) => playbackService.queueAndPlay(songs.value, shuffle)
-const shuffleLibrary = () => playbackService.shuffleLibrary()
+
+const shuffleSome = async () => {
+  await queueStore.fetchRandom()
+  await playbackService.playFirstInQueue()
+}
+
 const clearQueue = () => queueStore.clear()
 const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(selectedSongs.value)
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])

@@ -41,7 +41,10 @@ class Http {
 
   constructor () {
     this.client = Axios.create({
-      baseURL: `${window.BASE_URL}api`
+      baseURL: `${window.BASE_URL}api`,
+      headers: {
+        'X-Api-Version': 'v6'
+      }
     })
 
     // Intercept the request to make sure the token is injected into the header.
@@ -56,7 +59,7 @@ class Http {
       Http.hideProgressBar()
 
       // …get the token from the header or response data if exists, and save it.
-      const token = response.headers.Authorization || response.data.token
+      const token = response.headers.authorization || response.data.token
       token && authService.setToken(token)
 
       return response

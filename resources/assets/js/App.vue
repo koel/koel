@@ -99,8 +99,6 @@ const init = async () => {
   showOverlay()
   await socketService.init()
 
-  // Make the most important HTTP request to get all necessary data from the server.
-  // Afterwards, init all mandatory stores and services.
   try {
     await commonStore.init()
 

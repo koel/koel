@@ -16,39 +16,31 @@
 
 <script lang="ts" setup>
 import { computed, Ref, toRef } from 'vue'
-import { albumStore, artistStore, commonStore } from '@/stores'
+import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useContextMenu } from '@/composables'
 import router from '@/router'
 
-const { context, base, ContextMenuBase, open, close } = useContextMenu()
+const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
 
 const album = toRef(context, 'album') as Ref<Album>
-const allowDownload = toRef(commonStore.state, 'allowDownload')
+const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const isStandardAlbum = computed(() => !albumStore.isUnknownAlbum(album.value))
+const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))
 
 const isStandardArtist = computed(() => {
-  return !artistStore.isUnknownArtist(album.value.artist) && !artistStore.isVariousArtists(album.value.artist)
+  return !artistStore.isUnknown(album.value.artist_id) && !artistStore.isVarious(album.value.artist_id)
 })
 
-const play = () => playbackService.playAllInAlbum(album.value)
-const shuffle = () => playbackService.playAllInAlbum(album.value, true /* shuffled */)
+const play = () => trigger(async () => playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value)))
 
-const viewAlbumDetails = () => {
-  router.go(`album/${album.value.id}`)
-  close()
+const shuffle = () => {
+  trigger(async () => playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true))
 }
 
-const viewArtistDetails = () => {
-  router.go(`artist/${album.value.artist.id}`)
-  close()
-}
+const viewAlbumDetails = () => trigger(() => router.go(`album/${album.value.id}`))
+const viewArtistDetails = () => trigger(() => router.go(`artist/${album.value.artist_id}`))
+const download = () => trigger(() => downloadService.fromAlbum(album.value))
 
-const download = () => {
-  downloadService.fromAlbum(album.value)
-  close()
-}
-
-defineExpose({ open, close })
+defineExpose({ open })
 </script>

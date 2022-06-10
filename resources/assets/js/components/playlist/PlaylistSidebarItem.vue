@@ -30,8 +30,8 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, nextTick, ref, toRefs } from 'vue'
-import { alerts, eventBus, pluralize } from '@/utils'
-import { favoriteStore, playlistStore, songStore } from '@/stores'
+import { alerts, eventBus, pluralize, resolveSongsFromDragEvent } from '@/utils'
+import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
@@ -80,28 +80,21 @@ const makeEditable = () => {
   editing.value = true
 }
 
-/**
- * Handle songs dropped to our favorite or playlist menu item.
- */
-const handleDrop = (event: DragEvent) => {
+const handleDrop = async (event: DragEvent) => {
   if (!contentEditable.value) {
     return false
   }
 
-  if (!event.dataTransfer?.getData('application/x-koel.text+plain')) {
-    return false
-  }
-
-  const songs = songStore.byIds(event.dataTransfer.getData('application/x-koel.text+plain').split(','))
+  const songs = await resolveSongsFromDragEvent(event)
 
   if (!songs.length) {
     return false
   }
 
   if (type.value === 'favorites') {
-    favoriteStore.like(songs)
+    await favoriteStore.like(songs)
   } else if (type.value === 'playlist') {
-    playlistStore.addSongs(playlist.value, songs)
+    await playlistStore.addSongs(playlist, songs)
     alerts.success(`Added ${pluralize(songs.length, 'song')} into "${playlist.value.name}."`)
   }
 
