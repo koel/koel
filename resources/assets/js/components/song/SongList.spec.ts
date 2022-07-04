@@ -2,18 +2,12 @@ import lodash from 'lodash'
 import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
-import { eventBus, noop } from '@/utils'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongList from './SongList.vue'
 
 let songs: Song[]
 
 new class extends UnitTestCase {
-  protected beforeEach () {
-    // suppress the warning
-    super.beforeEach(() => eventBus.on('SET_SELECTED_SONGS', noop))
-  }
-
   private renderComponent (type: SongListType = 'all-songs') {
     songs = factory<Song>('song', 3)
 

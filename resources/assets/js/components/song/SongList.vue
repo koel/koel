@@ -85,9 +85,9 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { findIndex } from 'lodash'
-import { computed, defineAsyncComponent, getCurrentInstance, inject, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, inject, onMounted, ref, watch } from 'vue'
 import { $, eventBus, startDragging } from '@/utils'
-import { SongListConfigKey, SongListTypeKey, SongsKey } from '@/symbols'
+import { SelectedSongsKey, SongListConfigKey, SongListTypeKey, SongsKey } from '@/symbols'
 
 const VirtualScroller = defineAsyncComponent(() => import('@/components/ui/VirtualScroller.vue'))
 const SongListItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
@@ -96,6 +96,7 @@ const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scr
 
 const items = inject(SongsKey, ref([]))
 const type = inject(SongListTypeKey, 'all-songs')
+const selectedSongs = inject(SelectedSongsKey, ref([]))
 
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
@@ -103,7 +104,10 @@ const sortOrder = ref<SortOrder>('asc')
 const songRows = ref<SongRow[]>([])
 
 const allowReordering = type === 'queue'
-const selectedSongs = computed(() => songRows.value.filter(row => row.selected).map(row => row.song))
+
+watch(songRows, () => {
+  selectedSongs.value = songRows.value.filter(row => row.selected).map(row => row.song)
+}, { deep: true })
 
 const config = computed((): SongListConfig => {
   return Object.assign({
@@ -113,7 +117,7 @@ const config = computed((): SongListConfig => {
 })
 
 const currentSortField = ref<SongListSortField | null>((() => {
-  if (['album', 'artist'].includes(type)) return 'track'
+  if (type === 'album' || type === 'artist') return 'track'
   if (type === 'search-results') return null
   return config.value.sortable ? 'title' : null
 })())
@@ -152,9 +156,6 @@ const render = () => {
 }
 
 watch(items, () => render(), { deep: true })
-
-const vm = getCurrentInstance()
-watch(selectedSongs, () => eventBus.emit('SET_SELECTED_SONGS', selectedSongs.value, vm?.parent))
 
 const handleDelete = () => {
   emit('press:delete')

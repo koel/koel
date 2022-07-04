@@ -180,21 +180,21 @@ export const songStore = {
   },
 
   async fetchForAlbum (album: Album) {
-    return Cache.resolve<Song[]>(
+    return await Cache.resolve<Song[]>(
       [`album.songs`, album.id],
       async () => this.syncWithVault(await httpService.get<Song[]>(`albums/${album.id}/songs`))
     )
   },
 
   async fetchForArtist (artist: Artist) {
-    return Cache.resolve<Song[]>(
+    return await Cache.resolve<Song[]>(
       ['artist.songs', artist.id],
       async () => this.syncWithVault(await httpService.get<Song[]>(`artists/${artist.id}/songs`))
     )
   },
 
   async fetchForPlaylist (playlist: Playlist) {
-    return Cache.resolve<Song[]>(
+    return await Cache.resolve<Song[]>(
       [`playlist.songs`, playlist.id],
       async () => this.syncWithVault(await httpService.get<Song[]>(`playlists/${playlist.id}/songs`))
     )

@@ -23,10 +23,9 @@ export const artistStore = {
     ids.forEach(id => this.vault.delete(id))
   },
 
-  isVarious: (artist: Artist | number) => {
-    if (typeof artist === 'number') return artist === VARIOUS_ARTISTS_ID
-    return artist.id === VARIOUS_ARTISTS_ID
-  },
+  isVarious: (artist: Artist | number) => (typeof artist === 'number')
+    ? artist === VARIOUS_ARTISTS_ID
+    : artist.id === VARIOUS_ARTISTS_ID,
 
   isUnknown: (artist: Artist | number) => (typeof artist === 'number')
     ? artist === UNKNOWN_ARTIST_ID
@@ -56,7 +55,7 @@ export const artistStore = {
     let artist = this.byId(id)
 
     if (!artist) {
-      artist = Cache.resolve<Artist>(['artist', id], async () => await httpService.get<Artist>(`artists/${id}`))
+      artist = await Cache.resolve<Artist>(['artist', id], async () => await httpService.get<Artist>(`artists/${id}`))
       this.syncWithVault(artist)
     }
 

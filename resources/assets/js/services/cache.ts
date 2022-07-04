@@ -41,10 +41,10 @@ export const Cache = {
     this.storage.delete(this.normalizeKey(key))
   },
 
-  resolve<T> (key: any, resolver: Closure) {
+  async resolve<T> (key: any, fetcher: Closure) {
     key = this.normalizeKey(key)
 
-    this.hit(key) || this.set(key, resolver())
+    this.hit(key) || this.set(key, await fetcher())
     return this.storage.get(key)!.value
   }
 }

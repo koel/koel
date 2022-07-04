@@ -61,7 +61,7 @@ export const albumStore = {
     let album = this.byId(id)
 
     if (!album) {
-      album = Cache.resolve<Album>(['album', id], async () => await httpService.get<Album>(`albums/${id}`))
+      album = await Cache.resolve<Album>(['album', id], async () => await httpService.get<Album>(`albums/${id}`))
       this.syncWithVault(album)
     }
 

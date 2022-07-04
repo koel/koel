@@ -1,9 +1,8 @@
-import { ComponentInternalInstance, computed, getCurrentInstance, provide, reactive, Ref, ref } from 'vue'
+import { computed, getCurrentInstance, provide, reactive, Ref, ref } from 'vue'
 import isMobile from 'ismobilejs'
 import { orderBy } from 'lodash'
 
 import { playbackService } from '@/services'
-import { eventBus } from '@/utils'
 import { queueStore, songStore } from '@/stores'
 import router from '@/router'
 
@@ -66,12 +65,6 @@ export const useSongList = (
 
     songs.value = orderBy(songs.value, sortFields, sortOrder)
   }
-
-  eventBus.on({
-    SET_SELECTED_SONGS (songs: Song[], target: ComponentInternalInstance) {
-      target === vm && (selectedSongs.value = songs)
-    }
-  })
 
   provide(SongListTypeKey, type)
   provide(SongsKey, songs)
