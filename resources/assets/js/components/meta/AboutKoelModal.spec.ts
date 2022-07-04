@@ -6,7 +6,7 @@ import Btn from '@/components/ui/Btn.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => (KOEL_ENV = ''))
+    super.beforeEach(() => (VITE_KOEL_ENV = ''))
   }
 
   protected test () {
@@ -34,7 +34,7 @@ new class extends UnitTestCase {
     })
 
     it('shows demo notation', () => {
-      KOEL_ENV = 'demo'
+      VITE_KOEL_ENV = 'demo'
       const { findByTestId } = this.render(AboutKoelModel)
 
       findByTestId('demo-credits')

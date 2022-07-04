@@ -1,4 +1,4 @@
-declare let KOEL_ENV: '' | 'demo'
+declare let VITE_KOEL_ENV: '' | 'demo'
 
 declare module '*.vue'
 

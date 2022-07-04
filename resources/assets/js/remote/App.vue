@@ -203,6 +203,7 @@ onMounted(() => {
 
 body, html {
   height: 100vh;
+  position: relative;
 }
 
 #wrapper {

@@ -1,5 +1,4 @@
 import select from 'select'
-import { OverlayState } from 'koel/types/ui'
 import { eventBus, noop } from '@/utils'
 import defaultCover from '@/../img/covers/unknown-album.png'
 
@@ -49,4 +48,4 @@ export const copyText = (text: string): void => {
   document.execCommand('copy')
 }
 
-export const isDemo = KOEL_ENV === 'demo'
+export const isDemo = import.meta.env.VITE_KOEL_ENV === 'demo'
