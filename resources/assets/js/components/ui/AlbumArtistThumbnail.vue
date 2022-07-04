@@ -129,6 +129,8 @@ const onDrop = async (event: DragEvent) => {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
+  border-radius: 5px;
+  overflow: hidden;
 
   &::after {
     content: "";
