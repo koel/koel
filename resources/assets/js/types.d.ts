@@ -351,12 +351,23 @@ interface SongListControlsConfig {
   deletePlaylist: boolean
 }
 
+type ThemeableProperty = '--color-text-primary'
+  | '--color-text-secondary'
+  | '--color-bg-primary'
+  | '--color-bg-secondary'
+  | '--color-highlight'
+  | '--bg-image'
+  | '--bg-position'
+  | '--bg-attachment'
+  | '--bg-size'
+
 interface Theme {
   id: string
   name?: string
   thumbnailColor: string
   thumbnailUrl?: string
   selected?: boolean
+  properties?: Record<ThemeableProperty, string>
 }
 
 type ArtistAlbumViewMode = 'list' | 'thumbnails'
