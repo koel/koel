@@ -28,6 +28,16 @@
   .item {
     position: relative;
     max-width: 256px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-bg-secondary);
+    padding: 16px;
+    border-radius: 8px;
+
+    .thumbnail-wrapper {
+      overflow: hidden;
+      border-radius: 8px;
+      display: block;
+    }
 
     @media only screen and (max-width: 768px) {
       max-width: 100%;
@@ -40,17 +50,19 @@
     &.compact {
       display: flex;
       flex-direction: row;
+      align-items: center;
       max-width: 100%;
-      overflow: hidden;
-      min-height: 80px;
+      padding: 10px;
+      border-radius: 5px;
 
       .thumbnail-wrapper {
         width: 80px;
+        border-radius: 5px;
       }
 
       footer {
-        max-height: 80px;
         flex: 1;
+        padding: 0 16px;
       }
 
       .info {
@@ -67,8 +79,7 @@
     }
 
     footer {
-      padding: 16px;
-      background: var(--color-bg-secondary);
+      padding-top: 16px;
       flex: 1;
       overflow: hidden;
     }
@@ -190,9 +201,12 @@
     font-size: .8rem;
   }
 
-  img.cover, img.cool-guys-posing {
+  .cover, .cool-guys-posing {
     width: 100%;
     height: auto;
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
   }
 
   .wiki {

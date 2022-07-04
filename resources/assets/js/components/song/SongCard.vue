@@ -65,6 +65,11 @@ const changeSongState = () => {
 <style lang="scss" scoped>
 article {
   display: flex;
+  padding: 8px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-bg-secondary);
+  border-radius: 5px;
+  align-items: center;
 
   &.playing {
     color: var(--color-highlight);
@@ -85,6 +90,7 @@ article {
     height: 48px;
     background-size: cover;
     position: relative;
+    border-radius: 4px;
 
     @include vertical-center();
 
@@ -125,8 +131,8 @@ article {
 
   .main {
     flex: 1;
-    padding: 4px 8px;
     position: relative;
+    padding: 0 12px;
     display: flex;
 
     .play-count {

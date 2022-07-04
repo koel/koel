@@ -53,7 +53,7 @@ const greetings = [
   'How have you been, %s?'
 ]
 
-const greeting = computed(() => sample(greetings)!.replace('%s', userStore.current.name))
+const greeting = computed(() => sample(greetings)!.replace('%s', userStore.current?.name))
 
 let initialized = false
 
