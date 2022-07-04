@@ -56,8 +56,8 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, onMounted, ref, toRef, toRefs, watch } from 'vue'
-import { pluralize } from '@/utils'
-import { artistStore, commonStore, songStore } from '@/stores'
+import { eventBus, pluralize } from '@/utils'
+import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
 import router from '@/router'
@@ -109,6 +109,11 @@ const showInfo = () => (showingInfo.value = true)
 
 onMounted(async () => {
   albumSongs.value = await songStore.fetchForAlbum(album.value)
+})
+
+eventBus.on('SONGS_UPDATED', () => {
+  // if the current album has been deleted, go back to home
+  albumStore.byId(album.value.id) || router.go('home')
 })
 </script>
 

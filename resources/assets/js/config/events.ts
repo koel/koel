@@ -24,6 +24,7 @@ export type EventName =
   | 'PLAYLIST_DELETE'
   | 'SMART_PLAYLIST_UPDATED'
   | 'SONG_STARTED'
+  | 'SONGS_UPDATED'
 
   // upload-related
   | 'SONG_UPLOADED'

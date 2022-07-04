@@ -68,7 +68,7 @@ const { artist, layout } = toRefs(props)
 
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const showing = computed(() => artist.value.song_count && !artistStore.isVarious(artist.value))
+const showing = computed(() => artistStore.isStandard(artist.value))
 
 const shuffle = async () => {
   await playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value), true /* shuffled */)

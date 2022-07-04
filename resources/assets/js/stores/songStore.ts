@@ -2,7 +2,7 @@ import isMobile from 'ismobilejs'
 import slugify from 'slugify'
 import { orderBy, take, union } from 'lodash'
 import { reactive, watch } from 'vue'
-import { arrayify, secondsToHis, use } from '@/utils'
+import { arrayify, eventBus, secondsToHis, use } from '@/utils'
 import { authService, httpService } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, preferenceStore } from '@/stores'
 import { Cache } from '@/services/cache'
@@ -113,6 +113,8 @@ export const songStore = {
 
     albumStore.removeByIds(removed.albums.map(album => album.id))
     artistStore.removeByIds(removed.artists.map(artist => artist.id))
+
+    eventBus.emit('SONGS_UPDATED')
 
     overviewStore.refresh()
   },

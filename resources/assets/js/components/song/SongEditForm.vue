@@ -202,7 +202,15 @@ const open = async () => {
   formData.title = allSongsShareSameValue('title') ? firstSong.title : ''
   formData.album_name = allSongsShareSameValue('album_name') ? firstSong.album_name : ''
   formData.artist_name = allSongsShareSameValue('artist_name') ? firstSong.artist_name : ''
-  formData.album_artist_name = allSongsShareSameValue('album_artist_name') ? firstSong.album_artist_name : ''
+
+  // If the album artist is the same as the artist, we set the form value as empty to not confuse the user
+  // and make it less error-prone.
+  if (editingOnlyOneSong.value && firstSong.album_artist_id === firstSong.artist_id) {
+    formData.album_artist_name = ''
+  } else {
+    formData.album_artist_name = allSongsShareSameValue('album_artist_name') ? firstSong.album_artist_name : ''
+  }
+
   formData.lyrics = editingOnlyOneSong.value ? firstSong.lyrics : ''
   formData.track = allSongsShareSameValue('track') ? firstSong.track : null
   formData.disc = allSongsShareSameValue('disc') ? firstSong.disc : null

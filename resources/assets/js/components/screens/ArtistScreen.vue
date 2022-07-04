@@ -58,8 +58,8 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, ref, toRef, toRefs, watch } from 'vue'
-import { pluralize } from '@/utils'
-import { commonStore, songStore } from '@/stores'
+import { eventBus, pluralize } from '@/utils'
+import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList, useThirdPartyServices } from '@/composables'
 import router from '@/router'
@@ -108,6 +108,11 @@ const showInfo = () => (showingInfo.value = true)
 
 onMounted(async () => {
   artistSongs.value = await songStore.fetchForArtist(artist.value)
+})
+
+eventBus.on('SONGS_UPDATED', () => {
+  // if the current artist has been deleted, go back to home
+  artistStore.byId(artist.value.id) || router.go('home')
 })
 </script>
 

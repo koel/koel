@@ -1,6 +1,6 @@
 <template>
   <article
-    v-if="album.song_count"
+    v-if="showing"
     :class="layout"
     :title="`${album.name} by ${album.artist_name}`"
     class="item"
@@ -19,8 +19,8 @@
       <div class="info">
         <a :href="`#!/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
         <span class="sep text-secondary"> by </span>
-        <a v-if="isNormalArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
-        <span v-else class="artist nope">{{ album.artist_name }}</span>
+        <a v-if="isStandardArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
+        <span v-else class="text-secondary">{{ album.artist_name }}</span>
       </div>
       <p class="meta">
         <span class="left">
@@ -61,7 +61,7 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
 import { eventBus, pluralize, secondsToHis, startDragging } from '@/utils'
-import { artistStore, commonStore, songStore } from '@/stores'
+import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 
 const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
@@ -72,10 +72,8 @@ const { album, layout } = toRefs(props)
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
 const duration = computed(() => secondsToHis(album.value.length))
-
-const isNormalArtist = computed(() => {
-  return !artistStore.isVarious(album.value.artist_id) && !artistStore.isUnknown(album.value.artist_id)
-})
+const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_id))
+const showing = computed(() => !albumStore.isUnknown(album.value))
 
 const shuffle = async () => {
   await playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
