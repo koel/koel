@@ -3,6 +3,7 @@ import { difference, orderBy, take, union } from 'lodash'
 import { httpService } from '@/services'
 import { arrayify } from '@/utils'
 import { songStore } from '@/stores'
+import { Cache } from '@/services/cache'
 
 const UNKNOWN_ALBUM_ID = 1
 
@@ -60,7 +61,7 @@ export const albumStore = {
     let album = this.byId(id)
 
     if (!album) {
-      album = await httpService.get<Album>(`albums/${id}`)
+      album = Cache.resolve<Album>(['album', id], async () => await httpService.get<Album>(`albums/${id}`))
       this.syncWithVault(album)
     }
 

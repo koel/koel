@@ -2,6 +2,7 @@ import { reactive } from 'vue'
 import { difference, orderBy, take, union } from 'lodash'
 import { httpService } from '@/services'
 import { arrayify } from '@/utils'
+import { Cache } from '@/services/cache'
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
@@ -55,7 +56,7 @@ export const artistStore = {
     let artist = this.byId(id)
 
     if (!artist) {
-      artist = await httpService.get<Artist>(`artists/${id}`)
+      artist = Cache.resolve<Artist>(['artist', id], async () => await httpService.get<Artist>(`artists/${id}`))
       this.syncWithVault(artist)
     }
 

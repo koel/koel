@@ -5,6 +5,7 @@ import { reactive, watch } from 'vue'
 import { arrayify, secondsToHis, use } from '@/utils'
 import { authService, httpService } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, preferenceStore } from '@/stores'
+import { Cache } from '@/services/cache'
 
 interface BroadcastSongData {
   song: {
@@ -177,15 +178,24 @@ export const songStore = {
   },
 
   async fetchForAlbum (album: Album) {
-    return this.syncWithVault(await httpService.get<Song[]>(`albums/${album.id}/songs`))
+    return Cache.resolve<Song[]>(
+      [`album.songs`, album.id],
+      async () => this.syncWithVault(await httpService.get<Song[]>(`albums/${album.id}/songs`))
+    )
   },
 
   async fetchForArtist (artist: Artist) {
-    return this.syncWithVault(await httpService.get<Song[]>(`artists/${artist.id}/songs`))
+    return Cache.resolve<Song[]>(
+      ['artist.songs', artist.id],
+      async () => this.syncWithVault(await httpService.get<Song[]>(`artists/${artist.id}/songs`))
+    )
   },
 
   async fetchForPlaylist (playlist: Playlist) {
-    return this.syncWithVault(await httpService.get<Song[]>(`playlists/${playlist.id}/songs`))
+    return Cache.resolve<Song[]>(
+      [`playlist.songs`, playlist.id],
+      async () => this.syncWithVault(await httpService.get<Song[]>(`playlists/${playlist.id}/songs`))
+    )
   },
 
   async fetch (sortField: SongListSortField, sortOrder: SortOrder, page: number) {
