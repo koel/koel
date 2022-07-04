@@ -1,6 +1,12 @@
 @charset "utf-8";
 
-@import "partials/_vars.scss";
+@import '#/vendor/_reset.scss';
+
+@import '@modules/nouislider/distribute/nouislider.min.css';
+@import '@modules/font-awesome/css/font-awesome.min.css';
+
+@import "#/partials/_vars.scss";
+@import "#/partials/_shared.scss";
 
 body, html {
   height: 100%;

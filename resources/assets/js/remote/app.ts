@@ -1,7 +1,6 @@
-import './staticLoader'
 import { createApp } from 'vue'
-import App from './App.vue'
 import { clickaway } from '@/directives'
+import App from './App.vue'
 
 createApp(App)
   .directive('koel-clickaway', clickaway)

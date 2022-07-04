@@ -117,6 +117,8 @@ eventBus.on('SONGS_UPDATED', () => {
 </script>
 
 <style lang="scss" scoped>
+@import "#/partials/_mixins.scss";
+
 #artistWrapper {
   @include artist-album-info-wrapper();
 }

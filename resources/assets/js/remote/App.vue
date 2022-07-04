@@ -199,7 +199,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-@import "#/partials/_shared.scss";
+@import "#/remote.scss";
 
 body, html {
   height: 100vh;

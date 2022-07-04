@@ -68,3 +68,4 @@ eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
   }
 }
 </style>
+`
