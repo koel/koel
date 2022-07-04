@@ -21,4 +21,14 @@ class PlaylistService
 
         return $playlist;
     }
+
+    public function addSongsToPlaylist(Playlist $playlist, array $songIds): void
+    {
+        $playlist->songs()->syncWithoutDetaching($songIds);
+    }
+
+    public function removeSongsFromPlaylist(Playlist $playlist, array $songIds): void
+    {
+        $playlist->songs()->detach($songIds);
+    }
 }

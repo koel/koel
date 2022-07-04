@@ -1,9 +1,10 @@
 import { difference, orderBy, union } from 'lodash'
-import { reactive, Ref } from 'vue'
+import { reactive } from 'vue'
 
 import { httpService } from '@/services'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
+import { Cache } from '@/services/cache'
 
 export const playlistStore = {
   state: reactive({
@@ -54,23 +55,24 @@ export const playlistStore = {
   },
 
   async delete (playlist: Playlist) {
-    await httpService.delete(`playlist/${playlist.id}`)
+    await httpService.delete(`playlists/${playlist.id}`)
     this.state.playlists = difference(this.state.playlists, [playlist])
   },
 
-  async addSongs (playlist: Ref<Playlist>, songs: Song[]) {
-    if (playlist.value.is_smart) {
+  async addSongs (playlist: Playlist, songs: Song[]) {
+    if (playlist.is_smart) {
       return playlist
     }
 
-    const count = playlist.value.songs.length
-    playlist.value.songs = union(playlist.value.songs, songs)
+    const count = playlist.songs.length
+    playlist.songs = union(playlist.songs, songs)
 
-    if (count === playlist.value.songs.length) {
+    if (count === playlist.songs.length) {
       return playlist
     }
 
-    await httpService.put(`playlist/${playlist.value.id}/sync`, { songs: playlist.value.songs.map(song => song.id) })
+    await httpService.post(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
+    Cache.invalidate(['playlist.songs', playlist.id])
 
     return playlist
   },
@@ -81,14 +83,15 @@ export const playlistStore = {
     }
 
     playlist.songs = difference(playlist.songs, songs)
-    await httpService.put(`playlist/${playlist.id}/sync`, { songs: playlist.songs.map(song => song.id) })
+    await httpService.delete(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
+    Cache.invalidate(['playlist.songs', playlist.id])
 
     return playlist
   },
 
   async update (playlist: Playlist) {
     const serializedRules = this.serializeSmartPlaylistRulesForStorage(playlist.rules)
-    await httpService.put(`playlist/${playlist.id}`, { name: playlist.name, rules: serializedRules })
+    await httpService.put(`playlists/${playlist.id}`, { name: playlist.name, rules: serializedRules })
 
     return playlist
   },

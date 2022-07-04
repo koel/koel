@@ -1,6 +1,7 @@
 <?php
 
 use App\Facades\YouTube;
+use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\V6\API\AlbumController;
 use App\Http\Controllers\V6\API\AlbumSongController;
@@ -28,7 +29,12 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('albums.songs', AlbumSongController::class);
         Route::apiResource('artists', ArtistController::class);
         Route::apiResource('artists.songs', ArtistSongController::class);
+
+        Route::apiResource('playlists', PlaylistController::class);
         Route::apiResource('playlists.songs', PlaylistSongController::class);
+        Route::post('playlists/{playlist}/songs', [PlaylistSongController::class, 'add']);
+        Route::delete('playlists/{playlist}/songs', [PlaylistSongController::class, 'remove']);
+
         Route::apiResource('songs', SongController::class);
         Route::get('users', [UserController::class, 'index']);
 

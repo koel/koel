@@ -94,7 +94,7 @@ const handleDrop = async (event: DragEvent) => {
   if (type.value === 'favorites') {
     await favoriteStore.like(songs)
   } else if (type.value === 'playlist') {
-    await playlistStore.addSongs(playlist, songs)
+    await playlistStore.addSongs(playlist.value, songs)
     alerts.success(`Added ${pluralize(songs.length, 'song')} into "${playlist.value.name}."`)
   }
 

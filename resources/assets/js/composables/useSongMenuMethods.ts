@@ -1,4 +1,4 @@
-import { ref, Ref } from 'vue'
+import { Ref } from 'vue'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import { alerts, pluralize } from '@/utils'
 
@@ -25,7 +25,7 @@ export const useSongMenuMethods = (songs: Ref<Song[]>, close: Closure) => {
 
   const addSongsToExistingPlaylist = async (playlist: Playlist) => {
     close()
-    await playlistStore.addSongs(ref(playlist), songs.value)
+    await playlistStore.addSongs(playlist, songs.value)
     alerts.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
   }
 

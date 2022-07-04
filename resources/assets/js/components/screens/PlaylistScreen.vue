@@ -96,7 +96,7 @@ const download = () => downloadService.fromPlaylist(playlist.value!)
 const editSmartPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', playlist.value)
 
 const removeSelected = () => {
-  if (!selectedSongs.value.length) return
+  if (!selectedSongs.value.length || playlist.value.is_smart) return
 
   playlistStore.removeSongs(playlist.value!, selectedSongs.value)
   songs.value = difference(songs.value, selectedSongs.value)
