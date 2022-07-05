@@ -40,7 +40,7 @@ export const overviewStore = {
     this.state.mostPlayedSongs = songStore.getMostPlayed(7)
     this.state.mostPlayedAlbums = albumStore.getMostPlayed(6)
     this.state.mostPlayedArtists = artistStore.getMostPlayed(6)
-    this.state.recentlyAddedSongs = songStore.getRecentlyAdded(10)
+    this.state.recentlyAddedSongs = songStore.getRecentlyAdded(9)
     this.state.recentlyAddedAlbums = albumStore.getRecentlyAdded(6)
 
     this.state.recentlyPlayed = recentlyPlayedStore.excerptState.songs
