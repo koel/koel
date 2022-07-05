@@ -3,7 +3,7 @@
     <SoundBar v-if="loading"/>
     <form v-else @submit.prevent="submit">
       <header>
-        <img :src="coverUrl" alt="Album's cover" height="96" width="96">
+        <span class="cover" :style="{ backgroundImage: `url(${coverUrl})` }"/>
         <div class="meta">
           <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
           <h2 :class="{ mixed: !allSongsAreFromSameArtist && !formData.artist_name }">{{ displayedArtistName }}</h2>
@@ -173,13 +173,10 @@ const inputPlaceholder = computed(() => editingOnlyOneSong.value ? '' : 'Leave u
 const allSongsAreFromSameArtist = computed(() => allSongsShareSameValue('artist_name'))
 const allSongsAreInSameAlbum = computed(() => allSongsShareSameValue('album_name'))
 
-const coverUrl = computed(() => {
-  if (allSongsAreInSameAlbum.value) {
-    return mutatedSongs.value[0].album_cover ?? defaultCover
-  }
-
-  return defaultCover
-})
+const coverUrl = computed(() => allSongsAreInSameAlbum.value
+  ? mutatedSongs.value[0].album_cover || defaultCover
+  : defaultCover
+)
 
 const allSongsShareSameValue = (key: keyof EditFormData) => {
   if (editingOnlyOneSong.value) return true
@@ -260,13 +257,17 @@ form {
   }
 
   > header {
-    img {
-      flex: 0 0 96px;
+    gap: 1.2rem;
+
+    .cover {
+      flex: 0 0 84px;
+      height: 84px;
+      background-size: cover;
+      border-radius: 5px;
     }
 
     .meta {
       flex: 1;
-      padding-left: 1rem;
 
       .mixed {
         opacity: .5;
