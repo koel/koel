@@ -1,5 +1,5 @@
 <template>
-  <div class="side player-controls">
+  <div class="side player-controls" :class="{ playing }">
     <i
       class="prev fa fa-step-backward control"
       data-testid="play-prev-btn"
@@ -56,6 +56,7 @@ const { song } = toRefs(props)
 
 const cover = computed(() => song.value?.album_cover ? song.value?.album_cover : defaultCover)
 const shouldShowPlayButton = computed(() => !song || song.value?.playback_state !== 'Playing')
+const playing = computed(() => song.value?.playback_state === 'Playing')
 
 const playPrev = async () => await playbackService.playPrev()
 const playNext = async () => await playbackService.playNext()
@@ -107,8 +108,6 @@ const toggle = async () => await playbackService.toggle()
 
     &:hover {
       .album-thumb {
-        transform: scale(1.1);
-
         &::after {
           display: block;
         }
@@ -132,16 +131,6 @@ const toggle = async () => await playbackService.toggle()
     background-size: cover;
     transition: .2s ease-out;
     overflow: hidden;
-
-    &::after {
-      content: "";
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      top: 0;
-      left: 0;
-      background: linear-gradient(135deg, rgba(235, 241, 246, 0) 0%, rgba(255, 255, 255, .3) 41%, rgba(255, 255, 255, 0) 41%);
-    }
   }
 
   .prev, .next {
@@ -180,6 +169,14 @@ const toggle = async () => await playbackService.toggle()
     opacity: 1;
   }
 
+  &.playing .album-thumb {
+    animation: spin 30s linear infinite;
+
+    @media (prefers-reduced-motion) {
+      animation: none;
+    }
+  }
+
   @media only screen and (max-width: 768px) {
     flex: 1;
 
@@ -210,6 +207,12 @@ const toggle = async () => await playbackService.toggle()
       font-size: 2rem;
       color: var(--color-text-secondary);
     }
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>
