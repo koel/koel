@@ -72,6 +72,18 @@ export const songStore = {
     return Array.from(this.vault.values()).filter(song => song.album_id === album.id)
   },
 
+  async resolve (id: string) {
+    if (this.byId(id)) {
+      return this.byId(id)
+    }
+
+    try {
+      return this.syncWithVault(await httpService.get<Song>(`songs/${id}`))[0]
+    } catch (e) {
+      return null
+    }
+  },
+
   /**
    * Match a title to a song.
    * Forget about Levenshtein distance, this implementation is good enough.
