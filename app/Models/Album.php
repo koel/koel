@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,6 @@ use Laravel\Scout\Searchable;
  * @property bool $has_cover If the album has a non-default cover image
  * @property int $id
  * @property string $name Name of the album
- * @property bool $is_compilation If the album is a compilation from multiple artists
  * @property Artist $artist The album's artist
  * @property int $artist_id
  * @property Collection $songs
@@ -47,12 +47,10 @@ class Album extends Model
 
     public const UNKNOWN_ID = 1;
     public const UNKNOWN_NAME = 'Unknown Album';
-    public const UNKNOWN_COVER = 'unknown-album.png';
 
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
     protected $casts = ['artist_id' => 'integer'];
-    protected $appends = ['is_compilation'];
 
     /**
      * Get an album using some provided information.
@@ -81,76 +79,64 @@ class Album extends Model
         return $this->hasMany(Song::class);
     }
 
-    public function getIsUnknownAttribute(): bool
+    protected function isUnknown(): Attribute
     {
-        return $this->id === self::UNKNOWN_ID;
+        return Attribute::get(fn () => $this->id === self::UNKNOWN_ID);
     }
 
-    public function setCoverAttribute(?string $value): void
+    protected function cover(): Attribute
     {
-        $this->attributes['cover'] = $value ?: self::UNKNOWN_COVER;
+        return Attribute::get(static fn (?string $value) => $value ? album_cover_url($value) : '');
     }
 
-    public function getCoverAttribute(?string $value): string
+    protected function hasCover(): Attribute
     {
-        return album_cover_url($value ?: self::UNKNOWN_COVER);
+        return Attribute::get(function () {
+            $cover = array_get($this->attributes, 'cover');
+
+            return $cover && file_exists(album_cover_path($cover));
+        });
     }
 
-    public function getHasCoverAttribute(): bool
+    protected function coverPath(): Attribute
     {
-        $cover = array_get($this->attributes, 'cover');
+        return Attribute::get(function () {
+            $cover = array_get($this->attributes, 'cover');
 
-        if (!$cover) {
-            return false;
-        }
-
-        if ($cover === self::UNKNOWN_COVER) {
-            return false;
-        }
-
-        return file_exists(album_cover_path($cover));
-    }
-
-    public function getCoverPathAttribute(): ?string
-    {
-        $cover = array_get($this->attributes, 'cover');
-
-        return $cover ? album_cover_path($cover) : null;
+            return $cover ? album_cover_path($cover) : null;
+        });
     }
 
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
      */
-    public function getNameAttribute(string $value): string
+    protected function name(): Attribute
     {
-        return html_entity_decode($value);
+        return Attribute::get(static fn (string $value) => html_entity_decode($value));
     }
 
-    public function getIsCompilationAttribute(): bool
+    protected function thumbnailName(): Attribute
     {
-        return $this->artist_id === Artist::VARIOUS_ID;
+        return Attribute::get(function (): ?string {
+            if (!$this->has_cover) {
+                return null;
+            }
+
+            $parts = pathinfo($this->cover_path);
+
+            return sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
+        });
     }
 
-    public function getThumbnailNameAttribute(): ?string
+    protected function thumbnailPath(): Attribute
     {
-        if (!$this->has_cover) {
-            return null;
-        }
-
-        $parts = pathinfo($this->cover_path);
-
-        return sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
+        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_path($this->thumbnail_name) : null);
     }
 
-    public function getThumbnailPathAttribute(): ?string
+    protected function thumbnail(): Attribute
     {
-        return $this->thumbnail_name ? album_cover_path($this->thumbnail_name) : null;
-    }
-
-    public function getThumbnailAttribute(): ?string
-    {
-        return $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null;
+        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null);
     }
 
     public function scopeIsStandard(Builder $query): Builder
