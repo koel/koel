@@ -17,8 +17,8 @@
         @click="sort('track')"
       >
         #
-        <i v-show="currentSortField === 'track' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="currentSortField === 'track' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <i v-show="sortField === 'track' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="sortField === 'track' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
         v-if="config.columns.includes('title')"
@@ -27,8 +27,8 @@
         @click="sort('title')"
       >
         Title
-        <i v-show="currentSortField === 'title' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="currentSortField === 'title' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <i v-show="sortField === 'title' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="sortField === 'title' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
         v-if="config.columns.includes('artist')"
@@ -37,8 +37,8 @@
         @click="sort('artist_name')"
       >
         Artist
-        <i v-show="currentSortField === 'artist_name' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="currentSortField === 'artist_name' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <i v-show="sortField === 'artist_name' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="sortField === 'artist_name' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
         v-if="config.columns.includes('album')"
@@ -47,8 +47,8 @@
         @click="sort('album_name')"
       >
         Album
-        <i v-show="currentSortField === 'album_name' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="currentSortField === 'album_name' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <i v-show="sortField === 'album_name' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="sortField === 'album_name' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
         v-if="config.columns.includes('length')"
@@ -56,8 +56,8 @@
         data-testid="header-length"
         @click="sort('length')"
       >
-        <i v-show="currentSortField === 'length' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="currentSortField === 'length' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <i v-show="sortField === 'length' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="sortField === 'length' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
         &nbsp;<i class="duration-header fa fa-clock-o"></i>
       </span>
       <span class="favorite"></span>
@@ -87,7 +87,14 @@ import isMobile from 'ismobilejs'
 import { findIndex } from 'lodash'
 import { computed, defineAsyncComponent, inject, onMounted, ref, watch } from 'vue'
 import { $, eventBus, startDragging } from '@/utils'
-import { SelectedSongsKey, SongListConfigKey, SongListTypeKey, SongsKey } from '@/symbols'
+import {
+  SelectedSongsKey,
+  SongListConfigKey,
+  SongListSortFieldKey,
+  SongListSortOrderKey,
+  SongListTypeKey,
+  SongsKey
+} from '@/symbols'
 
 const VirtualScroller = defineAsyncComponent(() => import('@/components/ui/VirtualScroller.vue'))
 const SongListItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
@@ -97,10 +104,11 @@ const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scr
 const items = inject(SongsKey, ref([]))
 const type = inject(SongListTypeKey, 'all-songs')
 const selectedSongs = inject(SelectedSongsKey, ref([]))
+const sortField = inject(SongListSortFieldKey, ref('title'))
+const sortOrder = inject(SongListSortOrderKey, ref('asc'))
 
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
-const sortOrder = ref<SortOrder>('asc')
 const songRows = ref<SongRow[]>([])
 
 const allowReordering = type === 'queue'
@@ -115,12 +123,6 @@ const config = computed((): SongListConfig => {
     columns: ['track', 'title', 'artist', 'album', 'length']
   }, inject(SongListConfigKey, {}))
 })
-
-const currentSortField = ref<SongListSortField | null>((() => {
-  if (type === 'album' || type === 'artist') return 'track'
-  if (type === 'search-results') return null
-  return config.value.sortable ? 'title' : null
-})())
 
 /**
  * Since song objects themselves are shared by all song lists, we can't use them directly to
@@ -144,7 +146,7 @@ const sort = (field: SongListSortField) => {
     return
   }
 
-  currentSortField.value = field
+  sortField.value = field
   sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
 
   emit('sort', field, sortOrder.value)

@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance, provide, reactive, Ref, ref } from 'vue'
+import { computed, provide, reactive, Ref, ref } from 'vue'
 import isMobile from 'ismobilejs'
 import { orderBy } from 'lodash'
 
@@ -9,14 +9,20 @@ import router from '@/router'
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
-import { SelectedSongsKey, SongListConfigKey, SongListTypeKey, SongsKey } from '@/symbols'
+import {
+  SelectedSongsKey,
+  SongListConfigKey,
+  SongListSortFieldKey,
+  SongListSortOrderKey,
+  SongListTypeKey,
+  SongsKey
+} from '@/symbols'
 
 export const useSongList = (
   songs: Ref<Song[]>,
   type: SongListType,
   config: Partial<SongListConfig> = {}
 ) => {
-  const vm = getCurrentInstance()
   const songList = ref<InstanceType<typeof SongList>>()
 
   const isPhone = isMobile.phone
@@ -50,32 +56,47 @@ export const useSongList = (
     router.go('/queue')
   }
 
-  const sort = (sortField: SongListSortField | null, sortOrder: SortOrder) => {
-    if (!sortField) return
+  const sortField = ref<SongListSortField | null>(((): SongListSortField | null => {
+    if (type === 'album' || type === 'artist') return 'track'
+    if (type === 'search-results') return null
+    return config.sortable ? 'title' : null
+  })())
 
-    let sortFields: SongListSortField[] = [sortField]
+  const sortOrder = ref<SortOrder>('asc')
 
-    if (sortField === 'track') {
+  const sort = (by: SongListSortField | null = sortField.value, order: SortOrder = sortOrder.value) => {
+    if (!by) return
+
+    sortField.value = by
+    sortOrder.value = order
+
+    let sortFields: SongListSortField[] = [by]
+
+    if (by === 'track') {
       sortFields.push('disc', 'title')
-    } else if (sortField === 'album_name') {
+    } else if (by === 'album_name') {
       sortFields.push('artist_name', 'track', 'disc', 'title')
-    } else if (sortField === 'artist_name') {
+    } else if (by === 'artist_name') {
       sortFields.push('album_name', 'track', 'disc', 'title')
     }
 
-    songs.value = orderBy(songs.value, sortFields, sortOrder)
+    songs.value = orderBy(songs.value, sortFields, order)
   }
 
   provide(SongListTypeKey, type)
   provide(SongsKey, songs)
   provide(SelectedSongsKey, selectedSongs)
   provide(SongListConfigKey, reactive(config))
+  provide(SongListSortFieldKey, sortField)
+  provide(SongListSortOrderKey, sortOrder)
 
   return {
     SongList,
     SongListControls,
     ControlsToggle,
     songs,
+    sortField,
+    sortOrder,
     duration,
     songList,
     selectedSongs,

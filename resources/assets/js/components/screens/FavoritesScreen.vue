@@ -86,7 +86,7 @@ let initialized = false
 const fetchSongs = async () => {
   await favoriteStore.fetch()
   await nextTick()
-  sort('title', 'asc')
+  sort()
 }
 
 eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {

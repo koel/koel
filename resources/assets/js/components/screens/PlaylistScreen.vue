@@ -47,8 +47,7 @@
       <template v-else>
         The playlist is currently empty.
         <span class="d-block secondary">
-          Drag songs into its name in the sidebar
-          or use the &quot;Add To…&quot; button to fill it up.
+          Drag songs into its name in the sidebar or use the &quot;Add To…&quot; button to fill it up.
         </span>
       </template>
     </ScreenEmptyState>
@@ -57,7 +56,7 @@
 
 <script lang="ts" setup>
 import { difference } from 'lodash'
-import { defineAsyncComponent, nextTick, ref, toRef } from 'vue'
+import { defineAsyncComponent, ref, toRef } from 'vue'
 import { alerts, eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
@@ -107,8 +106,7 @@ const fetchSongs = async () => {
   loading.value = true
   playlistSongs.value = await songStore.fetchForPlaylist(playlist.value!)
   loading.value = false
-  await nextTick()
-  sort('title', 'asc')
+  sort()
 }
 
 eventBus.on({
