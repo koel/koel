@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore } from '@/stores'
 import { secondsToHis } from '@/utils'
 
-const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
+import LikeButton from '@/components/song/SongLikeButton.vue'
 
 const props = defineProps<{ item: SongRow, columns: SongListColumn[] }>()
 const { item, columns } = toRefs(props)

@@ -90,7 +90,13 @@ eventBus.on({
 
     .main-scroll-wrap {
       padding: 24px 24px 48px;
-      overflow: auto;
+      overflow: scroll;
+
+      @supports (scrollbar-gutter: stable) {
+        overflow: auto;
+        scrollbar-gutter: stable;
+      }
+
       flex: 1;
       -ms-overflow-style: -ms-autohiding-scrollbar;
       place-content: start;

@@ -55,8 +55,13 @@ onBeforeUnmount(() => observer.unobserve(scroller.value!))
 
 <style lang="scss" scoped>
 .virtual-scroller {
-  overflow: auto;
   will-change: transform;
+  overflow: scroll;
+
+  @supports (scrollbar-gutter: stable) {
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
 
   > div {
     overflow: hidden;
