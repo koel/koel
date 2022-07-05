@@ -13,7 +13,7 @@ class SyncCommand extends Command
 {
     protected $signature = 'koel:sync
         {record? : A single watch record. Consult Wiki for more info.}
-        {--tags= : The comma-separated tags to sync into the database}
+        {--excludes= : The comma-separated tags to excludes from syncing}
         {--force : Force re-syncing even unchanged files}';
 
     protected $description = 'Sync songs found in configured directory against the database.';
@@ -42,7 +42,7 @@ class SyncCommand extends Command
             return;
         }
 
-        $this->syngle($record);
+        $this->syncSingleRecord($record);
     }
 
     /**
@@ -52,12 +52,12 @@ class SyncCommand extends Command
     {
         $this->info('Syncing media from ' . Setting::get('media_path') . PHP_EOL);
 
-        // Get the tags to sync.
+        // The excluded tags.
         // Notice that this is only meaningful for existing records.
-        // New records will have every applicable field sync'ed in.
-        $tags = $this->option('tags') ? explode(',', $this->option('tags')) : [];
+        // New records will have every applicable field synced in.
+        $excludes = $this->option('excludes') ? explode(',', $this->option('excludes')) : [];
 
-        $this->mediaSyncService->sync(null, $tags, $this->option('force'), $this);
+        $this->mediaSyncService->sync(null, $excludes, $this->option('force'), $this);
 
         $this->output->writeln(
             PHP_EOL . PHP_EOL
@@ -68,8 +68,6 @@ class SyncCommand extends Command
     }
 
     /**
-     * SYNc a sinGLE file or directory. See my awesome pun?
-     *
      * @param string $record The watch record.
      *                       As of current we only support inotifywait.
      *                       Some examples:
@@ -79,7 +77,7 @@ class SyncCommand extends Command
      *
      * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
      */
-    public function syngle(string $record): void
+    public function syncSingleRecord(string $record): void
     {
         $this->mediaSyncService->syncByWatchRecord(new InotifyWatchRecord($record));
     }

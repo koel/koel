@@ -24,8 +24,7 @@ class UploadService
         $file->move($this->getUploadDirectory(), $targetFileName);
 
         $targetPathName = $this->getUploadDirectory() . $targetFileName;
-        $this->fileSynchronizer->setFile($targetPathName);
-        $result = $this->fileSynchronizer->sync(MediaSyncService::APPLICABLE_TAGS);
+        $result = $this->fileSynchronizer->setFile($targetPathName)->sync();
 
         if ($result !== FileSynchronizer::SYNC_RESULT_SUCCESS) {
             @unlink($targetPathName);

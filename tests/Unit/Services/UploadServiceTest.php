@@ -7,7 +7,6 @@ use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Services\FileSynchronizer;
-use App\Services\MediaSyncService;
 use App\Services\UploadService;
 use Illuminate\Http\UploadedFile;
 use Mockery;
@@ -56,7 +55,7 @@ class UploadServiceTest extends TestCase
         $this->fileSynchronizer
             ->shouldReceive('sync')
             ->once()
-            ->with(MediaSyncService::APPLICABLE_TAGS)
+            ->with()
             ->andReturn(FileSynchronizer::SYNC_RESULT_BAD_FILE);
 
         $this->fileSynchronizer
@@ -91,7 +90,7 @@ class UploadServiceTest extends TestCase
         $this->fileSynchronizer
             ->shouldReceive('sync')
             ->once()
-            ->with(MediaSyncService::APPLICABLE_TAGS)
+            ->with()
             ->andReturn(FileSynchronizer::SYNC_RESULT_SUCCESS);
 
         $song = new Song();

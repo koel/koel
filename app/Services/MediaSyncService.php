@@ -16,23 +16,6 @@ use Symfony\Component\Finder\Finder;
 
 class MediaSyncService
 {
-    /**
-     * All applicable tags in a media file that we cater for.
-     * Note that each isn't necessarily a valid ID3 tag name.
-     */
-    public const APPLICABLE_TAGS = [
-        'artist',
-        'album',
-        'title',
-        'length',
-        'track',
-        'disc',
-        'lyrics',
-        'cover',
-        'mtime',
-        'compilation',
-    ];
-
     public function __construct(
         private SongRepository $songRepository,
         private FileSynchronizer $fileSynchronizer,
@@ -42,14 +25,7 @@ class MediaSyncService
     }
 
     /**
-     * Tags to be synced.
-     */
-    protected array $tags = [];
-
-    /**
-     * Sync the media. Oh sync the media.
-     *
-     * @param array<string> $tags The tags to sync.
+     * @param array<string> $excludes The tags to exclude.
      * Only taken into account for existing records.
      * New records will have all tags synced in regardless.
      * @param bool $force Whether to force syncing even unchanged files
@@ -57,23 +33,18 @@ class MediaSyncService
      */
     public function sync(
         ?string $mediaPath = null,
-        array $tags = [],
+        array $excludes = [],
         bool $force = false,
         ?SyncCommand $syncCommand = null
     ): void {
         $this->setSystemRequirements();
-        $this->setTags($tags);
 
         $syncResult = SyncResult::init();
-
         $songPaths = $this->gatherFiles($mediaPath ?: Setting::get('media_path'));
-
-        if ($syncCommand) {
-            $syncCommand->createProgressBar(count($songPaths));
-        }
+        $syncCommand?->createProgressBar(count($songPaths));
 
         foreach ($songPaths as $path) {
-            $result = $this->fileSynchronizer->setFile($path)->sync($this->tags, $force);
+            $result = $this->fileSynchronizer->setFile($path)->sync($excludes, $force);
 
             switch ($result) {
                 case FileSynchronizer::SYNC_RESULT_SUCCESS:
@@ -113,7 +84,7 @@ class MediaSyncService
         return iterator_to_array(
             $this->finder->create()
                 ->ignoreUnreadableDirs()
-                ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/phanan/koel/issues/450
+                ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/koel/koel/issues/450
                 ->files()
                 ->followLinks()
                 ->name('/\.(mp3|ogg|m4a|flac)$/i')
@@ -151,23 +122,6 @@ class MediaSyncService
         }
     }
 
-    /**
-     * Construct an array of tags to be synced into the database from an input array of tags.
-     * If the input array is empty or contains only invalid items, we use all tags.
-     * Otherwise, we only use the valid items in it.
-     *
-     * @param array<string> $tags
-     */
-    public function setTags(array $tags = []): void
-    {
-        $this->tags = array_intersect($tags, self::APPLICABLE_TAGS) ?: self::APPLICABLE_TAGS;
-
-        // We always keep track of mtime.
-        if (!in_array('mtime', $this->tags, true)) {
-            $this->tags[] = 'mtime';
-        }
-    }
-
     private function setSystemRequirements(): void
     {
         if (!app()->runningInConsole()) {
@@ -194,7 +148,7 @@ class MediaSyncService
 
     private function handleNewOrModifiedFileRecord(string $path): void
     {
-        $result = $this->fileSynchronizer->setFile($path)->sync($this->tags);
+        $result = $this->fileSynchronizer->setFile($path)->sync();
 
         if ($result === FileSynchronizer::SYNC_RESULT_SUCCESS) {
             $this->logger->info("Synchronized $path");
@@ -221,7 +175,7 @@ class MediaSyncService
     private function handleNewOrModifiedDirectoryRecord(string $path): void
     {
         foreach ($this->gatherFiles($path) as $file) {
-            $this->fileSynchronizer->setFile($file)->sync($this->tags);
+            $this->fileSynchronizer->setFile($file)->sync();
         }
 
         $this->logger->info("Synced all song(s) under $path");

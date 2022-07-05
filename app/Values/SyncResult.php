@@ -6,20 +6,8 @@ use Illuminate\Support\Collection;
 
 final class SyncResult
 {
-    /** @var Collection|array<string> */
-    public Collection $success;
-
-    /** @var Collection|array<string> */
-    public Collection $bad;
-
-    /** @var Collection|array<string> */
-    public Collection $unmodified;
-
-    private function __construct(Collection $success, Collection $bad, Collection $unmodified)
+    private function __construct(public Collection $success, public Collection $bad, public Collection $unmodified)
     {
-        $this->success = $success;
-        $this->bad = $bad;
-        $this->unmodified = $unmodified;
     }
 
     public static function init(): self

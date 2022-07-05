@@ -44,7 +44,6 @@ class AlbumRepository extends AbstractRepository
     public function getByIds(array $ids, ?User $scopedUser = null): Collection
     {
         return Album::withMeta($scopedUser ?? $this->auth->user())
-            ->isStandard()
             ->whereIn('albums.id', $ids)
             ->get();
     }
