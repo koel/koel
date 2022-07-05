@@ -1,7 +1,7 @@
 <template>
   <span
     :class="{ droppable }"
-    :style="{ backgroundImage: `url(${image})` }"
+    :style="{ backgroundImage: `url(${image}), url(${defaultCover})` }"
     class="cover"
     data-testid="album-artist-thumbnail"
   >

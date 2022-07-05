@@ -8,7 +8,7 @@
     @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
-    <span :style="{ backgroundImage: `url(${song.album_cover})` }" class="cover">
+    <span :style="{ backgroundImage: `url(${song.album_cover}), url(${defaultCover})` }" class="cover">
       <a class="control" @click.prevent="changeSongState" data-testid="play-control">
         <i v-if="song.playback_state !== 'Playing'" class="fa fa-play"/>
         <i class="fa fa-pause" v-else/>
@@ -32,7 +32,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRefs } from 'vue'
-import { eventBus, pluralize, startDragging } from '@/utils'
+import { defaultCover, eventBus, pluralize, startDragging } from '@/utils'
 import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
 

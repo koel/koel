@@ -37,6 +37,9 @@
       overflow: hidden;
       border-radius: 8px;
       display: block;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
     @media only screen and (max-width: 768px) {
