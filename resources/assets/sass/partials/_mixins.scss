@@ -67,24 +67,15 @@
         flex: 1;
         padding: 0 16px;
       }
-
-      .info {
-        margin-bottom: 12px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-
-      a.name, a.artist, .sep {
-        display: inline;
-        white-space: inherit;
-      }
     }
 
     footer {
       padding-top: 16px;
       flex: 1;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
     }
 
     .name {
@@ -93,7 +84,6 @@
 
     .meta {
       color: var(--color-text-secondary);
-      margin-top: 4px;
       font-size: .9rem;
       display: flex;
       justify-content: space-between;
@@ -105,8 +95,8 @@
           display: block;
         }
 
-        a {
-          margin-left: 4px;
+        a + a {
+          margin-left: 1rem;
         }
       }
     }

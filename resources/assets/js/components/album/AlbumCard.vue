@@ -16,12 +16,9 @@
     </span>
 
     <footer>
-      <div class="info">
-        <a :href="`#!/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
-        <span class="sep text-secondary"> by </span>
-        <a v-if="isStandardArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
-        <span v-else class="text-secondary">{{ album.artist_name }}</span>
-      </div>
+      <a :href="`#!/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
+      <a v-if="isStandardArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
+      <span v-else class="text-secondary">{{ album.artist_name }}</span>
       <p class="meta">
         <span class="left">
           {{ pluralize(album.song_count, 'song') }}
