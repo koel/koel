@@ -1,7 +1,7 @@
 <template>
   <section id="uploadWrapper">
     <ScreenHeader>
-      Upload Media <sup>Beta</sup>
+      Upload Media
 
       <template v-slot:controls>
         <BtnGroup uppercased v-if="hasUploadFailures">
@@ -141,13 +141,6 @@ eventBus.on('UPLOAD_QUEUE_FINISHED', () => {
 
 <style lang="scss">
 #uploadWrapper {
-  sup {
-    vertical-align: super;
-    font-size: .4em;
-    text-transform: uppercase;
-    opacity: .5;
-  }
-
   .upload-panel {
     position: relative;
     height: 100%;
