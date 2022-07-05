@@ -37,8 +37,8 @@
         @click="sort('artist_name')"
       >
         Artist
-        <i v-show="currentSortField === 'artistName' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="currentSortField === 'artistName' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <i v-show="currentSortField === 'artist_name' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="currentSortField === 'artist_name' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
         v-if="config.columns.includes('album')"
@@ -47,8 +47,8 @@
         @click="sort('album_name')"
       >
         Album
-        <i v-show="currentSortField === 'albumName' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="currentSortField === 'albumName' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <i v-show="currentSortField === 'album_name' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
+        <i v-show="currentSortField === 'album_name' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
       </span>
       <span
         v-if="config.columns.includes('length')"

@@ -23,8 +23,8 @@ class SongRepository extends AbstractRepository
         'track' => 'songs.track',
         'length' => 'songs.length',
         'disc' => 'songs.disc',
-        'artistName' => 'artists.name',
-        'albumName' => 'albums.name',
+        'artist_name' => 'artists.name',
+        'album_name' => 'albums.name',
     ];
 
     private const VALID_SORT_COLUMNS = ['songs.title', 'songs.track', 'songs.length', 'artists.name', 'albums.name'];
