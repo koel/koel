@@ -173,7 +173,13 @@ const inputPlaceholder = computed(() => editingOnlyOneSong.value ? '' : 'Leave u
 const allSongsAreFromSameArtist = computed(() => allSongsShareSameValue('artist_name'))
 const allSongsAreInSameAlbum = computed(() => allSongsShareSameValue('album_name'))
 
-const coverUrl = computed(() => allSongsAreInSameAlbum.value ? mutatedSongs.value[0].album_cover : defaultCover)
+const coverUrl = computed(() => {
+  if (allSongsAreInSameAlbum.value) {
+    return mutatedSongs.value[0].album_cover ?? defaultCover
+  }
+
+  return defaultCover
+})
 
 const allSongsShareSameValue = (key: keyof EditFormData) => {
   if (editingOnlyOneSong.value) return true

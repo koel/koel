@@ -85,7 +85,7 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { findIndex } from 'lodash'
-import { computed, defineAsyncComponent, inject, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, inject, nextTick, onMounted, ref, watch } from 'vue'
 import { $, eventBus, startDragging } from '@/utils'
 import {
   SelectedSongsKey,
@@ -268,6 +268,8 @@ const openContextMenu = async (row: SongRow, event: MouseEvent) => {
     clearSelection()
     toggleRow(row)
   }
+
+  await nextTick()
 
   eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, selectedSongs.value)
 }
