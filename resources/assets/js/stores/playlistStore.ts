@@ -93,6 +93,8 @@ export const playlistStore = {
     const serializedRules = this.serializeSmartPlaylistRulesForStorage(playlist.rules)
     await httpService.put(`playlists/${playlist.id}`, { name: playlist.name, rules: serializedRules })
 
+    playlist.is_smart && Cache.invalidate(['playlist.songs', playlist.id])
+
     return playlist
   },
 
