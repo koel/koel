@@ -11,7 +11,7 @@
     @dragstart="dragStart"
     @contextmenu.prevent="requestContextMenu"
   >
-    <span class="thumbnail-wrapper" :style="{ backgroundImage: `url(${defaultCover})` }">
+    <span class="thumbnail-wrapper">
       <ArtistThumbnail :entity="artist"/>
     </span>
 
@@ -57,7 +57,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
-import { defaultCover, eventBus, pluralize, startDragging } from '@/utils'
+import { eventBus, pluralize, startDragging } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 
