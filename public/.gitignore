@@ -1,6 +1,15 @@
 css
 fonts
-img
+
+# Ignore all (generated) images under img, but keep the folder structure
+img/*
+!img/albums
+img/albums/*
+!img/albums/.gitkeep
+!img/artists
+img/artists/*
+!img/artists/.gitkeep
+
 images
 js
 manifest.json
