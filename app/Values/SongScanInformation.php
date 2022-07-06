@@ -32,7 +32,7 @@ final class SongScanInformation implements Arrayable
         $tags = array_merge(Arr::get($info, 'tags.id3v1', []), Arr::get($info, 'tags.id3v2', []));
         $comments = Arr::get($info, 'comments', []);
 
-        $title = self::getTag($tags, 'title', 'Untitled');
+        $title = self::getTag($tags, 'title');
         $albumName = self::getTag($tags, 'album', Album::UNKNOWN_NAME);
         $artistName = self::getTag($tags, 'artist', Artist::UNKNOWN_NAME);
         $albumArtistName = self::getTag($tags, ['albumartist', 'album_artist', 'band']);
