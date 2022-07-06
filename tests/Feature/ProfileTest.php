@@ -8,14 +8,12 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfileTest extends TestCase
 {
-    /** @var User */
-    private $user;
+    private User $user;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        // @phpstan-ignore-next-line
         $this->user = User::factory()->create(['password' => Hash::make('secret')]);
     }
 
@@ -51,9 +49,7 @@ class ProfileTest extends TestCase
             'new_password' => 'new-secret',
             'current_password' => 'secret',
         ], $this->user)
-            ->assertJsonStructure(['token']);
-
-        $this->user->refresh();
+            ->assertHeader('Authorization', $this->user->refresh()->api_token);
 
         self::assertSame('Foo', $this->user->name);
         self::assertSame('bar@baz.com', $this->user->email);

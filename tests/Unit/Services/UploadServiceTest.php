@@ -28,7 +28,7 @@ class UploadServiceTest extends TestCase
 
     public function testHandleUploadedFileWithMediaPathNotSet(): void
     {
-        Setting::set('media_path', null);
+        Setting::set('media_path');
         self::expectException(MediaPathNotSetException::class);
         $this->uploadService->handleUploadedFile(Mockery::mock(UploadedFile::class));
     }

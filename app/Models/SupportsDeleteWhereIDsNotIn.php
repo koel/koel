@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * With reference to GitHub issue #463.
- * MySQL and PostgreSQL seem to have a limit of 2^16-1 (65535) elements in an IN statement.
+ * MySQL and PostgresSQL seem to have a limit of 2^16-1 (65535) elements in an IN statement.
  * This trait provides a method as a workaround to this limitation.
  *
  * @method static Builder whereIn($keys, array $values)

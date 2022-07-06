@@ -50,14 +50,4 @@ class AlbumTest extends TestCase
 
         self::assertEquals('Unknown Album', $album->name);
     }
-
-    public function testNewAlbumIsCreatedWithArtistAsVariousIfIsCompilationFlagIsTrue(): void
-    {
-        /** @var Artist $artist */
-        $artist = Artist::factory()->create();
-
-        $album = Album::getOrCreate($artist, 'Foo', true);
-
-        self::assertTrue($album->artist->is_various);
-    }
 }

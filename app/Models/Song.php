@@ -37,6 +37,7 @@ use Laravel\Scout\Searchable;
  * @method static self|Collection|null find($id)
  * @method static Builder take(int $count)
  * @method static float|int sum(string $column)
+ * @method static Builder latest(string $column = 'created_at')
  */
 class Song extends Model
 {

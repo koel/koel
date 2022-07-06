@@ -42,6 +42,18 @@ class SongService
         $maybeSetAlbumArtist = static function (Album $album) use ($data): void {
             if ($data->albumArtistName && $data->albumArtistName !== $album->artist->name) {
                 $album->artist_id = Artist::getOrCreate($data->albumArtistName)->id;
+                $album->save();
+            }
+        };
+
+        $maybeSetAlbum = static function () use ($data, $song, $maybeSetAlbumArtist): void {
+            if ($data->albumName) {
+                if ($data->albumName !== $song->album->name) {
+                    $album = Album::getOrCreate($song->artist, $data->albumName);
+                    $song->album_id = $album->id;
+
+                    $maybeSetAlbumArtist($album);
+                }
             }
         };
 
@@ -56,15 +68,10 @@ class SongService
 
                 $maybeSetAlbumArtist($album);
             } else {
-                if ($data->albumName) {
-                    if ($data->albumName !== $song->album->name) {
-                        $album = Album::getOrCreate($song->artist, $data->albumName);
-                        $song->album_id = $album->id;
-
-                        $maybeSetAlbumArtist($album);
-                    }
-                }
+                $maybeSetAlbum();
             }
+        } else {
+            $maybeSetAlbum();
         }
 
         $song->title = $data->title ?: $song->title;
