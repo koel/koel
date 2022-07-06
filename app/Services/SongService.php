@@ -39,13 +39,32 @@ class SongService
 
     private function updateSong(Song $song, SongUpdateData $data): Song
     {
-        if ($data->artistName && $song->artist->name !== $data->artistName) {
-            $song->artist_id = Artist::getOrCreate($data->artistName)->id;
-        }
+        $maybeSetAlbumArtist = static function (Album $album) use ($data): void {
+            if ($data->albumArtistName && $data->albumArtistName !== $album->artist->name) {
+                $album->artist_id = Artist::getOrCreate($data->albumArtistName)->id;
+            }
+        };
 
-        if ($data->albumName || $data->albumArtistName) {
-            $albumArtist = $data->albumArtistName ? Artist::getOrCreate($data->albumArtistName) : $song->album->artist;
-            $song->album_id = Album::getOrCreate($albumArtist, $data->albumName)->id;
+        if ($data->artistName) {
+            if ($song->artist->name !== $data->artistName) {
+                $artist = Artist::getOrCreate($data->artistName);
+                $song->artist_id = $artist->id;
+
+                // Artist changed means album must be changed too.
+                $album = Album::getOrCreate($artist, $data->albumName ?: $song->album->name);
+                $song->album_id = $album->id;
+
+                $maybeSetAlbumArtist($album);
+            } else {
+                if ($data->albumName) {
+                    if ($data->albumName !== $song->album->name) {
+                        $album = Album::getOrCreate($song->artist, $data->albumName);
+                        $song->album_id = $album->id;
+
+                        $maybeSetAlbumArtist($album);
+                    }
+                }
+            }
         }
 
         $song->title = $data->title ?: $song->title;
@@ -53,7 +72,7 @@ class SongService
         $song->track = $data->track ?: $song->track;
         $song->disc = $data->disc ?: $song->disc;
 
-        $song->save();
+        $song->push();
 
         return $this->songRepository->getOne($song->id);
     }
