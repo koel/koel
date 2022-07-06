@@ -1,6 +1,6 @@
 import select from 'select'
 import { eventBus, noop } from '@/utils'
-import defaultCover from '@/../img/covers/unknown-album.png'
+import defaultCover from '@/../img/covers/default.svg'
 
 export { defaultCover }
 
