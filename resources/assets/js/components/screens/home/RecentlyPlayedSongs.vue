@@ -31,8 +31,9 @@ import { defineAsyncComponent, toRef } from 'vue'
 import router from '@/router'
 import { recentlyPlayedStore } from '@/stores'
 
+import Btn from '@/components/ui/Btn.vue'
+
 const SongCard = defineAsyncComponent(() => import('@/components/song/SongCard.vue'))
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const songs = toRef(recentlyPlayedStore.excerptState, 'songs')
 

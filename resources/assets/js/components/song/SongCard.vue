@@ -31,12 +31,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { defaultCover, eventBus, pluralize, startDragging } from '@/utils'
 import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
 
-const LikeButton = defineAsyncComponent(() => import('@/components/song/SongLikeButton.vue'))
+import LikeButton from '@/components/song/SongLikeButton.vue'
 
 const props = withDefaults(defineProps<{ song: Song, topPlayCount?: number }>(), { topPlayCount: 0 })
 const { song, topPlayCount } = toRefs(props)
@@ -65,7 +65,8 @@ const changeSongState = () => {
 <style lang="scss" scoped>
 article {
   display: flex;
-  padding: 8px;
+  gap: 12px;
+  padding: 8px 12px 8px 8px;
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-secondary);
   border-radius: 5px;
@@ -73,6 +74,16 @@ article {
 
   &.playing {
     color: var(--color-highlight);
+  }
+
+  .favorite {
+    opacity: 0;
+  }
+
+  &:hover {
+    .favorite {
+      opacity: 1;
+    }
   }
 
   &:hover .cover, &:focus .cover {
@@ -91,6 +102,7 @@ article {
     background-size: cover;
     position: relative;
     border-radius: 4px;
+    overflow: hidden;
 
     @include vertical-center();
 
@@ -114,7 +126,7 @@ article {
       border-radius: 50%;
       width: 28px;
       height: 28px;
-      background: rgba(0, 0, 0, .7);
+      background: rgba(0, 0, 0, .5);
       line-height: 2rem;
       font-size: 1rem;
       text-align: center;
@@ -132,8 +144,8 @@ article {
   .main {
     flex: 1;
     position: relative;
-    padding: 0 12px;
     display: flex;
+    gap: 8px;
 
     .play-count {
       background: rgba(255, 255, 255, 0.08);
@@ -147,7 +159,6 @@ article {
     .by {
       display: block;
       font-size: .9rem;
-      margin-top: 2px;
       opacity: .8;
 
       a {
@@ -161,6 +172,9 @@ article {
 
     .details {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
   }
 }
