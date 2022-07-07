@@ -6,11 +6,11 @@
 
 @mixin artist-album-wrapper() {
   display: grid;
-  grid-gap: 16px;
+  gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 
   &.as-list {
-    grid-gap: 0.7em 1em;;
+    gap: 0.7em 1em;;
     align-content: start;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 
