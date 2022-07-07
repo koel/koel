@@ -4,11 +4,11 @@ import router from '@/router'
 
 interface YouTubeSearchResult {
   nextPageToken: string
-  items: Array<Record<string, any>>
+  items: Record<string, any>[]
 }
 
 export const youTubeService = {
-  searchVideosRelatedToSong: async (song: Song, nextPageToken: string): Promise<YouTubeSearchResult> => {
+  searchVideosRelatedToSong: async (song: Song, nextPageToken: string) => {
     return await httpService.get<YouTubeSearchResult>(`youtube/search/song/${song.id}?pageToken=${nextPageToken}`)
   },
 

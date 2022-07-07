@@ -59,7 +59,7 @@
     </template>
 
     <div class="login-wrapper" v-else>
-      <login-form @loggedin="onUserLoggedIn"/>
+      <LoginForm @loggedin="onUserLoggedIn"/>
     </div>
   </div>
 </template>
@@ -70,12 +70,11 @@ import { authService, socketService } from '@/services'
 import { preferenceStore, userStore } from '@/stores'
 import { computed, defineAsyncComponent, nextTick, onMounted, ref, toRef, watch } from 'vue'
 
-import LoginForm from '@/components/auth/LoginForm.vue'
-
 const MAX_RETRIES = 10
 const DEFAULT_VOLUME = 7
 
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
+const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
 
 const volumeSlider = ref<SliderElement>()
 const authenticated = ref(false)

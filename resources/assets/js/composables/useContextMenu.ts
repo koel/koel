@@ -1,9 +1,9 @@
-import { defineAsyncComponent, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
+import ContextMenuBase from '@/components/ui/ContextMenuBase.vue'
 
 export type ContextMenuContext = Record<string, any>
 
 export const useContextMenu = () => {
-  const ContextMenuBase = defineAsyncComponent(() => import('@/components/ui/ContextMenuBase.vue'))
   const base = ref<InstanceType<typeof ContextMenuBase>>()
 
   const context = reactive<ContextMenuContext>({})

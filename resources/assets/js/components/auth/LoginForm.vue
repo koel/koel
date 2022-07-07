@@ -10,16 +10,16 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
 import { userStore } from '@/stores'
 import { isDemo } from '@/utils'
+
+import Btn from '@/components/ui/Btn.vue'
 
 const DEMO_ACCOUNT = {
   email: 'demo@koel.dev',
   password: 'demo'
 }
-
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 
 const url = ref('')
 const email = ref(isDemo ? DEMO_ACCOUNT.email : '')

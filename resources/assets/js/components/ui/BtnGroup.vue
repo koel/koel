@@ -1,18 +1,8 @@
 <template>
   <span class="btn-group">
-    <slot>
-      <Btn green>Foo</Btn>
-      <Btn orange>Bar</Btn>
-      <Btn red>Baz</Btn>
-    </slot>
+    <slot></slot>
   </span>
 </template>
-
-<script lang="ts" setup>
-import { defineAsyncComponent } from 'vue'
-
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-</script>
 
 <style lang="scss">
 .btn-group {

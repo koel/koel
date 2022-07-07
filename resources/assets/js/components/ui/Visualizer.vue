@@ -11,11 +11,11 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import initVisualizer from '@/utils/visualizer'
 import { eventBus } from '@/utils'
 
-const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
+import CloseModalBtn from '@/components/ui/BtnCloseModal.vue'
 
 const el = ref<HTMLElement>()
 const isFullscreen = ref(false)

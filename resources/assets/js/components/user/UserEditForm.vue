@@ -44,13 +44,13 @@
 
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
-import { defineAsyncComponent, reactive, ref, toRefs } from 'vue'
+import { reactive, ref, toRefs } from 'vue'
 import { alerts, parseValidationError } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
-const TooltipIcon = defineAsyncComponent(() => import('@/components/ui/TooltipIcon.vue'))
+import Btn from '@/components/ui/Btn.vue'
+import SoundBar from '@/components/ui/SoundBar.vue'
+import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)

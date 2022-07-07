@@ -22,12 +22,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
+import { computed, toRef, toRefs } from 'vue'
 import { searchStore } from '@/stores'
 import { useSongList } from '@/composables'
 import { pluralize } from '@/utils'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 
 const props = defineProps<{ q: string }>()
 const { q } = toRefs(props)

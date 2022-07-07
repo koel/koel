@@ -56,14 +56,14 @@
 
 <script lang="ts" setup>
 import { difference } from 'lodash'
-import { defineAsyncComponent, ref, toRef } from 'vue'
+import { ref, toRef } from 'vue'
 import { alerts, eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
 const playlist = ref<Playlist>()
 const playlistSongs = ref<Song[]>([])

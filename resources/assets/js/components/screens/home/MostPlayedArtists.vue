@@ -10,9 +10,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, toRef } from 'vue'
+import { toRef } from 'vue'
 import { overviewStore } from '@/stores'
 
-const ArtistCard = defineAsyncComponent(() => import('@/components/artist/ArtistCard.vue'))
+import ArtistCard from '@/components/artist/ArtistCard.vue'
+
 const artists = toRef(overviewStore.state, 'mostPlayedArtists')
 </script>

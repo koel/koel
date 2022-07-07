@@ -67,12 +67,12 @@ import { acceptedMediaTypes, UploadFile } from '@/config'
 import { uploadService } from '@/services'
 import { useAuthorization } from '@/composables'
 
-import UploadItem from '@/components/ui/upload/UploadItem.vue'
-import BtnGroup from '@/components/ui/BtnGroup.vue'
-import Btn from '@/components/ui/Btn.vue'
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
+const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
 
 const acceptAttribute = acceptedMediaTypes.join(',')
 

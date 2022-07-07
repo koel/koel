@@ -25,13 +25,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRefs } from 'vue'
+import { computed, ref, toRefs } from 'vue'
 import { userStore } from '@/stores'
 import { alerts } from '@/utils'
 import { useAuthorization } from '@/composables'
 import router from '@/router'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+import Btn from '@/components/ui/Btn.vue'
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)

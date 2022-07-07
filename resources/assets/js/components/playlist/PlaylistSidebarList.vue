@@ -39,13 +39,13 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, ref, toRef } from 'vue'
+import { nextTick, ref, toRef } from 'vue'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 import { alerts } from '@/utils'
 
-const PlaylistSidebarItem = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarItem.vue'))
-const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreateNewPlaylistContextMenu.vue'))
+import PlaylistSidebarItem from '@/components/playlist/PlaylistSidebarItem.vue'
+import ContextMenu from '@/components/playlist/CreateNewPlaylistContextMenu.vue'
 
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 

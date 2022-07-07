@@ -75,13 +75,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, nextTick, ref, toRef, toRefs, watch } from 'vue'
+import { computed, nextTick, ref, toRef, toRefs, watch } from 'vue'
 import { alerts, pluralize } from '@/utils'
 import { playlistStore, queueStore } from '@/stores'
 import { useSongMenuMethods } from '@/composables'
 import router from '@/router'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+import Btn from '@/components/ui/Btn.vue'
 
 const props = defineProps<{ songs: Song[], showing: Boolean, config: AddToMenuConfig }>()
 const { songs, showing, config } = toRefs(props)

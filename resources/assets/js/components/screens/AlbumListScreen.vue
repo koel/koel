@@ -15,14 +15,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
+import { computed, ref, toRef, watch } from 'vue'
 import { eventBus } from '@/utils'
 import { albumStore, preferenceStore as preferences } from '@/stores'
 import { useInfiniteScroll } from '@/composables'
 
-const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ViewModeSwitch = defineAsyncComponent(() => import('@/components/ui/ViewModeSwitch.vue'))
+import AlbumCard from '@/components/album/AlbumCard.vue'
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const albums = toRef(albumStore.state, 'albums')

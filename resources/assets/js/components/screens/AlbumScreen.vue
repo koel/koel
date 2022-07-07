@@ -62,9 +62,9 @@ import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
 import router from '@/router'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 

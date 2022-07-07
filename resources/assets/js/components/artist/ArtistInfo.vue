@@ -2,7 +2,7 @@
   <article :class="mode" class="artist-info" data-testid="artist-info">
     <h1 class="name">
       <span>{{ artist.name }}</span>
-      <button :title="`Play all songs by ${artist.name}`" class="play control" @click.prevent="play">
+      <button :title="`Play all songs by ${artist.name}`" class="play control" type="button" @click.prevent="play">
         <i class="fa fa-play"/>
       </button>
     </h1>

@@ -27,13 +27,12 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, toRef } from 'vue'
+import { toRef } from 'vue'
 import router from '@/router'
 import { recentlyPlayedStore } from '@/stores'
 
 import Btn from '@/components/ui/Btn.vue'
-
-const SongCard = defineAsyncComponent(() => import('@/components/song/SongCard.vue'))
+import SongCard from '@/components/song/SongCard.vue'
 
 const songs = toRef(recentlyPlayedStore.excerptState, 'songs')
 

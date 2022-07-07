@@ -132,18 +132,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, reactive, ref, toRefs } from 'vue'
+import { computed, reactive, ref, toRefs } from 'vue'
 import { isEqual } from 'lodash'
-
 import { alerts, arrayify, defaultCover, pluralize } from '@/utils'
 import { songStore } from '@/stores'
+
+import Btn from '@/components/ui/Btn.vue'
+import SoundBar from '@/components/ui/SoundBar.vue'
 
 type EditFormData = Pick<Song, 'title' | 'album_name' | 'artist_name' | 'album_artist_name' | 'lyrics' | 'track' | 'disc'>
 
 type TabName = 'details' | 'lyrics'
-
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
 
 const props = withDefaults(defineProps<{ songs: Song[], initialTab: TabName }>(), { initialTab: 'details' })
 const { songs, initialTab } = toRefs(props)

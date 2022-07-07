@@ -22,14 +22,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { eventBus, pluralize, secondsToHis } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useSongList } from '@/composables'
 import router from '@/router'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 
 const totalSongCount = toRef(commonStore.state, 'song_count')
 const totalDuration = computed(() => secondsToHis(commonStore.state.song_length))

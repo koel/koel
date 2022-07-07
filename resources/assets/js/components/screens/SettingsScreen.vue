@@ -29,13 +29,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { settingStore } from '@/stores'
 import { alerts, forceReloadWindow, hideOverlay, parseValidationError, showOverlay } from '@/utils'
 import router from '@/router'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import Btn from '@/components/ui/Btn.vue'
 
 const mediaPath = ref(settingStore.state.media_path)
 const originalMediaPath = mediaPath.value

@@ -85,7 +85,7 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { findIndex } from 'lodash'
-import { computed, defineAsyncComponent, inject, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
 import { $, eventBus, startDragging } from '@/utils'
 import {
   SelectedSongsKey,
@@ -96,8 +96,8 @@ import {
   SongsKey
 } from '@/symbols'
 
-const VirtualScroller = defineAsyncComponent(() => import('@/components/ui/VirtualScroller.vue'))
-const SongListItem = defineAsyncComponent(() => import('@/components/song/SongListItem.vue'))
+import VirtualScroller from '@/components/ui/VirtualScroller.vue'
+import SongListItem from '@/components/song/SongListItem.vue'
 
 const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scrolled-to-end'])
 

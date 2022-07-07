@@ -33,10 +33,10 @@
 import { eventBus, pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
 import { useSongList } from '@/composables'
-import { defineAsyncComponent, toRef } from 'vue'
+import { toRef } from 'vue'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
 const {
   SongList,

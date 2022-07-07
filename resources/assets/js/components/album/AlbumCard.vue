@@ -58,12 +58,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRef, toRefs } from 'vue'
+import { computed, toRef, toRefs } from 'vue'
 import { defaultCover, eventBus, pluralize, secondsToHis, startDragging } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 
-const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
+import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 
 const props = withDefaults(defineProps<{ album: Album, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { album, layout } = toRefs(props)

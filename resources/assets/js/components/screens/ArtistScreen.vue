@@ -64,6 +64,9 @@ import { downloadService } from '@/services'
 import { useSongList, useThirdPartyServices } from '@/composables'
 import router from '@/router'
 
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+
 const props = defineProps<{ artist: Artist }>()
 const { artist } = toRefs(props)
 
@@ -84,10 +87,7 @@ const {
   toggleControls
 } = useSongList(artistSongs, 'artist', { columns: ['track', 'title', 'album', 'length'] })
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
-const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
 const { useLastfm } = useThirdPartyServices()

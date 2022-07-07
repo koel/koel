@@ -1,14 +1,10 @@
-import { computed, provide, reactive, Ref, ref } from 'vue'
-import isMobile from 'ismobilejs'
 import { orderBy } from 'lodash'
-
+import isMobile from 'ismobilejs'
+import { computed, provide, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
 import router from '@/router'
 
-import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
-import SongList from '@/components/song/SongList.vue'
-import SongListControls from '@/components/song/SongListControls.vue'
 import {
   SelectedSongsKey,
   SongListConfigKey,
@@ -17,6 +13,10 @@ import {
   SongListTypeKey,
   SongsKey
 } from '@/symbols'
+
+import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
+import SongList from '@/components/song/SongList.vue'
+import SongListControls from '@/components/song/SongListControls.vue'
 
 export const useSongList = (
   songs: Ref<Song[]>,

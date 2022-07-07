@@ -1,5 +1,4 @@
-import { arrayify } from '@/utils/helpers'
-import { pluralize } from '@/utils/formatters'
+import { arrayify, pluralize } from '@/utils'
 import { albumStore, artistStore, songStore } from '@/stores'
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {

@@ -10,14 +10,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, toRef } from 'vue'
+import { toRef } from 'vue'
 import { overviewStore } from '@/stores'
 
-const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
+import AlbumCard from '@/components/album/AlbumCard.vue'
 
 const albums = toRef(overviewStore.state, 'mostPlayedAlbums')
 </script>
-
-<style scoped>
-
-</style>

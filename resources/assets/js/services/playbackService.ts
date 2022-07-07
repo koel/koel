@@ -1,9 +1,7 @@
-import { shuffle, throttle } from 'lodash'
-import plyr from 'plyr'
-import { nextTick } from 'vue'
 import isMobile from 'ismobilejs'
-
-import { eventBus, isAudioContextSupported } from '@/utils'
+import plyr from 'plyr'
+import { shuffle, throttle } from 'lodash'
+import { nextTick } from 'vue'
 
 import {
   commonStore,
@@ -14,6 +12,7 @@ import {
   userStore
 } from '@/stores'
 
+import { eventBus, isAudioContextSupported } from '@/utils'
 import { audioService, socketService } from '@/services'
 import router from '@/router'
 

@@ -50,11 +50,11 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { UpdateCurrentProfileData, userStore } from '@/stores'
 import { alerts, isDemo, parseValidationError } from '@/utils'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+import Btn from '@/components/ui/Btn.vue'
 
 const profile = ref<UpdateCurrentProfileData>({} as unknown as UpdateCurrentProfileData)
 

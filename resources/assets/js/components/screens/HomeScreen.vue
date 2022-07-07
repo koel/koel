@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import { sample } from 'lodash'
-import { computed, defineAsyncComponent } from 'vue'
+import { computed } from 'vue'
 
 import { eventBus, noop } from '@/utils'
 import { overviewStore, userStore } from '@/stores'
@@ -35,9 +35,7 @@ import RecentlyAddedAlbums from '@/components/screens/home/RecentlyAddedAlbums.v
 import RecentlyAddedSongs from '@/components/screens/home/RecentlyAddedSongs.vue'
 import MostPlayedArtists from '@/components/screens/home/MostPlayedArtists.vue'
 import MostPlayedAlbum from '@/components/screens/home/MostPlayedAlbum.vue'
-
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 
 const { ToTopButton, scrolling } = useInfiniteScroll(() => noop())
 

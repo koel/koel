@@ -1,7 +1,7 @@
-import { useAuthorization } from '@/composables/useAuthorization'
 import compareVersions from 'compare-versions'
-import { commonStore } from '@/stores'
 import { computed, toRef } from 'vue'
+import { commonStore } from '@/stores'
+import { useAuthorization } from '@/composables/useAuthorization'
 
 export const useNewVersionNotification = () => {
   const { isAdmin } = useAuthorization()

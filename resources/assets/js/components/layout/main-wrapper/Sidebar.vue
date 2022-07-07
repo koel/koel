@@ -49,12 +49,12 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
 import { eventBus, resolveSongsFromDragEvent } from '@/utils'
 import { queueStore } from '@/stores'
 import { useAuthorization, useThirdPartyServices } from '@/composables'
 
-const PlaylistList = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarList.vue'))
+import PlaylistList from '@/components/playlist/PlaylistSidebarList.vue'
 
 const showing = ref(!isMobile.phone)
 const currentView = ref<MainViewName>('Home')

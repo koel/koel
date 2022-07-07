@@ -85,12 +85,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, inject, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
+import { computed, inject, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { SelectedSongsKey, SongsKey } from '@/symbols'
 
-const AddToMenu = defineAsyncComponent(() => import('./AddToMenu.vue'))
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
+import AddToMenu from '@/components/song/AddToMenu.vue'
+import Btn from '@/components/ui/Btn.vue'
+import BtnGroup from '@/components/ui/BtnGroup.vue'
 
 const props = withDefaults(defineProps<{ config?: Partial<SongListControlsConfig> }>(), { config: () => ({}) })
 const { config } = toRefs(props)

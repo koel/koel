@@ -44,14 +44,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { pluralize } from '@/utils'
 import { commonStore, queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useSongList } from '@/composables'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
 

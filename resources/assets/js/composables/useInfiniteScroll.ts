@@ -1,8 +1,7 @@
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
+import ToTopButton from '@/components/ui/BtnScrollToTop.vue'
 
 export const useInfiniteScroll = (loadMore: Closure) => {
-  const ToTopButton = defineAsyncComponent(() => import('@/components/ui/BtnScrollToTop.vue'))
-
   const scroller = ref<HTMLElement>()
 
   const scrolling = ({ target }: { target: HTMLElement }) => {

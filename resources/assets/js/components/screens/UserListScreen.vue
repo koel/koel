@@ -25,15 +25,15 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
-
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ControlsToggle = defineAsyncComponent(() => import('@/components/ui/ScreenControlsToggle.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
+import UserCard from '@/components/user/UserCard.vue'
+
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
-const UserCard = defineAsyncComponent(() => import('@/components/user/UserCard.vue'))
 
 const users = toRef(userStore.state, 'users')
 const isPhone = isMobile.phone

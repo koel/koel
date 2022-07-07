@@ -45,11 +45,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue'
 import { isDemo } from '@/utils'
 import { useNewVersionNotification } from '@/composables'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+import Btn from '@/components/ui/Btn.vue'
 
 const {
   shouldNotifyNewVersion,

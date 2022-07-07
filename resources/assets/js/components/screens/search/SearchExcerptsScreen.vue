@@ -22,7 +22,9 @@
             </Btn>
           </h1>
           <ul v-if="excerpt.songs.length">
-            <li is="vue:SongCard" v-for="song in excerpt.songs" :key="song.id" :song="song"/>
+            <li v-for="song in excerpt.songs" :key="song.id">
+              <SongCard :song="song"/>
+            </li>
           </ul>
           <p v-else>None found.</p>
         </section>
@@ -60,17 +62,17 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, toRef } from 'vue'
+import { ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { searchStore } from '@/stores'
 import router from '@/router'
 
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
-const SongCard = defineAsyncComponent(() => import('@/components/song/SongCard.vue'))
-const ArtistCard = defineAsyncComponent(() => import('@/components/artist/ArtistCard.vue'))
-const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import ArtistCard from '@/components/artist/ArtistCard.vue'
+import AlbumCard from '@/components/album/AlbumCard.vue'
+import Btn from '@/components/ui/Btn.vue'
+import SongCard from '@/components/song/SongCard.vue'
 
 const excerpt = toRef(searchStore.state, 'excerpt')
 const q = ref('')

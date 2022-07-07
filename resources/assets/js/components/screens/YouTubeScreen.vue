@@ -16,16 +16,15 @@
 
 <script lang="ts" setup>
 import createYouTubePlayer from 'youtube-player'
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import { eventBus, use } from '@/utils'
 import { playbackService } from '@/services'
 
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+
 let player: YouTubePlayer | null = null
-
-const ScreenHeader = defineAsyncComponent(() => import('@/components/ui/ScreenHeader.vue'))
-const ScreenEmptyState = defineAsyncComponent(() => import('@/components/ui/ScreenEmptyState.vue'))
-
 const title = ref('YouTube Video')
 
 const getPlayer = () => {

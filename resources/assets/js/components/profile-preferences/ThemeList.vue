@@ -10,10 +10,11 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, toRef } from 'vue'
+import { toRef } from 'vue'
 import { themeStore } from '@/stores'
 
-const ThemeCard = defineAsyncComponent(() => import('@/components/profile-preferences/ThemeCard.vue'))
+import ThemeCard from '@/components/profile-preferences/ThemeCard.vue'
+
 const themes = toRef(themeStore.state, 'themes')
 
 const setTheme = (theme: Theme) => themeStore.setTheme(theme)

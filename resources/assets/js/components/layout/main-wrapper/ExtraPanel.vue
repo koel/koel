@@ -8,6 +8,7 @@
           aria-controls="extraPanelLyrics"
           data-testid="extra-tab-lyrics"
           role="tab"
+          type="button"
           @click.prevent="currentTab = 'Lyrics'"
         >
           Lyrics
@@ -18,6 +19,7 @@
           aria-controls="extraPanelArtist"
           data-testid="extra-tab-artist"
           role="tab"
+          type="button"
           @click.prevent="currentTab = 'Artist'"
         >
           Artist
@@ -28,6 +30,7 @@
           aria-controls="extraPanelAlbum"
           data-testid="extra-tab-album"
           role="tab"
+          type="button"
           @click.prevent="currentTab = 'Album'"
         >
           Album
@@ -40,6 +43,7 @@
           data-testid="extra-tab-youtube"
           role="tab"
           title="YouTube"
+          type="button"
           @click.prevent="currentTab = 'YouTube'"
         >
           <i class="fa fa-youtube-play"></i>
@@ -93,18 +97,18 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { defineAsyncComponent, ref, toRef, watch } from 'vue'
+import { ref, toRef, watch } from 'vue'
 import { $, eventBus } from '@/utils'
 import { albumStore, artistStore, preferenceStore as preferences } from '@/stores'
 import { useThirdPartyServices } from '@/composables'
 
+import LyricsPane from '@/components/ui/LyricsPane.vue'
+import ArtistInfo from '@/components/artist/ArtistInfo.vue'
+import AlbumInfo from '@/components/album/AlbumInfo.vue'
+import YouTubeVideoList from '@/components/ui/YouTubeVideoList.vue'
+
 type Tab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
 const defaultTab: Tab = 'Lyrics'
-
-const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))
-const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
-const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
-const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/YouTubeVideoList.vue'))
 
 const song = ref<Song | null>(null)
 const showing = toRef(preferences.state, 'showExtraPanel')
