@@ -5,11 +5,12 @@ namespace Tests\Feature;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\MediaSyncService;
+use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 
 class SettingTest extends TestCase
 {
-    private MockInterface $mediaSyncService;
+    private MediaSyncService|MockInterface|LegacyMockInterface $mediaSyncService;
 
     public function setUp(): void
     {
@@ -22,9 +23,15 @@ class SettingTest extends TestCase
     {
         $this->mediaSyncService->shouldReceive('sync')->once();
 
-        $user = User::factory()->admin()->create();
-        $this->putAsUser('/api/settings', ['media_path' => __DIR__], $user);
+        $this->putAsUser('/api/settings', ['media_path' => __DIR__], User::factory()->admin()->create())
+            ->assertSuccessful();
 
         self::assertEquals(__DIR__, Setting::get('media_path'));
+    }
+
+    public function testNonAdminCannotSaveSettings(): void
+    {
+        $this->putAsUser('/api/settings', ['media_path' => __DIR__], User::factory()->create())
+            ->assertForbidden();
     }
 }
