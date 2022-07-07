@@ -7,13 +7,13 @@ use Tests\TestCase;
 
 class SettingTest extends TestCase
 {
-    public function testSetsKeyValuePair(): void
+    public function testSetKeyValuePair(): void
     {
         Setting::set('foo', 'bar');
 
-        self::assertDatabaseHas('settings', [
+        self::assertDatabaseHas(Setting::class, [
             'key' => 'foo',
-            'value' => serialize('bar'),
+            'value' => json_encode('bar'),
         ]);
     }
 
@@ -26,12 +26,12 @@ class SettingTest extends TestCase
 
         Setting::set($settings);
 
-        self::assertDatabaseHas('settings', [
+        self::assertDatabaseHas(Setting::class, [
             'key' => 'foo',
-            'value' => serialize('bar'),
-        ])->assertDatabaseHas('settings', [
+            'value' => json_encode('bar'),
+        ])->assertDatabaseHas(Setting::class, [
             'key' => 'baz',
-            'value' => serialize('qux'),
+            'value' => json_encode('qux'),
         ]);
     }
 

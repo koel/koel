@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,8 +17,11 @@ class Setting extends Model
     use HasFactory;
 
     protected $primaryKey = 'key';
+    protected $keyType = 'string';
     public $timestamps = false;
     protected $guarded = [];
+
+    protected $casts = ['value' => 'json'];
 
     public static function get(string $key): mixed
     {
@@ -32,7 +34,7 @@ class Setting extends Model
      * @param array|string $key the key of the setting, or an associative array of settings,
      *                            in which case $value will be discarded
      */
-    public static function set(array|string $key, $value = null): void
+    public static function set(array|string $key, $value = ''): void
     {
         if (is_array($key)) {
             foreach ($key as $k => $v) {
@@ -43,13 +45,5 @@ class Setting extends Model
         }
 
         self::updateOrCreate(compact('key'), compact('value'));
-    }
-
-    protected function value(): Attribute
-    {
-        return new Attribute(
-            get: static fn ($value) => unserialize($value),
-            set: static fn ($value) => serialize($value)
-        );
     }
 }
