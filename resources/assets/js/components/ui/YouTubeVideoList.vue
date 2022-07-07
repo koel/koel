@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, toRefs, watchEffect } from 'vue'
+import { defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { youTubeService } from '@/services'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
@@ -26,17 +26,15 @@ const { song } = toRefs(props)
 const loading = ref(false)
 const videos = ref<YouTubeVideo[]>([])
 
+let nextPageToken = ''
+
 const loadMore = async () => {
   loading.value = true
 
   try {
-    song.value.youtube = song.value.youtube || { nextPageToken: '', items: [] }
-
-    const result = await youTubeService.searchVideosRelatedToSong(song.value, song.value.youtube.nextPageToken!)
-    song.value.youtube.nextPageToken = result.nextPageToken
-    song.value.youtube.items.push(...result.items as YouTubeVideo[])
-
-    videos.value = song.value.youtube.items
+    const result = await youTubeService.searchVideosBySong(song.value, nextPageToken)
+    nextPageToken = result.nextPageToken
+    videos.value.push(...result.items)
   } catch (err) {
     console.error(err)
   } finally {
@@ -44,13 +42,11 @@ const loadMore = async () => {
   }
 }
 
-watchEffect(() => {
-  videos.value = song.value.youtube?.items || []
-
-  if (videos.value.length === 0) {
-    loadMore()
-  }
-})
+watch(song, () => {
+  videos.value = []
+  nextPageToken = ''
+  loadMore()
+}, { immediate: true })
 </script>
 
 <style lang="scss" scoped>

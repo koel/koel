@@ -3,9 +3,8 @@ import slugify from 'slugify'
 import { orderBy, take, union } from 'lodash'
 import { reactive, watch } from 'vue'
 import { arrayify, eventBus, secondsToHis, use } from '@/utils'
-import { authService, httpService } from '@/services'
+import { authService, Cache, httpService } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, preferenceStore } from '@/stores'
-import { Cache } from '@/services/cache'
 
 interface BroadcastSongData {
   song: {

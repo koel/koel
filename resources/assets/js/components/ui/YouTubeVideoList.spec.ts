@@ -11,12 +11,7 @@ let song: Song
 
 new class extends UnitTestCase {
   private renderComponent () {
-    song = factory<Song>('song', {
-      youtube: {
-        items: factory<YouTubeVideo>('video', 5),
-        nextPageToken: 'f00'
-      }
-    })
+    song = factory<Song>('song')
 
     return this.render(YouTubeVideoList, {
       props: {
@@ -37,7 +32,7 @@ new class extends UnitTestCase {
     })
 
     it('loads more videos', async () => {
-      const mock = this.mock(youTubeService, 'searchVideosRelatedToSong').mockResolvedValue({
+      const mock = this.mock(youTubeService, 'searchVideosBySong').mockResolvedValue({
         nextPageToken: 'b4r',
         items: factory<YouTubeVideo>('video', 5)
       })

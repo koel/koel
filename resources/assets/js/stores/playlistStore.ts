@@ -1,10 +1,9 @@
 import { difference, orderBy, union } from 'lodash'
 import { reactive } from 'vue'
 
-import { httpService } from '@/services'
+import { Cache, httpService } from '@/services'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
-import { Cache } from '@/services/cache'
 
 export const playlistStore = {
   state: reactive({

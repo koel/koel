@@ -185,10 +185,6 @@ interface Song {
   track: number | null
   disc: number | null
   lyrics: string
-  youtube?: {
-    items: YouTubeVideo[]
-    nextPageToken: string
-  },
   play_count_registered?: boolean
   preloaded?: boolean
   playback_state?: PlaybackState
