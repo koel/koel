@@ -23,7 +23,7 @@ const play = () => youTubeService.play(video.value)
 <style lang="scss" scoped>
 a {
   display: flex;
-  padding: 12px 0;
+  gap: 10px;
 
   &:hover, &:active, &:focus {
     color: var(--color-text-primary);
@@ -40,7 +40,10 @@ a {
 }
 
 img {
-  margin-right: 10px;
   align-self: self-start;
+}
+
+.meta {
+  overflow-wrap: anywhere;
 }
 </style>

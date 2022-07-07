@@ -1,7 +1,11 @@
 <template>
   <div class="youtube-extra-wrapper">
     <template v-if="videos.length">
-      <YouTubeVideo v-for="video in videos" :key="video.id.videoId" :video="video"/>
+      <ul>
+        <li v-for="video in videos" :key="video.id.videoId">
+          <YouTubeVideo :video="video"/>
+        </li>
+      </ul>
       <Btn v-if="!loading" class="more" data-testid="youtube-search-more-btn" @click.prevent="loadMore">Load More</Btn>
     </template>
 
@@ -53,8 +57,11 @@ watchEffect(() => {
 .youtube-extra-wrapper {
   overflow-x: hidden;
 
-  a:last-of-type {
-    margin-bottom: 16px;
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
   }
 }
 </style>
