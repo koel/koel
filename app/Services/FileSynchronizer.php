@@ -39,7 +39,6 @@ class FileSynchronizer
     public function __construct(
         private getID3 $getID3,
         private MediaMetadataService $mediaMetadataService,
-        private Helper $helper,
         private SongRepository $songRepository,
         private Cache $cache,
         private Finder $finder
@@ -48,51 +47,45 @@ class FileSynchronizer
 
     public function setFile(string|SplFileInfo $path): self
     {
-        $splFileInfo = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
+        $file = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
 
-        $this->filePath = $splFileInfo->getPathname();
-        $this->fileHash = $this->helper->getFileHash($this->filePath);
+        $this->filePath = $file->getPathname();
+        $this->fileHash = Helper::getFileHash($this->filePath);
         $this->song = $this->songRepository->getOneById($this->fileHash); // @phpstan-ignore-line
         $this->syncError = null;
+        $this->fileModifiedTime = Helper::getModifiedTime($file);
 
         return $this;
     }
 
-    public function getFileInfo(): ?SongScanInformation
+    public function getFileScanInformation(): ?SongScanInformation
     {
         $info = $this->getID3->analyze($this->filePath);
+        $this->syncError = Arr::get($info, 'error.0') ?: (Arr::get($info, 'playtime_seconds') ? null : 'Empty file');
 
-        if (isset($info['error']) || !isset($info['playtime_seconds'])) {
-            $this->syncError = isset($info['error']) ? $info['error'][0] : 'No playtime found';
-
-            return null;
-        }
-
-        return SongScanInformation::fromGetId3Info($info);
+        return $this->syncError ? null : SongScanInformation::fromGetId3Info($info);
     }
 
     /**
      * Sync the song with all available media info into the database.
      *
-     * @param array<string> $excludes The tags to exclude (only taken into account if the song already exists)
+     * @param array<string> $ignores The tags to ignore/exclude (only taken into account if the song already exists)
      * @param bool $force Whether to force syncing, even if the file is unchanged
      */
-    public function sync(array $excludes = [], bool $force = false): int
+    public function sync(array $ignores = [], bool $force = false): int
     {
         if (!$this->isFileNewOrChanged() && !$force) {
             return self::SYNC_RESULT_UNMODIFIED;
         }
 
-        $info = $this->getFileInfo()?->toArray();
+        $info = $this->getFileScanInformation()?->toArray();
 
         if (!$info) {
             return self::SYNC_RESULT_BAD_FILE;
         }
 
         if (!$this->isFileNew()) {
-            foreach ($excludes as $tag) {
-                unset($info[$tag]);
-            }
+            Arr::forget($info, $ignores);
         }
 
         $artist = Arr::get($info, 'artist') ? Artist::getOrCreate($info['artist']) : $this->song->artist;

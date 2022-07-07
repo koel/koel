@@ -13,36 +13,34 @@ class SyncCommand extends Command
 {
     protected $signature = 'koel:sync
         {record? : A single watch record. Consult Wiki for more info.}
-        {--excludes= : The comma-separated tags to excludes from syncing}
+        {--ignore= : The comma-separated tags to ignore (exclude) from syncing}
         {--force : Force re-syncing even unchanged files}';
 
     protected $description = 'Sync songs found in configured directory against the database.';
-    private int $ignored = 0;
-    private int $invalid = 0;
-    private int $synced = 0;
-    private MediaSyncService $mediaSyncService;
+    private int $skippedCount = 0;
+    private int $invalidCount = 0;
+    private int $syncedCount = 0;
 
     private ?ProgressBar $progressBar = null;
 
-    public function __construct(MediaSyncService $mediaSyncService)
+    public function __construct(private MediaSyncService $mediaSyncService)
     {
         parent::__construct();
-
-        $this->mediaSyncService = $mediaSyncService;
     }
 
-    public function handle(): void
+    public function handle(): int
     {
         $this->ensureMediaPath();
+
         $record = $this->argument('record');
 
-        if (!$record) {
+        if ($record) {
+            $this->syncSingleRecord($record);
+        } else {
             $this->syncAll();
-
-            return;
         }
 
-        $this->syncSingleRecord($record);
+        return Command::SUCCESS;
     }
 
     /**
@@ -50,20 +48,21 @@ class SyncCommand extends Command
      */
     protected function syncAll(): void
     {
-        $this->info('Syncing media from ' . Setting::get('media_path') . PHP_EOL);
+        $path = Setting::get('media_path');
+        $this->info('Syncing media from ' . $path . PHP_EOL);
 
         // The excluded tags.
         // Notice that this is only meaningful for existing records.
         // New records will have every applicable field synced in.
         $excludes = $this->option('excludes') ? explode(',', $this->option('excludes')) : [];
 
-        $this->mediaSyncService->sync(null, $excludes, $this->option('force'), $this);
+        $this->mediaSyncService->sync($excludes, $this->option('force'), $this);
 
         $this->output->writeln(
             PHP_EOL . PHP_EOL
-            . "<info>Completed! $this->synced new or updated song(s)</info>, "
-            . "$this->ignored unchanged song(s), "
-            . "and <comment>$this->invalid invalid file(s)</comment>."
+            . "<info>Completed! $this->syncedCount new or updated song(s)</info>, "
+            . "$this->skippedCount unchanged song(s), "
+            . "and <comment>$this->invalidCount invalid file(s)</comment>."
         );
     }
 
@@ -90,15 +89,15 @@ class SyncCommand extends Command
         $name = basename($path);
 
         if ($result === FileSynchronizer::SYNC_RESULT_UNMODIFIED) {
-            ++$this->ignored;
+            ++$this->skippedCount;
         } elseif ($result === FileSynchronizer::SYNC_RESULT_BAD_FILE) {
             if ($this->option('verbose')) {
-                $this->error(PHP_EOL . "'$name' is not a valid media file: " . $reason);
+                $this->error(PHP_EOL . "'$name' is not a valid media file: $reason");
             }
 
-            ++$this->invalid;
+            ++$this->invalidCount;
         } else {
-            ++$this->synced;
+            ++$this->syncedCount;
         }
     }
 

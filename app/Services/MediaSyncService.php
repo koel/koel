@@ -6,8 +6,8 @@ use App\Console\Commands\SyncCommand;
 use App\Events\LibraryChanged;
 use App\Events\MediaSyncCompleted;
 use App\Libraries\WatchRecord\WatchRecordInterface;
-use App\Models\Setting;
 use App\Models\Song;
+use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use App\Values\SyncResult;
 use Psr\Log\LoggerInterface;
@@ -17,6 +17,7 @@ use Symfony\Component\Finder\Finder;
 class MediaSyncService
 {
     public function __construct(
+        private SettingRepository $settingRepository,
         private SongRepository $songRepository,
         private FileSynchronizer $fileSynchronizer,
         private Finder $finder,
@@ -25,26 +26,25 @@ class MediaSyncService
     }
 
     /**
-     * @param array<string> $excludes The tags to exclude.
+     * @param array<string> $ignores The tags to ignore.
      * Only taken into account for existing records.
      * New records will have all tags synced in regardless.
      * @param bool $force Whether to force syncing even unchanged files
      * @param SyncCommand $syncCommand The SyncMedia command object, to log to console if executed by artisan
      */
-    public function sync(
-        ?string $mediaPath = null,
-        array $excludes = [],
-        bool $force = false,
-        ?SyncCommand $syncCommand = null
-    ): void {
+    public function sync(array $ignores = [], bool $force = false, ?SyncCommand $syncCommand = null): void
+    {
+        /** @var string $mediaPath */
+        $mediaPath = $this->settingRepository->getByKey('media_path');
+
         $this->setSystemRequirements();
 
         $syncResult = SyncResult::init();
-        $songPaths = $this->gatherFiles($mediaPath ?: Setting::get('media_path'));
+        $songPaths = $this->gatherFiles($mediaPath);
         $syncCommand?->createProgressBar(count($songPaths));
 
         foreach ($songPaths as $path) {
-            $result = $this->fileSynchronizer->setFile($path)->sync($excludes, $force);
+            $result = $this->fileSynchronizer->setFile($path)->sync($ignores, $force);
 
             switch ($result) {
                 case FileSynchronizer::SYNC_RESULT_SUCCESS:

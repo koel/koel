@@ -38,6 +38,8 @@ use Laravel\Scout\Searchable;
  * @method static Builder take(int $count)
  * @method static float|int sum(string $column)
  * @method static Builder latest(string $column = 'created_at')
+ * @method static Builder where(...$params)
+ * @method static Song findOrFail(string $id)
  */
 class Song extends Model
 {

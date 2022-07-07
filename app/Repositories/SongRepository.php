@@ -30,14 +30,9 @@ class SongRepository extends AbstractRepository
     private const VALID_SORT_COLUMNS = ['songs.title', 'songs.track', 'songs.length', 'artists.name', 'albums.name'];
     private const DEFAULT_QUEUE_LIMIT = 500;
 
-    public function __construct(private Helper $helper)
-    {
-        parent::__construct();
-    }
-
     public function getOneByPath(string $path): ?Song
     {
-        return $this->getOneById($this->helper->getFileHash($path));
+        return $this->getOneById(Helper::getFileHash($path));
     }
 
     /** @return Collection|array<Song> */

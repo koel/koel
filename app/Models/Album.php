@@ -38,7 +38,6 @@ use Laravel\Scout\Searchable;
  * @method static Builder whereArtistIdAndName(int $id, string $name)
  * @method static orderBy(...$params)
  * @method static Builder latest()
- * @method static Builder whereName(string $name)
  */
 class Album extends Model
 {

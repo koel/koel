@@ -9,20 +9,15 @@ use App\Services\Helper;
 
 class DeleteNonExistingRecordsPostSync
 {
-    private SongRepository $songRepository;
-    private Helper $helper;
-
-    public function __construct(SongRepository $songRepository, Helper $helper)
+    public function __construct(private SongRepository $songRepository)
     {
-        $this->songRepository = $songRepository;
-        $this->helper = $helper;
     }
 
     public function handle(MediaSyncCompleted $event): void
     {
         $hashes = $event->result
             ->validEntries()
-            ->map(fn (string $path): string => $this->helper->getFileHash($path))
+            ->map(static fn (string $path): string => Helper::getFileHash($path))
             ->merge($this->songRepository->getAllHostedOnS3()->pluck('id'))
             ->toArray();
 

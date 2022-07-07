@@ -4,10 +4,9 @@ namespace App\Values;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Services\Helper;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
-use SplFileInfo;
-use Throwable;
 
 final class SongScanInformation implements Arrayable
 {
@@ -32,9 +31,6 @@ final class SongScanInformation implements Arrayable
         $tags = array_merge(Arr::get($info, 'tags.id3v1', []), Arr::get($info, 'tags.id3v2', []));
         $comments = Arr::get($info, 'comments', []);
 
-        $title = self::getTag($tags, 'title');
-        $albumName = self::getTag($tags, 'album', Album::UNKNOWN_NAME);
-        $artistName = self::getTag($tags, 'artist', Artist::UNKNOWN_NAME);
         $albumArtistName = self::getTag($tags, ['albumartist', 'album_artist', 'band']);
 
         // If the song is explicitly marked as a compilation but there's no album artist name, use the umbrella
@@ -43,26 +39,20 @@ final class SongScanInformation implements Arrayable
             $albumArtistName = Artist::VARIOUS_NAME;
         }
 
-        $track = (int) self::getTag($tags, ['track', 'tracknumber', 'track_number']);
-        $disc = (int) self::getTag($tags, 'part_of_a_set', 1);
-        $lyrics = self::getTag($tags, ['unsynchronised_lyric', 'unsychronised_lyric']);
         $path = Arr::get($info, 'filenamepath');
-        $length = (float) Arr::get($info, 'playtime_seconds');
-        $cover = self::getTag($comments, 'picture', []);
-        $mTime = self::getMTime($path);
 
         return new self(
-            title: $title,
-            albumName: $albumName,
-            artistName: $artistName,
-            albumArtistName: $albumArtistName,
-            track: $track,
-            disc: $disc,
-            lyrics: $lyrics,
-            length: $length,
-            cover: $cover,
+            title: html_entity_decode(self::getTag($tags, 'title', pathinfo($path, PATHINFO_FILENAME))),
+            albumName: html_entity_decode(self::getTag($tags, 'album', Album::UNKNOWN_NAME)),
+            artistName: html_entity_decode(self::getTag($tags, 'artist', Artist::UNKNOWN_NAME)),
+            albumArtistName: html_entity_decode($albumArtistName),
+            track: (int) self::getTag($tags, ['track', 'tracknumber', 'track_number']),
+            disc: (int) self::getTag($tags, 'part_of_a_set', 1),
+            lyrics: html_entity_decode(self::getTag($tags, ['unsynchronised_lyric', 'unsychronised_lyric'])),
+            length: (float) Arr::get($info, 'playtime_seconds'),
+            cover: self::getTag($comments, 'picture', []),
             path: $path,
-            mTime: $mTime,
+            mTime: Helper::getModifiedTime($path),
         );
     }
 
@@ -79,19 +69,6 @@ final class SongScanInformation implements Arrayable
         }
 
         return $value ?? $default;
-    }
-
-    private static function getMTime(mixed $path): int
-    {
-        $splFileInfo = new SplFileInfo($path);
-
-        // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
-        try {
-            return $splFileInfo->getMTime();
-        } catch (Throwable) {
-            // Just use current stamp for mtime.
-            return time();
-        }
     }
 
     /** @return array<mixed> */
