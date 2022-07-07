@@ -10,13 +10,14 @@ use App\Services\FileSynchronizer;
 use App\Services\UploadService;
 use Illuminate\Http\UploadedFile;
 use Mockery;
+use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
 class UploadServiceTest extends TestCase
 {
-    private $fileSynchronizer;
-    private $uploadService;
+    private FileSynchronizer|MockInterface|LegacyMockInterface $fileSynchronizer;
+    private UploadService $uploadService;
 
     public function setUp(): void
     {
@@ -50,7 +51,8 @@ class UploadServiceTest extends TestCase
         $this->fileSynchronizer
             ->shouldReceive('setFile')
             ->once()
-            ->with('/media/koel/__KOEL_UPLOADS__/foo.mp3');
+            ->with('/media/koel/__KOEL_UPLOADS__/foo.mp3')
+            ->andReturnSelf();
 
         $this->fileSynchronizer
             ->shouldReceive('sync')
@@ -85,12 +87,12 @@ class UploadServiceTest extends TestCase
         $this->fileSynchronizer
             ->shouldReceive('setFile')
             ->once()
-            ->with('/media/koel/__KOEL_UPLOADS__/foo.mp3');
+            ->with('/media/koel/__KOEL_UPLOADS__/foo.mp3')
+            ->andReturnSelf();
 
         $this->fileSynchronizer
             ->shouldReceive('sync')
             ->once()
-            ->with()
             ->andReturn(FileSynchronizer::SYNC_RESULT_SUCCESS);
 
         $song = new Song();

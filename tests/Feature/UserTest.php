@@ -30,7 +30,7 @@ class UserTest extends TestCase
             'password' => 'secret',
             'is_admin' => true,
         ], User::factory()->admin()->create())
-            ->assertOk();
+            ->assertSuccessful();
 
         /** @var User $user */
         $user = User::firstWhere('email', 'bar@baz.com');

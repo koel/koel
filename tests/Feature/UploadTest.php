@@ -73,8 +73,8 @@ class UploadTest extends TestCase
 
         $this->postAsUser('/api/upload', ['file' => $file], User::factory()->admin()->create())
             ->assertJsonStructure([
+                'song',
                 'album',
-                'artist',
             ]);
     }
 }

@@ -15,6 +15,8 @@ trait CreatesApplication
 
     public function createApplication(): Application
     {
+        $this->mediaPath = realpath($this->mediaPath);
+
         /** @var Application $app */
         $app = require __DIR__ . '/../../bootstrap/app.php';
 

@@ -158,7 +158,7 @@ class SongTest extends TestCase
             ->assertStatus(200);
 
         /** @var Album $album */
-        $album = Album::whereName('One by One')->first();
+        $album = Album::where('name', 'One by One')->first();
 
         /** @var Artist $albumArtist */
         $albumArtist = Artist::whereName('John Lennon')->first();

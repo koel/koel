@@ -18,12 +18,11 @@ class FileSynchronizerTest extends TestCase
 
     public function testGetFileInfo(): void
     {
-        $info = $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/full.mp3')->getFileInfo();
+        $info = $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/full.mp3')->getFileScanInformation();
 
         $expectedData = [
             'artist' => 'Koel',
             'album' => 'Koel Testing Vol. 1',
-            'compilation' => false,
             'title' => 'Amet',
             'track' => 5,
             'disc' => 3,
@@ -38,13 +37,13 @@ class FileSynchronizerTest extends TestCase
                 'description' => '',
                 'datalength' => 7627,
             ],
-            'path' => __DIR__ . '/../../songs/full.mp3',
+            'path' => realpath(__DIR__ . '/../../songs/full.mp3'),
             'mtime' => filemtime(__DIR__ . '/../../songs/full.mp3'),
             'albumartist' => '',
         ];
 
-        self::assertArraySubset($expectedData, $info);
-        self::assertEqualsWithDelta(10.083, $info['length'], 0.001);
+        self::assertArraySubset($expectedData, $info->toArray());
+        self::assertEqualsWithDelta(10, $info->length, 0.001);
     }
 
     /** @test */
@@ -52,6 +51,6 @@ class FileSynchronizerTest extends TestCase
     {
         $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/blank.mp3');
 
-        self::assertSame('blank', $this->fileSynchronizer->getFileInfo()['title']);
+        self::assertSame('blank', $this->fileSynchronizer->getFileScanInformation()->title);
     }
 }
