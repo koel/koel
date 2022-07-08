@@ -1,6 +1,7 @@
 import { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): User => ({
+  type: 'users',
   id: faker.datatype.number(),
   name: faker.name.findName(),
   email: faker.internet.email(),
@@ -10,8 +11,8 @@ export default (faker: Faker): User => ({
   preferences: {}
 })
 
-export const states = {
+export const states: Record<string, Omit<Partial<User>, 'type'>> = {
   admin: {
-    isAdmin: true
+    is_admin: true
   }
 }

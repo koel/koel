@@ -227,6 +227,7 @@ type SmartPlaylistInputTypes = Record<string, SmartPlaylistOperator[]>
 type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
 
 interface Playlist {
+  type: 'playlists'
   readonly id: number
   name: string
   songs: Song[]
@@ -255,6 +256,7 @@ interface UserPreferences {
 }
 
 interface User {
+  type: 'users'
   id: number
   name: string
   email: string
