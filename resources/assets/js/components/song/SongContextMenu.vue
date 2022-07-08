@@ -42,8 +42,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, Ref, toRef } from 'vue'
-import { alerts, copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
+import { computed, ref, toRef } from 'vue'
+import { alerts, arrayify, copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
 import { commonStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import router from '@/router'
@@ -51,7 +51,7 @@ import { useAuthorization, useContextMenu, useSongMenuMethods } from '@/composab
 
 const { context, base, ContextMenuBase, open, close, trigger } = useContextMenu()
 
-const songs = toRef(context, 'songs') as Ref<Song[]>
+const songs = ref<Song[]>([])
 
 const {
   queueSongsAfterCurrent,
@@ -101,5 +101,8 @@ const copyUrl = () => trigger(() => {
   alerts.success('URL copied to clipboard.')
 })
 
-defineExpose({ open })
+eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _songs: Song | Song[]) => {
+  songs.value = arrayify(_songs)
+  open(e.pageY, e.pageX, { songs: songs.value })
+})
 </script>

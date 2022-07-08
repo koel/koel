@@ -15,13 +15,16 @@
     </div>
   </template>
 
-  <SongContextMenu ref="songContextMenu"/>
-  <AlbumContextMenu ref="albumContextMenu"/>
-  <ArtistContextMenu ref="artistContextMenu"/>
+  <SongContextMenu/>
+  <AlbumContextMenu/>
+  <ArtistContextMenu/>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, onMounted, ref } from 'vue'
+import { defineAsyncComponent, onMounted, ref } from 'vue'
+import { $, eventBus, hideOverlay, showOverlay } from '@/utils'
+import { commonStore, favoriteStore, preferenceStore as preferences, queueStore } from '@/stores'
+import { authService, playbackService, socketService } from '@/services'
 
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/app-footer/index.vue'
@@ -30,19 +33,11 @@ import Hotkeys from '@/components/utils/HotkeyListener.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import MainWrapper from '@/components/layout/main-wrapper/index.vue'
 import Overlay from '@/components/ui/Overlay.vue'
+import AlbumContextMenu from '@/components/album/AlbumContextMenu.vue'
+import ArtistContextMenu from '@/components/artist/ArtistContextMenu.vue'
+import SongContextMenu from '@/components/song/SongContextMenu.vue'
 
-import { $, arrayify, eventBus, hideOverlay, showOverlay } from '@/utils'
-import { commonStore, favoriteStore, preferenceStore as preferences, queueStore } from '@/stores'
-import { authService, playbackService, socketService } from '@/services'
-
-const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
-const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
-const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
-
-const songContextMenu = ref<InstanceType<typeof SongContextMenu>>()
-const albumContextMenu = ref<InstanceType<typeof AlbumContextMenu>>()
-const artistContextMenu = ref<InstanceType<typeof ArtistContextMenu>>()
 
 const authenticated = ref(false)
 
@@ -78,21 +73,6 @@ onMounted(async () => {
   // Add an ugly mac/non-mac class for OS-targeting styles.
   // I'm crying inside.
   $.addClass(document.documentElement, navigator.userAgent.includes('Mac') ? 'mac' : 'non-mac')
-})
-
-eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, songs: Song | Song[]) => {
-  await nextTick()
-  songContextMenu.value?.open(e.pageY, e.pageX, { songs: arrayify(songs) })
-})
-
-eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, album: Album) => {
-  await nextTick()
-  albumContextMenu.value?.open(e.pageY, e.pageX, { album })
-})
-
-eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, artist: Artist) => {
-  await nextTick()
-  artistContextMenu.value?.open(e.pageY, e.pageX, { artist })
 })
 
 const init = async () => {

@@ -21,11 +21,11 @@ export const useContextMenu = () => {
   }
 
   return {
-    base,
     ContextMenuBase,
+    base,
+    context,
     open,
     close,
-    trigger,
-    context
+    trigger
   }
 }

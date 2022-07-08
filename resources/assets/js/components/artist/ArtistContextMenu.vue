@@ -16,15 +16,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, Ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useContextMenu } from '@/composables'
 import router from '@/router'
+import { eventBus } from '@/utils'
 
 const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
 
-const artist = toRef(context, 'artist') as Ref<Artist>
+const artist = ref<Artist>()
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
 const isStandardArtist = computed(() =>
@@ -41,5 +42,8 @@ const shuffle = () => {
 const viewArtistDetails = () => trigger(() => router.go(`artist/${artist.value.id}`))
 const download = () => trigger(() => downloadService.fromArtist(artist.value))
 
-defineExpose({ open })
+eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _artist: Artist) => {
+  artist.value = _artist
+  open(e.pageY, e.pageX, { _artist })
+})
 </script>

@@ -15,15 +15,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, Ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useContextMenu } from '@/composables'
 import router from '@/router'
+import { eventBus } from '@/utils'
 
 const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
 
-const album = toRef(context, 'album') as Ref<Album>
+const album = ref<Album>()
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))
@@ -42,5 +43,8 @@ const viewAlbumDetails = () => trigger(() => router.go(`album/${album.value.id}`
 const viewArtistDetails = () => trigger(() => router.go(`artist/${album.value.artist_id}`))
 const download = () => trigger(() => downloadService.fromAlbum(album.value))
 
-defineExpose({ open })
+eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _album: Album) => {
+  album.value = _album
+  open(e.pageY, e.pageX, { album })
+})
 </script>
