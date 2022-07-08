@@ -118,7 +118,6 @@ interface FileSystemEntry {
 interface AlbumTrack {
   readonly title: string
   readonly length: number
-  fmt_length: string
 }
 
 interface AlbumInfo {
@@ -145,7 +144,6 @@ interface Artist {
   readonly id: number
   name: string
   image: string | null
-  info: ArtistInfo | null
   play_count: number
   album_count: number
   song_count: number
@@ -162,7 +160,6 @@ interface Album {
   name: string
   cover: string
   thumbnail?: string | null
-  info: AlbumInfo | null
   play_count: number
   song_count: number
   length: number

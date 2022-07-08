@@ -8,6 +8,8 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
+use App\Values\AlbumInformation;
+use App\Values\ArtistInformation;
 
 class MediaInformationService
 {
@@ -18,12 +20,7 @@ class MediaInformationService
     ) {
     }
 
-    /**
-     * Get extra information about an album from Last.fm.
-     *
-     * @return array<mixed>|null the album info in an array format, or null on failure
-     */
-    public function getAlbumInformation(Album $album): ?array
+    public function getAlbumInformation(Album $album): ?AlbumInformation
     {
         if ($album->is_unknown) {
             return null;
@@ -33,20 +30,14 @@ class MediaInformationService
 
         if ($info) {
             event(new AlbumInformationFetched($album, $info));
-
             // The album cover may have been updated.
-            $info['cover'] = $this->albumRepository->getOneById($album->id)->cover;
+            $info->cover = $this->albumRepository->getOneById($album->id)->cover;
         }
 
         return $info;
     }
 
-    /**
-     * Get extra information about an artist from Last.fm.
-     *
-     * @return array<mixed>|null the artist info in an array format, or null on failure
-     */
-    public function getArtistInformation(Artist $artist): ?array
+    public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
         if ($artist->is_unknown) {
             return null;
@@ -56,9 +47,8 @@ class MediaInformationService
 
         if ($info) {
             event(new ArtistInformationFetched($artist, $info));
-
             // The artist image may have been updated.
-            $info['image'] = $this->artistRepository->getOneById($artist->id)->image;
+            $info->image = $this->artistRepository->getOneById($artist->id)->image;
         }
 
         return $info;

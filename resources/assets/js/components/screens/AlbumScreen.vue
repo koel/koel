@@ -46,7 +46,7 @@
     <SongList ref="songList" @press:enter="onPressEnter"/>
 
     <section v-if="useLastfm && showingInfo" class="info-wrapper">
-      <CloseModalBtn @click="showingInfo = false"/>
+      <CloseModalBtn class="close-modal" @click="showingInfo = false"/>
       <div class="inner">
         <AlbumInfo :album="album" mode="full"/>
       </div>

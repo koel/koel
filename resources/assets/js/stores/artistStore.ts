@@ -34,9 +34,12 @@ export const artistStore = {
     return !this.isVarious(artist) && !this.isUnknown(artist)
   },
 
-  uploadImage: async (artist: Artist, image: string) => {
-    const { imageUrl } = await httpService.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })
-    artist.image = imageUrl
+  async uploadImage (artist: Artist, image: string) {
+    artist.image = (await httpService.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })).imageUrl
+    
+    // sync to vault
+    this.byId(artist.id).image = artist.image
+
     return artist.image
   },
 

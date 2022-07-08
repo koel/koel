@@ -8,6 +8,6 @@ class AlbumController extends Controller
 {
     public function show(Album $album)
     {
-        return response()->json($this->mediaInformationService->getAlbumInformation($album));
+        return response()->json($this->mediaInformationService->getAlbumInformation($album)?->toArray() ?: []);
     }
 }

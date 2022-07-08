@@ -32,9 +32,6 @@ class ArtistController extends Controller
 
     public function show(Artist $artist)
     {
-        $artist = $this->artistRepository->getOne($artist->id, $this->user);
-        $artist->information = $this->informationService->getArtistInformation($artist);
-
-        return ArtistResource::make($artist);
+        return ArtistResource::make($this->artistRepository->getOne($artist->id, $this->user));
     }
 }

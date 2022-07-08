@@ -8,21 +8,19 @@ use App\Services\YouTubeService;
 
 class SongController extends Controller
 {
-    private YouTubeService $youTubeService;
-
-    public function __construct(MediaInformationService $mediaInformationService, YouTubeService $youTubeService)
-    {
+    public function __construct(
+        protected MediaInformationService $mediaInformationService,
+        private YouTubeService $youTubeService
+    ) {
         parent::__construct($mediaInformationService);
-
-        $this->youTubeService = $youTubeService;
     }
 
     public function show(Song $song)
     {
         return response()->json([
             'lyrics' => $song->lyrics,
-            'album_info' => $this->mediaInformationService->getAlbumInformation($song->album),
-            'artist_info' => $this->mediaInformationService->getArtistInformation($song->artist),
+            'album_info' => $this->mediaInformationService->getAlbumInformation($song->album)?->toArray() ?: [],
+            'artist_info' => $this->mediaInformationService->getArtistInformation($song->artist)?->toArray() ?: [],
             'youtube' => $this->youTubeService->searchVideosRelatedToSong($song),
         ]);
     }

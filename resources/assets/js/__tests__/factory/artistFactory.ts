@@ -8,14 +8,6 @@ export default (faker: Faker): Artist => {
     type: 'artists',
     id: faker.datatype.number({ min: 3 }), // avoid Unknown and Various Artist by default
     name: faker.name.findName(),
-    info: {
-      image: faker.image.imageUrl(),
-      bio: {
-        summary: faker.lorem.sentence(),
-        full: faker.lorem.paragraph()
-      },
-      url: faker.internet.url()
-    },
     image: 'foo.jpg',
     play_count: faker.datatype.number(),
     album_count: faker.datatype.number({ max: 10 }),

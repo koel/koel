@@ -12,26 +12,6 @@ export default (faker: Faker): Album => {
     id: faker.datatype.number({ min: 2 }), // avoid Unknown Album by default
     name: faker.lorem.sentence(),
     cover: faker.image.imageUrl(),
-    info: {
-      image: faker.image.imageUrl(),
-      wiki: {
-        summary: faker.lorem.sentence(),
-        full: faker.lorem.paragraph()
-      },
-      tracks: [
-        {
-          title: faker.lorem.sentence(),
-          length: 222,
-          fmt_length: '3:42'
-        },
-        {
-          title: faker.lorem.sentence(),
-          length: 157,
-          fmt_length: '2:37'
-        }
-      ],
-      url: faker.internet.url()
-    },
     play_count: faker.datatype.number(),
     length,
     fmt_length: secondsToHis(length),

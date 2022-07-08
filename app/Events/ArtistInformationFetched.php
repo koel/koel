@@ -3,29 +3,14 @@
 namespace App\Events;
 
 use App\Models\Artist;
+use App\Values\ArtistInformation;
 use Illuminate\Queue\SerializesModels;
 
 class ArtistInformationFetched
 {
     use SerializesModels;
 
-    private Artist $artist;
-    private array $information;
-
-    public function __construct(Artist $artist, array $information)
+    public function __construct(public Artist $artist, public ArtistInformation $information)
     {
-        $this->artist = $artist;
-        $this->information = $information;
-    }
-
-    public function getArtist(): Artist
-    {
-        return $this->artist;
-    }
-
-    /** @return array<mixed> */
-    public function getInformation(): array
-    {
-        return $this->information;
     }
 }

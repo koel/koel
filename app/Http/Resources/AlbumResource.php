@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\Album;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Arr;
 
 class AlbumResource extends JsonResource
 {
@@ -27,7 +26,6 @@ class AlbumResource extends JsonResource
             'length' => $this->album->length,
             'play_count' => (int) $this->album->play_count,
             'song_count' => (int) $this->album->song_count,
-            'info' => Arr::wrap($this->album->information),
         ];
     }
 }

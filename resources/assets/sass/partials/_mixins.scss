@@ -151,6 +151,16 @@
         padding: 16px;
       }
     }
+
+    .close-modal {
+      display: none;
+    }
+
+    &:hover {
+      .close-modal {
+        display: block;
+      }
+    }
   }
 }
 
@@ -163,6 +173,7 @@
 
     &.name {
       font-size: 2rem;
+      margin-bottom: 2rem;
     }
 
     span {
@@ -180,7 +191,7 @@
   }
 
   .bio {
-    margin-top: 16px;
+    margin: 16px 0;
   }
 
   .more {
@@ -203,56 +214,7 @@
   }
 
   .wiki {
-    margin-top: 16px;
-  }
-
-  .track-listing {
-    margin-top: 16px;
-
-    ul {
-      overflow: hidden;
-    }
-
-    h1 {
-      font-size: 1.4rem;
-      margin-bottom: 0;
-      display: block;
-    }
-
-    li {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px;
-
-      &:nth-child(even) {
-        background: rgba(255, 255, 255, 0.05);
-      }
-
-      &::before {
-        // the track counter
-        flex: 0 0 24px;
-        opacity: .5;
-      }
-
-      .title {
-        flex: 1;
-      }
-
-      .length {
-        flex: 0 0 44px;
-        text-align: right;
-        opacity: .5;
-      }
-
-      &.available {
-        color: var(--color-text-primary);
-        cursor: pointer;
-
-        &:hover {
-          color: var(--color-highlight);
-        }
-      }
-    }
+    margin: 16px 0;
   }
 
   footer {

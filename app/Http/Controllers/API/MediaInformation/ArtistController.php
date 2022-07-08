@@ -8,6 +8,6 @@ class ArtistController extends Controller
 {
     public function show(Artist $artist)
     {
-        return response()->json($this->mediaInformationService->getArtistInformation($artist));
+        return response()->json($this->mediaInformationService->getArtistInformation($artist)?->toArray() ?: []);
     }
 }

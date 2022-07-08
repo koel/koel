@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Values\AlbumInformation;
+use App\Values\ArtistInformation;
 use App\Values\LastfmLoveTrackParameters;
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\Utils;
@@ -32,8 +34,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         return $this->getKey() && $this->getSecret();
     }
 
-    /** @return array<mixed>|null */
-    public function getArtistInformation(string $name): ?array
+    public function getArtistInformation(string $name): ?ArtistInformation
     {
         if (!$this->enabled()) {
             return null;
@@ -45,14 +46,10 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
             return $this->cache->remember(
                 md5("lastfm_artist_$name"),
                 now()->addWeek(),
-                function () use ($name): ?array {
+                function () use ($name): ?ArtistInformation {
                     $response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
 
-                    if (!$response || !isset($response->artist)) {
-                        return null;
-                    }
-
-                    return $this->buildArtistInformation($response->artist);
+                    return $response?->artist ? ArtistInformation::fromLastFmData($response->artist) : null;
                 }
             );
         } catch (Throwable $e) {
@@ -62,27 +59,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         }
     }
 
-    /**
-     * Build a Koel-usable array of artist information using the data from Last.fm.
-     *
-     * @param mixed $data
-     *
-     * @return array<mixed>
-     */
-    private function buildArtistInformation($data): array
-    {
-        return [
-            'url' => $data->url,
-            'image' => count($data->image) > 3 ? $data->image[3]->{'#text'} : $data->image[0]->{'#text'},
-            'bio' => [
-                'summary' => isset($data->bio) ? $this->formatText($data->bio->summary) : '',
-                'full' => isset($data->bio) ? $this->formatText($data->bio->content) : '',
-            ],
-        ];
-    }
-
-    /** @return array<mixed>|null */
-    public function getAlbumInformation(string $albumName, string $artistName): ?array
+    public function getAlbumInformation(string $albumName, string $artistName): ?AlbumInformation
     {
         if (!$this->enabled()) {
             return null;
@@ -97,15 +74,11 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
             return $this->cache->remember(
                 $cacheKey,
                 now()->addWeek(),
-                function () use ($albumName, $artistName): ?array {
+                function () use ($albumName, $artistName): ?AlbumInformation {
                     $response = $this
                         ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
 
-                    if (!$response || !isset($response->album)) {
-                        return null;
-                    }
-
-                    return $this->buildAlbumInformation($response->album);
+                    return $response?->album ? AlbumInformation::fromLastFmData($response->album) : null;
                 }
             );
         } catch (Throwable $e) {
@@ -113,30 +86,6 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
 
             return null;
         }
-    }
-
-    /**
-     * Build a Koel-usable array of album information using the data from Last.fm.
-     *
-     * @param mixed $data
-     *
-     * @return array<mixed>
-     */
-    private function buildAlbumInformation($data): array
-    {
-        return [
-            'url' => $data->url,
-            'image' => count($data->image) > 3 ? $data->image[3]->{'#text'} : $data->image[0]->{'#text'},
-            'wiki' => [
-                'summary' => isset($data->wiki) ? $this->formatText($data->wiki->summary) : '',
-                'full' => isset($data->wiki) ? $this->formatText($data->wiki->content) : '',
-            ],
-            'tracks' => array_map(static fn ($track): array => [
-                'title' => $track->name,
-                'length' => (int) $track->duration,
-                'url' => $track->url,
-            ], isset($data->tracks) ? $data->tracks->track : []),
-        ];
     }
 
     /**
@@ -223,14 +172,11 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         }
     }
 
-    /**
-     * @param int|float $duration Duration of the track, in seconds
-     */
     public function updateNowPlaying(
         string $artistName,
         string $trackName,
         string $albumName,
-        $duration,
+        int|float $duration,
         string $sessionKey
     ): void {
         $params = [
@@ -265,7 +211,7 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
      *
      * @return array<mixed>|string
      */
-    public function buildAuthCallParams(array $params, bool $toString = false) // @phpcs:ignore
+    public function buildAuthCallParams(array $params, bool $toString = false): array|string
     {
         $params['api_key'] = $this->getKey();
         ksort($params);
@@ -292,18 +238,6 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         }
 
         return rtrim($query, '&');
-    }
-
-    /**
-     * Correctly format a value returned by Last.fm.
-     */
-    protected function formatText(?string $value): string
-    {
-        if (!$value) {
-            return '';
-        }
-
-        return trim(str_replace('Read more on Last.fm', '', nl2br(strip_tags(html_entity_decode($value)))));
     }
 
     public function getKey(): ?string

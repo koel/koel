@@ -10,21 +10,21 @@
     <main>
       <AlbumThumbnail :entity="album"/>
 
-      <template v-if="album.info">
-        <div v-if="album.info.wiki?.summary" class="wiki">
-          <div v-if="showSummary" class="summary" v-html="album.info.wiki.summary"/>
-          <div v-if="showFull" class="full" v-html="album.info.wiki.full"/>
+      <template v-if="info">
+        <div v-if="info.wiki?.summary" class="wiki">
+          <div v-if="showSummary" class="summary" v-html="info.wiki.summary"/>
+          <div v-if="showFull" class="full" v-html="info.wiki.full"/>
 
           <button v-if="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullWiki = true">
             Full Wiki
           </button>
         </div>
 
-        <TrackList v-if="album.info.tracks?.length" :album="album" data-testid="album-info-tracks"/>
+        <TrackList v-if="info.tracks?.length" :album="album" :tracks="info.tracks" data-testid="album-info-tracks"/>
 
-        <footer v-if="useLastfm">
+        <footer>
           Data &copy;
-          <a :href="album.info.url" rel="noopener" target="_blank">Last.fm</a>
+          <a :href="info.url" rel="noopener" target="_blank">Last.fm</a>
         </footer>
       </template>
     </main>
@@ -36,23 +36,27 @@ import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { useThirdPartyServices } from '@/composables'
 import { songStore } from '@/stores'
 import { playbackService } from '@/services'
+import { mediaInfoService } from '@/services/mediaInfoService'
 
-const TrackList = defineAsyncComponent(() => import('./AlbumTrackList.vue'))
-const AlbumThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
+import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+
+const TrackList = defineAsyncComponent(() => import('@/components/album/AlbumTrackList.vue'))
 
 type DisplayMode = 'aside' | 'full'
 
 const props = withDefaults(defineProps<{ album: Album, mode?: DisplayMode }>(), { mode: 'aside' })
 const { album, mode } = toRefs(props)
 
+const info = ref<AlbumInfo | null>(null)
 const showingFullWiki = ref(false)
 
 const { useLastfm } = useThirdPartyServices()
 
-/**
- * Whenever a new album is loaded into this component, we reset the "full wiki" state.
- */
-watch(album, () => (showingFullWiki.value = false))
+watch(album, async () => {
+  showingFullWiki.value = false
+  info.value = null
+  useLastfm.value && (info.value = await mediaInfoService.fetchForAlbum(album.value))
+}, { immediate: true })
 
 const showSummary = computed(() => mode.value !== 'full' && !showingFullWiki.value)
 const showFull = computed(() => !showSummary.value)
@@ -63,5 +67,9 @@ const play = async () => playbackService.queueAndPlay(await songStore.fetchForAl
 <style lang="scss">
 .album-info {
   @include artist-album-info();
+
+  .track-listing {
+    margin-top: 2rem;
+  }
 }
 </style>

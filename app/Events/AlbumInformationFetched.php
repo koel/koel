@@ -3,29 +3,14 @@
 namespace App\Events;
 
 use App\Models\Album;
+use App\Values\AlbumInformation;
 use Illuminate\Queue\SerializesModels;
 
 class AlbumInformationFetched extends Event
 {
     use SerializesModels;
 
-    private Album $album;
-    private array $information;
-
-    public function __construct(Album $album, array $information)
+    public function __construct(public Album $album, public AlbumInformation $information)
     {
-        $this->album = $album;
-        $this->information = $information;
-    }
-
-    public function getAlbum(): Album
-    {
-        return $this->album;
-    }
-
-    /** @return array<mixed> */
-    public function getInformation(): array
-    {
-        return $this->information;
     }
 }

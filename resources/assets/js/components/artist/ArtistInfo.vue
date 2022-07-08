@@ -7,22 +7,22 @@
       </button>
     </h1>
 
-    <main v-if="artist.info">
+    <main>
       <ArtistThumbnail :entity="artist"/>
 
-      <template v-if="artist.info">
-        <div v-if="artist.info.bio?.summary" class="bio">
-          <div v-if="showSummary" class="summary" v-html="artist.info.bio.summary"/>
-          <div v-if="showFull" class="full" v-html="artist.info.bio.full"/>
+      <template v-if="info">
+        <div v-if="info.bio?.summary" class="bio">
+          <div v-if="showSummary" class="summary" v-html="info.bio.summary"/>
+          <div v-if="showFull" class="full" v-html="info.bio.full"/>
 
           <button v-show="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullBio = true">
             Full Bio
           </button>
         </div>
 
-        <footer v-if="useLastfm">
+        <footer>
           Data &copy;
-          <a :href="artist.info.url" rel="openener" target="_blank">Last.fm</a>
+          <a :href="info.url" rel="openener" target="_blank">Last.fm</a>
         </footer>
       </template>
     </main>
@@ -30,23 +30,29 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
+import { computed, ref, toRefs, watch } from 'vue'
 import { playbackService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 import { songStore } from '@/stores'
+import { mediaInfoService } from '@/services/mediaInfoService'
+
+import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 
 type DisplayMode = 'aside' | 'full'
-
-const ArtistThumbnail = defineAsyncComponent(() => import('@/components/ui/AlbumArtistThumbnail.vue'))
 
 const props = withDefaults(defineProps<{ artist: Artist, mode?: DisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)
 
-const showingFullBio = ref(false)
-
 const { useLastfm } = useThirdPartyServices()
 
-watch(artist, () => (showingFullBio.value = false))
+const info = ref<ArtistInfo | null>(null)
+const showingFullBio = ref(false)
+
+watch(artist, async () => {
+  showingFullBio.value = false
+  info.value = null
+  useLastfm.value && (info.value = await mediaInfoService.fetchForArtist(artist.value))
+}, { immediate: true })
 
 const showSummary = computed(() => mode.value !== 'full' && !showingFullBio.value)
 const showFull = computed(() => !showSummary.value)

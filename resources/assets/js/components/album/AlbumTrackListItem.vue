@@ -1,5 +1,6 @@
 <template>
-  <li
+  <div
+    class="track-list-item"
     :class="{ active, available: matchedSong }"
     :title="tooltip"
     tabindex="0"
@@ -8,7 +9,7 @@
     <span class="title">{{ track.title }}</span>
     <AppleMusicButton v-if="useAppleMusic && !matchedSong" :url="iTunesUrl"/>
     <span class="length">{{ fmtLength }}</span>
-  </li>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -21,8 +22,8 @@ import { SongsKey } from '@/symbols'
 
 const AppleMusicButton = defineAsyncComponent(() => import('@/components/ui/AppleMusicButton.vue'))
 
-const props = defineProps<{ album: Album, track: AlbumTrack, songs: Song[] }>()
-const { album, track, songs } = toRefs(props)
+const props = defineProps<{ album: Album, track: AlbumTrack }>()
+const { album, track } = toRefs(props)
 
 const { useAppleMusic } = useThirdPartyServices()
 
@@ -47,13 +48,32 @@ const play = () => {
 </script>
 
 <style lang="scss" scoped>
-li {
-  span.title {
-    margin-right: 5px;
-  }
+.track-list-item {
+  display: flex;
+  flex: 1;
+  gap: 4px;
 
   &:focus, &.active {
     span.title {
+      color: var(--color-highlight);
+    }
+  }
+
+  .title {
+    flex: 1;
+  }
+
+  .length {
+    flex: 0 0 44px;
+    text-align: right;
+    opacity: .5;
+  }
+
+  &.available {
+    color: var(--color-text-primary);
+    cursor: pointer;
+
+    &:hover {
       color: var(--color-highlight);
     }
   }

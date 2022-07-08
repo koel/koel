@@ -12,6 +12,10 @@ export const Cache = {
     return this.hit(this.normalizeKey(key))
   },
 
+  get<T> (key: any) {
+    return this.storage.get(this.normalizeKey(key))!.value as T
+  },
+
   set (key: any, value: any) {
     this.storage.set(this.normalizeKey(key), {
       value,
@@ -45,6 +49,6 @@ export const Cache = {
     key = this.normalizeKey(key)
 
     this.hit(key) || this.set(key, await fetcher())
-    return this.storage.get(key)!.value
+    return this.get<T>(key)
   }
 }
