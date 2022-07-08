@@ -10,7 +10,7 @@ let song: Song
 
 const track = {
   title: 'Fahrstuhl to Heaven',
-  fmtLength: '00:42'
+  length: '42'
 }
 
 const album = factory<Album>('album', { id: 42 })
@@ -33,7 +33,7 @@ new class extends UnitTestCase {
     })
 
     it('plays', async () => {
-      const guessMock = this.mock(songStore, 'match', song)
+      const matchMock = this.mock(songStore, 'match', song)
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
 
@@ -46,7 +46,7 @@ new class extends UnitTestCase {
 
       await fireEvent.click(getByTitle('Click to play'))
 
-      expect(guessMock).toHaveBeenCalledWith('Fahrstuhl to Heaven', album)
+      expect(matchMock).toHaveBeenCalled()
       expect(queueMock).toHaveBeenNthCalledWith(1, song)
       expect(playMock).toHaveBeenNthCalledWith(1, song)
     })
