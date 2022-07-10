@@ -1,17 +1,16 @@
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
 import { playlistStore } from '@/stores'
 
-export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[] = []) => {
-  const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-  const FormBase = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistFormBase.vue'))
-  const RuleGroup = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRuleGroup.vue'))
-  const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
+import Btn from '@/components/ui/Btn.vue'
+import FormBase from '@/components/playlist/smart-playlist/SmartPlaylistFormBase.vue'
+import RuleGroup from '@/components/playlist/smart-playlist/SmartPlaylistRuleGroup.vue'
+import SoundBar from '@/components/ui/SoundBar.vue'
 
+export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[] = []) => {
   const collectedRuleGroups = ref<SmartPlaylistRuleGroup[]>(initialRuleGroups)
   const loading = ref(false)
 
-  const createGroup = () => playlistStore.createEmptySmartPlaylistRuleGroup()
-  const addGroup = () => collectedRuleGroups.value.push(createGroup())
+  const addGroup = () => collectedRuleGroups.value.push(playlistStore.createEmptySmartPlaylistRuleGroup())
 
   const onGroupChanged = (data: SmartPlaylistRuleGroup) => {
     const changedGroup = Object.assign(collectedRuleGroups.value.find(g => g.id === data.id), data)
