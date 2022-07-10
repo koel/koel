@@ -6,7 +6,7 @@ exports[`renders 1`] = `
     <h1 class="text-white" data-v-0ef2b3f8="">About Koel</h1>
   </header>
   <main data-v-0ef2b3f8="">
-    <div class="logo" data-v-0ef2b3f8=""><img alt="Koel's logo" src="/resources/assets/img/logo.svg" width="128" data-v-0ef2b3f8=""></div>
+    <div class="logo" data-v-0ef2b3f8=""><img alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="128" data-v-0ef2b3f8=""></div>
     <p class="current-version" data-v-0ef2b3f8="">v0.0.0</p>
     <!--v-if-->
     <p class="author" data-v-0ef2b3f8=""> Made with ❤️ by <a href="https://github.com/phanan" rel="noopener" target="_blank" data-v-0ef2b3f8="">Phan An</a> and quite a few <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank" data-v-0ef2b3f8="">awesome</a>&nbsp; <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank" data-v-0ef2b3f8="">contributors</a>. </p>
