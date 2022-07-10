@@ -1,11 +1,6 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { preferenceStore } from '@/stores'
-import SoundBar from '@/components/ui/SoundBar.vue'
-import Volume from '@/components/ui/Volume.vue'
-import LikeButton from '@/components/song/SongLikeButton.vue'
-import RepeatModeSwitch from '@/components/ui/RepeatModeSwitch.vue'
-import Equalizer from '@/components/ui/Equalizer.vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import FooterExtraControls from './FooterExtraControls.vue'
 
@@ -18,18 +13,12 @@ new class extends UnitTestCase {
         props: {
           song: factory<Song>('song', {
             playback_state: 'Playing',
-            // Set these values for Like button's rendered HTML to be consistent
-            title: 'Fahrstuhl to Heaven'
+            title: 'Fahrstuhl to Heaven',
+            artist_name: 'Led Zeppelin',
+            artist_id: 3,
+            album_name: 'Led Zeppelin IV',
+            album_id: 4
           })
-        },
-        global: {
-          stubs: {
-            SoundBar,
-            Volume,
-            LikeButton,
-            RepeatModeSwitch,
-            Equalizer
-          }
         }
       }).html()).toMatchSnapshot()
     })
