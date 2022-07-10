@@ -132,23 +132,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, toRefs } from 'vue'
+import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { alerts, arrayify, defaultCover, pluralize } from '@/utils'
+import { alerts, defaultCover, pluralize } from '@/utils'
 import { songStore } from '@/stores'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
+import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
 
 type EditFormData = Pick<Song, 'title' | 'album_name' | 'artist_name' | 'album_artist_name' | 'lyrics' | 'track' | 'disc'>
 
-type TabName = 'details' | 'lyrics'
-
-const props = withDefaults(defineProps<{ songs: Song[], initialTab: TabName }>(), { initialTab: 'details' })
-const { songs, initialTab } = toRefs(props)
-
-const mutatedSongs = ref<Song[]>([])
-const currentView = ref<TabName>()
+const initialTab = inject(EditSongFormInitialTabKey, ref<EditSongFormTabName>('details'))
+const songs = inject(SongsKey, ref<Song[]>([]))
+const mutatedSongs = computed(() => songs.value)
+const currentView = ref<EditSongFormTabName>('details')
 const loading = ref(false)
 
 /**
@@ -197,7 +195,6 @@ const displayedAlbumName = computed(() => {
 const isPristine = computed(() => isEqual(formData, initialFormData))
 
 const open = async () => {
-  mutatedSongs.value = arrayify(songs.value)
   currentView.value = initialTab.value
   const firstSong = mutatedSongs.value[0]
 
@@ -244,7 +241,7 @@ const submit = async () => {
   }
 }
 
-open()
+onMounted(async () => await open())
 </script>
 
 <style lang="scss" scoped>

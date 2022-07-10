@@ -25,16 +25,12 @@ new class extends UnitTestCase {
   protected test () {
     it('has a YouTube tab if using YouTube ', () => {
       commonStore.state.use_you_tube = true
-      const { getByTestId } = this.renderComponent()
-
-      getByTestId('extra-tab-youtube')
+      this.renderComponent().getByTestId('extra-tab-youtube')
     })
 
-    it('does not have a YouTube tab if not using YouTube', async () => {
+    it('does not have a YouTube tab if not using YouTube', () => {
       commonStore.state.use_you_tube = false
-      const { queryByTestId } = this.renderComponent()
-
-      expect(await queryByTestId('extra-tab-youtube')).toBeNull()
+      expect(this.renderComponent().queryByTestId('extra-tab-youtube')).toBeNull()
     })
 
     it.each([['extra-tab-lyrics'], ['extra-tab-album'], ['extra-tab-artist']])('switches to "%s" tab', async (id) => {

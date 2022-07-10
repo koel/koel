@@ -44,24 +44,29 @@
 
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
-import { reactive, ref, toRefs } from 'vue'
+import { inject, reactive, ref, watch } from 'vue'
 import { alerts, parseValidationError } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
+import { UserKey } from '@/symbols'
 
-const props = defineProps<{ user: User }>()
-const { user } = toRefs(props)
+const user = inject(UserKey, ref<User>())
 
-const originalData: UpdateUserData = {
-  name: user.value.name,
-  email: user.value.email,
-  is_admin: user.value.is_admin
-}
+let originalData: UpdateUserData
+let updateData: UpdateUserData
 
-const updateData = reactive<UpdateUserData>(Object.assign({}, originalData))
+watch(user, () => {
+  originalData = {
+    name: user.value.name,
+    email: user.value.email,
+    is_admin: user.value.is_admin
+  }
+
+  updateData = reactive(Object.assign({}, originalData))
+}, { immediate: true })
 
 const loading = ref(false)
 

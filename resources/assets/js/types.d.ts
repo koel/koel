@@ -402,3 +402,5 @@ interface PaginatorResource {
     current_page: number
   }
 }
+
+type EditSongFormTabName = 'details' | 'lyrics'

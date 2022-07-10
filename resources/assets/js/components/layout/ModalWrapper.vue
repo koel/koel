@@ -1,33 +1,18 @@
 <template>
   <div class="modal-wrapper" :class="{ overlay: showingModalName }">
     <CreateSmartPlaylistForm v-if="showingModalName === 'create-smart-playlist-form'" @close="close"/>
-    <EditSmartPlaylistForm
-      v-if="showingModalName === 'edit-smart-playlist-form'"
-      :playlist="boundData.playlist"
-      @close="close"
-    />
+    <EditSmartPlaylistForm v-if="showingModalName === 'edit-smart-playlist-form'" @close="close"/>
     <AddUserForm v-if="showingModalName === 'add-user-form'" @close="close"/>
-    <EditUserForm v-if="showingModalName === 'edit-user-form'" :user="boundData.user" @close="close"/>
-    <EditSongForm
-      v-if="showingModalName === 'edit-song-form'"
-      :initialTab="boundData.initialTab"
-      :songs="boundData.songs"
-      @close="close"
-    />
+    <EditUserForm v-if="showingModalName === 'edit-user-form'" @close="close"/>
+    <EditSongForm v-if="showingModalName === 'edit-song-form'" @close="close"/>
     <AboutKoel v-if="showingModalName === 'about-koel'" @close="close"/>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue'
-import { eventBus, arrayify } from '@/utils'
-
-interface ModalWrapperBoundData {
-  playlist?: Playlist
-  user?: User
-  songs?: Song[]
-  initialTab?: string
-}
+import { defineAsyncComponent, provide, ref } from 'vue'
+import { arrayify, eventBus } from '@/utils'
+import { EditSongFormInitialTabKey, PlaylistKey, SongsKey, UserKey } from '@/symbols'
 
 declare type ModalName =
   | 'create-smart-playlist-form'
@@ -45,31 +30,37 @@ const EditSongForm = defineAsyncComponent(() => import('@/components/song/SongEd
 const AboutKoel = defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue'))
 
 const showingModalName = ref<ModalName | null>(null)
-const boundData = ref<ModalWrapperBoundData>({})
 
-const close = () => {
-  showingModalName.value = null
-  boundData.value = {}
-}
+const close = () => (showingModalName.value = null)
+
+const playlistToEdit = ref<Playlist>()
+const userToEdit = ref<User>()
+const songsToEdit = ref<Song[]>()
+const editSongFormInitialTab = ref<EditSongFormTabName>('details')
+
+provide(PlaylistKey, playlistToEdit)
+provide(UserKey, userToEdit)
+provide(SongsKey, songsToEdit)
+provide(EditSongFormInitialTabKey, editSongFormInitialTab)
 
 eventBus.on({
   'MODAL_SHOW_ABOUT_KOEL': () => (showingModalName.value = 'about-koel'),
   'MODAL_SHOW_ADD_USER_FORM': () => (showingModalName.value = 'add-user-form'),
   'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM': () => (showingModalName.value = 'create-smart-playlist-form'),
 
-  MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM (playlist: Playlist) {
-    boundData.value.playlist = playlist
+  'MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM': (playlist: Playlist) => {
+    playlistToEdit.value = playlist
     showingModalName.value = 'edit-smart-playlist-form'
   },
 
-  MODAL_SHOW_EDIT_USER_FORM (user: User) {
-    boundData.value.user = user
+  'MODAL_SHOW_EDIT_USER_FORM': (user: User) => {
+    userToEdit.value = user
     showingModalName.value = 'edit-user-form'
   },
 
-  MODAL_SHOW_EDIT_SONG_FORM (songs: Song | Song[], initialTab = 'details') {
-    boundData.value.songs = arrayify(songs)
-    boundData.value.initialTab = initialTab
+  'MODAL_SHOW_EDIT_SONG_FORM': (songs: Song | Song[], initialTab: EditSongFormTabName = 'details') => {
+    songsToEdit.value = arrayify(songs)
+    editSongFormInitialTab.value = initialTab
     showingModalName.value = 'edit-song-form'
   }
 })

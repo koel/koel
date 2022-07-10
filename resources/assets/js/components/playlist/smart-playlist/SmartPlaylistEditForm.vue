@@ -37,16 +37,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, toRefs } from 'vue'
+import { computed, inject, reactive, ref, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'
 import { alerts, eventBus } from '@/utils'
 import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
+import { PlaylistKey } from '@/symbols'
 
-const props = defineProps<{ playlist: Playlist }>()
-const { playlist } = toRefs(props)
+const playlist = inject(PlaylistKey, ref<Playlist>())
+let mutatedPlaylist: Playlist
 
-const mutatedPlaylist = reactive<Playlist>(cloneDeep(playlist.value))
+watch(playlist, () => (mutatedPlaylist = reactive(cloneDeep(playlist.value))), { immediate: true })
 
 const isPristine = computed(() => {
   return isEqual(mutatedPlaylist.rules, playlist.value.rules) && mutatedPlaylist.name.trim() === playlist.value.name

@@ -1,6 +1,6 @@
 import isMobile from 'ismobilejs'
 import { expect, it } from 'vitest'
-import { fireEvent, queryAllByTestId } from '@testing-library/vue'
+import { fireEvent, queryAllByTestId, waitFor } from '@testing-library/vue'
 import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import compareVersions from 'compare-versions'
@@ -34,9 +34,7 @@ new class extends UnitTestCase {
       expect(await queryByRole('search')).toBeNull()
 
       await fireEvent.click(getByTitle('Show or hide the search form'))
-      await this.tick()
-
-      getByRole('search')
+      await waitFor(() => getByRole('search'))
     })
 
     it.each([[true, true, true], [false, true, false], [true, false, false], [false, false, false]])(
@@ -46,7 +44,7 @@ new class extends UnitTestCase {
 
         const { queryAllByTestId } = this.actingAs(factory<User>('user', { is_admin: isAdmin })).render(AppHeader)
 
-        expect(await queryAllByTestId('new-version')).toHaveLength(announcing ? 1 : 0)
+        expect(queryAllByTestId('new-version')).toHaveLength(announcing ? 1 : 0)
       }
     )
   }
