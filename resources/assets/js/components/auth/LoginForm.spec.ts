@@ -1,36 +1,36 @@
 import { fireEvent } from '@testing-library/vue'
-import { expect, it } from 'vitest'
+import { expect, it, SpyInstanceFn } from 'vitest'
 import { userStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import LoginFrom from './LoginForm.vue'
-import Btn from '@/components/ui/Btn.vue'
 
 new class extends UnitTestCase {
+  private async submitForm (loginMock: SpyInstanceFn) {
+    const rendered = this.render(LoginFrom)
+
+    await fireEvent.update(rendered.getByPlaceholderText('Email Address'), 'john@doe.com')
+    await fireEvent.update(rendered.getByPlaceholderText('Password'), 'secret')
+    await fireEvent.submit(rendered.getByTestId('login-form'))
+
+    expect(loginMock).toHaveBeenCalledWith('john@doe.com', 'secret')
+
+    return rendered
+  }
+
   protected test () {
-    it('renders', () => expect(this.render(LoginFrom, {
-      global: {
-        stubs: {
-          Btn
-        }
-      }
-    }).html()).toMatchSnapshot())
+    it('renders', () => expect(this.render(LoginFrom).html()).toMatchSnapshot())
 
-    it('triggers login when submitted', async () => {
-      const mock = this.mock(userStore, 'login')
+    it('logs in', async () => {
+      expect((await this.submitForm(this.mock(userStore, 'login'))).emitted().loggedin).toBeTruthy()
+    })
 
-      const { getByTestId, getByPlaceholderText } = this.render(LoginFrom, {
-        global: {
-          stubs: {
-            Btn
-          }
-        }
-      })
+    it('fails to log in', async () => {
+      const mock = this.mock(userStore, 'login').mockRejectedValue(new Error('Unauthenticated'))
+      const { getByTestId, emitted } = await this.submitForm(mock)
+      await this.tick()
 
-      await fireEvent.update(getByPlaceholderText('Email Address'), 'john@doe.com')
-      await fireEvent.update(getByPlaceholderText('Password'), 'secret')
-      await fireEvent.submit(getByTestId('login-form'))
-
-      expect(mock).toHaveBeenCalledWith('john@doe.com', 'secret')
+      expect(emitted().loggedin).toBeFalsy()
+      expect(getByTestId('login-form').classList.contains('error')).toBe(true)
     })
   }
 }

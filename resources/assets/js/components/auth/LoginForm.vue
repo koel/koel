@@ -76,10 +76,9 @@ form {
   border-radius: .6rem;
   border: 1px solid transparent;
   transition: .5s;
-
-  > * + * {
-    margin-top: 1rem;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 
   &.error {
     border-color: var(--color-red);
@@ -94,18 +93,5 @@ form {
     border: 0;
     background: transparent;
   }
-}
-
-input {
-  display: block;
-  border: 0;
-  outline: none;
-  width: 100%;
-}
-
-button {
-  display: block;
-  margin-top: 12px;
-  width: 100%;
 }
 </style>
