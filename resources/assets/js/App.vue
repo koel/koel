@@ -1,4 +1,6 @@
 <template>
+  <Overlay/>
+
   <div id="main" v-if="authenticated">
     <Hotkeys/>
     <EventListeners/>
@@ -6,7 +8,6 @@
     <MainWrapper/>
     <AppFooter/>
     <SupportKoel/>
-    <Overlay/>
   </div>
 
   <template v-else>
