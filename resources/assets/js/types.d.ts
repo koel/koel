@@ -115,6 +115,8 @@ interface FileSystemEntry {
   file (successCallback: Closure): void
 }
 
+type MediaInfoDisplayMode = 'aside' | 'full'
+
 interface AlbumTrack {
   readonly title: string
   readonly length: number

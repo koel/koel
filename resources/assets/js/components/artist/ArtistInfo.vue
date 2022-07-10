@@ -38,9 +38,7 @@ import { mediaInfoService } from '@/services/mediaInfoService'
 
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 
-type DisplayMode = 'aside' | 'full'
-
-const props = withDefaults(defineProps<{ artist: Artist, mode?: DisplayMode }>(), { mode: 'aside' })
+const props = withDefaults(defineProps<{ artist: Artist, mode?: MediaInfoDisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)
 
 const { useLastfm } = useThirdPartyServices()

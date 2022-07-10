@@ -12,8 +12,8 @@
 
       <template v-if="info">
         <div v-if="info.wiki?.summary" class="wiki">
-          <div v-if="showSummary" class="summary" v-html="info.wiki.summary"/>
-          <div v-if="showFull" class="full" v-html="info.wiki.full"/>
+          <div v-if="showSummary" class="summary" data-testid="summary" v-html="info.wiki.summary"/>
+          <div v-if="showFull" class="full" data-testid="full" v-html="info.wiki.full"/>
 
           <button v-if="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullWiki = true">
             Full Wiki
@@ -42,9 +42,7 @@ import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 
 const TrackList = defineAsyncComponent(() => import('@/components/album/AlbumTrackList.vue'))
 
-type DisplayMode = 'aside' | 'full'
-
-const props = withDefaults(defineProps<{ album: Album, mode?: DisplayMode }>(), { mode: 'aside' })
+const props = withDefaults(defineProps<{ album: Album, mode?: MediaInfoDisplayMode }>(), { mode: 'aside' })
 const { album, mode } = toRefs(props)
 
 const info = ref<AlbumInfo | null>(null)
