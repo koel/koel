@@ -16,21 +16,24 @@ export default [
     id: 'violet',
     thumbnailColor: '#31094e',
     properties: {
-      '--color-bg-primary': '#31094e'
+      '--color-bg-primary': '#31094e',
+      '--color-highlight': '#c23de5'
     }
   },
   {
     id: 'oak',
     thumbnailColor: '#560d25',
     properties: {
-      '--color-bg-primary': '#560d25'
+      '--color-bg-primary': '#560d25',
+      '--color-highlight': '#fd4b67'
     }
   },
   {
     id: 'slate',
     thumbnailColor: '#29434e',
     properties: {
-      '--color-bg-primary': '#29434e'
+      '--color-bg-primary': '#29434e',
+      '--color-highlight': '#6c8b99'
     }
   },
   {
@@ -45,14 +48,16 @@ export default [
     id: 'astronaut',
     thumbnailColor: '#2a3074',
     properties: {
-      '--color-bg-primary': '#2a3074'
+      '--color-bg-primary': '#2a3074',
+      '--color-highlight': '#7a78dd'
     }
   },
   {
     id: 'chocolate',
     thumbnailColor: '#3f2724',
     properties: {
-      '--color-bg-primary': '#3f2724'
+      '--color-bg-primary': '#3f2724',
+      '--color-highlight': '#d96759'
     }
   },
   {
@@ -70,6 +75,7 @@ export default [
     thumbnailUrl: bgRosePetal,
     properties: {
       '--color-bg-primary': '#7d083b',
+      '--color-highlight': '#d84179',
       '--bg-image': `url(${bgRosePetal})`
     }
   },
@@ -80,6 +86,7 @@ export default [
     thumbnailUrl: bgPurpleWaves,
     properties: {
       '--color-bg-primary': '#44115c',
+      '--color-highlight': '#b854dd',
       '--bg-image': `url(${bgPurpleWaves})`
     }
   },
@@ -100,6 +107,7 @@ export default [
     thumbnailUrl: bgJungle,
     properties: {
       '--color-bg-primary': '#0f0f03',
+      '--color-highlight': '#4f9345',
       '--bg-image': `url(${bgJungle})`
     }
   },
@@ -110,6 +118,7 @@ export default [
     thumbnailUrl: bgMountains,
     properties: {
       '--color-bg-primary': '#0e2656',
+      '--color-highlight': '#6488c3',
       '--bg-image': `url(${bgMountains})`
     }
   },
@@ -130,6 +139,7 @@ export default [
     thumbnailUrl: bgNemo,
     properties: {
       '--color-bg-primary': '#031724',
+      '--color-highlight': '#2896b8',
       '--bg-image': `url(${bgNemo})`
     }
   },
@@ -140,6 +150,7 @@ export default [
     thumbnailUrl: bgCat,
     properties: {
       '--color-bg-primary': '#000',
+      '--color-highlight': '#d26c37',
       '--bg-image': `url(${bgCat})`,
       '--bg-position': 'left'
     }
