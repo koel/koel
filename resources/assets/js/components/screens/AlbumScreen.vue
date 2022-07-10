@@ -9,27 +9,21 @@
       </template>
 
       <template v-slot:meta>
-        <span>
-          by
-          <a v-if="isNormalArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
-          <span class="nope" v-else>{{ album.artist_name }}</span>
-          •
-          {{ pluralize(album.song_count, 'song') }}
-          •
-          {{ duration }}
+        <a v-if="isNormalArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
+        <span class="nope" v-else>{{ album.artist_name }}</span>
+        <span>{{ pluralize(album.song_count, 'song') }}</span>
+        <span>{{ secondsToHis(album.length) }}</span>
+        <a v-if="useLastfm" class="info" href title="View album's extra information" @click.prevent="showInfo">Info</a>
 
-          <template v-if="useLastfm">
-            •
-            <a class="info" href title="View album's extra information" @click.prevent="showInfo">Info</a>
-          </template>
-
-          <template v-if="allowDownload && songs.length">
-            •
-            <a class="download" href role="button" title="Download all songs in album" @click.prevent="download">
-              Download All
-            </a>
-          </template>
-        </span>
+        <a
+          v-if="allowDownload"
+          class="download"
+          href role="button"
+          title="Download all songs in album"
+          @click.prevent="download"
+        >
+          Download All
+        </a>
       </template>
 
       <template v-slot:controls>
@@ -88,8 +82,6 @@ const {
 const useLastfm = toRef(commonStore.state, 'use_last_fm')
 const allowDownload = toRef(commonStore.state, 'allow_download')
 const showingInfo = ref(false)
-
-const duration = computed(() => secondsToHis(album.value.length))
 
 const isNormalArtist = computed(() => {
   return !artistStore.isVarious(album.value.artist_id) && !artistStore.isUnknown(album.value.artist_id)

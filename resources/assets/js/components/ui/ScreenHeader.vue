@@ -24,8 +24,8 @@ const props = withDefaults(defineProps<{ hasThumbnail?: boolean }>(), { hasThumb
 const { hasThumbnail } = toRefs(props)
 </script>
 
-<style lang="scss" scoped>
-header {
+<style lang="scss">
+header.screen-header {
   display: flex;
   font-weight: var(--font-weight-thin);
   padding: 1rem 1.8rem;
@@ -69,6 +69,18 @@ header {
 
       &:hover {
         color: var(--color-highlight);
+      }
+    }
+
+    > * + * {
+      margin-left: .2rem;
+      display: inline-block;
+
+      &::before {
+        content: '•';
+        margin-right: .2rem;
+        color: var(--color-text-secondary);
+        font-weight: unset;
       }
     }
   }

@@ -4,16 +4,18 @@
       {{ playlist?.name }}
       <ControlsToggle v-if="songs.length" :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-      <template v-slot:meta>
-        <span class="meta" v-if="songs.length">
-          {{ pluralize(songs.length, 'song') }}
-          •
-          {{ duration }}
-          <template v-if="allowDownload">
-            •
-            <a href role="button" title="Download all songs in playlist" @click.prevent="download">Download All</a>
-          </template>
-        </span>
+      <template v-slot:meta v-if="songs.length">
+        <span>{{ pluralize(songs.length, 'song') }}</span>
+        <span>{{ duration }}</span>
+        <a
+          v-if="allowDownload"
+          href
+          role="button"
+          title="Download all songs in playlist"
+          @click.prevent="download"
+        >
+          Download All
+        </a>
       </template>
 
       <template v-slot:controls>

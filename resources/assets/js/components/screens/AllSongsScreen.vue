@@ -4,8 +4,9 @@
       All Songs
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-      <template v-slot:meta>
-        <span v-if="totalSongCount">{{ pluralize(totalSongCount, 'song') }} • {{ totalDuration }}</span>
+      <template v-slot:meta v-if="totalSongCount">
+        <span>{{ pluralize(totalSongCount, 'song') }}</span>
+        <span>{{ totalDuration }}</span>
       </template>
 
       <template v-slot:controls>

@@ -4,8 +4,9 @@
       Recently Played
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
-      <template v-slot:meta>
-        <span v-if="songs.length">{{ pluralize(songs.length, 'song') }} • {{ duration }}</span>
+      <template v-slot:meta v-if="songs.length">
+        <span>{{ pluralize(songs.length, 'song') }}</span>
+        <span>{{ duration }}</span>
       </template>
 
       <template v-slot:controls>

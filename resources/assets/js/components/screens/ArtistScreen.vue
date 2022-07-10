@@ -9,31 +9,21 @@
       </template>
 
       <template v-slot:meta>
-        <span>
-          {{ pluralize(artist.album_count, 'album') }}
-          •
-          {{ pluralize(artist.song_count, 'song') }}
-          •
-          {{ duration }}
+        <span>{{ pluralize(artist.album_count, 'album') }}</span>
+        <span>{{ pluralize(artist.song_count, 'song') }}</span>
+        <span>{{ secondsToHis(artist.length) }}</span>
+        <a v-if="useLastfm" class="info" href title="View artist's extra information" @click.prevent="showInfo">Info</a>
 
-          <template v-if="useLastfm">
-            •
-            <a class="info" href title="View artist's extra information" @click.prevent="showInfo">Info</a>
-          </template>
-
-          <template v-if="allowDownload">
-            •
-            <a
-              class="download"
-              href
-              role="button"
-              title="Download all songs by this artist"
-              @click.prevent="download"
-            >
-              Download All
-            </a>
-          </template>
-        </span>
+        <a
+          v-if="allowDownload"
+          class="download"
+          href
+          role="button"
+          title="Download all songs by this artist"
+          @click.prevent="download"
+        >
+          Download All
+        </a>
       </template>
 
       <template v-slot:controls>
@@ -57,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, ref, toRef, toRefs } from 'vue'
+import { defineAsyncComponent, onMounted, ref, toRef, toRefs } from 'vue'
 import { eventBus, pluralize, secondsToHis } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
@@ -93,8 +83,6 @@ const { useLastfm } = useThirdPartyServices()
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
 const showingInfo = ref(false)
-
-const duration = computed(() => secondsToHis(artist.value.length))
 
 const download = () => downloadService.fromArtist(artist.value)
 const showInfo = () => (showingInfo.value = true)
