@@ -34,6 +34,7 @@ import { defineAsyncComponent, ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { preferenceStore } from '@/stores'
 import { useThirdPartyServices } from '@/composables'
+
 import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
 import AlbumListScreen from '@/components/screens/AlbumListScreen.vue'
@@ -41,8 +42,10 @@ import ArtistListScreen from '@/components/screens/ArtistListScreen.vue'
 import AllSongsScreen from '@/components/screens/AllSongsScreen.vue'
 import PlaylistScreen from '@/components/screens/PlaylistScreen.vue'
 import FavoritesScreen from '@/components/screens/FavoritesScreen.vue'
+import RecentlyPlayedScreen from '@/components/screens/RecentlyPlayedScreen.vue'
+import UploadScreen from '@/components/screens/UploadScreen.vue'
+import SearchExcerptsScreen from '@/components/screens/search/SearchExcerptsScreen.vue'
 
-const RecentlyPlayedScreen = defineAsyncComponent(() => import('@/components/screens/RecentlyPlayedScreen.vue'))
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
 const AlbumScreen = defineAsyncComponent(() => import('@/components/screens/AlbumScreen.vue'))
@@ -50,8 +53,6 @@ const ArtistScreen = defineAsyncComponent(() => import('@/components/screens/Art
 const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/SettingsScreen.vue'))
 const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/ProfileScreen.vue'))
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/YouTubeScreen.vue'))
-const UploadScreen = defineAsyncComponent(() => import('@/components/screens/UploadScreen.vue'))
-const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchExcerptsScreen.vue'))
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchSongResultsScreen.vue'))
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
