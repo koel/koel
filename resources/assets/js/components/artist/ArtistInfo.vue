@@ -12,10 +12,10 @@
 
       <template v-if="info">
         <div v-if="info.bio?.summary" class="bio">
-          <div v-if="showSummary" class="summary" v-html="info.bio.summary"/>
-          <div v-if="showFull" class="full" v-html="info.bio.full"/>
+          <div v-if="showSummary" class="summary" data-testid="summary" v-html="info.bio.summary"/>
+          <div v-if="showFull" class="full" data-testid="full" v-html="info.bio.full"/>
 
-          <button v-show="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullBio = true">
+          <button v-if="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullBio = true">
             Full Bio
           </button>
         </div>

@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import AlbumInfo from './AlbumInfo.vue'
 import { mediaInfoService } from '@/services/mediaInfoService'
 import { commonStore, songStore } from '@/stores'
 import { fireEvent } from '@testing-library/vue'
 import { playbackService } from '@/services'
+import AlbumInfoComponent from './AlbumInfo.vue'
 
 let album: Album
 
@@ -20,7 +20,7 @@ new class extends UnitTestCase {
     album = factory<Album>('album', { name: 'IV' })
     const fetchMock = this.mock(mediaInfoService, 'fetchForAlbum').mockResolvedValue(info)
 
-    const rendered = this.render(AlbumInfo, {
+    const rendered = this.render(AlbumInfoComponent, {
       props: {
         album,
         mode
