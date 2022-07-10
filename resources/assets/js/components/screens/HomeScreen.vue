@@ -14,7 +14,7 @@
       </div>
 
       <MostPlayedArtists/>
-      <MostPlayedAlbum/>
+      <MostPlayedAlbums/>
 
       <ToTopButton/>
     </div>
@@ -34,7 +34,7 @@ import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.v
 import RecentlyAddedAlbums from '@/components/screens/home/RecentlyAddedAlbums.vue'
 import RecentlyAddedSongs from '@/components/screens/home/RecentlyAddedSongs.vue'
 import MostPlayedArtists from '@/components/screens/home/MostPlayedArtists.vue'
-import MostPlayedAlbum from '@/components/screens/home/MostPlayedAlbum.vue'
+import MostPlayedAlbums from '@/components/screens/home/MostPlayedAlbums.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 
 const { ToTopButton, scrolling } = useInfiniteScroll(() => noop())
