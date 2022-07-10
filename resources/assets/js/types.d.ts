@@ -150,7 +150,6 @@ interface Artist {
   album_count: number
   song_count: number
   length: number
-  fmt_length: string
   created_at: string
 }
 
@@ -165,7 +164,6 @@ interface Album {
   play_count: number
   song_count: number
   length: number
-  fmt_length: string
   created_at: string
 }
 

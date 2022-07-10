@@ -1,5 +1,4 @@
 import { Faker } from '@faker-js/faker'
-import { secondsToHis } from '@/utils'
 
 export default (faker: Faker): Album => {
   const length = faker.datatype.number({ min: 300 })
@@ -14,7 +13,6 @@ export default (faker: Faker): Album => {
     cover: faker.image.imageUrl(),
     play_count: faker.datatype.number(),
     length,
-    fmt_length: secondsToHis(length),
     created_at: faker.date.past().toISOString()
   }
 }

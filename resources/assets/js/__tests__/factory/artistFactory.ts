@@ -1,5 +1,4 @@
 import { Faker } from '@faker-js/faker'
-import { secondsToHis } from '@/utils'
 
 export default (faker: Faker): Artist => {
   const length = faker.datatype.number({ min: 300 })
@@ -13,7 +12,6 @@ export default (faker: Faker): Artist => {
     album_count: faker.datatype.number({ max: 10 }),
     song_count: faker.datatype.number({ max: 100 }),
     length,
-    fmt_length: secondsToHis(length),
     created_at: faker.date.past().toISOString()
   }
 }

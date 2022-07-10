@@ -9,10 +9,10 @@
       </template>
 
       <template v-slot:meta>
-        <span v-if="songs.length">
+        <span>
           {{ pluralize(artist.album_count, 'album') }}
           •
-          {{ pluralize(songs.length, 'song') }}
+          {{ pluralize(artist.song_count, 'song') }}
           •
           {{ duration }}
 
@@ -57,8 +57,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, ref, toRef, toRefs, watch } from 'vue'
-import { eventBus, pluralize } from '@/utils'
+import { computed, defineAsyncComponent, onMounted, ref, toRef, toRefs } from 'vue'
+import { eventBus, pluralize, secondsToHis } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList, useThirdPartyServices } from '@/composables'
@@ -78,7 +78,6 @@ const {
   ControlsToggle,
   songList,
   songs,
-  duration,
   showingControls,
   isPhone,
   onPressEnter,
@@ -95,13 +94,7 @@ const allowDownload = toRef(commonStore.state, 'allow_download')
 
 const showingInfo = ref(false)
 
-/**
- * Watch the artist's album count.
- * If this is changed to 0, the user has edited the songs by this artist
- * and moved all of them to another artist (thus deleted this artist entirely).
- * We should then go back to the artist list.
- */
-watch(() => artist.value.album_count, newAlbumCount => newAlbumCount || router.go('artists'))
+const duration = computed(() => secondsToHis(artist.value.length))
 
 const download = () => downloadService.fromArtist(artist.value)
 const showInfo = () => (showingInfo.value = true)
@@ -111,8 +104,8 @@ onMounted(async () => {
 })
 
 eventBus.on('SONGS_UPDATED', () => {
-  // if the current artist has been deleted, go back to home
-  artistStore.byId(artist.value.id) || router.go('home')
+  // if the current artist has been deleted, go back to the list
+  artistStore.byId(artist.value.id) || router.go('artists')
 })
 </script>
 
