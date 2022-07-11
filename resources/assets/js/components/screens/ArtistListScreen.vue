@@ -7,7 +7,13 @@
       </template>
     </ScreenHeader>
 
-    <div ref="scroller" :class="`as-${viewMode}`" class="artists main-scroll-wrap" @scroll="scrolling">
+    <div
+      ref="scroller"
+      :class="`as-${viewMode}`"
+      class="artists main-scroll-wrap"
+      data-testid="artist-list"
+      @scroll="scrolling"
+    >
       <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout"/>
       <ToTopButton/>
     </div>
@@ -51,10 +57,9 @@ const fetchArtists = async () => {
   loading = false
 }
 
-eventBus.on('KOEL_READY', () => (viewMode.value = preferences.artistsViewMode || 'thumbnails'))
-
 eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
   if (view === 'Artists' && !initialized) {
+    viewMode.value = preferences.artistsViewMode || 'thumbnails'
     await makeScrollable()
     initialized = true
   }

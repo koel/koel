@@ -7,7 +7,13 @@
       </template>
     </ScreenHeader>
 
-    <div ref="scroller" :class="`as-${viewMode}`" class="albums main-scroll-wrap" @scroll="scrolling">
+    <div
+      ref="scroller"
+      :class="`as-${viewMode}`"
+      class="albums main-scroll-wrap"
+      data-testid="album-list"
+      @scroll="scrolling"
+    >
       <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout"/>
       <ToTopButton/>
     </div>
@@ -51,10 +57,9 @@ const fetchAlbums = async () => {
   loading = false
 }
 
-eventBus.on('KOEL_READY', () => (viewMode.value = preferences.albumsViewMode || 'thumbnails'))
-
 eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
   if (view === 'Albums' && !initialized) {
+    viewMode.value = preferences.albumsViewMode || 'thumbnails'
     await makeScrollable()
     initialized = true
   }
