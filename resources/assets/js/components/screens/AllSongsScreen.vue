@@ -11,7 +11,7 @@
 
       <template v-slot:controls>
         <SongListControls
-          v-if="songs.length && (!isPhone || showingControls)"
+          v-if="totalSongCount && (!isPhone || showingControls)"
           @playAll="playAll"
           @playSelected="playSelected"
         />
@@ -82,7 +82,7 @@ const playAll = async (shuffle: boolean) => {
   }
 
   await playbackService.playFirstInQueue()
-  await router.go('/queue')
+  await router.go('queue')
 }
 
 eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
