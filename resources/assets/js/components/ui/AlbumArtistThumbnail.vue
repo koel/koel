@@ -55,7 +55,7 @@ const getArtistImage = (artist: Artist) => {
 
 const buttonLabel = computed(() => forAlbum.value
   ? `Play all songs in the album ${entity.value.name}`
-  : `Play all songs by the artist ${entity.value.name}`
+  : `Play all songs by ${entity.value.name}`
 )
 
 const { isAdmin: allowsUpload } = useAuthorization()

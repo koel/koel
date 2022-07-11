@@ -12,7 +12,7 @@
         <span>{{ pluralize(artist.album_count, 'album') }}</span>
         <span>{{ pluralize(artist.song_count, 'song') }}</span>
         <span>{{ secondsToHis(artist.length) }}</span>
-        <a v-if="useLastfm" class="info" href title="View artist's extra information" @click.prevent="showInfo">Info</a>
+        <a v-if="useLastfm" class="info" href title="View artist information" @click.prevent="showInfo">Info</a>
 
         <a
           v-if="allowDownload"
