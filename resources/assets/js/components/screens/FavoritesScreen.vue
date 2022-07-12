@@ -30,14 +30,14 @@
     </ScreenHeader>
 
     <SongList
-      v-show="songs.length"
+      v-if="songs.length"
       ref="songList"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
       @sort="sort"
     />
 
-    <ScreenEmptyState v-show="!songs.length">
+    <ScreenEmptyState v-else>
       <template v-slot:icon>
         <i class="fa fa-frown-o"></i>
       </template>
