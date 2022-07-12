@@ -1,5 +1,5 @@
 <template>
-  <section v-if="songs.length">
+  <section>
     <h1>Most Played</h1>
     <ol v-if="songs.length" class="top-song-list">
       <li v-for="song in songs" :key="song.id">

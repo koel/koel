@@ -5,10 +5,10 @@
       <Btn
         v-if="songs.length"
         data-testid="home-view-all-recently-played-btn"
-        @click.prevent="goToRecentlyPlayedScreen"
+        orange
         rounded
         small
-        orange
+        @click.prevent="goToRecentlyPlayedScreen"
       >
         View All
       </Btn>

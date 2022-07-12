@@ -15,17 +15,17 @@
 
       <template v-else>
         <div class="two-cols">
-          <MostPlayedSongs/>
-          <RecentlyPlayedSongs/>
+          <MostPlayedSongs data-testid="most-played-songs"/>
+          <RecentlyPlayedSongs data-testid="recently-played-songs"/>
         </div>
 
         <div class="two-cols">
-          <RecentlyAddedAlbums/>
-          <RecentlyAddedSongs/>
+          <RecentlyAddedAlbums data-testid="recently-added-albums"/>
+          <RecentlyAddedSongs data-testid="recently-added-songs"/>
         </div>
 
-        <MostPlayedArtists/>
-        <MostPlayedAlbums/>
+        <MostPlayedArtists data-testid="most-played-artists"/>
+        <MostPlayedAlbums data-testid="most-played-albums"/>
 
         <ToTopButton/>
       </template>
