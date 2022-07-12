@@ -1,4 +1,4 @@
-import { difference, orderBy, union } from 'lodash'
+import { difference, orderBy } from 'lodash'
 import { reactive } from 'vue'
 
 import { Cache, httpService } from '@/services'
@@ -16,7 +16,6 @@ export const playlistStore = {
   },
 
   setupPlaylist (playlist: Playlist) {
-    playlist.songs = []
     playlist.is_smart && this.setupSmartPlaylist(playlist)
   },
 
@@ -63,13 +62,6 @@ export const playlistStore = {
       return playlist
     }
 
-    const count = playlist.songs.length
-    playlist.songs = union(playlist.songs, songs)
-
-    if (count === playlist.songs.length) {
-      return playlist
-    }
-
     await httpService.post(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
     Cache.invalidate(['playlist.songs', playlist.id])
 
@@ -81,7 +73,6 @@ export const playlistStore = {
       return playlist
     }
 
-    playlist.songs = difference(playlist.songs, songs)
     await httpService.delete(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
     Cache.invalidate(['playlist.songs', playlist.id])
 

@@ -1,7 +1,7 @@
 <template>
   <section id="playlistWrapper" v-if="playlist">
     <ScreenHeader>
-      {{ playlist?.name }}
+      {{ playlist.name }}
       <ControlsToggle v-if="songs.length" :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:meta v-if="songs.length">
@@ -68,7 +68,6 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
 const playlist = ref<Playlist>()
-const playlistSongs = ref<Song[]>([])
 const loading = ref(false)
 
 const controlsConfig: Partial<SongListControlsConfig> = { deletePlaylist: true }
@@ -88,7 +87,7 @@ const {
   playSelected,
   toggleControls,
   sort
-} = useSongList(playlistSongs, 'playlist')
+} = useSongList(ref<Song[]>([]), 'playlist')
 
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
@@ -106,31 +105,20 @@ const removeSelected = () => {
 
 const fetchSongs = async () => {
   loading.value = true
-  playlistSongs.value = await songStore.fetchForPlaylist(playlist.value!)
+  songs.value = await songStore.fetchForPlaylist(playlist.value!)
   loading.value = false
   sort()
 }
 
 eventBus.on({
-    LOAD_MAIN_CONTENT (view: MainViewName, playlistFromRoute: Playlist) {
-      if (view !== 'Playlist') {
-        return
+    'LOAD_MAIN_CONTENT': async (view: MainViewName, p: any) => {
+      if (view === 'Playlist') {
+        playlist.value = p as Playlist
+        await fetchSongs()
       }
-
-      playlistSongs.value = []
-      playlist.value = playlistFromRoute
-      fetchSongs()
     },
 
-    'SMART_PLAYLIST_UPDATED': (updated: Playlist) => updated === playlist.value && fetchSongs()
+    'SMART_PLAYLIST_UPDATED': async (updated: Playlist) => updated === playlist.value && await fetchSongs()
   }
 )
 </script>
-
-<style lang="scss">
-#playlistWrapper {
-  .none {
-    padding: 16px 24px;
-  }
-}
-</style>

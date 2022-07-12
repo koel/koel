@@ -198,28 +198,28 @@ interface SmartPlaylistRuleGroup {
 }
 
 interface SmartPlaylistModel {
-  name: string
-  type: string
+  name: 'title' | 'length' | 'created_at' | 'updated_at' | 'album.name' | 'artist.name' | 'interactions.play_count' | 'interactions.updated_at'
+  type: 'text' | 'number' | 'date'
   label: string
-  unit?: string
+  unit?: 'seconds' | 'days'
 }
 
 interface SmartPlaylistOperator {
-  operator: string
+  operator: 'is' | 'isNot' | 'contains' | 'notContain' | 'isBetween' | 'isGreaterThan' | 'isLessThan' | 'beginsWith' | 'endsWith' | 'inLast' | 'notInLast'
   label: string
-  type?: string
-  unit?: string
+  type?: SmartPlaylistModel['type'] // to override
+  unit?: SmartPlaylistModel['unit'] // to override
   inputs?: number
 }
 
 interface SmartPlaylistRule {
   id: number
-  model: SmartPlaylistModel
-  operator: string
+  model: SmartPlaylistModel | SmartPlaylistModel['name']
+  operator: SmartPlaylistOperator['operator']
   value: any[]
 }
 
-type SmartPlaylistInputTypes = Record<string, SmartPlaylistOperator[]>
+type SmartPlaylistInputTypes = Record<SmartPlaylistModel['type'], SmartPlaylistOperator[]>
 
 type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
 
@@ -227,7 +227,6 @@ interface Playlist {
   type: 'playlists'
   readonly id: number
   name: string
-  songs: Song[]
   is_smart: boolean
   rules: SmartPlaylistRuleGroup[]
 }

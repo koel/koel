@@ -13,24 +13,18 @@ import { playlistStore, preferenceStore, userStore } from '@/stores'
 import { alerts, eventBus, forceReloadWindow } from '@/utils'
 
 eventBus.on({
-  PLAYLIST_DELETE (playlist: Playlist) {
-    const destroy = async () => {
+  'PLAYLIST_DELETE': (playlist: Playlist) => {
+    alerts.confirm(`Delete the playlist "${playlist.name}"?`, async () => {
       await playlistStore.delete(playlist)
       alerts.success(`Deleted playlist "${playlist.name}."`)
       router.go('home')
-    }
-
-    if (!playlist.is_smart && !playlist.songs.length) {
-      destroy()
-    } else {
-      alerts.confirm(`Delete the playlist "${playlist.name}"?`, destroy)
-    }
+    })
   },
 
   /**
    * Log the current user out and reset the application state.
    */
-  async LOG_OUT () {
+  'LOG_OUT': async () => {
     await userStore.logout()
     authService.destroy()
     forceReloadWindow()
