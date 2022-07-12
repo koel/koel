@@ -1,11 +1,13 @@
 <template>
   <section>
     <h1>New Albums</h1>
-    <ol class="recently-added-album-list">
+    <ol v-if="albums.length" class="recently-added-album-list">
       <li v-for="album in albums" :key="album.id">
         <AlbumCard :album="album" layout="compact"/>
       </li>
     </ol>
+
+    <p v-else class="text-secondary">No albums added yet.</p>
   </section>
 </template>
 

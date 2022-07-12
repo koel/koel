@@ -3,6 +3,7 @@
     <h1>
       Recently Played
       <Btn
+        v-if="songs.length"
         data-testid="home-view-all-recently-played-btn"
         @click.prevent="goToRecentlyPlayedScreen"
         rounded
@@ -19,10 +20,7 @@
       </li>
     </ol>
 
-    <p v-show="!songs.length" class="text-secondary">
-      Your recently played songs will be displayed here.<br/>
-      Start listening!
-    </p>
+    <p v-else class="text-secondary">No songs played as of late.</p>
   </section>
 </template>
 

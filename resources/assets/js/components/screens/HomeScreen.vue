@@ -3,20 +3,32 @@
     <ScreenHeader>{{ greeting }}</ScreenHeader>
 
     <div class="main-scroll-wrap" @scroll="scrolling">
-      <div class="two-cols">
-        <MostPlayedSongs/>
-        <RecentlyPlayedSongs/>
-      </div>
+      <ScreenEmptyState v-if="libraryEmpty">
+        <template v-slot:icon>
+          <i class="fa fa-volume-off"></i>
+        </template>
+        No songs found.
+        <span class="secondary d-block">
+          {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
+        </span>
+      </ScreenEmptyState>
 
-      <div class="two-cols">
-        <RecentlyAddedAlbums/>
-        <RecentlyAddedSongs/>
-      </div>
+      <template v-else>
+        <div class="two-cols">
+          <MostPlayedSongs/>
+          <RecentlyPlayedSongs/>
+        </div>
 
-      <MostPlayedArtists/>
-      <MostPlayedAlbums/>
+        <div class="two-cols">
+          <RecentlyAddedAlbums/>
+          <RecentlyAddedSongs/>
+        </div>
 
-      <ToTopButton/>
+        <MostPlayedArtists/>
+        <MostPlayedAlbums/>
+
+        <ToTopButton/>
+      </template>
     </div>
   </section>
 </template>
@@ -26,8 +38,8 @@ import { sample } from 'lodash'
 import { computed } from 'vue'
 
 import { eventBus, noop } from '@/utils'
-import { overviewStore, userStore } from '@/stores'
-import { useInfiniteScroll } from '@/composables'
+import { commonStore, overviewStore, userStore } from '@/stores'
+import { useAuthorization, useInfiniteScroll } from '@/composables'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
 import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
@@ -36,8 +48,11 @@ import RecentlyAddedSongs from '@/components/screens/home/RecentlyAddedSongs.vue
 import MostPlayedArtists from '@/components/screens/home/MostPlayedArtists.vue'
 import MostPlayedAlbums from '@/components/screens/home/MostPlayedAlbums.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
 const { ToTopButton, scrolling } = useInfiniteScroll(() => noop())
+
+const { isAdmin } = useAuthorization()
 
 const greetings = [
   'Oh hai!',
@@ -52,6 +67,7 @@ const greetings = [
 ]
 
 const greeting = computed(() => sample(greetings)!.replace('%s', userStore.current?.name))
+const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 let initialized = false
 

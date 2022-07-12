@@ -1,12 +1,12 @@
 <template>
   <section v-if="songs.length">
     <h1>Most Played</h1>
-
-    <ol class="top-song-list">
+    <ol v-if="songs.length" class="top-song-list">
       <li v-for="song in songs" :key="song.id">
         <SongCard :song="song"/>
       </li>
     </ol>
+    <p v-else class="text-secondary">You don’t seem to have been playing.</p>
   </section>
 </template>
 

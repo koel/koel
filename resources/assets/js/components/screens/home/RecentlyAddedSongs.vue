@@ -1,11 +1,12 @@
 <template>
   <section>
     <h1>New Songs</h1>
-    <ol v-show="songs.length" class="recently-added-song-list">
+    <ol v-if="songs.length" class="recently-added-song-list">
       <li v-for="song in songs" :key="song.id">
         <SongCard :song="song"/>
       </li>
     </ol>
+    <p v-else class="text-secondary">No songs added so far.</p>
   </section>
 </template>
 
