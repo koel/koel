@@ -52,8 +52,6 @@
         </span>
       </p>
     </footer>
-
-    <span class="backdrop" :style="{ backgroundImage: `url(${album.cover})` }"/>
   </article>
 </template>
 

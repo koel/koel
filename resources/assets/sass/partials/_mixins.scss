@@ -32,6 +32,9 @@
     border: 1px solid var(--color-bg-secondary);
     padding: 16px;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 
     .thumbnail-wrapper {
       overflow: hidden;
@@ -51,7 +54,7 @@
     }
 
     &.compact {
-      display: flex;
+      gap: 1rem;
       flex-direction: row;
       align-items: center;
       max-width: 100%;
@@ -62,15 +65,9 @@
         width: 80px;
         border-radius: 5px;
       }
-
-      footer {
-        flex: 1;
-        padding: 0 16px;
-      }
     }
 
     footer {
-      padding-top: 16px;
       flex: 1;
       overflow: hidden;
       display: flex;
