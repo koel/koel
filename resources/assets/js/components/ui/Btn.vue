@@ -18,7 +18,7 @@ button {
 
   &[small] {
     font-size: .9rem;
-    padding: .3rem .7rem;
+    padding: .4rem .7rem;
   }
 
   @include inset-when-pressed();
