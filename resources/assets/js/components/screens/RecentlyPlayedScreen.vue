@@ -65,11 +65,3 @@ eventBus.on({
   }
 })
 </script>
-
-<style lang="scss">
-#recentlyPlayedWrapper {
-  .none {
-    padding: 16px 24px;
-  }
-}
-</style>

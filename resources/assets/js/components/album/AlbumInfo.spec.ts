@@ -27,7 +27,7 @@ new class extends UnitTestCase {
       },
       global: {
         stubs: {
-          'TrackList': this.stub()
+          TrackList: this.stub()
         }
       }
     })

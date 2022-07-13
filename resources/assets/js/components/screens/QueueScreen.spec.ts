@@ -2,9 +2,9 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, queueStore } from '@/stores'
-import QueueScreen from './QueueScreen.vue'
 import { fireEvent, waitFor } from '@testing-library/vue'
 import { playbackService } from '@/services'
+import QueueScreen from './QueueScreen.vue'
 
 new class extends UnitTestCase {
   private renderComponent (songs: Song[]) {

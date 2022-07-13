@@ -2,9 +2,9 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { artistStore, preferenceStore } from '@/stores'
-import ArtistListScreen from './ArtistListScreen.vue'
 import { eventBus } from '@/utils'
 import { fireEvent, waitFor } from '@testing-library/vue'
+import ArtistListScreen from './ArtistListScreen.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
