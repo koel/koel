@@ -82,9 +82,3 @@ const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(se
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
 const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
 </script>
-
-<style lang="scss" scoped>
-.start {
-  color: var(--color-highlight);
-}
-</style>
