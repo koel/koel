@@ -1,0 +1,18 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<section id="settingsWrapper">
+  <header class="screen-header">
+    <div class="thumbnail-wrapper"></div>
+    <div class="heading-wrapper">
+      <h1>Settings</h1><span class="meta text-secondary"></span>
+    </div>
+  </header>
+  <form class="main-scroll-wrap">
+    <div class="form-row"><label for="inputSettingsPath">Media Path</label>
+      <p id="mediaPathHelp" class="help"> The <em>absolute</em> path to the server directory containing your media. Koel will scan this directory for songs and extract any available information.<br> Scanning may take a while, especially if you have a lot of songs, so be patient. </p><input id="inputSettingsPath" aria-describedby="mediaPathHelp" name="media_path" type="text">
+    </div>
+    <div class="form-row"><button type="submit" data-v-27deb898="">Scan</button></div>
+  </form>
+</section>
+`;
