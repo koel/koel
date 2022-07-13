@@ -1,33 +1,32 @@
 <template>
-  <article v-if="showing" :class="{ me: isCurrentUser }" class="user-card" data-testid="user-card">
-    <div class="info">
-      <img :alt="`${user.name}'s avatar`" :src="user.avatar" height="96" width="96">
+  <article :class="{ me: isCurrentUser }" class="user-card" data-testid="user-card">
+    <img :alt="`${user.name}'s avatar`" :src="user.avatar" height="80" width="80">
 
-      <div class="right">
-        <div>
-          <h1>
-            <span class="name">{{ user.name }}</span>
-            <i v-if="isCurrentUser" class="you text-orange fa fa-check-circle" title="This is you!"/>
-            <i v-if="user.is_admin" class="is-admin text-blue fa fa-shield" title="User has admin privileges"/>
-          </h1>
-          <p class="email">{{ user.email }}</p>
-        </div>
+    <main>
+      <h1>
+        <span class="name">{{ user.name }}</span>
+        <i v-if="isCurrentUser" class="you text-orange fa fa-check-circle" title="This is you!"/>
+        <i v-if="user.is_admin" class="is-admin text-blue fa fa-shield" title="User has admin privileges"/>
+      </h1>
 
-        <div class="buttons">
-          <Btn class="btn-edit" data-testid="edit-user-btn" small orange @click="edit">{{ editButtonLabel }}</Btn>
-          <Btn v-if="!isCurrentUser" class="btn-delete" data-testid="delete-user-btn" small red @click="confirmDelete">
-            Delete
-          </Btn>
-        </div>
-      </div>
-    </div>
+      <p class="email text-secondary">{{ user.email }}</p>
+
+      <footer>
+        <Btn class="btn-edit" data-testid="edit-user-btn" small orange @click="edit">
+          {{ isCurrentUser ? 'Your Profile' : 'Edit' }}
+        </Btn>
+        <Btn v-if="!isCurrentUser" class="btn-delete" data-testid="delete-user-btn" small red @click="confirmDelete">
+          Delete
+        </Btn>
+      </footer>
+    </main>
   </article>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { userStore } from '@/stores'
-import { alerts } from '@/utils'
+import { alerts, eventBus } from '@/utils'
 import { useAuthorization } from '@/composables'
 import router from '@/router'
 
@@ -36,79 +35,68 @@ import Btn from '@/components/ui/Btn.vue'
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)
 
-const showing = ref(true)
-
 const { currentUser } = useAuthorization()
 
 const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
-const editButtonLabel = computed(() => isCurrentUser.value ? 'Update Profile' : 'Edit')
 
-const emit = defineEmits(['editUser'])
-
-const edit = () => isCurrentUser.value ? router.go('profile') : emit('editUser', user.value)
+const edit = () => isCurrentUser.value ? router.go('profile') : eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value)
 const confirmDelete = () => alerts.confirm(`You’re about to unperson ${user.value.name}. Are you sure?`, destroy)
 
-const destroy = () => {
-  userStore.destroy(user.value)
-  showing.value = false
+const destroy = async () => {
+  await userStore.destroy(user.value)
   alerts.success(`User "${user.value.name}" deleted.`)
 }
 </script>
 
 <style lang="scss" scoped>
 .user-card {
-  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 5px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-bg-secondary);
+  gap: 1rem;
 
-  .info {
+  img {
+    border-radius: 5px;
+    flex: 0 0 80px;
+    background: rgba(0, 0, 0, .2)
+  }
+
+  main {
+    flex: 1;
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    gap: .5rem;
+  }
 
-    img {
-      flex: 0 0 96px;
-    }
+  h1 {
+    font-size: 1rem;
+    font-weight: var(--font-weight-normal);
 
-    .email {
-      opacity: .5;
-    }
-
-    .right {
-      flex: 1;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      background-color: rgba(255, 255, 255, .02);
-      position: relative;
-    }
-
-    h1 {
-      font-size: 1.4rem;
-      margin-bottom: .25rem;
-
-      > * + * {
-        margin-left: .5rem
-      }
-    }
-
-    .buttons {
-      display: none;
-      margin-top: .5rem;
-
-      > * + * {
-        margin-left: .25rem;
-      }
-
-      @media (hover: none) {
-        display: block;
-      }
-    }
-
-    &:hover .buttons {
-      display: block;
+    > * + * {
+      margin-left: .5rem
     }
   }
 
-  @media only screen and (max-width: 1024px) {
-    width: 100%;
+  footer {
+    visibility: hidden;
+
+    > * + * {
+      margin-left: .3rem;
+    }
+
+    @media (hover: none) {
+      visibility: visible;
+    }
+  }
+
+  &:hover footer {
+    visibility: visible;
   }
 }
 </style>
