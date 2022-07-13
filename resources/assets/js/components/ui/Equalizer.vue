@@ -2,7 +2,8 @@
   <div id="equalizer" data-testid="equalizer" ref="root">
     <div class="presets">
       <label class="select-wrapper">
-        <select v-model="selectedPresetIndex">
+        <select v-model="selectedPresetId">
+          <option disabled value="-1">Preset</option>
           <option v-for="preset in presets" :value="preset.id" :key="preset.id" v-once>{{ preset.name }}</option>
         </select>
       </label>
@@ -42,20 +43,12 @@ interface Band {
 let context!: AudioContext
 let preampGainNode!: GainNode
 
-const root = ref(null as unknown as HTMLElement)
+const root = ref<HTMLElement>()
 const bands = ref<Band[]>([])
 const preampGainValue = ref(0)
-const selectedPresetIndex = ref(-1)
+const selectedPresetId = ref(-1)
 
 const presets: EqualizerPreset[] = Object.assign([], equalizerStore.presets)
-
-// Prepend an empty option for instruction purpose.`
-presets.unshift({
-  id: -1,
-  name: 'Preset',
-  preamp: 0,
-  gains: []
-})
 
 const changePreampGain = (dbValue: number) => {
   preampGainValue.value = dbValue
@@ -67,9 +60,9 @@ const changeFilterGain = (filter: BiquadFilterNode, value: number) => {
 }
 
 const createSliders = () => {
-  const config = equalizerStore.get()
+  const config = equalizerStore.get()!
 
-  root.value.querySelectorAll<SliderElement>('.slider').forEach((el, i) => {
+  root.value?.querySelectorAll<SliderElement>('.slider').forEach((el, i) => {
     el.noUiSlider?.destroy()
 
     noUiSlider.create(el, {
@@ -95,17 +88,17 @@ const createSliders = () => {
 
     el.noUiSlider.on('change', () => {
       // User has customized the equalizer. No preset should be selected.
-      selectedPresetIndex.value = -1
+      selectedPresetId.value = -1
       save()
     })
   })
 
   // Now we set this value to trigger the audio processing.
-  selectedPresetIndex.value = preferences.selectedPreset
+  selectedPresetId.value = preferences.selectedPreset
 }
 
 const init = async () => {
-  const config = equalizerStore.get()
+  const config = equalizerStore.get()!
 
   context = audioService.getContext()
   preampGainNode = context.createGain()
@@ -152,7 +145,7 @@ const init = async () => {
 const save = () => equalizerStore.set(preampGainValue.value, bands.value.map(band => band.filter.gain.value))
 
 const loadPreset = (preset: EqualizerPreset) => {
-  root.value.querySelectorAll<SliderElement>('.slider').forEach((el, i) => {
+  root.value?.querySelectorAll<SliderElement>('.slider').forEach((el, i) => {
     if (!el.noUiSlider) {
       throw new Error('Preset can only be loaded after sliders have been set up')
     }
@@ -172,12 +165,9 @@ const loadPreset = (preset: EqualizerPreset) => {
   save()
 }
 
-watch(selectedPresetIndex, () => {
-  preferences.selectedPreset = selectedPresetIndex.value
-
-  if (~~selectedPresetIndex.value !== -1) {
-    loadPreset(equalizerStore.getPresetById(selectedPresetIndex.value))
-  }
+watch(selectedPresetId, () => {
+  preferences.selectedPreset = selectedPresetId.value
+  selectedPresetId.value !== -1 && loadPreset(equalizerStore.getPresetById(selectedPresetId.value)!)
 })
 
 onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
