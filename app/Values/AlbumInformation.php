@@ -9,8 +9,8 @@ final class AlbumInformation implements Arrayable
     use FormatsLastFmText;
 
     private function __construct(
-        public string $url,
-        public string $cover,
+        public ?string $url,
+        public ?string $cover,
         public array $wiki,
         public array $tracks
     ) {

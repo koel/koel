@@ -8,7 +8,7 @@ final class ArtistInformation implements Arrayable
 {
     use FormatsLastFmText;
 
-    private function __construct(public string $url, public string $image, public array $bio)
+    private function __construct(public ?string $url, public ?string $image, public array $bio)
     {
     }
 
