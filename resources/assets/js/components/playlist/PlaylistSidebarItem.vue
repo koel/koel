@@ -146,6 +146,7 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void
 <style lang="scss" scoped>
 .playlist {
   user-select: none;
+  overflow: hidden;
 
   a {
     white-space: nowrap;

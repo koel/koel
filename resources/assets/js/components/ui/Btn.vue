@@ -59,18 +59,8 @@ button {
     border-radius: 0;
   }
 
-  &[icon-only] {
-    i {
-      margin-right: 0;
-    }
-  }
-
   &[uppercase] {
     text-transform: uppercase;
-  }
-
-  i {
-    margin-right: 4px;
   }
 }
 </style>

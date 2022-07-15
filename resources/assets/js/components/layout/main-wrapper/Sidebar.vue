@@ -151,10 +151,6 @@ eventBus.on('TOGGLE_SIDEBAR', () => (showing.value = !showing.value))
       letter-spacing: 1px;
       padding: 0 16px;
       margin-bottom: 12px;
-
-      i {
-        float: right;
-      }
     }
 
     a {

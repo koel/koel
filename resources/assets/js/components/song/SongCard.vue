@@ -72,6 +72,10 @@ article {
   border-radius: 5px;
   align-items: center;
 
+  &:focus, &:focus-within {
+    box-shadow: 0 0 1px 1px var(--color-highlight);
+  }
+
   &.playing {
     color: var(--color-highlight);
   }

@@ -85,10 +85,6 @@ eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-gap: .7em 1em;
-
-    ol, li {
-      overflow: hidden;
-    }
   }
 
   .recent {

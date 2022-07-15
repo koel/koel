@@ -4,6 +4,7 @@
     class="song-item"
     data-testid="song-item"
     @dblclick.prevent.stop="play"
+    tabindex="0"
   >
     <span v-if="columns.includes('track')" class="track-number text-secondary">{{ song.track || '' }}</span>
     <span v-if="columns.includes('title')" class="title">{{ song.title }}</span>
@@ -65,18 +66,13 @@ const doPlayback = () => {
   height: 35px;
   display: flex;
 
+  &:focus, &:focus-within {
+    box-shadow: 0 0 1px 1px var(--color-highlight) inset;
+    border-radius: 4px;
+  }
+
   &:hover {
     background: rgba(255, 255, 255, .05);
-  }
-
-  .play {
-    i {
-      font-size: 1.5rem;
-    }
-  }
-
-  .favorite .fa-heart, .favorite:hover .fa-heart-o {
-    color: var(--color-maroon);
   }
 
   &.selected {

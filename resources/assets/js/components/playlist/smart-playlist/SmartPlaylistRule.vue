@@ -123,10 +123,6 @@ const removeRule = () => emit('remove')
   margin-left: .3rem;
 }
 
-button.remove-rule i {
-  margin-right: 0;
-}
-
 .value-wrapper {
   flex: 1;
   display: inline-flex;

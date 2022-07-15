@@ -49,8 +49,12 @@
       max-width: 100%;
     }
 
+    &:focus, &:focus-within {
+      box-shadow: 0 0 1px 1px var(--color-highlight);
+    }
+
     &:hover .right, &:focus-within .right {
-      display: block !important;
+      display: flex !important;
     }
 
     &.compact {
@@ -89,11 +93,19 @@
         display: none;
 
         @media (hover: none) {
-          display: block;
+          display: flex;
         }
 
-        a + a {
-          margin-left: 1rem;
+        gap: .3rem;
+
+        a {
+          padding: 0 4px;
+          border-radius: 3px;
+
+          &:hover {
+            background: var(--color-text-primary);
+            color: var(--color-bg-primary);
+          }
         }
       }
     }
