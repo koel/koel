@@ -19,7 +19,7 @@ body, html {
 }
 
 input, select, button, textarea, .btn {
-  -webkit-appearance: none;
+  appearance: none;
   border: 0;
   outline: 0;
   font-family: var(--font-family);
@@ -67,54 +67,19 @@ select {
   background-repeat: no-repeat;
 }
 
-strong {
-  font-weight: var(--font-weight-normal);
-}
-
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 input[type="checkbox"] {
-  border: 1px solid rgba(255, 255, 255, .3);
-  border-radius: 0;
-  clear: none;
+  border-radius: 2px;
   cursor: pointer;
-  display: inline-block;
-  line-height: 0;
-  height: 16px;
+  height: 15px;
   margin: -4px 4px 0 0;
-  outline: 0;
   padding: 0 !important;
-  text-align: center;
   vertical-align: middle;
-  width: 16px;
-  min-width: 16px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
+  width: 15px;
   background: var(--color-text-primary);
-
-  &:before {
-    font-family: FontAwesome;
-    color: var(--color-highlight);
-    display: inline-block;
-    vertical-align: middle;
-    width: 14px;
-    height: 14px;
-    line-height: 1.3rem;
-    text-align: center;
-  }
-
-  &:checked {
-    &:before {
-      content: "\f00c";
-    }
-  }
-
-  &:indeterminate {
-    &:before {
-      content: "\f068";
-    }
-  }
 }
 
 a {
@@ -127,14 +92,6 @@ a {
 
   &:hover, &:focus {
     color: var(--color-highlight);
-  }
-}
-
-.clear, .clearfix {
-  &::after {
-    content: " ";
-    clear: both;
-    display: block;
   }
 }
 
@@ -289,7 +246,7 @@ label {
 }
 
 .text- {
-  &white {
+  &primary {
     color: var(--color-text-primary) !important;
   }
 
@@ -297,7 +254,7 @@ label {
     color: var(--color-text-secondary) !important;
   }
 
-  &orange {
+  &highlight {
     color: var(--color-highlight) !important;
   }
 
@@ -311,6 +268,10 @@ label {
 
   &blue {
     color: var(--color-blue) !important;
+  }
+
+  &green {
+    color: var(--color-green) !important;
   }
 
   &uppercase {

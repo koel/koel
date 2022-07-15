@@ -2,10 +2,10 @@
   <div v-if="state.showing" id="overlay" :class="state.type" class="overlay" data-testid="overlay">
     <div class="display">
       <SoundBar v-if="state.type === 'loading'"/>
-      <i v-if="state.type === 'error'" class="fa fa-exclamation-circle"/>
-      <i v-if="state.type === 'warning'" class="fa fa-exclamation-triangle"/>
-      <i v-if="state.type === 'info'" class="fa fa-info-circle"/>
-      <i v-if="state.type === 'success'" class="fa fa-check-circle"/>
+      <icon v-if="state.type === 'error'" :icon="faCircleExclamation"/>
+      <icon v-if="state.type === 'warning'" :icon="faWarning"/>
+      <icon v-if="state.type === 'info'" :icon="faCircleInfo"/>
+      <icon v-if="state.type === 'success'" :icon="faCircleCheck"/>
 
       <span class="message" v-html="state.message"/>
     </div>
@@ -15,6 +15,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faCircleCheck, faCircleExclamation, faCircleInfo, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { eventBus } from '@/utils'
 import { defineAsyncComponent, reactive } from 'vue'
 
@@ -48,8 +49,8 @@ eventBus.on({
   .display {
     @include vertical-center();
 
-    i {
-      margin-right: 6px;
+    .message {
+      margin-left: 6px;
     }
   }
 

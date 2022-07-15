@@ -10,7 +10,8 @@
             title="Play all songs"
             @click.prevent="playAll"
           >
-            <i class="fa fa-play"></i> All
+            <icon :icon="faPlay"/>
+            All
           </Btn>
 
           <Btn
@@ -20,7 +21,8 @@
             title="Play selected songs"
             @click.prevent="playSelected"
           >
-            <i class="fa fa-play"></i> Selected
+            <icon :icon="faPlay"/>
+            Selected
           </Btn>
         </template>
 
@@ -33,7 +35,8 @@
             title="Shuffle all songs"
             @click.prevent="shuffle"
           >
-            <i class="fa fa-random"></i> All
+            <icon :icon="faRandom"/>
+            All
           </Btn>
 
           <Btn
@@ -44,7 +47,8 @@
             title="Shuffle selected songs"
             @click.prevent="shuffleSelected"
           >
-            <i class="fa fa-random"></i> Selected
+            <icon :icon="faRandom"/>
+            Selected
           </Btn>
         </template>
       </template>
@@ -69,7 +73,8 @@
         title="Delete this playlist"
         @click.prevent="deletePlaylist"
       >
-        <i class="fa fa-times"></i> Playlist
+        <icon :icon="faTimes"/>
+        Playlist
       </Btn>
 
     </BtnGroup>
@@ -85,6 +90,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faPlay, faRandom, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, inject, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { SelectedSongsKey, SongsKey } from '@/symbols'
 

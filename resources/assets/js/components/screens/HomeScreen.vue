@@ -5,7 +5,7 @@
     <div class="main-scroll-wrap" @scroll="scrolling">
       <ScreenEmptyState v-if="libraryEmpty">
         <template v-slot:icon>
-          <i class="fa fa-volume-off"></i>
+          <icon :icon="faVolumeOff"/>
         </template>
         No songs found.
         <span class="secondary d-block">
@@ -34,9 +34,9 @@
 </template>
 
 <script lang="ts" setup>
+import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
 import { computed } from 'vue'
-
 import { eventBus, noop } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
 import { useAuthorization, useInfiniteScroll } from '@/composables'

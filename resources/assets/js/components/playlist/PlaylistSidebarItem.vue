@@ -11,9 +11,14 @@
       :href="url"
       @contextmenu.prevent="openContextMenu"
     >
+      <icon v-if="type === 'favorites'" :icon="faHeart" class="text-maroon" fixed-width/>
+      <icon v-else :icon="faMusic" :mask="faFile" transform="shrink-7 down-2" fixed-width/>
       {{ playlist.name }}
     </a>
+
     <a v-else :class="{ active }" :href="url" @contextmenu.prevent="openContextMenu">
+      <icon v-if="type === 'recently-played'" :icon="faClockRotateLeft" class="text-green" fixed-width/>
+      <icon v-else :icon="faBoltLightning" :mask="faFile" transform="shrink-7 down-2" fixed-width/>
       {{ playlist.name }}
     </a>
 
@@ -29,6 +34,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, nextTick, ref, toRefs } from 'vue'
 import { alerts, eventBus, pluralize, resolveSongsFromDragEvent } from '@/utils'
 import { favoriteStore, playlistStore } from '@/stores'
@@ -149,24 +155,6 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void
     span {
       pointer-events: none;
     }
-
-    &::before {
-      content: "\f0f6";
-    }
-  }
-
-  &.favorites a::before {
-    content: "\f004";
-    color: var(--color-maroon);
-  }
-
-  &.recently-played a::before {
-    content: "\f1da";
-    color: var(--color-green);
-  }
-
-  &.smart a::before {
-    content: "\f069";
   }
 
   input {

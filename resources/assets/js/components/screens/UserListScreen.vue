@@ -7,7 +7,7 @@
       <template v-slot:controls>
         <BtnGroup uppercased v-if="showingControls || !isPhone">
           <Btn class="btn-add" data-testid="add-user-btn" green @click="showAddUserForm">
-            <i class="fa fa-plus"></i>
+            <icon :icon="faPlus"/>
             Add
           </Btn>
         </BtnGroup>
@@ -25,6 +25,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
 import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { userStore } from '@/stores'

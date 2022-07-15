@@ -39,12 +39,12 @@
 
     <ScreenEmptyState v-else>
       <template v-slot:icon>
-        <i class="fa fa-frown-o"></i>
+        <icon :icon="faHeartBroken"/>
       </template>
       No favorites yet.
       <span class="secondary d-block">
         Click the&nbsp;
-        <i class="fa fa-heart-o"></i>&nbsp;
+        <icon :icon="faHeart"/>&nbsp;
         icon to mark a song as favorite.
       </span>
     </ScreenEmptyState>
@@ -52,6 +52,8 @@
 </template>
 
 <script lang="ts" setup>
+import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { eventBus, pluralize } from '@/utils'
 import { commonStore, favoriteStore } from '@/stores'
 import { downloadService } from '@/services'

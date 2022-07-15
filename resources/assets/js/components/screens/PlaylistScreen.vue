@@ -39,7 +39,7 @@
 
     <ScreenEmptyState v-if="!songs.length && !loading">
       <template v-slot:icon>
-        <i class="fa fa-file-o"></i>
+        <icon :icon="faFile"/>
       </template>
 
       <template v-if="playlist?.is_smart">
@@ -57,6 +57,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { difference } from 'lodash'
 import { ref, toRef } from 'vue'
 import { alerts, eventBus, pluralize } from '@/utils'

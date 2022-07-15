@@ -11,6 +11,9 @@ button {
   font-size: 1rem;
   padding: .6rem 1rem;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
 
   &:hover {
     box-shadow: inset 0 0 0 10rem rgba(0, 0, 0, .05);

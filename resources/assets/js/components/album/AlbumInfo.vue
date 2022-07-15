@@ -2,8 +2,8 @@
   <article :class="mode" class="album-info" data-testid="album-info">
     <h1 class="name">
       <span>{{ album.name }}</span>
-      <button :title="`Play all songs in ${album.name}`" class="control play" type="button" @click.prevent="play">
-        <i class="fa fa-play"/>
+      <button :title="`Play all songs in ${album.name}`" class="control" type="button" @click.prevent="play">
+        <icon :icon="faCirclePlay" size="xl"/>
       </button>
     </h1>
 
@@ -32,6 +32,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faCirclePlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { useThirdPartyServices } from '@/composables'
 import { songStore } from '@/stores'

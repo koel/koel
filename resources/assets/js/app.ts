@@ -2,8 +2,10 @@ import './staticLoader'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { clickaway, droppable, focus } from '@/directives'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 createApp(App)
+  .component('icon', FontAwesomeIcon)
   .directive('koel-focus', focus)
   .directive('koel-clickaway', clickaway)
   .directive('koel-droppable', droppable)

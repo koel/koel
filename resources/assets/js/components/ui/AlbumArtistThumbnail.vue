@@ -6,7 +6,7 @@
     data-testid="album-artist-thumbnail"
   >
     <a
-      class="control control-play font-size-0"
+      class="control control-play"
       href
       role="button"
       @click.prevent="playOrQueue"
@@ -15,12 +15,16 @@
       @drop.stop.prevent="onDrop"
       @dragover.prevent
     >
-      {{ buttonLabel }}
+      <span class="hidden">{{ buttonLabel }}</span>
+      <span class="icon-wrapper">
+        <icon :icon="faPlay" size="5x"/>
+      </span>
     </a>
   </span>
 </template>
 
 <script lang="ts" setup>
+import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import { orderBy } from 'lodash'
 import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
@@ -157,20 +161,18 @@ const onDrop = async (event: DragEvent) => {
       z-index: 1;
     }
 
-    &::after {
-      content: "";
-      width: 60%;
-      max-width: 128px;
-      height: 60%;
-      max-height: 128px;
-      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTEzcHgiIGhlaWdodD0iMTMxcHgiIHZpZXdCb3g9IjAgMCAxMTMgMTMxIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGcgaWQ9InRyaWFuZ2xlIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8cG9seWdvbiBpZD0iUG9seWdvbiIgZmlsbD0iI0ZGRkZGRiIgcG9pbnRzPSIxMTMuMDIzNzI5IDY1LjI1NDI4MDMgLTEuNTg1Njc4MzFlLTE0IDEzMC41MDg1NjEgLTUuNjg0MzQxODllLTE0IDAiPjwvcG9seWdvbj4KICAgIDwvZz4KPC9zdmc+);
-      background-size: 45%;
-      background-position: 58% 50%;
-      background-repeat: no-repeat;
-      border-radius: 50%;
+    .icon-wrapper {
       background-color: var(--color-bg-primary);
+      color: var(--color-highlight);
       opacity: 0;
-      z-index: 2;
+      border-radius: 50%;
+      width: 50%;
+      height: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-left: 4%;
+      z-index: 99;
 
       @media (hover: none) {
         opacity: .5;
@@ -178,7 +180,7 @@ const onDrop = async (event: DragEvent) => {
     }
 
     &:hover, &:focus {
-      &::before, &::after {
+      &::before, .icon-wrapper {
         transition: .3s opacity;
         opacity: 1;
       }
@@ -189,7 +191,7 @@ const onDrop = async (event: DragEvent) => {
         background: rgba(0, 0, 0, .5);
       }
 
-      &::after {
+      .icon-wrapper {
         transform: scale(.9);
       }
     }
@@ -214,5 +216,9 @@ const onDrop = async (event: DragEvent) => {
       opacity: 0;
     }
   }
+}
+
+.compact .icon-wrapper {
+  font-size: .3rem; // to control the size of the icon
 }
 </style>

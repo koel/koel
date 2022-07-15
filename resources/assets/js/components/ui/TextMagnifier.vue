@@ -1,15 +1,16 @@
 <template>
   <span>
     <button title="Zoom out" type="button" @click.prevent="zoom(-1)">
-      <i class="fa fa-search-minus"/>
+      <icon :icon="faSearchMinus"/>
     </button>
     <button title="Zoom in" type="button" @click.prevent="zoom(1)">
-      <i class="fa fa-search-plus"/>
+      <icon :icon="faSearchPlus"/>
     </button>
   </span>
 </template>
 
 <script lang="ts" setup>
+import { faSearchMinus, faSearchPlus } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
 
 const props = defineProps<{ target: HTMLElement | null }>()

@@ -1,12 +1,14 @@
 <template>
   <Transition name="fade">
     <button v-show="showing" ref="el" title="Scroll to top" type="button" @click="scrollToTop">
-      <i class="fa fa-arrow-circle-up"/> Top
+      <icon :icon="faCircleUp"/>&nbsp;
+      Top
     </button>
   </Transition>
 </template>
 
 <script lang="ts" setup>
+import { faCircleUp } from '@fortawesome/free-solid-svg-icons'
 import { onMounted, ref } from 'vue'
 import { $ } from '@/utils'
 
@@ -39,10 +41,6 @@ button {
   background: rgba(0, 0, 0, .5);
   border: 1px solid var(--color-text-primary);
   color: var(--color-text-primary);
-
-  i {
-    margin-right: 4px;
-  }
 }
 
 @media screen and (min-width: 415px) {

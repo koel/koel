@@ -10,8 +10,7 @@
   >
     <span :style="{ backgroundImage: `url(${song.album_cover}), url(${defaultCover})` }" class="cover">
       <a class="control" @click.prevent="changeSongState" data-testid="play-control">
-        <i v-if="song.playback_state !== 'Playing'" class="fa fa-play"/>
-        <i class="fa fa-pause" v-else/>
+        <icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-highlight"/>
       </a>
     </span>
     <span class="main">
@@ -31,6 +30,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { defaultCover, eventBus, pluralize, startDragging } from '@/utils'
 import { queueStore } from '@/stores'
@@ -88,7 +88,7 @@ article {
 
   &:hover .cover, &:focus .cover {
     .control {
-      display: block;
+      display: flex;
     }
 
     &::before {
@@ -103,8 +103,9 @@ article {
     position: relative;
     border-radius: 4px;
     overflow: hidden;
-
-    @include vertical-center();
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &::before {
       content: " ";
@@ -127,16 +128,16 @@ article {
       width: 28px;
       height: 28px;
       background: rgba(0, 0, 0, .5);
-      line-height: 2rem;
       font-size: 1rem;
-      text-align: center;
       z-index: 1;
       display: none;
       color: var(--color-text-primary);
       transition: .3s;
+      justify-content: center;
+      align-items: center;
 
       @media (hover: none) {
-        display: block;
+        display: flex;
       }
     }
   }

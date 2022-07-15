@@ -13,7 +13,7 @@
       <p>
         Connecting Koel and your Last.fm account enables such exciting features as
         <a
-          class="text-orange"
+          class="text-highlight"
           href="https://www.last.fm/about/trackmymusic"
           rel="noopener"
           target="_blank"
@@ -23,7 +23,7 @@
       </p>
       <div class="buttons">
         <Btn class="connect" @click.prevent="connect">
-          <i class="fa fa-lastfm"></i>
+          <icon :icon="faLastfm"/>
           {{ connected ? 'Reconnect' : 'Connect' }}
         </Btn>
 
@@ -36,7 +36,7 @@
         This installation of Koel has no Last.fm integration.
         <span v-if="isAdmin" data-testid="lastfm-admin-instruction">
           Visit
-          <a href="https://docs.koel.dev/3rd-party.html#last-fm" class="text-orange" target="_blank">Koel’s Wiki</a>
+          <a href="https://docs.koel.dev/3rd-party.html#last-fm" class="text-highlight" target="_blank">Koel’s Wiki</a>
           for a quick how-to.
         </span>
         <span v-else data-testid="lastfm-user-instruction">
@@ -48,6 +48,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faLastfm } from '@fortawesome/free-brands-svg-icons'
 import { computed, defineAsyncComponent } from 'vue'
 import { authService, httpService } from '@/services'
 import { forceReloadWindow } from '@/utils'

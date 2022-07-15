@@ -1,14 +1,16 @@
 <template>
   <section id="playlists">
-    <h1>Playlists
-      <i
+    <h1>
+      <span>Playlists</span>
+      <icon
         :class="{ creating }"
-        class="fa fa-plus-circle control create"
+        :icon="faCirclePlus"
+        class="control create"
         data-testid="sidebar-create-playlist-btn"
         role="button"
         title="Create a new playlist"
         @click.stop.prevent="toggleContextMenu"
-      ></i>
+      />
     </h1>
 
     <form v-if="creating" @submit.prevent="createPlaylist" name="create-simple-playlist-form" class="create">
@@ -39,6 +41,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, ref, toRef } from 'vue'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
@@ -79,11 +82,17 @@ const toggleContextMenu = async (event: MouseEvent) => {
 
 <style lang="scss">
 #playlists {
+  h1 {
+    display: flex;
+    align-items: center;
+
+    span {
+      flex: 1;
+    }
+  }
+
   .control.create {
-    margin: -8px -10px -10px;
-    font-size: 16px;
     transition: .3s;
-    padding: 10px;
 
     &.creating {
       transform: rotate(135deg);

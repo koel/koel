@@ -52,7 +52,7 @@
 
       <ScreenEmptyState v-else>
         <template v-slot:icon>
-          <i class="fa fa-search"></i>
+          <icon :icon="faSearch"/>
         </template>
         Find songs, artists, and albums,
         <span class="secondary d-block">all in one place.</span>
@@ -62,6 +62,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { searchStore } from '@/stores'

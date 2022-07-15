@@ -36,7 +36,7 @@
             data-testid="shuffle-artist"
             @click.prevent="shuffle"
           >
-            <i class="fa fa-random"/>
+            <icon :icon="faRandom"/>
           </a>
           <a
             v-if="allowDownload"
@@ -47,7 +47,7 @@
             data-testid="download-artist"
             @click.prevent="download"
           >
-            <i class="fa fa-download"/>
+            <icon :icon="faDownload"/>
           </a>
         </span>
       </p>
@@ -56,11 +56,11 @@
 </template>
 
 <script lang="ts" setup>
+import { faDownload, faRandom } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef, toRefs } from 'vue'
 import { eventBus, pluralize, startDragging } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
-
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })

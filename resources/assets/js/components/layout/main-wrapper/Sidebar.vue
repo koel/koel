@@ -5,24 +5,40 @@
 
       <ul class="menu">
         <li>
-          <a :class="['home', currentView === 'Home' ? 'active' : '']" href="#!/home">Home</a>
+          <a :class="['home', currentView === 'Home' ? 'active' : '']" href="#!/home">
+            <icon :icon="faHome" fixed-width/>
+            Home
+          </a>
         </li>
         <li>
           <a v-koel-droppable="handleDrop" :class="['queue', currentView === 'Queue' ? 'active' : '']" href="#!/queue">
+            <icon :icon="faListOl" fixed-width/>
             Current Queue
           </a>
         </li>
         <li>
-          <a :class="['songs', currentView === 'Songs' ? 'active' : '']" href="#!/songs">All Songs</a>
+          <a :class="['songs', currentView === 'Songs' ? 'active' : '']" href="#!/songs">
+            <icon :icon="faMusic" fixed-width/>
+            All Songs
+          </a>
         </li>
         <li>
-          <a :class="['albums', currentView === 'Albums' ? 'active' : '']" href="#!/albums">Albums</a>
+          <a :class="['albums', currentView === 'Albums' ? 'active' : '']" href="#!/albums">
+            <icon :icon="faCompactDisc" fixed-width/>
+            Albums
+          </a>
         </li>
         <li>
-          <a :class="['artists', currentView === 'Artists' ? 'active' : '']" href="#!/artists">Artists</a>
+          <a :class="['artists', currentView === 'Artists' ? 'active' : '']" href="#!/artists">
+            <icon :icon="faMicrophone" fixed-width/>
+            Artists
+          </a>
         </li>
         <li v-if="useYouTube">
-          <a :class="['youtube', currentView === 'YouTube' ? 'active' : '']" href="#!/youtube">YouTube Video</a>
+          <a :class="['youtube', currentView === 'YouTube' ? 'active' : '']" href="#!/youtube">
+            <icon :icon="faYoutube" fixed-width/>
+            YouTube Video
+          </a>
         </li>
       </ul>
     </section>
@@ -34,13 +50,22 @@
 
       <ul class="menu">
         <li>
-          <a :class="['settings', currentView === 'Settings' ? 'active' : '']" href="#!/settings">Settings</a>
+          <a :class="['settings', currentView === 'Settings' ? 'active' : '']" href="#!/settings">
+            <icon :icon="faTools" fixed-width/>
+            Settings
+          </a>
         </li>
         <li>
-          <a :class="['upload', currentView === 'Upload' ? 'active' : '']" href="#!/upload">Upload</a>
+          <a :class="['upload', currentView === 'Upload' ? 'active' : '']" href="#!/upload">
+            <icon :icon="faUpload" fixed-width/>
+            Upload
+          </a>
         </li>
         <li>
-          <a :class="['users', currentView === 'Users' ? 'active' : '']" href="#!/users">Users</a>
+          <a :class="['users', currentView === 'Users' ? 'active' : '']" href="#!/users">
+            <icon :icon="faUsers" fixed-width/>
+            Users
+          </a>
         </li>
       </ul>
     </section>
@@ -49,6 +74,17 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
+import {
+  faCompactDisc,
+  faHome,
+  faListOl,
+  faMicrophone,
+  faMusic,
+  faTools,
+  faUpload,
+  faUsers
+} from '@fortawesome/free-solid-svg-icons'
+import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { ref } from 'vue'
 import { eventBus, resolveSongsFromDragEvent } from '@/utils'
 import { queueStore } from '@/stores'
@@ -122,10 +158,12 @@ eventBus.on('TOGGLE_SIDEBAR', () => (showing.value = !showing.value))
     }
 
     a {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
       height: 36px;
       line-height: 36px;
-      padding: 0 12px 0 16px;
+      padding: 0 16px 0 12px;
       border-left: 4px solid transparent;
 
       &.active, &:hover {
@@ -141,50 +179,6 @@ eventBus.on('TOGGLE_SIDEBAR', () => (showing.value = !showing.value))
 
       &:hover {
         border-left-color: var(--color-highlight);
-      }
-
-      &::before {
-        width: 24px;
-        display: inline-block;
-        font-family: FontAwesome;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-      &.home::before {
-        content: "\f015";
-      }
-
-      &.queue::before {
-        content: "\f0cb";
-      }
-
-      &.songs::before {
-        content: "\f001";
-      }
-
-      &.albums::before {
-        content: "\f152";
-      }
-
-      &.artists::before {
-        content: "\f130";
-      }
-
-      &.youtube::before {
-        content: "\f16a";
-      }
-
-      &.settings::before {
-        content: "\f013";
-      }
-
-      &.users::before {
-        content: "\f0c0";
-      }
-
-      &.upload::before {
-        content: "\f093";
       }
     }
   }

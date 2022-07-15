@@ -1,7 +1,7 @@
 <template>
   <div v-koel-focus class="about text-secondary" data-testid="about-modal" tabindex="0" @keydown.esc="close">
     <header>
-      <h1 class="text-white">About Koel</h1>
+      <h1 class="text-primary">About Koel</h1>
     </header>
 
     <main>

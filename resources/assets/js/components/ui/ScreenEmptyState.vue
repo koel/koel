@@ -2,9 +2,7 @@
   <div class="screen-empty-state" data-testid="screen-empty-state">
     <div>
       <span class="jumbo-icon">
-        <slot name="icon">
-          <i class="fa fa-upload"></i>
-        </slot>
+        <slot name="icon">☕️</slot>
       </span>
       <div class="text">
         <slot>Placeholder text goes here.</slot>

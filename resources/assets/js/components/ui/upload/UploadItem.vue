@@ -5,10 +5,10 @@
       <span class="name">{{ file.name }}</span>
       <span class="controls">
         <Btn v-if="canRetry" icon-only title="Retry" transparent unrounded @click="retry">
-          <i class="fa fa-repeat"></i>
+          <icon :icon="faRotateBack"/>
         </Btn>
         <Btn v-if="canRemove" icon-only title="Remove" transparent unrounded @click="remove">
-          <i class="fa fa-times"></i>
+          <icon :icon="faTimes"/>
         </Btn>
       </span>
     </span>
@@ -17,6 +17,7 @@
 
 <script lang="ts" setup>
 import slugify from 'slugify'
+import { faRotateBack, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { UploadFile } from '@/config'
 import { uploadService } from '@/services'

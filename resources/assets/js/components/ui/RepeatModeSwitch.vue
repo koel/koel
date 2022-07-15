@@ -1,17 +1,22 @@
 <template>
   <button
-    :class="mode"
+    :class="{ active: mode !== 'NO_REPEAT' }"
     :title="`Change repeat mode (current mode: ${readableMode})`"
     class="control"
     data-testid="repeat-mode-switch"
     type="button"
     @click.prevent="changeMode"
   >
-    <i class="fa fa-repeat"></i>
+    <FontAwesomeLayers>
+      <icon :icon="faRepeat"/>
+      <FontAwesomeLayersText v-if="mode === 'REPEAT_ONE'" counter value="1"/>
+    </FontAwesomeLayers>
   </button>
 </template>
 
 <script lang="ts" setup>
+import { FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
+import { faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef } from 'vue'
 import { playbackService } from '@/services'
 import { preferenceStore } from '@/stores'
@@ -28,25 +33,17 @@ const changeMode = () => playbackService.changeRepeatMode()
 </script>
 
 <style lang="scss" scoped>
-button {
-  position: relative;
+.fa-layers-counter {
+  transform: none;
+  font-size: .45rem;
+  font-weight: bold;
+  right: 2px;
+  top: 2px;
+  color: var(--color-highlight);
+  background: transparent;
+}
 
-  &.REPEAT_ALL, &.REPEAT_ONE {
-    color: var(--color-highlight);
-  }
-
-  &.REPEAT_ONE::after {
-    content: "1";
-    position: absolute;
-    display: flex;
-    place-content: center;
-    place-items: center;
-    top: 0;
-    left: 0;
-    font-weight: 700;
-    font-size: .5rem;
-    width: 100%;
-    height: 100%;
-  }
+.active {
+  color: var(--color-highlight);
 }
 </style>

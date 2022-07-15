@@ -5,8 +5,13 @@
     <main>
       <h1>
         <span class="name">{{ user.name }}</span>
-        <i v-if="isCurrentUser" class="you text-orange fa fa-check-circle" title="This is you!"/>
-        <i v-if="user.is_admin" class="is-admin text-blue fa fa-shield" title="User has admin privileges"/>
+        <icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-highlight" title="This is you!"/>
+        <icon
+          v-if="user.is_admin"
+          :icon="faShield"
+          class="is-admin text-blue"
+          title="User has admin privileges"
+        />
       </h1>
 
       <p class="email text-secondary">{{ user.email }}</p>
@@ -24,6 +29,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faCircleCheck, faShield } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { userStore } from '@/stores'
 import { alerts, eventBus } from '@/utils'

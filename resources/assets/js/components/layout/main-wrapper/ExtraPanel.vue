@@ -46,7 +46,7 @@
           type="button"
           @click.prevent="currentTab = 'YouTube'"
         >
-          <i class="fa fa-youtube-play"></i>
+          <icon :icon="faYoutube"/>
         </button>
       </div>
 
@@ -97,6 +97,7 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
+import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { ref, toRef, watch } from 'vue'
 import { $, eventBus } from '@/utils'
 import { albumStore, artistStore, preferenceStore as preferences } from '@/stores'

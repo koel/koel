@@ -75,7 +75,6 @@ export default [
     thumbnailUrl: bgRosePetal,
     properties: {
       '--color-bg-primary': '#7d083b',
-      '--color-highlight': '#d84179',
       '--bg-image': `url(${bgRosePetal})`
     }
   },
@@ -86,7 +85,6 @@ export default [
     thumbnailUrl: bgPurpleWaves,
     properties: {
       '--color-bg-primary': '#44115c',
-      '--color-highlight': '#b854dd',
       '--bg-image': `url(${bgPurpleWaves})`
     }
   },

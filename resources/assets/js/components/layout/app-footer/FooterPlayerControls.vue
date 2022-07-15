@@ -1,7 +1,8 @@
 <template>
   <div class="side player-controls" :class="{ playing }">
-    <i
-      class="prev fa fa-step-backward control"
+    <icon
+      :icon="faStepBackward"
+      class="prev control"
       data-testid="play-prev-btn"
       role="button"
       tabindex="0"
@@ -20,7 +21,7 @@
         title="Play or resume"
         @click.prevent="toggle"
       >
-        <i class="fa fa-play"></i>
+        <icon :icon="faPlay" size="lg"/>
       </span>
       <span
         v-else
@@ -31,12 +32,13 @@
         title="Pause"
         @click.prevent="toggle"
       >
-        <i class="fa fa-pause"></i>
+        <icon :icon="faPause" size="lg"/>
       </span>
     </span>
 
-    <i
-      class="next fa fa-step-forward control"
+    <icon
+      :icon="faStepForward"
+      class="next control"
       data-testid="play-next-btn"
       role="button"
       tabindex="0"
@@ -47,6 +49,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faPause, faPlay, faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { playbackService } from '@/services'
 import { defaultCover } from '@/utils'
@@ -148,8 +151,10 @@ const toggle = async () => await playbackService.toggle()
     top: 0;
     left: 0;
     transition: opacity .4s ease-out;
-    font-size: 3rem;
-    display: inline-block;
+    display: flex;
+    font-size: 2rem;
+    place-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
     line-height: calc(var(--footer-height) + 30px);
@@ -160,9 +165,8 @@ const toggle = async () => await playbackService.toggle()
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
   }
 
-  .pause {
-    text-indent: 0;
-    font-size: 2rem;
+  .play {
+    margin-left: .2rem;
   }
 
   .enabled {

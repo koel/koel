@@ -18,13 +18,14 @@
     />
 
     <Btn @click.prevent="addRule" class="btn-add-rule" green small uppercase>
-      <i class="fa fa-plus"></i>
+      <icon :icon="faPlus"/>
       Rule
     </Btn>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { defineAsyncComponent, reactive, toRefs } from 'vue'
 import { playlistStore } from '@/stores'
 

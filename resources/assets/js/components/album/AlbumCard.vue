@@ -36,7 +36,7 @@
             role="button"
             @click.prevent="shuffle"
           >
-            <i class="fa fa-random"/>
+            <icon :icon="faRandom"/>
           </a>
           <a
             v-if="allowDownload"
@@ -47,7 +47,7 @@
             role="button"
             @click.prevent="download"
           >
-            <i class="fa fa-download"/>
+            <icon :icon="faDownload"/>
           </a>
         </span>
       </p>
@@ -56,6 +56,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faDownload, faRandom } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef, toRefs } from 'vue'
 import { defaultCover, eventBus, pluralize, secondsToHis, startDragging } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
@@ -82,13 +83,5 @@ const requestContextMenu = (event: MouseEvent) => eventBus.emit('ALBUM_CONTEXT_M
 </script>
 
 <style lang="scss">
-.sep {
-  display: none;
-
-  .as-list & {
-    display: inline;
-  }
-}
-
 @include artist-album-card();
 </style>

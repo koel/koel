@@ -218,7 +218,6 @@
     margin-top: 24px;
     font-size: .9rem;
     text-align: right;
-    clear: both;
 
     a {
       color: var(--color-text-primary);
@@ -244,20 +243,6 @@
       a.shuffle {
         display: none;
       }
-    }
-  }
-
-  button.play {
-    font-size: 1rem;
-    width: 2rem;
-    height: 2rem;
-    border: 1px solid var(--color-text-secondary);
-    border-radius: 9999rem;
-    text-indent: .1rem; // the Play triangle icon doesn't look balanced otherwise
-    opacity: .5;
-
-    &:hover {
-      opacity: 1;
     }
   }
 }

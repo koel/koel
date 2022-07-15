@@ -17,8 +17,8 @@
         @click="sort('track')"
       >
         #
-        <i v-show="sortField === 'track' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="sortField === 'track' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faAngleDown" class="text-highlight"/>
+        <icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faAngleUp" class="text-highlight"/>
       </span>
       <span
         v-if="config.columns.includes('title')"
@@ -27,8 +27,8 @@
         @click="sort('title')"
       >
         Title
-        <i v-show="sortField === 'title' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="sortField === 'title' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faAngleDown" class="text-highlight"/>
+        <icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faAngleUp" class="text-highlight"/>
       </span>
       <span
         v-if="config.columns.includes('artist')"
@@ -37,8 +37,8 @@
         @click="sort('artist_name')"
       >
         Artist
-        <i v-show="sortField === 'artist_name' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="sortField === 'artist_name' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <icon v-if="sortField === 'artist_name' && sortOrder === 'asc'" :icon="faAngleDown" class="text-highlight"/>
+        <icon v-if="sortField === 'artist_name' && sortOrder === 'desc'" :icon="faAngleUp" class="text-highlight"/>
       </span>
       <span
         v-if="config.columns.includes('album')"
@@ -47,8 +47,8 @@
         @click="sort('album_name')"
       >
         Album
-        <i v-show="sortField === 'album_name' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="sortField === 'album_name' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
+        <icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faAngleDown" class="text-highlight"/>
+        <icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faAngleUp" class="text-highlight"/>
       </span>
       <span
         v-if="config.columns.includes('length')"
@@ -56,9 +56,10 @@
         data-testid="header-length"
         @click="sort('length')"
       >
-        <i v-show="sortField === 'length' && sortOrder === 'asc'" class="fa fa-angle-down"></i>
-        <i v-show="sortField === 'length' && sortOrder === 'desc'" class="fa fa-angle-up"></i>
-        &nbsp;<i class="duration-header fa fa-clock-o"></i>
+        <icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faAngleDown" class="text-highlight"/>
+        <icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faAngleUp" class="text-highlight"/>
+        &nbsp;
+        <icon :icon="faClock" class="duration-header"/>
       </span>
       <span class="favorite"></span>
       <span class="play"></span>
@@ -83,6 +84,8 @@
 </template>
 
 <script lang="ts" setup>
+import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
+import { faClock } from '@fortawesome/free-regular-svg-icons'
 import isMobile from 'ismobilejs'
 import { findIndex } from 'lodash'
 import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'

@@ -22,7 +22,7 @@
               @input="onGroupChanged"
             />
             <Btn class="btn-add-group" green small uppercase @click.prevent="addGroup">
-              <i class="fa fa-plus"></i> Group
+              <icon :icon="faPlus"/>
             </Btn>
           </div>
         </div>
@@ -37,6 +37,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { computed, inject, reactive, ref, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'

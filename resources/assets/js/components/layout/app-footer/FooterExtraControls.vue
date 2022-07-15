@@ -35,11 +35,11 @@
         type="button"
         @click.prevent="toggleEqualizer"
       >
-        <i class="fa fa-sliders"></i>
+        <icon :icon="faSliders"/>
       </button>
 
       <a v-else :class="{ active: viewingQueue }" class="queue control" href="#!/queue">
-        <i class="fa fa-list-ol"></i>
+        <icon :icon="faListOl"/>
       </a>
 
       <RepeatModeSwitch/>
@@ -49,8 +49,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRef, toRefs } from 'vue'
 import isMobile from 'ismobilejs'
+import { faListOl, faSliders } from '@fortawesome/free-solid-svg-icons'
+import { ref, toRef, toRefs } from 'vue'
 import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'
 import { preferenceStore } from '@/stores'
 

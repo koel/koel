@@ -1,11 +1,11 @@
 <template>
-  <span v-if="isMobile.phone" class="text-orange" data-testid="controls-toggle" @click="$emit('toggleControls')">
-    <i v-if="showingControls" class="fa fa-angle-up toggle"/>
-    <i v-else class="fa fa-angle-down toggle"/>
+  <span v-if="isMobile.phone" class="text-highlight" data-testid="controls-toggle" @click="$emit('toggleControls')">
+    <icon v-if="showingControls" :icon="showingControls ? faAngleUp : faAngleDown" class="toggle"/>
   </span>
 </template>
 
 <script lang="ts" setup>
+import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
 import { toRefs } from 'vue'
 

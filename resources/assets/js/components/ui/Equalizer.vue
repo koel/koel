@@ -6,6 +6,7 @@
           <option disabled value="-1">Preset</option>
           <option v-for="preset in presets" :value="preset.id" :key="preset.id" v-once>{{ preset.name }}</option>
         </select>
+        <icon :icon="faAngleDown" class="arrow text-highlight" size="sm"/>
       </label>
     </div>
     <div class="bands">
@@ -30,6 +31,7 @@
 
 <script lang="ts" setup>
 import noUiSlider from 'nouislider'
+import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { eventBus } from '@/utils'
 import { equalizerStore, preferenceStore as preferences } from '@/stores'
@@ -204,14 +206,8 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
       position: relative;
       margin-bottom: 0;
 
-      &::after {
-        content: '\f107';
-        font-family: FontAwesome;
-        color: var(--color-highlight);
-        display: inline-block;
-        position: absolute;
-        right: 8px;
-        top: 6px;
+      .arrow {
+        margin-left: -14px;
         pointer-events: none;
       }
     }

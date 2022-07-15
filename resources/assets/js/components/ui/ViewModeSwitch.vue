@@ -7,7 +7,7 @@
       title="View as thumbnails"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="thumbnails">
-      <i class="fa fa-th-large"/>
+      <icon :icon="faThumbnailsHehe"/>
       <span class="hidden">View as thumbnails</span>
     </label>
 
@@ -18,13 +18,15 @@
       title="View as list"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="list">
-      <i class="fa fa-list"/>
+      <icon :icon="faList"/>
       <span class="hidden">View as list</span>
     </label>
   </span>
 </template>
 
 <script lang="ts" setup>
+import { faMicrosoft as faThumbnailsHehe } from '@fortawesome/free-brands-svg-icons'
+import { faList } from '@fortawesome/free-solid-svg-icons'
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{ modelValue?: ArtistAlbumViewMode }>(), { modelValue: 'thumbnails' })
@@ -46,9 +48,10 @@ const value = computed({
 
   label {
     width: 50%;
-    text-align: center;
-    line-height: 2rem;
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2rem;
     margin-bottom: 0;
     cursor: pointer;
 

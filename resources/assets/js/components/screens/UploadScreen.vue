@@ -6,11 +6,11 @@
       <template v-slot:controls>
         <BtnGroup uppercased v-if="hasUploadFailures">
           <Btn data-testid="upload-retry-all-btn" green @click="retryAll">
-            <i class="fa fa-repeat"></i>
+            <icon :icon="faRotateBack"/>
             Retry All
           </Btn>
           <Btn data-testid="upload-remove-all-btn" orange @click="removeFailedEntries">
-            <i class="fa fa-times"></i>
+            <icon :icon="faTimes"/>
             Remove Failed
           </Btn>
         </BtnGroup>
@@ -33,10 +33,11 @@
 
         <ScreenEmptyState v-else>
           <template v-slot:icon>
-            <i class="fa fa-upload"></i>
+            <icon :icon="faUpload"/>
           </template>
 
-          {{ instructionText }}
+          {{ canDropFolders ? 'Drop files or folders to upload' : 'Drop files to upload' }}
+
           <span class="secondary d-block">
             <a class="or-click d-block" role="button">
               or click here to select songs
@@ -48,7 +49,7 @@
 
       <ScreenEmptyState v-else>
         <template v-slot:icon>
-          <i class="fa fa-exclamation-triangle"></i>
+          <icon :icon="faWarning"/>
         </template>
         No media path set.
       </ScreenEmptyState>
@@ -57,12 +58,13 @@
 </template>
 
 <script lang="ts" setup>
+import { faRotateBack, faTimes, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import ismobile from 'ismobilejs'
 import md5 from 'blueimp-md5'
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { settingStore } from '@/stores'
-import { eventBus, getAllFileEntries, isDirectoryReadingSupported } from '@/utils'
+import { eventBus, getAllFileEntries, isDirectoryReadingSupported as canDropFolders } from '@/utils'
 import { acceptedMediaTypes, UploadFile } from '@/config'
 import { uploadService } from '@/services'
 import { useAuthorization } from '@/composables'
@@ -83,10 +85,6 @@ const hasUploadFailures = ref(false)
 
 const { isAdmin } = useAuthorization()
 const allowsUpload = computed(() => isAdmin.value && !ismobile.any)
-
-const instructionText = isDirectoryReadingSupported
-  ? 'Drop files or folders to upload'
-  : 'Drop files to upload'
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 const onDragLeave = () => (droppable.value = false)

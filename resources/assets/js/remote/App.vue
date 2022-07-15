@@ -18,18 +18,16 @@
           <p class="none text-secondary" v-else>No song is playing.</p>
           <footer>
             <a class="favorite" @click.prevent="toggleFavorite">
-              <i class="fa fa-heart yep" v-if="song?.liked"></i>
-              <i class="fa fa-heart-o" v-else></i>
+              <icon :icon="song?.liked ? faHeart : faEmptyHeart"/>
             </a>
             <a class="prev" @click="playPrev">
-              <i class="fa fa-step-backward"></i>
+              <icon :icon="faStepBackward"/>
             </a>
             <a class="play-pause" @click.prevent="togglePlayback">
-              <i class="fa fa-pause" v-if="playing"/>
-              <i class="fa fa-play" v-else/>
+              <icon :icon="playing ? faPause : faPlay"/>
             </a>
             <a class="next" @click.prevent="playNext">
-              <i class="fa fa-step-forward"></i>
+              <icon :icon="faStepForward"/>
             </a>
             <span class="volume">
               <span
@@ -39,8 +37,7 @@
                 v-koel-clickaway="closeVolumeSlider"
               />
               <span class="icon" @click.stop="toggleVolumeSlider">
-                <i class="fa fa-volume-off" v-if="muted"/>
-                <i class="fa fa-volume-up" v-else/>
+                <icon :icon="muted ? faVolumeHigh : faVolumeMute" fixed-width/>
               </span>
             </span>
           </footer>
@@ -52,7 +49,7 @@
           </div>
           <p v-else>
             No active Koel instance found.
-            <a class="rescan text-orange" @click.prevent="rescan">Rescan</a>
+            <a class="rescan text-highlight" @click.prevent="rescan">Rescan</a>
           </p>
         </div>
       </main>
@@ -65,6 +62,17 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  faHeart,
+  faPause,
+  faPlay,
+  faStepBackward,
+  faStepForward,
+  faVolumeHigh,
+  faVolumeMute
+} from '@fortawesome/free-solid-svg-icons'
+
+import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import noUISlider from 'nouislider'
 import { authService, socketService } from '@/services'
 import { preferenceStore, userStore } from '@/stores'

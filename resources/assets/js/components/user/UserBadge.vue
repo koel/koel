@@ -13,12 +13,13 @@
       role="button"
       @click.prevent="logout"
     >
-      <i class="fa fa-sign-out"></i>
+      <icon :icon="faSignOutAlt"/>
     </a>
   </span>
 </template>
 
 <script lang="ts" setup>
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { eventBus } from '@/utils'
 import { useAuthorization } from '@/composables'
 

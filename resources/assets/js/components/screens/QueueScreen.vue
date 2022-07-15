@@ -30,7 +30,7 @@
 
     <ScreenEmptyState v-else>
       <template v-slot:icon>
-        <i class="fa fa-coffee"></i>
+        <icon :icon="faCoffee"/>
       </template>
 
       No songs queued.
@@ -43,6 +43,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef } from 'vue'
 import { pluralize } from '@/utils'
 import { commonStore, queueStore } from '@/stores'

@@ -14,13 +14,14 @@
       <LikeButton :song="song"/>
     </span>
     <span class="play" data-testid="song-item-play" role="button" @click.stop="doPlayback">
-      <i class="fa fa-pause-circle" v-if="song.playback_state === 'Playing'"></i>
-      <i class="fa fa-play-circle" v-else></i>
+      <icon v-if="song.playback_state === 'Playing'" :icon="faCirclePause"/>
+      <icon v-else :icon="faCirclePlay"/>
     </span>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { faCirclePause, faCirclePlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore } from '@/stores'

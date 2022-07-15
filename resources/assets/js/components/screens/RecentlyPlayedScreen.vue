@@ -22,7 +22,7 @@
 
     <ScreenEmptyState v-else>
       <template v-slot:icon>
-        <i class="fa fa-clock-o"></i>
+        <icon :icon="faClock"/>
       </template>
       No songs recently played.
       <span class="secondary d-block">Start playing to populate this playlist.</span>
@@ -31,6 +31,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { eventBus, pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
 import { useSongList } from '@/composables'

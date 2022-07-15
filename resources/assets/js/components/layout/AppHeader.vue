@@ -2,10 +2,10 @@
   <header id="mainHeader">
     <h1 class="brand">Koel</h1>
     <span class="hamburger" role="button" title="Show or hide the sidebar" @click="toggleSidebar">
-      <i class="fa fa-bars"></i>
+      <icon :icon="faBars"/>
     </span>
     <span class="magnifier" role="button" title="Show or hide the search form" @click="toggleSearchForm">
-      <i class="fa fa-search"></i>
+      <icon :icon="faSearch"/>
     </span>
     <SearchForm v-if="showSearchForm"/>
     <div class="header-right">
@@ -20,13 +20,14 @@
         <span v-if="shouldNotifyNewVersion" class="new-version" data-testid="new-version">
           {{ latestVersion }} available!
         </span>
-        <i v-else class="fa fa-info-circle"></i>
+        <icon v-else :icon="faInfoCircle"/>
       </button>
     </div>
   </header>
 </template>
 
 <script lang="ts" setup>
+import { faBars, faInfoCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
 import { ref } from 'vue'
 import { eventBus } from '@/utils'

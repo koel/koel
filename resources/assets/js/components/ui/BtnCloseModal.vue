@@ -1,8 +1,11 @@
 <template>
   <button data-testid="close-modal-btn" type="button" @click.prevent="$emit('click')">
-    <i class="fa fa-times"></i>
+    <icon :icon="faTimes"/>
   </button>
 </template>
+
+<script lang="ts" setup>
+import { faTimes } from '@fortawesome/free-solid-svg-icons'</script>
 
 <style lang="scss" scoped>
 button {

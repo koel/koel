@@ -5,7 +5,7 @@
     <div id="player">
       <ScreenEmptyState data-testid="youtube-placeholder">
         <template v-slot:icon>
-          <i class="fa fa-youtube-play"></i>
+          <icon :icon="faYoutube"/>
         </template>
         YouTube videos will be played here.
         <span class="d-block instruction">Start a video playback from the right sidebar.</span>
@@ -15,6 +15,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import createYouTubePlayer from 'youtube-player'
 import { ref } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'

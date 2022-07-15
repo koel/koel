@@ -1,7 +1,24 @@
 <template>
   <span id="volume" class="volume control">
-    <i v-if="muted" class="fa fa-volume-off" role="button" tabindex="0" title="Unmute" @click="unmute"/>
-    <i v-else class="fa fa-volume-up" role="button" tabindex="0" title="Mute" @click="mute"/>
+    <icon
+      v-if="level === 'muted'"
+      :icon="faVolumeMute"
+      fixed-width
+      role="button"
+      tabindex="0"
+      title="Unmute"
+      @click="unmute"
+    />
+    <icon
+      v-else
+      :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh"
+      fixed-width
+      role="button"
+      tabindex="0"
+      title="Mute"
+      @click="mute"
+    />
+
     <input
       id="volumeInput"
       class="plyr__volume"
@@ -17,26 +34,31 @@
 </template>
 
 <script lang="ts" setup>
+import { faVolumeHigh, faVolumeLow, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 import { playbackService, socketService } from '@/services'
+import { preferenceStore as preferences } from '@/stores'
+import { eventBus } from '@/utils'
 
-const muted = ref(false)
+const level = ref<'muted' | 'discreet' | 'loud'>()
 
 const mute = () => {
-  muted.value = true
   playbackService.mute()
+  level.value = 'muted'
 }
 
 const unmute = () => {
-  muted.value = false
   playbackService.unmute()
+  level.value = preferences.volume < 3 ? 'discreet' : 'loud'
 }
 
 const setVolume = (e: InputEvent) => {
   const volume = parseFloat((e.target as HTMLInputElement).value)
   playbackService.setVolume(volume)
-  muted.value = volume === 0
+  setLevel(volume)
 }
+
+const setLevel = (volume: number) => (level.value = volume === 0 ? 'muted' : volume < 3 ? 'discreet' : 'loud')
 
 /**
  * Broadcast the volume changed event to remote controller.
@@ -44,6 +66,8 @@ const setVolume = (e: InputEvent) => {
 const broadcastVolume = (e: InputEvent) => {
   socketService.broadcast('SOCKET_VOLUME_CHANGED', parseFloat((e.target as HTMLInputElement).value))
 }
+
+eventBus.on('KOEL_READY', () => setLevel(preferences.volume))
 </script>
 
 <style lang="scss">
@@ -53,11 +77,11 @@ const broadcastVolume = (e: InputEvent) => {
 
   // More tweaks
   [type=range] {
-    margin: -1px 0 0 5px;
+    margin: 0 0 0 8px;
     transform: rotate(270deg);
     transform-origin: 0;
     position: absolute;
-    bottom: -25px;
+    bottom: -22px;
     border: 14px solid var(--color-bg-primary);
     border-left-width: 30px;
     z-index: 0;
@@ -70,8 +94,7 @@ const broadcastVolume = (e: InputEvent) => {
     display: block;
   }
 
-  i {
-    width: 16px;
+  [role=button] {
     position: relative;
     z-index: 1;
   }
