@@ -123,7 +123,7 @@ interface AlbumTrack {
 }
 
 interface AlbumInfo {
-  image: string | null
+  cover: string | null
   readonly tracks: AlbumTrack[]
   wiki?: {
     summary: string

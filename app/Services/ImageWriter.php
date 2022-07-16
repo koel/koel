@@ -17,10 +17,10 @@ class ImageWriter
         $this->imageManager = $imageManager;
     }
 
-    public function writeFromBinaryData(string $destination, string $data, array $config = []): void
+    public function write(string $destination, object|string $source, array $config = []): void
     {
         $img = $this->imageManager
-            ->make($data)
+            ->make($source)
             ->resize(
                 $config['max_width'] ?? self::DEFAULT_MAX_WIDTH,
                 null,

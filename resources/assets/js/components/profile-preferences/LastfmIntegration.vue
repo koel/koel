@@ -17,9 +17,7 @@
           href="https://www.last.fm/about/trackmymusic"
           rel="noopener"
           target="_blank"
-        >
-          scrobbling
-        </a>.
+        >scrobbling</a>.
       </p>
       <div class="buttons">
         <Btn class="connect" @click.prevent="connect">

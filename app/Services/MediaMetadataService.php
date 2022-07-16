@@ -20,26 +20,26 @@ class MediaMetadataService
 
     public function downloadAlbumCover(Album $album, string $imageUrl): void
     {
-        $extension = explode('.', $imageUrl);
-        $this->writeAlbumCover($album, file_get_contents($imageUrl), last($extension));
+        $this->writeAlbumCover($album, $imageUrl, 'png');
     }
 
     /**
      * Write an album cover image file with binary data and update the Album with the new cover attribute.
      *
+     * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
      * @param string $destination The destination path. Automatically generated if empty.
      */
     public function writeAlbumCover(
         Album $album,
-        string $binaryData,
+        string $source,
         string $extension,
         string $destination = '',
         bool $cleanUp = true
     ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateAlbumCoverPath($extension);
-            $this->imageWriter->writeFromBinaryData($destination, $binaryData);
+            $destination = $destination ?: $this->generateAlbumCoverPath($album, $extension);
+            $this->imageWriter->write($destination, $source);
 
             if ($cleanUp) {
                 $this->deleteAlbumCoverFiles($album);
@@ -54,26 +54,26 @@ class MediaMetadataService
 
     public function downloadArtistImage(Artist $artist, string $imageUrl): void
     {
-        $extension = explode('.', $imageUrl);
-        $this->writeArtistImage($artist, file_get_contents($imageUrl), last($extension));
+        $this->writeArtistImage($artist, $imageUrl, '.png');
     }
 
     /**
      * Write an artist image file with binary data and update the Artist with the new image attribute.
      *
+     * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
      * @param string $destination The destination path. Automatically generated if empty.
      */
     public function writeArtistImage(
         Artist $artist,
-        string $binaryData,
+        string $source,
         string $extension,
         string $destination = '',
         bool $cleanUp = true
     ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateArtistImagePath($extension);
-            $this->imageWriter->writeFromBinaryData($destination, $binaryData);
+            $destination = $destination ?: $this->generateArtistImagePath($artist, $extension);
+            $this->imageWriter->write($destination, $source);
 
             if ($cleanUp && $artist->has_image) {
                 @unlink($artist->image_path);
@@ -85,24 +85,14 @@ class MediaMetadataService
         }
     }
 
-    /**
-     * Generate the absolute path for an album cover image.
-     *
-     * @param string $extension The extension of the cover (without dot)
-     */
-    private function generateAlbumCoverPath(string $extension): string
+    private function generateAlbumCoverPath(Album $album, string $extension): string
     {
-        return album_cover_path(sprintf('%s.%s', sha1(uniqid()), $extension));
+        return album_cover_path(sprintf('%s.%s', sha1((string) $album->id), trim($extension, '.')));
     }
 
-    /**
-     * Generate the absolute path for an artist image.
-     *
-     * @param string $extension The extension of the cover (without dot)
-     */
-    private function generateArtistImagePath($extension): string
+    private function generateArtistImagePath(Artist $artist, string $extension): string
     {
-        return artist_image_path(sprintf('%s.%s', sha1(uniqid()), $extension));
+        return artist_image_path(sprintf('%s.%s', sha1((string) $artist->id), trim($extension, '.')));
     }
 
     /**
@@ -124,11 +114,7 @@ class MediaMetadataService
 
     private function createThumbnailForAlbum(Album $album): void
     {
-        $this->imageWriter->writeFromBinaryData(
-            $album->thumbnail_path,
-            file_get_contents($album->cover_path),
-            ['max_width' => 48, 'blur' => 10]
-        );
+        $this->imageWriter->write($album->thumbnail_path, $album->cover_path, ['max_width' => 48, 'blur' => 10]);
     }
 
     private function deleteAlbumCoverFiles(Album $album): void

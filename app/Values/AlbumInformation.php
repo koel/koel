@@ -8,11 +8,11 @@ final class AlbumInformation implements Arrayable
 {
     use FormatsLastFmText;
 
-    private function __construct(
-        public ?string $url,
-        public ?string $cover,
-        public array $wiki,
-        public array $tracks
+    public function __construct(
+        public ?string $url = null,
+        public ?string $cover = null,
+        public array $wiki = ['summary' => '', 'full' => ''],
+        public array $tracks = []
     ) {
     }
 
@@ -20,7 +20,6 @@ final class AlbumInformation implements Arrayable
     {
         return new self(
             url: $data->url,
-            cover: count($data->image) > 3 ? $data->image[3]->{'#text'} : $data->image[0]->{'#text'},
             wiki: [
                 'summary' => isset($data->wiki) ? self::formatLastFmText($data->wiki->summary) : '',
                 'full' => isset($data->wiki) ? self::formatLastFmText($data->wiki->content) : '',

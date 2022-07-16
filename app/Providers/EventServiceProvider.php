@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Events\AlbumInformationFetched;
-use App\Events\ArtistInformationFetched;
 use App\Events\LibraryChanged;
 use App\Events\MediaSyncCompleted;
 use App\Events\SongLikeToggled;
@@ -12,8 +10,6 @@ use App\Events\SongsBatchUnliked;
 use App\Events\SongStartedPlaying;
 use App\Listeners\ClearMediaCache;
 use App\Listeners\DeleteNonExistingRecordsPostSync;
-use App\Listeners\DownloadAlbumCover;
-use App\Listeners\DownloadArtistImage;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\PruneLibrary;
@@ -47,14 +43,6 @@ class EventServiceProvider extends ServiceProvider
         LibraryChanged::class => [
             PruneLibrary::class,
             ClearMediaCache::class,
-        ],
-
-        AlbumInformationFetched::class => [
-            DownloadAlbumCover::class,
-        ],
-
-        ArtistInformationFetched::class => [
-            DownloadArtistImage::class,
         ],
 
         MediaSyncCompleted::class => [

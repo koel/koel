@@ -128,7 +128,7 @@ class FileSynchronizer
 
             if ($cover) {
                 $extension = pathinfo($cover, PATHINFO_EXTENSION);
-                $this->mediaMetadataService->writeAlbumCover($album, file_get_contents($cover), $extension);
+                $this->mediaMetadataService->writeAlbumCover($album, $cover, $extension);
             }
         } catch (Throwable) {
         }

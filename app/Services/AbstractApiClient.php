@@ -13,7 +13,7 @@ use SimpleXMLElement;
 use Webmozart\Assert\Assert;
 
 /**
- * @method object get(string $uri, array $data = [], bool $appendKey = true)
+ * @method object|null get(string $uri, array $data = [], bool $appendKey = true)
  * @method object post($uri, array $data = [], bool $appendKey = true)
  * @method object put($uri, array $data = [], bool $appendKey = true)
  * @method object patch($uri, array $data = [], bool $appendKey = true)

@@ -2,21 +2,18 @@
 
 namespace App\Services;
 
-use App\Events\AlbumInformationFetched;
-use App\Events\ArtistInformationFetched;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Repositories\AlbumRepository;
-use App\Repositories\ArtistRepository;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
+use Throwable;
 
 class MediaInformationService
 {
     public function __construct(
         private LastfmService $lastfmService,
-        private AlbumRepository $albumRepository,
-        private ArtistRepository $artistRepository
+        private SpotifyService $spotifyService,
+        private MediaMetadataService $mediaMetadataService
     ) {
     }
 
@@ -26,12 +23,18 @@ class MediaInformationService
             return null;
         }
 
-        $info = $this->lastfmService->getAlbumInformation($album->name, $album->artist->name);
+        $info = $this->lastfmService->getAlbumInformation($album) ?: new AlbumInformation();
 
-        if ($info) {
-            event(new AlbumInformationFetched($album, $info));
-            // The album cover may have been updated.
-            $info->cover = $this->albumRepository->getOneById($album->id)->cover;
+        if (!$album->has_cover) {
+            try {
+                $cover = $this->spotifyService->tryGetAlbumCover($album);
+
+                if ($cover) {
+                    $this->mediaMetadataService->downloadAlbumCover($album, $cover);
+                    $info->cover = $album->refresh()->cover;
+                }
+            } catch (Throwable) {
+            }
         }
 
         return $info;
@@ -43,12 +46,18 @@ class MediaInformationService
             return null;
         }
 
-        $info = $this->lastfmService->getArtistInformation($artist->name);
+        $info = $this->lastfmService->getArtistInformation($artist) ?: new ArtistInformation();
 
-        if ($info) {
-            event(new ArtistInformationFetched($artist, $info));
-            // The artist image may have been updated.
-            $info->image = $this->artistRepository->getOneById($artist->id)->image;
+        if (!$artist->has_image) {
+            try {
+                $image = $this->spotifyService->tryGetArtistImage($artist);
+
+                if ($image) {
+                    $this->mediaMetadataService->downloadArtistImage($artist, $image);
+                    $info->image = $artist->refresh()->image;
+                }
+            } catch (Throwable) {
+            }
         }
 
         return $info;

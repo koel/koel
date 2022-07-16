@@ -32,7 +32,8 @@
     "webmozart/assert": "^1.10",
     "laravel/sanctum": "^2.15",
     "laravel/scout": "^9.4",
-    "nunomaduro/collision": "^6.2"
+    "nunomaduro/collision": "^6.2",
+    "jwilsson/spotify-web-api-php": "^5.2"
   },
   "require-dev": {
     "mockery/mockery": "~1.0",

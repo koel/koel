@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\User;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
@@ -34,13 +36,13 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         return $this->getKey() && $this->getSecret();
     }
 
-    public function getArtistInformation(string $name): ?ArtistInformation
+    public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
         if (!$this->enabled()) {
             return null;
         }
 
-        $name = urlencode($name);
+        $name = urlencode($artist->name);
 
         try {
             return $this->cache->remember(
@@ -59,14 +61,14 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
         }
     }
 
-    public function getAlbumInformation(string $albumName, string $artistName): ?AlbumInformation
+    public function getAlbumInformation(Album $album): ?AlbumInformation
     {
         if (!$this->enabled()) {
             return null;
         }
 
-        $albumName = urlencode($albumName);
-        $artistName = urlencode($artistName);
+        $albumName = urlencode($album->name);
+        $artistName = urlencode($album->artist->name);
 
         try {
             $cacheKey = md5("lastfm_album_{$albumName}_{$artistName}");

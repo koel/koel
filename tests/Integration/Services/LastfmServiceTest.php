@@ -25,7 +25,7 @@ class LastfmServiceTest extends TestCase
         ]);
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
-        $info = $api->getArtistInformation($artist->name);
+        $info = $api->getArtistInformation($artist);
 
         self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot',
@@ -51,7 +51,7 @@ class LastfmServiceTest extends TestCase
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
 
-        self::assertNull($api->getArtistInformation($artist->name));
+        self::assertNull($api->getArtistInformation($artist));
     }
 
     public function testGetAlbumInformation(): void
@@ -71,7 +71,7 @@ class LastfmServiceTest extends TestCase
         ]);
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
-        $info = $api->getAlbumInformation($album->name, $album->artist->name);
+        $info = $api->getAlbumInformation($album);
 
         self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot/Epica',
@@ -109,6 +109,6 @@ class LastfmServiceTest extends TestCase
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
 
-        self::assertNull($api->getAlbumInformation($album->name, $album->artist->name));
+        self::assertNull($api->getAlbumInformation($album));
     }
 }

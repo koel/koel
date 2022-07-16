@@ -13,6 +13,7 @@ interface CommonStoreState {
   settings: Settings
   use_i_tunes: boolean
   use_last_fm: boolean
+  use_spotify: boolean
   users: User[]
   use_you_tube: boolean,
   song_count: number,
@@ -30,6 +31,7 @@ export const commonStore = {
     settings: {} as Settings,
     use_i_tunes: false,
     use_last_fm: false,
+    use_spotify: false,
     users: [],
     use_you_tube: false,
     song_count: 0,

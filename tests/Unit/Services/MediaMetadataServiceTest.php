@@ -8,12 +8,14 @@ use App\Services\ImageWriter;
 use App\Services\MediaMetadataService;
 use Illuminate\Log\Logger;
 use Mockery;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class MediaMetadataServiceTest extends TestCase
 {
-    private $mediaMetadataService;
-    private $imageWriter;
+    private MediaMetadataService $mediaMetadataService;
+    private LegacyMockInterface|ImageWriter|MockInterface $imageWriter;
 
     public function setUp(): void
     {
