@@ -1,8 +1,12 @@
 <template>
   <section id="recentlyPlayedWrapper">
-    <ScreenHeader>
+    <ScreenHeader :layout="headerLayout" has-thumbnail>
       Recently Played
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+
+      <template v-slot:thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails"/>
+      </template>
 
       <template v-slot:meta v-if="songs.length">
         <span>{{ pluralize(songs.length, 'song') }}</span>
@@ -18,7 +22,7 @@
       </template>
     </ScreenHeader>
 
-    <SongList v-if="songs.length" ref="songList" @press:enter="onPressEnter"/>
+    <SongList v-if="songs.length" ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
 
     <ScreenEmptyState v-else>
       <template v-slot:icon>
@@ -40,20 +44,26 @@ import { toRef } from 'vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
+const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'songs')
+
 const {
   SongList,
   SongListControls,
   ControlsToggle,
+  ThumbnailStack,
+  headerLayout,
   songs,
   songList,
+  thumbnails,
   duration,
   showingControls,
   isPhone,
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls
-} = useSongList(toRef(recentlyPlayedStore.state, 'songs'), 'recently-played', { sortable: false })
+  toggleControls,
+  onScrollBreakpoint
+} = useSongList(recentlyPlayedSongs, 'recently-played', { sortable: false })
 
 let initialized = false
 

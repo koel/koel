@@ -43,8 +43,7 @@ new class extends UnitTestCase {
         factory<Playlist>('playlist', { name: 'Baz' })
       ]
 
-      const { html } = this.renderComponent()
-      expect(html()).toMatchSnapshot()
+      expect(this.renderComponent().html()).toMatchSnapshot()
     })
 
     it.each<[keyof AddToMenuConfig, string | string[]]>([

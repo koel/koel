@@ -65,7 +65,13 @@
       <span class="play"></span>
     </div>
 
-    <VirtualScroller v-slot="{ item }" :item-height="35" :items="songRows" @scrolled-to-end="$emit('scrolled-to-end')">
+    <VirtualScroller
+      v-slot="{ item }"
+      :item-height="35"
+      :items="songRows"
+      @scroll="onScroll"
+      @scrolled-to-end="$emit('scrolled-to-end')"
+    >
       <SongListItem
         :key="item.song.id"
         :columns="config.columns"
@@ -102,7 +108,7 @@ import {
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import SongListItem from '@/components/song/SongListItem.vue'
 
-const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scrolled-to-end'])
+const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scroll-breakpoint', 'scrolled-to-end'])
 
 const items = inject(SongsKey, ref([]))
 const type = inject(SongListTypeKey, 'all-songs')
@@ -126,6 +132,20 @@ const config = computed((): SongListConfig => {
     columns: ['track', 'title', 'artist', 'album', 'length']
   }, inject(SongListConfigKey, {}))
 })
+
+let lastScrollTop = 0
+
+const onScroll = e => {
+  const scroller = e.target as HTMLElement
+
+  if (scroller.scrollTop > 512 && lastScrollTop < 512) {
+    emit('scroll-breakpoint', 'down')
+  } else if (scroller.scrollTop < 512 && lastScrollTop > 512) {
+    emit('scroll-breakpoint', 'up')
+  }
+
+  lastScrollTop = scroller.scrollTop
+}
 
 /**
  * Since song objects themselves are shared by all song lists, we can't use them directly to
@@ -380,7 +400,7 @@ onMounted(() => render())
       position: absolute;
       left: 0;
       right: 0;
-      min-height: 100%;
+      min-height: 200%;
     }
 
     .item {
@@ -399,7 +419,7 @@ onMounted(() => render())
       .item-container {
         left: 12px;
         right: 12px;
-        width: calc(100vw - 24px);
+        width: calc(200vw - 24px);
       }
     }
 
@@ -410,7 +430,7 @@ onMounted(() => render())
       overflow: hidden;
       text-overflow: ellipsis;
       color: var(--color-text-secondary);
-      width: 100%;
+      width: 200%;
     }
 
     .song-item span {

@@ -1,6 +1,6 @@
 <template>
   <section id="albumWrapper">
-    <ScreenHeader has-thumbnail>
+    <ScreenHeader :layout="headerLayout" has-thumbnail>
       {{ album.name }}
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
@@ -35,7 +35,7 @@
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" @press:enter="onPressEnter"/>
+    <SongList ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
 
     <section v-if="useLastfm && showingInfo" class="info-wrapper">
       <CloseModalBtn class="close-modal" @click="showingInfo = false"/>
@@ -69,6 +69,7 @@ const {
   SongList,
   SongListControls,
   ControlsToggle,
+  headerLayout,
   songs,
   songList,
   showingControls,
@@ -76,7 +77,8 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls
+  toggleControls,
+  onScrollBreakpoint
 } = useSongList(albumSongs, 'album', { columns: ['track', 'title', 'artist', 'length'] })
 
 const useLastfm = toRef(commonStore.state, 'use_last_fm')

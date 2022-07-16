@@ -1,4 +1,4 @@
-import { orderBy } from 'lodash'
+import { orderBy, sampleSize, take } from 'lodash'
 import isMobile from 'ismobilejs'
 import { computed, provide, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
@@ -17,6 +17,7 @@ import {
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
+import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (
   songs: Ref<Song[]>,
@@ -28,8 +29,19 @@ export const useSongList = (
   const isPhone = isMobile.phone
   const selectedSongs = ref<Song[]>([])
   const showingControls = ref(false)
+  const headerLayout = ref<'expanded' | 'collapsed'>('expanded')
+
+  const onScrollBreakpoint = (direction: 'up' | 'down') => {
+    headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
+  }
 
   const duration = computed(() => songStore.getFormattedLength(songs.value))
+
+  const thumbnails = computed(() => {
+    const songsWithCover = songs.value.filter(song => song.album_cover)
+    const sampleCovers = sampleSize(songsWithCover, 20).map(song => song.album_cover)
+    return take(Array.from(new Set(sampleCovers)), 4)
+  })
 
   const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
   const playAll = (shuffle: boolean) => playbackService.queueAndPlay(getSongsToPlay(), shuffle)
@@ -94,10 +106,13 @@ export const useSongList = (
     SongList,
     SongListControls,
     ControlsToggle,
+    ThumbnailStack,
     songs,
+    headerLayout,
     sortField,
     sortOrder,
     duration,
+    thumbnails,
     songList,
     selectedSongs,
     showingControls,
@@ -106,6 +121,7 @@ export const useSongList = (
     playAll,
     playSelected,
     toggleControls,
+    onScrollBreakpoint,
     sort
   }
 }

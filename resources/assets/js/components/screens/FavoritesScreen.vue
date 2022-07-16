@@ -1,8 +1,12 @@
 <template>
   <section id="favoritesWrapper">
-    <ScreenHeader>
+    <ScreenHeader :layout="headerLayout" has-thumbnail>
       Songs You Love
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+
+      <template v-slot:thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails"/>
+      </template>
 
       <template v-slot:meta v-if="songs.length">
         <span>{{ pluralize(songs.length, 'song') }}</span>
@@ -32,9 +36,10 @@
     <SongList
       v-if="songs.length"
       ref="songList"
+      @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
-      @sort="sort"
+      @scroll-breakpoint="onScrollBreakpoint"
     />
 
     <ScreenEmptyState v-else>
@@ -67,9 +72,12 @@ const {
   SongList,
   SongListControls,
   ControlsToggle,
+  ThumbnailStack,
+  headerLayout,
   songs,
   songList,
   duration,
+  thumbnails,
   selectedSongs,
   showingControls,
   isPhone,
@@ -77,6 +85,7 @@ const {
   playAll,
   playSelected,
   toggleControls,
+  onScrollBreakpoint,
   sort
 } = useSongList(toRef(favoriteStore.state, 'songs'), 'favorites')
 

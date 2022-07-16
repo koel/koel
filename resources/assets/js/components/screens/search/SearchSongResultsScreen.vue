@@ -1,8 +1,12 @@
 <template>
   <section id="songResultsWrapper">
-    <ScreenHeader>
-      Songs Matching <strong>{{ decodedQ }}</strong>
+    <ScreenHeader :layout="headerLayout" has-thumbnail>
+      Songs for <span class="q">{{ decodedQ }}</span>
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+
+      <template v-slot:thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails"/>
+      </template>
 
       <template v-slot:meta v-if="songs.length">
         <span>{{ pluralize(songs.length, 'song') }}</span>
@@ -18,7 +22,7 @@
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" @press:enter="onPressEnter" @sort="sort"/>
+    <SongList ref="songList" @sort="sort" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
   </section>
 </template>
 
@@ -37,8 +41,11 @@ const {
   SongList,
   SongListControls,
   ControlsToggle,
+  ThumbnailStack,
+  headerLayout,
   songs,
   songList,
+  thumbnails,
   duration,
   showingControls,
   isPhone,
@@ -46,7 +53,8 @@ const {
   playAll,
   playSelected,
   toggleControls,
-  sort
+  sort,
+  onScrollBreakpoint
 } = useSongList(toRef(searchStore.state, 'songs'), 'search-results')
 
 const decodedQ = computed(() => decodeURIComponent(q.value))
@@ -54,3 +62,9 @@ const decodedQ = computed(() => decodeURIComponent(q.value))
 searchStore.resetSongResultState()
 searchStore.songSearch(decodedQ.value)
 </script>
+
+<style lang="scss" scoped>
+.q {
+  font-weight: var(--font-weight-thin);
+}
+</style>

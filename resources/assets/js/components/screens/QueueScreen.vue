@@ -1,8 +1,12 @@
 <template>
   <section id="queueWrapper">
-    <ScreenHeader>
+    <ScreenHeader :layout="headerLayout" :has-thumbnail="shouldDisplayThumbnails">
       Current Queue
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+
+      <template v-slot:thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails"/>
+      </template>
 
       <template v-slot:meta v-if="songs.length">
         <span>{{ pluralize(songs.length, 'song') }}</span>
@@ -26,6 +30,7 @@
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
       @reorder="onReorder"
+      @scroll-breakpoint="onScrollBreakpoint"
     />
 
     <ScreenEmptyState v-else>
@@ -59,17 +64,22 @@ const {
   SongList,
   SongListControls,
   ControlsToggle,
+  ThumbnailStack,
+  headerLayout,
   songs,
   songList,
   duration,
+  thumbnails,
   selectedSongs,
   showingControls,
   isPhone,
   playSelected,
-  toggleControls
+  toggleControls,
+  onScrollBreakpoint
 } = useSongList(toRef(queueStore.state, 'songs'), 'queue', { sortable: false })
 
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
+const shouldDisplayThumbnails = computed(() => songs.value.length > 0)
 
 const playAll = (shuffle = true) => playbackService.queueAndPlay(songs.value, shuffle)
 

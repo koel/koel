@@ -6,6 +6,7 @@ import { clickaway, droppable, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
 import factory from '@/__tests__/factory'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export default abstract class UnitTestCase {
   private backupMethods = new Map()
@@ -69,6 +70,9 @@ export default abstract class UnitTestCase {
           'koel-clickaway': clickaway,
           'koel-focus': focus,
           'koel-droppable': droppable
+        },
+        components: {
+          icon: FontAwesomeIcon
         }
       }
     }, options))

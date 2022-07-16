@@ -1,6 +1,6 @@
 <template>
   <section id="artistWrapper">
-    <ScreenHeader has-thumbnail>
+    <ScreenHeader :layout="headerLayout" has-thumbnail>
       {{ artist.name }}
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
@@ -35,7 +35,7 @@
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" @press:enter="onPressEnter"/>
+    <SongList ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
 
     <section class="info-wrapper" v-if="useLastfm && showingInfo">
       <CloseModalBtn class="close-modal" @click="showingInfo = false"/>
@@ -66,6 +66,7 @@ const {
   SongList,
   SongListControls,
   ControlsToggle,
+  headerLayout,
   songList,
   songs,
   showingControls,
@@ -73,7 +74,8 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls
+  toggleControls,
+  onScrollBreakpoint
 } = useSongList(artistSongs, 'artist', { columns: ['track', 'title', 'album', 'length'] })
 
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))

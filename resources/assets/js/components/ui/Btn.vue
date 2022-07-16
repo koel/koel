@@ -13,6 +13,7 @@ button {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: .3rem;
 
   &:hover {

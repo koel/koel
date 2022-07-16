@@ -1,65 +1,107 @@
 <template>
-  <header class="screen-header">
+  <header class="screen-header" :class="layout">
     <div class="thumbnail-wrapper" :class="{ 'non-empty': hasThumbnail }">
       <slot name="thumbnail"></slot>
     </div>
 
-    <div class="heading-wrapper">
-      <h1>
-        <slot></slot>
-      </h1>
-      <span class="meta text-secondary">
-        <slot name="meta"></slot>
-      </span>
-    </div>
+    <div class="right">
+      <div class="heading-wrapper">
+        <h1 class="name">
+          <slot></slot>
+        </h1>
+        <span class="meta text-secondary">
+          <slot name="meta"></slot>
+        </span>
+      </div>
 
-    <slot name="controls"></slot>
+      <slot name="controls"></slot>
+    </div>
   </header>
 </template>
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
 
-const props = withDefaults(defineProps<{ hasThumbnail?: boolean }>(), { hasThumbnail: false })
+const props = withDefaults(defineProps<{ hasThumbnail?: boolean, layout?: 'expanded' | 'collapsed' }>(), {
+  hasThumbnail: false,
+  layout: 'expanded'
+})
+
 const { hasThumbnail } = toRefs(props)
 </script>
 
 <style lang="scss">
 header.screen-header {
   display: flex;
-  font-weight: var(--font-weight-thin);
-  padding: 1rem 1.8rem;
+  align-items: flex-end;
   border-bottom: 1px solid var(--color-bg-secondary);
-  min-height: 96px;
   position: relative;
-  align-items: center;
   align-content: stretch;
   line-height: normal;
   gap: 1.5rem;
+  padding: .8rem 1rem .8rem 0;
+  will-change: height;
+
+  &.expanded {
+    padding: 1.8rem;
+
+    .thumbnail-wrapper {
+      width: 192px;
+    }
+
+    h1.name {
+      font-size: 4rem;
+      font-weight: bold;
+    }
+
+    .meta {
+      display: block;
+    }
+
+    .right {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 
   .thumbnail-wrapper {
-    width: 64px;
+    overflow: hidden;
+    width: 0;
     display: none;
+    will-change: width, height;
+    transition: width .3s;
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
 
     &.non-empty {
       display: block;
     }
   }
 
-  h1 {
+  .right {
+    flex: 1;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  h1.name {
     font-size: 2.75rem;
+    font-weight: var(--font-weight-thin);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
 
   .heading-wrapper {
+    width: 100%;
     overflow: hidden;
     flex: 1;
   }
 
   .meta {
-    display: block;
+    display: none;
     font-size: .9rem;
     line-height: 2;
     font-weight: var(--font-weight-light);

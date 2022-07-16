@@ -1,8 +1,12 @@
 <template>
   <section id="playlistWrapper" v-if="playlist">
-    <ScreenHeader>
+    <ScreenHeader :layout="headerLayout" has-thumbnail>
       {{ playlist.name }}
       <ControlsToggle v-if="songs.length" :showing-controls="showingControls" @toggleControls="toggleControls"/>
+
+      <template v-slot:thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails"/>
+      </template>
 
       <template v-slot:meta v-if="songs.length">
         <span>{{ pluralize(songs.length, 'song') }}</span>
@@ -21,10 +25,10 @@
       <template v-slot:controls>
         <SongListControls
           v-if="!isPhone || showingControls"
+          :config="controlsConfig"
+          @deletePlaylist="destroy"
           @playAll="playAll"
           @playSelected="playSelected"
-          @deletePlaylist="destroy"
-          :config="controlsConfig"
         />
       </template>
     </ScreenHeader>
@@ -34,6 +38,7 @@
       ref="songList"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
+      @scroll-breakpoint="onScrollBreakpoint"
       @sort="sort"
     />
 
@@ -77,9 +82,12 @@ const {
   SongList,
   SongListControls,
   ControlsToggle,
+  ThumbnailStack,
+  headerLayout,
   songs,
   songList,
   duration,
+  thumbnails,
   selectedSongs,
   showingControls,
   isPhone,
@@ -87,6 +95,7 @@ const {
   playAll,
   playSelected,
   toggleControls,
+  onScrollBreakpoint,
   sort
 } = useSongList(ref<Song[]>([]), 'playlist')
 

@@ -1,8 +1,12 @@
 <template>
   <section id="songsWrapper">
-    <ScreenHeader>
+    <ScreenHeader :layout="headerLayout" has-thumbnail>
       All Songs
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+
+      <template v-slot:thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails"/>
+      </template>
 
       <template v-slot:meta v-if="totalSongCount">
         <span>{{ pluralize(totalSongCount, 'song') }}</span>
@@ -18,7 +22,13 @@
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" @press:enter="onPressEnter" @scrolled-to-end="fetchSongs" @sort="sort"/>
+    <SongList
+      ref="songList"
+      @sort="sort"
+      @scroll-breakpoint="onScrollBreakpoint"
+      @press:enter="onPressEnter"
+      @scrolled-to-end="fetchSongs"
+    />
   </section>
 </template>
 
@@ -39,6 +49,9 @@ const {
   SongList,
   SongListControls,
   ControlsToggle,
+  ThumbnailStack,
+  headerLayout,
+  thumbnails,
   songs,
   songList,
   duration,
@@ -46,7 +59,8 @@ const {
   isPhone,
   onPressEnter,
   playSelected,
-  toggleControls
+  toggleControls,
+  onScrollBreakpoint
 } = useSongList(toRef(songStore.state, 'songs'), 'all-songs')
 
 let initialized = false

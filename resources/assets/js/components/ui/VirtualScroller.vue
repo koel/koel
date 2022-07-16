@@ -21,7 +21,7 @@ const scrollerHeight = ref(0)
 const renderAhead = 5
 const scrollTop = ref(0)
 
-const emit = defineEmits(['scrolled-to-end'])
+const emit = defineEmits(['scrolled-to-end', 'scroll'])
 
 const totalHeight = computed(() => items.value.length * itemHeight.value)
 const startPosition = computed(() => Math.max(0, Math.floor(scrollTop.value / itemHeight.value) - renderAhead))
@@ -37,6 +37,8 @@ const onScroll = e => requestAnimationFrame(() => {
   scrollTop.value = (e.target as HTMLElement).scrollTop
 
   if (!scroller.value) return
+
+  emit('scroll', e)
 
   if (scroller.value.scrollTop + scroller.value.clientHeight + itemHeight.value >= scroller.value.scrollHeight) {
     emit('scrolled-to-end')
