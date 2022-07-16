@@ -152,6 +152,7 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
 
     span {
       pointer-events: none;
