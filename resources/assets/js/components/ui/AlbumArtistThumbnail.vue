@@ -29,7 +29,7 @@ import { playbackService } from '@/services'
 import { alerts, defaultCover, fileReader } from '@/utils'
 import { useAuthorization } from '@/composables'
 
-const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png']
+const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png', 'image/webp']
 
 const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)

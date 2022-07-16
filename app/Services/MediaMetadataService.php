@@ -4,27 +4,23 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 class MediaMetadataService
 {
-    private ImageWriter $imageWriter;
-    private LoggerInterface $logger;
-
-    public function __construct(ImageWriter $imageWriter, LoggerInterface $logger)
+    public function __construct(private ImageWriter $imageWriter, private LoggerInterface $logger)
     {
-        $this->imageWriter = $imageWriter;
-        $this->logger = $logger;
     }
 
     public function downloadAlbumCover(Album $album, string $imageUrl): void
     {
-        $this->writeAlbumCover($album, $imageUrl, 'png');
+        $this->writeAlbumCover($album, $imageUrl);
     }
 
     /**
-     * Write an album cover image file with binary data and update the Album with the new cover attribute.
+     * Write an album cover image file and update the Album with the new cover attribute.
      *
      * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
      * @param string $destination The destination path. Automatically generated if empty.
@@ -32,13 +28,13 @@ class MediaMetadataService
     public function writeAlbumCover(
         Album $album,
         string $source,
-        string $extension,
+        string $extension = 'png',
         string $destination = '',
         bool $cleanUp = true
     ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateAlbumCoverPath($album, $extension);
+            $destination = $destination ?: $this->generateAlbumCoverPath($extension);
             $this->imageWriter->write($destination, $source);
 
             if ($cleanUp) {
@@ -54,11 +50,11 @@ class MediaMetadataService
 
     public function downloadArtistImage(Artist $artist, string $imageUrl): void
     {
-        $this->writeArtistImage($artist, $imageUrl, '.png');
+        $this->writeArtistImage($artist, $imageUrl);
     }
 
     /**
-     * Write an artist image file with binary data and update the Artist with the new image attribute.
+     * Write an artist image file update the Artist with the new image attribute.
      *
      * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
      * @param string $destination The destination path. Automatically generated if empty.
@@ -66,13 +62,13 @@ class MediaMetadataService
     public function writeArtistImage(
         Artist $artist,
         string $source,
-        string $extension,
-        string $destination = '',
+        string $extension = 'png',
+        ?string $destination = '',
         bool $cleanUp = true
     ): void {
         try {
             $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateArtistImagePath($artist, $extension);
+            $destination = $destination ?: $this->generateArtistImagePath($extension);
             $this->imageWriter->write($destination, $source);
 
             if ($cleanUp && $artist->has_image) {
@@ -85,14 +81,14 @@ class MediaMetadataService
         }
     }
 
-    private function generateAlbumCoverPath(Album $album, string $extension): string
+    private function generateAlbumCoverPath(string $extension): string
     {
-        return album_cover_path(sprintf('%s.%s', sha1((string) $album->id), trim($extension, '.')));
+        return album_cover_path(sprintf('%s.%s', sha1(Str::uuid()), trim($extension, '.')));
     }
 
-    private function generateArtistImagePath(Artist $artist, string $extension): string
+    private function generateArtistImagePath(string $extension): string
     {
-        return artist_image_path(sprintf('%s.%s', sha1((string) $artist->id), trim($extension, '.')));
+        return artist_image_path(sprintf('%s.%s', sha1(Str::uuid()), trim($extension, '.')));
     }
 
     /**

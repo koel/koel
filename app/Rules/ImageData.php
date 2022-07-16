@@ -12,8 +12,8 @@ class ImageData implements Rule
         try {
             [$header,] = explode(';', $value);
 
-            return (bool) preg_match('/data:image\/(jpe?g|png|gif)/i', $header);
-        } catch (Throwable $exception) {
+            return (bool) preg_match('/data:image\/(jpe?g|png|webp|gif)/i', $header);
+        } catch (Throwable) {
             return false;
         }
     }
