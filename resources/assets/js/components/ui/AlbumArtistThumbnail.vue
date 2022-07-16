@@ -170,6 +170,7 @@ const onDrop = async (event: DragEvent) => {
       align-items: center;
       padding-left: 4%; // to balance the play icon
       z-index: 99;
+      pointer-events: none;
 
       @media (hover: none) {
         opacity: 1;
