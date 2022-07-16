@@ -1,7 +1,7 @@
 <template>
   <section id="searchExcerptsWrapper">
-    <ScreenHeader>
-      <span v-if="q">Search Results for <strong>{{ q }}</strong></span>
+    <ScreenHeader layout="collapsed">
+      <span v-if="q">Searching for <span class="text-thin">{{ q }}</span></span>
       <span v-else>Search</span>
     </ScreenHeader>
 

@@ -277,6 +277,10 @@ label {
   &uppercase {
     text-transform: uppercase !important;
   }
+
+  &thin {
+    font-weight: var(--font-weight-thin) !important;
+  }
 }
 
 .d- {

@@ -1,6 +1,6 @@
 <template>
   <section id="homeWrapper">
-    <ScreenHeader>{{ greeting }}</ScreenHeader>
+    <ScreenHeader layout="collapsed">{{ greeting }}</ScreenHeader>
 
     <div class="main-scroll-wrap" @scroll="scrolling">
       <ScreenEmptyState v-if="libraryEmpty">

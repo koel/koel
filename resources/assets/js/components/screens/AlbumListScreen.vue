@@ -1,6 +1,6 @@
 <template>
   <section id="albumsWrapper">
-    <ScreenHeader>
+    <ScreenHeader layout="collapsed">
       Albums
       <template v-slot:controls>
         <ViewModeSwitch v-model="viewMode"/>

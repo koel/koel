@@ -1,6 +1,6 @@
 <template>
   <section id="artistsWrapper">
-    <ScreenHeader>
+    <ScreenHeader layout="collapsed">
       Artists
       <template v-slot:controls>
         <ViewModeSwitch v-model="viewMode"/>

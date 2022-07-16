@@ -1,6 +1,6 @@
 <template>
   <section id="youtubeWrapper">
-    <screen-header>{{ title }}</screen-header>
+    <ScreenHeader layout="collapsed">{{ title }}</ScreenHeader>
 
     <div id="player">
       <ScreenEmptyState data-testid="youtube-placeholder">

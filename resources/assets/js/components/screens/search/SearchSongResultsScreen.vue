@@ -1,7 +1,7 @@
 <template>
   <section id="songResultsWrapper">
     <ScreenHeader :layout="headerLayout" has-thumbnail>
-      Songs for <span class="q">{{ decodedQ }}</span>
+      Songs for <span class="text-thin">{{ decodedQ }}</span>
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
       <template v-slot:thumbnail>
@@ -62,9 +62,3 @@ const decodedQ = computed(() => decodeURIComponent(q.value))
 searchStore.resetSongResultState()
 searchStore.songSearch(decodedQ.value)
 </script>
-
-<style lang="scss" scoped>
-.q {
-  font-weight: var(--font-weight-thin);
-}
-</style>

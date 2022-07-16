@@ -1,5 +1,5 @@
 <template>
-  <div class="thumbnail-stack" :class="layout">
+  <div class="thumbnail-stack" :class="layout" :style="{ backgroundImage: `url(${defaultCover})` }">
     <span v-for="thumbnail in displayedThumbnails" :style="{ backgroundImage: `url(${thumbnail}`}"/>
   </div>
 </template>
@@ -26,6 +26,8 @@ const layout = computed<'mono' | 'tiles'>(() => displayedThumbnails.value.length
   aspect-ratio: 1/1;
   display: grid;
   overflow: hidden;
+  background-size: cover;
+  background-repeat: no-repeat;
 
   &.tiles {
     grid-template-columns: 1fr 1fr;
@@ -33,6 +35,7 @@ const layout = computed<'mono' | 'tiles'>(() => displayedThumbnails.value.length
 
   span {
     display: block;
+    will-change: transform; // fix anti-aliasing problem with background images
     width: 100%;
     height: 100%;
     background-size: cover;

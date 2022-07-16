@@ -17,4 +17,4 @@ createApp(App)
    */
   .mount('#app')
 
-navigator.serviceWorker.register('./sw.js').then(() => console.log('Service Worker Registered'))
+navigator.serviceWorker.register('./sw.js')

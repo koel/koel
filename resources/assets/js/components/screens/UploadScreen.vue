@@ -1,6 +1,6 @@
 <template>
   <section id="uploadWrapper">
-    <ScreenHeader>
+    <ScreenHeader layout="collapsed">
       Upload Media
 
       <template v-slot:controls>

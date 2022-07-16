@@ -1,6 +1,6 @@
 <template>
   <section id="usersWrapper">
-    <ScreenHeader>
+    <ScreenHeader layout="collapsed">
       Users
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 

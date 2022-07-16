@@ -1,6 +1,6 @@
 <template>
   <header id="mainHeader">
-    <h1 class="brand">Koel</h1>
+    <h1 class="brand text-thin">Koel</h1>
     <span class="hamburger" role="button" title="Show or hide the sidebar" @click="toggleSidebar">
       <icon :icon="faBars"/>
     </span>
@@ -54,7 +54,6 @@ const showAboutDialog = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
   h1.brand {
     flex: 1;
     font-size: 1.7rem;
-    font-weight: var(--font-weight-thin);
     opacity: 0;
     line-height: var(--header-height);
     text-align: center;

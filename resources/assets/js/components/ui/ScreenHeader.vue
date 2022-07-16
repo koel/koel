@@ -32,26 +32,28 @@ const { hasThumbnail } = toRefs(props)
 
 <style lang="scss">
 header.screen-header {
+  --transition-duration: .3s;
+
+  @media (prefers-reduced-motion) {
+    --transition-duration: 0;
+  }
+
   display: flex;
   align-items: flex-end;
   border-bottom: 1px solid var(--color-bg-secondary);
   position: relative;
   align-content: stretch;
   line-height: normal;
-  gap: 1.5rem;
-  padding: .8rem 1rem .8rem 0;
-  will-change: height;
+  padding: 1.8rem;
 
   &.expanded {
-    padding: 1.8rem;
-
     .thumbnail-wrapper {
+      margin-right: 1.5rem;
       width: 192px;
-    }
 
-    h1.name {
-      font-size: 4rem;
-      font-weight: bold;
+      > * {
+        transform: scale(1);
+      }
     }
 
     .meta {
@@ -66,12 +68,17 @@ header.screen-header {
 
   .thumbnail-wrapper {
     overflow: hidden;
-    width: 0;
     display: none;
-    will-change: width, height;
-    transition: width .3s;
+    width: 0;
+    transition: width var(--transition-duration);
     box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.3);
     border-radius: 5px;
+
+    > * {
+      transform: scale(0);
+      transform-origin: bottom left;
+      transition: transform var(--transition-duration), width var(--transition-duration);
+    }
 
     &.non-empty {
       display: block;
@@ -87,11 +94,12 @@ header.screen-header {
   }
 
   h1.name {
-    font-size: 2.75rem;
-    font-weight: var(--font-weight-thin);
+    font-size: 4rem;
+    font-weight: var(--font-weight-bold);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin-right: 1.5rem;
   }
 
   .heading-wrapper {
