@@ -16,15 +16,12 @@
       @dragover.prevent
     >
       <span class="hidden">{{ buttonLabel }}</span>
-      <span class="icon-wrapper">
-        <icon :icon="faPlay" size="5x"/>
-      </span>
+      <span class="icon"/>
     </a>
   </span>
 </template>
 
 <script lang="ts" setup>
-import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import { orderBy } from 'lodash'
 import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
@@ -161,7 +158,7 @@ const onDrop = async (event: DragEvent) => {
       z-index: 1;
     }
 
-    .icon-wrapper {
+    .icon {
       background-color: var(--color-bg-primary);
       color: var(--color-highlight);
       opacity: 0;
@@ -171,16 +168,32 @@ const onDrop = async (event: DragEvent) => {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-left: 4%;
+      padding-left: 4%; // to balance the play icon
       z-index: 99;
 
       @media (hover: none) {
-        opacity: .5;
+        opacity: 1;
+      }
+
+      &::after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: var(--color-highlight);
+
+        mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>');
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>');
+        mask-repeat: no-repeat;
+        -webkit-mask-repeat: no-repeat;
+        mask-position: center;
+        -webkit-mask-position: center;
+        mask-size: 40%;
+        -webkit-mask-size: 40%;
       }
     }
 
     &:hover, &:focus {
-      &::before, .icon-wrapper {
+      &::before, .icon {
         transition: .3s opacity;
         opacity: 1;
       }
@@ -191,7 +204,7 @@ const onDrop = async (event: DragEvent) => {
         background: rgba(0, 0, 0, .5);
       }
 
-      .icon-wrapper {
+      .icon {
         transform: scale(.9);
       }
     }
@@ -218,7 +231,7 @@ const onDrop = async (event: DragEvent) => {
   }
 }
 
-.compact .icon-wrapper {
+.compact .icon {
   font-size: .3rem; // to control the size of the icon
 }
 </style>
