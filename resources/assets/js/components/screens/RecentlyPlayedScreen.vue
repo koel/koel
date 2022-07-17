@@ -1,6 +1,6 @@
 <template>
   <section id="recentlyPlayedWrapper">
-    <ScreenHeader :layout="headerLayout" has-thumbnail>
+    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Recently Played
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 

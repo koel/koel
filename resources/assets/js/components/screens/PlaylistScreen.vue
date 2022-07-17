@@ -1,6 +1,6 @@
 <template>
   <section id="playlistWrapper" v-if="playlist">
-    <ScreenHeader :layout="headerLayout" has-thumbnail>
+    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ playlist.name }}
       <ControlsToggle v-if="songs.length" :showing-controls="showingControls" @toggleControls="toggleControls"/>
 

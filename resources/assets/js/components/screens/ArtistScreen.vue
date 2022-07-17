@@ -1,6 +1,6 @@
 <template>
   <section id="artistWrapper">
-    <ScreenHeader :layout="headerLayout" has-thumbnail>
+    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ artist.name }}
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 

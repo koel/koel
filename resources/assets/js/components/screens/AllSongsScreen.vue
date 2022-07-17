@@ -1,6 +1,6 @@
 <template>
   <section id="songsWrapper">
-    <ScreenHeader :layout="headerLayout" has-thumbnail>
+    <ScreenHeader :layout="headerLayout">
       All Songs
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 

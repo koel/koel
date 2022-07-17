@@ -1,6 +1,6 @@
 <template>
   <section id="favoritesWrapper">
-    <ScreenHeader :layout="headerLayout" has-thumbnail>
+    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Songs You Love
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 

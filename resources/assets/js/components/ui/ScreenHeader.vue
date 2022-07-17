@@ -1,6 +1,6 @@
 <template>
   <header class="screen-header" :class="layout">
-    <div class="thumbnail-wrapper" :class="{ 'non-empty': hasThumbnail }">
+    <div class="thumbnail-wrapper">
       <slot name="thumbnail"></slot>
     </div>
 
@@ -20,14 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from 'vue'
-
-const props = withDefaults(defineProps<{ hasThumbnail?: boolean, layout?: 'expanded' | 'collapsed' }>(), {
-  hasThumbnail: false,
-  layout: 'expanded'
-})
-
-const { hasThumbnail } = toRefs(props)
+const props = withDefaults(defineProps<{ layout?: 'expanded' | 'collapsed' }>(), { layout: 'expanded' })
 </script>
 
 <style lang="scss">
@@ -68,7 +61,7 @@ header.screen-header {
 
   .thumbnail-wrapper {
     overflow: hidden;
-    display: none;
+    display: block;
     width: 0;
     transition: width var(--transition-duration);
     box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.3);
@@ -80,8 +73,8 @@ header.screen-header {
       transition: transform var(--transition-duration), width var(--transition-duration);
     }
 
-    &.non-empty {
-      display: block;
+    &:empty {
+      display: none;
     }
   }
 

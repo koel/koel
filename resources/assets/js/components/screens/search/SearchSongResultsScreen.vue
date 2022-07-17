@@ -1,6 +1,6 @@
 <template>
   <section id="songResultsWrapper">
-    <ScreenHeader :layout="headerLayout" has-thumbnail>
+    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Songs for <span class="text-thin">{{ decodedQ }}</span>
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 

@@ -1,6 +1,6 @@
 <template>
   <section id="queueWrapper">
-    <ScreenHeader :layout="headerLayout" :has-thumbnail="shouldDisplayThumbnails">
+    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Current Queue
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
@@ -79,7 +79,6 @@ const {
 } = useSongList(toRef(queueStore.state, 'songs'), 'queue', { sortable: false })
 
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
-const shouldDisplayThumbnails = computed(() => songs.value.length > 0)
 
 const playAll = (shuffle = true) => playbackService.queueAndPlay(songs.value, shuffle)
 

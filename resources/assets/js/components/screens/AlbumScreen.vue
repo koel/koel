@@ -1,6 +1,6 @@
 <template>
   <section id="albumWrapper">
-    <ScreenHeader :layout="headerLayout" has-thumbnail>
+    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ album.name }}
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
