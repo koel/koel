@@ -116,6 +116,7 @@ interface FileSystemEntry {
 }
 
 type MediaInfoDisplayMode = 'aside' | 'full'
+type ScreenHeaderLayout = 'expanded' | 'collapsed'
 
 interface AlbumTrack {
   readonly title: string

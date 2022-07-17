@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(defineProps<{ layout?: 'expanded' | 'collapsed' }>(), { layout: 'expanded' })
+const props = withDefaults(defineProps<{ layout?: ScreenHeaderLayout }>(), { layout: 'expanded' })
 </script>
 
 <style lang="scss">

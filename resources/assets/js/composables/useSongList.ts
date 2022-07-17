@@ -29,7 +29,7 @@ export const useSongList = (
   const isPhone = isMobile.phone
   const selectedSongs = ref<Song[]>([])
   const showingControls = ref(false)
-  const headerLayout = ref<'expanded' | 'collapsed'>('expanded')
+  const headerLayout = ref<ScreenHeaderLayout>('expanded')
 
   const onScrollBreakpoint = (direction: 'up' | 'down') => {
     headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
