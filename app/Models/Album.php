@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 
@@ -76,27 +77,23 @@ class Album extends Model
 
     protected function isUnknown(): Attribute
     {
-        return Attribute::get(fn () => $this->id === self::UNKNOWN_ID);
+        return Attribute::get(fn (): bool => $this->id === self::UNKNOWN_ID);
     }
 
     protected function cover(): Attribute
     {
-        return Attribute::get(static fn (?string $value) => $value ? album_cover_url($value) : '');
+        return Attribute::get(static fn (?string $value): ?string => album_cover_url($value));
     }
 
     protected function hasCover(): Attribute
     {
-        return Attribute::get(function () {
-            $cover = array_get($this->attributes, 'cover');
-
-            return $cover && file_exists(album_cover_path($cover));
-        });
+        return Attribute::get(fn (): bool => $this->cover_path && file_exists($this->cover_path));
     }
 
     protected function coverPath(): Attribute
     {
         return Attribute::get(function () {
-            $cover = array_get($this->attributes, 'cover');
+            $cover = Arr::get($this->attributes, 'cover');
 
             return $cover ? album_cover_path($cover) : null;
         });

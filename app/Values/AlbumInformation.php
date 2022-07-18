@@ -8,17 +8,22 @@ final class AlbumInformation implements Arrayable
 {
     use FormatsLastFmText;
 
-    public function __construct(
-        public ?string $url = null,
-        public ?string $cover = null,
-        public array $wiki = ['summary' => '', 'full' => ''],
-        public array $tracks = []
-    ) {
+    private function __construct(public ?string $url, public ?string $cover, public array $wiki, public array $tracks)
+    {
+    }
+
+    public static function make(
+        ?string $url = null,
+        ?string $cover = null,
+        array $wiki = ['summary' => '', 'full' => ''],
+        array $tracks = []
+    ): self {
+        return new self($url, $cover, $wiki, $tracks);
     }
 
     public static function fromLastFmData(object $data): self
     {
-        return new self(
+        return self::make(
             url: $data->url,
             wiki: [
                 'summary' => isset($data->wiki) ? self::formatLastFmText($data->wiki->summary) : '',

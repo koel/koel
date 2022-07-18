@@ -29,12 +29,12 @@ class LastfmServiceTest extends TestCase
 
         self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot',
-            'image' => 'http://foo.bar/extralarge.jpg',
+            'image' => null,
             'bio' => [
                 'summary' => 'Quisque ut nisi.',
                 'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.',
             ],
-        ], $info);
+        ], $info->toArray());
 
         self::assertNotNull(cache()->get('0aff3bc1259154f0e9db860026cda7a6'));
     }
@@ -75,7 +75,7 @@ class LastfmServiceTest extends TestCase
 
         self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot/Epica',
-            'image' => 'http://foo.bar/extralarge.jpg',
+            'cover' => null,
             'tracks' => [
                 [
                     'title' => 'Track 1',
@@ -92,7 +92,7 @@ class LastfmServiceTest extends TestCase
                 'summary' => 'Quisque ut nisi.',
                 'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.',
             ],
-        ], $info);
+        ], $info->toArray());
 
         self::assertNotNull(cache()->get('fca889d13b3222589d7d020669cc5a38'));
     }

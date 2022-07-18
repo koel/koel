@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\SmartPlaylistRulesCast;
 use App\Values\SmartPlaylistRuleGroup;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +17,8 @@ use Laravel\Scout\Searchable;
  * @property int $user_id
  * @property Collection|array $songs
  * @property int $id
- * @property Collection|array<SmartPlaylistRuleGroup> $rule_groups
+ * @property Collection|array<array-key, SmartPlaylistRuleGroup> $rule_groups
+ * @property Collection|array<array-key, SmartPlaylistRuleGroup> $rules
  * @property bool $is_smart
  * @property string $name
  * @property user $user
@@ -48,15 +50,16 @@ class Playlist extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getIsSmartAttribute(): bool
+    protected function isSmart(): Attribute
     {
-        return $this->rule_groups->isNotEmpty();
+        return Attribute::get(fn (): bool => $this->rule_groups->isNotEmpty());
     }
 
-    /** @return Collection|array<SmartPlaylistRuleGroup> */
-    public function getRuleGroupsAttribute(): Collection
+    /** @return Collection|array<array-key, SmartPlaylistRuleGroup> */
+    protected function ruleGroups(): Attribute
     {
-        return $this->rules;
+        // aliasing the attribute to avoid confusion
+        return Attribute::get(fn () => $this->rules);
     }
 
     /** @return array<mixed> */

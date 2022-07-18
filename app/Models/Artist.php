@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Facades\Util;
 use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 
@@ -45,11 +47,6 @@ class Artist extends Model
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
-    public static function getVariousArtist(): self
-    {
-        return static::find(self::VARIOUS_ID);
-    }
-
     /**
      * Get an Artist object from their name.
      * If such is not found, a new artist will be created.
@@ -76,51 +73,45 @@ class Artist extends Model
         return $this->hasMany(Song::class);
     }
 
-    public function getIsUnknownAttribute(): bool
+    protected function isUnknown(): Attribute
     {
-        return $this->id === self::UNKNOWN_ID;
+        return Attribute::get(fn (): bool => $this->id === self::UNKNOWN_ID);
     }
 
-    public function getIsVariousAttribute(): bool
+    protected function isVarious(): Attribute
     {
-        return $this->id === self::VARIOUS_ID;
+        return Attribute::get(fn (): bool => $this->id === self::VARIOUS_ID);
     }
 
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
      */
-    public function getNameAttribute(string $value): string
+    protected function name(): Attribute
     {
-        return html_entity_decode($value ?: self::UNKNOWN_NAME);
+        return Attribute::get(static fn (string $value): string => html_entity_decode($value) ?: self::UNKNOWN_NAME);
     }
 
     /**
      * Turn the image name into its absolute URL.
      */
-    public function getImageAttribute(?string $value): ?string
+    protected function image(): Attribute
     {
-        return $value ? artist_image_url($value) : null;
+        return Attribute::get(static fn (?string $value): ?string => artist_image_url($value));
     }
 
-    public function getImagePathAttribute(): ?string
+    protected function imagePath(): Attribute
     {
-        if (!$this->has_image) {
-            return null;
-        }
-
-        return artist_image_path(array_get($this->attributes, 'image'));
+        return Attribute::get(fn (): ?string => artist_image_path(Arr::get($this->attributes, 'image')));
     }
 
-    public function getHasImageAttribute(): bool
+    protected function hasImage(): Attribute
     {
-        $image = array_get($this->attributes, 'image');
+        return Attribute::get(function (): bool {
+            $image = Arr::get($this->attributes, 'image');
 
-        if (!$image) {
-            return false;
-        }
-
-        return file_exists(artist_image_path($image));
+            return $image && file_exists(artist_image_path($image));
+        });
     }
 
     public function scopeIsStandard(Builder $query): Builder

@@ -10,13 +10,18 @@ use Throwable;
 
 class MediaMetadataService
 {
-    public function __construct(private ImageWriter $imageWriter, private LoggerInterface $logger)
-    {
+    public function __construct(
+        private SpotifyService $spotifyService,
+        private ImageWriter $imageWriter,
+        private LoggerInterface $logger
+    ) {
     }
 
-    public function downloadAlbumCover(Album $album, string $imageUrl): void
+    public function tryDownloadAlbumCover(Album $album): void
     {
-        $this->writeAlbumCover($album, $imageUrl);
+        optional($this->spotifyService->tryGetAlbumCover($album), function (string $coverUrl) use ($album): void {
+            $this->writeAlbumCover($album, $coverUrl);
+        });
     }
 
     /**
@@ -29,7 +34,7 @@ class MediaMetadataService
         Album $album,
         string $source,
         string $extension = 'png',
-        string $destination = '',
+        ?string $destination = '',
         bool $cleanUp = true
     ): void {
         try {
@@ -48,9 +53,11 @@ class MediaMetadataService
         }
     }
 
-    public function downloadArtistImage(Artist $artist, string $imageUrl): void
+    public function tryDownloadArtistImage(Artist $artist): void
     {
-        $this->writeArtistImage($artist, $imageUrl);
+        optional($this->spotifyService->tryGetArtistImage($artist), function (string $imageUrl) use ($artist): void {
+            $this->writeArtistImage($artist, $imageUrl);
+        });
     }
 
     /**

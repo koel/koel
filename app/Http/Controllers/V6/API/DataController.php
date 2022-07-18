@@ -11,7 +11,6 @@ use App\Repositories\SongRepository;
 use App\Services\ApplicationInformationService;
 use App\Services\ITunesService;
 use App\Services\LastfmService;
-use App\Services\SpotifyService;
 use App\Services\YouTubeService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -37,7 +36,6 @@ class DataController extends Controller
             'playlists' => $this->playlistRepository->getAllByCurrentUser(),
             'current_user' => UserResource::make($this->user),
             'use_last_fm' => $this->lastfmService->used(),
-            'use_spotify' => SpotifyService::enabled(),
             'use_you_tube' => $this->youTubeService->enabled(), // @todo clean this mess up
             'use_i_tunes' => $this->iTunesService->used(),
             'allow_download' => config('koel.download.allow'),

@@ -8,16 +8,21 @@ final class ArtistInformation implements Arrayable
 {
     use FormatsLastFmText;
 
-    public function __construct(
-        public ?string $url = null,
-        public ?string $image = null,
-        public array $bio = ['summary' => '', 'full' => '']
-    ) {
+    private function __construct(public ?string $url, public ?string $image, public array $bio)
+    {
+    }
+
+    public static function make(
+        ?string $url = null,
+        ?string $image = null,
+        array $bio = ['summary' => '', 'full' => '']
+    ): self {
+        return new self($url, $image, $bio);
     }
 
     public static function fromLastFmData(object $data): self
     {
-        return new self(
+        return self::make(
             url: $data->url,
             bio: [
                 'summary' => isset($data->bio) ? self::formatLastFmText($data->bio->summary) : '',

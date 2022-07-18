@@ -12,7 +12,6 @@ class MediaInformationService
 {
     public function __construct(
         private LastfmService $lastfmService,
-        private SpotifyService $spotifyService,
         private MediaMetadataService $mediaMetadataService
     ) {
     }
@@ -23,16 +22,12 @@ class MediaInformationService
             return null;
         }
 
-        $info = $this->lastfmService->getAlbumInformation($album) ?: new AlbumInformation();
+        $info = $this->lastfmService->getAlbumInformation($album) ?: AlbumInformation::make();
 
         if (!$album->has_cover) {
             try {
-                $cover = $this->spotifyService->tryGetAlbumCover($album);
-
-                if ($cover) {
-                    $this->mediaMetadataService->downloadAlbumCover($album, $cover);
-                    $info->cover = $album->refresh()->cover;
-                }
+                $this->mediaMetadataService->tryDownloadAlbumCover($album);
+                $info->cover = $album->cover;
             } catch (Throwable) {
             }
         }
@@ -46,16 +41,12 @@ class MediaInformationService
             return null;
         }
 
-        $info = $this->lastfmService->getArtistInformation($artist) ?: new ArtistInformation();
+        $info = $this->lastfmService->getArtistInformation($artist) ?: ArtistInformation::make();
 
         if (!$artist->has_image) {
             try {
-                $image = $this->spotifyService->tryGetArtistImage($artist);
-
-                if ($image) {
-                    $this->mediaMetadataService->downloadArtistImage($artist, $image);
-                    $info->image = $artist->refresh()->image;
-                }
+                $this->mediaMetadataService->tryDownloadArtistImage($artist);
+                $info->image = $artist->image;
             } catch (Throwable) {
             }
         }

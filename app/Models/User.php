@@ -60,20 +60,20 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's Last.fm session key.
+     *
+     * @return string|null The key if found, or null if user isn't connected to Last.fm
+     */
+    protected function lastfmSessionKey(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->preferences->lastFmSessionKey);
+    }
+
+    /**
      * Determine if the user is connected to Last.fm.
      */
     public function connectedToLastfm(): bool
     {
         return (bool) $this->lastfm_session_key;
-    }
-
-    /**
-     * Get the user's Last.fm session key.
-     *
-     * @return string|null The key if found, or null if user isn't connected to Last.fm
-     */
-    public function getLastfmSessionKeyAttribute(): ?string
-    {
-        return $this->preferences->lastFmSessionKey;
     }
 }

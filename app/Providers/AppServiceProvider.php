@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Services\SpotifyService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Factory as Validator;
+use SpotifyWebAPI\Session as SpotifySession;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,12 @@ class AppServiceProvider extends ServiceProvider
 
         // disable wrapping JSON resource in a `data` key
         JsonResource::withoutWrapping();
+
+        $this->app->bind(SpotifySession::class, static function () {
+            return SpotifyService::enabled()
+                ? new SpotifySession(config('koel.spotify.client_id'), config('koel.spotify.client_secret'))
+                : null;
+        });
     }
 
     /**
