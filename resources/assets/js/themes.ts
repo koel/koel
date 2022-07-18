@@ -1,11 +1,19 @@
 import bgRosePetal from '../img/themes/bg-rose-petals.svg'
 import bgPurpleWaves from '../img/themes/bg-purple-waves.svg'
 import bgPopCulture from '../img/themes/bg-pop-culture.jpg'
+import thumbPopCulture from '../img/themes/thumbnails/pop-culture.jpg'
 import bgJungle from '../img/themes/bg-jungle.jpg'
+import thumbJungle from '../img/themes/thumbnails/jungle.jpg'
 import bgMountains from '../img/themes/bg-mountains.jpg'
+import thumbMountains from '../img/themes/thumbnails/mountains.jpg'
 import bgPines from '../img/themes/bg-pines.jpg'
+import thumbPines from '../img/themes/thumbnails/pines.jpg'
 import bgNemo from '../img/themes/bg-nemo.jpg'
+import thumbNemo from '../img/themes/thumbnails/nemo.jpg'
 import bgCat from '../img/themes/bg-cat.jpg'
+import thumbCat from '../img/themes/thumbnails/cat.jpg'
+import bgDawn from '../img/themes/bg-dawn.jpg'
+import thumbDawn from '../img/themes/thumbnails/dawn.jpg'
 
 export default [
   {
@@ -69,6 +77,16 @@ export default [
     }
   },
   {
+    id: 'dawn',
+    name: 'Before the Dawn',
+    thumbnailUrl: thumbDawn,
+    properties: {
+      '--color-highlight': '#ed5135',
+      '--bg-image': `url(${bgDawn})`,
+      '--bg-position': 'center bottom'
+    }
+  },
+  {
     id: 'rose-petals',
     name: '…Has Its Thorns',
     thumbnailColor: '#7d083b',
@@ -91,7 +109,7 @@ export default [
   {
     id: 'pop-culture',
     thumbnailColor: '#ad0937',
-    thumbnailUrl: bgPopCulture,
+    thumbnailUrl: thumbPopCulture,
     properties: {
       '--color-bg-primary': '#ad0937',
       '--color-highlight': 'rgba(234, 208, 110, .9)',
@@ -102,7 +120,7 @@ export default [
     id: 'jungle',
     name: 'Welcome to the Jungle',
     thumbnailColor: '#0f0f03',
-    thumbnailUrl: bgJungle,
+    thumbnailUrl: thumbJungle,
     properties: {
       '--color-bg-primary': '#0f0f03',
       '--color-highlight': '#4f9345',
@@ -113,7 +131,7 @@ export default [
     id: 'mountains',
     name: 'Rocky Mountain High',
     thumbnailColor: '#0e2656',
-    thumbnailUrl: bgMountains,
+    thumbnailUrl: thumbMountains,
     properties: {
       '--color-bg-primary': '#0e2656',
       '--color-highlight': '#6488c3',
@@ -124,7 +142,7 @@ export default [
     id: 'pines',
     name: 'In the Pines',
     thumbnailColor: '#06090c',
-    thumbnailUrl: bgPines,
+    thumbnailUrl: thumbPines,
     properties: {
       '--color-bg-primary': '#06090c',
       '--color-highlight': '#5984b9',
@@ -134,7 +152,7 @@ export default [
   {
     id: 'nemo',
     thumbnailColor: '#031724',
-    thumbnailUrl: bgNemo,
+    thumbnailUrl: thumbNemo,
     properties: {
       '--color-bg-primary': '#031724',
       '--color-highlight': '#2896b8',
@@ -145,7 +163,7 @@ export default [
     id: 'cat',
     name: 'What\'s New Pussycat?',
     thumbnailColor: '#000',
-    thumbnailUrl: bgCat,
+    thumbnailUrl: thumbCat,
     properties: {
       '--color-bg-primary': '#000',
       '--color-highlight': '#d26c37',

@@ -66,7 +66,7 @@ const destroy = async () => {
   gap: 1rem;
 
   img {
-    border-radius: 5px;
+    border-radius: 50%;
     flex: 0 0 80px;
     background: rgba(0, 0, 0, .2)
   }
