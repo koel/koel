@@ -64,7 +64,6 @@ header.screen-header {
     display: block;
     width: 0;
     transition: width var(--transition-duration);
-    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.3);
     border-radius: 5px;
 
     > * {

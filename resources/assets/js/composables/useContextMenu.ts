@@ -8,9 +8,9 @@ export const useContextMenu = () => {
 
   const context = reactive<ContextMenuContext>({})
 
-  const open = (top: number, left: number, ctx: ContextMenuContext = {}) => {
-    base.value?.open(top, left, ctx)
+  const open = async (top: number, left: number, ctx: ContextMenuContext = {}) => {
     Object.assign(context, ctx)
+    await base.value?.open(top, left, ctx)
   }
 
   const close = () => base.value?.close()

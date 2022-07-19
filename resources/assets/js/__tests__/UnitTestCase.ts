@@ -34,8 +34,8 @@ export default abstract class UnitTestCase {
     })
   }
 
-  protected actingAs (user: User) {
-    userStore.state.current = user
+  protected actingAs (user?: User) {
+    userStore.state.current = user || factory<User>('user')
     return this
   }
 

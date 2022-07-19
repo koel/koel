@@ -1,5 +1,5 @@
 <template>
-  <ContextMenuBase extra-class="album-menu" data-testid="album-context-menu" ref="base">
+  <ContextMenuBase ref="base" data-testid="album-context-menu" extra-class="album-menu">
     <template v-if="album">
       <li data-testid="play" @click="play">Play All</li>
       <li data-testid="shuffle" @click="shuffle">Shuffle All</li>

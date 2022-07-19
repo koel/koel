@@ -2,26 +2,30 @@
 
 exports[`renders 1`] = `
 <section id="songsWrapper">
-  <header class="screen-header">
-    <div class="thumbnail-wrapper"></div>
-    <div class="heading-wrapper">
-      <h1> All Songs
-        <!--v-if-->
-      </h1><span class="meta text-secondary"><span>420 songs</span><span>34:17:36</span></span>
+  <header class="screen-header expanded">
+    <div class="thumbnail-wrapper">
+      <div class="thumbnail-stack mono" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-v-2978c570=""><span data-v-2978c570=""></span></div>
     </div>
-    <div class="song-list-controls" data-testid="song-list-controls" data-v-cee28c08=""><span class="btn-group" uppercased="" data-v-cee28c08=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-27deb898="" data-v-cee28c08=""><i class="fa fa-random" data-v-cee28c08=""></i> All </button><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span>
-      <div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-0351ff38="" data-v-cee28c08="" style="display: none;">
-        <section class="existing-playlists" data-v-0351ff38="">
-          <p data-v-0351ff38="">Add 0 songs to</p>
-          <ul data-v-0351ff38="">
-            <li data-testid="queue" tabindex="0" data-v-0351ff38="">Queue</li>
-            <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-0351ff38=""> Favorites </li>
-          </ul>
-        </section>
-        <section class="new-playlist" data-testid="new-playlist" data-v-0351ff38="">
-          <p data-v-0351ff38="">or create a new playlist</p>
-          <form class="form-save form-simple form-new-playlist" data-v-0351ff38=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-0351ff38=""><button type="submit" title="Save" data-v-27deb898="" data-v-0351ff38="">⏎</button></form>
-        </section>
+    <div class="right">
+      <div class="heading-wrapper">
+        <h1 class="name"> All Songs
+          <!--v-if-->
+        </h1><span class="meta text-secondary"><span>420 songs</span><span>34:17:36</span></span>
+      </div>
+      <div class="song-list-controls" data-testid="song-list-controls" data-v-cee28c08=""><span class="btn-group" uppercased="" data-v-cee28c08=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-27deb898="" data-v-cee28c08=""><svg class="svg-inline--fa fa-shuffle" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="shuffle" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-v-cee28c08=""><path class="" fill="currentColor" d="M424.1 287c-15.13-15.12-40.1-4.426-40.1 16.97V352H336L153.6 108.8C147.6 100.8 138.1 96 128 96H32C14.31 96 0 110.3 0 128s14.31 32 32 32h80l182.4 243.2C300.4 411.3 309.9 416 320 416h63.97v47.94c0 21.39 25.86 32.12 40.99 17l79.1-79.98c9.387-9.387 9.387-24.59 0-33.97L424.1 287zM336 160h47.97v48.03c0 21.39 25.87 32.09 40.1 16.97l79.1-79.98c9.387-9.391 9.385-24.59-.0013-33.97l-79.1-79.98c-15.13-15.12-40.99-4.391-40.99 17V96H320c-10.06 0-19.56 4.75-25.59 12.81L254 162.7L293.1 216L336 160zM112 352H32c-17.69 0-32 14.31-32 32s14.31 32 32 32h96c10.06 0 19.56-4.75 25.59-12.81l40.4-53.87L154 296L112 352z"></path></svg> All </button><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span>
+        <div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-0351ff38="" data-v-cee28c08="" style="display: none;">
+          <section class="existing-playlists" data-v-0351ff38="">
+            <p data-v-0351ff38="">Add 0 songs to</p>
+            <ul data-v-0351ff38="">
+              <li data-testid="queue" tabindex="0" data-v-0351ff38="">Queue</li>
+              <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-0351ff38=""> Favorites </li>
+            </ul>
+          </section>
+          <section class="new-playlist" data-testid="new-playlist" data-v-0351ff38="">
+            <p data-v-0351ff38="">or create a new playlist</p>
+            <form class="form-save form-simple form-new-playlist" data-v-0351ff38=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-0351ff38=""><button type="submit" title="Save" data-v-27deb898="" data-v-0351ff38="">⏎</button></form>
+          </section>
+        </div>
       </div>
     </div>
   </header><br data-testid="song-list">

@@ -43,7 +43,7 @@ new class extends UnitTestCase {
     })
 
     it('does not have a button to add lyrics if current user is not an admin', async () => {
-      const { queryByTestId } = this.actingAs(factory<User>('user')).renderComponent(factory<Song>('song', {
+      const { queryByTestId } = this.actingAs().renderComponent(factory<Song>('song', {
         lyrics: null
       }))
 

@@ -1,5 +1,5 @@
 <template>
-  <ContextMenuBase extra-class="song-menu" ref="base" data-testid="song-context-menu">
+  <ContextMenuBase ref="base" data-testid="song-context-menu" extra-class="song-menu">
     <template v-if="onlyOneSongSelected">
       <li class="playback" @click.stop.prevent="doPlayback">
         <span v-if="firstSongPlaying">Pause</span>
@@ -33,7 +33,7 @@
     <li class="download" v-if="allowDownload" @click="download">Download</li>
     <li
       class="copy-url"
-      v-if="copyable && onlyOneSongSelected"
+      v-if="onlyOneSongSelected"
       @click="copyUrl"
     >
       Copy Shareable URL
@@ -43,7 +43,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { alerts, arrayify, copyText, eventBus, isClipboardSupported as copyable } from '@/utils'
+import { alerts, arrayify, copyText, eventBus } from '@/utils'
 import { commonStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import router from '@/router'
@@ -103,6 +103,6 @@ const copyUrl = () => trigger(() => {
 
 eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _songs: Song | Song[]) => {
   songs.value = arrayify(_songs)
-  open(e.pageY, e.pageX, { songs: songs.value })
+  await open(e.pageY, e.pageX, { songs: songs.value })
 })
 </script>

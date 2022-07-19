@@ -82,7 +82,7 @@ const open = async (_top = 0, _left = 0) => {
   } catch (e) {
     console.error(e)
     // in a non-browser environment (e.g., unit testing), these two functions are broken due to calls to
-    // getBoundingClientRect() and querySelectorAll
+    // getBoundingClientRect() and querySelectorAll()
   }
 
   eventBus.emit('CONTEXT_MENU_OPENED', el)

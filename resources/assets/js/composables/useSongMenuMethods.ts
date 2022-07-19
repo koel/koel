@@ -25,8 +25,13 @@ export const useSongMenuMethods = (songs: Ref<Song[]>, close: Closure) => {
 
   const addSongsToExistingPlaylist = async (playlist: Playlist) => {
     close()
-    await playlistStore.addSongs(playlist, songs.value)
-    alerts.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
+
+    try {
+      await playlistStore.addSongs(playlist, songs.value)
+      alerts.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
+    } catch (error) {
+      alerts.error('Something went wrong. Please try again.')
+    }
   }
 
   return {
