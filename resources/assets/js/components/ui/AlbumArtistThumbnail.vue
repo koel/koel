@@ -26,7 +26,7 @@ import { orderBy } from 'lodash'
 import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
-import { alerts, defaultCover, fileReader } from '@/utils'
+import { alerts, defaultCover, fileReader, logger } from '@/utils'
 import { useAuthorization } from '@/composables'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png', 'image/webp']
@@ -117,7 +117,7 @@ const onDrop = async (event: DragEvent) => {
       await artistStore.uploadImage(entity.value as Artist, fileData)
     }
   } catch (e) {
-    console.error(e)
+    logger.error(e)
   }
 }
 </script>

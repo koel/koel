@@ -1,4 +1,5 @@
 import { EventName } from '@/config'
+import { logger } from '@/utils'
 
 export const eventBus = {
   all: new Map(),
@@ -23,7 +24,7 @@ export const eventBus = {
     if (this.all.has(name)) {
       this.all.get(name).forEach((cb: Closure) => cb(...args))
     } else {
-      console.warn(`Event ${name} is not listened by any component`)
+      logger.warn(`Event ${name} is not listened by any component`)
     }
   }
 }

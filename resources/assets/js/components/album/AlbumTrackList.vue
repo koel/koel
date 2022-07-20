@@ -11,9 +11,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, provide, ref, toRefs } from 'vue'
+import { onMounted, ref, toRefs } from 'vue'
 import { songStore } from '@/stores'
 import { SongsKey } from '@/symbols'
+import { provideReadonly } from '@/utils'
 import TrackListItem from '@/components/album/AlbumTrackListItem.vue'
 
 const props = defineProps<{ album: Album, tracks: AlbumTrack[] }>()
@@ -21,7 +22,7 @@ const { album, tracks } = toRefs(props)
 
 const songs = ref<Song[]>([])
 
-provide(SongsKey, songs)
+provideReadonly(SongsKey, songs)
 
 onMounted(async () => songs.value = await songStore.fetchForAlbum(album.value))
 </script>

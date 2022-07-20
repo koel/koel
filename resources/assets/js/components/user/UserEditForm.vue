@@ -44,16 +44,16 @@
 
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
-import { inject, reactive, ref, watch } from 'vue'
-import { alerts, parseValidationError } from '@/utils'
+import { reactive, ref, watch } from 'vue'
+import { alerts, parseValidationError, requireInjection } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
+import { UserKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
-import { UserKey } from '@/symbols'
 
-const user = inject(UserKey, ref<User>())
+const [user] = requireInjection(UserKey)
 
 let originalData: UpdateUserData
 let updateData: UpdateUserData

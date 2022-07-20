@@ -94,8 +94,8 @@ import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import isMobile from 'ismobilejs'
 import { findIndex } from 'lodash'
-import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
-import { $, eventBus, startDragging } from '@/utils'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { $, eventBus, requireInjection, startDragging } from '@/utils'
 import {
   SelectedSongsKey,
   SongListConfigKey,
@@ -110,27 +110,27 @@ import SongListItem from '@/components/song/SongListItem.vue'
 
 const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scroll-breakpoint', 'scrolled-to-end'])
 
-const items = inject(SongsKey, ref([]))
-const type = inject(SongListTypeKey, 'all-songs')
-const selectedSongs = inject(SelectedSongsKey, ref([]))
-const sortField = inject(SongListSortFieldKey, ref('title'))
-const sortOrder = inject(SongListSortOrderKey, ref('asc'))
+const [items] = requireInjection(SongsKey)
+const [type] = requireInjection(SongListTypeKey)
+const [selectedSongs, setSelectedSongs] = requireInjection(SelectedSongsKey)
+const [sortField, setSortField] = requireInjection(SongListSortFieldKey)
+const [sortOrder, setSortOrder] = requireInjection(SongListSortOrderKey)
 
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
 const songRows = ref<SongRow[]>([])
 
-const allowReordering = type === 'queue'
+const allowReordering = type.value === 'queue'
 
-watch(songRows, () => {
-  selectedSongs.value = songRows.value.filter(row => row.selected).map(row => row.song)
-}, { deep: true })
+watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected).map(row => row.song)), { deep: true })
 
 const config = computed((): SongListConfig => {
+  const [injectedConfig] = requireInjection(SongListConfigKey, {})
+
   return Object.assign({
     sortable: true,
     columns: ['track', 'title', 'artist', 'album', 'length']
-  }, inject(SongListConfigKey, {}))
+  }, injectedConfig)
 })
 
 let lastScrollTop = 0
@@ -169,8 +169,8 @@ const sort = (field: SongListSortField) => {
     return
   }
 
-  sortField.value = field
-  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  setSortField(field)
+  setSortOrder(sortOrder.value === 'asc' ? 'desc' : 'asc')
 
   emit('sort', field, sortOrder.value)
 }

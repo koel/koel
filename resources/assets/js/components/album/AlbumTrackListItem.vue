@@ -13,11 +13,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, inject, ref, toRefs } from 'vue'
+import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { queueStore, songStore } from '@/stores'
 import { authService, playbackService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
-import { secondsToHis } from '@/utils'
+import { requireInjection, secondsToHis } from '@/utils'
 import { SongsKey } from '@/symbols'
 
 const AppleMusicButton = defineAsyncComponent(() => import('@/components/ui/AppleMusicButton.vue'))
@@ -27,7 +27,7 @@ const { album, track } = toRefs(props)
 
 const { useAppleMusic } = useThirdPartyServices()
 
-const songsToMatchAgainst = inject(SongsKey, ref([]))
+const [songsToMatchAgainst] = requireInjection(SongsKey)
 
 const matchedSong = computed(() => songStore.match(track.value.title, songsToMatchAgainst.value))
 const tooltip = computed(() => matchedSong.value ? 'Click to play' : '')

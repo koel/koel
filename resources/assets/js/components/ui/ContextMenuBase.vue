@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import { nextTick, ref, toRefs } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus, logger } from '@/utils'
 
 const props = defineProps<{ extraClass?: string }>()
 const { extraClass } = toRefs(props)
@@ -80,7 +80,7 @@ const open = async (_top = 0, _left = 0) => {
     await preventOffScreen(el.value!)
     await initSubmenus()
   } catch (e) {
-    console.error(e)
+    logger.error(e)
     // in a non-browser environment (e.g., unit testing), these two functions are broken due to calls to
     // getBoundingClientRect() and querySelectorAll()
   }

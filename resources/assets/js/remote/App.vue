@@ -77,6 +77,7 @@ import noUISlider from 'nouislider'
 import { authService, socketService } from '@/services'
 import { preferenceStore, userStore } from '@/stores'
 import { computed, defineAsyncComponent, nextTick, onMounted, ref, toRef, watch } from 'vue'
+import { logger } from '@/utils'
 
 const MAX_RETRIES = 10
 const DEFAULT_VOLUME = 7
@@ -147,7 +148,7 @@ const init = async () => {
 
     scan()
   } catch (e) {
-    console.error(e)
+    logger.error(e)
     authenticated.value = false
   }
 }

@@ -1,4 +1,4 @@
-import { arrayify, pluralize } from '@/utils'
+import { arrayify, logger, pluralize } from '@/utils'
 import { albumStore, artistStore, songStore } from '@/stores'
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
@@ -88,7 +88,7 @@ const resolveSongsFromDragEvent = async (event: DragEvent) => {
     case 'artist':
       return await songStore.fetchForArtist(await artistStore.resolve(data.value as number))
     default:
-      console.warn('Unhandled drag data type', data.type)
+      logger.warn('Unhandled drag data type', data.type)
       return []
   }
 }

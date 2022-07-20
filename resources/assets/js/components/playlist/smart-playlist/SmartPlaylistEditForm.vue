@@ -38,14 +38,15 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { computed, inject, reactive, ref, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'
-import { alerts, eventBus } from '@/utils'
+import { alerts, eventBus, requireInjection } from '@/utils'
 import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
 import { PlaylistKey } from '@/symbols'
 
-const playlist = inject(PlaylistKey, ref<Playlist>())
+const [playlist] = requireInjection(PlaylistKey)
+
 let mutatedPlaylist: Playlist
 
 watch(playlist, () => (mutatedPlaylist = reactive(cloneDeep(playlist.value))), { immediate: true })

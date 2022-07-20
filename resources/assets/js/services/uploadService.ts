@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import { UploadFile, UploadStatus } from '@/config'
 import { httpService } from '@/services'
 import { albumStore, overviewStore, songStore } from '@/stores'
-import { eventBus } from '@/utils'
+import { eventBus, logger } from '@/utils'
 
 interface UploadResult {
   song: Song
@@ -76,7 +76,7 @@ export const uploadService = {
 
       window.setTimeout(() => this.remove(file), 1000)
     } catch (error: any) {
-      console.error(error)
+      logger.error(error)
       file.message = `Upload failed: ${error.response?.data?.message || 'Unknown error'}`
       file.status = 'Errored'
       this.proceed() // upload the next file

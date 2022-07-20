@@ -12,7 +12,7 @@ import {
   userStore
 } from '@/stores'
 
-import { eventBus, isAudioContextSupported } from '@/utils'
+import { eventBus, isAudioContextSupported, logger } from '@/utils'
 import { audioService, socketService } from '@/services'
 import router from '@/router'
 
@@ -199,7 +199,7 @@ export const playbackService = {
     } catch (e) {
       // Notification fails.
       // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
-      console.error(e)
+      logger.error(e)
     }
 
     navigator.mediaSession.metadata = new MediaMetadata({
@@ -236,7 +236,7 @@ export const playbackService = {
       await this.getPlayer().media.play()
     } catch (error) {
       // convert this into a warning, as an error will cause Cypress to fail the tests entirely
-      console.warn(error)
+      logger.warn(error)
     }
   },
 
@@ -359,7 +359,7 @@ export const playbackService = {
     try {
       await this.getPlayer().media.play()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
     }
 
     queueStore.current!.playback_state = 'Playing'

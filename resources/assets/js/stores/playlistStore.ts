@@ -1,6 +1,7 @@
 import { difference, orderBy } from 'lodash'
 import { reactive } from 'vue'
 
+import { logger } from '@/utils'
 import { Cache, httpService } from '@/services'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
@@ -28,7 +29,7 @@ export const playlistStore = {
         const model = models.find(model => model.name === rule.model as unknown as string)
 
         if (!model) {
-          console.error(`Invalid model ${rule.model} found in smart playlist ${playlist.name} (ID ${playlist.id})`)
+          logger.error(`Invalid model ${rule.model} found in smart playlist ${playlist.name} (ID ${playlist.id})`)
           return
         }
 

@@ -1,6 +1,6 @@
 import { orderBy, sampleSize, take } from 'lodash'
 import isMobile from 'ismobilejs'
-import { computed, provide, reactive, Ref, ref } from 'vue'
+import { computed, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
 import router from '@/router'
@@ -18,6 +18,7 @@ import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
+import { provideReadonly } from '@/utils'
 
 export const useSongList = (
   songs: Ref<Song[]>,
@@ -95,12 +96,12 @@ export const useSongList = (
     songs.value = orderBy(songs.value, sortFields, order)
   }
 
-  provide(SongListTypeKey, type)
-  provide(SongsKey, songs)
-  provide(SelectedSongsKey, selectedSongs)
-  provide(SongListConfigKey, reactive(config))
-  provide(SongListSortFieldKey, sortField)
-  provide(SongListSortOrderKey, sortOrder)
+  provideReadonly(SongListTypeKey, ref(type))
+  provideReadonly(SongsKey, songs, false)
+  provideReadonly(SelectedSongsKey, selectedSongs, false)
+  provideReadonly(SongListConfigKey, reactive(config))
+  provideReadonly(SongListSortFieldKey, sortField)
+  provideReadonly(SongListSortOrderKey, sortOrder)
 
   return {
     SongList,

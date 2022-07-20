@@ -132,22 +132,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { alerts, defaultCover, pluralize } from '@/utils'
+import { alerts, defaultCover, pluralize, requireInjection } from '@/utils'
 import { songStore } from '@/stores'
+import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
-import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
 
 type EditFormData = Pick<Song, 'title' | 'album_name' | 'artist_name' | 'album_artist_name' | 'lyrics' | 'track' | 'disc'>
 
-const initialTab = inject(EditSongFormInitialTabKey, ref<EditSongFormTabName>('details'))
-const songs = inject(SongsKey, ref<Song[]>([]))
-const mutatedSongs = computed(() => songs.value)
+const [initialTab] = requireInjection(EditSongFormInitialTabKey)
+const [songs] = requireInjection(SongsKey)
+
 const currentView = ref<EditSongFormTabName>('details')
 const loading = ref(false)
+
+const mutatedSongs = computed(() => songs.value)
 
 /**
  * In order not to mess up the original songs, we manually assign and manipulate their attributes.

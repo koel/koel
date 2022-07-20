@@ -16,6 +16,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { youTubeService } from '@/services'
+import { logger } from '@/utils'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const YouTubeVideo = defineAsyncComponent(() => import('@/components/ui/YouTubeVideoItem.vue'))
@@ -36,7 +37,7 @@ const loadMore = async () => {
     nextPageToken = result.nextPageToken
     videos.value.push(...result.items)
   } catch (err) {
-    console.error(err)
+    logger.error(err)
   } finally {
     loading.value = false
   }

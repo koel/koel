@@ -91,8 +91,9 @@
 
 <script lang="ts" setup>
 import { faPlay, faRandom, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { computed, inject, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { SelectedSongsKey, SongsKey } from '@/symbols'
+import { requireInjection } from '@/utils'
 
 import AddToMenu from '@/components/song/AddToMenu.vue'
 import Btn from '@/components/ui/Btn.vue'
@@ -101,8 +102,8 @@ import BtnGroup from '@/components/ui/BtnGroup.vue'
 const props = withDefaults(defineProps<{ config?: Partial<SongListControlsConfig> }>(), { config: () => ({}) })
 const { config } = toRefs(props)
 
-const songs = inject(SongsKey, ref([]))
-const selectedSongs = inject(SelectedSongsKey, ref([]))
+const [songs] = requireInjection(SongsKey)
+const [selectedSongs] = requireInjection(SelectedSongsKey)
 
 const el = ref<HTMLElement>()
 const showingAddToMenu = ref(false)

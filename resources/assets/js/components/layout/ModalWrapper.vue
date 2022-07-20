@@ -10,8 +10,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, provide, ref } from 'vue'
-import { arrayify, eventBus } from '@/utils'
+import { defineAsyncComponent, ref } from 'vue'
+import { arrayify, eventBus, provideReadonly } from '@/utils'
 import { EditSongFormInitialTabKey, PlaylistKey, SongsKey, UserKey } from '@/symbols'
 
 declare type ModalName =
@@ -38,10 +38,10 @@ const userToEdit = ref<User>()
 const songsToEdit = ref<Song[]>()
 const editSongFormInitialTab = ref<EditSongFormTabName>('details')
 
-provide(PlaylistKey, playlistToEdit)
-provide(UserKey, userToEdit)
-provide(SongsKey, songsToEdit)
-provide(EditSongFormInitialTabKey, editSongFormInitialTab)
+provideReadonly(PlaylistKey, playlistToEdit, false)
+provideReadonly(UserKey, userToEdit)
+provideReadonly(SongsKey, songsToEdit, false)
+provideReadonly(EditSongFormInitialTabKey, editSongFormInitialTab)
 
 eventBus.on({
   'MODAL_SHOW_ABOUT_KOEL': () => (showingModalName.value = 'about-koel'),
