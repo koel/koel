@@ -34,7 +34,7 @@ export const requireInjection = <T> (key: InjectionKey<T>, defaultValue?: T) => 
   const value = inject(key, defaultValue)
 
   if (typeof value === 'undefined') {
-    throw new Error(`Missing injection: ${key}`)
+    throw new Error(`Missing injection: ${key.toString()}`)
   }
 
   return value

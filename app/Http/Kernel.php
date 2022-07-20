@@ -10,7 +10,6 @@ use App\Http\Middleware\TrimStrings;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
-use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 
@@ -25,7 +24,6 @@ class Kernel extends HttpKernel
         CheckForMaintenanceMode::class,
         ValidatePostSize::class,
         TrimStrings::class,
-        ConvertEmptyStringsToNull::class,
         ForceHttps::class,
     ];
 

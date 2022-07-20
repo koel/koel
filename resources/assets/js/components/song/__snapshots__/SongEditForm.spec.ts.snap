@@ -1,0 +1,71 @@
+// Vitest Snapshot v1
+
+exports[`edits a single song 1`] = `
+<div class="edit-song" data-testid="edit-song-form" tabindex="0" data-v-5f0f6176="">
+  <form data-v-5f0f6176="">
+    <header data-v-5f0f6176=""><span class="cover" style="background-image: url(https://example.co/album.jpg);" data-v-5f0f6176=""></span>
+      <div class="meta" data-v-5f0f6176="">
+        <h1 class="" data-v-5f0f6176="">Rocket to Heaven</h1>
+        <h2 data-testid="displayed-artist-name" class="" data-v-5f0f6176="">Led Zeppelin</h2>
+        <h2 data-testid="displayed-album-name" class="" data-v-5f0f6176="">IV</h2>
+      </div>
+    </header>
+    <div class="tabs" data-v-5f0f6176="">
+      <div class="clear" role="tablist" data-v-5f0f6176=""><button id="editSongTabDetails" aria-selected="true" aria-controls="editSongPanelDetails" role="tab" type="button" data-v-5f0f6176=""> Details </button><button id="editSongTabLyrics" aria-selected="false" aria-controls="editSongPanelLyrics" data-testid="edit-song-lyrics-tab" role="tab" type="button" data-v-5f0f6176=""> Lyrics </button></div>
+      <div class="panes" data-v-5f0f6176="">
+        <div id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" tabindex="0" data-v-5f0f6176="">
+          <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Title</label><input data-testid="title-input" name="title" title="Title" type="text" data-v-5f0f6176=""></div>
+          <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Artist</label><input placeholder="" data-testid="artist-input" name="artist" type="text" data-v-5f0f6176=""></div>
+          <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Album</label><input placeholder="" data-testid="album-input" name="album" type="text" data-v-5f0f6176=""></div>
+          <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Album Artist</label><input placeholder="" data-testid="albumArtist-input" name="album_artist" type="text" data-v-5f0f6176=""></div>
+          <div class="form-row" data-v-5f0f6176="">
+            <div class="cols" data-v-5f0f6176="">
+              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Track</label><input placeholder="" data-testid="track-input" name="track" pattern="\\d*" title="Empty or a number" type="text" data-v-5f0f6176=""></div>
+              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Disc</label><input placeholder="" data-testid="disc-input" name="disc" pattern="\\d*" title="Empty or a number" type="text" data-v-5f0f6176=""></div>
+            </div>
+          </div>
+        </div>
+        <div id="editSongPanelLyrics" aria-labelledby="editSongTabLyrics" role="tabpanel" tabindex="0" data-v-5f0f6176="" style="display: none;">
+          <div class="form-row" data-v-5f0f6176=""><textarea data-testid="lyrics-input" name="lyrics" title="Lyrics" data-v-5f0f6176=""></textarea></div>
+        </div>
+      </div>
+    </div>
+    <footer data-v-5f0f6176=""><button type="submit" data-v-27deb898="" data-v-5f0f6176="">Update</button><button type="button" class="btn-cancel" white="" data-v-27deb898="" data-v-5f0f6176="">Cancel</button></footer>
+  </form>
+</div>
+`;
+
+exports[`edits multiple songs 1`] = `
+<div class="edit-song" data-testid="edit-song-form" tabindex="0" data-v-5f0f6176="">
+  <form data-v-5f0f6176="">
+    <header data-v-5f0f6176=""><span class="cover" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-v-5f0f6176=""></span>
+      <div class="meta" data-v-5f0f6176="">
+        <h1 class="mixed" data-v-5f0f6176="">3 songs selected</h1>
+        <h2 data-testid="displayed-artist-name" class="mixed" data-v-5f0f6176="">Mixed Artists</h2>
+        <h2 data-testid="displayed-album-name" class="mixed" data-v-5f0f6176="">Mixed Albums</h2>
+      </div>
+    </header>
+    <div class="tabs" data-v-5f0f6176="">
+      <div class="clear" role="tablist" data-v-5f0f6176=""><button id="editSongTabDetails" aria-selected="true" aria-controls="editSongPanelDetails" role="tab" type="button" data-v-5f0f6176=""> Details </button>
+        <!--v-if-->
+      </div>
+      <div class="panes" data-v-5f0f6176="">
+        <div id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" tabindex="0" data-v-5f0f6176="">
+          <!--v-if-->
+          <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Artist</label><input placeholder="Leave unchanged" data-testid="artist-input" name="artist" type="text" data-v-5f0f6176=""></div>
+          <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Album</label><input placeholder="Leave unchanged" data-testid="album-input" name="album" type="text" data-v-5f0f6176=""></div>
+          <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Album Artist</label><input placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist" type="text" data-v-5f0f6176=""></div>
+          <div class="form-row" data-v-5f0f6176="">
+            <div class="cols" data-v-5f0f6176="">
+              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Track</label><input placeholder="Leave unchanged" data-testid="track-input" name="track" pattern="\\d*" title="Empty or a number" type="text" data-v-5f0f6176=""></div>
+              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Disc</label><input placeholder="Leave unchanged" data-testid="disc-input" name="disc" pattern="\\d*" title="Empty or a number" type="text" data-v-5f0f6176=""></div>
+            </div>
+          </div>
+        </div>
+        <!--v-if-->
+      </div>
+    </div>
+    <footer data-v-5f0f6176=""><button type="submit" data-v-27deb898="" data-v-5f0f6176="">Update</button><button type="button" class="btn-cancel" white="" data-v-27deb898="" data-v-5f0f6176="">Cancel</button></footer>
+  </form>
+</div>
+`;

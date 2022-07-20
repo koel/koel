@@ -59,7 +59,6 @@
     "crypto-random-string": "^1.0.0",
     "css-loader": "^0.28.7",
     "cypress": "^9.5.4",
-    "deepmerge": "^4.2.2",
     "eslint": "^8.14.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",

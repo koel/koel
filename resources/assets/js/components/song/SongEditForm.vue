@@ -6,8 +6,18 @@
         <span class="cover" :style="{ backgroundImage: `url(${coverUrl})` }"/>
         <div class="meta">
           <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
-          <h2 :class="{ mixed: !allSongsAreFromSameArtist && !formData.artist_name }">{{ displayedArtistName }}</h2>
-          <h2 :class="{ mixed: !allSongsAreInSameAlbum && !formData.album_name }">{{ displayedAlbumName }}</h2>
+          <h2
+            data-testid="displayed-artist-name"
+            :class="{ mixed: !allSongsAreFromSameArtist && !formData.artist_name }"
+          >
+            {{ displayedArtistName }}
+          </h2>
+          <h2
+            data-testid="displayed-album-name"
+            :class="{ mixed: !allSongsAreInSameAlbum && !formData.album_name }"
+          >
+            {{ displayedAlbumName }}
+          </h2>
         </div>
       </header>
 
@@ -47,7 +57,14 @@
           >
             <div v-if="editingOnlyOneSong" class="form-row">
               <label>Title</label>
-              <input v-model="formData.title" v-koel-focus name="title" title="Title" type="text">
+              <input
+                v-model="formData.title"
+                v-koel-focus
+                data-testid="title-input"
+                name="title"
+                title="Title"
+                type="text"
+              >
             </div>
 
             <div class="form-row">
@@ -55,6 +72,7 @@
               <input
                 v-model="formData.artist_name"
                 :placeholder="inputPlaceholder"
+                data-testid="artist-input"
                 name="artist"
                 type="text"
               >
@@ -65,6 +83,7 @@
               <input
                 v-model="formData.album_name"
                 :placeholder="inputPlaceholder"
+                data-testid="album-input"
                 name="album"
                 type="text"
               >
@@ -74,8 +93,9 @@
               <label>Album Artist</label>
               <input
                 v-model="formData.album_artist_name"
-                name="album_artist"
                 :placeholder="inputPlaceholder"
+                data-testid="albumArtist-input"
+                name="album_artist"
                 type="text"
               >
             </div>
@@ -86,22 +106,24 @@
                   <label>Track</label>
                   <input
                     v-model="formData.track"
+                    :placeholder="inputPlaceholder"
+                    data-testid="track-input"
                     name="track"
                     pattern="\d*"
                     title="Empty or a number"
                     type="text"
-                    :placeholder="inputPlaceholder"
                   >
                 </div>
                 <div>
                   <label>Disc</label>
                   <input
                     v-model="formData.disc"
+                    :placeholder="inputPlaceholder"
+                    data-testid="disc-input"
                     name="disc"
                     pattern="\d*"
                     title="Empty or a number"
                     type="text"
-                    :placeholder="inputPlaceholder"
                   >
                 </div>
               </div>
@@ -117,7 +139,13 @@
             tabindex="0"
           >
             <div class="form-row">
-              <textarea v-model="formData.lyrics" v-koel-focus name="lyrics" title="Lyrics"></textarea>
+              <textarea
+                v-model="formData.lyrics"
+                v-koel-focus
+                data-testid="lyrics-input"
+                name="lyrics"
+                title="Lyrics"
+              />
             </div>
           </div>
         </div>
@@ -141,7 +169,15 @@ import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
 import Btn from '@/components/ui/Btn.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
 
-type EditFormData = Pick<Song, 'title' | 'album_name' | 'artist_name' | 'album_artist_name' | 'lyrics' | 'track' | 'disc'>
+type EditFormData = {
+  title?: string
+  artist_name?: string
+  album_name?: string
+  album_artist_name?: string
+  track?: string | null
+  disc?: string | null
+  lyrics?: string
+}
 
 const [initialTab] = requireInjection(EditSongFormInitialTabKey)
 const [songs] = requireInjection(SongsKey)
@@ -204,9 +240,12 @@ const open = async () => {
   formData.album_name = allSongsShareSameValue('album_name') ? firstSong.album_name : ''
   formData.artist_name = allSongsShareSameValue('artist_name') ? firstSong.artist_name : ''
 
-  // If the album artist is the same as the artist, we set the form value as empty to not confuse the user
+  // If the album artist(s) is the same as the artist(s), we set the form value as empty to not confuse the user
   // and make it less error-prone.
-  if (editingOnlyOneSong.value && firstSong.album_artist_id === firstSong.artist_id) {
+  if (
+    allSongsShareSameValue('artist_name') && allSongsShareSameValue('album_artist_name')
+    && firstSong.album_artist_id === firstSong.artist_id
+  ) {
     formData.album_artist_name = ''
   } else {
     formData.album_artist_name = allSongsShareSameValue('album_artist_name') ? firstSong.album_artist_name : ''
@@ -215,6 +254,11 @@ const open = async () => {
   formData.lyrics = editingOnlyOneSong.value ? firstSong.lyrics : ''
   formData.track = allSongsShareSameValue('track') ? firstSong.track : null
   formData.disc = allSongsShareSameValue('disc') ? firstSong.disc : null
+
+  if (!editingOnlyOneSong.value) {
+    delete formData.title
+    delete formData.lyrics
+  }
 
   Object.assign(initialFormData, formData)
 }

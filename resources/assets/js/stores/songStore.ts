@@ -112,6 +112,7 @@ export const songStore = {
   scrobble: async (song: Song) => await httpService.post(`${song.id}/scrobble`, { timestamp: song.play_start_time }),
 
   async update (songsToUpdate: Song[], data: any) {
+    console.log(data)
     const { songs, artists, albums, removed } = await httpService.put<SongUpdateResult>('songs', {
       data,
       songs: songsToUpdate.map(song => song.id)

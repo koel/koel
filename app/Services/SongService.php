@@ -74,8 +74,8 @@ class SongService
             $maybeSetAlbum();
         }
 
-        $song->title = $data->title ?: $song->title;
-        $song->lyrics = $data->lyrics ?: $song->lyrics;
+        $song->title = $data->title ?? $song->title; // Empty string still has effects
+        $song->lyrics = $data->lyrics ?? $song->lyrics; // Empty string still has effects
         $song->track = $data->track ?: $song->track;
         $song->disc = $data->disc ?: $song->disc;
 

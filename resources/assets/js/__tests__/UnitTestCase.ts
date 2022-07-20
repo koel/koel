@@ -1,12 +1,24 @@
-import deepmerge from 'deepmerge'
 import isMobile from 'ismobilejs'
+import { isObject, mergeWith } from 'lodash'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { cleanup, render, RenderOptions } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { clickaway, droppable, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
 import factory from '@/__tests__/factory'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+// A deep-merge function that
+// - supports symbols as keys (_.merge doesn't)
+// - supports Vue's Ref type without losing reactivity (deepmerge doesn't)
+// Credit: https://stackoverflow.com/a/60598589/794641
+const deepMerge = (first: object, second: object) => {
+  return mergeWith(first, second, (a, b) => {
+    if (!isObject(b)) return b
+
+    return Array.isArray(a) ? [...a, ...b] : { ...a, ...b }
+  })
+}
 
 export default abstract class UnitTestCase {
   private backupMethods = new Map()
@@ -64,7 +76,7 @@ export default abstract class UnitTestCase {
   }
 
   protected render (component: any, options: RenderOptions = {}) {
-    return render(component, deepmerge({
+    return render(component, deepMerge({
       global: {
         directives: {
           'koel-clickaway': clickaway,
