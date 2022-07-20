@@ -83,6 +83,7 @@ export default [
     properties: {
       '--color-highlight': '#ed5135',
       '--bg-image': `url(${bgDawn})`,
+      '--color-bg-primary': '#1e2747',
       '--bg-position': 'center bottom'
     }
   },
