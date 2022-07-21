@@ -1,28 +1,24 @@
 import { take } from 'lodash'
+import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { fireEvent } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { SelectedSongsKey, SongsKey } from '@/symbols'
 import SongListControls from './SongListControls.vue'
-import AddToMenu from '@/components/song/AddToMenu.vue'
-import Btn from '@/components/ui/Btn.vue'
-import BtnGroup from '@/components/ui/BtnGroup.vue'
 
 new class extends UnitTestCase {
   private renderComponent (selectedSongCount = 1, config: Partial<SongListControlsConfig> = {}) {
-    const songs = factory<Song>('song', 5)
+    const songs = factory<Song[]>('song', 5)
 
     return this.render(SongListControls, {
       props: {
-        config,
-        songs,
-        selectedSongs: take(songs, selectedSongCount)
+        config
       },
       global: {
-        stubs: {
-          AddToMenu,
-          Btn,
-          BtnGroup
+        provide: {
+          [SongsKey]: [ref(songs)],
+          [SelectedSongsKey]: [ref(take(songs, selectedSongCount))]
         }
       }
     })
