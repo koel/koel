@@ -14,6 +14,8 @@
         v-if="config.columns.includes('track')"
         class="track-number"
         data-testid="header-track-number"
+        role="button"
+        title="Sort by track number"
         @click="sort('track')"
       >
         #
@@ -24,6 +26,8 @@
         v-if="config.columns.includes('title')"
         class="title"
         data-testid="header-title"
+        role="button"
+        title="Sort by title"
         @click="sort('title')"
       >
         Title
@@ -34,6 +38,8 @@
         v-if="config.columns.includes('artist')"
         class="artist"
         data-testid="header-artist"
+        role="button"
+        title="Sort by artist"
         @click="sort('artist_name')"
       >
         Artist
@@ -44,6 +50,8 @@
         v-if="config.columns.includes('album')"
         class="album"
         data-testid="header-album"
+        role="button"
+        title="Sort by album"
         @click="sort('album_name')"
       >
         Album
@@ -54,6 +62,8 @@
         v-if="config.columns.includes('length')"
         class="time"
         data-testid="header-length"
+        role="button"
+        title="Sort by song duration"
         @click="sort('length')"
       >
         <icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faAngleDown" class="text-highlight"/>
@@ -90,10 +100,10 @@
 </template>
 
 <script lang="ts" setup>
+import { findIndex } from 'lodash'
+import isMobile from 'ismobilejs'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
-import isMobile from 'ismobilejs'
-import { findIndex } from 'lodash'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { $, eventBus, requireInjection, startDragging } from '@/utils'
 import {
@@ -115,18 +125,17 @@ const [type] = requireInjection(SongListTypeKey)
 const [selectedSongs, setSelectedSongs] = requireInjection(SelectedSongsKey)
 const [sortField, setSortField] = requireInjection(SongListSortFieldKey)
 const [sortOrder, setSortOrder] = requireInjection(SongListSortOrderKey)
+const [injectedConfig] = requireInjection(SongListConfigKey, {})
 
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
 const songRows = ref<SongRow[]>([])
 
-const allowReordering = type.value === 'queue'
+const allowReordering = type === 'queue'
 
 watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected).map(row => row.song)), { deep: true })
 
 const config = computed((): SongListConfig => {
-  const [injectedConfig] = requireInjection(SongListConfigKey, {})
-
   return Object.assign({
     sortable: true,
     columns: ['track', 'title', 'artist', 'album', 'length']

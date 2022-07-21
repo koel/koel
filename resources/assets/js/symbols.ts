@@ -2,7 +2,7 @@ import { DeepReadonly, InjectionKey, Ref } from 'vue'
 
 export type ReadonlyInjectionKey<T> = InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]>
 
-export const SongListTypeKey: ReadonlyInjectionKey<Ref<SongListType>> = Symbol('SongListType')
+export const SongListTypeKey: ReadonlyInjectionKey<SongListType> = Symbol('SongListType')
 export const SongsKey: ReadonlyInjectionKey<Ref<Song[]>> = Symbol('Songs')
 export const SelectedSongsKey: ReadonlyInjectionKey<Ref<Song[]>> = Symbol('SelectedSongs')
 export const SongListConfigKey: ReadonlyInjectionKey<Partial<SongListConfig>> = Symbol('SongListConfig')

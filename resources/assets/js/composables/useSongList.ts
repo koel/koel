@@ -96,7 +96,7 @@ export const useSongList = (
     songs.value = orderBy(songs.value, sortFields, order)
   }
 
-  provideReadonly(SongListTypeKey, ref(type))
+  provideReadonly(SongListTypeKey, type)
   provideReadonly(SongsKey, songs, false)
   provideReadonly(SelectedSongsKey, selectedSongs, false)
   provideReadonly(SongListConfigKey, reactive(config))
