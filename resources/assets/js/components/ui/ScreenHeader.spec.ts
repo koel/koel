@@ -9,7 +9,8 @@ new class extends UnitTestCase {
         slots: {
           default: 'This Header',
           meta: '<p>Some meta</p>',
-          controls: '<nav>Some controls</nav>'
+          controls: '<nav>Some controls</nav>',
+          thumbnail: '<img src="https://placekitten.com/200/300" />'
         }
       }).html()).toMatchSnapshot()
     })
