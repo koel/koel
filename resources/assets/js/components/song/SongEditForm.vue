@@ -108,10 +108,9 @@
                     v-model="formData.track"
                     :placeholder="inputPlaceholder"
                     data-testid="track-input"
+                    min="1"
                     name="track"
-                    pattern="\d*"
-                    title="Empty or a number"
-                    type="text"
+                    type="number"
                   >
                 </div>
                 <div>
@@ -120,10 +119,9 @@
                     v-model="formData.disc"
                     :placeholder="inputPlaceholder"
                     data-testid="disc-input"
+                    min="1"
                     name="disc"
-                    pattern="\d*"
-                    title="Empty or a number"
-                    type="text"
+                    type="number"
                   >
                 </div>
               </div>
@@ -174,8 +172,8 @@ type EditFormData = {
   artist_name?: string
   album_name?: string
   album_artist_name?: string
-  track?: string | null
-  disc?: string | null
+  track?: number | null
+  disc?: number | null
   lyrics?: string
 }
 
@@ -252,8 +250,12 @@ const open = async () => {
   }
 
   formData.lyrics = editingOnlyOneSong.value ? firstSong.lyrics : ''
+
   formData.track = allSongsShareSameValue('track') ? firstSong.track : null
+  formData.track = formData.track || null // if 0, just don't show it
+
   formData.disc = allSongsShareSameValue('disc') ? firstSong.disc : null
+  formData.disc = formData.disc || null // if 0, just don't show it
 
   if (!editingOnlyOneSong.value) {
     delete formData.title

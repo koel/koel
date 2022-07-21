@@ -20,8 +20,8 @@ exports[`edits a single song 1`] = `
           <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Album Artist</label><input placeholder="" data-testid="albumArtist-input" name="album_artist" type="text" data-v-5f0f6176=""></div>
           <div class="form-row" data-v-5f0f6176="">
             <div class="cols" data-v-5f0f6176="">
-              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Track</label><input placeholder="" data-testid="track-input" name="track" pattern="\\d*" title="Empty or a number" type="text" data-v-5f0f6176=""></div>
-              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Disc</label><input placeholder="" data-testid="disc-input" name="disc" pattern="\\d*" title="Empty or a number" type="text" data-v-5f0f6176=""></div>
+              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Track</label><input placeholder="" data-testid="track-input" min="1" name="track" type="number" data-v-5f0f6176=""></div>
+              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Disc</label><input placeholder="" data-testid="disc-input" min="1" name="disc" type="number" data-v-5f0f6176=""></div>
             </div>
           </div>
         </div>
@@ -57,8 +57,8 @@ exports[`edits multiple songs 1`] = `
           <div class="form-row" data-v-5f0f6176=""><label data-v-5f0f6176="">Album Artist</label><input placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist" type="text" data-v-5f0f6176=""></div>
           <div class="form-row" data-v-5f0f6176="">
             <div class="cols" data-v-5f0f6176="">
-              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Track</label><input placeholder="Leave unchanged" data-testid="track-input" name="track" pattern="\\d*" title="Empty or a number" type="text" data-v-5f0f6176=""></div>
-              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Disc</label><input placeholder="Leave unchanged" data-testid="disc-input" name="disc" pattern="\\d*" title="Empty or a number" type="text" data-v-5f0f6176=""></div>
+              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Track</label><input placeholder="Leave unchanged" data-testid="track-input" min="1" name="track" type="number" data-v-5f0f6176=""></div>
+              <div data-v-5f0f6176=""><label data-v-5f0f6176="">Disc</label><input placeholder="Leave unchanged" data-testid="disc-input" min="1" name="disc" type="number" data-v-5f0f6176=""></div>
             </div>
           </div>
         </div>

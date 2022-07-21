@@ -26,8 +26,8 @@ final class SongUpdateData implements Arrayable
             artistName: $request->input('data.artist_name'),
             albumName: $request->input('data.album_name'),
             albumArtistName: $request->input('data.album_artist_name'),
-            track: $request->input('data.track'),
-            disc: $request->input('data.disc'),
+            track: (int) $request->input('data.track'),
+            disc: (int) $request->input('data.disc'),
             lyrics: $request->input('data.lyrics'),
         );
     }

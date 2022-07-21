@@ -58,8 +58,8 @@ new class extends UnitTestCase {
         artist_name: 'AC/DC',
         album_artist_name: 'AC/DC',
         lyrics: 'I\'m gonna make him an offer he can\'t refuse',
-        track: '10',
-        disc: '1'
+        track: 10,
+        disc: 1
       })
 
       expect(alertMock).toHaveBeenCalledWith('Updated 1 song.')
@@ -87,8 +87,8 @@ new class extends UnitTestCase {
         album_name: 'Back in Black',
         artist_name: 'AC/DC',
         album_artist_name: 'AC/DC',
-        track: '10',
-        disc: '1'
+        track: 10,
+        disc: 1
       })
 
       expect(alertMock).toHaveBeenCalledWith('Updated 3 songs.')
