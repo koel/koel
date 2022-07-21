@@ -4,7 +4,7 @@ import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { fireEvent } from '@testing-library/vue'
 import LyricsPane from './LyricsPane.vue'
-import TextMagnifier from '@/components/ui/TextMagnifier.vue'
+import Magnifier from '@/components/ui/Magnifier.vue'
 
 new class extends UnitTestCase {
   private renderComponent (song?: Song) {
@@ -18,7 +18,7 @@ new class extends UnitTestCase {
       },
       global: {
         stubs: {
-          TextMagnifier
+          Magnifier
         }
       }
     })

@@ -1,9 +1,9 @@
 <template>
   <span>
-    <button title="Zoom out" type="button" @click.prevent="zoom(-1)">
+    <button title="Zoom out" type="button" @click.prevent="$emit('out')">
       <icon :icon="faSearchMinus"/>
     </button>
-    <button title="Zoom in" type="button" @click.prevent="zoom(1)">
+    <button title="Zoom in" type="button" @click.prevent="$emit('in')">
       <icon :icon="faSearchPlus"/>
     </button>
   </span>
@@ -11,26 +11,8 @@
 
 <script lang="ts" setup>
 import { faSearchMinus, faSearchPlus } from '@fortawesome/free-solid-svg-icons'
-import { toRefs } from 'vue'
 
-const props = defineProps<{ target: HTMLElement | null }>()
-const { target } = toRefs(props)
-
-const zoom = (delta: number) => {
-  if (!target.value) {
-    return
-  }
-
-  const style = target.value.style
-
-  if (style.fontSize === '') {
-    style.fontSize = '1em'
-    style.lineHeight = '1.6'
-  }
-
-  style.fontSize = parseFloat(style.fontSize) + delta * 0.2 + 'em'
-  style.lineHeight = String(parseFloat(style.lineHeight) + delta * 0.15)
-}
+const emit = defineEmits(['in', 'out'])
 </script>
 
 <style lang="scss" scoped>

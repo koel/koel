@@ -4,7 +4,7 @@
       <template v-if="song">
         <div v-show="song.lyrics">
           <pre ref="lyricsContainer">{{ song.lyrics }}</pre>
-          <TextMagnifier :target="lyricsContainer" class="magnifier"/>
+          <Magnifier @in="zoomLevel++" @out="zoomLevel--" class="magnifier"/>
         </div>
         <p v-if="song.id && !song.lyrics" class="none text-secondary">
           <template v-if="isAdmin">
@@ -22,25 +22,26 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, toRefs } from 'vue'
+import { defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { eventBus } from '@/utils'
 import { useAuthorization } from '@/composables'
 
-const TextMagnifier = defineAsyncComponent(() => import('@/components/ui/TextMagnifier.vue'))
+const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
 
+const { isAdmin } = useAuthorization()
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
 const lyricsContainer = ref<HTMLElement>()
-
-const { isAdmin } = useAuthorization()
+const zoomLevel = ref(0)
 
 const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
+
+watch(zoomLevel, level => lyricsContainer.value && (lyricsContainer.value.style.fontSize = `${1 + level * 0.2}em`))
 </script>
 
 <style lang="scss" scoped>
 .content {
-  line-height: 1.6;
   position: relative;
 
   .magnifier {
@@ -65,5 +66,6 @@ const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.v
 
 pre {
   white-space: pre-wrap;
+  line-height: 1.7;
 }
 </style>

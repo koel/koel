@@ -1,14 +1,13 @@
 import { expect, it } from 'vitest'
 import router from '@/router'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import SearchForm from './SearchForm.vue'
 import { fireEvent } from '@testing-library/vue'
 import { eventBus } from '@/utils'
+import SearchForm from './SearchForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    // skipping because of unstable getRootNode() issues
-    it.skip('sets focus into search box when requested', async () => {
+    it('sets focus into search box when requested', async () => {
       const { getByRole } = this.render(SearchForm)
 
       eventBus.emit('FOCUS_SEARCH_FIELD')
