@@ -1,7 +1,7 @@
 <template>
   <span
     :class="{ droppable }"
-    :style="{ backgroundImage: `url(${image}), url(${defaultCover})` }"
+    :style="backgroundStyle"
     class="cover"
     data-testid="album-artist-thumbnail"
   >
@@ -40,19 +40,15 @@ const user = toRef(userStore.state, 'current')
 const forAlbum = computed(() => entity.value.type === 'albums')
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
 
-const image = computed(() => {
-  if (forAlbum.value) {
-    return (entity.value as Album).cover ? (entity.value as Album).cover : defaultCover
+const backgroundStyle = computed(() => {
+  const image = forAlbum.value
+    ? (entity.value as Album).cover || defaultCover
+    : (entity.value as Artist).image || defaultCover
+
+  return {
+    backgroundImage: `url(${image}), url(${defaultCover})`
   }
-
-  return getArtistImage(entity.value as Artist)
 })
-
-const getArtistImage = (artist: Artist) => {
-  artist.image = artist.image ?? defaultCover
-
-  return artist.image
-}
 
 const buttonLabel = computed(() => forAlbum.value
   ? `Play all songs in the album ${entity.value.name}`
