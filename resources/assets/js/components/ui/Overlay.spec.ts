@@ -1,12 +1,12 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import { OverlayState } from 'koel/types/ui'
 import { eventBus } from '@/utils'
-import Overlay from './Overlay.vue'
+import { waitFor } from '@testing-library/vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
+import Overlay from './Overlay.vue'
 
 new class extends UnitTestCase {
-  private async showOverlay (type: OverlayState['type'] = 'loading') {
+  private async renderComponent (type: OverlayState['type'] = 'loading') {
     const rendered = this.render(Overlay, {
       global: {
         stubs: {
@@ -21,6 +21,7 @@ new class extends UnitTestCase {
     })
 
     await this.tick()
+
     return rendered
   }
 
@@ -31,16 +32,14 @@ new class extends UnitTestCase {
       ['info'],
       ['warning'],
       ['error']
-    ])('renders %s type', async (type) => expect((await this.showOverlay(type)).html()).toMatchSnapshot())
+    ])('renders %s type', async (type) => expect((await this.renderComponent(type)).html()).toMatchSnapshot())
 
     it('closes', async () => {
-      const { queryByTestId } = await this.showOverlay()
-      expect(await queryByTestId('overlay')).not.toBeNull()
+      const { queryByTestId } = await this.renderComponent()
+      expect(queryByTestId('overlay')).not.toBeNull()
 
       eventBus.emit('HIDE_OVERLAY')
-      await this.tick()
-
-      expect(await queryByTestId('overlay')).toBeNull()
+      await waitFor(() => expect(queryByTestId('overlay')).toBeNull())
     })
   }
 }
