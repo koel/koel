@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { differenceBy, orderBy, take, union, unionBy } from 'lodash'
+import { differenceBy, orderBy, take, unionBy } from 'lodash'
 import { Cache, httpService } from '@/services'
 import { arrayify } from '@/utils'
 
@@ -64,7 +64,7 @@ export const artistStore = {
     return artist
   },
 
-  async fetch (page: number) {
+  async paginate (page: number) {
     const resource = await httpService.get<PaginatorResource>(`artists?page=${page}`)
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 

@@ -8,7 +8,7 @@ import ArtistListScreen from './ArtistListScreen.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => this.mock(artistStore, 'fetch'))
+    super.beforeEach(() => this.mock(artistStore, 'paginate'))
   }
 
   private renderComponent () {

@@ -53,7 +53,7 @@ const fetchArtists = async () => {
   if (loading || !moreArtistsAvailable.value) return
 
   loading = true
-  page.value = await artistStore.fetch(page.value!)
+  page.value = await artistStore.paginate(page.value!)
   loading = false
 }
 
