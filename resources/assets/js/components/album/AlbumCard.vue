@@ -11,9 +11,7 @@
     @dragstart="dragStart"
     @contextmenu.prevent="requestContextMenu"
   >
-    <span class="thumbnail-wrapper" :style="{ backgroundImage: `url(${defaultCover})` }">
-      <AlbumThumbnail :entity="album"/>
-    </span>
+    <AlbumThumbnail :entity="album"/>
 
     <footer>
       <a :href="`#!/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
@@ -58,7 +56,7 @@
 <script lang="ts" setup>
 import { faDownload, faRandom } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef, toRefs } from 'vue'
-import { defaultCover, eventBus, pluralize, secondsToHis, startDragging } from '@/utils'
+import { eventBus, pluralize, secondsToHis, startDragging } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 

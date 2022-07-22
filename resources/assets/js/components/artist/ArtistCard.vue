@@ -11,9 +11,7 @@
     @dragstart="dragStart"
     @contextmenu.prevent="requestContextMenu"
   >
-    <span class="thumbnail-wrapper">
-      <ArtistThumbnail :entity="artist"/>
-    </span>
+    <ArtistThumbnail :entity="artist"/>
 
     <footer>
       <div class="info">

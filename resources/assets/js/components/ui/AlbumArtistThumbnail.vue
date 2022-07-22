@@ -122,6 +122,7 @@ const onDrop = async (event: DragEvent) => {
 .cover {
   position: relative;
   width: 100%;
+  aspect-ratio: 1/1;
   display: block;
   background-repeat: no-repeat;
   background-size: cover;

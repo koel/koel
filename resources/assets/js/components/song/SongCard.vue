@@ -101,8 +101,8 @@ article {
   }
 
   .cover {
-    flex: 0 0 48px;
-    height: 48px;
+    width: 48px;
+    aspect-ratio: 1/1;
     background-size: cover;
     position: relative;
     border-radius: 4px;
