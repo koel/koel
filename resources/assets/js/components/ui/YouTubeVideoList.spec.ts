@@ -1,50 +1,48 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import YouTubeVideoList from './YouTubeVideoList.vue'
+import { youTubeService } from '@/services'
+import { fireEvent, waitFor } from '@testing-library/vue'
 import Btn from '@/components/ui/Btn.vue'
 import YouTubeVideo from '@/components/ui/YouTubeVideoItem.vue'
-import { youTubeService } from '@/services'
-import { fireEvent } from '@testing-library/vue'
-
-let song: Song
+import YouTubeVideoList from './YouTubeVideoList.vue'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    song = factory<Song>('song')
-
-    return this.render(YouTubeVideoList, {
-      props: {
-        song
-      },
-      global: {
-        stubs: {
-          Btn,
-          YouTubeVideo
-        }
-      }
-    })
-  }
-
   protected test () {
-    it('displays a list of videos', () => {
-      expect(this.renderComponent().getAllByTestId('youtube-search-result').length).toBe(5)
-    })
+    it('functions', async () => {
+      const song = factory<Song>('song')
 
-    it('loads more videos', async () => {
-      const mock = this.mock(youTubeService, 'searchVideosBySong').mockResolvedValue({
-        nextPageToken: 'b4r',
-        items: factory<YouTubeVideo>('video', 5)
+      const searchMock = this.mock(youTubeService, 'searchVideosBySong').mockResolvedValueOnce({
+        nextPageToken: 'foo',
+        items: factory<YouTubeVideo[]>('video', 5)
+      }).mockResolvedValueOnce({
+        nextPageToken: 'bar',
+        items: factory<YouTubeVideo[]>('video', 3)
       })
 
-      const { getAllByTestId, getByTestId } = this.renderComponent()
+      const { getAllByTestId, getByRole } = this.render(YouTubeVideoList, {
+        props: {
+          song
+        },
+        global: {
+          stubs: {
+            Btn,
+            YouTubeVideo
+          }
+        }
+      })
 
-      await fireEvent.click(getByTestId('youtube-search-more-btn'))
+      await waitFor(() => {
+        expect(searchMock).toHaveBeenNthCalledWith(1, song, '')
+        expect(getAllByTestId('youtube-video')).toHaveLength(5)
+      })
 
-      expect(mock).toHaveBeenCalledWith(song, 'f00')
+      await fireEvent.click(getByRole('button', { name: 'Load More' }))
 
-      await this.tick()
-      expect(getAllByTestId('youtube-search-result').length).toBe(10)
+      await waitFor(() => {
+        expect(searchMock).toHaveBeenNthCalledWith(2, song, 'foo')
+        expect(getAllByTestId('youtube-video')).toHaveLength(8)
+      })
     })
   }
 }

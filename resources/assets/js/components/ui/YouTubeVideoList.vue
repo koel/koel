@@ -2,14 +2,14 @@
   <div class="youtube-extra-wrapper">
     <template v-if="videos.length">
       <ul>
-        <li v-for="video in videos" :key="video.id.videoId">
+        <li v-for="video in videos" :key="video.id.videoId" data-testid="youtube-video">
           <YouTubeVideo :video="video"/>
         </li>
       </ul>
-      <Btn v-if="!loading" class="more" data-testid="youtube-search-more-btn" @click.prevent="loadMore">Load More</Btn>
+      <Btn v-if="!loading" class="more" @click.prevent="loadMore">Load More</Btn>
     </template>
 
-    <p class="nope" v-show="loading">Loading…</p>
+    <p class="nope" v-if="loading">Loading…</p>
   </div>
 </template>
 

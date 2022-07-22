@@ -4,7 +4,7 @@ import router from '@/router'
 
 interface YouTubeSearchResult {
   nextPageToken: string
-  items: Record<string, any>[]
+  items: YouTubeVideo[]
 }
 
 export const youTubeService = {
