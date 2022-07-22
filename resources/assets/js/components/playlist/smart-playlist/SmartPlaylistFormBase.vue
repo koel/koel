@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .smart-playlist-form {
   width: 560px;
 }
@@ -17,9 +17,5 @@
   border: 1px solid rgba(255, 255, 255, .1);
   padding: .75rem;
   border-radius: .3rem;
-
-  input[type=text], input[type=number], input[type=datetime] {
-    display: inline-block;
-  }
 }
 </style>

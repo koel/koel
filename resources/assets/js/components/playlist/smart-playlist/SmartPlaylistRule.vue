@@ -113,24 +113,21 @@ const removeRule = () => emit('remove')
 <style lang="scss" scoped>
 .row {
   display: flex;
-
-  > * + * {
-    margin-left: .5rem;
-  }
-}
-
-.suffix {
-  margin-left: .3rem;
+  gap: .5rem;
 }
 
 .value-wrapper {
   flex: 1;
   display: inline-flex;
   place-items: center;
-  column-gap: .5rem;
+  gap: .5rem;
 
   input {
     flex: 1;
   }
+}
+
+select {
+  margin-top: 0;
 }
 </style>

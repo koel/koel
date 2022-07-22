@@ -65,3 +65,51 @@ eventBus.on({
   }
 })
 </script>
+
+<style lang="scss">
+.modal-wrapper {
+  form {
+    position: relative;
+    min-width: 460px;
+    background-color: var(--color-bg-primary);
+    border-radius: 4px;
+
+    > header, > main, > footer {
+      padding: 1.2rem;
+    }
+
+    > * + * {
+      margin-top: 1.25rem;
+    }
+
+    > footer {
+      margin-top: 0;
+    }
+
+    [type=text], [type=number], [type=email], [type=password], [type=url], [type=date], textarea, select {
+      width: 100%;
+      max-width: 100%;
+      height: 32px;
+    }
+
+    .warning {
+      color: var(--color-red);
+    }
+
+    textarea {
+      min-height: 192px;
+    }
+
+    > header {
+      display: flex;
+      background: var(--color-bg-secondary);
+
+      h1 {
+        font-size: 1.8rem;
+        line-height: 2.2rem;
+        margin-bottom: .3rem;
+      }
+    }
+  }
+}
+</style>

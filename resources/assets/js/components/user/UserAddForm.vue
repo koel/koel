@@ -6,25 +6,31 @@
         <h1>Add New User</h1>
       </header>
 
-      <div>
+      <main>
         <div class="form-row">
-          <label>Name</label>
-          <input v-model="newUser.name" v-koel-focus name="name" required title="Name" type="text">
+          <label>
+            Name
+            <input v-model="newUser.name" v-koel-focus name="name" required title="Name" type="text">
+          </label>
         </div>
         <div class="form-row">
-          <label>Email</label>
-          <input v-model="newUser.email" name="email" required title="Email" type="email">
+          <label>
+            Email
+            <input v-model="newUser.email" name="email" required title="Email" type="email">
+          </label>
         </div>
         <div class="form-row">
-          <label>Password</label>
-          <input
-            v-model="newUser.password"
-            autocomplete="new-password"
-            name="password"
-            required
-            title="Password"
-            type="password"
-          >
+          <label>
+            Password
+            <input
+              v-model="newUser.password"
+              autocomplete="new-password"
+              name="password"
+              required
+              title="Password"
+              type="password"
+            >
+          </label>
           <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
         </div>
         <div class="form-row">
@@ -33,7 +39,7 @@
             <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
           </label>
         </div>
-      </div>
+      </main>
 
       <footer>
         <Btn class="btn-add" type="submit">Save</Btn>

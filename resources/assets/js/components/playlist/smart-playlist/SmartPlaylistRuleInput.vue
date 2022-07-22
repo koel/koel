@@ -19,7 +19,6 @@ const value = computed({
 
 <style lang="scss" scoped>
 input {
-  display: inline-block;
   width: 140px !important;
 }
 </style>

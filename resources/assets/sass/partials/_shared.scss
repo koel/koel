@@ -179,6 +179,12 @@ label {
   position: relative;
 }
 
+.form-row input:not([type="checkbox"]), .form-row select {
+  margin-top: .7rem;
+  display: block;
+  height: 32px;
+}
+
 .overlay {
   position: fixed;
   top: 0;
@@ -190,53 +196,6 @@ label {
   background-color: rgba(0, 0, 0, .7);
 
   @include vertical-center();
-
-  form {
-    position: relative;
-    min-width: 460px;
-    background: var(--color-bg-primary);
-    border-radius: 4px;
-
-    > header, > div, > footer {
-      padding: 1.2rem;
-    }
-
-    > * + * {
-      margin-top: 1.25rem;
-    }
-
-    > footer {
-      margin-top: 0;
-    }
-
-    input[type="text"], input[type="number"], input[type="email"], input[type="password"],
-    input[type="url"], input[type="date"], textarea, select {
-      border: 1px solid transparent;
-      width: 100%;
-      max-width: 100%;
-      height: 32px;
-    }
-
-    .warning {
-      color: var(--color-red);
-    }
-
-    textarea {
-      min-height: 192px;
-    }
-
-    > header {
-      display: flex;
-      background: var(--color-bg-secondary);
-      border-radius: 4px 4px 0 0;
-
-      h1 {
-        font-size: 1.8rem;
-        line-height: 2.2rem;
-        margin-bottom: .3rem;
-      }
-    }
-  }
 }
 
 .font-size- {

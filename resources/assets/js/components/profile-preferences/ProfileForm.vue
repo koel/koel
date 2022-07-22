@@ -1,31 +1,36 @@
 <template>
   <form data-testid="update-profile-form" @submit.prevent="update">
     <div class="form-row">
-      <label for="inputProfileCurrentPassword">Current Password</label>
-      <input
-        id="inputProfileCurrentPassword"
-        v-model="profile.current_password"
-        v-koel-focus
-        name="current_password"
-        placeholder="Required to update your profile"
-        required
-        type="password"
-      >
+      <label>
+        Current Password
+        <input
+          v-model="profile.current_password"
+          v-koel-focus
+          name="current_password"
+          placeholder="Required to update your profile"
+          required
+          type="password"
+        >
+      </label>
     </div>
 
     <div class="form-row">
-      <label for="inputProfileName">Name</label>
-      <input id="inputProfileName" v-model="profile.name" name="name" required type="text">
+      <label>
+        Name
+        <input id="inputProfileName" v-model="profile.name" name="name" required type="text">
+      </label>
     </div>
 
     <div class="form-row">
-      <label for="inputProfileEmail">Email Address</label>
-      <input id="inputProfileEmail" v-model="profile.email" name="email" required type="email">
+      <label>
+        Email Address
+        <input id="inputProfileEmail" v-model="profile.email" name="email" required type="email">
+      </label>
     </div>
 
-    <div class="change-password">
-      <div class="form-row">
-        <label for="inputProfileNewPassword">New Password</label>
+    <div class="form-row">
+      <label>
+        New Password
         <input
           id="inputProfileNewPassword"
           v-model="profile.new_password"
@@ -34,10 +39,10 @@
           placeholder="Leave empty to keep current password"
           type="password"
         >
-        <p class="password-rules help">
-          Min. 10 characters. Should be a mix of characters, numbers, and symbols.<br>
-        </p>
-      </div>
+        <span class="password-rules help">
+            Min. 10 characters. Should be a mix of characters, numbers, and symbols.
+          </span>
+      </label>
     </div>
 
     <div class="form-row">
@@ -95,11 +100,8 @@ input {
   }
 }
 
-.change-password {
-  padding: 1.75rem 0;
-}
-
 .password-rules {
+  display: block;
   margin-top: .75rem;
 }
 

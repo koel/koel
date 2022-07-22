@@ -7,7 +7,7 @@
           <h1>New Smart Playlist</h1>
         </header>
 
-        <div>
+        <main>
           <div class="form-row">
             <label>Name</label>
             <input v-model="name" v-koel-focus name="name" required type="text">
@@ -26,7 +26,7 @@
               Group
             </Btn>
           </div>
-        </div>
+        </main>
 
         <footer>
           <Btn type="submit">Save</Btn>

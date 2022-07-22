@@ -7,10 +7,12 @@
           <h1>Edit Smart Playlist</h1>
         </header>
 
-        <div>
+        <main>
           <div class="form-row">
-            <label>Name</label>
-            <input v-model="mutatedPlaylist.name" v-koel-focus name="name" required type="text">
+            <label>
+              Name
+              <input v-model="mutatedPlaylist.name" v-koel-focus name="name" required type="text">
+            </label>
           </div>
 
           <div class="form-row rules">
@@ -25,7 +27,7 @@
               <icon :icon="faPlus"/>
             </Btn>
           </div>
-        </div>
+        </main>
 
         <footer>
           <Btn type="submit">Save</Btn>

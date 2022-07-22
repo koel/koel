@@ -21,7 +21,7 @@
         </div>
       </header>
 
-      <div class="tabs">
+      <main class="tabs">
         <div class="clear" role="tablist">
           <button
             id="editSongTabDetails"
@@ -56,73 +56,85 @@
             tabindex="0"
           >
             <div v-if="editingOnlyOneSong" class="form-row">
-              <label>Title</label>
-              <input
-                v-model="formData.title"
-                v-koel-focus
-                data-testid="title-input"
-                name="title"
-                title="Title"
-                type="text"
-              >
+              <label>
+                Title
+                <input
+                  v-model="formData.title"
+                  v-koel-focus
+                  data-testid="title-input"
+                  name="title"
+                  title="Title"
+                  type="text"
+                >
+              </label>
             </div>
 
             <div class="form-row">
-              <label>Artist</label>
-              <input
-                v-model="formData.artist_name"
-                :placeholder="inputPlaceholder"
-                data-testid="artist-input"
-                name="artist"
-                type="text"
-              >
+              <label>
+                Artist
+                <input
+                  v-model="formData.artist_name"
+                  :placeholder="inputPlaceholder"
+                  data-testid="artist-input"
+                  name="artist"
+                  type="text"
+                >
+              </label>
             </div>
 
             <div class="form-row">
-              <label>Album</label>
-              <input
-                v-model="formData.album_name"
-                :placeholder="inputPlaceholder"
-                data-testid="album-input"
-                name="album"
-                type="text"
-              >
+              <label>
+                Album
+                <input
+                  v-model="formData.album_name"
+                  :placeholder="inputPlaceholder"
+                  data-testid="album-input"
+                  name="album"
+                  type="text"
+                >
+              </label>
             </div>
 
             <div class="form-row">
-              <label>Album Artist</label>
-              <input
-                v-model="formData.album_artist_name"
-                :placeholder="inputPlaceholder"
-                data-testid="albumArtist-input"
-                name="album_artist"
-                type="text"
-              >
+              <label>
+                Album Artist
+                <input
+                  v-model="formData.album_artist_name"
+                  :placeholder="inputPlaceholder"
+                  data-testid="albumArtist-input"
+                  name="album_artist"
+                  type="text"
+                >
+              </label>
             </div>
 
             <div class="form-row">
               <div class="cols">
                 <div>
-                  <label>Track</label>
-                  <input
-                    v-model="formData.track"
-                    :placeholder="inputPlaceholder"
-                    data-testid="track-input"
-                    min="1"
-                    name="track"
-                    type="number"
-                  >
+                  <label>
+                    Track
+                    <input
+                      v-model="formData.track"
+                      :placeholder="inputPlaceholder"
+                      data-testid="track-input"
+                      min="1"
+                      name="track"
+                      type="number"
+                    >
+                  </label>
                 </div>
                 <div>
-                  <label>Disc</label>
-                  <input
-                    v-model="formData.disc"
-                    :placeholder="inputPlaceholder"
-                    data-testid="disc-input"
-                    min="1"
-                    name="disc"
-                    type="number"
-                  >
+                  <label>
+                    Disc
+                    <input
+                      v-model="formData.disc"
+                      :placeholder="inputPlaceholder"
+                      data-testid="disc-input"
+                      min="1"
+                      name="disc"
+                      type="number"
+                    >
+                  </label>
                 </div>
               </div>
             </div>
@@ -147,7 +159,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       <footer>
         <Btn type="submit">Update</Btn>

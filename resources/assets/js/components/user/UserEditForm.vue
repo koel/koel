@@ -6,7 +6,7 @@
         <h1>Edit User</h1>
       </header>
 
-      <div>
+      <main>
         <div class="form-row">
           <label>Name</label>
           <input v-model="updateData.name" v-koel-focus name="name" required title="Name" type="text">
@@ -32,7 +32,7 @@
             <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
           </label>
         </div>
-      </div>
+      </main>
 
       <footer>
         <Btn class="btn-update" type="submit">Update</Btn>
