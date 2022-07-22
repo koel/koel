@@ -73,8 +73,12 @@ let initialized = false
 
 eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
   if (view === 'Home' && !initialized) {
-    await overviewStore.init()
-    initialized = true
+    try {
+      await overviewStore.init()
+      initialized = true
+    } catch (e) {
+      console.error(e)
+    }
   }
 })
 </script>

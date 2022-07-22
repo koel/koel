@@ -25,10 +25,8 @@ export const overviewStore = {
       recently_played_songs: Song[],
     }>('overview')
 
-    songStore.syncWithVault(resource.most_played_songs)
-    songStore.syncWithVault(resource.recently_added_songs)
-    albumStore.syncWithVault(resource.recently_added_albums)
-    albumStore.syncWithVault(resource.most_played_albums)
+    songStore.syncWithVault([...resource.most_played_songs, ...resource.recently_added_songs])
+    albumStore.syncWithVault([...resource.most_played_albums, ...resource.recently_added_albums])
     artistStore.syncWithVault(resource.most_played_artists)
 
     recentlyPlayedStore.excerptState.songs = songStore.syncWithVault(resource.recently_played_songs)
