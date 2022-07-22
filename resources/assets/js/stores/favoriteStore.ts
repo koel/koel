@@ -1,14 +1,12 @@
 import { reactive } from 'vue'
-import { differenceBy, union, unionBy } from 'lodash'
+import { differenceBy, unionBy } from 'lodash'
 import { httpService } from '@/services'
 import { arrayify } from '@/utils'
 import { songStore } from '@/stores'
 
 export const favoriteStore = {
   state: reactive({
-    songs: [] as Song[],
-    length: 0,
-    fmtLength: ''
+    songs: [] as Song[]
   }),
 
   async toggleOne (song: Song) {
@@ -26,10 +24,6 @@ export const favoriteStore = {
 
   remove (songs: Song | Song[]) {
     this.state.songs = differenceBy(this.state.songs, arrayify(songs), 'id')
-  },
-
-  clear () {
-    this.state.songs = []
   },
 
   async like (songs: Song[]) {
