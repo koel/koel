@@ -8,22 +8,28 @@
 
       <main>
         <div class="form-row">
-          <label>Name</label>
-          <input v-model="updateData.name" v-koel-focus name="name" required title="Name" type="text">
+          <label>
+            Name
+            <input v-model="updateData.name" v-koel-focus name="name" required title="Name" type="text">
+          </label>
         </div>
         <div class="form-row">
-          <label>Email</label>
-          <input v-model="updateData.email" name="email" required title="Email" type="email">
+          <label>
+            Email
+            <input v-model="updateData.email" name="email" required title="Email" type="email">
+          </label>
         </div>
         <div class="form-row">
-          <label>Password</label>
-          <input
-            v-model="updateData.password"
-            autocomplete="new-password"
-            name="password"
-            placeholder="Leave blank for no changes"
-            type="password"
-          >
+          <label>
+            Password
+            <input
+              v-model="updateData.password"
+              autocomplete="new-password"
+              name="password"
+              placeholder="Leave blank for no changes"
+              type="password"
+            >
+          </label>
           <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
         </div>
         <div class="form-row">
