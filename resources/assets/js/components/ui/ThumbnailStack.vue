@@ -1,6 +1,10 @@
 <template>
   <div class="thumbnail-stack" :class="layout" :style="{ backgroundImage: `url(${defaultCover})` }">
-    <span v-for="thumbnail in displayedThumbnails" :style="{ backgroundImage: `url(${thumbnail}`}"/>
+    <span
+      v-for="thumbnail in displayedThumbnails"
+      :style="{ backgroundImage: `url(${thumbnail}`}"
+      data-testid="thumbnail"
+    />
   </div>
 </template>
 
@@ -18,7 +22,7 @@ const displayedThumbnails = computed(() => {
     : (thumbnails.value.length < 4 ? [thumbnails.value[0]] : take(thumbnails.value, 4)).map(url => url || defaultCover)
 })
 
-const layout = computed<'mono' | 'tiles'>(() => displayedThumbnails.value.length < 4 ? 'mono' : 'tiles')
+const layout = computed<'single' | 'tiles'>(() => displayedThumbnails.value.length < 4 ? 'single' : 'tiles')
 </script>
 
 <style lang="scss" scoped>
