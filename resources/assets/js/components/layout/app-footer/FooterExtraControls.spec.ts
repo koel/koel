@@ -19,6 +19,12 @@ new class extends UnitTestCase {
             album_name: 'Led Zeppelin IV',
             album_id: 4
           })
+        },
+        global: {
+          stubs: {
+            RepeatModeSwitch: this.stub('RepeatModeSwitch'),
+            Volume: this.stub('Volume')
+          }
         }
       }).html()).toMatchSnapshot()
     })

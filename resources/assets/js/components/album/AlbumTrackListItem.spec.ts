@@ -4,9 +4,9 @@ import factory from '@/__tests__/factory'
 import { queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import AlbumTrackListItem from './AlbumTrackListItem.vue'
 import { SongsKey } from '@/symbols'
 import { ref } from 'vue'
+import AlbumTrackListItem from './AlbumTrackListItem.vue'
 
 new class extends UnitTestCase {
   private renderComponent (matchedSong?: Song) {

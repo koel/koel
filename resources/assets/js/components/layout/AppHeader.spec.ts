@@ -1,6 +1,6 @@
 import isMobile from 'ismobilejs'
 import { expect, it } from 'vitest'
-import { fireEvent, queryAllByTestId, waitFor } from '@testing-library/vue'
+import { fireEvent, waitFor } from '@testing-library/vue'
 import { eventBus } from '@/utils'
 import compareVersions from 'compare-versions'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -37,11 +37,17 @@ new class extends UnitTestCase {
     })
 
     it.each([[true, true, true], [false, true, false], [true, false, false], [false, false, false]])(
-      'announces a new version if applicable',
+      'announces a new version has new version: %s, is admin: %s, should announce: %s',
       async (hasNewVersion, isAdmin, announcing) => {
         this.mock(compareVersions, 'compare', hasNewVersion)
 
-        const { queryAllByTestId } = this.actingAsAdmin().render(AppHeader)
+        if (isAdmin) {
+          this.actingAsAdmin()
+        } else {
+          this.actingAs()
+        }
+
+        const { queryAllByTestId } = this.render(AppHeader)
 
         expect(queryAllByTestId('new-version')).toHaveLength(announcing ? 1 : 0)
       }
