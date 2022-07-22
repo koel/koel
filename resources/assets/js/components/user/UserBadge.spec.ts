@@ -16,12 +16,12 @@ new class extends UnitTestCase {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('logs out', async () => {
-      const mock = this.mock(eventBus, 'emit')
+      const emitMock = this.mock(eventBus, 'emit')
       const { getByTestId } = this.renderComponent()
 
       await fireEvent.click(getByTestId('btn-logout'))
 
-      expect(mock).toHaveBeenCalledOnce()
+      expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
     })
   }
 }
