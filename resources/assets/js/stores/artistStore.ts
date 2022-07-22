@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { difference, orderBy, take, union } from 'lodash'
+import { differenceBy, orderBy, take, union, unionBy } from 'lodash'
 import { Cache, httpService } from '@/services'
 import { arrayify } from '@/utils'
 
@@ -18,7 +18,7 @@ export const artistStore = {
   },
 
   removeByIds (ids: number[]) {
-    this.state.artists = difference(this.state.artists, ids.map(id => this.byId(id)))
+    this.state.artists = differenceBy(this.state.artists, ids.map(id => this.byId(id)), 'id')
     ids.forEach(id => this.vault.delete(id))
   },
 
@@ -36,7 +36,7 @@ export const artistStore = {
 
   async uploadImage (artist: Artist, image: string) {
     artist.image = (await httpService.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })).imageUrl
-    
+
     // sync to vault
     this.byId(artist.id).image = artist.image
 
@@ -66,7 +66,7 @@ export const artistStore = {
 
   async fetch (page: number) {
     const resource = await httpService.get<PaginatorResource>(`artists?page=${page}`)
-    this.state.artists = union(this.state.artists, this.syncWithVault(resource.data))
+    this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
   },

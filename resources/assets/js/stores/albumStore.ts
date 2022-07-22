@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { difference, orderBy, take, union } from 'lodash'
+import { differenceBy, merge, orderBy, take, unionBy } from 'lodash'
 import { Cache, httpService } from '@/services'
 import { arrayify } from '@/utils'
 import { songStore } from '@/stores'
@@ -18,8 +18,23 @@ export const albumStore = {
   },
 
   removeByIds (ids: number[]) {
-    this.state.albums = difference(this.state.albums, ids.map(id => this.byId(id)))
+    this.state.albums = differenceBy(this.state.albums, ids.map(id => this.byId(id)), 'id')
     ids.forEach(id => this.vault.delete(id))
+  },
+
+  isUnknown: (album: Album | number) => {
+    if (typeof album === 'number') return album === UNKNOWN_ALBUM_ID
+    return album.id === UNKNOWN_ALBUM_ID
+  },
+
+  syncWithVault (albums: Album | Album[]) {
+    return arrayify(albums).map(album => {
+      let local = this.vault.get(album.id)
+      local = reactive(local ? merge(local, album) : album)
+      this.vault.set(album.id, local)
+
+      return local
+    })
   },
 
   /**
@@ -45,21 +60,6 @@ export const albumStore = {
     return (await httpService.get<{ thumbnailUrl: string }>(`album/${id}/thumbnail`)).thumbnailUrl
   },
 
-  isUnknown: (album: Album | number) => {
-    if (typeof album === 'number') return album === UNKNOWN_ALBUM_ID
-    return album.id === UNKNOWN_ALBUM_ID
-  },
-
-  syncWithVault (albums: Album | Album[]) {
-    return arrayify(albums).map(album => {
-      let local = this.vault.get(album.id)
-      local = reactive(local ? Object.assign(local, album) : album)
-      this.vault.set(album.id, local)
-
-      return local
-    })
-  },
-
   async resolve (id: number) {
     let album = this.byId(id)
 
@@ -71,9 +71,9 @@ export const albumStore = {
     return album
   },
 
-  async fetch (page: number) {
+  async paginate (page: number) {
     const resource = await httpService.get<PaginatorResource>(`albums?page=${page}`)
-    this.state.albums = union(this.state.albums, this.syncWithVault(resource.data))
+    this.state.albums = unionBy(this.state.albums, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
   },

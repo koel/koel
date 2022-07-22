@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { difference, union } from 'lodash'
+import { differenceBy, union, unionBy } from 'lodash'
 import { httpService } from '@/services'
 import { arrayify } from '@/utils'
 import { songStore } from '@/stores'
@@ -21,11 +21,11 @@ export const favoriteStore = {
   },
 
   add (songs: Song | Song[]) {
-    this.state.songs = union(this.state.songs, arrayify(songs))
+    this.state.songs = unionBy(this.state.songs, arrayify(songs), 'id')
   },
 
   remove (songs: Song | Song[]) {
-    this.state.songs = difference(this.state.songs, arrayify(songs))
+    this.state.songs = differenceBy(this.state.songs, arrayify(songs), 'id')
   },
 
   clear () {

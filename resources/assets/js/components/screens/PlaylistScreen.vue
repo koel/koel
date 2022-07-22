@@ -63,7 +63,7 @@
 
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
-import { difference } from 'lodash'
+import { differenceBy } from 'lodash'
 import { ref, toRef } from 'vue'
 import { alerts, eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
@@ -109,7 +109,7 @@ const removeSelected = () => {
   if (!selectedSongs.value.length || playlist.value.is_smart) return
 
   playlistStore.removeSongs(playlist.value!, selectedSongs.value)
-  songs.value = difference(songs.value, selectedSongs.value)
+  songs.value = differenceBy(songs.value, selectedSongs.value, 'id')
   alerts.success(`Removed ${pluralize(selectedSongs.value.length, 'song')} from "${playlist.value!.name}."`)
 }
 

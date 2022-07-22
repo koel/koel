@@ -53,7 +53,7 @@ const fetchAlbums = async () => {
   if (loading || !moreAlbumsAvailable.value) return
 
   loading = true
-  page.value = await albumStore.fetch(page.value!)
+  page.value = await albumStore.paginate(page.value!)
   loading = false
 }
 

@@ -1,4 +1,4 @@
-import { difference } from 'lodash'
+import { differenceBy } from 'lodash'
 import { httpService } from '@/services'
 import { reactive } from 'vue'
 import { arrayify } from '@/utils'
@@ -84,7 +84,7 @@ export const userStore = {
 
   async destroy (user: User) {
     await httpService.delete(`user/${user.id}`)
-    this.state.users = difference(this.state.users, [user])
+    this.state.users = differenceBy(this.state.users, [user], 'id')
     this.vault.delete(user.id)
 
     // Mama, just killed a man

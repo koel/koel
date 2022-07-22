@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { difference, shuffle, union } from 'lodash'
+import { differenceBy, shuffle, union, unionBy } from 'lodash'
 import { arrayify } from '@/utils'
 import { httpService } from '@/services'
 import { songStore } from '@/stores'
@@ -60,7 +60,7 @@ export const queueStore = {
    */
   queue (songs: Song | Song[]) {
     this.unqueue(songs)
-    this.all = union(this.all, arrayify(songs))
+    this.all = unionBy(this.all, arrayify(songs), 'id')
   },
 
   queueIfNotQueued (song: Song) {
@@ -70,7 +70,7 @@ export const queueStore = {
   },
 
   queueToTop (songs: Song | Song[]) {
-    this.all = union(arrayify(songs), this.all)
+    this.all = unionBy(arrayify(songs), this.all, 'id')
   },
 
   replaceQueueWith (songs: Song | Song[]) {
@@ -92,7 +92,7 @@ export const queueStore = {
   },
 
   unqueue (songs: Song | Song[]) {
-    this.all = difference(this.all, arrayify(songs))
+    this.all = differenceBy(this.all, arrayify(songs), 'id')
   },
 
   /**

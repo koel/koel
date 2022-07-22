@@ -1,6 +1,6 @@
 import isMobile from 'ismobilejs'
 import slugify from 'slugify'
-import { orderBy, take, union } from 'lodash'
+import { orderBy, take, union, unionBy } from 'lodash'
 import { reactive, watch } from 'vue'
 import { arrayify, eventBus, secondsToHis, use } from '@/utils'
 import { authService, Cache, httpService } from '@/services'
@@ -216,7 +216,7 @@ export const songStore = {
       `songs?page=${page}&sort=${sortField}&order=${sortOrder}`
     )
 
-    this.state.songs = union(this.state.songs, this.syncWithVault(resource.data))
+    this.state.songs = unionBy(this.state.songs, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
   },

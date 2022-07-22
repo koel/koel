@@ -8,7 +8,7 @@ import AlbumListScreen from './AlbumListScreen.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => this.mock(albumStore, 'fetch'))
+    super.beforeEach(() => this.mock(albumStore, 'paginate'))
   }
 
   private renderComponent () {

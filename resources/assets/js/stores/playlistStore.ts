@@ -1,4 +1,4 @@
-import { difference, orderBy } from 'lodash'
+import { differenceBy, orderBy } from 'lodash'
 import { reactive } from 'vue'
 
 import { logger } from '@/utils'
@@ -55,7 +55,7 @@ export const playlistStore = {
 
   async delete (playlist: Playlist) {
     await httpService.delete(`playlists/${playlist.id}`)
-    this.state.playlists = difference(this.state.playlists, [playlist])
+    this.state.playlists = differenceBy(this.state.playlists, [playlist], 'id')
   },
 
   async addSongs (playlist: Playlist, songs: Song[]) {
