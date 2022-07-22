@@ -9,3 +9,7 @@ global.ResizeObserver = global.ResizeObserver ||
     observe: vi.fn(),
     unobserve: vi.fn()
   }))
+
+window.HTMLMediaElement.prototype.load = vi.fn()
+window.HTMLMediaElement.prototype.play = vi.fn()
+window.HTMLMediaElement.prototype.pause = vi.fn()

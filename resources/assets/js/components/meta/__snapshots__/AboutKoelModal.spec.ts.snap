@@ -3,7 +3,7 @@
 exports[`renders 1`] = `
 <div class="about text-secondary" data-testid="about-modal" tabindex="0" data-v-0ef2b3f8="">
   <header data-v-0ef2b3f8="">
-    <h1 class="text-white" data-v-0ef2b3f8="">About Koel</h1>
+    <h1 class="text-primary" data-v-0ef2b3f8="">About Koel</h1>
   </header>
   <main data-v-0ef2b3f8="">
     <div class="logo" data-v-0ef2b3f8=""><img alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="128" data-v-0ef2b3f8=""></div>
