@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { httpService } from '@/services'
+import { merge } from 'lodash'
 
 export const settingStore = {
   state: reactive<Settings>({
@@ -7,11 +8,11 @@ export const settingStore = {
   }),
 
   init (settings: Settings) {
-    Object.assign(this.state, settings)
+    merge(this.state, settings)
   },
 
   async update (settings: Settings) {
     await httpService.put('settings', settings)
-    Object.assign(this.state, settings)
+    merge(this.state, settings)
   }
 }
