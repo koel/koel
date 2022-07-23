@@ -50,7 +50,7 @@
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef } from 'vue'
-import { pluralize } from '@/utils'
+import { alerts, logger, pluralize } from '@/utils'
 import { commonStore, queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useSongList } from '@/composables'
@@ -83,8 +83,13 @@ const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 const playAll = (shuffle = true) => playbackService.queueAndPlay(songs.value, shuffle)
 
 const shuffleSome = async () => {
-  await queueStore.fetchRandom()
-  await playbackService.playFirstInQueue()
+  try {
+    await queueStore.fetchRandom()
+    await playbackService.playFirstInQueue()
+  } catch (e) {
+    alerts.error('Failed to fetch random songs. Please try again.')
+    logger.error(e)
+  }
 }
 
 const clearQueue = () => queueStore.clear()

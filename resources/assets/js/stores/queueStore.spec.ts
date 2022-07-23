@@ -1,75 +1,114 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import data from '@/__tests__/blobs/data'
 import { queueStore } from '@/stores/queueStore'
 import { expect, it } from 'vitest'
+import factory from 'factoria'
+import { httpService } from '@/services'
+import { songStore } from '@/stores/songStore'
 
-const ARTIST_ID = 5
 let songs
-let songToQueue: Song
 
 new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
-      songs = data.songs.filter(song => song.artist_id === ARTIST_ID)
+      songs = factory<Song[]>('song', 3)
       queueStore.state.songs = songs
-      queueStore.state.current = songs[1]
-
-      songToQueue = data.songs[0]
     })
   }
 
   protected test () {
     it('returns all queued songs', () => expect(queueStore.all).toEqual(songs))
-    it('returns the first queued song', () => expect(queueStore.first.title).toBe('No bravery'))
-    it('returns the last queued song', () => expect(queueStore.last.title).toBe('Tears and rain'))
 
-    it('appends a song to end of the queue', () => {
-      queueStore.queue(songToQueue)
-      expect(queueStore.last.title).toBe('I Swear')
+    it('returns the first queued song', () => expect(queueStore.first).toEqual(songs[0]))
+
+    it('returns the last queued song', () => expect(queueStore.last).toEqual(songs[2]))
+
+    it('queues to bottom', () => {
+      const song = factory<Song>('song')
+      queueStore.queue(song)
+
+      expect(queueStore.all).toHaveLength(4)
+      expect(queueStore.last).toEqual(song)
     })
 
-    it('prepends a song to top of the queue', () => {
-      queueStore.queueToTop(songToQueue)
-      expect(queueStore.first.title).toBe('I Swear')
+    it('queues to top', () => {
+      const song = factory<Song>('song')
+      queueStore.queueToTop(song)
+
+      expect(queueStore.all).toHaveLength(4)
+      expect(queueStore.first).toEqual(song)
     })
 
     it('replaces the whole queue', () => {
-      queueStore.replaceQueueWith(songToQueue)
-      expect(queueStore.all).toHaveLength(1)
-      expect(queueStore.first.title).toBe('I Swear')
+      const newSongs = factory<Song[]>('song', 2)
+      queueStore.replaceQueueWith(newSongs)
+
+      expect(queueStore.all).toEqual(newSongs)
     })
 
     it('removes a song from queue', () => {
-      queueStore.unqueue(queueStore.state.songs[0])
-      expect(queueStore.first.title).toBe('So long, Jimmy')
+      queueStore.unqueue(songs[1])
+
+      expect(queueStore.all).toEqual([songs[0], songs[2]])
     })
 
     it('removes multiple songs from queue', () => {
-      queueStore.unqueue([queueStore.state.songs[0], queueStore.state.songs[1]])
-      expect(queueStore.first.title).toBe('Wisemen')
+      queueStore.unqueue([songs[1], songs[0]])
+
+      expect(queueStore.all).toEqual([songs[2]])
     })
 
-    it('removes all songs from queue', () => {
+    it('clears the queue', () => {
       queueStore.clear()
       expect(queueStore.state.songs).toHaveLength(0)
     })
 
-    it('returns the current song', () => expect(queueStore.current?.title).toBe('So long, Jimmy'))
-
-    it('sets the current song', () => {
-      expect(queueStore.current!.title).toBe('No bravery')
+    it.each([['Playing'], ['Paused']])('identifies the current song by %s state', (state: PlaybackState) => {
+      queueStore.state.songs[1].playback_state = state
+      expect(queueStore.current).toEqual(queueStore.state.songs[1])
     })
 
-    it('gets the next song in queue', () => expect(queueStore.next?.title).toBe('Wisemen'))
+    it('gets the next song in queue', () => {
+      queueStore.state.songs[1].playback_state = 'Playing'
+      expect(queueStore.next).toEqual(queueStore.state.songs[2])
+    })
 
     it('returns undefined as next song if at end of queue', () => {
+      queueStore.state.songs[2].playback_state = 'Playing'
       expect(queueStore.next).toBeUndefined()
     })
 
-    it('gets the previous song in queue', () => expect(queueStore.previous?.title).toBe('No bravery'))
+    it('gets the previous song in queue', () => {
+      queueStore.state.songs[1].playback_state = 'Playing'
+      expect(queueStore.previous).toEqual(queueStore.state.songs[0])
+    })
 
     it('returns undefined as previous song if at beginning of queue', () => {
+      queueStore.state.songs[0].playback_state = 'Playing'
       expect(queueStore.previous).toBeUndefined()
+    })
+
+    it('fetches random songs to queue', async () => {
+      const songs = factory<Song[]>('song', 3)
+      const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
+      const syncMock = this.mock(songStore, 'syncWithVault', songs)
+      
+      await queueStore.fetchRandom(3)
+
+      expect(getMock).toHaveBeenCalledWith('queue/fetch?order=rand&limit=3')
+      expect(syncMock).toHaveBeenCalledWith(songs)
+      expect(queueStore.all).toEqual(songs)
+    })
+
+    it('fetches random songs to queue with a custom order', async () => {
+      const songs = factory<Song[]>('song', 3)
+      const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
+      const syncMock = this.mock(songStore, 'syncWithVault', songs)
+
+      await queueStore.fetchInOrder('title', 'desc', 3)
+
+      expect(getMock).toHaveBeenCalledWith('queue/fetch?order=desc&sort=title&limit=3')
+      expect(syncMock).toHaveBeenCalledWith(songs)
+      expect(queueStore.all).toEqual(songs)
     })
   }
 }
