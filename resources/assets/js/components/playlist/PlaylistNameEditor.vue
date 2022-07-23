@@ -1,6 +1,6 @@
 <template>
   <input
-    v-model="mutatedPlaylist.name"
+    v-model="name"
     v-koel-focus
     data-testid="inline-playlist-name-input"
     name="name"
@@ -15,44 +15,42 @@
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue'
 import { playlistStore } from '@/stores'
-import { alerts } from '@/utils'
+import { alerts, logger } from '@/utils'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
 
-const updating = ref(false)
+let updating = false
 
-const mutatedPlaylist = reactive<Playlist>(Object.assign({}, playlist.value))
+const mutablePlaylist = reactive<Playlist>(Object.assign({}, playlist.value))
+const name = ref(mutablePlaylist.name)
 
 const emit = defineEmits(['updated', 'cancelled'])
 
 const update = async () => {
-  mutatedPlaylist.name = mutatedPlaylist.name.trim()
-
-  if (!mutatedPlaylist.name) {
-    cancel()
-    return
-  }
-
-  if (mutatedPlaylist.name === playlist.value.name) {
+  if (!name.value || name.value === playlist.value.name) {
     cancel()
     return
   }
 
   // prevent duplicate updating from Enter and Blur
-  if (updating.value) {
+  if (updating) {
     return
   }
 
-  updating.value = true
+  updating = true
 
-  await playlistStore.update(mutatedPlaylist)
-  alerts.success(`Playlist "${mutatedPlaylist.name}" updated.`)
-  emit('updated', mutatedPlaylist)
+  try {
+    await playlistStore.update(mutablePlaylist, { name: name.value })
+    alerts.success(`Playlist "${name}" updated.`)
+    emit('updated', name)
+  } catch (error) {
+    alerts.error('Something went wrong. Please try again.')
+    logger.error(error)
+  } finally {
+    updating = false
+  }
 }
 
-const cancel = () => {
-  mutatedPlaylist.name = playlist.value.name
-  emit('cancelled')
-}
+const cancel = () => emit('cancelled')
 </script>

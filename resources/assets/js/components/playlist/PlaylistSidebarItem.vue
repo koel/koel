@@ -117,8 +117,8 @@ const openContextMenu = async (event: MouseEvent) => {
 
 const cancelEditing = () => (editing.value = false)
 
-const onPlaylistNameUpdated = (mutatedPlaylist: Playlist) => {
-  playlist.value.name = mutatedPlaylist.name
+const onPlaylistNameUpdated = (name: string) => {
+  playlist.value.name = name
   editing.value = false
 }
 

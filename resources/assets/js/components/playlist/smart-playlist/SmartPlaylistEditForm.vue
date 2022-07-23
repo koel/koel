@@ -11,13 +11,13 @@
           <div class="form-row">
             <label>
               Name
-              <input v-model="mutatedPlaylist.name" v-koel-focus name="name" required type="text">
+              <input v-model="mutablePlaylist.name" v-koel-focus name="name" required type="text">
             </label>
           </div>
 
           <div class="form-row rules">
             <RuleGroup
-              v-for="(group, index) in mutatedPlaylist.rules"
+              v-for="(group, index) in mutablePlaylist.rules"
               :key="group.id"
               :group="group"
               :isFirstGroup="index === 0"
@@ -43,18 +43,18 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { computed, reactive, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'
-import { alerts, eventBus, requireInjection } from '@/utils'
+import { alerts, eventBus, logger, requireInjection } from '@/utils'
 import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
 import { PlaylistKey } from '@/symbols'
 
 const [playlist] = requireInjection(PlaylistKey)
 
-let mutatedPlaylist: Playlist
+let mutablePlaylist: Playlist
 
-watch(playlist, () => (mutatedPlaylist = reactive(cloneDeep(playlist.value))), { immediate: true })
+watch(playlist, () => (mutablePlaylist = reactive(cloneDeep(playlist.value))), { immediate: true })
 
 const isPristine = computed(() => {
-  return isEqual(mutatedPlaylist.rules, playlist.value.rules) && mutatedPlaylist.name.trim() === playlist.value.name
+  return isEqual(mutablePlaylist.rules, playlist.value.rules) && mutablePlaylist.name.trim() === playlist.value.name
 })
 
 const {
@@ -66,7 +66,7 @@ const {
   loading,
   addGroup,
   onGroupChanged
-} = useSmartPlaylistForm(mutatedPlaylist.rules)
+} = useSmartPlaylistForm(mutablePlaylist.rules)
 
 const emit = defineEmits(['close'])
 const close = () => emit('close')
@@ -82,12 +82,22 @@ const maybeClose = () => {
 
 const submit = async () => {
   loading.value = true
-  mutatedPlaylist.rules = collectedRuleGroups.value
-  await playlistStore.update(mutatedPlaylist)
-  Object.assign(playlist.value, mutatedPlaylist)
-  loading.value = false
-  alerts.success(`Playlist "${playlist.value.name}" updated.`)
-  eventBus.emit('SMART_PLAYLIST_UPDATED', playlist.value)
-  close()
+  mutablePlaylist.rules = collectedRuleGroups.value
+
+  try {
+    await playlistStore.update(playlist.value, {
+      name: mutablePlaylist.name,
+      rules: mutablePlaylist.rules
+    })
+
+    alerts.success(`Playlist "${playlist.value.name}" updated.`)
+    eventBus.emit('SMART_PLAYLIST_UPDATED', playlist.value)
+    close()
+  } catch (error) {
+    alerts.error('Something went wrong. Please try again.')
+    logger.error(error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>

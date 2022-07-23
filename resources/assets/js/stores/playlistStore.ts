@@ -1,6 +1,5 @@
 import { differenceBy, orderBy } from 'lodash'
 import { reactive } from 'vue'
-
 import { logger } from '@/utils'
 import { Cache, httpService } from '@/services'
 import models from '@/config/smart-playlist/models'
@@ -13,11 +12,7 @@ export const playlistStore = {
 
   init (playlists: Playlist[]) {
     this.state.playlists = this.sort(playlists)
-    this.state.playlists.forEach(playlist => this.setupPlaylist(playlist))
-  },
-
-  setupPlaylist (playlist: Playlist) {
-    playlist.is_smart && this.setupSmartPlaylist(playlist)
+    this.state.playlists.forEach(playlist => playlist.is_smart && this.setupSmartPlaylist(playlist))
   },
 
   /**
@@ -43,10 +38,12 @@ export const playlistStore = {
   },
 
   async store (name: string, songs: Song[] = [], rules: SmartPlaylistRuleGroup[] = []) {
-    const songIds = songs.map(song => song.id)
-    const serializedRules = this.serializeSmartPlaylistRulesForStorage(rules)
+    const playlist = await httpService.post<Playlist>('playlist', {
+      name,
+      songs: songs.map(song => song.id),
+      rules: this.serializeSmartPlaylistRulesForStorage(rules)
+    })
 
-    const playlist = await httpService.post<Playlist>('playlist', { name, songs: songIds, rules: serializedRules })
     this.state.playlists.push(playlist)
     this.state.playlists = this.sort(this.state.playlists)
 
@@ -80,11 +77,14 @@ export const playlistStore = {
     return playlist
   },
 
-  async update (playlist: Playlist) {
-    const serializedRules = this.serializeSmartPlaylistRulesForStorage(playlist.rules)
-    await httpService.put(`playlists/${playlist.id}`, { name: playlist.name, rules: serializedRules })
+  async update (playlist: Playlist, data: Partial<Pick<Playlist, 'name' | 'rules'>>) {
+    await httpService.put(`playlists/${playlist.id}`, {
+      name: data.name,
+      rules: this.serializeSmartPlaylistRulesForStorage(data.rules || [])
+    })
 
     playlist.is_smart && Cache.invalidate(['playlist.songs', playlist.id])
+    Object.assign(playlist, data)
 
     return playlist
   },
