@@ -4,6 +4,7 @@ import { expect, it } from 'vitest'
 import factory from 'factoria'
 import { httpService } from '@/services'
 import { songStore } from '@/stores/songStore'
+import { reactive } from 'vue'
 
 let songs
 
@@ -11,7 +12,7 @@ new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
       songs = factory<Song[]>('song', 3)
-      queueStore.state.songs = songs
+      queueStore.state.songs = reactive(songs)
     })
   }
 
@@ -91,7 +92,7 @@ new class extends UnitTestCase {
       const songs = factory<Song[]>('song', 3)
       const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
-      
+
       await queueStore.fetchRandom(3)
 
       expect(getMock).toHaveBeenCalledWith('queue/fetch?order=rand&limit=3')
