@@ -12,7 +12,7 @@
 import { GlobalEvents } from 'vue-global-events'
 import { $, eventBus } from '@/utils'
 import { playbackService, socketService } from '@/services'
-import { favoriteStore, queueStore, songStore } from '@/stores'
+import { favoriteStore, queueStore } from '@/stores'
 
 const togglePlayback = (e: KeyboardEvent) => {
   if (
@@ -90,7 +90,7 @@ const toggleLike = (e: KeyboardEvent) => {
   }
 
   favoriteStore.toggleOne(queueStore.current)
-  socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current))
+  socketService.broadcast('SOCKET_SONG', queueStore.current)
 
   return false
 }

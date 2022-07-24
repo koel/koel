@@ -24,8 +24,8 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, ref } from 'vue'
 import { $, eventBus, hideOverlay, showOverlay } from '@/utils'
-import { commonStore, favoriteStore, preferenceStore as preferences, queueStore } from '@/stores'
-import { authService, playbackService, socketService } from '@/services'
+import { commonStore, preferenceStore as preferences } from '@/stores'
+import { authService, playbackService, socketListener, socketService } from '@/services'
 
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/app-footer/index.vue'
@@ -56,14 +56,6 @@ const onUserLoggedIn = () => {
   init()
 }
 
-const subscribeToBroadcastEvents = () => {
-  socketService.listen('SOCKET_TOGGLE_FAVORITE', (): void => {
-    if (queueStore.current) {
-      favoriteStore.toggleOne(queueStore.current)
-    }
-  })
-}
-
 onMounted(async () => {
   // The app has just been initialized, check if we can get the user data with an already existing token
   if (authService.hasToken()) {
@@ -78,7 +70,6 @@ onMounted(async () => {
 
 const init = async () => {
   showOverlay()
-  await socketService.init()
 
   try {
     await commonStore.init()
@@ -97,11 +88,11 @@ const init = async () => {
         e.returnValue = ''
       })
 
-      subscribeToBroadcastEvents()
-
       // Let all other components know we're ready.
       eventBus.emit('KOEL_READY')
     }, 100)
+
+    await socketService.init() && socketListener.listen()
   } catch (err) {
     authenticated.value = false
     throw err

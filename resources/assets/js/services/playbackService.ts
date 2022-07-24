@@ -54,30 +54,7 @@ export const playbackService = {
     }
 
     this.setMediaSessionActionHandlers()
-
-    this.listenToSocketEvents()
     this.initialized = true
-  },
-
-  listenToSocketEvents () {
-    socketService.listen('SOCKET_TOGGLE_PLAYBACK', () => this.toggle())
-      .listen('SOCKET_PLAY_NEXT', () => this.playNext())
-      .listen('SOCKET_PLAY_PREV', () => this.playPrev())
-      .listen('SOCKET_GET_STATUS', () => {
-        const data = queueStore.current ? songStore.generateDataToBroadcast(queueStore.current) : {
-          volume: this.volumeInput.value
-        }
-        socketService.broadcast('SOCKET_STATUS', data)
-      })
-      .listen('SOCKET_GET_CURRENT_SONG', () => {
-        socketService.broadcast(
-          'SOCKET_SONG',
-          queueStore.current
-            ? songStore.generateDataToBroadcast(queueStore.current)
-            : { song: null }
-        )
-      })
-      .listen('SOCKET_SET_VOLUME', ({ volume }: { volume: number }) => this.setVolume(volume))
   },
 
   setMediaSessionActionHandlers () {
@@ -223,12 +200,10 @@ export const playbackService = {
 
     // Record the UNIX timestamp the song starts playing, for scrobbling purpose
     song.play_start_time = Math.floor(Date.now() / 1000)
-
     song.play_count_registered = false
 
     eventBus.emit('SONG_STARTED', song)
-
-    socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(song))
+    socketService.broadcast('SOCKET_SONG', song)
 
     this.getPlayer().restart()
 
@@ -314,6 +289,8 @@ export const playbackService = {
     }
   },
 
+  getVolume: () => preferences.volume,
+
   /**
    * @param {Number}     volume   0-10
    * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
@@ -352,7 +329,7 @@ export const playbackService = {
   pause () {
     this.getPlayer().pause()
     queueStore.current!.playback_state = 'Paused'
-    socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current!))
+    socketService.broadcast('SOCKET_SONG', queueStore.current)
   },
 
   async resume () {
@@ -364,7 +341,7 @@ export const playbackService = {
 
     queueStore.current!.playback_state = 'Playing'
     eventBus.emit('SONG_STARTED', queueStore.current)
-    socketService.broadcast('SOCKET_SONG', songStore.generateDataToBroadcast(queueStore.current!))
+    socketService.broadcast('SOCKET_SONG', queueStore.current)
   },
 
   async toggle () {

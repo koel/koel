@@ -5,8 +5,8 @@
 
       <main>
         <template v-if="connected">
-          <div class="details" v-if="song">
-            <div :style="{ backgroundImage: `url(${song.album_cover})` }" class="cover"/>
+          <div v-if="song" class="details">
+            <div :style="{ backgroundImage: `url(${song.album_cover || defaultCover})` }" class="cover"/>
             <div class="info">
               <div class="wrap">
                 <p class="title text">{{ song.title }}</p>
@@ -17,7 +17,7 @@
           </div>
           <p class="none text-secondary" v-else>No song is playing.</p>
           <footer>
-            <a class="favorite" @click.prevent="toggleFavorite">
+            <a class="favorite" :class="song?.liked ? 'yep' : ''" @click.prevent="toggleFavorite">
               <icon :icon="song?.liked ? faHeart : faEmptyHeart"/>
             </a>
             <a class="prev" @click="playPrev">
@@ -37,7 +37,7 @@
                 v-koel-clickaway="closeVolumeSlider"
               />
               <span class="icon" @click.stop="toggleVolumeSlider">
-                <icon :icon="muted ? faVolumeHigh : faVolumeMute" fixed-width/>
+                <icon :icon="muted ? faVolumeMute : faVolumeHigh" fixed-width/>
               </span>
             </span>
           </footer>
@@ -77,7 +77,7 @@ import noUISlider from 'nouislider'
 import { authService, socketService } from '@/services'
 import { preferenceStore, userStore } from '@/stores'
 import { computed, defineAsyncComponent, nextTick, onMounted, ref, toRef, watch } from 'vue'
-import { logger } from '@/utils'
+import { defaultCover, logger } from '@/utils'
 
 const MAX_RETRIES = 10
 const DEFAULT_VOLUME = 7
@@ -87,7 +87,7 @@ const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm
 
 const volumeSlider = ref<SliderElement>()
 const authenticated = ref(false)
-const song = ref<Song | null>(null)
+const song = ref<Song>()
 const connected = ref(false)
 const muted = ref(false)
 const showingVolumeSlider = ref(false)
@@ -116,18 +116,18 @@ watch(connected, async () => {
     throw new Error('Failed to initialize noUISlider on element #volumeSlider')
   }
 
-  volumeSlider.value.noUiSlider.on('change', (values: number[], handle: number): void => {
+  volumeSlider.value.noUiSlider.on('change', (values: number[], handle: number) => {
     const volume = values[handle]
     muted.value = !volume
-    socketService.broadcast('SOCKET_SET_VOLUME', { volume })
+    socketService.broadcast('SOCKET_SET_VOLUME', volume)
   })
 })
 
-watch(volume, () => volumeSlider.value?.noUiSlider!.set(volume.value || DEFAULT_VOLUME))
+watch(volume, () => volumeSlider.value?.noUiSlider!.set(volume.value ?? DEFAULT_VOLUME))
 
-const onUserLoggedIn = () => {
+const onUserLoggedIn = async () => {
   authenticated.value = true
-  init()
+  await init()
 }
 
 const init = async () => {
@@ -137,12 +137,12 @@ const init = async () => {
     await socketService.init()
 
     socketService
-      .listen('SOCKET_SONG', ({ song: _song }: { song: Song }) => (song.value = _song))
+      .listen('SOCKET_SONG', _song => (song.value = _song))
       .listen('SOCKET_PLAYBACK_STOPPED', () => song.value && (song.value.playback_state = 'Stopped'))
       .listen('SOCKET_VOLUME_CHANGED', (volume: number) => volumeSlider.value?.noUiSlider?.set(volume))
-      .listen('SOCKET_STATUS', ({ song: _song, volume: _volume }: { song: Song, volume: number }) => {
-        song.value = _song
-        volume.value = _volume || DEFAULT_VOLUME
+      .listen('SOCKET_STATUS', (data: { song?: Song, volume: number }) => {
+        song.value = data.song
+        volume.value = data.volume || DEFAULT_VOLUME
         connected.value = true
       })
 
@@ -197,11 +197,11 @@ const rescan = () => {
 const playing = computed(() => Boolean(song.value?.playback_state === 'Playing'))
 const maxRetriesReached = computed(() => retries.value >= MAX_RETRIES)
 
-onMounted(() => {
+onMounted(async () => {
   // The app has just been initialized, check if we can get the user data with an already existing token
   if (authService.hasToken()) {
     authenticated.value = true
-    init()
+    await init()
   }
 })
 </script>
@@ -345,6 +345,7 @@ main {
     justify-content: space-around;
     align-items: center;
     border-top: 1px solid rgba(255, 255, 255, .1);
+    padding: 1rem 0;
     font-size: 5vmin;
 
     a {
@@ -355,10 +356,8 @@ main {
       }
     }
 
-    .favorite {
-      .yep {
-        color: var(--color-maroon);
-      }
+    .favorite.yep {
+      color: var(--color-maroon);
     }
 
     .prev, .next {
@@ -375,7 +374,7 @@ main {
       place-content: center;
       place-items: center;
 
-      &.fa-play {
+      .fa-play {
         margin-left: 4px;
       }
     }

@@ -8,26 +8,24 @@ export const socketService = {
   channel: null as Pusher.Channel | null,
 
   async init () {
-    return new Promise(resolve => {
-      if (!window.PUSHER_APP_KEY) {
-        return resolve()
-      }
+    if (!window.PUSHER_APP_KEY) {
+      return false
+    }
 
-      this.pusher = new Pusher(window.PUSHER_APP_KEY, {
-        authEndpoint: `${window.BASE_URL}api/broadcasting/auth`,
-        auth: {
-          headers: {
-            Authorization: `Bearer ${authService.getToken()}`
-          }
-        },
-        cluster: window.PUSHER_APP_CLUSTER,
-        encrypted: true
-      })
-
-      this.channel = this.pusher.subscribe('private-koel')
-      this.channel.bind('pusher:subscription_succeeded', () => resolve())
-      this.channel.bind('pusher:subscription_error', () => resolve())
+    this.pusher = new Pusher(window.PUSHER_APP_KEY, {
+      authEndpoint: `${window.BASE_URL}api/broadcasting/auth`,
+      auth: {
+        headers: {
+          Authorization: `Bearer ${authService.getToken()}`
+        }
+      },
+      cluster: window.PUSHER_APP_CLUSTER,
+      encrypted: true
     })
+
+    this.channel = this.pusher.subscribe('private-koel')
+
+    return true
   },
 
   broadcast (eventName: string, data: any = {}) {
