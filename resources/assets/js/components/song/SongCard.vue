@@ -8,7 +8,7 @@
     @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
-    <span :style="{ backgroundImage: `url(${song.album_cover}), url(${defaultCover})` }" class="cover">
+    <span :style="{ backgroundImage: `url(${song.album_cover ?? ''}), url(${defaultCover})` }" class="cover">
       <a class="control" @click.prevent="changeSongState" data-testid="play-control">
         <icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-highlight"/>
       </a>
