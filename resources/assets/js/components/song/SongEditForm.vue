@@ -173,21 +173,11 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
 import { alerts, defaultCover, pluralize, requireInjection } from '@/utils'
-import { songStore } from '@/stores'
+import { songStore, SongUpdateData } from '@/stores'
 import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
-
-type EditFormData = {
-  title?: string
-  artist_name?: string
-  album_name?: string
-  album_artist_name?: string
-  track?: number | null
-  disc?: number | null
-  lyrics?: string
-}
 
 const [initialTab] = requireInjection(EditSongFormInitialTabKey)
 const [songs] = requireInjection(SongsKey)
@@ -200,7 +190,7 @@ const mutatedSongs = computed(() => songs.value)
 /**
  * In order not to mess up the original songs, we manually assign and manipulate their attributes.
  */
-const formData = reactive<EditFormData>({
+const formData = reactive<SongUpdateData>({
   title: '',
   album_name: '',
   artist_name: '',
@@ -223,7 +213,7 @@ const coverUrl = computed(() => allSongsAreInSameAlbum.value
   : defaultCover
 )
 
-const allSongsShareSameValue = (key: keyof EditFormData) => {
+const allSongsShareSameValue = (key: keyof SongUpdateData) => {
   if (editingOnlyOneSong.value) return true
   return new Set(mutatedSongs.value.map(song => song[key])).size === 1
 }

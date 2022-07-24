@@ -55,7 +55,11 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
 
         Route::put('settings', [SettingController::class, 'update']);
 
+        /**
+         * @deprecated Use songs/{song}/scrobble instead
+         */
         Route::post('{song}/scrobble', [ScrobbleController::class, 'store']);
+        Route::post('songs/{song}/scrobble', [ScrobbleController::class, 'store']);
         Route::put('songs', [SongController::class, 'update']);
 
         Route::post('upload', UploadController::class);

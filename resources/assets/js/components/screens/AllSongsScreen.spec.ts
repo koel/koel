@@ -13,7 +13,7 @@ new class extends UnitTestCase {
     commonStore.state.song_count = 420
     commonStore.state.song_length = 123_456
     songStore.state.songs = factory<Song[]>('song', 20)
-    const fetchMock = this.mock(songStore, 'fetch').mockResolvedValue(2)
+    const fetchMock = this.mock(songStore, 'paginate').mockResolvedValue(2)
 
     const rendered = this.render(AllSongsScreen, {
       global: {

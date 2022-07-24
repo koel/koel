@@ -1,30 +1,22 @@
 import isMobile from 'ismobilejs'
 import slugify from 'slugify'
-import { orderBy, take, union, unionBy } from 'lodash'
-import { reactive, watch } from 'vue'
-import { arrayify, eventBus, secondsToHis, use } from '@/utils'
+import { merge, orderBy, sumBy, take, unionBy } from 'lodash'
+import { reactive, UnwrapNestedRefs, watch } from 'vue'
+import { arrayify, eventBus, logger, secondsToHis, use } from '@/utils'
 import { authService, Cache, httpService } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, preferenceStore } from '@/stores'
 
-interface BroadcastSongData {
-  song: {
-    id: string
-    title: string
-    liked: boolean
-    playbackState: PlaybackState
-    album: {
-      id: number
-      name: string
-      cover: string
-    }
-    artist: {
-      id: number
-      name: string
-    }
-  }
+export type SongUpdateData = {
+  title?: string
+  artist_name?: string
+  album_name?: string
+  album_artist_name?: string
+  track?: number | null
+  disc?: number | null
+  lyrics?: string
 }
 
-interface SongUpdateResult {
+export interface SongUpdateResult {
   songs: Song[]
   artists: Artist[]
   albums: Album[]
@@ -35,27 +27,13 @@ interface SongUpdateResult {
 }
 
 export const songStore = {
-  vault: new Map<string, Song>(),
+  vault: new Map<string, UnwrapNestedRefs<Song>>(),
 
   state: reactive({
     songs: [] as Song[]
   }),
 
-  /**
-   * Get the total duration of some songs.
-   *
-   * @param songs
-   * @param {Boolean} formatted Whether to convert the duration into H:i:s format
-   */
-  getLength: (songs: Song[], formatted: boolean = false) => {
-    const duration = songs.reduce((length, song) => length + song.length, 0)
-
-    return formatted ? secondsToHis(duration) : duration
-  },
-
-  getFormattedLength (songs: Song[]) {
-    return String(this.getLength(songs, true))
-  },
+  getFormattedLength: (songs: Song | Song[]) => secondsToHis(sumBy(arrayify(songs), 'length')),
 
   byId (id: string) {
     return this.vault.get(id)
@@ -72,15 +50,17 @@ export const songStore = {
   },
 
   async resolve (id: string) {
-    if (this.byId(id)) {
-      return this.byId(id)
+    let song = this.byId(id)
+
+    if (!song) {
+      try {
+        song = this.syncWithVault(await httpService.get<Song>(`songs/${id}`))[0]
+      } catch (e) {
+        logger.error(e)
+      }
     }
 
-    try {
-      return this.syncWithVault(await httpService.get<Song>(`songs/${id}`))[0]
-    } catch (e) {
-      return null
-    }
+    return song
   },
 
   /**
@@ -109,9 +89,11 @@ export const songStore = {
     song.play_count = interaction.play_count
   },
 
-  scrobble: async (song: Song) => await httpService.post(`${song.id}/scrobble`, { timestamp: song.play_start_time }),
+  scrobble: async (song: Song) => await httpService.post(`songs/${song.id}/scrobble`, {
+    timestamp: song.play_start_time
+  }),
 
-  async update (songsToUpdate: Song[], data: any) {
+  async update (songsToUpdate: Song[], data: SongUpdateData) {
     const { songs, artists, albums, removed } = await httpService.put<SongUpdateResult>('songs', {
       data,
       songs: songsToUpdate.map(song => song.id)
@@ -138,42 +120,24 @@ export const songStore = {
 
   getShareableUrl: (song: Song) => `${window.BASE_URL}#!/song/${song.id}`,
 
-  generateDataToBroadcast: (song: Song): BroadcastSongData => ({
-    song: {
-      id: song.id,
-      title: song.title,
-      liked: song.liked,
-      playbackState: song.playback_state || 'Stopped',
-      album: {
-        id: song.album_id,
-        name: song.album_name,
-        cover: song.album_cover
-      },
-      artist: {
-        id: song.artist_id,
-        name: song.artist_name
-      }
-    }
-  }),
-
   syncWithVault (songs: Song | Song[]) {
     return arrayify(songs).map(song => {
       let local = this.byId(song.id)
 
       if (local) {
-        Object.assign(local, song)
+        merge(local, song)
       } else {
-        song.playback_state = 'Stopped'
         local = reactive(song)
-        this.trackPlayCount(local!)
+        local.playback_state = 'Stopped'
+        this.trackPlayCount(local)
+        this.vault.set(local.id, local)
       }
 
-      this.vault.set(song.id, local)
       return local
     })
   },
 
-  trackPlayCount: (song: Song) => {
+  trackPlayCount: (song: UnwrapNestedRefs<Song>) => {
     watch(() => song.play_count, (newCount, oldCount) => {
       const album = albumStore.byId(song.album_id)
       album && (album.play_count += (newCount - oldCount))
@@ -211,7 +175,7 @@ export const songStore = {
     )
   },
 
-  async fetch (sortField: SongListSortField, sortOrder: SortOrder, page: number) {
+  async paginate (sortField: SongListSortField, sortOrder: SortOrder, page: number) {
     const resource = await httpService.get<PaginatorResource>(
       `songs?page=${page}&sort=${sortField}&order=${sortOrder}`
     )

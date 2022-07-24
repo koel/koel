@@ -84,7 +84,7 @@ const fetchSongs = async () => {
   if (!moreSongsAvailable.value || loading) return
 
   loading = true
-  page.value = await songStore.fetch(sortField, sortOrder, page.value!)
+  page.value = await songStore.paginate(sortField, sortOrder, page.value!)
   loading = false
 }
 

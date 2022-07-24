@@ -13,3 +13,5 @@ global.ResizeObserver = global.ResizeObserver ||
 window.HTMLMediaElement.prototype.load = vi.fn()
 window.HTMLMediaElement.prototype.play = vi.fn()
 window.HTMLMediaElement.prototype.pause = vi.fn()
+
+window.BASE_URL = 'https://koel.test/'

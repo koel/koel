@@ -1,7 +1,8 @@
 import factory from 'factoria'
 import artistFactory, { states as artistStates } from '@/__tests__/factory/artistFactory'
 import songFactory, { states as songStates } from '@/__tests__/factory/songFactory'
-import albumFactory, { states as albumStates } from './albumFactory'
+import albumFactory, { states as albumStates } from '@/__tests__/factory/albumFactory'
+import interactionFactory from '@/__tests__/factory/interactionFactory'
 import smartPlaylistRuleFactory from '@/__tests__/factory/smartPlaylistRuleFactory'
 import smartPlaylistRuleGroupFactory from '@/__tests__/factory/smartPlaylistRuleGroupFactory'
 import playlistFactory, { states as playlistStates } from '@/__tests__/factory/playlistFactory'
@@ -18,6 +19,7 @@ export default factory
   .define('album-track', faker => albumTrackFactory(faker))
   .define('album-info', faker => albumInfoFactory(faker))
   .define('song', faker => songFactory(faker), songStates)
+  .define('interaction', faker => interactionFactory(faker))
   .define('video', faker => youTubeVideoFactory(faker))
   .define('smart-playlist-rule', faker => smartPlaylistRuleFactory(faker))
   .define('smart-playlist-rule-group', faker => smartPlaylistRuleGroupFactory(faker))

@@ -268,6 +268,7 @@ interface Settings {
 }
 
 interface Interaction {
+  type: 'interactions'
   readonly id: number
   readonly song_id: string
   liked: boolean

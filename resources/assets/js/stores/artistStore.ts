@@ -1,13 +1,13 @@
-import { reactive } from 'vue'
+import { reactive, UnwrapNestedRefs } from 'vue'
 import { differenceBy, orderBy, take, unionBy } from 'lodash'
 import { Cache, httpService } from '@/services'
-import { arrayify } from '@/utils'
+import { arrayify, logger } from '@/utils'
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
 
 export const artistStore = {
-  vault: new Map<number, Artist>(),
+  vault: new Map<number, UnwrapNestedRefs<Artist>>(),
 
   state: reactive({
     artists: []
@@ -57,8 +57,13 @@ export const artistStore = {
     let artist = this.byId(id)
 
     if (!artist) {
-      artist = await Cache.resolve<Artist>(['artist', id], async () => await httpService.get<Artist>(`artists/${id}`))
-      this.syncWithVault(artist)
+      try {
+        artist = this.syncWithVault(
+          await Cache.resolve<Artist>(['artist', id], async () => await httpService.get<Artist>(`artists/${id}`))
+        )[0]
+      } catch (e) {
+        logger.error(e)
+      }
     }
 
     return artist

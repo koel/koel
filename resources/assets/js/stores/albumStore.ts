@@ -1,13 +1,13 @@
-import { reactive } from 'vue'
+import { reactive, UnwrapNestedRefs } from 'vue'
 import { differenceBy, merge, orderBy, take, unionBy } from 'lodash'
 import { Cache, httpService } from '@/services'
-import { arrayify } from '@/utils'
+import { arrayify, logger } from '@/utils'
 import { songStore } from '@/stores'
 
 const UNKNOWN_ALBUM_ID = 1
 
 export const albumStore = {
-  vault: new Map<number, Album>(),
+  vault: new Map<number, UnwrapNestedRefs<Album>>(),
 
   state: reactive({
     albums: []
@@ -64,8 +64,13 @@ export const albumStore = {
     let album = this.byId(id)
 
     if (!album) {
-      album = await Cache.resolve<Album>(['album', id], async () => await httpService.get<Album>(`albums/${id}`))
-      this.syncWithVault(album)
+      try {
+        album = this.syncWithVault(
+          await Cache.resolve<Album>(['album', id], async () => await httpService.get<Album>(`albums/${id}`))
+        )[0]
+      } catch (e) {
+        logger.error(e)
+      }
     }
 
     return album
