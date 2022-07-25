@@ -1,7 +1,7 @@
 import { differenceBy, orderBy } from 'lodash'
 import { reactive } from 'vue'
 import { logger } from '@/utils'
-import { Cache, httpService } from '@/services'
+import { cache, httpService } from '@/services'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
 
@@ -61,7 +61,7 @@ export const playlistStore = {
     }
 
     await httpService.post(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
-    Cache.invalidate(['playlist.songs', playlist.id])
+    cache.remove(['playlist.songs', playlist.id])
 
     return playlist
   },
@@ -72,7 +72,7 @@ export const playlistStore = {
     }
 
     await httpService.delete(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
-    Cache.invalidate(['playlist.songs', playlist.id])
+    cache.remove(['playlist.songs', playlist.id])
 
     return playlist
   },
@@ -83,7 +83,7 @@ export const playlistStore = {
       rules: this.serializeSmartPlaylistRulesForStorage(data.rules || [])
     })
 
-    playlist.is_smart && Cache.invalidate(['playlist.songs', playlist.id])
+    playlist.is_smart && cache.remove(['playlist.songs', playlist.id])
     Object.assign(playlist, data)
 
     return playlist

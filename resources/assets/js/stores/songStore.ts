@@ -3,7 +3,7 @@ import slugify from 'slugify'
 import { merge, orderBy, sumBy, take, unionBy } from 'lodash'
 import { reactive, UnwrapNestedRefs, watch } from 'vue'
 import { arrayify, eventBus, logger, secondsToHis, use } from '@/utils'
-import { authService, Cache, httpService } from '@/services'
+import { authService, cache, httpService } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, preferenceStore } from '@/stores'
 
 export type SongUpdateData = {
@@ -155,21 +155,21 @@ export const songStore = {
   },
 
   async fetchForAlbum (album: Album) {
-    return await Cache.resolve<Song[]>(
+    return await cache.remember<Song[]>(
       [`album.songs`, album.id],
       async () => this.syncWithVault(await httpService.get<Song[]>(`albums/${album.id}/songs`))
     )
   },
 
   async fetchForArtist (artist: Artist) {
-    return await Cache.resolve<Song[]>(
+    return await cache.remember<Song[]>(
       ['artist.songs', artist.id],
       async () => this.syncWithVault(await httpService.get<Song[]>(`artists/${artist.id}/songs`))
     )
   },
 
   async fetchForPlaylist (playlist: Playlist) {
-    return await Cache.resolve<Song[]>(
+    return await cache.remember<Song[]>(
       [`playlist.songs`, playlist.id],
       async () => this.syncWithVault(await httpService.get<Song[]>(`playlists/${playlist.id}/songs`))
     )

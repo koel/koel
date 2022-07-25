@@ -1,4 +1,4 @@
-import { Cache, httpService } from '@/services'
+import { cache, httpService } from '@/services'
 import { eventBus } from '@/utils'
 import router from '@/router'
 
@@ -9,7 +9,7 @@ interface YouTubeSearchResult {
 
 export const youTubeService = {
   searchVideosBySong: async (song: Song, nextPageToken: string) => {
-    return await Cache.resolve<YouTubeSearchResult>(
+    return await cache.remember<YouTubeSearchResult>(
       ['youtube.search', song.id, nextPageToken],
       async () => await httpService.get<YouTubeSearchResult>(
         `youtube/search/song/${song.id}?pageToken=${nextPageToken}`

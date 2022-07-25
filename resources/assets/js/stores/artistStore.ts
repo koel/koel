@@ -1,6 +1,6 @@
 import { reactive, UnwrapNestedRefs } from 'vue'
 import { differenceBy, orderBy, take, unionBy } from 'lodash'
-import { Cache, httpService } from '@/services'
+import { cache, httpService } from '@/services'
 import { arrayify, logger } from '@/utils'
 
 const UNKNOWN_ARTIST_ID = 1
@@ -59,7 +59,7 @@ export const artistStore = {
     if (!artist) {
       try {
         artist = this.syncWithVault(
-          await Cache.resolve<Artist>(['artist', id], async () => await httpService.get<Artist>(`artists/${id}`))
+          await cache.remember<Artist>(['artist', id], async () => await httpService.get<Artist>(`artists/${id}`))
         )[0]
       } catch (e) {
         logger.error(e)

@@ -1,6 +1,6 @@
 import { reactive, UnwrapNestedRefs } from 'vue'
 import { differenceBy, merge, orderBy, take, unionBy } from 'lodash'
-import { Cache, httpService } from '@/services'
+import { cache, httpService } from '@/services'
 import { arrayify, logger } from '@/utils'
 import { songStore } from '@/stores'
 
@@ -66,7 +66,7 @@ export const albumStore = {
     if (!album) {
       try {
         album = this.syncWithVault(
-          await Cache.resolve<Album>(['album', id], async () => await httpService.get<Album>(`albums/${id}`))
+          await cache.remember<Album>(['album', id], async () => await httpService.get<Album>(`albums/${id}`))
         )[0]
       } catch (e) {
         logger.error(e)
