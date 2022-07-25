@@ -2,7 +2,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { playlistStore } from '@/stores'
 import { expect, it } from 'vitest'
-import { Cache, httpService } from '@/services'
+import { cache, httpService } from '@/services'
 
 const ruleGroups: SmartPlaylistRuleGroup[] = [
   {
@@ -114,24 +114,24 @@ new class extends UnitTestCase {
       const playlist = factory<Playlist>('playlist', { id: 12 })
       const songs = factory<Song[]>('song', 3)
       const postMock = this.mock(httpService, 'post').mockResolvedValue(playlist)
-      const invalidateMock = this.mock(Cache, 'invalidate')
+      const removeMock = this.mock(cache, 'remove')
 
       await playlistStore.addSongs(playlist, songs)
 
       expect(postMock).toHaveBeenCalledWith('playlists/12/songs', { songs: songs.map(song => song.id) })
-      expect(invalidateMock).toHaveBeenCalledWith(['playlist.songs', 12])
+      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', 12])
     })
 
     it('removes songs from a playlist', async () => {
       const playlist = factory<Playlist>('playlist', { id: 12 })
       const songs = factory<Song[]>('song', 3)
       const deleteMock = this.mock(httpService, 'delete').mockResolvedValue(playlist)
-      const invalidateMock = this.mock(Cache, 'invalidate')
+      const removeMock = this.mock(cache, 'remove')
 
       await playlistStore.removeSongs(playlist, songs)
 
       expect(deleteMock).toHaveBeenCalledWith('playlists/12/songs', { songs: songs.map(song => song.id) })
-      expect(invalidateMock).toHaveBeenCalledWith(['playlist.songs', 12])
+      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', 12])
     })
 
     it('does not modify a smart playlist content', async () => {
@@ -160,13 +160,13 @@ new class extends UnitTestCase {
       const rules = factory<SmartPlaylistRuleGroup[]>('smart-playlist-rule-group', 2)
       const serializeMock = this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', ['Whatever'])
       const putMock = this.mock(httpService, 'put').mockResolvedValue(playlist)
-      const invalidateMock = this.mock(Cache, 'invalidate')
+      const removeMock = this.mock(cache, 'remove')
 
       await playlistStore.update(playlist, { name: 'Foo', rules })
 
       expect(serializeMock).toHaveBeenCalledWith(rules)
       expect(putMock).toHaveBeenCalledWith('playlists/12', { name: 'Foo', rules: ['Whatever'] })
-      expect(invalidateMock).toHaveBeenCalledWith(['playlist.songs', 12])
+      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', 12])
     })
   }
 }

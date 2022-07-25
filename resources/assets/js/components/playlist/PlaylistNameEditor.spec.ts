@@ -1,56 +1,50 @@
 import factory from '@/__tests__/factory'
-import PlaylistNameEditor from '@/components/playlist/PlaylistNameEditor.vue'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import { playlistStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import PlaylistNameEditor from './PlaylistNameEditor.vue'
+
+let playlist: Playlist
 
 new class extends UnitTestCase {
-  private useEditor () {
-    const updateMock = this.mock(playlistStore, 'update')
-
-    const { getByTestId } = this.render(PlaylistNameEditor, {
-      props: {
-        playlist: factory<Playlist>('playlist', {
-          id: 99,
-          name: 'Foo'
-        })
-      }
+  private renderComponent () {
+    playlist = factory<Playlist>('playlist', {
+      id: 99,
+      name: 'Foo'
     })
 
-    return {
-      updateMock,
-      input: getByTestId<HTMLInputElement>('inline-playlist-name-input')
-    }
+    return this.render(PlaylistNameEditor, {
+      props: {
+        playlist
+      }
+    }).getByRole('textbox')
   }
 
   protected test () {
     it('updates a playlist name on blur', async () => {
-      const { updateMock, input } = this.useEditor()
+      const updateMock = this.mock(playlistStore, 'update')
+      const input = this.renderComponent()
 
       await fireEvent.update(input, 'Bar')
       await fireEvent.blur(input)
 
-      expect(updateMock).toHaveBeenCalledWith(expect.objectContaining({
-        id: 99,
-        name: 'Bar'
-      }))
+      expect(updateMock).toHaveBeenCalledWith(playlist, { name: 'Bar' })
     })
 
     it('updates a playlist name on enter', async () => {
-      const { updateMock, input } = this.useEditor()
+      const updateMock = this.mock(playlistStore, 'update')
+      const input = this.renderComponent()
 
       await fireEvent.update(input, 'Bar')
       await fireEvent.keyUp(input, { key: 'Enter' })
 
-      expect(updateMock).toHaveBeenCalledWith(expect.objectContaining({
-        id: 99,
-        name: 'Bar'
-      }))
+      expect(updateMock).toHaveBeenCalledWith(playlist, { name: 'Bar' })
     })
 
     it('cancels updating on esc', async () => {
-      const { updateMock, input } = this.useEditor()
+      const updateMock = this.mock(playlistStore, 'update')
+      const input = this.renderComponent()
 
       await fireEvent.update(input, 'Bar')
       await fireEvent.keyUp(input, { key: 'Esc' })
