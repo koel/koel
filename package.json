@@ -93,13 +93,8 @@
     "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' http-get://localhost:8080/api/ping 'cypress run --browser chromium'",
     "build": "vite build",
     "build-demo": "cross-env VITE_KOEL_ENV=demo vite build",
-    "dev": "kill-port 8000 && start-test 'php artisan serve --port=8000 --quiet' http-get://localhost:8000/api/ping hot",
-    "development": "mix",
-    "watch": "mix watch",
-    "watch-poll": "mix watch -- --watch-options-poll=1000",
-    "hot": "vite",
-    "prod": "npm run production",
-    "production": "mix --production"
+    "dev": "kill-port 8000 && start-test 'php artisan serve --port=8000 --quiet' http-get://localhost:8000/api/ping vite",
+    "prod": "npm run production"
   },
   "husky": {
     "hooks": {

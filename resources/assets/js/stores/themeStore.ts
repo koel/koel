@@ -14,7 +14,7 @@ export const themeStore = {
     '--bg-position': undefined,
     '--bg-attachment': undefined,
     '--bg-size': undefined
-  } as Record<ThemeableProperty, string>,
+  } as Record<ThemeableProperty, string | undefined>,
 
   state: reactive({
     themes

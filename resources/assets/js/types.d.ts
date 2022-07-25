@@ -363,7 +363,7 @@ interface Theme {
   thumbnailColor: string
   thumbnailUrl?: string
   selected?: boolean
-  properties?: Record<ThemeableProperty, string>
+  properties?: Partial<Record<ThemeableProperty, string>>
 }
 
 type ArtistAlbumViewMode = 'list' | 'thumbnails'

@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, ref } from 'vue'
+import { defineAsyncComponent, nextTick, onMounted, ref } from 'vue'
 import { $, eventBus, hideOverlay, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences } from '@/stores'
 import { authService, playbackService, socketListener, socketService } from '@/services'
@@ -46,7 +46,7 @@ const authenticated = ref(false)
  * Request for notification permission if it's not provided and the user is OK with notifications.
  */
 const requestNotificationPermission = async () => {
-  if (window.Notification && preferences.notify && window.Notification.permission !== 'granted') {
+  if (preferences.notify && window.Notification && window.Notification.permission !== 'granted') {
     preferences.notify = await window.Notification.requestPermission() === 'denied'
   }
 }
@@ -73,26 +73,26 @@ const init = async () => {
 
   try {
     await commonStore.init()
+    await nextTick()
 
-    window.setTimeout(() => {
-      playbackService.init()
-      hideOverlay()
-      requestNotificationPermission()
+    playbackService.init()
+    await requestNotificationPermission()
 
-      window.addEventListener('beforeunload', (e: BeforeUnloadEvent): void => {
-        if (!preferences.confirmClosing) {
-          return
-        }
+    window.addEventListener('beforeunload', (e: BeforeUnloadEvent): void => {
+      if (!preferences.confirmClosing) {
+        return
+      }
 
-        e.preventDefault()
-        e.returnValue = ''
-      })
-
-      // Let all other components know we're ready.
-      eventBus.emit('KOEL_READY')
-    }, 100)
+      e.preventDefault()
+      e.returnValue = ''
+    })
 
     await socketService.init() && socketListener.listen()
+
+    hideOverlay()
+
+    // Let all other components know we're ready.
+    eventBus.emit('KOEL_READY')
   } catch (err) {
     authenticated.value = false
     throw err
