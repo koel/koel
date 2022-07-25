@@ -2,7 +2,7 @@ import { Faker } from '@faker-js/faker'
 import factory from 'factoria'
 
 export default (faker: Faker): AlbumInfo => ({
-  image: faker.image.imageUrl(),
+  cover: faker.image.imageUrl(),
   wiki: {
     summary: faker.lorem.sentence(),
     full: faker.lorem.sentences(4)

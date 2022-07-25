@@ -3,20 +3,20 @@ import { albumStore, artistStore, songStore } from '@/stores'
 
 export const mediaInfoService = {
   async fetchForArtist (artist: Artist) {
+    artist = artistStore.syncWithVault(artist)[0]
     const cacheKey = ['artist.info', artist.id]
     if (cache.has(cacheKey)) return cache.get<ArtistInfo>(cacheKey)
 
     const info = await httpService.get<ArtistInfo | null>(`artists/${artist.id}/information`)
-    info && cache.set(cacheKey, info)
 
-    if (info?.image) {
-      artistStore.byId(artist.id)!.image = info.image
-    }
+    info && cache.set(cacheKey, info)
+    info?.image && (artist.image = info.image)
 
     return info
   },
 
   async fetchForAlbum (album: Album) {
+    album = albumStore.syncWithVault(album)[0]
     const cacheKey = ['album.info', album.id]
     if (cache.has(cacheKey)) return cache.get<AlbumInfo>(cacheKey)
 
@@ -24,8 +24,8 @@ export const mediaInfoService = {
     info && cache.set(cacheKey, info)
 
     if (info?.cover) {
-      albumStore.byId(album.id)!.cover = info.cover
-      songStore.byAlbum(album)!.forEach(song => (song.album_cover = info.cover))
+      album.cover = info.cover
+      songStore.byAlbum(album).forEach(song => (song.album_cover = info.cover!))
     }
 
     return info
