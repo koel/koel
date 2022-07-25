@@ -42,7 +42,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
 
         Route::apiResource('songs', SongController::class);
 
-        Route::get('users', [UserController::class, 'index']);
+        Route::apiResource('users', UserController::class);
 
         Route::get('search', ExcerptSearchController::class);
         Route::get('search/songs', SongSearchController::class);
