@@ -1,6 +1,5 @@
 import isMobile from 'ismobilejs'
 import { isObject, mergeWith } from 'lodash'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { cleanup, render, RenderOptions } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { clickaway, droppable, focus } from '@/directives'
@@ -84,7 +83,7 @@ export default abstract class UnitTestCase {
           'koel-droppable': droppable
         },
         components: {
-          icon: FontAwesomeIcon
+          icon: this.stub('icon')
         }
       }
     }, options))

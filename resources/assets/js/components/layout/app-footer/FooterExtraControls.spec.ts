@@ -17,7 +17,8 @@ new class extends UnitTestCase {
             artist_name: 'Led Zeppelin',
             artist_id: 3,
             album_name: 'Led Zeppelin IV',
-            album_id: 4
+            album_id: 4,
+            liked: false
           })
         },
         global: {
