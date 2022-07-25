@@ -10,15 +10,15 @@
 
 <script lang="ts" setup>
 import { GlobalEvents } from 'vue-global-events'
-import { $, eventBus } from '@/utils'
+import { eventBus } from '@/utils'
 import { playbackService, socketService } from '@/services'
 import { favoriteStore, queueStore } from '@/stores'
 
 const togglePlayback = (e: KeyboardEvent) => {
   if (
     !(e.target instanceof Document) &&
-    $.is(e.target as Element, 'input, textarea, button, select') &&
-    !$.is(e.target as Element, 'input[type=range]')
+    (e.target as Element).matches('input, textarea, button, select') &&
+    !(e.target as Element).matches('input[type=range]')
   ) {
     return true
   }
@@ -32,7 +32,7 @@ const togglePlayback = (e: KeyboardEvent) => {
  * Play the previous song when user presses K.
  */
 const playPrev = (e: KeyboardEvent) => {
-  if (!(e.target instanceof Document) && $.is(e.target as Element, 'input, select, textarea')) {
+  if (!(e.target instanceof Document) && (e.target as Element).matches('input, select, textarea')) {
     return true
   }
 
@@ -46,7 +46,7 @@ const playPrev = (e: KeyboardEvent) => {
  * Play the next song when user presses J.
  */
 const playNext = (e: KeyboardEvent) => {
-  if (!(e.target instanceof Document) && $.is(e.target as Element, 'input, select, textarea')) {
+  if (!(e.target instanceof Document) && (e.target as Element).matches('input, select, textarea')) {
     return true
   }
 
@@ -62,7 +62,7 @@ const playNext = (e: KeyboardEvent) => {
 const search = (e: KeyboardEvent) => {
   if (
     !(e.target instanceof Document) &&
-    ($.is(e.target as Element, 'input, select, textarea') && !$.is(e.target as Element, 'input[type=range]'))
+    (e.target as Element).matches('input, select, textarea') && !(e.target as Element).matches('input[type=range]')
   ) {
     return true
   }
@@ -81,7 +81,7 @@ const search = (e: KeyboardEvent) => {
  * Like/unlike the current song when use presses L.
  */
 const toggleLike = (e: KeyboardEvent) => {
-  if (!(e.target instanceof Document) && $.is(e.target as Element, 'input, select, textarea')) {
+  if (!(e.target instanceof Document) && (e.target as Element).matches('input, select, textarea')) {
     return true
   }
 

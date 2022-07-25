@@ -105,7 +105,7 @@ import isMobile from 'ismobilejs'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import { $, eventBus, requireInjection, startDragging } from '@/utils'
+import { eventBus, requireInjection, startDragging } from '@/utils'
 import {
   SelectedSongsKey,
   SongListConfigKey,
@@ -267,9 +267,9 @@ const rowDragStart = (row: SongRow, event: DragEvent) => {
  * Add a "droppable" class and set the drop effect when other songs are dragged over a row.
  */
 const allowDrop = (event: DragEvent) => {
-  if (!allowReordering) return
-
-  $.addClass((event.target as Element).parentElement, 'droppable')
+  if (!allowReordering) return;
+  
+  (event.target as Element).parentElement.classList.add('droppable')
   event.dataTransfer!.dropEffect = 'move'
 
   return false
@@ -289,7 +289,7 @@ const handleDrop = (item: SongRow, event: DragEvent) => {
 }
 
 const removeDroppableState = (event: DragEvent) => {
-  $.removeClass((event.target as Element).parentElement, 'droppable')
+  (event.target as Element).parentElement.classList.remove('droppable')
   return false
 }
 

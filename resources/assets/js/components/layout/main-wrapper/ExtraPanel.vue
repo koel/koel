@@ -99,7 +99,7 @@
 import isMobile from 'ismobilejs'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { ref, toRef, watch } from 'vue'
-import { $, eventBus } from '@/utils'
+import { eventBus } from '@/utils'
 import { albumStore, artistStore, preferenceStore as preferences } from '@/stores'
 import { useThirdPartyServices } from '@/composables'
 
@@ -122,9 +122,9 @@ const album = ref<Album>()
 
 watch(showing, (showingExtraPanel) => {
   if (showingExtraPanel && !isMobile.any) {
-    $.addClass(document.documentElement, 'with-extra-panel')
+    document.documentElement.classList.add('with-extra-panel')
   } else {
-    $.removeClass(document.documentElement, 'with-extra-panel')
+    document.documentElement.classList.remove('with-extra-panel')
   }
 })
 
@@ -142,7 +142,7 @@ eventBus.on({
   'SONG_STARTED': async (song: Song) => await fetchSongInfo(song),
   'LOAD_MAIN_CONTENT': (): void => {
     // On ready, add 'with-extra-panel' class.
-    isMobile.any || $.addClass(document.documentElement, 'with-extra-panel')
+    isMobile.any || document.documentElement.classList.add('with-extra-panel')
 
     // Hide the extra panel if on mobile
     isMobile.phone && (showing.value = false)

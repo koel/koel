@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, onMounted, ref } from 'vue'
-import { $, eventBus, hideOverlay, showOverlay } from '@/utils'
+import { eventBus, hideOverlay, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences } from '@/stores'
 import { authService, playbackService, socketListener, socketService } from '@/services'
 
@@ -65,7 +65,7 @@ onMounted(async () => {
 
   // Add an ugly mac/non-mac class for OS-targeting styles.
   // I'm crying inside.
-  $.addClass(document.documentElement, navigator.userAgent.includes('Mac') ? 'mac' : 'non-mac')
+  document.documentElement.classList.add(navigator.userAgent.includes('Mac') ? 'mac' : 'non-mac')
 })
 
 const init = async () => {
