@@ -1,13 +1,12 @@
 import { reactive } from 'vue'
-import { differenceBy, shuffle, union, unionBy } from 'lodash'
+import { differenceBy, shuffle, unionBy } from 'lodash'
 import { arrayify } from '@/utils'
 import { httpService } from '@/services'
 import { songStore } from '@/stores'
 
 export const queueStore = {
   state: reactive({
-    songs: [] as Song[],
-    current: null as Song
+    songs: [] as Song[]
   }),
 
   init () {
@@ -40,7 +39,7 @@ export const queueStore = {
   },
 
   set all (songs: Song[]) {
-    this.state.songs = songs
+    this.state.songs = reactive(songs)
   },
 
   get first () {
@@ -52,7 +51,7 @@ export const queueStore = {
   },
 
   contains (song: Song) {
-    return this.all.includes(song)
+    return this.all.includes(reactive(song))
   },
 
   /**
@@ -74,7 +73,7 @@ export const queueStore = {
   },
 
   replaceQueueWith (songs: Song | Song[]) {
-    this.state.songs = arrayify(songs)
+    this.state.songs = reactive(arrayify(songs))
   },
 
   queueAfterCurrent (songs: Song | Song[]) {
@@ -88,7 +87,7 @@ export const queueStore = {
     this.unqueue(songs)
 
     const head = this.all.splice(0, this.indexOf(this.current) + 1)
-    this.all = head.concat(songs, this.all)
+    this.all = head.concat(reactive(songs), this.all)
   },
 
   unqueue (songs: Song | Song[]) {
@@ -104,7 +103,7 @@ export const queueStore = {
 
     movedSongs.forEach(song => {
       this.all.splice(this.indexOf(song), 1)
-      this.all.splice(targetIndex, 0, song)
+      this.all.splice(targetIndex, 0, reactive(song))
     })
   },
 
@@ -113,7 +112,7 @@ export const queueStore = {
   },
 
   indexOf (song: Song) {
-    return this.all.indexOf(song)
+    return this.all.indexOf(reactive(song))
   },
 
   get next () {

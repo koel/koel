@@ -22,19 +22,19 @@ import router from '@/router'
 const PRELOAD_BUFFER = 30
 const DEFAULT_VOLUME_VALUE = 7
 const VOLUME_INPUT_SELECTOR = '#volumeInput'
-const REPEAT_MODES: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
 
-export const playbackService = {
-  player: null as Plyr | null,
-  volumeInput: null as unknown as HTMLInputElement,
-  repeatModes: REPEAT_MODES,
-  initialized: false,
+class PlaybackService {
+  public player: Plyr
+  private volumeInput: HTMLInputElement
+  private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
+  private initialized = false
 
-  init () {
-    // We don't need to init this service twice, or the media events will be duplicated.
+  public init () {
     if (this.initialized) {
       return
     }
+
+    this.initialized = true
 
     this.player = plyr.setup('.plyr', {
       controls: []
@@ -54,10 +54,9 @@ export const playbackService = {
     }
 
     this.setMediaSessionActionHandlers()
-    this.initialized = true
-  },
+  }
 
-  setMediaSessionActionHandlers () {
+  private setMediaSessionActionHandlers () {
     if (!navigator.mediaSession) {
       return
     }
@@ -66,9 +65,9 @@ export const playbackService = {
     navigator.mediaSession.setActionHandler('pause', () => this.pause())
     navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
     navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
-  },
+  }
 
-  listenToMediaEvents (mediaElement: HTMLMediaElement) {
+  private listenToMediaEvents (mediaElement: HTMLMediaElement) {
     mediaElement.addEventListener('error', () => this.playNext(), true)
 
     mediaElement.addEventListener('ended', () => {
@@ -104,29 +103,25 @@ export const playbackService = {
     }
 
     if (process.env.NODE_ENV !== 'test') {
-      timeUpdateHandler = throttle(timeUpdateHandler, 3000)
+      timeUpdateHandler = throttle(timeUpdateHandler, 1000)
     }
 
     mediaElement.addEventListener('timeupdate', timeUpdateHandler)
-  },
+  }
 
-  get isTranscoding () {
-    return isMobile.any && preferences.transcodeOnMobile
-  },
-
-  registerPlay (song: Song) {
+  public registerPlay (song: Song) {
     recentlyPlayedStore.add(song)
     songStore.registerPlay(song)
     song.play_count_registered = true
-  },
+  }
 
-  preload (song: Song) {
+  public preload (song: Song) {
     const audioElement = document.createElement('audio')
     audioElement.setAttribute('src', songStore.getSourceUrl(song))
     audioElement.setAttribute('preload', 'auto')
     audioElement.load()
     song.preloaded = true
-  },
+  }
 
   /**
    * Play a song. Because
@@ -136,9 +131,9 @@ export const playbackService = {
    * So many dreams swinging out of the blue
    * We'll let them come true
    */
-  async play (song: Song) {
+  public async play (song: Song) {
     document.title = `${song.title} ♫ Koel`
-    this.player!.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
+    this.player.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
 
     if (queueStore.current) {
       queueStore.current.playback_state = 'Stopped'
@@ -148,7 +143,7 @@ export const playbackService = {
 
     // Manually set the `src` attribute of the audio to prevent plyr from resetting
     // the audio media object and cause our equalizer to malfunction.
-    this.getPlayer().media.src = songStore.getSourceUrl(song)
+    this.player.media.src = songStore.getSourceUrl(song)
 
     // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
     // Fixes #898
@@ -157,9 +152,9 @@ export const playbackService = {
     }
 
     await this.restart()
-  },
+  }
 
-  showNotification (song: Song) {
+  public showNotification (song: Song) {
     if (!window.Notification || !preferences.notify) {
       return
     }
@@ -191,9 +186,9 @@ export const playbackService = {
         }
       ]
     })
-  },
+  }
 
-  async restart () {
+  public async restart () {
     const song = queueStore.current!
 
     this.showNotification(song)
@@ -205,21 +200,25 @@ export const playbackService = {
     eventBus.emit('SONG_STARTED', song)
     socketService.broadcast('SOCKET_SONG', song)
 
-    this.getPlayer().restart()
+    this.player.restart()
 
     try {
-      await this.getPlayer().media.play()
+      await this.player.media.play()
     } catch (error) {
       // convert this into a warning, as an error will cause Cypress to fail the tests entirely
       logger.warn(error)
     }
-  },
+  }
+
+  public get isTranscoding () {
+    return isMobile.any && preferences.transcodeOnMobile
+  }
 
   /**
    * The next song in the queue.
    * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
    */
-  get next () {
+  public get next () {
     if (queueStore.next) {
       return queueStore.next
     }
@@ -227,13 +226,13 @@ export const playbackService = {
     if (preferences.repeatMode === 'REPEAT_ALL') {
       return queueStore.first
     }
-  },
+  }
 
   /**
    * The previous song in the queue.
    * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
    */
-  get previous () {
+  public get previous () {
     if (queueStore.previous) {
       return queueStore.previous
     }
@@ -241,13 +240,13 @@ export const playbackService = {
     if (preferences.repeatMode === 'REPEAT_ALL') {
       return queueStore.last
     }
-  },
+  }
 
   /**
    * Circle through the repeat mode.
    * The selected mode will be stored into local storage as well.
    */
-  changeRepeatMode () {
+  public changeRepeatMode () {
     let index = this.repeatModes.indexOf(preferences.repeatMode) + 1
 
     if (index >= this.repeatModes.length) {
@@ -255,17 +254,17 @@ export const playbackService = {
     }
 
     preferences.repeatMode = this.repeatModes[index]
-  },
+  }
 
   /**
    * Play the prev song in the queue, if one is found.
    * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
    */
-  async playPrev () {
+  public async playPrev () {
     // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
     // restart playing instead.
-    if (this.getPlayer().media.currentTime > 5 && queueStore.current!.length > 5) {
-      this.getPlayer().restart()
+    if (this.player.media.currentTime > 5 && queueStore.current!.length > 5) {
+      this.player.restart()
 
       return
     }
@@ -275,66 +274,64 @@ export const playbackService = {
     } else {
       this.previous && await this.play(this.previous)
     }
-  },
+  }
 
   /**
    * Play the next song in the queue, if one is found.
    * If the next song is not found and the current mode is NO_REPEAT, we stop completely.
    */
-  async playNext () {
+  public async playNext () {
     if (!this.next && preferences.repeatMode === 'NO_REPEAT') {
       await this.stop() //  Nothing lasts forever, even cold November rain.
     } else {
       this.next && await this.play(this.next)
     }
-  },
+  }
 
-  getVolume: () => preferences.volume,
+  public getVolume () {
+    return preferences.volume
+  }
 
   /**
    * @param {Number}     volume   0-10
    * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
    */
-  setVolume (volume: number, persist = true) {
-    this.getPlayer().setVolume(volume)
-
-    if (persist) {
-      preferences.volume = volume
-    }
-
+  public setVolume (volume: number, persist = true) {
+    this.player.setVolume(volume)
+    persist && (preferences.volume = volume)
     this.volumeInput.value = String(volume)
-  },
+  }
 
-  mute () {
+  public mute () {
     this.setVolume(0, false)
-  },
+  }
 
-  unmute () {
+  public unmute () {
     preferences.volume = preferences.volume || DEFAULT_VOLUME_VALUE
     this.setVolume(preferences.volume)
-  },
+  }
 
-  async stop () {
+  public async stop () {
     document.title = 'Koel'
-    this.getPlayer().pause()
-    this.getPlayer().seek(0)
+    this.player.pause()
+    this.player.seek(0)
 
     if (queueStore.current) {
       queueStore.current.playback_state = 'Stopped'
     }
 
     socketService.broadcast('SOCKET_PLAYBACK_STOPPED')
-  },
+  }
 
-  pause () {
-    this.getPlayer().pause()
+  public pause () {
+    this.player.pause()
     queueStore.current!.playback_state = 'Paused'
     socketService.broadcast('SOCKET_SONG', queueStore.current)
-  },
+  }
 
-  async resume () {
+  public async resume () {
     try {
-      await this.getPlayer().media.play()
+      await this.player.media.play()
     } catch (error) {
       logger.error(error)
     }
@@ -342,9 +339,9 @@ export const playbackService = {
     queueStore.current!.playback_state = 'Playing'
     eventBus.emit('SONG_STARTED', queueStore.current)
     socketService.broadcast('SOCKET_SONG', queueStore.current)
-  },
+  }
 
-  async toggle () {
+  public async toggle () {
     if (!queueStore.current) {
       await this.playFirstInQueue()
       return
@@ -356,7 +353,7 @@ export const playbackService = {
     }
 
     this.pause()
-  },
+  }
 
   /**
    * Queue up songs (replace them into the queue) and start playing right away.
@@ -364,7 +361,7 @@ export const playbackService = {
    * @param {?Song[]} songs  An array of song objects. Defaults to all songs if null.
    * @param {Boolean=false}   shuffled Whether to shuffle the songs before playing.
    */
-  async queueAndPlay (songs: Song[], shuffled = false) {
+  public async queueAndPlay (songs: Song[], shuffled = false) {
     if (shuffled) {
       songs = shuffle(songs)
     }
@@ -376,13 +373,11 @@ export const playbackService = {
     await nextTick()
     router.go('queue')
     await this.play(queueStore.first)
-  },
+  }
 
-  getPlayer () {
-    return this.player!
-  },
-
-  async playFirstInQueue () {
+  public async playFirstInQueue () {
     queueStore.all.length && await this.play(queueStore.first)
   }
 }
+
+export const playbackService = new PlaybackService()

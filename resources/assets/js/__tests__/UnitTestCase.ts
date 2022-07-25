@@ -103,8 +103,11 @@ export default abstract class UnitTestCase {
   }
 
   protected setReadOnlyProperty<T> (obj: T, prop: keyof T, value: any) {
-    return Object.defineProperty(obj, prop, {
-      get: () => value
+    return Object.defineProperties(obj, {
+      [prop]: {
+        value,
+        configurable: true
+      }
     })
   }
 

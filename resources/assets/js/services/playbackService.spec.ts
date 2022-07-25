@@ -5,7 +5,7 @@ import { eventBus, noop } from '@/utils'
 import router from '@/router'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { nextTick } from 'vue'
+import { nextTick, reactive } from 'vue'
 import { socketService } from '@/services'
 import { playbackService } from './playbackService'
 
@@ -43,11 +43,22 @@ new class extends UnitTestCase {
     super.beforeEach(() => this.setupEnvironment())
   }
 
+  private setCurrentSong (song?: Song) {
+    song = reactive(song || factory<Song>('song', {
+      playback_state: 'Playing'
+    }))
+
+    queueStore.state.songs = reactive([song])
+    return song
+  }
+
   protected test () {
     it('only initializes once', () => {
       const spy = vi.spyOn(plyr, 'setup')
+
       playbackService.init()
       expect(spy).toHaveBeenCalled()
+
       playbackService.init()
       expect(spy).toHaveBeenCalledTimes(1)
     })
@@ -60,23 +71,23 @@ new class extends UnitTestCase {
     ])(
       'when playCountRegistered is %s, isTranscoding is %s, current media time is %d, media duration is %d, then registerPlay() should be call %d times',
       (playCountRegistered, isTranscoding, currentTime, duration, numberOfCalls) => {
+        this.setCurrentSong(factory<Song>('song', {
+          play_count_registered: playCountRegistered,
+          playback_state: 'Playing'
+        }))
+
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
         playbackService.init()
-        const mediaElement = playbackService.player!.media
+
+        const mediaElement = playbackService.player.media
+
         // we can't set mediaElement.currentTime|duration directly because they're read-only
-        Object.defineProperties(mediaElement, {
-          currentTime: {
-            value: currentTime,
-            configurable: true
-          },
-          duration: {
-            value: duration,
-            configurable: true
-          }
-        })
+        this.setReadOnlyProperty(mediaElement, 'currentTime', currentTime)
+        this.setReadOnlyProperty(mediaElement, 'duration', duration)
 
         const registerPlayMock = this.mock(playbackService, 'registerPlay')
         mediaElement.dispatchEvent(new Event('timeupdate'))
+
         expect(registerPlayMock).toHaveBeenCalledTimes(numberOfCalls)
       })
 
@@ -89,11 +100,11 @@ new class extends UnitTestCase {
 
     it('scrobbles if current song ends', () => {
       commonStore.state.use_last_fm = true
-      userStore.current = factory<User>('user', {
+      userStore.state.current = reactive(factory<User>('user', {
         preferences: {
           lastfm_session_key: 'foo'
         }
-      })
+      }))
 
       playbackService.init()
       const scrobbleMock = this.mock(songStore, 'scrobble')
@@ -109,7 +120,9 @@ new class extends UnitTestCase {
         playbackService.init()
         const restartMock = this.mock(playbackService, 'restart')
         const playNextMock = this.mock(playbackService, 'playNext')
+
         playbackService.player!.media.dispatchEvent(new Event('ended'))
+
         expect(restartMock).toHaveBeenCalledTimes(restartCalls)
         expect(playNextMock).toHaveBeenCalledTimes(playNextCalls)
       })
@@ -128,16 +141,8 @@ new class extends UnitTestCase {
 
         const mediaElement = playbackService.player!.media
 
-        Object.defineProperties(mediaElement, {
-          currentTime: {
-            value: currentTime,
-            configurable: true
-          },
-          duration: {
-            value: duration,
-            configurable: true
-          }
-        })
+        this.setReadOnlyProperty(mediaElement, 'currentTime', currentTime)
+        this.setReadOnlyProperty(mediaElement, 'duration', duration)
 
         const preloadMock = this.mock(playbackService, 'preload')
         mediaElement.dispatchEvent(new Event('timeupdate'))
@@ -148,14 +153,12 @@ new class extends UnitTestCase {
 
     it('registers play', () => {
       const recentlyPlayedStoreAddMock = this.mock(recentlyPlayedStore, 'add')
-      const recentlyPlayedStoreFetchAllMock = this.mock(recentlyPlayedStore, 'fetch')
       const registerPlayMock = this.mock(songStore, 'registerPlay')
       const song = factory<Song>('song')
 
       playbackService.registerPlay(song)
 
       expect(recentlyPlayedStoreAddMock).toHaveBeenCalledWith(song)
-      expect(recentlyPlayedStoreFetchAllMock).toHaveBeenCalled()
       expect(registerPlayMock).toHaveBeenCalledWith(song)
       expect(song.play_count_registered).toBe(true)
     })
@@ -180,13 +183,11 @@ new class extends UnitTestCase {
     })
 
     it('restarts a song', async () => {
-      const song = factory<Song>('song')
+      const song = this.setCurrentSong()
       this.mock(Math, 'floor', 1000)
       const emitMock = this.mock(eventBus, 'emit')
       const broadcastMock = this.mock(socketService, 'broadcast')
       const showNotificationMock = this.mock(playbackService, 'showNotification')
-      const dataToBroadcast = {}
-      this.mock(songStore, 'generateDataToBroadcast', dataToBroadcast)
       const restartMock = this.mock(playbackService.player!, 'restart')
       const playMock = this.mock(window.HTMLMediaElement.prototype, 'play')
 
@@ -195,7 +196,7 @@ new class extends UnitTestCase {
       expect(song.play_start_time).toEqual(1000)
       expect(song.play_count_registered).toBe(false)
       expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', song)
-      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', dataToBroadcast)
+      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', song)
       expect(showNotificationMock).toHaveBeenCalled()
       expect(restartMock).toHaveBeenCalled()
       expect(playMock).toHaveBeenCalled()
@@ -279,23 +280,22 @@ new class extends UnitTestCase {
     })
 
     it('pauses playback', () => {
-      const currentSong = factory<Song>('song')
-      const dataToBroadcast = {}
-      this.mock(songStore, 'generateDataToBroadcast', dataToBroadcast)
+      const song = this.setCurrentSong()
       const pauseMock = this.mock(playbackService.player!, 'pause')
       const broadcastMock = this.mock(socketService, 'broadcast')
 
       playbackService.pause()
 
-      expect(currentSong.playback_state).toEqual('Paused')
-      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', dataToBroadcast)
+      expect(song.playback_state).toEqual('Paused')
+      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', song)
       expect(pauseMock).toHaveBeenCalled()
     })
 
     it('resumes playback', async () => {
-      const currentSong = factory<Song>('song')
-      const dataToBroadcast = {}
-      this.mock(songStore, 'generateDataToBroadcast', dataToBroadcast)
+      const song = this.setCurrentSong(factory<Song>('song', {
+        playback_state: 'Paused'
+      }))
+
       const playMock = this.mock(window.HTMLMediaElement.prototype, 'play')
       const broadcastMock = this.mock(socketService, 'broadcast')
       const emitMock = this.mock(eventBus, 'emit')
@@ -304,12 +304,13 @@ new class extends UnitTestCase {
       await playbackService.resume()
 
       expect(queueStore.current?.playback_state).toEqual('Playing')
-      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', dataToBroadcast)
+      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', song)
       expect(playMock).toHaveBeenCalled()
-      expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', currentSong)
+      expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', song)
     })
 
     it('plays first in queue if toggled when there is no current song', async () => {
+      queueStore.clear()
       const playFirstInQueueMock = this.mock(playbackService, 'playFirstInQueue')
 
       await playbackService.toggle()
@@ -318,10 +319,10 @@ new class extends UnitTestCase {
     })
 
     it.each<[MethodOf<typeof playbackService>, PlaybackState]>([
-      ['resume', 'Stopped'],
       ['resume', 'Paused'],
       ['pause', 'Playing']
     ])('%ss playback if toggled when current song playback state is %s', async (action, playbackState) => {
+      this.setCurrentSong(factory<Song>('song', { playback_state: playbackState }))
       const actionMock = this.mock(playbackService, action)
       await playbackService.toggle()
 
@@ -374,15 +375,6 @@ new class extends UnitTestCase {
       await playbackService.playFirstInQueue()
 
       expect(playMock).toHaveBeenCalledWith(songs[0])
-    })
-
-    it('playFirstInQueue triggers queueAndPlay if queue is empty', async () => {
-      queueStore.all = []
-      const queueAndPlayMock = this.mock(playbackService, 'queueAndPlay')
-
-      await playbackService.playFirstInQueue()
-
-      expect(queueAndPlayMock).toHaveBeenCalled()
     })
   }
 }
