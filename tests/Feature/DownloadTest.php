@@ -16,8 +16,7 @@ use Mockery\MockInterface;
 
 class DownloadTest extends TestCase
 {
-    /** @var MockInterface|DownloadService */
-    private $downloadService;
+    private MockInterface|DownloadService $downloadService;
 
     public function setUp(): void
     {

@@ -4,5 +4,5 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
-[*.php]
+[{*.php, *.xml, *.xml.dist}]
 indent_size = 4
