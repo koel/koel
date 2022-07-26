@@ -1,11 +1,11 @@
 import { DeepReadonly, InjectionKey, Ref } from 'vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
-import MessageToast from '@/components/ui/MessageToast.vue'
+import MessageToaster from '@/components/ui/MessageToaster.vue'
 
 export type ReadonlyInjectionKey<T> = InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]>
 
 export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
-export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToast>>> = Symbol('MessageToast')
+export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')
 
 export const SongListTypeKey: ReadonlyInjectionKey<SongListType> = Symbol('SongListType')
 export const SongsKey: ReadonlyInjectionKey<Ref<Song[]>> = Symbol('Songs')
