@@ -408,5 +408,5 @@ type ToastMessage = {
   id: string
   type: 'info' | 'success' | 'warning' | 'danger'
   content: string
-  timeout: number
+  timeout: number // seconds
 }
