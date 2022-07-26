@@ -1,8 +1,8 @@
-import './staticLoader'
+import 'plyr/dist/plyr.js'
 import { createApp } from 'vue'
-import App from './App.vue'
 import { clickaway, droppable, focus } from '@/directives'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import App from './App.vue'
 
 createApp(App)
   .component('icon', FontAwesomeIcon)
