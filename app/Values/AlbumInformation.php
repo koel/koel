@@ -25,6 +25,7 @@ final class AlbumInformation implements Arrayable
     {
         return self::make(
             url: $data->url,
+            cover: $data->cover,
             wiki: [
                 'summary' => isset($data->wiki) ? self::formatLastFmText($data->wiki->summary) : '',
                 'full' => isset($data->wiki) ? self::formatLastFmText($data->wiki->content) : '',
