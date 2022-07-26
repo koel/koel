@@ -11,14 +11,16 @@ import router from '@/router'
 import { authService } from '@/services'
 import { playlistStore, preferenceStore, userStore } from '@/stores'
 import { eventBus, forceReloadWindow, requireInjection } from '@/utils'
-import { DialogBoxKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
+const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)
 
 eventBus.on({
   'PLAYLIST_DELETE': async (playlist: Playlist) => {
     if (await dialog.value.confirm(`Are you sure you want to delete "${playlist.name}"?`, 'Delete Playlist')) {
       await playlistStore.delete(playlist)
+      toaster.value.success(`Playlist "${playlist.name}" deleted.`)
       router.go('home')
     }
   },
