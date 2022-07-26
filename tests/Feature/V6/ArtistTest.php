@@ -6,7 +6,7 @@ use App\Models\Artist;
 
 class ArtistTest extends TestCase
 {
-    private const JSON_STRUCTURE = [
+    public const JSON_STRUCTURE = [
         'type',
         'id',
         'name',
