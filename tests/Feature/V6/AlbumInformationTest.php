@@ -61,7 +61,7 @@ class AlbumInformationTest extends TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE);
     }
 
-    public function testGetWithoutLastFmStillReturnsValidStructure(): void
+    public function testGetWithoutLastfmStillReturnsValidStructure(): void
     {
         config(['koel.lastfm.key' => null]);
         config(['koel.lastfm.secret' => null]);
