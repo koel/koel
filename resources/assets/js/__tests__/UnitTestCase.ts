@@ -6,6 +6,8 @@ import { clickaway, droppable, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
 import factory from '@/__tests__/factory'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
 
 // A deep-merge function that
 // - supports symbols as keys (_.merge doesn't)
@@ -86,7 +88,22 @@ export default abstract class UnitTestCase {
           icon: this.stub('icon')
         }
       }
-    }, options))
+    }, this.supplyRequiredProvides(options)))
+  }
+
+  private supplyRequiredProvides (options: RenderOptions) {
+    options.global = options.global || {}
+    options.global.provide = options.global.provide || {}
+
+    if (!options.global.provide?.hasOwnProperty(DialogBoxKey)) {
+      options.global.provide[DialogBoxKey] = DialogBoxStub
+    }
+
+    if (!options.global.provide?.hasOwnProperty(MessageToasterKey)) {
+      options.global.provide[MessageToasterKey] = MessageToasterStub
+    }
+
+    return options
   }
 
   protected stub (testId = 'stub') {

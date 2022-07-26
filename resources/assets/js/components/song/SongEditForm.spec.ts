@@ -1,12 +1,13 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { alerts, arrayify } from '@/utils'
-import SongEditForm from './SongEditForm.vue'
+import { arrayify } from '@/utils'
 import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
 import { ref } from 'vue'
 import { fireEvent } from '@testing-library/vue'
 import { songStore } from '@/stores'
+import { MessageToasterStub } from '@/__tests__/stubs'
+import SongEditForm from './SongEditForm.vue'
 
 let songs: Song[]
 
@@ -31,7 +32,7 @@ new class extends UnitTestCase {
   protected test () {
     it('edits a single song', async () => {
       const updateMock = this.mock(songStore, 'update')
-      const alertMock = this.mock(alerts, 'success')
+      const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       const { html, getByTestId, getByRole } = await this.renderComponent(factory<Song>('song', {
         title: 'Rocket to Heaven',
@@ -67,7 +68,7 @@ new class extends UnitTestCase {
 
     it('edits multiple songs', async () => {
       const updateMock = this.mock(songStore, 'update')
-      const alertMock = this.mock(alerts, 'success')
+      const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       const { html, getByTestId, getByRole, queryByTestId } = await this.renderComponent(factory<Song[]>('song', 3))
 

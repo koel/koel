@@ -5,14 +5,14 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { UserKey } from '@/symbols'
 import { fireEvent, waitFor } from '@testing-library/vue'
 import { userStore } from '@/stores'
-import { alerts } from '@/utils'
 import UserEditForm from './UserEditForm.vue'
+import { MessageToasterStub } from '@/__tests__/stubs'
 
 new class extends UnitTestCase {
   protected test () {
     it('edits a user', async () => {
       const updateMock = this.mock(userStore, 'update')
-      const alertMock = this.mock(alerts, 'success')
+      const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       const user = ref(factory<User>('user', { name: 'John Doe' }))
 

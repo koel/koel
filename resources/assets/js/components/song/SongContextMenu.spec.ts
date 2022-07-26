@@ -1,12 +1,13 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import SongContextMenu from './SongContextMenu.vue'
-import { alerts, arrayify, eventBus } from '@/utils'
+import { arrayify, eventBus } from '@/utils'
 import { fireEvent } from '@testing-library/vue'
 import router from '@/router'
 import { downloadService, playbackService } from '@/services'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
+import { MessageToasterStub } from '@/__tests__/stubs'
+import SongContextMenu from './SongContextMenu.vue'
 
 let songs: Song[]
 
@@ -139,7 +140,7 @@ new class extends UnitTestCase {
     it('lists and adds to existing playlist', async () => {
       playlistStore.state.playlists = factory<Playlist[]>('playlist', 3)
       const addMock = this.mock(playlistStore, 'addSongs')
-      this.mock(alerts, 'success')
+      this.mock(MessageToasterStub.value, 'success')
       const { queryByText, getByText } = await this.renderComponent()
 
       playlistStore.state.playlists.forEach(playlist => queryByText(playlist.name))
