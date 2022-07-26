@@ -1,5 +1,5 @@
 import { differenceBy, orderBy } from 'lodash'
-import { reactive } from 'vue'
+import { reactive, UnwrapNestedRefs } from 'vue'
 import { logger } from '@/utils'
 import { cache, httpService } from '@/services'
 import models from '@/config/smart-playlist/models'
@@ -11,7 +11,7 @@ export const playlistStore = {
   }),
 
   init (playlists: Playlist[]) {
-    this.state.playlists = this.sort(playlists)
+    this.state.playlists = this.sort(reactive(playlists))
     this.state.playlists.forEach(playlist => playlist.is_smart && this.setupSmartPlaylist(playlist))
   },
 
@@ -38,11 +38,13 @@ export const playlistStore = {
   },
 
   async store (name: string, songs: Song[] = [], rules: SmartPlaylistRuleGroup[] = []) {
-    const playlist = await httpService.post<Playlist>('playlist', {
+    const playlist = reactive(await httpService.post<Playlist>('playlist', {
       name,
       songs: songs.map(song => song.id),
       rules: this.serializeSmartPlaylistRulesForStorage(rules)
-    })
+    }))
+
+    this.setupSmartPlaylist(playlist)
 
     this.state.playlists.push(playlist)
     this.state.playlists = this.sort(this.state.playlists)
@@ -122,7 +124,7 @@ export const playlistStore = {
     return serializedGroups
   },
 
-  sort: (playlists: Playlist[]) => {
+  sort: (playlists: Playlist[] | UnwrapNestedRefs<Playlist>[]) => {
     return orderBy(playlists, ['is_smart', 'name'], ['desc', 'asc'])
   }
 }
