@@ -76,13 +76,15 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, ref, toRef, toRefs, watch } from 'vue'
-import { alerts, pluralize } from '@/utils'
+import { pluralize, requireInjection } from '@/utils'
 import { playlistStore, queueStore } from '@/stores'
 import { useSongMenuMethods } from '@/composables'
 import router from '@/router'
+import { MessageToasterKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 
+const toaster = requireInjection(MessageToasterKey)
 const props = defineProps<{ songs: Song[], showing: Boolean, config: AddToMenuConfig }>()
 const { songs, showing, config } = toRefs(props)
 
@@ -120,7 +122,7 @@ const createNewPlaylistFromSongs = async () => {
   const playlist = await playlistStore.store(newPlaylistName.value, songs.value)
   newPlaylistName.value = ''
 
-  alerts.success(`Playlist "${playlist.name}" created.`)
+  toaster.value.success(`Playlist "${playlist.name}" created.`)
 
   // Activate the new playlist right away
   await nextTick()

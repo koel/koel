@@ -19,13 +19,16 @@
   <SongContextMenu/>
   <AlbumContextMenu/>
   <ArtistContextMenu/>
+  <DialogBox ref="dialog"/>
+  <MessageToaster ref="toaster"/>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, onMounted, ref } from 'vue'
+import { defineAsyncComponent, nextTick, onMounted, provide, ref } from 'vue'
 import { eventBus, hideOverlay, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences } from '@/stores'
 import { authService, playbackService, socketListener, socketService } from '@/services'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/app-footer/index.vue'
@@ -37,9 +40,13 @@ import Overlay from '@/components/ui/Overlay.vue'
 import AlbumContextMenu from '@/components/album/AlbumContextMenu.vue'
 import ArtistContextMenu from '@/components/artist/ArtistContextMenu.vue'
 import SongContextMenu from '@/components/song/SongContextMenu.vue'
+import DialogBox from '@/components/ui/DialogBox.vue'
+import MessageToaster from '@/components/ui/MessageToaster.vue'
 
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 
+const dialog = ref<InstanceType<typeof DialogBox>>()
+const toaster = ref<InstanceType<typeof MessageToast>>()
 const authenticated = ref(false)
 
 /**
@@ -98,6 +105,9 @@ const init = async () => {
     throw err
   }
 }
+
+provide(DialogBoxKey, dialog)
+provide(MessageToasterKey, toaster)
 </script>
 
 <style lang="scss">
@@ -107,7 +117,7 @@ const init = async () => {
   display: inline-block;
   background: var(--color-green);
   padding: .8rem;
-  border-radius: .2rem;
+  border-radius: .3rem;
   color: var(--color-text-primary);
   font-family: var(--font-family);
   font-size: 1rem;

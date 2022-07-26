@@ -51,14 +51,16 @@
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
 import { reactive, ref, watch } from 'vue'
-import { alerts, parseValidationError, requireInjection } from '@/utils'
+import { parseValidationError, requireInjection } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
-import { UserKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey, UserKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 
+const toaster = requireInjection(MessageToasterKey)
+const dialog = requireInjection(DialogBoxKey)
 const [user] = requireInjection(UserKey)
 
 let originalData: UpdateUserData
@@ -81,11 +83,11 @@ const submit = async () => {
 
   try {
     await userStore.update(user.value, updateData)
-    alerts.success('User profile updated.')
+    toaster.value.success('User profile updated.')
     close()
   } catch (err: any) {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    alerts.error(msg)
+    dialog.value.error(msg, 'Error')
   } finally {
     loading.value = false
   }
@@ -95,13 +97,13 @@ const emit = defineEmits(['close'])
 
 const close = () => emit('close')
 
-const maybeClose = () => {
+const maybeClose = async () => {
   if (isEqual(originalData, updateData)) {
     close()
     return
   }
 
-  alerts.confirm('Discard all changes?', close)
+  await dialog.value.confirm('Discard all changes?') && close()
 }
 </script>
 

@@ -10,15 +10,17 @@ import isMobile from 'ismobilejs'
 import router from '@/router'
 import { authService } from '@/services'
 import { playlistStore, preferenceStore, userStore } from '@/stores'
-import { alerts, eventBus, forceReloadWindow } from '@/utils'
+import { eventBus, forceReloadWindow, requireInjection } from '@/utils'
+import { DialogBoxKey } from '@/symbols'
+
+const dialog = requireInjection(DialogBoxKey)
 
 eventBus.on({
-  'PLAYLIST_DELETE': (playlist: Playlist) => {
-    alerts.confirm(`Delete the playlist "${playlist.name}"?`, async () => {
+  'PLAYLIST_DELETE': async (playlist: Playlist) => {
+    if (await dialog.value.confirm(`Are you sure you want to delete "${playlist.name}"?`, 'Delete Playlist')) {
       await playlistStore.delete(playlist)
-      alerts.success(`Deleted playlist "${playlist.name}."`)
       router.go('home')
-    })
+    }
   },
 
   /**

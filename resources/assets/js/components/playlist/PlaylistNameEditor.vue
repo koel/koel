@@ -15,8 +15,11 @@
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue'
 import { playlistStore } from '@/stores'
-import { alerts, logger } from '@/utils'
+import { logger, requireInjection } from '@/utils'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
+const toaster = requireInjection(MessageToasterKey)
+const dialog = requireInjection(DialogBoxKey)
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
 
@@ -42,10 +45,10 @@ const update = async () => {
 
   try {
     await playlistStore.update(mutablePlaylist, { name: name.value })
-    alerts.success(`Playlist "${name}" updated.`)
-    emit('updated', name)
+    toaster.value.success(`Playlist "${name.value}" updated.`)
+    emit('updated', name.value)
   } catch (error) {
-    alerts.error('Something went wrong. Please try again.')
+    dialog.value.error('Something went wrong. Please try again.')
     logger.error(error)
   } finally {
     updating = false

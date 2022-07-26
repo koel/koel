@@ -45,11 +45,13 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, ref, toRef } from 'vue'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
-import { alerts } from '@/utils'
+import { requireInjection } from '@/utils'
+import { MessageToasterKey } from '@/symbols'
 
 import PlaylistSidebarItem from '@/components/playlist/PlaylistSidebarItem.vue'
 import ContextMenu from '@/components/playlist/CreateNewPlaylistContextMenu.vue'
 
+const toaster = requireInjection(MessageToasterKey)
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
 const playlists = toRef(playlistStore.state, 'playlists')
@@ -63,7 +65,7 @@ const createPlaylist = async () => {
   const playlist = await playlistStore.store(newName.value)
   newName.value = ''
 
-  alerts.success(`Playlist "${playlist.name}" created.`)
+  toaster.value.success(`Playlist "${playlist.name}" created.`)
 
   // Activate the new playlist right away
   await nextTick()

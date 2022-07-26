@@ -43,14 +43,16 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { alerts, arrayify, copyText, eventBus } from '@/utils'
+import { arrayify, copyText, eventBus, requireInjection } from '@/utils'
 import { commonStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import router from '@/router'
 import { useAuthorization, useContextMenu, useSongMenuMethods } from '@/composables'
+import { MessageToasterKey } from '@/symbols'
 
 const { context, base, ContextMenuBase, open, close, trigger } = useContextMenu()
 
+const toaster = requireInjection(MessageToasterKey)
 const songs = ref<Song[]>([])
 
 const {
@@ -98,7 +100,7 @@ const download = () => trigger(() => downloadService.fromSongs(songs.value))
 
 const copyUrl = () => trigger(() => {
   copyText(songStore.getShareableUrl(songs.value[0]))
-  alerts.success('URL copied to clipboard.')
+  toaster.value.success('URL copied to clipboard.')
 })
 
 eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _songs: Song | Song[]) => {

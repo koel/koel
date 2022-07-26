@@ -31,12 +31,15 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { settingStore } from '@/stores'
-import { alerts, forceReloadWindow, hideOverlay, parseValidationError, showOverlay } from '@/utils'
+import { forceReloadWindow, hideOverlay, parseValidationError, requireInjection, showOverlay } from '@/utils'
 import router from '@/router'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/Btn.vue'
 
+const toaster = requireInjection(MessageToasterKey)
+const dialog = requireInjection(DialogBoxKey)
 const mediaPath = ref(settingStore.state.media_path)
 const originalMediaPath = mediaPath.value
 
@@ -54,24 +57,25 @@ const save = async () => {
 
   try {
     await settingStore.update({ media_path: mediaPath.value })
-    alerts.success('Settings saved.')
+    toaster.value.success('Settings saved.')
     // Make sure we're back to home first.
     router.go('home')
     forceReloadWindow()
   } catch (err: any) {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    alerts.error(msg)
+    dialog.value.error(msg, 'Error')
   } finally {
     hideOverlay()
   }
 }
 
-const confirmThenSave = () => {
+const confirmThenSave = async () => {
   if (shouldWarn.value) {
-    alerts.confirm('Warning: Changing the media path will essentially remove all existing data – songs, artists, \
-          albums, favorites, everything – and empty your playlists! Sure you want to proceed?', save)
+    await dialog.value.confirm('Changing the media path will essentially remove all existing data – songs, artists, \
+          albums, favorites, everything – and empty your playlists! Sure you want to proceed?', 'Confirm')
+    && await save()
   } else {
-    save()
+    await save()
   }
 }
 </script>

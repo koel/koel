@@ -36,13 +36,15 @@
 <script lang="ts" setup>
 import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, nextTick, ref, toRefs } from 'vue'
-import { alerts, eventBus, pluralize, resolveSongsFromDragEvent } from '@/utils'
+import { eventBus, pluralize, requireInjection, resolveSongsFromDragEvent } from '@/utils'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
+import { MessageToasterKey } from '@/symbols'
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 const NameEditor = defineAsyncComponent(() => import('@/components/playlist/PlaylistNameEditor.vue'))
 
+const toaster = requireInjection(MessageToasterKey)
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
 const props = withDefaults(defineProps<{ playlist: Playlist, type?: PlaylistType }>(), { type: 'playlist' })
@@ -101,7 +103,7 @@ const handleDrop = async (event: DragEvent) => {
     await favoriteStore.like(songs)
   } else if (type.value === 'playlist') {
     await playlistStore.addSongs(playlist.value, songs)
-    alerts.success(`Added ${pluralize(songs.length, 'song')} into "${playlist.value.name}."`)
+    toaster.value.success(`Added ${pluralize(songs.length, 'song')} into "${playlist.value.name}."`)
   }
 
   return false

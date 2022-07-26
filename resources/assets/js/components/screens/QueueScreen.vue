@@ -50,14 +50,16 @@
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef } from 'vue'
-import { alerts, logger, pluralize } from '@/utils'
+import { logger, pluralize, requireInjection } from '@/utils'
 import { commonStore, queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useSongList } from '@/composables'
+import { DialogBoxKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
+const dialog = requireInjection(DialogBoxKey)
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
 
 const {
@@ -87,7 +89,7 @@ const shuffleSome = async () => {
     await queueStore.fetchRandom()
     await playbackService.playFirstInQueue()
   } catch (e) {
-    alerts.error('Failed to fetch random songs. Please try again.')
+    dialog.value.error('Failed to fetch songs to play. Please try again.', 'Error')
     logger.error(e)
   }
 }

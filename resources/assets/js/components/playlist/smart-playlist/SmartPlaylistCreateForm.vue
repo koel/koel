@@ -41,7 +41,8 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, ref } from 'vue'
 import { playlistStore } from '@/stores'
-import { alerts } from '@/utils'
+import { requireInjection } from '@/utils'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 import router from '@/router'
 import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
 
@@ -56,18 +57,20 @@ const {
   onGroupChanged
 } = useSmartPlaylistForm()
 
+const toaster = requireInjection(MessageToasterKey)
+const dialog = requireInjection(DialogBoxKey)
 const name = ref('')
 
 const emit = defineEmits(['close'])
 const close = () => emit('close')
 
-const maybeClose = () => {
+const maybeClose = async () => {
   if (!name.value && !collectedRuleGroups.value.length) {
     close()
     return
   }
 
-  alerts.confirm('Discard all changes?', close)
+  await dialog.value.confirm('Discard all changes?') && close()
 }
 
 const submit = async () => {
@@ -76,7 +79,7 @@ const submit = async () => {
   loading.value = false
   close()
 
-  alerts.success(`Playlist "${playlist.name}" created.`)
+  toaster.value.success(`Playlist "${playlist.name}" created.`)
 
   await nextTick()
   router.go(`playlist/${playlist.id}`)

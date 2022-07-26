@@ -172,13 +172,15 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { alerts, defaultCover, pluralize, requireInjection } from '@/utils'
+import { defaultCover, pluralize, requireInjection } from '@/utils'
 import { songStore, SongUpdateData } from '@/stores'
-import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
+import { DialogBoxKey, EditSongFormInitialTabKey, MessageToasterKey, SongsKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBar from '@/components/ui/SoundBar.vue'
 
+const toaster = requireInjection(MessageToasterKey)
+const dialog = requireInjection(DialogBoxKey)
 const [initialTab] = requireInjection(EditSongFormInitialTabKey)
 const [songs] = requireInjection(SongsKey)
 
@@ -270,13 +272,13 @@ const open = async () => {
 const emit = defineEmits(['close'])
 const close = () => emit('close')
 
-const maybeClose = () => {
+const maybeClose = async () => {
   if (isPristine.value) {
     close()
     return
   }
 
-  alerts.confirm('Discard all changes?', close)
+  await dialog.value.confirm('Discard all changes?') && close()
 }
 
 const submit = async () => {
@@ -284,7 +286,7 @@ const submit = async () => {
 
   try {
     await songStore.update(mutatedSongs.value, formData)
-    alerts.success(`Updated ${pluralize(mutatedSongs.value.length, 'song')}.`)
+    toaster.value.success(`Updated ${pluralize(mutatedSongs.value.length, 'song')}.`)
     close()
   } finally {
     loading.value = false

@@ -1,8 +1,12 @@
 import { Ref } from 'vue'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
-import { alerts, pluralize } from '@/utils'
+import { pluralize, requireInjection } from '@/utils'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
 export const useSongMenuMethods = (songs: Ref<Song[]>, close: Closure) => {
+  const toaster = requireInjection(MessageToasterKey)
+  const dialog = requireInjection(DialogBoxKey)
+
   const queueSongsAfterCurrent = () => {
     close()
     queueStore.queueAfterCurrent(songs.value)
@@ -28,9 +32,9 @@ export const useSongMenuMethods = (songs: Ref<Song[]>, close: Closure) => {
 
     try {
       await playlistStore.addSongs(playlist, songs.value)
-      alerts.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
+      toaster.value.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
     } catch (error) {
-      alerts.error('Something went wrong. Please try again.')
+      dialog.value.error('Something went wrong. Please try again.', 'Error')
     }
   }
 

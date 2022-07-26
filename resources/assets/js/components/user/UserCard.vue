@@ -32,11 +32,15 @@
 import { faCircleCheck, faShield } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { userStore } from '@/stores'
-import { alerts, eventBus } from '@/utils'
+import { eventBus, requireInjection } from '@/utils'
 import { useAuthorization } from '@/composables'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 import router from '@/router'
 
 import Btn from '@/components/ui/Btn.vue'
+
+const toaster = requireInjection(MessageToasterKey)
+const dialog = requireInjection(DialogBoxKey)
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)
@@ -46,11 +50,13 @@ const { currentUser } = useAuthorization()
 const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
 
 const edit = () => isCurrentUser.value ? router.go('profile') : eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value)
-const confirmDelete = () => alerts.confirm(`You’re about to unperson ${user.value.name}. Are you sure?`, destroy)
+
+const confirmDelete = async () =>
+  await dialog.value.confirm(`You’re about to unperson ${user.value.name}. Are you sure?`) && await destroy()
 
 const destroy = async () => {
   await userStore.destroy(user.value)
-  alerts.success(`User "${user.value.name}" deleted.`)
+  toaster.value.success(`User "${user.value.name}" deleted.`)
 }
 </script>
 

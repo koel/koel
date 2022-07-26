@@ -26,10 +26,13 @@ import { orderBy } from 'lodash'
 import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
-import { alerts, defaultCover, fileReader, logger } from '@/utils'
+import { defaultCover, fileReader, logger, requireInjection } from '@/utils'
 import { useAuthorization } from '@/composables'
+import { MessageToasterKey } from '@/symbols'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png', 'image/webp']
+
+const toaster = requireInjection(MessageToasterKey)
 
 const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)
@@ -64,7 +67,7 @@ const playOrQueue = async (event: KeyboardEvent) => {
 
   if (event.altKey) {
     queueStore.queue(orderBy(songs, sortFields.value))
-    alerts.success('Songs added to queue.')
+    toaster.value.success('Songs added to queue.')
     return
   }
 

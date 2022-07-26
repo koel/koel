@@ -65,14 +65,16 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
 import { ref, toRef } from 'vue'
-import { alerts, eventBus, pluralize } from '@/utils'
+import { eventBus, pluralize, requireInjection } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
+import { MessageToasterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
+const toaster = requireInjection(MessageToasterKey)
 const playlist = ref<Playlist>()
 const loading = ref(false)
 
@@ -110,7 +112,7 @@ const removeSelected = () => {
 
   playlistStore.removeSongs(playlist.value!, selectedSongs.value)
   songs.value = differenceBy(songs.value, selectedSongs.value, 'id')
-  alerts.success(`Removed ${pluralize(selectedSongs.value.length, 'song')} from "${playlist.value!.name}."`)
+  toaster.value.success(`Removed ${pluralize(selectedSongs.value.length, 'song')} from "${playlist.value!.name}."`)
 }
 
 const fetchSongs = async () => {

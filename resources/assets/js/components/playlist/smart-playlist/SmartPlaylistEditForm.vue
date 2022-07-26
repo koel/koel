@@ -43,10 +43,12 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { computed, reactive, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'
-import { alerts, eventBus, logger, requireInjection } from '@/utils'
+import { eventBus, logger, requireInjection } from '@/utils'
 import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
-import { PlaylistKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey, PlaylistKey } from '@/symbols'
 
+const toaster = requireInjection(MessageToasterKey)
+const dialog = requireInjection(DialogBoxKey)
 const [playlist] = requireInjection(PlaylistKey)
 
 let mutablePlaylist: Playlist
@@ -71,13 +73,13 @@ const {
 const emit = defineEmits(['close'])
 const close = () => emit('close')
 
-const maybeClose = () => {
+const maybeClose = async () => {
   if (isPristine.value) {
     close()
     return
   }
 
-  alerts.confirm('Discard all changes?', close)
+  await dialog.value.confirm('Discard all changes?') && close()
 }
 
 const submit = async () => {
@@ -90,11 +92,11 @@ const submit = async () => {
       rules: mutablePlaylist.rules
     })
 
-    alerts.success(`Playlist "${playlist.value.name}" updated.`)
+    toaster.value.success(`Playlist "${playlist.value.name}" updated.`)
     eventBus.emit('SMART_PLAYLIST_UPDATED', playlist.value)
     close()
   } catch (error) {
-    alerts.error('Something went wrong. Please try again.')
+    dialog.value.error('Something went wrong. Please try again.', 'Error')
     logger.error(error)
   } finally {
     loading.value = false

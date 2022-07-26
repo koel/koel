@@ -403,3 +403,10 @@ interface PaginatorResource {
 }
 
 type EditSongFormTabName = 'details' | 'lyrics'
+
+type ToastMessage = {
+  id: string
+  type: 'info' | 'success' | 'warning' | 'danger'
+  content: string
+  timeout: number
+}
