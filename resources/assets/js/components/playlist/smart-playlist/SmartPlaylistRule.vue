@@ -127,7 +127,7 @@ const removeRule = () => emit('remove')
   }
 }
 
-select {
-  margin-top: 0;
+select, input {
+  margin-top: 0 !important;
 }
 </style>
