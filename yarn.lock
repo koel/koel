@@ -1686,13 +1686,6 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.12.4, ajv@^6.12.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-alertify.js@^1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/alertify.js/-/alertify.js-1.0.12.tgz#8c1f15423dbcbb07f0368f281cf79f6497e3cfea"
-  integrity sha1-jB8VQj28uwfwNo8oHPefZJfjz+o=
-  dependencies:
-    snyk "^1.14.3"
-
 alphanum-sort@^1.0.1, alphanum-sort@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
@@ -5844,11 +5837,6 @@ slugify@^1.0.2:
   version "1.6.5"
   resolved "https://registry.yarnpkg.com/slugify/-/slugify-1.6.5.tgz#c8f5c072bf2135b80703589b39a3d41451fbe8c8"
   integrity sha512-8mo9bslnBO3tr5PEVFzMPIWwWnipGS0xVbYf65zxDqfNwmzYn1LpiKNrR6DlClusuvo+hDHd1zKpmfAe83NQSQ==
-
-snyk@^1.14.3:
-  version "1.905.0"
-  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.905.0.tgz#08e8c544850ddff413efb5dd50ac84d21ff32df9"
-  integrity sha512-VAUwhWBeWONI/a2ky0ONMizr74zCmEJuMej5zV8XgmowONj6KwQotm0k7kfs3l1ZH5RKHBMWREA65TulcGGObA==
 
 sort-keys@^1.0.0:
   version "1.1.2"
