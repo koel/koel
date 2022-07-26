@@ -2,21 +2,20 @@
 
 namespace Tests\Feature\V6;
 
-use App\Models\Album;
+use App\Models\Artist;
 
-class AlbumTest extends TestCase
+class ArtistTest extends TestCase
 {
     private const JSON_STRUCTURE = [
         'type',
         'id',
         'name',
-        'artist_id',
-        'artist_name',
-        'cover',
-        'created_at',
+        'image',
         'length',
         'play_count',
         'song_count',
+        'album_count',
+        'created_at',
     ];
 
     private const JSON_COLLECTION_STRUCTURE = [
@@ -40,18 +39,18 @@ class AlbumTest extends TestCase
 
     public function testIndex(): void
     {
-        Album::factory(10)->create();
+        Artist::factory(10)->create();
 
-        $this->getAsUser('api/albums')
+        $this->getAsUser('api/artists')
             ->assertJsonStructure(self::JSON_COLLECTION_STRUCTURE);
     }
 
     public function testShow(): void
     {
-        /** @var Album $album */
-        $album = Album::factory()->create();
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create();
 
-        $this->getAsUser('api/albums/' . $album->id)
+        $this->getAsUser('api/artists/' . $artist->id)
             ->assertJsonStructure(self::JSON_STRUCTURE);
     }
 }
