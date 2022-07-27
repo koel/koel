@@ -14,7 +14,7 @@ new class extends UnitTestCase {
 
       await recentlyPlayedStore.fetch()
 
-      expect(getMock).toHaveBeenCalledWith('recently-played')
+      expect(getMock).toHaveBeenCalledWith('songs/recently-played')
       expect(syncMock).toHaveBeenCalledWith(songs)
       expect(recentlyPlayedStore.state.songs).toEqual(songs)
     })

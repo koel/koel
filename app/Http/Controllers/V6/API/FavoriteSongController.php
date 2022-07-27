@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class FavoriteController extends Controller
+class FavoriteSongController extends Controller
 {
     /** @param User $user */
     public function __construct(private SongRepository $songRepository, private ?Authenticatable $user)

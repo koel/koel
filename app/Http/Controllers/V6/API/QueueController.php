@@ -25,8 +25,8 @@ class QueueController extends Controller
                 $this->songRepository->getForQueue(
                     $request->sort,
                     $request->order,
-                    $this->user,
                     $request->limit,
+                    $this->user,
                 )
             );
         }

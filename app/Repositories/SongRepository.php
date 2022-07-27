@@ -18,7 +18,7 @@ class SongRepository extends AbstractRepository
 {
     use Searchable;
 
-    private const SORT_COLUMNS_NORMALIZE_MAP = [
+    public const SORT_COLUMNS_NORMALIZE_MAP = [
         'title' => 'songs.title',
         'track' => 'songs.track',
         'length' => 'songs.length',
@@ -89,8 +89,8 @@ class SongRepository extends AbstractRepository
     public function getForQueue(
         string $sortColumn,
         string $sortDirection,
+        int $limit = self::DEFAULT_QUEUE_LIMIT,
         ?User $scopedUser = null,
-        int $limit = self::DEFAULT_QUEUE_LIMIT
     ): Collection {
         return self::applySort(
             Song::withMeta($scopedUser ?? $this->auth->user()),

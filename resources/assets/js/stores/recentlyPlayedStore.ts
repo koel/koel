@@ -15,7 +15,7 @@ export const recentlyPlayedStore = {
   }),
 
   async fetch () {
-    this.state.songs = songStore.syncWithVault(await httpService.get<Song[]>('recently-played'))
+    this.state.songs = songStore.syncWithVault(await httpService.get<Song[]>('songs/recently-played'))
   },
 
   async add (song: Song) {

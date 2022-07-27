@@ -9,7 +9,7 @@ use App\Http\Controllers\V6\API\ArtistController;
 use App\Http\Controllers\V6\API\ArtistSongController;
 use App\Http\Controllers\V6\API\DataController;
 use App\Http\Controllers\V6\API\ExcerptSearchController;
-use App\Http\Controllers\V6\API\FavoriteController;
+use App\Http\Controllers\V6\API\FavoriteSongController;
 use App\Http\Controllers\V6\API\FetchAlbumInformationController;
 use App\Http\Controllers\V6\API\FetchArtistInformationController;
 use App\Http\Controllers\V6\API\OverviewController;
@@ -40,15 +40,14 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('playlists/{playlist}/songs', [PlaylistSongController::class, 'add']);
         Route::delete('playlists/{playlist}/songs', [PlaylistSongController::class, 'remove']);
 
-        Route::apiResource('songs', SongController::class);
-
+        Route::apiResource('songs', SongController::class)->where(['song' => '[a-f0-9]{32}']);
+        Route::get('songs/recently-played', [RecentlyPlayedSongController::class, 'index']);
+        Route::get('songs/favorite', [FavoriteSongController::class, 'index']);
+        
         Route::apiResource('users', UserController::class);
 
         Route::get('search', ExcerptSearchController::class);
         Route::get('search/songs', SongSearchController::class);
-
-        Route::get('favorites', [FavoriteController::class, 'index']);
-        Route::get('recently-played', [RecentlyPlayedSongController::class, 'index']);
 
         Route::get('queue/fetch', [QueueController::class, 'fetchSongs']);
 

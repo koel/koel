@@ -73,7 +73,7 @@ new class extends UnitTestCase {
 
       await favoriteStore.fetch()
 
-      expect(getMock).toHaveBeenCalledWith(`favorites`)
+      expect(getMock).toHaveBeenCalledWith('songs/favorite')
       expect(favoriteStore.state.songs).toEqual(songs)
     })
   }
