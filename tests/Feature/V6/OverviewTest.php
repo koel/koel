@@ -12,11 +12,9 @@ class OverviewTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
-        Interaction::factory(20)->create([
-            'user_id' => $user->id,
-        ]);
+        Interaction::factory(20)->for($user)->create();
 
-        $this->getAsUser('api/overview', $user)
+        $this->getAs('api/overview', $user)
             ->assertJsonStructure([
                 'most_played_songs' => ['*' => SongTest::JSON_STRUCTURE],
                 'recently_played_songs' => ['*' => SongTest::JSON_STRUCTURE],

@@ -13,7 +13,7 @@ class PlayCountTest extends TestCase
             'play_count' => 10,
         ]);
 
-        $response = $this->postAsUser('/api/interaction/play', [
+        $response = $this->postAs('/api/interaction/play', [
             'song' => $interaction->song->id,
         ], $interaction->user);
 

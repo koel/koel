@@ -8,30 +8,28 @@ use Throwable;
 
 final class SmartPlaylistRuleGroup implements Arrayable
 {
-    public ?int $id;
-
-    /** @var Collection|array<SmartPlaylistRule> */
-    public Collection $rules;
+    private function __construct(public ?int $id, public Collection $rules)
+    {
+    }
 
     public static function tryCreate(array $jsonArray): ?self
     {
         try {
             return self::create($jsonArray);
-        } catch (Throwable $exception) {
+        } catch (Throwable) {
             return null;
         }
     }
 
     public static function create(array $jsonArray): self
     {
-        $group = new self();
-        $group->id = $jsonArray['id'] ?? null;
+        $id = $jsonArray['id'] ?? null;
 
-        $group->rules = collect(array_map(static function (array $rawRuleConfig) {
+        $rules = collect(array_map(static function (array $rawRuleConfig) {
             return SmartPlaylistRule::create($rawRuleConfig);
         }, $jsonArray['rules']));
 
-        return $group;
+        return new self($id, $rules);
     }
 
     /** @return array<mixed> */

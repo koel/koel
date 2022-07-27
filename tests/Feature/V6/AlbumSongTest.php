@@ -12,11 +12,9 @@ class AlbumSongTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create();
 
-        Song::factory(5)->create([
-            'album_id' => $album->id,
-        ]);
+        Song::factory(5)->for($album)->create();
 
-        $this->getAsUser('api/albums/' . $album->id . '/songs')
+        $this->getAs('api/albums/' . $album->id . '/songs')
             ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE]);
     }
 }

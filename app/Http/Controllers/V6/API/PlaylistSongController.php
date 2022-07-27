@@ -43,6 +43,8 @@ class PlaylistSongController extends Controller
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
 
         $this->playlistService->addSongsToPlaylist($playlist, $request->songs);
+
+        return response()->noContent();
     }
 
     public function remove(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)
@@ -52,5 +54,7 @@ class PlaylistSongController extends Controller
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
 
         $this->playlistService->removeSongsFromPlaylist($playlist, $request->songs);
+
+        return response()->noContent();
     }
 }

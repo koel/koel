@@ -25,7 +25,7 @@ class PlaylistTest extends TestCase
         /** @var array<Song>|Collection $songs */
         $songs = Song::orderBy('id')->take(3)->get();
 
-        $response = $this->postAsUser('api/playlist', [
+        $response = $this->postAs('api/playlist', [
             'name' => 'Foo Bar',
             'songs' => $songs->pluck('id')->toArray(),
             'rules' => [],
@@ -52,7 +52,7 @@ class PlaylistTest extends TestCase
             'value' => ['Bob Dylan'],
         ]);
 
-        $this->postAsUser('api/playlist', [
+        $this->postAs('api/playlist', [
             'name' => 'Smart Foo Bar',
             'rules' => [
                 [
@@ -74,7 +74,7 @@ class PlaylistTest extends TestCase
 
     public function testCreatingSmartPlaylistIgnoresSongs(): void
     {
-        $this->postAsUser('api/playlist', [
+        $this->postAs('api/playlist', [
             'name' => 'Smart Foo Bar',
             'rules' => [
                 [
@@ -100,7 +100,7 @@ class PlaylistTest extends TestCase
 
     public function testCreatingPlaylistWithNonExistentSongsFails(): void
     {
-        $response = $this->postAsUser('api/playlist', [
+        $response = $this->postAs('api/playlist', [
             'name' => 'Foo Bar',
             'rules' => [],
             'songs' => ['foo'],
@@ -120,7 +120,7 @@ class PlaylistTest extends TestCase
             'name' => 'Foo',
         ]);
 
-        $this->putAsUser("api/playlist/$playlist->id", ['name' => 'Bar'], $user);
+        $this->putAs("api/playlist/$playlist->id", ['name' => 'Bar'], $user);
 
         self::assertSame('Bar', $playlist->refresh()->name);
     }
@@ -132,7 +132,7 @@ class PlaylistTest extends TestCase
             'name' => 'Foo',
         ]);
 
-        $response = $this->putAsUser("api/playlist/$playlist->id", ['name' => 'Qux']);
+        $response = $this->putAs("api/playlist/$playlist->id", ['name' => 'Qux']);
         $response->assertStatus(403);
     }
 
@@ -146,7 +146,7 @@ class PlaylistTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $this->deleteAsUser("api/playlist/$playlist->id", [], $user);
+        $this->deleteAs("api/playlist/$playlist->id", [], $user);
         self::assertDatabaseMissing('playlists', ['id' => $playlist->id]);
     }
 
@@ -155,7 +155,7 @@ class PlaylistTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
-        $this->deleteAsUser("api/playlist/$playlist->id")
+        $this->deleteAs("api/playlist/$playlist->id")
             ->assertStatus(403);
     }
 }

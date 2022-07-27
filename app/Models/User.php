@@ -37,7 +37,6 @@ class User extends Authenticatable
     protected $appends = ['avatar'];
 
     protected $casts = [
-        'id' => 'int',
         'is_admin' => 'bool',
         'preferences' => UserPreferencesCast::class,
     ];

@@ -33,9 +33,7 @@ class PlaylistSongTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $playlist = Playlist::factory()->create([], $user);
 
         /** @var array<Song>|Collection $songs */
         $songs = Song::orderBy('id')->take(4)->get();
@@ -46,7 +44,7 @@ class PlaylistSongTest extends TestCase
 
         $path = $useDeprecatedRoute ? "api/playlist/$playlist->id/sync" : "api/playlist/$playlist->id/songs";
 
-        $this->putAsUser($path, [
+        $this->putAs($path, [
             'songs' => $songs->pluck('id')->all(),
         ], $user)->assertOk();
 
@@ -77,7 +75,7 @@ class PlaylistSongTest extends TestCase
         $songs = Song::factory(2)->create();
         $playlist->songs()->saveMany($songs);
 
-        $this->getAsUser("api/playlist/$playlist->id/songs", $user)
+        $this->getAs("api/playlist/$playlist->id/songs", $user)
             ->assertJson($songs->pluck('id')->all());
     }
 }

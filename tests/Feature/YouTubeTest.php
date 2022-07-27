@@ -29,7 +29,7 @@ class YouTubeTest extends TestCase
             }), 'foo')
             ->once();
 
-        $this->getAsUser("/api/youtube/search/song/{$song->id}?pageToken=foo")
+        $this->getAs("/api/youtube/search/song/{$song->id}?pageToken=foo")
             ->assertOk();
     }
 }

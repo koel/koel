@@ -6,7 +6,7 @@ class DataTest extends TestCase
 {
     public function testIndex(): void
     {
-        $this->getAsUser('/api/data')->assertJsonStructure([
+        $this->getAs('/api/data')->assertJsonStructure([
             'settings',
             'playlists',
             'current_user',

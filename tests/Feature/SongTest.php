@@ -21,7 +21,7 @@ class SongTest extends TestCase
     {
         $song = Song::first();
 
-        $this->putAsUser('/api/songs', [
+        $this->putAs('/api/songs', [
             'songs' => [$song->id],
             'data' => [
                 'title' => 'Foo Bar',
@@ -56,7 +56,7 @@ class SongTest extends TestCase
         $song = Song::first();
         $originalArtistId = $song->artist->id;
 
-        $this->putAsUser('/api/songs', [
+        $this->putAs('/api/songs', [
             'songs' => [$song->id],
             'data' => [
                 'title' => '',
@@ -79,7 +79,7 @@ class SongTest extends TestCase
     {
         $songIds = Song::latest()->take(3)->pluck('id')->toArray();
 
-        $this->putAsUser('/api/songs', [
+        $this->putAs('/api/songs', [
             'songs' => $songIds,
             'data' => [
                 'title' => 'foo',
@@ -109,7 +109,7 @@ class SongTest extends TestCase
         $originalSongs = Song::latest()->take(3)->get();
         $songIds = $originalSongs->pluck('id')->toArray();
 
-        $this->putAsUser('/api/songs', [
+        $this->putAs('/api/songs', [
             'songs' => $songIds,
             'data' => [
                 'title' => 'Foo Bar',
@@ -143,7 +143,7 @@ class SongTest extends TestCase
     {
         $song = Song::first();
 
-        $this->putAsUser('/api/songs', [
+        $this->putAs('/api/songs', [
             'songs' => [$song->id],
             'data' => [
                 'title' => 'Foo Bar',

@@ -9,6 +9,6 @@ class PlaylistPolicy
 {
     public function owner(User $user, Playlist $playlist): bool
     {
-        return $user->id === $playlist->user_id;
+        return $playlist->user->is($user);
     }
 }

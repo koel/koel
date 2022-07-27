@@ -41,7 +41,7 @@ class ArtistTest extends TestCase
     {
         Artist::factory(10)->create();
 
-        $this->getAsUser('api/artists')
+        $this->getAs('api/artists')
             ->assertJsonStructure(self::JSON_COLLECTION_STRUCTURE);
     }
 
@@ -50,7 +50,7 @@ class ArtistTest extends TestCase
         /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
-        $this->getAsUser('api/artists/' . $artist->id)
+        $this->getAs('api/artists/' . $artist->id)
             ->assertJsonStructure(self::JSON_STRUCTURE);
     }
 }

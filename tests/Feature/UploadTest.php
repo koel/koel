@@ -32,7 +32,7 @@ class UploadTest extends TestCase
             ->shouldReceive('handleUploadedFile')
             ->never();
 
-        $this->postAsUser('/api/upload', ['file' => $file], User::factory()->create())->assertStatus(403);
+        $this->postAs('/api/upload', ['file' => $file], User::factory()->create())->assertStatus(403);
     }
 
     /** @return array<mixed> */
@@ -55,7 +55,7 @@ class UploadTest extends TestCase
             ->with($file)
             ->andThrow($exceptionClass);
 
-        $this->postAsUser('/api/upload', ['file' => $file], User::factory()->admin()->create())
+        $this->postAs('/api/upload', ['file' => $file], User::factory()->admin()->create())
             ->assertStatus($statusCode);
     }
 
@@ -71,7 +71,7 @@ class UploadTest extends TestCase
             ->with($file)
             ->andReturn($song);
 
-        $this->postAsUser('/api/upload', ['file' => $file], User::factory()->admin()->create())
+        $this->postAs('/api/upload', ['file' => $file], User::factory()->admin()->create())
             ->assertJsonStructure([
                 'song',
                 'album',

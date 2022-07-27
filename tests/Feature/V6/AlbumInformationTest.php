@@ -57,7 +57,7 @@ class AlbumInformationTest extends TestCase
                 ]
             ));
 
-        $this->getAsUser('api/albums/' . $album->id . '/information')
+        $this->getAs('api/albums/' . $album->id . '/information')
             ->assertJsonStructure(self::JSON_STRUCTURE);
     }
 
@@ -69,7 +69,7 @@ class AlbumInformationTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create();
 
-        $this->getAsUser('api/albums/' . $album->id . '/information')
+        $this->getAs('api/albums/' . $album->id . '/information')
             ->assertJsonStructure(self::JSON_STRUCTURE);
     }
 }

@@ -14,7 +14,7 @@ class UserTest extends TestCase
 
     public function testNonAdminCannotCreateUser(): void
     {
-        $this->postAsUser('api/user', [
+        $this->postAs('api/user', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'secret',
@@ -24,7 +24,7 @@ class UserTest extends TestCase
 
     public function testAdminCreatesUser(): void
     {
-        $this->postAsUser('api/user', [
+        $this->postAs('api/user', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'secret',
@@ -46,7 +46,7 @@ class UserTest extends TestCase
         /** @var User $user */
         $user = User::factory()->admin()->create(['password' => 'secret']);
 
-        $this->putAsUser("api/user/$user->id", [
+        $this->putAs("api/user/$user->id", [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'new-secret',
@@ -67,7 +67,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
-        $this->deleteAsUser("api/user/$user->id", [], $admin);
+        $this->deleteAs("api/user/$user->id", [], $admin);
         self::assertDatabaseMissing('users', ['id' => $user->id]);
     }
 
@@ -77,7 +77,7 @@ class UserTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         // A user can't delete himself
-        $this->deleteAsUser("api/user/$admin->id", [], $admin)
+        $this->deleteAs("api/user/$admin->id", [], $admin)
             ->assertStatus(403);
 
         self::assertDatabaseHas('users', ['id' => $admin->id]);

@@ -33,7 +33,7 @@ class AlbumCoverTest extends TestCase
                 return $album->id === 9999;
             }), 'Foo', 'jpeg');
 
-        $response = $this->putAsUser('api/album/' . $album->id . '/cover', [
+        $response = $this->putAs('api/album/' . $album->id . '/cover', [
             'cover' => 'data:image/jpeg;base64,Rm9v',
         ], User::factory()->admin()->create());
 
@@ -49,7 +49,7 @@ class AlbumCoverTest extends TestCase
             ->shouldReceive('writeAlbumCover')
             ->never();
 
-        $this->putAsUser('api/album/' . $album->id . '/cover', [
+        $this->putAs('api/album/' . $album->id . '/cover', [
             'cover' => 'data:image/jpeg;base64,Rm9v',
         ], User::factory()->create())
             ->assertStatus(403);

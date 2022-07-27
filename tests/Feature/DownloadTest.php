@@ -164,9 +164,7 @@ class DownloadTest extends TestCase
         self::mock(InteractionRepository::class)
             ->shouldReceive('getUserFavorites')
             ->once()
-            ->with(Mockery::on(static function (User $retrievedUser) use ($user): bool {
-                return $retrievedUser->id === $user->id;
-            }))
+            ->with(Mockery::on(static fn (User $retrievedUser) => $retrievedUser->is($user)))
             ->andReturn($favorites);
 
         $this->downloadService

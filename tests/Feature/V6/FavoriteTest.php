@@ -16,7 +16,7 @@ class FavoriteTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $this->getAsUser('api/favorites', $user)
+        $this->getAs('api/favorites', $user)
             ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE]);
     }
 }

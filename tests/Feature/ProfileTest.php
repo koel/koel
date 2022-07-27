@@ -19,7 +19,7 @@ class ProfileTest extends TestCase
 
     public function testUpdateProfileRequiresCurrentPassword(): void
     {
-        $this->putAsUser('api/me', [
+        $this->putAs('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
         ], $this->user)
@@ -28,7 +28,7 @@ class ProfileTest extends TestCase
 
     public function testUpdateProfileWithoutNewPassword(): void
     {
-        $this->putAsUser('api/me', [
+        $this->putAs('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'current_password' => 'secret',
@@ -43,7 +43,7 @@ class ProfileTest extends TestCase
 
     public function testUpdateProfileWithNewPassword(): void
     {
-        $this->putAsUser('api/me', [
+        $this->putAs('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'new_password' => 'new-secret',

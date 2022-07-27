@@ -33,7 +33,7 @@ class ArtistImageTest extends TestCase
                 return $artist->id === 9999;
             }), 'Foo', 'jpeg');
 
-        $this->putAsUser('api/artist/9999/image', [
+        $this->putAs('api/artist/9999/image', [
             'image' => 'data:image/jpeg;base64,Rm9v',
         ], User::factory()->admin()->create())
             ->assertStatus(200);
@@ -47,7 +47,7 @@ class ArtistImageTest extends TestCase
             ->shouldReceive('writeArtistImage')
             ->never();
 
-        $this->putAsUser('api/artist/9999/image', [
+        $this->putAs('api/artist/9999/image', [
             'image' => 'data:image/jpeg;base64,Rm9v',
         ], User::factory()->create())
             ->assertStatus(403);

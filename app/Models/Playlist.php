@@ -34,7 +34,6 @@ class Playlist extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'user_id' => 'int',
         'rules' => SmartPlaylistRulesCast::class,
     ];
 

@@ -19,7 +19,7 @@ class ExcerptSearchTest extends TestCase
         Album::factory()->create(['name' => 'Foo Number Five']);
         Album::factory(4)->create();
 
-        $this->getAsUser('api/search?q=foo')
+        $this->getAs('api/search?q=foo')
             ->assertJsonStructure([
                 'songs' => ['*' => SongTest::JSON_STRUCTURE],
                 'artists' => ['*' => ArtistTest::JSON_STRUCTURE],

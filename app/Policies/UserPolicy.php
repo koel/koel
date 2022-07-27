@@ -13,6 +13,6 @@ class UserPolicy
 
     public function destroy(User $currentUser, User $userToDestroy): bool
     {
-        return $currentUser->is_admin && $currentUser->id !== $userToDestroy->id;
+        return $currentUser->is_admin && $currentUser->isNot($userToDestroy);
     }
 }

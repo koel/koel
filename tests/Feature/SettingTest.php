@@ -23,7 +23,7 @@ class SettingTest extends TestCase
     {
         $this->mediaSyncService->shouldReceive('sync')->once();
 
-        $this->putAsUser('/api/settings', ['media_path' => __DIR__], User::factory()->admin()->create())
+        $this->putAs('/api/settings', ['media_path' => __DIR__], User::factory()->admin()->create())
             ->assertSuccessful();
 
         self::assertEquals(__DIR__, Setting::get('media_path'));
@@ -31,7 +31,7 @@ class SettingTest extends TestCase
 
     public function testNonAdminCannotSaveSettings(): void
     {
-        $this->putAsUser('/api/settings', ['media_path' => __DIR__], User::factory()->create())
+        $this->putAs('/api/settings', ['media_path' => __DIR__], User::factory()->create())
             ->assertForbidden();
     }
 }
