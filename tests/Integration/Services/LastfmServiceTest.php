@@ -60,10 +60,7 @@ class LastfmServiceTest extends TestCase
         $artist = Artist::factory()->create(['name' => 'bar']);
 
         /** @var Album $album */
-        $album = Album::factory()->create([
-            'artist_id' => $artist->id,
-            'name' => 'foo',
-        ]);
+        $album = Album::factory()->for($artist)->create(['name' => 'foo']);
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
@@ -79,12 +76,12 @@ class LastfmServiceTest extends TestCase
             'tracks' => [
                 [
                     'title' => 'Track 1',
-                    'url' => 'http://foo/track1',
+                    'url' => 'https://foo/track1',
                     'length' => 100,
                 ],
                 [
                     'title' => 'Track 2',
-                    'url' => 'http://foo/track2',
+                    'url' => 'https://foo/track2',
                     'length' => 150,
                 ],
             ],

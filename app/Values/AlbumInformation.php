@@ -3,6 +3,7 @@
 namespace App\Values;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Arr;
 
 final class AlbumInformation implements Arrayable
 {
@@ -25,7 +26,7 @@ final class AlbumInformation implements Arrayable
     {
         return self::make(
             url: $data->url,
-            cover: $data->cover,
+            cover: Arr::get($data->image, '0.#text'),
             wiki: [
                 'summary' => isset($data->wiki) ? self::formatLastFmText($data->wiki->summary) : '',
                 'full' => isset($data->wiki) ? self::formatLastFmText($data->wiki->content) : '',
