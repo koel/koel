@@ -6,7 +6,6 @@ use App\Console\Commands\Traits\AskForPassword;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
-use App\Repositories\SettingRepository;
 use App\Services\MediaCacheService;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as Artisan;
@@ -27,30 +26,16 @@ class InitCommand extends Command
     protected $signature = 'koel:init {--no-assets}';
     protected $description = 'Install or upgrade Koel';
 
-    private MediaCacheService $mediaCacheService;
-    private Artisan $artisan;
-    private DotenvEditor $dotenvEditor;
-    private Hash $hash;
-    private DB $db;
-    private SettingRepository $settingRepository;
     private bool $adminSeeded = false;
 
     public function __construct(
-        MediaCacheService $mediaCacheService,
-        SettingRepository $settingRepository,
-        Artisan $artisan,
-        Hash $hash,
-        DotenvEditor $dotenvEditor,
-        DB $db
+        private MediaCacheService $mediaCacheService,
+        private Artisan $artisan,
+        private Hash $hash,
+        private DotenvEditor $dotenvEditor,
+        private DB $db
     ) {
         parent::__construct();
-
-        $this->mediaCacheService = $mediaCacheService;
-        $this->artisan = $artisan;
-        $this->dotenvEditor = $dotenvEditor;
-        $this->hash = $hash;
-        $this->db = $db;
-        $this->settingRepository = $settingRepository;
     }
 
     public function handle(): void

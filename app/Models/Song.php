@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,6 +28,9 @@ use Laravel\Scout\Searchable;
  * @property int $artist_id
  * @property int $mtime
  * @property int $contributing_artist_id
+ * @property ?bool $liked Whether the song is liked by the current user (dynamically calculated)
+ * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
+ * @property Carbon $created_at
  *
  * @method static self updateOrCreate(array $where, array $params)
  * @method static Builder select(string $string)

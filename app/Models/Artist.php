@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Facades\Util;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -24,6 +25,11 @@ use Laravel\Scout\Searchable;
  * @property Collection $songs
  * @property bool $has_image If the artist has a (non-default) image
  * @property string|null $image_path Absolute path to the artist's image
+ * @property float|string $length Total length of the artist's songs in seconds (dynamically calculated)
+ * @property string|int $play_count Total number of times the artist has been played (dynamically calculated)
+ * @property string|int $song_count Total number of songs by the artist (dynamically calculated)
+ * @property string|int $album_count Total number of albums by the artist (dynamically calculated)
+ * @property Carbon $created_at
  *
  * @method static self find(int $id)
  * @method static self firstOrCreate(array $where, array $params = [])

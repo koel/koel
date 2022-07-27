@@ -9,12 +9,11 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\UploadService;
 use Illuminate\Http\UploadedFile;
-use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 
 class UploadTest extends TestCase
 {
-    private UploadService|MockInterface|LegacyMockInterface $uploadService;
+    private UploadService|MockInterface $uploadService;
 
     public function setUp(): void
     {
@@ -32,7 +31,7 @@ class UploadTest extends TestCase
             ->shouldReceive('handleUploadedFile')
             ->never();
 
-        $this->postAs('/api/upload', ['file' => $file], User::factory()->create())->assertStatus(403);
+        $this->postAs('/api/upload', ['file' => $file])->assertForbidden();
     }
 
     /** @return array<mixed> */
@@ -49,32 +48,35 @@ class UploadTest extends TestCase
     {
         $file = UploadedFile::fake()->create('foo.mp3', 2048);
 
+        /** @var User $admin */
+        $admin = User::factory()->admin()->create();
+
         $this->uploadService
             ->shouldReceive('handleUploadedFile')
             ->once()
             ->with($file)
             ->andThrow($exceptionClass);
 
-        $this->postAs('/api/upload', ['file' => $file], User::factory()->admin()->create())
-            ->assertStatus($statusCode);
+        $this->postAs('/api/upload', ['file' => $file], $admin)->assertStatus($statusCode);
     }
 
     public function testPost(): void
     {
         Setting::set('media_path', '/media/koel');
         $file = UploadedFile::fake()->create('foo.mp3', 2048);
+
         /** @var Song $song */
         $song = Song::factory()->create();
+
+        /** @var User $admin */
+        $admin = User::factory()->admin()->create();
+
         $this->uploadService
             ->shouldReceive('handleUploadedFile')
             ->once()
             ->with($file)
             ->andReturn($song);
 
-        $this->postAs('/api/upload', ['file' => $file], User::factory()->admin()->create())
-            ->assertJsonStructure([
-                'song',
-                'album',
-            ]);
+        $this->postAs('/api/upload', ['file' => $file], $admin)->assertJsonStructure(['song', 'album']);
     }
 }

@@ -19,6 +19,8 @@ class SongTest extends TestCase
 
     public function testSingleUpdateAllInfoNoCompilation(): void
     {
+        /** @var User $user */
+        $user = User::factory()->admin()->create();
         $song = Song::first();
 
         $this->putAs('/api/songs', [
@@ -31,8 +33,8 @@ class SongTest extends TestCase
                 'track' => 1,
                 'disc' => 2,
             ],
-        ], User::factory()->admin()->create())
-            ->assertStatus(200);
+        ], $user)
+            ->assertOk();
 
         /** @var Artist $artist */
         $artist = Artist::where('name', 'John Cena')->first();
@@ -53,6 +55,8 @@ class SongTest extends TestCase
 
     public function testSingleUpdateSomeInfoNoCompilation(): void
     {
+        /** @var User $user */
+        $user = User::factory()->admin()->create();
         $song = Song::first();
         $originalArtistId = $song->artist->id;
 
@@ -65,8 +69,8 @@ class SongTest extends TestCase
                 'lyrics' => 'Lorem ipsum dolor sic amet.',
                 'track' => 1,
             ],
-        ], User::factory()->admin()->create())
-            ->assertStatus(200);
+        ], $user)
+            ->assertOk();
 
         // We don't expect the song's artist to change
         self::assertEquals($originalArtistId, Song::find($song->id)->artist->id);
@@ -77,6 +81,8 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateNoCompilation(): void
     {
+        /** @var User $user */
+        $user = User::factory()->admin()->create();
         $songIds = Song::latest()->take(3)->pluck('id')->toArray();
 
         $this->putAs('/api/songs', [
@@ -88,8 +94,8 @@ class SongTest extends TestCase
                 'lyrics' => 'bar',
                 'track' => 9999,
             ],
-        ], User::factory()->admin()->create())
-            ->assertStatus(200);
+        ], $user)
+            ->assertOk();
 
         $songs = Song::whereIn('id', $songIds)->get();
 
@@ -105,6 +111,9 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateCreatingNewAlbumsAndArtists(): void
     {
+        /** @var User $user */
+        $user = User::factory()->admin()->create();
+
         /** @var array<array-key, Song>|Collection $originalSongs */
         $originalSongs = Song::latest()->take(3)->get();
         $songIds = $originalSongs->pluck('id')->toArray();
@@ -118,8 +127,8 @@ class SongTest extends TestCase
                 'lyrics' => 'Lorem ipsum dolor sic amet.',
                 'track' => 1,
             ],
-        ], User::factory()->admin()->create())
-            ->assertStatus(200);
+        ], $user)
+            ->assertOk();
 
         /** @var array<Song>|Collection $songs */
         $songs = Song::latest()->take(3)->get();
@@ -141,6 +150,8 @@ class SongTest extends TestCase
 
     public function testSingleUpdateAllInfoWithCompilation(): void
     {
+        /** @var User $user */
+        $user = User::factory()->admin()->create();
         $song = Song::first();
 
         $this->putAs('/api/songs', [
@@ -154,8 +165,8 @@ class SongTest extends TestCase
                 'track' => 1,
                 'disc' => 2,
             ],
-        ], User::factory()->admin()->create())
-            ->assertStatus(200);
+        ], $user)
+            ->assertOk();
 
         /** @var Album $album */
         $album = Album::where('name', 'One by One')->first();
@@ -182,7 +193,9 @@ class SongTest extends TestCase
     {
         self::assertNotEquals(0, Song::count());
         $ids = Song::select('id')->get()->pluck('id')->all();
+
         Song::deleteByChunk($ids, 'id', 1);
+
         self::assertEquals(0, Song::count());
     }
 }

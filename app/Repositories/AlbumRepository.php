@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\Album;
 use App\Models\User;
 use App\Repositories\Traits\Searchable;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class AlbumRepository extends AbstractRepository
 {

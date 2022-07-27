@@ -157,7 +157,7 @@ class FileSynchronizer
 
             $cover = $matches ? $matches[0] : null;
 
-            return $cover && static::isImage($cover) ? $cover : null;
+            return $cover && self::isImage($cover) ? $cover : null;
         });
     }
 

@@ -18,7 +18,7 @@ final class SongScanInformation implements Arrayable
         public ?int $track,
         public ?int $disc,
         public ?string $lyrics,
-        public ?int $length,
+        public ?float $length,
         public ?array $cover,
         public ?string $path,
         public ?int $mTime,

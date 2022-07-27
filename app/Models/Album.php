@@ -31,6 +31,9 @@ use Laravel\Scout\Searchable;
  *                                       Notice that this doesn't guarantee the thumbnail exists.
  * @property string|null $thumbnail The public URL to the album's thumbnail
  * @property Carbon $created_at
+ * @property float|string $length Total length of the album in seconds (dynamically calculated)
+ * @property int|string $play_count Total number of times the album's songs have been played (dynamically calculated)
+ * @property int|string $song_count Total number of songs on the album (dynamically calculated)
  *
  * @method static self firstOrCreate(array $where, array $params = [])
  * @method static self|null find(int $id)

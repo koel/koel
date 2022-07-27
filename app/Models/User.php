@@ -16,7 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property UserPreferences $preferences
  * @property int $id
  * @property bool $is_admin
- * @property string $lastfm_session_key
+ * @property ?string $lastfm_session_key
  * @property string $name
  * @property string $email
  * @property string $password
@@ -25,6 +25,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static self create(array $params)
  * @method static int count()
  * @method static Builder where(...$params)
+ * @method static self|null firstWhere(...$params)
  */
 class User extends Authenticatable
 {
@@ -60,8 +61,6 @@ class User extends Authenticatable
 
     /**
      * Get the user's Last.fm session key.
-     *
-     * @return string|null The key if found, or null if user isn't connected to Last.fm
      */
     protected function lastfmSessionKey(): Attribute
     {

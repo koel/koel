@@ -54,7 +54,6 @@ class Playlist extends Model
         return Attribute::get(fn (): bool => $this->rule_groups->isNotEmpty());
     }
 
-    /** @return Collection|array<array-key, SmartPlaylistRuleGroup> */
     protected function ruleGroups(): Attribute
     {
         // aliasing the attribute to avoid confusion

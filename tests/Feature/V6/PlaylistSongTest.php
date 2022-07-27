@@ -5,7 +5,7 @@ namespace Tests\Feature\V6;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 
 class PlaylistSongTest extends TestCase
 {
@@ -53,7 +53,7 @@ class PlaylistSongTest extends TestCase
         $playlist->songs()->attach(Song::factory(5)->create());
 
         $this->getAs('api/playlists/' . $playlist->id . '/songs')
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 
     public function testAddSongsToPlaylist(): void
@@ -61,6 +61,7 @@ class PlaylistSongTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
+        /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::factory(2)->create();
 
         $this->postAs('api/playlists/' . $playlist->id . '/songs', [
@@ -77,7 +78,10 @@ class PlaylistSongTest extends TestCase
         $playlist = Playlist::factory()->create();
 
         $toRemainSongs = Song::factory(5)->create();
+
+        /** @var Collection|array<array-key, Song> $toBeRemovedSongs */
         $toBeRemovedSongs = Song::factory(2)->create();
+
         $playlist->songs()->attach($toRemainSongs->merge($toBeRemovedSongs));
 
         self::assertCount(7, $playlist->songs);
@@ -103,10 +107,10 @@ class PlaylistSongTest extends TestCase
         $song = Song::factory()->create();
 
         $this->postAs('api/playlists/' . $playlist->id . '/songs', ['songs' => [$song->id]])
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
 
         $this->deleteAs('api/playlists/' . $playlist->id . '/songs', ['songs' => [$song->id]])
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 
     public function testSmartPlaylistContentCannotBeModified(): void
@@ -128,12 +132,14 @@ class PlaylistSongTest extends TestCase
             ],
         ]);
 
-        $songs = Song::factory(2)->create()->map(static fn (Song $song) => $song->id)->all();
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory(2)->create();
+        $songIds = $songs->map(static fn (Song $song) => $song->id)->all();
 
-        $this->postAs('api/playlists/' . $playlist->id . '/songs', ['songs' => $songs], $playlist->user)
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+        $this->postAs('api/playlists/' . $playlist->id . '/songs', ['songs' => $songIds], $playlist->user)
+            ->assertForbidden();
 
-        $this->deleteAs('api/playlists/' . $playlist->id . '/songs', ['songs' => $songs], $playlist->user)
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+        $this->deleteAs('api/playlists/' . $playlist->id . '/songs', ['songs' => $songIds], $playlist->user)
+            ->assertForbidden();
     }
 }

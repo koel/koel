@@ -10,7 +10,7 @@ use SpotifyWebAPI\SpotifyWebAPI;
 use Throwable;
 
 /**
- * @method array search(string $keywords, string|array $type, string|object $options = [])
+ * @method array search(string $keywords, string|array $type, array|object $options = [])
  */
 class SpotifyClient
 {

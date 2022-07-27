@@ -100,27 +100,20 @@ class PlaylistTest extends TestCase
 
     public function testCreatingPlaylistWithNonExistentSongsFails(): void
     {
-        $response = $this->postAs('api/playlist', [
+        $this->postAs('api/playlist', [
             'name' => 'Foo Bar',
             'rules' => [],
             'songs' => ['foo'],
-        ]);
-
-        $response->assertUnprocessable();
+        ])
+            ->assertUnprocessable();
     }
 
     public function testUpdatePlaylistName(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'user_id' => $user->id,
-            'name' => 'Foo',
-        ]);
+        $playlist = Playlist::factory()->create(['name' => 'Foo']);
 
-        $this->putAs("api/playlist/$playlist->id", ['name' => 'Bar'], $user);
+        $this->putAs("api/playlist/$playlist->id", ['name' => 'Bar'], $playlist->user);
 
         self::assertSame('Bar', $playlist->refresh()->name);
     }
@@ -128,26 +121,19 @@ class PlaylistTest extends TestCase
     public function testNonOwnerCannotUpdatePlaylist(): void
     {
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'name' => 'Foo',
-        ]);
+        $playlist = Playlist::factory()->create(['name' => 'Foo']);
 
-        $response = $this->putAs("api/playlist/$playlist->id", ['name' => 'Qux']);
-        $response->assertStatus(403);
+        $this->putAs("api/playlist/$playlist->id", ['name' => 'Qux'])->assertForbidden();
     }
 
     public function testDeletePlaylist(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $playlist = Playlist::factory()->create();
 
-        $this->deleteAs("api/playlist/$playlist->id", [], $user);
-        self::assertDatabaseMissing('playlists', ['id' => $playlist->id]);
+        $this->deleteAs("api/playlist/$playlist->id", [], $playlist->user);
+
+        self::assertModelMissing($playlist);
     }
 
     public function testNonOwnerCannotDeletePlaylist(): void
@@ -155,7 +141,8 @@ class PlaylistTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
-        $this->deleteAs("api/playlist/$playlist->id")
-            ->assertStatus(403);
+        $this->deleteAs("api/playlist/$playlist->id")->assertForbidden();
+
+        self::assertModelExists($playlist);
     }
 }

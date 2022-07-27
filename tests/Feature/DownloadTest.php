@@ -9,7 +9,6 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\MockInterface;
@@ -152,7 +151,7 @@ class DownloadTest extends TestCase
         $user = User::factory()->create();
 
         $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 
     public function testDownloadFavorites(): void

@@ -3,56 +3,56 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 
 class ProfileTest extends TestCase
 {
-    private User $user;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->user = User::factory()->create(['password' => Hash::make('secret')]);
-    }
-
     public function testUpdateProfileRequiresCurrentPassword(): void
     {
         $this->putAs('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
-        ], $this->user)
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        ])
+            ->assertUnprocessable();
     }
 
     public function testUpdateProfileWithoutNewPassword(): void
     {
+        /** @var User $user */
+        $user =  User::factory()->create(['password' => Hash::make('secret')]);
+
         $this->putAs('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'current_password' => 'secret',
-        ], $this->user);
+        ], $user);
 
-        $this->user->refresh();
+        $user->refresh();
 
-        self::assertSame('Foo', $this->user->name);
-        self::assertSame('bar@baz.com', $this->user->email);
-        self::assertTrue(Hash::check('secret', $this->user->password));
+        self::assertSame('Foo', $user->name);
+        self::assertSame('bar@baz.com', $user->email);
+        self::assertTrue(Hash::check('secret', $user->password));
     }
 
     public function testUpdateProfileWithNewPassword(): void
     {
-        $this->putAs('api/me', [
+        /** @var User $user */
+        $user =  User::factory()->create(['password' => Hash::make('secret')]);
+
+        $token = $this->putAs('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'new_password' => 'new-secret',
             'current_password' => 'secret',
-        ], $this->user)
-            ->assertHeader('Authorization', $this->user->refresh()->api_token);
+        ], $user)
+            ->headers
+            ->get('Authorization');
 
-        self::assertSame('Foo', $this->user->name);
-        self::assertSame('bar@baz.com', $this->user->email);
-        self::assertTrue(Hash::check('new-secret', $this->user->password));
+        $user->refresh();
+
+        self::assertNotNull($token);
+        self::assertSame('Foo', $user->name);
+        self::assertSame('bar@baz.com', $user->email);
+        self::assertTrue(Hash::check('new-secret', $user->password));
     }
 }

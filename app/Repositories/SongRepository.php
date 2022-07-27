@@ -11,7 +11,7 @@ use App\Repositories\Traits\Searchable;
 use App\Services\Helper;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Webmozart\Assert\Assert;
 
 class SongRepository extends AbstractRepository

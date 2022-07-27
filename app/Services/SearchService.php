@@ -55,6 +55,6 @@ class SearchService
         return $this->songRepository
             ->search($keywords)
             ->get()
-            ->map(static fn (Song $song): string => $song->id);
+            ->map(static fn (Song $song): string => $song->id); // @phpstan-ignore-line
     }
 }

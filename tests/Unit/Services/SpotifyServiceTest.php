@@ -14,7 +14,7 @@ use Tests\TestCase;
 class SpotifyServiceTest extends TestCase
 {
     private SpotifyService $service;
-    private SpotifyClient|LegacyMockInterface|MockInterface $client;
+    private SpotifyClient|MockInterface|LegacyMockInterface $client;
 
     public function setUp(): void
     {
@@ -48,7 +48,7 @@ class SpotifyServiceTest extends TestCase
 
         $this->client->shouldNotReceive('search');
 
-        self::assertNull($this->service->tryGetArtistImage(Artist::factory()->create()));
+        self::assertNull($this->service->tryGetArtistImage(Mockery::mock(Artist::class)));
     }
 
     public function testTryGetAlbumImage(): void
@@ -73,7 +73,7 @@ class SpotifyServiceTest extends TestCase
 
         $this->client->shouldNotReceive('search');
 
-        self::assertNull($this->service->tryGetAlbumCover(Album::factory()->create()));
+        self::assertNull($this->service->tryGetAlbumCover(Mockery::mock(Album::class)));
     }
 
     /** @return array<mixed> */

@@ -43,7 +43,7 @@ class FileSynchronizerTest extends TestCase
         ];
 
         self::assertArraySubset($expectedData, $info->toArray());
-        self::assertEqualsWithDelta(10, $info->length, 0.001);
+        self::assertEqualsWithDelta(10, $info->length, 0.1);
     }
 
     /** @test */

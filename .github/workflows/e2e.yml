@@ -3,7 +3,8 @@ on:
   push:
     branches:
       - master
-      - next
+      # @fixme Tmp.disable until ready
+      # - next
   pull_request:
   workflow_dispatch:
 jobs:

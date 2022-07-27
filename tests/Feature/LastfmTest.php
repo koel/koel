@@ -32,7 +32,7 @@ class LastfmTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
         $this->postAs('api/lastfm/session-key', ['key' => 'foo'], $user)
-            ->assertStatus(204);
+            ->assertNoContent();
 
         self::assertEquals('foo', $user->refresh()->lastfm_session_key);
     }
