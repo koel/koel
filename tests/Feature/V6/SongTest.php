@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\V6;
 
-class SongTest
+use App\Models\Song;
+
+class SongTest extends TestCase
 {
     public const JSON_STRUCTURE = [
         'type',
@@ -23,4 +25,39 @@ class SongTest
         'disc',
         'created_at',
     ];
+
+    private const JSON_COLLECTION_STRUCTURE = [
+        'data' => [
+            '*' => self::JSON_STRUCTURE,
+        ],
+        'links' => [
+            'first',
+            'last',
+            'prev',
+            'next',
+        ],
+        'meta' => [
+            'current_page',
+            'from',
+            'path',
+            'per_page',
+            'to',
+        ],
+    ];
+
+    public function testIndex(): void
+    {
+        Song::factory(10)->create();
+
+        $this->getAs('api/songs')->assertJsonStructure(self::JSON_COLLECTION_STRUCTURE);
+        $this->getAs('api/songs?sort=title&order=desc')->assertJsonStructure(self::JSON_COLLECTION_STRUCTURE);
+    }
+
+    public function testShow(): void
+    {
+        /** @var Song $song */
+        $song = Song::factory()->create();
+
+        $this->getAs('api/songs/' . $song->id)->assertJsonStructure(self::JSON_STRUCTURE);
+    }
 }
