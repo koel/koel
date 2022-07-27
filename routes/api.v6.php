@@ -1,6 +1,5 @@
 <?php
 
-use App\Facades\YouTube;
 use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\V6\API\AlbumController;
@@ -19,7 +18,6 @@ use App\Http\Controllers\V6\API\QueueController;
 use App\Http\Controllers\V6\API\RecentlyPlayedSongController;
 use App\Http\Controllers\V6\API\SongController;
 use App\Http\Controllers\V6\API\SongSearchController;
-use App\Http\Controllers\V6\API\YouTubeSearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->middleware('api')->group(static function (): void {
@@ -43,17 +41,13 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('songs', SongController::class)->where(['song' => '[a-f0-9]{32}']);
         Route::get('songs/recently-played', [RecentlyPlayedSongController::class, 'index']);
         Route::get('songs/favorite', [FavoriteSongController::class, 'index']);
-        
+
         Route::apiResource('users', UserController::class);
 
         Route::get('search', ExcerptSearchController::class);
         Route::get('search/songs', SongSearchController::class);
 
         Route::get('queue/fetch', [QueueController::class, 'fetchSongs']);
-
-        if (YouTube::enabled()) {
-            Route::get('youtube/search/song/{song}', YouTubeSearchController::class);
-        }
 
         Route::post('interaction/play', [PlayCountController::class, 'store']);
     });
