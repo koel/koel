@@ -67,7 +67,7 @@ class Http {
       Http.hideProgressBar()
 
       // Also, if we receive a Bad Request / Unauthorized error
-      if (error.response.status === 400 || error.response.status === 401) {
+      if (error.response?.status === 400 || error.response?.status === 401) {
         // and we're not trying to log in
         if (!(error.config.method === 'post' && /\/api\/me\/?$/.test(error.config.url))) {
           // the token must have expired. Log out.
