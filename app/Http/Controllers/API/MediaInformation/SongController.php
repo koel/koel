@@ -18,7 +18,7 @@ class SongController extends Controller
     public function show(Song $song)
     {
         return response()->json([
-            'lyrics' => $song->lyrics,
+            'lyrics' => nl2br($song->lyrics), // backward compat
             'album_info' => $this->mediaInformationService->getAlbumInformation($song->album)?->toArray() ?: [],
             'artist_info' => $this->mediaInformationService->getArtistInformation($song->artist)?->toArray() ?: [],
             'youtube' => $this->youTubeService->searchVideosRelatedToSong($song),
