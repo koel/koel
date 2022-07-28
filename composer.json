@@ -18,6 +18,7 @@
     "predis/predis": "~1.0",
     "jackiedo/dotenv-editor": "^1.0",
     "ext-exif": "*",
+    "ext-gd": "*",
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-SimpleXML": "*",
