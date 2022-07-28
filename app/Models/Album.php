@@ -56,6 +56,9 @@ class Album extends Model
     protected $hidden = ['updated_at'];
     protected $casts = ['artist_id' => 'integer'];
 
+    /** @deprecated */
+    protected $appends = ['is_compilation'];
+
     /**
      * Get an album using some provided information.
      * If such is not found, a new album will be created using the information.
@@ -132,6 +135,12 @@ class Album extends Model
     protected function thumbnail(): Attribute
     {
         return Attribute::get(fn () => $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null);
+    }
+
+    /** @deprecated Only here for backward compat with mobile apps */
+    protected function isCompilation(): Attribute
+    {
+        return Attribute::get(fn () => $this->artist_id === Artist::VARIOUS_ID);
     }
 
     public function scopeIsStandard(Builder $query): Builder
