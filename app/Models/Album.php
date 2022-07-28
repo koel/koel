@@ -52,7 +52,7 @@ class Album extends Model
      * Get an album using some provided information.
      * If such is not found, a new album will be created using the information.
      */
-    public static function getOrCreate(Artist $artist, ?string $name = null, bool $isCompilation = false): self
+    public static function getOrCreate(Artist $artist, ?string $name = null, ?bool $isCompilation = false): self
     {
         // If this is a compilation album, its artist must be "Various Artists"
         if ($isCompilation) {
