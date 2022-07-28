@@ -50,7 +50,9 @@ class AuthController extends Controller
 
     public function logout()
     {
-        $this->tokenManager->destroyTokens($this->currentUser);
+        if ($this->currentUser) {
+            $this->tokenManager->destroyTokens($this->currentUser);
+        }
 
         return response()->noContent();
     }
