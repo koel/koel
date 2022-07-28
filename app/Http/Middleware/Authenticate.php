@@ -18,7 +18,7 @@ class Authenticate
     public function handle(Request $request, Closure $next) // @phpcs:ignore
     {
         if ($this->auth->guest()) {
-            if ($request->ajax() || $request->route()->getName() === 'play') {
+            if ($request->ajax() || $request->wantsJson() || $request->route()->getName() === 'play') {
                 return response('Unauthorized.', 401);
             } else {
                 return redirect()->guest('/');
