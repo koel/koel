@@ -105,6 +105,14 @@ class Song extends Model
         );
     }
 
+    protected function lyrics(): Attribute
+    {
+        // Since we're displaying the lyrics using <pre>, replace breaks with newlines and strip all tags.
+        $normalizer = static fn (?string $value): string => strip_tags(preg_replace('#<br\s*/?>#i', PHP_EOL, $value));
+
+        return new Attribute(get: $normalizer, set: $normalizer);
+    }
+
     public static function withMeta(User $scopedUser, ?Builder $query = null): Builder
     {
         $query ??= static::query();
