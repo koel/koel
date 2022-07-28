@@ -8,6 +8,10 @@ server {
   gzip_types      text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/json;
   gzip_comp_level  9;
 
+  location / {
+    try_files   $uri $uri/ /index.php?$args;
+  }
+
   location /media/ {
     internal;
 
@@ -15,10 +19,6 @@ server {
 
     #access_log /var/log/nginx/koel.access.log;
     #error_log  /var/log/nginx/koel.error.log;
-  }
-
-  location / {
-    try_files   $uri $uri/ /index.php?$args;
   }
 
   location ~ \.php$ {
