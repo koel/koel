@@ -18,7 +18,6 @@ class PruneLibraryCommand extends Command
     public function handle(): int
     {
         $this->libraryManager->prune();
-
         $this->info('Empty artists and albums removed.');
 
         return self::SUCCESS;

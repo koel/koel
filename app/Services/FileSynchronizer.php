@@ -7,6 +7,7 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Values\SongScanInformation;
+use App\Values\SyncResult;
 use getID3;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Support\Arr;
@@ -72,16 +73,16 @@ class FileSynchronizer
      * @param array<string> $ignores The tags to ignore/exclude (only taken into account if the song already exists)
      * @param bool $force Whether to force syncing, even if the file is unchanged
      */
-    public function sync(array $ignores = [], bool $force = false): int
+    public function sync(array $ignores = [], bool $force = false): SyncResult
     {
         if (!$this->isFileNewOrChanged() && !$force) {
-            return self::SYNC_RESULT_UNMODIFIED;
+            return SyncResult::skipped($this->filePath);
         }
 
         $info = $this->getFileScanInformation()?->toArray();
 
         if (!$info) {
-            return self::SYNC_RESULT_BAD_FILE;
+            return SyncResult::error($this->filePath, $this->syncError);
         }
 
         if (!$this->isFileNew()) {
@@ -102,7 +103,7 @@ class FileSynchronizer
 
         $this->song = Song::updateOrCreate(['id' => $this->fileHash], $data);
 
-        return self::SYNC_RESULT_SUCCESS;
+        return SyncResult::success($this->filePath);
     }
 
     /**

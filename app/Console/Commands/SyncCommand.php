@@ -4,9 +4,10 @@ namespace App\Console\Commands;
 
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Setting;
-use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
+use App\Values\SyncResult;
 use Illuminate\Console\Command;
+use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class SyncCommand extends Command
@@ -17,15 +18,18 @@ class SyncCommand extends Command
         {--force : Force re-syncing even unchanged files}';
 
     protected $description = 'Sync songs found in configured directory against the database.';
-    private int $skippedCount = 0;
-    private int $invalidCount = 0;
-    private int $syncedCount = 0;
 
-    private ?ProgressBar $progressBar = null;
+    private ProgressBar $progressBar;
 
     public function __construct(private MediaSyncService $mediaSyncService)
     {
         parent::__construct();
+
+        $this->mediaSyncService->on('paths-gathered', function (array $paths): void {
+            $this->progressBar = new ProgressBar($this->output, count($paths));
+        });
+
+        $this->mediaSyncService->on('progress', [$this, 'onSyncProgress']);
     }
 
     public function handle(): int
@@ -46,24 +50,27 @@ class SyncCommand extends Command
     /**
      * Sync all files in the configured media path.
      */
-    protected function syncAll(): void
+    private function syncAll(): void
     {
         $path = Setting::get('media_path');
-        $this->info('Syncing media from ' . $path . PHP_EOL);
 
-        // The excluded tags.
+        $this->components->info('Scanning ' . $path);
+
+        // The tags to ignore from syncing.
         // Notice that this is only meaningful for existing records.
         // New records will have every applicable field synced in.
-        $excludes = $this->option('excludes') ? explode(',', $this->option('excludes')) : [];
+        $ignores = $this->option('ignore') ? explode(',', $this->option('ignore')) : [];
 
-        $this->mediaSyncService->sync($excludes, $this->option('force'), $this);
+        $results = $this->mediaSyncService->sync($ignores, $this->option('force'));
 
-        $this->output->writeln(
-            PHP_EOL . PHP_EOL
-            . "<info>Completed! $this->syncedCount new or updated song(s)</info>, "
-            . "$this->skippedCount unchanged song(s), "
-            . "and <comment>$this->invalidCount invalid file(s)</comment>."
-        );
+        $this->newLine(2);
+        $this->components->info('Scanning completed!');
+
+        $this->components->bulletList([
+            "<fg=green>{$results->success()->count()}</> new or updated song(s)",
+            "<fg=yellow>{$results->skipped()->count()}</> unchanged song(s)",
+            "<fg=red>{$results->error()->count()}</> invalid file(s)",
+        ]);
     }
 
     /**
@@ -76,39 +83,33 @@ class SyncCommand extends Command
      *
      * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
      */
-    public function syncSingleRecord(string $record): void
+    private function syncSingleRecord(string $record): void
     {
         $this->mediaSyncService->syncByWatchRecord(new InotifyWatchRecord($record));
     }
 
-    /**
-     * Log a song's sync status to console.
-     */
-    public function logSyncStatusToConsole(string $path, int $result, ?string $reason = null): void
+    public function onSyncProgress(SyncResult $result): void
     {
-        $name = basename($path);
+        if (!$this->option('verbose')) {
+            $this->progressBar->advance();
 
-        if ($result === FileSynchronizer::SYNC_RESULT_UNMODIFIED) {
-            ++$this->skippedCount;
-        } elseif ($result === FileSynchronizer::SYNC_RESULT_BAD_FILE) {
-            if ($this->option('verbose')) {
-                $this->error(PHP_EOL . "'$name' is not a valid media file: $reason");
-            }
-
-            ++$this->invalidCount;
-        } else {
-            ++$this->syncedCount;
+            return;
         }
-    }
 
-    public function createProgressBar(int $max): void
-    {
-        $this->progressBar = $this->getOutput()->createProgressBar($max);
-    }
+        $path = dirname($result->path);
+        $file = basename($result->path);
+        $sep = DIRECTORY_SEPARATOR;
 
-    public function advanceProgressBar(): void
-    {
-        $this->progressBar->advance();
+        $this->components->twoColumnDetail("<fg=gray>$path$sep</>$file", match (true) {
+            $result->isSuccess() => "<fg=green>OK</>",
+            $result->isSkipped() => "<fg=yellow>SKIPPED</>",
+            $result->isError() => "<fg=red>ERROR</>",
+            default => throw new RuntimeException("Unknown sync result type: {$result->type}")
+        });
+
+        if ($result->isError()) {
+            $this->output->writeln("<fg=red>$result->error</>");
+        }
     }
 
     private function ensureMediaPath(): void

@@ -2,20 +2,22 @@
 
 namespace App\Services;
 
-use App\Console\Commands\SyncCommand;
 use App\Events\LibraryChanged;
 use App\Events\MediaSyncCompleted;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Song;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
-use App\Values\SyncResult;
+use App\Values\SyncResultCollection;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class MediaSyncService
 {
+    /** @var array<array-key, callable> */
+    private array $events = [];
+
     public function __construct(
         private SettingRepository $settingRepository,
         private SongRepository $songRepository,
@@ -30,46 +32,36 @@ class MediaSyncService
      * Only taken into account for existing records.
      * New records will have all tags synced in regardless.
      * @param bool $force Whether to force syncing even unchanged files
-     * @param SyncCommand $syncCommand The SyncMedia command object, to log to console if executed by artisan
      */
-    public function sync(array $ignores = [], bool $force = false, ?SyncCommand $syncCommand = null): void
+    public function sync(array $ignores = [], bool $force = false): SyncResultCollection
     {
         /** @var string $mediaPath */
         $mediaPath = $this->settingRepository->getByKey('media_path');
 
         $this->setSystemRequirements();
 
-        $syncResult = SyncResult::init();
+        $results = SyncResultCollection::create();
         $songPaths = $this->gatherFiles($mediaPath);
-        $syncCommand?->createProgressBar(count($songPaths));
+
+        if (isset($this->events['paths-gathered'])) {
+            $this->events['paths-gathered']($songPaths);
+        }
 
         foreach ($songPaths as $path) {
             $result = $this->fileSynchronizer->setFile($path)->sync($ignores, $force);
+            $results->add($result);
 
-            switch ($result) {
-                case FileSynchronizer::SYNC_RESULT_SUCCESS:
-                    $syncResult->success->add($path);
-                    break;
-
-                case FileSynchronizer::SYNC_RESULT_UNMODIFIED:
-                    $syncResult->unmodified->add($path);
-                    break;
-
-                default:
-                    $syncResult->bad->add($path);
-                    break;
-            }
-
-            if ($syncCommand) {
-                $syncCommand->advanceProgressBar();
-                $syncCommand->logSyncStatusToConsole($path, $result, $this->fileSynchronizer->getSyncError());
+            if (isset($this->events['progress'])) {
+                $this->events['progress']($result);
             }
         }
 
-        event(new MediaSyncCompleted($syncResult));
+        event(new MediaSyncCompleted($results));
 
         // Trigger LibraryChanged, so that PruneLibrary handler is fired to prune the lib.
         event(new LibraryChanged());
+
+        return $results;
     }
 
     /**
@@ -150,7 +142,7 @@ class MediaSyncService
     {
         $result = $this->fileSynchronizer->setFile($path)->sync();
 
-        if ($result === FileSynchronizer::SYNC_RESULT_SUCCESS) {
+        if ($result->isSuccess()) {
             $this->logger->info("Synchronized $path");
         } else {
             $this->logger->info("Failed to synchronized $path. Maybe an invalid file?");
@@ -181,5 +173,10 @@ class MediaSyncService
         $this->logger->info("Synced all song(s) under $path");
 
         event(new LibraryChanged());
+    }
+
+    public function on(string $event, callable $callback): void
+    {
+        $this->events[$event] = $callback;
     }
 }
