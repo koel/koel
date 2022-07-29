@@ -14,7 +14,6 @@ koel.db
 
 ### Node ###
 # Logs
-logs
 *.log
 npm-debug.log*
 
