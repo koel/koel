@@ -17,8 +17,8 @@ use Tests\TestCase;
 
 class S3ServiceTest extends TestCase
 {
-    private LegacyMockInterface|MockInterface|S3ClientInterface $s3Client;
-    private LegacyMockInterface|Cache|MockInterface $cache;
+    private S3ClientInterface|LegacyMockInterface|MockInterface $s3Client;
+    private Cache|LegacyMockInterface|MockInterface $cache;
     private S3Service $s3Service;
 
     public function setUp(): void

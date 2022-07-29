@@ -10,12 +10,7 @@ class SongStartedPlaying extends Event
 {
     use SerializesModels;
 
-    public Song $song;
-    public User $user;
-
-    public function __construct(Song $song, User $user)
+    public function __construct(public Song $song, public User $user)
     {
-        $this->song = $song;
-        $this->user = $user;
     }
 }

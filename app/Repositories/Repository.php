@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Throwable;
 
-abstract class AbstractRepository implements RepositoryInterface
+abstract class Repository implements RepositoryInterface
 {
     private string $modelClass;
     protected Model $model;

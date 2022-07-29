@@ -31,4 +31,10 @@ class PlaylistService
     {
         $playlist->songs()->detach($songIds);
     }
+
+    /** @deprecated */
+    public function populatePlaylist(Playlist $playlist, array $songIds): void
+    {
+        $playlist->songs()->sync($songIds);
+    }
 }

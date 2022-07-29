@@ -5,10 +5,11 @@ namespace Tests\Feature;
 use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Mockery;
+use Mockery\MockInterface;
 
 class AlbumThumbnailTest extends TestCase
 {
-    private $mediaMetadataService;
+    private MockInterface $mediaMetadataService;
 
     public function setUp(): void
     {

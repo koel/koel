@@ -40,7 +40,7 @@ class SyncCommand extends Command
             $this->syncAll();
         }
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 
     /**

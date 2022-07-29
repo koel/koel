@@ -3,9 +3,9 @@
 namespace App\Http\Requests;
 
 /**
- * @property float $time
+ * @property float|string $time
  * @property string $api_token
  */
-class SongPlayRequest extends AbstractRequest
+class SongPlayRequest extends Request
 {
 }

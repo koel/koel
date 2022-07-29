@@ -5,7 +5,6 @@ namespace Tests\Unit\Listeners;
 use App\Events\SongLikeToggled;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Models\Interaction;
-use App\Models\User;
 use App\Services\LastfmService;
 use App\Values\LastfmLoveTrackParameters;
 use Mockery;
@@ -15,9 +14,6 @@ class LoveTrackOnLastFmTest extends TestCase
 {
     public function testHandle(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();
 
@@ -25,15 +21,15 @@ class LoveTrackOnLastFmTest extends TestCase
         $lastfm->shouldReceive('toggleLoveTrack')
             ->with(
                 Mockery::on(static function (LastfmLoveTrackParameters $params) use ($interaction): bool {
-                    self::assertSame($interaction->song->title, $params->getTrackName());
-                    self::assertSame($interaction->song->artist->name, $params->getArtistName());
+                    self::assertSame($interaction->song->title, $params->trackName);
+                    self::assertSame($interaction->song->artist->name, $params->artistName);
 
                     return true;
                 }),
-                $user->lastfm_session_key,
+                $interaction->user->lastfm_session_key,
                 $interaction->liked
             );
 
-        (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction, $user));
+        (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction));
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Stubs;
 
-use App\Services\AbstractApiClient;
+use App\Services\ApiClient;
 
-class ConcreteApiClient extends AbstractApiClient
+class ConcreteApiClient extends ApiClient
 {
     public function getKey(): string
     {

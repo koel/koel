@@ -38,7 +38,7 @@ class InitCommand extends Command
         parent::__construct();
     }
 
-    public function handle(): void
+    public function handle(): int
     {
         $this->comment('Attempting to install or upgrade Koel.');
         $this->comment('Remember, you can always install/upgrade manually following the guide here:');
@@ -60,7 +60,7 @@ class InitCommand extends Command
             $this->error('Please try again, or visit ' . config('koel.misc.docs_url') . ' for manual installation.');
             $this->error('😥 Sorry for this. You deserve better.');
 
-            return;
+            return self::FAILURE;
         }
 
         $this->comment(PHP_EOL . '🎆  Success! Koel can now be run from localhost with `php artisan serve`.');
@@ -76,12 +76,16 @@ class InitCommand extends Command
         }
 
         $this->comment('Again, visit 📙 ' . config('koel.misc.docs_url') . ' for the official documentation.');
+
         $this->comment(
             "Feeling generous and want to support Koel's development? Check out "
             . config('koel.misc.sponsor_github_url')
             . ' 🤗'
         );
+
         $this->comment('Thanks for using Koel. You rock! 🤘');
+
+        return self::SUCCESS;
     }
 
     /**

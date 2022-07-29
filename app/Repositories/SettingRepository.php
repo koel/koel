@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Setting;
 
-class SettingRepository extends AbstractRepository
+class SettingRepository extends Repository
 {
     /** @return array<mixed> */
     public function getAllAsKeyValueArray(): array

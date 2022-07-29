@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\ObjectStorage\S3;
 
 use App\Exceptions\SongPathNotFoundException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ObjectStorage\S3\PutSongRequest;
 use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
 use App\Services\S3Service;
@@ -10,11 +11,8 @@ use Illuminate\Http\Response;
 
 class SongController extends Controller
 {
-    private S3Service $s3Service;
-
-    public function __construct(S3Service $s3Service)
+    public function __construct(private S3Service $s3Service)
     {
-        $this->s3Service = $s3Service;
     }
 
     public function put(PutSongRequest $request)

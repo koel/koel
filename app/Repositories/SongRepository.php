@@ -14,7 +14,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Webmozart\Assert\Assert;
 
-class SongRepository extends AbstractRepository
+class SongRepository extends Repository
 {
     use Searchable;
 

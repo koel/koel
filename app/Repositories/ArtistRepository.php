@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Repositories\Traits\Searchable;
 use Illuminate\Database\Eloquent\Collection;
 
-class ArtistRepository extends AbstractRepository
+class ArtistRepository extends Repository
 {
     use Searchable;
 

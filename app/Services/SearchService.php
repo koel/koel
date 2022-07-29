@@ -16,18 +16,11 @@ class SearchService
 {
     public const DEFAULT_EXCERPT_RESULT_COUNT = 6;
 
-    private SongRepository $songRepository;
-    private AlbumRepository $albumRepository;
-    private ArtistRepository $artistRepository;
-
     public function __construct(
-        SongRepository $songRepository,
-        AlbumRepository $albumRepository,
-        ArtistRepository $artistRepository
+        private SongRepository $songRepository,
+        private AlbumRepository $albumRepository,
+        private ArtistRepository $artistRepository
     ) {
-        $this->songRepository = $songRepository;
-        $this->albumRepository = $albumRepository;
-        $this->artistRepository = $artistRepository;
     }
 
     /** @return array<mixed> */

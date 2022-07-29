@@ -8,13 +8,6 @@ use App\Models\User;
 
 class PlaylistSongTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        static::createSampleMediaSet();
-    }
-
     public function testUpdatePlaylistSongs(): void
     {
         $this->doTestUpdatePlaylistSongs();
@@ -40,7 +33,7 @@ class PlaylistSongTest extends TestCase
 
         $path = $useDeprecatedRoute ? "api/playlist/$playlist->id/sync" : "api/playlist/$playlist->id/songs";
 
-        $this->putAs($path, ['songs' => $toRemainSongs->pluck('id')->all()], $user)->assertOk();
+        $this->putAs($path, ['songs' => $toRemainSongs->pluck('id')->all()], $user)->assertNoContent();
 
         self::assertEqualsCanonicalizing(
             $toRemainSongs->pluck('id')->all(),

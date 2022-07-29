@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\Download;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Download\SongRequest;
 use App\Repositories\SongRepository;
 use App\Services\DownloadService;
 
 class SongController extends Controller
 {
-    private SongRepository $songRepository;
-
-    public function __construct(DownloadService $downloadService, SongRepository $songRepository)
+    public function __construct(private DownloadService $downloadService, private SongRepository $songRepository)
     {
-        parent::__construct($downloadService);
-
-        $this->songRepository = $songRepository;
     }
 
     public function show(SongRequest $request)

@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\API\Interaction;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\InteractionRepository;
-use App\Services\InteractionService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class RecentlyPlayedController extends Controller
 {
     /** @param User $user */
-    public function __construct(
-        protected InteractionService $interactionService,
-        protected InteractionRepository $interactionRepository,
-        protected ?Authenticatable $user
-    ) {
-        parent::__construct($interactionService, $user);
+    public function __construct(private InteractionRepository $interactionRepository, private ?Authenticatable $user)
+    {
     }
 
     public function index(?int $count = null)

@@ -21,6 +21,6 @@ class PruneLibraryCommand extends Command
 
         $this->info('Empty artists and albums removed.');
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

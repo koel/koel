@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistSongUpdateRequest;
 use App\Models\Playlist;
+use App\Services\PlaylistService;
 use App\Services\SmartPlaylistService;
 
 class PlaylistSongController extends Controller
 {
-    private SmartPlaylistService $smartPlaylistService;
-
-    public function __construct(SmartPlaylistService $smartPlaylistService)
-    {
-        $this->smartPlaylistService = $smartPlaylistService;
+    public function __construct(
+        private SmartPlaylistService $smartPlaylistService,
+        private PlaylistService $playlistService
+    ) {
     }
 
     public function index(Playlist $playlist)
@@ -26,14 +27,15 @@ class PlaylistSongController extends Controller
         );
     }
 
+    /** @deprecated */
     public function update(PlaylistSongUpdateRequest $request, Playlist $playlist)
     {
         $this->authorize('owner', $playlist);
 
-        abort_if($playlist->is_smart, 403, 'A smart playlist\'s content cannot be updated manually.');
+        abort_if($playlist->is_smart, 403, 'A smart playlist cannot be populated manually.');
 
-        $playlist->songs()->sync((array) $request->songs);
+        $this->playlistService->populatePlaylist($playlist, (array) $request->songs);
 
-        return response()->json();
+        return response()->noContent();
     }
 }

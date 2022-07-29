@@ -6,7 +6,7 @@ use App\Models\Playlist;
 use App\Repositories\Traits\ByCurrentUser;
 use Illuminate\Support\Collection;
 
-class PlaylistRepository extends AbstractRepository
+class PlaylistRepository extends Repository
 {
     use ByCurrentUser;
 

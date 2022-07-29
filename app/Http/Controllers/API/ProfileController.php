@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;

@@ -26,11 +26,9 @@ class SongService
                 /** @var Song|null $song */
                 $song = Song::with('album', 'album.artist', 'artist')->find($id);
 
-                if (!$song) {
-                    continue;
+                if ($song) {
+                    $updatedSongs->push($this->updateSong($song, $data));
                 }
-
-                $updatedSongs->push($this->updateSong($song, $data));
             }
         });
 

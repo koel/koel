@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UserLoginRequest;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -15,23 +16,13 @@ class AuthController extends Controller
 {
     use ThrottlesLogins;
 
-    private UserRepository $userRepository;
-    private HashManager $hash;
-    private TokenManager $tokenManager;
-
-    /** @var User */
-    private ?Authenticatable $currentUser;
-
+    /** @param User $user */
     public function __construct(
-        UserRepository $userRepository,
-        HashManager $hash,
-        TokenManager $tokenManager,
-        ?Authenticatable $currentUser
+        private UserRepository $userRepository,
+        private HashManager $hash,
+        private TokenManager $tokenManager,
+        private ?Authenticatable $user
     ) {
-        $this->userRepository = $userRepository;
-        $this->hash = $hash;
-        $this->tokenManager = $tokenManager;
-        $this->currentUser = $currentUser;
     }
 
     public function login(UserLoginRequest $request)
@@ -50,8 +41,8 @@ class AuthController extends Controller
 
     public function logout()
     {
-        if ($this->currentUser) {
-            $this->tokenManager->destroyTokens($this->currentUser);
+        if ($this->user) {
+            $this->tokenManager->destroyTokens($this->user);
         }
 
         return response()->noContent();

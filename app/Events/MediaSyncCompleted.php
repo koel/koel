@@ -9,10 +9,7 @@ class MediaSyncCompleted extends Event
 {
     use SerializesModels;
 
-    public SyncResult $result;
-
-    public function __construct(SyncResult $result)
+    public function __construct(public SyncResult $result)
     {
-        $this->result = $result;
     }
 }

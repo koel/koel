@@ -10,12 +10,7 @@ class SongsBatchLiked extends Event
 {
     use SerializesModels;
 
-    public Collection $songs;
-    public User $user;
-
-    public function __construct(Collection $songs, User $user)
+    public function __construct(public Collection $songs, public User $user)
     {
-        $this->songs = $songs;
-        $this->user = $user;
     }
 }

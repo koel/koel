@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Http\Resources\AlbumResource;
 use App\Http\Resources\ArtistResource;

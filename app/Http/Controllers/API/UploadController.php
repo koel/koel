@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UploadRequest;
 use App\Http\Resources\AlbumResource;
 use App\Http\Resources\SongResource;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\MediaInformation;
 
+use App\Http\Controllers\Controller;
 use App\Models\Song;
 use App\Services\MediaInformationService;
 use App\Services\YouTubeService;
@@ -9,10 +10,9 @@ use App\Services\YouTubeService;
 class SongController extends Controller
 {
     public function __construct(
-        protected MediaInformationService $mediaInformationService,
+        private MediaInformationService $mediaInformationService,
         private YouTubeService $youTubeService
     ) {
-        parent::__construct($mediaInformationService);
     }
 
     public function show(Song $song)

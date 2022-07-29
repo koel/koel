@@ -11,15 +11,8 @@ class ApplicationInformationService
 {
     private const CACHE_KEY = 'latestKoelVersion';
 
-    private Client $client;
-    private Cache $cache;
-    private Logger $logger;
-
-    public function __construct(Client $client, Cache $cache, Logger $logger)
+    public function __construct(private Client $client, private Cache $cache, private Logger $logger)
     {
-        $this->client = $client;
-        $this->cache = $cache;
-        $this->logger = $logger;
     }
 
     /**

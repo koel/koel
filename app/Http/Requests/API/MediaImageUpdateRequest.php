@@ -4,7 +4,7 @@ namespace App\Http\Requests\API;
 
 use App\Rules\ImageData;
 
-abstract class AbstractMediaImageUpdateRequest extends Request
+abstract class MediaImageUpdateRequest extends Request
 {
     public function authorize(): bool
     {

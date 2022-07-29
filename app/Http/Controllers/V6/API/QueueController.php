@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\V6\API;
 
-use App\Http\Controllers\API\Controller;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\V6\Requests\QueueFetchSongRequest;
 use App\Http\Resources\SongResource;
 use App\Models\User;

@@ -5,10 +5,11 @@ namespace Tests\Feature;
 use App\Models\Song;
 use App\Services\YouTubeService;
 use Mockery;
+use Mockery\MockInterface;
 
 class YouTubeTest extends TestCase
 {
-    private $youTubeService;
+    private MockInterface $youTubeService;
 
     public function setUp(): void
     {

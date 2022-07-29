@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\API;
 
-use App\Http\Requests\AbstractRequest;
+use App\Http\Requests\Request;
 use Illuminate\Http\UploadedFile;
 
 /** @property UploadedFile $file */
-class UploadRequest extends AbstractRequest
+class UploadRequest extends Request
 {
     /** @return array<mixed> */
     public function rules(): array

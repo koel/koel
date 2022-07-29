@@ -23,12 +23,17 @@ class UserService
 
     public function updateUser(User $user, string $name, string $email, string|null $password, bool $isAdmin): User
     {
-        $user->update([
+        $data = [
             'name' => $name,
             'email' => $email,
-            'password' => $password ? $this->hash->make($password) : $user->password,
             'is_admin' => $isAdmin,
-        ]);
+        ];
+
+        if ($password) {
+            $data['password'] = $this->hash->make($password);
+        }
+
+        $user->update($data);
 
         return $user;
     }

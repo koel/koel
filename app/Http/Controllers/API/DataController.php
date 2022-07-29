@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\InteractionRepository;
 use App\Repositories\PlaylistRepository;
@@ -18,41 +19,19 @@ class DataController extends Controller
 {
     private const RECENTLY_PLAYED_EXCERPT_COUNT = 7;
 
-    private LastfmService $lastfmService;
-    private YouTubeService $youTubeService;
-    private ITunesService $iTunesService;
-    private MediaCacheService $mediaCacheService;
-    private SettingRepository $settingRepository;
-    private PlaylistRepository $playlistRepository;
-    private InteractionRepository $interactionRepository;
-    private UserRepository $userRepository;
-    private ApplicationInformationService $applicationInformationService;
-
-    /** @var User */
-    private ?Authenticatable $currentUser;
-
+    /** @param User $currentUser */
     public function __construct(
-        LastfmService $lastfmService,
-        YouTubeService $youTubeService,
-        ITunesService $iTunesService,
-        MediaCacheService $mediaCacheService,
-        SettingRepository $settingRepository,
-        PlaylistRepository $playlistRepository,
-        InteractionRepository $interactionRepository,
-        UserRepository $userRepository,
-        ApplicationInformationService $applicationInformationService,
-        ?Authenticatable $currentUser
+        private LastfmService $lastfmService,
+        private YouTubeService $youTubeService,
+        private ITunesService $iTunesService,
+        private MediaCacheService $mediaCacheService,
+        private SettingRepository $settingRepository,
+        private PlaylistRepository $playlistRepository,
+        private InteractionRepository $interactionRepository,
+        private UserRepository $userRepository,
+        private ApplicationInformationService $applicationInformationService,
+        private ?Authenticatable $currentUser
     ) {
-        $this->lastfmService = $lastfmService;
-        $this->youTubeService = $youTubeService;
-        $this->iTunesService = $iTunesService;
-        $this->mediaCacheService = $mediaCacheService;
-        $this->settingRepository = $settingRepository;
-        $this->playlistRepository = $playlistRepository;
-        $this->interactionRepository = $interactionRepository;
-        $this->userRepository = $userRepository;
-        $this->applicationInformationService = $applicationInformationService;
-        $this->currentUser = $currentUser;
     }
 
     public function index()

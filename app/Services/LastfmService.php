@@ -13,7 +13,7 @@ use GuzzleHttp\Promise\Utils;
 use Illuminate\Support\Collection;
 use Throwable;
 
-class LastfmService extends AbstractApiClient implements ApiConsumerInterface
+class LastfmService extends ApiClient implements ApiConsumerInterface
 {
     /**
      * Override the key param, since, again, Last.fm wants to be different.
@@ -143,8 +143,8 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     {
         try {
             $this->post('/', $this->buildAuthCallParams([
-                'track' => $params->getTrackName(),
-                'artist' => $params->getArtistName(),
+                'track' => $params->trackName,
+                'artist' => $params->artistName,
                 'sk' => $sessionKey,
                 'method' => $love ? 'track.love' : 'track.unlove',
             ]), false);
@@ -160,8 +160,8 @@ class LastfmService extends AbstractApiClient implements ApiConsumerInterface
     {
         $promises = $parameterCollection->map(
             fn (LastfmLoveTrackParameters $params): Promise => $this->postAsync('/', $this->buildAuthCallParams([
-                'track' => $params->getTrackName(),
-                'artist' => $params->getArtistName(),
+                'track' => $params->trackName,
+                'artist' => $params->artistName,
                 'sk' => $sessionKey,
                 'method' => $love ? 'track.love' : 'track.unlove',
             ]), false)

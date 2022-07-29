@@ -26,7 +26,7 @@ use Webmozart\Assert\Assert;
  * @method Promise headAsync($uri, array $data = [], bool $appendKey = true)
  * @method Promise deleteAsync($uri, array $data = [], bool $appendKey = true)
  */
-abstract class AbstractApiClient
+abstract class ApiClient
 {
     private const MAGIC_METHODS = [
         'get',

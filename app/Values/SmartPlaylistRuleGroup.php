@@ -3,6 +3,7 @@
 namespace App\Values;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Throwable;
 
@@ -23,13 +24,11 @@ final class SmartPlaylistRuleGroup implements Arrayable
 
     public static function create(array $jsonArray): self
     {
-        $id = $jsonArray['id'] ?? null;
-
         $rules = collect(array_map(static function (array $rawRuleConfig) {
             return SmartPlaylistRule::create($rawRuleConfig);
         }, $jsonArray['rules']));
 
-        return new self($id, $rules);
+        return new self(Arr::get($jsonArray, 'id'), $rules);
     }
 
     /** @return array<mixed> */
