@@ -294,7 +294,7 @@ class InitCommand extends Command
                 return;
             }
 
-            if (static::isValidMediaPath($path)) {
+            if (self::isValidMediaPath($path)) {
                 Setting::set('media_path', $path);
             } else {
                 $this->warn(sprintf('The path %s does not exist or not readable. Skipping.', $path));

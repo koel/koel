@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\MediaSyncService;
+use App\Values\SyncResultCollection;
 use Mockery\MockInterface;
 
 class SettingTest extends TestCase
@@ -23,7 +24,8 @@ class SettingTest extends TestCase
         /** @var User $admin */
         $admin = User::factory()->admin()->create();
 
-        $this->mediaSyncService->shouldReceive('sync')->once();
+        $this->mediaSyncService->shouldReceive('sync')->once()
+            ->andReturn(SyncResultCollection::create());
 
         $this->putAs('/api/settings', ['media_path' => __DIR__], $admin)
             ->assertSuccessful();

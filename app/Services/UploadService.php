@@ -26,9 +26,9 @@ class UploadService
         $targetPathName = $this->getUploadDirectory() . $targetFileName;
         $result = $this->fileSynchronizer->setFile($targetPathName)->sync();
 
-        if ($result !== FileSynchronizer::SYNC_RESULT_SUCCESS) {
+        if ($result->isError()) {
             @unlink($targetPathName);
-            throw new SongUploadFailedException($this->fileSynchronizer->getSyncError());
+            throw new SongUploadFailedException($result->error);
         }
 
         return $this->fileSynchronizer->getSong();

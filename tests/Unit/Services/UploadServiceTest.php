@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\Song;
 use App\Services\FileSynchronizer;
 use App\Services\UploadService;
+use App\Values\SyncResult;
 use Illuminate\Http\UploadedFile;
 use Mockery;
 use Mockery\LegacyMockInterface;
@@ -58,12 +59,7 @@ class UploadServiceTest extends TestCase
             ->shouldReceive('sync')
             ->once()
             ->with()
-            ->andReturn(FileSynchronizer::SYNC_RESULT_BAD_FILE);
-
-        $this->fileSynchronizer
-            ->shouldReceive('getSyncError')
-            ->once()
-            ->andReturn('A monkey ate your file oh no');
+            ->andReturn(SyncResult::error('/media/koel/__KOEL_UPLOADS__/foo.mp3', 'A monkey ate your file oh no'));
 
         self::expectException(SongUploadFailedException::class);
         self::expectExceptionMessage('A monkey ate your file oh no');
@@ -93,7 +89,7 @@ class UploadServiceTest extends TestCase
         $this->fileSynchronizer
             ->shouldReceive('sync')
             ->once()
-            ->andReturn(FileSynchronizer::SYNC_RESULT_SUCCESS);
+            ->andReturn(SyncResult::success('/media/koel/__KOEL_UPLOADS__/foo.mp3'));
 
         $song = new Song();
 

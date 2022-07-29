@@ -17,10 +17,6 @@ use Throwable;
 
 class FileSynchronizer
 {
-    public const SYNC_RESULT_SUCCESS = 1;
-    public const SYNC_RESULT_BAD_FILE = 2;
-    public const SYNC_RESULT_UNMODIFIED = 3;
-
     private ?int $fileModifiedTime = null;
     private ?string $filePath = null;
 
@@ -35,7 +31,7 @@ class FileSynchronizer
      */
     private ?Song $song;
 
-    private ?string $syncError;
+    private ?string $syncError = null;
 
     public function __construct(
         private getID3 $getID3,
@@ -53,7 +49,6 @@ class FileSynchronizer
         $this->filePath = $file->getPathname();
         $this->fileHash = Helper::getFileHash($this->filePath);
         $this->song = $this->songRepository->getOneById($this->fileHash); // @phpstan-ignore-line
-        $this->syncError = null;
         $this->fileModifiedTime = Helper::getModifiedTime($file);
 
         return $this;
@@ -190,11 +185,6 @@ class FileSynchronizer
     public function isFileNewOrChanged(): bool
     {
         return $this->isFileNew() || $this->isFileChanged();
-    }
-
-    public function getSyncError(): ?string
-    {
-        return $this->syncError;
     }
 
     public function getSong(): ?Song
