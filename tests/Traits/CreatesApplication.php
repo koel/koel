@@ -6,7 +6,6 @@ use App\Console\Kernel;
 use App\Models\User;
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Foundation\Application;
-use Throwable;
 
 trait CreatesApplication
 {
@@ -29,12 +28,7 @@ trait CreatesApplication
 
     private function prepareForTests(): void
     {
-        try {
-            $this->artisan->call('migrate');
-        } catch (Throwable $e) {
-            \Log::error($e); // @phpcs:ignore
-            throw $e;
-        }
+        $this->artisan->call('migrate');
 
         if (!User::count()) {
             $this->artisan->call('db:seed');
