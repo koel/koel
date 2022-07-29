@@ -34,6 +34,12 @@ jobs:
         run: composer analyze -- --no-progress
       - name: Run tests
         run: composer coverage
+      - name: Upload logs if broken
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: logs
+          path: storage/logs
       - name: Upload coverage
         uses: codecov/codecov-action@v1
         with:
