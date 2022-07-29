@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Database\DatabaseManager as DB;
+use Illuminate\Support\Facades\Log;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
@@ -56,6 +57,8 @@ class InitCommand extends Command
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
         } catch (Throwable $e) {
+            Log::error($e);
+
             $this->error("Oops! Koel installation or upgrade didn't finish successfully.");
             $this->error('Please try again, or visit ' . config('koel.misc.docs_url') . ' for manual installation.');
             $this->error('😥 Sorry for this. You deserve better.');
