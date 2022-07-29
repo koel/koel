@@ -11,6 +11,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [ 14, 16, 17 ] # 15 conflicts with @typescript-eslint/eslint-plugin@5
     steps:
