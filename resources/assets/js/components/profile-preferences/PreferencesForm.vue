@@ -15,7 +15,6 @@
     <div class="form-row" v-if="isPhone">
       <label>
         <CheckBox name="transcode_on_mobile" v-model="preferences.transcodeOnMobile"/>
-        <input type="checkbox" name="transcode_on_mobile" v-model="preferences.transcodeOnMobile">
         Convert and play media at 128kbps on mobile
       </label>
     </div>

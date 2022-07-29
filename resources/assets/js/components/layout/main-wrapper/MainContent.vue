@@ -90,12 +90,19 @@ eventBus.on({
     backface-visibility: hidden;
 
     .main-scroll-wrap {
-      padding: 24px 24px 48px;
+      &:not(.song-list-wrap) {
+        padding: 24px 24px 48px;
+      }
+
       overflow: scroll;
 
       @supports (scrollbar-gutter: stable) {
         overflow: auto;
         scrollbar-gutter: stable;
+
+        @media (hover: none) {
+          scrollbar-gutter: auto;
+        }
       }
 
       flex: 1;

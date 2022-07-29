@@ -129,14 +129,14 @@ header.screen-header {
 
   @media (max-width: 768px) {
     min-height: 0;
-    flex-direction: column;
 
     .thumbnail-wrapper {
       display: none;
     }
 
-    h1 {
-      font-size: 1.38rem;
+    h1.name {
+      font-size: 1.8rem;
+      font-weight: var(--font-weight-thin);
     }
 
     .meta {

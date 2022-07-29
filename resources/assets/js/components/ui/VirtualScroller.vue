@@ -63,6 +63,10 @@ onBeforeUnmount(() => observer.unobserve(scroller.value!))
   @supports (scrollbar-gutter: stable) {
     overflow: auto;
     scrollbar-gutter: stable;
+
+    @media (hover: none) {
+      scrollbar-gutter: auto;
+    }
   }
 
   > div {

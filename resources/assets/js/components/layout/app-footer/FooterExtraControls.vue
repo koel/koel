@@ -108,6 +108,7 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName) => (viewingQueue.value = v
     top: 0;
     height: 100%;
     width: 188px;
+    padding-top: 12px; // leave space for the audio track
 
     &::before {
       display: none;

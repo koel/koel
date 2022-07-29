@@ -336,7 +336,7 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
     max-width: 414px;
     left: auto;
     right: 0;
-    bottom: calc(var(--footer-heigh-mobile) + 14px);
+    bottom: calc(var(--footer-height-mobile) + 0px);
     display: block;
     height: auto;
 

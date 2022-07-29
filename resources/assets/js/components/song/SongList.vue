@@ -268,7 +268,7 @@ const rowDragStart = (row: SongRow, event: DragEvent) => {
  */
 const allowDrop = (event: DragEvent) => {
   if (!allowReordering) return;
-  
+
   (event.target as Element).parentElement.classList.add('droppable')
   event.dataTransfer!.dropEffect = 'move'
 
@@ -317,7 +317,6 @@ onMounted(() => render())
 <style lang="scss">
 .song-list-wrap {
   position: relative;
-  padding: 0 !important;
   display: flex;
   flex-direction: column;
 
@@ -368,9 +367,6 @@ onMounted(() => render())
 
       @media (hover: none) {
         display: block;
-        position: absolute;
-        top: 8px;
-        right: 4px;
       }
     }
 
@@ -418,6 +414,8 @@ onMounted(() => render())
   }
 
   @media only screen and (max-width: 768px) {
+    padding: 12px;
+
     .song-list-header {
       display: none;
     }
@@ -433,7 +431,7 @@ onMounted(() => render())
     }
 
     .song-item {
-      padding: 8px 32px 8px 4px;
+      padding: 8px 12px;
       position: relative;
       white-space: nowrap;
       overflow: hidden;

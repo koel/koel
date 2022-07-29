@@ -44,7 +44,7 @@ footer {
   height: var(--footer-height);
   display: flex;
   position: relative;
-  z-index: 9;
+  z-index: 99;
 
   .media-info-wrap {
     flex: 1;
@@ -67,7 +67,9 @@ footer {
   }
 
   @media only screen and (max-width: 768px) {
+    @include themed-background();
     height: var(--footer-height-mobile);
+    padding-top: 12px; // leave space for the audio track
   }
 }
 </style>

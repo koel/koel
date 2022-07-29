@@ -180,7 +180,7 @@ eventBus.on({
     position: fixed;
     height: calc(100vh - var(--header-height));
     width: var(--extra-panel-width);
-    z-index: 5;
+    z-index: 9;
     top: var(--header-height);
     right: -100%;
     transition: right .3s ease-in;
