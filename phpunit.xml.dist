@@ -36,6 +36,7 @@
         <env name="APP_URL" value="http://localhost/"/>
         <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
         <env name="CACHE_DRIVER" value="array"/>
+        <env name="SCOUT_DRIVER" value="database"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
         <env name="DB_CONNECTION" value="sqlite"/>

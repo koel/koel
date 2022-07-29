@@ -28,13 +28,15 @@
     "doctrine/dbal": "^2.10",
     "lstrojny/functional-php": "^1.14",
     "teamtnt/laravel-scout-tntsearch-driver": "^11.1",
-    "algolia/algoliasearch-client-php": "^2.7",
+    "algolia/algoliasearch-client-php": "^3.3",
     "laravel/ui": "^3.2",
     "webmozart/assert": "^1.10",
     "laravel/sanctum": "^2.15",
     "laravel/scout": "^9.4",
     "nunomaduro/collision": "^6.2",
-    "jwilsson/spotify-web-api-php": "^5.2"
+    "jwilsson/spotify-web-api-php": "^5.2",
+    "meilisearch/meilisearch-php": "^0.24.0",
+    "http-interop/http-factory-guzzle": "^1.2"
   },
   "require-dev": {
     "mockery/mockery": "~1.0",
