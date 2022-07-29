@@ -1,11 +1,26 @@
 name: Backend Unit Tests
 on:
+  pull_request:
+    branches:
+      - master
+      - next
+    paths:
+      - '!resources/assets/**'
+      - .github/workflows/unit-backend.yml
   push:
     branches:
       - master
       - next
-  pull_request:
+    paths:
+      - '!resources/assets/**'
+      - .github/workflows/unit-backend.yml
   workflow_dispatch:
+    branches:
+      - master
+      - next
+    paths:
+      - '!resources/assets/**'
+      - .github/workflows/unit-backend.yml
 jobs:
   test:
     runs-on: ubuntu-latest
