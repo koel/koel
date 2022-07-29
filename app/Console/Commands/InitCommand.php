@@ -94,10 +94,8 @@ class InitCommand extends Command
     private function setUpDatabase(): void
     {
         $config = [
-            'DB_CONNECTION' => '',
             'DB_HOST' => '',
             'DB_PORT' => '',
-            'DB_DATABASE' => '',
             'DB_USERNAME' => '',
             'DB_PASSWORD' => '',
         ];
@@ -185,7 +183,7 @@ class InitCommand extends Command
                 return;
             }
 
-            if ($this->isValidMediaPath($path)) {
+            if (self::isValidMediaPath($path)) {
                 Setting::set('media_path', $path);
 
                 return;
@@ -276,30 +274,14 @@ class InitCommand extends Command
 
         $this->info('Now to front-end stuff');
 
-        // We need to run several yarn commands:
-        // - The first to install node_modules in the resources/assets submodule
-        // - The second and third for the root folder, to build Koel's front-end assets with Mix.
-
-        chdir('./resources/assets');
-        $this->info('├── Installing Node modules in resources/assets directory');
-
         $runOkOrThrow = static function (string $command): void {
             passthru($command, $status);
             throw_if((bool) $status, InstallationFailedException::class);
         };
 
         $runOkOrThrow('yarn install --colors');
-
-        chdir('../..');
         $this->info('└── Compiling assets');
-
-        $runOkOrThrow('yarn install --colors');
         $runOkOrThrow('yarn build --colors');
-    }
-
-    private function isValidMediaPath(string $path): bool
-    {
-        return is_dir($path) && is_readable($path);
     }
 
     private function setMediaPathFromEnvFile(): void
@@ -309,11 +291,16 @@ class InitCommand extends Command
                 return;
             }
 
-            if ($this->isValidMediaPath($path)) {
+            if (static::isValidMediaPath($path)) {
                 Setting::set('media_path', $path);
             } else {
                 $this->warn(sprintf('The path %s does not exist or not readable. Skipping.', $path));
             }
         });
+    }
+
+    private static function isValidMediaPath(string $path): bool
+    {
+        return is_dir($path) && is_readable($path);
     }
 }

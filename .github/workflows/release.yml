@@ -17,9 +17,9 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.0
           tools: composer:v2
-          extensions: pdo_sqlite
+          extensions: pdo_sqlite, zip, gd
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v2
         with:
