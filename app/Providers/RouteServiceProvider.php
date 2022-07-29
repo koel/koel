@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Throwable;
 use Webmozart\Assert\Assert;
 
 class RouteServiceProvider extends ServiceProvider
@@ -32,15 +33,19 @@ class RouteServiceProvider extends ServiceProvider
 
     private static function getApiVersion(): ?string
     {
-        // In the test environment, the route service provider is loaded _before_ the request is made,
-        // so we can't rely on the header.
-        // Instead, we manually set the API version as an env variable in applicable test cases.
-        $version = app()->runningUnitTests() ? env('X_API_VERSION') : request()->header('X-Api-Version');
+        try {
+            // In the test environment, the route service provider is loaded _before_ the request is made,
+            // so we can't rely on the header.
+            // Instead, we manually set the API version as an env variable in applicable test cases.
+            $version = app()->runningUnitTests() ? env('X_API_VERSION') : request()->header('X-Api-Version');
 
-        if ($version) {
-            Assert::oneOf($version, ['v6']);
+            if ($version) {
+                Assert::oneOf($version, ['v6']);
+            }
+
+            return $version;
+        } catch (Throwable) {
+            return null;
         }
-
-        return $version;
     }
 }
