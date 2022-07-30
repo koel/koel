@@ -1,12 +1,20 @@
 <template>
   <section>
     <h1>Top Artists</h1>
-    <ol v-if="artists.length" class="two-cols top-artist-list">
-      <li v-for="artist in artists" :key="artist.id">
-        <ArtistCard :artist="artist" layout="compact"/>
+
+    <ol v-if="loading" class="two-cols top-album-list">
+      <li v-for="i in 4" :key="i">
+        <ArtistCardSkeleton layout="compact"/>
       </li>
     </ol>
-    <p v-else class="text-secondary">No artists found.</p>
+    <template v-else>
+      <ol v-if="artists.length" class="two-cols top-artist-list">
+        <li v-for="artist in artists" :key="artist.id">
+          <ArtistCard :artist="artist" layout="compact"/>
+        </li>
+      </ol>
+      <p v-else class="text-secondary">No artists found.</p>
+    </template>
   </section>
 </template>
 
@@ -15,6 +23,8 @@ import { toRef } from 'vue'
 import { overviewStore } from '@/stores'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
+import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 
 const artists = toRef(overviewStore.state, 'mostPlayedArtists')
+const loading = toRef(overviewStore.state, 'loading')
 </script>

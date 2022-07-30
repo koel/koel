@@ -1,6 +1,6 @@
 import isMobile from 'ismobilejs'
 import { loadMainView, use } from '@/utils'
-import { albumStore, artistStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
+import { playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
 
 class Router {
@@ -23,8 +23,8 @@ class Router {
       '/youtube': () => loadMainView('YouTube'),
       '/visualizer': () => loadMainView('Visualizer'),
       '/profile': () => loadMainView('Profile'),
-      '/album/(\\d+)': async (id: number) => loadMainView('Album', await albumStore.resolve(id)),
-      '/artist/(\\d+)': async (id: number) => loadMainView('Artist', await artistStore.resolve(id)),
+      '/album/(\\d+)': async (id: string) => loadMainView('Album', parseInt(id)),
+      '/artist/(\\d+)': async (id: string) => loadMainView('Artist', parseInt(id)),
       '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
       '/song/([a-z0-9]{32})': async (id: string) => {
         const song = await songStore.resolve(id)

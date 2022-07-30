@@ -22,6 +22,7 @@
       </template>
     </ScreenHeader>
 
+    <SongListSkeleton v-if="loading"/>
     <SongList v-if="songs.length" ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
 
     <ScreenEmptyState v-else>
@@ -39,10 +40,11 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { eventBus, pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
 import { useSongList } from '@/composables'
-import { toRef } from 'vue'
+import { ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'songs')
 
@@ -66,11 +68,14 @@ const {
 } = useSongList(recentlyPlayedSongs, 'recently-played', { sortable: false })
 
 let initialized = false
+let loading = ref(false)
 
 eventBus.on({
   'LOAD_MAIN_CONTENT': async (view: MainViewName) => {
     if (view === 'RecentlyPlayed' && !initialized) {
+      loading.value = true
       await recentlyPlayedStore.fetch()
+      loading.value = false
       initialized = true
     }
   }

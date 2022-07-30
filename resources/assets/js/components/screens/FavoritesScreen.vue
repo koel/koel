@@ -33,6 +33,7 @@
       </template>
     </ScreenHeader>
 
+    <SongListSkeleton v-if="loading"/>
     <SongList
       v-if="songs.length"
       ref="songList"
@@ -63,10 +64,11 @@ import { eventBus, pluralize } from '@/utils'
 import { commonStore, favoriteStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
-import { nextTick, toRef } from 'vue'
+import { nextTick, ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const {
   SongList,
@@ -95,9 +97,12 @@ const download = () => downloadService.fromFavorites()
 const removeSelected = () => selectedSongs.value.length && favoriteStore.unlike(selectedSongs.value)
 
 let initialized = false
+const loading = ref(false)
 
 const fetchSongs = async () => {
+  loading.value = true
   await favoriteStore.fetch()
+  loading.value = false
   await nextTick()
   sort()
 }

@@ -8,40 +8,35 @@
     @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
-    <span :style="{ backgroundImage: `url(${song.album_cover ?? ''}), url(${defaultCover})` }" class="cover">
+    <aside :style="{ backgroundImage: `url(${song.album_cover ?? ''}), url(${defaultCover})` }" class="cover">
       <a class="control" @click.prevent="changeSongState" data-testid="play-control">
         <icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-highlight"/>
       </a>
-    </span>
-    <span class="main">
-      <span class="details">
-        <span v-if="showPlayCount" :style="{ width: `${song.play_count*100/topPlayCount}%` }" class="play-count"/>
-        {{ song.title }}
-        <span class="by text-secondary">
+    </aside>
+    <main>
+      <div class="details">
+        <h3>{{ song.title }}</h3>
+        <p class="by text-secondary">
           <a :href="`#!/artist/${song.artist_id}`">{{ song.artist_name }}</a>
-          <template v-if="showPlayCount"> - {{ pluralize(song.play_count, 'play') }}</template>
-        </span>
-      </span>
-      <span class="favorite">
-        <LikeButton :song="song"/>
-      </span>
-    </span>
+          - {{ pluralize(song.play_count, 'play') }}
+        </p>
+      </div>
+      <LikeButton :song="song"/>
+    </main>
   </article>
 </template>
 
 <script lang="ts" setup>
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
-import { computed, toRefs } from 'vue'
+import { toRefs } from 'vue'
 import { defaultCover, eventBus, pluralize, startDragging } from '@/utils'
 import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
 
-const props = withDefaults(defineProps<{ song: Song, topPlayCount?: number }>(), { topPlayCount: 0 })
-const { song, topPlayCount } = toRefs(props)
-
-const showPlayCount = computed(() => Boolean(topPlayCount && song.value.play_count))
+const props = defineProps<{ song: Song }>()
+const { song } = toRefs(props)
 
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
 const dragStart = (event: DragEvent) => startDragging(event, song.value, 'Song')
@@ -80,12 +75,18 @@ article {
     color: var(--color-highlight);
   }
 
-  .favorite {
+  button {
     opacity: 0;
   }
 
   &:hover {
-    .favorite {
+    button {
+      opacity: 1;
+    }
+  }
+
+  @media (hover: none) {
+    button {
       opacity: 1;
     }
   }
@@ -146,10 +147,10 @@ article {
     }
   }
 
-  .main {
+  main {
     flex: 1;
-    position: relative;
     display: flex;
+    align-items: flex-start;
     gap: 8px;
 
     .play-count {
@@ -162,7 +163,6 @@ article {
     }
 
     .by {
-      display: block;
       font-size: .9rem;
       opacity: .8;
 

@@ -24,6 +24,7 @@
       </template>
     </ScreenHeader>
 
+    <SongListSkeleton v-if="fetchingRandomSongs"/>
     <SongList
       v-if="songs.length"
       ref="songList"
@@ -49,7 +50,7 @@
 
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { computed, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { logger, pluralize, requireInjection } from '@/utils'
 import { commonStore, queueStore } from '@/stores'
 import { playbackService } from '@/services'
@@ -58,6 +59,7 @@ import { DialogBoxKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const dialog = requireInjection(DialogBoxKey)
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
@@ -80,13 +82,16 @@ const {
   onScrollBreakpoint
 } = useSongList(toRef(queueStore.state, 'songs'), 'queue', { sortable: false })
 
+const fetchingRandomSongs = ref(false)
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 
 const playAll = (shuffle = true) => playbackService.queueAndPlay(songs.value, shuffle)
 
 const shuffleSome = async () => {
   try {
+    fetchingRandomSongs.value = true
     await queueStore.fetchRandom()
+    fetchingRandomSongs.value = false
     await playbackService.playFirstInQueue()
   } catch (e) {
     dialog.value.error('Failed to fetch songs to play. Please try again.', 'Error')

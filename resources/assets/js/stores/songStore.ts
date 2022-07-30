@@ -154,17 +154,21 @@ export const songStore = {
     })
   },
 
-  async fetchForAlbum (album: Album) {
+  async fetchForAlbum (album: Album | number) {
+    const id = typeof album === 'number' ? album : album.id
+
     return await cache.remember<Song[]>(
-      [`album.songs`, album.id],
-      async () => this.syncWithVault(await httpService.get<Song[]>(`albums/${album.id}/songs`))
+      [`album.songs`, id],
+      async () => this.syncWithVault(await httpService.get<Song[]>(`albums/${id}/songs`))
     )
   },
 
-  async fetchForArtist (artist: Artist) {
+  async fetchForArtist (artist: Artist | number) {
+    const id = typeof artist === 'number' ? artist : artist.id
+
     return await cache.remember<Song[]>(
-      ['artist.songs', artist.id],
-      async () => this.syncWithVault(await httpService.get<Song[]>(`artists/${artist.id}/songs`))
+      ['artist.songs', id],
+      async () => this.syncWithVault(await httpService.get<Song[]>(`artists/${id}/songs`))
     )
   },
 

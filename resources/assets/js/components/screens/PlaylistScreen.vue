@@ -33,8 +33,9 @@
       </template>
     </ScreenHeader>
 
+    <SongListSkeleton v-if="loading"/>
     <SongList
-      v-if="songs.length"
+      v-if="!loading && songs.length"
       ref="songList"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
@@ -73,6 +74,7 @@ import { MessageToasterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const toaster = requireInjection(MessageToasterKey)
 const playlist = ref<Playlist>()

@@ -1,12 +1,19 @@
 <template>
   <section>
     <h1>New Songs</h1>
-    <ol v-if="songs.length" class="recently-added-song-list">
-      <li v-for="song in songs" :key="song.id">
-        <SongCard :song="song"/>
+    <ol v-if="loading" class="recently-added-song-list">
+      <li v-for="i in 3" :key="i">
+        <SongCardSkeleton/>
       </li>
     </ol>
-    <p v-else class="text-secondary">No songs added so far.</p>
+    <template v-else>
+      <ol v-if="songs.length" class="recently-added-song-list">
+        <li v-for="song in songs" :key="song.id">
+          <SongCard :song="song"/>
+        </li>
+      </ol>
+      <p v-else class="text-secondary">No songs added so far.</p>
+    </template>
   </section>
 </template>
 
@@ -15,6 +22,8 @@ import { toRef } from 'vue'
 import { overviewStore } from '@/stores'
 
 import SongCard from '@/components/song/SongCard.vue'
+import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
 
 const songs = toRef(overviewStore.state, 'recentlyAddedSongs')
+const loading = toRef(overviewStore.state, 'loading')
 </script>

@@ -14,8 +14,13 @@
       data-testid="album-list"
       @scroll="scrolling"
     >
-      <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout"/>
-      <ToTopButton/>
+      <template v-if="showSkeletons">
+        <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout"/>
+      </template>
+      <template v-else>
+        <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout"/>
+        <ToTopButton/>
+      </template>
     </div>
   </section>
 </template>
@@ -27,6 +32,7 @@ import { albumStore, preferenceStore as preferences } from '@/stores'
 import { useInfiniteScroll } from '@/composables'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
+import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 
@@ -40,21 +46,22 @@ const {
   makeScrollable
 } = useInfiniteScroll(async () => await fetchAlbums())
 
-const itemLayout = computed<ArtistAlbumCardLayout>(() => viewMode.value === 'thumbnails' ? 'full' : 'compact')
-
 watch(viewMode, () => (preferences.albumsViewMode = viewMode.value))
 
 let initialized = false
-let loading = false
+const loading = ref(false)
 const page = ref<number | null>(1)
+
+const itemLayout = computed<ArtistAlbumCardLayout>(() => viewMode.value === 'thumbnails' ? 'full' : 'compact')
 const moreAlbumsAvailable = computed(() => page.value !== null)
+const showSkeletons = computed(() => loading.value && albums.value.length === 0)
 
 const fetchAlbums = async () => {
-  if (loading || !moreAlbumsAvailable.value) return
+  if (loading.value || !moreAlbumsAvailable.value) return
 
-  loading = true
+  loading.value = true
   page.value = await albumStore.paginate(page.value!)
-  loading = false
+  loading.value = false
 }
 
 eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {

@@ -1,10 +1,10 @@
 <template>
   <header class="screen-header" :class="layout">
-    <div class="thumbnail-wrapper">
+    <aside class="thumbnail-wrapper">
       <slot name="thumbnail"></slot>
-    </div>
+    </aside>
 
-    <div class="right">
+    <main>
       <div class="heading-wrapper">
         <h1 class="name">
           <slot></slot>
@@ -15,7 +15,7 @@
       </div>
 
       <slot name="controls"></slot>
-    </div>
+    </main>
   </header>
 </template>
 
@@ -53,7 +53,7 @@ header.screen-header {
       display: block;
     }
 
-    .right {
+    main {
       flex-direction: column;
       align-items: flex-start;
     }
@@ -77,7 +77,7 @@ header.screen-header {
     }
   }
 
-  .right {
+  main {
     flex: 1;
     display: flex;
     gap: 1.5rem;

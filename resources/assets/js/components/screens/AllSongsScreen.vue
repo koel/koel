@@ -22,7 +22,9 @@
       </template>
     </ScreenHeader>
 
+    <SongListSkeleton v-if="showSkeletons"/>
     <SongList
+      v-else
       ref="songList"
       @sort="sort"
       @scroll-breakpoint="onScrollBreakpoint"
@@ -41,6 +43,7 @@ import { useSongList } from '@/composables'
 import router from '@/router'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const totalSongCount = toRef(commonStore.state, 'song_count')
 const totalDuration = computed(() => secondsToHis(commonStore.state.song_length))
@@ -64,12 +67,13 @@ const {
 } = useSongList(toRef(songStore.state, 'songs'), 'all-songs')
 
 let initialized = false
-let loading = false
+const loading = ref(false)
 let sortField: SongListSortField = 'title' // @todo get from query string
 let sortOrder: SortOrder = 'asc'
 
 const page = ref<number | null>(1)
 const moreSongsAvailable = computed(() => page.value !== null)
+const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 
 const sort = async (field: SongListSortField, order: SortOrder) => {
   page.value = 1
@@ -81,11 +85,11 @@ const sort = async (field: SongListSortField, order: SortOrder) => {
 }
 
 const fetchSongs = async () => {
-  if (!moreSongsAvailable.value || loading) return
+  if (!moreSongsAvailable.value || loading.value) return
 
-  loading = true
+  loading.value = true
   page.value = await songStore.paginate(sortField, sortOrder, page.value!)
-  loading = false
+  loading.value = false
 }
 
 const playAll = async (shuffle: boolean) => {

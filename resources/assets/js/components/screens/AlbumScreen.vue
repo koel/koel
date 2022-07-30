@@ -1,6 +1,8 @@
 <template>
   <section id="albumWrapper">
-    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+    <ScreenHeaderSkeleton v-if="loading"/>
+
+    <ScreenHeader v-if="!loading && album" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ album.name }}
       <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
 
@@ -35,9 +37,10 @@
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
+    <SongListSkeleton v-if="loading"/>
+    <SongList v-else ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
 
-    <section v-if="useLastfm && showingInfo" class="info-wrapper">
+    <section v-if="!loading && useLastfm && showingInfo" class="info-wrapper">
       <CloseModalBtn class="close-modal" @click="showingInfo = false"/>
       <div class="inner">
         <AlbumInfo :album="album" mode="full"/>
@@ -48,29 +51,36 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, onMounted, ref, toRef, toRefs } from 'vue'
-import { eventBus, pluralize, secondsToHis } from '@/utils'
+import { eventBus, logger, pluralize, requireInjection, secondsToHis } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
 import router from '@/router'
+import { DialogBoxKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
+import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
-const props = defineProps<{ album: Album }>()
-const { album } = toRefs(props)
+const dialog = requireInjection(DialogBoxKey)
 
-const albumSongs = ref<Song[]>([])
+const props = defineProps<{ album: number }>()
+const { album: id } = toRefs(props)
+
+const album = ref<Album>()
+const songs = ref<Song[]>([])
+const showingInfo = ref(false)
+const loading = ref(false)
 
 const {
   SongList,
   SongListControls,
   ControlsToggle,
   headerLayout,
-  songs,
   songList,
   showingControls,
   isPhone,
@@ -79,13 +89,13 @@ const {
   playSelected,
   toggleControls,
   onScrollBreakpoint
-} = useSongList(albumSongs, 'album', { columns: ['track', 'title', 'artist', 'length'] })
+} = useSongList(songs, 'album', { columns: ['track', 'title', 'artist', 'length'] })
 
 const useLastfm = toRef(commonStore.state, 'use_last_fm')
 const allowDownload = toRef(commonStore.state, 'allow_download')
-const showingInfo = ref(false)
 
 const isNormalArtist = computed(() => {
+  if (!album.value) return true
   return !artistStore.isVarious(album.value.artist_id) && !artistStore.isUnknown(album.value.artist_id)
 })
 
@@ -93,12 +103,24 @@ const download = () => downloadService.fromAlbum(album.value)
 const showInfo = () => (showingInfo.value = true)
 
 onMounted(async () => {
-  albumSongs.value = await songStore.fetchForAlbum(album.value)
+  loading.value = true
+
+  try {
+    [album.value, songs.value] = await Promise.all([
+      albumStore.resolve(id.value),
+      songStore.fetchForAlbum(id.value)
+    ])
+  } catch (e) {
+    logger.error(e)
+    dialog.value.error('Failed to load album. Please try again.')
+  } finally {
+    loading.value = false
+  }
 })
 
 eventBus.on('SONGS_UPDATED', () => {
   // if the current album has been deleted, go back to the list
-  albumStore.byId(album.value.id) || router.go('albums')
+  albumStore.byId(id.value) || router.go('albums')
 })
 </script>
 
