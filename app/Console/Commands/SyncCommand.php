@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Services\MediaSyncService;
 use App\Values\SyncResult;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -19,6 +20,7 @@ class SyncCommand extends Command
 
     protected $description = 'Sync songs found in configured directory against the database.';
 
+    private ?string $mediaPath;
     private ProgressBar $progressBar;
 
     public function __construct(private MediaSyncService $mediaSyncService)
@@ -34,7 +36,7 @@ class SyncCommand extends Command
 
     public function handle(): int
     {
-        $this->ensureMediaPath();
+        $this->mediaPath = $this->getMediaPath();
 
         $record = $this->argument('record');
 
@@ -52,9 +54,7 @@ class SyncCommand extends Command
      */
     private function syncAll(): void
     {
-        $path = Setting::get('media_path');
-
-        $this->components->info('Scanning ' . $path);
+        $this->components->info('Scanning ' . $this->mediaPath);
 
         // The tags to ignore from syncing.
         // Notice that this is only meaningful for existing records.
@@ -96,11 +96,9 @@ class SyncCommand extends Command
             return;
         }
 
-        $path = dirname($result->path);
-        $file = basename($result->path);
-        $sep = DIRECTORY_SEPARATOR;
+        $path = trim(Str::replaceFirst($this->mediaPath, '', $result->path), DIRECTORY_SEPARATOR);
 
-        $this->components->twoColumnDetail("<fg=gray>$path$sep</>$file", match (true) {
+        $this->components->twoColumnDetail($path, match (true) {
             $result->isSuccess() => "<fg=green>OK</>",
             $result->isSkipped() => "<fg=yellow>SKIPPED</>",
             $result->isError() => "<fg=red>ERROR</>",
@@ -112,10 +110,12 @@ class SyncCommand extends Command
         }
     }
 
-    private function ensureMediaPath(): void
+    private function getMediaPath(): string
     {
-        if (Setting::get('media_path')) {
-            return;
+        $path = Setting::get('media_path');
+
+        if ($path) {
+            return $path;
         }
 
         $this->warn("Media path hasn't been configured. Let's set it up.");
@@ -130,5 +130,7 @@ class SyncCommand extends Command
 
             $this->error('The path does not exist or is not readable. Try again.');
         }
+
+        return $path;
     }
 }
