@@ -55,7 +55,6 @@
     "@vitejs/plugin-vue": "^2.3.1",
     "@vue/test-utils": "^2.0.0-rc.21",
     "cross-env": "^7.0.3",
-    "crypto-random-string": "^1.0.0",
     "css-loader": "^0.28.7",
     "cypress": "^9.5.4",
     "eslint": "^8.14.0",
