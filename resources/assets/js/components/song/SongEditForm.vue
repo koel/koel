@@ -1,6 +1,6 @@
 <template>
   <div class="edit-song" data-testid="edit-song-form" tabindex="0" @keydown.esc="maybeClose">
-    <SoundBar v-if="loading"/>
+    <SoundBars v-if="loading"/>
     <form v-else @submit.prevent="submit">
       <header>
         <span class="cover" :style="{ backgroundImage: `url(${coverUrl})` }"/>
@@ -177,7 +177,7 @@ import { songStore, SongUpdateData } from '@/stores'
 import { DialogBoxKey, EditSongFormInitialTabKey, MessageToasterKey, SongsKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
-import SoundBar from '@/components/ui/SoundBar.vue'
+import SoundBars from '@/components/ui/SoundBars.vue'
 
 const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)

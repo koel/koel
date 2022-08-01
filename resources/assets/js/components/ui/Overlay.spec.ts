@@ -2,7 +2,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import { eventBus } from '@/utils'
 import { waitFor } from '@testing-library/vue'
-import SoundBar from '@/components/ui/SoundBar.vue'
+import SoundBars from '@/components/ui/SoundBars.vue'
 import Overlay from './Overlay.vue'
 
 new class extends UnitTestCase {
@@ -10,7 +10,7 @@ new class extends UnitTestCase {
     const rendered = this.render(Overlay, {
       global: {
         stubs: {
-          SoundBar
+          SoundBars
         }
       }
     })

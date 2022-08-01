@@ -1,11 +1,14 @@
 <template>
-  <button data-testid="close-modal-btn" type="button" @click.prevent="$emit('click')">
+  <button data-testid="close-modal-btn" title="Dismiss" type="button" @click.prevent="$emit('click')">
     <icon :icon="faTimes"/>
   </button>
 </template>
 
 <script lang="ts" setup>
-import { faTimes } from '@fortawesome/free-solid-svg-icons'</script>
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+
+defineEmits(['click'])
+</script>
 
 <style lang="scss" scoped>
 button {
@@ -13,12 +16,12 @@ button {
   place-content: center;
   place-items: center;
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 3px;
+  top: 3px;
+  border-radius: 3px;
   background: var(--color-red);
-  width: 24px;
-  height: 24px;
-  border-radius: 0;
+  width: 22px;
+  height: 22px;
   padding: 0;
   color: var(--color-text-primary);
   transition: opacity .3s;

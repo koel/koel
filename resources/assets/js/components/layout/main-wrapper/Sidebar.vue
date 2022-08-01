@@ -104,17 +104,18 @@ const handleDrop = async (event: DragEvent) => {
   return false
 }
 
-eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName): void => {
-  currentView.value = view
-  // Hide the sidebar if on mobile
-  isMobile.phone && (showing.value = false)
+eventBus.on({
+  LOAD_MAIN_CONTENT (view: MainViewName) {
+    currentView.value = view
+    // Hide the sidebar if on mobile
+    isMobile.phone && (showing.value = false)
+  },
+  /**
+   * Listen to sidebar:toggle event to show or hide the sidebar.
+   * This should only be triggered on a mobile device.
+   */
+  ['TOGGLE_SIDEBAR']: () => (showing.value = !showing.value)
 })
-
-/**
- * Listen to sidebar:toggle event to show or hide the sidebar.
- * This should only be triggered on a mobile device.
- */
-eventBus.on('TOGGLE_SIDEBAR', () => (showing.value = !showing.value))
 </script>
 
 <style lang="scss">
@@ -143,6 +144,13 @@ eventBus.on('TOGGLE_SIDEBAR', () => (showing.value = !showing.value))
 
     color: var(--color-text-primary);
     background-color: rgba(0, 0, 0, .3);
+  }
+
+  .queue > span {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex: 1;
   }
 
   section {

@@ -5,12 +5,13 @@
 
       <button
         v-if="song?.playback_state === 'Playing'"
+        class="control"
         data-testid="toggle-visualizer-btn"
-        title="Click for a marvelous visualizer!"
+        title="Show/hide the visualizer"
         type="button"
         @click.prevent="toggleVisualizer"
       >
-        <SoundBar/>
+        <icon :icon="faBolt"/>
       </button>
 
       <LikeButton v-if="song" :song="song" class="like"/>
@@ -50,13 +51,12 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { faListOl, faSliders } from '@fortawesome/free-solid-svg-icons'
+import { faBolt, faListOl, faSliders } from '@fortawesome/free-solid-svg-icons'
 import { ref, toRef, toRefs } from 'vue'
 import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'
 import { preferenceStore } from '@/stores'
 
 import Equalizer from '@/components/ui/Equalizer.vue'
-import SoundBar from '@/components/ui/SoundBar.vue'
 import Volume from '@/components/ui/Volume.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import RepeatModeSwitch from '@/components/ui/RepeatModeSwitch.vue'

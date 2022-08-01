@@ -331,7 +331,7 @@ onMounted(() => render())
     border-bottom-color: var(--color-green);
   }
 
-  .song-list-header span, .song-item span {
+  .song-list-header > span, .song-item > span {
     text-align: left;
     padding: 8px;
     vertical-align: middle;

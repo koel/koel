@@ -4,7 +4,7 @@ import { playlistStore } from '@/stores'
 import Btn from '@/components/ui/Btn.vue'
 import FormBase from '@/components/playlist/smart-playlist/SmartPlaylistFormBase.vue'
 import RuleGroup from '@/components/playlist/smart-playlist/SmartPlaylistRuleGroup.vue'
-import SoundBar from '@/components/ui/SoundBar.vue'
+import SoundBars from '@/components/ui/SoundBars.vue'
 
 export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[] = []) => {
   const collectedRuleGroups = ref<SmartPlaylistRuleGroup[]>(initialRuleGroups)
@@ -25,7 +25,7 @@ export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[]
     Btn,
     FormBase,
     RuleGroup,
-    SoundBar,
+    SoundBars,
     collectedRuleGroups,
     loading,
     addGroup,

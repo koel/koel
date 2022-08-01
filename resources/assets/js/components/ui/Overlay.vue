@@ -1,7 +1,7 @@
 <template>
   <div v-if="state.showing" id="overlay" :class="state.type" class="overlay" data-testid="overlay">
     <div class="display">
-      <SoundBar v-if="state.type === 'loading'"/>
+      <SoundBars v-if="state.type === 'loading'"/>
       <icon v-if="state.type === 'error'" :icon="faCircleExclamation"/>
       <icon v-if="state.type === 'warning'" :icon="faWarning"/>
       <icon v-if="state.type === 'info'" :icon="faCircleInfo"/>
@@ -19,7 +19,7 @@ import { faCircleCheck, faCircleExclamation, faCircleInfo, faWarning } from '@fo
 import { eventBus } from '@/utils'
 import { defineAsyncComponent, reactive } from 'vue'
 
-const SoundBar = defineAsyncComponent(() => import('@/components/ui/SoundBar.vue'))
+const SoundBars = defineAsyncComponent(() => import('@/components/ui/SoundBars.vue'))
 
 const state = reactive<OverlayState>({
   showing: false,
@@ -47,7 +47,9 @@ eventBus.on({
   flex-direction: column;
 
   .display {
-    @include vertical-center();
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
 
     .message {
       margin-left: 6px;

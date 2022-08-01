@@ -1,7 +1,7 @@
 <template>
   <FormBase>
     <div @keydown.esc="maybeClose">
-      <SoundBar v-if="loading"/>
+      <SoundBars v-if="loading"/>
       <form v-else data-testid="create-smart-playlist-form" @submit.prevent="submit">
         <header>
           <h1>New Smart Playlist</h1>
@@ -50,7 +50,7 @@ const {
   Btn,
   FormBase,
   RuleGroup,
-  SoundBar,
+  SoundBars,
   collectedRuleGroups,
   loading,
   addGroup,

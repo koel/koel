@@ -1,6 +1,6 @@
 <template>
   <div class="add-user" @keydown.esc="maybeClose">
-    <SoundBar v-if="loading"/>
+    <SoundBars v-if="loading"/>
     <form v-else class="user-add" data-testid="add-user-form" @submit.prevent="submit">
       <header>
         <h1>Add New User</h1>
@@ -57,7 +57,7 @@ import { parseValidationError, requireInjection } from '@/utils'
 import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
-import SoundBar from '@/components/ui/SoundBar.vue'
+import SoundBars from '@/components/ui/SoundBars.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 
 const toaster = requireInjection(MessageToasterKey)

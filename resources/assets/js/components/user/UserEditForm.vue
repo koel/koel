@@ -1,6 +1,6 @@
 <template>
   <div class="edit-user" @keydown.esc="maybeClose">
-    <SoundBar v-if="loading"/>
+    <SoundBars v-if="loading"/>
     <form v-else class="user-edit" data-testid="edit-user-form" @submit.prevent="submit">
       <header>
         <h1>Edit User</h1>
@@ -56,7 +56,7 @@ import { UpdateUserData, userStore } from '@/stores'
 import { DialogBoxKey, MessageToasterKey, UserKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
-import SoundBar from '@/components/ui/SoundBar.vue'
+import SoundBars from '@/components/ui/SoundBars.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 
 const toaster = requireInjection(MessageToasterKey)

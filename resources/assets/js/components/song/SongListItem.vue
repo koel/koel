@@ -6,7 +6,10 @@
     @dblclick.prevent.stop="play"
     tabindex="0"
   >
-    <span v-if="columns.includes('track')" class="track-number text-secondary">{{ song.track || '' }}</span>
+    <span v-if="columns.includes('track')" class="track-number">
+      <SoundBars v-if="song.playback_state === 'Playing'"/>
+      <span class="text-secondary" v-else>{{ song.track || '' }}</span>
+    </span>
     <span v-if="columns.includes('title')" class="title">{{ song.title }}</span>
     <span v-if="columns.includes('artist')" class="artist">{{ song.artist_name }}</span>
     <span v-if="columns.includes('album')" class="album">{{ song.album_name }}</span>
@@ -29,6 +32,7 @@ import { queueStore } from '@/stores'
 import { secondsToHis } from '@/utils'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
+import SoundBars from '@/components/ui/SoundBars.vue'
 
 const props = defineProps<{ item: SongRow, columns: SongListColumn[] }>()
 const { item, columns } = toRefs(props)
@@ -79,7 +83,7 @@ const doPlayback = () => {
     background-color: rgba(255, 255, 255, .08);
   }
 
-  &.playing span {
+  &.playing > span {
     color: var(--color-highlight);
   }
 }
