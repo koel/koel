@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\MediaSyncCompleted;
 use App\Models\Song;
 use App\Repositories\SongRepository;
-use App\Services\Helper;
 use App\Values\SyncResult;
 
 class DeleteNonExistingRecordsPostSync
@@ -16,12 +15,12 @@ class DeleteNonExistingRecordsPostSync
 
     public function handle(MediaSyncCompleted $event): void
     {
-        $hashes = $event->results
+        $paths = $event->results
             ->valid()
-            ->map(static fn (SyncResult $result) => Helper::getFileHash($result->path))
-            ->merge($this->songRepository->getAllHostedOnS3()->pluck('id'))
+            ->map(static fn (SyncResult $result) => $result->path)
+            ->merge($this->songRepository->getAllHostedOnS3()->pluck('path'))
             ->toArray();
 
-        Song::deleteWhereIDsNotIn($hashes);
+        Song::deleteWhereValueNotIn($paths, 'path');
     }
 }

@@ -1,4 +1,3 @@
-import crypto from 'crypto-random-string'
 import { Faker, faker } from '@faker-js/faker'
 
 const generate = (partOfCompilation = false): Song => {
@@ -14,7 +13,7 @@ const generate = (partOfCompilation = false): Song => {
     album_artist_id: partOfCompilation ? artistId + 1 : artistId,
     album_artist_name: partOfCompilation ? artistName : faker.name.findName(),
     album_cover: faker.image.imageUrl(),
-    id: crypto(32),
+    id: faker.datatype.uuid(),
     title: faker.lorem.sentence(),
     length: faker.datatype.number(),
     track: faker.datatype.number(),

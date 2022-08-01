@@ -8,7 +8,6 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\Traits\Searchable;
-use App\Services\Helper;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -32,7 +31,7 @@ class SongRepository extends Repository
 
     public function getOneByPath(string $path): ?Song
     {
-        return $this->getOneById(Helper::getFileHash($path));
+        return Song::where('path', $path)->first();
     }
 
     /** @return Collection|array<Song> */

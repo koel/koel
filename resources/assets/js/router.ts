@@ -26,7 +26,7 @@ class Router {
       '/album/(\\d+)': async (id: string) => loadMainView('Album', parseInt(id)),
       '/artist/(\\d+)': async (id: string) => loadMainView('Artist', parseInt(id)),
       '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
-      '/song/([a-z0-9]{32})': async (id: string) => {
+      '/song/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})': async (id: string) => {
         const song = await songStore.resolve(id)
         if (!song) {
           this.go('home')

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
 /**
@@ -49,8 +50,10 @@ class Song extends Model
 {
     use HasFactory;
     use Searchable;
-    use SupportsDeleteWhereIDsNotIn;
+    use SupportsDeleteWhereValueNotIn;
     use SupportsS3;
+
+    public const ID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 
     public $incrementing = false;
     protected $guarded = [];
@@ -65,6 +68,11 @@ class Song extends Model
     ];
 
     protected $keyType = 'string';
+
+    protected static function booted(): void
+    {
+        static::creating(static fn (self $song) => $song->id = Str::uuid()->toString());
+    }
 
     public function artist(): BelongsTo
     {

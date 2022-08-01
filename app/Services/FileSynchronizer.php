@@ -21,12 +21,6 @@ class FileSynchronizer
     private ?string $filePath = null;
 
     /**
-     * A (MD5) hash of the file's path.
-     * This value is unique, and can be used to query a Song record.
-     */
-    private ?string $fileHash = null;
-
-    /**
      * The song model that's associated with the current file.
      */
     private ?Song $song;
@@ -46,9 +40,8 @@ class FileSynchronizer
     {
         $file = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
 
-        $this->filePath = $file->getPathname();
-        $this->fileHash = Helper::getFileHash($this->filePath);
-        $this->song = $this->songRepository->getOneById($this->fileHash); // @phpstan-ignore-line
+        $this->filePath = $file->getRealPath();
+        $this->song = $this->songRepository->getOneByPath($this->filePath);
         $this->fileModifiedTime = Helper::getModifiedTime($file);
 
         return $this;
@@ -96,7 +89,7 @@ class FileSynchronizer
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
 
-        $this->song = Song::updateOrCreate(['id' => $this->fileHash], $data);
+        $this->song = Song::updateOrCreate(['path' => $this->filePath], $data);
 
         return SyncResult::success($this->filePath);
     }

@@ -43,7 +43,7 @@ class Artist extends Model
 {
     use HasFactory;
     use Searchable;
-    use SupportsDeleteWhereIDsNotIn;
+    use SupportsDeleteWhereValueNotIn;
 
     public const UNKNOWN_ID = 1;
     public const UNKNOWN_NAME = 'Unknown Artist';

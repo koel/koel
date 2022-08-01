@@ -16,12 +16,10 @@ use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Album;
-use App\Models\Song;
 use App\Observers\AlbumObserver;
-use App\Observers\SongObserver;
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseServiceProvider;
 
-class EventServiceProvider extends ServiceProvider
+class EventServiceProvider extends BaseServiceProvider
 {
     protected $listen = [
         SongLikeToggled::class => [
@@ -54,7 +52,6 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        Song::observe(SongObserver::class);
         Album::observe(AlbumObserver::class);
     }
 }

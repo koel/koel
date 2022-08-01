@@ -18,6 +18,7 @@ use App\Http\Controllers\V6\API\QueueController;
 use App\Http\Controllers\V6\API\RecentlyPlayedSongController;
 use App\Http\Controllers\V6\API\SongController;
 use App\Http\Controllers\V6\API\SongSearchController;
+use App\Models\Song;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->middleware('api')->group(static function (): void {
@@ -38,7 +39,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('playlists/{playlist}/songs', [PlaylistSongController::class, 'add']);
         Route::delete('playlists/{playlist}/songs', [PlaylistSongController::class, 'remove']);
 
-        Route::apiResource('songs', SongController::class)->where(['song' => '[a-f0-9]{32}']);
+        Route::apiResource('songs', SongController::class)->where(['song' => Song::ID_REGEX]);
         Route::get('songs/recently-played', [RecentlyPlayedSongController::class, 'index']);
         Route::get('songs/favorite', [FavoriteSongController::class, 'index']);
 

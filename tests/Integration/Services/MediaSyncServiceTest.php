@@ -168,8 +168,8 @@ class MediaSyncServiceTest extends TestCase
 
         // Song should be added back with all info
         self::assertEquals(
-            Arr::except(Song::findOrFail($song->id)->toArray(), 'created_at'),
-            Arr::except($song->toArray(), 'created_at')
+            Arr::except(Song::where('path', $song->path)->first()->toArray(), ['id', 'created_at']),
+            Arr::except($song->toArray(), ['id', 'created_at'])
         );
     }
 
