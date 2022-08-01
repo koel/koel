@@ -5,14 +5,18 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistSongUpdateRequest;
 use App\Models\Playlist;
+use App\Models\User;
 use App\Services\PlaylistService;
 use App\Services\SmartPlaylistService;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class PlaylistSongController extends Controller
 {
+    /** @param User $user */
     public function __construct(
         private SmartPlaylistService $smartPlaylistService,
-        private PlaylistService $playlistService
+        private PlaylistService $playlistService,
+        private Authenticatable $user
     ) {
     }
 
@@ -22,7 +26,7 @@ class PlaylistSongController extends Controller
 
         return response()->json(
             $playlist->is_smart
-                ? $this->smartPlaylistService->getSongs($playlist)->pluck('id')
+                ? $this->smartPlaylistService->getSongs($playlist, $this->user)->pluck('id')
                 : $playlist->songs->pluck('id')
         );
     }

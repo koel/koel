@@ -31,7 +31,7 @@ class PlaylistSongController extends Controller
 
         return SongResource::collection(
             $playlist->is_smart
-                ? $this->smartPlaylistService->getSongs($playlist)
+                ? $this->smartPlaylistService->getSongs($playlist, $this->user)
                 : $this->songRepository->getByStandardPlaylist($playlist, $this->user)
         );
     }
