@@ -15,17 +15,17 @@
 
       <template v-else>
         <div class="two-cols">
-          <MostPlayedSongs data-testid="most-played-songs"/>
-          <RecentlyPlayedSongs data-testid="recently-played-songs"/>
+          <MostPlayedSongs data-testid="most-played-songs" :loading="loading"/>
+          <RecentlyPlayedSongs data-testid="recently-played-songs" :loading="loading"/>
         </div>
 
         <div class="two-cols">
-          <RecentlyAddedAlbums data-testid="recently-added-albums"/>
-          <RecentlyAddedSongs data-testid="recently-added-songs"/>
+          <RecentlyAddedAlbums data-testid="recently-added-albums" :loading="loading"/>
+          <RecentlyAddedSongs data-testid="recently-added-songs" :loading="loading"/>
         </div>
 
-        <MostPlayedArtists data-testid="most-played-artists"/>
-        <MostPlayedAlbums data-testid="most-played-albums"/>
+        <MostPlayedArtists data-testid="most-played-artists" :loading="loading"/>
+        <MostPlayedAlbums data-testid="most-played-albums" :loading="loading"/>
 
         <ToTopButton/>
       </template>
@@ -36,7 +36,7 @@
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { eventBus, noop } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
 import { useAuthorization, useInfiniteScroll } from '@/composables'
@@ -69,16 +69,15 @@ const greetings = [
 const greeting = computed(() => sample(greetings)!.replace('%s', userStore.current?.name))
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
+const loading = ref(false)
 let initialized = false
 
 eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
   if (view === 'Home' && !initialized) {
-    try {
-      await overviewStore.init()
-      initialized = true
-    } catch (e) {
-      console.error(e)
-    }
+    loading.value = true
+    await overviewStore.init()
+    initialized = true
+    loading.value = false
   }
 })
 </script>

@@ -19,12 +19,13 @@
 </template>
 
 <script lang="ts" setup>
-import { toRef } from 'vue'
+import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores'
-
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 
+const props = withDefaults(defineProps<{ loading: boolean }>(), { loading: false })
+const { loading } = toRefs(props)
+
 const albums = toRef(overviewStore.state, 'recentlyAddedAlbums')
-const loading = toRef(overviewStore.state, 'loading')
 </script>

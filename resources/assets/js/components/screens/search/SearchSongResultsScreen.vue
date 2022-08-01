@@ -22,17 +22,19 @@
       </template>
     </ScreenHeader>
 
-    <SongList ref="songList" @sort="sort" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
+    <SongListSkeleton v-if="loading"/>
+    <SongList v-else ref="songList" @sort="sort" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { computed, toRef, toRefs } from 'vue'
+import { computed, onMounted, ref, toRef, toRefs } from 'vue'
 import { searchStore } from '@/stores'
 import { useSongList } from '@/composables'
 import { pluralize } from '@/utils'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const props = defineProps<{ q: string }>()
 const { q } = toRefs(props)
@@ -58,7 +60,13 @@ const {
 } = useSongList(toRef(searchStore.state, 'songs'), 'search-results')
 
 const decodedQ = computed(() => decodeURIComponent(q.value))
+const loading = ref(false)
 
 searchStore.resetSongResultState()
-searchStore.songSearch(decodedQ.value)
+
+onMounted(async () => {
+  loading.value = true
+  await searchStore.songSearch(q.value)
+  loading.value = false
+})
 </script>

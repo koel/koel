@@ -12,13 +12,10 @@ export const overviewStore = {
     recentlyAddedAlbums: [],
     mostPlayedSongs: [],
     mostPlayedAlbums: [],
-    mostPlayedArtists: [],
-    loading: false
+    mostPlayedArtists: []
   }),
 
   async init () {
-    this.state.loading = true
-
     const resource = await httpService.get<{
       most_played_songs: Song[],
       most_played_albums: Album[],
@@ -35,7 +32,6 @@ export const overviewStore = {
     recentlyPlayedStore.excerptState.songs = songStore.syncWithVault(resource.recently_played_songs)
 
     this.refresh()
-    this.state.loading = false
   },
 
   refresh () {

@@ -19,12 +19,13 @@
 </template>
 
 <script lang="ts" setup>
-import { toRef } from 'vue'
+import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores'
-
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 
+const props = withDefaults(defineProps<{ loading: boolean }>(), { loading: false })
+const { loading } = toRefs(props)
+
 const artists = toRef(overviewStore.state, 'mostPlayedArtists')
-const loading = toRef(overviewStore.state, 'loading')
 </script>

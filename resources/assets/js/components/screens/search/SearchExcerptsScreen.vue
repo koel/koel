@@ -11,7 +11,7 @@
           <h1>
             Songs
             <Btn
-              v-if="excerpt.songs.length"
+              v-if="excerpt.songs.length && !searching"
               data-testid="view-all-songs-btn"
               orange
               rounded
@@ -21,32 +21,53 @@
               View All
             </Btn>
           </h1>
-          <ul v-if="excerpt.songs.length">
-            <li v-for="song in excerpt.songs" :key="song.id">
-              <SongCard :song="song"/>
+          <ul v-if="searching">
+            <li v-for="i in 6" :key="i">
+              <SongCardSkeleton/>
             </li>
           </ul>
-          <p v-else>None found.</p>
+          <template v-else>
+            <ul v-if="excerpt.songs.length">
+              <li v-for="song in excerpt.songs" :key="song.id">
+                <SongCard :song="song"/>
+              </li>
+            </ul>
+            <p v-else>None found.</p>
+          </template>
         </section>
 
         <section class="artists" data-testid="artist-excerpts">
           <h1>Artists</h1>
-          <ul v-if="excerpt.artists.length">
-            <li v-for="artist in excerpt.artists" :key="artist.id">
-              <ArtistCard :artist="artist" layout="compact"/>
+          <ul v-if="searching">
+            <li v-for="i in 6" :key="i">
+              <ArtistAlbumCardSkeleton layout="compact"/>
             </li>
           </ul>
-          <p v-else>None found.</p>
+          <template v-else>
+            <ul v-if="excerpt.artists.length">
+              <li v-for="artist in excerpt.artists" :key="artist.id">
+                <ArtistCard :artist="artist" layout="compact"/>
+              </li>
+            </ul>
+            <p v-else>None found.</p>
+          </template>
         </section>
 
         <section class="albums" data-testid="album-excerpts">
           <h1>Albums</h1>
-          <ul v-if="excerpt.albums.length">
-            <li v-for="album in excerpt.albums" :key="album.id">
-              <AlbumCard :album="album" layout="compact"/>
+          <ul v-if="searching">
+            <li v-for="i in 6" :key="i">
+              <ArtistAlbumCardSkeleton layout="compact"/>
             </li>
           </ul>
-          <p v-else>None found.</p>
+          <template v-else>
+            <ul v-if="excerpt.albums.length">
+              <li v-for="album in excerpt.albums" :key="album.id">
+                <AlbumCard :album="album" layout="compact"/>
+              </li>
+            </ul>
+            <p v-else>None found.</p>
+          </template>
         </section>
       </div>
 
@@ -74,15 +95,20 @@ import ArtistCard from '@/components/artist/ArtistCard.vue'
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import Btn from '@/components/ui/Btn.vue'
 import SongCard from '@/components/song/SongCard.vue'
+import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
+import ArtistAlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 
 const excerpt = toRef(searchStore.state, 'excerpt')
 const q = ref('')
+const searching = ref(false)
 
 const goToSongResults = () => router.go(`search/songs/${q.value}`)
 
-eventBus.on('SEARCH_KEYWORDS_CHANGED', (_q: string) => {
+eventBus.on('SEARCH_KEYWORDS_CHANGED', async (_q: string) => {
   q.value = _q
-  searchStore.excerptSearch(q.value)
+  searching.value = true
+  await searchStore.excerptSearch(q.value)
+  searching.value = false
 })
 </script>
 
