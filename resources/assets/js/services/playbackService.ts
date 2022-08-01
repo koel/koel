@@ -12,7 +12,7 @@ import {
   userStore
 } from '@/stores'
 
-import { eventBus, isAudioContextSupported, logger } from '@/utils'
+import { arrayify, eventBus, isAudioContextSupported, logger } from '@/utils'
 import { audioService, socketService } from '@/services'
 import router from '@/router'
 
@@ -361,7 +361,9 @@ class PlaybackService {
    * @param {?Song[]} songs  An array of song objects. Defaults to all songs if null.
    * @param {Boolean=false}   shuffled Whether to shuffle the songs before playing.
    */
-  public async queueAndPlay (songs: Song[], shuffled = false) {
+  public async queueAndPlay (songs: Song | Song[], shuffled = false) {
+    songs = arrayify(songs)
+
     if (shuffled) {
       songs = shuffle(songs)
     }

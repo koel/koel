@@ -24,7 +24,7 @@
       </template>
     </ScreenHeader>
 
-    <SongListSkeleton v-if="fetchingRandomSongs"/>
+    <SongListSkeleton v-if="loading"/>
     <SongList
       v-if="songs.length"
       ref="songList"
@@ -50,9 +50,9 @@
 
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef } from 'vue'
-import { logger, pluralize, requireInjection } from '@/utils'
-import { commonStore, queueStore } from '@/stores'
+import { computed, ref, toRef, toRefs } from 'vue'
+import { eventBus, logger, pluralize, requireInjection } from '@/utils'
+import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useSongList } from '@/composables'
 import { DialogBoxKey } from '@/symbols'
@@ -63,6 +63,9 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const dialog = requireInjection(DialogBoxKey)
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
+
+const props = defineProps<{ song?: string }>()
+const { song: queuedSongId } = toRefs(props)
 
 const {
   SongList,
@@ -82,20 +85,21 @@ const {
   onScrollBreakpoint
 } = useSongList(toRef(queueStore.state, 'songs'), 'queue', { sortable: false })
 
-const fetchingRandomSongs = ref(false)
+const loading = ref(false)
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 
 const playAll = (shuffle = true) => playbackService.queueAndPlay(songs.value, shuffle)
 
 const shuffleSome = async () => {
   try {
-    fetchingRandomSongs.value = true
+    loading.value = true
     await queueStore.fetchRandom()
-    fetchingRandomSongs.value = false
     await playbackService.playFirstInQueue()
   } catch (e) {
     dialog.value.error('Failed to fetch songs to play. Please try again.', 'Error')
     logger.error(e)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -103,4 +107,26 @@ const clearQueue = () => queueStore.clear()
 const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(selectedSongs.value)
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
 const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
+
+eventBus.on('SONG_QUEUED_FROM_ROUTE', async (id: string) => {
+  let song: Song
+
+  try {
+    loading.value = true
+    song = await songStore.resolve(id)
+
+    if (!song) {
+      throw new Error('Song not found')
+    }
+  } catch (e) {
+    dialog.value.error('Song not found. Please double check and try again.', 'Error')
+    logger.error(e)
+    return
+  } finally {
+    loading.value = false
+  }
+
+  queueStore.queueIfNotQueued(song)
+  await playbackService.play(song)
+})
 </script>

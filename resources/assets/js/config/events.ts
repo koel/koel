@@ -24,6 +24,7 @@ export type EventName =
   | 'SMART_PLAYLIST_UPDATED'
   | 'SONG_STARTED'
   | 'SONGS_UPDATED'
+  | 'SONG_QUEUED_FROM_ROUTE'
 
   // upload-related
   | 'SONG_UPLOADED'

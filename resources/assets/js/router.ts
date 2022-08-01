@@ -1,7 +1,5 @@
-import isMobile from 'ismobilejs'
-import { loadMainView, use } from '@/utils'
-import { playlistStore, queueStore, songStore, userStore } from '@/stores'
-import { playbackService } from '@/services'
+import { eventBus, loadMainView, use } from '@/utils'
+import { playlistStore, userStore } from '@/stores'
 
 class Router {
   routes: Record<string, Closure>
@@ -26,20 +24,9 @@ class Router {
       '/album/(\\d+)': async (id: string) => loadMainView('Album', parseInt(id)),
       '/artist/(\\d+)': async (id: string) => loadMainView('Artist', parseInt(id)),
       '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
-      '/song/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})': async (id: string) => {
-        const song = await songStore.resolve(id)
-        if (!song) {
-          this.go('home')
-          return
-        }
-
-        if (isMobile.apple.device) {
-          // Mobile Safari doesn't allow autoplay, so we just queue.
-          queueStore.queue(song)
-          loadMainView('Queue')
-        } else {
-          await playbackService.queueAndPlay([song])
-        }
+      '/song/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})': (id: string) => {
+        eventBus.emit('SONG_QUEUED_FROM_ROUTE', id)
+        loadMainView('Queue')
       }
     }
 
