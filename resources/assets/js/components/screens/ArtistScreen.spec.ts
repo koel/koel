@@ -23,12 +23,14 @@ new class extends UnitTestCase {
       length: 40_603
     })
 
+    const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
+
     const songs = factory<Song[]>('song', 13)
     const fetchSongsMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
 
     const rendered = this.render(ArtistScreen, {
       props: {
-        artist
+        artist: 42
       },
       global: {
         stubs: {
@@ -39,7 +41,12 @@ new class extends UnitTestCase {
       }
     })
 
-    await waitFor(() => expect(fetchSongsMock).toHaveBeenCalledWith(artist))
+    await waitFor(() => {
+      expect(resolveArtistMock).toHaveBeenCalledWith(artist.id)
+      expect(fetchSongsMock).toHaveBeenCalledWith(artist.id)
+    })
+
+    await this.tick(2)
 
     return rendered
   }

@@ -24,12 +24,14 @@ new class extends UnitTestCase {
       length: 1_603
     })
 
+    const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
+
     const songs = factory<Song[]>('song', 13)
     const fetchSongsMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
 
     const rendered = this.render(AlbumScreen, {
       props: {
-        album
+        album: 42
       },
       global: {
         stubs: {
@@ -40,7 +42,12 @@ new class extends UnitTestCase {
       }
     })
 
-    await waitFor(() => expect(fetchSongsMock).toHaveBeenCalledWith(album))
+    await waitFor(() => {
+      expect(resolveAlbumMock).toHaveBeenCalledWith(album.id)
+      expect(fetchSongsMock).toHaveBeenCalledWith(album.id)
+    })
+
+    await this.tick(2)
 
     return rendered
   }
@@ -52,7 +59,7 @@ new class extends UnitTestCase {
     })
 
     it('shows and hides info', async () => {
-      const { getByTitle, getByTestId, queryByTestId } = await this.renderComponent()
+      const { getByTitle, getByTestId, queryByTestId, html } = await this.renderComponent()
       expect(queryByTestId('album-info')).toBeNull()
 
       await fireEvent.click(getByTitle('View album information'))

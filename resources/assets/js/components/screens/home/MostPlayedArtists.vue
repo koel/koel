@@ -24,7 +24,7 @@ import { overviewStore } from '@/stores'
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 
-const props = withDefaults(defineProps<{ loading: boolean }>(), { loading: false })
+const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
 const artists = toRef(overviewStore.state, 'mostPlayedArtists')

@@ -26,8 +26,7 @@ exports[`renders info type 1`] = `
 
 exports[`renders loading type 1`] = `
 <div id="overlay" class="loading overlay" data-testid="overlay">
-  <div class="display">
-    <div class="bars" data-testid="soundbars" data-v-d983e410=""><img alt="Sound bars" height="13" src="undefined/resources/assets/img/bars.gif" data-v-d983e410=""></div>
+  <div class="display"><i data-v-4fa15baa=""><span data-v-4fa15baa=""></span><span data-v-4fa15baa=""></span><span data-v-4fa15baa=""></span></i>
     <!--v-if-->
     <!--v-if-->
     <!--v-if-->

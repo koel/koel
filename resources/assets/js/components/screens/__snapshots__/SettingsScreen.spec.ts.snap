@@ -3,12 +3,12 @@
 exports[`renders 1`] = `
 <section id="settingsWrapper">
   <header class="screen-header expanded">
-    <div class="thumbnail-wrapper"></div>
-    <div class="right">
+    <aside class="thumbnail-wrapper"></aside>
+    <main>
       <div class="heading-wrapper">
         <h1 class="name">Settings</h1><span class="meta text-secondary"></span>
       </div>
-    </div>
+    </main>
   </header>
   <form class="main-scroll-wrap">
     <div class="form-row"><label for="inputSettingsPath">Media Path</label>
