@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('song_id', 36)->change();
 
             if (DB::getDriverName() !== 'sqlite') {
-                $table->dropForeign('playlist_song_song_id_foreign');
+                $table->dropForeign('interactions_song_id_foreign');
             }
 
             $table->foreign('song_id')->references('id')->on('songs')->cascadeOnDelete()->cascadeOnUpdate();
