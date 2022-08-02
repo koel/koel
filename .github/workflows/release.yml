@@ -2,7 +2,6 @@ on:
   push:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-      - 'beta'
 
 name: Upload Release Assets
 
@@ -41,7 +40,7 @@ jobs:
           rm -rf .git ./node_modules ./storage/search-indexes/*.index ./koel.db ./.env
           cd ../
           zip -r /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip koel/
-          tar -zcvf /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz koel/
+          tar -zcf /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz koel/
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
