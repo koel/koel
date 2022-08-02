@@ -2,6 +2,7 @@ on:
   push:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'beta'
 
 name: Upload Release Assets
 
@@ -17,7 +18,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: 8.1
           tools: composer:v2
           extensions: pdo_sqlite, zip, gd
       - name: Install PHP dependencies
@@ -27,7 +28,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: 16
       - name: Build project
         run: |
           sudo apt install pngquant zip unzip
@@ -57,7 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip
           asset_name: koel-${{ steps.get_version.outputs.VERSION }}.zip
           asset_content_type: application/zip
@@ -67,7 +68,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz
           asset_name: koel-${{ steps.get_version.outputs.VERSION }}.tar.gz
           asset_content_type: application/gzip
