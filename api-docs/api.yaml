@@ -832,7 +832,7 @@ paths:
       security:
         - Bearer Token: []
   /api/settings:
-    post:
+    put:
       summary: Save the application settings
       tags:
         - settings

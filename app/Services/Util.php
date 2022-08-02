@@ -23,19 +23,14 @@ class Util
                 return 'UTF-16LE';
         }
 
-        switch (substr($str, 0, 3)) {
-            case UTF8_BOM:
-                return 'UTF-8';
+        if (substr($str, 0, 3) === UTF8_BOM) {
+            return 'UTF-8';
         }
 
-        switch (substr($str, 0, 4)) {
-            case UTF32_BIG_ENDIAN_BOM:
-                return 'UTF-32BE';
-
-            case UTF32_LITTLE_ENDIAN_BOM:
-                return 'UTF-32LE';
-        }
-
-        return null;
+        return match (substr($str, 0, 4)) {
+            UTF32_BIG_ENDIAN_BOM => 'UTF-32BE',
+            UTF32_LITTLE_ENDIAN_BOM => 'UTF-32LE',
+            default => null,
+        };
     }
 }

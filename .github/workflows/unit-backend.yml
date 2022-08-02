@@ -1,0 +1,61 @@
+name: Backend Unit Tests
+on:
+  pull_request:
+    branches:
+      - master
+      - next
+    paths:
+      - '!resources/assets/**'
+      - .github/workflows/unit-backend.yml
+  push:
+    branches:
+      - master
+      - next
+    paths:
+      - '!resources/assets/**'
+      - .github/workflows/unit-backend.yml
+  workflow_dispatch:
+    branches:
+      - master
+      - next
+    paths:
+      - '!resources/assets/**'
+      - .github/workflows/unit-backend.yml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [ 8.0, 8.1 ]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: xdebug
+          extensions: pdo_sqlite, zip, gd
+      - name: Install PHP dependencies
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: --prefer-dist
+      - name: Generate app key
+        run: php artisan key:generate --quiet
+      - name: Run code style checker
+        run: composer cs
+      - name: Run static analysis
+        run: composer analyze -- --no-progress
+      - name: Run tests
+        run: composer coverage
+      - name: Upload logs if broken
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: logs
+          path: storage/logs
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

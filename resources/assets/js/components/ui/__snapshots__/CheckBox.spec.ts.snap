@@ -1,0 +1,5 @@
+// Vitest Snapshot v1
+
+exports[`renders checked state 1`] = `<span data-v-51bb9d97=""><input type="checkbox" data-v-51bb9d97=""><br data-testid="icon" icon="[object Object]" data-v-51bb9d97=""></span>`;
+
+exports[`renders unchecked state 1`] = `<span data-v-51bb9d97=""><input type="checkbox" data-v-51bb9d97=""><!--v-if--></span>`;

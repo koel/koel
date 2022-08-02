@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Song $song
  * @property User $user
  * @property int $id
+ * @property string $song_id
  *
  * @method static self firstOrCreate(array $where, array $params = [])
  * @method static self find(int $id)
  * @method static Builder whereSongIdAndUserId(string $songId, string $userId)
  * @method static Builder whereIn(...$params)
+ * @method static Builder where(...$params)
  */
 class Interaction extends Model
 {

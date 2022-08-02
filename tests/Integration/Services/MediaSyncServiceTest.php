@@ -7,178 +7,180 @@ use App\Events\MediaSyncCompleted;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Setting;
 use App\Models\Song;
 use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
 use getID3;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Arr;
 use Mockery;
 use Tests\Feature\TestCase;
 
 class MediaSyncServiceTest extends TestCase
 {
-    use WithoutMiddleware;
-
-    /** @var MediaSyncService */
-    private $mediaService;
+    private MediaSyncService $mediaService;
 
     public function setUp(): void
     {
         parent::setUp();
 
+        Setting::set('media_path', realpath($this->mediaPath));
         $this->mediaService = app(MediaSyncService::class);
+    }
+
+    private function path($subPath): string
+    {
+        return realpath($this->mediaPath . $subPath);
     }
 
     public function testSync(): void
     {
-        $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
+        $this->expectsEvents(MediaSyncCompleted::class);
 
-        $this->mediaService->sync($this->mediaPath);
+        $this->mediaService->sync();
 
         // Standard mp3 files under root path should be recognized
         self::assertDatabaseHas(Song::class, [
-            'path' => $this->mediaPath . '/full.mp3',
-            // Track # should be recognized
+            'path' => $this->path('/full.mp3'),
             'track' => 5,
         ]);
 
         // Ogg files and audio files in subdirectories should be recognized
-        self::assertDatabaseHas('songs', ['path' => $this->mediaPath . '/subdir/back-in-black.ogg']);
+        self::assertDatabaseHas(Song::class, ['path' => $this->path('/subdir/back-in-black.ogg')]);
 
         // GitHub issue #380. folder.png should be copied and used as the cover for files
         // under subdir/
-        $song = Song::wherePath($this->mediaPath . '/subdir/back-in-black.ogg')->first();
-        self::assertNotNull($song->album->cover);
+        /** @var Song $song */
+        $song = Song::where('path', $this->path('/subdir/back-in-black.ogg'))->first();
+        self::assertNotEmpty($song->album->cover);
 
         // File search shouldn't be case-sensitive.
-        self::assertDatabaseHas('songs', ['path' => $this->mediaPath . '/subdir/no-name.mp3']);
+        self::assertDatabaseHas(Song::class, ['path' => $this->path('/subdir/no-name.mp3')]);
 
         // Non-audio files shouldn't be recognized
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/rubbish.log']);
+        self::assertDatabaseMissing(Song::class, ['path' => $this->path('/rubbish.log')]);
 
         // Broken/corrupted audio files shouldn't be recognized
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/fake.mp3']);
+        self::assertDatabaseMissing(Song::class, ['path' => $this->path('/fake.mp3')]);
 
         // Artists should be created
-        self::assertDatabaseHas('artists', ['name' => 'Cuckoo']);
-        self::assertDatabaseHas('artists', ['name' => 'Koel']);
+        self::assertDatabaseHas(Artist::class, ['name' => 'Cuckoo']);
+        self::assertDatabaseHas(Artist::class, ['name' => 'Koel']);
 
         // Albums should be created
-        self::assertDatabaseHas('albums', ['name' => 'Koel Testing Vol. 1']);
+        self::assertDatabaseHas(Album::class, ['name' => 'Koel Testing Vol. 1']);
 
         // Albums and artists should be correctly linked
-        $album = Album::whereName('Koel Testing Vol. 1')->first();
+        /** @var Album $album */
+        $album = Album::where('name', 'Koel Testing Vol. 1')->first();
         self::assertEquals('Koel', $album->artist->name);
 
         // Compilation albums, artists and songs must be recognized
-        $song = Song::whereTitle('This song belongs to a compilation')->first();
-        self::assertNotNull($song->artist_id);
-        self::assertTrue($song->album->is_compilation);
-        self::assertEquals(Artist::VARIOUS_ID, $song->album->artist_id);
-
-        $currentCover = $album->cover;
-
-        $song = Song::orderBy('id', 'desc')->first();
-
-        // Modified file should be recognized
-        touch($song->path, $time = time());
-        $this->mediaService->sync($this->mediaPath);
-        $song = Song::find($song->id);
-        self::assertEquals($time, $song->mtime);
-
-        // Albums with a non-default cover should have their covers overwritten
-        self::assertEquals($currentCover, Album::find($album->id)->cover);
+        /** @var Song $song */
+        $song = Song::where('title', 'This song belongs to a compilation')->first();
+        self::assertFalse($song->album->artist->is($song->artist));
+        self::assertSame('Koel', $song->album->artist->name);
+        self::assertSame('Cuckoo', $song->artist->name);
     }
 
-    public function testForceSync(): void
+    public function testModifiedFileIsResynced(): void
     {
-        $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
+        $this->mediaService->sync();
 
-        $this->mediaService->sync($this->mediaPath);
+        $song = Song::first();
 
-        // Make some modification to the records
-        /** @var Song $song */
-        $song = Song::orderBy('id', 'desc')->first();
-        $originalTitle = $song->title;
-        $originalLyrics = $song->lyrics;
+        touch($song->path, $time = time() + 1000);
+        $this->mediaService->sync();
+
+        self::assertSame($time, $song->refresh()->mtime);
+    }
+
+    public function testResyncWithoutForceDoesNotResetData(): void
+    {
+        $this->expectsEvents(MediaSyncCompleted::class);
+
+        $this->mediaService->sync();
+
+        $song = Song::first();
 
         $song->update([
             'title' => "It's John Cena!",
             'lyrics' => 'Booom Wroooom',
         ]);
 
-        // Resync without forcing
-        $this->mediaService->sync($this->mediaPath);
+        $this->mediaService->sync();
 
-        // Validate that the changes are not lost
-        /** @var Song $song */
-        $song = Song::orderBy('id', 'desc')->first();
-        self::assertEquals("It's John Cena!", $song->title);
-        self::assertEquals('Booom Wroooom', $song->lyrics);
-
-        // Resync with force
-        $this->mediaService->sync($this->mediaPath, [], true);
-
-        // All is lost.
-        /** @var Song $song */
-        $song = Song::orderBy('id', 'desc')->first();
-        self::assertEquals($originalTitle, $song->title);
-        self::assertEquals($originalLyrics, $song->lyrics);
+        $song->refresh();
+        self::assertSame("It's John Cena!", $song->title);
+        self::assertSame('Booom Wroooom', $song->lyrics);
     }
 
-    public function testSelectiveSync(): void
+    public function testForceSyncResetsData(): void
     {
-        $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
+        $this->expectsEvents(MediaSyncCompleted::class);
 
-        $this->mediaService->sync($this->mediaPath);
+        $this->mediaService->sync();
 
-        // Make some modification to the records
-        /** @var Song $song */
-        $song = Song::orderBy('id', 'desc')->first();
-        $originalTitle = $song->title;
+        $song = Song::first();
 
         $song->update([
             'title' => "It's John Cena!",
             'lyrics' => 'Booom Wroooom',
         ]);
 
-        // Sync only the selective tags
-        $this->mediaService->sync($this->mediaPath, ['title'], true);
+        $this->mediaService->sync(force: true);
 
-        // Validate that the specified tags are changed, other remains the same
-        $song = Song::orderBy('id', 'desc')->first();
-        self::assertEquals($originalTitle, $song->title);
-        self::assertEquals('Booom Wroooom', $song->lyrics);
+        $song->refresh();
+
+        self::assertNotSame("It's John Cena!", $song->title);
+        self::assertNotSame('Booom Wroooom', $song->lyrics);
     }
 
-    public function testSyncAllTagsForNewFiles(): void
+    public function testSyncWithIgnoredTags(): void
     {
-        // First we sync the test directory to get the data
-        $this->mediaService->sync($this->mediaPath);
+        $this->expectsEvents(MediaSyncCompleted::class);
 
-        // Now delete the first song.
-        $song = Song::orderBy('id')->first();
+        $this->mediaService->sync();
+
+        $song = Song::first();
+
+        $song->update([
+            'title' => "It's John Cena!",
+            'lyrics' => 'Booom Wroooom',
+        ]);
+
+        $this->mediaService->sync(ignores: ['title'], force: true);
+
+        $song->refresh();
+
+        self::assertSame("It's John Cena!", $song->title);
+        self::assertNotSame('Booom Wroooom', $song->lyrics);
+    }
+
+    public function testSyncAllTagsForNewFilesRegardlessOfIgnoredOption(): void
+    {
+        $this->mediaService->sync();
+
+        $song = Song::first();
         $song->delete();
 
-        // Selectively sync only one tag
-        $this->mediaService->sync($this->mediaPath, ['track'], true);
+        $this->mediaService->sync(ignores: ['title', 'disc', 'track'], force: true);
 
-        // but we still expect the whole song to be added back with all info
-        $addedSong = Song::findOrFail($song->id)->toArray();
-        $song = $song->toArray();
-        array_forget($addedSong, 'created_at');
-        array_forget($song, 'created_at');
-        self::assertEquals($song, $addedSong);
+        // Song should be added back with all info
+        self::assertEquals(
+            Arr::except(Song::where('path', $song->path)->first()->toArray(), ['id', 'created_at']),
+            Arr::except($song->toArray(), ['id', 'created_at'])
+        );
     }
 
     public function testSyncAddedSongViaWatch(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        $path = $this->mediaPath . '/blank.mp3';
+        $path = $this->path('/blank.mp3');
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
 
-        self::assertDatabaseHas('songs', ['path' => $path]);
+        self::assertDatabaseHas(Song::class, ['path' => $path]);
     }
 
     public function testSyncDeletedSongViaWatch(): void
@@ -186,32 +188,36 @@ class MediaSyncServiceTest extends TestCase
         $this->expectsEvents(LibraryChanged::class);
 
         static::createSampleMediaSet();
-        $song = Song::orderBy('id', 'desc')->first();
+        $song = Song::first();
+        self::assertModelExists($song);
 
-        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("DELETE {$song->path}"));
+        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("DELETE $song->path"));
 
-        self::assertDatabaseMissing('songs', ['id' => $song->id]);
+        self::assertModelMissing($song);
     }
 
     public function testSyncDeletedDirectoryViaWatch(): void
     {
         $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
 
-        $this->mediaService->sync($this->mediaPath);
+        $this->mediaService->sync();
 
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR $this->mediaPath/subdir"));
 
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/subdir/sic.mp3']);
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/subdir/no-name.mp3']);
-        self::assertDatabaseMissing('songs', ['path' => $this->mediaPath . '/subdir/back-in-black.mp3']);
+        self::assertDatabaseMissing('songs', ['path' => $this->path('/subdir/sic.mp3')]);
+        self::assertDatabaseMissing('songs', ['path' => $this->path('/subdir/no-name.mp3')]);
+        self::assertDatabaseMissing('songs', ['path' => $this->path('/subdir/back-in-black.mp3')]);
     }
 
     public function testHtmlEntities(): void
     {
+        $path = $this->path('/songs/blank.mp3');
+
         $this->swap(
             getID3::class,
             Mockery::mock(getID3::class, [
                 'analyze' => [
+                    'filenamepath' => $path,
                     'tags' => [
                         'id3v2' => [
                             'title' => ['&#27700;&#35895;&#24195;&#23455;'],
@@ -227,21 +233,21 @@ class MediaSyncServiceTest extends TestCase
 
         /** @var FileSynchronizer $fileSynchronizer */
         $fileSynchronizer = app(FileSynchronizer::class);
-        $info = $fileSynchronizer->setFile(__DIR__ . '/songs/blank.mp3')->getFileInfo();
+        $info = $fileSynchronizer->setFile($path)->getFileScanInformation();
 
-        self::assertEquals('佐倉綾音 Unknown', $info['artist']);
-        self::assertEquals('小岩井こ Random', $info['album']);
-        self::assertEquals('水谷広実', $info['title']);
+        self::assertSame('佐倉綾音 Unknown', $info->artistName);
+        self::assertSame('小岩井こ Random', $info->albumName);
+        self::assertSame('水谷広実', $info->title);
     }
 
     public function testOptionallyIgnoreHiddenFiles(): void
     {
         config(['koel.ignore_dot_files' => false]);
-        $this->mediaService->sync($this->mediaPath);
-        self::assertDatabaseHas('albums', ['name' => 'Hidden Album']);
+        $this->mediaService->sync();
+        self::assertDatabaseHas(Album::class, ['name' => 'Hidden Album']);
 
         config(['koel.ignore_dot_files' => true]);
-        $this->mediaService->sync($this->mediaPath);
-        self::assertDatabaseMissing('albums', ['name' => 'Hidden Album']);
+        $this->mediaService->sync();
+        self::assertDatabaseMissing(Album::class, ['name' => 'Hidden Album']);
     }
 }

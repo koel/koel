@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\LastfmSetSessionKeyRequest;
 use App\Models\User;
 use App\Services\LastfmService;
@@ -9,20 +10,14 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class LastfmController extends Controller
 {
-    private LastfmService $lastfm;
-
-    /** @var User */
-    private ?Authenticatable $currentUser;
-
-    public function __construct(LastfmService $lastfm, ?Authenticatable $currentUser)
+    /** @param User $currentUser */
+    public function __construct(private LastfmService $lastfm, private ?Authenticatable $currentUser)
     {
-        $this->lastfm = $lastfm;
-        $this->currentUser = $currentUser;
     }
 
     public function setSessionKey(LastfmSetSessionKeyRequest $request)
     {
-        $this->lastfm->setUserSessionKey($this->currentUser, trim($request->key));
+        $this->lastfm->setUserSessionKey($this->currentUser, $request->key);
 
         return response()->noContent();
     }

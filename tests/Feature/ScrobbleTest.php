@@ -25,7 +25,7 @@ class ScrobbleTest extends TestCase
             ->with($song->album->artist->name, $song->title, $timestamp, $song->album->name, $user->lastfm_session_key)
             ->once();
 
-        $this->postAsUser("/api/$song->id/scrobble", ['timestamp' => $timestamp], $user)
+        $this->postAs("/api/$song->id/scrobble", ['timestamp' => $timestamp], $user)
             ->assertNoContent();
     }
 }

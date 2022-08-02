@@ -14,11 +14,6 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array
-     */
     protected $policies = [
         Playlist::class => PlaylistPolicy::class,
         User::class => UserPolicy::class,

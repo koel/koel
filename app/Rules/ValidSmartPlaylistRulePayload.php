@@ -19,7 +19,7 @@ class ValidSmartPlaylistRulePayload implements Rule
             }
 
             return true;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return false;
         }
     }

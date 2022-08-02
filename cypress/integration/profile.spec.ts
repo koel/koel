@@ -76,7 +76,7 @@ context('Profiles & Preferences', () => {
     cy.$login()
     cy.$mockPlayback()
     cy.$clickSidebarItem('Current Queue')
-    cy.get('#queueWrapper').within(() => cy.findByText('shuffling all songs').click())
+    cy.get('#queueWrapper').within(() => cy.findByTestId('shuffle-library').click())
     cy.findByTestId('album-art-overlay').should('exist')
 
     cy.findByTestId('view-profile-link').click()

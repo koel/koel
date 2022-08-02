@@ -4,72 +4,76 @@ namespace App\Console\Commands;
 
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Setting;
-use App\Services\FileSynchronizer;
 use App\Services\MediaSyncService;
+use App\Values\SyncResult;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
+use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class SyncCommand extends Command
 {
     protected $signature = 'koel:sync
         {record? : A single watch record. Consult Wiki for more info.}
-        {--tags= : The comma-separated tags to sync into the database}
+        {--ignore= : The comma-separated tags to ignore (exclude) from syncing}
         {--force : Force re-syncing even unchanged files}';
 
     protected $description = 'Sync songs found in configured directory against the database.';
-    private int $ignored = 0;
-    private int $invalid = 0;
-    private int $synced = 0;
-    private MediaSyncService $mediaSyncService;
 
-    private ?ProgressBar $progressBar = null;
+    private ?string $mediaPath;
+    private ProgressBar $progressBar;
 
-    public function __construct(MediaSyncService $mediaSyncService)
+    public function __construct(private MediaSyncService $mediaSyncService)
     {
         parent::__construct();
 
-        $this->mediaSyncService = $mediaSyncService;
+        $this->mediaSyncService->on('paths-gathered', function (array $paths): void {
+            $this->progressBar = new ProgressBar($this->output, count($paths));
+        });
+
+        $this->mediaSyncService->on('progress', [$this, 'onSyncProgress']);
     }
 
-    public function handle(): void
+    public function handle(): int
     {
-        $this->ensureMediaPath();
+        $this->mediaPath = $this->getMediaPath();
+
         $record = $this->argument('record');
 
-        if (!$record) {
+        if ($record) {
+            $this->syncSingleRecord($record);
+        } else {
             $this->syncAll();
-
-            return;
         }
 
-        $this->syngle($record);
+        return self::SUCCESS;
     }
 
     /**
      * Sync all files in the configured media path.
      */
-    protected function syncAll(): void
+    private function syncAll(): void
     {
-        $this->info('Syncing media from ' . Setting::get('media_path') . PHP_EOL);
+        $this->components->info('Scanning ' . $this->mediaPath);
 
-        // Get the tags to sync.
+        // The tags to ignore from syncing.
         // Notice that this is only meaningful for existing records.
-        // New records will have every applicable field sync'ed in.
-        $tags = $this->option('tags') ? explode(',', $this->option('tags')) : [];
+        // New records will have every applicable field synced in.
+        $ignores = $this->option('ignore') ? explode(',', $this->option('ignore')) : [];
 
-        $this->mediaSyncService->sync(null, $tags, $this->option('force'), $this);
+        $results = $this->mediaSyncService->sync($ignores, $this->option('force'));
 
-        $this->output->writeln(
-            PHP_EOL . PHP_EOL
-            . "<info>Completed! $this->synced new or updated song(s)</info>, "
-            . "$this->ignored unchanged song(s), "
-            . "and <comment>$this->invalid invalid file(s)</comment>."
-        );
+        $this->newLine(2);
+        $this->components->info('Scanning completed!');
+
+        $this->components->bulletList([
+            "<fg=green>{$results->success()->count()}</> new or updated song(s)",
+            "<fg=yellow>{$results->skipped()->count()}</> unchanged song(s)",
+            "<fg=red>{$results->error()->count()}</> invalid file(s)",
+        ]);
     }
 
     /**
-     * SYNc a sinGLE file or directory. See my awesome pun?
-     *
      * @param string $record The watch record.
      *                       As of current we only support inotifywait.
      *                       Some examples:
@@ -79,45 +83,39 @@ class SyncCommand extends Command
      *
      * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
      */
-    public function syngle(string $record): void
+    private function syncSingleRecord(string $record): void
     {
         $this->mediaSyncService->syncByWatchRecord(new InotifyWatchRecord($record));
     }
 
-    /**
-     * Log a song's sync status to console.
-     */
-    public function logSyncStatusToConsole(string $path, int $result, ?string $reason = null): void
+    public function onSyncProgress(SyncResult $result): void
     {
-        $name = basename($path);
+        if (!$this->option('verbose')) {
+            $this->progressBar->advance();
 
-        if ($result === FileSynchronizer::SYNC_RESULT_UNMODIFIED) {
-            ++$this->ignored;
-        } elseif ($result === FileSynchronizer::SYNC_RESULT_BAD_FILE) {
-            if ($this->option('verbose')) {
-                $this->error(PHP_EOL . "'$name' is not a valid media file: " . $reason);
-            }
+            return;
+        }
 
-            ++$this->invalid;
-        } else {
-            ++$this->synced;
+        $path = trim(Str::replaceFirst($this->mediaPath, '', $result->path), DIRECTORY_SEPARATOR);
+
+        $this->components->twoColumnDetail($path, match (true) {
+            $result->isSuccess() => "<fg=green>OK</>",
+            $result->isSkipped() => "<fg=yellow>SKIPPED</>",
+            $result->isError() => "<fg=red>ERROR</>",
+            default => throw new RuntimeException("Unknown sync result type: {$result->type}")
+        });
+
+        if ($result->isError()) {
+            $this->output->writeln("<fg=red>$result->error</>");
         }
     }
 
-    public function createProgressBar(int $max): void
+    private function getMediaPath(): string
     {
-        $this->progressBar = $this->getOutput()->createProgressBar($max);
-    }
+        $path = Setting::get('media_path');
 
-    public function advanceProgressBar(): void
-    {
-        $this->progressBar->advance();
-    }
-
-    private function ensureMediaPath(): void
-    {
-        if (Setting::get('media_path')) {
-            return;
+        if ($path) {
+            return $path;
         }
 
         $this->warn("Media path hasn't been configured. Let's set it up.");
@@ -132,5 +130,7 @@ class SyncCommand extends Command
 
             $this->error('The path does not exist or is not readable. Try again.');
         }
+
+        return $path;
     }
 }

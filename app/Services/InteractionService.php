@@ -33,7 +33,7 @@ class InteractionService
     }
 
     /**
-     * Like or unlike a song on behalf of a user.
+     * Like or unlike a song as a user.
      *
      * @return Interaction the affected Interaction object
      */

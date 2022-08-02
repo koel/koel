@@ -17,13 +17,13 @@ context('YouTube', () => {
     })
 
     cy.$clickSidebarItem('All Songs')
-    cy.get('#songsWrapper tr.song-item:first-child').dblclick()
+    cy.get('#songsWrapper .song-item:first-child').dblclick()
 
     cy.get('#extra').within(() => {
       cy.get('#extraTabYouTube').click()
-      cy.get('[data-test=youtube-search-result]').should('have.length', 2)
+      cy.findAllByTestId('youtube-search-result').should('have.length', 2)
       cy.findByTestId('youtube-search-more-btn').click()
-      cy.get('[data-test=youtube-search-result]').should('have.length', 4)
+      cy.findAllByTestId('youtube-search-result').should('have.length', 4)
     })
   })
 
@@ -31,11 +31,11 @@ context('YouTube', () => {
     cy.$mockPlayback()
 
     cy.$clickSidebarItem('All Songs')
-    cy.get('#songsWrapper tr.song-item:first-child').dblclick()
+    cy.get('#songsWrapper .song-item:first-child').dblclick()
 
     cy.get('#extra').within(() => {
       cy.get('#extraTabYouTube').click()
-      cy.get('[data-test=youtube-search-result]:nth-child(2)').click()
+      cy.get('[data-testid=youtube-search-result]:nth-child(2)').click()
     })
 
     cy.url().should('contain', '/#!/youtube')

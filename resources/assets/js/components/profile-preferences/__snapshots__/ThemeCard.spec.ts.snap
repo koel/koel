@@ -1,0 +1,7 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<div class="theme" data-testid="theme-card-sample" style="background-color: rgb(255, 0, 0);" title="Set current them to Sample" role="button" data-v-3bc20152="">
+  <div class="name" data-v-3bc20152="">Sample</div>
+</div>
+`;

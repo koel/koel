@@ -1,0 +1,3 @@
+// Vitest Snapshot v1
+
+exports[`renders and functions 1`] = `<span data-v-7a4cd38c=""><button title="Zoom out" type="button" data-v-7a4cd38c=""><br data-testid="icon" icon="[object Object]" data-v-7a4cd38c=""></button><button title="Zoom in" type="button" data-v-7a4cd38c=""><br data-testid="icon" icon="[object Object]" data-v-7a4cd38c=""></button></span>`;

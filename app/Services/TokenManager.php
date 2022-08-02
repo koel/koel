@@ -20,18 +20,12 @@ class TokenManager
 
     public function deleteTokenByPlainTextToken(string $plainTextToken): void
     {
-        $token = PersonalAccessToken::findToken($plainTextToken);
-
-        if ($token) {
-            $token->delete();
-        }
+        PersonalAccessToken::findToken($plainTextToken)?->delete();
     }
 
     public function getUserFromPlainTextToken(string $plainTextToken): ?User
     {
-        $token = PersonalAccessToken::findToken($plainTextToken);
-
-        return $token ? $token->tokenable : null;
+        return PersonalAccessToken::findToken($plainTextToken)?->tokenable;
     }
 
     public function refreshToken(User $user): NewAccessToken

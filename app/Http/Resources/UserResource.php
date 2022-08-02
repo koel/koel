@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Models\User;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class UserResource extends JsonResource
+{
+    public function __construct(private User $user)
+    {
+        parent::__construct($user);
+    }
+
+    /** @return array<mixed> */
+    public function toArray($request): array
+    {
+        return [
+            'type' => 'users',
+            'id' => $this->user->id,
+            'name' => $this->user->name,
+            'email' => $this->user->email,
+            'avatar' => $this->user->avatar,
+            'is_admin' => $this->user->is_admin,
+        ];
+    }
+}

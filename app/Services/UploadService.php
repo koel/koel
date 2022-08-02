@@ -14,11 +14,8 @@ class UploadService
 {
     private const UPLOAD_DIRECTORY = '__KOEL_UPLOADS__';
 
-    private FileSynchronizer $fileSynchronizer;
-
-    public function __construct(FileSynchronizer $fileSynchronizer)
+    public function __construct(private FileSynchronizer $fileSynchronizer)
     {
-        $this->fileSynchronizer = $fileSynchronizer;
     }
 
     public function handleUploadedFile(UploadedFile $file): Song
@@ -27,12 +24,11 @@ class UploadService
         $file->move($this->getUploadDirectory(), $targetFileName);
 
         $targetPathName = $this->getUploadDirectory() . $targetFileName;
-        $this->fileSynchronizer->setFile($targetPathName);
-        $result = $this->fileSynchronizer->sync(MediaSyncService::APPLICABLE_TAGS);
+        $result = $this->fileSynchronizer->setFile($targetPathName)->sync();
 
-        if ($result !== FileSynchronizer::SYNC_RESULT_SUCCESS) {
+        if ($result->isError()) {
             @unlink($targetPathName);
-            throw new SongUploadFailedException($this->fileSynchronizer->getSyncError());
+            throw new SongUploadFailedException($result->error);
         }
 
         return $this->fileSynchronizer->getSong();

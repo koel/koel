@@ -9,15 +9,13 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\MockInterface;
 
 class DownloadTest extends TestCase
 {
-    /** @var MockInterface|DownloadService */
-    private $downloadService;
+    private MockInterface|DownloadService $downloadService;
 
     public function setUp(): void
     {
@@ -153,7 +151,7 @@ class DownloadTest extends TestCase
         $user = User::factory()->create();
 
         $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 
     public function testDownloadFavorites(): void
@@ -165,9 +163,7 @@ class DownloadTest extends TestCase
         self::mock(InteractionRepository::class)
             ->shouldReceive('getUserFavorites')
             ->once()
-            ->with(Mockery::on(static function (User $retrievedUser) use ($user): bool {
-                return $retrievedUser->id === $user->id;
-            }))
+            ->with(Mockery::on(static fn (User $retrievedUser) => $retrievedUser->is($user)))
             ->andReturn($favorites);
 
         $this->downloadService

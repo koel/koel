@@ -11,17 +11,12 @@ use Illuminate\Http\Response;
 
 class LastfmController extends Controller
 {
-    private LastfmService $lastfm;
-    private TokenManager $tokenManager;
-
-    /** @var User */
-    private ?Authenticatable $currentUser;
-
-    public function __construct(LastfmService $lastfm, TokenManager $tokenManager, ?Authenticatable $currentUser)
-    {
-        $this->lastfm = $lastfm;
-        $this->tokenManager = $tokenManager;
-        $this->currentUser = $currentUser;
+    /** @param User $currentUser */
+    public function __construct(
+        private LastfmService $lastfm,
+        private TokenManager $tokenManager,
+        private ?Authenticatable $currentUser
+    ) {
     }
 
     public function connect()

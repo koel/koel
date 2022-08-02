@@ -1,0 +1,7 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<form class="" data-testid="login-form" data-v-7d840a46="">
+  <div class="logo" data-v-7d840a46=""><img alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="156" data-v-7d840a46=""></div><input autofocus="" placeholder="Email Address" required="" type="email" data-v-7d840a46=""><input placeholder="Password" required="" type="password" data-v-7d840a46=""><button type="submit" data-v-27deb898="" data-v-7d840a46="">Log In</button>
+</form>
+`;

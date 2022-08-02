@@ -1,5 +1,8 @@
 context('Shortcut Keys', () => {
-  beforeEach(() => cy.$login())
+  beforeEach(() => {
+    cy.$login()
+    cy.$mockPlayback()
+  })
 
   it('focus into Search input when F is pressed', () => {
     cy.get('body').type('f')
@@ -8,7 +11,6 @@ context('Shortcut Keys', () => {
 
   it('shuffles all songs by default when Space is pressed', () => {
     cy.fixture('data.get.200.json').then(data => {
-      cy.$mockPlayback()
       cy.get('body').type(' ')
       cy.$assertSidebarItemActive('Current Queue')
       cy.$assertPlaying()
@@ -17,7 +19,6 @@ context('Shortcut Keys', () => {
   })
 
   it('toggles playback when Space is pressed', () => {
-    cy.$mockPlayback()
     cy.$shuffleSeveralSongs()
     cy.$assertPlaying()
     cy.get('body').type(' ')
@@ -27,22 +28,20 @@ context('Shortcut Keys', () => {
   })
 
   it('moves back and forward when K and J are pressed', () => {
-    cy.$mockPlayback()
     cy.$shuffleSeveralSongs()
     cy.get('body').type('j')
-    cy.get('#queueWrapper tr.song-item:nth-child(2)').should('have.class', 'playing')
+    cy.get('#queueWrapper .song-item:nth-child(2)').should('have.class', 'playing')
     cy.get('body').type('k')
-    cy.get('#queueWrapper tr.song-item:nth-child(1)').should('have.class', 'playing')
+    cy.get('#queueWrapper .song-item:nth-child(1)').should('have.class', 'playing')
     cy.$assertPlaying()
   })
 
   it('toggles favorite when L is pressed', () => {
     cy.intercept('POST', '/api/interaction/like', {})
-    cy.$mockPlayback()
     cy.$shuffleSeveralSongs()
     cy.get('body').type('l')
-    cy.get('#queueWrapper tr.song-item:first-child [data-test=btn-like-liked]').should('be.visible')
+    cy.get('#queueWrapper .song-item:first-child [data-testid=btn-like-liked]').should('be.visible')
     cy.get('body').type('l')
-    cy.get('#queueWrapper tr.song-item:first-child [data-test=btn-like-unliked]').should('be.visible')
+    cy.get('#queueWrapper .song-item:first-child [data-testid=btn-like-unliked]').should('be.visible')
   })
 })

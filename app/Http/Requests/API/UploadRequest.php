@@ -2,17 +2,12 @@
 
 namespace App\Http\Requests\API;
 
-use App\Http\Requests\AbstractRequest;
+use App\Http\Requests\Request;
 use Illuminate\Http\UploadedFile;
 
 /** @property UploadedFile $file */
-class UploadRequest extends AbstractRequest
+class UploadRequest extends Request
 {
-    public function authorize(): bool
-    {
-        return auth()->user()->is_admin;
-    }
-
     /** @return array<mixed> */
     public function rules(): array
     {
@@ -20,7 +15,7 @@ class UploadRequest extends AbstractRequest
             'file' => [
                 'required',
                 'file',
-                'mimetypes:audio/flac,audio/mpeg,audio/ogg,audio/x-flac,audio/x-aac',
+                'mimes:mp3,mpga,aac,flac,ogg,oga,opus',
             ],
         ];
     }

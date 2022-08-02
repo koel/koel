@@ -9,18 +9,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class LoveTrackOnLastfm implements ShouldQueue
 {
-    private LastfmService $lastfm;
-
-    public function __construct(LastfmService $lastfm)
+    public function __construct(private LastfmService $lastfm)
     {
-        $this->lastfm = $lastfm;
     }
 
     public function handle(SongLikeToggled $event): void
     {
         if (
             !$this->lastfm->enabled() ||
-            !$event->user->lastfm_session_key ||
+            !$event->interaction->user->lastfm_session_key ||
             $event->interaction->song->artist->is_unknown
         ) {
             return;
@@ -28,7 +25,7 @@ class LoveTrackOnLastfm implements ShouldQueue
 
         $this->lastfm->toggleLoveTrack(
             LastfmLoveTrackParameters::make($event->interaction->song->title, $event->interaction->song->artist->name),
-            $event->user->lastfm_session_key,
+            $event->interaction->user->lastfm_session_key,
             $event->interaction->liked
         );
     }

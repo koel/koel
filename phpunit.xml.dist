@@ -36,6 +36,7 @@
         <env name="APP_URL" value="http://localhost/"/>
         <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
         <env name="CACHE_DRIVER" value="array"/>
+        <env name="SCOUT_DRIVER" value="tntsearch"/> <!-- "database" driver doesn't support SQLite -->
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
         <env name="DB_CONNECTION" value="sqlite"/>
@@ -44,6 +45,7 @@
         <env name="YOUTUBE_API_KEY" value="foo"/>
         <env name="BROADCAST_DRIVER" value="log"/>
         <env name="CACHE_MEDIA" value="true"/>
+        <env name="MAIL_DRIVER" value="smtp"/>
         <ini name="memory_limit" value="512M"/>
     </php>
 </phpunit>

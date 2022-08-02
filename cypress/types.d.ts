@@ -21,10 +21,13 @@ declare namespace Cypress {
     $mockPlayback(): void
 
     /**
-     * Queue several songs from the All Song screen.
+     * Queue several songs from the "All Songs" screen.
      * @param count
      */
     $shuffleSeveralSongs(count?: number): void
+
+    $getSongRows(): Chainable<JQuery>
+    $getSongRowAt(position: number): Chainable<JQuery>
 
     $assertPlaylistSongCount(name: string, count: number): void
     $assertFavoriteSongCount(count: number): void

@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers\Download;
 
-use App\Http\Requests\Download\Request;
+use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Repositories\InteractionRepository;
 use App\Services\DownloadService;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class FavoritesController extends Controller
 {
-    private InteractionRepository $interactionRepository;
-
-    public function __construct(DownloadService $downloadService, InteractionRepository $interactionRepository)
-    {
-        parent::__construct($downloadService);
-
-        $this->interactionRepository = $interactionRepository;
+    /** @param User $user */
+    public function __construct(
+        private DownloadService $downloadService,
+        private InteractionRepository $interactionRepository,
+        private ?Authenticatable $user
+    ) {
     }
 
-    public function show(Request $request)
+    public function show()
     {
-        $songs = $this->interactionRepository->getUserFavorites($request->user());
+        $songs = $this->interactionRepository->getUserFavorites($this->user);
 
         return response()->download($this->downloadService->from($songs));
     }

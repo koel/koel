@@ -30,6 +30,6 @@ class ImportSearchableEntitiesCommand extends Command
             $this->call('scout:import', ['model' => $entity]);
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 }

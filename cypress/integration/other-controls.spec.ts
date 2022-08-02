@@ -6,10 +6,10 @@ context('Other Controls', () => {
   })
 
   it('likes/unlikes the current song', () => {
-    cy.$findInTestId('other-controls [data-test=like-btn]').as('like').click()
-    cy.get('#queueWrapper tr.song-item:first-child [data-test=btn-like-liked]').should('be.visible')
+    cy.$findInTestId('other-controls [data-testid=like-btn]').as('like').click()
+    cy.get('#queueWrapper .song-item:first-child [data-testid=btn-like-liked]').should('be.visible')
     cy.get('@like').click()
-    cy.get('#queueWrapper tr.song-item:first-child [data-test=btn-like-unliked]').should('be.visible')
+    cy.get('#queueWrapper .song-item:first-child [data-testid=btn-like-unliked]').should('be.visible')
   })
 
   it('toggles the info panel', () => {
@@ -21,10 +21,10 @@ context('Other Controls', () => {
   })
 
   it('toggles the "sound bars" icon when a song is played/paused', () => {
-    cy.$findInTestId('other-controls [data-test=soundbars]').should('be.visible')
+    cy.$findInTestId('other-controls [data-testid=soundbars]').should('be.visible')
     cy.get('body').type(' ')
     cy.$assertNotPlaying()
-    cy.$findInTestId('other-controls [data-test=soundbars]').should('not.exist')
+    cy.$findInTestId('other-controls [data-testid=soundbars]').should('not.exist')
   })
 
   it('toggles the visualizer', () => {

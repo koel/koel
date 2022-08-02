@@ -5,10 +5,11 @@ namespace Tests\Feature;
 use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Mockery;
+use Mockery\MockInterface;
 
 class AlbumThumbnailTest extends TestCase
 {
-    private $mediaMetadataService;
+    private MockInterface $mediaMetadataService;
 
     public function setUp(): void
     {
@@ -37,7 +38,7 @@ class AlbumThumbnailTest extends TestCase
             }))
             ->andReturn($thumbnailUrl);
 
-        $response = $this->getAsUser("api/album/{$createdAlbum->id}/thumbnail");
+        $response = $this->getAs("api/album/{$createdAlbum->id}/thumbnail");
         $response->assertJson(['thumbnailUrl' => $thumbnailUrl]);
     }
 }

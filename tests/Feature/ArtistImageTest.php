@@ -11,8 +11,7 @@ use Mockery\MockInterface;
 
 class ArtistImageTest extends TestCase
 {
-    /** @var MockInterface|MediaMetadataService */
-    private $mediaMetadataService;
+    private MediaMetadataService|MockInterface $mediaMetadataService;
 
     public function setUp(): void
     {
@@ -24,19 +23,19 @@ class ArtistImageTest extends TestCase
     public function testUpdate(): void
     {
         $this->expectsEvents(LibraryChanged::class);
+
+        /** @var User $admin */
+        $admin = User::factory()->admin()->create();
+
         Artist::factory()->create(['id' => 9999]);
 
         $this->mediaMetadataService
             ->shouldReceive('writeArtistImage')
             ->once()
-            ->with(Mockery::on(static function (Artist $artist): bool {
-                return $artist->id === 9999;
-            }), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Artist $artist) => $artist->id === 9999), 'Foo', 'jpeg');
 
-        $this->putAsUser('api/artist/9999/image', [
-            'image' => 'data:image/jpeg;base64,Rm9v',
-        ], User::factory()->admin()->create())
-            ->assertStatus(200);
+        $this->putAs('api/artist/9999/image', ['image' => 'data:image/jpeg;base64,Rm9v'], $admin)
+            ->assertOk();
     }
 
     public function testUpdateNotAllowedForNormalUsers(): void
@@ -47,9 +46,7 @@ class ArtistImageTest extends TestCase
             ->shouldReceive('writeArtistImage')
             ->never();
 
-        $this->putAsUser('api/artist/9999/image', [
-            'image' => 'data:image/jpeg;base64,Rm9v',
-        ], User::factory()->create())
-            ->assertStatus(403);
+        $this->putAs('api/artist/9999/image', ['image' => 'data:image/jpeg;base64,Rm9v'])
+            ->assertForbidden();
     }
 }

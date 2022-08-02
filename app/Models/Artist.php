@@ -3,12 +3,17 @@
 namespace App\Models;
 
 use App\Facades\Util;
+use Carbon\Carbon;
+use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 
 /**
@@ -20,6 +25,11 @@ use Laravel\Scout\Searchable;
  * @property Collection $songs
  * @property bool $has_image If the artist has a (non-default) image
  * @property string|null $image_path Absolute path to the artist's image
+ * @property float|string $length Total length of the artist's songs in seconds (dynamically calculated)
+ * @property string|int $play_count Total number of times the artist has been played (dynamically calculated)
+ * @property string|int $song_count Total number of songs by the artist (dynamically calculated)
+ * @property string|int $album_count Total number of albums by the artist (dynamically calculated)
+ * @property Carbon $created_at
  *
  * @method static self find(int $id)
  * @method static self firstOrCreate(array $where, array $params = [])
@@ -27,12 +37,13 @@ use Laravel\Scout\Searchable;
  * @method static self first()
  * @method static Builder whereName(string $name)
  * @method static Builder orderBy(...$params)
+ * @method static Builder join(...$params)
  */
 class Artist extends Model
 {
     use HasFactory;
     use Searchable;
-    use SupportsDeleteWhereIDsNotIn;
+    use SupportsDeleteWhereValueNotIn;
 
     public const UNKNOWN_ID = 1;
     public const UNKNOWN_NAME = 'Unknown Artist';
@@ -41,11 +52,6 @@ class Artist extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
-
-    public static function getVariousArtist(): self
-    {
-        return static::find(self::VARIOUS_ID);
-    }
 
     /**
      * Get an Artist object from their name.
@@ -68,60 +74,69 @@ class Artist extends Model
         return $this->hasMany(Album::class);
     }
 
-    /**
-     * An artist can have many songs.
-     * Unless he is Rick Astley.
-     */
-    public function songs(): HasManyThrough
+    public function songs(): HasMany
     {
-        return $this->hasManyThrough(Song::class, Album::class);
+        return $this->hasMany(Song::class);
     }
 
-    public function getIsUnknownAttribute(): bool
+    protected function isUnknown(): Attribute
     {
-        return $this->id === self::UNKNOWN_ID;
+        return Attribute::get(fn (): bool => $this->id === self::UNKNOWN_ID);
     }
 
-    public function getIsVariousAttribute(): bool
+    protected function isVarious(): Attribute
     {
-        return $this->id === self::VARIOUS_ID;
+        return Attribute::get(fn (): bool => $this->id === self::VARIOUS_ID);
     }
 
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
      */
-    public function getNameAttribute(string $value): string
+    protected function name(): Attribute
     {
-        return html_entity_decode($value ?: self::UNKNOWN_NAME);
+        return Attribute::get(static fn (string $value): string => html_entity_decode($value) ?: self::UNKNOWN_NAME);
     }
 
     /**
      * Turn the image name into its absolute URL.
      */
-    public function getImageAttribute(?string $value): ?string
+    protected function image(): Attribute
     {
-        return $value ? artist_image_url($value) : null;
+        return Attribute::get(static fn (?string $value): ?string => artist_image_url($value));
     }
 
-    public function getImagePathAttribute(): ?string
+    protected function imagePath(): Attribute
     {
-        if (!$this->has_image) {
-            return null;
-        }
-
-        return artist_image_path(array_get($this->attributes, 'image'));
+        return Attribute::get(fn (): ?string => artist_image_path(Arr::get($this->attributes, 'image')));
     }
 
-    public function getHasImageAttribute(): bool
+    protected function hasImage(): Attribute
     {
-        $image = array_get($this->attributes, 'image');
+        return Attribute::get(function (): bool {
+            $image = Arr::get($this->attributes, 'image');
 
-        if (!$image) {
-            return false;
-        }
+            return $image && file_exists(artist_image_path($image));
+        });
+    }
 
-        return file_exists(artist_image_path($image));
+    public function scopeIsStandard(Builder $query): Builder
+    {
+        return $query->whereNotIn('artists.id', [self::UNKNOWN_ID, self::VARIOUS_ID]);
+    }
+
+    public static function withMeta(User $scopedUser): BuilderContract
+    {
+        return static::query()
+            ->leftJoin('songs', 'artists.id', '=', 'songs.artist_id')
+            ->leftJoin('interactions', static function (JoinClause $join) use ($scopedUser): void {
+                $join->on('interactions.song_id', '=', 'songs.id')
+                    ->where('interactions.user_id', $scopedUser->id);
+            })
+            ->groupBy('artists.id')
+            ->select(['artists.*', DB::raw('CAST(SUM(interactions.play_count) AS INTEGER) AS play_count')])
+            ->withCount('albums AS album_count', 'songs AS song_count')
+            ->withSum('songs AS length', 'length');
     }
 
     /** @return array<mixed> */

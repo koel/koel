@@ -5,17 +5,9 @@ namespace Tests\Feature;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Support\Collection;
 
 class PlaylistSongTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        static::createSampleMediaSet();
-    }
-
     public function testUpdatePlaylistSongs(): void
     {
         $this->doTestUpdatePlaylistSongs();
@@ -33,51 +25,31 @@ class PlaylistSongTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $playlist = Playlist::factory()->for($user)->create();
 
-        /** @var array<Song>|Collection $songs */
-        $songs = Song::orderBy('id')->take(4)->get();
-        $playlist->songs()->attach($songs->pluck('id')->all());
-
-        /** @var Song $removedSong */
-        $removedSong = $songs->pop();
+        $toRemainSongs = Song::factory(3)->create();
+        $toBeRemovedSongs = Song::factory(2)->create();
+        $playlist->songs()->attach($toRemainSongs->merge($toBeRemovedSongs));
 
         $path = $useDeprecatedRoute ? "api/playlist/$playlist->id/sync" : "api/playlist/$playlist->id/songs";
 
-        $this->putAsUser($path, [
-            'songs' => $songs->pluck('id')->all(),
-        ], $user)->assertOk();
+        $this->putAs($path, ['songs' => $toRemainSongs->pluck('id')->all()], $user)->assertNoContent();
 
-        // We should still see the first 3 songs, but not the removed one
-        foreach ($songs as $song) {
-            self::assertDatabaseHas('playlist_song', [
-                'playlist_id' => $playlist->id,
-                'song_id' => $song->id,
-            ]);
-        }
-
-        self::assertDatabaseMissing('playlist_song', [
-            'playlist_id' => $playlist->id,
-            'song_id' => $removedSong->id,
-        ]);
+        self::assertEqualsCanonicalizing(
+            $toRemainSongs->pluck('id')->all(),
+            $playlist->refresh()->songs->pluck('id')->all()
+        );
     }
 
     public function testGetPlaylistSongs(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $playlist = Playlist::factory()->create();
 
         $songs = Song::factory(2)->create();
         $playlist->songs()->saveMany($songs);
 
-        $this->getAsUser("api/playlist/$playlist->id/songs", $user)
+        $this->getAs("api/playlist/$playlist->id/songs", $playlist->user)
             ->assertJson($songs->pluck('id')->all());
     }
 }

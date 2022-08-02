@@ -8,7 +8,7 @@ use App\Repositories\Traits\ByCurrentUser;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
-class InteractionRepository extends AbstractRepository
+class InteractionRepository extends Repository
 {
     use ByCurrentUser;
 

@@ -17,26 +17,24 @@ class Setting extends Model
     use HasFactory;
 
     protected $primaryKey = 'key';
+    protected $keyType = 'string';
     public $timestamps = false;
     protected $guarded = [];
 
-    /**
-     * Get a setting value.
-     */
-    public static function get(string $key) // @phpcs:ignore
-    {
-        $record = self::find($key);
+    protected $casts = ['value' => 'json'];
 
-        return $record ? $record->value : null;
+    public static function get(string $key): mixed
+    {
+        return self::find($key)?->value;
     }
 
     /**
      * Set a setting (no pun) value.
      *
-     * @param string|array $key the key of the setting, or an associative array of settings,
+     * @param array|string $key the key of the setting, or an associative array of settings,
      *                            in which case $value will be discarded
      */
-    public static function set($key, $value = null): void
+    public static function set(array|string $key, $value = ''): void
     {
         if (is_array($key)) {
             foreach ($key as $k => $v) {
@@ -47,22 +45,5 @@ class Setting extends Model
         }
 
         self::updateOrCreate(compact('key'), compact('value'));
-    }
-
-    /**
-     * Serialize the setting value before saving into the database.
-     * This makes settings more flexible.
-     */
-    public function setValueAttribute($value): void
-    {
-        $this->attributes['value'] = serialize($value);
-    }
-
-    /**
-     * Get the unserialized setting value.
-     */
-    public function getValueAttribute($value) // @phpcs:ignore
-    {
-        return unserialize($value);
     }
 }

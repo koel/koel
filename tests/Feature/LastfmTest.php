@@ -31,8 +31,8 @@ class LastfmTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
-        $this->postAsUser('api/lastfm/session-key', ['key' => 'foo'], $user)
-            ->assertStatus(204);
+        $this->postAs('api/lastfm/session-key', ['key' => 'foo'], $user)
+            ->assertNoContent();
 
         self::assertEquals('foo', $user->refresh()->lastfm_session_key);
     }
@@ -120,7 +120,7 @@ class LastfmTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
         self::assertNotNull($user->lastfm_session_key);
-        $this->deleteAsUser('api/lastfm/disconnect', [], $user);
+        $this->deleteAs('api/lastfm/disconnect', [], $user);
         $user->refresh();
 
         self::assertNull($user->lastfm_session_key);

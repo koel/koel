@@ -17,16 +17,11 @@ class StreamerServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(DirectStreamerInterface::class, static function (): DirectStreamerInterface {
-            switch (config('koel.streaming.method')) {
-                case 'x-sendfile':
-                    return new XSendFileStreamer();
-
-                case 'x-accel-redirect':
-                    return new XAccelRedirectStreamer();
-
-                default:
-                    return new PhpStreamer();
-            }
+            return match (config('koel.streaming.method')) {
+                'x-sendfile' => new XSendFileStreamer(),
+                'x-accel-redirect' => new XAccelRedirectStreamer(),
+                default => new PhpStreamer(),
+            };
         });
 
         $this->app->bind(TranscodingStreamerInterface::class, TranscodingStreamer::class);

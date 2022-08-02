@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Throwable;
 
-class ITunesService extends AbstractApiClient implements ApiConsumerInterface
+class ITunesService extends ApiClient implements ApiConsumerInterface
 {
     /**
      * Determines whether to use iTunes services.
