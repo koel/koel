@@ -28,7 +28,6 @@ use Laravel\Scout\Searchable;
  * @property string $id
  * @property int $artist_id
  * @property int $mtime
- * @property int $contributing_artist_id
  * @property ?bool $liked Whether the song is liked by the current user (dynamically calculated)
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
  * @property Carbon $created_at

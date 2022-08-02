@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cdcb59dddec768e6cc821e1f6dffb72f",
+    "content-hash": "310243edd4bc8d4f2184ff38520a52dd",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -639,35 +639,38 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "2.13.9",
+            "version": "3.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "c480849ca3ad6706a39c970cdfe6888fa8a058b8"
+                "reference": "9f79d4650430b582f4598fe0954ef4d52fbc0a8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/c480849ca3ad6706a39c970cdfe6888fa8a058b8",
-                "reference": "c480849ca3ad6706a39c970cdfe6888fa8a058b8",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/9f79d4650430b582f4598fe0954ef4d52fbc0a8a",
+                "reference": "9f79d4650430b582f4598fe0954ef4d52fbc0a8a",
                 "shasum": ""
             },
             "require": {
-                "doctrine/cache": "^1.0|^2.0",
+                "composer-runtime-api": "^2",
+                "doctrine/cache": "^1.11|^2.0",
                 "doctrine/deprecations": "^0.5.3|^1",
                 "doctrine/event-manager": "^1.0",
-                "ext-pdo": "*",
-                "php": "^7.1 || ^8"
+                "php": "^7.3 || ^8.0",
+                "psr/cache": "^1|^2|^3",
+                "psr/log": "^1|^2|^3"
             },
             "require-dev": {
                 "doctrine/coding-standard": "9.0.0",
-                "jetbrains/phpstorm-stubs": "2021.1",
-                "phpstan/phpstan": "1.4.6",
-                "phpunit/phpunit": "^7.5.20|^8.5|9.5.16",
+                "jetbrains/phpstorm-stubs": "2022.1",
+                "phpstan/phpstan": "1.7.13",
+                "phpstan/phpstan-strict-rules": "^1.2",
+                "phpunit/phpunit": "9.5.20",
                 "psalm/plugin-phpunit": "0.16.1",
-                "squizlabs/php_codesniffer": "3.6.2",
-                "symfony/cache": "^4.4",
-                "symfony/console": "^2.0.5|^3.0|^4.0|^5.0",
-                "vimeo/psalm": "4.22.0"
+                "squizlabs/php_codesniffer": "3.7.0",
+                "symfony/cache": "^5.2|^6.0",
+                "symfony/console": "^2.7|^3.0|^4.0|^5.0|^6.0",
+                "vimeo/psalm": "4.23.0"
             },
             "suggest": {
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
@@ -678,7 +681,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Doctrine\\DBAL\\": "lib/Doctrine/DBAL"
+                    "Doctrine\\DBAL\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -721,14 +724,13 @@
                 "queryobject",
                 "sasql",
                 "sql",
-                "sqlanywhere",
                 "sqlite",
                 "sqlserver",
                 "sqlsrv"
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/2.13.9"
+                "source": "https://github.com/doctrine/dbal/tree/3.3.7"
             },
             "funding": [
                 {
@@ -744,7 +746,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-02T20:28:55+00:00"
+            "time": "2022-06-13T21:43:03+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -1900,26 +1902,29 @@
         },
         {
             "name": "jackiedo/dotenv-editor",
-            "version": "1.1.2",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JackieDo/Laravel-Dotenv-Editor.git",
-                "reference": "44062c804e6fa777c01d9fba3bd8fe9a57ec25f0"
+                "reference": "0971d876567b4bcf96078f8e55700b4726431704"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JackieDo/Laravel-Dotenv-Editor/zipball/44062c804e6fa777c01d9fba3bd8fe9a57ec25f0",
-                "reference": "44062c804e6fa777c01d9fba3bd8fe9a57ec25f0",
+                "url": "https://api.github.com/repos/JackieDo/Laravel-Dotenv-Editor/zipball/0971d876567b4bcf96078f8e55700b4726431704",
+                "reference": "0971d876567b4bcf96078f8e55700b4726431704",
                 "shasum": ""
             },
             "require": {
-                "illuminate/config": ">=5.0",
-                "illuminate/container": ">=5.0",
-                "illuminate/support": ">=5.0",
-                "php": ">=5.4.0"
+                "illuminate/console": "^9.0|^8.0|7.0|^6.0|^5.8",
+                "illuminate/contracts": "^9.0|^8.0|7.0|^6.0|^5.8",
+                "illuminate/support": "^9.0|^8.0|7.0|^6.0|^5.8",
+                "jackiedo/path-helper": "^1.0"
             },
             "type": "library",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                },
                 "laravel": {
                     "providers": [
                         "Jackiedo\\DotenvEditor\\DotenvEditorServiceProvider"
@@ -1931,7 +1936,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Jackiedo\\DotenvEditor\\": "src/Jackiedo/DotenvEditor"
+                    "Jackiedo\\DotenvEditor\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1944,7 +1949,7 @@
                     "email": "anhvudo@gmail.com"
                 }
             ],
-            "description": "The .env file editor tool for Laravel 5+",
+            "description": "The .env file editor tool for Laravel 5.8+",
             "keywords": [
                 "dotenv",
                 "dotenv-editor",
@@ -1952,9 +1957,61 @@
             ],
             "support": {
                 "issues": "https://github.com/JackieDo/Laravel-Dotenv-Editor/issues",
-                "source": "https://github.com/JackieDo/Laravel-Dotenv-Editor/tree/master"
+                "source": "https://github.com/JackieDo/Laravel-Dotenv-Editor/tree/2.0.1"
             },
-            "time": "2020-06-07T00:55:45+00:00"
+            "time": "2022-03-10T17:04:52+00:00"
+        },
+        {
+            "name": "jackiedo/path-helper",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/JackieDo/Path-Helper.git",
+                "reference": "43179cfa17d01f94f4889f286430c2cec1071fb2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/JackieDo/Path-Helper/zipball/43179cfa17d01f94f4889f286430c2cec1071fb2",
+                "reference": "43179cfa17d01f94f4889f286430c2cec1071fb2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Jackiedo\\PathHelper\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jackie Do",
+                    "email": "anhvudo@gmail.com"
+                }
+            ],
+            "description": "Helper class for working with local paths in PHP",
+            "homepage": "https://github.com/JackieDo/path-helper",
+            "keywords": [
+                "helper",
+                "helpers",
+                "library",
+                "path",
+                "paths",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/JackieDo/Path-Helper/issues",
+                "source": "https://github.com/JackieDo/Path-Helper/tree/v1.0.0"
+            },
+            "time": "2022-03-07T20:28:08+00:00"
         },
         {
             "name": "james-heinrich/getid3",
@@ -4368,6 +4425,55 @@
                 }
             ],
             "time": "2022-01-05T17:46:08+00:00"
+        },
+        {
+            "name": "psr/cache",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/cache.git",
+                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
+                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for caching libraries",
+            "keywords": [
+                "cache",
+                "psr",
+                "psr-6"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/cache/tree/3.0.0"
+            },
+            "time": "2021-02-03T23:26:27+00:00"
         },
         {
             "name": "psr/container",
