@@ -12,6 +12,7 @@ use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Database\DatabaseManager as DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
@@ -46,10 +47,12 @@ class InitCommand extends Command
         $this->info('📙  ' . config('koel.misc.docs_url') . PHP_EOL);
 
         if ($this->inNoInteractionMode()) {
-            $this->info('Running in no-interaction mode');
+            $this->components->info('Running in no-interaction mode');
         }
 
         try {
+            $this->clearCaches();
+            $this->maybeCopyEnvFile();
             $this->maybeGenerateAppKey();
             $this->maybeSetUpDatabase();
             $this->migrateDatabase();
@@ -59,8 +62,12 @@ class InitCommand extends Command
         } catch (Throwable $e) {
             Log::error($e);
 
-            $this->error("Oops! Koel installation or upgrade didn't finish successfully.");
-            $this->error('Please try again, or visit ' . config('koel.misc.docs_url') . ' for manual installation.');
+            $this->components->error("Oops! Koel installation or upgrade didn't finish successfully.");
+
+            $this->error('Please try again, or visit '
+                . config('koel.misc.docs_url')
+                . ' for other options.');
+
             $this->error('😥 Sorry for this. You deserve better.');
 
             return self::FAILURE;
@@ -89,6 +96,35 @@ class InitCommand extends Command
         $this->comment('Thanks for using Koel. You rock! 🤘');
 
         return self::SUCCESS;
+    }
+
+    private function clearCaches(): void
+    {
+        $this->components->info('Clearing caches');
+        $this->artisan->call('config:clear');
+        $this->artisan->call('cache:clear');
+    }
+
+    private function maybeCopyEnvFile(): void
+    {
+        if (!file_exists(base_path('.env'))) {
+            $this->components->info('Copying .env file');
+            copy(base_path('.env.example'), base_path('.env'));
+        } else {
+            $this->components->info('.env file exists -- skipping');
+        }
+    }
+
+    private function maybeGenerateAppKey(): void
+    {
+        if (!config('app.key')) {
+            $this->components->info('Generating app key');
+            $this->artisan->call('key:generate');
+        } else {
+            $this->components->info('App key exists -- skipping');
+        }
+
+        $this->components->info('Using app key: ' . Str::limit(config('app.key'), 16));
     }
 
     /**
@@ -192,17 +228,7 @@ class InitCommand extends Command
                 return;
             }
 
-            $this->error('The path does not exist or not readable. Try again.');
-        }
-    }
-
-    private function maybeGenerateAppKey(): void
-    {
-        if (!config('app.key')) {
-            $this->info('Generating app key');
-            $this->artisan->call('key:generate');
-        } else {
-            $this->comment('App key exists -- skipping');
+            $this->components->error('The path does not exist or not readable. Try again.');
         }
     }
 
@@ -210,10 +236,10 @@ class InitCommand extends Command
     {
         if (!User::count()) {
             $this->setUpAdminAccount();
-            $this->info('Seeding initial data');
+            $this->components->info('Seeding initial data');
             $this->artisan->call('db:seed', ['--force' => true]);
         } else {
-            $this->comment('Data seeded -- skipping');
+            $this->components->info('Data seeded -- skipping');
         }
     }
 
@@ -226,7 +252,7 @@ class InitCommand extends Command
             // Doing so will just end up with a huge amount of "failed to connect" logs.
             // We do retry a little, though, just in case there's some kind of temporary failure.
             if ($this->inNoInteractionMode() && $attemptCount >= self::NON_INTERACTION_MAX_ATTEMPT_COUNT) {
-                $this->warn("Maximum database connection attempts reached. Giving up.");
+                $this->components->warn("Maximum database connection attempts reached. Giving up.");
                 break;
             }
 
@@ -251,9 +277,12 @@ class InitCommand extends Command
                         $attemptCount,
                         self::NON_INTERACTION_MAX_ATTEMPT_COUNT
                     );
-                    $this->warn($warning);
+                    $this->components->warn($warning);
                 } else {
-                    $this->warn(sprintf("%sKoel cannot connect to the database. Let's set it up.", PHP_EOL));
+                    $this->components->warn(
+                        sprintf("%sKoel cannot connect to the database. Let's set it up.", PHP_EOL)
+                    );
+
                     $this->setUpDatabase();
                 }
             }
@@ -262,7 +291,7 @@ class InitCommand extends Command
 
     private function migrateDatabase(): void
     {
-        $this->info('Migrating database');
+        $this->components->info('Migrating database');
         $this->artisan->call('migrate', ['--force' => true]);
 
         // Clear the media cache, just in case we did any media-related migration
@@ -275,7 +304,7 @@ class InitCommand extends Command
             return;
         }
 
-        $this->info('Now to front-end stuff');
+        $this->components->info('Now to front-end stuff');
 
         $runOkOrThrow = static function (string $command): void {
             passthru($command, $status);
@@ -283,8 +312,8 @@ class InitCommand extends Command
         };
 
         $runOkOrThrow('yarn install --colors');
-        $this->info('└── Compiling assets');
-        $runOkOrThrow('yarn build --colors');
+        $this->components->info('Compiling assets');
+        $runOkOrThrow('yarn build');
     }
 
     private function setMediaPathFromEnvFile(): void
@@ -297,7 +326,7 @@ class InitCommand extends Command
             if (self::isValidMediaPath($path)) {
                 Setting::set('media_path', $path);
             } else {
-                $this->warn(sprintf('The path %s does not exist or not readable. Skipping.', $path));
+                $this->components->warn(sprintf('The path %s does not exist or not readable. Skipping.', $path));
             }
         });
     }

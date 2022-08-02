@@ -13,7 +13,9 @@ class RenameContributingArtistId extends Migration
             if (DB::getDriverName() !== 'sqlite') { // @phpstan-ignore-line
                 $table->dropForeign(['contributing_artist_id']);
             }
+        });
 
+        Schema::table('songs', static function (Blueprint $table): void {
             $table->renameColumn('contributing_artist_id', 'artist_id');
             $table->foreign('artist_id')->references('id')->on('artists')->onDelete('cascade');
         });

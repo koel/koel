@@ -21,8 +21,8 @@ class Router {
       '/youtube': () => loadMainView('YouTube'),
       '/visualizer': () => loadMainView('Visualizer'),
       '/profile': () => loadMainView('Profile'),
-      '/album/(\\d+)': async (id: string) => loadMainView('Album', parseInt(id)),
-      '/artist/(\\d+)': async (id: string) => loadMainView('Artist', parseInt(id)),
+      '/album/(\\d+)': (id: string) => loadMainView('Album', parseInt(id)),
+      '/artist/(\\d+)': (id: string) => loadMainView('Artist', parseInt(id)),
       '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
       '/song/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})': (id: string) => {
         eventBus.emit('SONG_QUEUED_FROM_ROUTE', id)
