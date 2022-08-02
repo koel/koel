@@ -2,18 +2,22 @@
 
 namespace Tests\Integration\Services;
 
-use App\Events\AlbumInformationFetched;
-use App\Events\ArtistInformationFetched;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\LastfmService;
 use App\Services\MediaInformationService;
+use App\Services\MediaMetadataService;
+use App\Values\AlbumInformation;
+use App\Values\ArtistInformation;
 use Mockery;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class MediaInformationServiceTest extends TestCase
 {
-    private $lastFmService;
+    private LastfmService|MockInterface|LegacyMockInterface $lastFmService;
+    private MediaMetadataService|LegacyMockInterface|MockInterface $mediaMetadataService;
     private MediaInformationService $mediaInformationService;
 
     public function setUp(): void
@@ -21,48 +25,76 @@ class MediaInformationServiceTest extends TestCase
         parent::setUp();
 
         $this->lastFmService = Mockery::mock(LastfmService::class);
-        $this->mediaInformationService = new MediaInformationService($this->lastFmService);
+        $this->mediaMetadataService = Mockery::mock(MediaMetadataService::class);
+
+        $this->mediaInformationService = new MediaInformationService($this->lastFmService, $this->mediaMetadataService);
     }
 
     public function testGetAlbumInformation(): void
     {
-        $this->expectsEvents(AlbumInformationFetched::class);
-
         /** @var Album $album */
         $album = Album::factory()->create();
+        $info = AlbumInformation::make();
 
         $this->lastFmService
             ->shouldReceive('getAlbumInformation')
             ->once()
-            ->with($album->name, $album->artist->name)
-            ->andReturn(['foo' => 'bar']);
+            ->with($album)
+            ->andReturn($info);
 
-        $info = $this->mediaInformationService->getAlbumInformation($album);
+        self::assertSame($info, $this->mediaInformationService->getAlbumInformation($album));
+    }
 
-        self::assertEquals([
-            'foo' => 'bar',
-            'cover' => $album->cover,
-        ], $info);
+    public function testGetAlbumInformationTriesDownloadingCover(): void
+    {
+        /** @var Album $album */
+        $album = Album::factory()->create(['cover' => '']);
+        $info = AlbumInformation::make();
+
+        $this->lastFmService
+            ->shouldReceive('getAlbumInformation')
+            ->once()
+            ->with($album)
+            ->andReturn($info);
+
+        $this->mediaMetadataService
+            ->shouldReceive('tryDownloadAlbumCover')
+            ->with($album);
+
+        self::assertSame($info, $this->mediaInformationService->getAlbumInformation($album));
     }
 
     public function testGetArtistInformation(): void
     {
-        $this->expectsEvents(ArtistInformationFetched::class);
-
         /** @var Artist $artist */
         $artist = Artist::factory()->create();
+        $info = ArtistInformation::make();
 
         $this->lastFmService
             ->shouldReceive('getArtistInformation')
             ->once()
-            ->with($artist->name)
-            ->andReturn(['foo' => 'bar']);
+            ->with($artist)
+            ->andReturn($info);
 
-        $info = $this->mediaInformationService->getArtistInformation($artist);
+        self::assertSame($info, $this->mediaInformationService->getArtistInformation($artist));
+    }
 
-        self::assertEquals([
-            'foo' => 'bar',
-            'image' => $artist->image,
-        ], $info);
+    public function testGetArtistInformationTriesDownloadingImage(): void
+    {
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create(['image' => '']);
+        $info = ArtistInformation::make();
+
+        $this->lastFmService
+            ->shouldReceive('getArtistInformation')
+            ->once()
+            ->with($artist)
+            ->andReturn($info);
+
+        $this->mediaMetadataService
+            ->shouldReceive('tryDownloadArtistImage')
+            ->with($artist);
+
+        self::assertSame($info, $this->mediaInformationService->getArtistInformation($artist));
     }
 }

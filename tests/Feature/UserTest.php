@@ -7,14 +7,9 @@ use Illuminate\Support\Facades\Hash;
 
 class UserTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function testNonAdminCannotCreateUser(): void
     {
-        $this->postAsUser('api/user', [
+        $this->postAs('api/user', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'secret',
@@ -24,15 +19,17 @@ class UserTest extends TestCase
 
     public function testAdminCreatesUser(): void
     {
-        $this->postAsUser('api/user', [
+        /** @var User $admin */
+        $admin = User::factory()->admin()->create();
+
+        $this->postAs('api/user', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'secret',
             'is_admin' => true,
-        ], User::factory()->admin()->create())
-            ->assertOk();
+        ], $admin)
+            ->assertSuccessful();
 
-        /** @var User $user */
         $user = User::firstWhere('email', 'bar@baz.com');
 
         self::assertTrue(Hash::check('secret', $user->password));
@@ -43,15 +40,19 @@ class UserTest extends TestCase
 
     public function testAdminUpdatesUser(): void
     {
+        /** @var User $admin */
+        $admin = User::factory()->admin()->create();
+
         /** @var User $user */
         $user = User::factory()->admin()->create(['password' => 'secret']);
 
-        $this->putAsUser("api/user/$user->id", [
+        $this->putAs("api/user/$user->id", [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'new-secret',
             'is_admin' => false,
-        ], User::factory()->admin()->create());
+        ], $admin)
+            ->assertSuccessful();
 
         $user->refresh();
 
@@ -65,10 +66,12 @@ class UserTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
+
+        /** @var User $admin */
         $admin = User::factory()->admin()->create();
 
-        $this->deleteAsUser("api/user/$user->id", [], $admin);
-        self::assertDatabaseMissing('users', ['id' => $user->id]);
+        $this->deleteAs("api/user/$user->id", [], $admin);
+        self::assertModelMissing($user);
     }
 
     public function testSeppukuNotAllowed(): void
@@ -77,9 +80,7 @@ class UserTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         // A user can't delete himself
-        $this->deleteAsUser("api/user/$admin->id", [], $admin)
-            ->assertStatus(403);
-
-        self::assertDatabaseHas('users', ['id' => $admin->id]);
+        $this->deleteAs("api/user/$admin->id", [], $admin)->assertForbidden();
+        self::assertModelExists($admin);
     }
 }

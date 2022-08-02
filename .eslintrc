@@ -1,19 +1,37 @@
 {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
+  "parser": "vue-eslint-parser",
+  "env": {
+    "browser": true
+  },
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "ecmaVersion": 2020
+  },
+  "extends": [
+    "plugin:vue/vue3-recommended"
+  ],
+  "ignorePatterns": [
+    "cypress/fixtures",
+    "cypress/screenshots",
+    "resources/assets/js/tests/__coverage__"
+  ],
   "plugins": [
     "@typescript-eslint"
   ],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "globals": {
+    "KOEL_ENV": "readonly",
+    "FileReader": "readonly",
+    "defineProps": "readonly",
+    "defineEmits": "readonly",
+    "defineExpose": "readonly",
+    "withDefaults": "readonly"
+  },
   "rules": {
     "camelcase": 0,
     "no-multi-str": 0,
     "no-empty": 0,
     "quotes": 0,
+    "no-use-before-define": 0,
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/camelcase": 0,
     "@typescript-eslint/member-delimiter-style": 0,
@@ -21,6 +39,13 @@
     "@typescript-eslint/no-inferrable-types": 0,
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
-    "@typescript-eslint/ban-ts-ignore": 0
+    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/no-empty-function": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "standard/no-callback-literal": 0,
+    "vue/valid-v-on": 0,
+    "vue/no-side-effects-in-computed-properties": 0,
+    "vue/max-attributes-per-line": 0,
+    "vue/no-v-html": 0
   }
 }

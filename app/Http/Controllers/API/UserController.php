@@ -2,48 +2,56 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Contracts\Hashing\Hasher as Hash;
+use App\Repositories\UserRepository;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
-    private Hash $hash;
-
-    public function __construct(Hash $hash)
+    public function __construct(private UserRepository $userRepository, private UserService $userService)
     {
-        $this->hash = $hash;
+    }
+
+    public function index()
+    {
+        $this->authorize('admin', User::class);
+
+        return UserResource::collection($this->userRepository->getAll());
     }
 
     public function store(UserStoreRequest $request)
     {
-        return response()->json(User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $this->hash->make($request->password),
-            'is_admin' => $request->is_admin,
-        ]));
+        $this->authorize('admin', User::class);
+
+        return UserResource::make($this->userService->createUser(
+            $request->name,
+            $request->email,
+            $request->password,
+            $request->get('is_admin') ?: false
+        ));
     }
 
     public function update(UserUpdateRequest $request, User $user)
     {
-        $data = $request->only('name', 'email', 'is_admin');
+        $this->authorize('admin', User::class);
 
-        if ($request->password) {
-            $data['password'] = $this->hash->make($request->password);
-        }
-
-        $user->update($data);
-
-        return response()->json($user);
+        return UserResource::make($this->userService->updateUser(
+            $user,
+            $request->name,
+            $request->email,
+            $request->password,
+            $request->get('is_admin') ?: false
+        ));
     }
 
     public function destroy(User $user)
     {
         $this->authorize('destroy', $user);
-
-        $user->delete();
+        $this->userService->deleteUser($user);
 
         return response()->noContent();
     }

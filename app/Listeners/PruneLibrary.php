@@ -2,19 +2,16 @@
 
 namespace App\Listeners;
 
-use App\Services\MediaSyncService;
+use App\Services\LibraryManager;
 
 class PruneLibrary
 {
-    private MediaSyncService $mediaSyncService;
-
-    public function __construct(MediaSyncService $mediaSyncService)
+    public function __construct(private LibraryManager $libraryManager)
     {
-        $this->mediaSyncService = $mediaSyncService;
     }
 
     public function handle(): void
     {
-        $this->mediaSyncService->prune();
+        $this->libraryManager->prune();
     }
 }

@@ -13,40 +13,33 @@ use InvalidArgumentException;
 
 class DownloadService
 {
-    private S3Service $s3Service;
-
-    public function __construct(S3Service $s3Service)
+    public function __construct(private S3Service $s3Service)
     {
-        $this->s3Service = $s3Service;
     }
 
     /**
      * Generic method to generate a download archive from various source types.
      *
-     * @param Song|Collection|Album|Artist|Playlist $mixed
-     *
-     * @throws InvalidArgumentException
-     *
      * @return string Full path to the generated archive
      */
-    public function from($mixed): string
+    public function from(Playlist|Song|Album|Artist|Collection $downloadable): string
     {
-        switch (get_class($mixed)) {
+        switch (get_class($downloadable)) {
             case Song::class:
-                return $this->fromSong($mixed);
+                return $this->fromSong($downloadable);
 
             case Collection::class:
             case EloquentCollection::class:
-                return $this->fromMultipleSongs($mixed);
+                return $this->fromMultipleSongs($downloadable);
 
             case Album::class:
-                return $this->fromAlbum($mixed);
+                return $this->fromAlbum($downloadable);
 
             case Artist::class:
-                return $this->fromArtist($mixed);
+                return $this->fromArtist($downloadable);
 
             case Playlist::class:
-                return $this->fromPlaylist($mixed);
+                return $this->fromPlaylist($downloadable);
         }
 
         throw new InvalidArgumentException('Unsupported download type.');

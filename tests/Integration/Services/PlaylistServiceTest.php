@@ -23,7 +23,7 @@ class PlaylistServiceTest extends TestCase
         $user = User::factory()->create();
 
         $playlist = $this->service->createPlaylist('foo', $user, []);
-        self::assertFalse($playlist->getIsSmartAttribute());
+        self::assertFalse($playlist->is_smart);
     }
 
     public function testCreateSmartPlaylist(): void
@@ -41,6 +41,6 @@ class PlaylistServiceTest extends TestCase
         $user = User::factory()->create();
 
         $playlist = $this->service->createPlaylist('foo', $user, [], $rules);
-        self::assertTrue($playlist->getIsSmartAttribute());
+        self::assertTrue($playlist->is_smart);
     }
 }

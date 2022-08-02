@@ -1,8 +1,10 @@
-name: e2e
+name: End to End Tests
 on:
   push:
     branches:
       - master
+      # @fixme Tmp.disable until ready
+      # - next
   pull_request:
   workflow_dispatch:
 jobs:
@@ -19,11 +21,11 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.1
           tools: composer:v2
           extensions: pdo_sqlite
       - name: Install PHP dependencies
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@v2
         with:
           composer-options: --prefer-dist
       - name: Generate app key
@@ -32,12 +34,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - name: Install JavaScript dependencies
-        run: |
-            cd ./resources/assets && yarn install --no-progress
-            cd ../.. && yarn install --no-progress
-      - name: Lint
-        run: yarn lint
       - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:

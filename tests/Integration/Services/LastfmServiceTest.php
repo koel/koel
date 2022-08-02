@@ -25,16 +25,16 @@ class LastfmServiceTest extends TestCase
         ]);
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
-        $info = $api->getArtistInformation($artist->name);
+        $info = $api->getArtistInformation($artist);
 
         self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot',
-            'image' => 'http://foo.bar/extralarge.jpg',
+            'image' => null,
             'bio' => [
                 'summary' => 'Quisque ut nisi.',
                 'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.',
             ],
-        ], $info);
+        ], $info->toArray());
 
         self::assertNotNull(cache()->get('0aff3bc1259154f0e9db860026cda7a6'));
     }
@@ -51,7 +51,7 @@ class LastfmServiceTest extends TestCase
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
 
-        self::assertNull($api->getArtistInformation($artist->name));
+        self::assertNull($api->getArtistInformation($artist));
     }
 
     public function testGetAlbumInformation(): void
@@ -60,10 +60,7 @@ class LastfmServiceTest extends TestCase
         $artist = Artist::factory()->create(['name' => 'bar']);
 
         /** @var Album $album */
-        $album = Album::factory()->create([
-            'artist_id' => $artist->id,
-            'name' => 'foo',
-        ]);
+        $album = Album::factory()->for($artist)->create(['name' => 'foo']);
 
         /** @var Client $client */
         $client = Mockery::mock(Client::class, [
@@ -71,20 +68,20 @@ class LastfmServiceTest extends TestCase
         ]);
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
-        $info = $api->getAlbumInformation($album->name, $album->artist->name);
+        $info = $api->getAlbumInformation($album);
 
         self::assertEquals([
             'url' => 'https://www.last.fm/music/Kamelot/Epica',
-            'image' => 'http://foo.bar/extralarge.jpg',
+            'cover' => null,
             'tracks' => [
                 [
                     'title' => 'Track 1',
-                    'url' => 'http://foo/track1',
+                    'url' => 'https://foo/track1',
                     'length' => 100,
                 ],
                 [
                     'title' => 'Track 2',
-                    'url' => 'http://foo/track2',
+                    'url' => 'https://foo/track2',
                     'length' => 150,
                 ],
             ],
@@ -92,7 +89,7 @@ class LastfmServiceTest extends TestCase
                 'summary' => 'Quisque ut nisi.',
                 'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.',
             ],
-        ], $info);
+        ], $info->toArray());
 
         self::assertNotNull(cache()->get('fca889d13b3222589d7d020669cc5a38'));
     }
@@ -109,6 +106,6 @@ class LastfmServiceTest extends TestCase
 
         $api = new LastfmService($client, app(Cache::class), app(Logger::class));
 
-        self::assertNull($api->getAlbumInformation($album->name, $album->artist->name));
+        self::assertNull($api->getAlbumInformation($album));
     }
 }

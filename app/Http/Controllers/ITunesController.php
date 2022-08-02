@@ -10,13 +10,8 @@ use Illuminate\Http\Response;
 
 class ITunesController extends Controller
 {
-    private ITunesService $iTunesService;
-    private TokenManager $tokenManager;
-
-    public function __construct(ITunesService $iTunesService, TokenManager $tokenManager)
+    public function __construct(private ITunesService $iTunesService, private TokenManager $tokenManager)
     {
-        $this->iTunesService = $iTunesService;
-        $this->tokenManager = $tokenManager;
     }
 
     public function viewSong(ViewSongOnITunesRequest $request, Album $album)

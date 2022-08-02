@@ -11,20 +11,16 @@ class ChangePasswordCommand extends Command
 {
     use AskForPassword;
 
-    protected $signature = "koel:admin:change-password 
+    protected $signature = "koel:admin:change-password
                             {email? : The user's email. If empty, will get the default admin user.}";
     protected $description = "Change a user's password";
 
-    private Hash $hash;
-
-    public function __construct(Hash $hash)
+    public function __construct(private Hash $hash)
     {
         parent::__construct();
-
-        $this->hash = $hash;
     }
 
-    public function handle(): void
+    public function handle(): int
     {
         $email = $this->argument('email');
 
@@ -34,7 +30,7 @@ class ChangePasswordCommand extends Command
         if (!$user) {
             $this->error('The user account cannot be found.');
 
-            return;
+            return self::FAILURE;
         }
 
         $this->comment("Changing the user's password (ID: $user->id, email: $user->email)");
@@ -43,5 +39,7 @@ class ChangePasswordCommand extends Command
         $user->save();
 
         $this->comment('Alrighty, the new password has been saved. Enjoy! 👌');
+
+        return self::SUCCESS;
     }
 }

@@ -6,12 +6,14 @@ use App\Http\Middleware\ForceHttps;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use Mockery;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class ForceHttpsTest extends TestCase
 {
-    private $url;
+    private LegacyMockInterface|UrlGenerator|MockInterface $url;
     private ForceHttps $middleware;
 
     public function setUp(): void
@@ -40,10 +42,7 @@ class ForceHttpsTest extends TestCase
             );
 
         $response = Mockery::mock(Response::class);
-
-        $next = static function () use ($response) {
-            return $response;
-        };
+        $next = static fn () => $response;
 
         self::assertSame($response, $this->middleware->handle($request, $next));
     }
@@ -58,10 +57,7 @@ class ForceHttpsTest extends TestCase
         $request->shouldReceive('setTrustedProxies')->never();
 
         $response = Mockery::mock(Response::class);
-
-        $next = static function () use ($response) {
-            return $response;
-        };
+        $next = static fn () => $response;
 
         self::assertSame($response, $this->middleware->handle($request, $next));
     }

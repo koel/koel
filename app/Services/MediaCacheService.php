@@ -11,11 +11,8 @@ class MediaCacheService
 {
     private const CACHE_KEY = 'media_cache';
 
-    private Cache $cache;
-
-    public function __construct(Cache $cache)
+    public function __construct(private Cache $cache)
     {
-        $this->cache = $cache;
     }
 
     /**

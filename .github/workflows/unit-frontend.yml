@@ -1,0 +1,46 @@
+name: Frontend Unit Tests
+on:
+  pull_request:
+    branches:
+      - master
+      - next
+    paths:
+      - resources/assets/**
+      - .github/workflows/unit-frontend.yml
+  push:
+    branches:
+      - master
+      - next
+    paths:
+      - resources/assets/**
+      - .github/workflows/unit-frontend.yml
+  workflow_dispatch:
+    branches:
+      - master
+      - next
+    paths:
+      - resources/assets/**
+      - .github/workflows/unit-frontend.yml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [ 14, 16, 17 ] # 15 conflicts with @typescript-eslint/eslint-plugin@5
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Lint
+        run: yarn lint
+      - name: Run unit tests
+        run: yarn test:unit
+      - name: Collect coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

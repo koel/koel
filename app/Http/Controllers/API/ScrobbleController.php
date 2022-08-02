@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ScrobbleStoreRequest;
 use App\Jobs\ScrobbleJob;
 use App\Models\Song;
@@ -10,12 +11,9 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class ScrobbleController extends Controller
 {
-    /** @var User */
-    private ?Authenticatable $currentUser;
-
-    public function __construct(?Authenticatable $currentUser)
+    /** @param User $currentUser */
+    public function __construct(private ?Authenticatable $currentUser)
     {
-        $this->currentUser = $currentUser;
     }
 
     public function store(ScrobbleStoreRequest $request, Song $song)

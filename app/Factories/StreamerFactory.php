@@ -11,21 +11,12 @@ use App\Services\TranscodingService;
 
 class StreamerFactory
 {
-    private DirectStreamerInterface $directStreamer;
-    private TranscodingStreamerInterface $transcodingStreamer;
-    private ObjectStorageStreamerInterface $objectStorageStreamer;
-    private TranscodingService $transcodingService;
-
     public function __construct(
-        DirectStreamerInterface $directStreamer,
-        TranscodingStreamerInterface $transcodingStreamer,
-        ObjectStorageStreamerInterface $objectStorageStreamer,
-        TranscodingService $transcodingService
+        private DirectStreamerInterface $directStreamer,
+        private TranscodingStreamerInterface $transcodingStreamer,
+        private ObjectStorageStreamerInterface $objectStorageStreamer,
+        private TranscodingService $transcodingService
     ) {
-        $this->directStreamer = $directStreamer;
-        $this->transcodingStreamer = $transcodingStreamer;
-        $this->objectStorageStreamer = $objectStorageStreamer;
-        $this->transcodingService = $transcodingService;
     }
 
     public function createStreamer(

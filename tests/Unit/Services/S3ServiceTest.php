@@ -4,7 +4,6 @@ namespace Tests\Unit\Services;
 
 use App\Models\Song;
 use App\Repositories\SongRepository;
-use App\Services\Helper;
 use App\Services\MediaMetadataService;
 use App\Services\S3Service;
 use Aws\CommandInterface;
@@ -12,15 +11,14 @@ use Aws\S3\S3ClientInterface;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Cache\Repository as Cache;
 use Mockery;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class S3ServiceTest extends TestCase
 {
-    private $s3Client;
-    private $cache;
-    private $metadataService;
-    private $songRepository;
-    private $helper;
+    private S3ClientInterface|LegacyMockInterface|MockInterface $s3Client;
+    private Cache|LegacyMockInterface|MockInterface $cache;
     private S3Service $s3Service;
 
     public function setUp(): void
@@ -29,17 +27,11 @@ class S3ServiceTest extends TestCase
 
         $this->s3Client = Mockery::mock(S3ClientInterface::class);
         $this->cache = Mockery::mock(Cache::class);
-        $this->metadataService = Mockery::mock(MediaMetadataService::class);
-        $this->songRepository = Mockery::mock(SongRepository::class);
-        $this->helper = Mockery::mock(Helper::class);
 
-        $this->s3Service = new S3Service(
-            $this->s3Client,
-            $this->cache,
-            $this->metadataService,
-            $this->songRepository,
-            $this->helper
-        );
+        $metadataService = Mockery::mock(MediaMetadataService::class);
+        $songRepository = Mockery::mock(SongRepository::class);
+
+        $this->s3Service = new S3Service($this->s3Client, $this->cache, $metadataService, $songRepository);
     }
 
     public function testGetSongPublicUrl(): void
@@ -48,6 +40,7 @@ class S3ServiceTest extends TestCase
         $song = Song::factory()->create(['path' => 's3://foo/bar']);
 
         $cmd = Mockery::mock(CommandInterface::class);
+
         $this->s3Client->shouldReceive('getCommand')
             ->with('GetObject', [
                 'Bucket' => 'foo',

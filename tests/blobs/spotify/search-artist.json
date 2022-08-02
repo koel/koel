@@ -1,0 +1,52 @@
+{
+  "artists": {
+    "href": "https://api.spotify.com/v1/search?query=Kamelot&type=artist&locale=en-US%2Cen%3Bq%3D0.9%2Cvi%3Bq%3D0.8&offset=0&limit=1",
+    "items": [
+      {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/7gTbq5nTZGQIUgjEGXQpOS"
+        },
+        "followers": {
+          "href": null,
+          "total": 333740
+        },
+        "genres": [
+          "gothic symphonic metal",
+          "melodic metal",
+          "neo classical metal",
+          "power metal",
+          "progressive metal",
+          "symphonic metal"
+        ],
+        "href": "https://api.spotify.com/v1/artists/7gTbq5nTZGQIUgjEGXQpOS",
+        "id": "7gTbq5nTZGQIUgjEGXQpOS",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://foo/bar.jpg",
+            "width": 640
+          },
+          {
+            "height": 320,
+            "url": "https://i.scdn.co/image/ab676161000051745f878a0070d7800c18a508b7",
+            "width": 320
+          },
+          {
+            "height": 160,
+            "url": "https://i.scdn.co/image/ab6761610000f1785f878a0070d7800c18a508b7",
+            "width": 160
+          }
+        ],
+        "name": "Kamelot",
+        "popularity": 48,
+        "type": "artist",
+        "uri": "spotify:artist:7gTbq5nTZGQIUgjEGXQpOS"
+      }
+    ],
+    "limit": 1,
+    "next": "https://api.spotify.com/v1/search?query=Kamelot&type=artist&locale=en-US%2Cen%3Bq%3D0.9%2Cvi%3Bq%3D0.8&offset=1&limit=1",
+    "offset": 0,
+    "previous": null,
+    "total": 10
+  }
+}

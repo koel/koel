@@ -1,0 +1,5 @@
+// Vitest Snapshot v1
+
+exports[`renders for album 1`] = `<span class="cover" data-testid="album-artist-thumbnail" data-v-901ba52c=""><a class="control control-play" href="" role="button" data-v-901ba52c=""><span class="hidden" data-v-901ba52c="">Play all songs in the album IV</span><span class="icon" data-v-901ba52c=""></span></a></span>`;
+
+exports[`renders for artist 1`] = `<span class="cover" data-testid="album-artist-thumbnail" data-v-901ba52c=""><a class="control control-play" href="" role="button" data-v-901ba52c=""><span class="hidden" data-v-901ba52c="">Play all songs by Led Zeppelin</span><span class="icon" data-v-901ba52c=""></span></a></span>`;

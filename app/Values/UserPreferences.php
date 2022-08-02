@@ -7,11 +7,8 @@ use JsonSerializable;
 
 final class UserPreferences implements Arrayable, JsonSerializable
 {
-    public ?string $lastFmSessionKey = null;
-
-    private function __construct(?string $lastFmSessionKey)
+    private function __construct(public ?string $lastFmSessionKey = null)
     {
-        $this->lastFmSessionKey = $lastFmSessionKey;
     }
 
     public static function make(?string $lastFmSessionKey = null): self

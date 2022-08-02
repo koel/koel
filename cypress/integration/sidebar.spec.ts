@@ -23,30 +23,20 @@ context('Sidebar Functionalities', () => {
   }
 
   it('contains menu items', () => {
-    cy.on('uncaught:exception', err => !err.message.includes('Request failed'))
-
     cy.$login()
     cy.$each(commonMenuItems, assertMenuItem)
     cy.$each(managementMenuItems, assertMenuItem)
   })
 
   it('does not contain management items for non-admins', () => {
-    cy.on('uncaught:exception', err => !err.message.includes('Request failed'))
-
     cy.$loginAsNonAdmin()
     cy.$each(commonMenuItems, assertMenuItem)
 
-    cy.$each(managementMenuItems, (text: string) => {
-      cy.get('#sidebar')
-        .findByText(text)
-        .should('not.exist')
-    })
+    cy.$each(managementMenuItems, (text: string) => cy.get('#sidebar').findByText(text).should('not.exist'))
   })
 
   it('does not have a YouTube item if YouTube is not used', () => {
     cy.$login({ useYouTube: false })
-    cy.get('#sidebar')
-      .findByText('YouTube Video')
-      .should('not.exist')
+    cy.get('#sidebar').findByText('YouTube Video').should('not.exist')
   })
 })

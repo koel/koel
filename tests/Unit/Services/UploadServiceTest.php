@@ -7,17 +7,18 @@ use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Services\FileSynchronizer;
-use App\Services\MediaSyncService;
 use App\Services\UploadService;
+use App\Values\SyncResult;
 use Illuminate\Http\UploadedFile;
 use Mockery;
+use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
 class UploadServiceTest extends TestCase
 {
-    private $fileSynchronizer;
-    private $uploadService;
+    private FileSynchronizer|MockInterface|LegacyMockInterface $fileSynchronizer;
+    private UploadService $uploadService;
 
     public function setUp(): void
     {
@@ -29,7 +30,7 @@ class UploadServiceTest extends TestCase
 
     public function testHandleUploadedFileWithMediaPathNotSet(): void
     {
-        Setting::set('media_path', null);
+        Setting::set('media_path');
         self::expectException(MediaPathNotSetException::class);
         $this->uploadService->handleUploadedFile(Mockery::mock(UploadedFile::class));
     }
@@ -51,18 +52,14 @@ class UploadServiceTest extends TestCase
         $this->fileSynchronizer
             ->shouldReceive('setFile')
             ->once()
-            ->with('/media/koel/__KOEL_UPLOADS__/foo.mp3');
+            ->with('/media/koel/__KOEL_UPLOADS__/foo.mp3')
+            ->andReturnSelf();
 
         $this->fileSynchronizer
             ->shouldReceive('sync')
             ->once()
-            ->with(MediaSyncService::APPLICABLE_TAGS)
-            ->andReturn(FileSynchronizer::SYNC_RESULT_BAD_FILE);
-
-        $this->fileSynchronizer
-            ->shouldReceive('getSyncError')
-            ->once()
-            ->andReturn('A monkey ate your file oh no');
+            ->with()
+            ->andReturn(SyncResult::error('/media/koel/__KOEL_UPLOADS__/foo.mp3', 'A monkey ate your file oh no'));
 
         self::expectException(SongUploadFailedException::class);
         self::expectExceptionMessage('A monkey ate your file oh no');
@@ -86,13 +83,13 @@ class UploadServiceTest extends TestCase
         $this->fileSynchronizer
             ->shouldReceive('setFile')
             ->once()
-            ->with('/media/koel/__KOEL_UPLOADS__/foo.mp3');
+            ->with('/media/koel/__KOEL_UPLOADS__/foo.mp3')
+            ->andReturnSelf();
 
         $this->fileSynchronizer
             ->shouldReceive('sync')
             ->once()
-            ->with(MediaSyncService::APPLICABLE_TAGS)
-            ->andReturn(FileSynchronizer::SYNC_RESULT_SUCCESS);
+            ->andReturn(SyncResult::success('/media/koel/__KOEL_UPLOADS__/foo.mp3'));
 
         $song = new Song();
 

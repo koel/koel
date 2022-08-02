@@ -6,18 +6,12 @@ use App\Models\User;
 use Illuminate\Validation\Rules\Password;
 
 /**
- * @property string $password
- * @property string $name
- * @property string $email
- * @property bool $is_admin
+ * @property-read string $password
+ * @property-read string $name
+ * @property-read string $email
  */
 class UserUpdateRequest extends Request
 {
-    public function authorize(): bool
-    {
-        return auth()->user()->is_admin;
-    }
-
     /** @return array<mixed> */
     public function rules(): array
     {
@@ -28,6 +22,7 @@ class UserUpdateRequest extends Request
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => ['sometimes', Password::defaults()],
+            'is_admin' => 'sometimes',
         ];
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 /** @property string $cover */
-class AlbumCoverUpdateRequest extends AbstractMediaImageUpdateRequest
+class AlbumCoverUpdateRequest extends MediaImageUpdateRequest
 {
     protected function getImageFieldName(): string
     {

@@ -2,10 +2,7 @@
 
 namespace App\Providers;
 
-use App\Events\AlbumInformationFetched;
-use App\Events\ArtistInformationFetched;
 use App\Events\LibraryChanged;
-use App\Events\MediaCacheObsolete;
 use App\Events\MediaSyncCompleted;
 use App\Events\SongLikeToggled;
 use App\Events\SongsBatchLiked;
@@ -13,20 +10,16 @@ use App\Events\SongsBatchUnliked;
 use App\Events\SongStartedPlaying;
 use App\Listeners\ClearMediaCache;
 use App\Listeners\DeleteNonExistingRecordsPostSync;
-use App\Listeners\DownloadAlbumCover;
-use App\Listeners\DownloadArtistImage;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Album;
-use App\Models\Song;
 use App\Observers\AlbumObserver;
-use App\Observers\SongObserver;
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseServiceProvider;
 
-class EventServiceProvider extends ServiceProvider
+class EventServiceProvider extends BaseServiceProvider
 {
     protected $listen = [
         SongLikeToggled::class => [
@@ -50,18 +43,6 @@ class EventServiceProvider extends ServiceProvider
             ClearMediaCache::class,
         ],
 
-        MediaCacheObsolete::class => [
-            ClearMediaCache::class,
-        ],
-
-        AlbumInformationFetched::class => [
-            DownloadAlbumCover::class,
-        ],
-
-        ArtistInformationFetched::class => [
-            DownloadArtistImage::class,
-        ],
-
         MediaSyncCompleted::class => [
             DeleteNonExistingRecordsPostSync::class,
         ],
@@ -71,7 +52,6 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        Song::observe(SongObserver::class);
         Album::observe(AlbumObserver::class);
     }
 }

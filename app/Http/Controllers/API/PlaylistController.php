@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Http\Requests\API\PlaylistUpdateRequest;
 use App\Models\Playlist;
@@ -12,20 +13,12 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class PlaylistController extends Controller
 {
-    private PlaylistRepository $playlistRepository;
-    private PlaylistService $playlistService;
-
-    /** @var User */
-    private ?Authenticatable $currentUser;
-
+    /** @param User $user */
     public function __construct(
-        PlaylistRepository $playlistRepository,
-        PlaylistService $playlistService,
-        ?Authenticatable $currentUser
+        private PlaylistRepository $playlistRepository,
+        private PlaylistService $playlistService,
+        private ?Authenticatable $user
     ) {
-        $this->playlistRepository = $playlistRepository;
-        $this->playlistService = $playlistService;
-        $this->currentUser = $currentUser;
     }
 
     public function index()
@@ -37,7 +30,7 @@ class PlaylistController extends Controller
     {
         $playlist = $this->playlistService->createPlaylist(
             $request->name,
-            $this->currentUser,
+            $this->user,
             (array) $request->songs,
             $request->rules
         );
@@ -62,6 +55,6 @@ class PlaylistController extends Controller
 
         $playlist->delete();
 
-        return response()->json();
+        return response()->noContent();
     }
 }

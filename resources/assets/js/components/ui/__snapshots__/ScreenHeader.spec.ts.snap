@@ -1,0 +1,13 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<header class="screen-header expanded">
+  <aside class="thumbnail-wrapper"><img src="https://placekitten.com/200/300"></aside>
+  <main>
+    <div class="heading-wrapper">
+      <h1 class="name">This Header</h1><span class="meta text-secondary"><p>Some meta</p></span>
+    </div>
+    <nav>Some controls</nav>
+  </main>
+</header>
+`;

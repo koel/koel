@@ -1,0 +1,10 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<article id="lyrics" data-v-502c43f0="">
+  <div class="content" data-v-502c43f0="">
+    <div data-v-502c43f0=""><pre data-v-502c43f0="">Foo bar baz qux</pre><span class="magnifier" data-v-7a4cd38c="" data-v-502c43f0=""><button title="Zoom out" type="button" data-v-7a4cd38c=""><br data-testid="icon" icon="[object Object]" data-v-7a4cd38c=""></button><button title="Zoom in" type="button" data-v-7a4cd38c=""><br data-testid="icon" icon="[object Object]" data-v-7a4cd38c=""></button></span></div>
+    <!--v-if-->
+  </div>
+</article>
+`;

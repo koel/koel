@@ -1,0 +1,288 @@
+@mixin vertical-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin artist-album-wrapper() {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+  &.as-list {
+    gap: 0.7em 1em;;
+    align-content: start;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+
+    @media only screen and (max-width: 667px) {
+      display: block;
+
+      > * + * {
+        margin-top: .7rem;
+      }
+    }
+  }
+}
+
+@mixin artist-album-card() {
+  .item {
+    position: relative;
+    max-width: 256px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-bg-secondary);
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    @media only screen and (max-width: 768px) {
+      max-width: 100%;
+    }
+
+    &:focus, &:focus-within {
+      box-shadow: 0 0 1px 1px var(--color-highlight);
+    }
+
+    &:hover .right, &:focus-within .right {
+      display: flex !important;
+    }
+
+    &.compact {
+      gap: 1rem;
+      flex-direction: row;
+      align-items: center;
+      max-width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+
+      .cover {
+        width: 80px;
+        border-radius: 5px;
+      }
+    }
+
+    footer {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+
+    .name {
+      font-weight: var(--font-weight-normal);
+    }
+
+    .meta {
+      color: var(--color-text-secondary);
+      font-size: .9rem;
+      display: flex;
+      justify-content: space-between;
+
+      .right {
+        display: none;
+
+        @media (hover: none) {
+          display: flex;
+        }
+
+        gap: .3rem;
+
+        a {
+          padding: 0 4px;
+          border-radius: 3px;
+
+          &:hover {
+            background: var(--color-text-primary);
+            color: var(--color-bg-primary);
+          }
+        }
+      }
+    }
+
+    a.name, a.artist {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &:link, &:visited {
+        color: var(--color-text-primary);
+      }
+
+      &:focus, &:hover {
+        color: var(--color-highlight);
+      }
+    }
+
+    .info {
+      .compact & {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+@mixin artist-album-info-wrapper() {
+  .loading {
+    @include vertical-center();
+    height: 100%;
+  }
+
+  .info-wrapper {
+    color: var(--color-text-secondary);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--color-bg-primary);
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+
+    .inner {
+      overflow: auto;
+      height: 100%;
+      padding: 24px 24px 48px;
+
+      @media only screen and (max-width: 768px) {
+        padding: 16px;
+      }
+    }
+
+    .close-modal {
+      display: none;
+    }
+
+    &:hover {
+      .close-modal {
+        display: block;
+      }
+    }
+  }
+}
+
+@mixin artist-album-info() {
+  h1 {
+    @include vertical-center();
+
+    font-weight: var(--font-weight-thin);
+    line-height: 2.8rem;
+
+    &.name {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    span {
+      flex: 1;
+      margin-right: 12px;
+    }
+
+    a {
+      font-size: 14px;
+
+      &:hover {
+        color: var(--color-highlight);
+      }
+    }
+  }
+
+  .bio {
+    margin: 16px 0;
+  }
+
+  .more {
+    margin-top: .75rem;
+    border-radius: .23rem;
+    background: var(--color-blue);
+    color: var(--color-text-primary);
+    padding: .3rem .6rem;
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: .8rem;
+  }
+
+  .cover, .cool-guys-posing {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .wiki {
+    margin: 16px 0;
+  }
+
+  footer {
+    margin-top: 24px;
+    font-size: .9rem;
+    text-align: right;
+
+    a {
+      color: var(--color-text-primary);
+      font-weight: var(--font-weight-normal);
+
+      &:hover {
+        color: var(--color-text-secondary);
+      }
+    }
+  }
+
+  &.full {
+    .cover {
+      width: 300px;
+      max-width: 100%;
+      float: left;
+      margin: 0 16px 16px 0;
+    }
+
+    h1.name {
+      font-size: 2.4rem;
+
+      a.shuffle {
+        display: none;
+      }
+    }
+  }
+}
+
+@mixin inset-when-pressed() {
+  &:active {
+    box-shadow: inset 0px 10px 10px -10px rgba(0, 0, 0, .6);
+  }
+}
+
+@mixin context-menu() {
+  padding: .4rem 0;
+  min-width: 144px;
+  background-color: var(--color-bg-primary);
+  position: fixed;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1001;
+  align-items: stretch;
+  text-align: left;
+  box-shadow: inset 0 0 0 rgba(255, 255, 255, 0.3), 0 2px 15px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
+
+  input[type="search"], input[type="text"], input[type="email"], input[type="url"] {
+    background: var(--color-text-primary);
+
+    &:focus {
+      background: var(--color-text-primary);
+    }
+  }
+}
+
+@mixin themed-background() {
+  background-color: var(--color-bg-primary);
+  background-image: var(--bg-image);
+  background-attachment: var(--bg-attachment);
+  background-size: var(--bg-size);
+  background-position: var(--bg-position);
+}

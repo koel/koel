@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "es5",
     "baseUrl": ".",
-    "lib": ["es5", "dom"],
-    "types": ["cypress", "@testing-library/cypress", "@types/node", "cypress-file-upload"]
+    "lib": ["es2021", "dom"],
+    "types": ["cypress", "@testing-library/cypress", "@types/node"]
   },
   "include": [
     "**/*.ts"

@@ -8,11 +8,8 @@ use Illuminate\Routing\UrlGenerator;
 
 class ForceHttps
 {
-    private UrlGenerator $url;
-
-    public function __construct(UrlGenerator $url)
+    public function __construct(private UrlGenerator $url)
     {
-        $this->url = $url;
     }
 
     public function handle(Request $request, Closure $next) // @phpcs:ignore

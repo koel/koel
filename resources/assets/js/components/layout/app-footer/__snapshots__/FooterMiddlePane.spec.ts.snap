@@ -1,0 +1,20 @@
+// Vitest Snapshot v1
+
+exports[`renders with a song 1`] = `
+<div class="middle-pane" data-testid="footer-middle-pane">
+  <div id="progressPane" class="progress">
+    <h3 class="title">Fahrstuhl to Heaven</h3>
+    <p class="meta"><a href="/#!/artist/3" class="artist">Led Zeppelin</a> – <a href="/#!/album/4" class="album">Led Zeppelin IV</a></p>
+    <div class="plyr"><audio controls="" crossorigin="anonymous"></audio></div>
+  </div>
+</div>
+`;
+
+exports[`renders without a song 1`] = `
+<div class="middle-pane" data-testid="footer-middle-pane">
+  <div id="progressPane" class="progress">
+    <!--v-if-->
+    <div class="plyr"><audio controls="" crossorigin="anonymous"></audio></div>
+  </div>
+</div>
+`;

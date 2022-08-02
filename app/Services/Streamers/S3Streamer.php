@@ -8,13 +8,9 @@ use Illuminate\Routing\Redirector;
 
 class S3Streamer extends Streamer implements ObjectStorageStreamerInterface
 {
-    private S3Service $s3Service;
-
-    public function __construct(S3Service $s3Service)
+    public function __construct(private S3Service $s3Service)
     {
         parent::__construct();
-
-        $this->s3Service = $s3Service;
     }
 
     /**

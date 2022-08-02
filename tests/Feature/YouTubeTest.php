@@ -5,10 +5,11 @@ namespace Tests\Feature;
 use App\Models\Song;
 use App\Services\YouTubeService;
 use Mockery;
+use Mockery\MockInterface;
 
 class YouTubeTest extends TestCase
 {
-    private $youTubeService;
+    private MockInterface $youTubeService;
 
     public function setUp(): void
     {
@@ -29,7 +30,7 @@ class YouTubeTest extends TestCase
             }), 'foo')
             ->once();
 
-        $this->getAsUser("/api/youtube/search/song/{$song->id}?pageToken=foo")
+        $this->getAs("/api/youtube/search/song/{$song->id}?pageToken=foo")
             ->assertOk();
     }
 }

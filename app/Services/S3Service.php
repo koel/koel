@@ -13,24 +13,12 @@ use Illuminate\Cache\Repository as Cache;
 
 class S3Service implements ObjectStorageInterface
 {
-    private ?S3ClientInterface $s3Client;
-    private Cache $cache;
-    private MediaMetadataService $mediaMetadataService;
-    private SongRepository $songRepository;
-    private Helper $helper;
-
     public function __construct(
-        ?S3ClientInterface $s3Client,
-        Cache $cache,
-        MediaMetadataService $mediaMetadataService,
-        SongRepository $songRepository,
-        Helper $helper
+        private ?S3ClientInterface $s3Client,
+        private Cache $cache,
+        private MediaMetadataService $mediaMetadataService,
+        private SongRepository $songRepository,
     ) {
-        $this->s3Client = $s3Client;
-        $this->cache = $cache;
-        $this->mediaMetadataService = $mediaMetadataService;
-        $this->songRepository = $songRepository;
-        $this->helper = $helper;
     }
 
     public function getSongPublicUrl(Song $song): string
@@ -53,7 +41,7 @@ class S3Service implements ObjectStorageInterface
         string $key,
         string $artistName,
         string $albumName,
-        bool $compilation,
+        string $albumArtistName,
         ?array $cover,
         string $title,
         float $duration,
@@ -63,7 +51,12 @@ class S3Service implements ObjectStorageInterface
         $path = Song::getPathFromS3BucketAndKey($bucket, $key);
 
         $artist = Artist::getOrCreate($artistName);
-        $album = Album::getOrCreate($artist, $albumName, $compilation);
+
+        $albumArtist = $albumArtistName && $albumArtistName !== $artistName
+            ? Artist::getOrCreate($albumArtistName)
+            : $artist;
+
+        $album = Album::getOrCreate($albumArtist, $albumName);
 
         if ($cover) {
             $this->mediaMetadataService->writeAlbumCover(
@@ -73,7 +66,7 @@ class S3Service implements ObjectStorageInterface
             );
         }
 
-        $song = Song::updateOrCreate(['id' => $this->helper->getFileHash($path)], [
+        $song = Song::updateOrCreate(['id' => Helper::getFileHash($path)], [
             'path' => $path,
             'album_id' => $album->id,
             'artist_id' => $artist->id,
@@ -94,9 +87,7 @@ class S3Service implements ObjectStorageInterface
         $path = Song::getPathFromS3BucketAndKey($bucket, $key);
         $song = $this->songRepository->getOneByPath($path);
 
-        if (!$song) {
-            throw SongPathNotFoundException::create($path);
-        }
+        throw_unless((bool) $song, SongPathNotFoundException::create($path));
 
         $song->delete();
         event(new LibraryChanged());

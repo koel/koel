@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * Authenticate requests from Object Storage services (like S3).
@@ -13,9 +14,7 @@ class ObjectStorageAuthenticate
 {
     public function handle(Request $request, Closure $next) // @phpcs:ignore
     {
-        if ($request->appKey !== config('app.key')) {
-            return response('Unauthorized.', 401);
-        }
+        abort_unless($request->get('appKey') === config('app.key'), Response::HTTP_UNAUTHORIZED);
 
         return $next($request);
     }

@@ -1,4 +1,6 @@
 context('Uploading', () => {
+  let interceptCounter = 0
+
   beforeEach(() => {
     cy.$login()
     cy.$clickSidebarItem('Upload')
@@ -12,20 +14,27 @@ context('Uploading', () => {
       .should('contain.text', 'Mendelssohn Violin Concerto in E minor, Op. 64')
   }
 
+  function selectFixtureFile (fileName = 'sample.mp3') {
+    // Cypress caches fixtures and apparently has a bug where consecutive fixture files yield an empty "type"
+    // which will fail our "audio type filter" (i.e. the file will not be considered an audio file).
+    // As a workaround, we pad the fixture file name with slashes to invalidate the cache.
+    // https://github.com/cypress-io/cypress/issues/4716#issuecomment-558305553
+    cy.fixture(fileName.padStart(fileName.length + interceptCounter, '/')).as('file')
+    cy.get('[type=file]').selectFile('@file')
+
+    interceptCounter++
+  }
+
   function executeFailedUpload () {
     cy.intercept('POST', '/api/upload', {
       statusCode: 413
     }).as('failedUpload')
 
-    cy.get('[type=file]').attachFile('sample.mp3')
-    cy.get('[data-test=upload-item]')
-      .should('have.length', 1)
-      .and('be.visible')
-
+    selectFixtureFile()
+    cy.findByTestId('upload-item').should('have.length', 1).and('be.visible')
     cy.wait('@failedUpload')
 
-    cy.get('[data-test=upload-item]').should('have.length', 1)
-    cy.get('[data-test=upload-item]:first-child').should('have.class', 'Errored')
+    cy.findByTestId('upload-item').should('have.length', 1).should('have.class', 'errored')
   }
 
   it('uploads songs', () => {
@@ -34,13 +43,11 @@ context('Uploading', () => {
     }).as('upload')
 
     cy.get('#uploadWrapper').within(() => {
-      cy.get('[type=file]').attachFile('sample.mp3')
-      cy.get('[data-test=upload-item]')
-        .should('have.length', 1)
-        .and('be.visible')
+      selectFixtureFile()
+      cy.findByTestId('upload-item').should('have.length', 1).and('be.visible')
 
       cy.wait('@upload')
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
 
     assertResultsAddedToHomeScreen()
@@ -54,9 +61,9 @@ context('Uploading', () => {
         fixture: 'upload.post.200.json'
       }).as('successfulUpload')
 
-      cy.get('[data-test=upload-item]:first-child [data-test=retry-upload-btn]').click()
+      cy.get('[data-testid=upload-item]:first-child').findByTitle('Retry').click()
       cy.wait('@successfulUpload')
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
 
     assertResultsAddedToHomeScreen()
@@ -72,7 +79,7 @@ context('Uploading', () => {
 
       cy.findByTestId('upload-retry-all-btn').click()
       cy.wait('@successfulUpload')
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
 
     assertResultsAddedToHomeScreen()
@@ -81,8 +88,8 @@ context('Uploading', () => {
   it('allows removing individual failed uploads', () => {
     cy.get('#uploadWrapper').within(() => {
       executeFailedUpload()
-      cy.get('[data-test=upload-item]:first-child [data-test=remove-upload-btn]').click()
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.get('[data-testid=upload-item]:first-child').findByTitle('Remove').click()
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
   })
 
@@ -90,7 +97,7 @@ context('Uploading', () => {
     cy.get('#uploadWrapper').within(() => {
       executeFailedUpload()
       cy.findByTestId('upload-remove-all-btn').click()
-      cy.get('[data-test=upload-item]').should('have.length', 0)
+      cy.findByTestId('upload-item').should('have.length', 0)
     })
   })
 })

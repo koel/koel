@@ -2,34 +2,55 @@
 
 namespace App\Values;
 
-use Illuminate\Support\Collection;
+use Webmozart\Assert\Assert;
 
 final class SyncResult
 {
-    /** @var Collection|array<string> */
-    public Collection $success;
+    public const TYPE_SUCCESS = 1;
+    public const TYPE_ERROR = 2;
+    public const TYPE_SKIPPED = 3;
 
-    /** @var Collection|array<string> */
-    public Collection $bad;
-
-    /** @var Collection|array<string> */
-    public Collection $unmodified;
-
-    private function __construct(Collection $success, Collection $bad, Collection $unmodified)
+    private function __construct(public string $path, public int $type, public ?string $error)
     {
-        $this->success = $success;
-        $this->bad = $bad;
-        $this->unmodified = $unmodified;
+        Assert::oneOf($type, [
+            SyncResult::TYPE_SUCCESS,
+            SyncResult::TYPE_ERROR,
+            SyncResult::TYPE_SKIPPED,
+        ]);
     }
 
-    public static function init(): self
+    public static function success(string $path): self
     {
-        return new self(collect(), collect(), collect());
+        return new self($path, self::TYPE_SUCCESS, null);
     }
 
-    /** @return Collection|array<string> */
-    public function validEntries(): Collection
+    public static function skipped(string $path): self
     {
-        return $this->success->merge($this->unmodified);
+        return new self($path, self::TYPE_SKIPPED, null);
+    }
+
+    public static function error(string $path, ?string $error): self
+    {
+        return new self($path, self::TYPE_ERROR, $error);
+    }
+
+    public function isSuccess(): bool
+    {
+        return $this->type === self::TYPE_SUCCESS;
+    }
+
+    public function isSkipped(): bool
+    {
+        return $this->type === self::TYPE_SKIPPED;
+    }
+
+    public function isError(): bool
+    {
+        return $this->type === self::TYPE_ERROR;
+    }
+
+    public function isValid(): bool
+    {
+        return $this->isSuccess() || $this->isSkipped();
     }
 }

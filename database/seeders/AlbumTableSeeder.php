@@ -16,7 +16,6 @@ class AlbumTableSeeder extends Seeder
         ], [
             'artist_id' => Artist::UNKNOWN_ID,
             'name' => Album::UNKNOWN_NAME,
-            'cover' => Album::UNKNOWN_COVER,
         ]);
 
         self::maybeResetPgsqlSerialValue();

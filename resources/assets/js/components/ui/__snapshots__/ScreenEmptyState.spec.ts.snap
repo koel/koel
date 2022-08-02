@@ -1,0 +1,9 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<div class="screen-empty-state" data-testid="screen-empty-state">
+  <div><span class="jumbo-icon"><i class="my-icon"></i></span>
+    <div class="text">Nothing here</div>
+  </div>
+</div>
+`;

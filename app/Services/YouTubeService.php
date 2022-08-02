@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Song;
 use Throwable;
 
-class YouTubeService extends AbstractApiClient implements ApiConsumerInterface
+class YouTubeService extends ApiClient implements ApiConsumerInterface
 {
     /**
      * Determine if our application is using YouTube.

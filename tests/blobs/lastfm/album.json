@@ -36,7 +36,7 @@
       "track": [
         {
           "name": "Track 1",
-          "url": "http://foo/track1",
+          "url": "https://foo/track1",
           "duration": "100",
           "@attr": {
             "rank": "1"
@@ -53,7 +53,7 @@
         },
         {
           "name": "Track 2",
-          "url": "http://foo/track2",
+          "url": "https://foo/track2",
           "duration": "150",
           "@attr": {
             "rank": "2"

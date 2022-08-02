@@ -26,7 +26,7 @@ class InteractionTest extends TestCase
 
         /** @var Song $song */
         $song = Song::orderBy('id')->first();
-        $this->postAsUser('api/interaction/play', ['song' => $song->id], $user);
+        $this->postAs('api/interaction/play', ['song' => $song->id], $user);
 
         self::assertDatabaseHas('interactions', [
             'user_id' => $user->id,
@@ -35,7 +35,7 @@ class InteractionTest extends TestCase
         ]);
 
         // Try again
-        $this->postAsUser('api/interaction/play', ['song' => $song->id], $user);
+        $this->postAs('api/interaction/play', ['song' => $song->id], $user);
 
         self::assertDatabaseHas('interactions', [
             'user_id' => $user->id,
@@ -53,7 +53,7 @@ class InteractionTest extends TestCase
 
         /** @var Song $song */
         $song = Song::orderBy('id')->first();
-        $this->postAsUser('api/interaction/like', ['song' => $song->id], $user);
+        $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
         self::assertDatabaseHas('interactions', [
             'user_id' => $user->id,
@@ -62,7 +62,7 @@ class InteractionTest extends TestCase
         ]);
 
         // Try again
-        $this->postAsUser('api/interaction/like', ['song' => $song->id], $user);
+        $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
         self::assertDatabaseHas('interactions', [
             'user_id' => $user->id,
@@ -82,7 +82,7 @@ class InteractionTest extends TestCase
         $songs = Song::orderBy('id')->take(2)->get();
         $songIds = array_pluck($songs->toArray(), 'id');
 
-        $this->postAsUser('api/interaction/batch/like', ['songs' => $songIds], $user);
+        $this->postAs('api/interaction/batch/like', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
             self::assertDatabaseHas('interactions', [
@@ -92,7 +92,7 @@ class InteractionTest extends TestCase
             ]);
         }
 
-        $this->postAsUser('api/interaction/batch/unlike', ['songs' => $songIds], $user);
+        $this->postAs('api/interaction/batch/unlike', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
             self::assertDatabaseHas('interactions', [
