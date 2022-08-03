@@ -160,7 +160,7 @@ class Album extends Model
             ->groupBy('albums.id')
             ->select(
                 'albums.*',
-                DB::raw('CAST(SUM(interactions.play_count) AS INTEGER) AS play_count')
+                DB::raw('CAST(SUM(interactions.play_count) AS UNSIGNED) AS play_count')
             )
             ->withCount('songs AS song_count')
             ->withSum('songs AS length', 'length');
