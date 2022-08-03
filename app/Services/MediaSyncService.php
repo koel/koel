@@ -79,7 +79,7 @@ class MediaSyncService
                 ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/koel/koel/issues/450
                 ->files()
                 ->followLinks()
-                ->name('/\.(mp3|ogg|m4a|flac)$/i')
+                ->name('/\.(mp3|wav|ogg|m4a|flac)$/i')
                 ->in($path)
         );
     }
