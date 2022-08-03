@@ -12,12 +12,7 @@ fi
 
 TAG=$1
 echo "$TAG" > .version
-# shellcheck disable=SC2164
-cd ./resources/assets
-git -c color.ui=always tag "$TAG"
-git -c color.ui=always push --tags
 
-cd ../..
 git -c color.ui=always add .
 git -c color.ui=always commit -m "chore(release): bump version to ${TAG}"
 git -c color.ui=always push
