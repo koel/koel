@@ -118,6 +118,7 @@ eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
 
   li {
     overflow: hidden;
+    padding: 1px; // make space for focus outline
   }
 
   @media only screen and (max-width: 768px) {
