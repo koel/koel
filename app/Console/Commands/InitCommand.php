@@ -64,6 +64,7 @@ class InitCommand extends Command
             $this->maybeSeedDatabase();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
+            $this->dotenvEditor->save();
         } catch (Throwable $e) {
             $this->logger->error($e);
 
