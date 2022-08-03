@@ -116,6 +116,10 @@ eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
     }
   }
 
+  li {
+    overflow: hidden;
+  }
+
   @media only screen and (max-width: 768px) {
     .two-cols {
       grid-template-columns: 1fr;

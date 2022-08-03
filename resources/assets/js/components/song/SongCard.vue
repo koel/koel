@@ -103,6 +103,7 @@ article {
 
   .cover {
     width: 48px;
+    min-width: 48px;
     aspect-ratio: 1/1;
     background-size: cover;
     position: relative;
@@ -148,7 +149,8 @@ article {
   }
 
   main {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
     align-items: flex-start;
     gap: 8px;
@@ -180,7 +182,15 @@ article {
       display: flex;
       flex-direction: column;
       gap: 4px;
+      overflow: hidden;
     }
+  }
+
+  h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
   }
 }
 </style>
