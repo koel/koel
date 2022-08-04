@@ -1,8 +1,10 @@
 css
 fonts
 
-# Ignore all (generated) images under img, but keep the folder structure
+# Ignore all (generated) images under img/, but keep the folder structure
 img/*
+!img/icon.png
+!img/favicon.ico
 !img/covers
 img/covers/*
 !img/covers/.gitkeep
