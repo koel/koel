@@ -27,7 +27,7 @@
 import { defineAsyncComponent, nextTick, onMounted, provide, ref } from 'vue'
 import { eventBus, hideOverlay, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences } from '@/stores'
-import { authService, playbackService, socketListener, socketService } from '@/services'
+import { authService, playbackService, socketListener, socketService, uploadService } from '@/services'
 import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
 import AppHeader from '@/components/layout/AppHeader.vue'
@@ -85,13 +85,11 @@ const init = async () => {
     playbackService.init()
     await requestNotificationPermission()
 
-    window.addEventListener('beforeunload', (e: BeforeUnloadEvent): void => {
-      if (!preferences.confirmClosing) {
-        return
+    window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
+      if (uploadService.shouldWarnUponWindowUnload() || preferences.confirmClosing) {
+        e.preventDefault()
+        e.returnValue = ''
       }
-
-      e.preventDefault()
-      e.returnValue = ''
     })
 
     await socketService.init() && socketListener.listen()

@@ -36,10 +36,7 @@ export const uploadService = {
 
     for (let i = 0; i < remainingSlots; ++i) {
       const file = this.getUploadCandidate()
-
-      if (file) {
-        this.upload(file)
-      }
+      file && this.upload(file)
     }
   },
 
@@ -49,6 +46,10 @@ export const uploadService = {
 
   getUploadCandidate () {
     return this.state.files.find(file => file.status === 'Ready')
+  },
+
+  shouldWarnUponWindowUnload () {
+    return this.state.files.length > 0
   },
 
   async upload (file: UploadFile) {
