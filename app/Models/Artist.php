@@ -134,8 +134,12 @@ class Artist extends Model
                     ->where('interactions.user_id', $scopedUser->id);
             })
             ->groupBy('artists.id')
-            ->select(['artists.*', DB::raw('CAST(SUM(interactions.play_count) AS UNSIGNED) AS play_count')])
-            ->withCount('albums AS album_count', 'songs AS song_count')
+            ->select([
+                'artists.*',
+                DB::raw('CAST(SUM(interactions.play_count) AS UNSIGNED) AS play_count'),
+                DB::raw('COUNT(DISTINCT songs.album_id) AS album_count'),
+            ])
+            ->withCount('songs AS song_count')
             ->withSum('songs AS length', 'length');
     }
 
