@@ -12,10 +12,12 @@ return new class extends Migration
             // This migration is actually to fix a mistake that the original one was deleted.
             // Therefore, we just "try" it and ignore on error.
             try {
-                Schema::disableForeignKeyConstraints();
-                $table->dropForeign('songs_contributing_artist_id_foreign');
-                $table->dropColumn('contributing_artist_id');
-                Schema::enableForeignKeyConstraints();
+                if (Schema::hasColumn('songs', 'contributing_artist_id')) {
+                    Schema::disableForeignKeyConstraints();
+                    $table->dropForeign('songs_contributing_artist_id_foreign');
+                    $table->dropColumn('contributing_artist_id');
+                    Schema::enableForeignKeyConstraints();
+                }
             } catch (Throwable) {
             }
         });
