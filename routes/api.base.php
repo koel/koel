@@ -6,6 +6,7 @@ use App\Http\Controllers\API\AlbumThumbnailController;
 use App\Http\Controllers\API\ArtistImageController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\DataController;
+use App\Http\Controllers\API\DemoCreditController;
 use App\Http\Controllers\API\Interaction\BatchLikeController;
 use App\Http\Controllers\API\Interaction\LikeController;
 use App\Http\Controllers\API\Interaction\PlayCountController;
@@ -116,4 +117,6 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('song', [S3SongController::class, 'put'])->name('s3.song.put'); // we follow AWS's convention here.
         Route::delete('song', [S3SongController::class, 'remove'])->name('s3.song.remove'); // and here.
     });
+
+    Route::get('demo/credits', [DemoCreditController::class, 'index']);
 });

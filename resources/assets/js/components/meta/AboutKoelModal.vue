@@ -25,10 +25,14 @@
         <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
       </p>
 
-      <p v-if="isDemo" data-testid="demo-credits">
-        Demo music provided by
-        <a href="https://www.bensound.com" rel="noopener" target="_blank">Bensound</a>.
-      </p>
+      <div v-if="isDemo" class="credit-wrapper" data-testid="demo-credits">
+        Music by
+        <ul class="credits">
+          <li v-for="credit in credits" :key="credit.name">
+            <a :href="credit.url" target="_blank">{{ credit.name }}</a>
+          </li>
+        </ul>
+      </div>
 
       <p>
         Loving Koel? Please consider supporting its development via
@@ -45,10 +49,20 @@
 </template>
 
 <script lang="ts" setup>
+import { orderBy } from 'lodash'
+import { onMounted, ref } from 'vue'
 import { isDemo } from '@/utils'
 import { useNewVersionNotification } from '@/composables'
+import { httpService } from '@/services'
 
 import Btn from '@/components/ui/Btn.vue'
+
+type DemoCredits = {
+  name: string
+  url: string
+}
+
+const credits = ref<DemoCredits[]>([])
 
 const {
   shouldNotifyNewVersion,
@@ -59,6 +73,10 @@ const {
 
 const emit = defineEmits(['close'])
 const close = () => emit('close')
+
+onMounted(async () => {
+  credits.value = isDemo ? orderBy(await httpService.get<DemoCredits[]>('demo/credits'), 'name') : []
+})
 </script>
 
 <style lang="scss" scoped>
@@ -94,6 +112,39 @@ const close = () => emit('close')
 
     &:hover {
       color: var(--color-highlight);
+    }
+  }
+}
+
+.credit-wrapper {
+  max-height: 9rem;
+  overflow: auto;
+}
+
+.credits, .credits li {
+  display: inline;
+}
+
+.credits {
+  display: inline;
+
+  li {
+    display: inline;
+
+    &:last-child {
+      &::before {
+        content: ', and '
+      }
+
+      &::after {
+        content: '.';
+      }
+    }
+  }
+
+  li + li {
+    &::before {
+      content: ', ';
     }
   }
 }

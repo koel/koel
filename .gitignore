@@ -84,3 +84,5 @@ coverage.xml
 log.json
 
 .php_cs.cache
+
+demo-credits.json
