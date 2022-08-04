@@ -139,7 +139,6 @@ class Artist extends Model
                 DB::raw('CAST(SUM(interactions.play_count) AS UNSIGNED) AS play_count'),
                 DB::raw('COUNT(DISTINCT songs.album_id) AS album_count'),
             ])
-            ->having('album_count', '>', 0) // e.g., the title artist of a compilation album
             ->withCount('songs AS song_count')
             ->withSum('songs AS length', 'length');
     }
