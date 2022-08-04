@@ -58,9 +58,8 @@
 </template>
 
 <script lang="ts" setup>
-import { faRotateBack, faTimes, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import ismobile from 'ismobilejs'
-import md5 from 'blueimp-md5'
+import { faRotateBack, faTimes, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { settingStore } from '@/stores'
@@ -94,7 +93,7 @@ const handleFiles = (files: Array<File>) => {
     .filter(file => acceptedMediaTypes.includes(file.type))
     .map((file): UploadFile => ({
       file,
-      id: md5(`${file.name}-${file.size}`), // for simplicity, a file's identity is determined by its name and size
+      id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
       status: 'Ready',
       name: file.name,
       progress: 0
