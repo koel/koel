@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,7 +15,11 @@ return new class extends Migration
             try {
                 if (Schema::hasColumn('songs', 'contributing_artist_id')) {
                     Schema::disableForeignKeyConstraints();
-                    $table->dropForeign('songs_contributing_artist_id_foreign');
+
+                    if (DB::getDriverName() !== 'sqlite') { // @phpstan-ignore-line
+                        $table->dropForeign('songs_contributing_artist_id_foreign');
+                    }
+
                     $table->dropColumn('contributing_artist_id');
                     Schema::enableForeignKeyConstraints();
                 }
