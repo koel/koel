@@ -39,7 +39,7 @@ const changeMode = () => playbackService.changeRepeatMode()
   font-weight: bold;
   right: 2px;
   top: 2px;
-  color: var(--color-highlight);
+  color: var(--color-accent);
   background: transparent;
 }
 

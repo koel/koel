@@ -94,7 +94,7 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName) => (viewingQueue.value = v
 
   .control {
     &.active {
-      color: var(--color-highlight);
+      color: var(--color-accent);
     }
 
     &:last-child {

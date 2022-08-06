@@ -82,6 +82,7 @@ export default [
     thumbnailUrl: thumbDawn,
     properties: {
       '--color-highlight': '#ed5135',
+      '--color-accent': '#f4944f',
       '--bg-image': `url(${bgDawn})`,
       '--color-bg-primary': '#1e2747',
       '--bg-position': 'center bottom'

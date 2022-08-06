@@ -47,12 +47,6 @@ const { song } = toRefs(props)
 
   .meta {
     font-size: .9rem;
-
-    a {
-      &:hover {
-        color: var(--color-highlight);
-      }
-    }
   }
 
   // Some little tweaks here and there

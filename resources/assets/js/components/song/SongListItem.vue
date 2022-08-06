@@ -71,7 +71,7 @@ const doPlayback = () => {
   display: flex;
 
   &:focus, &:focus-within {
-    box-shadow: 0 0 1px 1px var(--color-highlight) inset;
+    box-shadow: 0 0 1px 1px var(--color-accent) inset;
     border-radius: 4px;
   }
 
@@ -84,7 +84,7 @@ const doPlayback = () => {
   }
 
   &.playing > span {
-    color: var(--color-highlight);
+    color: var(--color-accent);
   }
 }
 </style>
