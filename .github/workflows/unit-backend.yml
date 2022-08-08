@@ -5,6 +5,7 @@ on:
       - master
       - next
     paths:
+      - ./*
       - '!resources/assets/**'
       - .github/workflows/unit-backend.yml
   push:
@@ -12,6 +13,7 @@ on:
       - master
       - next
     paths:
+      - ./*
       - '!resources/assets/**'
       - .github/workflows/unit-backend.yml
   workflow_dispatch:
@@ -19,6 +21,7 @@ on:
       - master
       - next
     paths:
+      - ./*
       - '!resources/assets/**'
       - .github/workflows/unit-backend.yml
 jobs:
@@ -38,7 +41,7 @@ jobs:
           coverage: xdebug
           extensions: pdo_sqlite, zip, gd
       - name: Install PHP dependencies
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@v2
         with:
           composer-options: --prefer-dist
       - name: Generate app key
