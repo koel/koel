@@ -41,7 +41,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        $this->user?->currentAccessToken()->delete();
+        $this->user?->currentAccessToken()->delete(); // @phpstan-ignore-line
 
         return response()->noContent();
     }
