@@ -1,33 +1,23 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\ApiClients;
 
 use App\Exceptions\SpotifyIntegrationDisabledException;
+use App\Services\SpotifyService;
 use Illuminate\Cache\Repository as Cache;
-use Psr\Log\LoggerInterface;
 use SpotifyWebAPI\Session;
 use SpotifyWebAPI\SpotifyWebAPI;
-use Throwable;
 
 /**
  * @method array search(string $keywords, string|array $type, array|object $options = [])
  */
 class SpotifyClient
 {
-    public function __construct(
-        public SpotifyWebAPI $wrapped,
-        private ?Session $session,
-        private Cache $cache,
-        private LoggerInterface $log
-    ) {
+    public function __construct(public SpotifyWebAPI $wrapped, private ?Session $session, private Cache $cache)
+    {
         if (SpotifyService::enabled()) {
             $this->wrapped->setOptions(['return_assoc' => true]);
-
-            try {
-                $this->setAccessToken();
-            } catch (Throwable $e) {
-                $this->log->error('Failed to set Spotify access token', ['exception' => $e]);
-            }
+            attempt(fn () => $this->setAccessToken());
         }
     }
 

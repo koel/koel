@@ -9,12 +9,11 @@ class ConvertUserPreferencesFromArrayToJson extends Migration
     public function up(): void
     {
         User::all()->each(static function (User $user): void {
-            try {
+            attempt(static function () use ($user): void {
                 $preferences = unserialize($user->getRawOriginal('preferences'));
                 $user->preferences->lastFmSessionKey = Arr::get($preferences, 'lastfm_session_key');
                 $user->save();
-            } catch (Throwable $exception) {
-            }
+            }, false);
         });
     }
 }

@@ -21,9 +21,6 @@ class DataController extends Controller
 
     /** @param User $currentUser */
     public function __construct(
-        private LastfmService $lastfmService,
-        private YouTubeService $youTubeService,
-        private ITunesService $iTunesService,
         private MediaCacheService $mediaCacheService,
         private SettingRepository $settingRepository,
         private PlaylistRepository $playlistRepository,
@@ -46,9 +43,9 @@ class DataController extends Controller
             ),
             'users' => $this->currentUser->is_admin ? $this->userRepository->getAll() : [],
             'currentUser' => $this->currentUser,
-            'useLastfm' => $this->lastfmService->used(),
-            'useYouTube' => $this->youTubeService->enabled(),
-            'useiTunes' => $this->iTunesService->used(),
+            'useLastfm' => LastfmService::used(),
+            'useYouTube' => YouTubeService::enabled(),
+            'useiTunes' => ITunesService::used(),
             'allowDownload' => config('koel.download.allow'),
             'supportsTranscoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),

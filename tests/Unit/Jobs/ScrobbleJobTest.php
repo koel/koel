@@ -25,7 +25,7 @@ class ScrobbleJobTest extends TestCase
 
         $lastfm->shouldReceive('scrobble')
             ->once()
-            ->with($song->artist->name, $song->title, 100, $song->album->name, $user->lastfm_session_key);
+            ->with($song, $user, 100);
 
         $job->handle($lastfm);
     }

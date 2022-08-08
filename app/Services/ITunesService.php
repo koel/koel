@@ -2,14 +2,19 @@
 
 namespace App\Services;
 
-use Throwable;
+use App\Services\ApiClients\ITunesClient;
+use Illuminate\Cache\Repository as Cache;
 
-class ITunesService extends ApiClient implements ApiConsumerInterface
+class ITunesService
 {
+    public function __construct(private ITunesClient $client, private Cache $cache)
+    {
+    }
+
     /**
      * Determines whether to use iTunes services.
      */
-    public function used(): bool
+    public static function used(): bool
     {
         return (bool) config('koel.itunes.enabled');
     }
@@ -23,7 +28,7 @@ class ITunesService extends ApiClient implements ApiConsumerInterface
      */
     public function getTrackUrl(string $term, string $album = '', string $artist = ''): ?string
     {
-        try {
+        return attempt(function () use ($term, $album, $artist): ?string {
             return $this->cache->remember(
                 md5("itunes_track_url_$term$album$artist"),
                 24 * 60 * 7,
@@ -35,9 +40,7 @@ class ITunesService extends ApiClient implements ApiConsumerInterface
                         'limit' => 1,
                     ];
 
-                    $response = json_decode(
-                        $this->getClient()->get($this->getEndpoint(), ['query' => $params])->getBody()
-                    );
+                    $response = $this->client->get('/', ['query' => $params]);
 
                     if (!$response->resultCount) {
                         return null;
@@ -45,28 +48,10 @@ class ITunesService extends ApiClient implements ApiConsumerInterface
 
                     $trackUrl = $response->results[0]->trackViewUrl;
                     $connector = parse_url($trackUrl, PHP_URL_QUERY) ? '&' : '?';
+
                     return $trackUrl . "{$connector}at=" . config('koel.itunes.affiliate_id');
                 }
             );
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-
-            return null;
-        }
-    }
-
-    public function getKey(): ?string
-    {
-        return null;
-    }
-
-    public function getSecret(): ?string
-    {
-        return null;
-    }
-
-    public function getEndpoint(): ?string
-    {
-        return config('koel.itunes.endpoint');
+        });
     }
 }

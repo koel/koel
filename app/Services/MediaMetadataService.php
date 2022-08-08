@@ -5,16 +5,11 @@ namespace App\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Support\Str;
-use Psr\Log\LoggerInterface;
-use Throwable;
 
 class MediaMetadataService
 {
-    public function __construct(
-        private SpotifyService $spotifyService,
-        private ImageWriter $imageWriter,
-        private LoggerInterface $logger
-    ) {
+    public function __construct(private SpotifyService $spotifyService, private ImageWriter $imageWriter)
+    {
     }
 
     public function tryDownloadAlbumCover(Album $album): void
@@ -37,7 +32,7 @@ class MediaMetadataService
         ?string $destination = '',
         bool $cleanUp = true
     ): void {
-        try {
+        attempt(function () use ($album, $source, $extension, $destination, $cleanUp): void {
             $extension = trim(strtolower($extension), '. ');
             $destination = $destination ?: $this->generateAlbumCoverPath($extension);
             $this->imageWriter->write($destination, $source);
@@ -48,9 +43,7 @@ class MediaMetadataService
 
             $album->update(['cover' => basename($destination)]);
             $this->createThumbnailForAlbum($album);
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-        }
+        });
     }
 
     public function tryDownloadArtistImage(Artist $artist): void
@@ -73,7 +66,7 @@ class MediaMetadataService
         ?string $destination = '',
         bool $cleanUp = true
     ): void {
-        try {
+        attempt(function () use ($artist, $source, $extension, $destination, $cleanUp): void {
             $extension = trim(strtolower($extension), '. ');
             $destination = $destination ?: $this->generateArtistImagePath($extension);
             $this->imageWriter->write($destination, $source);
@@ -83,9 +76,7 @@ class MediaMetadataService
             }
 
             $artist->update(['image' => basename($destination)]);
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-        }
+        });
     }
 
     private function generateAlbumCoverPath(string $extension): string

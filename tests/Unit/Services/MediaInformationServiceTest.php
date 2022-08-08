@@ -1,14 +1,16 @@
 <?php
 
-namespace Tests\Integration\Services;
+namespace Tests\Unit\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\LastfmService;
 use App\Services\MediaInformationService;
 use App\Services\MediaMetadataService;
+use App\Services\MusicEncyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
+use Illuminate\Cache\Repository as Cache;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
@@ -16,7 +18,7 @@ use Tests\TestCase;
 
 class MediaInformationServiceTest extends TestCase
 {
-    private LastfmService|MockInterface|LegacyMockInterface $lastFmService;
+    private MusicEncyclopedia|MockInterface|LegacyMockInterface $encyclopedia;
     private MediaMetadataService|LegacyMockInterface|MockInterface $mediaMetadataService;
     private MediaInformationService $mediaInformationService;
 
@@ -24,10 +26,14 @@ class MediaInformationServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->lastFmService = Mockery::mock(LastfmService::class);
+        $this->encyclopedia = Mockery::mock(LastfmService::class);
         $this->mediaMetadataService = Mockery::mock(MediaMetadataService::class);
 
-        $this->mediaInformationService = new MediaInformationService($this->lastFmService, $this->mediaMetadataService);
+        $this->mediaInformationService = new MediaInformationService(
+            $this->encyclopedia,
+            $this->mediaMetadataService,
+            app(Cache::class)
+        );
     }
 
     public function testGetAlbumInformation(): void
@@ -36,13 +42,14 @@ class MediaInformationServiceTest extends TestCase
         $album = Album::factory()->create();
         $info = AlbumInformation::make();
 
-        $this->lastFmService
+        $this->encyclopedia
             ->shouldReceive('getAlbumInformation')
             ->once()
             ->with($album)
             ->andReturn($info);
 
         self::assertSame($info, $this->mediaInformationService->getAlbumInformation($album));
+        self::assertNotNull(cache()->get('album.info.' . $album->id));
     }
 
     public function testGetAlbumInformationTriesDownloadingCover(): void
@@ -51,7 +58,7 @@ class MediaInformationServiceTest extends TestCase
         $album = Album::factory()->create(['cover' => '']);
         $info = AlbumInformation::make();
 
-        $this->lastFmService
+        $this->encyclopedia
             ->shouldReceive('getAlbumInformation')
             ->once()
             ->with($album)
@@ -70,13 +77,14 @@ class MediaInformationServiceTest extends TestCase
         $artist = Artist::factory()->create();
         $info = ArtistInformation::make();
 
-        $this->lastFmService
+        $this->encyclopedia
             ->shouldReceive('getArtistInformation')
             ->once()
             ->with($artist)
             ->andReturn($info);
 
         self::assertSame($info, $this->mediaInformationService->getArtistInformation($artist));
+        self::assertNotNull(cache()->get('artist.info.' . $artist->id));
     }
 
     public function testGetArtistInformationTriesDownloadingImage(): void
@@ -85,7 +93,7 @@ class MediaInformationServiceTest extends TestCase
         $artist = Artist::factory()->create(['image' => '']);
         $info = ArtistInformation::make();
 
-        $this->lastFmService
+        $this->encyclopedia
             ->shouldReceive('getArtistInformation')
             ->once()
             ->with($artist)

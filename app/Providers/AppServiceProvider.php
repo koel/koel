@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\LastfmService;
+use App\Services\MusicEncyclopedia;
+use App\Services\NullMusicEncyclopedia;
 use App\Services\SpotifyService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Schema\Builder;
@@ -36,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
             return SpotifyService::enabled()
                 ? new SpotifySession(config('koel.spotify.client_id'), config('koel.spotify.client_secret'))
                 : null;
+        });
+
+        $this->app->bind(MusicEncyclopedia::class, function () {
+            return $this->app->get(LastfmService::enabled() ? LastfmService::class : NullMusicEncyclopedia::class);
         });
     }
 

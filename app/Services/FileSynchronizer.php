@@ -13,7 +13,6 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Support\Arr;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
-use Throwable;
 
 class FileSynchronizer
 {
@@ -101,7 +100,7 @@ class FileSynchronizer
      */
     private function tryGenerateAlbumCover(Album $album, ?array $coverData): void
     {
-        try {
+        attempt(function () use ($album, $coverData): void {
             // If the album has no cover, we try to get the cover image from existing tag data
             if ($coverData) {
                 $extension = explode('/', $coverData['image_mime']);
@@ -119,8 +118,7 @@ class FileSynchronizer
                 $extension = pathinfo($cover, PATHINFO_EXTENSION);
                 $this->mediaMetadataService->writeAlbumCover($album, $cover, $extension);
             }
-        } catch (Throwable) {
-        }
+        }, false);
     }
 
     /**
@@ -152,11 +150,7 @@ class FileSynchronizer
 
     private static function isImage(string $path): bool
     {
-        try {
-            return (bool) exif_imagetype($path);
-        } catch (Throwable) {
-            return false;
-        }
+        return attempt(static fn () => (bool) exif_imagetype($path)) ?? false;
     }
 
     /**

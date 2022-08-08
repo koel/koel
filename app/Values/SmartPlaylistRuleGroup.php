@@ -5,7 +5,6 @@ namespace App\Values;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Throwable;
 
 final class SmartPlaylistRuleGroup implements Arrayable
 {
@@ -15,11 +14,7 @@ final class SmartPlaylistRuleGroup implements Arrayable
 
     public static function tryCreate(array $jsonArray): ?self
     {
-        try {
-            return self::create($jsonArray);
-        } catch (Throwable) {
-            return null;
-        }
+        return attempt(static fn () => self::create($jsonArray));
     }
 
     public static function create(array $jsonArray): self

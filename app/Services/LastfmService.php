@@ -4,257 +4,126 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
 use App\Models\User;
+use App\Services\ApiClients\LastfmClient;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
-use App\Values\LastfmLoveTrackParameters;
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\Utils;
 use Illuminate\Support\Collection;
-use Throwable;
 
-class LastfmService extends ApiClient implements ApiConsumerInterface
+class LastfmService implements MusicEncyclopedia
 {
-    /**
-     * Override the key param, since, again, Last.fm wants to be different.
-     */
-    protected string $keyParam = 'api_key';
+    public function __construct(private LastfmClient $client)
+    {
+    }
 
     /**
      * Determine if our application is using Last.fm.
      */
-    public function used(): bool
+    public static function used(): bool
     {
-        return (bool) $this->getKey();
+        return (bool) config('koel.lastfm.key');
     }
 
     /**
      * Determine if Last.fm integration is enabled.
      */
-    public function enabled(): bool
+    public static function enabled(): bool
     {
-        return $this->getKey() && $this->getSecret();
+        return config('koel.lastfm.key') && config('koel.lastfm.secret');
     }
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
-        if (!$this->enabled()) {
-            return null;
-        }
+        return attempt_if(static::enabled(), function () use ($artist): ?ArtistInformation {
+            $name = urlencode($artist->name);
+            $response = $this->client->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
 
-        $name = urlencode($artist->name);
-
-        try {
-            return $this->cache->remember(
-                md5("lastfm_artist_$name"),
-                now()->addWeek(),
-                function () use ($name): ?ArtistInformation {
-                    $response = $this->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
-
-                    return $response?->artist ? ArtistInformation::fromLastFmData($response->artist) : null;
-                }
-            );
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-
-            return null;
-        }
+            return $response?->artist ? ArtistInformation::fromLastFmData($response->artist) : null;
+        });
     }
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
     {
-        if (!$this->enabled()) {
-            return null;
-        }
+        return attempt_if(static::enabled(), function () use ($album): ?AlbumInformation {
+            $albumName = urlencode($album->name);
+            $artistName = urlencode($album->artist->name);
 
-        $albumName = urlencode($album->name);
-        $artistName = urlencode($album->artist->name);
+            $response = $this->client
+                ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
 
-        try {
-            $cacheKey = md5("lastfm_album_{$albumName}_{$artistName}");
-
-            return $this->cache->remember(
-                $cacheKey,
-                now()->addWeek(),
-                function () use ($albumName, $artistName): ?AlbumInformation {
-                    $response = $this
-                        ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
-
-                    return $response?->album ? AlbumInformation::fromLastFmData($response->album) : null;
-                }
-            );
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-
-            return null;
-        }
+            return $response?->album ? AlbumInformation::fromLastFmData($response->album) : null;
+        });
     }
 
-    /**
-     * Get Last.fm's session key for the authenticated user using a token.
-     *
-     * @param string $token The token after successfully connecting to Last.fm
-     *
-     * @see http://www.last.fm/api/webauth#4
-     */
-    public function getSessionKey(string $token): ?string
+    public function scrobble(Song $song, User $user, int $timestamp): void
     {
-        $query = $this->buildAuthCallParams([
-            'method' => 'auth.getSession',
-            'token' => $token,
-        ], true);
-
-        try {
-            return $this->get("/?$query&format=json", [], false)->session->key;
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-
-            return null;
-        }
-    }
-
-    public function scrobble(
-        string $artistName,
-        string $trackName,
-        $timestamp,
-        string $albumName,
-        string $sessionKey
-    ): void {
         $params = [
-            'artist' => $artistName,
-            'track' => $trackName,
+            'artist' => $song->artist->name,
+            'track' => $song->title,
             'timestamp' => $timestamp,
-            'sk' => $sessionKey,
+            'sk' => $user->lastfm_session_key,
             'method' => 'track.scrobble',
         ];
 
-        if ($albumName) {
-            $params['album'] = $albumName;
+        if ($song->album->name !== Album::UNKNOWN_NAME) {
+            $params['album'] = $song->album->name;
         }
 
-        try {
-            $this->post('/', $this->buildAuthCallParams($params), false);
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-        }
+        attempt(fn () => $this->client->post('/', $params, false));
     }
 
-    public function toggleLoveTrack(LastfmLoveTrackParameters $params, string $sessionKey, bool $love = true): void
+    public function toggleLoveTrack(Song $song, User $user, bool $love): void
     {
-        try {
-            $this->post('/', $this->buildAuthCallParams([
-                'track' => $params->trackName,
-                'artist' => $params->artistName,
-                'sk' => $sessionKey,
-                'method' => $love ? 'track.love' : 'track.unlove',
-            ]), false);
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-        }
+        attempt(fn () => $this->client->post('/', [
+            'track' => $song->title,
+            'artist' => $song->artist->name,
+            'sk' => $user->lastfm_session_key,
+            'method' => $love ? 'track.love' : 'track.unlove',
+        ], false));
     }
 
     /**
-     * @param Collection|array<LastfmLoveTrackParameters> $parameterCollection
+     * @param Collection|array<array-key, Song> $songs
      */
-    public function batchToggleLoveTracks(Collection $parameterCollection, string $sessionKey, bool $love = true): void
+    public function batchToggleLoveTracks(Collection $songs, User $user, bool $love): void
     {
-        $promises = $parameterCollection->map(
-            fn (LastfmLoveTrackParameters $params): Promise => $this->postAsync('/', $this->buildAuthCallParams([
-                'track' => $params->trackName,
-                'artist' => $params->artistName,
-                'sk' => $sessionKey,
-                'method' => $love ? 'track.love' : 'track.unlove',
-            ]), false)
+        $promises = $songs->map(
+            function (Song $song) use ($user, $love): Promise {
+                return $this->client->postAsync('/', [
+                    'track' => $song->title,
+                    'artist' => $song->artist->name,
+                    'sk' => $user->lastfm_session_key,
+                    'method' => $love ? 'track.love' : 'track.unlove',
+                ], false);
+            }
         );
 
-        try {
-            Utils::unwrap($promises);
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-        }
+        attempt(static fn () => Utils::unwrap($promises));
     }
 
-    public function updateNowPlaying(
-        string $artistName,
-        string $trackName,
-        string $albumName,
-        int|float $duration,
-        string $sessionKey
-    ): void {
+    public function updateNowPlaying(Song $song, User $user): void
+    {
         $params = [
-            'artist' => $artistName,
-            'track' => $trackName,
-            'duration' => $duration,
-            'sk' => $sessionKey,
+            'artist' => $song->artist->name,
+            'track' => $song->title,
+            'duration' => $song->length,
+            'sk' => $user->lastfm_session_key,
             'method' => 'track.updateNowPlaying',
         ];
 
-        if ($albumName) {
-            $params['album'] = $albumName;
+        if ($song->album->name !== Album::UNKNOWN_NAME) {
+            $params['album'] = $song->album->name;
         }
 
-        try {
-            $this->post('/', $this->buildAuthCallParams($params), false);
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-        }
+        attempt(fn () => $this->client->post('/', $params, false));
     }
 
-    /**
-     * Build the parameters to use for _authenticated_ Last.fm API calls.
-     * Such calls require:
-     * - The API key (api_key)
-     * - The API signature (api_sig).
-     *
-     * @see http://www.last.fm/api/webauth#5
-     *
-     * @param array $params The array of parameters
-     * @param bool $toString Whether to turn the array into a query string
-     *
-     * @return array<mixed>|string
-     */
-    public function buildAuthCallParams(array $params, bool $toString = false): array|string
+    public function getSessionKey(string $token): ?string
     {
-        $params['api_key'] = $this->getKey();
-        ksort($params);
-
-        // Generate the API signature.
-        // @link http://www.last.fm/api/webauth#6
-        $str = '';
-
-        foreach ($params as $name => $value) {
-            $str .= $name . $value;
-        }
-
-        $str .= $this->getSecret();
-        $params['api_sig'] = md5($str);
-
-        if (!$toString) {
-            return $params;
-        }
-
-        $query = '';
-
-        foreach ($params as $key => $value) {
-            $query .= "$key=$value&";
-        }
-
-        return rtrim($query, '&');
-    }
-
-    public function getKey(): ?string
-    {
-        return config('koel.lastfm.key');
-    }
-
-    public function getEndpoint(): ?string
-    {
-        return config('koel.lastfm.endpoint');
-    }
-
-    public function getSecret(): ?string
-    {
-        return config('koel.lastfm.secret');
+        return $this->client->getSessionKey($token);
     }
 
     public function setUserSessionKey(User $user, ?string $sessionKey): void

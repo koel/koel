@@ -1,24 +1,21 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\ApiClients;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\Promise\Promise;
-use Illuminate\Contracts\Cache\Repository as Cache;
-use Illuminate\Log\Logger;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use SimpleXMLElement;
 use Webmozart\Assert\Assert;
 
 /**
- * @method object|null get(string $uri, array $data = [], bool $appendKey = true)
- * @method object post($uri, array $data = [], bool $appendKey = true)
- * @method object put($uri, array $data = [], bool $appendKey = true)
- * @method object patch($uri, array $data = [], bool $appendKey = true)
- * @method object head($uri, array $data = [], bool $appendKey = true)
- * @method object delete($uri, array $data = [], bool $appendKey = true)
+ * @method mixed get(string $uri, array $data = [], bool $appendKey = true)
+ * @method mixed post($uri, array $data = [], bool $appendKey = true)
+ * @method mixed put($uri, array $data = [], bool $appendKey = true)
+ * @method mixed patch($uri, array $data = [], bool $appendKey = true)
+ * @method mixed head($uri, array $data = [], bool $appendKey = true)
+ * @method mixed delete($uri, array $data = [], bool $appendKey = true)
  * @method Promise getAsync(string $uri, array $data = [], bool $appendKey = true)
  * @method Promise postAsync($uri, array $data = [], bool $appendKey = true)
  * @method Promise putAsync($uri, array $data = [], bool $appendKey = true)
@@ -44,9 +41,6 @@ abstract class ApiClient
     ];
 
     protected string $responseFormat = 'json';
-    protected Client $client;
-    protected Cache $cache;
-    protected Logger $logger;
 
     /**
      * The query parameter name for the key.
@@ -55,11 +49,8 @@ abstract class ApiClient
      */
     protected string $keyParam = 'key';
 
-    public function __construct(Client $client, Cache $cache, Logger $logger)
+    public function __construct(protected GuzzleHttpClient $wrapped)
     {
-        $this->client = $client;
-        $this->cache = $cache;
-        $this->logger = $logger;
     }
 
     /**
@@ -72,12 +63,11 @@ abstract class ApiClient
      *                           an "API signature" of the request. Appending an API key will break the request.
      * @param array $params An array of parameters
      *
-     * @return mixed|SimpleXMLElement|void
      */
-    public function request(string $method, string $uri, bool $appendKey = true, array $params = []) // @phpcs:ignore
+    public function request(string $method, string $uri, bool $appendKey = true, array $params = []): mixed
     {
-        try {
-            $body = (string) $this->getClient()
+        return attempt(function () use ($method, $uri, $appendKey, $params) {
+            $body = (string) $this->wrapped
                 ->$method($this->buildUrl($uri, $appendKey), ['form_params' => $params])
                 ->getBody();
 
@@ -90,14 +80,12 @@ abstract class ApiClient
             }
 
             return $body;
-        } catch (ClientException $e) {
-            $this->logger->error($e);
-        }
+        });
     }
 
     public function requestAsync(string $method, string $uri, bool $appendKey = true, array $params = []): Promise
     {
-        return $this->getClient()->$method($this->buildUrl($uri, $appendKey), ['form_params' => $params]);
+        return $this->wrapped->$method($this->buildUrl($uri, $appendKey), ['form_params' => $params]);
     }
 
     /**
@@ -153,11 +141,6 @@ abstract class ApiClient
         }
 
         return $uri;
-    }
-
-    public function getClient(): Client
-    {
-        return $this->client;
     }
 
     abstract public function getKey(): ?string;

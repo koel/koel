@@ -3,16 +3,21 @@
 namespace App\Services;
 
 use App\Models\Song;
-use Throwable;
+use App\Services\ApiClients\YouTubeClient;
+use Illuminate\Cache\Repository as Cache;
 
-class YouTubeService extends ApiClient implements ApiConsumerInterface
+class YouTubeService
 {
+    public function __construct(private YouTubeClient $client, private Cache $cache)
+    {
+    }
+
     /**
      * Determine if our application is using YouTube.
      */
-    public function enabled(): bool
+    public static function enabled(): bool
     {
-        return (bool) $this->getKey();
+        return (bool) config('koel.youtube.key');
     }
 
     public function searchVideosRelatedToSong(Song $song, string $pageToken = '') // @phpcs:ignore
@@ -35,40 +40,17 @@ class YouTubeService extends ApiClient implements ApiConsumerInterface
      * @param int $perPage Number of results per page
      *
      */
-    public function search(string $q, string $pageToken = '', int $perPage = 10) // @phpcs:ignore
+    private function search(string $q, string $pageToken = '', int $perPage = 10) // @phpcs:ignore
     {
-        if (!$this->enabled()) {
-            return null;
-        }
+        return attempt_if(static::enabled(), function () use ($q, $pageToken, $perPage) {
+            $uri = sprintf(
+                'search?part=snippet&type=video&maxResults=%s&pageToken=%s&q=%s',
+                $perPage,
+                urlencode($pageToken),
+                urlencode($q)
+            );
 
-        $uri = sprintf(
-            'search?part=snippet&type=video&maxResults=%s&pageToken=%s&q=%s',
-            $perPage,
-            urlencode($pageToken),
-            urlencode($q)
-        );
-
-        try {
-            return $this->cache->remember(md5("youtube_$uri"), 60 * 24 * 7, fn () => $this->get($uri));
-        } catch (Throwable $e) {
-            $this->logger->error($e);
-
-            return null;
-        }
-    }
-
-    public function getEndpoint(): ?string
-    {
-        return config('koel.youtube.endpoint');
-    }
-
-    public function getKey(): ?string
-    {
-        return config('koel.youtube.key');
-    }
-
-    public function getSecret(): ?string
-    {
-        return null;
+            return $this->cache->remember(md5("youtube_$uri"), now()->addWeek(), fn () => $this->client->get($uri));
+        });
     }
 }

@@ -1,14 +1,13 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit\Services\ApiClients;
 
 use App\Exceptions\SpotifyIntegrationDisabledException;
-use App\Services\SpotifyClient;
+use App\Services\ApiClients\SpotifyClient;
 use Illuminate\Cache\Repository as Cache;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
-use Psr\Log\LoggerInterface;
 use SpotifyWebAPI\Session as SpotifySession;
 use SpotifyWebAPI\SpotifyWebAPI;
 use Tests\TestCase;
@@ -18,7 +17,6 @@ class SpotifyClientTest extends TestCase
     private SpotifySession|LegacyMockInterface|MockInterface $session;
     private SpotifyWebAPI|LegacyMockInterface|MockInterface $wrapped;
     private Cache|LegacyMockInterface|MockInterface $cache;
-    private LoggerInterface|LegacyMockInterface|MockInterface $logger;
 
     private SpotifyClient $client;
 
@@ -34,14 +32,13 @@ class SpotifyClientTest extends TestCase
         $this->session = Mockery::mock(SpotifySession::class);
         $this->wrapped = Mockery::mock(SpotifyWebAPI::class);
         $this->cache = Mockery::mock(Cache::class);
-        $this->logger = Mockery::mock(LoggerInterface::class);
     }
 
     public function testAccessTokenIsSetUponInitialization(): void
     {
         $this->mockSetAccessToken();
 
-        $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache, $this->logger);
+        $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache);
     }
 
     public function testAccessTokenIsRetrievedFromCacheWhenApplicable(): void
@@ -53,7 +50,7 @@ class SpotifyClientTest extends TestCase
         $this->cache->shouldNotReceive('put');
         $this->wrapped->shouldReceive('setAccessToken')->with('fake-access-token');
 
-        $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache, $this->logger);
+        $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache);
     }
 
     public function testCallForwarding(): void
@@ -61,7 +58,7 @@ class SpotifyClientTest extends TestCase
         $this->mockSetAccessToken();
         $this->wrapped->shouldReceive('search')->with('foo', 'track')->andReturn('bar');
 
-        $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache, $this->logger);
+        $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache);
 
         self::assertSame('bar', $this->client->search('foo', 'track'));
     }
@@ -74,7 +71,7 @@ class SpotifyClientTest extends TestCase
         ]);
 
         self::expectException(SpotifyIntegrationDisabledException::class);
-        (new SpotifyClient($this->wrapped, $this->session, $this->cache, $this->logger))->search('foo', 'track');
+        (new SpotifyClient($this->wrapped, $this->session, $this->cache))->search('foo', 'track');
     }
 
     private function mockSetAccessToken(): void

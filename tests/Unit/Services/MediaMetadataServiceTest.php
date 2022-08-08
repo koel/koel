@@ -10,7 +10,6 @@ use App\Services\SpotifyService;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
-use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 class MediaMetadataServiceTest extends TestCase
@@ -26,11 +25,7 @@ class MediaMetadataServiceTest extends TestCase
         $this->spotifyService = Mockery::mock(SpotifyService::class);
         $this->imageWriter = Mockery::mock(ImageWriter::class);
 
-        $this->mediaMetadataService = new MediaMetadataService(
-            $this->spotifyService,
-            $this->imageWriter,
-            app(LoggerInterface::class)
-        );
+        $this->mediaMetadataService = new MediaMetadataService($this->spotifyService, $this->imageWriter);
     }
 
     public function testTryDownloadAlbumCover(): void

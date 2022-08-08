@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use SplFileInfo;
-use Throwable;
 
 class Helper
 {
@@ -21,11 +20,6 @@ class Helper
         $file = is_string($file) ? new SplFileInfo($file) : $file;
 
         // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
-        try {
-            return $file->getMTime();
-        } catch (Throwable) {
-            // Just use current stamp for mtime.
-            return time();
-        }
+        return attempt(static fn () => $file->getMTime()) ?? time();
     }
 }

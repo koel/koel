@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
-    public function __construct(private User $user)
+    public function __construct(private User $user, private bool $includePreferences = false)
     {
         parent::__construct($user);
     }
@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'email' => $this->user->email,
             'avatar' => $this->user->avatar,
             'is_admin' => $this->user->is_admin,
+            'preferences' => $this->when($this->includePreferences, $this->user->preferences),
         ];
     }
 }

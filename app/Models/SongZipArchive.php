@@ -4,9 +4,7 @@ namespace App\Models;
 
 use App\Facades\Download;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use RuntimeException;
-use Throwable;
 use ZipArchive;
 
 class SongZipArchive
@@ -43,12 +41,10 @@ class SongZipArchive
 
     public function addSong(Song $song): self
     {
-        try {
+        attempt(function () use ($song): void {
             $path = Download::fromSong($song);
             $this->archive->addFile($path, $this->generateZipContentFileNameFromPath($path));
-        } catch (Throwable $e) {
-            Log::error($e);
-        }
+        });
 
         return $this;
     }

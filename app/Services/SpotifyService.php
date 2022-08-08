@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Services\ApiClients\SpotifyClient;
 use Illuminate\Support\Arr;
 
 class SpotifyService

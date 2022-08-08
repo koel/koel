@@ -4,7 +4,7 @@ namespace Tests\Unit\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\SpotifyClient;
+use App\Services\ApiClients\SpotifyClient;
 use App\Services\SpotifyService;
 use Mockery;
 use Mockery\LegacyMockInterface;

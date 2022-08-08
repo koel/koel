@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
+
 /**
  * Get a URL for static file requests.
  * If this installation of Koel has a CDN_URL configured, use it as the base.
@@ -37,4 +39,27 @@ function artist_image_url(?string $fileName): ?string
 function koel_version(): string
 {
     return trim(file_get_contents(base_path('.version')));
+}
+
+function attempt(callable $callback, bool $log = true): mixed
+{
+    try {
+        return $callback();
+    } catch (Throwable $e) {
+        if ($log) {
+            Log::error('Failed attempt', ['error' => $e]);
+        }
+
+        return null;
+    }
+}
+
+function attempt_if($condition, callable $callback, bool $log = true): mixed
+{
+    return value($condition) ? attempt($callback, $log) : null;
+}
+
+function attempt_unless($condition, callable $callback, bool $log = true): mixed
+{
+    return !value($condition) ? attempt($callback, $log) : null;
 }

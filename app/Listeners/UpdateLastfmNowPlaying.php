@@ -8,25 +8,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class UpdateLastfmNowPlaying implements ShouldQueue
 {
-    private LastfmService $lastfm;
-
-    public function __construct(LastfmService $lastfm)
+    public function __construct(private LastfmService $lastfm)
     {
-        $this->lastfm = $lastfm;
     }
 
     public function handle(SongStartedPlaying $event): void
     {
-        if (!$this->lastfm->enabled() || !$event->user->lastfm_session_key || $event->song->artist->is_unknown) {
+        if (!LastfmService::enabled() || !$event->user->lastfm_session_key || $event->song->artist->is_unknown) {
             return;
         }
 
-        $this->lastfm->updateNowPlaying(
-            $event->song->artist->name,
-            $event->song->title,
-            $event->song->album->is_unknown ? '' : $event->song->album->name,
-            $event->song->length,
-            $event->user->lastfm_session_key
-        );
+        $this->lastfm->updateNowPlaying($event->song, $event->user);
     }
 }

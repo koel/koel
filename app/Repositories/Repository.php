@@ -5,7 +5,6 @@ namespace App\Repositories;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Throwable;
 
 abstract class Repository implements RepositoryInterface
 {
@@ -20,10 +19,7 @@ abstract class Repository implements RepositoryInterface
 
         // This instantiation may fail during a console command if e.g. APP_KEY is empty,
         // rendering the whole installation failing.
-        try {
-            $this->auth = app(Guard::class);
-        } catch (Throwable) {
-        }
+        attempt(fn () => $this->auth = app(Guard::class), false);
     }
 
     private static function guessModelClass(): string

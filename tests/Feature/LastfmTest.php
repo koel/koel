@@ -5,10 +5,6 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\LastfmService;
 use App\Services\TokenManager;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
-use Illuminate\Contracts\Cache\Repository as Cache;
-use Illuminate\Log\Logger;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery;
@@ -16,17 +12,6 @@ use Mockery\MockInterface;
 
 class LastfmTest extends TestCase
 {
-    public function testGetSessionKey(): void
-    {
-        /** @var Client $client */
-        $client = Mockery::mock(Client::class, [
-            'get' => new Response(200, [], file_get_contents(__DIR__ . '../../blobs/lastfm/session-key.json')),
-        ]);
-
-        $service = new LastfmService($client, app(Cache::class), app(Logger::class));
-        self::assertEquals('foo', $service->getSessionKey('bar'));
-    }
-
     public function testSetSessionKey(): void
     {
         /** @var User $user */

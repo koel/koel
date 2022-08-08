@@ -22,13 +22,13 @@ class PhpStreamer extends Streamer implements DirectStreamerInterface
             $rangeSet = RangeSet::createFromHeader(get_request_header('Range'));
             $resource = new FileResource($this->song->path);
             (new ResourceServlet($resource))->sendResource($rangeSet);
-        } catch (InvalidRangeHeaderException $e) {
+        } catch (InvalidRangeHeaderException) {
             abort(Response::HTTP_BAD_REQUEST);
-        } catch (UnsatisfiableRangeException $e) {
+        } catch (UnsatisfiableRangeException) {
             abort(Response::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
-        } catch (NonExistentFileException $e) {
+        } catch (NonExistentFileException) {
             abort(Response::HTTP_NOT_FOUND);
-        } catch (UnreadableFileException $e) {
+        } catch (UnreadableFileException) {
             abort(Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch (SendFileFailureException $e) {
             abort_unless(headers_sent(), Response::HTTP_INTERNAL_SERVER_ERROR);

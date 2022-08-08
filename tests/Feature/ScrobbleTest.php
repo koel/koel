@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
+use Mockery;
 
 class ScrobbleTest extends TestCase
 {
@@ -18,14 +19,16 @@ class ScrobbleTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $timestamp = time();
-
         self::mock(LastfmService::class)
             ->shouldReceive('scrobble')
-            ->with($song->album->artist->name, $song->title, $timestamp, $song->album->name, $user->lastfm_session_key)
+            ->with(
+                Mockery::on(static fn (Song $s) => $s->is($song)),
+                Mockery::on(static fn (User $u) => $u->is($user)),
+                100
+            )
             ->once();
 
-        $this->postAs("/api/$song->id/scrobble", ['timestamp' => $timestamp], $user)
+        $this->postAs("/api/$song->id/scrobble", ['timestamp' => 100], $user)
             ->assertNoContent();
     }
 }

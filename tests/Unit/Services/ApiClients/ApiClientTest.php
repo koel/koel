@@ -1,12 +1,10 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit\Services\ApiClients;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Log\Logger;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
@@ -17,26 +15,22 @@ class ApiClientTest extends TestCase
 {
     use WithoutMiddleware;
 
-    private Cache|LegacyMockInterface|MockInterface $cache;
-    private Client|LegacyMockInterface|MockInterface $client;
-    private Logger|LegacyMockInterface|MockInterface $logger;
+    private Client|LegacyMockInterface|MockInterface $wrapped;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->client = Mockery::mock(Client::class);
-        $this->cache = Mockery::mock(Cache::class);
-        $this->logger = Mockery::mock(Logger::class);
+        $this->wrapped = Mockery::mock(Client::class);
     }
 
     public function testBuildUri(): void
     {
-        $api = new ConcreteApiClient($this->client, $this->cache, $this->logger);
+        $api = new ConcreteApiClient($this->wrapped);
 
-        self::assertEquals('http://foo.com/get/param?key=bar', $api->buildUrl('get/param'));
-        self::assertEquals('http://foo.com/get/param?baz=moo&key=bar', $api->buildUrl('/get/param?baz=moo'));
-        self::assertEquals('http://baz.com/?key=bar', $api->buildUrl('http://baz.com/'));
+        self::assertEquals('https://foo.com/get/param?key=bar', $api->buildUrl('get/param'));
+        self::assertEquals('https://foo.com/get/param?baz=moo&key=bar', $api->buildUrl('/get/param?baz=moo'));
+        self::assertEquals('https://baz.com/?key=bar', $api->buildUrl('https://baz.com/'));
     }
 
     /** @return array<mixed> */
@@ -58,7 +52,7 @@ class ApiClientTest extends TestCase
             $method => new Response(200, [], $responseBody),
         ]);
 
-        $api = new ConcreteApiClient($client, $this->cache, $this->logger);
+        $api = new ConcreteApiClient($client);
 
         self::assertSame((array) json_decode($responseBody), (array) $api->$method('/'));
     }
