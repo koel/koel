@@ -4,78 +4,31 @@
 
 ## Intro
 
-**Koel** (also stylized as **koel**, with a lowercase k) is a simple web-based personal audio streaming service written in [Vue](http://vuejs.org/) on the client side and [Laravel](http://laravel.com/) on the server side. Targeting web developers, Koel embraces some of the more modern web technologies – CSS grid, audio, and drag-and-drop API to name a few – to do its job.
+**Koel** (also stylized as **koel**, with a lowercase k) is a simple web-based personal audio streaming service written
+in [Vue](http://vuejs.org/) on the client side and [Laravel](http://laravel.com/) on the server side. Targeting web
+developers, Koel embraces some of the more modern web technologies to do its job.
 
 ## Install and Upgrade Guide
 
-For system requirements, installation/upgrade guides, troubleshooting etc., head over to the [Official Documentation](https://docs.koel.dev).
+For system requirements, installation/upgrade guides, troubleshooting etc., head over to
+the [Official Documentation](https://docs.koel.dev).
 
 ## Development
 
-Since Koel makes use of [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), you'll want to make sure the submodule is up-to-date:
-
-```bash
-git pull
-git submodule update --init --recursive --remote
-
-# install the submodule dependencies
-cd resources/assets
-yarn install
-```
-
-To start the **PHP dev server**, which serves as the API of the application, run the following command from the root directory. By default, the server will listen at port `8000`.
-
-```bash
-php artisan serve
-```
-
-For the **client application** itself, run this command:
-
-```bash
-yarn hot
-```
-
-A development version of Koel should now be available at `http://localhost:8080` with full support for hot module reloading.
-
-Alternatively, you can start both the PHP server and the client application in one go with `yarn dev`, which uses [`start-server-and-test`](https://github.com/bahmutov/start-server-and-test) under the hood.
-
-## Testing, Linting, Static Analysis and Stuff
-
-```bash
-# PHP-related code quality tasks
-# Basically, take a look at the "scripts" section in composer.json
-composer test        # Run the PHP test suite
-composer cs          # Run code style checker
-composer cs:fix      # Run code style fixer 
-composer analyze     # Run PHP static analysis
-
-yarn build # Build a production version of the client application
-
-# Client/E2E code quality tasks
-# You may want to run `yarn build` first.
-yarn test:e2e        # Run the Cypress test suite interactively
-yarn test:e2e:ci     # Run the Cypress test suite non-interactively (CI mode)
-# These commands need to be run from within the submodule (resources/assets)
-yarn lint            # Lint
-yarn type-check      # TypeScript type checking
-yarn test            # Unit testing
-```
-
-> Note: If you're already running `yarn test:e2e`, there's no need to start a dev server. `yarn test:e2e` calls `yarn dev` internally and will eliminate the existing `yarn dev` process, if any. 
-
-> A quick and easy way to start hacking on koel is to open and run this repo in Gitpod, an online IDE with full Laravel support.
-> 
-> [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/koel/koel)
+See the [Development Guide](https://docs.koel.dev/#local-development).
 
 ## Koel Player
 
 ![Koel Player screenshots](https://user-images.githubusercontent.com/8056274/126907318-f3e1e09d-556e-4696-8277-29fd5332aaa1.jpg)
 
-[Koel Player](https://github.com/koel/player) is the official mobile app for Koel, which supports both iOS and Android without the limitations of the mobile web version. For more information on the project, visit [its repository](https://github.com/koel/player).
+[Koel Player](https://github.com/koel/player) is the official mobile app for Koel, which supports both iOS and Android
+without the limitations of the mobile web version. For more information on the project,
+visit [its repository](https://github.com/koel/player).
 
 ## Backers
 
-[Support me on OpenCollective](https://opencollective.com/koel#backer) with a monthly donation and help me continue building Koel.
+[Support me on OpenCollective](https://opencollective.com/koel#backer) with a monthly donation and help me continue
+building Koel.
 
 <a href="https://opencollective.com/koel/backer/0/website" target="_blank"><img src="https://opencollective.com/koel/backer/0/avatar.svg"></a>
 <a href="https://opencollective.com/koel/backer/1/website" target="_blank"><img src="https://opencollective.com/koel/backer/1/avatar.svg"></a>
@@ -112,12 +65,12 @@ yarn test            # Unit testing
 
 #### GitHub Sponsors
 
-* Eduardo San Martin Morote ([@posva](https://github.com/posva))
 * [You](https://github.com/users/phanan/sponsorship)?
 
 #### OpenCollective
 
-[Become a sponsor on OpenCollective](https://opencollective.com/koel#sponsor) and get your logo on our README on Github with a link to your site.
+[Become a sponsor on OpenCollective](https://opencollective.com/koel#sponsor) and get your logo on our README on Github
+with a link to your site.
 
 <a href="https://opencollective.com/koel/sponsor/0/website" target="_blank"><img src="https://opencollective.com/koel/sponsor/0/avatar.svg"></a>
 <a href="https://opencollective.com/koel/sponsor/1/website" target="_blank"><img src="https://opencollective.com/koel/sponsor/1/avatar.svg"></a>
