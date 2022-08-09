@@ -53,7 +53,7 @@ class MediaMetadataServiceTest extends TestCase
             ->with('/koel/public/img/album/foo.jpg', 'dummy-src');
 
         $this->mediaMetadataService->writeAlbumCover($album, 'dummy-src', 'jpg', $coverPath);
-        self::assertEquals(album_cover_url('foo.jpg'), Album::find($album->id)->cover);
+        self::assertEquals(album_cover_url('foo.jpg'), $album->refresh()->cover);
     }
 
     public function testTryDownloadArtistImage(): void
@@ -81,6 +81,7 @@ class MediaMetadataServiceTest extends TestCase
             ->with('/koel/public/img/artist/foo.jpg', 'dummy-src');
 
         $this->mediaMetadataService->writeArtistImage($artist, 'dummy-src', 'jpg', $imagePath);
-        self::assertEquals(artist_image_url('foo.jpg'), Artist::find($artist->id)->image);
+
+        self::assertEquals(artist_image_url('foo.jpg'), $artist->refresh()->image);
     }
 }

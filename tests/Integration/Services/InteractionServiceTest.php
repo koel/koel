@@ -27,11 +27,10 @@ class InteractionServiceTest extends TestCase
     {
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();
-
+        $currentCount = $interaction->play_count;
         $this->interactionService->increasePlayCount($interaction->song, $interaction->user);
 
-        $updatedInteraction = Interaction::find($interaction->id);
-        self::assertEquals($interaction->play_count + 1, $updatedInteraction->play_count);
+        self::assertEquals($currentCount + 1, $interaction->refresh()->play_count);
     }
 
     public function testToggleLike(): void
@@ -40,11 +39,11 @@ class InteractionServiceTest extends TestCase
 
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();
+        $currentLiked = $interaction->liked;
 
         $this->interactionService->toggleLike($interaction->song, $interaction->user);
 
-        $updatedInteraction = Interaction::find($interaction->id);
-        self::assertNotSame($interaction->liked, $updatedInteraction->liked);
+        self::assertNotSame($currentLiked, $interaction->refresh()->liked);
     }
 
     public function testLikeMultipleSongs(): void
@@ -60,7 +59,13 @@ class InteractionServiceTest extends TestCase
         $this->interactionService->batchLike($songs->pluck('id')->all(), $user);
 
         $songs->each(static function (Song $song) use ($user): void {
-            self::assertTrue(Interaction::whereSongIdAndUserId($song->id, $user->id)->first()->liked);
+            /** @var Interaction $interaction */
+            $interaction = Interaction::query()
+                ->where('song_id', $song->id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            self::assertTrue($interaction->liked);
         });
     }
 
@@ -80,7 +85,7 @@ class InteractionServiceTest extends TestCase
         $this->interactionService->batchUnlike($interactions->pluck('song.id')->all(), $user);
 
         $interactions->each(static function (Interaction $interaction): void {
-            self::assertFalse(Interaction::find($interaction->id)->liked);
+            self::assertFalse($interaction->refresh()->liked);
         });
     }
 }

@@ -17,7 +17,7 @@ class ArtistTest extends TestCase
 
     public function testNewArtistIsCreatedWithName(): void
     {
-        self::assertNull(Artist::whereName('Foo')->first());
+        self::assertNull(Artist::query()->where('name', 'Foo')->first());
         self::assertSame('Foo', Artist::getOrCreate('Foo')->name);
     }
 

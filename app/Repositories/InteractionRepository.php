@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Interaction;
 use App\Models\User;
 use App\Repositories\Traits\ByCurrentUser;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 class InteractionRepository extends Repository
@@ -15,10 +14,12 @@ class InteractionRepository extends Repository
     /** @return Collection|array<Interaction> */
     public function getUserFavorites(User $user): Collection
     {
-        return $this->model->where([
-            'user_id' => $user->id,
-            'liked' => true,
-        ])
+        return $this->model
+            ->newQuery()
+            ->where([
+                'user_id' => $user->id,
+                'liked' => true,
+            ])
             ->with('song')
             ->pluck('song');
     }
@@ -26,11 +27,11 @@ class InteractionRepository extends Repository
     /** @return array<Interaction> */
     public function getRecentlyPlayed(User $user, ?int $count = null): array
     {
-        /** @var Builder $query */
         $query = $this->model
+            ->newQuery()
             ->where('user_id', $user->id)
             ->where('play_count', '>', 0)
-            ->orderBy('updated_at', 'DESC');
+            ->latest('updated_at');
 
         if ($count) {
             $query = $query->take($count);

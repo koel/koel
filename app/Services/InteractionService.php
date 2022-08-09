@@ -19,7 +19,7 @@ class InteractionService
      */
     public function increasePlayCount(string $songId, User $user): Interaction
     {
-        return tap(Interaction::firstOrCreate([
+        return tap(Interaction::query()->firstOrCreate([
             'song_id' => $songId,
             'user_id' => $user->id,
         ]), static function (Interaction $interaction): void {
@@ -39,7 +39,7 @@ class InteractionService
      */
     public function toggleLike(string $songId, User $user): Interaction
     {
-        return tap(Interaction::firstOrCreate([
+        return tap(Interaction::query()->firstOrCreate([
             'song_id' => $songId,
             'user_id' => $user->id,
         ]), static function (Interaction $interaction): void {
@@ -59,21 +59,18 @@ class InteractionService
      */
     public function batchLike(array $songIds, User $user): Collection
     {
-        $interactions = collect($songIds)->map(static fn ($songId): Interaction => tap(Interaction::firstOrCreate([
-            'song_id' => $songId,
-            'user_id' => $user->id,
-        ]), static function (Interaction $interaction): void {
-            if (!$interaction->exists) {
-                $interaction->play_count = 0;
-            }
+        $interactions = collect($songIds)->map(static function ($songId) use ($user): Interaction {
+            return tap(Interaction::query()->firstOrCreate([
+                'song_id' => $songId,
+                'user_id' => $user->id,
+            ]), static function (Interaction $interaction): void {
+                $interaction->play_count ??= 0;
+                $interaction->liked = true;
+                $interaction->save();
+            });
+        });
 
-            $interaction->liked = true;
-            $interaction->save();
-        }));
-
-        event(new SongsBatchLiked($interactions->map(static function (Interaction $interaction): Song {
-            return $interaction->song;
-        }), $user));
+        event(new SongsBatchLiked($interactions->map(static fn (Interaction $item) => $item->song), $user));
 
         return $interactions;
     }
@@ -85,10 +82,11 @@ class InteractionService
      */
     public function batchUnlike(array $songIds, User $user): void
     {
-        Interaction::whereIn('song_id', $songIds)
+        Interaction::query()
+            ->whereIn('song_id', $songIds)
             ->where('user_id', $user->id)
             ->update(['liked' => false]);
 
-        event(new SongsBatchUnliked(Song::find($songIds), $user));
+        event(new SongsBatchUnliked(Song::query()->find($songIds), $user));
     }
 }

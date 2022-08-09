@@ -27,7 +27,8 @@ class DownloadTest extends TestCase
 
     public function testNonLoggedInUserCannotDownload(): void
     {
-        $song = Song::first();
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         $this->downloadService
             ->shouldReceive('from')
@@ -39,7 +40,8 @@ class DownloadTest extends TestCase
 
     public function testDownloadOneSong(): void
     {
-        $song = Song::first();
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         /** @var User $user */
         $user = User::factory()->create();
@@ -62,7 +64,7 @@ class DownloadTest extends TestCase
         $user = User::factory()->create();
 
         /** @var array<Song>|Collection $songs */
-        $songs = Song::take(2)->orderBy('id')->get();
+        $songs = Song::query()->take(2)->orderBy('id')->get();
 
         $this->downloadService
             ->shouldReceive('from')
@@ -84,7 +86,8 @@ class DownloadTest extends TestCase
 
     public function testDownloadAlbum(): void
     {
-        $album = Album::first();
+        /** @var Album $album */
+        $album = Album::query()->first();
 
         /** @var User $user */
         $user = User::factory()->create();
@@ -103,7 +106,8 @@ class DownloadTest extends TestCase
 
     public function testDownloadArtist(): void
     {
-        $artist = Artist::first();
+        /** @var Artist $artist */
+        $artist = Artist::query()->first();
 
         /** @var User $user */
         $user = User::factory()->create();

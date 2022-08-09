@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Casts\SmartPlaylistRulesCast;
 use App\Values\SmartPlaylistRuleGroup;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,8 +21,6 @@ use Laravel\Scout\Searchable;
  * @property bool $is_smart
  * @property string $name
  * @property user $user
- *
- * @method static Builder orderBy(string $field, string $order = 'asc')
  */
 class Playlist extends Model
 {

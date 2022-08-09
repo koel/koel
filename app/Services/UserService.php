@@ -13,7 +13,7 @@ class UserService
 
     public function createUser(string $name, string $email, string $plainTextPassword, bool $isAdmin): User
     {
-        return User::create([
+        return User::query()->create([
             'name' => $name,
             'email' => $email,
             'password' => $this->hash->make($plainTextPassword),

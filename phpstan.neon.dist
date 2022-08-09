@@ -21,13 +21,12 @@ parameters:
         - '#expects .*, Mockery\\LegacyMockInterface given#'
         - '#Call to an undefined method Illuminate\\Filesystem\\FilesystemAdapter::getAdapter\(\)#'
         - '#Call to an undefined method Mockery\\ExpectationInterface|Mockery\\HigherOrderMessage::with\(\)#'
-        - '#Call to an undefined method Laravel\\Scout\\Builder::with\(\)#'
-        - '#Call to an undefined method Illuminate\\Contracts\\Database\\Query\\Builder::isStandard\(\)#'
-        - '#Call to an undefined method Illuminate\\Contracts\\Database\\Query\\Builder::withMeta\(\)#'
-        - '#should return App\\Models\\.*(\|null)? but returns Illuminate\\Database\\Eloquent\\Model(\|null)?#'
+        - '#Call to private method .*\(\) of parent class Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model>#'
+        - '#should return App\\Models\\.*(\|null)? but returns .*Illuminate\\Database\\Eloquent\\Model(\|null)?#'
         # Laravel factories allow declaration of dynamic methods as "states"
         - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factories\\Factory::#'
         - '#expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Collection\|Illuminate\\Database\\Eloquent\\Model given#'
+        - '#Method App\\Models\\.*::query\(\) should return App\\Builders\\.*Builder but returns Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model>#'
 
     excludePaths:
         - ./routes/console.php

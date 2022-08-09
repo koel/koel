@@ -21,13 +21,13 @@ class YouTubeTest extends TestCase
     public function testSearchYouTubeVideos(): void
     {
         static::createSampleMediaSet();
-        $song = Song::first();
+
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         $this->youTubeService
             ->shouldReceive('searchVideosRelatedToSong')
-            ->with(Mockery::on(static function (Song $retrievedSong) use ($song) {
-                return $song->id === $retrievedSong->id;
-            }), 'foo')
+            ->with(Mockery::on(static fn (Song $retrievedSong) => $song->is($retrievedSong)), 'foo')
             ->once();
 
         $this->getAs("/api/youtube/search/song/{$song->id}?pageToken=foo")

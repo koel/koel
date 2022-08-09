@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\DB;
  * MySQL and PostgresSQL seem to have a limit of 2^16-1 (65535) elements in an IN statement.
  * This trait provides a method as a workaround to this limitation.
  *
- * @method static Builder whereIn($keys, array $values)
- * @method static Builder whereNotIn($keys, array $values)
- * @method static Builder select(string $string)
+ * @method static Builder query()
  */
 trait SupportsDeleteWhereValueNotIn
 {
@@ -25,18 +23,18 @@ trait SupportsDeleteWhereValueNotIn
 
         // If the number of entries is lower than, or equals to maxChunkSize, just go ahead.
         if (count($values) <= $maxChunkSize) {
-            static::whereNotIn($field, $values)->delete();
+            static::query()->whereNotIn($field, $values)->delete();
 
             return;
         }
 
         // Otherwise, we get the actual IDs that should be deleted…
-        $allIDs = static::select($field)->get()->pluck($field)->all();
+        $allIDs = static::query()->select($field)->get()->pluck($field)->all();
         $whereInIDs = array_diff($allIDs, $values);
 
         // …and see if we can delete them instead.
         if (count($whereInIDs) < $maxChunkSize) {
-            static::whereIn($field, $whereInIDs)->delete();
+            static::query()->whereIn($field, $whereInIDs)->delete();
 
             return;
         }
@@ -50,7 +48,7 @@ trait SupportsDeleteWhereValueNotIn
     {
         DB::transaction(static function () use ($values, $field, $chunkSize): void {
             foreach (array_chunk($values, $chunkSize) as $chunk) {
-                static::whereIn($field, $chunk)->delete();
+                static::query()->whereIn($field, $chunk)->delete();
             }
         });
     }

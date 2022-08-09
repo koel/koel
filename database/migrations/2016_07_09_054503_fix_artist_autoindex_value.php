@@ -16,7 +16,7 @@ class FixArtistAutoindexValue extends Migration
         }
 
         /** @var Artist $latestArtist */
-        $latestArtist = Artist::orderBy('id', 'DESC')->first();
+        $latestArtist = Artist::query()->orderByDesc('id')->first();
         DB::statement('ALTER TABLE artists AUTO_INCREMENT=' . ($latestArtist->id + 1));
     }
 

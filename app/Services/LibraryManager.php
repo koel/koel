@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 class LibraryManager
@@ -19,13 +18,13 @@ class LibraryManager
     public function prune(bool $dryRun = false): array
     {
         return DB::transaction(static function () use ($dryRun): array {
-            /** @var Builder $albumQuery */
-            $albumQuery = Album::leftJoin('songs', 'songs.album_id', '=', 'albums.id')
+            $albumQuery = Album::query()
+                ->leftJoin('songs', 'songs.album_id', '=', 'albums.id')
                 ->whereNull('songs.album_id')
                 ->whereNotIn('albums.id', [Album::UNKNOWN_ID]);
 
-            /** @var Builder $artistQuery */
-            $artistQuery = Artist::leftJoin('songs', 'songs.artist_id', '=', 'artists.id')
+            $artistQuery = Artist::query()
+                ->leftJoin('songs', 'songs.artist_id', '=', 'artists.id')
                 ->leftJoin('albums', 'albums.artist_id', '=', 'artists.id')
                 ->whereNull('songs.artist_id')
                 ->whereNull('albums.artist_id')

@@ -30,7 +30,8 @@ class UserTest extends TestCase
         ], $admin)
             ->assertSuccessful();
 
-        $user = User::firstWhere('email', 'bar@baz.com');
+        /** @var User $user */
+        $user = User::query()->firstWhere('email', 'bar@baz.com');
 
         self::assertTrue(Hash::check('secret', $user->password));
         self::assertSame('Foo', $user->name);

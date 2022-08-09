@@ -21,7 +21,9 @@ class SongTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->admin()->create();
-        $song = Song::first();
+
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         $this->putAs('/api/songs', [
             'songs' => [$song->id],
@@ -37,11 +39,11 @@ class SongTest extends TestCase
             ->assertOk();
 
         /** @var Artist $artist */
-        $artist = Artist::where('name', 'John Cena')->first();
+        $artist = Artist::query()->where('name', 'John Cena')->first();
         self::assertNotNull($artist);
 
         /** @var Album $album */
-        $album = Album::where('name', 'One by One')->first();
+        $album = Album::query()->where('name', 'One by One')->first();
         self::assertNotNull($album);
 
         self::assertDatabaseHas(Song::class, [
@@ -57,7 +59,10 @@ class SongTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->admin()->create();
-        $song = Song::first();
+
+        /** @var Song $song */
+        $song = Song::query()->first();
+
         $originalArtistId = $song->artist->id;
 
         $this->putAs('/api/songs', [
@@ -73,17 +78,17 @@ class SongTest extends TestCase
             ->assertOk();
 
         // We don't expect the song's artist to change
-        self::assertEquals($originalArtistId, Song::find($song->id)->artist->id);
+        self::assertEquals($originalArtistId, $song->refresh()->artist->id);
 
         // But we expect a new album to be created for this artist and contain this song
-        self::assertEquals('One by One', Song::find($song->id)->album->name);
+        self::assertEquals('One by One', $song->album->name);
     }
 
     public function testMultipleUpdateNoCompilation(): void
     {
         /** @var User $user */
         $user = User::factory()->admin()->create();
-        $songIds = Song::latest()->take(3)->pluck('id')->toArray();
+        $songIds = Song::query()->latest()->take(3)->pluck('id')->toArray();
 
         $this->putAs('/api/songs', [
             'songs' => $songIds,
@@ -97,7 +102,7 @@ class SongTest extends TestCase
         ], $user)
             ->assertOk();
 
-        $songs = Song::whereIn('id', $songIds)->get();
+        $songs = Song::query()->whereIn('id', $songIds)->get();
 
         // All of these songs must now belong to a new album and artist set
         self::assertEquals('One by One', $songs[0]->album->name);
@@ -115,7 +120,7 @@ class SongTest extends TestCase
         $user = User::factory()->admin()->create();
 
         /** @var array<array-key, Song>|Collection $originalSongs */
-        $originalSongs = Song::latest()->take(3)->get();
+        $originalSongs = Song::query()->latest()->take(3)->get();
         $songIds = $originalSongs->pluck('id')->toArray();
 
         $this->putAs('/api/songs', [
@@ -131,7 +136,7 @@ class SongTest extends TestCase
             ->assertOk();
 
         /** @var array<Song>|Collection $songs */
-        $songs = Song::latest()->take(3)->get();
+        $songs = Song::query()->latest()->take(3)->get();
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.
@@ -152,7 +157,10 @@ class SongTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->admin()->create();
-        $song = Song::first();
+
+        /** @var Song $song */
+        $song = Song::query()->first();
+
 
         $this->putAs('/api/songs', [
             'songs' => [$song->id],
@@ -169,13 +177,13 @@ class SongTest extends TestCase
             ->assertOk();
 
         /** @var Album $album */
-        $album = Album::where('name', 'One by One')->first();
+        $album = Album::query()->where('name', 'One by One')->first();
 
         /** @var Artist $albumArtist */
-        $albumArtist = Artist::whereName('John Lennon')->first();
+        $albumArtist = Artist::query()->where('name', 'John Lennon')->first();
 
         /** @var Artist $artist */
-        $artist = Artist::whereName('John Cena')->first();
+        $artist = Artist::query()->where('name', 'John Cena')->first();
 
         self::assertDatabaseHas(Song::class, [
             'id' => $song->id,
@@ -191,11 +199,11 @@ class SongTest extends TestCase
 
     public function testDeletingByChunk(): void
     {
-        self::assertNotEquals(0, Song::count());
-        $ids = Song::select('id')->get()->pluck('id')->all();
+        self::assertNotEquals(0, Song::query()->count());
+        $ids = Song::query()->select('id')->get()->pluck('id')->all();
 
         Song::deleteByChunk($ids, 'id', 1);
 
-        self::assertEquals(0, Song::count());
+        self::assertEquals(0, Song::query()->count());
     }
 }

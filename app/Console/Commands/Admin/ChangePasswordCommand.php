@@ -25,7 +25,9 @@ class ChangePasswordCommand extends Command
         $email = $this->argument('email');
 
         /** @var User|null $user */
-        $user = $email ? User::where('email', $email)->first() : User::where('is_admin', true)->first();
+        $user = $email
+            ? User::query()->where('email', $email)->first()
+            : User::query()->where('is_admin', true)->first();
 
         if (!$user) {
             $this->error('The user account cannot be found.');

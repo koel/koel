@@ -7,7 +7,6 @@ use App\Values\UserPreferences;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -21,11 +20,6 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property string $password
  * @property-read string $avatar
- *
- * @method static self create(array $params)
- * @method static int count()
- * @method static Builder where(...$params)
- * @method static self|null firstWhere(...$params)
  */
 class User extends Authenticatable
 {

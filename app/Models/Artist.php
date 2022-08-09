@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
+use App\Builders\ArtistBuilder;
 use App\Facades\Util;
 use Carbon\Carbon;
-use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 
 /**
@@ -30,14 +27,6 @@ use Laravel\Scout\Searchable;
  * @property string|int $song_count Total number of songs by the artist (dynamically calculated)
  * @property string|int $album_count Total number of albums by the artist (dynamically calculated)
  * @property Carbon $created_at
- *
- * @method static self find(int $id)
- * @method static self firstOrCreate(array $where, array $params = [])
- * @method static Builder where(...$params)
- * @method static self first()
- * @method static Builder whereName(string $name)
- * @method static Builder orderBy(...$params)
- * @method static Builder join(...$params)
  */
 class Artist extends Model
 {
@@ -53,6 +42,16 @@ class Artist extends Model
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
+    public static function query(): ArtistBuilder
+    {
+        return parent::query();
+    }
+
+    public function newEloquentBuilder($query): ArtistBuilder
+    {
+        return new ArtistBuilder($query);
+    }
+
     /**
      * Get an Artist object from their name.
      * If such is not found, a new artist will be created.
@@ -66,7 +65,7 @@ class Artist extends Model
             $name = mb_convert_encoding($name, 'UTF-8', $encoding);
         }
 
-        return static::firstOrCreate(['name' => trim($name) ?: self::UNKNOWN_NAME]);
+        return static::query()->firstOrCreate(['name' => trim($name) ?: self::UNKNOWN_NAME]);
     }
 
     public function albums(): HasMany
@@ -118,29 +117,6 @@ class Artist extends Model
 
             return $image && file_exists(artist_image_path($image));
         });
-    }
-
-    public function scopeIsStandard(Builder $query): Builder
-    {
-        return $query->whereNotIn('artists.id', [self::UNKNOWN_ID, self::VARIOUS_ID]);
-    }
-
-    public static function withMeta(User $scopedUser): BuilderContract
-    {
-        return static::query()
-            ->leftJoin('songs', 'artists.id', '=', 'songs.artist_id')
-            ->leftJoin('interactions', static function (JoinClause $join) use ($scopedUser): void {
-                $join->on('interactions.song_id', '=', 'songs.id')
-                    ->where('interactions.user_id', $scopedUser->id);
-            })
-            ->groupBy('artists.id')
-            ->select([
-                'artists.*',
-                DB::raw('CAST(SUM(interactions.play_count) AS UNSIGNED) AS play_count'),
-                DB::raw('COUNT(DISTINCT songs.album_id) AS album_count'),
-            ])
-            ->withCount('songs AS song_count')
-            ->withSum('songs AS length', 'length');
     }
 
     /** @return array<mixed> */

@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
+use App\Builders\AlbumBuilder;
 use Carbon\Carbon;
-use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 
 /**
@@ -34,14 +31,6 @@ use Laravel\Scout\Searchable;
  * @property float|string $length Total length of the album in seconds (dynamically calculated)
  * @property int|string $play_count Total number of times the album's songs have been played (dynamically calculated)
  * @property int|string $song_count Total number of songs on the album (dynamically calculated)
- *
- * @method static self firstOrCreate(array $where, array $params = [])
- * @method static self|null find(int $id)
- * @method static Builder where(...$params)
- * @method static self first()
- * @method static Builder whereArtistIdAndName(int $id, string $name)
- * @method static orderBy(...$params)
- * @method static Builder latest()
  */
 class Album extends Model
 {
@@ -59,13 +48,23 @@ class Album extends Model
     /** @deprecated */
     protected $appends = ['is_compilation'];
 
+    public static function query(): AlbumBuilder
+    {
+        return parent::query();
+    }
+
+    public function newEloquentBuilder($query): AlbumBuilder
+    {
+        return new AlbumBuilder($query);
+    }
+
     /**
      * Get an album using some provided information.
      * If such is not found, a new album will be created using the information.
      */
-    public static function getOrCreate(Artist $artist, ?string $name = null): self
+    public static function getOrCreate(Artist $artist, ?string $name = null): static
     {
-        return static::firstOrCreate([
+        return static::query()->firstOrCreate([ // @phpstan-ignore-line
             'artist_id' => $artist->id,
             'name' => trim($name) ?: self::UNKNOWN_NAME,
         ]);
@@ -141,29 +140,6 @@ class Album extends Model
     protected function isCompilation(): Attribute
     {
         return Attribute::get(fn () => $this->artist_id === Artist::VARIOUS_ID);
-    }
-
-    public function scopeIsStandard(Builder $query): Builder
-    {
-        return $query->whereNot('albums.id', self::UNKNOWN_ID);
-    }
-
-    public static function withMeta(User $scopedUser): BuilderContract
-    {
-        return static::query()
-            ->with('artist')
-            ->leftJoin('songs', 'albums.id', '=', 'songs.album_id')
-            ->leftJoin('interactions', static function (JoinClause $join) use ($scopedUser): void {
-                $join->on('songs.id', '=', 'interactions.song_id')
-                    ->where('interactions.user_id', $scopedUser->id);
-            })
-            ->groupBy('albums.id')
-            ->select(
-                'albums.*',
-                DB::raw('CAST(SUM(interactions.play_count) AS UNSIGNED) AS play_count')
-            )
-            ->withCount('songs AS song_count')
-            ->withSum('songs AS length', 'length');
     }
 
     /** @return array<mixed> */

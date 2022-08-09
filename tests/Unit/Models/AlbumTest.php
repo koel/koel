@@ -22,7 +22,7 @@ class AlbumTest extends TestCase
         $artist = Artist::factory()->create();
         $name = 'Foo';
 
-        self::assertNull(Album::whereArtistIdAndName($artist->id, $name)->first());
+        self::assertNull(Album::query()->where('artist_id', $artist->id)->where('name', $name)->first());
 
         $album = Album::getOrCreate($artist, $name);
         self::assertSame('Foo', $album->name);

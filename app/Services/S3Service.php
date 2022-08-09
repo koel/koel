@@ -66,7 +66,7 @@ class S3Service implements ObjectStorageInterface
             );
         }
 
-        $song = Song::updateOrCreate(['id' => Helper::getFileHash($path)], [
+        $song = Song::query()->updateOrCreate(['id' => Helper::getFileHash($path)], [
             'path' => $path,
             'album_id' => $album->id,
             'artist_id' => $artist->id,

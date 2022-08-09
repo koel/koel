@@ -2,6 +2,7 @@
 
 namespace App\Services\V6;
 
+use App\Builders\SongBuilder;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -10,7 +11,6 @@ use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\SongRepository;
 use App\Values\ExcerptSearchResult;
-use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 class SearchService
@@ -55,7 +55,7 @@ class SearchService
         int $limit = self::DEFAULT_MAX_SONG_RESULT_COUNT
     ): Collection {
         return Song::search($keywords)
-            ->query(static function (Builder $builder) use ($scopedUser, $limit): void {
+            ->query(static function (SongBuilder $builder) use ($scopedUser, $limit): void {
                 $builder->withMeta($scopedUser ?? auth()->user())->limit($limit);
             })
             ->get();

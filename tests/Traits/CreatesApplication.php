@@ -30,7 +30,7 @@ trait CreatesApplication
     {
         $this->artisan->call('migrate');
 
-        if (!User::count()) {
+        if (!User::query()->count()) {
             $this->artisan->call('db:seed');
         }
     }

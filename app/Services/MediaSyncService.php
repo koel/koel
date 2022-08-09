@@ -153,7 +153,7 @@ class MediaSyncService
 
     private function handleDeletedDirectoryRecord(string $path): void
     {
-        $count = Song::inDirectory($path)->delete();
+        $count = Song::query()->inDirectory($path)->delete();
 
         if ($count) {
             $this->logger->info("Deleted $count song(s) under $path");

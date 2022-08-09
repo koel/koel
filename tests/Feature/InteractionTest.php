@@ -25,7 +25,7 @@ class InteractionTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Song $song */
-        $song = Song::orderBy('id')->first();
+        $song = Song::query()->orderBy('id')->first();
         $this->postAs('api/interaction/play', ['song' => $song->id], $user);
 
         self::assertDatabaseHas('interactions', [
@@ -52,7 +52,7 @@ class InteractionTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Song $song */
-        $song = Song::orderBy('id')->first();
+        $song = Song::query()->orderBy('id')->first();
         $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
         self::assertDatabaseHas('interactions', [
@@ -79,7 +79,7 @@ class InteractionTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Collection|array<Song> $songs */
-        $songs = Song::orderBy('id')->take(2)->get();
+        $songs = Song::query()->orderBy('id')->take(2)->get();
         $songIds = array_pluck($songs->toArray(), 'id');
 
         $this->postAs('api/interaction/batch/like', ['songs' => $songIds], $user);

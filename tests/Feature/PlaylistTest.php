@@ -23,7 +23,7 @@ class PlaylistTest extends TestCase
         $user = User::factory()->create();
 
         /** @var array<Song>|Collection $songs */
-        $songs = Song::orderBy('id')->take(3)->get();
+        $songs = Song::query()->orderBy('id')->take(3)->get();
 
         $response = $this->postAs('api/playlist', [
             'name' => 'Foo Bar',
@@ -34,7 +34,7 @@ class PlaylistTest extends TestCase
         $response->assertOk();
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::orderBy('id', 'desc')->first();
+        $playlist = Playlist::query()->orderByDesc('id')->first();
 
         self::assertSame('Foo Bar', $playlist->name);
         self::assertTrue($playlist->user->is($user));
@@ -63,7 +63,7 @@ class PlaylistTest extends TestCase
         ], $user);
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::orderBy('id', 'desc')->first();
+        $playlist = Playlist::query()->orderByDesc('id')->first();
 
         self::assertSame('Smart Foo Bar', $playlist->name);
         self::assertTrue($playlist->user->is($user));
@@ -88,11 +88,11 @@ class PlaylistTest extends TestCase
                     ],
                 ],
             ],
-            'songs' => Song::orderBy('id')->take(3)->get()->pluck('id')->all(),
+            'songs' => Song::query()->orderBy('id')->take(3)->get()->pluck('id')->all(),
         ]);
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::orderBy('id', 'desc')->first();
+        $playlist = Playlist::query()->orderByDesc('id')->first();
 
         self::assertSame('Smart Foo Bar', $playlist->name);
         self::assertEmpty($playlist->songs);

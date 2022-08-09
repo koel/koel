@@ -44,6 +44,12 @@ class PlayCountTest extends TestCase
                 'play_count',
             ]);
 
-        self::assertEquals(1, Interaction::whereSongIdAndUserId($song->id, $user->id)->first()->play_count);
+        /** @var Interaction $interaction */
+        $interaction = Interaction::query()
+            ->where('song_id', $song->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        self::assertEquals(1, $interaction->play_count);
     }
 }

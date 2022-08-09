@@ -10,7 +10,6 @@ use ZipArchive;
 class SongZipArchive
 {
     private ZipArchive $archive;
-
     private string $path;
 
     /**
@@ -30,7 +29,7 @@ class SongZipArchive
         }
     }
 
-    public function addSongs(Collection $songs): self
+    public function addSongs(Collection $songs): static
     {
         $songs->each(function (Song $song): void {
             $this->addSong($song);
@@ -39,7 +38,7 @@ class SongZipArchive
         return $this;
     }
 
-    public function addSong(Song $song): self
+    public function addSong(Song $song): static
     {
         attempt(function () use ($song): void {
             $path = Download::fromSong($song);
@@ -49,7 +48,7 @@ class SongZipArchive
         return $this;
     }
 
-    public function finish(): self
+    public function finish(): static
     {
         $this->archive->close();
 

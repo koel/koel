@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed $value
  *
  * @method static self find(string $key)
- * @method static self updateOrCreate(array $where, array $params)
  */
 class Setting extends Model
 {
@@ -44,6 +43,6 @@ class Setting extends Model
             return;
         }
 
-        self::updateOrCreate(compact('key'), compact('value'));
+        self::query()->updateOrCreate(compact('key'), compact('value'));
     }
 }

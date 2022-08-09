@@ -28,8 +28,8 @@ class MediaCacheServiceTest extends TestCase
         Song::factory(5)->create();
 
         $this->cache->shouldReceive('rememberForever')->andReturn([
-            'albums' => Album::orderBy('name')->get(),
-            'artists' => Artist::orderBy('name')->get(),
+            'albums' => Album::query()->orderBy('name')->get(),
+            'artists' => Artist::query()->orderBy('name')->get(),
             'songs' => Song::all(),
         ]);
 

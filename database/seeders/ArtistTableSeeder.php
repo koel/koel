@@ -10,11 +10,7 @@ class ArtistTableSeeder extends Seeder
 {
     public function run(): void
     {
-        Artist::firstOrCreate([
-            'id' => Artist::UNKNOWN_ID,
-        ], [
-            'name' => Artist::UNKNOWN_NAME,
-        ]);
+        Artist::query()->firstOrCreate(['id' => Artist::UNKNOWN_ID], ['name' => Artist::UNKNOWN_NAME]);
 
         self::maybeResetPgsqlSerialValue();
     }

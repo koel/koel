@@ -204,7 +204,7 @@ class InitCommand extends Command
     private function setUpAdminAccount(): void
     {
         $this->components->task('Creating default admin account', function (): void {
-            User::create([
+            User::query()->create([
                 'name' => self::DEFAULT_ADMIN_NAME,
                 'email' => self::DEFAULT_ADMIN_EMAIL,
                 'password' => $this->hash->make(self::DEFAULT_ADMIN_PASSWORD),
@@ -217,7 +217,7 @@ class InitCommand extends Command
 
     private function maybeSeedDatabase(): void
     {
-        if (!User::count()) {
+        if (!User::query()->count()) {
             $this->setUpAdminAccount();
 
             $this->components->task('Seeding data', function (): void {

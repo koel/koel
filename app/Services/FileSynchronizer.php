@@ -88,7 +88,7 @@ class FileSynchronizer
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
 
-        $this->song = Song::updateOrCreate(['path' => $this->filePath], $data);
+        $this->song = Song::query()->updateOrCreate(['path' => $this->filePath], $data); // @phpstan-ignore-line
 
         return SyncResult::success($this->filePath);
     }

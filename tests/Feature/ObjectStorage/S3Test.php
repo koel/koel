@@ -34,7 +34,7 @@ class S3Test extends TestCase
         ]);
 
         /** @var Song $song */
-        $song = Song::where('path', 's3://koel/sample.mp3')->firstOrFail();
+        $song = Song::query()->where('path', 's3://koel/sample.mp3')->firstOrFail();
 
         self::assertSame('A Koel Song', $song->title);
         self::assertSame('Koel Testing Vol. 1', $song->album->name);

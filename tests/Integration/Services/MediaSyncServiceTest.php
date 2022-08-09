@@ -51,7 +51,7 @@ class MediaSyncServiceTest extends TestCase
         // GitHub issue #380. folder.png should be copied and used as the cover for files
         // under subdir/
         /** @var Song $song */
-        $song = Song::where('path', $this->path('/subdir/back-in-black.ogg'))->first();
+        $song = Song::query()->where('path', $this->path('/subdir/back-in-black.ogg'))->first();
         self::assertNotEmpty($song->album->cover);
 
         // File search shouldn't be case-sensitive.
@@ -72,12 +72,12 @@ class MediaSyncServiceTest extends TestCase
 
         // Albums and artists should be correctly linked
         /** @var Album $album */
-        $album = Album::where('name', 'Koel Testing Vol. 1')->first();
+        $album = Album::query()->where('name', 'Koel Testing Vol. 1')->first();
         self::assertEquals('Koel', $album->artist->name);
 
         // Compilation albums, artists and songs must be recognized
         /** @var Song $song */
-        $song = Song::where('title', 'This song belongs to a compilation')->first();
+        $song = Song::query()->where('title', 'This song belongs to a compilation')->first();
         self::assertFalse($song->album->artist->is($song->artist));
         self::assertSame('Koel', $song->album->artist->name);
         self::assertSame('Cuckoo', $song->artist->name);
@@ -87,7 +87,8 @@ class MediaSyncServiceTest extends TestCase
     {
         $this->mediaService->sync();
 
-        $song = Song::first();
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         touch($song->path, $time = time() + 1000);
         $this->mediaService->sync();
@@ -101,7 +102,8 @@ class MediaSyncServiceTest extends TestCase
 
         $this->mediaService->sync();
 
-        $song = Song::first();
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         $song->update([
             'title' => "It's John Cena!",
@@ -121,7 +123,8 @@ class MediaSyncServiceTest extends TestCase
 
         $this->mediaService->sync();
 
-        $song = Song::first();
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         $song->update([
             'title' => "It's John Cena!",
@@ -142,7 +145,8 @@ class MediaSyncServiceTest extends TestCase
 
         $this->mediaService->sync();
 
-        $song = Song::first();
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         $song->update([
             'title' => "It's John Cena!",
@@ -161,14 +165,16 @@ class MediaSyncServiceTest extends TestCase
     {
         $this->mediaService->sync();
 
-        $song = Song::first();
+        /** @var Song $song */
+        $song = Song::query()->first();
+
         $song->delete();
 
         $this->mediaService->sync(ignores: ['title', 'disc', 'track'], force: true);
 
         // Song should be added back with all info
         self::assertEquals(
-            Arr::except(Song::where('path', $song->path)->first()->toArray(), ['id', 'created_at']),
+            Arr::except(Song::query()->where('path', $song->path)->first()->toArray(), ['id', 'created_at']),
             Arr::except($song->toArray(), ['id', 'created_at'])
         );
     }
@@ -188,8 +194,9 @@ class MediaSyncServiceTest extends TestCase
         $this->expectsEvents(LibraryChanged::class);
 
         static::createSampleMediaSet();
-        $song = Song::first();
-        self::assertModelExists($song);
+
+        /** @var Song $song */
+        $song = Song::query()->first();
 
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("DELETE $song->path"));
 

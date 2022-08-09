@@ -12,22 +12,17 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class ArtistController extends Controller
 {
     /** @param User $user */
-    public function __construct(private ArtistRepository $artistRepository, private ?Authenticatable $user)
+    public function __construct(private ArtistRepository $repository, private ?Authenticatable $user)
     {
     }
 
     public function index()
     {
-        $pagination = Artist::withMeta($this->user)
-            ->isStandard()
-            ->orderBy('artists.name')
-            ->simplePaginate(21);
-
-        return ArtistResource::collection($pagination);
+        return ArtistResource::collection($this->repository->paginate($this->user));
     }
 
     public function show(Artist $artist)
     {
-        return ArtistResource::make($this->artistRepository->getOne($artist->id, $this->user));
+        return ArtistResource::make($this->repository->getOne($artist->id, $this->user));
     }
 }
