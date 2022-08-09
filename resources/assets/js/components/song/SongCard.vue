@@ -68,11 +68,11 @@ article {
   align-items: center;
 
   &:focus, &:focus-within {
-    box-shadow: 0 0 1px 1px var(--color-highlight);
+    box-shadow: 0 0 1px 1px var(--color-accent);
   }
 
   &.playing {
-    color: var(--color-highlight);
+    color: var(--color-accent);
   }
 
   button {
@@ -172,7 +172,7 @@ article {
         color: var(--color-text-primary);
 
         &:hover {
-          color: var(--color-highlight);
+          color: var(--color-accent);
         }
       }
     }

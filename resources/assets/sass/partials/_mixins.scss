@@ -41,7 +41,7 @@
     }
 
     &:focus, &:focus-within {
-      box-shadow: 0 0 1px 1px var(--color-highlight);
+      box-shadow: 0 0 1px 1px var(--color-accent);
     }
 
     &:hover .right, &:focus-within .right {
@@ -112,7 +112,7 @@
       }
 
       &:focus, &:hover {
-        color: var(--color-highlight);
+        color: var(--color-accent);
       }
     }
 
