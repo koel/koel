@@ -42,7 +42,7 @@ class PlaylistController extends Controller
 
     public function update(PlaylistUpdateRequest $request, Playlist $playlist)
     {
-        $this->authorize('owner', $playlist);
+        $this->authorize('own', $playlist);
 
         $playlist->update($request->only('name', 'rules'));
 
@@ -51,7 +51,7 @@ class PlaylistController extends Controller
 
     public function destroy(Playlist $playlist)
     {
-        $this->authorize('owner', $playlist);
+        $this->authorize('own', $playlist);
 
         $playlist->delete();
 

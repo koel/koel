@@ -1,39 +1,9 @@
-declare let VITE_KOEL_ENV: '' | 'demo'
-
 declare module '*.vue'
+declare module '*.jpg'
+declare module '*.png'
+declare module '*.svg'
 
-declare module '*.jpg' {
-  const value: string
-  export default value
-}
-
-declare module '*.png' {
-  const value: string
-  export default value
-}
-
-declare module '*.svg' {
-  const value: string
-  export default value
-}
-
-declare type Closure = (...args: Array<unknown | any>) => unknown | any
-
-declare module 'alertify.js' {
-  function alert (msg: string): void
-
-  function confirm (msg: string, okFunc: Closure, cancelFunc?: Closure): void
-
-  function success (msg: string, cb?: Closure): void
-
-  function error (msg: string, cb?: Closure): void
-
-  function log (msg: string, cb?: Closure): void
-
-  function logPosition (position: string): void
-
-  function closeLogOnClick (close: boolean): void
-}
+declare type Closure<T = unknown | any> = (...args: Array<unknown | any>) => T
 
 declare module 'sketch-js' {
   function create (config: Record<string, any>): any
@@ -228,8 +198,16 @@ interface Playlist {
   type: 'playlists'
   readonly id: number
   name: string
+  folder_id: string | null
   is_smart: boolean
   rules: SmartPlaylistRuleGroup[]
+}
+
+interface PlaylistFolder {
+  type: 'playlist-folders'
+  readonly id: string
+  name: string
+  // we don't need to keep track of the playlists here, as they can be computed using their folder_id value
 }
 
 interface YouTubeVideo {
@@ -302,11 +280,12 @@ interface EqualizerPreset {
   gains: number[]
 }
 
-type DragType = 'Song' | 'Album' | 'Artist'
+type Draggable = Song | Song[] | Album | Artist | Playlist
+type DragType = 'Song' | 'Album' | 'Artist' | 'Playlist'
 
 type DragData = {
-  type: 'songs' | 'album' | 'artist'
-  value: string[] | number
+  type: 'songs' | 'album' | 'artist' | 'playlist'
+  value: string | string[] | number
 }
 
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'

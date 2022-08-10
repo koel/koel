@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\UserPreferencesCast;
 use App\Values\UserPreferences;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,6 +21,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property string $password
  * @property-read string $avatar
+ * @property Collection|array<array-key, Playlist> $playlists
+ * @property Collection|array<array-key, PlaylistFolder> $playlist_folders
  */
 class User extends Authenticatable
 {
@@ -39,6 +42,11 @@ class User extends Authenticatable
     public function playlists(): HasMany
     {
         return $this->hasMany(Playlist::class);
+    }
+
+    public function playlist_folders(): HasMany // @phpcs:ignore
+    {
+        return $this->hasMany(PlaylistFolder::class);
     }
 
     public function interactions(): HasMany

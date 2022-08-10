@@ -37,8 +37,12 @@ export const playlistStore = {
     return this.state.playlists.find(playlist => playlist.id === id)
   },
 
+  byFolder (folder: PlaylistFolder) {
+    return this.state.playlists.filter(playlist => playlist.folder_id === folder.id)
+  },
+
   async store (name: string, songs: Song[] = [], rules: SmartPlaylistRuleGroup[] = []) {
-    const playlist = reactive(await httpService.post<Playlist>('playlist', {
+    const playlist = reactive(await httpService.post<Playlist>('playlists', {
       name,
       songs: songs.map(song => song.id),
       rules: this.serializeSmartPlaylistRulesForStorage(rules)

@@ -5,8 +5,8 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { UserKey } from '@/symbols'
 import { fireEvent, waitFor } from '@testing-library/vue'
 import { userStore } from '@/stores'
-import UserEditForm from './UserEditForm.vue'
 import { MessageToasterStub } from '@/__tests__/stubs'
+import EditUserForm from './EditUserForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
 
       const user = ref(factory<User>('user', { name: 'John Doe' }))
 
-      const { getByLabelText, getByRole } = this.render(UserEditForm, {
+      const { getByLabelText, getByRole } = this.render(EditUserForm, {
         global: {
           provide: {
             [UserKey]: [user]

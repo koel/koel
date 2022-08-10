@@ -118,8 +118,8 @@ eventBus.on({
 })
 </script>
 
-<style lang="scss">
-#sidebar {
+<style lang="scss" scoped>
+nav {
   flex: 0 0 256px;
   background-color: var(--color-bg-secondary);
   padding: 2.05rem 0;
@@ -153,38 +153,43 @@ eventBus.on({
     flex: 1;
   }
 
-  section {
-    h1 {
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 0 16px;
-      margin-bottom: 12px;
+  ::v-deep(h1) {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 16px;
+    margin-bottom: 12px;
+  }
+
+  ::v-deep(a) {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 16px 0 12px;
+    border-left: 4px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.active, &:hover {
+      border-left-color: var(--color-highlight);
+      color: var(--color-text-primary);
+      background: rgba(255, 255, 255, .05);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
     }
 
-    a {
-      display: flex;
-      align-items: center;
-      gap: .7rem;
-      height: 36px;
-      line-height: 36px;
-      padding: 0 16px 0 12px;
-      border-left: 4px solid transparent;
-
-      &.active, &:hover {
-        border-left-color: var(--color-highlight);
-        color: var(--color-text-primary);
-        background: rgba(255, 255, 255, .05);
-        box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
-      }
-
-      &:active {
-        opacity: .5;
-      }
-
-      &:hover {
-        border-left-color: var(--color-highlight);
-      }
+    &:active {
+      opacity: .5;
     }
+
+    &:hover {
+      border-left-color: var(--color-highlight);
+    }
+  }
+
+  ::v-deep(li li a) { // submenu items
+    padding-left: 24px;
   }
 
   @media only screen and (max-width: 667px) {

@@ -19,7 +19,7 @@ const createGhostDragImage = (event: DragEvent, text: string): void => {
   event.dataTransfer.setDragImage(dragGhost, 0, 0)
 }
 
-const startDragging = (event: DragEvent, dragged: Song | Song[] | Album | Artist, type: DragType): void => {
+const startDragging = (event: DragEvent, dragged: Draggable, type: DragType): void => {
   if (!event.dataTransfer) {
     return
   }
@@ -63,10 +63,22 @@ const startDragging = (event: DragEvent, dragged: Song | Song[] | Album | Artist
 
       break
 
+    case 'Playlist':
+      dragged = dragged as Playlist
+      text = dragged.name
+
+      data = {
+        type: 'playlist',
+        value: dragged.id
+      }
+
+      break
+
     default:
       throw Error(`Invalid drag type: ${type}`)
   }
 
+  event.dataTransfer.setData(data.type, '')
   event.dataTransfer.setData('application/x-koel.text+plain', JSON.stringify(data))
   event.dataTransfer.effectAllowed = 'move'
 
@@ -84,9 +96,11 @@ const resolveSongsFromDragEvent = async (event: DragEvent) => {
     case 'songs':
       return songStore.byIds(data.value as string[])
     case 'album':
-      return await songStore.fetchForAlbum(await albumStore.resolve(data.value as number))
+      const album = await albumStore.resolve(data.value as number)
+      return album ? await songStore.fetchForAlbum(album) : []
     case 'artist':
-      return await songStore.fetchForArtist(await artistStore.resolve(data.value as number))
+      const artist = await artistStore.resolve(data.value as number)
+      return artist ? await songStore.fetchForArtist(artist) : []
     default:
       logger.warn('Unhandled drag data type', data.type)
       return []

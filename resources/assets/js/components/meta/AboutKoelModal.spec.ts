@@ -19,6 +19,7 @@ new class extends UnitTestCase {
     })
 
     it('shows demo notation', () => {
+      // @ts-ignore
       import.meta.env.VITE_KOEL_ENV = 'demo'
       this.render(AboutKoelModel).findByTestId('demo-credits')
     })

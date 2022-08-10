@@ -2,7 +2,7 @@ import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import PlaylistSidebarItem from '@/components/playlist/PlaylistSidebarItem.vue'
+import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 
 new class extends UnitTestCase {
   renderComponent (playlist: Record<string, any>, type: PlaylistType = 'playlist') {
@@ -10,11 +10,6 @@ new class extends UnitTestCase {
       props: {
         playlist,
         type
-      },
-      global: {
-        stubs: {
-          NameEditor: this.stub('name-editor')
-        }
       }
     })
   }

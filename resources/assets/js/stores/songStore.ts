@@ -1,10 +1,10 @@
 import isMobile from 'ismobilejs'
 import slugify from 'slugify'
-import { merge, orderBy, sumBy, take, unionBy } from 'lodash'
+import { merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
 import { reactive, UnwrapNestedRefs, watch } from 'vue'
 import { arrayify, eventBus, logger, secondsToHis, use } from '@/utils'
 import { authService, cache, httpService } from '@/services'
-import { albumStore, artistStore, commonStore, overviewStore, preferenceStore } from '@/stores'
+import { albumStore, artistStore, commonStore, overviewStore, playlistStore, preferenceStore } from '@/stores'
 
 export type SongUpdateData = {
   title?: string
@@ -177,6 +177,16 @@ export const songStore = {
       [`playlist.songs`, playlist.id],
       async () => this.syncWithVault(await httpService.get<Song[]>(`playlists/${playlist.id}/songs`))
     )
+  },
+
+  async fetchForPlaylistFolder (folder: PlaylistFolder) {
+    const songs: Song[] = []
+
+    for await (const playlist of playlistStore.byFolder(folder)) {
+      songs.push(...await songStore.fetchForPlaylist(playlist))
+    }
+
+    return uniqBy(songs, 'id')
   },
 
   async paginate (sortField: SongListSortField, sortOrder: SortOrder, page: number) {

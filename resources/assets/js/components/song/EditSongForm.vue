@@ -301,6 +301,7 @@ form {
   max-width: 540px;
 
   .tabs {
+    margin-top: 1.125rem;
     padding: 0;
   }
 

@@ -1,8 +1,9 @@
 <template>
   <li
-    :class="['playlist', type, editing ? 'editing' : '', playlist.is_smart ? 'smart' : '']"
+    :class="['playlist', type, playlist.is_smart ? 'smart' : '']"
     data-testid="playlist-sidebar-item"
-    @dblclick.prevent="makeEditable"
+    draggable="true"
+    @dragstart="dragStart"
   >
     <a
       v-if="contentEditable"
@@ -22,27 +23,19 @@
       {{ playlist.name }}
     </a>
 
-    <NameEditor
-      v-if="nameEditable && editing"
-      :playlist="playlist"
-      @cancelled="cancelEditing"
-      @updated="onPlaylistNameUpdated"
-    />
-
-    <ContextMenu v-if="hasContextMenu" ref="contextMenu" :playlist="playlist" @edit="makeEditable"/>
+    <ContextMenu v-if="hasContextMenu" ref="contextMenu" :playlist="playlist"/>
   </li>
 </template>
 
 <script lang="ts" setup>
 import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, nextTick, ref, toRefs } from 'vue'
-import { eventBus, pluralize, requireInjection, resolveSongsFromDragEvent } from '@/utils'
+import { computed, nextTick, ref, toRefs } from 'vue'
+import { eventBus, pluralize, requireInjection, resolveSongsFromDragEvent, startDragging } from '@/utils'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 import { MessageToasterKey } from '@/symbols'
 
-const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
-const NameEditor = defineAsyncComponent(() => import('@/components/playlist/PlaylistNameEditor.vue'))
+import ContextMenu from '@/components/playlist/PlaylistContextMenu.vue'
 
 const toaster = requireInjection(MessageToasterKey)
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
@@ -50,7 +43,6 @@ const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 const props = withDefaults(defineProps<{ playlist: Playlist, type?: PlaylistType }>(), { type: 'playlist' })
 const { playlist, type } = toRefs(props)
 
-const editing = ref(false)
 const active = ref(false)
 
 const url = computed(() => {
@@ -69,7 +61,6 @@ const url = computed(() => {
   }
 })
 
-const nameEditable = computed(() => type.value === 'playlist')
 const hasContextMenu = computed(() => type.value === 'playlist')
 
 const contentEditable = computed(() => {
@@ -79,14 +70,6 @@ const contentEditable = computed(() => {
 
   return type.value === 'playlist' || type.value === 'favorites'
 })
-
-const makeEditable = () => {
-  if (!nameEditable.value) {
-    return
-  }
-
-  editing.value = true
-}
 
 const handleDrop = async (event: DragEvent) => {
   if (!contentEditable.value) {
@@ -117,12 +100,7 @@ const openContextMenu = async (event: MouseEvent) => {
   }
 }
 
-const cancelEditing = () => (editing.value = false)
-
-const onPlaylistNameUpdated = (name: string) => {
-  playlist.value.name = name
-  editing.value = false
-}
+const dragStart = (event: DragEvent) => startDragging(event, playlist.value, 'Playlist')
 
 eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void => {
   switch (view) {
@@ -150,12 +128,7 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void
   user-select: none;
   overflow: hidden;
 
-  a {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-
+  ::v-deep(a) {
     span {
       pointer-events: none;
     }
@@ -164,12 +137,6 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void
   input {
     width: calc(100% - 32px);
     margin: 5px 16px;
-  }
-
-  &.editing {
-    a {
-      display: none !important;
-    }
   }
 }
 </style>

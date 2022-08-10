@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\SmartPlaylistRulesCast;
 use App\Values\SmartPlaylistRuleGroup;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,14 +14,17 @@ use Illuminate\Support\Collection;
 use Laravel\Scout\Searchable;
 
 /**
- * @property int $user_id
- * @property Collection|array $songs
  * @property int $id
+ * @property string $name
+ * @property bool $is_smart
+ * @property int $user_id
+ * @property User $user
+ * @property ?string $folder_id
+ * @property ?PlaylistFolder $folder
+ * @property Collection|array<array-key, Song> $songs
  * @property Collection|array<array-key, SmartPlaylistRuleGroup> $rule_groups
  * @property Collection|array<array-key, SmartPlaylistRuleGroup> $rules
- * @property bool $is_smart
- * @property string $name
- * @property user $user
+ * @property Carbon $created_at
  */
 class Playlist extends Model
 {
@@ -44,6 +48,11 @@ class Playlist extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(PlaylistFolder::class);
     }
 
     protected function isSmart(): Attribute

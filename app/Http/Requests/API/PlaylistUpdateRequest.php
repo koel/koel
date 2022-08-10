@@ -4,6 +4,10 @@ namespace App\Http\Requests\API;
 
 use App\Rules\ValidSmartPlaylistRulePayload;
 
+/**
+ * @property-read $name
+ * @property-read array $rules
+ */
 class PlaylistUpdateRequest extends Request
 {
     /** @return array<mixed> */

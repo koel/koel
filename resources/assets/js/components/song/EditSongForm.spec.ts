@@ -7,7 +7,7 @@ import { ref } from 'vue'
 import { fireEvent } from '@testing-library/vue'
 import { songStore } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
-import SongEditForm from './SongEditForm.vue'
+import EditSongForm from './EditSongForm.vue'
 
 let songs: Song[]
 
@@ -15,7 +15,7 @@ new class extends UnitTestCase {
   private async renderComponent (_songs: Song | Song[], initialTab: EditSongFormTabName = 'details') {
     songs = arrayify(_songs)
 
-    const rendered = this.render(SongEditForm, {
+    const rendered = this.render(EditSongForm, {
       global: {
         provide: {
           [SongsKey]: [ref(songs)],

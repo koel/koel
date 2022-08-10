@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\V6\API\AlbumController;
 use App\Http\Controllers\V6\API\AlbumSongController;
@@ -13,6 +12,9 @@ use App\Http\Controllers\V6\API\FetchAlbumInformationController;
 use App\Http\Controllers\V6\API\FetchArtistInformationController;
 use App\Http\Controllers\V6\API\OverviewController;
 use App\Http\Controllers\V6\API\PlayCountController;
+use App\Http\Controllers\V6\API\PlaylistController;
+use App\Http\Controllers\V6\API\PlaylistFolderController;
+use App\Http\Controllers\V6\API\PlaylistFolderPlaylistController;
 use App\Http\Controllers\V6\API\PlaylistSongController;
 use App\Http\Controllers\V6\API\QueueController;
 use App\Http\Controllers\V6\API\RecentlyPlayedSongController;
@@ -34,10 +36,16 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('albums/{album}/information', FetchAlbumInformationController::class);
         Route::get('artists/{artist}/information', FetchArtistInformationController::class);
 
+        Route::apiResource('playlist-folders', PlaylistFolderController::class);
+        Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except('destroy');
+        Route::delete(
+            'playlist-folders/{playlistFolder}/playlists',
+            [PlaylistFolderPlaylistController::class, 'destroy']
+        );
+
         Route::apiResource('playlists', PlaylistController::class);
-        Route::apiResource('playlists.songs', PlaylistSongController::class);
-        Route::post('playlists/{playlist}/songs', [PlaylistSongController::class, 'add']);
-        Route::delete('playlists/{playlist}/songs', [PlaylistSongController::class, 'remove']);
+        Route::apiResource('playlists.songs', PlaylistSongController::class)->except('destroy');
+        Route::delete('playlists/{playlist}/songs', [PlaylistSongController::class, 'destroy']);
 
         Route::apiResource('songs', SongController::class)->where(['song' => Song::ID_REGEX]);
         Route::get('songs/recently-played', [RecentlyPlayedSongController::class, 'index']);

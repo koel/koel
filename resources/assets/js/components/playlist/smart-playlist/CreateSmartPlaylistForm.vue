@@ -9,8 +9,7 @@
 
         <main>
           <div class="form-row">
-            <label>Name</label>
-            <input v-model="name" v-koel-focus name="name" required type="text">
+            <input v-model="name" v-koel-focus name="name" placeholder="Playlist name" required type="text">
           </div>
 
           <div class="form-row rules">

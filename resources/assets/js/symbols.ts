@@ -17,4 +17,5 @@ export const SongListSortOrderKey: ReadonlyInjectionKey<Ref<SortOrder>> = Symbol
 export const EditSongFormInitialTabKey: ReadonlyInjectionKey<Ref<EditSongFormTabName>> = Symbol('EditSongFormInitialTab')
 
 export const PlaylistKey: ReadonlyInjectionKey<Ref<Playlist>> = Symbol('Playlist')
+export const PlaylistFolderKey: ReadonlyInjectionKey<Ref<PlaylistFolder>> = Symbol('PlaylistFolder')
 export const UserKey: ReadonlyInjectionKey<Ref<User>> = Symbol('User')

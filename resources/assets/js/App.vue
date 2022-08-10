@@ -19,6 +19,8 @@
   <SongContextMenu/>
   <AlbumContextMenu/>
   <ArtistContextMenu/>
+  <PlaylistFolderContextMenu/>
+
   <DialogBox ref="dialog"/>
   <MessageToaster ref="toaster"/>
 </template>
@@ -39,6 +41,7 @@ import MainWrapper from '@/components/layout/main-wrapper/index.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 import AlbumContextMenu from '@/components/album/AlbumContextMenu.vue'
 import ArtistContextMenu from '@/components/artist/ArtistContextMenu.vue'
+import PlaylistFolderContextMenu from '@/components/playlist/PlaylistFolderContextMenu.vue'
 import SongContextMenu from '@/components/song/SongContextMenu.vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'

@@ -22,6 +22,16 @@ class PlaylistService
         return $playlist;
     }
 
+    public function updatePlaylist(Playlist $playlist, string $name, array $rules): Playlist
+    {
+        $playlist->update([
+            'name' => $name,
+            'rules' => $rules,
+        ]);
+
+        return $playlist;
+    }
+
     public function addSongsToPlaylist(Playlist $playlist, array $songIds): void
     {
         $playlist->songs()->syncWithoutDetaching($songIds);

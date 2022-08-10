@@ -80,6 +80,6 @@ const dragStart = (event: DragEvent) => startDragging(event, album.value, 'Album
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', event, album.value)
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @include artist-album-card();
 </style>

@@ -9,10 +9,13 @@
 
         <main>
           <div class="form-row">
-            <label>
-              Name
-              <input v-model="mutablePlaylist.name" v-koel-focus name="name" required type="text">
-            </label>
+            <input
+              v-model="mutablePlaylist.name"
+              v-koel-focus name="name"
+              placeholder="Playlist name"
+              required
+              type="text"
+            >
           </div>
 
           <div class="form-row rules">

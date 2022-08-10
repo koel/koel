@@ -4,7 +4,7 @@
   </span>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .btn-group {
   --radius: 9999px;
 
@@ -12,7 +12,7 @@
   position: relative;
   flex-wrap: nowrap;
 
-  button {
+  ::v-deep(button) {
     &:not(:first-child) {
       border-radius: 0;
     }
@@ -30,7 +30,7 @@
     }
   }
 
-  &[uppercased] button {
+  &[uppercased] ::v-deep(button) {
     text-transform: uppercase;
   }
 }

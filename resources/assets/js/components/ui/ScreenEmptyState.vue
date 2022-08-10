@@ -40,7 +40,7 @@
   }
 
   .text {
-    font-size: 2em;
+    font-size: 2rem;
     font-weight: 200;
     line-height: 1.3;
 
