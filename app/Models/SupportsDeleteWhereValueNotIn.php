@@ -19,29 +19,24 @@ trait SupportsDeleteWhereValueNotIn
      */
     public static function deleteWhereValueNotIn(array $values, string $field = 'id'): void
     {
-        $maxChunkSize = config('database.default') === 'sqlite-persistent' ? 999 : 65535;
+        $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65535;
 
-        // If the number of entries is lower than, or equals to maxChunkSize, just go ahead.
         if (count($values) <= $maxChunkSize) {
             static::query()->whereNotIn($field, $values)->delete();
 
             return;
         }
 
-        // Otherwise, we get the actual IDs that should be deleted…
-        $allIDs = static::query()->select($field)->get()->pluck($field)->all();
-        $whereInIDs = array_diff($allIDs, $values);
+        $allIds = static::query()->select($field)->get()->pluck($field)->all();
+        $deletableIds = array_diff($allIds, $values);
 
-        // …and see if we can delete them instead.
-        if (count($whereInIDs) < $maxChunkSize) {
-            static::query()->whereIn($field, $whereInIDs)->delete();
+        if (count($deletableIds) < $maxChunkSize) {
+            static::query()->whereIn($field, $deletableIds)->delete();
 
             return;
         }
 
-        // If that's not possible (i.e. this array has more than maxChunkSize elements, too)
-        // then we'll delete chunk by chunk.
-        static::deleteByChunk($values, $field, $maxChunkSize);
+        static::deleteByChunk($deletableIds, $field, $maxChunkSize);
     }
 
     public static function deleteByChunk(array $values, string $field = 'id', int $chunkSize = 65535): void
