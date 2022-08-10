@@ -17,6 +17,8 @@ class ArtistBuilder extends Builder
 
     public function withMeta(User $user): static
     {
+        $integer = $this->integerCastType();
+
         return $this->leftJoin('songs', 'artists.id', '=', 'songs.artist_id')
             ->leftJoin('interactions', static function (JoinClause $join) use ($user): void {
                 $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
@@ -24,7 +26,7 @@ class ArtistBuilder extends Builder
             ->groupBy('artists.id')
             ->select([
                 'artists.*',
-                DB::raw('CAST(SUM(interactions.play_count) AS UNSIGNED) AS play_count'),
+                DB::raw("CAST(SUM(interactions.play_count) AS $integer) AS play_count"),
                 DB::raw('COUNT(DISTINCT songs.album_id) AS album_count'),
             ])
             ->withCount('songs AS song_count')

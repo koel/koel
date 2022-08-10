@@ -17,16 +17,15 @@ class AlbumBuilder extends Builder
 
     public function withMeta(User $user): static
     {
+        $integer = $this->integerCastType();
+
         return $this->with('artist')
             ->leftJoin('songs', 'albums.id', '=', 'songs.album_id')
             ->leftJoin('interactions', static function (JoinClause $join) use ($user): void {
                 $join->on('songs.id', '=', 'interactions.song_id')->where('interactions.user_id', $user->id);
             })
             ->groupBy('albums.id')
-            ->select(
-                'albums.*',
-                DB::raw('CAST(SUM(interactions.play_count) AS UNSIGNED) AS play_count')
-            )
+            ->select('albums.*', DB::raw("CAST(SUM(interactions.play_count) AS $integer) AS play_count"))
             ->withCount('songs AS song_count')
             ->withSum('songs AS length', 'length');
     }

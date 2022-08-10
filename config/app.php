@@ -145,6 +145,7 @@ return [
         App\Providers\ITunesServiceProvider::class,
         App\Providers\StreamerServiceProvider::class,
         App\Providers\ObjectStorageServiceProvider::class,
+        App\Providers\MacroProvider::class,
     ],
 
     /*
