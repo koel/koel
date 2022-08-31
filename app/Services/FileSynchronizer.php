@@ -51,6 +51,8 @@ class FileSynchronizer
         $info = $this->getID3->analyze($this->filePath);
         $this->syncError = Arr::get($info, 'error.0') ?: (Arr::get($info, 'playtime_seconds') ? null : 'Empty file');
 
+        $this->getID3->CopyTagsToComments($info);
+
         return $this->syncError ? null : SongScanInformation::fromGetId3Info($info);
     }
 

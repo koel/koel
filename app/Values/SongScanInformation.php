@@ -28,7 +28,11 @@ final class SongScanInformation implements Arrayable
     public static function fromGetId3Info(array $info): self
     {
         // We prefer ID3v2 tags over ID3v1 tags.
-        $tags = array_merge(Arr::get($info, 'tags.id3v1', []), Arr::get($info, 'tags.id3v2', []));
+        $tags = array_merge(
+            Arr::get($info, 'tags.id3v1', []),
+            Arr::get($info, 'tags.id3v2', []),
+            Arr::get($info, 'comments', []),
+        );
         $comments = Arr::get($info, 'comments', []);
 
         $albumArtistName = self::getTag($tags, ['albumartist', 'album_artist', 'band']);
