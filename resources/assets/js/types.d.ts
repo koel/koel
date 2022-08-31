@@ -199,7 +199,7 @@ interface SmartPlaylistRuleGroup {
 }
 
 interface SmartPlaylistModel {
-  name: 'title' | 'length' | 'created_at' | 'updated_at' | 'album.name' | 'artist.name' | 'interactions.play_count' | 'interactions.updated_at'
+  name: 'title' | 'length' | 'created_at' | 'updated_at' | 'album.name' | 'artist.name' | 'interactions.play_count' | 'interactions.updated_at' | 'path'
   type: 'text' | 'number' | 'date'
   label: string
   unit?: 'seconds' | 'days'

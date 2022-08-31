@@ -41,6 +41,10 @@ const models: SmartPlaylistModel[] = [
     name: 'updated_at',
     type: 'date',
     label: 'Date Modified'
+  }, {
+    name: 'path',
+    type: 'text',
+    label: 'Path'
   }
 ]
 

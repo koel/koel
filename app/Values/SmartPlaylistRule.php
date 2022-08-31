@@ -42,6 +42,7 @@ final class SmartPlaylistRule implements Arrayable
     private const MODEL_LENGTH = 'length';
     private const MODEL_DATE_ADDED = 'created_at';
     private const MODEL_DATE_MODIFIED = 'updated_at';
+    private const MODEL_PATH = 'path';
 
     private const VALID_MODELS = [
         self::MODEL_TITLE,
@@ -52,6 +53,7 @@ final class SmartPlaylistRule implements Arrayable
         self::MODEL_LENGTH,
         self::MODEL_DATE_ADDED,
         self::MODEL_DATE_MODIFIED,
+        self::MODEL_PATH,
     ];
 
     private const MODEL_COLUMN_MAP = [
