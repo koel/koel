@@ -49,14 +49,16 @@ class FileSynchronizer
 
     public function getFileScanInformation(): ?SongScanInformation
     {
-        $info = $this->getID3->analyze($this->filePath);
-        $this->syncError = Arr::get($info, 'error.0') ?: (Arr::get($info, 'playtime_seconds') ? null : 'Empty file');
+        $raw = $this->getID3->analyze($this->filePath);
+        $this->syncError = Arr::get($raw, 'error.0') ?: (Arr::get($raw, 'playtime_seconds') ? null : 'Empty file');
 
         if ($this->syncError) {
             return null;
         }
 
-        $info = SongScanInformation::fromGetId3Info($info);
+        $this->getID3->CopyTagsToComments($raw);
+        $info = SongScanInformation::fromGetId3Info($raw);
+
         $info->lyrics = $info->lyrics ?: $this->lrcReader->tryReadForMediaFile($this->filePath);
 
         return $info;

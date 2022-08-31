@@ -219,22 +219,24 @@ class MediaSyncServiceTest extends TestCase
     public function testHtmlEntities(): void
     {
         $path = $this->path('/songs/blank.mp3');
+        $analyzed = [
+            'filenamepath' => $path,
+            'tags' => [
+                'id3v2' => [
+                    'title' => ['&#27700;&#35895;&#24195;&#23455;'],
+                    'album' => ['&#23567;&#23721;&#20117;&#12371; Random'],
+                    'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown'],
+                ],
+            ],
+            'encoding' => 'UTF-8',
+            'playtime_seconds' => 100,
+        ];
 
         $this->swap(
             getID3::class,
             Mockery::mock(getID3::class, [
-                'analyze' => [
-                    'filenamepath' => $path,
-                    'tags' => [
-                        'id3v2' => [
-                            'title' => ['&#27700;&#35895;&#24195;&#23455;'],
-                            'album' => ['&#23567;&#23721;&#20117;&#12371; Random'],
-                            'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown'],
-                        ],
-                    ],
-                    'encoding' => 'UTF-8',
-                    'playtime_seconds' => 100,
-                ],
+                'CopyTagsToComments' => $analyzed,
+                'analyze' => $analyzed,
             ])
         );
 

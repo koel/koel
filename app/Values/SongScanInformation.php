@@ -28,7 +28,12 @@ final class SongScanInformation implements Arrayable
     public static function fromGetId3Info(array $info): self
     {
         // We prefer ID3v2 tags over ID3v1 tags.
-        $tags = array_merge(Arr::get($info, 'tags.id3v1', []), Arr::get($info, 'tags.id3v2', []));
+        $tags = array_merge(
+            Arr::get($info, 'tags.id3v1', []),
+            Arr::get($info, 'tags.id3v2', []),
+            Arr::get($info, 'comments', []),
+        );
+
         $comments = Arr::get($info, 'comments', []);
 
         $albumArtistName = self::getTag($tags, ['albumartist', 'album_artist', 'band']);
@@ -41,16 +46,28 @@ final class SongScanInformation implements Arrayable
 
         $path = Arr::get($info, 'filenamepath');
 
+        $cover = [self::getTag($comments, 'cover', null)];
+
+        if ($cover[0] === null) {
+            $cover = self::getTag($comments, 'picture', []);
+        }
+
+        $lyrics = html_entity_decode(self::getTag($tags, [
+            'unsynchronised_lyric',
+            'unsychronised_lyric',
+            'unsyncedlyrics',
+        ]));
+
         return new self(
             title: html_entity_decode(self::getTag($tags, 'title', pathinfo($path, PATHINFO_FILENAME))),
             albumName: html_entity_decode(self::getTag($tags, 'album', Album::UNKNOWN_NAME)),
             artistName: html_entity_decode(self::getTag($tags, 'artist', Artist::UNKNOWN_NAME)),
             albumArtistName: html_entity_decode($albumArtistName),
             track: (int) self::getTag($tags, ['track', 'tracknumber', 'track_number']),
-            disc: (int) self::getTag($tags, 'part_of_a_set', 1),
-            lyrics: html_entity_decode(self::getTag($tags, ['unsynchronised_lyric', 'unsychronised_lyric'])),
+            disc: (int) self::getTag($tags, ['discnumber', 'part_of_a_set'], 1),
+            lyrics: $lyrics,
             length: (float) Arr::get($info, 'playtime_seconds'),
-            cover: self::getTag($comments, 'picture', []),
+            cover: $cover,
             path: $path,
             mTime: Helper::getModifiedTime($path),
         );
