@@ -1,25 +1,25 @@
 <template>
   <li
+    ref="el"
     :class="['playlist', type, playlist.is_smart ? 'smart' : '']"
     data-testid="playlist-sidebar-item"
     draggable="true"
-    @dragstart="dragStart"
+    @dragleave="onDragLeave"
+    @dragover="onDragOver"
+    @dragstart="onDragStart"
+    @drop="onDrop"
   >
-    <a
-      v-if="contentEditable"
-      v-koel-droppable="handleDrop"
-      :class="{ active }"
-      :href="url"
-      @contextmenu.prevent="openContextMenu"
-    >
-      <icon v-if="type === 'favorites'" :icon="faHeart" class="text-maroon" fixed-width/>
-      <icon v-else :icon="faMusic" :mask="faFile" transform="shrink-7 down-2" fixed-width/>
-      {{ playlist.name }}
-    </a>
-
-    <a v-else :class="{ active }" :href="url" @contextmenu.prevent="openContextMenu">
+    <a :class="{ active }" :href="url" @contextmenu.prevent="onContextMenu">
       <icon v-if="type === 'recently-played'" :icon="faClockRotateLeft" class="text-green" fixed-width/>
-      <icon v-else :icon="faBoltLightning" :mask="faFile" transform="shrink-7 down-2" fixed-width/>
+      <icon v-else-if="type === 'favorites'" :icon="faHeart" class="text-maroon" fixed-width/>
+      <icon
+        v-else-if="playlist.is_smart"
+        :icon="faBoltLightning"
+        :mask="faFile"
+        fixed-width
+        transform="shrink-7 down-2"
+      />
+      <icon v-else :icon="faMusic" :mask="faFile" fixed-width transform="shrink-7 down-2"/>
       {{ playlist.name }}
     </a>
 
@@ -30,15 +30,20 @@
 <script lang="ts" setup>
 import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, ref, toRefs } from 'vue'
-import { eventBus, pluralize, requireInjection, resolveSongsFromDragEvent, startDragging } from '@/utils'
+import { eventBus, pluralize, requireInjection } from '@/utils'
 import { favoriteStore, playlistStore } from '@/stores'
 import router from '@/router'
 import { MessageToasterKey } from '@/symbols'
+import { useDraggable, useDroppable } from '@/composables'
 
 import ContextMenu from '@/components/playlist/PlaylistContextMenu.vue'
 
+const { startDragging } = useDraggable('playlist')
+const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
+
 const toaster = requireInjection(MessageToasterKey)
 const contextMenu = ref<InstanceType<typeof ContextMenu>>()
+const el = ref<HTMLLIElement>()
 
 const props = withDefaults(defineProps<{ playlist: Playlist, type?: PlaylistType }>(), { type: 'playlist' })
 const { playlist, type } = toRefs(props)
@@ -64,35 +69,11 @@ const url = computed(() => {
 const hasContextMenu = computed(() => type.value === 'playlist')
 
 const contentEditable = computed(() => {
-  if (playlist.value.is_smart) {
-    return false
-  }
-
+  if (playlist.value.is_smart) return false
   return type.value === 'playlist' || type.value === 'favorites'
 })
 
-const handleDrop = async (event: DragEvent) => {
-  if (!contentEditable.value) {
-    return false
-  }
-
-  const songs = await resolveSongsFromDragEvent(event)
-
-  if (!songs.length) {
-    return false
-  }
-
-  if (type.value === 'favorites') {
-    await favoriteStore.like(songs)
-  } else if (type.value === 'playlist') {
-    await playlistStore.addSongs(playlist.value, songs)
-    toaster.value.success(`Added ${pluralize(songs.length, 'song')} into "${playlist.value.name}."`)
-  }
-
-  return false
-}
-
-const openContextMenu = async (event: MouseEvent) => {
+const onContextMenu = async (event: MouseEvent) => {
   if (hasContextMenu.value) {
     await nextTick()
     router.go(`/playlist/${playlist.value.id}`)
@@ -100,7 +81,44 @@ const openContextMenu = async (event: MouseEvent) => {
   }
 }
 
-const dragStart = (event: DragEvent) => startDragging(event, playlist.value, 'Playlist')
+const onDragStart = (event: DragEvent) => {
+  if (type.value === 'playlist') {
+    startDragging(event, playlist.value)
+  }
+}
+
+const onDragOver = (event: DragEvent) => {
+  if (!contentEditable.value) return false
+  if (!acceptsDrop(event)) return false
+
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'copy'
+  el.value!.classList.add('droppable')
+
+  return false
+}
+
+const onDragLeave = () => el.value!.classList.remove('droppable')
+
+const onDrop = async (event: DragEvent) => {
+  el.value!.classList.remove('droppable')
+
+  if (!contentEditable.value) return false
+  if (!acceptsDrop(event)) return false
+
+  const songs = await resolveDroppedSongs(event)
+
+  if (!songs?.length) return false
+
+  if (type.value === 'favorites') {
+    await favoriteStore.like(songs)
+  } else if (type.value === 'playlist') {
+    await playlistStore.addSongs(playlist.value, songs)
+    toaster.value.success(`Added ${pluralize(songs, 'song')} into "${playlist.value.name}."`)
+  }
+
+  return false
+}
 
 eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void => {
   switch (view) {
@@ -127,6 +145,12 @@ eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void
 .playlist {
   user-select: none;
   overflow: hidden;
+
+  &.droppable {
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+    border-radius: 4px;
+    cursor: copy;
+  }
 
   ::v-deep(a) {
     span {

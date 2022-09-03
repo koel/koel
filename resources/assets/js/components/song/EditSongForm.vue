@@ -286,7 +286,7 @@ const submit = async () => {
 
   try {
     await songStore.update(mutatedSongs.value, formData)
-    toaster.value.success(`Updated ${pluralize(mutatedSongs.value.length, 'song')}.`)
+    toaster.value.success(`Updated ${pluralize(mutatedSongs.value, 'song')}.`)
     close()
   } finally {
     loading.value = false

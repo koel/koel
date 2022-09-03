@@ -2,9 +2,9 @@
   <li
     ref="el"
     class="playlist-folder"
-    @dragleave.prevent="onDragLeave"
+    @dragleave="onDragLeave"
     @dragover="onDragOver"
-    @drop.prevent="onDrop"
+    @drop="onDrop"
     tabindex="0"
   >
     <a @click.prevent="toggle" @contextmenu.prevent="onContextMenu">
@@ -36,7 +36,8 @@
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRefs } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { eventBus, logger } from '@/utils'
+import { eventBus } from '@/utils'
+import { useDroppable } from '@/composables'
 
 const PlaylistSidebarItem = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarItem.vue'))
 
@@ -49,41 +50,47 @@ const opened = ref(false)
 
 const playlistsInFolder = computed(() => playlistStore.byFolder(folder.value))
 
+const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
+
 const toggle = () => (opened.value = !opened.value)
 
 const onDragOver = (event: DragEvent) => {
-  if (!event.dataTransfer?.types.includes('playlist')) return false
+  if (!acceptsDrop(event)) return false
 
   event.preventDefault()
-  event.dataTransfer.dropEffect = 'move'
-  el.value!.classList.add('drag-over')
-  opened.value || (opened.value = true)
+  event.dataTransfer!.dropEffect = 'move'
+  el.value!.classList.add('droppable')
+  opened.value = true
 }
 
-const onDragLeave = () => el.value!.classList.remove('drag-over')
+const onDragLeave = () => el.value!.classList.remove('droppable')
 
 const onDrop = async (event: DragEvent) => {
-  el.value!.classList.remove('drag-over')
-  const playlist = getPlaylistFromDropEvent(event)
+  if (!acceptsDrop(event)) return false
+
+  event.preventDefault()
+
+  el.value!.classList.remove('droppable')
+  const playlist = await resolveDroppedValue<Playlist>(event)
   if (!playlist || playlist.folder_id === folder.value.id) return
 
   await playlistFolderStore.addPlaylistToFolder(folder.value, playlist)
 }
 
-const onDragLeaveHatch = () => hatch.value!.classList.remove('drag-over')
+const onDragLeaveHatch = () => hatch.value!.classList.remove('droppable')
 
 const onDragOverHatch = (event: DragEvent) => {
-  if (!event.dataTransfer?.types.includes('playlist')) return false
+  if (!acceptsDrop(event)) return false
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'move'
-  hatch.value!.classList.add('drag-over')
+  hatch.value!.classList.add('droppable')
 }
 
 const onDropOnHatch = async (event: DragEvent) => {
-  hatch.value!.classList.remove('drag-over')
-  el.value!.classList.remove('drag-over')
-  const playlist = getPlaylistFromDropEvent(event)!
+  hatch.value!.classList.remove('droppable')
+  el.value!.classList.remove('droppable')
+  const playlist = (await resolveDroppedValue<Playlist>(event))!
 
   // if the playlist isn't in the folder, don't do anything. The folder will handle the drop.
   if (playlist.folder_id !== folder.value.id) return
@@ -93,15 +100,6 @@ const onDropOnHatch = async (event: DragEvent) => {
   await playlistFolderStore.removePlaylistFromFolder(folder.value, playlist)
 }
 
-const getPlaylistFromDropEvent = (event: DragEvent) => {
-  try {
-    const data = JSON.parse(event.dataTransfer?.getData('application/x-koel.text+plain')!)
-    return playlistStore.byId(data.value as number)
-  } catch (e) {
-    logger.error(e)
-  }
-}
-
 const onContextMenu = event => eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', event, folder.value)
 </script>
 
@@ -109,7 +107,7 @@ const onContextMenu = event => eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUE
 li.playlist-folder {
   position: relative;
 
-  &.drag-over {
+  &.droppable {
     box-shadow: inset 0 0 0 1px var(--color-accent);
     border-radius: 4px;
     cursor: copy;
@@ -121,7 +119,7 @@ li.playlist-folder {
     width: 100%;
     height: .5rem;
 
-    &.drag-over {
+    &.droppable {
       border-bottom: 3px solid var(--color-highlight);
     }
   }

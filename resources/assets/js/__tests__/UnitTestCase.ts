@@ -2,7 +2,7 @@ import isMobile from 'ismobilejs'
 import { isObject, mergeWith } from 'lodash'
 import { cleanup, render, RenderOptions } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
-import { clickaway, droppable, focus } from '@/directives'
+import { clickaway, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
 import factory from '@/__tests__/factory'
@@ -81,8 +81,7 @@ export default abstract class UnitTestCase {
       global: {
         directives: {
           'koel-clickaway': clickaway,
-          'koel-focus': focus,
-          'koel-droppable': droppable
+          'koel-focus': focus
         },
         components: {
           icon: this.stub('icon')

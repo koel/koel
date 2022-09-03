@@ -10,8 +10,8 @@
             Home
           </a>
         </li>
-        <li>
-          <a v-koel-droppable="handleDrop" :class="['queue', currentView === 'Queue' ? 'active' : '']" href="#!/queue">
+        <li ref="queueMenuItemEl" @dragleave="onQueueDragLeave" @dragover="onQueueDragOver" @drop="onQueueDrop">
+          <a :class="['queue', currentView === 'Queue' ? 'active' : '']" href="#!/queue">
             <icon :icon="faListOl" fixed-width/>
             Current Queue
           </a>
@@ -86,19 +86,37 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { ref } from 'vue'
-import { eventBus, resolveSongsFromDragEvent } from '@/utils'
+import { eventBus } from '@/utils'
 import { queueStore } from '@/stores'
-import { useAuthorization, useThirdPartyServices } from '@/composables'
+import { useAuthorization, useDroppable, useThirdPartyServices } from '@/composables'
 
 import PlaylistList from '@/components/playlist/PlaylistSidebarList.vue'
 
 const showing = ref(!isMobile.phone)
 const currentView = ref<MainViewName>('Home')
+const queueMenuItemEl = ref<HTMLLIElement>()
+
+const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist', 'playlist'])
 const { useYouTube } = useThirdPartyServices()
 const { isAdmin } = useAuthorization()
 
-const handleDrop = async (event: DragEvent) => {
-  const songs = await resolveSongsFromDragEvent(event)
+const onQueueDragOver = (event: DragEvent) => {
+  if (!acceptsDrop(event)) return false
+
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'move'
+  queueMenuItemEl.value!.classList.add('droppable')
+}
+
+const onQueueDragLeave = () => queueMenuItemEl.value!.classList.remove('droppable')
+
+const onQueueDrop = async (event: DragEvent) => {
+  queueMenuItemEl.value!.classList.remove('droppable')
+
+  if (!acceptsDrop(event)) return false
+
+  event.preventDefault()
+  const songs = await resolveDroppedSongs(event) || []
   songs.length && queueStore.queue(songs)
 
   return false
@@ -137,13 +155,10 @@ nav {
     -webkit-overflow-scrolling: touch;
   }
 
-  a.droppable {
-    transform: scale(1.2);
-    transition: .3s;
-    transform-origin: center left;
-
-    color: var(--color-text-primary);
-    background-color: rgba(0, 0, 0, .3);
+  .droppable {
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+    border-radius: 4px;
+    cursor: copy;
   }
 
   .queue > span {

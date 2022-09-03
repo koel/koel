@@ -44,7 +44,7 @@ export const slugToTitle = (slug: string, separator = '-') => {
   return title.replace(/\s+/g, ' ').trim()
 }
 
-export const pluralize = (count: number | undefined, singular: string) => {
-  count = count ?? 0
+export const pluralize = (count: any[] | number | undefined, singular: string) => {
+  count = Array.isArray(count) ? count.length : (count ?? 0)
   return count === 1 ? `${count} ${singular}` : `${count.toLocaleString()} ${singular}s`
 }

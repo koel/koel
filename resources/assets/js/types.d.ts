@@ -280,14 +280,6 @@ interface EqualizerPreset {
   gains: number[]
 }
 
-type Draggable = Song | Song[] | Album | Artist | Playlist
-type DragType = 'Song' | 'Album' | 'Artist' | 'Playlist'
-
-type DragData = {
-  type: 'songs' | 'album' | 'artist' | 'playlist'
-  value: string | string[] | number
-}
-
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
 declare type MainViewName =
   | 'Home'
