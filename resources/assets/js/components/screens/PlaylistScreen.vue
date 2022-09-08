@@ -50,7 +50,7 @@
 
       <template v-if="playlist?.is_smart">
         No songs match the playlist's
-        <a @click.prevent="editSmartPlaylist">criteria</a>.
+        <a @click.prevent="editPlaylist">criteria</a>.
       </template>
       <template v-else>
         The playlist is currently empty.
@@ -107,14 +107,14 @@ const allowDownload = toRef(commonStore.state, 'allow_download')
 
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value)
 const download = () => downloadService.fromPlaylist(playlist.value!)
-const editSmartPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM', playlist.value)
+const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value)
 
 const removeSelected = () => {
-  if (!selectedSongs.value.length || playlist.value.is_smart) return
+  if (!selectedSongs.value.length || playlist.value!.is_smart) return
 
   playlistStore.removeSongs(playlist.value!, selectedSongs.value)
   songs.value = differenceBy(songs.value, selectedSongs.value, 'id')
-  toaster.value.success(`Removed ${pluralize(selectedSongs.value.length, 'song')} from "${playlist.value!.name}."`)
+  toaster.value.success(`Removed ${pluralize(selectedSongs.value, 'song')} from "${playlist.value!.name}."`)
 }
 
 const fetchSongs = async () => {

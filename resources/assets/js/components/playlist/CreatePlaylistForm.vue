@@ -20,8 +20,8 @@
       </main>
 
       <footer>
-        <Btn class="btn-add" type="submit">Save</Btn>
-        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+        <Btn type="submit">Save</Btn>
+        <Btn white @click.prevent="maybeClose">Cancel</Btn>
       </footer>
     </form>
   </div>

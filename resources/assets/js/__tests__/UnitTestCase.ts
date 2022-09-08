@@ -94,11 +94,15 @@ export default abstract class UnitTestCase {
     options.global = options.global || {}
     options.global.provide = options.global.provide || {}
 
+    // @ts-ignore
     if (!options.global.provide?.hasOwnProperty(DialogBoxKey)) {
+      // @ts-ignore
       options.global.provide[DialogBoxKey] = DialogBoxStub
     }
 
+    // @ts-ignore
     if (!options.global.provide?.hasOwnProperty(MessageToasterKey)) {
+      // @ts-ignore
       options.global.provide[MessageToasterKey] = MessageToasterStub
     }
 

@@ -2,7 +2,8 @@ import { DeepReadonly, InjectionKey, Ref } from 'vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
 
-export type ReadonlyInjectionKey<T> = InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]>
+export interface ReadonlyInjectionKey<T> extends InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]> {
+}
 
 export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
 export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')

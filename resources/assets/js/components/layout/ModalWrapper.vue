@@ -53,7 +53,11 @@ const editSongFormInitialTab = ref<EditSongFormTabName>('details')
 
 provideReadonly(PlaylistKey, playlistToEdit, false)
 provideReadonly(UserKey, userToEdit)
-provideReadonly(PlaylistFolderKey, playlistFolderToEdit, true, (name: string) => playlistFolderToEdit.value!.name = name)
+
+provideReadonly(PlaylistFolderKey, playlistFolderToEdit, true, (name: string) => {
+  playlistFolderToEdit.value!.name = name
+})
+
 provideReadonly(SongsKey, songsToEdit, false)
 provideReadonly(EditSongFormInitialTabKey, editSongFormInitialTab)
 
@@ -66,12 +70,7 @@ eventBus.on({
 
   'MODAL_SHOW_EDIT_PLAYLIST_FORM': (playlist: Playlist) => {
     playlistToEdit.value = playlist
-    showingModalName.value = 'edit-playlist-form'
-  },
-
-  'MODAL_SHOW_EDIT_SMART_PLAYLIST_FORM': (playlist: Playlist) => {
-    playlistToEdit.value = playlist
-    showingModalName.value = 'edit-smart-playlist-form'
+    showingModalName.value = playlist.is_smart ? 'edit-smart-playlist-form' : 'edit-playlist-form'
   },
 
   'MODAL_SHOW_EDIT_USER_FORM': (user: User) => {

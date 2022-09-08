@@ -1,28 +1,26 @@
 <template>
   <Overlay/>
+  <DialogBox ref="dialog"/>
+  <MessageToaster ref="toaster"/>
 
   <div id="main" v-if="authenticated">
     <Hotkeys/>
-    <EventListeners/>
+    <GlobalEventListeners/>
     <AppHeader/>
     <MainWrapper/>
     <AppFooter/>
     <SupportKoel/>
+    <SongContextMenu/>
+    <AlbumContextMenu/>
+    <ArtistContextMenu/>
+    <PlaylistContextMenu/>
+    <PlaylistFolderContextMenu/>
+    <CreateNewPlaylistContextMenu/>
   </div>
 
-  <template v-else>
-    <div class="login-wrapper">
-      <LoginForm @loggedin="onUserLoggedIn"/>
-    </div>
-  </template>
-
-  <SongContextMenu/>
-  <AlbumContextMenu/>
-  <ArtistContextMenu/>
-  <PlaylistFolderContextMenu/>
-
-  <DialogBox ref="dialog"/>
-  <MessageToaster ref="toaster"/>
+  <div class="login-wrapper" v-else>
+    <LoginForm @loggedin="onUserLoggedIn"/>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -32,24 +30,29 @@ import { commonStore, preferenceStore as preferences } from '@/stores'
 import { authService, playbackService, socketListener, socketService, uploadService } from '@/services'
 import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
-import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/app-footer/index.vue'
-import EventListeners from '@/components/utils/EventListeners.vue'
-import Hotkeys from '@/components/utils/HotkeyListener.vue'
-import LoginForm from '@/components/auth/LoginForm.vue'
-import MainWrapper from '@/components/layout/main-wrapper/index.vue'
-import Overlay from '@/components/ui/Overlay.vue'
-import AlbumContextMenu from '@/components/album/AlbumContextMenu.vue'
-import ArtistContextMenu from '@/components/artist/ArtistContextMenu.vue'
-import PlaylistFolderContextMenu from '@/components/playlist/PlaylistFolderContextMenu.vue'
-import SongContextMenu from '@/components/song/SongContextMenu.vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
+import Overlay from '@/components/ui/Overlay.vue'
 
+// Do not dynamic-import app footer, as it contains the <audio> element
+// that is necessary to properly initialize the playService and equalizer.
+import AppFooter from '@/components/layout/app-footer/index.vue'
+
+const AppHeader = defineAsyncComponent(() => import('@/components/layout/AppHeader.vue'))
+const GlobalEventListeners = defineAsyncComponent(() => import('@/components/utils/GlobalEventListeners.vue'))
+const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
+const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
+const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
+const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
+const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
+const PlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
+const PlaylistFolderContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistFolderContextMenu.vue'))
+const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
+const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreateNewPlaylistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 
 const dialog = ref<InstanceType<typeof DialogBox>>()
-const toaster = ref<InstanceType<typeof MessageToast>>()
+const toaster = ref<InstanceType<typeof MessageToaster>>()
 const authenticated = ref(false)
 
 /**
@@ -61,9 +64,9 @@ const requestNotificationPermission = async () => {
   }
 }
 
-const onUserLoggedIn = () => {
+const onUserLoggedIn = async () => {
   authenticated.value = true
-  init()
+  await init()
 }
 
 onMounted(async () => {
@@ -149,6 +152,7 @@ provide(MessageToasterKey, toaster)
   display: flex;
   height: 100vh;
   flex-direction: column;
+  justify-content: flex-end;
 }
 
 .login-wrapper {

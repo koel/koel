@@ -1,57 +1,43 @@
-import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
+import { eventBus } from '@/utils'
+import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 
 new class extends UnitTestCase {
-  renderComponent (playlist: Record<string, any>, type: PlaylistType = 'playlist') {
+  renderComponent (list: PlaylistLike) {
     return this.render(PlaylistSidebarItem, {
       props: {
-        playlist,
-        type
+        list
       }
     })
   }
 
   protected test () {
-    it('edits the name of a standard playlist', async () => {
-      const { getByTestId, queryByTestId } = this.renderComponent(factory<Playlist>('playlist', {
-        id: 99,
-        name: 'A Standard Playlist'
-      }))
+    it('requests context menu if is playlist', async () => {
+      const emitMock = this.mock(eventBus, 'emit')
+      const playlist = factory<Playlist>('playlist')
+      const { getByTestId } = this.renderComponent(playlist)
 
-      expect(await queryByTestId('name-editor')).toBeNull()
+      await fireEvent.contextMenu(getByTestId('playlist-sidebar-item'))
 
-      await fireEvent.dblClick(getByTestId('playlist-sidebar-item'))
-
-      getByTestId('name-editor')
+      expect(emitMock).toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', expect.anything(), playlist)
     })
 
-    it('does not allow editing the name of the "Favorites" playlist', async () => {
-      const { getByTestId, queryByTestId } = this.renderComponent({
-        name: 'Favorites',
+    it.each<FavoriteList['name'] | RecentlyPlayedList['name']>(['Favorites', 'Recently Played'])
+    ('does not request context menu if not playlist', async (name) => {
+      const list: FavoriteList | RecentlyPlayedList = {
+        name,
         songs: []
-      }, 'favorites')
+      }
 
-      expect(await queryByTestId('name-editor')).toBeNull()
+      const emitMock = this.mock(eventBus, 'emit')
+      const { getByTestId } = this.renderComponent(list)
 
-      await fireEvent.dblClick(getByTestId('playlist-sidebar-item'))
+      await fireEvent.contextMenu(getByTestId('playlist-sidebar-item'))
 
-      expect(await queryByTestId('name-editor')).toBeNull()
-    })
-
-    it('does not allow editing the name of the "Recently Played" playlist', async () => {
-      const { getByTestId, queryByTestId } = this.renderComponent({
-        name: 'Recently Played',
-        songs: []
-      }, 'recently-played')
-
-      expect(await queryByTestId('name-editor')).toBeNull()
-
-      await fireEvent.dblClick(getByTestId('playlist-sidebar-item'))
-
-      expect(await queryByTestId('name-editor')).toBeNull()
+      expect(emitMock).not.toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', list)
     })
   }
 }

@@ -105,13 +105,13 @@ const onQueueDragOver = (event: DragEvent) => {
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'move'
-  queueMenuItemEl.value!.classList.add('droppable')
+  queueMenuItemEl.value?.classList.add('droppable')
 }
 
-const onQueueDragLeave = () => queueMenuItemEl.value!.classList.remove('droppable')
+const onQueueDragLeave = () => queueMenuItemEl.value?.classList.remove('droppable')
 
 const onQueueDrop = async (event: DragEvent) => {
-  queueMenuItemEl.value!.classList.remove('droppable')
+  queueMenuItemEl.value?.classList.remove('droppable')
 
   if (!acceptsDrop(event)) return false
 

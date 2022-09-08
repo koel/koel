@@ -33,7 +33,7 @@ class PlaylistFolder extends Model
 
     public function playlists(): HasMany
     {
-        return $this->hasMany(Playlist::class);
+        return $this->hasMany(Playlist::class, 'folder_id');
     }
 
     public function user(): BelongsTo

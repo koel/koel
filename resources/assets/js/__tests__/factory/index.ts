@@ -6,6 +6,7 @@ import interactionFactory from '@/__tests__/factory/interactionFactory'
 import smartPlaylistRuleFactory from '@/__tests__/factory/smartPlaylistRuleFactory'
 import smartPlaylistRuleGroupFactory from '@/__tests__/factory/smartPlaylistRuleGroupFactory'
 import playlistFactory, { states as playlistStates } from '@/__tests__/factory/playlistFactory'
+import playlistFolderFactory from '@/__tests__/factory/playlistFolderFactory'
 import userFactory, { states as userStates } from '@/__tests__/factory/userFactory'
 import albumTrackFactory from '@/__tests__/factory/albumTrackFactory'
 import albumInfoFactory from '@/__tests__/factory/albumInfoFactory'
@@ -24,4 +25,5 @@ export default factory
   .define('smart-playlist-rule', faker => smartPlaylistRuleFactory(faker))
   .define('smart-playlist-rule-group', faker => smartPlaylistRuleGroupFactory(faker))
   .define('playlist', faker => playlistFactory(faker), playlistStates)
+  .define('playlist-folder', faker => playlistFolderFactory(faker))
   .define('user', faker => userFactory(faker), userStates)

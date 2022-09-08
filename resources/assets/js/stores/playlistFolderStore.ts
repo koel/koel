@@ -32,8 +32,8 @@ export const playlistFolderStore = {
   },
 
   async addPlaylistToFolder (folder: PlaylistFolder, playlist: Playlist) {
-    // Update the folder ID right away, so that the UI can be updated immediately.
-    // The actual update will be done in the background.
+    // Update the folder ID right away, so that the UI can be refreshed immediately.
+    // The actual HTTP request will be done in the background.
     playlist.folder_id = folder.id
     await httpService.post(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
   },

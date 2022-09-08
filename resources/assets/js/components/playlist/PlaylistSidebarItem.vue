@@ -1,91 +1,77 @@
 <template>
   <li
     ref="el"
-    :class="['playlist', type, playlist.is_smart ? 'smart' : '']"
+    class="playlist"
     data-testid="playlist-sidebar-item"
     draggable="true"
+    @contextmenu="onContextMenu"
     @dragleave="onDragLeave"
     @dragover="onDragOver"
     @dragstart="onDragStart"
     @drop="onDrop"
   >
-    <a :class="{ active }" :href="url" @contextmenu.prevent="onContextMenu">
-      <icon v-if="type === 'recently-played'" :icon="faClockRotateLeft" class="text-green" fixed-width/>
-      <icon v-else-if="type === 'favorites'" :icon="faHeart" class="text-maroon" fixed-width/>
+    <a :class="{ active }" :href="url">
+      <icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-green" fixed-width/>
+      <icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width/>
       <icon
-        v-else-if="playlist.is_smart"
+        v-else-if="list.is_smart"
         :icon="faBoltLightning"
         :mask="faFile"
         fixed-width
         transform="shrink-7 down-2"
       />
       <icon v-else :icon="faMusic" :mask="faFile" fixed-width transform="shrink-7 down-2"/>
-      {{ playlist.name }}
+      {{ list.name }}
     </a>
-
-    <ContextMenu v-if="hasContextMenu" ref="contextMenu" :playlist="playlist"/>
   </li>
 </template>
 
 <script lang="ts" setup>
 import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, ref, toRefs } from 'vue'
+import { computed, ref, toRefs } from 'vue'
 import { eventBus, pluralize, requireInjection } from '@/utils'
 import { favoriteStore, playlistStore } from '@/stores'
-import router from '@/router'
 import { MessageToasterKey } from '@/symbols'
 import { useDraggable, useDroppable } from '@/composables'
-
-import ContextMenu from '@/components/playlist/PlaylistContextMenu.vue'
 
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
 
 const toaster = requireInjection(MessageToasterKey)
-const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 const el = ref<HTMLLIElement>()
 
-const props = withDefaults(defineProps<{ playlist: Playlist, type?: PlaylistType }>(), { type: 'playlist' })
-const { playlist, type } = toRefs(props)
+const props = defineProps<{ list: PlaylistLike }>()
+const { list } = toRefs(props)
+
+const isPlaylist = (list: PlaylistLike): list is Playlist => 'id' in list
+const isFavoriteList = (list: PlaylistLike): list is FavoriteList => list.name === 'Favorites'
+const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList => list.name === 'Recently Played'
 
 const active = ref(false)
 
 const url = computed(() => {
-  switch (type.value) {
-    case 'playlist':
-      return `#!/playlist/${playlist.value.id}`
+  if (isPlaylist(list.value)) return `#!/playlist/${list.value.id}`
+  if (isFavoriteList(list.value)) return '#!/favorites'
+  if (isRecentlyPlayedList(list.value)) return '#!/recently-played'
 
-    case 'favorites':
-      return '#!/favorites'
-
-    case 'recently-played':
-      return '#!/recently-played'
-
-    default:
-      throw new Error('Invalid playlist type')
-  }
+  throw new Error('Invalid playlist-like type.')
 })
-
-const hasContextMenu = computed(() => type.value === 'playlist')
 
 const contentEditable = computed(() => {
-  if (playlist.value.is_smart) return false
-  return type.value === 'playlist' || type.value === 'favorites'
+  if (isRecentlyPlayedList(list.value)) return false
+  if (isFavoriteList(list.value)) return true
+
+  return !list.value.is_smart
 })
 
-const onContextMenu = async (event: MouseEvent) => {
-  if (hasContextMenu.value) {
-    await nextTick()
-    router.go(`/playlist/${playlist.value.id}`)
-    contextMenu.value?.open(event.pageY, event.pageX, { playlist })
+const onContextMenu = (event: MouseEvent) => {
+  if (isPlaylist(list.value)) {
+    event.preventDefault()
+    eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', event, list.value)
   }
 }
 
-const onDragStart = (event: DragEvent) => {
-  if (type.value === 'playlist') {
-    startDragging(event, playlist.value)
-  }
-}
+const onDragStart = (event: DragEvent) => isPlaylist(list.value) && startDragging(event, list.value)
 
 const onDragOver = (event: DragEvent) => {
   if (!contentEditable.value) return false
@@ -93,15 +79,15 @@ const onDragOver = (event: DragEvent) => {
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'copy'
-  el.value!.classList.add('droppable')
+  el.value?.classList.add('droppable')
 
   return false
 }
 
-const onDragLeave = () => el.value!.classList.remove('droppable')
+const onDragLeave = () => el.value?.classList.remove('droppable')
 
 const onDrop = async (event: DragEvent) => {
-  el.value!.classList.remove('droppable')
+  el.value?.classList.remove('droppable')
 
   if (!contentEditable.value) return false
   if (!acceptsDrop(event)) return false
@@ -110,28 +96,28 @@ const onDrop = async (event: DragEvent) => {
 
   if (!songs?.length) return false
 
-  if (type.value === 'favorites') {
+  if (isFavoriteList(list.value)) {
     await favoriteStore.like(songs)
-  } else if (type.value === 'playlist') {
-    await playlistStore.addSongs(playlist.value, songs)
-    toaster.value.success(`Added ${pluralize(songs, 'song')} into "${playlist.value.name}."`)
+  } else if (isPlaylist(list.value)) {
+    await playlistStore.addSongs(list.value, songs)
+    toaster.value.success(`Added ${pluralize(songs, 'song')} into "${list.value.name}."`)
   }
 
   return false
 }
 
-eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _playlist: Playlist): void => {
+eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _list: PlaylistLike): void => {
   switch (view) {
     case 'Favorites':
-      active.value = type.value === 'favorites'
+      active.value = isFavoriteList(list.value)
       break
 
     case 'RecentlyPlayed':
-      active.value = type.value === 'recently-played'
-
+      active.value = isRecentlyPlayedList(list.value)
       break
+
     case 'Playlist':
-      active.value = playlist.value === _playlist
+      active.value = list.value === _list
       break
 
     default:

@@ -8,50 +8,38 @@
         data-testid="sidebar-create-playlist-btn"
         role="button"
         title="Create a new playlist or folder"
-        @click.stop.prevent="toggleContextMenu"
+        @click.stop.prevent="requestContextMenu"
       />
     </h1>
 
     <ul>
-      <PlaylistSidebarItem :playlist="{ name: 'Favorites', songs: favorites }" type="favorites"/>
-      <PlaylistSidebarItem :playlist="{ name: 'Recently Played', songs: [] }" type="recently-played"/>
+      <PlaylistSidebarItem :list="{ name: 'Favorites', songs: favorites }"/>
+      <PlaylistSidebarItem :list="{ name: 'Recently Played', songs: [] }"/>
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder"/>
-      <PlaylistSidebarItem
-        v-for="playlist in rootLevelPlaylists"
-        :key="playlist.id"
-        :playlist="playlist"
-        type="playlist"
-      />
+      <PlaylistSidebarItem v-for="playlist in orphanPlaylists" :key="playlist.id" :list="playlist"/>
     </ul>
-
-    <ContextMenu ref="contextMenu"/>
   </section>
 </template>
 
 <script lang="ts" setup>
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, ref, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { favoriteStore, playlistFolderStore, playlistStore } from '@/stores'
-import { requireInjection } from '@/utils'
+import { eventBus, requireInjection } from '@/utils'
 import { MessageToasterKey } from '@/symbols'
 
-import ContextMenu from '@/components/playlist/CreateNewPlaylistContextMenu.vue'
 import PlaylistSidebarItem from '@/components/playlist/PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from '@/components/playlist/PlaylistFolderSidebarItem.vue'
 
 const toaster = requireInjection(MessageToasterKey)
-const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
 const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(favoriteStore.state, 'songs')
 
-const rootLevelPlaylists: Playlist[] = computed(() => playlists.value.filter(playlist => playlist.folder_id === null))
+const orphanPlaylists = computed(() => playlists.value.filter(playlist => playlist.folder_id === null))
 
-const toggleContextMenu = async (event: MouseEvent) => {
-  await nextTick()
-  contextMenu.value?.open(event.pageY, event.pageX)
-}
+const requestContextMenu = (event: MouseEvent) => eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', event)
 </script>
 
 <style lang="scss">

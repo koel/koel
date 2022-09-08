@@ -1,5 +1,5 @@
 <template>
-  <div @keydown.esc="maybeClose">
+  <div tabindex="0" @keydown.esc="maybeClose">
     <SoundBars v-if="loading"/>
     <form v-else @submit.prevent="submit">
       <header>
@@ -20,8 +20,8 @@
       </main>
 
       <footer>
-        <Btn class="btn-add" type="submit">Save</Btn>
-        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+        <Btn type="submit">Save</Btn>
+        <Btn white @click.prevent="maybeClose">Cancel</Btn>
       </footer>
     </form>
   </div>

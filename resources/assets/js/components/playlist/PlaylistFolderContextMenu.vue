@@ -1,13 +1,13 @@
 <template>
-  <ContextMenuBase ref="base" data-testid="playlist-folder-context-menu" extra-class="playlist-folder-menu">
+  <ContextMenuBase ref="base">
     <template v-if="folder">
       <template v-if="playable">
-        <li data-testid="play" @click="play">Play All</li>
-        <li data-testid="play" @click="shuffle">Shuffle All</li>
+        <li @click="play">Play All</li>
+        <li @click="shuffle">Shuffle All</li>
         <li class="separator"/>
       </template>
-      <li data-testid="shuffle" @click="rename">Rename</li>
-      <li data-testid="shuffle" @click="destroy">Delete</li>
+      <li @click="rename">Rename</li>
+      <li @click="destroy">Delete</li>
     </template>
   </ContextMenuBase>
 </template>
@@ -16,7 +16,7 @@
 import { computed, ref } from 'vue'
 import { useContextMenu } from '@/composables'
 import { eventBus, requireInjection } from '@/utils'
-import { playlistFolderStore, playlistStore, songStore } from '@/stores'
+import { playlistStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { DialogBoxKey } from '@/symbols'
 import router from '@/router'
@@ -39,11 +39,8 @@ const shuffle = () => trigger(async () => {
   router.go('queue')
 })
 
-const rename = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder.value!))
-
-const destroy = () => trigger(async () => {
-  await dialog.value.confirm('Delete this folder?') && await playlistFolderStore.delete(folder.value!)
-})
+const rename = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder.value))
+const destroy = () => trigger(() => eventBus.emit('PLAYLIST_FOLDER_DELETE', folder.value))
 
 eventBus.on('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _folder: PlaylistFolder) => {
   folder.value = _folder

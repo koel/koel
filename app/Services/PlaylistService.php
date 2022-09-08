@@ -42,7 +42,7 @@ class PlaylistService
         $playlist->songs()->detach($songIds);
     }
 
-    /** @deprecated */
+    /** @deprecated since v6.0.0, use add/removeSongs methods instead */
     public function populatePlaylist(Playlist $playlist, array $songIds): void
     {
         $playlist->songs()->sync($songIds);

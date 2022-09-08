@@ -194,6 +194,16 @@ type SmartPlaylistInputTypes = Record<SmartPlaylistModel['type'], SmartPlaylistO
 
 type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
 
+type FavoriteList = {
+  name: 'Favorites'
+  songs: Song[]
+}
+
+type RecentlyPlayedList = {
+  name: 'Recently Played'
+  songs: Song[]
+}
+
 interface Playlist {
   type: 'playlists'
   readonly id: number
@@ -202,6 +212,8 @@ interface Playlist {
   is_smart: boolean
   rules: SmartPlaylistRuleGroup[]
 }
+
+type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList
 
 interface PlaylistFolder {
   type: 'playlist-folders'

@@ -19,7 +19,7 @@ new class extends UnitTestCase {
       const { getByLabelText, getByRole } = this.render(EditUserForm, {
         global: {
           provide: {
-            [UserKey]: [user]
+            [<symbol>UserKey]: [user]
           }
         }
       })

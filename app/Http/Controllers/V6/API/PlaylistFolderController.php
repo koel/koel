@@ -27,7 +27,7 @@ class PlaylistFolderController extends Controller
     {
         $this->authorize('own', $playlistFolder);
 
-        return PlaylistFolderResource::make($this->service->updateFolder($playlistFolder, $request->name));
+        return PlaylistFolderResource::make($this->service->renameFolder($playlistFolder, $request->name));
     }
 
     public function destroy(PlaylistFolder $playlistFolder)

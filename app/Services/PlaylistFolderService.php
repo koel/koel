@@ -13,7 +13,7 @@ class PlaylistFolderService
         return $user->playlist_folders()->create(['name' => $name]);
     }
 
-    public function updateFolder(PlaylistFolder $folder, string $name): PlaylistFolder
+    public function renameFolder(PlaylistFolder $folder, string $name): PlaylistFolder
     {
         $folder->update(['name' => $name]);
 

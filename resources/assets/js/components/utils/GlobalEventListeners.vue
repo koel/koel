@@ -9,7 +9,7 @@
 import isMobile from 'ismobilejs'
 import router from '@/router'
 import { authService } from '@/services'
-import { playlistStore, preferenceStore, userStore } from '@/stores'
+import { playlistFolderStore, playlistStore, preferenceStore, userStore } from '@/stores'
 import { eventBus, forceReloadWindow, requireInjection } from '@/utils'
 import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
@@ -18,9 +18,17 @@ const dialog = requireInjection(DialogBoxKey)
 
 eventBus.on({
   'PLAYLIST_DELETE': async (playlist: Playlist) => {
-    if (await dialog.value.confirm(`Are you sure you want to delete "${playlist.name}"?`, 'Delete Playlist')) {
+    if (await dialog.value.confirm(`Delete the playlist "${playlist.name}"?`)) {
       await playlistStore.delete(playlist)
       toaster.value.success(`Playlist "${playlist.name}" deleted.`)
+      router.go('home')
+    }
+  },
+
+  'PLAYLIST_FOLDER_DELETE': async (folder: PlaylistFolder) => {
+    if (await dialog.value.confirm(`Delete the playlist folder "${folder.name}"?`)) {
+      await playlistFolderStore.delete(folder)
+      toaster.value.success(`Playlist folder "${folder.name}" deleted.`)
       router.go('home')
     }
   },

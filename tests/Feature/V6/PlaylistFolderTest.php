@@ -26,6 +26,28 @@ class PlaylistFolderTest extends TestCase
         $this->assertDatabaseHas(PlaylistFolder::class, ['name' => 'Classical', 'user_id' => $user->id]);
     }
 
+    public function testUpdate(): void
+    {
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
+
+        $this->patchAs('api/playlist-folders/' . $folder->id, ['name' => 'Classical'], $folder->user)
+            ->assertJsonStructure(self::JSON_STRUCTURE);
+
+        self::assertSame('Classical', $folder->fresh()->name);
+    }
+
+    public function testUnauthorizedUpdate(): void
+    {
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
+
+        $this->patchAs('api/playlist-folders/' . $folder->id, ['name' => 'Classical'])
+            ->assertForbidden();
+
+        self::assertSame('Metal', $folder->fresh()->name);
+    }
+
     public function testDelete(): void
     {
         /** @var PlaylistFolder $folder */

@@ -11,14 +11,9 @@
       <icon :icon="opened ? faFolderOpen : faFolder" fixed-width/>
       {{ folder.name }}
     </a>
+
     <ul v-if="playlistsInFolder.length" v-show="opened">
-      <PlaylistSidebarItem
-        class="sub-item"
-        v-for="playlist in playlistsInFolder"
-        :key="playlist.id"
-        :playlist="playlist"
-        type="playlist"
-      />
+      <PlaylistSidebarItem v-for="playlist in playlistsInFolder" :key="playlist.id" :list="playlist" class="sub-item"/>
     </ul>
 
     <div
@@ -59,37 +54,37 @@ const onDragOver = (event: DragEvent) => {
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'move'
-  el.value!.classList.add('droppable')
+  el.value?.classList.add('droppable')
   opened.value = true
 }
 
-const onDragLeave = () => el.value!.classList.remove('droppable')
+const onDragLeave = () => el.value?.classList.remove('droppable')
 
 const onDrop = async (event: DragEvent) => {
   if (!acceptsDrop(event)) return false
 
   event.preventDefault()
 
-  el.value!.classList.remove('droppable')
+  el.value?.classList.remove('droppable')
   const playlist = await resolveDroppedValue<Playlist>(event)
   if (!playlist || playlist.folder_id === folder.value.id) return
 
   await playlistFolderStore.addPlaylistToFolder(folder.value, playlist)
 }
 
-const onDragLeaveHatch = () => hatch.value!.classList.remove('droppable')
+const onDragLeaveHatch = () => hatch.value?.classList.remove('droppable')
 
 const onDragOverHatch = (event: DragEvent) => {
   if (!acceptsDrop(event)) return false
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'move'
-  hatch.value!.classList.add('droppable')
+  hatch.value?.classList.add('droppable')
 }
 
 const onDropOnHatch = async (event: DragEvent) => {
-  hatch.value!.classList.remove('droppable')
-  el.value!.classList.remove('droppable')
+  hatch.value?.classList.remove('droppable')
+  el.value?.classList.remove('droppable')
   const playlist = (await resolveDroppedValue<Playlist>(event))!
 
   // if the playlist isn't in the folder, don't do anything. The folder will handle the drop.
