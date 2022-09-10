@@ -13,7 +13,7 @@
 
       <p v-if="shouldNotifyNewVersion" data-testid="new-version-about">
         <a :href="latestVersionReleaseUrl" target="_blank">
-          A new Koel version is available ({{ latestVersion }}).
+          A new version of Koel is available ({{ latestVersion }})!
         </a>
       </p>
 

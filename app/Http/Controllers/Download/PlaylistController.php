@@ -14,7 +14,7 @@ class PlaylistController extends Controller
 
     public function show(Playlist $playlist)
     {
-        $this->authorize('owner', $playlist);
+        $this->authorize('own', $playlist);
 
         return response()->download($this->downloadService->from($playlist));
     }

@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
 import { reactive, ref, watch } from 'vue'
-import { parseValidationError, requireInjection } from '@/utils'
+import { logger, parseValidationError, requireInjection } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
 import { DialogBoxKey, MessageToasterKey, UserKey } from '@/symbols'
 
@@ -85,9 +85,10 @@ const submit = async () => {
     await userStore.update(user.value, updateData)
     toaster.value.success('User profile updated.')
     close()
-  } catch (err: any) {
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
+  } catch (error: any) {
+    const msg = error.response.status === 422 ? parseValidationError(error.response.data)[0] : 'Unknown error.'
     dialog.value.error(msg, 'Error')
+    logger.error(error)
   } finally {
     loading.value = false
   }

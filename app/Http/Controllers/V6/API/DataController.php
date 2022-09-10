@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\V6\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PlaylistFolderResource;
+use App\Http\Resources\PlaylistResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use App\Services\ApplicationInformationService;
@@ -20,7 +21,6 @@ class DataController extends Controller
     public function __construct(
         private ITunesService $iTunesService,
         private SettingRepository $settingRepository,
-        private PlaylistRepository $playlistRepository,
         private SongRepository $songRepository,
         private ApplicationInformationService $applicationInformationService,
         private ?Authenticatable $user
@@ -31,7 +31,8 @@ class DataController extends Controller
     {
         return response()->json([
             'settings' => $this->user->is_admin ? $this->settingRepository->getAllAsKeyValueArray() : [],
-            'playlists' => $this->playlistRepository->getAllByCurrentUser(),
+            'playlists' => PlaylistResource::collection($this->user->playlists),
+            'playlist_folders' => PlaylistFolderResource::collection($this->user->playlist_folders),
             'current_user' => UserResource::make($this->user, true),
             'use_last_fm' => LastfmService::used(),
             'use_you_tube' => YouTubeService::enabled(),

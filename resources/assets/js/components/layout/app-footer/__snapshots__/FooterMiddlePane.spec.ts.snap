@@ -1,20 +1,20 @@
 // Vitest Snapshot v1
 
 exports[`renders with a song 1`] = `
-<div class="middle-pane" data-testid="footer-middle-pane">
-  <div id="progressPane" class="progress">
-    <h3 class="title">Fahrstuhl to Heaven</h3>
-    <p class="meta"><a href="/#!/artist/3" class="artist">Led Zeppelin</a> – <a href="/#!/album/4" class="album">Led Zeppelin IV</a></p>
-    <div class="plyr"><audio controls="" crossorigin="anonymous"></audio></div>
+<div class="middle-pane" data-testid="footer-middle-pane" data-v-2ff4ca72="">
+  <div id="progressPane" class="progress" data-v-2ff4ca72="">
+    <h3 class="title" data-v-2ff4ca72="">Fahrstuhl to Heaven</h3>
+    <p class="meta" data-v-2ff4ca72=""><a href="/#!/artist/3" class="artist" data-v-2ff4ca72="">Led Zeppelin</a> – <a href="/#!/album/4" class="album" data-v-2ff4ca72="">Led Zeppelin IV</a></p>
+    <div class="plyr" data-v-2ff4ca72=""><audio controls="" crossorigin="anonymous" data-v-2ff4ca72=""></audio></div>
   </div>
 </div>
 `;
 
 exports[`renders without a song 1`] = `
-<div class="middle-pane" data-testid="footer-middle-pane">
-  <div id="progressPane" class="progress">
+<div class="middle-pane" data-testid="footer-middle-pane" data-v-2ff4ca72="">
+  <div id="progressPane" class="progress" data-v-2ff4ca72="">
     <!--v-if-->
-    <div class="plyr"><audio controls="" crossorigin="anonymous"></audio></div>
+    <div class="plyr" data-v-2ff4ca72=""><audio controls="" crossorigin="anonymous" data-v-2ff4ca72=""></audio></div>
   </div>
 </div>
 `;

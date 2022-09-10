@@ -1,7 +1,7 @@
 import isMobile from 'ismobilejs'
 import { reactive } from 'vue'
 import { httpService } from '@/services'
-import { playlistStore, preferenceStore, settingStore, themeStore, userStore } from '@/stores'
+import { playlistFolderStore, playlistStore, preferenceStore, settingStore, themeStore, userStore } from '@/stores'
 
 interface CommonStoreState {
   allow_download: boolean
@@ -10,6 +10,7 @@ interface CommonStoreState {
   current_version: string
   latest_version: string
   playlists: Playlist[]
+  playlist_folders: PlaylistFolder[]
   settings: Settings
   use_i_tunes: boolean
   use_last_fm: boolean
@@ -28,6 +29,7 @@ export const commonStore = {
     current_version: '',
     latest_version: '',
     playlists: [],
+    playlist_folders: [],
     settings: {} as Settings,
     use_i_tunes: false,
     use_last_fm: false,
@@ -50,6 +52,7 @@ export const commonStore = {
     userStore.init(this.state.current_user)
     preferenceStore.init(this.state.current_user)
     playlistStore.init(this.state.playlists)
+    playlistFolderStore.init(this.state.playlist_folders)
     settingStore.init(this.state.settings)
     themeStore.init()
 

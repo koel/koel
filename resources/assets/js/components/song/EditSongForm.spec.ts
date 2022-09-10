@@ -7,7 +7,7 @@ import { ref } from 'vue'
 import { fireEvent } from '@testing-library/vue'
 import { songStore } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
-import SongEditForm from './SongEditForm.vue'
+import EditSongForm from './EditSongForm.vue'
 
 let songs: Song[]
 
@@ -15,11 +15,11 @@ new class extends UnitTestCase {
   private async renderComponent (_songs: Song | Song[], initialTab: EditSongFormTabName = 'details') {
     songs = arrayify(_songs)
 
-    const rendered = this.render(SongEditForm, {
+    const rendered = this.render(EditSongForm, {
       global: {
         provide: {
-          [SongsKey]: [ref(songs)],
-          [EditSongFormInitialTabKey]: [ref(initialTab)]
+          [<symbol>SongsKey]: [ref(songs)],
+          [<symbol>EditSongFormInitialTabKey]: [ref(initialTab)]
         }
       }
     })
@@ -70,7 +70,7 @@ new class extends UnitTestCase {
       const updateMock = this.mock(songStore, 'update')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      const { html, getByTestId, getByRole, queryByTestId } = await this.renderComponent(factory<Song[]>('song', 3))
+      const { html, getByTestId, getByRole, queryByTestId } = await this.renderComponent(factory<Song>('song', 3))
 
       expect(html()).toMatchSnapshot()
       expect(queryByTestId('title-input')).toBeNull()
@@ -96,12 +96,12 @@ new class extends UnitTestCase {
     })
 
     it('displays artist name if all songs have the same artist', async () => {
-      const { getByTestId } = await this.renderComponent(factory<Song[]>('song', {
+      const { getByTestId } = await this.renderComponent(factory<Song>('song', 4, {
         artist_id: 1000,
         artist_name: 'Led Zeppelin',
         album_id: 1001,
         album_name: 'IV'
-      }, 4))
+      }))
 
       expect(getByTestId('displayed-artist-name').textContent).toBe('Led Zeppelin')
       expect(getByTestId('displayed-album-name').textContent).toBe('IV')

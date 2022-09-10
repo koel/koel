@@ -3,83 +3,43 @@
     <h1>
       <span>Playlists</span>
       <icon
-        :class="{ creating }"
         :icon="faCirclePlus"
         class="control create"
         data-testid="sidebar-create-playlist-btn"
         role="button"
-        title="Create a new playlist"
-        @click.stop.prevent="toggleContextMenu"
+        title="Create a new playlist or folder"
+        @click.stop.prevent="requestContextMenu"
       />
     </h1>
 
-    <form v-if="creating" @submit.prevent="createPlaylist" name="create-simple-playlist-form" class="create">
-      <input
-        v-model="newName"
-        v-koel-focus
-        name="name"
-        placeholder="↵ to save"
-        required
-        type="text"
-        @keyup.esc.prevent="creating = false"
-      >
-    </form>
-
     <ul>
-      <PlaylistSidebarItem :playlist="{ name: 'Favorites', songs: favorites }" type="favorites"/>
-      <PlaylistSidebarItem :playlist="{ name: 'Recently Played', songs: [] }" type="recently-played"/>
-      <PlaylistSidebarItem
-        v-for="playlist in playlists"
-        :key="playlist.id"
-        :playlist="playlist"
-        type="playlist"
-      />
+      <PlaylistSidebarItem :list="{ name: 'Favorites', songs: favorites }"/>
+      <PlaylistSidebarItem :list="{ name: 'Recently Played', songs: [] }"/>
+      <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder"/>
+      <PlaylistSidebarItem v-for="playlist in orphanPlaylists" :key="playlist.id" :list="playlist"/>
     </ul>
-
-    <ContextMenu ref="contextMenu" @createPlaylist="creating = true"/>
   </section>
 </template>
 
 <script lang="ts" setup>
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
-import { nextTick, ref, toRef } from 'vue'
-import { favoriteStore, playlistStore } from '@/stores'
-import router from '@/router'
-import { requireInjection } from '@/utils'
+import { computed, toRef } from 'vue'
+import { favoriteStore, playlistFolderStore, playlistStore } from '@/stores'
+import { eventBus, requireInjection } from '@/utils'
 import { MessageToasterKey } from '@/symbols'
 
 import PlaylistSidebarItem from '@/components/playlist/PlaylistSidebarItem.vue'
-import ContextMenu from '@/components/playlist/CreateNewPlaylistContextMenu.vue'
+import PlaylistFolderSidebarItem from '@/components/playlist/PlaylistFolderSidebarItem.vue'
 
 const toaster = requireInjection(MessageToasterKey)
-const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
+const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(favoriteStore.state, 'songs')
-const creating = ref(false)
-const newName = ref('')
 
-const createPlaylist = async () => {
-  creating.value = false
+const orphanPlaylists = computed(() => playlists.value.filter(playlist => playlist.folder_id === null))
 
-  const playlist = await playlistStore.store(newName.value)
-  newName.value = ''
-
-  toaster.value.success(`Playlist "${playlist.name}" created.`)
-
-  // Activate the new playlist right away
-  await nextTick()
-  router.go(`playlist/${playlist.id}`)
-}
-
-const toggleContextMenu = async (event: MouseEvent) => {
-  await nextTick()
-  if (creating.value) {
-    creating.value = false
-  } else {
-    contextMenu.value?.open(event.pageY, event.pageX)
-  }
-}
+const requestContextMenu = (event: MouseEvent) => eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', event)
 </script>
 
 <style lang="scss">
@@ -98,14 +58,6 @@ const toggleContextMenu = async (event: MouseEvent) => {
 
     &.creating {
       transform: rotate(135deg);
-    }
-  }
-
-  form.create {
-    padding: 8px 16px;
-
-    input[type="text"] {
-      width: 100%;
     }
   }
 }

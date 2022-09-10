@@ -4,16 +4,20 @@ import { Faker } from '@faker-js/faker'
 export default (faker: Faker): Playlist => ({
   type: 'playlists',
   id: faker.datatype.number(),
+  folder_id: faker.datatype.uuid(),
   name: faker.random.word(),
   is_smart: false,
   rules: []
 })
 
-export const states: Record<string, () => Omit<Partial<Playlist>, 'type'>> = {
-  smart: faker => ({
+export const states: Record<string, (faker: Faker) => Omit<Partial<Playlist>, 'type'>> = {
+  smart: _ => ({
     is_smart: true,
     rules: [
-      factory<SmartPlaylistRule>('smart-playlist-rule')
+      factory<SmartPlaylistRuleGroup>('smart-playlist-rule-group')
     ]
+  }),
+  orphan: _ => ({
+    folder_id: null
   })
 }

@@ -35,10 +35,10 @@ new class extends UnitTestCase {
     })
 
     it.each([
-      ['foo<br>bar', "foo\nbar"],
-      ['foo<br/>bar', "foo\nbar"],
-      ['foo<br />bar', "foo\nbar"],
-      ['foo<br>bar<br/>baz', "foo\nbar\nbaz"]
+      ['foo<br>bar', 'foo\nbar'],
+      ['foo<br/>bar', 'foo\nbar'],
+      ['foo<br />bar', 'foo\nbar'],
+      ['foo<br>bar<br/>baz', 'foo\nbar\nbaz']
     ])('converts <br> tags in %s to line breaks', (input, output) => expect(br2nl(input)).toEqual(output))
 
     it.each([
@@ -53,5 +53,14 @@ new class extends UnitTestCase {
       [2, 'cat', 'cats'],
       [0, 'cat', 'cats']
     ])('pluralizes %d %s', (count, noun, plural) => expect(pluralize(count, noun)).toEqual(`${count} ${plural}`))
+
+    it.each([
+      [['foo'], 'cat', 'cat'],
+      [['foo', 'bar'], 'cat', 'cats'],
+      [[], 'cat', 'cats'],
+    ])(
+      'pluralizes with array parameters',
+      (arr, noun, plural) => expect(pluralize(arr, noun)).toEqual(`${arr.length} ${plural}`)
+    )
   }
 }

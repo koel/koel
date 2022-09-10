@@ -44,6 +44,6 @@ const download = () => trigger(() => downloadService.fromArtist(artist.value))
 
 eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _artist: Artist) => {
   artist.value = _artist
-  open(e.pageY, e.pageX, { _artist })
+  await open(e.pageY, e.pageX, { _artist })
 })
 </script>

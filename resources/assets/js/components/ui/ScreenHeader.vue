@@ -23,7 +23,7 @@
 const props = withDefaults(defineProps<{ layout?: ScreenHeaderLayout }>(), { layout: 'expanded' })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 header.screen-header {
   --transition-duration: .3s;
 
@@ -114,7 +114,7 @@ header.screen-header {
       }
     }
 
-    > * + * {
+    > ::v-deep(* + *) {
       margin-left: .2rem;
       display: inline-block;
 

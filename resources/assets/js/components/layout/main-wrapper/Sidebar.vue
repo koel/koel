@@ -10,8 +10,8 @@
             Home
           </a>
         </li>
-        <li>
-          <a v-koel-droppable="handleDrop" :class="['queue', currentView === 'Queue' ? 'active' : '']" href="#!/queue">
+        <li ref="queueMenuItemEl" @dragleave="onQueueDragLeave" @dragover="onQueueDragOver" @drop="onQueueDrop">
+          <a :class="['queue', currentView === 'Queue' ? 'active' : '']" href="#!/queue">
             <icon :icon="faListOl" fixed-width/>
             Current Queue
           </a>
@@ -86,19 +86,37 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { ref } from 'vue'
-import { eventBus, resolveSongsFromDragEvent } from '@/utils'
+import { eventBus } from '@/utils'
 import { queueStore } from '@/stores'
-import { useAuthorization, useThirdPartyServices } from '@/composables'
+import { useAuthorization, useDroppable, useThirdPartyServices } from '@/composables'
 
 import PlaylistList from '@/components/playlist/PlaylistSidebarList.vue'
 
 const showing = ref(!isMobile.phone)
 const currentView = ref<MainViewName>('Home')
+const queueMenuItemEl = ref<HTMLLIElement>()
+
+const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist', 'playlist'])
 const { useYouTube } = useThirdPartyServices()
 const { isAdmin } = useAuthorization()
 
-const handleDrop = async (event: DragEvent) => {
-  const songs = await resolveSongsFromDragEvent(event)
+const onQueueDragOver = (event: DragEvent) => {
+  if (!acceptsDrop(event)) return false
+
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'move'
+  queueMenuItemEl.value?.classList.add('droppable')
+}
+
+const onQueueDragLeave = () => queueMenuItemEl.value?.classList.remove('droppable')
+
+const onQueueDrop = async (event: DragEvent) => {
+  queueMenuItemEl.value?.classList.remove('droppable')
+
+  if (!acceptsDrop(event)) return false
+
+  event.preventDefault()
+  const songs = await resolveDroppedSongs(event) || []
   songs.length && queueStore.queue(songs)
 
   return false
@@ -118,8 +136,8 @@ eventBus.on({
 })
 </script>
 
-<style lang="scss">
-#sidebar {
+<style lang="scss" scoped>
+nav {
   flex: 0 0 256px;
   background-color: var(--color-bg-secondary);
   padding: 2.05rem 0;
@@ -137,13 +155,10 @@ eventBus.on({
     -webkit-overflow-scrolling: touch;
   }
 
-  a.droppable {
-    transform: scale(1.2);
-    transition: .3s;
-    transform-origin: center left;
-
-    color: var(--color-text-primary);
-    background-color: rgba(0, 0, 0, .3);
+  .droppable {
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+    border-radius: 4px;
+    cursor: copy;
   }
 
   .queue > span {
@@ -153,38 +168,43 @@ eventBus.on({
     flex: 1;
   }
 
-  section {
-    h1 {
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 0 16px;
-      margin-bottom: 12px;
+  ::v-deep(h1) {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 16px;
+    margin-bottom: 12px;
+  }
+
+  ::v-deep(a) {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 16px 0 12px;
+    border-left: 4px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.active, &:hover {
+      border-left-color: var(--color-highlight);
+      color: var(--color-text-primary);
+      background: rgba(255, 255, 255, .05);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
     }
 
-    a {
-      display: flex;
-      align-items: center;
-      gap: .7rem;
-      height: 36px;
-      line-height: 36px;
-      padding: 0 16px 0 12px;
-      border-left: 4px solid transparent;
-
-      &.active, &:hover {
-        border-left-color: var(--color-highlight);
-        color: var(--color-text-primary);
-        background: rgba(255, 255, 255, .05);
-        box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
-      }
-
-      &:active {
-        opacity: .5;
-      }
-
-      &:hover {
-        border-left-color: var(--color-highlight);
-      }
+    &:active {
+      opacity: .5;
     }
+
+    &:hover {
+      border-left-color: var(--color-highlight);
+    }
+  }
+
+  ::v-deep(li li a) { // submenu items
+    padding-left: 24px;
   }
 
   @media only screen and (max-width: 667px) {

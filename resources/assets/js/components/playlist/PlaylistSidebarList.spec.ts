@@ -1,30 +1,44 @@
 import { it } from 'vitest'
-import { playlistStore } from '@/stores'
+import { playlistFolderStore, playlistStore } from '@/stores'
 import factory from '@/__tests__/factory'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import PlaylistSidebarList from './PlaylistSidebarList.vue'
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
 
 new class extends UnitTestCase {
+  private renderComponent () {
+    return this.render(PlaylistSidebarList, {
+      global: {
+        stubs: {
+          PlaylistSidebarItem,
+          PlaylistFolderSidebarItem
+        }
+      }
+    })
+  }
+
   protected test () {
-    it('renders all playlists', () => {
+    it('displays orphan playlists', () => {
       playlistStore.state.playlists = [
-        factory<Playlist>('playlist', { name: 'Foo Playlist' }),
-        factory<Playlist>('playlist', { name: 'Bar Playlist' }),
-        factory<Playlist>('playlist', { name: 'Smart Playlist', is_smart: true })
+        factory.states('orphan')<Playlist>('playlist', { name: 'Foo Playlist' }),
+        factory.states('orphan')<Playlist>('playlist', { name: 'Bar Playlist' }),
+        factory.states('smart', 'orphan')<Playlist>('playlist', { name: 'Smart Playlist' })
       ]
 
-      const { getByText } = this.render(PlaylistSidebarList, {
-          global: {
-            stubs: {
-              PlaylistSidebarItem
-            }
-          }
-        })
+      const { getByText } = this.renderComponent()
 
       ;['Favorites', 'Recently Played', 'Foo Playlist', 'Bar Playlist', 'Smart Playlist'].forEach(t => getByText(t))
     })
 
-    // other functionalities are handled by E2E
+    it('displays playlist folders', () => {
+      playlistFolderStore.state.folders = [
+        factory<PlaylistFolder>('playlist-folder', { name: 'Foo Folder' }),
+        factory<PlaylistFolder>('playlist-folder', { name: 'Bar Folder' })
+      ]
+
+      const { getByText } = this.renderComponent()
+      ;['Foo Folder', 'Bar Folder'].forEach(t => getByText(t))
+    })
   }
 }

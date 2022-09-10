@@ -80,14 +80,14 @@ new class extends UnitTestCase {
     })
 
     it('stores a playlist', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const playlist = factory<Playlist>('playlist')
       const postMock = this.mock(httpService, 'post').mockResolvedValue(playlist)
       const serializeMock = this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
 
       await playlistStore.store('New Playlist', songs, [])
 
-      expect(postMock).toHaveBeenCalledWith('playlist', {
+      expect(postMock).toHaveBeenCalledWith('playlists', {
         name: 'New Playlist',
         songs: songs.map(song => song.id),
         rules: null
@@ -112,7 +112,7 @@ new class extends UnitTestCase {
 
     it('adds songs to a playlist', async () => {
       const playlist = factory<Playlist>('playlist', { id: 12 })
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const postMock = this.mock(httpService, 'post').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
 
@@ -124,7 +124,7 @@ new class extends UnitTestCase {
 
     it('removes songs from a playlist', async () => {
       const playlist = factory<Playlist>('playlist', { id: 12 })
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const deleteMock = this.mock(httpService, 'delete').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
 
@@ -138,10 +138,10 @@ new class extends UnitTestCase {
       const playlist = factory.states('smart')<Playlist>('playlist')
       const postMock = this.mock(httpService, 'post')
 
-      await playlistStore.addSongs(playlist, factory<Song[]>('song', 3))
+      await playlistStore.addSongs(playlist, factory<Song>('song', 3))
       expect(postMock).not.toHaveBeenCalled()
 
-      await playlistStore.removeSongs(playlist, factory<Song[]>('song', 3))
+      await playlistStore.removeSongs(playlist, factory<Song>('song', 3))
       expect(postMock).not.toHaveBeenCalled()
     })
 
@@ -157,7 +157,7 @@ new class extends UnitTestCase {
 
     it('updates a smart playlist', async () => {
       const playlist = factory.states('smart')<Playlist>('playlist', { id: 12 })
-      const rules = factory<SmartPlaylistRuleGroup[]>('smart-playlist-rule-group', 2)
+      const rules = factory<SmartPlaylistRuleGroup>('smart-playlist-rule-group', 2)
       const serializeMock = this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', ['Whatever'])
       const putMock = this.mock(httpService, 'put').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')

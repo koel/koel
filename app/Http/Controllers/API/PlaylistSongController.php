@@ -16,13 +16,13 @@ class PlaylistSongController extends Controller
     public function __construct(
         private SmartPlaylistService $smartPlaylistService,
         private PlaylistService $playlistService,
-        private Authenticatable $user
+        private ?Authenticatable $user
     ) {
     }
 
     public function index(Playlist $playlist)
     {
-        $this->authorize('owner', $playlist);
+        $this->authorize('own', $playlist);
 
         return response()->json(
             $playlist->is_smart
@@ -34,7 +34,7 @@ class PlaylistSongController extends Controller
     /** @deprecated */
     public function update(PlaylistSongUpdateRequest $request, Playlist $playlist)
     {
-        $this->authorize('owner', $playlist);
+        $this->authorize('own', $playlist);
 
         abort_if($playlist->is_smart, 403, 'A smart playlist cannot be populated manually.');
 

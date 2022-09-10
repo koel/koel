@@ -105,7 +105,8 @@ import isMobile from 'ismobilejs'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import { eventBus, requireInjection, startDragging } from '@/utils'
+import { eventBus, requireInjection } from '@/utils'
+import { useDraggable } from '@/composables'
 import {
   SelectedSongsKey,
   SongListConfigKey,
@@ -117,6 +118,8 @@ import {
 
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import SongListItem from '@/components/song/SongListItem.vue'
+
+const { startDragging } = useDraggable('songs')
 
 const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scroll-breakpoint', 'scrolled-to-end'])
 
@@ -260,7 +263,7 @@ const rowDragStart = (row: SongRow, event: DragEvent) => {
     row.selected = true
   }
 
-  startDragging(event, selectedSongs.value, 'Song')
+  startDragging(event, selectedSongs.value)
 }
 
 /**

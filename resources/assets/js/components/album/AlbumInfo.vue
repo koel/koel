@@ -63,7 +63,7 @@ const showFull = computed(() => !showSummary.value)
 const play = async () => playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value))
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .album-info {
   @include artist-album-info();
 
