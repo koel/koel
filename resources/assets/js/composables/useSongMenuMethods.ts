@@ -32,7 +32,7 @@ export const useSongMenuMethods = (songs: Ref<Song[]>, close: Closure) => {
 
     try {
       await playlistStore.addSongs(playlist, songs.value)
-      toaster.value.success(`Added ${pluralize(songs.value.length, 'song')} into "${playlist.name}."`)
+      toaster.value.success(`Added ${pluralize(songs.value, 'song')} into "${playlist.name}."`)
     } catch (error) {
       dialog.value.error('Something went wrong. Please try again.', 'Error')
     }

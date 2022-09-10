@@ -27,7 +27,7 @@ class PlaylistSongController extends Controller
 
     public function index(Playlist $playlist)
     {
-        $this->authorize('owner', $playlist);
+        $this->authorize('own', $playlist);
 
         return SongResource::collection(
             $playlist->is_smart
@@ -36,9 +36,9 @@ class PlaylistSongController extends Controller
         );
     }
 
-    public function add(Playlist $playlist, AddSongsToPlaylistRequest $request)
+    public function store(Playlist $playlist, AddSongsToPlaylistRequest $request)
     {
-        $this->authorize('owner', $playlist);
+        $this->authorize('own', $playlist);
 
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
 
@@ -47,9 +47,9 @@ class PlaylistSongController extends Controller
         return response()->noContent();
     }
 
-    public function remove(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)
+    public function destroy(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)
     {
-        $this->authorize('owner', $playlist);
+        $this->authorize('own', $playlist);
 
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\LibraryChanged;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Http\Controllers\Controller;
@@ -29,6 +30,8 @@ class UploadController extends Controller
 
         try {
             $song = $songRepository->getOne($uploadService->handleUploadedFile($request->file)->id);
+
+            event(new LibraryChanged());
 
             return response()->json([
                 'song' => SongResource::make($song),

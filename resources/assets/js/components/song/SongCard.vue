@@ -4,7 +4,7 @@
     data-testid="song-card"
     draggable="true"
     tabindex="0"
-    @dragstart="dragStart"
+    @dragstart="onDragStart"
     @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
@@ -29,17 +29,20 @@
 <script lang="ts" setup>
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
-import { defaultCover, eventBus, pluralize, startDragging } from '@/utils'
+import { defaultCover, eventBus, pluralize } from '@/utils'
 import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
+import { useDraggable } from '@/composables'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
 
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
+const { startDragging } = useDraggable('songs')
+
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
-const dragStart = (event: DragEvent) => startDragging(event, song.value, 'Song')
+const onDragStart = (event: DragEvent) => startDragging(event, [song.value])
 
 const play = () => {
   queueStore.queueIfNotQueued(song.value)

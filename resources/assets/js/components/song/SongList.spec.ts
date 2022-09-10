@@ -1,5 +1,6 @@
-import { expect, it } from 'vitest'
 import { ref } from 'vue'
+import { expect, it } from 'vitest'
+import { fireEvent } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify } from '@/utils'
@@ -12,7 +13,6 @@ import {
   SongsKey
 } from '@/symbols'
 import SongList from './SongList.vue'
-import { fireEvent } from '@testing-library/vue'
 
 let songs: Song[]
 
@@ -27,18 +27,21 @@ new class extends UnitTestCase {
   ) {
     songs = arrayify(_songs)
 
+    const sortFieldRef = ref(sortField)
+    const sortOrderRef = ref(sortOrder)
+
     return this.render(SongList, {
       global: {
         stubs: {
           VirtualScroller: this.stub('virtual-scroller')
         },
         provide: {
-          [SongsKey]: [ref(songs)],
-          [SelectedSongsKey]: [ref(selectedSongs), value => selectedSongs = value],
-          [SongListTypeKey]: [ref(type)],
-          [SongListConfigKey]: [config],
-          [SongListSortFieldKey]: [ref(sortField), value => sortField = value],
-          [SongListSortOrderKey]: [ref(sortOrder), value => sortOrder = value]
+          [<symbol>SongsKey]: [ref(songs)],
+          [<symbol>SelectedSongsKey]: [ref(selectedSongs), value => (selectedSongs = value)],
+          [<symbol>SongListTypeKey]: [ref(type)],
+          [<symbol>SongListConfigKey]: [config],
+          [<symbol>SongListSortFieldKey]: [sortFieldRef, value => (sortFieldRef.value = value)],
+          [<symbol>SongListSortOrderKey]: [sortOrderRef, value => (sortOrderRef.value = value)]
         }
       }
     })
@@ -46,24 +49,24 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders', async () => {
-      const { html } = this.renderComponent(factory<Song[]>('song', 5))
+      const { html } = this.renderComponent(factory<Song>('song', 5))
       expect(html()).toMatchSnapshot()
     })
 
-    it.each([
+    it.each<[SongListSortField, string]>([
       ['track', 'header-track-number'],
       ['title', 'header-title'],
       ['album_name', 'header-album'],
       ['length', 'header-length'],
       ['artist_name', 'header-artist']
-    ])('sorts by %s upon %s clicked', async (field: SongListSortField, testId: string) => {
-      const { getByTestId, emitted } = this.renderComponent(factory<Song[]>('song', 5))
+    ])('sorts by %s upon %s clicked', async (field, testId) => {
+      const { getByTestId, emitted } = this.renderComponent(factory<Song>('song', 5))
 
       await fireEvent.click(getByTestId(testId))
-      expect(emitted().sort[0]).toBeTruthy([field, 'asc'])
+      expect(emitted().sort[0]).toEqual([field, 'desc'])
 
       await fireEvent.click(getByTestId(testId))
-      expect(emitted().sort[0]).toBeTruthy([field, 'desc'])
+      expect(emitted().sort[1]).toEqual([field, 'asc'])
     })
   }
 }

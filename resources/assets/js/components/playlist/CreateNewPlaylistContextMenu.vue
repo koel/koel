@@ -1,20 +1,34 @@
 <template>
-  <ContextMenuBase ref="base" extra-class="playlist-menu">
-    <li data-testid="playlist-context-menu-create-simple" @click="createPlaylist">New Playlist</li>
-    <li data-testid="playlist-context-menu-create-smart" @click="createSmartPlaylist">New Smart Playlist</li>
+  <ContextMenuBase ref="base">
+    <li data-testid="playlist-context-menu-create-simple" @click="onItemClicked('new-playlist')">New Playlist</li>
+    <li data-testid="playlist-context-menu-create-smart" @click="onItemClicked('new-smart-playlist')">
+      New Smart Playlist
+    </li>
+    <li data-testid="playlist-context-menu-create-folder" @click="onItemClicked('new-folder')">New Folder</li>
   </ContextMenuBase>
 </template>
 
 <script lang="ts" setup>
-import { eventBus } from '@/utils'
 import { useContextMenu } from '@/composables'
+import { eventBus } from '@/utils'
+import { EventName } from '@/config'
+import { onMounted } from 'vue'
 
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
-const emit = defineEmits(['createPlaylist'])
+const emit = defineEmits(['itemClicked'])
 
-const createPlaylist = () => trigger(() => emit('createPlaylist'))
-const createSmartPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM'))
+const actionToEventMap: Record<string, EventName> = {
+  'new-playlist': 'MODAL_SHOW_CREATE_PLAYLIST_FORM',
+  'new-smart-playlist': 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM',
+  'new-folder': 'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM'
+}
 
-defineExpose({ open })
+const onItemClicked = (key: keyof typeof actionToEventMap) => trigger(() => eventBus.emit(actionToEventMap[key]))
+
+onMounted(() => {
+  eventBus.on('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', async (e: MouseEvent) => {
+    await open(e.pageY, e.pageX)
+  })
+})
 </script>

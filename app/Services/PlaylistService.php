@@ -22,6 +22,16 @@ class PlaylistService
         return $playlist;
     }
 
+    public function updatePlaylist(Playlist $playlist, string $name, array $rules): Playlist
+    {
+        $playlist->update([
+            'name' => $name,
+            'rules' => $rules,
+        ]);
+
+        return $playlist;
+    }
+
     public function addSongsToPlaylist(Playlist $playlist, array $songIds): void
     {
         $playlist->songs()->syncWithoutDetaching($songIds);
@@ -32,7 +42,7 @@ class PlaylistService
         $playlist->songs()->detach($songIds);
     }
 
-    /** @deprecated */
+    /** @deprecated since v6.0.0, use add/removeSongs methods instead */
     public function populatePlaylist(Playlist $playlist, array $songIds): void
     {
         $playlist->songs()->sync($songIds);

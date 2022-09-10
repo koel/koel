@@ -17,18 +17,18 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (_songs?: Song | Song[]) {
-    songs = arrayify(_songs || factory<Song[]>('song', 5))
+    songs = arrayify(_songs || factory<Song>('song', 5))
 
     const rendered = this.render(SongContextMenu)
-    eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 69 }, songs)
+    eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 }, songs)
     await this.tick(2)
 
     return rendered
   }
 
   private fillQueue () {
-    queueStore.state.songs = factory<Song[]>('song', 5)
-    queueStore.state.current = queueStore.state.songs[0]
+    queueStore.state.songs = factory<Song>('song', 5)
+    queueStore.state.songs[2].playback_state = 'Playing'
   }
 
   protected test () {
@@ -138,7 +138,7 @@ new class extends UnitTestCase {
     })
 
     it('lists and adds to existing playlist', async () => {
-      playlistStore.state.playlists = factory<Playlist[]>('playlist', 3)
+      playlistStore.state.playlists = factory<Playlist>('playlist', 3)
       const addMock = this.mock(playlistStore, 'addSongs')
       this.mock(MessageToasterStub.value, 'success')
       const { queryByText, getByText } = await this.renderComponent()
@@ -151,7 +151,7 @@ new class extends UnitTestCase {
     })
 
     it('does not list smart playlists', async () => {
-      playlistStore.state.playlists = factory<Playlist[]>('playlist', 3)
+      playlistStore.state.playlists = factory<Playlist>('playlist', 3)
       playlistStore.state.playlists.push(factory.states('smart')<Playlist>('playlist', { name: 'My Smart Playlist' }))
 
       const { queryByText } = await this.renderComponent()

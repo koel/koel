@@ -9,7 +9,7 @@
     @keydown.esc="close"
   >
     <section class="existing-playlists">
-      <p>Add {{ pluralize(songs.length, 'song') }} to</p>
+      <p>Add {{ pluralize(songs, 'song') }} to</p>
 
       <ul>
         <template v-if="config.queue">

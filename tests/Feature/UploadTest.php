@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Events\LibraryChanged;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
@@ -10,6 +11,7 @@ use App\Models\User;
 use App\Services\UploadService;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Mockery\MockInterface;
 
 class UploadTest extends TestCase
@@ -63,6 +65,7 @@ class UploadTest extends TestCase
 
     public function testPost(): void
     {
+        Event::fake(LibraryChanged::class);
         Setting::set('media_path', '/media/koel');
 
         /** @var Song $song */
@@ -78,5 +81,6 @@ class UploadTest extends TestCase
             ->andReturn($song);
 
         $this->postAs('/api/upload', ['file' => $this->file], $admin)->assertJsonStructure(['song', 'album']);
+        Event::assertDispatched(LibraryChanged::class);
     }
 }

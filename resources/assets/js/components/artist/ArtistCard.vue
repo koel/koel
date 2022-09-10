@@ -8,7 +8,7 @@
     draggable="true"
     tabindex="0"
     @dblclick="shuffle"
-    @dragstart="dragStart"
+    @dragstart="onDragStart"
     @contextmenu.prevent="requestContextMenu"
   >
     <ArtistThumbnail :entity="artist"/>
@@ -56,10 +56,14 @@
 <script lang="ts" setup>
 import { faDownload, faRandom } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus, pluralize, startDragging } from '@/utils'
+import { eventBus, pluralize } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
+import { useDraggable } from '@/composables'
+
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+
+const { startDragging } = useDraggable('artist')
 
 const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { artist, layout } = toRefs(props)
@@ -73,10 +77,10 @@ const shuffle = async () => {
 }
 
 const download = () => downloadService.fromArtist(artist.value)
-const dragStart = (event: DragEvent) => startDragging(event, artist.value, 'Artist')
+const onDragStart = (event: DragEvent) => startDragging(event, artist.value)
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', event, artist.value)
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @include artist-album-card();
 </style>

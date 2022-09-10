@@ -45,6 +45,6 @@ const download = () => trigger(() => downloadService.fromAlbum(album.value))
 
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _album: Album) => {
   album.value = _album
-  open(e.pageY, e.pageX, { album })
+  await open(e.pageY, e.pageX, { album })
 })
 </script>

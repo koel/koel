@@ -19,7 +19,7 @@ new class extends UnitTestCase {
     })
 
     const rendered = this.render(AlbumContextMenu)
-    eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 69 }, album)
+    eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 }, album)
     await this.tick(2)
 
     return rendered

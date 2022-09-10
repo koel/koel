@@ -24,7 +24,9 @@ const DEFAULT_VOLUME_VALUE = 7
 const VOLUME_INPUT_SELECTOR = '#volumeInput'
 
 class PlaybackService {
+  // @ts-ignore
   public player: Plyr
+  // @ts-ignore
   private volumeInput: HTMLInputElement
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private initialized = false

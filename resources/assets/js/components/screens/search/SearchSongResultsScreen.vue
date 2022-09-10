@@ -9,7 +9,7 @@
       </template>
 
       <template v-slot:meta v-if="songs.length">
-        <span>{{ pluralize(songs.length, 'song') }}</span>
+        <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
       </template>
 

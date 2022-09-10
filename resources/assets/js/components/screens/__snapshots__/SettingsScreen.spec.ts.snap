@@ -2,11 +2,11 @@
 
 exports[`renders 1`] = `
 <section id="settingsWrapper">
-  <header class="screen-header expanded">
-    <aside class="thumbnail-wrapper"></aside>
-    <main>
-      <div class="heading-wrapper">
-        <h1 class="name">Settings</h1><span class="meta text-secondary"></span>
+  <header class="screen-header expanded" data-v-661f8f0d="">
+    <aside class="thumbnail-wrapper" data-v-661f8f0d=""></aside>
+    <main data-v-661f8f0d="">
+      <div class="heading-wrapper" data-v-661f8f0d="">
+        <h1 class="name" data-v-661f8f0d="">Settings</h1><span class="meta text-secondary" data-v-661f8f0d=""></span>
       </div>
     </main>
   </header>

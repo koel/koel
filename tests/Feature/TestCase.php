@@ -36,4 +36,9 @@ abstract class TestCase extends BaseTestCase
     {
         return $this->jsonAs($user, 'put', $url, $data);
     }
+
+    protected function patchAs(string $url, array $data, ?User $user = null): TestResponse
+    {
+        return $this->jsonAs($user, 'patch', $url, $data);
+    }
 }

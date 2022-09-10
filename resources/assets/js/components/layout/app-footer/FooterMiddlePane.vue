@@ -23,7 +23,7 @@ const props = defineProps<{ song?: Song }>()
 const { song } = toRefs(props)
 </script>
 
-<style lang="scss">/* no scoping here because we're overriding some plyr classes */
+<style lang="scss" scoped>
 .middle-pane {
   flex: 1;
   display: flex;
@@ -37,7 +37,7 @@ const { song } = toRefs(props)
   }
 }
 
-#progressPane {
+::v-deep(#progressPane) {
   flex: 1;
   position: relative;
   display: flex;

@@ -9,6 +9,7 @@ class DataTest extends TestCase
         $this->getAs('/api/data')->assertJsonStructure([
             'settings',
             'playlists',
+            'playlist_folders',
             'current_user',
             'use_last_fm',
             'use_you_tube',
