@@ -2,7 +2,7 @@
   <section id="recentlyPlayedWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Recently Played
-      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:thumbnail>
         <ThumbnailStack :thumbnails="thumbnails"/>
@@ -63,7 +63,6 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls,
   onScrollBreakpoint
 } = useSongList(recentlyPlayedSongs, 'recently-played', { sortable: false })
 

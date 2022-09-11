@@ -2,7 +2,7 @@
   <section id="playlistWrapper" v-if="playlist">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ playlist.name }}
-      <ControlsToggle v-if="songs.length" :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle v-if="songs.length" v-model="showingControls"/>
 
       <template v-slot:thumbnail>
         <ThumbnailStack :thumbnails="thumbnails"/>
@@ -98,7 +98,6 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls,
   onScrollBreakpoint,
   sort
 } = useSongList(ref<Song[]>([]), 'playlist')

@@ -2,7 +2,7 @@
   <section id="songsWrapper">
     <ScreenHeader :layout="headerLayout">
       All Songs
-      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:thumbnail>
         <ThumbnailStack :thumbnails="thumbnails"/>
@@ -62,7 +62,6 @@ const {
   isPhone,
   onPressEnter,
   playSelected,
-  toggleControls,
   onScrollBreakpoint
 } = useSongList(toRef(songStore.state, 'songs'), 'all-songs')
 

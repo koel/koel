@@ -2,7 +2,7 @@
   <section id="songResultsWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Songs for <span class="text-thin">{{ decodedQ }}</span>
-      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:thumbnail>
         <ThumbnailStack :thumbnails="thumbnails"/>
@@ -54,7 +54,6 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls,
   sort,
   onScrollBreakpoint
 } = useSongList(toRef(searchStore.state, 'songs'), 'search-results')

@@ -4,7 +4,7 @@
 
     <ScreenHeader v-if="!loading && artist" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ artist.name }}
-      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:thumbnail>
         <ArtistThumbnail :entity="artist"/>
@@ -84,7 +84,6 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls,
   onScrollBreakpoint
 } = useSongList(songs, 'artist', { columns: ['track', 'title', 'album', 'length'] })
 

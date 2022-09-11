@@ -2,7 +2,7 @@
   <section id="favoritesWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Songs You Love
-      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:thumbnail>
         <ThumbnailStack :thumbnails="thumbnails"/>
@@ -86,7 +86,6 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  toggleControls,
   onScrollBreakpoint,
   sort
 } = useSongList(toRef(favoriteStore.state, 'songs'), 'favorites')

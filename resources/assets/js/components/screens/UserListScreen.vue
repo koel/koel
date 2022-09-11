@@ -2,7 +2,7 @@
   <section id="usersWrapper">
     <ScreenHeader layout="collapsed">
       Users
-      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:controls>
         <BtnGroup uppercased v-if="showingControls || !isPhone">
@@ -42,7 +42,6 @@ const users = toRef(userStore.state, 'users')
 const isPhone = isMobile.phone
 const showingControls = ref(false)
 
-const toggleControls = () => (showingControls.value = !showingControls.value)
 const showAddUserForm = () => eventBus.emit('MODAL_SHOW_ADD_USER_FORM')
 
 onMounted(async () => await userStore.fetch())

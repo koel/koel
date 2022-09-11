@@ -2,7 +2,7 @@
   <section id="queueWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Current Queue
-      <ControlsToggle :showing-controls="showingControls" @toggleControls="toggleControls"/>
+      <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:thumbnail>
         <ThumbnailStack :thumbnails="thumbnails"/>
@@ -81,7 +81,6 @@ const {
   showingControls,
   isPhone,
   playSelected,
-  toggleControls,
   onScrollBreakpoint
 } = useSongList(toRef(queueStore.state, 'songs'), 'queue', { sortable: false })
 

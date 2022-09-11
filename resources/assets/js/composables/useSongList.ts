@@ -47,7 +47,6 @@ export const useSongList = (
   const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
   const playAll = (shuffle: boolean) => playbackService.queueAndPlay(getSongsToPlay(), shuffle)
   const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedSongs.value, shuffle)
-  const toggleControls = () => (showingControls.value = !showingControls.value)
 
   const onPressEnter = async (event: KeyboardEvent) => {
     if (selectedSongs.value.length === 1) {
@@ -121,7 +120,6 @@ export const useSongList = (
     onPressEnter,
     playAll,
     playSelected,
-    toggleControls,
     onScrollBreakpoint,
     sort
   }
