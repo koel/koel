@@ -19,6 +19,8 @@ class TranscodingStreamer extends Streamer implements TranscodingStreamerInterfa
      */
     public function stream(): void
     {
+        setlocale(LC_CTYPE, 'en_US.UTF-8'); // #1481 special chars might be stripped otherwise
+
         $ffmpeg = config('koel.streaming.ffmpeg_path');
         abort_unless(is_executable($ffmpeg), 500, 'Transcoding requires valid ffmpeg settings.');
 
