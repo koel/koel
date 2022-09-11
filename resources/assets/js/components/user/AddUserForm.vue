@@ -35,7 +35,8 @@
         </div>
         <div class="form-row">
           <label>
-            <input v-model="newUser.is_admin" name="isAdmin" type="checkbox"> User is an admin
+            <CheckBox name="is_admin" v-model="newUser.is_admin"/>
+            User is an admin
             <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
           </label>
         </div>
@@ -59,6 +60,7 @@ import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 import Btn from '@/components/ui/Btn.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
+import CheckBox from '@/components/ui/CheckBox.vue'
 
 const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)
