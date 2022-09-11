@@ -11,8 +11,18 @@ export const playlistStore = {
   }),
 
   init (playlists: Playlist[]) {
-    this.state.playlists = this.sort(reactive(playlists))
-    this.state.playlists.forEach(playlist => playlist.is_smart && this.setupSmartPlaylist(playlist))
+    this.sort(reactive(playlists)).forEach((playlist: Playlist) => {
+      if (!playlist.is_smart) {
+        this.state.playlists.push(playlist)
+      } else {
+        try {
+          this.setupSmartPlaylist(playlist)
+          this.state.playlists.push(playlist)
+        } catch (error) {
+          logger.warn(`Failed to setup smart playlist "${playlist.name}".`, error)
+        }
+      }
+    })
   },
 
   /**
