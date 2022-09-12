@@ -9,7 +9,7 @@ import router from '@/router'
 new class extends UnitTestCase {
   protected test () {
     it('displays the songs', () => {
-      recentlyPlayedStore.excerptState.songs = factory<Song[]>('song', 6)
+      recentlyPlayedStore.excerptState.songs = factory<Song>('song', 6)
       expect(this.render(RecentlyPlayedSongs).getAllByTestId('song-card')).toHaveLength(6)
     })
 

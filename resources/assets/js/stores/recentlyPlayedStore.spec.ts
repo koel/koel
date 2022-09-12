@@ -8,7 +8,7 @@ import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 new class extends UnitTestCase {
   protected test () {
     it('fetches the recently played songs', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
@@ -21,7 +21,7 @@ new class extends UnitTestCase {
 
     it('fetches when attempting to add a new song and the state is empty', async () => {
       recentlyPlayedStore.state.songs = []
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(recentlyPlayedStore, 'fetch').mockResolvedValue(songs)
 
       await recentlyPlayedStore.add(factory<Song>('song'))
@@ -31,7 +31,7 @@ new class extends UnitTestCase {
 
     it('adds a song to the state', async () => {
       const newSong = factory<Song>('song')
-      const songs = factory<Song[]>('song', 10)
+      const songs = factory<Song>('song', 10)
       const exceptSongs = songs.slice(0, 7)
 
       // We don't want to keep the reference to the original songs
@@ -45,7 +45,7 @@ new class extends UnitTestCase {
     })
 
     it('deduplicates when adding a song to the state', async () => {
-      const songs = factory<Song[]>('song', 10)
+      const songs = factory<Song>('song', 10)
       const newSong = songs[1]
       const exceptSongs = songs.slice(0, 7)
 

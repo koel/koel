@@ -72,6 +72,7 @@ const currentSong = queueStore.current
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)
 const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
+
 const { isAdmin } = useAuthorization()
 
 const doPlayback = () => trigger(() => {

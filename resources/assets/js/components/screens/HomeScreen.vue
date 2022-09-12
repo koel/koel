@@ -37,9 +37,9 @@
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
 import { computed, ref } from 'vue'
-import { eventBus, noop } from '@/utils'
+import { noop } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
-import { useAuthorization, useInfiniteScroll } from '@/composables'
+import { useAuthorization, useInfiniteScroll, useScreen } from '@/composables'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
 import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
@@ -72,8 +72,8 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const loading = ref(false)
 let initialized = false
 
-eventBus.on('ACTIVATE_SCREEN', async (view: ScreenName) => {
-  if (view === 'Home' && !initialized) {
+useScreen('Home').onScreenActivated(async () => {
+  if (!initialized) {
     loading.value = true
     await overviewStore.init()
     initialized = true

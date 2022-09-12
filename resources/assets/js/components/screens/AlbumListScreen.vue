@@ -27,9 +27,8 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef, watch } from 'vue'
-import { eventBus } from '@/utils'
 import { albumStore, preferenceStore as preferences } from '@/stores'
-import { useInfiniteScroll } from '@/composables'
+import { useInfiniteScroll, useScreen } from '@/composables'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
@@ -64,11 +63,11 @@ const fetchAlbums = async () => {
   loading.value = false
 }
 
-eventBus.on('ACTIVATE_SCREEN', async (screen: ScreenName) => {
-  if (screen === 'Albums' && !initialized) {
+useScreen('Albums').onScreenActivated(async () => {
+  if (!initialized) {
     viewMode.value = preferences.albumsViewMode || 'thumbnails'
-    await makeScrollable()
     initialized = true
+    await makeScrollable()
   }
 })
 </script>

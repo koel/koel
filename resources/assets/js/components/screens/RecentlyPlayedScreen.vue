@@ -37,9 +37,9 @@
 
 <script lang="ts" setup>
 import { faClock } from '@fortawesome/free-regular-svg-icons'
-import { eventBus, pluralize } from '@/utils'
+import { pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
-import { useSongList } from '@/composables'
+import { useScreen, useSongList } from '@/composables'
 import { ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -69,14 +69,12 @@ const {
 let initialized = false
 let loading = ref(false)
 
-eventBus.on({
-  ACTIVATE_SCREEN: async (screen: ScreenName) => {
-    if (screen === 'RecentlyPlayed' && !initialized) {
-      loading.value = true
-      await recentlyPlayedStore.fetch()
-      loading.value = false
-      initialized = true
-    }
+useScreen('RecentlyPlayed').onScreenActivated(async () => {
+  if (!initialized) {
+    loading.value = true
+    initialized = true
+    await recentlyPlayedStore.fetch()
+    loading.value = false
   }
 })
 </script>

@@ -29,7 +29,7 @@ new class extends UnitTestCase {
     })
 
     it('adds songs', () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       favoriteStore.add(songs)
       expect(favoriteStore.state.songs).toEqual(songs)
 
@@ -39,14 +39,14 @@ new class extends UnitTestCase {
     })
 
     it('removes songs', () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       favoriteStore.state.songs = songs
       favoriteStore.remove(songs)
       expect(favoriteStore.state.songs).toEqual([])
     })
 
     it('likes several songs', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const addMock = this.mock(favoriteStore, 'add')
       const postMock = this.mock(httpService, 'post')
 
@@ -57,7 +57,7 @@ new class extends UnitTestCase {
     })
 
     it('unlikes several songs', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const removeMock = this.mock(favoriteStore, 'remove')
       const postMock = this.mock(httpService, 'post')
 
@@ -68,7 +68,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches favorites', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
 
       await favoriteStore.fetch()

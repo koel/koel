@@ -11,7 +11,7 @@ let songs
 new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
-      songs = factory<Song[]>('song', 3)
+      songs = factory<Song>('song', 3)
       queueStore.state.songs = reactive(songs)
     })
   }
@@ -40,7 +40,7 @@ new class extends UnitTestCase {
     })
 
     it('replaces the whole queue', () => {
-      const newSongs = factory<Song[]>('song', 2)
+      const newSongs = factory<Song>('song', 2)
       queueStore.replaceQueueWith(newSongs)
 
       expect(queueStore.all).toEqual(newSongs)
@@ -89,7 +89,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches random songs to queue', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
@@ -101,7 +101,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches random songs to queue with a custom order', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 

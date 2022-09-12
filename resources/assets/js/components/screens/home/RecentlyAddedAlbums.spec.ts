@@ -7,7 +7,7 @@ import RecentlyAddedAlbums from './RecentlyAddedAlbums.vue'
 new class extends UnitTestCase {
   protected test () {
     it('displays the albums', () => {
-      overviewStore.state.recentlyAddedAlbums = factory<Album[]>('album', 6)
+      overviewStore.state.recentlyAddedAlbums = factory<Album>('album', 6)
       expect(this.render(RecentlyAddedAlbums).getAllByTestId('album-card')).toHaveLength(6)
     })
   }

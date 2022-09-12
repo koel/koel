@@ -73,7 +73,7 @@ new class extends UnitTestCase {
 
     it('matches a song', () => {
       const song = factory<Song>('song', { title: 'An amazing song' })
-      const songs = [song, ...factory<Song[]>('song', 3)]
+      const songs = [song, ...factory<Song>('song', 3)]
 
       expect(songStore.match('An amazing song', songs)).toEqual(song)
       expect(songStore.match('An Amazing Song', songs)).toEqual(song)
@@ -103,24 +103,24 @@ new class extends UnitTestCase {
     })
 
     it('updates songs', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
 
       const result: SongUpdateResult = {
-        songs: factory<Song[]>('song', 3),
-        albums: factory<Album[]>('album', 2),
-        artists: factory<Artist[]>('artist', 2),
+        songs: factory<Song>('song', 3),
+        albums: factory<Album>('album', 2),
+        artists: factory<Artist>('artist', 2),
         removed: {
           albums: [{
             id: 10,
             artist_id: 3,
             name: 'Removed Album',
-            cover: 'https://example.com/removed-album.jpg',
+            cover: 'http://localhost/removed-album.jpg',
             created_at: '2020-01-01'
           }],
           artists: [{
             id: 42,
             name: 'Removed Artist',
-            image: 'https://example.com/removed-artist.jpg',
+            image: 'http://localhost/removed-artist.jpg',
             created_at: '2020-01-01'
           }]
         }
@@ -220,7 +220,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches for album', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const album = factory<Album>('album', { id: 42 })
       const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(songs)
       const syncMock = this.mock(songStore, 'syncWithVault')
@@ -232,7 +232,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches for artist', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const artist = factory<Artist>('artist', { id: 42 })
       const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(songs)
       const syncMock = this.mock(songStore, 'syncWithVault')
@@ -244,7 +244,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches for playlist', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const playlist = factory<Playlist>('playlist', { id: 42 })
       const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(songs)
       const syncMock = this.mock(songStore, 'syncWithVault')
@@ -256,7 +256,7 @@ new class extends UnitTestCase {
     })
 
     it('paginates', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
 
       const getMock = this.mock(httpService, 'get').mockResolvedValueOnce({
         data: songs,

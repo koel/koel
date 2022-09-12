@@ -1,11 +1,12 @@
+import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { fireEvent, waitFor } from '@testing-library/vue'
-import { eventBus } from '@/utils'
 import { playbackService } from '@/services'
 import router from '@/router'
+import { ActiveScreenKey } from '@/symbols'
 import AllSongsScreen from './AllSongsScreen.vue'
 
 new class extends UnitTestCase {
@@ -19,11 +20,12 @@ new class extends UnitTestCase {
       global: {
         stubs: {
           SongList: this.stub('song-list')
+        },
+        provide: {
+          [<symbol>ActiveScreenKey]: ref('Songs')
         }
       }
     })
-
-    eventBus.emit('ACTIVATE_SCREEN', 'Songs')
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('title', 'asc', 1))
     return rendered

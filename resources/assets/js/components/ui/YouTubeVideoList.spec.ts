@@ -14,10 +14,10 @@ new class extends UnitTestCase {
 
       const searchMock = this.mock(youTubeService, 'searchVideosBySong').mockResolvedValueOnce({
         nextPageToken: 'foo',
-        items: factory<YouTubeVideo[]>('video', 5)
+        items: factory<YouTubeVideo>('video', 5)
       }).mockResolvedValueOnce({
         nextPageToken: 'bar',
-        items: factory<YouTubeVideo[]>('video', 3)
+        items: factory<YouTubeVideo>('video', 3)
       })
 
       const { getAllByTestId, getByRole } = this.render(YouTubeVideoList, {

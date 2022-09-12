@@ -67,7 +67,7 @@ new class extends UnitTestCase {
     })
 
     it('plays', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const { getByTitle } = await this.renderComponent()

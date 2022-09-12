@@ -32,7 +32,7 @@ new class extends UnitTestCase {
     })
 
     it('plays all', async () => {
-      const songs = factory<Song[]>('song', 10)
+      const songs = factory<Song>('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
@@ -45,7 +45,7 @@ new class extends UnitTestCase {
     })
 
     it('shuffles all', async () => {
-      const songs = factory<Song[]>('song', 10)
+      const songs = factory<Song>('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 

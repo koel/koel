@@ -36,10 +36,10 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { eventBus, pluralize, secondsToHis } from '@/utils'
+import { pluralize, secondsToHis } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useSongList } from '@/composables'
+import { useScreen, useSongList } from '@/composables'
 import router from '@/router'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -102,10 +102,10 @@ const playAll = async (shuffle: boolean) => {
   await router.go('queue')
 }
 
-eventBus.on('ACTIVATE_SCREEN', async (screen: ScreenName) => {
-  if (screen === 'Songs' && !initialized) {
-    await fetchSongs()
+useScreen('Songs').onScreenActivated(async () => {
+  if (!initialized) {
     initialized = true
+    await fetchSongs()
   }
 })
 </script>

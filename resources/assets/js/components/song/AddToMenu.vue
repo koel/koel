@@ -90,7 +90,7 @@ const { songs, showing, config } = toRefs(props)
 
 const newPlaylistName = ref('')
 const queue = toRef(queueStore.state, 'songs')
-const currentSong = toRef(queueStore.state, 'current')
+const currentSong = queueStore.current
 
 const allPlaylists = toRef(playlistStore.state, 'playlists')
 const playlists = computed(() => allPlaylists.value.filter(playlist => !playlist.is_smart))

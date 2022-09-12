@@ -7,12 +7,12 @@ import { recentlyPlayedStore } from '@/stores'
 
 export const overviewStore = {
   state: reactive({
-    recentlyPlayed: [],
-    recentlyAddedSongs: [],
-    recentlyAddedAlbums: [],
-    mostPlayedSongs: [],
-    mostPlayedAlbums: [],
-    mostPlayedArtists: []
+    recentlyPlayed: [] as Song[],
+    recentlyAddedSongs: [] as Song[],
+    recentlyAddedAlbums: [] as Album[],
+    mostPlayedSongs: [] as Song[],
+    mostPlayedAlbums: [] as Album[],
+    mostPlayedArtists: [] as Artist[]
   }),
 
   async init () {

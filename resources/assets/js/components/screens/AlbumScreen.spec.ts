@@ -26,7 +26,7 @@ new class extends UnitTestCase {
 
     const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
 
-    const songs = factory<Song[]>('song', 13)
+    const songs = factory<Song>('song', 13)
     const fetchSongsMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
 
     const rendered = this.render(AlbumScreen, {

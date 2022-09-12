@@ -10,7 +10,7 @@ export const albumStore = {
   vault: new Map<number, UnwrapNestedRefs<Album>>(),
 
   state: reactive({
-    albums: []
+    albums: [] as Album[]
   }),
 
   byId (id: number) {
@@ -48,7 +48,7 @@ export const albumStore = {
     songStore.byAlbum(album).forEach(song => song.album_cover = album.cover)
 
     // sync to vault
-    this.byId(album.id).cover = album.cover
+    this.byId(album.id)!.cover = album.cover
 
     return album.cover
   },

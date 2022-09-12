@@ -20,11 +20,7 @@ import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 import { provideReadonly } from '@/utils'
 
-export const useSongList = (
-  songs: Ref<Song[]>,
-  type: SongListType,
-  config: Partial<SongListConfig> = {}
-) => {
+export const useSongList = (songs: Ref<Song[]>, type: SongListType, config: Partial<SongListConfig> = {}) => {
   const songList = ref<InstanceType<typeof SongList>>()
 
   const isPhone = isMobile.phone

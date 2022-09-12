@@ -24,7 +24,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders the playlist', async () => {
-      const { getByTestId, queryByTestId } = (await this.renderComponent(factory<Song[]>('song', 10))).rendered
+      const { getByTestId, queryByTestId } = (await this.renderComponent(factory<Song>('song', 10))).rendered
 
       await waitFor(() => {
         getByTestId('song-list')
@@ -43,7 +43,7 @@ new class extends UnitTestCase {
 
     it('downloads the playlist', async () => {
       const downloadMock = this.mock(downloadService, 'fromPlaylist')
-      const { getByText } = (await this.renderComponent(factory<Song[]>('song', 10))).rendered
+      const { getByText } = (await this.renderComponent(factory<Song>('song', 10))).rendered
 
       await this.tick()
       await fireEvent.click(getByText('Download All'))

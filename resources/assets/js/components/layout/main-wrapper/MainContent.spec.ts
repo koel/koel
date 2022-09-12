@@ -4,13 +4,13 @@ import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { albumStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import MainContent from '@/components/layout/main-wrapper/MainContent.vue'
 import AlbumArtOverlay from '@/components/ui/AlbumArtOverlay.vue'
+import MainContent from './MainContent.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('has a translucent overlay per album', async () => {
-      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('https://foo/bar.jpg')
+      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://localhost/foo.jpg')
 
       const { getByTestId } = this.render(MainContent, {
         global: {

@@ -60,10 +60,10 @@
 <script lang="ts" setup>
 import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-regular-svg-icons'
-import { eventBus, pluralize } from '@/utils'
+import { pluralize } from '@/utils'
 import { commonStore, favoriteStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useSongList } from '@/composables'
+import { useScreen, useSongList } from '@/composables'
 import { nextTick, ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -106,10 +106,10 @@ const fetchSongs = async () => {
   sort()
 }
 
-eventBus.on('ACTIVATE_SCREEN', async (screen: ScreenName) => {
-  if (screen === 'Favorites' && !initialized) {
-    await fetchSongs()
+useScreen('Favorites').onScreenActivated(async () => {
+  if (!initialized) {
     initialized = true
+    await fetchSongs()
   }
 })
 </script>

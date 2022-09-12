@@ -1,5 +1,5 @@
 import isMobile from 'ismobilejs'
-import { computed, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { settingStore } from '@/stores'
 import { acceptedMediaTypes, UploadFile } from '@/config'
@@ -11,7 +11,7 @@ import router from '@/router'
 export const useUpload = () => {
   const { isAdmin } = useAuthorization()
 
-  const activeScreen = requireInjection(ActiveScreenKey)
+  const activeScreen = requireInjection(ActiveScreenKey, ref('Home'))
   const toaster = requireInjection(MessageToasterKey)
   const mediaPath = toRef(settingStore.state, 'media_path')
 

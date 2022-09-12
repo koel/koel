@@ -10,7 +10,7 @@ export const artistStore = {
   vault: new Map<number, UnwrapNestedRefs<Artist>>(),
 
   state: reactive({
-    artists: []
+    artists: [] as Artist[]
   }),
 
   byId (id: number) {
@@ -38,7 +38,7 @@ export const artistStore = {
     artist.image = (await httpService.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })).imageUrl
 
     // sync to vault
-    this.byId(artist.id).image = artist.image
+    this.byId(artist.id)!.image = artist.image
 
     return artist.image
   },

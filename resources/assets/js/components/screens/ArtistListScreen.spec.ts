@@ -1,9 +1,10 @@
+import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { artistStore, preferenceStore } from '@/stores'
-import { eventBus } from '@/utils'
 import { fireEvent, waitFor } from '@testing-library/vue'
+import { ActiveScreenKey } from '@/symbols'
 import ArtistListScreen from './ArtistListScreen.vue'
 
 new class extends UnitTestCase {
@@ -12,8 +13,14 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    artistStore.state.artists = factory<Artist[]>('artist', 9)
-    return this.render(ArtistListScreen)
+    artistStore.state.artists = factory<Artist>('artist', 9)
+    return this.render(ArtistListScreen, {
+      global: {
+        provide: {
+          [<symbol>ActiveScreenKey]: ref('Artists')
+        }
+      }
+    })
   }
 
   protected test () {
@@ -21,11 +28,10 @@ new class extends UnitTestCase {
       expect(this.renderComponent().getAllByTestId('artist-card')).toHaveLength(9)
     })
 
-    it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout from preferences', async (mode) => {
+    it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async (mode) => {
       preferenceStore.artistsViewMode = mode
 
-      const { getByTestId } = this.renderComponent()
-      eventBus.emit('ACTIVATE_SCREEN', 'Artists')
+      const { getByTestId, html } = this.renderComponent()
 
       await waitFor(() => expect(getByTestId('artist-list').classList.contains(`as-${mode}`)).toBe(true))
     })

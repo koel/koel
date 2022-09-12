@@ -1,9 +1,10 @@
+import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { recentlyPlayedStore } from '@/stores'
-import { eventBus } from '@/utils'
 import { waitFor } from '@testing-library/vue'
+import { ActiveScreenKey } from '@/symbols'
 import RecentlyPlayedScreen from './RecentlyPlayedScreen.vue'
 
 new class extends UnitTestCase {
@@ -15,11 +16,12 @@ new class extends UnitTestCase {
       global: {
         stubs: {
           SongList: this.stub('song-list')
+        },
+        provide: {
+          [<symbol>ActiveScreenKey]: ref('RecentlyPlayed')
         }
       }
     })
-
-    eventBus.emit('ACTIVATE_SCREEN', 'RecentlyPlayed')
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
 
@@ -28,7 +30,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('displays the songs', async () => {
-      const { queryByTestId } = await this.renderComponent(factory<Song[]>('song', 3))
+      const { queryByTestId } = await this.renderComponent(factory<Song>('song', 3))
 
       expect(queryByTestId('song-list')).toBeTruthy()
       expect(queryByTestId('screen-empty-state')).toBeNull()

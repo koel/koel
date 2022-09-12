@@ -20,7 +20,7 @@ new class extends UnitTestCase {
     })
 
     it('removes artists by IDs', () => {
-      const artists = factory<Artist[]>('artist', 3)
+      const artists = factory<Artist>('artist', 3)
       artists.forEach(artist => artistStore.vault.set(artist.id, artist))
       artistStore.state.artists = artists
 
@@ -64,19 +64,19 @@ new class extends UnitTestCase {
       artistStore.syncWithVault(artist)
 
       expect(artistStore.vault.size).toBe(1)
-      expect(artistStore.vault.get(artist.id).name).toBe('Pink Floyd')
+      expect(artistStore.vault.get(artist.id)?.name).toBe('Pink Floyd')
     })
 
     it('uploads an image for an artist', async () => {
       const artist = factory<Artist>('artist')
       artistStore.syncWithVault(artist)
-      const putMock = this.mock(httpService, 'put').mockResolvedValue({ imageUrl: 'https://foo/img.jpg' })
+      const putMock = this.mock(httpService, 'put').mockResolvedValue({ imageUrl: 'http://localhost/img.jpg' })
 
       await artistStore.uploadImage(artist, 'data://image')
 
-      expect(artist.image).toBe('https://foo/img.jpg')
+      expect(artist.image).toBe('http://localhost/img.jpg')
       expect(putMock).toHaveBeenCalledWith(`artist/${artist.id}/image`, { image: 'data://image' })
-      expect(artistStore.byId(artist.id).image).toBe('https://foo/img.jpg')
+      expect(artistStore.byId(artist.id)?.image).toBe('http://localhost/img.jpg')
     })
 
     it('resolves an artist', async () => {
@@ -92,7 +92,7 @@ new class extends UnitTestCase {
     })
 
     it('paginates', async () => {
-      const artists = factory<Artist[]>('artist', 3)
+      const artists = factory<Artist>('artist', 3)
 
       this.mock(httpService, 'get').mockResolvedValueOnce({
         data: artists,

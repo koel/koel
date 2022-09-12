@@ -38,7 +38,7 @@ new class extends UnitTestCase {
         title: 'Rocket to Heaven',
         artist_name: 'Led Zeppelin',
         album_name: 'IV',
-        album_cover: 'https://example.co/album.jpg'
+        album_cover: 'http://localhost/album.jpg'
       }))
 
       expect(html()).toMatchSnapshot()

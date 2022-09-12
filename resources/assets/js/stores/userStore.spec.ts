@@ -34,7 +34,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches users', async () => {
-      const users = factory<User[]>('user', 3)
+      const users = factory<User>('user', 3)
       const getMock = this.mock(httpService, 'get').mockResolvedValue(users)
 
       await userStore.fetch()

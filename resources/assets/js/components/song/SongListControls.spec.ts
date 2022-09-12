@@ -9,7 +9,7 @@ import SongListControls from './SongListControls.vue'
 
 new class extends UnitTestCase {
   private renderComponent (selectedSongCount = 1, config: Partial<SongListControlsConfig> = {}) {
-    const songs = factory<Song[]>('song', 5)
+    const songs = factory<Song>('song', 5)
 
     return this.render(SongListControls, {
       props: {

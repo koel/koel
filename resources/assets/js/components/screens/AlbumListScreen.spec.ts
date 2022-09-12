@@ -1,9 +1,10 @@
+import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { albumStore, preferenceStore } from '@/stores'
-import { eventBus } from '@/utils'
 import { fireEvent, waitFor } from '@testing-library/vue'
+import { ActiveScreenKey } from '@/symbols'
 import AlbumListScreen from './AlbumListScreen.vue'
 
 new class extends UnitTestCase {
@@ -12,8 +13,14 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    albumStore.state.albums = factory<Album[]>('album', 9)
-    return this.render(AlbumListScreen)
+    albumStore.state.albums = factory<Album>('album', 9)
+    return this.render(AlbumListScreen, {
+      global: {
+        provide: {
+          [<symbol>ActiveScreenKey]: ref('Albums')
+        }
+      }
+    })
   }
 
   protected test () {
@@ -25,7 +32,6 @@ new class extends UnitTestCase {
       preferenceStore.albumsViewMode = mode
 
       const { getByTestId } = this.renderComponent()
-      eventBus.emit('ACTIVATE_SCREEN', 'Albums')
 
       await waitFor(() => expect(getByTestId('album-list').classList.contains(`as-${mode}`)).toBe(true))
     })

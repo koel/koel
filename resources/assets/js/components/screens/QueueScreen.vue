@@ -50,7 +50,7 @@
 
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef, toRefs } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
@@ -63,9 +63,6 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const dialog = requireInjection(DialogBoxKey)
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
-
-const props = defineProps<{ song?: string }>()
-const { song: queuedSongId } = toRefs(props)
 
 const {
   SongList,
@@ -108,7 +105,7 @@ const onPressEnter = () => selectedSongs.value.length && playbackService.play(se
 const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
 
 eventBus.on('SONG_QUEUED_FROM_ROUTE', async (id: string) => {
-  let song: Song
+  let song: Song | undefined
 
   try {
     loading.value = true

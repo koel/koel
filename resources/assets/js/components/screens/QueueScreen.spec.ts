@@ -21,7 +21,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders the queue', () => {
-      const { queryByTestId } = this.renderComponent(factory<Song[]>('song', 3))
+      const { queryByTestId } = this.renderComponent(factory<Song>('song', 3))
 
       expect(queryByTestId('song-list')).toBeTruthy()
       expect(queryByTestId('screen-empty-state')).toBeNull()
@@ -49,7 +49,7 @@ new class extends UnitTestCase {
     })
 
     it('Shuffles all', async () => {
-      const songs = factory<Song[]>('song', 3)
+      const songs = factory<Song>('song', 3)
       const { getByTitle } = this.renderComponent(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 

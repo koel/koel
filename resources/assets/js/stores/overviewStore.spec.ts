@@ -25,12 +25,12 @@ new class extends UnitTestCase {
       const artistSyncMock = this.mock(artistStore, 'syncWithVault')
       const refreshMock = this.mock(overviewStore, 'refresh')
 
-      const mostPlayedSongs = factory<Song[]>('song', 7)
-      const mostPlayedAlbums = factory<Album[]>('album', 6)
-      const mostPlayedArtists = factory<Artist[]>('artist', 6)
-      const recentlyAddedSongs = factory<Song[]>('song', 9)
-      const recentlyAddedAlbums = factory<Album[]>('album', 6)
-      const recentlyPlayedSongs = factory<Song[]>('song', 9)
+      const mostPlayedSongs = factory<Song>('song', 7)
+      const mostPlayedAlbums = factory<Album>('album', 6)
+      const mostPlayedArtists = factory<Artist>('artist', 6)
+      const recentlyAddedSongs = factory<Song>('song', 9)
+      const recentlyAddedAlbums = factory<Album>('album', 6)
+      const recentlyPlayedSongs = factory<Song>('song', 9)
 
       const getMock = this.mock(httpService, 'get').mockResolvedValueOnce({
         most_played_songs: mostPlayedSongs,
@@ -52,12 +52,12 @@ new class extends UnitTestCase {
     })
 
     it('refreshes the store', () => {
-      const mostPlayedSongs = factory<Song[]>('song', 7)
-      const mostPlayedAlbums = factory<Album[]>('album', 6)
-      const mostPlayedArtists = factory<Artist[]>('artist', 6)
-      const recentlyAddedSongs = factory<Song[]>('song', 9)
-      const recentlyAddedAlbums = factory<Album[]>('album', 6)
-      const recentlyPlayedSongs = factory<Song[]>('song', 9)
+      const mostPlayedSongs = factory<Song>('song', 7)
+      const mostPlayedAlbums = factory<Album>('album', 6)
+      const mostPlayedArtists = factory<Artist>('artist', 6)
+      const recentlyAddedSongs = factory<Song>('song', 9)
+      const recentlyAddedAlbums = factory<Album>('album', 6)
+      const recentlyPlayedSongs = factory<Song>('song', 9)
 
       const mostPlayedSongsMock = this.mock(songStore, 'getMostPlayed', mostPlayedSongs)
       const mostPlayedAlbumsMock = this.mock(albumStore, 'getMostPlayed', mostPlayedAlbums)

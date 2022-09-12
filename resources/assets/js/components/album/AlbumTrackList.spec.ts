@@ -8,12 +8,12 @@ new class extends UnitTestCase {
   protected test () {
     it('displays the tracks', async () => {
       const album = factory<Album>('album')
-      const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(factory<Song[]>('song', 5))
+      const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(factory<Song>('song', 5))
 
       const { queryAllByTestId } = this.render(AlbumTrackList, {
         props: {
           album,
-          tracks: factory<AlbumTrack[]>('album-track', 3)
+          tracks: factory<AlbumTrack>('album-track', 3)
         }
       })
 

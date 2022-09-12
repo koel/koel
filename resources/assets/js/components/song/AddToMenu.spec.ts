@@ -62,7 +62,8 @@ new class extends UnitTestCase {
       ['to bottom', 'queue-bottom', 'queue']
     ])('queues songs %s', async (_: string, testId: string, queueMethod: MethodOf<typeof queueStore>) => {
       queueStore.state.songs = factory<Song>('song', 5)
-      queueStore.state.current = queueStore.state.songs[1]
+      queueStore.state.songs[2].playback_state = 'Playing'
+
       const mock = this.mock(queueStore, queueMethod)
       const { getByTestId } = this.renderComponent()
 

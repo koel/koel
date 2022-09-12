@@ -10,7 +10,7 @@ import AlbumTrackListItem from './AlbumTrackListItem.vue'
 
 new class extends UnitTestCase {
   private renderComponent (matchedSong?: Song) {
-    const songsToMatchAgainst = factory<Song[]>('song', 10)
+    const songsToMatchAgainst = factory<Song>('song', 10)
     const album = factory<Album>('album')
 
     const track = factory<AlbumTrack>('album-track', {
