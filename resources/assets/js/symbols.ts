@@ -20,3 +20,5 @@ export const EditSongFormInitialTabKey: ReadonlyInjectionKey<Ref<EditSongFormTab
 export const PlaylistKey: ReadonlyInjectionKey<Ref<Playlist>> = Symbol('Playlist')
 export const PlaylistFolderKey: ReadonlyInjectionKey<Ref<PlaylistFolder>> = Symbol('PlaylistFolder')
 export const UserKey: ReadonlyInjectionKey<Ref<User>> = Symbol('User')
+
+export const ActiveScreenKey: InjectionKey<Ref<ScreenName>> = Symbol('ActiveScreen')

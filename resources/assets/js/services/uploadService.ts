@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import { UploadFile, UploadStatus } from '@/config'
 import { httpService } from '@/services'
 import { albumStore, overviewStore, songStore } from '@/stores'
-import { eventBus, logger } from '@/utils'
+import { logger } from '@/utils'
 
 interface UploadResult {
   song: Song
@@ -81,8 +81,6 @@ export const uploadService = {
       file.message = `Upload failed: ${error.response?.data?.message || 'Unknown error'}`
       file.status = 'Errored'
       this.proceed() // upload the next file
-    } finally {
-      this.checkUploadQueueStatus()
     }
   },
 
@@ -102,20 +100,8 @@ export const uploadService = {
     file.progress = 0
   },
 
-  clear () {
-    this.state.files = []
-  },
-
   removeFailed () {
     this.state.files = this.state.files.filter(file => file.status !== 'Errored')
-  },
-
-  checkUploadQueueStatus () {
-    const uploadingFiles = this.state.files.filter(file => file.status === 'Uploading')
-
-    if (uploadingFiles.length === 0) {
-      eventBus.emit('UPLOAD_QUEUE_FINISHED')
-    }
   },
 
   getFilesByStatus (status: UploadStatus) {

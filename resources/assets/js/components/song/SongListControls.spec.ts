@@ -17,8 +17,8 @@ new class extends UnitTestCase {
       },
       global: {
         provide: {
-          [SongsKey]: [ref(songs)],
-          [SelectedSongsKey]: [ref(take(songs, selectedSongCount))]
+          [<symbol>SongsKey]: [ref(songs)],
+          [<symbol>SelectedSongsKey]: [ref(take(songs, selectedSongCount))]
         }
       }
     })

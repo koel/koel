@@ -106,8 +106,8 @@ const fetchSongs = async () => {
   sort()
 }
 
-eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
-  if (view === 'Favorites' && !initialized) {
+eventBus.on('ACTIVATE_SCREEN', async (screen: ScreenName) => {
+  if (screen === 'Favorites' && !initialized) {
     await fetchSongs()
     initialized = true
   }

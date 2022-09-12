@@ -2,6 +2,7 @@
   <li
     ref="el"
     class="playlist"
+    :class="{ droppable }"
     data-testid="playlist-sidebar-item"
     draggable="true"
     @contextmenu="onContextMenu"
@@ -38,7 +39,7 @@ const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
 
 const toaster = requireInjection(MessageToasterKey)
-const el = ref<HTMLLIElement>()
+const droppable = ref(false)
 
 const props = defineProps<{ list: PlaylistLike }>()
 const { list } = toRefs(props)
@@ -79,15 +80,15 @@ const onDragOver = (event: DragEvent) => {
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'copy'
-  el.value?.classList.add('droppable')
+  droppable.value = true
 
   return false
 }
 
-const onDragLeave = () => el.value?.classList.remove('droppable')
+const onDragLeave = () => (droppable.value = false)
 
 const onDrop = async (event: DragEvent) => {
-  el.value?.classList.remove('droppable')
+  droppable.value = false
 
   if (!contentEditable.value) return false
   if (!acceptsDrop(event)) return false
@@ -106,8 +107,8 @@ const onDrop = async (event: DragEvent) => {
   return false
 }
 
-eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName, _list: PlaylistLike): void => {
-  switch (view) {
+eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName, _list: PlaylistLike): void => {
+  switch (screen) {
     case 'Favorites':
       active.value = isFavoriteList(list.value)
       break

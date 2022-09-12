@@ -70,8 +70,8 @@ let initialized = false
 let loading = ref(false)
 
 eventBus.on({
-  'LOAD_MAIN_CONTENT': async (view: MainViewName) => {
-    if (view === 'RecentlyPlayed' && !initialized) {
+  ACTIVATE_SCREEN: async (screen: ScreenName) => {
+    if (screen === 'RecentlyPlayed' && !initialized) {
       loading.value = true
       await recentlyPlayedStore.fetch()
       loading.value = false

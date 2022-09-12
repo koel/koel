@@ -25,7 +25,7 @@ new class extends UnitTestCase {
       preferenceStore.artistsViewMode = mode
 
       const { getByTestId } = this.renderComponent()
-      eventBus.emit('LOAD_MAIN_CONTENT', 'Artists')
+      eventBus.emit('ACTIVATE_SCREEN', 'Artists')
 
       await waitFor(() => expect(getByTestId('artist-list').classList.contains(`as-${mode}`)).toBe(true))
     })

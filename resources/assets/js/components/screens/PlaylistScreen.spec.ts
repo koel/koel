@@ -15,7 +15,7 @@ new class extends UnitTestCase {
     const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
 
     const rendered = this.render(PlaylistScreen)
-    eventBus.emit('LOAD_MAIN_CONTENT', 'Playlist', playlist)
+    eventBus.emit('ACTIVATE_SCREEN', 'Playlist', playlist)
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist))
 
@@ -54,7 +54,7 @@ new class extends UnitTestCase {
     it('deletes the playlist', async () => {
       const { getByTitle } = (await this.renderComponent([])).rendered
 
-      // mock *after* rendering to not tamper with "LOAD_MAIN_CONTENT" emission
+      // mock *after* rendering to not tamper with "ACTIVATE_SCREEN" emission
       const emitMock = this.mock(eventBus, 'emit')
 
       await fireEvent.click(getByTitle('Delete this playlist'))

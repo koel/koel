@@ -293,7 +293,7 @@ interface EqualizerPreset {
 }
 
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
-declare type MainViewName =
+declare type ScreenName =
   | 'Home'
   | 'Default'
   | 'Queue'

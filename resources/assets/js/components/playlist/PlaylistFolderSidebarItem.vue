@@ -1,7 +1,7 @@
 <template>
   <li
-    ref="el"
     class="playlist-folder"
+    :class="{ droppable }"
     @dragleave="onDragLeave"
     @dragover="onDragOver"
     @drop="onDrop"
@@ -18,10 +18,10 @@
 
     <div
       v-if="opened"
-      ref="hatch"
+      :class="droppableOnHatch && 'droppable'"
       class="hatch"
-      @dragleave.prevent="onDragLeaveHatch"
       @dragover="onDragOverHatch"
+      @dragleave.prevent="onDragLeaveHatch"
       @drop.prevent="onDropOnHatch"
     />
   </li>
@@ -39,9 +39,9 @@ const PlaylistSidebarItem = defineAsyncComponent(() => import('@/components/play
 const props = defineProps<{ folder: PlaylistFolder }>()
 const { folder } = toRefs(props)
 
-const el = ref<HTMLLIElement>()
-const hatch = ref<HTMLLIElement>()
 const opened = ref(false)
+const droppable = ref(false)
+const droppableOnHatch = ref(false)
 
 const playlistsInFolder = computed(() => playlistStore.byFolder(folder.value))
 
@@ -54,37 +54,39 @@ const onDragOver = (event: DragEvent) => {
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'move'
-  el.value?.classList.add('droppable')
+  droppable.value = true
   opened.value = true
 }
 
-const onDragLeave = () => el.value?.classList.remove('droppable')
+const onDragLeave = () => (droppable.value = false)
 
 const onDrop = async (event: DragEvent) => {
+  droppable.value = false
+
   if (!acceptsDrop(event)) return false
 
   event.preventDefault()
 
-  el.value?.classList.remove('droppable')
   const playlist = await resolveDroppedValue<Playlist>(event)
   if (!playlist || playlist.folder_id === folder.value.id) return
 
   await playlistFolderStore.addPlaylistToFolder(folder.value, playlist)
 }
 
-const onDragLeaveHatch = () => hatch.value?.classList.remove('droppable')
+const onDragLeaveHatch = () => (droppableOnHatch.value = false)
 
 const onDragOverHatch = (event: DragEvent) => {
   if (!acceptsDrop(event)) return false
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'move'
-  hatch.value?.classList.add('droppable')
+  droppableOnHatch.value = true
 }
 
 const onDropOnHatch = async (event: DragEvent) => {
-  hatch.value?.classList.remove('droppable')
-  el.value?.classList.remove('droppable')
+  droppableOnHatch.value = false
+  droppable.value = false
+
   const playlist = (await resolveDroppedValue<Playlist>(event))!
 
   // if the playlist isn't in the folder, don't do anything. The folder will handle the drop.

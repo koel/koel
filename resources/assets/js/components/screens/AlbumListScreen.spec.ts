@@ -25,7 +25,7 @@ new class extends UnitTestCase {
       preferenceStore.albumsViewMode = mode
 
       const { getByTestId } = this.renderComponent()
-      eventBus.emit('LOAD_MAIN_CONTENT', 'Albums')
+      eventBus.emit('ACTIVATE_SCREEN', 'Albums')
 
       await waitFor(() => expect(getByTestId('album-list').classList.contains(`as-${mode}`)).toBe(true))
     })

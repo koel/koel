@@ -10,7 +10,7 @@ export { defaultCover }
  * @param view
  * @param {...*} args     Extra data to attach to the view.
  */
-export const loadMainView = (view: MainViewName, ...args: any[]) => eventBus.emit('LOAD_MAIN_CONTENT', view, ...args)
+export const loadMainView = (view: ScreenName, ...args: any[]) => eventBus.emit('ACTIVATE_SCREEN', view, ...args)
 
 /**
  * Force reloading window regardless of "Confirm before reload" setting.

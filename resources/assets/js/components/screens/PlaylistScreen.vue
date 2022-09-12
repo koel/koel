@@ -124,14 +124,14 @@ const fetchSongs = async () => {
 }
 
 eventBus.on({
-    'LOAD_MAIN_CONTENT': async (view: MainViewName, p: any) => {
-      if (view === 'Playlist') {
+    ACTIVATE_SCREEN: async (screen: ScreenName, p: any) => {
+      if (screen === 'Playlist') {
         playlist.value = p as Playlist
         await fetchSongs()
       }
     },
 
-    'SMART_PLAYLIST_UPDATED': async (updated: Playlist) => updated === playlist.value && await fetchSongs()
+    SMART_PLAYLIST_UPDATED: async (updated: Playlist) => updated === playlist.value && await fetchSongs()
   }
 )
 </script>

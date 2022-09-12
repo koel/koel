@@ -8,24 +8,24 @@
     <Visualizer v-if="showingVisualizer"/>
     <AlbumArtOverlay v-if="showAlbumArtOverlay && currentSong" :album="currentSong?.album_id"/>
 
-    <HomeScreen v-show="view === 'Home'"/>
-    <QueueScreen v-show="view === 'Queue'"/>
-    <AllSongsScreen v-show="view === 'Songs'"/>
-    <AlbumListScreen v-show="view === 'Albums'"/>
-    <ArtistListScreen v-show="view === 'Artists'"/>
-    <PlaylistScreen v-show="view === 'Playlist'"/>
-    <FavoritesScreen v-show="view === 'Favorites'"/>
-    <RecentlyPlayedScreen v-show="view === 'RecentlyPlayed'"/>
-    <UploadScreen v-show="view === 'Upload'"/>
-    <SearchExcerptsScreen v-show="view === 'Search.Excerpt'"/>
+    <HomeScreen v-show="screen === 'Home'"/>
+    <QueueScreen v-show="screen === 'Queue'"/>
+    <AllSongsScreen v-show="screen === 'Songs'"/>
+    <AlbumListScreen v-show="screen === 'Albums'"/>
+    <ArtistListScreen v-show="screen === 'Artists'"/>
+    <PlaylistScreen v-show="screen === 'Playlist'"/>
+    <FavoritesScreen v-show="screen === 'Favorites'"/>
+    <RecentlyPlayedScreen v-show="screen === 'RecentlyPlayed'"/>
+    <UploadScreen v-show="screen === 'Upload'"/>
+    <SearchExcerptsScreen v-show="screen === 'Search.Excerpt'"/>
 
-    <SearchSongResultsScreen v-if="view === 'Search.Songs'" :q="screenProps"/>
-    <AlbumScreen v-if="view === 'Album'" :album="screenProps"/>
-    <ArtistScreen v-if="view === 'Artist'" :artist="screenProps"/>
-    <SettingsScreen v-if="view === 'Settings'"/>
-    <ProfileScreen v-if="view === 'Profile'"/>
-    <UserListScreen v-if="view === 'Users'"/>
-    <YoutubeScreen v-if="useYouTube" v-show="view === 'YouTube'"/>
+    <SearchSongResultsScreen v-if="screen === 'Search.Songs'" :q="screenProps"/>
+    <AlbumScreen v-if="screen === 'Album'" :album="screenProps"/>
+    <ArtistScreen v-if="screen === 'Artist'" :artist="screenProps"/>
+    <SettingsScreen v-if="screen === 'Settings'"/>
+    <ProfileScreen v-if="screen === 'Profile'"/>
+    <UserListScreen v-if="screen === 'Users'"/>
+    <YoutubeScreen v-if="useYouTube" v-show="screen === 'YouTube'"/>
   </section>
 </template>
 
@@ -61,17 +61,17 @@ const { useYouTube } = useThirdPartyServices()
 const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
 const showingVisualizer = ref(false)
 const screenProps = ref<any>(null)
-const view = ref<MainViewName>('Home')
+const screen = ref<ScreenName>('Home')
 const currentSong = ref<Song | null>(null)
 
 eventBus.on({
-  LOAD_MAIN_CONTENT (_view: MainViewName, data: any) {
+  ACTIVATE_SCREEN (screenName: ScreenName, data: any) {
     screenProps.value = data
-    view.value = _view
+    screen.value = screenName
   },
 
-  'TOGGLE_VISUALIZER': () => (showingVisualizer.value = !showingVisualizer.value),
-  'SONG_STARTED': (song: Song) => (currentSong.value = song)
+  TOGGLE_VISUALIZER: () => (showingVisualizer.value = !showingVisualizer.value),
+  SONG_STARTED: (song: Song) => (currentSong.value = song)
 })
 </script>
 

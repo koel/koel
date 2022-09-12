@@ -139,8 +139,8 @@ const fetchSongInfo = async (_song: Song) => {
 }
 
 eventBus.on({
-  'SONG_STARTED': async (song: Song) => await fetchSongInfo(song),
-  'LOAD_MAIN_CONTENT': (): void => {
+  SONG_STARTED: async (song: Song) => await fetchSongInfo(song),
+  KOEL_READY: () => {
     // On ready, add 'with-extra-panel' class.
     isMobile.any || document.documentElement.classList.add('with-extra-panel')
 

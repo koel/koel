@@ -102,8 +102,8 @@ const playAll = async (shuffle: boolean) => {
   await router.go('queue')
 }
 
-eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
-  if (view === 'Songs' && !initialized) {
+eventBus.on('ACTIVATE_SCREEN', async (screen: ScreenName) => {
+  if (screen === 'Songs' && !initialized) {
     await fetchSongs()
     initialized = true
   }

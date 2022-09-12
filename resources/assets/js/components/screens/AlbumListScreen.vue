@@ -64,8 +64,8 @@ const fetchAlbums = async () => {
   loading.value = false
 }
 
-eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
-  if (view === 'Albums' && !initialized) {
+eventBus.on('ACTIVATE_SCREEN', async (screen: ScreenName) => {
+  if (screen === 'Albums' && !initialized) {
     viewMode.value = preferences.albumsViewMode || 'thumbnails'
     await makeScrollable()
     initialized = true

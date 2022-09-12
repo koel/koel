@@ -17,7 +17,7 @@ const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)
 
 eventBus.on({
-  'PLAYLIST_DELETE': async (playlist: Playlist) => {
+  PLAYLIST_DELETE: async (playlist: Playlist) => {
     if (await dialog.value.confirm(`Delete the playlist "${playlist.name}"?`)) {
       await playlistStore.delete(playlist)
       toaster.value.success(`Playlist "${playlist.name}" deleted.`)
@@ -25,7 +25,7 @@ eventBus.on({
     }
   },
 
-  'PLAYLIST_FOLDER_DELETE': async (folder: PlaylistFolder) => {
+  PLAYLIST_FOLDER_DELETE: async (folder: PlaylistFolder) => {
     if (await dialog.value.confirm(`Delete the playlist folder "${folder.name}"?`)) {
       await playlistFolderStore.delete(folder)
       toaster.value.success(`Playlist folder "${folder.name}" deleted.`)
@@ -36,17 +36,17 @@ eventBus.on({
   /**
    * Log the current user out and reset the application state.
    */
-  'LOG_OUT': async () => {
+  LOG_OUT: async () => {
     await userStore.logout()
     authService.destroy()
     forceReloadWindow()
   },
 
-  'KOEL_READY': () => router.resolveRoute(),
+  KOEL_READY: () => router.resolveRoute(),
 
   /**
    * Hide the panel away if a main view is triggered on mobile.
    */
-  'LOAD_MAIN_CONTENT': () => isMobile.phone && (preferenceStore.showExtraPanel = false)
+  ACTIVATE_SCREEN: () => isMobile.phone && (preferenceStore.showExtraPanel = false)
 })
 </script>

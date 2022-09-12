@@ -72,7 +72,7 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const loading = ref(false)
 let initialized = false
 
-eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
+eventBus.on('ACTIVATE_SCREEN', async (view: ScreenName) => {
   if (view === 'Home' && !initialized) {
     loading.value = true
     await overviewStore.init()

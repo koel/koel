@@ -62,29 +62,29 @@ provideReadonly(SongsKey, songsToEdit, false)
 provideReadonly(EditSongFormInitialTabKey, editSongFormInitialTab)
 
 eventBus.on({
-  'MODAL_SHOW_ABOUT_KOEL': () => (showingModalName.value = 'about-koel'),
-  'MODAL_SHOW_ADD_USER_FORM': () => (showingModalName.value = 'add-user-form'),
-  'MODAL_SHOW_CREATE_PLAYLIST_FORM': () => (showingModalName.value = 'create-playlist-form'),
-  'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM': () => (showingModalName.value = 'create-smart-playlist-form'),
-  'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM': () => (showingModalName.value = 'create-playlist-folder-form'),
+  MODAL_SHOW_ABOUT_KOEL: () => (showingModalName.value = 'about-koel'),
+  MODAL_SHOW_ADD_USER_FORM: () => (showingModalName.value = 'add-user-form'),
+  MODAL_SHOW_CREATE_PLAYLIST_FORM: () => (showingModalName.value = 'create-playlist-form'),
+  MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM: () => (showingModalName.value = 'create-smart-playlist-form'),
+  MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM: () => (showingModalName.value = 'create-playlist-folder-form'),
 
-  'MODAL_SHOW_EDIT_PLAYLIST_FORM': (playlist: Playlist) => {
+  MODAL_SHOW_EDIT_PLAYLIST_FORM: (playlist: Playlist) => {
     playlistToEdit.value = playlist
     showingModalName.value = playlist.is_smart ? 'edit-smart-playlist-form' : 'edit-playlist-form'
   },
 
-  'MODAL_SHOW_EDIT_USER_FORM': (user: User) => {
+  MODAL_SHOW_EDIT_USER_FORM: (user: User) => {
     userToEdit.value = user
     showingModalName.value = 'edit-user-form'
   },
 
-  'MODAL_SHOW_EDIT_SONG_FORM': (songs: Song | Song[], initialTab: EditSongFormTabName = 'details') => {
+  MODAL_SHOW_EDIT_SONG_FORM: (songs: Song | Song[], initialTab: EditSongFormTabName = 'details') => {
     songsToEdit.value = arrayify(songs)
     editSongFormInitialTab.value = initialTab
     showingModalName.value = 'edit-song-form'
   },
 
-  'MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM': (folder: PlaylistFolder) => {
+  MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (folder: PlaylistFolder) => {
     playlistFolderToEdit.value = folder
     showingModalName.value = 'edit-playlist-folder-form'
   }

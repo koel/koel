@@ -11,7 +11,7 @@ new class extends UnitTestCase {
     const fetchMock = this.mock(favoriteStore, 'fetch')
     const rendered = this.render(FavoritesScreen)
 
-    eventBus.emit('LOAD_MAIN_CONTENT', 'Favorites')
+    eventBus.emit('ACTIVATE_SCREEN', 'Favorites')
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
 
     return rendered
@@ -19,7 +19,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders a list of favorites', async () => {
-      favoriteStore.state.songs = factory<Song[]>('song', 13)
+      favoriteStore.state.songs = factory<Song>('song', 13)
       const { queryByTestId } = await this.renderComponent()
 
       await waitFor(() => {

@@ -36,7 +36,7 @@ if (process.env.NODE_ENV !== 'test') {
 const goToSearchScreen = () => router.go('search')
 
 eventBus.on({
-  FOCUS_SEARCH_FIELD () {
+  FOCUS_SEARCH_FIELD: () => {
     input.value?.focus()
     input.value?.select()
   }

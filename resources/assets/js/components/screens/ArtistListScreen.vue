@@ -64,8 +64,8 @@ const fetchArtists = async () => {
   loading.value = false
 }
 
-eventBus.on('LOAD_MAIN_CONTENT', async (view: MainViewName) => {
-  if (view === 'Artists' && !initialized) {
+eventBus.on('ACTIVATE_SCREEN', async (screen: ScreenName) => {
+  if (screen === 'Artists' && !initialized) {
     viewMode.value = preferences.artistsViewMode || 'thumbnails'
     await makeScrollable()
     initialized = true

@@ -1,6 +1,6 @@
 export type EventName =
   'KOEL_READY'
-  | 'LOAD_MAIN_CONTENT'
+  | 'ACTIVATE_SCREEN'
   | 'LOG_OUT'
   | 'TOGGLE_SIDEBAR'
   | 'SHOW_OVERLAY'
@@ -35,10 +35,6 @@ export type EventName =
   | 'SONG_STARTED'
   | 'SONGS_UPDATED'
   | 'SONG_QUEUED_FROM_ROUTE'
-
-  // upload-related
-  | 'SONG_UPLOADED'
-  | 'UPLOAD_QUEUE_FINISHED'
 
   // socket events
   | 'SOCKET_TOGGLE_PLAYBACK'

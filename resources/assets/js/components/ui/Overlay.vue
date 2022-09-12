@@ -36,8 +36,8 @@ const show = (options: Partial<OverlayState>) => {
 const hide = () => (state.showing = false)
 
 eventBus.on({
-  'SHOW_OVERLAY': show,
-  'HIDE_OVERLAY': hide
+  SHOW_OVERLAY: show,
+  HIDE_OVERLAY: hide
 })
 </script>
 

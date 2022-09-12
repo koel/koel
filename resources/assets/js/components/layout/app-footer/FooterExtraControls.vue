@@ -73,7 +73,7 @@ const toggleEqualizer = () => (showEqualizer.value = !showEqualizer.value)
 const closeEqualizer = () => (showEqualizer.value = false)
 const toggleVisualizer = () => isMobile.any || eventBus.emit('TOGGLE_VISUALIZER')
 
-eventBus.on('LOAD_MAIN_CONTENT', (view: MainViewName) => (viewingQueue.value = view === 'Queue'))
+eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName) => (viewingQueue.value = screen === 'Queue'))
 </script>
 
 <style lang="scss" scoped>

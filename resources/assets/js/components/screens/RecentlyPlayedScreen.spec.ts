@@ -19,7 +19,7 @@ new class extends UnitTestCase {
       }
     })
 
-    eventBus.emit('LOAD_MAIN_CONTENT', 'RecentlyPlayed')
+    eventBus.emit('ACTIVATE_SCREEN', 'RecentlyPlayed')
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
 

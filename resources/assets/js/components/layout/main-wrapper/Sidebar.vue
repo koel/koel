@@ -5,37 +5,42 @@
 
       <ul class="menu">
         <li>
-          <a :class="['home', currentView === 'Home' ? 'active' : '']" href="#!/home">
+          <a :class="['home', activeScreen === 'Home' ? 'active' : '']" href="#!/home">
             <icon :icon="faHome" fixed-width/>
             Home
           </a>
         </li>
-        <li ref="queueMenuItemEl" @dragleave="onQueueDragLeave" @dragover="onQueueDragOver" @drop="onQueueDrop">
-          <a :class="['queue', currentView === 'Queue' ? 'active' : '']" href="#!/queue">
+        <li
+          :class="droppableToQueue && 'droppable'"
+          @dragleave="onQueueDragLeave"
+          @dragover="onQueueDragOver"
+          @drop="onQueueDrop"
+        >
+          <a :class="['queue', activeScreen === 'Queue' ? 'active' : '']" href="#!/queue">
             <icon :icon="faListOl" fixed-width/>
             Current Queue
           </a>
         </li>
         <li>
-          <a :class="['songs', currentView === 'Songs' ? 'active' : '']" href="#!/songs">
+          <a :class="['songs', activeScreen === 'Songs' ? 'active' : '']" href="#!/songs">
             <icon :icon="faMusic" fixed-width/>
             All Songs
           </a>
         </li>
         <li>
-          <a :class="['albums', currentView === 'Albums' ? 'active' : '']" href="#!/albums">
+          <a :class="['albums', activeScreen === 'Albums' ? 'active' : '']" href="#!/albums">
             <icon :icon="faCompactDisc" fixed-width/>
             Albums
           </a>
         </li>
         <li>
-          <a :class="['artists', currentView === 'Artists' ? 'active' : '']" href="#!/artists">
+          <a :class="['artists', activeScreen === 'Artists' ? 'active' : '']" href="#!/artists">
             <icon :icon="faMicrophone" fixed-width/>
             Artists
           </a>
         </li>
         <li v-if="useYouTube">
-          <a :class="['youtube', currentView === 'YouTube' ? 'active' : '']" href="#!/youtube">
+          <a :class="['youtube', activeScreen === 'YouTube' ? 'active' : '']" href="#!/youtube">
             <icon :icon="faYoutube" fixed-width/>
             YouTube Video
           </a>
@@ -43,26 +48,26 @@
       </ul>
     </section>
 
-    <PlaylistList :current-view="currentView"/>
+    <PlaylistList/>
 
     <section v-if="isAdmin" class="manage">
       <h1>Manage</h1>
 
       <ul class="menu">
         <li>
-          <a :class="['settings', currentView === 'Settings' ? 'active' : '']" href="#!/settings">
+          <a :class="['settings', activeScreen === 'Settings' ? 'active' : '']" href="#!/settings">
             <icon :icon="faTools" fixed-width/>
             Settings
           </a>
         </li>
         <li>
-          <a :class="['upload', currentView === 'Upload' ? 'active' : '']" href="#!/upload">
+          <a :class="['upload', activeScreen === 'Upload' ? 'active' : '']" href="#!/upload">
             <icon :icon="faUpload" fixed-width/>
             Upload
           </a>
         </li>
         <li>
-          <a :class="['users', currentView === 'Users' ? 'active' : '']" href="#!/users">
+          <a :class="['users', activeScreen === 'Users' ? 'active' : '']" href="#!/users">
             <icon :icon="faUsers" fixed-width/>
             Users
           </a>
@@ -86,15 +91,16 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { ref } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus, requireInjection } from '@/utils'
 import { queueStore } from '@/stores'
 import { useAuthorization, useDroppable, useThirdPartyServices } from '@/composables'
+import { ActiveScreenKey } from '@/symbols'
 
 import PlaylistList from '@/components/playlist/PlaylistSidebarList.vue'
 
 const showing = ref(!isMobile.phone)
-const currentView = ref<MainViewName>('Home')
-const queueMenuItemEl = ref<HTMLLIElement>()
+const activeScreen = requireInjection(ActiveScreenKey, ref('Home'))
+const droppableToQueue = ref(false)
 
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist', 'playlist'])
 const { useYouTube } = useThirdPartyServices()
@@ -105,13 +111,13 @@ const onQueueDragOver = (event: DragEvent) => {
 
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'move'
-  queueMenuItemEl.value?.classList.add('droppable')
+  droppableToQueue.value = true
 }
 
-const onQueueDragLeave = () => queueMenuItemEl.value?.classList.remove('droppable')
+const onQueueDragLeave = () => (droppableToQueue.value = false)
 
 const onQueueDrop = async (event: DragEvent) => {
-  queueMenuItemEl.value?.classList.remove('droppable')
+  droppableToQueue.value = false
 
   if (!acceptsDrop(event)) return false
 
@@ -123,16 +129,16 @@ const onQueueDrop = async (event: DragEvent) => {
 }
 
 eventBus.on({
-  LOAD_MAIN_CONTENT (view: MainViewName) {
-    currentView.value = view
-    // Hide the sidebar if on mobile
-    isMobile.phone && (showing.value = false)
-  },
   /**
-   * Listen to sidebar:toggle event to show or hide the sidebar.
+   * On mobile, hide the sidebar whenever a screen is activated.
+   */
+  ACTIVATE_SCREEN: () => isMobile.phone && (showing.value = false),
+
+  /**
+   * Listen to toggle sidebar event to show or hide the sidebar.
    * This should only be triggered on a mobile device.
    */
-  ['TOGGLE_SIDEBAR']: () => (showing.value = !showing.value)
+  TOGGLE_SIDEBAR: () => (showing.value = !showing.value)
 })
 </script>
 

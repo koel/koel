@@ -55,7 +55,7 @@ eventBus.on({
   /**
    * Stop video playback when a song is played/resumed.
    */
-  'SONG_STARTED': () => player && player.pauseVideo()
+  SONG_STARTED: () => player && player.pauseVideo()
 })
 </script>
 

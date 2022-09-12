@@ -19,7 +19,7 @@
 
     <div class="main-scroll-wrap">
       <div
-        v-if="mediaPath"
+        v-if="mediaPathSetUp"
         :class="{ droppable }"
         class="upload-panel"
         @dragenter.prevent="onDragEnter"
@@ -58,15 +58,13 @@
 </template>
 
 <script lang="ts" setup>
-import ismobile from 'ismobilejs'
 import { faRotateBack, faTimes, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
-import { settingStore } from '@/stores'
-import { eventBus, getAllFileEntries, isDirectoryReadingSupported as canDropFolders } from '@/utils'
-import { acceptedMediaTypes, UploadFile } from '@/config'
+import { isDirectoryReadingSupported as canDropFolders } from '@/utils'
+import { acceptedMediaTypes } from '@/config'
 import { uploadService } from '@/services'
-import { useAuthorization } from '@/composables'
+import { useUpload } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -77,63 +75,31 @@ const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/Upl
 
 const acceptAttribute = acceptedMediaTypes.join(',')
 
-const mediaPath = toRef(settingStore.state, 'media_path')
+const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = useUpload()
+
 const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
-const hasUploadFailures = ref(false)
 
-const { isAdmin } = useAuthorization()
-const allowsUpload = computed(() => isAdmin.value && !ismobile.any)
+const hasUploadFailures = computed(() => files.value.filter((file) => file.status === 'Errored').length > 0)
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 const onDragLeave = () => (droppable.value = false)
 
-const handleFiles = (files: Array<File>) => {
-  const uploadCandidates = files
-    .filter(file => acceptedMediaTypes.includes(file.type))
-    .map((file): UploadFile => ({
-      file,
-      id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
-      status: 'Ready',
-      name: file.name,
-      progress: 0
-    }))
-
-  uploadService.queue(uploadCandidates)
-}
-
-const fileEntryToFile = async (entry: FileSystemEntry) => new Promise<File>(resolve => entry.file(resolve))
-
 const onFileInputChange = (event: InputEvent) => {
   const selectedFileList = (event.target as HTMLInputElement).files
-  selectedFileList?.length && handleFiles(Array.from(selectedFileList))
+
+  if (selectedFileList?.length) {
+    queueFilesForUpload(Array.from(selectedFileList))
+  }
 }
 
 const onDrop = async (event: DragEvent) => {
   droppable.value = false
-
-  if (!event.dataTransfer) {
-    return
-  }
-
-  const fileEntries = await getAllFileEntries(event.dataTransfer.items)
-  const files = await Promise.all(fileEntries.map(async entry => await fileEntryToFile(entry)))
-  handleFiles(files)
+  await handleDropEvent(event)
 }
 
-const retryAll = () => {
-  uploadService.retryAll()
-  hasUploadFailures.value = false
-}
-
-const removeFailedEntries = () => {
-  uploadService.removeFailed()
-  hasUploadFailures.value = false
-}
-
-eventBus.on('UPLOAD_QUEUE_FINISHED', () => {
-  hasUploadFailures.value = uploadService.getFilesByStatus('Errored').length !== 0
-})
+const retryAll = () => uploadService.retryAll()
+const removeFailedEntries = () => uploadService.removeFailed()
 </script>
 
 <style lang="scss">

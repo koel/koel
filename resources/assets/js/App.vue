@@ -3,7 +3,7 @@
   <DialogBox ref="dialog"/>
   <MessageToaster ref="toaster"/>
 
-  <div id="main" v-if="authenticated">
+  <div id="main" v-if="authenticated" @dragover="onDragOver" @drop="onDrop" @dragend="onDragEnd">
     <Hotkeys/>
     <GlobalEventListeners/>
     <AppHeader/>
@@ -16,6 +16,7 @@
     <PlaylistContextMenu/>
     <PlaylistFolderContextMenu/>
     <CreateNewPlaylistContextMenu/>
+    <DropZone v-show="showDropZone"/>
   </div>
 
   <div class="login-wrapper" v-else>
@@ -28,7 +29,7 @@ import { defineAsyncComponent, nextTick, onMounted, provide, ref } from 'vue'
 import { eventBus, hideOverlay, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences } from '@/stores'
 import { authService, playbackService, socketListener, socketService, uploadService } from '@/services'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { ActiveScreenKey, DialogBoxKey, MessageToasterKey } from '@/symbols'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
@@ -50,10 +51,13 @@ const PlaylistFolderContextMenu = defineAsyncComponent(() => import('@/component
 const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
 const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreateNewPlaylistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
+const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 
 const dialog = ref<InstanceType<typeof DialogBox>>()
 const toaster = ref<InstanceType<typeof MessageToaster>>()
 const authenticated = ref(false)
+const showDropZone = ref(false)
+const activeScreen = ref<ScreenName>()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
@@ -110,6 +114,18 @@ const init = async () => {
   }
 }
 
+const onDragOver = (e: DragEvent) => {
+  showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && activeScreen.value !== 'Upload'
+}
+
+const onDragEnd = () => (showDropZone.value = false)
+const onDrop = () => (showDropZone.value = false)
+
+onMounted(() => {
+  eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName) => (activeScreen.value = screen))
+})
+
+provide(ActiveScreenKey, activeScreen)
 provide(DialogBoxKey, dialog)
 provide(MessageToasterKey, toaster)
 </script>

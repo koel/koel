@@ -25,16 +25,8 @@ const requestContextMenu = (event: MouseEvent) => {
 }
 
 eventBus.on({
-  /**
-   * Listen to song:played event to set the current playing song.
-   */
-  'SONG_STARTED': (newSong: Song) => (song.value = newSong),
-
-  /**
-   * Listen to main-content-view:load event and highlight the Queue icon if
-   * the Queue screen is being loaded.
-   */
-  'LOAD_MAIN_CONTENT': (view: MainViewName) => (viewingQueue.value = view === 'Queue')
+  SONG_STARTED: (newSong: Song) => (song.value = newSong),
+  ACTIVATE_SCREEN: (screen: ScreenName) => (viewingQueue.value = screen === 'Queue')
 })
 </script>
 
