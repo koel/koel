@@ -98,8 +98,13 @@ class Song extends Model
 
     protected function lyrics(): Attribute
     {
-        // Since we're displaying the lyrics using <pre>, replace breaks with newlines and strip all tags.
-        $normalizer = static fn (?string $value): string => strip_tags(preg_replace('#<br\s*/?>#i', PHP_EOL, $value));
+        $normalizer = static function (?string $value): string {
+            // Since we're displaying the lyrics using <pre>, replace breaks with newlines and strip all tags.
+            $value = strip_tags(preg_replace('#<br\s*/?>#i', PHP_EOL, $value));
+
+            // also remove the timestamps that often come with LRC files
+            return preg_replace('/\[\d{2}:\d{2}.\d{2}]\s*/m', '', $value);
+        };
 
         return new Attribute(get: $normalizer, set: $normalizer);
     }

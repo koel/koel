@@ -3,7 +3,6 @@ on:
   pull_request:
     branches:
       - master
-      - next
     paths:
       - resources/assets/**
       - .github/workflows/unit-frontend.yml

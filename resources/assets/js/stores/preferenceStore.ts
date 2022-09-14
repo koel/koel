@@ -15,7 +15,7 @@ interface Preferences extends Record<string, any> {
   transcodeOnMobile: boolean
   supportBarNoBugging: boolean
   showAlbumArtOverlay: boolean
-  theme: Theme['id'] | null
+  theme?: Theme['id'] | null
 }
 
 const preferenceStore = {

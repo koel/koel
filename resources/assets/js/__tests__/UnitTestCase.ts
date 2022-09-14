@@ -17,6 +17,7 @@ const deepMerge = (first: object, second: object) => {
   return mergeWith(first, second, (a, b) => {
     if (!isObject(b)) return b
 
+    // @ts-ignore
     return Array.isArray(a) ? [...a, ...b] : { ...a, ...b }
   })
 }
