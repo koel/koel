@@ -32,7 +32,7 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('quques and plays', async () => {
+    it('queues and plays', async () => {
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
       const song = factory<Song>('song', { playback_state: 'Stopped' })

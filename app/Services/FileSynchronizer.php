@@ -30,6 +30,7 @@ class FileSynchronizer
         private getID3 $getID3,
         private MediaMetadataService $mediaMetadataService,
         private SongRepository $songRepository,
+        private SimpleLrcReader $lrcReader,
         private Cache $cache,
         private Finder $finder
     ) {
@@ -51,7 +52,14 @@ class FileSynchronizer
         $info = $this->getID3->analyze($this->filePath);
         $this->syncError = Arr::get($info, 'error.0') ?: (Arr::get($info, 'playtime_seconds') ? null : 'Empty file');
 
-        return $this->syncError ? null : SongScanInformation::fromGetId3Info($info);
+        if ($this->syncError) {
+            return null;
+        }
+
+        $info = SongScanInformation::fromGetId3Info($info);
+        $info->lyrics = $info->lyrics ?: $this->lrcReader->tryReadForMediaFile($this->filePath);
+
+        return $info;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Tests\Integration\Services;
 
 use App\Services\FileSynchronizer;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class FileSynchronizerTest extends TestCase
@@ -46,11 +47,34 @@ class FileSynchronizerTest extends TestCase
         self::assertEqualsWithDelta(10, $info->length, 0.1);
     }
 
-    /** @test */
     public function testSongWithoutTitleHasFileNameAsTitle(): void
     {
         $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/blank.mp3');
 
         self::assertSame('blank', $this->fileSynchronizer->getFileScanInformation()->title);
+    }
+
+    public function testIgnoreLrcFileIfEmbeddedLyricsAvailable(): void
+    {
+        $base = sys_get_temp_dir() . '/' . Str::uuid();
+        $mediaFile = $base . '.mp3';
+        $lrcFile = $base . '.lrc';
+        copy(__DIR__ . '/../../songs/full.mp3', $mediaFile);
+        copy(__DIR__ . '/../../blobs/simple.lrc', $lrcFile);
+
+        self::assertSame("Foo\rbar", $this->fileSynchronizer->setFile($mediaFile)->getFileScanInformation()->lyrics);
+    }
+
+    public function testReadLrcFileIfEmbeddedLyricsNotAvailable(): void
+    {
+        $base = sys_get_temp_dir() . '/' . Str::uuid();
+        $mediaFile = $base . '.mp3';
+        $lrcFile = $base . '.lrc';
+        copy(__DIR__ . '/../../songs/blank.mp3', $mediaFile);
+        copy(__DIR__ . '/../../blobs/simple.lrc', $lrcFile);
+
+        $info = $this->fileSynchronizer->setFile($mediaFile)->getFileScanInformation();
+
+        self::assertSame("Line 1\nLine 2\nLine 3", $info->lyrics);
     }
 }
