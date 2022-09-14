@@ -21,7 +21,7 @@ export const downloadService = {
   },
 
   fromFavorites () {
-    if (favoriteStore.all.length) {
+    if (favoriteStore.state.songs.length) {
       this.trigger('favorites')
     }
   },
