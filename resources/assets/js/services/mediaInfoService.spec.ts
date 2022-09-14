@@ -3,7 +3,7 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { cache, httpService } from '@/services'
 import { albumStore, artistStore } from '@/stores'
-import { mediaInfoService } from '@/services/mediaInfoService'
+import { mediaInfoService } from './mediaInfoService'
 
 new class extends UnitTestCase {
   protected test () {

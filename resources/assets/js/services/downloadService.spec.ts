@@ -40,7 +40,7 @@ new class extends UnitTestCase {
       'downloads favorites if available',
       (songs, triggered) => {
         const mock = this.mock(downloadService, 'trigger')
-        favoriteStore.all = songs
+        favoriteStore.state.songs = songs
 
         downloadService.fromFavorites()
 

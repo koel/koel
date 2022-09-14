@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { preferenceStore, themeStore } from '@/stores'
+import { preferenceStore, themeStore } from '.'
 
 const testTheme: Theme = {
   id: 'test',

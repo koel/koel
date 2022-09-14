@@ -49,10 +49,10 @@ new class extends UnitTestCase {
     })
 
     it('triggers showing full wiki for aside mode', async () => {
-      const { queryByTestId } = await this.renderComponent('aside')
+      const { getByTestId, queryByTestId } = await this.renderComponent('aside')
       expect(queryByTestId('full')).toBeNull()
 
-      await fireEvent.click(queryByTestId('more-btn'))
+      await fireEvent.click(getByTestId('more-btn'))
 
       expect(queryByTestId('summary')).toBeNull()
       expect(queryByTestId('full')).not.toBeNull()

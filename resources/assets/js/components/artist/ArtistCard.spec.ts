@@ -74,7 +74,7 @@ new class extends UnitTestCase {
       await this.tick()
 
       expect(fetchMock).toHaveBeenCalledWith(artist)
-      expect(playMock).toHaveBeenCalled(songs, true)
+      expect(playMock).toHaveBeenCalledWith(songs, true)
     })
   }
 }

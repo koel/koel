@@ -8,7 +8,7 @@ import CreatePlaylistForm from './CreatePlaylistForm.vue'
 new class extends UnitTestCase {
   protected test () {
     it('submits', async () => {
-      const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory<PlaylistFolder>('playlist'))
+      const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory<Playlist>('playlist'))
       const { getByPlaceholderText, getByRole } = await this.render(CreatePlaylistForm)
 
       await fireEvent.update(getByPlaceholderText('Playlist name'), 'My playlist')

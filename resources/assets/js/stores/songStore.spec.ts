@@ -1,19 +1,11 @@
+import { reactive } from 'vue'
 import isMobile from 'ismobilejs'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { authService, httpService } from '@/services'
-import {
-  albumStore,
-  artistStore,
-  commonStore,
-  overviewStore,
-  preferenceStore,
-  songStore,
-  SongUpdateResult
-} from '@/stores'
 import { eventBus } from '@/utils'
-import { reactive } from 'vue'
+import { albumStore, artistStore, commonStore, overviewStore, preferenceStore, songStore, SongUpdateResult } from '.'
 
 new class extends UnitTestCase {
   protected afterEach () {

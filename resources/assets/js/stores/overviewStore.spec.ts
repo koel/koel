@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { httpService } from '@/services'
-import { albumStore, artistStore, overviewStore, recentlyPlayedStore, songStore } from '@/stores'
+import { albumStore, artistStore, overviewStore, recentlyPlayedStore, songStore } from '.'
 
 new class extends UnitTestCase {
   protected beforeEach () {

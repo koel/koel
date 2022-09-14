@@ -1,7 +1,7 @@
 import isMobile from 'ismobilejs'
 import { reactive } from 'vue'
 import { httpService } from '@/services'
-import { playlistFolderStore, playlistStore, preferenceStore, settingStore, themeStore, userStore } from '@/stores'
+import { playlistFolderStore, playlistStore, preferenceStore, settingStore, themeStore, userStore } from '.'
 
 interface CommonStoreState {
   allow_download: boolean

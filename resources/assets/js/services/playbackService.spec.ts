@@ -1,3 +1,4 @@
+import { nextTick, reactive } from 'vue'
 import plyr from 'plyr'
 import lodash from 'lodash'
 import { expect, it, vi } from 'vitest'
@@ -5,7 +6,6 @@ import { eventBus, noop } from '@/utils'
 import router from '@/router'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { nextTick, reactive } from 'vue'
 import { socketService } from '@/services'
 import { playbackService } from './playbackService'
 

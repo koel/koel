@@ -3,10 +3,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { reactive } from 'vue'
 import factory from '@/__tests__/factory'
 import { httpService } from '@/services'
-import { songStore } from '@/stores/songStore'
-import { ExcerptSearchResult, searchStore } from '@/stores/searchStore'
-import { albumStore } from '@/stores/albumStore'
-import { artistStore } from '@/stores/artistStore'
+import { albumStore, artistStore, ExcerptSearchResult, searchStore, songStore } from '.'
 
 new class extends UnitTestCase {
   protected beforeEach () {

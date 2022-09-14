@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { localStorageService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { preferenceStore } from '@/stores'
+import { preferenceStore } from '.'
 
 new class extends UnitTestCase {
   protected beforeEach () {

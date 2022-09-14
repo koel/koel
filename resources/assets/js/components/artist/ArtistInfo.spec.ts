@@ -7,7 +7,7 @@ import { fireEvent } from '@testing-library/vue'
 import { playbackService } from '@/services'
 import ArtistInfoComponent from './ArtistInfo.vue'
 
-let artist: Album
+let artist: Artist
 
 new class extends UnitTestCase {
   private async renderComponent (mode: MediaInfoDisplayMode = 'aside', info?: ArtistInfo) {
@@ -43,10 +43,10 @@ new class extends UnitTestCase {
     })
 
     it('triggers showing full bio for aside mode', async () => {
-      const { queryByTestId } = await this.renderComponent('aside')
+      const { queryByTestId, getByTestId } = await this.renderComponent('aside')
       expect(queryByTestId('full')).toBeNull()
 
-      await fireEvent.click(queryByTestId('more-btn'))
+      await fireEvent.click(getByTestId('more-btn'))
 
       expect(queryByTestId('summary')).toBeNull()
       expect(queryByTestId('full')).not.toBeNull()

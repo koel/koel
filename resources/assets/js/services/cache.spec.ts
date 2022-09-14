@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { Cache } from '@/services/cache'
+import { Cache } from './cache'
 
 let cache: Cache
 

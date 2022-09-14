@@ -1,7 +1,7 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { localStorageService } from '@/services/localStorageService'
-import { authService } from '@/services/authService'
 import { expect, it } from 'vitest'
+import { authService } from './authService'
 
 new class extends UnitTestCase {
   protected test () {

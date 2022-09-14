@@ -1,10 +1,9 @@
+import { reactive } from 'vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { queueStore } from '@/stores/queueStore'
 import { expect, it } from 'vitest'
 import factory from 'factoria'
 import { httpService } from '@/services'
-import { songStore } from '@/stores/songStore'
-import { reactive } from 'vue'
+import { queueStore, songStore } from '.'
 
 let songs
 
@@ -63,7 +62,7 @@ new class extends UnitTestCase {
       expect(queueStore.state.songs).toHaveLength(0)
     })
 
-    it.each([['Playing'], ['Paused']])('identifies the current song by %s state', (state: PlaybackState) => {
+    it.each<[PlaybackState]>([['Playing'], ['Paused']])('identifies the current song by %s state', state => {
       queueStore.state.songs[1].playback_state = state
       expect(queueStore.current).toEqual(queueStore.state.songs[1])
     })

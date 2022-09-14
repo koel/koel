@@ -1,6 +1,6 @@
 import { without } from 'lodash'
 import { reactive } from 'vue'
-import { UploadFile, UploadStatus } from '@/config'
+import { UploadFile } from '@/config'
 import { httpService } from '@/services'
 import { albumStore, overviewStore, songStore } from '@/stores'
 import { logger } from '@/utils'
@@ -102,9 +102,5 @@ export const uploadService = {
 
   removeFailed () {
     this.state.files = this.state.files.filter(file => file.status !== 'Errored')
-  },
-
-  getFilesByStatus (status: UploadStatus) {
-    return this.state.files.filter(file => file.status === status)
   }
 }

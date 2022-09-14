@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { CreateUserData, UpdateCurrentProfileData, UpdateUserData, userStore } from '@/stores/userStore'
 import factory from '@/__tests__/factory'
 import { httpService } from '@/services'
+import { CreateUserData, UpdateCurrentProfileData, UpdateUserData, userStore } from '.'
 
 const currentUser = factory<User>('user', {
   id: 1,

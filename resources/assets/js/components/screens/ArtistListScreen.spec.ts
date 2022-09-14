@@ -31,7 +31,7 @@ new class extends UnitTestCase {
     it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async (mode) => {
       preferenceStore.artistsViewMode = mode
 
-      const { getByTestId, html } = this.renderComponent()
+      const { getByTestId } = this.renderComponent()
 
       await waitFor(() => expect(getByTestId('artist-list').classList.contains(`as-${mode}`)).toBe(true))
     })
