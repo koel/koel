@@ -34,6 +34,7 @@ export type EventName =
   | 'SMART_PLAYLIST_UPDATED'
   | 'SONG_STARTED'
   | 'SONGS_UPDATED'
+  | 'SONGS_DELETED'
   | 'SONG_QUEUED_FROM_ROUTE'
 
   // socket events

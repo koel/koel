@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { arrayify } from '@/utils'
+import { arrayify, eventBus } from '@/utils'
 import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
 import { ref } from 'vue'
 import { fireEvent } from '@testing-library/vue'
@@ -32,6 +32,7 @@ new class extends UnitTestCase {
   protected test () {
     it('edits a single song', async () => {
       const updateMock = this.mock(songStore, 'update')
+      const emitMock = this.mock(eventBus, 'emit')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       const { html, getByTestId, getByRole } = await this.renderComponent(factory<Song>('song', {
@@ -64,10 +65,12 @@ new class extends UnitTestCase {
       })
 
       expect(alertMock).toHaveBeenCalledWith('Updated 1 song.')
+      expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED')
     })
 
     it('edits multiple songs', async () => {
       const updateMock = this.mock(songStore, 'update')
+      const emitMock = this.mock(eventBus, 'emit')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       const { html, getByTestId, getByRole, queryByTestId } = await this.renderComponent(factory<Song>('song', 3))
@@ -93,6 +96,7 @@ new class extends UnitTestCase {
       })
 
       expect(alertMock).toHaveBeenCalledWith('Updated 3 songs.')
+      expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED')
     })
 
     it('displays artist name if all songs have the same artist', async () => {

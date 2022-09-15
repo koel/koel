@@ -1,8 +1,10 @@
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore } from '@/stores'
+import { commonStore, overviewStore } from '@/stores'
 import { ActiveScreenKey } from '@/symbols'
+import { EventName } from '@/config'
+import { eventBus } from '@/utils'
 import HomeScreen from './HomeScreen.vue'
 
 new class extends UnitTestCase {
@@ -37,6 +39,16 @@ new class extends UnitTestCase {
       ].forEach(id => getByTestId(id))
 
       expect(queryByTestId('screen-empty-state')).toBeNull()
+    })
+
+    it.each<[EventName]>([['SONGS_UPDATED'], ['SONGS_DELETED']])
+    ('refreshes the overviews on %s event', (eventName) => {
+      const refreshMock = this.mock(overviewStore, 'refresh')
+      this.renderComponent()
+
+      eventBus.emit(eventName)
+
+      expect(refreshMock).toHaveBeenCalled()
     })
   }
 }

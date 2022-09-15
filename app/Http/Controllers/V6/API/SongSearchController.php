@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V6\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\V6\Requests\SearchRequest;
+use App\Http\Requests\V6\API\SearchRequest;
 use App\Http\Resources\SongResource;
 use App\Models\User;
 use App\Services\V6\SearchService;

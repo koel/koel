@@ -13,8 +13,8 @@
       <template v-slot:meta>
         <a v-if="isNormalArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
         <span class="nope" v-else>{{ album.artist_name }}</span>
-        <span>{{ pluralize(album.song_count, 'song') }}</span>
-        <span>{{ secondsToHis(album.length) }}</span>
+        <span>{{ pluralize(songs, 'song') }}</span>
+        <span>{{ duration }}</span>
         <a v-if="useLastfm" class="info" href title="View album information" @click.prevent="showInfo">Info</a>
 
         <a
@@ -51,7 +51,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, onMounted, ref, toRef, toRefs } from 'vue'
-import { eventBus, logger, pluralize, requireInjection, secondsToHis } from '@/utils'
+import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
@@ -84,6 +84,7 @@ const {
   songList,
   showingControls,
   isPhone,
+  duration,
   onPressEnter,
   playAll,
   playSelected,

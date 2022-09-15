@@ -134,6 +134,17 @@ class PlaybackService {
    * We'll let them come true
    */
   public async play (song: Song) {
+    // If for any reason (most likely a bug), the requested song has been deleted, just attempt the next song.
+    if (song.deleted) {
+      logger.warn('Attempted to play a deleted song', song)
+
+      if (this.next && this.next.id !== song.id) {
+        await this.playNext()
+      }
+
+      return
+    }
+
     document.title = `${song.title} ♫ Koel`
     this.player.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
 

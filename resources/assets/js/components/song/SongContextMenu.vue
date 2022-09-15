@@ -1,57 +1,48 @@
 <template>
   <ContextMenuBase ref="base" data-testid="song-context-menu" extra-class="song-menu">
     <template v-if="onlyOneSongSelected">
-      <li class="playback" @click.stop.prevent="doPlayback">
+      <li @click.stop.prevent="doPlayback">
         <span v-if="firstSongPlaying">Pause</span>
         <span v-else>Play</span>
       </li>
-      <li class="go-to-album" @click="viewAlbumDetails(songs[0].album_id)">Go to Album</li>
-      <li class="go-to-artist" @click="viewArtistDetails(songs[0].artist_id)">Go to Artist</li>
+      <li @click="viewAlbumDetails(songs[0].album_id)">Go to Album</li>
+      <li @click="viewArtistDetails(songs[0].artist_id)">Go to Artist</li>
     </template>
     <li class="has-sub">
       Add To
       <ul class="menu submenu menu-add-to">
         <template v-if="queue.length">
-          <li v-if="currentSong" class="after-current" @click="queueSongsAfterCurrent">After Current Song</li>
-          <li class="bottom-queue" @click="queueSongsToBottom">Bottom of Queue</li>
-          <li class="top-queue" @click="queueSongsToTop">Top of Queue</li>
+          <li v-if="currentSong" @click="queueSongsAfterCurrent">After Current Song</li>
+          <li @click="queueSongsToBottom">Bottom of Queue</li>
+          <li @click="queueSongsToTop">Top of Queue</li>
         </template>
         <li v-else @click="queueSongsToBottom">Queue</li>
-        <li class="separator"></li>
-        <li class="favorite" @click="addSongsToFavorite">Favorites</li>
-        <li class="separator" v-if="normalPlaylists.length"></li>
-        <li
-          class="playlist"
-          v-for="p in normalPlaylists"
-          :key="p.id"
-          @click="addSongsToExistingPlaylist(p)"
-        >{{ p.name }}
-        </li>
+        <li class="separator"/>
+        <li @click="addSongsToFavorite">Favorites</li>
+        <li class="separator" v-if="normalPlaylists.length"/>
+        <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
       </ul>
     </li>
-    <li class="open-edit-form" v-if="isAdmin" @click="openEditForm">Edit</li>
-    <li class="download" v-if="allowDownload" @click="download">Download</li>
-    <li
-      class="copy-url"
-      v-if="onlyOneSongSelected"
-      @click="copyUrl"
-    >
-      Copy Shareable URL
-    </li>
+    <li v-if="isAdmin" @click="openEditForm">Edit</li>
+    <li v-if="allowDownload" @click="download">Download</li>
+    <li v-if="onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
+    <li class="separator"/>
+    <li v-if="isAdmin" @click="deleteFromFilesystem">Delete from Filesystem</li>
   </ContextMenuBase>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { arrayify, copyText, eventBus, requireInjection } from '@/utils'
+import { arrayify, copyText, eventBus, pluralize, requireInjection } from '@/utils'
 import { commonStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import router from '@/router'
 import { useAuthorization, useContextMenu, useSongMenuMethods } from '@/composables'
-import { MessageToasterKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey } from '@/symbols'
 
 const { context, base, ContextMenuBase, open, close, trigger } = useContextMenu()
 
+const dialogBox = requireInjection(DialogBoxKey)
 const toaster = requireInjection(MessageToasterKey)
 const songs = ref<Song[]>([])
 
@@ -102,6 +93,18 @@ const download = () => trigger(() => downloadService.fromSongs(songs.value))
 const copyUrl = () => trigger(() => {
   copyText(songStore.getShareableUrl(songs.value[0]))
   toaster.value.success('URL copied to clipboard.')
+})
+
+const deleteFromFilesystem = () => trigger(async () => {
+  const confirmed = await dialogBox.value.confirm(
+    'Delete selected song(s) from the filesystem? This action is NOT reversible!'
+  )
+
+  if (confirmed) {
+    await songStore.deleteFromFilesystem(songs.value)
+    toaster.value.success(`Deleted ${pluralize(songs.value, 'song')} from the filesystem.`)
+    eventBus.emit('SONGS_DELETED', songs.value)
+  }
 })
 
 eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _songs: Song | Song[]) => {

@@ -3,8 +3,7 @@ import isMobile from 'ismobilejs'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { authService, httpService } from '@/services'
-import { eventBus } from '@/utils'
+import { authService, http } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, preferenceStore, songStore, SongUpdateResult } from '.'
 
 new class extends UnitTestCase {
@@ -53,7 +52,7 @@ new class extends UnitTestCase {
 
     it('resolves a song', async () => {
       const song = factory<Song>('song')
-      const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(song)
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce(song)
 
       expect(await songStore.resolve(song.id)).toEqual(song)
       expect(getMock).toHaveBeenCalledWith(`songs/${song.id}`)
@@ -74,7 +73,7 @@ new class extends UnitTestCase {
     it('registers a play', async () => {
       const song = factory<Song>('song', { play_count: 42 })
 
-      const postMock = this.mock(httpService, 'post').mockResolvedValueOnce(factory<Interaction>('interaction', {
+      const postMock = this.mock(http, 'post').mockResolvedValueOnce(factory<Interaction>('interaction', {
         song_id: song.id,
         play_count: 50
       }))
@@ -87,7 +86,7 @@ new class extends UnitTestCase {
     it('scrobbles', async () => {
       const song = factory<Song>('song')
       song.play_start_time = 123456789
-      const postMock = this.mock(httpService, 'post')
+      const postMock = this.mock(http, 'post')
 
       await songStore.scrobble(song)
 
@@ -123,9 +122,7 @@ new class extends UnitTestCase {
       const syncArtistsMock = this.mock(artistStore, 'syncWithVault')
       const removeAlbumsMock = this.mock(albumStore, 'removeByIds')
       const removeArtistsMock = this.mock(artistStore, 'removeByIds')
-      const emitMock = this.mock(eventBus, 'emit')
-      const refreshMock = this.mock(overviewStore, 'refresh')
-      const putMock = this.mock(httpService, 'put').mockResolvedValueOnce(result)
+      const putMock = this.mock(http, 'put').mockResolvedValueOnce(result)
 
       await songStore.update(songs, {
         album_name: 'Updated Album',
@@ -145,8 +142,6 @@ new class extends UnitTestCase {
       expect(syncArtistsMock).toHaveBeenCalledWith(result.artists)
       expect(removeAlbumsMock).toHaveBeenCalledWith([10])
       expect(removeArtistsMock).toHaveBeenCalledWith([42])
-      expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED')
-      expect(refreshMock).toHaveBeenCalled()
     })
 
     it('gets source URL', () => {
@@ -171,7 +166,7 @@ new class extends UnitTestCase {
         playback_state: null
       })
 
-      const trackPlayCountMock = this.mock(songStore, 'trackPlayCount')
+      const trackPlayCountMock = this.mock(songStore, 'setUpPlayCountTracking')
 
       expect(songStore.syncWithVault(song)).toEqual([reactive(song)])
       expect(songStore.vault.has(song.id)).toBe(true)
@@ -183,7 +178,7 @@ new class extends UnitTestCase {
       expect(trackPlayCountMock).toHaveBeenCalledOnce()
     })
 
-    it('tracks play count', async () => {
+    it('sets up play count tracking', async () => {
       const refreshMock = this.mock(overviewStore, 'refresh')
       const artist = reactive(factory<Artist>('artist', { id: 42, play_count: 100 }))
       const album = reactive(factory<Album>('album', { id: 10, play_count: 120 }))
@@ -200,7 +195,7 @@ new class extends UnitTestCase {
         play_count: 98
       }))
 
-      songStore.trackPlayCount(song)
+      songStore.setUpPlayCountTracking(song)
       song.play_count = 100
 
       await this.tick()
@@ -214,8 +209,8 @@ new class extends UnitTestCase {
     it('fetches for album', async () => {
       const songs = factory<Song>('song', 3)
       const album = factory<Album>('album', { id: 42 })
-      const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(songs)
-      const syncMock = this.mock(songStore, 'syncWithVault')
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
+      const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await songStore.fetchForAlbum(album)
 
@@ -226,8 +221,8 @@ new class extends UnitTestCase {
     it('fetches for artist', async () => {
       const songs = factory<Song>('song', 3)
       const artist = factory<Artist>('artist', { id: 42 })
-      const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(songs)
-      const syncMock = this.mock(songStore, 'syncWithVault')
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
+      const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await songStore.fetchForArtist(artist)
 
@@ -238,8 +233,8 @@ new class extends UnitTestCase {
     it('fetches for playlist', async () => {
       const songs = factory<Song>('song', 3)
       const playlist = factory<Playlist>('playlist', { id: 42 })
-      const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(songs)
-      const syncMock = this.mock(songStore, 'syncWithVault')
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
+      const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await songStore.fetchForPlaylist(playlist)
 
@@ -250,7 +245,7 @@ new class extends UnitTestCase {
     it('paginates', async () => {
       const songs = factory<Song>('song', 3)
 
-      const getMock = this.mock(httpService, 'get').mockResolvedValueOnce({
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce({
         data: songs,
         links: {
           next: 'http://localhost/api/v1/songs?page=3'

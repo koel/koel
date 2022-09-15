@@ -84,6 +84,7 @@
 
 <script lang="ts" setup>
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { intersectionBy } from 'lodash'
 import { ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { searchStore } from '@/stores'
@@ -104,11 +105,23 @@ const searching = ref(false)
 
 const goToSongResults = () => router.go(`search/songs/${q.value}`)
 
-eventBus.on('SEARCH_KEYWORDS_CHANGED', async (_q: string) => {
-  q.value = _q
+const doSearch = async () => {
   searching.value = true
   await searchStore.excerptSearch(q.value)
   searching.value = false
+}
+
+eventBus.on({
+  SEARCH_KEYWORDS_CHANGED: async (_q: string) => {
+    q.value = _q
+    await doSearch()
+  },
+
+  SONGS_DELETED: async (songs: Song[]) => {
+    if (intersectionBy(songs, excerpt.value.songs, 'id').length !== 0) {
+      await doSearch()
+    }
+  }
 })
 </script>
 

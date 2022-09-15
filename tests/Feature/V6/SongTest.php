@@ -3,6 +3,8 @@
 namespace Tests\Feature\V6;
 
 use App\Models\Song;
+use App\Models\User;
+use Illuminate\Support\Collection;
 
 class SongTest extends TestCase
 {
@@ -59,5 +61,30 @@ class SongTest extends TestCase
         $song = Song::factory()->create();
 
         $this->getAs('api/songs/' . $song->id)->assertJsonStructure(self::JSON_STRUCTURE);
+    }
+
+    public function testDelete(): void
+    {
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory(3)->create();
+
+        /** @var User $admin */
+        $admin = User::factory()->admin()->create();
+
+        $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->toArray()], $admin)
+            ->assertNoContent();
+
+        $songs->each(fn (Song $song) => $this->assertModelMissing($song));
+    }
+
+    public function testUnauthorizedDelete(): void
+    {
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory(3)->create();
+
+        $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->toArray()])
+            ->assertForbidden();
+
+        $songs->each(fn (Song $song) => $this->assertModelExists($song));
     }
 }

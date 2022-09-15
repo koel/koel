@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { remove } from 'lodash'
 import { songStore } from '@/stores'
 
@@ -15,7 +15,7 @@ export const recentlyPlayedStore = {
   }),
 
   async fetch () {
-    this.state.songs = songStore.syncWithVault(await httpService.get<Song[]>('songs/recently-played'))
+    this.state.songs = songStore.syncWithVault(await http.get<Song[]>('songs/recently-played'))
   },
 
   async add (song: Song) {

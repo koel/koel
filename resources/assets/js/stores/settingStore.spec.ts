@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { settingStore } from '.'
 
 new class extends UnitTestCase {
@@ -11,7 +11,7 @@ new class extends UnitTestCase {
     })
 
     it('updates the media path', async () => {
-      this.mock(httpService, 'put')
+      this.mock(http, 'put')
       await settingStore.update({ media_path: '/dev/null' })
       expect(settingStore.state.media_path).toEqual('/dev/null')
     })

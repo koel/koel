@@ -2,7 +2,7 @@ import { reactive } from 'vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import factory from 'factoria'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { queueStore, songStore } from '.'
 
 let songs
@@ -89,7 +89,7 @@ new class extends UnitTestCase {
 
     it('fetches random songs to queue', async () => {
       const songs = factory<Song>('song', 3)
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
+      const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await queueStore.fetchRandom(3)
@@ -101,7 +101,7 @@ new class extends UnitTestCase {
 
     it('fetches random songs to queue with a custom order', async () => {
       const songs = factory<Song>('song', 3)
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
+      const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await queueStore.fetchInOrder('title', 'desc', 3)

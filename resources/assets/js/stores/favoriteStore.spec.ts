@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { favoriteStore } from '.'
 
 new class extends UnitTestCase {
@@ -13,7 +13,7 @@ new class extends UnitTestCase {
     it('toggles one song', async () => {
       const addMock = this.mock(favoriteStore, 'add')
       const removeMock = this.mock(favoriteStore, 'remove')
-      const postMock = this.mock(httpService, 'post')
+      const postMock = this.mock(http, 'post')
       const song = factory<Song>('song', { liked: false })
 
       await favoriteStore.toggleOne(song)
@@ -48,7 +48,7 @@ new class extends UnitTestCase {
     it('likes several songs', async () => {
       const songs = factory<Song>('song', 3)
       const addMock = this.mock(favoriteStore, 'add')
-      const postMock = this.mock(httpService, 'post')
+      const postMock = this.mock(http, 'post')
 
       await favoriteStore.like(songs)
 
@@ -59,7 +59,7 @@ new class extends UnitTestCase {
     it('unlikes several songs', async () => {
       const songs = factory<Song>('song', 3)
       const removeMock = this.mock(favoriteStore, 'remove')
-      const postMock = this.mock(httpService, 'post')
+      const postMock = this.mock(http, 'post')
 
       await favoriteStore.unlike(songs)
 
@@ -69,7 +69,7 @@ new class extends UnitTestCase {
 
     it('fetches favorites', async () => {
       const songs = factory<Song>('song', 3)
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
+      const getMock = this.mock(http, 'get').mockResolvedValue(songs)
 
       await favoriteStore.fetch()
 

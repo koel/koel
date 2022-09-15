@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { arrayify } from '@/utils'
 import { songStore } from '@/stores'
 
@@ -15,7 +15,7 @@ export const favoriteStore = {
     song.liked = !song.liked
     song.liked ? this.add(song) : this.remove(song)
 
-    await httpService.post<Song>('interaction/like', { song: song.id })
+    await http.post<Song>('interaction/like', { song: song.id })
   },
 
   add (songs: Song | Song[]) {
@@ -32,17 +32,17 @@ export const favoriteStore = {
     songs.forEach(song => (song.liked = true))
     this.add(songs)
 
-    await httpService.post('interaction/batch/like', { songs: songs.map(song => song.id) })
+    await http.post('interaction/batch/like', { songs: songs.map(song => song.id) })
   },
 
   async unlike (songs: Song[]) {
     songs.forEach(song => (song.liked = false))
     this.remove(songs)
 
-    await httpService.post('interaction/batch/unlike', { songs: songs.map(song => song.id) })
+    await http.post('interaction/batch/unlike', { songs: songs.map(song => song.id) })
   },
 
   async fetch () {
-    this.state.songs = songStore.syncWithVault(await httpService.get<Song[]>('songs/favorite'))
+    this.state.songs = songStore.syncWithVault(await http.get<Song[]>('songs/favorite'))
   }
 }

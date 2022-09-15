@@ -48,7 +48,7 @@
 <script lang="ts" setup>
 import { faLastfm } from '@fortawesome/free-brands-svg-icons'
 import { computed, defineAsyncComponent } from 'vue'
-import { authService, httpService } from '@/services'
+import { authService, http } from '@/services'
 import { forceReloadWindow } from '@/utils'
 import { useAuthorization, useThirdPartyServices } from '@/composables'
 
@@ -71,7 +71,7 @@ const connect = () => window.open(
 )
 
 const disconnect = async () => {
-  await httpService.delete('lastfm/disconnect')
+  await http.delete('lastfm/disconnect')
   forceReloadWindow()
 }
 </script>

@@ -53,11 +53,6 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('renders', async () => {
-      const { html } = await this.renderComponent()
-      expect(html()).toMatchSnapshot()
-    })
-
     it('shows and hides info', async () => {
       const { getByTitle, getByTestId, queryByTestId, html } = await this.renderComponent()
       expect(queryByTestId('album-info')).toBeNull()

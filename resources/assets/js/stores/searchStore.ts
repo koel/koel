@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { albumStore, artistStore, songStore } from '@/stores'
 
 type ExcerptState = {
@@ -21,7 +21,7 @@ export const searchStore = {
   }),
 
   async excerptSearch (q: string) {
-    const result = await httpService.get<ExcerptSearchResult>(`search?q=${q}`)
+    const result = await http.get<ExcerptSearchResult>(`search?q=${q}`)
 
     this.state.excerpt.songs = songStore.syncWithVault(result.songs)
     this.state.excerpt.albums = albumStore.syncWithVault(result.albums)
@@ -29,7 +29,7 @@ export const searchStore = {
   },
 
   async songSearch (q: string) {
-    this.state.songs = songStore.syncWithVault(await httpService.get<Song[]>(`search/songs?q=${q}`))
+    this.state.songs = songStore.syncWithVault(await http.get<Song[]>(`search/songs?q=${q}`))
   },
 
   resetSongResultState () {

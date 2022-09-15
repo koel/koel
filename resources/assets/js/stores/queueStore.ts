@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 import { differenceBy, shuffle, unionBy } from 'lodash'
 import { arrayify } from '@/utils'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { songStore } from '@/stores'
 
 export const queueStore = {
@@ -144,12 +144,12 @@ export const queueStore = {
   },
 
   async fetchRandom (limit = 500) {
-    const songs = await httpService.get<Song[]>(`queue/fetch?order=rand&limit=${limit}`)
+    const songs = await http.get<Song[]>(`queue/fetch?order=rand&limit=${limit}`)
     this.state.songs = songStore.syncWithVault(songs)
   },
 
   async fetchInOrder (sortField: SongListSortField, order: SortOrder, limit = 500) {
-    const songs = await httpService.get<Song[]>(`queue/fetch?order=${order}&sort=${sortField}&limit=${limit}`)
+    const songs = await http.get<Song[]>(`queue/fetch?order=${order}&sort=${sortField}&limit=${limit}`)
     this.state.songs = songStore.syncWithVault(songs)
   }
 }

@@ -2,11 +2,11 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify, eventBus } from '@/utils'
-import { fireEvent } from '@testing-library/vue'
+import { fireEvent, waitFor } from '@testing-library/vue'
 import router from '@/router'
 import { downloadService, playbackService } from '@/services'
-import { favoriteStore, playlistStore, queueStore } from '@/stores'
-import { MessageToasterStub } from '@/__tests__/stubs'
+import { favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
+import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
 import SongContextMenu from './SongContextMenu.vue'
 
 let songs: Song[]
@@ -178,6 +178,29 @@ new class extends UnitTestCase {
       const { getByText } = await this.renderComponent(factory<Song>('song'))
 
       getByText('Copy Shareable URL')
+    })
+
+    it('deletes song', async () => {
+      const confirmMock = this.mock(DialogBoxStub.value, 'confirm', true)
+      const toasterMock = this.mock(MessageToasterStub.value, 'success')
+      const deleteMock = this.mock(songStore, 'deleteFromFilesystem')
+      const { getByText } = await this.actingAsAdmin().renderComponent()
+
+      const emitMock = this.mock(eventBus, 'emit')
+
+      await fireEvent.click(getByText('Delete from Filesystem'))
+
+      await waitFor(() => {
+        expect(confirmMock).toHaveBeenCalled()
+        expect(deleteMock).toHaveBeenCalledWith(songs)
+        expect(toasterMock).toHaveBeenCalledWith('Deleted 5 songs from the filesystem.')
+        expect(emitMock).toHaveBeenCalledWith('SONGS_DELETED', songs)
+      })
+    })
+
+    it('does not have an option to delete songs if current user is not admin', async () => {
+      const { queryByText } = await this.actingAs().renderComponent()
+      expect(queryByText('Delete from Filesystem')).toBeNull()
     })
   }
 }

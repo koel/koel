@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { artistStore } from '.'
 
 new class extends UnitTestCase {
@@ -70,7 +70,7 @@ new class extends UnitTestCase {
     it('uploads an image for an artist', async () => {
       const artist = factory<Artist>('artist')
       artistStore.syncWithVault(artist)
-      const putMock = this.mock(httpService, 'put').mockResolvedValue({ imageUrl: 'http://localhost/img.jpg' })
+      const putMock = this.mock(http, 'put').mockResolvedValue({ imageUrl: 'http://localhost/img.jpg' })
 
       await artistStore.uploadImage(artist, 'data://image')
 
@@ -81,7 +81,7 @@ new class extends UnitTestCase {
 
     it('resolves an artist', async () => {
       const artist = factory<Artist>('artist')
-      const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(artist)
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce(artist)
 
       expect(await artistStore.resolve(artist.id)).toEqual(artist)
       expect(getMock).toHaveBeenCalledWith(`artists/${artist.id}`)
@@ -94,7 +94,7 @@ new class extends UnitTestCase {
     it('paginates', async () => {
       const artists = factory<Artist>('artist', 3)
 
-      this.mock(httpService, 'get').mockResolvedValueOnce({
+      this.mock(http, 'get').mockResolvedValueOnce({
         data: artists,
         links: {
           next: '/artists?page=2'

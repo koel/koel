@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { albumStore, artistStore, overviewStore, recentlyPlayedStore, songStore } from '.'
 
 new class extends UnitTestCase {
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
       const recentlyAddedAlbums = factory<Album>('album', 6)
       const recentlyPlayedSongs = factory<Song>('song', 9)
 
-      const getMock = this.mock(httpService, 'get').mockResolvedValueOnce({
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce({
         most_played_songs: mostPlayedSongs,
         most_played_albums: mostPlayedAlbums,
         most_played_artists: mostPlayedArtists,

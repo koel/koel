@@ -126,10 +126,9 @@ return [
     ],
 
     'cache_media' => env('CACHE_MEDIA', true),
-
     'memory_limit' => env('MEMORY_LIMIT'),
-
     'force_https' => env('FORCE_HTTPS', false),
+    'backup_on_delete' => env('BACKUP_ON_DELETE', true),
 
     'misc' => [
         'home_url' => 'https://koel.dev',

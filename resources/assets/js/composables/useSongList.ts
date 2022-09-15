@@ -1,4 +1,4 @@
-import { orderBy, sampleSize, take } from 'lodash'
+import { differenceBy, orderBy, sampleSize, take } from 'lodash'
 import isMobile from 'ismobilejs'
 import { computed, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
@@ -18,7 +18,7 @@ import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
-import { provideReadonly } from '@/utils'
+import { eventBus, provideReadonly } from '@/utils'
 
 export const useSongList = (songs: Ref<Song[]>, type: SongListType, config: Partial<SongListConfig> = {}) => {
   const songList = ref<InstanceType<typeof SongList>>()
@@ -90,6 +90,10 @@ export const useSongList = (songs: Ref<Song[]>, type: SongListType, config: Part
 
     songs.value = orderBy(songs.value, sortFields, order)
   }
+
+  eventBus.on('SONGS_DELETED', (deletedSongs: Song[]) => {
+    songs.value = differenceBy(songs.value, deletedSongs, 'id')
+  })
 
   provideReadonly(SongListTypeKey, type)
   provideReadonly(SongsKey, songs, false)

@@ -80,4 +80,4 @@ class Http {
   }
 }
 
-export const httpService = new Http()
+export const http = new Http()

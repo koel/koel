@@ -1,14 +1,14 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { recentlyPlayedStore, songStore } from '.'
 
 new class extends UnitTestCase {
   protected test () {
     it('fetches the recently played songs', async () => {
       const songs = factory<Song>('song', 3)
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
+      const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await recentlyPlayedStore.fetch()

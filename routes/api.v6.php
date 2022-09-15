@@ -6,6 +6,7 @@ use App\Http\Controllers\V6\API\AlbumSongController;
 use App\Http\Controllers\V6\API\ArtistController;
 use App\Http\Controllers\V6\API\ArtistSongController;
 use App\Http\Controllers\V6\API\DataController;
+use App\Http\Controllers\V6\API\DeleteSongsController;
 use App\Http\Controllers\V6\API\ExcerptSearchController;
 use App\Http\Controllers\V6\API\FavoriteSongController;
 use App\Http\Controllers\V6\API\FetchAlbumInformationController;
@@ -50,6 +51,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('songs', SongController::class)->where(['song' => Song::ID_REGEX]);
         Route::get('songs/recently-played', [RecentlyPlayedSongController::class, 'index']);
         Route::get('songs/favorite', [FavoriteSongController::class, 'index']);
+        Route::delete('songs', DeleteSongsController::class);
 
         Route::apiResource('users', UserController::class);
 

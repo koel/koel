@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { albumStore, songStore } from '.'
 
 new class extends UnitTestCase {
@@ -57,7 +57,7 @@ new class extends UnitTestCase {
       const album = factory<Album>('album')
       albumStore.syncWithVault(album)
       const songsInAlbum = factory<Song>('song', 3, { album_id: album.id })
-      const putMock = this.mock(httpService, 'put').mockResolvedValue({ coverUrl: 'http://localhost/cover.jpg' })
+      const putMock = this.mock(http, 'put').mockResolvedValue({ coverUrl: 'http://localhost/cover.jpg' })
       this.mock(songStore, 'byAlbum', songsInAlbum)
 
       await albumStore.uploadCover(album, 'data://cover')
@@ -69,7 +69,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches an album thumbnail', async () => {
-      const getMock = this.mock(httpService, 'get').mockResolvedValue({ thumbnailUrl: 'http://localhost/thumbnail.jpg' })
+      const getMock = this.mock(http, 'get').mockResolvedValue({ thumbnailUrl: 'http://localhost/thumbnail.jpg' })
       const album = factory<Album>('album')
 
       const url = await albumStore.fetchThumbnail(album.id)
@@ -80,7 +80,7 @@ new class extends UnitTestCase {
 
     it('resolves an album', async () => {
       const album = factory<Album>('album')
-      const getMock = this.mock(httpService, 'get').mockResolvedValueOnce(album)
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce(album)
 
       expect(await albumStore.resolve(album.id)).toEqual(album)
       expect(getMock).toHaveBeenCalledWith(`albums/${album.id}`)
@@ -93,7 +93,7 @@ new class extends UnitTestCase {
     it('paginates', async () => {
       const albums = factory<Album>('album', 3)
 
-      this.mock(httpService, 'get').mockResolvedValueOnce({
+      this.mock(http, 'get').mockResolvedValueOnce({
         data: albums,
         links: {
           next: '/albums?page=2'

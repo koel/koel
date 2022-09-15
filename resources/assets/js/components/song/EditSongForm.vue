@@ -172,7 +172,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { defaultCover, pluralize, requireInjection } from '@/utils'
+import { defaultCover, eventBus, pluralize, requireInjection } from '@/utils'
 import { songStore, SongUpdateData } from '@/stores'
 import { DialogBoxKey, EditSongFormInitialTabKey, MessageToasterKey, SongsKey } from '@/symbols'
 
@@ -287,6 +287,7 @@ const submit = async () => {
   try {
     await songStore.update(mutatedSongs.value, formData)
     toaster.value.success(`Updated ${pluralize(mutatedSongs.value, 'song')}.`)
+    eventBus.emit('SONGS_UPDATED')
     close()
   } finally {
     loading.value = false
