@@ -3,21 +3,18 @@ on:
   pull_request:
     branches:
       - master
-    paths:
-      - '!resources/assets/**'
-      - .github/workflows/unit-backend.yml
+    paths-ignore:
+      - resources/assets/**
   push:
     branches:
       - master
-    paths:
-      - '!resources/assets/**'
-      - .github/workflows/unit-backend.yml
+    paths-ignore:
+      - resources/assets/**
   workflow_dispatch:
     branches:
       - master
-    paths:
-      - '!resources/assets/**'
-      - .github/workflows/unit-backend.yml
+    paths-ignore:
+      - resources/assets/**
 jobs:
   test:
     runs-on: ubuntu-latest
