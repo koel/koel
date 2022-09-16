@@ -1,5 +1,5 @@
 import { differenceBy, merge } from 'lodash'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { reactive } from 'vue'
 import { arrayify } from '@/utils'
 import { UnwrapNestedRefs } from '@vue/reactivity'
@@ -50,7 +50,7 @@ export const userStore = {
   },
 
   async fetch () {
-    this.state.users = this.syncWithVault(await httpService.get<User[]>('users'))
+    this.state.users = this.syncWithVault(await http.get<User[]>('users'))
   },
 
   byId (id: number) {
@@ -61,26 +61,26 @@ export const userStore = {
     return this.state.current
   },
 
-  login: async (email: string, password: string) => await httpService.post<User>('me', { email, password }),
-  logout: async () => await httpService.delete('me'),
-  getProfile: async () => await httpService.get<User>('me'),
+  login: async (email: string, password: string) => await http.post<User>('me', { email, password }),
+  logout: async () => await http.delete('me'),
+  getProfile: async () => await http.get<User>('me'),
 
   async updateProfile (data: UpdateCurrentProfileData) {
-    merge(this.current, (await httpService.put<User>('me', data)))
+    merge(this.current, (await http.put<User>('me', data)))
   },
 
   async store (data: CreateUserData) {
-    const user = await httpService.post<User>('users', data)
+    const user = await http.post<User>('users', data)
     this.state.users.push(...this.syncWithVault(user))
     return this.byId(user.id)
   },
 
   async update (user: User, data: UpdateUserData) {
-    this.syncWithVault(await httpService.put<User>(`users/${user.id}`, data))
+    this.syncWithVault(await http.put<User>(`users/${user.id}`, data))
   },
 
   async destroy (user: User) {
-    await httpService.delete(`users/${user.id}`)
+    await http.delete(`users/${user.id}`)
     this.state.users = differenceBy(this.state.users, [user], 'id')
     this.vault.delete(user.id)
 

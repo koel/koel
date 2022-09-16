@@ -1,6 +1,6 @@
 import { reactive, UnwrapNestedRefs } from 'vue'
 import { differenceBy, orderBy, take, unionBy } from 'lodash'
-import { cache, httpService } from '@/services'
+import { cache, http } from '@/services'
 import { arrayify, logger } from '@/utils'
 
 const UNKNOWN_ARTIST_ID = 1
@@ -35,7 +35,7 @@ export const artistStore = {
   },
 
   async uploadImage (artist: Artist, image: string) {
-    artist.image = (await httpService.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })).imageUrl
+    artist.image = (await http.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })).imageUrl
 
     // sync to vault
     this.byId(artist.id)!.image = artist.image
@@ -59,7 +59,7 @@ export const artistStore = {
     if (!artist) {
       try {
         artist = this.syncWithVault(
-          await cache.remember<Artist>(['artist', id], async () => await httpService.get<Artist>(`artists/${id}`))
+          await cache.remember<Artist>(['artist', id], async () => await http.get<Artist>(`artists/${id}`))
         )[0]
       } catch (e) {
         logger.error(e)
@@ -70,7 +70,7 @@ export const artistStore = {
   },
 
   async paginate (page: number) {
-    const resource = await httpService.get<PaginatorResource>(`artists?page=${page}`)
+    const resource = await http.get<PaginatorResource>(`artists?page=${page}`)
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null

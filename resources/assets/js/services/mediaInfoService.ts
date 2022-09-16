@@ -1,4 +1,4 @@
-import { cache, httpService } from '@/services'
+import { cache, http } from '@/services'
 import { albumStore, artistStore, songStore } from '@/stores'
 
 export const mediaInfoService = {
@@ -7,7 +7,7 @@ export const mediaInfoService = {
     const cacheKey = ['artist.info', artist.id]
     if (cache.has(cacheKey)) return cache.get<ArtistInfo>(cacheKey)
 
-    const info = await httpService.get<ArtistInfo | null>(`artists/${artist.id}/information`)
+    const info = await http.get<ArtistInfo | null>(`artists/${artist.id}/information`)
 
     info && cache.set(cacheKey, info)
     info?.image && (artist.image = info.image)
@@ -20,7 +20,7 @@ export const mediaInfoService = {
     const cacheKey = ['album.info', album.id]
     if (cache.has(cacheKey)) return cache.get<AlbumInfo>(cacheKey)
 
-    const info = await httpService.get<AlbumInfo | null>(`albums/${album.id}/information`)
+    const info = await http.get<AlbumInfo | null>(`albums/${album.id}/information`)
     info && cache.set(cacheKey, info)
 
     if (info?.cover) {

@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { songStore } from '@/stores/songStore'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
@@ -16,7 +16,7 @@ export const overviewStore = {
   }),
 
   async init () {
-    const resource = await httpService.get<{
+    const resource = await http.get<{
       most_played_songs: Song[],
       most_played_albums: Album[],
       most_played_artists: Artist[],
@@ -40,7 +40,6 @@ export const overviewStore = {
     this.state.mostPlayedArtists = artistStore.getMostPlayed(6)
     this.state.recentlyAddedSongs = songStore.getRecentlyAdded(9)
     this.state.recentlyAddedAlbums = albumStore.getRecentlyAdded(6)
-
-    this.state.recentlyPlayed = recentlyPlayedStore.excerptState.songs
+    this.state.recentlyPlayed = recentlyPlayedStore.excerptState.songs.filter(song => !song.deleted)
   }
 }

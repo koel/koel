@@ -1,6 +1,6 @@
 import isMobile from 'ismobilejs'
 import { reactive } from 'vue'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { playlistFolderStore, playlistStore, preferenceStore, settingStore, themeStore, userStore } from '.'
 
 interface CommonStoreState {
@@ -41,7 +41,7 @@ export const commonStore = {
   }),
 
   async init () {
-    Object.assign(this.state, await httpService.get<CommonStoreState>('data'))
+    Object.assign(this.state, await http.get<CommonStoreState>('data'))
 
     // Always disable YouTube integration on mobile.
     this.state.use_you_tube = this.state.use_you_tube && !isMobile.phone

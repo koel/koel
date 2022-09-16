@@ -2,8 +2,8 @@ import isMobile from 'ismobilejs'
 import slugify from 'slugify'
 import { merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
 import { reactive, UnwrapNestedRefs, watch } from 'vue'
-import { arrayify, eventBus, logger, secondsToHis, use } from '@/utils'
-import { authService, cache, httpService } from '@/services'
+import { arrayify, logger, secondsToHis, use } from '@/utils'
+import { authService, cache, http } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, playlistStore, preferenceStore } from '@/stores'
 
 export type SongUpdateData = {
@@ -36,7 +36,8 @@ export const songStore = {
   getFormattedLength: (songs: Song | Song[]) => secondsToHis(sumBy(arrayify(songs), 'length')),
 
   byId (id: string) {
-    return this.vault.get(id)
+    const song = this.vault.get(id)
+    return song?.deleted ? undefined : song
   },
 
   byIds (ids: string[]) {
@@ -54,7 +55,7 @@ export const songStore = {
 
     if (!song) {
       try {
-        song = this.syncWithVault(await httpService.get<Song>(`songs/${id}`))[0]
+        song = this.syncWithVault(await http.get<Song>(`songs/${id}`))[0]
       } catch (e) {
         logger.error(e)
       }
@@ -83,18 +84,18 @@ export const songStore = {
    * Increase a play count for a song.
    */
   registerPlay: async (song: Song) => {
-    const interaction = await httpService.post<Interaction>('interaction/play', { song: song.id })
+    const interaction = await http.post<Interaction>('interaction/play', { song: song.id })
 
     // Use the data from the server to make sure we don't miss a play from another device.
     song.play_count = interaction.play_count
   },
 
-  scrobble: async (song: Song) => await httpService.post(`songs/${song.id}/scrobble`, {
+  scrobble: async (song: Song) => await http.post(`songs/${song.id}/scrobble`, {
     timestamp: song.play_start_time
   }),
 
   async update (songsToUpdate: Song[], data: SongUpdateData) {
-    const { songs, artists, albums, removed } = await httpService.put<SongUpdateResult>('songs', {
+    const { songs, artists, albums, removed } = await http.put<SongUpdateResult>('songs', {
       data,
       songs: songsToUpdate.map(song => song.id)
     })
@@ -106,10 +107,6 @@ export const songStore = {
 
     albumStore.removeByIds(removed.albums.map(album => album.id))
     artistStore.removeByIds(removed.artists.map(artist => artist.id))
-
-    eventBus.emit('SONGS_UPDATED')
-
-    overviewStore.refresh()
   },
 
   getSourceUrl: (song: Song) => {
@@ -129,7 +126,7 @@ export const songStore = {
       } else {
         local = reactive(song)
         local.playback_state = 'Stopped'
-        this.trackPlayCount(local)
+        this.setUpPlayCountTracking(local)
         this.vault.set(local.id, local)
       }
 
@@ -137,7 +134,7 @@ export const songStore = {
     })
   },
 
-  trackPlayCount: (song: UnwrapNestedRefs<Song>) => {
+  setUpPlayCountTracking: (song: UnwrapNestedRefs<Song>) => {
     watch(() => song.play_count, (newCount, oldCount) => {
       const album = albumStore.byId(song.album_id)
       album && (album.play_count += (newCount - oldCount))
@@ -154,29 +151,23 @@ export const songStore = {
     })
   },
 
+  async cacheable (key: any, fetcher: Promise<Song[]>) {
+    const songs = await cache.remember<Song[]>(key, async () => this.syncWithVault(await fetcher))
+    return songs.filter(song => !song.deleted)
+  },
+
   async fetchForAlbum (album: Album | number) {
     const id = typeof album === 'number' ? album : album.id
-
-    return await cache.remember<Song[]>(
-      [`album.songs`, id],
-      async () => this.syncWithVault(await httpService.get<Song[]>(`albums/${id}/songs`))
-    )
+    return await this.cacheable(['album.songs', id], http.get<Song[]>(`albums/${id}/songs`))
   },
 
   async fetchForArtist (artist: Artist | number) {
     const id = typeof artist === 'number' ? artist : artist.id
-
-    return await cache.remember<Song[]>(
-      ['artist.songs', id],
-      async () => this.syncWithVault(await httpService.get<Song[]>(`artists/${id}/songs`))
-    )
+    return await this.cacheable(['artist.songs', id], http.get<Song[]>(`artists/${id}/songs`))
   },
 
   async fetchForPlaylist (playlist: Playlist) {
-    return await cache.remember<Song[]>(
-      [`playlist.songs`, playlist.id],
-      async () => this.syncWithVault(await httpService.get<Song[]>(`playlists/${playlist.id}/songs`))
-    )
+    return await this.cacheable(['playlist.songs', playlist.id], http.get<Song[]>(`playlists/${playlist.id}/songs`))
   },
 
   async fetchForPlaylistFolder (folder: PlaylistFolder) {
@@ -190,7 +181,7 @@ export const songStore = {
   },
 
   async paginate (sortField: SongListSortField, sortOrder: SortOrder, page: number) {
-    const resource = await httpService.get<PaginatorResource>(
+    const resource = await http.get<PaginatorResource>(
       `songs?page=${page}&sort=${sortField}&order=${sortOrder}`
     )
 
@@ -200,10 +191,21 @@ export const songStore = {
   },
 
   getMostPlayed (count: number) {
-    return take(orderBy(Array.from(this.vault.values()), 'play_count', 'desc'), count)
+    return take(orderBy(Array.from(this.vault.values()).filter(song => !song.deleted), 'play_count', 'desc'), count)
   },
 
   getRecentlyAdded (count: number) {
-    return take(orderBy(Array.from(this.vault.values()), 'created_at', 'desc'), count)
+    return take(orderBy(Array.from(this.vault.values()).filter(song => !song.deleted), 'created_at', 'desc'), count)
+  },
+
+  async deleteFromFilesystem (songs: Song[]) {
+    const ids = songs.map(song => {
+      // Whenever a vault sync is requested (e.g. upon playlist/album/artist fetching)
+      // songs marked as "deleted" will be excluded.
+      song.deleted = true
+      return song.id
+    })
+
+    await http.delete('songs', { songs: ids })
   }
 }

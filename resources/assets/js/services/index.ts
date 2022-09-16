@@ -1,4 +1,4 @@
-export * from './httpService'
+export * from './http'
 export * from './downloadService'
 export * from './localStorageService'
 export * from './playbackService'

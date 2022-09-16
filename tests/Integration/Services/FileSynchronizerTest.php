@@ -47,7 +47,6 @@ class FileSynchronizerTest extends TestCase
         self::assertEqualsWithDelta(10, $info->length, 0.1);
     }
 
-    /** @test */
     public function testGetFileInfoVorbisCommentsFlac(): void
     {
         $flacPath = __DIR__ . '/../../songs/full-vorbis-comments.flac';
@@ -77,7 +76,6 @@ class FileSynchronizerTest extends TestCase
         self::assertEqualsWithDelta(10, $info->length, 0.1);
     }
 
-    /** @test */
     public function testSongWithoutTitleHasFileNameAsTitle(): void
     {
         $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/blank.mp3');

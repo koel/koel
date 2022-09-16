@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V6\Requests;
+namespace App\Http\Requests\V6\API;
 
 use App\Http\Requests\API\Request;
 use App\Repositories\SongRepository;

@@ -1,7 +1,7 @@
 import { differenceBy, orderBy } from 'lodash'
 import { reactive, UnwrapNestedRefs } from 'vue'
 import { logger } from '@/utils'
-import { cache, httpService } from '@/services'
+import { cache, http } from '@/services'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
 
@@ -52,7 +52,7 @@ export const playlistStore = {
   },
 
   async store (name: string, songs: Song[] = [], rules: SmartPlaylistRuleGroup[] = []) {
-    const playlist = reactive(await httpService.post<Playlist>('playlists', {
+    const playlist = reactive(await http.post<Playlist>('playlists', {
       name,
       songs: songs.map(song => song.id),
       rules: this.serializeSmartPlaylistRulesForStorage(rules)
@@ -67,7 +67,7 @@ export const playlistStore = {
   },
 
   async delete (playlist: Playlist) {
-    await httpService.delete(`playlists/${playlist.id}`)
+    await http.delete(`playlists/${playlist.id}`)
     this.state.playlists = differenceBy(this.state.playlists, [playlist], 'id')
   },
 
@@ -76,7 +76,7 @@ export const playlistStore = {
       return playlist
     }
 
-    await httpService.post(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
+    await http.post(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
     cache.remove(['playlist.songs', playlist.id])
 
     return playlist
@@ -87,14 +87,14 @@ export const playlistStore = {
       return playlist
     }
 
-    await httpService.delete(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
+    await http.delete(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
     cache.remove(['playlist.songs', playlist.id])
 
     return playlist
   },
 
   async update (playlist: Playlist, data: Partial<Pick<Playlist, 'name' | 'rules'>>) {
-    await httpService.put(`playlists/${playlist.id}`, {
+    await http.put(`playlists/${playlist.id}`, {
       name: data.name,
       rules: this.serializeSmartPlaylistRulesForStorage(data.rules || [])
     })

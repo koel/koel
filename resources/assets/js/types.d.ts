@@ -161,6 +161,7 @@ interface Song {
   play_start_time?: number
   fmt_length?: string
   created_at: string
+  deleted?: boolean
 }
 
 interface SmartPlaylistRuleGroup {

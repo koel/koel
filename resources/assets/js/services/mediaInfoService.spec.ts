@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { cache, httpService } from '@/services'
+import { cache, http } from '@/services'
 import { albumStore, artistStore } from '@/stores'
 import { mediaInfoService } from './mediaInfoService'
 
@@ -10,7 +10,7 @@ new class extends UnitTestCase {
     it('fetches the artist info', async () => {
       const artist = artistStore.syncWithVault(factory<Artist>('artist', { id: 42 }))[0]
       const artistInfo = factory<ArtistInfo>('artist-info')
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(artistInfo)
+      const getMock = this.mock(http, 'get').mockResolvedValue(artistInfo)
       const hasCacheMock = this.mock(cache, 'has', false)
       const setCacheMock = this.mock(cache, 'set')
 
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
       const artistInfo = factory<ArtistInfo>('artist-info')
       const hasCacheMock = this.mock(cache, 'has', true)
       const getCacheMock = this.mock(cache, 'get', artistInfo)
-      const getMock = this.mock(httpService, 'get')
+      const getMock = this.mock(http, 'get')
 
       expect(await mediaInfoService.fetchForArtist(factory<Artist>('artist', { id: 42 }))).toBe(artistInfo)
       expect(hasCacheMock).toHaveBeenCalledWith(['artist.info', 42])
@@ -37,7 +37,7 @@ new class extends UnitTestCase {
     it('fetches the album info', async () => {
       const album = albumStore.syncWithVault(factory<Album>('album', { id: 42 }))[0]
       const albumInfo = factory<AlbumInfo>('album-info')
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(albumInfo)
+      const getMock = this.mock(http, 'get').mockResolvedValue(albumInfo)
       const hasCacheMock = this.mock(cache, 'has', false)
       const setCacheMock = this.mock(cache, 'set')
 
@@ -53,7 +53,7 @@ new class extends UnitTestCase {
       const albumInfo = factory<AlbumInfo>('album-info')
       const hasCacheMock = this.mock(cache, 'has', true)
       const getCacheMock = this.mock(cache, 'get', albumInfo)
-      const getMock = this.mock(httpService, 'get')
+      const getMock = this.mock(http, 'get')
 
       expect(await mediaInfoService.fetchForAlbum(factory<Album>('album', { id: 42 }))).toBe(albumInfo)
       expect(hasCacheMock).toHaveBeenCalledWith(['album.info', 42])

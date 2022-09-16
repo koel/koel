@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\V6\Requests;
+namespace App\Http\Requests\V6\API;
 
 use App\Http\Requests\API\Request;
+use App\Models\Song;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read array<string> $songs
  */
-class RemoveSongsFromPlaylistRequest extends Request
+class AddSongsToPlaylistRequest extends Request
 {
     /** @return array<mixed> */
     public function rules(): array
     {
         return [
             'songs' => 'required|array',
-            'songs.*' => 'exists:songs,id',
+            'songs.*' => [Rule::exists(Song::class, 'id')],
         ];
     }
 }

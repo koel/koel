@@ -12,8 +12,8 @@
 
       <template v-slot:meta>
         <span>{{ pluralize(artist.album_count, 'album') }}</span>
-        <span>{{ pluralize(artist.song_count, 'song') }}</span>
-        <span>{{ secondsToHis(artist.length) }}</span>
+        <span>{{ pluralize(songs, 'song') }}</span>
+        <span>{{ duration }}</span>
         <a v-if="useLastfm" class="info" href title="View artist information" @click.prevent="showInfo">Info</a>
 
         <a
@@ -51,7 +51,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, ref, toRef, toRefs } from 'vue'
-import { eventBus, logger, pluralize, requireInjection, secondsToHis } from '@/utils'
+import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList, useThirdPartyServices } from '@/composables'
@@ -81,6 +81,7 @@ const {
   songList,
   showingControls,
   isPhone,
+  duration,
   onPressEnter,
   playAll,
   playSelected,

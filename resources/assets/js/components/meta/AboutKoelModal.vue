@@ -53,7 +53,7 @@ import { orderBy } from 'lodash'
 import { onMounted, ref } from 'vue'
 import { isDemo } from '@/utils'
 import { useNewVersionNotification } from '@/composables'
-import { httpService } from '@/services'
+import { http } from '@/services'
 
 import Btn from '@/components/ui/Btn.vue'
 
@@ -75,7 +75,7 @@ const emit = defineEmits(['close'])
 const close = () => emit('close')
 
 onMounted(async () => {
-  credits.value = isDemo ? orderBy(await httpService.get<DemoCredits[]>('demo/credits'), 'name') : []
+  credits.value = isDemo ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : []
 })
 </script>
 

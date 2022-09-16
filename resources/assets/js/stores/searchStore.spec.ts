@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { reactive } from 'vue'
 import factory from '@/__tests__/factory'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { albumStore, artistStore, ExcerptSearchResult, searchStore, songStore } from '.'
 
 new class extends UnitTestCase {
@@ -27,7 +27,7 @@ new class extends UnitTestCase {
         artists: factory<Artist>('artist', 3)
       }
 
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(result)
+      const getMock = this.mock(http, 'get').mockResolvedValue(result)
       const syncSongsMock = this.mock(songStore, 'syncWithVault', result.songs)
       const syncAlbumsMock = this.mock(albumStore, 'syncWithVault', result.albums)
       const syncArtistsMock = this.mock(artistStore, 'syncWithVault', result.artists)
@@ -47,7 +47,7 @@ new class extends UnitTestCase {
     it('performs a song search', async () => {
       const songs = factory<Song>('song', 3)
 
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(songs)
+      const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await searchStore.songSearch('test')

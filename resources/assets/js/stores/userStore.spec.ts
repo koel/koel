@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { httpService } from '@/services'
+import { http } from '@/services'
 import { CreateUserData, UpdateCurrentProfileData, UpdateUserData, userStore } from '.'
 
 const currentUser = factory<User>('user', {
@@ -35,7 +35,7 @@ new class extends UnitTestCase {
 
     it('fetches users', async () => {
       const users = factory<User>('user', 3)
-      const getMock = this.mock(httpService, 'get').mockResolvedValue(users)
+      const getMock = this.mock(http, 'get').mockResolvedValue(users)
 
       await userStore.fetch()
 
@@ -51,21 +51,21 @@ new class extends UnitTestCase {
     })
 
     it('logs in', async () => {
-      const postMock = this.mock(httpService, 'post')
+      const postMock = this.mock(http, 'post')
       await userStore.login('john@doe.com', 'curry-wurst')
 
       expect(postMock).toHaveBeenCalledWith('me', { email: 'john@doe.com', password: 'curry-wurst' })
     })
 
     it('logs out', async () => {
-      const deleteMock = this.mock(httpService, 'delete')
+      const deleteMock = this.mock(http, 'delete')
       await userStore.logout()
 
       expect(deleteMock).toHaveBeenCalledWith('me')
     })
 
     it('gets profile', async () => {
-      const getMock = this.mock(httpService, 'get')
+      const getMock = this.mock(http, 'get')
       await userStore.getProfile()
 
       expect(getMock).toHaveBeenCalledWith('me')
@@ -78,7 +78,7 @@ new class extends UnitTestCase {
         email: 'jane@doe.com'
       })
 
-      const putMock = this.mock(httpService, 'put').mockResolvedValue(updated)
+      const putMock = this.mock(http, 'put').mockResolvedValue(updated)
 
       const data: UpdateCurrentProfileData = {
         current_password: 'curry-wurst',
@@ -102,7 +102,7 @@ new class extends UnitTestCase {
       }
 
       const user = factory<User>('user', data)
-      const postMock = this.mock(httpService, 'post').mockResolvedValue(user)
+      const postMock = this.mock(http, 'post').mockResolvedValue(user)
 
       expect(await userStore.store(data)).toEqual(user)
       expect(postMock).toHaveBeenCalledWith('users', data)
@@ -122,7 +122,7 @@ new class extends UnitTestCase {
       }
 
       const updated = { ...user, ...data }
-      const putMock = this.mock(httpService, 'put').mockResolvedValue(updated)
+      const putMock = this.mock(http, 'put').mockResolvedValue(updated)
 
       await userStore.update(user, data)
 
@@ -131,7 +131,7 @@ new class extends UnitTestCase {
     })
 
     it('deletes a user', async () => {
-      const deleteMock = this.mock(httpService, 'delete')
+      const deleteMock = this.mock(http, 'delete')
 
       const user = factory<User>('user', { id: 2 })
       userStore.state.users.push(...userStore.syncWithVault(user))
