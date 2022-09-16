@@ -81,11 +81,11 @@ export const useSongList = (songs: Ref<Song[]>, type: SongListType, config: Part
     let sortFields: SongListSortField[] = [by]
 
     if (by === 'track') {
-      sortFields.push('disc', 'title')
+      sortFields = ['disc', 'track', 'title']
     } else if (by === 'album_name') {
-      sortFields.push('artist_name', 'track', 'disc', 'title')
+      sortFields.push('artist_name', 'disc', 'track', 'title')
     } else if (by === 'artist_name') {
-      sortFields.push('album_name', 'track', 'disc', 'title')
+      sortFields.push('album_name', 'disc', 'track', 'title')
     }
 
     songs.value = orderBy(songs.value, sortFields, order)

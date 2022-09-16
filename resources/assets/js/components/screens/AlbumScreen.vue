@@ -38,7 +38,7 @@
     </ScreenHeader>
 
     <SongListSkeleton v-if="loading"/>
-    <SongList v-else ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
+    <SongList v-else ref="songList" @sort="sort" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
 
     <section v-if="!loading && useLastfm && showingInfo" class="info-wrapper">
       <CloseModalBtn class="close-modal" @click="showingInfo = false"/>
@@ -85,6 +85,7 @@ const {
   showingControls,
   isPhone,
   duration,
+  sort,
   onPressEnter,
   playAll,
   playSelected,
@@ -110,6 +111,8 @@ onMounted(async () => {
       albumStore.resolve(id.value),
       songStore.fetchForAlbum(id.value)
     ])
+
+    sort('track')
   } catch (e) {
     logger.error(e)
     dialog.value.error('Failed to load album. Please try again.')
