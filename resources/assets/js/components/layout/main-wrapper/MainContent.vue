@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, toRef } from 'vue'
+import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { eventBus } from '@/utils'
 import { preferenceStore } from '@/stores'
 import { useThirdPartyServices } from '@/composables'
@@ -45,6 +45,7 @@ import FavoritesScreen from '@/components/screens/FavoritesScreen.vue'
 import RecentlyPlayedScreen from '@/components/screens/RecentlyPlayedScreen.vue'
 import UploadScreen from '@/components/screens/UploadScreen.vue'
 import SearchExcerptsScreen from '@/components/screens/search/SearchExcerptsScreen.vue'
+import router from '@/router'
 
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
@@ -73,6 +74,8 @@ eventBus.on({
   TOGGLE_VISUALIZER: () => (showingVisualizer.value = !showingVisualizer.value),
   SONG_STARTED: (song: Song) => (currentSong.value = song)
 })
+
+onMounted(() => router.resolveRoute())
 </script>
 
 <style lang="scss">
