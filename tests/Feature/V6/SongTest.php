@@ -24,6 +24,8 @@ class SongTest extends TestCase
         'liked',
         'play_count',
         'track',
+        'genre',
+        'year',
         'disc',
         'created_at',
     ];

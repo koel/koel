@@ -76,9 +76,13 @@ class SongService
             $maybeSetAlbum();
         }
 
-        $song->title = $data->title ?? $song->title; // Empty string still has effects
-        $song->lyrics = $data->lyrics ?? $song->lyrics; // Empty string still has effects
+        // For string attributes like title, lyrics, and genre, we use "??" because empty strings still have effects
+        $song->title = $data->title ?? $song->title;
+        $song->lyrics = $data->lyrics ?? $song->lyrics;
+        $song->genre = $data->genre ?? $song->genre;
+
         $song->track = $data->track ?: $song->track;
+        $song->year = $data->year ?: $song->year;
         $song->disc = $data->disc ?: $song->disc;
 
         $song->push();

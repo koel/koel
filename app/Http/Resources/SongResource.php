@@ -32,6 +32,8 @@ class SongResource extends JsonResource
             'play_count' => (int) $this->song->play_count,
             'track' => $this->song->track,
             'disc' => $this->song->disc,
+            'genre' => $this->song->genre,
+            'year' => $this->song->year,
             'created_at' => $this->song->created_at,
         ];
     }

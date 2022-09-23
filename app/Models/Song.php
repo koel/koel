@@ -23,6 +23,8 @@ use Laravel\Scout\Searchable;
  * @property int $track
  * @property int $disc
  * @property int $album_id
+ * @property int|null $year
+ * @property string $genre
  * @property string $id
  * @property int $artist_id
  * @property int $mtime
