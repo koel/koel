@@ -22,8 +22,11 @@ class SongFactory extends Factory
             'title' => $this->faker->sentence,
             'length' => $this->faker->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),
+            'disc' => random_int(1, 5),
             'lyrics' => $this->faker->paragraph(),
             'path' => '/tmp/' . uniqid() . '.mp3',
+            'genre' => $this->faker->randomElement(['Rock', 'Pop', 'Jazz', 'Classical', 'Metal', 'Hip Hop', 'Rap']),
+            'year' => $this->faker->year(),
             'mtime' => time(),
         ];
     }

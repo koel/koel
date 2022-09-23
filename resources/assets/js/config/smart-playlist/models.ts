@@ -11,16 +11,15 @@ const models: SmartPlaylistModel[] = [
     name: 'artist.name',
     type: 'text',
     label: 'Artist'
-  // }, {
-  //   name: 'genre',
-  //   type: 'text',
-  //   label: 'Genre'
   }, {
-  //   name: 'bit_rate',
-  //   type: 'number',
-  //   label: 'Bit Rate',
-  //   unit: 'kbps'
-  // }, {
+    name: 'genre',
+    type: 'text',
+    label: 'Genre'
+  }, {
+    name: 'year',
+    type: 'number',
+    label: 'Year'
+  }, {
     name: 'interactions.play_count',
     type: 'number',
     label: 'Plays'

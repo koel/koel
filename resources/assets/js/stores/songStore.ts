@@ -14,6 +14,8 @@ export type SongUpdateData = {
   track?: number | null
   disc?: number | null
   lyrics?: string
+  year?: number | null
+  genre?: string
 }
 
 export interface SongUpdateResult {

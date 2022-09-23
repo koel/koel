@@ -15,7 +15,7 @@ class SyncCommand extends Command
 {
     protected $signature = 'koel:sync
         {record? : A single watch record. Consult Wiki for more info.}
-        {--ignore= : The comma-separated tags to ignore (exclude) from syncing}
+        {--ignore=* : The comma-separated tags to ignore (exclude) from syncing}
         {--force : Force re-syncing even unchanged files}';
 
     protected $description = 'Sync songs found in configured directory against the database.';
@@ -59,7 +59,11 @@ class SyncCommand extends Command
         // The tags to ignore from syncing.
         // Notice that this is only meaningful for existing records.
         // New records will have every applicable field synced in.
-        $ignores = $this->option('ignore') ? explode(',', $this->option('ignore')) : [];
+        $ignores = collect($this->option('ignore'))->sort()->values()->all();
+
+        if ($ignores) {
+            $this->components->info('Ignoring tag(s): ' . implode(', ', $ignores));
+        }
 
         $results = $this->mediaSyncService->sync($ignores, $this->option('force'));
 

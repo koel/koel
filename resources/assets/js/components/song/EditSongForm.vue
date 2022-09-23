@@ -70,16 +70,28 @@
             </div>
 
             <div class="form-row">
-              <label>
-                Artist
-                <input
-                  v-model="formData.artist_name"
-                  :placeholder="inputPlaceholder"
-                  data-testid="artist-input"
-                  name="artist"
-                  type="text"
-                >
-              </label>
+              <div class="cols">
+                <label>
+                  Artist
+                  <input
+                    v-model="formData.artist_name"
+                    :placeholder="inputPlaceholder"
+                    data-testid="artist-input"
+                    name="artist"
+                    type="text"
+                  >
+                </label>
+                <label>
+                  Album Artist
+                  <input
+                    v-model="formData.album_artist_name"
+                    :placeholder="inputPlaceholder"
+                    data-testid="albumArtist-input"
+                    name="album_artist"
+                    type="text"
+                  >
+                </label>
+              </div>
             </div>
 
             <div class="form-row">
@@ -96,46 +108,58 @@
             </div>
 
             <div class="form-row">
-              <label>
-                Album Artist
-                <input
-                  v-model="formData.album_artist_name"
-                  :placeholder="inputPlaceholder"
-                  data-testid="albumArtist-input"
-                  name="album_artist"
-                  type="text"
-                >
-              </label>
+              <div class="cols">
+                <label>
+                  Track
+                  <input
+                    v-model="formData.track"
+                    :placeholder="inputPlaceholder"
+                    data-testid="track-input"
+                    min="1"
+                    name="track"
+                    type="number"
+                  >
+                </label>
+                <label>
+                  Disc
+                  <input
+                    v-model="formData.disc"
+                    :placeholder="inputPlaceholder"
+                    data-testid="disc-input"
+                    min="1"
+                    name="disc"
+                    type="number"
+                  >
+                </label>
+              </div>
             </div>
 
             <div class="form-row">
               <div class="cols">
-                <div>
-                  <label>
-                    Track
-                    <input
-                      v-model="formData.track"
-                      :placeholder="inputPlaceholder"
-                      data-testid="track-input"
-                      min="1"
-                      name="track"
-                      type="number"
-                    >
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    Disc
-                    <input
-                      v-model="formData.disc"
-                      :placeholder="inputPlaceholder"
-                      data-testid="disc-input"
-                      min="1"
-                      name="disc"
-                      type="number"
-                    >
-                  </label>
-                </div>
+                <label>
+                  Genre
+                  <input
+                    v-model="formData.genre"
+                    :placeholder="inputPlaceholder"
+                    data-testid="genre-input"
+                    name="genre"
+                    type="text"
+                    list="genres"
+                  >
+                  <datalist id="genres">
+                    <option v-for="genre in genres" :key="genre" :value="genre"/>
+                  </datalist>
+                </label>
+                <label>
+                  Year
+                  <input
+                    v-model="formData.year"
+                    :placeholder="inputPlaceholder"
+                    data-testid="year-input"
+                    name="year"
+                    type="number"
+                  >
+                </label>
               </div>
             </div>
           </div>
@@ -175,6 +199,7 @@ import { isEqual } from 'lodash'
 import { defaultCover, eventBus, pluralize, requireInjection } from '@/utils'
 import { songStore, SongUpdateData } from '@/stores'
 import { DialogBoxKey, EditSongFormInitialTabKey, MessageToasterKey, SongsKey } from '@/symbols'
+import { genres } from '@/config'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
@@ -199,7 +224,9 @@ const formData = reactive<SongUpdateData>({
   album_artist_name: '',
   lyrics: '',
   track: null,
-  disc: null
+  disc: null,
+  year: null,
+  genre: ''
 })
 
 const initialFormData = {}
@@ -260,6 +287,9 @@ const open = async () => {
 
   formData.disc = allSongsShareSameValue('disc') ? firstSong.disc : null
   formData.disc = formData.disc || null // if 0, just don't show it
+
+  formData.year = allSongsShareSameValue('year') ? firstSong.year : null
+  formData.genre = allSongsShareSameValue('genre') ? firstSong.genre : ''
 
   if (!editingOnlyOneSong.value) {
     delete formData.title
@@ -330,7 +360,7 @@ form {
     place-content: space-between;
     gap: 1rem;
 
-    > div {
+    > * {
       flex: 1;
     }
   }

@@ -39,7 +39,8 @@ new class extends UnitTestCase {
         title: 'Rocket to Heaven',
         artist_name: 'Led Zeppelin',
         album_name: 'IV',
-        album_cover: 'http://localhost/album.jpg'
+        album_cover: 'http://localhost/album.jpg',
+        genre: 'Rock'
       }))
 
       expect(html()).toMatchSnapshot()
@@ -50,6 +51,8 @@ new class extends UnitTestCase {
       await fireEvent.update(getByTestId('album-input'), 'Back in Black')
       await fireEvent.update(getByTestId('disc-input'), '1')
       await fireEvent.update(getByTestId('track-input'), '10')
+      await fireEvent.update(getByTestId('genre-input'), 'Rock & Roll')
+      await fireEvent.update(getByTestId('year-input'), '1971')
       await fireEvent.update(getByTestId('lyrics-input'), 'I\'m gonna make him an offer he can\'t refuse')
 
       await fireEvent.click(getByRole('button', { name: 'Update' }))
@@ -61,7 +64,9 @@ new class extends UnitTestCase {
         album_artist_name: 'AC/DC',
         lyrics: 'I\'m gonna make him an offer he can\'t refuse',
         track: 10,
-        disc: 1
+        disc: 1,
+        genre: 'Rock & Roll',
+        year: 1971
       })
 
       expect(alertMock).toHaveBeenCalledWith('Updated 1 song.')
@@ -84,6 +89,8 @@ new class extends UnitTestCase {
       await fireEvent.update(getByTestId('album-input'), 'Back in Black')
       await fireEvent.update(getByTestId('disc-input'), '1')
       await fireEvent.update(getByTestId('track-input'), '10')
+      await fireEvent.update(getByTestId('year-input'), '1990')
+      await fireEvent.update(getByTestId('genre-input'), 'Pop')
 
       await fireEvent.click(getByRole('button', { name: 'Update' }))
 
@@ -92,7 +99,9 @@ new class extends UnitTestCase {
         artist_name: 'AC/DC',
         album_artist_name: 'AC/DC',
         track: 10,
-        disc: 1
+        disc: 1,
+        genre: 'Pop',
+        year: 1990
       })
 
       expect(alertMock).toHaveBeenCalledWith('Updated 3 songs.')

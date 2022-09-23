@@ -90,7 +90,7 @@ class FileSynchronizer
         $albumArtist = Arr::get($info, 'albumartist') ? Artist::getOrCreate($info['albumartist']) : $artist;
         $album = Arr::get($info, 'album') ? Album::getOrCreate($albumArtist, $info['album']) : $this->song->album;
 
-        if (!$album->has_cover) {
+        if (!in_array('cover', $ignores, true) && !$album->has_cover) {
             $this->tryGenerateAlbumCover($album, Arr::get($info, 'cover', []));
         }
 

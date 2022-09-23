@@ -152,6 +152,8 @@ interface Song {
   readonly length: number
   track: number | null
   disc: number | null
+  genre: string
+  year: number | null
   lyrics: string
   play_count_registered?: boolean
   preloaded?: boolean
@@ -170,7 +172,7 @@ interface SmartPlaylistRuleGroup {
 }
 
 interface SmartPlaylistModel {
-  name: 'title' | 'length' | 'created_at' | 'updated_at' | 'album.name' | 'artist.name' | 'interactions.play_count' | 'interactions.updated_at'
+  name: 'title' | 'length' | 'created_at' | 'updated_at' | 'album.name' | 'artist.name' | 'interactions.play_count' | 'interactions.updated_at' | 'genre' | 'year'
   type: 'text' | 'number' | 'date'
   label: string
   unit?: 'seconds' | 'days'
