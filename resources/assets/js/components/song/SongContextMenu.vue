@@ -26,8 +26,10 @@
     <li v-if="isAdmin" @click="openEditForm">Edit</li>
     <li v-if="allowDownload" @click="download">Download</li>
     <li v-if="onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
-    <li class="separator"/>
-    <li v-if="isAdmin" @click="deleteFromFilesystem">Delete from Filesystem</li>
+    <template v-if="isAdmin">
+      <li class="separator"/>
+      <li @click="deleteFromFilesystem">Delete from Filesystem</li>
+    </template>
   </ContextMenuBase>
 </template>
 
