@@ -60,7 +60,7 @@ const playlists = toRef(playlistStore.state, 'playlists')
 const allowDownload = toRef(commonStore.state, 'allow_download')
 const user = toRef(userStore.state, 'current')
 const queue = toRef(queueStore.state, 'songs')
-const currentSong = queueStore.current
+const currentSong = toRef(queueStore, 'current')
 
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)

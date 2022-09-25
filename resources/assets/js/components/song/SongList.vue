@@ -272,7 +272,7 @@ const rowDragStart = (row: SongRow, event: DragEvent) => {
 const allowDrop = (event: DragEvent) => {
   if (!allowReordering) return;
 
-  (event.target as Element).parentElement.classList.add('droppable')
+  (event.target as Element).parentElement?.classList.add('droppable')
   event.dataTransfer!.dropEffect = 'move'
 
   return false
@@ -292,7 +292,7 @@ const handleDrop = (item: SongRow, event: DragEvent) => {
 }
 
 const removeDroppableState = (event: DragEvent) => {
-  (event.target as Element).parentElement.classList.remove('droppable')
+  (event.target as Element).parentElement?.classList.remove('droppable')
   return false
 }
 
