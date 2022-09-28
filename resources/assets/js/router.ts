@@ -3,6 +3,7 @@ import { playlistStore, userStore } from '@/stores'
 
 class Router {
   routes: Record<string, Closure>
+  paths: string[]
 
   constructor () {
     this.routes = {
@@ -23,29 +24,34 @@ class Router {
       '/profile': () => loadMainView('Profile'),
       '/album/(\\d+)': (id: string) => loadMainView('Album', parseInt(id)),
       '/artist/(\\d+)': (id: string) => loadMainView('Artist', parseInt(id)),
-      '/playlist/(\\d+)': (id: number) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
+      '/playlist/(\\d+)': (id: string) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
       '/song/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})': (id: string) => {
         eventBus.emit('SONG_QUEUED_FROM_ROUTE', id)
         loadMainView('Queue')
       }
     }
 
-    window.addEventListener('popstate', () => this.resolveRoute(), true)
+    this.paths = Object.keys(this.routes)
+
+    addEventListener('popstate', () => this.resolveRoute(), true)
   }
 
   public resolveRoute () {
-    if (!window.location.hash) {
+    if (!location.hash) {
       return this.go('home')
     }
 
-    Object.keys(this.routes).forEach(route => {
-      const matches = window.location.hash.match(new RegExp(`^#!${route}$`))
+    for (let i = 0; i < this.paths.length; i++) {
+      const matches = location.hash.match(new RegExp(`^#!${this.paths[i]}$`))
 
       if (matches) {
         const [, ...params] = matches
-        this.routes[route](...params)
+        this.routes[this.paths[i]](...params)
+        return
       }
-    })
+    }
+
+    loadMainView('404')
   }
 
   /**
@@ -53,7 +59,7 @@ class Router {
    */
   public go (path: string | number) {
     if (typeof path === 'number') {
-      window.history.go(path)
+      history.go(path)
       return
     }
 
@@ -66,7 +72,7 @@ class Router {
     }
 
     path = path.substring(1, path.length)
-    document.location.href = `${document.location.origin}${document.location.pathname}${path}`
+    location.assign(`${location.origin}${location.pathname}${path}`)
   }
 }
 

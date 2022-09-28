@@ -26,6 +26,7 @@
     <ProfileScreen v-if="screen === 'Profile'"/>
     <UserListScreen v-if="screen === 'Users'"/>
     <YoutubeScreen v-if="useYouTube" v-show="screen === 'YouTube'"/>
+    <NotFoundScreen v-if="screen === '404'"/>
   </section>
 </template>
 
@@ -55,6 +56,7 @@ const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/S
 const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/ProfileScreen.vue'))
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/YouTubeScreen.vue'))
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchSongResultsScreen.vue'))
+const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/NotFoundScreen.vue'))
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
 const { useYouTube } = useThirdPartyServices()

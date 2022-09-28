@@ -316,6 +316,7 @@ declare type ScreenName =
   | 'Upload'
   | 'Search.Excerpt'
   | 'Search.Songs'
+  | '404'
 
 declare type ArtistAlbumCardLayout = 'full' | 'compact'
 
