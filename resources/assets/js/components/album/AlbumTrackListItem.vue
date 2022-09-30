@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRefs } from 'vue'
+import { computed, defineAsyncComponent, Ref, toRefs } from 'vue'
 import { queueStore, songStore } from '@/stores'
 import { authService, playbackService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
@@ -27,7 +27,7 @@ const { album, track } = toRefs(props)
 
 const { useAppleMusic } = useThirdPartyServices()
 
-const [songsToMatchAgainst] = requireInjection(SongsKey)
+const songsToMatchAgainst = requireInjection<Ref<Song[]>>(SongsKey)
 
 const matchedSong = computed(() => songStore.match(track.value.title, songsToMatchAgainst.value))
 const tooltip = computed(() => matchedSong.value ? 'Click to play' : '')
