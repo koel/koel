@@ -43,6 +43,7 @@ const play = () => {
   if (matchedSong.value) {
     queueStore.queueIfNotQueued(matchedSong.value)
     playbackService.play(matchedSong.value)
+
   }
 }
 </script>
