@@ -15,7 +15,7 @@
 
     <footer>
       <div class="info">
-        <a class="name" :href="`#!/artist/${artist.id}`" data-testid="name">{{ artist.name }}</a>
+        <a :href="`#!/artist/${artist.id}`" class="name" data-testid="name">{{ artist.name }}</a>
       </div>
       <p class="meta">
         <span class="left">
@@ -29,9 +29,9 @@
           <a
             :title="`Shuffle all songs by ${artist.name}`"
             class="shuffle-artist"
+            data-testid="shuffle-artist"
             href
             role="button"
-            data-testid="shuffle-artist"
             @click.prevent="shuffle"
           >
             <icon :icon="faRandom"/>
@@ -40,9 +40,9 @@
             v-if="allowDownload"
             :title="`Download all songs by ${artist.name}`"
             class="download-artist"
+            data-testid="download-artist"
             href
             role="button"
-            data-testid="download-artist"
             @click.prevent="download"
           >
             <icon :icon="faDownload"/>
@@ -56,12 +56,15 @@
 <script lang="ts" setup>
 import { faDownload, faRandom } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus, pluralize } from '@/utils'
+import { eventBus, pluralize, requireInjection } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useDraggable } from '@/composables'
+import { RouterKey } from '@/symbols'
 
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+
+const router = requireInjection(RouterKey)
 
 const { startDragging } = useDraggable('artist')
 
@@ -74,6 +77,7 @@ const showing = computed(() => artistStore.isStandard(artist.value))
 
 const shuffle = async () => {
   await playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value), true /* shuffled */)
+  router.go('queue')
 }
 
 const download = () => downloadService.fromArtist(artist.value)

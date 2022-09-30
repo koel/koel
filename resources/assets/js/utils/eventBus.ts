@@ -20,7 +20,7 @@ export const eventBus = {
     this.all.has(name) ? this.all.get(name).push(callback) : this.all.set(name, [callback])
   },
 
-  emit (name: EventName, ...args: any) {
+  emit (name: EventName, ...args: any[]) {
     if (this.all.has(name)) {
       this.all.get(name).forEach((cb: Closure) => cb(...args))
     } else {

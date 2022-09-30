@@ -32,12 +32,15 @@
 <script lang="ts" setup>
 import { faCirclePlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs, watch } from 'vue'
-import { playbackService } from '@/services'
+import { playbackService, mediaInfoService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 import { songStore } from '@/stores'
-import { mediaInfoService } from '@/services/mediaInfoService'
+import { RouterKey } from '@/symbols'
+import { requireInjection } from '@/utils'
 
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+
+const router = requireInjection(RouterKey)
 
 const props = withDefaults(defineProps<{ artist: Artist, mode?: MediaInfoDisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)
@@ -56,7 +59,10 @@ watch(artist, async () => {
 const showSummary = computed(() => mode.value !== 'full' && !showingFullBio.value)
 const showFull = computed(() => !showSummary.value)
 
-const play = async () => playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value))
+const play = async () => {
+  await playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value))
+  router.go('queue')
+}
 </script>
 
 <style lang="scss" scoped>

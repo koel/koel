@@ -4,7 +4,6 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import router from '@/router'
 import { eventBus } from '@/utils'
 import CloseModalBtn from '@/components/ui/BtnCloseModal.vue'
 import ArtistScreen from './ArtistScreen.vue'
@@ -28,10 +27,12 @@ new class extends UnitTestCase {
     const songs = factory<Song>('song', 13)
     const fetchSongsMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
 
+    await this.router.activateRoute({
+      path: 'artists/42',
+      screen: 'Artist'
+    }, { id: '42' })
+
     const rendered = this.render(ArtistScreen, {
-      props: {
-        artist: 42
-      },
       global: {
         stubs: {
           CloseModalBtn,
@@ -73,7 +74,7 @@ new class extends UnitTestCase {
     })
 
     it('goes back to list if artist is deleted', async () => {
-      const goMock = this.mock(router, 'go')
+      const goMock = this.mock(this.router, 'go')
       const byIdMock = this.mock(artistStore, 'byId', null)
       await this.renderComponent()
 

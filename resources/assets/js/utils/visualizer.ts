@@ -161,7 +161,7 @@ export default (container: HTMLElement) => {
   Sketch.create({
     container,
     particles: [],
-    setup () {
+    init () {
       // generate some particles
       for (let i = 0; i < NUM_PARTICLES; i++) {
         const particle = new Particle(random(this.width), random(this.height))

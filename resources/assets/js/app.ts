@@ -1,10 +1,13 @@
-import 'plyr/dist/plyr.js'
 import { createApp } from 'vue'
 import { clickaway, focus } from '@/directives'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { RouterKey } from '@/symbols'
+import { routes } from '@/config'
+import Router from '@/router'
 import App from './App.vue'
 
 createApp(App)
+  .provide(RouterKey, new Router(routes))
   .component('icon', FontAwesomeIcon)
   .directive('koel-focus', focus)
   .directive('koel-clickaway', clickaway)

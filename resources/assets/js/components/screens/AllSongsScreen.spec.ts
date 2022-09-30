@@ -1,12 +1,9 @@
-import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { fireEvent, waitFor } from '@testing-library/vue'
 import { playbackService } from '@/services'
-import router from '@/router'
-import { ActiveScreenKey } from '@/symbols'
 import AllSongsScreen from './AllSongsScreen.vue'
 
 new class extends UnitTestCase {
@@ -16,13 +13,15 @@ new class extends UnitTestCase {
     songStore.state.songs = factory<Song>('song', 20)
     const fetchMock = this.mock(songStore, 'paginate').mockResolvedValue(2)
 
+    this.router.$currentRoute.value = {
+      screen: 'Songs',
+      path: '/songs'
+    }
+
     const rendered = this.render(AllSongsScreen, {
       global: {
         stubs: {
           SongList: this.stub('song-list')
-        },
-        provide: {
-          [<symbol>ActiveScreenKey]: ref('Songs')
         }
       }
     })
@@ -40,7 +39,7 @@ new class extends UnitTestCase {
     it('shuffles', async () => {
       const queueMock = this.mock(queueStore, 'fetchRandom')
       const playMock = this.mock(playbackService, 'playFirstInQueue')
-      const goMock = this.mock(router, 'go')
+      const goMock = this.mock(this.router, 'go')
       const { getByTitle } = await this.renderComponent()
 
       await fireEvent.click(getByTitle('Shuffle all songs'))

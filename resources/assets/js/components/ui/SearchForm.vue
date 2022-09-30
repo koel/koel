@@ -18,8 +18,10 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { debounce } from 'lodash'
-import { eventBus } from '@/utils'
-import router from '@/router'
+import { eventBus, requireInjection } from '@/utils'
+import { RouterKey } from '@/symbols'
+
+const router = requireInjection(RouterKey)
 
 const input = ref<HTMLInputElement>()
 const q = ref('')

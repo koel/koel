@@ -8,11 +8,9 @@ new class extends UnitTestCase {
     it('searches for prop query on created', () => {
       const resetResultMock = this.mock(searchStore, 'resetSongResultState')
       const searchMock = this.mock(searchStore, 'songSearch')
-      this.render(SearchSongResultsScreen, {
-        props: {
-          q: 'search me'
-        }
-      })
+
+      this.router.activateRoute({ path: 'search-songs', screen: 'Search.Songs' }, { q: 'search me' })
+      this.render(SearchSongResultsScreen)
 
       expect(resetResultMock).toHaveBeenCalled()
       expect(searchMock).toHaveBeenCalledWith('search me')

@@ -8,7 +8,7 @@
         <ThumbnailStack :thumbnails="thumbnails"/>
       </template>
 
-      <template v-slot:meta v-if="totalSongCount">
+      <template v-if="totalSongCount" v-slot:meta>
         <span>{{ pluralize(totalSongCount, 'song') }}</span>
         <span>{{ totalDuration }}</span>
       </template>
@@ -36,11 +36,11 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { pluralize, secondsToHis } from '@/utils'
+import { pluralize, requireInjection, secondsToHis } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useScreen, useSongList } from '@/composables'
-import router from '@/router'
+import { RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
@@ -64,6 +64,8 @@ const {
   playSelected,
   onScrollBreakpoint
 } = useSongList(toRef(songStore.state, 'songs'), 'all-songs')
+
+const router = requireInjection(RouterKey)
 
 let initialized = false
 const loading = ref(false)
@@ -99,7 +101,7 @@ const playAll = async (shuffle: boolean) => {
   }
 
   await playbackService.playFirstInQueue()
-  await router.go('queue')
+  router.go('queue')
 }
 
 useScreen('Songs').onScreenActivated(async () => {

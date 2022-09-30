@@ -94,12 +94,12 @@ import { ref } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
 import { queueStore } from '@/stores'
 import { useAuthorization, useDroppable, useThirdPartyServices } from '@/composables'
-import { ActiveScreenKey } from '@/symbols'
+import { RouterKey } from '@/symbols'
 
 import PlaylistList from '@/components/playlist/PlaylistSidebarList.vue'
 
 const showing = ref(!isMobile.phone)
-const activeScreen = requireInjection(ActiveScreenKey, ref('Home'))
+const activeScreen = ref<ScreenName>()
 const droppableToQueue = ref(false)
 
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist', 'playlist'])
@@ -128,12 +128,18 @@ const onQueueDrop = async (event: DragEvent) => {
   return false
 }
 
-eventBus.on({
-  /**
-   * On mobile, hide the sidebar whenever a screen is activated.
-   */
-  ACTIVATE_SCREEN: () => isMobile.phone && (showing.value = false),
+const router = requireInjection(RouterKey)
 
+router.onRouteChanged(route => {
+  // On mobile, hide the sidebar whenever a screen is activated.
+  if (isMobile.phone) {
+    showing.value = false
+  }
+
+  activeScreen.value = route.screen
+})
+
+eventBus.on({
   /**
    * Listen to toggle sidebar event to show or hide the sidebar.
    * This should only be triggered on a mobile device.

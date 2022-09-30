@@ -1,15 +1,18 @@
 import { DeepReadonly, InjectionKey, Ref } from 'vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
+import Router from '@/router'
 
 export interface ReadonlyInjectionKey<T> extends InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]> {
 }
+
+export const RouterKey: InjectionKey<Router> = Symbol('Router')
 
 export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
 export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')
 
 export const SongListTypeKey: ReadonlyInjectionKey<SongListType> = Symbol('SongListType')
-export const SongsKey: ReadonlyInjectionKey<Ref<Song[]>> = Symbol('Songs')
+export const SongsKey: ReadonlyInjectionKey<Ref<Song[]>> | InjectionKey<Ref<Song[]>> = Symbol('Songs')
 export const SelectedSongsKey: ReadonlyInjectionKey<Ref<Song[]>> = Symbol('SelectedSongs')
 export const SongListConfigKey: ReadonlyInjectionKey<Partial<SongListConfig>> = Symbol('SongListConfig')
 export const SongListSortFieldKey: ReadonlyInjectionKey<Ref<SongListSortField>> = Symbol('SongListSortField')
@@ -20,5 +23,3 @@ export const EditSongFormInitialTabKey: ReadonlyInjectionKey<Ref<EditSongFormTab
 export const PlaylistKey: ReadonlyInjectionKey<Ref<Playlist>> = Symbol('Playlist')
 export const PlaylistFolderKey: ReadonlyInjectionKey<Ref<PlaylistFolder>> = Symbol('PlaylistFolder')
 export const UserKey: ReadonlyInjectionKey<Ref<User>> = Symbol('User')
-
-export const ActiveScreenKey: InjectionKey<Ref<ScreenName>> = Symbol('ActiveScreen')

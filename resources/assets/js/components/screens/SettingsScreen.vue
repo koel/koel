@@ -32,14 +32,15 @@
 import { computed, ref } from 'vue'
 import { settingStore } from '@/stores'
 import { forceReloadWindow, hideOverlay, parseValidationError, requireInjection, showOverlay } from '@/utils'
-import router from '@/router'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/Btn.vue'
 
+const router = requireInjection(RouterKey)
 const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)
+
 const mediaPath = ref(settingStore.state.media_path)
 const originalMediaPath = mediaPath.value
 

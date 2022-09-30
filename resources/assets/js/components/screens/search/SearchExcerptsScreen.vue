@@ -6,7 +6,7 @@
     </ScreenHeader>
 
     <div ref="wrapper" class="main-scroll-wrap">
-      <div class="results" v-if="q">
+      <div v-if="q" class="results">
         <section class="songs" data-testid="song-excerpts">
           <h1>
             Songs
@@ -86,9 +86,9 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { intersectionBy } from 'lodash'
 import { ref, toRef } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus, requireInjection } from '@/utils'
 import { searchStore } from '@/stores'
-import router from '@/router'
+import { RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -99,11 +99,13 @@ import SongCard from '@/components/song/SongCard.vue'
 import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
 import ArtistAlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 
+const router = requireInjection(RouterKey)
+
 const excerpt = toRef(searchStore.state, 'excerpt')
 const q = ref('')
 const searching = ref(false)
 
-const goToSongResults = () => router.go(`search/songs/${q.value}`)
+const goToSongResults = () => router.go(`search/songs/?q=${q.value}`)
 
 const doSearch = async () => {
   searching.value = true

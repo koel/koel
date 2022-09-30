@@ -2,7 +2,7 @@
   <div id="equalizer" data-testid="equalizer" ref="root">
     <div class="presets">
       <label class="select-wrapper">
-        <select v-model="selectedPresetId">
+        <select v-model="selectedPresetId" title="Select equalizer">
           <option disabled value="-1">Preset</option>
           <option v-for="preset in presets" :value="preset.id" :key="preset.id" v-once>{{ preset.name }}</option>
         </select>

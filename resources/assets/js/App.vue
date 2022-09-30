@@ -4,7 +4,7 @@
   <MessageToaster ref="toaster"/>
   <GlobalEventListeners/>
 
-  <div id="main" v-if="authenticated" @dragover="onDragOver" @drop="onDrop" @dragend="onDragEnd">
+  <div v-if="authenticated" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
     <Hotkeys/>
     <AppHeader/>
     <MainWrapper/>
@@ -19,17 +19,17 @@
     <DropZone v-show="showDropZone"/>
   </div>
 
-  <div class="login-wrapper" v-else>
+  <div v-else class="login-wrapper">
     <LoginForm @loggedin="onUserLoggedIn"/>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, onMounted, provide, ref } from 'vue'
-import { eventBus, hideOverlay, showOverlay } from '@/utils'
+import { eventBus, hideOverlay, requireInjection, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences } from '@/stores'
 import { authService, playbackService, socketListener, socketService, uploadService } from '@/services'
-import { ActiveScreenKey, DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
@@ -59,7 +59,6 @@ const dialog = ref<InstanceType<typeof DialogBox>>()
 const toaster = ref<InstanceType<typeof MessageToaster>>()
 const authenticated = ref(false)
 const showDropZone = ref(false)
-const activeScreen = ref<ScreenName>()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
@@ -116,18 +115,15 @@ const init = async () => {
   }
 }
 
+const router = requireInjection(RouterKey)
+
 const onDragOver = (e: DragEvent) => {
-  showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && activeScreen.value !== 'Upload'
+  showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && router.$currentRoute.value.screen !== 'Upload'
 }
 
 const onDragEnd = () => (showDropZone.value = false)
 const onDrop = () => (showDropZone.value = false)
 
-onMounted(() => {
-  eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName) => (activeScreen.value = screen))
-})
-
-provide(ActiveScreenKey, activeScreen)
 provide(DialogBoxKey, dialog)
 provide(MessageToasterKey, toaster)
 </script>

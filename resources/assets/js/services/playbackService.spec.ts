@@ -3,7 +3,6 @@ import plyr from 'plyr'
 import lodash from 'lodash'
 import { expect, it, vi } from 'vitest'
 import { eventBus, noop } from '@/utils'
-import router from '@/router'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { socketService } from '@/services'
@@ -332,7 +331,6 @@ new class extends UnitTestCase {
     it('queues and plays songs without shuffling', async () => {
       const songs = factory<Song>('song', 5)
       const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
-      const goMock = this.mock(router, 'go')
       const playMock = this.mock(playbackService, 'play')
       const firstSongInQueue = songs[0]
       const shuffleMock = this.mock(lodash, 'shuffle')
@@ -343,7 +341,6 @@ new class extends UnitTestCase {
 
       expect(shuffleMock).not.toHaveBeenCalled()
       expect(replaceQueueMock).toHaveBeenCalledWith(songs)
-      expect(goMock).toHaveBeenCalledWith('queue')
       expect(playMock).toHaveBeenCalledWith(firstSongInQueue)
     })
 
@@ -351,7 +348,6 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 5)
       const shuffledSongs = factory<Song>('song', 5)
       const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
-      const goMock = this.mock(router, 'go')
       const playMock = this.mock(playbackService, 'play')
       const firstSongInQueue = songs[0]
       this.setReadOnlyProperty(queueStore, 'first', firstSongInQueue)
@@ -362,7 +358,6 @@ new class extends UnitTestCase {
 
       expect(shuffleMock).toHaveBeenCalledWith(songs)
       expect(replaceQueueMock).toHaveBeenCalledWith(shuffledSongs)
-      expect(goMock).toHaveBeenCalledWith('queue')
       expect(playMock).toHaveBeenCalledWith(firstSongInQueue)
     })
 

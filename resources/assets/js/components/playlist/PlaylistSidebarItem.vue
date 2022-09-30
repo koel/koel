@@ -1,8 +1,8 @@
 <template>
   <li
     ref="el"
-    class="playlist"
     :class="{ droppable }"
+    class="playlist"
     data-testid="playlist-sidebar-item"
     draggable="true"
     @contextmenu="onContextMenu"
@@ -32,13 +32,14 @@ import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@f
 import { computed, ref, toRefs } from 'vue'
 import { eventBus, pluralize, requireInjection } from '@/utils'
 import { favoriteStore, playlistStore } from '@/stores'
-import { MessageToasterKey } from '@/symbols'
+import { MessageToasterKey, RouterKey } from '@/symbols'
 import { useDraggable, useDroppable } from '@/composables'
 
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
 
 const toaster = requireInjection(MessageToasterKey)
+const router = requireInjection(RouterKey)
 const droppable = ref(false)
 
 const props = defineProps<{ list: PlaylistLike }>()
@@ -107,8 +108,8 @@ const onDrop = async (event: DragEvent) => {
   return false
 }
 
-eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName, _list: PlaylistLike): void => {
-  switch (screen) {
+router.onRouteChanged(route => {
+  switch (route.screen) {
     case 'Favorites':
       active.value = isFavoriteList(list.value)
       break
@@ -118,7 +119,7 @@ eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName, _list: PlaylistLike): void =
       break
 
     case 'Playlist':
-      active.value = list.value === _list
+      active.value = (list.value as Playlist).id === parseInt(route.params!.id)
       break
 
     default:

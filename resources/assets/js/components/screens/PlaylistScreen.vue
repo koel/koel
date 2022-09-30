@@ -1,5 +1,5 @@
 <template>
-  <section id="playlistWrapper" v-if="playlist">
+  <section v-if="playlist" id="playlistWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ playlist.name }}
       <ControlsToggle v-if="songs.length" v-model="showingControls"/>
@@ -8,7 +8,7 @@
         <ThumbnailStack :thumbnails="thumbnails"/>
       </template>
 
-      <template v-slot:meta v-if="songs.length">
+      <template v-if="songs.length" v-slot:meta>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
         <a
@@ -37,10 +37,10 @@
     <SongList
       v-if="!loading && songs.length"
       ref="songList"
+      @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
-      @sort="sort"
     />
 
     <ScreenEmptyState v-if="!songs.length && !loading">
@@ -70,13 +70,14 @@ import { eventBus, pluralize, requireInjection } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
-import { MessageToasterKey } from '@/symbols'
+import { MessageToasterKey, RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const toaster = requireInjection(MessageToasterKey)
+const router = requireInjection(RouterKey)
 const playlist = ref<Playlist>()
 const loading = ref(false)
 
@@ -123,15 +124,24 @@ const fetchSongs = async () => {
   sort()
 }
 
-eventBus.on({
-    ACTIVATE_SCREEN: async (screen: ScreenName, p: any) => {
-      if (screen === 'Playlist') {
-        playlist.value = p as Playlist
-        await fetchSongs()
-      }
-    },
+router.onRouteChanged(async (route) => {
+  if (route.screen !== 'Playlist') return
+  const id = parseInt(route.params!.id)
 
-    SMART_PLAYLIST_UPDATED: async (updated: Playlist) => updated === playlist.value && await fetchSongs()
+  if (id === playlist.value?.id) return
+
+  const _playlist = playlistStore.byId(id)
+
+  if (!_playlist) {
+    await router.triggerNotFound()
+    return
   }
-)
+
+  playlist.value = _playlist
+  await fetchSongs()
+})
+
+eventBus.on({
+  SMART_PLAYLIST_UPDATED: async (updated: Playlist) => updated === playlist.value && await fetchSongs()
+})
 </script>

@@ -31,10 +31,6 @@ interface Plyr {
   setVolume (volume: number): void
 }
 
-declare module 'plyr' {
-  function setup (el: string | HTMLMediaElement | HTMLMediaElement[], options: Record<string, any>): Plyr[]
-}
-
 declare module 'ismobilejs' {
   let apple: { device: boolean }
   let any: boolean

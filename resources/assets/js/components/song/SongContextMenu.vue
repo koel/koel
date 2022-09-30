@@ -19,7 +19,7 @@
         <li v-else @click="queueSongsToBottom">Queue</li>
         <li class="separator"/>
         <li @click="addSongsToFavorite">Favorites</li>
-        <li class="separator" v-if="normalPlaylists.length"/>
+        <li v-if="normalPlaylists.length" class="separator"/>
         <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
       </ul>
     </li>
@@ -38,14 +38,15 @@ import { computed, ref, toRef } from 'vue'
 import { arrayify, copyText, eventBus, pluralize, requireInjection } from '@/utils'
 import { commonStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
-import router from '@/router'
 import { useAuthorization, useContextMenu, useSongMenuMethods } from '@/composables'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 
 const { context, base, ContextMenuBase, open, close, trigger } = useContextMenu()
 
 const dialogBox = requireInjection(DialogBoxKey)
 const toaster = requireInjection(MessageToasterKey)
+const router = requireInjection(RouterKey)
+
 const songs = ref<Song[]>([])
 
 const {

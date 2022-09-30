@@ -12,7 +12,7 @@
 
       <template v-slot:meta>
         <a v-if="isNormalArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
-        <span class="nope" v-else>{{ album.artist_name }}</span>
+        <span v-else class="nope">{{ album.artist_name }}</span>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
         <a v-if="useLastfm" class="info" href title="View album information" @click.prevent="showInfo">Info</a>
@@ -50,13 +50,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, ref, toRef, toRefs } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList } from '@/composables'
-import router from '@/router'
-import { DialogBoxKey } from '@/symbols'
+import { DialogBoxKey, RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
@@ -67,9 +66,7 @@ const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInf
 const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
 const dialog = requireInjection(DialogBoxKey)
-
-const props = defineProps<{ album: number }>()
-const { album: id } = toRefs(props)
+const router = requireInjection(RouterKey)
 
 const album = ref<Album>()
 const songs = ref<Song[]>([])
@@ -100,16 +97,17 @@ const isNormalArtist = computed(() => {
   return !artistStore.isVarious(album.value.artist_id) && !artistStore.isUnknown(album.value.artist_id)
 })
 
-const download = () => downloadService.fromAlbum(album.value)
+const download = () => downloadService.fromAlbum(album.value!)
 const showInfo = () => (showingInfo.value = true)
 
 onMounted(async () => {
+  const id = parseInt(router.$currentRoute.value?.params!.id)
   loading.value = true
 
   try {
     [album.value, songs.value] = await Promise.all([
-      albumStore.resolve(id.value),
-      songStore.fetchForAlbum(id.value)
+      albumStore.resolve(id),
+      songStore.fetchForAlbum(id)
     ])
 
     sort('track')
@@ -121,10 +119,8 @@ onMounted(async () => {
   }
 })
 
-eventBus.on('SONGS_UPDATED', () => {
-  // if the current album has been deleted, go back to the list
-  albumStore.byId(id.value) || router.go('albums')
-})
+// if the current album has been deleted, go back to the list
+eventBus.on('SONGS_UPDATED', () => albumStore.byId(album.value!.id) || router.go('albums'))
 </script>
 
 <style lang="scss" scoped>

@@ -8,7 +8,7 @@
         <ThumbnailStack :thumbnails="thumbnails"/>
       </template>
 
-      <template v-slot:meta v-if="songs.length">
+      <template v-if="songs.length" v-slot:meta>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
       </template>
@@ -28,16 +28,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRef, toRefs } from 'vue'
+import { computed, onMounted, ref, toRef } from 'vue'
 import { searchStore } from '@/stores'
 import { useSongList } from '@/composables'
-import { pluralize } from '@/utils'
+import { pluralize, requireInjection } from '@/utils'
+import { RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const props = defineProps<{ q: string }>()
-const { q } = toRefs(props)
+const router = requireInjection(RouterKey)
+const q = ref('')
 
 const {
   SongList,
@@ -64,6 +65,9 @@ const loading = ref(false)
 searchStore.resetSongResultState()
 
 onMounted(async () => {
+  q.value = router.$currentRoute.value?.params?.q || ''
+  if (!q.value) return
+
   loading.value = true
   await searchStore.songSearch(q.value)
   loading.value = false

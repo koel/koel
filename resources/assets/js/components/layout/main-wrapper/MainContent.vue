@@ -19,9 +19,9 @@
     <UploadScreen v-show="screen === 'Upload'"/>
     <SearchExcerptsScreen v-show="screen === 'Search.Excerpt'"/>
 
-    <SearchSongResultsScreen v-if="screen === 'Search.Songs'" :q="screenProps"/>
-    <AlbumScreen v-if="screen === 'Album'" :album="screenProps"/>
-    <ArtistScreen v-if="screen === 'Artist'" :artist="screenProps"/>
+    <SearchSongResultsScreen v-if="screen === 'Search.Songs'"/>
+    <AlbumScreen v-if="screen === 'Album'"/>
+    <ArtistScreen v-if="screen === 'Artist'"/>
     <SettingsScreen v-if="screen === 'Settings'"/>
     <ProfileScreen v-if="screen === 'Profile'"/>
     <UserListScreen v-if="screen === 'Users'"/>
@@ -32,9 +32,10 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus, requireInjection } from '@/utils'
 import { preferenceStore } from '@/stores'
 import { useThirdPartyServices } from '@/composables'
+import { RouterKey } from '@/symbols'
 
 import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
@@ -46,7 +47,6 @@ import FavoritesScreen from '@/components/screens/FavoritesScreen.vue'
 import RecentlyPlayedScreen from '@/components/screens/RecentlyPlayedScreen.vue'
 import UploadScreen from '@/components/screens/UploadScreen.vue'
 import SearchExcerptsScreen from '@/components/screens/search/SearchExcerptsScreen.vue'
-import router from '@/router'
 
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
@@ -60,24 +60,21 @@ const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/N
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
 const { useYouTube } = useThirdPartyServices()
+const router = requireInjection(RouterKey)
 
 const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
 const showingVisualizer = ref(false)
-const screenProps = ref<any>(null)
 const screen = ref<ScreenName>('Home')
 const currentSong = ref<Song | null>(null)
 
-eventBus.on({
-  ACTIVATE_SCREEN (screenName: ScreenName, data: any) {
-    screenProps.value = data
-    screen.value = screenName
-  },
+router.onRouteChanged(route => (screen.value = route.screen))
 
+eventBus.on({
   TOGGLE_VISUALIZER: () => (showingVisualizer.value = !showingVisualizer.value),
   SONG_STARTED: (song: Song) => (currentSong.value = song)
 })
 
-onMounted(() => router.resolveRoute())
+onMounted(() => router.resolve())
 </script>
 
 <style lang="scss">
@@ -93,6 +90,7 @@ onMounted(() => router.resolveRoute())
     display: flex;
     flex-direction: column;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 
     .main-scroll-wrap {
       &:not(.song-list-wrap) {

@@ -1,6 +1,5 @@
 import { without } from 'lodash'
 import { reactive } from 'vue'
-import { UploadFile } from '@/config'
 import { http } from '@/services'
 import { albumStore, overviewStore, songStore } from '@/stores'
 import { logger } from '@/utils'
@@ -8,6 +7,22 @@ import { logger } from '@/utils'
 interface UploadResult {
   song: Song
   album: Album
+}
+
+export type UploadStatus =
+  | 'Ready'
+  | 'Uploading'
+  | 'Uploaded'
+  | 'Canceled'
+  | 'Errored'
+
+export interface UploadFile {
+  id: string
+  file: File
+  status: UploadStatus
+  name: string
+  progress: number
+  message?: string
 }
 
 export const uploadService = {

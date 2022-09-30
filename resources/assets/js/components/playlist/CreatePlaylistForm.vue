@@ -31,11 +31,12 @@
 import { ref } from 'vue'
 import { playlistStore } from '@/stores'
 import { logger, requireInjection } from '@/utils'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
 import Btn from '@/components/ui/Btn.vue'
 
+const router = requireInjection(RouterKey)
 const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)
 
@@ -50,9 +51,10 @@ const submit = async () => {
   loading.value = true
 
   try {
-    const folder = await playlistStore.store(name.value)
+    const playlist = await playlistStore.store(name.value)
     close()
-    toaster.value.success(`Playlist "${folder.name}" created.`)
+    toaster.value.success(`Playlist "${playlist.name}" created.`)
+    router.go(`playlist/${playlist.id}`)
   } catch (error) {
     dialog.value.error('Something went wrong. Please try again.')
     logger.error(error)

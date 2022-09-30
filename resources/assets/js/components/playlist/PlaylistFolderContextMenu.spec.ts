@@ -5,7 +5,6 @@ import factory from '@/__tests__/factory'
 import { fireEvent, waitFor } from '@testing-library/vue'
 import { playlistStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import router from '@/router'
 import PlaylistFolderContextMenu from './PlaylistFolderContextMenu.vue'
 
 new class extends UnitTestCase {
@@ -42,7 +41,7 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(router, 'go')
+      const goMock = this.mock(this.router, 'go')
       const { getByText } = await this.renderComponent(folder)
 
       await fireEvent.click(getByText('Play All'))
@@ -59,7 +58,7 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(router, 'go')
+      const goMock = this.mock(this.router, 'go')
       const { getByText } = await this.renderComponent(folder)
 
       await fireEvent.click(getByText('Shuffle All'))

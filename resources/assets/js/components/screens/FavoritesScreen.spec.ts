@@ -1,22 +1,16 @@
-import { ref } from 'vue'
 import { waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { favoriteStore } from '@/stores'
-import { ActiveScreenKey } from '@/symbols'
 import FavoritesScreen from './FavoritesScreen.vue'
 
 new class extends UnitTestCase {
   private async renderComponent () {
     const fetchMock = this.mock(favoriteStore, 'fetch')
-    const rendered = this.render(FavoritesScreen, {
-      global: {
-        provide: {
-          [<symbol>ActiveScreenKey]: ref('Favorites')
-        }
-      }
-    })
+    const rendered = this.render(FavoritesScreen)
+
+    await this.router.activateRoute({ path: 'favorites', screen: 'Favorites' })
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
 
