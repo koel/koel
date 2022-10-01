@@ -48,6 +48,6 @@ class AlbumTest extends TestCase
 
         $album = Album::getOrCreate($artist, $name);
 
-        self::assertEquals('Unknown Album', $album->name);
+        self::assertSame('Unknown Album', $album->name);
     }
 }

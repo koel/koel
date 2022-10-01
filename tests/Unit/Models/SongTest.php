@@ -20,6 +20,6 @@ class SongTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create(['lyrics' => "[00:00.00]Line 1\n[00:01.00]Line 2\n[00:02.00]Line 3"]);
 
-        self::assertEquals("Line 1\nLine 2\nLine 3", $song->lyrics);
+        self::assertSame("Line 1\nLine 2\nLine 3", $song->lyrics);
     }
 }

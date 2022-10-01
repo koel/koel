@@ -19,6 +19,6 @@ class LastfmClientTest extends TestCase
 
         $client = new LastfmClient(new GuzzleHttpClient(['handler' => HandlerStack::create($mock)]));
 
-        self::assertEquals('foo', $client->getSessionKey('bar'));
+        self::assertSame('foo', $client->getSessionKey('bar'));
     }
 }

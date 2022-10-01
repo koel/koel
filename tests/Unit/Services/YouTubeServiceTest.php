@@ -25,7 +25,7 @@ class YouTubeServiceTest extends TestCase
         $service = new YouTubeService($client, app(Repository::class));
         $response = $service->searchVideosRelatedToSong($song, 'my-token');
 
-        self::assertEquals('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
+        self::assertSame('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
         self::assertNotNull(cache()->get('5becf539115b18b2df11c39adbc2bdfa'));
     }
 }
