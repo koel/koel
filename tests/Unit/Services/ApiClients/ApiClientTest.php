@@ -28,9 +28,9 @@ class ApiClientTest extends TestCase
     {
         $api = new ConcreteApiClient($this->wrapped);
 
-        self::assertEquals('https://foo.com/get/param?key=bar', $api->buildUrl('get/param'));
-        self::assertEquals('https://foo.com/get/param?baz=moo&key=bar', $api->buildUrl('/get/param?baz=moo'));
-        self::assertEquals('https://baz.com/?key=bar', $api->buildUrl('https://baz.com/'));
+        self::assertSame('https://foo.com/get/param?key=bar', $api->buildUrl('get/param'));
+        self::assertSame('https://foo.com/get/param?baz=moo&key=bar', $api->buildUrl('/get/param?baz=moo'));
+        self::assertSame('https://baz.com/?key=bar', $api->buildUrl('https://baz.com/'));
     }
 
     /** @return array<mixed> */

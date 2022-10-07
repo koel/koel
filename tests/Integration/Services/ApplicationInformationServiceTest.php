@@ -23,7 +23,7 @@ class ApplicationInformationServiceTest extends TestCase
         $client = new Client(['handler' => HandlerStack::create($mock)]);
         $service = new ApplicationInformationService($client, app(Cache::class));
 
-        self::assertEquals($latestVersion, $service->getLatestVersionNumber());
+        self::assertSame($latestVersion, $service->getLatestVersionNumber());
         self::assertSame($latestVersion, cache()->get('latestKoelVersion'));
     }
 }

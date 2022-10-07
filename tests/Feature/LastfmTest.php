@@ -19,7 +19,7 @@ class LastfmTest extends TestCase
         $this->postAs('api/lastfm/session-key', ['key' => 'foo'], $user)
             ->assertNoContent();
 
-        self::assertEquals('foo', $user->refresh()->lastfm_session_key);
+        self::assertSame('foo', $user->refresh()->lastfm_session_key);
     }
 
     public function testConnectToLastfm(): void
@@ -97,7 +97,7 @@ class LastfmTest extends TestCase
 
         $this->get('lastfm/callback?token=foo&api_token=my-token');
 
-        self::assertEquals('my-session-key', $user->refresh()->lastfm_session_key);
+        self::assertSame('my-session-key', $user->refresh()->lastfm_session_key);
     }
 
     public function testDisconnectUser(): void

@@ -73,7 +73,7 @@ class MediaSyncServiceTest extends TestCase
         // Albums and artists should be correctly linked
         /** @var Album $album */
         $album = Album::query()->where('name', 'Koel Testing Vol. 1')->first();
-        self::assertEquals('Koel', $album->artist->name);
+        self::assertSame('Koel', $album->artist->name);
 
         // Compilation albums, artists and songs must be recognized
         /** @var Song $song */

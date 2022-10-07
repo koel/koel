@@ -24,7 +24,7 @@ class PlayCountTest extends TestCase
                 'play_count',
             ]);
 
-        self::assertEquals(11, $interaction->refresh()->play_count);
+        self::assertSame(11, $interaction->refresh()->play_count);
     }
 
     public function testStoreNewEntry(): void
@@ -50,6 +50,6 @@ class PlayCountTest extends TestCase
             ->where('user_id', $user->id)
             ->first();
 
-        self::assertEquals(1, $interaction->play_count);
+        self::assertSame(1, $interaction->play_count);
     }
 }

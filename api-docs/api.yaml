@@ -1057,7 +1057,7 @@ paths:
         - download
       responses: {}
       operationId: get-download-songs
-      description: Download a song or several songs. This is NOT an XmlHttpRequest. The response will be a download response of either the media file or a zip file containg multiple media files.
+      description: Download a song or several songs. This is NOT an XmlHttpRequest. The response will be a download response of either the media file or a zip file containing multiple media files.
       security:
         - api-token: []
       parameters:
@@ -1080,7 +1080,7 @@ paths:
         - download
       responses: {}
       operationId: get-download-album-albumId
-      description: Download a whole album. This is NOT an XmlHttpRequest. The response will be a download response of either one media file or a zip file containg multiple media files.
+      description: Download a whole album. This is NOT an XmlHttpRequest. The response will be a download response of either one media file or a zip file containing multiple media files.
       security:
         - api-token: []
   '/download/artist/{artistId}':
@@ -1097,7 +1097,7 @@ paths:
         - download
       responses: {}
       operationId: get-download-artist-artistId
-      description: Download a whole artist's biography. This is NOT an XmlHttpRequest. The response will be a download response of either one media file or a zip file containg multiple media files.
+      description: Download a whole artist's biography. This is NOT an XmlHttpRequest. The response will be a download response of either one media file or a zip file containing multiple media files.
       security:
         - api-token: []
   '/download/playlist/{playlistId}':
@@ -1114,7 +1114,7 @@ paths:
         - download
       responses: {}
       operationId: get-download-playlist-playlistId
-      description: Download a whole playlist. This is NOT an XmlHttpRequest. The response will be a download response of either one media file or a zip file containg multiple media files.
+      description: Download a whole playlist. This is NOT an XmlHttpRequest. The response will be a download response of either one media file or a zip file containing multiple media files.
       security:
         - api-token: []
   /api/search:
@@ -1155,7 +1155,7 @@ paths:
                 required:
                   - results
       operationId: get-api-search
-      description: 'Seach for songs, albums, and artists, with a maximum of {count} results each.'
+      description: 'Search for songs, albums, and artists, with a maximum of {count} results each.'
       security:
         - Bearer Token: []
       parameters:
@@ -1375,7 +1375,7 @@ components:
                   - title
                   - album.name
                   - artist.name
-                  - interations.play_count
+                  - interactions.play_count
                   - interactions.updated_at
                   - length
                   - created_at

@@ -30,7 +30,7 @@ class InteractionServiceTest extends TestCase
         $currentCount = $interaction->play_count;
         $this->interactionService->increasePlayCount($interaction->song, $interaction->user);
 
-        self::assertEquals($currentCount + 1, $interaction->refresh()->play_count);
+        self::assertSame($currentCount + 1, $interaction->refresh()->play_count);
     }
 
     public function testToggleLike(): void
