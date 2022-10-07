@@ -2,10 +2,10 @@
   <Overlay/>
   <DialogBox ref="dialog"/>
   <MessageToaster ref="toaster"/>
+  <GlobalEventListeners/>
 
   <div id="main" v-if="authenticated" @dragover="onDragOver" @drop="onDrop" @dragend="onDragEnd">
     <Hotkeys/>
-    <GlobalEventListeners/>
     <AppHeader/>
     <MainWrapper/>
     <AppFooter/>
@@ -39,8 +39,10 @@ import Overlay from '@/components/ui/Overlay.vue'
 // that is necessary to properly initialize the playService and equalizer.
 import AppFooter from '@/components/layout/app-footer/index.vue'
 
+// GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
+import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
+
 const AppHeader = defineAsyncComponent(() => import('@/components/layout/AppHeader.vue'))
-const GlobalEventListeners = defineAsyncComponent(() => import('@/components/utils/GlobalEventListeners.vue'))
 const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
 const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
