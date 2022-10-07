@@ -27,7 +27,7 @@ new class extends UnitTestCase {
       },
       global: {
         provide: {
-          [<symbol>SongsKey]: [ref(songsToMatchAgainst)]
+          [<symbol>SongsKey]: ref(songsToMatchAgainst)
         }
       }
     })
