@@ -78,10 +78,10 @@ class SongTest extends TestCase
             ->assertOk();
 
         // We don't expect the song's artist to change
-        self::assertEquals($originalArtistId, $song->refresh()->artist->id);
+        self::assertSame($originalArtistId, $song->refresh()->artist->id);
 
         // But we expect a new album to be created for this artist and contain this song
-        self::assertEquals('One by One', $song->album->name);
+        self::assertSame('One by One', $song->album->name);
     }
 
     public function testMultipleUpdateNoCompilation(): void
@@ -105,11 +105,11 @@ class SongTest extends TestCase
         $songs = Song::query()->whereIn('id', $songIds)->get();
 
         // All of these songs must now belong to a new album and artist set
-        self::assertEquals('One by One', $songs[0]->album->name);
+        self::assertSame('One by One', $songs[0]->album->name);
         self::assertSame($songs[0]->album_id, $songs[1]->album_id);
         self::assertSame($songs[0]->album_id, $songs[2]->album_id);
 
-        self::assertEquals('John Cena', $songs[0]->artist->name);
+        self::assertSame('John Cena', $songs[0]->artist->name);
         self::assertSame($songs[0]->artist_id, $songs[1]->artist_id);
         self::assertSame($songs[0]->artist_id, $songs[2]->artist_id);
     }
@@ -140,17 +140,17 @@ class SongTest extends TestCase
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.
-        self::assertEquals($songs[0]->album->name, $originalSongs[0]->album->name);
-        self::assertNotEquals($songs[0]->album->id, $originalSongs[0]->album->id);
-        self::assertEquals($songs[1]->album->name, $originalSongs[1]->album->name);
-        self::assertNotEquals($songs[1]->album->id, $originalSongs[1]->album->id);
-        self::assertEquals($songs[2]->album->name, $originalSongs[2]->album->name);
-        self::assertNotEquals($songs[2]->album->id, $originalSongs[2]->album->id);
+        self::assertSame($songs[0]->album->name, $originalSongs[0]->album->name);
+        self::assertNotSame($songs[0]->album->id, $originalSongs[0]->album->id);
+        self::assertSame($songs[1]->album->name, $originalSongs[1]->album->name);
+        self::assertNotSame($songs[1]->album->id, $originalSongs[1]->album->id);
+        self::assertSame($songs[2]->album->name, $originalSongs[2]->album->name);
+        self::assertNotSame($songs[2]->album->id, $originalSongs[2]->album->id);
 
         // And of course, the new artist is...
-        self::assertEquals('John Cena', $songs[0]->artist->name); // JOHN CENA!!!
-        self::assertEquals('John Cena', $songs[1]->artist->name); // JOHN CENA!!!
-        self::assertEquals('John Cena', $songs[2]->artist->name); // And... JOHN CENAAAAAAAAAAA!!!
+        self::assertSame('John Cena', $songs[0]->artist->name); // JOHN CENA!!!
+        self::assertSame('John Cena', $songs[1]->artist->name); // JOHN CENA!!!
+        self::assertSame('John Cena', $songs[2]->artist->name); // And... JOHN CENAAAAAAAAAAA!!!
     }
 
     public function testSingleUpdateAllInfoWithCompilation(): void
@@ -199,11 +199,11 @@ class SongTest extends TestCase
 
     public function testDeletingByChunk(): void
     {
-        self::assertNotEquals(0, Song::query()->count());
+        self::assertNotSame(0, Song::query()->count());
         $ids = Song::query()->select('id')->get()->pluck('id')->all();
 
         Song::deleteByChunk($ids, 'id', 1);
 
-        self::assertEquals(0, Song::query()->count());
+        self::assertSame(0, Song::query()->count());
     }
 }

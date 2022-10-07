@@ -40,7 +40,7 @@ class S3Test extends TestCase
         self::assertSame('Koel Testing Vol. 1', $song->album->name);
         self::assertSame('Koel', $song->artist->name);
         self::assertSame('When you wake up, turn your radio on, and you\'ll hear this simple song', $song->lyrics);
-        self::assertEquals(10, $song->length);
+        self::assertSame(10, (int) $song->length);
         self::assertSame(5, $song->track);
     }
 

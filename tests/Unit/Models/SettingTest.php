@@ -40,7 +40,7 @@ class SettingTest extends TestCase
         Setting::set('foo', 'bar');
         Setting::set('foo', 'baz');
 
-        self::assertEquals('baz', Setting::get('foo'));
+        self::assertSame('baz', Setting::get('foo'));
     }
 
     public function testGetSettings(): void

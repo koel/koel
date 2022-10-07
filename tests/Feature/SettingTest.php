@@ -30,7 +30,7 @@ class SettingTest extends TestCase
         $this->putAs('/api/settings', ['media_path' => __DIR__], $admin)
             ->assertSuccessful();
 
-        self::assertEquals(__DIR__, Setting::get('media_path'));
+        self::assertSame(__DIR__, Setting::get('media_path'));
     }
 
     public function testNonAdminCannotSaveSettings(): void
