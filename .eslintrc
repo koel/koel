@@ -19,7 +19,6 @@
     "@typescript-eslint"
   ],
   "globals": {
-    "KOEL_ENV": "readonly",
     "FileReader": "readonly",
     "defineProps": "readonly",
     "defineEmits": "readonly",

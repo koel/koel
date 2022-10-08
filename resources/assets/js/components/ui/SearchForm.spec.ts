@@ -1,5 +1,4 @@
 import { expect, it } from 'vitest'
-import router from '@/router'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { fireEvent } from '@testing-library/vue'
 import { eventBus } from '@/utils'
@@ -16,7 +15,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to search screen when search box is focused', async () => {
-      const mock = this.mock(router, 'go')
+      const mock = this.mock(this.router, 'go')
       const { getByRole } = this.render(SearchForm)
 
       await fireEvent.focus(getByRole('searchbox'))

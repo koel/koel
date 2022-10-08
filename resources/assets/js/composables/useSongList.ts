@@ -3,7 +3,7 @@ import isMobile from 'ismobilejs'
 import { computed, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
-import router from '@/router'
+import { eventBus, provideReadonly, requireInjection } from '@/utils'
 
 import {
   SelectedSongsKey,
@@ -11,16 +11,18 @@ import {
   SongListSortFieldKey,
   SongListSortOrderKey,
   SongListTypeKey,
-  SongsKey
+  SongsKey,
+  RouterKey
 } from '@/symbols'
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
-import { eventBus, provideReadonly } from '@/utils'
 
 export const useSongList = (songs: Ref<Song[]>, type: SongListType, config: Partial<SongListConfig> = {}) => {
+  const router = requireInjection(RouterKey)
+
   const songList = ref<InstanceType<typeof SongList>>()
 
   const isPhone = isMobile.phone
@@ -61,7 +63,7 @@ export const useSongList = (songs: Ref<Song[]>, type: SongListType, config: Part
       await playbackService.play(selectedSongs.value[0])
     }
 
-    router.go('/queue')
+    router.go('queue')
   }
 
   const sortField = ref<SongListSortField | null>(((): SongListSortField | null => {

@@ -28,11 +28,12 @@ import { albumStore, artistStore, queueStore, songStore, userStore } from '@/sto
 import { playbackService } from '@/services'
 import { defaultCover, fileReader, logger, requireInjection } from '@/utils'
 import { useAuthorization } from '@/composables'
-import { MessageToasterKey } from '@/symbols'
+import { MessageToasterKey, RouterKey } from '@/symbols'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png', 'image/webp']
 
 const toaster = requireInjection(MessageToasterKey)
+const router = requireInjection(RouterKey)
 
 const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)
@@ -72,6 +73,7 @@ const playOrQueue = async (event: KeyboardEvent) => {
   }
 
   await playbackService.queueAndPlay(songs)
+  router.go('queue')
 }
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)

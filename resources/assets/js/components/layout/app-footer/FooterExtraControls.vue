@@ -53,8 +53,9 @@
 import isMobile from 'ismobilejs'
 import { faBolt, faListOl, faSliders } from '@fortawesome/free-solid-svg-icons'
 import { ref, toRef, toRefs } from 'vue'
-import { eventBus, isAudioContextSupported as useEqualizer } from '@/utils'
+import { eventBus, isAudioContextSupported as useEqualizer, requireInjection } from '@/utils'
 import { preferenceStore } from '@/stores'
+import { RouterKey } from '@/symbols'
 
 import Equalizer from '@/components/ui/Equalizer.vue'
 import Volume from '@/components/ui/Volume.vue'
@@ -73,7 +74,9 @@ const toggleEqualizer = () => (showEqualizer.value = !showEqualizer.value)
 const closeEqualizer = () => (showEqualizer.value = false)
 const toggleVisualizer = () => isMobile.any || eventBus.emit('TOGGLE_VISUALIZER')
 
-eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName) => (viewingQueue.value = screen === 'Queue'))
+const router = requireInjection(RouterKey)
+
+router.onRouteChanged(route => (viewingQueue.value = route.screen === 'Queue'))
 </script>
 
 <style lang="scss" scoped>

@@ -29,9 +29,6 @@ export default defineConfig({
       }
     }
   },
-  define: {
-    KOEL_ENV: '""'
-  },
   test: {
     environment: 'jsdom',
     setupFiles: path.resolve(__dirname, './resources/assets/js/__tests__/setup.ts')

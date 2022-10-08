@@ -1,7 +1,6 @@
 import isMobile from 'ismobilejs'
 import plyr from 'plyr'
 import { shuffle, throttle } from 'lodash'
-import { nextTick } from 'vue'
 
 import {
   commonStore,
@@ -14,7 +13,6 @@ import {
 
 import { arrayify, eventBus, isAudioContextSupported, logger } from '@/utils'
 import { audioService, socketService } from '@/services'
-import router from '@/router'
 
 /**
  * The number of seconds before the current song ends to start preload the next one.
@@ -56,59 +54,6 @@ class PlaybackService {
     }
 
     this.setMediaSessionActionHandlers()
-  }
-
-  private setMediaSessionActionHandlers () {
-    if (!navigator.mediaSession) {
-      return
-    }
-
-    navigator.mediaSession.setActionHandler('play', () => this.resume())
-    navigator.mediaSession.setActionHandler('pause', () => this.pause())
-    navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
-    navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
-  }
-
-  private listenToMediaEvents (mediaElement: HTMLMediaElement) {
-    mediaElement.addEventListener('error', () => this.playNext(), true)
-
-    mediaElement.addEventListener('ended', () => {
-      if (commonStore.state.use_last_fm && userStore.current.preferences!.lastfm_session_key) {
-        songStore.scrobble(queueStore.current!)
-      }
-
-      preferences.repeatMode === 'REPEAT_ONE' ? this.restart() : this.playNext()
-    })
-
-    let timeUpdateHandler = () => {
-      const currentSong = queueStore.current
-
-      if (!currentSong) return
-
-      if (!currentSong.play_count_registered && !this.isTranscoding) {
-        // if we've passed 25% of the song, it's safe to say the song has been "played".
-        // Refer to https://github.com/koel/koel/issues/1087
-        if (!mediaElement.duration || mediaElement.currentTime * 4 >= mediaElement.duration) {
-          this.registerPlay(currentSong)
-        }
-      }
-
-      const nextSong = queueStore.next
-
-      if (!nextSong || nextSong.preloaded || this.isTranscoding) {
-        return
-      }
-
-      if (mediaElement.duration && mediaElement.currentTime + PRELOAD_BUFFER > mediaElement.duration) {
-        this.preload(nextSong)
-      }
-    }
-
-    if (process.env.NODE_ENV !== 'test') {
-      timeUpdateHandler = throttle(timeUpdateHandler, 1000)
-    }
-
-    mediaElement.addEventListener('timeupdate', timeUpdateHandler)
   }
 
   public registerPlay (song: Song) {
@@ -383,15 +328,64 @@ class PlaybackService {
 
     await this.stop()
     queueStore.replaceQueueWith(songs)
-
-    // Wait for the DOM to complete updating and play the first song in the queue.
-    await nextTick()
-    router.go('queue')
     await this.play(queueStore.first)
   }
 
   public async playFirstInQueue () {
     queueStore.all.length && await this.play(queueStore.first)
+  }
+
+  private setMediaSessionActionHandlers () {
+    if (!navigator.mediaSession) {
+      return
+    }
+
+    navigator.mediaSession.setActionHandler('play', () => this.resume())
+    navigator.mediaSession.setActionHandler('pause', () => this.pause())
+    navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
+    navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
+  }
+
+  private listenToMediaEvents (mediaElement: HTMLMediaElement) {
+    mediaElement.addEventListener('error', () => this.playNext(), true)
+
+    mediaElement.addEventListener('ended', () => {
+      if (commonStore.state.use_last_fm && userStore.current.preferences!.lastfm_session_key) {
+        songStore.scrobble(queueStore.current!)
+      }
+
+      preferences.repeatMode === 'REPEAT_ONE' ? this.restart() : this.playNext()
+    })
+
+    let timeUpdateHandler = () => {
+      const currentSong = queueStore.current
+
+      if (!currentSong) return
+
+      if (!currentSong.play_count_registered && !this.isTranscoding) {
+        // if we've passed 25% of the song, it's safe to say the song has been "played".
+        // Refer to https://github.com/koel/koel/issues/1087
+        if (!mediaElement.duration || mediaElement.currentTime * 4 >= mediaElement.duration) {
+          this.registerPlay(currentSong)
+        }
+      }
+
+      const nextSong = queueStore.next
+
+      if (!nextSong || nextSong.preloaded || this.isTranscoding) {
+        return
+      }
+
+      if (mediaElement.duration && mediaElement.currentTime + PRELOAD_BUFFER > mediaElement.duration) {
+        this.preload(nextSong)
+      }
+    }
+
+    if (process.env.NODE_ENV !== 'test') {
+      timeUpdateHandler = throttle(timeUpdateHandler, 1000)
+    }
+
+    mediaElement.addEventListener('timeupdate', timeUpdateHandler)
   }
 }
 

@@ -3,7 +3,6 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import SettingsScreen from './SettingsScreen.vue'
 import { settingStore } from '@/stores'
 import { fireEvent, waitFor } from '@testing-library/vue'
-import router from '@/router'
 import { DialogBoxStub } from '@/__tests__/stubs'
 
 new class extends UnitTestCase {
@@ -12,7 +11,7 @@ new class extends UnitTestCase {
 
     it('submits the settings form', async () => {
       const updateMock = this.mock(settingStore, 'update')
-      const goMock = this.mock(router, 'go')
+      const goMock = this.mock(this.router, 'go')
 
       settingStore.state.media_path = ''
       const { getByLabelText, getByText } = this.render(SettingsScreen)
@@ -28,7 +27,7 @@ new class extends UnitTestCase {
 
     it('confirms upon media path change', async () => {
       const updateMock = this.mock(settingStore, 'update')
-      const goMock = this.mock(router, 'go')
+      const goMock = this.mock(this.router, 'go')
       const confirmMock = this.mock(DialogBoxStub.value, 'confirm')
 
       settingStore.state.media_path = '/old'

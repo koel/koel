@@ -32,12 +32,15 @@
 
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
-import router from '@/router'
 import { overviewStore } from '@/stores'
+import { RouterKey } from '@/symbols'
+import { requireInjection } from '@/utils'
 
 import Btn from '@/components/ui/Btn.vue'
 import SongCard from '@/components/song/SongCard.vue'
 import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
+
+const router = requireInjection(RouterKey)
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)

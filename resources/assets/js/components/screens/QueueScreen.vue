@@ -8,7 +8,7 @@
         <ThumbnailStack :thumbnails="thumbnails"/>
       </template>
 
-      <template v-slot:meta v-if="songs.length">
+      <template v-if="songs.length" v-slot:meta>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
       </template>
@@ -16,10 +16,10 @@
       <template v-slot:controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          :config="controlConfig"
+          @clearQueue="clearQueue"
           @playAll="playAll"
           @playSelected="playSelected"
-          @clearQueue="clearQueue"
-          :config="controlConfig"
         />
       </template>
     </ScreenHeader>
@@ -28,9 +28,9 @@
     <SongList
       v-if="songs.length"
       ref="songList"
+      @reorder="onReorder"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
-      @reorder="onReorder"
       @scroll-breakpoint="onScrollBreakpoint"
     />
 
@@ -40,9 +40,9 @@
       </template>
 
       No songs queued.
-      <span class="d-block secondary" v-if="libraryNotEmpty">
+      <span v-if="libraryNotEmpty" class="d-block secondary">
         How about
-        <a data-testid="shuffle-library" class="start" @click.prevent="shuffleSome">playing some random songs</a>?
+        <a class="start" data-testid="shuffle-library" @click.prevent="shuffleSome">playing some random songs</a>?
       </span>
     </ScreenEmptyState>
   </section>
@@ -55,13 +55,15 @@ import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useSongList } from '@/composables'
-import { DialogBoxKey } from '@/symbols'
+import { DialogBoxKey, RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const dialog = requireInjection(DialogBoxKey)
+const router = requireInjection(RouterKey)
+
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
 
 const {
@@ -84,7 +86,10 @@ const {
 const loading = ref(false)
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 
-const playAll = (shuffle = true) => playbackService.queueAndPlay(songs.value, shuffle)
+const playAll = async (shuffle = true) => {
+  await playbackService.queueAndPlay(songs.value, shuffle)
+  router.go('queue')
+}
 
 const shuffleSome = async () => {
   try {

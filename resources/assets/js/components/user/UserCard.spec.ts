@@ -2,7 +2,6 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { fireEvent } from '@testing-library/vue'
-import router from '@/router'
 import { eventBus } from '@/utils'
 import UserCard from './UserCard.vue'
 
@@ -35,7 +34,7 @@ new class extends UnitTestCase {
     })
 
     it('redirects to Profile screen if edit current user', async () => {
-      const mock = this.mock(router, 'go')
+      const mock = this.mock(this.router, 'go')
       const user = factory<User>('user')
       const { getByText } = this.actingAs(user).renderComponent(user)
 

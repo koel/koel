@@ -79,12 +79,13 @@ import { computed, nextTick, ref, toRef, toRefs, watch } from 'vue'
 import { pluralize, requireInjection } from '@/utils'
 import { playlistStore, queueStore } from '@/stores'
 import { useSongMenuMethods } from '@/composables'
-import router from '@/router'
-import { MessageToasterKey } from '@/symbols'
+import { MessageToasterKey, RouterKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 
 const toaster = requireInjection(MessageToasterKey)
+const router = requireInjection(RouterKey)
+
 const props = defineProps<{ songs: Song[], showing: Boolean, config: AddToMenuConfig }>()
 const { songs, showing, config } = toRefs(props)
 

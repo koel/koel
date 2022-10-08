@@ -1,6 +1,5 @@
 import { cache, http } from '@/services'
 import { eventBus } from '@/utils'
-import router from '@/router'
 
 interface YouTubeSearchResult {
   nextPageToken: string
@@ -22,7 +21,5 @@ export const youTubeService = {
       id: video.id.videoId,
       title: video.snippet.title
     })
-
-    router.go('youtube')
   }
 }

@@ -1,16 +1,11 @@
-import { ref, watch } from 'vue'
+import { RouterKey } from '@/symbols'
 import { requireInjection } from '@/utils'
-import { ActiveScreenKey } from '@/symbols'
 
-export const useScreen = (currentScreen: ScreenName) => {
-  const activeScreen = requireInjection(ActiveScreenKey, ref('Home'))
-
-  const onScreenActivated = (cb: Closure) => watch(activeScreen, screen => screen === currentScreen && cb(), {
-    immediate: true
-  })
+export const useScreen = (screen: ScreenName) => {
+  const router = requireInjection(RouterKey)
+  const onScreenActivated = (cb: Closure) => router.onRouteChanged(route => route.screen === screen && cb())
 
   return {
-    activeScreen,
     onScreenActivated
   }
 }

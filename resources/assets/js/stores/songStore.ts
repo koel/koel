@@ -168,8 +168,9 @@ export const songStore = {
     return await this.cacheable(['artist.songs', id], http.get<Song[]>(`artists/${id}/songs`))
   },
 
-  async fetchForPlaylist (playlist: Playlist) {
-    return await this.cacheable(['playlist.songs', playlist.id], http.get<Song[]>(`playlists/${playlist.id}/songs`))
+  async fetchForPlaylist (playlist: Playlist | number) {
+    const id = typeof playlist === 'number' ? playlist : playlist.id
+    return await this.cacheable(['playlist.songs', id], http.get<Song[]>(`playlists/${id}/songs`))
   },
 
   async fetchForPlaylistFolder (folder: PlaylistFolder) {

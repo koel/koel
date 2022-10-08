@@ -56,12 +56,15 @@
 <script lang="ts" setup>
 import { faDownload, faRandom } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus, pluralize, secondsToHis } from '@/utils'
+import { eventBus, pluralize, requireInjection, secondsToHis } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useDraggable } from '@/composables'
+import { RouterKey } from '@/symbols'
 
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+
+const router = requireInjection(RouterKey)
 
 const { startDragging } = useDraggable('album')
 
@@ -76,6 +79,7 @@ const showing = computed(() => !albumStore.isUnknown(album.value))
 
 const shuffle = async () => {
   await playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
+  router.go('queue')
 }
 
 const download = () => downloadService.fromAlbum(album.value)

@@ -17,17 +17,13 @@ import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vu
 import MiddlePane from '@/components/layout/app-footer/FooterMiddlePane.vue'
 import PlayerControls from '@/components/layout/app-footer/FooterPlayerControls.vue'
 
-const song = ref<Song | null>(null)
-const viewingQueue = ref(false)
+const song = ref<Song>()
 
 const requestContextMenu = (event: MouseEvent) => {
   song.value?.id && eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
 }
 
-eventBus.on({
-  SONG_STARTED: (newSong: Song) => (song.value = newSong),
-  ACTIVATE_SCREEN: (screen: ScreenName) => (viewingQueue.value = screen === 'Queue')
-})
+eventBus.on('SONG_STARTED', (newSong: Song) => (song.value = newSong))
 </script>
 
 <style lang="scss" scoped>

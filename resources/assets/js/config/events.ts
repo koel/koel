@@ -1,6 +1,5 @@
 export type EventName =
   'KOEL_READY'
-  | 'ACTIVATE_SCREEN'
   | 'LOG_OUT'
   | 'TOGGLE_SIDEBAR'
   | 'SHOW_OVERLAY'
