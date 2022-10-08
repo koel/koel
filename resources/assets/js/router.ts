@@ -3,7 +3,7 @@ import { ref, Ref, watch } from 'vue'
 type RouteParams = Record<string, string>
 type BeforeEnterHook = (params: RouteParams) => boolean | void
 type EnterHook = (params: RouteParams) => any
-type RedirectHook = (params: RouteParams) => Route
+type RedirectHook = (params: RouteParams) => Route | string
 
 export type Route = {
   path: string
@@ -59,6 +59,11 @@ export default class Router {
           return this.triggerNotFound()
         }
 
+        if (route.redirect) {
+          const to = route.redirect(routeParams)
+          return typeof to === 'string' ? this.go(to) : this.activateRoute(to, routeParams)
+        }
+
         return this.activateRoute(route, routeParams)
       }
     }
@@ -77,11 +82,6 @@ export default class Router {
   public async activateRoute (route: Route, params: RouteParams = {}) {
     this.$currentRoute.value = route
     this.$currentRoute.value.params = params
-
-    if (this.$currentRoute.value.redirect) {
-      const to = this.$currentRoute.value.redirect(params)
-      return await this.activateRoute(to, to.params)
-    }
 
     if (this.$currentRoute.value.onEnter) {
       await this.$currentRoute.value.onEnter(params)
