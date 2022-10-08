@@ -2,13 +2,7 @@ import { eventBus } from '@/utils'
 import { Route } from '@/router'
 import { userStore } from '@/stores'
 
-const queueRoute: Route = {
-  path: '/queue',
-  screen: 'Queue'
-}
-
 export const routes: Route[] = [
-  queueRoute,
   {
     path: '/home',
     screen: 'Home'
@@ -16,6 +10,10 @@ export const routes: Route[] = [
   {
     path: '/404',
     screen: '404'
+  },
+  {
+    path: '/queue',
+    screen: 'Queue'
   },
   {
     path: '/songs',
@@ -87,7 +85,7 @@ export const routes: Route[] = [
   {
     path: '/song/(?<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
     screen: 'Queue',
-    redirect: () => queueRoute,
+    redirect: () => 'queue',
     onBeforeEnter: params => eventBus.emit('SONG_QUEUED_FROM_ROUTE', params.id)
   }
 ]
