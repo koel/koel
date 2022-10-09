@@ -21,6 +21,9 @@ on:
       - resources/assets/**
       - .github/workflows/unit-frontend.yml
 
+env:
+  LARAVEL_BYPASS_ENV_CHECK: 1
+
 jobs:
   test:
     runs-on: ubuntu-latest
