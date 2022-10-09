@@ -4,8 +4,8 @@
       <template v-if="song">
         <h3 class="title">{{ song.title }}</h3>
         <p class="meta">
-          <a :href="`/#!/artist/${song.artist_id}`" class="artist">{{ song.artist_name }}</a> –
-          <a :href="`/#!/album/${song.album_id}`" class="album">{{ song.album_name }}</a>
+          <a :href="`/#/artist/${song.artist_id}`" class="artist">{{ song.artist_name }}</a> –
+          <a :href="`/#/album/${song.album_id}`" class="album">{{ song.album_name }}</a>
         </p>
       </template>
 

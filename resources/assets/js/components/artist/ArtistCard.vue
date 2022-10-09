@@ -15,7 +15,7 @@
 
     <footer>
       <div class="info">
-        <a :href="`#!/artist/${artist.id}`" class="name" data-testid="name">{{ artist.name }}</a>
+        <a :href="`#/artist/${artist.id}`" class="name" data-testid="name">{{ artist.name }}</a>
       </div>
       <p class="meta">
         <span class="left">

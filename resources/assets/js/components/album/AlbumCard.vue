@@ -14,8 +14,8 @@
     <AlbumThumbnail :entity="album"/>
 
     <footer>
-      <a :href="`#!/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
-      <a v-if="isStandardArtist" :href="`#!/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
+      <a :href="`#/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
+      <a v-if="isStandardArtist" :href="`#/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
       <span v-else class="text-secondary">{{ album.artist_name }}</span>
       <p class="meta">
         <span class="left">

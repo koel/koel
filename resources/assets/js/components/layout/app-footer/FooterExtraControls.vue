@@ -39,7 +39,7 @@
         <icon :icon="faSliders"/>
       </button>
 
-      <a v-else :class="{ active: viewingQueue }" class="queue control" href="#!/queue">
+      <a v-else :class="{ active: viewingQueue }" class="queue control" href="#/queue">
         <icon :icon="faListOl"/>
       </a>
 
