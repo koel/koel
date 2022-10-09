@@ -1,20 +1,20 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-0351ff38="">
-  <section class="existing-playlists" data-v-0351ff38="">
-    <p data-v-0351ff38="">Add 5 songs to</p>
-    <ul data-v-0351ff38="">
-      <li data-testid="queue" tabindex="0" data-v-0351ff38="">Queue</li>
-      <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-0351ff38=""> Favorites </li>
-      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-0351ff38="">Foo</li>
-      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-0351ff38="">Bar</li>
-      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-0351ff38="">Baz</li>
+<div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-42061e3e="">
+  <section class="existing-playlists" data-v-42061e3e="">
+    <p data-v-42061e3e="">Add 5 songs to</p>
+    <ul data-v-42061e3e="">
+      <li data-testid="queue" tabindex="0" data-v-42061e3e="">Queue</li>
+      <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-42061e3e=""> Favorites </li>
+      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-42061e3e="">Foo</li>
+      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-42061e3e="">Bar</li>
+      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-42061e3e="">Baz</li>
     </ul>
   </section>
-  <section class="new-playlist" data-testid="new-playlist" data-v-0351ff38="">
-    <p data-v-0351ff38="">or create a new playlist</p>
-    <form class="form-save form-simple form-new-playlist" data-v-0351ff38=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-0351ff38=""><button type="submit" title="Save" data-v-27deb898="" data-v-0351ff38="">⏎</button></form>
+  <section class="new-playlist" data-testid="new-playlist" data-v-42061e3e="">
+    <p data-v-42061e3e="">or create a new playlist</p>
+    <form class="form-save form-simple form-new-playlist" data-v-42061e3e=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-42061e3e=""><button type="submit" title="Save" data-v-e368fe26="" data-v-42061e3e="">⏎</button></form>
   </section>
 </div>
 `;

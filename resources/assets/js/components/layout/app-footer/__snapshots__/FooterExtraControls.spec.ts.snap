@@ -1,9 +1,9 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="other-controls" data-testid="other-controls" data-v-add48cbe="">
-  <div class="wrapper" data-v-add48cbe="">
-    <!--v-if--><button class="control" data-testid="toggle-visualizer-btn" title="Show/hide the visualizer" type="button" data-v-add48cbe=""><br data-testid="icon" icon="[object Object]" data-v-add48cbe=""></button><button title="Like Fahrstuhl to Heaven by Led Zeppelin" class="text-secondary like" data-testid="like-btn" data-v-5d366bb1="" data-v-add48cbe=""><br data-testid="btn-like-unliked" icon="[object Object]" data-v-5d366bb1=""></button><button class="active control text-uppercase" data-testid="toggle-extra-panel-btn" title="View song information" type="button" data-v-add48cbe=""> Info </button><a class="queue control" href="#/queue" data-v-add48cbe=""><br data-testid="icon" icon="[object Object]" data-v-add48cbe=""></a><br data-testid="RepeatModeSwitch" data-v-add48cbe=""><br data-testid="Volume" data-v-add48cbe="">
+<div class="other-controls" data-testid="other-controls" data-v-8bf5fe81="">
+  <div class="wrapper" data-v-8bf5fe81="">
+    <!--v-if--><button class="control" data-testid="toggle-visualizer-btn" title="Show/hide the visualizer" type="button" data-v-8bf5fe81=""><br data-testid="icon" icon="[object Object]" data-v-8bf5fe81=""></button><button title="Like Fahrstuhl to Heaven by Led Zeppelin" class="text-secondary like" data-testid="like-btn" data-v-5fcb4e02="" data-v-8bf5fe81=""><br data-testid="btn-like-unliked" icon="[object Object]" data-v-5fcb4e02=""></button><button class="active control text-uppercase" data-testid="toggle-extra-panel-btn" title="View song information" type="button" data-v-8bf5fe81=""> Info </button><a class="queue control" href="#/queue" data-v-8bf5fe81=""><br data-testid="icon" icon="[object Object]" data-v-8bf5fe81=""></a><br data-testid="RepeatModeSwitch" data-v-8bf5fe81=""><br data-testid="Volume" data-v-8bf5fe81="">
   </div>
 </div>
 `;
