@@ -49,7 +49,7 @@ export default class Router {
       return this.activateRoute(this.homeRoute)
     }
 
-    const matched = this.tryMatchRoute(location.hash)
+    const matched = this.tryMatchRoute()
     const [route, params] = matched ? [matched.route, matched.params] : [null, null]
 
     if (!route) {
@@ -68,16 +68,16 @@ export default class Router {
     return this.activateRoute(route, params)
   }
 
-  private tryMatchRoute (hash: string) {
-    if (!this.cache.has(hash)) {
+  private tryMatchRoute () {
+    if (!this.cache.has(location.hash)) {
       for (let i = 0; i < this.routes.length; i++) {
         const route = this.routes[i]
-        const matches = hash.match(new RegExp(`^#!?${route.path}/?(?:\\?(.*))?$`))
+        const matches = location.hash.match(new RegExp(`^#!?${route.path}/?(?:\\?(.*))?$`))
 
         if (matches) {
-          const searchParams = new URLSearchParams(new URL(location.href.replace(/#!?\?/, '')).search)
+          const searchParams = new URLSearchParams(new URL(location.href.replace('#/', '')).search)
 
-          this.cache.set(hash, {
+          this.cache.set(location.hash, {
             route,
             params: Object.assign(Object.fromEntries(searchParams.entries()), matches.groups || {})
           })
@@ -87,7 +87,7 @@ export default class Router {
       }
     }
 
-    return this.cache.get(hash)
+    return this.cache.get(location.hash)
   }
 
   public async triggerNotFound () {
