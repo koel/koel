@@ -10,7 +10,7 @@ import MainContent from './MainContent.vue'
 new class extends UnitTestCase {
   protected test () {
     it('has a translucent overlay per album', async () => {
-      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://localhost/foo.jpg')
+      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/foo.jpg')
 
       const { getByTestId } = this.render(MainContent, {
         global: {

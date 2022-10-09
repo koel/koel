@@ -14,7 +14,7 @@ new class extends UnitTestCase {
   private renderForAlbum () {
     album = factory<Album>('album', {
       name: 'IV',
-      cover: 'https://localhost/album.jpg'
+      cover: 'https://test/album.jpg'
     })
 
     return this.render(Thumbnail, {
@@ -27,7 +27,7 @@ new class extends UnitTestCase {
   private renderForArtist () {
     artist = factory<Artist>('artist', {
       name: 'Led Zeppelin',
-      image: 'https://localhost/blimp.jpg'
+      image: 'https://test/blimp.jpg'
     })
 
     return this.render(Thumbnail, {

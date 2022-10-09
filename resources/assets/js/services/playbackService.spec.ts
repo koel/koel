@@ -134,6 +134,8 @@ new class extends UnitTestCase {
     ])(
       'when next song preloaded is %s, isTranscoding is %s, current media time is %d, media duration is %d, then preload() should be called %d times',
       (preloaded, isTranscoding, currentTime, duration, numberOfCalls) => {
+        this.mock(playbackService, 'registerPlay')
+
         this.setReadOnlyProperty(queueStore, 'next', factory<Song>('song', { preloaded }))
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
         playbackService.init()
@@ -149,7 +151,6 @@ new class extends UnitTestCase {
         expect(preloadMock).toHaveBeenCalledTimes(numberOfCalls)
       }
     )
-
     it('registers play', () => {
       const recentlyPlayedStoreAddMock = this.mock(recentlyPlayedStore, 'add')
       const registerPlayMock = this.mock(songStore, 'registerPlay')

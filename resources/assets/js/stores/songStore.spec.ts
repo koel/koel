@@ -105,13 +105,13 @@ new class extends UnitTestCase {
             id: 10,
             artist_id: 3,
             name: 'Removed Album',
-            cover: 'http://localhost/removed-album.jpg',
+            cover: 'http://test/removed-album.jpg',
             created_at: '2020-01-01'
           }],
           artists: [{
             id: 42,
             name: 'Removed Artist',
-            image: 'http://localhost/removed-artist.jpg',
+            image: 'http://test/removed-artist.jpg',
             created_at: '2020-01-01'
           }]
         }
@@ -145,20 +145,20 @@ new class extends UnitTestCase {
     })
 
     it('gets source URL', () => {
-      commonStore.state.cdn_url = 'http://localhost/'
+      commonStore.state.cdn_url = 'http://test/'
       const song = factory<Song>('song', { id: 'foo' })
       this.mock(authService, 'getToken', 'hadouken')
 
-      expect(songStore.getSourceUrl(song)).toBe('http://localhost/play/foo?api_token=hadouken')
+      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo?api_token=hadouken')
 
       isMobile.any = true
       preferenceStore.transcodeOnMobile = true
-      expect(songStore.getSourceUrl(song)).toBe('http://localhost/play/foo/1/128?api_token=hadouken')
+      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo/1/128?api_token=hadouken')
     })
 
     it('gets shareable URL', () => {
       const song = factory<Song>('song', { id: 'foo' })
-      expect(songStore.getShareableUrl(song)).toBe('http://localhost/#/song/foo')
+      expect(songStore.getShareableUrl(song)).toBe('http://test/#/song/foo')
     })
 
     it('syncs with the vault', () => {
@@ -248,7 +248,7 @@ new class extends UnitTestCase {
       const getMock = this.mock(http, 'get').mockResolvedValueOnce({
         data: songs,
         links: {
-          next: 'http://localhost/api/v1/songs?page=3'
+          next: 'http://test/api/v1/songs?page=3'
         },
         meta: {
           current_page: 2

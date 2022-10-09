@@ -5,6 +5,7 @@ import { afterEach, beforeEach, vi } from 'vitest'
 import { clickaway, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
+import { http } from '@/services'
 import factory from '@/__tests__/factory'
 import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
@@ -30,6 +31,7 @@ export default abstract class UnitTestCase {
 
   public constructor () {
     this.router = new Router(routes)
+    this.mock(http, 'request') // prevent actual HTTP requests from being made
     this.beforeEach()
     this.afterEach()
     this.test()
