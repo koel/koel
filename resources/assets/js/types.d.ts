@@ -353,15 +353,6 @@ type ArtistAlbumViewMode = 'list' | 'thumbnails'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
-type SongListType = 'all-songs'
-  | 'queue'
-  | 'playlist'
-  | 'favorites'
-  | 'recently-played'
-  | 'artist'
-  | 'album'
-  | 'search-results'
-
 type SongListColumn = 'track' | 'title' | 'album' | 'artist' | 'length'
 
 interface SongListConfig {
@@ -372,6 +363,11 @@ interface SongListConfig {
 type SongListSortField = keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name'>
 
 type SortOrder = 'asc' | 'desc'
+
+type SongListSort = {
+  fields: SongListSortField[]
+  order: SortOrder
+}
 
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T]
 

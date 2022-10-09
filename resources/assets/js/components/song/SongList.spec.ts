@@ -5,11 +5,11 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify } from '@/utils'
 import {
+  ScreenNameKey,
   SelectedSongsKey,
   SongListConfigKey,
   SongListSortFieldKey,
   SongListSortOrderKey,
-  SongListTypeKey,
   SongsKey
 } from '@/symbols'
 import SongList from './SongList.vue'
@@ -19,7 +19,7 @@ let songs: Song[]
 new class extends UnitTestCase {
   private renderComponent (
     _songs: Song | Song[],
-    type: SongListType = 'all-songs',
+    screen: ScreenName = 'Songs',
     config: Partial<SongListConfig> = {},
     selectedSongs: Song[] = [],
     sortField: SongListSortField = 'title',
@@ -38,7 +38,7 @@ new class extends UnitTestCase {
         provide: {
           [<symbol>SongsKey]: [ref(songs)],
           [<symbol>SelectedSongsKey]: [ref(selectedSongs), value => (selectedSongs = value)],
-          [<symbol>SongListTypeKey]: [ref(type)],
+          [<symbol>ScreenNameKey]: [ref(screen)],
           [<symbol>SongListConfigKey]: [config],
           [<symbol>SongListSortFieldKey]: [sortFieldRef, value => (sortFieldRef.value = value)],
           [<symbol>SongListSortOrderKey]: [sortOrderRef, value => (sortOrderRef.value = value)]

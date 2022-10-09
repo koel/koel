@@ -1,7 +1,6 @@
 <template>
   <div
     ref="wrapper"
-    :class="type"
     class="song-list-wrap main-scroll-wrap"
     data-testid="song-list"
     tabindex="0"
@@ -108,11 +107,11 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
 import { useDraggable } from '@/composables'
 import {
+  ScreenNameKey,
   SelectedSongsKey,
   SongListConfigKey,
   SongListSortFieldKey,
   SongListSortOrderKey,
-  SongListTypeKey,
   SongsKey
 } from '@/symbols'
 
@@ -124,7 +123,7 @@ const { startDragging } = useDraggable('songs')
 const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scroll-breakpoint', 'scrolled-to-end'])
 
 const [items] = requireInjection(SongsKey)
-const [type] = requireInjection(SongListTypeKey)
+const [screen] = requireInjection<[ScreenName]>(ScreenNameKey)
 const [selectedSongs, setSelectedSongs] = requireInjection(SelectedSongsKey)
 const [sortField, setSortField] = requireInjection(SongListSortFieldKey)
 const [sortOrder, setSortOrder] = requireInjection(SongListSortOrderKey)
@@ -134,7 +133,7 @@ const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
 const songRows = ref<SongRow[]>([])
 
-const allowReordering = type === 'queue'
+const allowReordering = screen === 'Queue'
 
 watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected).map(row => row.song)), { deep: true })
 

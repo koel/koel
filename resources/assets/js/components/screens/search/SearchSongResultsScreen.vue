@@ -57,7 +57,7 @@ const {
   playSelected,
   sort,
   onScrollBreakpoint
-} = useSongList(toRef(searchStore.state, 'songs'), 'search-results')
+} = useSongList(toRef(searchStore.state, 'songs'), 'Search.Songs')
 
 const decodedQ = computed(() => decodeURIComponent(q.value))
 const loading = ref(false)

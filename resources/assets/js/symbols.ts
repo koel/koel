@@ -7,11 +7,11 @@ export interface ReadonlyInjectionKey<T> extends InjectionKey<[Readonly<T> | Dee
 }
 
 export const RouterKey: InjectionKey<Router> = Symbol('Router')
+export const ScreenNameKey: ReadonlyInjectionKey<ScreenName> = Symbol('ScreenName')
 
 export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
 export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')
 
-export const SongListTypeKey: ReadonlyInjectionKey<SongListType> = Symbol('SongListType')
 export const SongsKey: ReadonlyInjectionKey<Ref<Song[]>> | InjectionKey<Ref<Song[]>> = Symbol('Songs')
 export const SelectedSongsKey: ReadonlyInjectionKey<Ref<Song[]>> = Symbol('SelectedSongs')
 export const SongListConfigKey: ReadonlyInjectionKey<Partial<SongListConfig>> = Symbol('SongListConfig')

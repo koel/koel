@@ -63,7 +63,7 @@ const {
   onPressEnter,
   playSelected,
   onScrollBreakpoint
-} = useSongList(toRef(songStore.state, 'songs'), 'all-songs')
+} = useSongList(toRef(songStore.state, 'songs'), 'Songs')
 
 const router = requireInjection(RouterKey)
 

@@ -101,7 +101,7 @@ const {
   playSelected,
   onScrollBreakpoint,
   sort
-} = useSongList(ref<Song[]>([]), 'playlist')
+} = useSongList(ref<Song[]>([]), 'Playlist')
 
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
