@@ -161,7 +161,7 @@ export default (container: HTMLElement) => {
   Sketch.create({
     container,
     particles: [],
-    init () {
+    setup () {
       // generate some particles
       for (let i = 0; i < NUM_PARTICLES; i++) {
         const particle = new Particle(random(this.width), random(this.height))
@@ -170,7 +170,6 @@ export default (container: HTMLElement) => {
         this.particles.push(particle)
       }
 
-      // setup the audio analyser
       const analyser = new AudioAnalyser(NUM_BANDS, SMOOTHING)
 
       // update particles based on fft transformed audio frequencies
