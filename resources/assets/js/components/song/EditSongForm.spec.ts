@@ -39,7 +39,7 @@ new class extends UnitTestCase {
         title: 'Rocket to Heaven',
         artist_name: 'Led Zeppelin',
         album_name: 'IV',
-        album_cover: 'http://localhost/album.jpg',
+        album_cover: 'http://test/album.jpg',
         genre: 'Rock'
       }))
 

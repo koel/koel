@@ -21,8 +21,11 @@ new class extends UnitTestCase {
 
     it('renders overview components if applicable', async () => {
       commonStore.state.song_length = 100
+      const initMock = this.mock(overviewStore, 'init')
 
       const { getByTestId, queryByTestId } = await this.renderComponent()
+
+      expect(initMock).toHaveBeenCalled()
 
       ;[
         'most-played-songs',
@@ -38,11 +41,13 @@ new class extends UnitTestCase {
 
     it.each<[EventName]>([['SONGS_UPDATED'], ['SONGS_DELETED']])
     ('refreshes the overviews on %s event', async (eventName) => {
+      const initMock = this.mock(overviewStore, 'init')
       const refreshMock = this.mock(overviewStore, 'refresh')
       await this.renderComponent()
 
       eventBus.emit(eventName)
 
+      expect(initMock).toHaveBeenCalled()
       expect(refreshMock).toHaveBeenCalled()
     })
   }

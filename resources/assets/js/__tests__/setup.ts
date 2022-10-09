@@ -1,5 +1,12 @@
+declare global {
+  interface Window {
+    BASE_URL: string;
+  }
+}
+
 import vueSnapshotSerializer from 'jest-serializer-vue'
 import { expect, vi } from 'vitest'
+import Axios from 'axios'
 
 expect.addSnapshotSerializer(vueSnapshotSerializer)
 
@@ -14,4 +21,6 @@ window.HTMLMediaElement.prototype.load = vi.fn()
 window.HTMLMediaElement.prototype.play = vi.fn()
 window.HTMLMediaElement.prototype.pause = vi.fn()
 
-window.BASE_URL = 'http://localhost/'
+window.BASE_URL = 'http://test/'
+
+Axios.defaults.adapter = vi.fn()

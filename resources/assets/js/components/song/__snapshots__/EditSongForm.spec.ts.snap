@@ -3,7 +3,7 @@
 exports[`edits a single song 1`] = `
 <div class="edit-song" data-testid="edit-song-form" tabindex="0" data-v-210b4214="">
   <form data-v-210b4214="">
-    <header data-v-210b4214=""><span class="cover" style="background-image: url(http://localhost/album.jpg);" data-v-210b4214=""></span>
+    <header data-v-210b4214=""><span class="cover" style="background-image: url(http://test/album.jpg);" data-v-210b4214=""></span>
       <div class="meta" data-v-210b4214="">
         <h1 class="" data-v-210b4214="">Rocket to Heaven</h1>
         <h2 data-testid="displayed-artist-name" class="" data-v-210b4214="">Led Zeppelin</h2>
