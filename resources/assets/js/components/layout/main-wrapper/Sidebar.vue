@@ -5,7 +5,7 @@
 
       <ul class="menu">
         <li>
-          <a :class="['home', activeScreen === 'Home' ? 'active' : '']" href="#!/home">
+          <a :class="['home', activeScreen === 'Home' ? 'active' : '']" href="#/home">
             <icon :icon="faHome" fixed-width/>
             Home
           </a>
@@ -16,31 +16,31 @@
           @dragover="onQueueDragOver"
           @drop="onQueueDrop"
         >
-          <a :class="['queue', activeScreen === 'Queue' ? 'active' : '']" href="#!/queue">
+          <a :class="['queue', activeScreen === 'Queue' ? 'active' : '']" href="#/queue">
             <icon :icon="faListOl" fixed-width/>
             Current Queue
           </a>
         </li>
         <li>
-          <a :class="['songs', activeScreen === 'Songs' ? 'active' : '']" href="#!/songs">
+          <a :class="['songs', activeScreen === 'Songs' ? 'active' : '']" href="#/songs">
             <icon :icon="faMusic" fixed-width/>
             All Songs
           </a>
         </li>
         <li>
-          <a :class="['albums', activeScreen === 'Albums' ? 'active' : '']" href="#!/albums">
+          <a :class="['albums', activeScreen === 'Albums' ? 'active' : '']" href="#/albums">
             <icon :icon="faCompactDisc" fixed-width/>
             Albums
           </a>
         </li>
         <li>
-          <a :class="['artists', activeScreen === 'Artists' ? 'active' : '']" href="#!/artists">
+          <a :class="['artists', activeScreen === 'Artists' ? 'active' : '']" href="#/artists">
             <icon :icon="faMicrophone" fixed-width/>
             Artists
           </a>
         </li>
         <li v-if="useYouTube">
-          <a :class="['youtube', activeScreen === 'YouTube' ? 'active' : '']" href="#!/youtube">
+          <a :class="['youtube', activeScreen === 'YouTube' ? 'active' : '']" href="#/youtube">
             <icon :icon="faYoutube" fixed-width/>
             YouTube Video
           </a>
@@ -55,19 +55,19 @@
 
       <ul class="menu">
         <li>
-          <a :class="['settings', activeScreen === 'Settings' ? 'active' : '']" href="#!/settings">
+          <a :class="['settings', activeScreen === 'Settings' ? 'active' : '']" href="#/settings">
             <icon :icon="faTools" fixed-width/>
             Settings
           </a>
         </li>
         <li>
-          <a :class="['upload', activeScreen === 'Upload' ? 'active' : '']" href="#!/upload">
+          <a :class="['upload', activeScreen === 'Upload' ? 'active' : '']" href="#/upload">
             <icon :icon="faUpload" fixed-width/>
             Upload
           </a>
         </li>
         <li>
-          <a :class="['users', activeScreen === 'Users' ? 'active' : '']" href="#!/users">
+          <a :class="['users', activeScreen === 'Users' ? 'active' : '']" href="#/users">
             <icon :icon="faUsers" fixed-width/>
             Users
           </a>

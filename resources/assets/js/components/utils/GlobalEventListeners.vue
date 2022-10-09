@@ -40,9 +40,7 @@ eventBus.on({
     await userStore.logout()
     authService.destroy()
     forceReloadWindow()
-  },
-
-  KOEL_READY: () => router.resolve()
+  }
 })
 
 router.onRouteChanged(() => {

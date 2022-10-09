@@ -117,7 +117,7 @@ export const songStore = {
       : `${commonStore.state.cdn_url}play/${song.id}?api_token=${authService.getToken()}`
   },
 
-  getShareableUrl: (song: Song) => `${window.BASE_URL}#!/song/${song.id}`,
+  getShareableUrl: (song: Song) => `${window.BASE_URL}#/song/${song.id}`,
 
   syncWithVault (songs: Song | Song[]) {
     return arrayify(songs).map(song => {

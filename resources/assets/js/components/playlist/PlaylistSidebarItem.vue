@@ -52,9 +52,9 @@ const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList =>
 const active = ref(false)
 
 const url = computed(() => {
-  if (isPlaylist(list.value)) return `#!/playlist/${list.value.id}`
-  if (isFavoriteList(list.value)) return '#!/favorites'
-  if (isRecentlyPlayedList(list.value)) return '#!/recently-played'
+  if (isPlaylist(list.value)) return `#/playlist/${list.value.id}`
+  if (isFavoriteList(list.value)) return '#/favorites'
+  if (isRecentlyPlayedList(list.value)) return '#/recently-played'
 
   throw new Error('Invalid playlist-like type.')
 })

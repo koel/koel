@@ -17,7 +17,7 @@
       <div class="details">
         <h3>{{ song.title }}</h3>
         <p class="by text-secondary">
-          <a :href="`#!/artist/${song.artist_id}`">{{ song.artist_name }}</a>
+          <a :href="`#/artist/${song.artist_id}`">{{ song.artist_name }}</a>
           - {{ pluralize(song.play_count, 'play') }}
         </p>
       </div>

@@ -158,7 +158,7 @@ new class extends UnitTestCase {
 
     it('gets shareable URL', () => {
       const song = factory<Song>('song', { id: 'foo' })
-      expect(songStore.getShareableUrl(song)).toBe('http://localhost/#!/song/foo')
+      expect(songStore.getShareableUrl(song)).toBe('http://localhost/#/song/foo')
     })
 
     it('syncs with the vault', () => {

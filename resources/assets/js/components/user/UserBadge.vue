@@ -1,6 +1,6 @@
 <template>
   <span class="profile" id="userBadge" v-if="currentUser">
-    <a class="view-profile" data-testid="view-profile-link" href="/#!/profile" title="View/edit user profile">
+    <a class="view-profile" data-testid="view-profile-link" href="/#/profile" title="View/edit user profile">
       <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar" class="avatar"/>
       <span class="name">{{ currentUser.name }}</span>
     </a>
