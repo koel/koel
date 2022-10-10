@@ -139,6 +139,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
 
   return {
     acceptsDrop,
+    getDroppedData,
     resolveDroppedValue,
     resolveDroppedSongs
   }
