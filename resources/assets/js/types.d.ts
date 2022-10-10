@@ -191,8 +191,6 @@ interface SmartPlaylistRule {
 
 type SmartPlaylistInputTypes = Record<SmartPlaylistModel['type'], SmartPlaylistOperator[]>
 
-type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
-
 type FavoriteList = {
   name: 'Favorites'
   songs: Song[]

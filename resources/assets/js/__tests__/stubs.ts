@@ -4,14 +4,14 @@ import { noop } from '@/utils'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
 
-export const MessageToasterStub: InstanceType<Ref<MessageToaster>> = ref({
+export const MessageToasterStub: Ref<InstanceType<typeof MessageToaster>> = ref({
   info: noop,
   success: noop,
   warning: noop,
   error: noop
 })
 
-export const DialogBoxStub: InstanceType<Ref<DialogBox>> = ref({
+export const DialogBoxStub: Ref<InstanceType<typeof DialogBox>> = ref({
   info: noop,
   success: noop,
   warning: noop,
