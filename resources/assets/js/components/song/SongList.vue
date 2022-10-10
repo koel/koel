@@ -91,7 +91,7 @@
         @dragstart="rowDragStart(item, $event)"
         @dragenter.prevent="allowDrop"
         @dragover.prevent
-        @drop.stop.prevent="handleDrop(item, $event)"
+        @drop.prevent="handleDrop(item, $event)"
         @contextmenu.prevent="openContextMenu(item, $event)"
       />
     </VirtualScroller>

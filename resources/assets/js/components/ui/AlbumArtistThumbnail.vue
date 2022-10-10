@@ -12,7 +12,7 @@
       @click.prevent="playOrQueue"
       @dragenter.prevent="onDragEnter"
       @dragleave.prevent="onDragLeave"
-      @drop.stop.prevent="onDrop"
+      @drop.prevent="onDrop"
       @dragover.prevent
     >
       <span class="hidden">{{ buttonLabel }}</span>
