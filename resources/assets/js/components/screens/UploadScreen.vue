@@ -24,7 +24,7 @@
         class="upload-panel"
         @dragenter.prevent="onDragEnter"
         @dragleave.prevent="onDragLeave"
-        @drop.stop.prevent="onDrop"
+        @drop.prevent="onDrop"
         @dragover.prevent
       >
         <div class="upload-files" v-if="files.length">
