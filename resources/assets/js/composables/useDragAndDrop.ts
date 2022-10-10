@@ -2,7 +2,8 @@ import { arrayify, logger, pluralize } from '@/utils'
 import { albumStore, artistStore, playlistStore, songStore } from '@/stores'
 
 type Draggable = Song | Song[] | Album | Artist | Playlist
-type DraggableType = 'songs' | 'album' | 'artist' | 'playlist'
+const draggableTypes = <const>['songs', 'album', 'artist', 'playlist']
+type DraggableType = typeof draggableTypes[number]
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
   if (!event.dataTransfer) {
@@ -23,11 +24,7 @@ const createGhostDragImage = (event: DragEvent, text: string): void => {
 }
 
 const getDragType = (event: DragEvent) => {
-  const types: DraggableType[] = ['songs', 'album', 'artist', 'playlist']
-
-  for (let i = 0, count = types.length; i < count; ++i) {
-    if (event.dataTransfer?.types.includes(`application/x-koel.${types[i]}`)) return types[i]
-  }
+  return draggableTypes.find(type => event.dataTransfer?.types.includes(`application/x-koel.${type}`))
 }
 
 export const useDraggable = (type: DraggableType) => {
@@ -139,6 +136,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
 
   return {
     acceptsDrop,
+    getDroppedData,
     resolveDroppedValue,
     resolveDroppedSongs
   }
