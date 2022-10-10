@@ -27,6 +27,7 @@ use Laravel\Scout\Searchable;
  * @property string|int $song_count Total number of songs by the artist (dynamically calculated)
  * @property string|int $album_count Total number of albums by the artist (dynamically calculated)
  * @property Carbon $created_at
+ * @property Collection|array<array-key, Album> $albums
  */
 class Artist extends Model
 {

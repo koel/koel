@@ -45,7 +45,7 @@ class DownloadService
         throw new InvalidArgumentException('Unsupported download type.');
     }
 
-    public function fromSong(Song $song): string
+    private function fromSong(Song $song): string
     {
         if ($song->s3_params) {
             // The song is hosted on Amazon S3.
@@ -67,7 +67,7 @@ class DownloadService
         return $localPath;
     }
 
-    protected function fromMultipleSongs(Collection $songs): string
+    private function fromMultipleSongs(Collection $songs): string
     {
         if ($songs->count() === 1) {
             return $this->fromSong($songs->first());
@@ -79,18 +79,24 @@ class DownloadService
             ->getPath();
     }
 
-    protected function fromPlaylist(Playlist $playlist): string
+    private function fromPlaylist(Playlist $playlist): string
     {
         return $this->fromMultipleSongs($playlist->songs);
     }
 
-    protected function fromAlbum(Album $album): string
+    private function fromAlbum(Album $album): string
     {
         return $this->fromMultipleSongs($album->songs);
     }
 
-    protected function fromArtist(Artist $artist): string
+    public function fromArtist(Artist $artist): string
     {
-        return $this->fromMultipleSongs($artist->songs);
+        // We cater to the case where the artist is an "album artist," which means she has songs through albums as well.
+        $songs = $artist->albums->reduce(
+            static fn (Collection $songs, Album $album) => $songs->merge($album->songs),
+            $artist->songs
+        )->unique('id');
+
+        return $this->fromMultipleSongs($songs);
     }
 }

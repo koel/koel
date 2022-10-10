@@ -42,7 +42,7 @@ class SongService
     private function updateSong(Song $song, SongUpdateData $data): Song
     {
         $maybeSetAlbumArtist = static function (Album $album) use ($data): void {
-            if ($data->albumArtistName && $data->albumArtistName !== $album->artist->name) {
+            if ($data->albumArtistName) {
                 $album->artist_id = Artist::getOrCreate($data->albumArtistName)->id;
                 $album->save();
             }
@@ -50,28 +50,24 @@ class SongService
 
         $maybeSetAlbum = static function () use ($data, $song, $maybeSetAlbumArtist): void {
             if ($data->albumName) {
-                if ($data->albumName !== $song->album->name) {
-                    $album = Album::getOrCreate($song->artist, $data->albumName);
-                    $song->album_id = $album->id;
-
-                    $maybeSetAlbumArtist($album);
-                }
-            }
-        };
-
-        if ($data->artistName) {
-            if ($song->artist->name !== $data->artistName) {
-                $artist = Artist::getOrCreate($data->artistName);
-                $song->artist_id = $artist->id;
-
-                // Artist changed means album must be changed too.
-                $album = Album::getOrCreate($artist, $data->albumName ?: $song->album->name);
+                $album = Album::getOrCreate($song->artist, $data->albumName);
                 $song->album_id = $album->id;
 
                 $maybeSetAlbumArtist($album);
-            } else {
-                $maybeSetAlbum();
             }
+        };
+
+        // if album artist name is provided, get/create an album with that artist and assign it to the song
+        if ($data->albumArtistName) {
+            $album = Album::getOrCreate(Artist::getOrCreate($data->albumArtistName), $data->albumName);
+            $song->album_id = $album->id;
+        } else {
+            $maybeSetAlbum();
+        }
+
+        if ($data->artistName) {
+            $artist = Artist::getOrCreate($data->artistName);
+            $song->artist_id = $artist->id;
         } else {
             $maybeSetAlbum();
         }
