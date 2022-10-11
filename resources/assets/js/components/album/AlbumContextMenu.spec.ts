@@ -11,10 +11,7 @@ let album: Album
 new class extends UnitTestCase {
   private async renderComponent (_album?: Album) {
     album = _album || factory<Album>('album', {
-      name: 'IV',
-      play_count: 30,
-      song_count: 10,
-      length: 123
+      name: 'IV'
     })
 
     const rendered = this.render(AlbumContextMenu)

@@ -11,10 +11,9 @@ let album: Album
 new class extends UnitTestCase {
   private renderComponent () {
     album = factory<Album>('album', {
+      id: 42,
       name: 'IV',
-      play_count: 30,
-      song_count: 10,
-      length: 123
+      artist_name: 'Led Zeppelin'
     })
 
     return this.render(AlbumCard, {
@@ -26,12 +25,8 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders', () => {
-      const { getByText, getByTestId } = this.renderComponent()
-
-      expect(getByTestId('name').textContent).toBe('IV')
-      getByText(/^10 songs.+02:03.+30 plays$/)
-      getByTestId('shuffle-album')
-      getByTestId('download-album')
+      const { html } = this.renderComponent()
+      expect(html()).toMatchSnapshot()
     })
 
     it('downloads', async () => {

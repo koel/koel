@@ -166,27 +166,20 @@ new class extends UnitTestCase {
         playback_state: null
       })
 
-      const trackPlayCountMock = this.mock(songStore, 'setUpPlayCountTracking')
+      const watchPlayCountMock = this.mock(songStore, 'watchPlayCount')
 
       expect(songStore.syncWithVault(song)).toEqual([reactive(song)])
       expect(songStore.vault.has(song.id)).toBe(true)
-      expect(trackPlayCountMock).toHaveBeenCalledOnce()
+      expect(watchPlayCountMock).toHaveBeenCalledOnce()
 
       expect(songStore.syncWithVault(song)).toEqual([reactive(song)])
       expect(songStore.vault.has(song.id)).toBe(true)
       // second call shouldn't set up play count tracking again
-      expect(trackPlayCountMock).toHaveBeenCalledOnce()
+      expect(watchPlayCountMock).toHaveBeenCalledOnce()
     })
 
-    it('sets up play count tracking', async () => {
+    it('watches play count tracking', async () => {
       const refreshMock = this.mock(overviewStore, 'refresh')
-      const artist = reactive(factory<Artist>('artist', { id: 42, play_count: 100 }))
-      const album = reactive(factory<Album>('album', { id: 10, play_count: 120 }))
-      const albumArtist = reactive(factory<Artist>('artist', { id: 43, play_count: 130 }))
-
-      artistStore.vault.set(42, artist)
-      artistStore.vault.set(43, albumArtist)
-      albumStore.vault.set(10, album)
 
       const song = reactive(factory<Song>('song', {
         album_id: 10,
@@ -195,14 +188,11 @@ new class extends UnitTestCase {
         play_count: 98
       }))
 
-      songStore.setUpPlayCountTracking(song)
+      songStore.watchPlayCount(song)
       song.play_count = 100
 
       await this.tick()
 
-      expect(artist.play_count).toBe(102)
-      expect(album.play_count).toBe(122)
-      expect(albumArtist.play_count).toBe(132)
       expect(refreshMock).toHaveBeenCalled()
     })
 

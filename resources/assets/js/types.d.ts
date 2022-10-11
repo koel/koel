@@ -113,10 +113,6 @@ interface Artist {
   readonly id: number
   name: string
   image: string | null
-  play_count: number
-  album_count: number
-  song_count: number
-  length: number
   created_at: string
 }
 
@@ -128,9 +124,6 @@ interface Album {
   name: string
   cover: string
   thumbnail?: string | null
-  play_count: number
-  song_count: number
-  length: number
   created_at: string
 }
 

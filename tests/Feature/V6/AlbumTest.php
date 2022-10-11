@@ -14,9 +14,6 @@ class AlbumTest extends TestCase
         'artist_name',
         'cover',
         'created_at',
-        'length',
-        'play_count',
-        'song_count',
     ];
 
     private const JSON_COLLECTION_STRUCTURE = [

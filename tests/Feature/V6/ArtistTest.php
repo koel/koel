@@ -11,10 +11,6 @@ class ArtistTest extends TestCase
         'id',
         'name',
         'image',
-        'length',
-        'play_count',
-        'song_count',
-        'album_count',
         'created_at',
     ];
 

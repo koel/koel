@@ -128,7 +128,7 @@ export const songStore = {
       } else {
         local = reactive(song)
         local.playback_state = 'Stopped'
-        this.setUpPlayCountTracking(local)
+        this.watchPlayCount(local)
         this.vault.set(local.id, local)
       }
 
@@ -136,21 +136,8 @@ export const songStore = {
     })
   },
 
-  setUpPlayCountTracking: (song: UnwrapNestedRefs<Song>) => {
-    watch(() => song.play_count, (newCount, oldCount) => {
-      const album = albumStore.byId(song.album_id)
-      album && (album.play_count += (newCount - oldCount))
-
-      const artist = artistStore.byId(song.artist_id)
-      artist && (artist.play_count += (newCount - oldCount))
-
-      if (song.album_artist_id !== song.artist_id) {
-        const albumArtist = artistStore.byId(song.album_artist_id)
-        albumArtist && (albumArtist.play_count += (newCount - oldCount))
-      }
-
-      overviewStore.refresh()
-    })
+  watchPlayCount: (song: UnwrapNestedRefs<Song>) => {
+    watch(() => song.play_count, () => overviewStore.refresh())
   },
 
   async cacheable (key: any, fetcher: Promise<Song[]>) {
@@ -195,10 +182,6 @@ export const songStore = {
 
   getMostPlayed (count: number) {
     return take(orderBy(Array.from(this.vault.values()).filter(song => !song.deleted), 'play_count', 'desc'), count)
-  },
-
-  getRecentlyAdded (count: number) {
-    return take(orderBy(Array.from(this.vault.values()).filter(song => !song.deleted), 'created_at', 'desc'), count)
   },
 
   async deleteFromFilesystem (songs: Song[]) {

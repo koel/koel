@@ -25,9 +25,14 @@ export const overviewStore = {
       recently_played_songs: Song[],
     }>('overview')
 
-    songStore.syncWithVault([...resource.most_played_songs, ...resource.recently_added_songs])
-    albumStore.syncWithVault([...resource.most_played_albums, ...resource.recently_added_albums])
+    songStore.syncWithVault(resource.most_played_songs)
+    albumStore.syncWithVault(resource.recently_added_albums)
     artistStore.syncWithVault(resource.most_played_artists)
+
+    this.state.mostPlayedAlbums = albumStore.syncWithVault(resource.most_played_albums)
+    this.state.mostPlayedArtists = artistStore.syncWithVault(resource.most_played_artists)
+    this.state.recentlyAddedSongs = songStore.syncWithVault(resource.recently_added_songs)
+    this.state.recentlyAddedAlbums = albumStore.syncWithVault(resource.recently_added_albums)
 
     recentlyPlayedStore.excerptState.songs = songStore.syncWithVault(resource.recently_played_songs)
 
@@ -35,11 +40,10 @@ export const overviewStore = {
   },
 
   refresh () {
+    // @since v6.2.3
+    // To keep things simple, we only refresh the song stats.
+    // All album/artist stats are simply ignored.
     this.state.mostPlayedSongs = songStore.getMostPlayed(7)
-    this.state.mostPlayedAlbums = albumStore.getMostPlayed(6)
-    this.state.mostPlayedArtists = artistStore.getMostPlayed(6)
-    this.state.recentlyAddedSongs = songStore.getRecentlyAdded(9)
-    this.state.recentlyAddedAlbums = albumStore.getRecentlyAdded(6)
     this.state.recentlyPlayed = recentlyPlayedStore.excerptState.songs.filter(song => !song.deleted)
   }
 }

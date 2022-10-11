@@ -18,45 +18,36 @@
       <a v-if="isStandardArtist" :href="`#/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
       <span v-else class="text-secondary">{{ album.artist_name }}</span>
       <p class="meta">
-        <span class="left">
-          {{ pluralize(album.song_count, 'song') }}
-          •
-          {{ duration }}
-          •
-          {{ pluralize(album.play_count, 'play') }}
-        </span>
-        <span class="right">
-          <a
-            :title="`Shuffle all songs in the album ${album.name}`"
-            class="shuffle-album"
-            data-testid="shuffle-album"
-            href
-            role="button"
-            @click.prevent="shuffle"
-          >
-            <icon :icon="faRandom"/>
-          </a>
-          <a
-            v-if="allowDownload"
-            :title="`Download all songs in the album ${album.name}`"
-            class="download-album"
-            data-testid="download-album"
-            href
-            role="button"
-            @click.prevent="download"
-          >
-            <icon :icon="faDownload"/>
-          </a>
-        </span>
+        <a
+          :title="`Shuffle all songs in the album ${album.name}`"
+          class="shuffle-album"
+          data-testid="shuffle-album"
+          href
+          role="button"
+          @click.prevent="shuffle"
+        >
+          Shuffle
+        </a>
+        •
+        <a
+          v-if="allowDownload"
+          :title="`Download all songs in the album ${album.name}`"
+          class="download-album"
+          data-testid="download-album"
+          href
+          role="button"
+          @click.prevent="download"
+        >
+          Download
+        </a>
       </p>
     </footer>
   </article>
 </template>
 
 <script lang="ts" setup>
-import { faDownload, faRandom } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus, pluralize, requireInjection, secondsToHis } from '@/utils'
+import { eventBus, requireInjection, secondsToHis } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useDraggable } from '@/composables'
