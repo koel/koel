@@ -13,6 +13,7 @@ new class extends UnitTestCase {
     album = factory<Album>('album', {
       id: 42,
       name: 'IV',
+      artist_id: 17,
       artist_name: 'Led Zeppelin'
     })
 

@@ -21,65 +21,46 @@ class SongService
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function updateSongs(array $songIds, SongUpdateData $data): Collection
+    public function updateSongs(array $ids, SongUpdateData $data): Collection
     {
-        $updatedSongs = collect();
-
-        DB::transaction(function () use ($songIds, $data, $updatedSongs): void {
-            foreach ($songIds as $id) {
+        return DB::transaction(function () use ($ids, $data): Collection {
+            return collect($ids)->reduce(function (Collection $updated, string $id) use ($data): Collection {
                 /** @var Song|null $song */
                 $song = Song::with('album', 'album.artist', 'artist')->find($id);
 
                 if ($song) {
-                    $updatedSongs->push($this->updateSong($song, $data));
+                    $updated->push($this->updateSong($song, $data));
                 }
-            }
-        });
 
-        return $updatedSongs;
+                return $updated;
+            }, collect());
+        });
     }
 
     private function updateSong(Song $song, SongUpdateData $data): Song
     {
-        $maybeSetAlbumArtist = static function (Album $album) use ($data): void {
-            if ($data->albumArtistName) {
-                $album->artist_id = Artist::getOrCreate($data->albumArtistName)->id;
-                $album->save();
-            }
-        };
+        $data->albumName = $data->albumName ?: $song->album->name;
+        $data->artistName = $data->artistName ?: $song->artist->name;
+        $data->albumArtistName = $data->albumArtistName ?: $song->album_artist->name;
+        $data->title = $data->title ?: $song->title;
+        $data->lyrics = $data->lyrics ?: $song->lyrics;
+        $data->track = $data->track ?: $song->track;
+        $data->disc = $data->disc ?: $song->disc;
+        $data->genre = $data->genre ?: $song->genre;
+        $data->year = $data->year ?: $song->year;
 
-        $maybeSetAlbum = static function () use ($data, $song, $maybeSetAlbumArtist): void {
-            if ($data->albumName) {
-                $album = Album::getOrCreate($song->artist, $data->albumName);
-                $song->album_id = $album->id;
+        $albumArtist = Artist::getOrCreate($data->albumArtistName);
+        $artist = Artist::getOrCreate($data->artistName);
+        $album = Album::getOrCreate($albumArtist, $data->albumName);
 
-                $maybeSetAlbumArtist($album);
-            }
-        };
-
-        // if album artist name is provided, get/create an album with that artist and assign it to the song
-        if ($data->albumArtistName) {
-            $album = Album::getOrCreate(Artist::getOrCreate($data->albumArtistName), $data->albumName);
-            $song->album_id = $album->id;
-        } else {
-            $maybeSetAlbum();
-        }
-
-        if ($data->artistName) {
-            $artist = Artist::getOrCreate($data->artistName);
-            $song->artist_id = $artist->id;
-        } else {
-            $maybeSetAlbum();
-        }
-
-        // For string attributes like title, lyrics, and genre, we use "??" because empty strings still have effects
-        $song->title = $data->title ?? $song->title;
-        $song->lyrics = $data->lyrics ?? $song->lyrics;
-        $song->genre = $data->genre ?? $song->genre;
-
-        $song->track = $data->track ?: $song->track;
-        $song->year = $data->year ?: $song->year;
-        $song->disc = $data->disc ?: $song->disc;
+        $song->album_id = $album->id;
+        $song->artist_id = $artist->id;
+        $song->title = $data->title;
+        $song->lyrics = $data->lyrics;
+        $song->track = $data->track;
+        $song->disc = $data->disc;
+        $song->genre = $data->genre;
+        $song->year = $data->year;
 
         $song->push();
 

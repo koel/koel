@@ -45,7 +45,7 @@ class DownloadService
         throw new InvalidArgumentException('Unsupported download type.');
     }
 
-    private function fromSong(Song $song): string
+    public function fromSong(Song $song): string
     {
         if ($song->s3_params) {
             // The song is hosted on Amazon S3.

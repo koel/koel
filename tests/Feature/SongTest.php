@@ -121,10 +121,9 @@ class SongTest extends TestCase
 
         /** @var array<array-key, Song>|Collection $originalSongs */
         $originalSongs = Song::query()->latest()->take(3)->get();
-        $songIds = $originalSongs->pluck('id')->toArray();
 
         $this->putAs('/api/songs', [
-            'songs' => $songIds,
+            'songs' =>  $originalSongs->pluck('id')->toArray(),
             'data' => [
                 'title' => 'Foo Bar',
                 'artist_name' => 'John Cena',
@@ -135,7 +134,7 @@ class SongTest extends TestCase
         ], $user)
             ->assertOk();
 
-        /** @var array<Song>|Collection $songs */
+        /** @var array<array-key, Song>|Collection $songs */
         $songs = Song::query()->latest()->take(3)->get();
 
         // Even though the album name doesn't change, a new artist should have been created

@@ -2,7 +2,7 @@
 
 exports[`renders 1`] = `
 <article class="full item" title="IV by Led Zeppelin" data-testid="album-card" draggable="true" tabindex="0" data-v-b204153b=""><span class="cover" data-testid="album-artist-thumbnail" data-v-e37470a2="" data-v-b204153b=""><a class="control control-play" href="" role="button" data-v-e37470a2=""><span class="hidden" data-v-e37470a2="">Play all songs in the album IV</span><span class="icon" data-v-e37470a2=""></span></a></span>
-  <footer data-v-b204153b=""><a href="#/album/42" class="name" data-testid="name" data-v-b204153b="">IV</a><a href="#/artist/76553" class="artist" data-v-b204153b="">Led Zeppelin</a>
+  <footer data-v-b204153b=""><a href="#/album/42" class="name" data-testid="name" data-v-b204153b="">IV</a><a href="#/artist/17" class="artist" data-v-b204153b="">Led Zeppelin</a>
     <p class="meta" data-v-b204153b=""><a title="Shuffle all songs in the album IV" class="shuffle-album" data-testid="shuffle-album" href="" role="button" data-v-b204153b=""> Shuffle </a> • <a title="Download all songs in the album IV" class="download-album" data-testid="download-album" href="" role="button" data-v-b204153b=""> Download </a></p>
   </footer>
 </article>
