@@ -78,8 +78,8 @@ class MediaSyncServiceTest extends TestCase
         // Compilation albums, artists and songs must be recognized
         /** @var Song $song */
         $song = Song::query()->where('title', 'This song belongs to a compilation')->first();
-        self::assertFalse($song->album->artist->is($song->artist));
-        self::assertSame('Koel', $song->album->artist->name);
+        self::assertFalse($song->album_artist->is($song->artist));
+        self::assertSame('Koel', $song->album_artist->name);
         self::assertSame('Cuckoo', $song->artist->name);
     }
 

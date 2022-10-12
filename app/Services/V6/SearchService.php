@@ -37,14 +37,8 @@ class SearchService
                 Song::search($keywords)->get()->take($count)->pluck('id')->all(),
                 $scopedUser
             ),
-            $this->artistRepository->getByIds(
-                Artist::search($keywords)->get()->take($count)->pluck('id')->all(),
-                $scopedUser
-            ),
-            $this->albumRepository->getByIds(
-                Album::search($keywords)->get()->take($count)->pluck('id')->all(),
-                $scopedUser
-            ),
+            $this->artistRepository->getByIds(Artist::search($keywords)->get()->take($count)->pluck('id')->all()),
+            $this->albumRepository->getByIds(Album::search($keywords)->get()->take($count)->pluck('id')->all()),
         );
     }
 

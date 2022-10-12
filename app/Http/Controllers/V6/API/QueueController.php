@@ -26,7 +26,7 @@ class QueueController extends Controller
                     $request->sort,
                     $request->order,
                     $request->limit,
-                    $this->user,
+                    $this->user
                 )
             );
         }

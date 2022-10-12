@@ -122,6 +122,7 @@ class SongRepository extends Repository
         return Song::query()
             ->withMeta($scopedUser ?? $this->auth->user())
             ->where('songs.artist_id', $artist->id)
+            ->orWhere('albums.artist_id', $artist->id)
             ->orderBy('albums.name')
             ->orderBy('songs.track')
             ->orderBy('songs.disc')

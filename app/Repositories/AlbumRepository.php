@@ -6,57 +6,57 @@ use App\Models\Album;
 use App\Models\User;
 use App\Repositories\Traits\Searchable;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 
 class AlbumRepository extends Repository
 {
     use Searchable;
 
-    public function getOne(int $id, ?User $scopedUser = null): Album
+    public function getOne(int $id): Album
     {
-        return Album::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
-            ->where('albums.id', $id)
-            ->first();
+        return Album::query()->find($id);
     }
 
     /** @return Collection|array<array-key, Album> */
-    public function getRecentlyAdded(int $count = 6, ?User $scopedUser = null): Collection
+    public function getRecentlyAdded(int $count = 6): Collection
     {
         return Album::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
             ->isStandard()
-            ->latest('albums.created_at')
+            ->latest('created_at')
             ->limit($count)
             ->get();
     }
 
     /** @return Collection|array<array-key, Album> */
-    public function getMostPlayed(int $count = 6, ?User $scopedUser = null): Collection
+    public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
+        $user ??= $this->auth->user();
+
         return Album::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
+            ->leftJoin('songs', 'albums.id', 'songs.album_id')
+            ->leftJoin('interactions', static function (JoinClause $join) use ($user): void {
+                $join->on('songs.id', 'interactions.song_id')->where('interactions.user_id', $user->id);
+            })
             ->isStandard()
             ->orderByDesc('play_count')
             ->limit($count)
-            ->get();
+            ->get('albums.*');
     }
 
     /** @return Collection|array<array-key, Album> */
-    public function getByIds(array $ids, ?User $scopedUser = null): Collection
+    public function getByIds(array $ids): Collection
     {
         return Album::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
-            ->whereIn('albums.id', $ids)
+            ->whereIn('id', $ids)
             ->get();
     }
 
-    public function paginate(?User $scopedUser = null): Paginator
+    public function paginate(): Paginator
     {
         return Album::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
             ->isStandard()
-            ->orderBy('albums.name')
+            ->orderBy('name')
             ->simplePaginate(21);
     }
 }

@@ -11,7 +11,7 @@
       </template>
 
       <template v-slot:meta>
-        <span>{{ pluralize(artist.album_count, 'album') }}</span>
+        <span>{{ pluralize(albumCount, 'album') }}</span>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
         <a v-if="useLastfm" class="info" href title="View artist information" @click.prevent="showInfo">Info</a>
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
@@ -91,6 +91,12 @@ const {
 
 const { useLastfm } = useThirdPartyServices()
 const allowDownload = toRef(commonStore.state, 'allow_download')
+
+const albumCount = computed(() => {
+  const albums = new Set()
+  songs.value.forEach(song => albums.add(song.album_id))
+  return albums.size
+})
 
 const download = () => downloadService.fromArtist(artist.value!)
 const showInfo = () => (showingInfo.value = true)
