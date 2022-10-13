@@ -132,7 +132,6 @@ router.onRouteChanged(route => {
 <style lang="scss" scoped>
 .playlist {
   user-select: none;
-  overflow: hidden;
 
   &.droppable {
     box-shadow: inset 0 0 0 1px var(--color-accent);
@@ -144,11 +143,6 @@ router.onRouteChanged(route => {
     span {
       pointer-events: none;
     }
-  }
-
-  input {
-    width: calc(100% - 32px);
-    margin: 5px 16px;
   }
 }
 </style>

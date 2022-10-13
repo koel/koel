@@ -2,7 +2,6 @@
   <button
     :class="{ active: mode !== 'NO_REPEAT' }"
     :title="`Change repeat mode (current mode: ${readableMode})`"
-    class="control"
     data-testid="repeat-mode-switch"
     type="button"
     @click.prevent="changeMode"
@@ -39,11 +38,15 @@ const changeMode = () => playbackService.changeRepeatMode()
   font-weight: bold;
   right: 2px;
   top: 2px;
-  color: var(--color-accent);
+  color: currentColor;
   background: transparent;
 }
 
+button {
+  opacity: .3;
+}
+
 .active {
-  color: var(--color-highlight);
+  opacity: 1;
 }
 </style>

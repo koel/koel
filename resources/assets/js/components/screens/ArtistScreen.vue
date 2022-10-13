@@ -102,7 +102,7 @@ const download = () => downloadService.fromArtist(artist.value!)
 const showInfo = () => (showingInfo.value = true)
 
 onMounted(async () => {
-  const id = parseInt(router.$currentRoute.value!.params!.id)
+  const id = parseInt(router.$currentRoute.value.params!.id)
   loading.value = true
 
   try {

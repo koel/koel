@@ -2,7 +2,7 @@ import { nextTick, reactive } from 'vue'
 import plyr from 'plyr'
 import lodash from 'lodash'
 import { expect, it, vi } from 'vitest'
-import { eventBus, noop } from '@/utils'
+import { noop } from '@/utils'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { socketService } from '@/services'
@@ -185,7 +185,6 @@ new class extends UnitTestCase {
     it('restarts a song', async () => {
       const song = this.setCurrentSong()
       this.mock(Math, 'floor', 1000)
-      const emitMock = this.mock(eventBus, 'emit')
       const broadcastMock = this.mock(socketService, 'broadcast')
       const showNotificationMock = this.mock(playbackService, 'showNotification')
       const restartMock = this.mock(playbackService.player!, 'restart')
@@ -195,7 +194,6 @@ new class extends UnitTestCase {
 
       expect(song.play_start_time).toEqual(1000)
       expect(song.play_count_registered).toBe(false)
-      expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', song)
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', song)
       expect(showNotificationMock).toHaveBeenCalled()
       expect(restartMock).toHaveBeenCalled()
@@ -298,7 +296,6 @@ new class extends UnitTestCase {
 
       const playMock = this.mock(window.HTMLMediaElement.prototype, 'play')
       const broadcastMock = this.mock(socketService, 'broadcast')
-      const emitMock = this.mock(eventBus, 'emit')
 
       playbackService.init()
       await playbackService.resume()
@@ -306,7 +303,6 @@ new class extends UnitTestCase {
       expect(queueStore.current?.playback_state).toEqual('Playing')
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', song)
       expect(playMock).toHaveBeenCalled()
-      expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', song)
     })
 
     it('plays first in queue if toggled when there is no current song', async () => {

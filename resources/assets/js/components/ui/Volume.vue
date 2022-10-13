@@ -1,5 +1,5 @@
 <template>
-  <span id="volume" class="volume control">
+  <span id="volume" class="volume" :class="level">
     <icon
       v-if="level === 'muted'"
       :icon="faVolumeMute"
@@ -73,30 +73,45 @@ eventBus.on('KOEL_READY', () => setLevel(preferences.volume))
 <style lang="scss">
 #volume {
   position: relative;
-  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  // More tweaks
   [type=range] {
     margin: 0 0 0 8px;
-    transform: rotate(270deg);
-    transform-origin: 0;
-    position: absolute;
-    bottom: -22px;
-    border: 14px solid var(--color-bg-primary);
-    border-left-width: 30px;
-    z-index: 0;
-    width: 140px;
+    width: 120px;
+    height: 4px;
     border-radius: 4px;
-    display: none;
-  }
-
-  &:hover [type=range] {
-    display: block;
-  }
-
-  [role=button] {
     position: relative;
-    z-index: 1;
+
+    // increase click area
+    &::before {
+      position: absolute;
+      content: ' ';
+      left: 0;
+      right: 0;
+      top: -12px;
+      bottom: -12px;
+    }
+
+    &::-webkit-slider-thumb {
+      background: var(--color-text-secondary);
+    }
+
+    &:hover {
+      &::-webkit-slider-thumb {
+        background: var(--color-text-primary);
+      }
+    }
+  }
+
+  &.muted {
+    [type=range] {
+      &::-webkit-slider-thumb {
+        background: transparent;
+        box-shadow: none;
+      }
+    }
   }
 
   @media only screen and (max-width: 768px) {

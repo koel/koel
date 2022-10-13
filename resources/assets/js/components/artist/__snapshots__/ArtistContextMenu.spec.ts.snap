@@ -1,8 +1,8 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<nav class="artist-menu menu context-menu" style="top: 42px; left: 420px;" tabindex="0" data-testid="artist-context-menu">
-  <ul>
+<nav class="artist-menu menu context-menu" style="top: 42px; left: 420px;" tabindex="0" data-testid="artist-context-menu" data-v-0408531a="">
+  <ul data-v-0408531a="">
     <li data-testid="play">Play All</li>
     <li data-testid="shuffle">Shuffle All</li>
     <li class="separator"></li>

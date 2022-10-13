@@ -1,5 +1,6 @@
 <template>
-  <nav id="sidebar" :class="{ showing }" class="side side-nav">
+  <nav id="sidebar" :class="{ showing: mobileShowing }" class="side side-nav" v-koel-clickaway="closeIfMobile">
+    <SearchForm/>
     <section class="music">
       <h1>Your Music</h1>
 
@@ -78,7 +79,6 @@
 </template>
 
 <script lang="ts" setup>
-import isMobile from 'ismobilejs'
 import {
   faCompactDisc,
   faHome,
@@ -97,8 +97,9 @@ import { useAuthorization, useDroppable, useThirdPartyServices } from '@/composa
 import { RouterKey } from '@/symbols'
 
 import PlaylistList from '@/components/playlist/PlaylistSidebarList.vue'
+import SearchForm from '@/components/ui/SearchForm.vue'
 
-const showing = ref(!isMobile.phone)
+const mobileShowing = ref(false)
 const activeScreen = ref<ScreenName>()
 const droppableToQueue = ref(false)
 
@@ -128,14 +129,12 @@ const onQueueDrop = async (event: DragEvent) => {
   return false
 }
 
+const closeIfMobile = () => (mobileShowing.value = false)
+
 const router = requireInjection(RouterKey)
 
 router.onRouteChanged(route => {
-  // On mobile, hide the sidebar whenever a screen is activated.
-  if (isMobile.phone) {
-    showing.value = false
-  }
-
+  mobileShowing.value = false
   activeScreen.value = route.screen
 })
 
@@ -144,15 +143,15 @@ eventBus.on({
    * Listen to toggle sidebar event to show or hide the sidebar.
    * This should only be triggered on a mobile device.
    */
-  TOGGLE_SIDEBAR: () => (showing.value = !showing.value)
+  TOGGLE_SIDEBAR: () => (mobileShowing.value = !mobileShowing.value)
 })
 </script>
 
 <style lang="scss" scoped>
 nav {
-  flex: 0 0 256px;
+  width: var(--sidebar-width);
   background-color: var(--color-bg-secondary);
-  padding: 2.05rem 0;
+  padding: 2.05rem 1.5rem;
   overflow: auto;
   overflow-x: hidden;
   -ms-overflow-style: -ms-autohiding-scrollbar;
@@ -183,8 +182,11 @@ nav {
   ::v-deep(h1) {
     text-transform: uppercase;
     letter-spacing: 1px;
-    padding: 0 16px;
     margin-bottom: 12px;
+  }
+
+  ::v-deep(a svg) {
+    opacity: .7;
   }
 
   ::v-deep(a) {
@@ -193,45 +195,53 @@ nav {
     gap: .7rem;
     height: 36px;
     line-height: 36px;
-    padding: 0 16px 0 12px;
-    border-left: 4px solid transparent;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
-
-    &.active, &:hover {
-      border-left-color: var(--color-highlight);
-      color: var(--color-text-primary);
-      background: rgba(255, 255, 255, .05);
-      box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
-    }
+    position: relative;
 
     &:active {
-      opacity: .5;
+      padding: 2px 0 0 2px;
     }
 
-    &:hover {
-      border-left-color: var(--color-highlight);
+    &.active, &:hover {
+      color: var(--color-text-primary);
+    }
+
+    &.active {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 25%;
+        right: -1.5rem;
+        width: 4px;
+        height: 50%;
+        background-color: var(--color-highlight);
+        box-shadow: 0 0 40px 10px var(--color-highlight);
+        border-radius: 9999rem;
+      }
     }
   }
 
   ::v-deep(li li a) { // submenu items
-    padding-left: 24px;
+    padding-left: 11px;
+
+    &:active {
+      padding: 2px 0 0 13px;
+    }
   }
 
-  @media only screen and (max-width: 667px) {
+  @media screen and (max-width: 768px) {
     @include themed-background();
+    transform: translateX(-100vw);
+    transition: transform .2s ease-in-out;
 
     position: fixed;
-    height: calc(100vh - var(--header-height) + var(--footer-height));
     width: 100%;
     z-index: 99;
-    top: var(--header-height);
-    left: -100%;
-    transition: left .3s ease-in;
+    height: calc(100vh - var(--header-height));
 
     &.showing {
-      left: 0;
+      transform: translateX(0);
     }
   }
 }

@@ -6,7 +6,6 @@
 
   <div v-if="authenticated" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
     <Hotkeys/>
-    <AppHeader/>
     <MainWrapper/>
     <AppFooter/>
     <SupportKoel/>
@@ -25,11 +24,11 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, onMounted, provide, ref } from 'vue'
+import { defineAsyncComponent, nextTick, onMounted, provide, ref, watch } from 'vue'
 import { eventBus, hideOverlay, requireInjection, showOverlay } from '@/utils'
-import { commonStore, preferenceStore as preferences } from '@/stores'
+import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
 import { authService, playbackService, socketListener, socketService, uploadService } from '@/services'
-import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
+import { CurrentSongKey, DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
@@ -42,7 +41,6 @@ import AppFooter from '@/components/layout/app-footer/index.vue'
 // GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
 import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 
-const AppHeader = defineAsyncComponent(() => import('@/components/layout/AppHeader.vue'))
 const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
 const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
@@ -57,6 +55,7 @@ const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZ
 
 const dialog = ref<InstanceType<typeof DialogBox>>()
 const toaster = ref<InstanceType<typeof MessageToaster>>()
+const currentSong = ref<Song | null>(null)
 const authenticated = ref(false)
 const showDropZone = ref(false)
 
@@ -121,11 +120,14 @@ const onDragOver = (e: DragEvent) => {
   showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && router.$currentRoute.value.screen !== 'Upload'
 }
 
+watch(() => queueStore.current, song => (currentSong.value = song))
+
 const onDragEnd = () => (showDropZone.value = false)
 const onDrop = () => (showDropZone.value = false)
 
 provide(DialogBoxKey, dialog)
 provide(MessageToasterKey, toaster)
+provide(CurrentSongKey, currentSong)
 </script>
 
 <style lang="scss">
@@ -167,6 +169,12 @@ provide(MessageToasterKey, toaster)
   height: 100vh;
   flex-direction: column;
   justify-content: flex-end;
+}
+
+#main {
+  @media screen and (max-width: 768px) {
+    padding-top: var(--header-height);
+  }
 }
 
 .login-wrapper {

@@ -17,10 +17,11 @@
 <script lang="ts" setup>
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import createYouTubePlayer from 'youtube-player'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
-import { eventBus, use } from '@/utils'
+import { eventBus, requireInjection, use } from '@/utils'
 import { playbackService } from '@/services'
+import { CurrentSongKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -42,20 +43,20 @@ const getPlayer = () => {
   return player
 }
 
-eventBus.on({
-  PLAY_YOUTUBE_VIDEO (payload: { id: string, title: string }) {
-    title.value = payload.title
+const currentSong = requireInjection(CurrentSongKey)
 
-    use(getPlayer(), player => {
-      player.loadVideoById(payload.id)
-      player.playVideo()
-    })
-  },
+/**
+ * Pause video playback when a song is played/resumed.
+ */
+watch(() => currentSong.value?.playback_state, state => state === 'Playing' && player?.pauseVideo())
 
-  /**
-   * Stop video playback when a song is played/resumed.
-   */
-  SONG_STARTED: () => player && player.pauseVideo()
+eventBus.on('PLAY_YOUTUBE_VIDEO', (payload: { id: string, title: string }) => {
+  title.value = payload.title
+
+  use(getPlayer(), player => {
+    player.loadVideoById(payload.id)
+    player.playVideo()
+  })
 })
 </script>
 

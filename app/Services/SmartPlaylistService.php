@@ -13,10 +13,6 @@ use Illuminate\Support\Collection;
 
 class SmartPlaylistService
 {
-    public function __construct()
-    {
-    }
-
     /** @return Collection|array<array-key, Song> */
     public function getSongs(Playlist $playlist, ?User $user = null): Collection
     {

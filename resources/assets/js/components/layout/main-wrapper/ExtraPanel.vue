@@ -1,163 +1,143 @@
 <template>
-  <section id="extra" :class="{ showing }" class="text-secondary" data-testid="extra-panel">
-    <div class="tabs">
-      <div class="clear" role="tablist">
-        <button
-          id="extraTabLyrics"
-          :aria-selected="currentTab === 'Lyrics'"
-          aria-controls="extraPanelLyrics"
-          data-testid="extra-tab-lyrics"
-          role="tab"
-          type="button"
-          @click.prevent="currentTab = 'Lyrics'"
-        >
-          Lyrics
-        </button>
-        <button
-          id="extraTabArtist"
-          :aria-selected="currentTab === 'Artist'"
-          aria-controls="extraPanelArtist"
-          data-testid="extra-tab-artist"
-          role="tab"
-          type="button"
-          @click.prevent="currentTab = 'Artist'"
-        >
-          Artist
-        </button>
-        <button
-          id="extraTabAlbum"
-          :aria-selected="currentTab === 'Album'"
-          aria-controls="extraPanelAlbum"
-          data-testid="extra-tab-album"
-          role="tab"
-          type="button"
-          @click.prevent="currentTab = 'Album'"
-        >
-          Album
-        </button>
-        <button
-          v-if="useYouTube"
-          id="extraTabYouTube"
-          :aria-selected="currentTab === 'YouTube'"
-          aria-controls="extraPanelYouTube"
-          data-testid="extra-tab-youtube"
-          role="tab"
-          title="YouTube"
-          type="button"
-          @click.prevent="currentTab = 'YouTube'"
-        >
-          <icon :icon="faYoutube"/>
-        </button>
+  <div id="extraPanel" :class="{ 'showing-pane': selectedTab }">
+    <div class="controls">
+      <div class="top">
+        <SidebarMenuToggleButton class="burger"/>
+        <ExtraPanelTabHeader v-if="song" v-model="selectedTab"/>
       </div>
 
-      <div class="panes">
-        <div
-          v-show="currentTab === 'Lyrics'"
-          id="extraPanelLyrics"
-          aria-labelledby="extraTabLyrics"
-          role="tabpanel"
-          tabindex="0"
-        >
-          <LyricsPane :song="song"/>
-        </div>
+      <div class="bottom">
+        <button title="About Koel" type="button" @click.prevent="openAboutKoelModal">
+          <icon :icon="faInfoCircle"/>
+        </button>
 
-        <div
-          v-show="currentTab === 'Artist'"
-          id="extraPanelArtist"
-          aria-labelledby="extraTabArtist"
-          role="tabpanel"
-          tabindex="0"
-        >
-          <ArtistInfo v-if="artist" :artist="artist" mode="aside"/>
-        </div>
+        <button title="Log out" type="button" @click.prevent="logout">
+          <icon :icon="faArrowRightFromBracket"/>
+        </button>
 
-        <div
-          v-show="currentTab === 'Album'"
-          id="extraPanelAlbum"
-          aria-labelledby="extraTabAlbum"
-          role="tabpanel"
-          tabindex="0"
-        >
-          <AlbumInfo v-if="album" :album="album" mode="aside"/>
-        </div>
-
-        <div
-          v-show="currentTab === 'YouTube'"
-          id="extraPanelYouTube"
-          aria-labelledby="extraTabYouTube"
-          role="tabpanel"
-          tabindex="0"
-        >
-          <YouTubeVideoList v-if="useYouTube && song" :song="song"/>
-        </div>
+        <ProfileAvatar @click="onProfileLinkClick"/>
       </div>
     </div>
-  </section>
+
+    <div class="panes" v-if="song" v-show="selectedTab">
+      <div
+        v-show="selectedTab === 'Lyrics'"
+        id="extraPanelLyrics"
+        aria-labelledby="extraTabLyrics"
+        role="tabpanel"
+        tabindex="0"
+      >
+        <LyricsPane :song="song"/>
+      </div>
+
+      <div
+        v-show="selectedTab === 'Artist'"
+        id="extraPanelArtist"
+        aria-labelledby="extraTabArtist"
+        role="tabpanel"
+        tabindex="0"
+      >
+        <ArtistInfo v-if="artist" :artist="artist" mode="aside"/>
+        <span v-else>Loading…</span>
+      </div>
+
+      <div
+        v-show="selectedTab === 'Album'"
+        id="extraPanelAlbum"
+        aria-labelledby="extraTabAlbum"
+        role="tabpanel"
+        tabindex="0"
+      >
+        <AlbumInfo v-if="album" :album="album" mode="aside"/>
+        <span v-else>Loading…</span>
+      </div>
+
+      <div
+        v-show="selectedTab === 'YouTube'"
+        id="extraPanelYouTube"
+        aria-labelledby="extraTabYouTube"
+        role="tabpanel"
+        tabindex="0"
+      >
+        <YouTubeVideoList v-if="useYouTube && song" :song="song"/>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { faYoutube } from '@fortawesome/free-brands-svg-icons'
-import { ref, toRef, watch } from 'vue'
-import { eventBus } from '@/utils'
-import { albumStore, artistStore, preferenceStore as preferences } from '@/stores'
-import { useThirdPartyServices } from '@/composables'
+import { faArrowRightFromBracket, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import { defineAsyncComponent, ref, watch } from 'vue'
+import { albumStore, artistStore } from '@/stores'
+import { useAuthorization, useThirdPartyServices } from '@/composables'
+import { eventBus, logger, requireInjection } from '@/utils'
+import { CurrentSongKey } from '@/symbols'
 
-import LyricsPane from '@/components/ui/LyricsPane.vue'
-import ArtistInfo from '@/components/artist/ArtistInfo.vue'
-import AlbumInfo from '@/components/album/AlbumInfo.vue'
-import YouTubeVideoList from '@/components/ui/YouTubeVideoList.vue'
+import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
+import SidebarMenuToggleButton from '@/components/ui/SidebarMenuToggleButton.vue'
 
-type Tab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
-const defaultTab: Tab = 'Lyrics'
+const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))
+const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
+const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
+const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/YouTubeVideoList.vue'))
+const ExtraPanelTabHeader = defineAsyncComponent(() => import('@/components/ui/ExtraPanelTabHeader.vue'))
 
-const song = ref<Song | null>(null)
-const showing = toRef(preferences.state, 'showExtraPanel')
-const currentTab = ref<Tab>(defaultTab)
-
+const { currentUser } = useAuthorization()
 const { useYouTube } = useThirdPartyServices()
 
-const artist = ref<Artist>()
-const album = ref<Album>()
+const song = requireInjection(CurrentSongKey, ref(null))
+const selectedTab = ref<ExtraPanelTab | undefined>(undefined)
 
-watch(showing, (showingExtraPanel) => {
-  if (showingExtraPanel && !isMobile.any) {
-    document.documentElement.classList.add('with-extra-panel')
-  } else {
-    document.documentElement.classList.remove('with-extra-panel')
-  }
-})
+const artist = ref<Artist | null>(null)
+const album = ref<Album | null>(null)
+
+watch(song, song => song && fetchSongInfo(song))
 
 const fetchSongInfo = async (_song: Song) => {
+  song.value = _song
+  artist.value = null
+  album.value = null
+
   try {
-    song.value = _song
     artist.value = await artistStore.resolve(_song.artist_id)
     album.value = await albumStore.resolve(_song.album_id)
-  } catch (err) {
-    throw err
+  } catch (error) {
+    logger.log('Failed to fetch media information', error)
   }
 }
 
-eventBus.on({
-  SONG_STARTED: async (song: Song) => await fetchSongInfo(song),
-  KOEL_READY: () => {
-    // On ready, add 'with-extra-panel' class.
-    isMobile.any || document.documentElement.classList.add('with-extra-panel')
-
-    // Hide the extra panel if on mobile
-    isMobile.phone && (showing.value = false)
-  }
-})
+const openAboutKoelModal = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
+const onProfileLinkClick = () => isMobile.any && (selectedTab.value = undefined)
+const logout = () => eventBus.emit('LOG_OUT')
 </script>
 
-<style lang="scss">
-#extra {
-  flex: 0 0 var(--extra-panel-width);
-  padding-top: 2.3rem;
+<style lang="scss" scoped>
+#extraPanel {
+  display: flex;
+  flex-direction: row-reverse;
+  color: var(--color-text-secondary);
+  height: var(--header-height);
+  z-index: 1;
+
+  @media screen and (max-width: 768px) {
+    @include themed-background();
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    width: 100%;
+
+    &.showing-pane {
+      height: 100%;
+    }
+  }
+}
+
+.panes {
+  width: var(--extra-panel-width);
+  padding: 2rem 1.7rem;
   background: var(--color-bg-secondary);
-  display: none;
   overflow: auto;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 
   @media (hover: none) {
     // Enable scroll with momentum on touch devices
@@ -165,38 +145,79 @@ eventBus.on({
     -webkit-overflow-scrolling: touch;
   }
 
-  &.showing {
-    display: block;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    height: calc(100vh - var(--header-height) - var(--footer-height));
+  }
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 64px;
+  padding: 1.6rem 0 1.2rem;
+  background-color: rgba(0, 0, 0, .05);
+  border-left: 1px solid rgba(255, 255, 255, .05);
+
+  @media screen and (max-width: 768px) {
+    z-index: 2;
+    height: auto;
+    width: 100%;
+    flex-direction: row;
+    padding: .5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .05);
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, .75);
   }
 
-  h1 {
-    font-weight: var(--font-weight-thin);
-    font-size: 2.2rem;
-    margin-bottom: 1.25rem;
-    line-height: 2.8rem;
-  }
+  .top, .bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
 
-  @media only screen and (max-width: 1024px) {
-    position: fixed;
-    height: calc(100vh - var(--header-height));
-    width: var(--extra-panel-width);
-    z-index: 9;
-    top: var(--header-height);
-    right: -100%;
-    transition: right .3s ease-in;
-
-    &.showing {
-      right: 0;
+    @media screen and (max-width: 768px) {
+      flex-direction: row;
+      gap: .25rem;
     }
   }
 
-  @media only screen and (max-width: 667px) {
-    @include themed-background();
+  ::v-deep(button) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    aspect-ratio: 1/1;
+    border-radius: 999rem;
+    background: rgba(0, 0, 0, .3);
+    font-size: 1.2rem;
+    opacity: .7;
+    transition: opacity .2s ease-in-out;
+    color: currentColor;
+    cursor: pointer;
 
-    width: 100%;
+    @media screen and (max-width: 768px) {
+      background: none;
+    }
 
-    [role=tabpanel] {
-      padding-bottom: calc(var(--footer-height-mobile) + 1rem)
+    &:hover, &.active {
+      opacity: 1;
+      color: var(--color-text-primary);
+    }
+
+    &:active {
+      transform: scale(.9);
+    }
+
+    &.burger {
+      display: none;
+
+      @media screen and (max-width: 768px) {
+        display: block;
+      }
     }
   }
 }

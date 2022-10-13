@@ -35,7 +35,7 @@ import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
 import { preferenceStore } from '@/stores'
 import { useThirdPartyServices } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { CurrentSongKey, RouterKey } from '@/symbols'
 
 import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
@@ -60,19 +60,17 @@ const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/N
 const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
 
 const { useYouTube } = useThirdPartyServices()
+
 const router = requireInjection(RouterKey)
+const currentSong = requireInjection(CurrentSongKey, ref(null))
 
 const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
 const showingVisualizer = ref(false)
 const screen = ref<ScreenName>('Home')
-const currentSong = ref<Song | null>(null)
 
 router.onRouteChanged(route => (screen.value = route.screen))
 
-eventBus.on({
-  TOGGLE_VISUALIZER: () => (showingVisualizer.value = !showingVisualizer.value),
-  SONG_STARTED: (song: Song) => (currentSong.value = song)
-})
+eventBus.on('TOGGLE_VISUALIZER', () => (showingVisualizer.value = !showingVisualizer.value))
 
 onMounted(() => router.resolve())
 </script>
@@ -94,7 +92,7 @@ onMounted(() => router.resolve())
 
     .main-scroll-wrap {
       &:not(.song-list-wrap) {
-        padding: 24px 24px 48px;
+        padding: 1.5rem;
       }
 
       overflow: scroll;
@@ -120,7 +118,7 @@ onMounted(() => router.resolve())
     }
   }
 
-  @media only screen and (max-width: 375px) {
+  @media screen and (max-width: 768px) {
     > section {
       // Leave some space for the "Back to top" button
       .main-scroll-wrap {

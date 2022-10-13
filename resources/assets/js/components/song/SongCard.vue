@@ -79,6 +79,7 @@ article {
   }
 
   button {
+    color: var(--color-text-secondary);
     opacity: 0;
   }
 

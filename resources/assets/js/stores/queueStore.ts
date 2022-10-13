@@ -146,10 +146,12 @@ export const queueStore = {
   async fetchRandom (limit = 500) {
     const songs = await http.get<Song[]>(`queue/fetch?order=rand&limit=${limit}`)
     this.state.songs = songStore.syncWithVault(songs)
+    return this.state.songs
   },
 
   async fetchInOrder (sortField: SongListSortField, order: SortOrder, limit = 500) {
     const songs = await http.get<Song[]>(`queue/fetch?order=${order}&sort=${sortField}&limit=${limit}`)
     this.state.songs = songStore.syncWithVault(songs)
+    return this.state.songs
   }
 }

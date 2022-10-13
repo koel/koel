@@ -1,29 +1,30 @@
 <template>
   <footer id="mainFooter" @contextmenu.prevent="requestContextMenu">
-    <PlayerControls :song="song"/>
+    <AudioPlayer/>
 
-    <div class="media-info-wrap">
-      <MiddlePane :song="song"/>
-      <ExtraControls :song="song"/>
+    <div class="wrapper">
+      <SongInfo/>
+      <PlaybackControls/>
+      <ExtraControls/>
     </div>
   </footer>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus, requireInjection } from '@/utils'
+import { CurrentSongKey } from '@/symbols'
 
+import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
+import SongInfo from '@/components/layout/app-footer/FooterSongInfo.vue'
 import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
-import MiddlePane from '@/components/layout/app-footer/FooterMiddlePane.vue'
-import PlayerControls from '@/components/layout/app-footer/FooterPlayerControls.vue'
+import PlaybackControls from '@/components/layout/app-footer/FooterPlaybackControls.vue'
 
-const song = ref<Song>()
+const song = requireInjection(CurrentSongKey, ref(null))
 
 const requestContextMenu = (event: MouseEvent) => {
-  song.value?.id && eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
+  song.value && eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
 }
-
-eventBus.on('SONG_STARTED', (newSong: Song) => (song.value = newSong))
 </script>
 
 <style lang="scss" scoped>
@@ -31,33 +32,14 @@ footer {
   background: var(--color-bg-secondary);
   height: var(--footer-height);
   display: flex;
+  box-shadow: 0 0 30px 20px rgba(0, 0, 0, .2);
+  flex-direction: column;
   position: relative;
-  z-index: 99;
+  z-index: 1;
 
-  .media-info-wrap {
-    flex: 1;
+  .wrapper {
     display: flex;
-  }
-
-  // Add a reverse gradient here to eliminate the "hard cut" feel.
-  &::before {
-    content: " ";
-    position: absolute;
-    width: 100%;
-    height: calc(2 * var(--footer-height) / 3);
-    bottom: var(--footer-height);
-    left: 0;
-
-    // Safari 8 won't recognize rgba(255, 255, 255, 0) and treat it as black.
-    // rgba(#000, 0) is a workaround.
-    background-image: linear-gradient(to bottom, rgba(#000, 0) 0%, rgba(#000, .1) 100%);
-    pointer-events: none; // click-through
-  }
-
-  @media only screen and (max-width: 768px) {
-    @include themed-background();
-    height: var(--footer-height-mobile);
-    padding-top: 12px; // leave space for the audio track
+    flex: 1;
   }
 }
 </style>

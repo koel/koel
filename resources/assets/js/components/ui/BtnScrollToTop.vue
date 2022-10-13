@@ -31,7 +31,7 @@ button {
   }
 
   position: fixed;
-  bottom: calc(var(--footer-height-mobile) + 26px);
+  bottom: calc(var(--footer-height) + 26px);
   right: 1.8rem;
   z-index: 20;
   opacity: 1;

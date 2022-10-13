@@ -111,7 +111,7 @@ useScreen('Home').onScreenActivated(async () => {
   }
 
   .main-scroll-wrap {
-    section {
+    section:not(:last-of-type) {
       margin-bottom: 48px;
     }
 
