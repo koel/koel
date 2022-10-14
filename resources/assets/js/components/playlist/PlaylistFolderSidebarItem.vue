@@ -104,6 +104,10 @@ const onContextMenu = event => eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUE
 li.playlist-folder {
   position: relative;
 
+  a {
+    color: var(--color-text-secondary);
+  }
+
   &.droppable {
     box-shadow: inset 0 0 0 1px var(--color-accent);
     border-radius: 4px;
