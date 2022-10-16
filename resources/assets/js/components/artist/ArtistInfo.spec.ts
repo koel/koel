@@ -23,6 +23,11 @@ new class extends UnitTestCase {
       props: {
         artist,
         mode
+      },
+      global: {
+        stubs: {
+          ArtistThumbnail: this.stub('thumbnail')
+        }
       }
     })
 
@@ -34,9 +39,13 @@ new class extends UnitTestCase {
 
   protected test () {
     it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async (mode) => {
-      const { getByTestId } = await this.renderComponent(mode)
+      const { getByTestId, queryByTestId } = await this.renderComponent(mode)
 
-      getByTestId('album-artist-thumbnail')
+      if (mode === 'aside') {
+        getByTestId('thumbnail')
+      } else {
+        expect(queryByTestId('thumbnail'))
+      }
 
       expect(getByTestId('artist-info').classList.contains(mode)).toBe(true)
     })

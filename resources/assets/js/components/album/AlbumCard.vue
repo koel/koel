@@ -28,7 +28,6 @@
         >
           Shuffle
         </a>
-        •
         <a
           v-if="allowDownload"
           :title="`Download all songs in the album ${album.name}`"

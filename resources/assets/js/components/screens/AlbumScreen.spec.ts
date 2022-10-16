@@ -1,11 +1,10 @@
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { fireEvent, getByTestId, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { albumStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { eventBus } from '@/utils'
-import CloseModalBtn from '@/components/ui/BtnCloseModal.vue'
 import AlbumScreen from './AlbumScreen.vue'
 
 let album: Album
@@ -36,9 +35,9 @@ new class extends UnitTestCase {
     const rendered = this.render(AlbumScreen, {
       global: {
         stubs: {
-          CloseModalBtn,
-          AlbumInfo: this.stub('album-info'),
-          SongList: this.stub('song-list')
+          SongList: this.stub('song-list'),
+          AlbumCard: this.stub('album-card'),
+          AlbumInfo: this.stub('album-info')
         }
       }
     })
@@ -54,17 +53,6 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('shows and hides info', async () => {
-      const { getByTitle, getByTestId, queryByTestId, html } = await this.renderComponent()
-      expect(queryByTestId('album-info')).toBeNull()
-
-      await fireEvent.click(getByTitle('View album information'))
-      expect(queryByTestId('album-info')).not.toBeNull()
-
-      await fireEvent.click(getByTestId('close-modal-btn'))
-      expect(queryByTestId('album-info')).toBeNull()
-    })
-
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromAlbum')
       const { getByText } = await this.renderComponent()
@@ -84,6 +72,25 @@ new class extends UnitTestCase {
       await waitFor(() => {
         expect(byIdMock).toHaveBeenCalledWith(album.id)
         expect(goMock).toHaveBeenCalledWith('albums')
+      })
+    })
+
+    it('shows the song list', async () => {
+      const { getByTestId } = await this.renderComponent()
+      getByTestId('song-list')
+    })
+
+    it('shows other albums from the same artist', async () => {
+      const albums = factory<Album>('album', 3)
+      albums.push(album)
+      const fetchMock = this.mock(albumStore, 'fetchForArtist').mockResolvedValue(albums)
+      const { getByLabelText, getAllByTestId } = await this.renderComponent()
+
+      await fireEvent.click(getByLabelText('Other Albums'))
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenCalledWith(album.artist_id)
+        expect(getAllByTestId('album-card')).toHaveLength(3) // current album is excluded
       })
     })
   }

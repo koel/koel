@@ -23,6 +23,7 @@
     </ScreenHeader>
 
     <SongListSkeleton v-if="loading"/>
+
     <SongList v-if="songs.length" ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint"/>
 
     <ScreenEmptyState v-else>
