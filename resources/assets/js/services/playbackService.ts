@@ -155,7 +155,6 @@ class PlaybackService {
     song.play_start_time = Math.floor(Date.now() / 1000)
     song.play_count_registered = false
 
-    eventBus.emit('SONG_STARTED', song)
     socketService.broadcast('SOCKET_SONG', song)
 
     this.player.restart()
@@ -295,7 +294,6 @@ class PlaybackService {
     }
 
     queueStore.current!.playback_state = 'Playing'
-    eventBus.emit('SONG_STARTED', queueStore.current)
     socketService.broadcast('SOCKET_SONG', queueStore.current)
   }
 

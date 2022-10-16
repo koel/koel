@@ -18,16 +18,22 @@
   --font-weight-normal: 500;
   --font-weight-bold: 700;
 
-  --header-height: 48px;
-  --footer-height: 64px;
-  --footer-height-mobile: 74px;
-  --extra-panel-width: 334px;
+  --header-height: auto;
+  --footer-height: 84px;
+  --extra-panel-width: 320px;
+  --sidebar-width: 256px;
 
   --color-black: #181818;
   --color-maroon: #bf2043;
   --color-green: #56a052;
   --color-blue: #0191f7;
   --color-red: #c34848;
+
+  @media screen and (max-width: 768px) {
+    --header-height: 59px;
+    --footer-height: 96px;
+    --extra-panel-width: 100%;
+  }
 }
 
 $plyr-blue: var(--color-highlight);

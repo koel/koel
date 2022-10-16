@@ -44,5 +44,6 @@ export const favoriteStore = {
 
   async fetch () {
     this.state.songs = songStore.syncWithVault(await http.get<Song[]>('songs/favorite'))
+    return this.state.songs
   }
 }

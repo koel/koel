@@ -8,7 +8,7 @@
     </p>
     <button data-testid="hide-support-koel" type="button" @click.prevent="close">Hide</button>
     <span class="sep"></span>
-    <button data-testid="stop-support-koel-bugging" @click.prevent="stopBugging" type="button">
+    <button data-testid="stop-support-koel-bugging" type="button" @click.prevent="stopBugging">
       Don't bug me again
     </button>
   </div>

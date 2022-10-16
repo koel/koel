@@ -97,3 +97,9 @@ eventBus.on('CONTEXT_MENU_OPENED', target => target === el || close())
 
 defineExpose({ open, close, shown })
 </script>
+
+<style lang="scss" scoped>
+nav {
+  user-select: none;
+}
+</style>

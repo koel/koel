@@ -96,12 +96,12 @@ eventBus.on({
   form {
     position: relative;
     min-width: 460px;
-    max-width: calc(100% - 24px);
+    max-width: calc(100vw - 24px);
     background-color: var(--color-bg-primary);
     border-radius: 4px;
 
-    @media only screen and (max-width: 667px) {
-      min-width: calc(100% - 24px);
+    @media screen and (max-width: 667px) {
+      min-width: calc(100vw - 24px);
     }
 
     > header, > main, > footer {

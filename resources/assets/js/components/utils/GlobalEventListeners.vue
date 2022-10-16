@@ -6,9 +6,8 @@
 /**
  * Global event listeners (basically, those without a Vue instance access) go here.
  */
-import isMobile from 'ismobilejs'
 import { authService } from '@/services'
-import { playlistFolderStore, playlistStore, preferenceStore, userStore } from '@/stores'
+import { playlistFolderStore, playlistStore, userStore } from '@/stores'
 import { eventBus, forceReloadWindow, requireInjection } from '@/utils'
 import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 
@@ -40,13 +39,6 @@ eventBus.on({
     await userStore.logout()
     authService.destroy()
     forceReloadWindow()
-  }
-})
-
-router.onRouteChanged(() => {
-  // Hide the extra panel away if a main view is triggered on mobile.
-  if (isMobile.phone) {
-    preferenceStore.showExtraPanel = false
   }
 })
 </script>

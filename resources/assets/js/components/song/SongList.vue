@@ -308,6 +308,10 @@ onMounted(() => render())
   display: flex;
   flex-direction: column;
 
+  @media screen and (max-width: 768px) {
+    padding: 0 12px;
+  }
+
   .song-list-header {
     background: var(--color-bg-secondary);
     z-index: 1;
@@ -402,8 +406,6 @@ onMounted(() => render())
   }
 
   @media only screen and (max-width: 768px) {
-    padding: 12px;
-
     .song-list-header {
       display: none;
     }

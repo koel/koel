@@ -33,9 +33,6 @@ const logout = () => eventBus.emit('LOG_OUT')
   @include vertical-center();
 
   justify-content: flex-end;
-  flex: 0 0 var(--extra-panel-width);
-  text-align: right;
-  height: 100%;
   position: relative;
 
   .avatar {

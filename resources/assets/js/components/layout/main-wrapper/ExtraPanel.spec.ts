@@ -1,44 +1,73 @@
+import { ref, Ref } from 'vue'
 import { expect, it } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
+import { fireEvent, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
-import { commonStore } from '@/stores'
+import { albumStore, artistStore, commonStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { CurrentSongKey } from '@/symbols'
 import ExtraPanel from './ExtraPanel.vue'
+import { eventBus } from '@/utils'
 
 new class extends UnitTestCase {
-  private renderComponent () {
+  private renderComponent (songRef: Ref<Song | null> = ref(null)) {
     return this.render(ExtraPanel, {
-      props: {
-        song: factory<Song>('song')
-      },
       global: {
         stubs: {
-          LyricsPane: this.stub(),
-          AlbumInfo: this.stub(),
-          ArtistInfo: this.stub(),
-          YouTubeVideoList: this.stub()
+          ProfileAvatar: this.stub(),
+          LyricsPane: this.stub('lyrics'),
+          AlbumInfo: this.stub('album-info'),
+          ArtistInfo: this.stub('artist-info'),
+          YouTubeVideoList: this.stub('youtube-video-list'),
+          ExtraPanelTabHeader: this.stub()
+        },
+        provide: {
+          [CurrentSongKey]: songRef
         }
       }
     })
   }
 
   protected test () {
-    it('has a YouTube tab if using YouTube ', () => {
+    it('renders without a current song', () => expect(this.renderComponent().html()).toMatchSnapshot())
+
+    it('fetches info for the current song', async () => {
       commonStore.state.use_you_tube = true
-      this.renderComponent().getByTestId('extra-tab-youtube')
+      const artist = factory<Artist>('artist')
+      const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
+
+      const album = factory<Album>('album')
+      const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
+
+      const song = factory<Song>('song')
+
+      const songRef = ref<Song | null>(null)
+
+      const { getByTestId } = this.renderComponent(songRef)
+      songRef.value = song
+
+      await waitFor(() => {
+        expect(resolveArtistMock).toHaveBeenCalledWith(song.artist_id)
+        expect(resolveAlbumMock).toHaveBeenCalledWith(song.album_id)
+        ;['lyrics', 'album-info', 'artist-info', 'youtube-video-list'].forEach(id => getByTestId(id))
+      })
     })
 
-    it('does not have a YouTube tab if not using YouTube', () => {
-      commonStore.state.use_you_tube = false
-      expect(this.renderComponent().queryByTestId('extra-tab-youtube')).toBeNull()
+    it('shows About Koel model', async () => {
+      const emitMock = this.mock(eventBus, 'emit')
+      const { getByTitle } = this.renderComponent()
+
+      await fireEvent.click(getByTitle('About Koel'))
+
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ABOUT_KOEL')
     })
 
-    it.each([['extra-tab-lyrics'], ['extra-tab-album'], ['extra-tab-artist']])('switches to "%s" tab', async (id) => {
-      const { getByTestId, container } = this.renderComponent()
+    it('logs out', async () => {
+      const emitMock = this.mock(eventBus, 'emit')
+      const { getByTitle } = this.renderComponent()
 
-      await fireEvent.click(getByTestId(id))
+      await fireEvent.click(getByTitle('Log out'))
 
-      expect(container.querySelector('[aria-selected=true]')).toBe(getByTestId(id))
+      expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
     })
   }
 }

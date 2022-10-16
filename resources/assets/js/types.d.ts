@@ -355,11 +355,6 @@ type SongListSortField = keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_na
 
 type SortOrder = 'asc' | 'desc'
 
-type SongListSort = {
-  fields: SongListSortField[]
-  order: SortOrder
-}
-
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T]
 
 interface PaginatorResource {
@@ -380,3 +375,5 @@ type ToastMessage = {
   content: string
   timeout: number // seconds
 }
+
+type ExtraPanelTab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'

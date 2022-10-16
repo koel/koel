@@ -13,6 +13,7 @@ export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = S
 export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')
 
 export const SongsKey: ReadonlyInjectionKey<Ref<Song[]>> | InjectionKey<Ref<Song[]>> = Symbol('Songs')
+export const CurrentSongKey: InjectionKey<Ref<Song | null>> = Symbol('CurrentSong')
 export const SelectedSongsKey: ReadonlyInjectionKey<Ref<Song[]>> = Symbol('SelectedSongs')
 export const SongListConfigKey: ReadonlyInjectionKey<Partial<SongListConfig>> = Symbol('SongListConfig')
 export const SongListSortFieldKey: ReadonlyInjectionKey<Ref<SongListSortField>> = Symbol('SongListSortField')
