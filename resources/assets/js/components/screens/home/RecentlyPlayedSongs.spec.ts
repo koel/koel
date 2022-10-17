@@ -2,7 +2,6 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { fireEvent } from '@testing-library/vue'
-import router from '@/router'
 import { overviewStore } from '@/stores'
 import RecentlyPlayedSongs from './RecentlyPlayedSongs.vue'
 
@@ -14,7 +13,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to dedicated screen', async () => {
-      const mock = this.mock(router, 'go')
+      const mock = this.mock(this.router, 'go')
       const { getByTestId } = this.render(RecentlyPlayedSongs)
 
       await fireEvent.click(getByTestId('home-view-all-recently-played-btn'))

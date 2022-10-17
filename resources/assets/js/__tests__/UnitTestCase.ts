@@ -5,9 +5,12 @@ import { afterEach, beforeEach, vi } from 'vitest'
 import { clickaway, focus } from '@/directives'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
+import { http } from '@/services'
 import factory from '@/__tests__/factory'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
+import { routes } from '@/config'
+import Router from '@/router'
 
 // A deep-merge function that
 // - supports symbols as keys (_.merge doesn't)
@@ -24,8 +27,11 @@ const deepMerge = (first: object, second: object) => {
 
 export default abstract class UnitTestCase {
   private backupMethods = new Map()
+  protected router: Router
 
   public constructor () {
+    this.router = new Router(routes)
+    this.mock(http, 'request') // prevent actual HTTP requests from being made
     this.beforeEach()
     this.afterEach()
     this.test()
@@ -105,6 +111,12 @@ export default abstract class UnitTestCase {
     if (!options.global.provide?.hasOwnProperty(MessageToasterKey)) {
       // @ts-ignore
       options.global.provide[MessageToasterKey] = MessageToasterStub
+    }
+
+    // @ts-ignore
+    if (!options.global.provide.hasOwnProperty(RouterKey)) {
+      // @ts-ignore
+      options.global.provide[RouterKey] = this.router
     }
 
     return options

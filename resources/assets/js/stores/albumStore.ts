@@ -1,5 +1,5 @@
 import { reactive, UnwrapNestedRefs } from 'vue'
-import { differenceBy, merge, orderBy, take, unionBy } from 'lodash'
+import { differenceBy, merge, unionBy } from 'lodash'
 import { cache, http } from '@/services'
 import { arrayify, logger } from '@/utils'
 import { songStore } from '@/stores'
@@ -84,19 +84,5 @@ export const albumStore = {
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
-  },
-
-  getMostPlayed (count: number) {
-    return take(
-      orderBy(Array.from(this.vault.values()).filter(album => !this.isUnknown(album)), 'play_count', 'desc'),
-      count
-    )
-  },
-
-  getRecentlyAdded (count: number) {
-    return take(
-      orderBy(Array.from(this.vault.values()).filter(album => !this.isUnknown(album)), 'created_at', 'desc'),
-      count
-    )
   }
 }

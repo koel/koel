@@ -1,10 +1,8 @@
-import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { recentlyPlayedStore } from '@/stores'
 import { waitFor } from '@testing-library/vue'
-import { ActiveScreenKey } from '@/symbols'
 import RecentlyPlayedScreen from './RecentlyPlayedScreen.vue'
 
 new class extends UnitTestCase {
@@ -16,12 +14,11 @@ new class extends UnitTestCase {
       global: {
         stubs: {
           SongList: this.stub('song-list')
-        },
-        provide: {
-          [<symbol>ActiveScreenKey]: ref('RecentlyPlayed')
         }
       }
     })
+
+    await this.router.activateRoute({ path: 'recently-played', screen: 'RecentlyPlayed' })
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
 

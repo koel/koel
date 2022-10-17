@@ -6,15 +6,14 @@
 /**
  * Global event listeners (basically, those without a Vue instance access) go here.
  */
-import isMobile from 'ismobilejs'
-import router from '@/router'
 import { authService } from '@/services'
-import { playlistFolderStore, playlistStore, preferenceStore, userStore } from '@/stores'
+import { playlistFolderStore, playlistStore, userStore } from '@/stores'
 import { eventBus, forceReloadWindow, requireInjection } from '@/utils'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 
 const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)
+const router = requireInjection(RouterKey)
 
 eventBus.on({
   PLAYLIST_DELETE: async (playlist: Playlist) => {
@@ -40,13 +39,6 @@ eventBus.on({
     await userStore.logout()
     authService.destroy()
     forceReloadWindow()
-  },
-
-  KOEL_READY: () => router.resolveRoute(),
-
-  /**
-   * Hide the panel away if a main view is triggered on mobile.
-   */
-  ACTIVATE_SCREEN: () => isMobile.phone && (preferenceStore.showExtraPanel = false)
+  }
 })
 </script>

@@ -38,11 +38,10 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { nextTick, ref } from 'vue'
+import { ref } from 'vue'
 import { playlistStore } from '@/stores'
-import { requireInjection } from '@/utils'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
-import router from '@/router'
+import { logger, requireInjection } from '@/utils'
+import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
 
 const {
@@ -58,6 +57,7 @@ const {
 
 const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)
+const router = requireInjection(RouterKey)
 const name = ref('')
 
 const emit = defineEmits(['close'])
@@ -74,13 +74,17 @@ const maybeClose = async () => {
 
 const submit = async () => {
   loading.value = true
-  const playlist = await playlistStore.store(name.value, [], collectedRuleGroups.value)
-  loading.value = false
-  close()
 
-  toaster.value.success(`Playlist "${playlist.name}" created.`)
-
-  await nextTick()
-  router.go(`playlist/${playlist.id}`)
+  try {
+    const playlist = await playlistStore.store(name.value, [], collectedRuleGroups.value)
+    close()
+    toaster.value.success(`Playlist "${playlist.name}" created.`)
+    router.go(`playlist/${playlist.id}`)
+  } catch (error) {
+    dialog.value.error('Something went wrong. Please try again.')
+    logger.error(error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>

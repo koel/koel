@@ -1,6 +1,6 @@
 <template>
-  <button @click.stop="toggleLike" :title="title" class="text-secondary" data-testid="like-btn">
-    <icon v-if="song.liked" :icon="faHeart" class="text-maroon" data-testid="btn-like-liked"/>
+  <button :title="title" data-testid="like-btn" type="button" @click.stop="toggleLike">
+    <icon v-if="song.liked" :icon="faHeart" data-testid="btn-like-liked"/>
     <icon v-else :icon="faEmptyHeart" data-testid="btn-like-unliked"/>
   </button>
 </template>
@@ -18,11 +18,3 @@ const title = computed(() => `${song.value.liked ? 'Unlike' : 'Like'} ${song.val
 
 const toggleLike = () => favoriteStore.toggleOne(song.value)
 </script>
-
-<style lang="scss" scoped>
-button {
-  &:hover .fa-heart {
-    color: var(--color-maroon);
-  }
-}
-</style>

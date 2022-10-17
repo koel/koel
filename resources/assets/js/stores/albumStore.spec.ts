@@ -57,25 +57,25 @@ new class extends UnitTestCase {
       const album = factory<Album>('album')
       albumStore.syncWithVault(album)
       const songsInAlbum = factory<Song>('song', 3, { album_id: album.id })
-      const putMock = this.mock(http, 'put').mockResolvedValue({ coverUrl: 'http://localhost/cover.jpg' })
+      const putMock = this.mock(http, 'put').mockResolvedValue({ coverUrl: 'http://test/cover.jpg' })
       this.mock(songStore, 'byAlbum', songsInAlbum)
 
       await albumStore.uploadCover(album, 'data://cover')
 
-      expect(album.cover).toBe('http://localhost/cover.jpg')
+      expect(album.cover).toBe('http://test/cover.jpg')
       expect(putMock).toHaveBeenCalledWith(`album/${album.id}/cover`, { cover: 'data://cover' })
-      expect(albumStore.byId(album.id)?.cover).toBe('http://localhost/cover.jpg')
-      songsInAlbum.forEach(song => expect(song.album_cover).toBe('http://localhost/cover.jpg'))
+      expect(albumStore.byId(album.id)?.cover).toBe('http://test/cover.jpg')
+      songsInAlbum.forEach(song => expect(song.album_cover).toBe('http://test/cover.jpg'))
     })
 
     it('fetches an album thumbnail', async () => {
-      const getMock = this.mock(http, 'get').mockResolvedValue({ thumbnailUrl: 'http://localhost/thumbnail.jpg' })
+      const getMock = this.mock(http, 'get').mockResolvedValue({ thumbnailUrl: 'http://test/thumbnail.jpg' })
       const album = factory<Album>('album')
 
       const url = await albumStore.fetchThumbnail(album.id)
 
       expect(getMock).toHaveBeenCalledWith(`album/${album.id}/thumbnail`)
-      expect(url).toBe('http://localhost/thumbnail.jpg')
+      expect(url).toBe('http://test/thumbnail.jpg')
     })
 
     it('resolves an album', async () => {

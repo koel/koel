@@ -2,28 +2,28 @@
 
 exports[`renders 1`] = `
 <section id="songsWrapper">
-  <header class="screen-header expanded" data-v-661f8f0d="">
-    <aside class="thumbnail-wrapper" data-v-661f8f0d="">
-      <div class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-v-2978c570=""><span data-testid="thumbnail" data-v-2978c570=""></span></div>
+  <header class="screen-header expanded" data-v-5691beb5="">
+    <aside class="thumbnail-wrapper" data-v-5691beb5="">
+      <div class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-v-55bfc268=""><span data-testid="thumbnail" data-v-55bfc268=""></span></div>
     </aside>
-    <main data-v-661f8f0d="">
-      <div class="heading-wrapper" data-v-661f8f0d="">
-        <h1 class="name" data-v-661f8f0d=""> All Songs
+    <main data-v-5691beb5="">
+      <div class="heading-wrapper" data-v-5691beb5="">
+        <h1 class="name" data-v-5691beb5=""> All Songs
           <!--v-if-->
-        </h1><span class="meta text-secondary" data-v-661f8f0d=""><span>420 songs</span><span>34:17:36</span></span>
+        </h1><span class="meta text-secondary" data-v-5691beb5=""><span>420 songs</span><span>34:17:36</span></span>
       </div>
-      <div class="song-list-controls" data-testid="song-list-controls" data-v-cee28c08=""><span class="btn-group" uppercased="" data-v-5d6fa912="" data-v-cee28c08=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-27deb898="" data-v-cee28c08=""><br data-testid="icon" icon="[object Object]" data-v-cee28c08=""> All </button><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span>
-        <div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-0351ff38="" data-v-cee28c08="" style="display: none;">
-          <section class="existing-playlists" data-v-0351ff38="">
-            <p data-v-0351ff38="">Add 0 songs to</p>
-            <ul data-v-0351ff38="">
-              <li data-testid="queue" tabindex="0" data-v-0351ff38="">Queue</li>
-              <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-0351ff38=""> Favorites </li>
+      <div class="song-list-controls" data-testid="song-list-controls" data-v-d396e0d2=""><span class="btn-group" uppercased="" data-v-e884c19a="" data-v-d396e0d2=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-e368fe26="" data-v-d396e0d2=""><br data-testid="icon" icon="[object Object]" data-v-d396e0d2=""> All </button><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span>
+        <div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-42061e3e="" data-v-d396e0d2="" style="display: none;">
+          <section class="existing-playlists" data-v-42061e3e="">
+            <p data-v-42061e3e="">Add 0 songs to</p>
+            <ul data-v-42061e3e="">
+              <li data-testid="queue" tabindex="0" data-v-42061e3e="">Queue</li>
+              <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-42061e3e=""> Favorites </li>
             </ul>
           </section>
-          <section class="new-playlist" data-testid="new-playlist" data-v-0351ff38="">
-            <p data-v-0351ff38="">or create a new playlist</p>
-            <form class="form-save form-simple form-new-playlist" data-v-0351ff38=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-0351ff38=""><button type="submit" title="Save" data-v-27deb898="" data-v-0351ff38="">⏎</button></form>
+          <section class="new-playlist" data-testid="new-playlist" data-v-42061e3e="">
+            <p data-v-42061e3e="">or create a new playlist</p>
+            <form class="form-save form-simple form-new-playlist" data-v-42061e3e=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-42061e3e=""><button type="submit" title="Save" data-v-e368fe26="" data-v-42061e3e="">⏎</button></form>
           </section>
         </div>
       </div>

@@ -64,7 +64,7 @@ const {
   playAll,
   playSelected,
   onScrollBreakpoint
-} = useSongList(recentlyPlayedSongs, 'recently-played', { sortable: false })
+} = useSongList(recentlyPlayedSongs, 'RecentlyPlayed', { sortable: false })
 
 let initialized = false
 let loading = ref(false)

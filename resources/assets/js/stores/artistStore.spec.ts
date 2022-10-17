@@ -70,13 +70,13 @@ new class extends UnitTestCase {
     it('uploads an image for an artist', async () => {
       const artist = factory<Artist>('artist')
       artistStore.syncWithVault(artist)
-      const putMock = this.mock(http, 'put').mockResolvedValue({ imageUrl: 'http://localhost/img.jpg' })
+      const putMock = this.mock(http, 'put').mockResolvedValue({ imageUrl: 'http://test/img.jpg' })
 
       await artistStore.uploadImage(artist, 'data://image')
 
-      expect(artist.image).toBe('http://localhost/img.jpg')
+      expect(artist.image).toBe('http://test/img.jpg')
       expect(putMock).toHaveBeenCalledWith(`artist/${artist.id}/image`, { image: 'data://image' })
-      expect(artistStore.byId(artist.id)?.image).toBe('http://localhost/img.jpg')
+      expect(artistStore.byId(artist.id)?.image).toBe('http://test/img.jpg')
     })
 
     it('resolves an artist', async () => {

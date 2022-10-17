@@ -2,8 +2,7 @@ import { nextTick, reactive } from 'vue'
 import plyr from 'plyr'
 import lodash from 'lodash'
 import { expect, it, vi } from 'vitest'
-import { eventBus, noop } from '@/utils'
-import router from '@/router'
+import { noop } from '@/utils'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { socketService } from '@/services'
@@ -135,6 +134,8 @@ new class extends UnitTestCase {
     ])(
       'when next song preloaded is %s, isTranscoding is %s, current media time is %d, media duration is %d, then preload() should be called %d times',
       (preloaded, isTranscoding, currentTime, duration, numberOfCalls) => {
+        this.mock(playbackService, 'registerPlay')
+
         this.setReadOnlyProperty(queueStore, 'next', factory<Song>('song', { preloaded }))
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
         playbackService.init()
@@ -150,7 +151,6 @@ new class extends UnitTestCase {
         expect(preloadMock).toHaveBeenCalledTimes(numberOfCalls)
       }
     )
-
     it('registers play', () => {
       const recentlyPlayedStoreAddMock = this.mock(recentlyPlayedStore, 'add')
       const registerPlayMock = this.mock(songStore, 'registerPlay')
@@ -185,7 +185,6 @@ new class extends UnitTestCase {
     it('restarts a song', async () => {
       const song = this.setCurrentSong()
       this.mock(Math, 'floor', 1000)
-      const emitMock = this.mock(eventBus, 'emit')
       const broadcastMock = this.mock(socketService, 'broadcast')
       const showNotificationMock = this.mock(playbackService, 'showNotification')
       const restartMock = this.mock(playbackService.player!, 'restart')
@@ -195,7 +194,6 @@ new class extends UnitTestCase {
 
       expect(song.play_start_time).toEqual(1000)
       expect(song.play_count_registered).toBe(false)
-      expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', song)
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', song)
       expect(showNotificationMock).toHaveBeenCalled()
       expect(restartMock).toHaveBeenCalled()
@@ -298,7 +296,6 @@ new class extends UnitTestCase {
 
       const playMock = this.mock(window.HTMLMediaElement.prototype, 'play')
       const broadcastMock = this.mock(socketService, 'broadcast')
-      const emitMock = this.mock(eventBus, 'emit')
 
       playbackService.init()
       await playbackService.resume()
@@ -306,7 +303,6 @@ new class extends UnitTestCase {
       expect(queueStore.current?.playback_state).toEqual('Playing')
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_SONG', song)
       expect(playMock).toHaveBeenCalled()
-      expect(emitMock).toHaveBeenCalledWith('SONG_STARTED', song)
     })
 
     it('plays first in queue if toggled when there is no current song', async () => {
@@ -332,7 +328,6 @@ new class extends UnitTestCase {
     it('queues and plays songs without shuffling', async () => {
       const songs = factory<Song>('song', 5)
       const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
-      const goMock = this.mock(router, 'go')
       const playMock = this.mock(playbackService, 'play')
       const firstSongInQueue = songs[0]
       const shuffleMock = this.mock(lodash, 'shuffle')
@@ -343,7 +338,6 @@ new class extends UnitTestCase {
 
       expect(shuffleMock).not.toHaveBeenCalled()
       expect(replaceQueueMock).toHaveBeenCalledWith(songs)
-      expect(goMock).toHaveBeenCalledWith('queue')
       expect(playMock).toHaveBeenCalledWith(firstSongInQueue)
     })
 
@@ -351,7 +345,6 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 5)
       const shuffledSongs = factory<Song>('song', 5)
       const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
-      const goMock = this.mock(router, 'go')
       const playMock = this.mock(playbackService, 'play')
       const firstSongInQueue = songs[0]
       this.setReadOnlyProperty(queueStore, 'first', firstSongInQueue)
@@ -362,7 +355,6 @@ new class extends UnitTestCase {
 
       expect(shuffleMock).toHaveBeenCalledWith(songs)
       expect(replaceQueueMock).toHaveBeenCalledWith(shuffledSongs)
-      expect(goMock).toHaveBeenCalledWith('queue')
       expect(playMock).toHaveBeenCalledWith(firstSongInQueue)
     })
 

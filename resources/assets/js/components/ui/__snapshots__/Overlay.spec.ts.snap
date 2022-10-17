@@ -26,7 +26,7 @@ exports[`renders info type 1`] = `
 
 exports[`renders loading type 1`] = `
 <div id="overlay" class="loading overlay" data-testid="overlay">
-  <div class="display"><i data-v-4fa15baa=""><span data-v-4fa15baa=""></span><span data-v-4fa15baa=""></span><span data-v-4fa15baa=""></span></i>
+  <div class="display"><i data-v-47e95701=""><span data-v-47e95701=""></span><span data-v-47e95701=""></span><span data-v-47e95701=""></span></i>
     <!--v-if-->
     <!--v-if-->
     <!--v-if-->

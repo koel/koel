@@ -18,12 +18,12 @@ import { useContextMenu } from '@/composables'
 import { eventBus, requireInjection } from '@/utils'
 import { playlistStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { DialogBoxKey } from '@/symbols'
-import router from '@/router'
+import { DialogBoxKey, RouterKey } from '@/symbols'
 
 const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
 
 const dialog = requireInjection(DialogBoxKey)
+const router = requireInjection(RouterKey)
 const folder = ref<PlaylistFolder>()
 
 const playlistsInFolder = computed(() => folder.value ? playlistStore.byFolder(folder.value) : [])

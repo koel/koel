@@ -23,7 +23,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('fetches and displays the album thumbnail', async () => {
-      const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://localhost/thumb.jpg')
+      const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/thumb.jpg')
 
       const { html } = await this.renderComponent()
 

@@ -2,7 +2,7 @@
   <div id="equalizer" data-testid="equalizer" ref="root">
     <div class="presets">
       <label class="select-wrapper">
-        <select v-model="selectedPresetId">
+        <select v-model="selectedPresetId" title="Select equalizer">
           <option disabled value="-1">Preset</option>
           <option v-for="preset in presets" :value="preset.id" :key="preset.id" v-once>{{ preset.name }}</option>
         </select>
@@ -185,6 +185,7 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
   display: flex;
   flex-direction: column;
   left: 0;
+  box-shadow: 0 0 50x 0 var(--color-bg-primary);
 
   label {
     margin-top: 8px;
@@ -336,7 +337,7 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
     max-width: 414px;
     left: auto;
     right: 0;
-    bottom: calc(var(--footer-height-mobile) + 0px);
+    bottom: var(--footer-height);
     display: block;
     height: auto;
 

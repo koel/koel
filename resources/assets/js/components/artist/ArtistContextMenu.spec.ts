@@ -4,7 +4,6 @@ import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { downloadService, playbackService } from '@/services'
 import { commonStore, songStore } from '@/stores'
-import router from '@/router'
 import ArtistContextMenu from './ArtistContextMenu.vue'
 
 let artist: Artist
@@ -12,10 +11,7 @@ let artist: Artist
 new class extends UnitTestCase {
   private async renderComponent (_artist?: Artist) {
     artist = _artist || factory<Artist>('artist', {
-      name: 'Accept',
-      play_count: 30,
-      song_count: 10,
-      length: 123
+      name: 'Accept'
     })
 
     const rendered = this.render(ArtistContextMenu)
@@ -74,7 +70,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to artist', async () => {
-      const mock = this.mock(router, 'go')
+      const mock = this.mock(this.router, 'go')
       const { getByText } = await this.renderComponent()
 
       await getByText('Go to Artist').click()

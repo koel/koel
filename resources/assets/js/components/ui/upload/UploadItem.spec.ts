@@ -1,8 +1,7 @@
 import { expect, it } from 'vitest'
-import { UploadFile, UploadStatus } from '@/config'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { fireEvent } from '@testing-library/vue'
-import { uploadService } from '@/services'
+import { UploadFile, uploadService, UploadStatus } from '@/services'
 import Btn from '@/components/ui/Btn.vue'
 import UploadItem from './UploadItem.vue'
 

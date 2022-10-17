@@ -31,10 +31,6 @@ interface Plyr {
   setVolume (volume: number): void
 }
 
-declare module 'plyr' {
-  function setup (el: string | HTMLMediaElement | HTMLMediaElement[], options: Record<string, any>): Plyr[]
-}
-
 declare module 'ismobilejs' {
   let apple: { device: boolean }
   let any: boolean
@@ -117,10 +113,6 @@ interface Artist {
   readonly id: number
   name: string
   image: string | null
-  play_count: number
-  album_count: number
-  song_count: number
-  length: number
   created_at: string
 }
 
@@ -132,9 +124,6 @@ interface Album {
   name: string
   cover: string
   thumbnail?: string | null
-  play_count: number
-  song_count: number
-  length: number
   created_at: string
 }
 
@@ -194,8 +183,6 @@ interface SmartPlaylistRule {
 }
 
 type SmartPlaylistInputTypes = Record<SmartPlaylistModel['type'], SmartPlaylistOperator[]>
-
-type PlaylistType = 'playlist' | 'favorites' | 'recently-played'
 
 type FavoriteList = {
   name: 'Favorites'
@@ -357,15 +344,6 @@ type ArtistAlbumViewMode = 'list' | 'thumbnails'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
-type SongListType = 'all-songs'
-  | 'queue'
-  | 'playlist'
-  | 'favorites'
-  | 'recently-played'
-  | 'artist'
-  | 'album'
-  | 'search-results'
-
 type SongListColumn = 'track' | 'title' | 'album' | 'artist' | 'length'
 
 interface SongListConfig {
@@ -397,3 +375,5 @@ type ToastMessage = {
   content: string
   timeout: number // seconds
 }
+
+type ExtraPanelTab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'

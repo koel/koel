@@ -1,6 +1,5 @@
 export type EventName =
   'KOEL_READY'
-  | 'ACTIVATE_SCREEN'
   | 'LOG_OUT'
   | 'TOGGLE_SIDEBAR'
   | 'SHOW_OVERLAY'
@@ -32,7 +31,6 @@ export type EventName =
   | 'PLAYLIST_DELETE'
   | 'PLAYLIST_FOLDER_DELETE'
   | 'SMART_PLAYLIST_UPDATED'
-  | 'SONG_STARTED'
   | 'SONGS_UPDATED'
   | 'SONGS_DELETED'
   | 'SONG_QUEUED_FROM_ROUTE'

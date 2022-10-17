@@ -1,8 +1,8 @@
 <template>
   <li
     ref="el"
-    class="playlist"
     :class="{ droppable }"
+    class="playlist"
     data-testid="playlist-sidebar-item"
     draggable="true"
     @contextmenu="onContextMenu"
@@ -32,13 +32,14 @@ import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@f
 import { computed, ref, toRefs } from 'vue'
 import { eventBus, pluralize, requireInjection } from '@/utils'
 import { favoriteStore, playlistStore } from '@/stores'
-import { MessageToasterKey } from '@/symbols'
+import { MessageToasterKey, RouterKey } from '@/symbols'
 import { useDraggable, useDroppable } from '@/composables'
 
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
 
 const toaster = requireInjection(MessageToasterKey)
+const router = requireInjection(RouterKey)
 const droppable = ref(false)
 
 const props = defineProps<{ list: PlaylistLike }>()
@@ -51,9 +52,9 @@ const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList =>
 const active = ref(false)
 
 const url = computed(() => {
-  if (isPlaylist(list.value)) return `#!/playlist/${list.value.id}`
-  if (isFavoriteList(list.value)) return '#!/favorites'
-  if (isRecentlyPlayedList(list.value)) return '#!/recently-played'
+  if (isPlaylist(list.value)) return `#/playlist/${list.value.id}`
+  if (isFavoriteList(list.value)) return '#/favorites'
+  if (isRecentlyPlayedList(list.value)) return '#/recently-played'
 
   throw new Error('Invalid playlist-like type.')
 })
@@ -107,8 +108,8 @@ const onDrop = async (event: DragEvent) => {
   return false
 }
 
-eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName, _list: PlaylistLike): void => {
-  switch (screen) {
+router.onRouteChanged(route => {
+  switch (route.screen) {
     case 'Favorites':
       active.value = isFavoriteList(list.value)
       break
@@ -118,7 +119,7 @@ eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName, _list: PlaylistLike): void =
       break
 
     case 'Playlist':
-      active.value = list.value === _list
+      active.value = (list.value as Playlist).id === parseInt(route.params!.id)
       break
 
     default:
@@ -131,7 +132,6 @@ eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName, _list: PlaylistLike): void =
 <style lang="scss" scoped>
 .playlist {
   user-select: none;
-  overflow: hidden;
 
   &.droppable {
     box-shadow: inset 0 0 0 1px var(--color-accent);
@@ -143,11 +143,6 @@ eventBus.on('ACTIVATE_SCREEN', (screen: ScreenName, _list: PlaylistLike): void =
     span {
       pointer-events: none;
     }
-  }
-
-  input {
-    width: calc(100% - 32px);
-    margin: 5px 16px;
   }
 }
 </style>

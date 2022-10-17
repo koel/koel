@@ -18,6 +18,7 @@ use Laravel\Scout\Searchable;
  * @property string $title
  * @property Album $album
  * @property Artist $artist
+ * @property Artist $album_artist
  * @property float $length
  * @property string $lyrics
  * @property int $track
@@ -78,6 +79,11 @@ class Song extends Model
     public function album(): BelongsTo
     {
         return $this->belongsTo(Album::class);
+    }
+
+    public function album_artist(): BelongsTo // @phpcs:ignore
+    {
+        return $this->album->artist();
     }
 
     public function playlists(): BelongsToMany

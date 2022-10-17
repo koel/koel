@@ -3,7 +3,6 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify, eventBus } from '@/utils'
 import { fireEvent, waitFor } from '@testing-library/vue'
-import router from '@/router'
 import { downloadService, playbackService } from '@/services'
 import { favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
@@ -63,7 +62,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to album details screen', async () => {
-      const goMock = this.mock(router, 'go')
+      const goMock = this.mock(this.router, 'go')
       const { getByText } = await this.renderComponent(factory<Song>('song'))
 
       await fireEvent.click(getByText('Go to Album'))
@@ -72,7 +71,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to artist details screen', async () => {
-      const goMock = this.mock(router, 'go')
+      const goMock = this.mock(this.router, 'go')
       const { getByText } = await this.renderComponent(factory<Song>('song'))
 
       await fireEvent.click(getByText('Go to Artist'))

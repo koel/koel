@@ -75,6 +75,10 @@ let initialized = false
 eventBus.on(['SONGS_DELETED', 'SONGS_UPDATED'], () => overviewStore.refresh())
 
 useScreen('Home').onScreenActivated(async () => {
+  if (libraryEmpty.value) {
+    return
+  }
+
   if (!initialized) {
     loading.value = true
     await overviewStore.init()
@@ -107,7 +111,7 @@ useScreen('Home').onScreenActivated(async () => {
   }
 
   .main-scroll-wrap {
-    section {
+    section:not(:last-of-type) {
       margin-bottom: 48px;
     }
 

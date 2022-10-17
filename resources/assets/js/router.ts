@@ -1,79 +1,122 @@
-import { eventBus, loadMainView, use } from '@/utils'
-import { playlistStore, userStore } from '@/stores'
+import { ref, Ref, watch } from 'vue'
 
-class Router {
-  routes: Record<string, Closure>
-  paths: string[]
+type RouteParams = Record<string, string>
+type BeforeEnterHook = (params: RouteParams) => boolean | void
+type EnterHook = (params: RouteParams) => any
+type RedirectHook = (params: RouteParams) => Route | string
 
-  constructor () {
-    this.routes = {
-      '/home': () => loadMainView('Home'),
-      '/queue': () => loadMainView('Queue'),
-      '/songs': () => loadMainView('Songs'),
-      '/albums': () => loadMainView('Albums'),
-      '/artists': () => loadMainView('Artists'),
-      '/favorites': () => loadMainView('Favorites'),
-      '/recently-played': () => loadMainView('RecentlyPlayed'),
-      '/search': () => loadMainView('Search.Excerpt'),
-      '/search/songs/(.+)': (q: string) => loadMainView('Search.Songs', q),
-      '/upload': () => userStore.current.is_admin && loadMainView('Upload'),
-      '/settings': () => userStore.current.is_admin && loadMainView('Settings'),
-      '/users': () => userStore.current.is_admin && loadMainView('Users'),
-      '/youtube': () => loadMainView('YouTube'),
-      '/visualizer': () => loadMainView('Visualizer'),
-      '/profile': () => loadMainView('Profile'),
-      '/album/(\\d+)': (id: string) => loadMainView('Album', parseInt(id)),
-      '/artist/(\\d+)': (id: string) => loadMainView('Artist', parseInt(id)),
-      '/playlist/(\\d+)': (id: string) => use(playlistStore.byId(~~id), playlist => loadMainView('Playlist', playlist)),
-      '/song/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})': (id: string) => {
-        eventBus.emit('SONG_QUEUED_FROM_ROUTE', id)
-        loadMainView('Queue')
+export type Route = {
+  path: string
+  screen: ScreenName
+  params?: RouteParams
+  redirect?: RedirectHook
+  onBeforeEnter?: BeforeEnterHook
+  onEnter?: EnterHook
+}
+
+type RouteChangedHandler = (newRoute: Route, oldRoute: Route | undefined) => any
+
+// @TODO: Remove support for hashbang (#!) and only support hash (#)
+export default class Router {
+  public $currentRoute: Ref<Route>
+
+  private readonly routes: Route[]
+  private readonly homeRoute: Route
+  private readonly notFoundRoute: Route
+  private routeChangedHandlers: RouteChangedHandler[] = []
+  private cache: Map<string, { route: Route, params: RouteParams }> = new Map()
+
+  constructor (routes: Route[]) {
+    this.routes = routes
+    this.homeRoute = routes.find(route => route.screen === 'Home')!
+    this.notFoundRoute = routes.find(route => route.screen === '404')!
+    this.$currentRoute = ref(this.homeRoute)
+
+    watch(
+      this.$currentRoute,
+      (newValue, oldValue) => this.routeChangedHandlers.forEach(async handler => await handler(newValue, oldValue)),
+      {
+        deep: true,
+        immediate: true
+      }
+    )
+
+    addEventListener('popstate', () => this.resolve(), true)
+  }
+
+  public async resolve () {
+    if (!location.hash || location.hash === '#/' || location.hash === '#!/') {
+      return this.activateRoute(this.homeRoute)
+    }
+
+    const matched = this.tryMatchRoute()
+    const [route, params] = matched ? [matched.route, matched.params] : [null, null]
+
+    if (!route) {
+      return this.triggerNotFound()
+    }
+
+    if (route.onBeforeEnter && route.onBeforeEnter(params) === false) {
+      return this.triggerNotFound()
+    }
+
+    if (route.redirect) {
+      const to = route.redirect(params)
+      return typeof to === 'string' ? this.go(to) : this.activateRoute(to, params)
+    }
+
+    return this.activateRoute(route, params)
+  }
+
+  private tryMatchRoute () {
+    if (!this.cache.has(location.hash)) {
+      for (let i = 0; i < this.routes.length; i++) {
+        const route = this.routes[i]
+        const matches = location.hash.match(new RegExp(`^#!?${route.path}/?(?:\\?(.*))?$`))
+
+        if (matches) {
+          const searchParams = new URLSearchParams(new URL(location.href.replace('#/', '')).search)
+
+          this.cache.set(location.hash, {
+            route,
+            params: Object.assign(Object.fromEntries(searchParams.entries()), matches.groups || {})
+          })
+
+          break
+        }
       }
     }
 
-    this.paths = Object.keys(this.routes)
-
-    addEventListener('popstate', () => this.resolveRoute(), true)
+    return this.cache.get(location.hash)
   }
 
-  public resolveRoute () {
-    if (!location.hash) {
-      return this.go('home')
-    }
-
-    for (let i = 0; i < this.paths.length; i++) {
-      const matches = location.hash.match(new RegExp(`^#!${this.paths[i]}$`))
-
-      if (matches) {
-        const [, ...params] = matches
-        this.routes[this.paths[i]](...params)
-        return
-      }
-    }
-
-    loadMainView('404')
+  public async triggerNotFound () {
+    await this.activateRoute(this.notFoundRoute)
   }
 
-  /**
-   * Navigate to a (relative, hash-bang'ed) path.
-   */
-  public go (path: string | number) {
-    if (typeof path === 'number') {
-      history.go(path)
-      return
-    }
+  public onRouteChanged (handler: RouteChangedHandler) {
+    this.routeChangedHandlers.push(handler)
+  }
 
+  public async activateRoute (route: Route, params: RouteParams = {}) {
+    this.$currentRoute.value = route
+    this.$currentRoute.value.params = params
+
+    if (this.$currentRoute.value.onEnter) {
+      await this.$currentRoute.value.onEnter(params)
+    }
+  }
+
+  public go (path: string) {
     if (!path.startsWith('/')) {
       path = `/${path}`
     }
 
-    if (!path.startsWith('/#!')) {
-      path = `/#!${path}`
+    if (!path.startsWith('/#')) {
+      path = `/#${path}`
     }
 
     path = path.substring(1, path.length)
     location.assign(`${location.origin}${location.pathname}${path}`)
   }
 }
-
-export default new Router()

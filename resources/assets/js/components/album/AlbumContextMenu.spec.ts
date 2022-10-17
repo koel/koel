@@ -4,7 +4,6 @@ import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { downloadService, playbackService } from '@/services'
 import { commonStore, songStore } from '@/stores'
-import router from '@/router'
 import AlbumContextMenu from './AlbumContextMenu.vue'
 
 let album: Album
@@ -12,10 +11,7 @@ let album: Album
 new class extends UnitTestCase {
   private async renderComponent (_album?: Album) {
     album = _album || factory<Album>('album', {
-      name: 'IV',
-      play_count: 30,
-      song_count: 10,
-      length: 123
+      name: 'IV'
     })
 
     const rendered = this.render(AlbumContextMenu)
@@ -58,12 +54,12 @@ new class extends UnitTestCase {
     })
 
     it('downloads', async () => {
-      const mock = this.mock(downloadService, 'fromAlbum')
+      const downloadMock = this.mock(downloadService, 'fromAlbum')
 
       const { getByText } = await this.renderComponent()
       await getByText('Download').click()
 
-      expect(mock).toHaveBeenCalledWith(album)
+      expect(downloadMock).toHaveBeenCalledWith(album)
     })
 
     it('does not have an option to download if downloading is disabled', async () => {
@@ -74,7 +70,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to album', async () => {
-      const mock = this.mock(router, 'go')
+      const mock = this.mock(this.router, 'go')
       const { getByText } = await this.renderComponent()
 
       await getByText('Go to Album').click()
@@ -91,7 +87,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to artist', async () => {
-      const mock = this.mock(router, 'go')
+      const mock = this.mock(this.router, 'go')
       const { getByText } = await this.renderComponent()
 
       await getByText('Go to Artist').click()

@@ -19,8 +19,7 @@
 import slugify from 'slugify'
 import { faRotateBack, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
-import { UploadFile } from '@/config'
-import { uploadService } from '@/services'
+import { UploadFile, uploadService } from '@/services'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 

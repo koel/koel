@@ -78,26 +78,15 @@
       color: var(--color-text-secondary);
       font-size: .9rem;
       display: flex;
-      justify-content: space-between;
+      gap: .3rem;
+      opacity: .7;
 
-      .right {
-        display: none;
+      a {
+        border-radius: 3px;
+      }
 
-        @media (hover: none) {
-          display: flex;
-        }
-
-        gap: .3rem;
-
-        a {
-          padding: 0 4px;
-          border-radius: 3px;
-
-          &:hover {
-            background: var(--color-text-primary);
-            color: var(--color-bg-primary);
-          }
-        }
+      &:hover {
+        opacity: 1;
       }
     }
 

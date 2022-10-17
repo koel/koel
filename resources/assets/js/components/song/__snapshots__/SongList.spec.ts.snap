@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="all-songs song-list-wrap main-scroll-wrap" data-testid="song-list" tabindex="0">
+<div class="song-list-wrap main-scroll-wrap" data-testid="song-list" tabindex="0">
   <div class="sortable song-list-header"><span class="track-number" data-testid="header-track-number" role="button" title="Sort by track number"> # <!--v-if--><!--v-if--></span><span class="title" data-testid="header-title" role="button" title="Sort by title"> Title <br data-testid="icon" icon="[object Object]" class="text-highlight"><!--v-if--></span><span class="artist" data-testid="header-artist" role="button" title="Sort by artist"> Artist <!--v-if--><!--v-if--></span><span class="album" data-testid="header-album" role="button" title="Sort by album"> Album <!--v-if--><!--v-if--></span><span class="time" data-testid="header-length" role="button" title="Sort by song duration"><!--v-if--><!--v-if--> &nbsp; <br data-testid="icon" icon="[object Object]" class="duration-header"></span><span class="favorite"></span><span class="play"></span></div><br data-testid="virtual-scroller" item-height="35" items="">
 </div>
 `;

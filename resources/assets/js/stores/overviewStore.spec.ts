@@ -44,42 +44,28 @@ new class extends UnitTestCase {
       await overviewStore.init()
 
       expect(getMock).toHaveBeenCalledWith('overview')
-      expect(songSyncMock).toHaveBeenNthCalledWith(1, [...mostPlayedSongs, ...recentlyAddedSongs])
-      expect(songSyncMock).toHaveBeenNthCalledWith(2, recentlyPlayedSongs)
-      expect(albumSyncMock).toHaveBeenCalledWith([...mostPlayedAlbums, ...recentlyAddedAlbums])
+      expect(songSyncMock).toHaveBeenNthCalledWith(1, mostPlayedSongs)
+      expect(songSyncMock).toHaveBeenNthCalledWith(2, recentlyAddedSongs)
+      expect(songSyncMock).toHaveBeenNthCalledWith(3, recentlyPlayedSongs)
+      expect(albumSyncMock).toHaveBeenNthCalledWith(1, recentlyAddedAlbums)
+      expect(albumSyncMock).toHaveBeenNthCalledWith(2, mostPlayedAlbums)
       expect(artistSyncMock).toHaveBeenCalledWith(mostPlayedArtists)
       expect(refreshMock).toHaveBeenCalled()
     })
 
     it('refreshes the store', () => {
       const mostPlayedSongs = factory<Song>('song', 7)
-      const mostPlayedAlbums = factory<Album>('album', 6)
-      const mostPlayedArtists = factory<Artist>('artist', 6)
-      const recentlyAddedSongs = factory<Song>('song', 9)
-      const recentlyAddedAlbums = factory<Album>('album', 6)
       const recentlyPlayedSongs = factory<Song>('song', 9)
 
       const mostPlayedSongsMock = this.mock(songStore, 'getMostPlayed', mostPlayedSongs)
-      const mostPlayedAlbumsMock = this.mock(albumStore, 'getMostPlayed', mostPlayedAlbums)
-      const mostPlayedArtistsMock = this.mock(artistStore, 'getMostPlayed', mostPlayedArtists)
-      const recentlyAddedSongsMock = this.mock(songStore, 'getRecentlyAdded', recentlyAddedSongs)
-      const recentlyAddedAlbumsMock = this.mock(albumStore, 'getRecentlyAdded', recentlyAddedAlbums)
       recentlyPlayedStore.excerptState.songs = recentlyPlayedSongs
 
       overviewStore.refresh()
 
       expect(mostPlayedSongsMock).toHaveBeenCalled()
-      expect(mostPlayedAlbumsMock).toHaveBeenCalled()
-      expect(mostPlayedArtistsMock).toHaveBeenCalled()
-      expect(recentlyAddedSongsMock).toHaveBeenCalled()
-      expect(recentlyAddedAlbumsMock).toHaveBeenCalled()
 
       expect(overviewStore.state.recentlyPlayed).toEqual(recentlyPlayedSongs)
-      expect(overviewStore.state.recentlyAddedSongs).toEqual(recentlyAddedSongs)
-      expect(overviewStore.state.recentlyAddedAlbums).toEqual(recentlyAddedAlbums)
       expect(overviewStore.state.mostPlayedSongs).toEqual(mostPlayedSongs)
-      expect(overviewStore.state.mostPlayedAlbums).toEqual(mostPlayedAlbums)
-      expect(overviewStore.state.mostPlayedArtists).toEqual(mostPlayedArtists)
     })
   }
 }

@@ -11,7 +11,7 @@
       </template>
 
       <template v-slot:meta>
-        <span>{{ pluralize(artist.album_count, 'album') }}</span>
+        <span>{{ pluralize(albumCount, 'album') }}</span>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
         <a v-if="useLastfm" class="info" href title="View artist information" @click.prevent="showInfo">Info</a>
@@ -50,23 +50,23 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, ref, toRef, toRefs } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useSongList, useThirdPartyServices } from '@/composables'
-import router from '@/router'
-import { DialogBoxKey } from '@/symbols'
+import { DialogBoxKey, RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const dialog = requireInjection(DialogBoxKey)
+const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
+const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
 
-const props = defineProps<{ artist: number }>()
-const { artist: id } = toRefs(props)
+const dialog = requireInjection(DialogBoxKey)
+const router = requireInjection(RouterKey)
 
 const artist = ref<Artist>()
 const songs = ref<Song[]>([])
@@ -87,24 +87,28 @@ const {
   playAll,
   playSelected,
   onScrollBreakpoint
-} = useSongList(songs, 'artist', { columns: ['track', 'title', 'album', 'length'] })
-
-const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
-const CloseModalBtn = defineAsyncComponent(() => import('@/components/ui/BtnCloseModal.vue'))
+} = useSongList(songs, 'Artist', { columns: ['track', 'title', 'album', 'length'] })
 
 const { useLastfm } = useThirdPartyServices()
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const download = () => downloadService.fromArtist(artist.value)
+const albumCount = computed(() => {
+  const albums = new Set()
+  songs.value.forEach(song => albums.add(song.album_id))
+  return albums.size
+})
+
+const download = () => downloadService.fromArtist(artist.value!)
 const showInfo = () => (showingInfo.value = true)
 
 onMounted(async () => {
+  const id = parseInt(router.$currentRoute.value.params!.id)
   loading.value = true
 
   try {
     [artist.value, songs.value] = await Promise.all([
-      artistStore.resolve(id.value),
-      songStore.fetchForArtist(id.value)
+      artistStore.resolve(id),
+      songStore.fetchForArtist(id)
     ])
   } catch (e) {
     logger.error(e)
@@ -114,10 +118,8 @@ onMounted(async () => {
   }
 })
 
-eventBus.on('SONGS_UPDATED', () => {
-  // if the current artist has been deleted, go back to the list
-  artistStore.byId(id.value) || router.go('artists')
-})
+// if the current artist has been deleted, go back to the list
+eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || router.go('artists'))
 </script>
 
 <style lang="scss" scoped>

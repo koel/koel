@@ -6,7 +6,6 @@ interface Preferences extends Record<string, any> {
   volume: number
   notify: boolean
   repeatMode: RepeatMode
-  showExtraPanel: boolean
   confirmClosing: boolean
   equalizer: EqualizerPreset,
   artistsViewMode: ArtistAlbumViewMode | null,
@@ -25,7 +24,6 @@ const preferenceStore = {
     volume: 7,
     notify: true,
     repeatMode: 'NO_REPEAT',
-    showExtraPanel: true,
     confirmClosing: false,
     equalizer: {
       preamp: 0,

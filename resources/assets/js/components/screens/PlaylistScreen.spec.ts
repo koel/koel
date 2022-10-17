@@ -3,7 +3,7 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils'
 import { fireEvent, getByTestId, waitFor } from '@testing-library/vue'
-import { songStore } from '@/stores'
+import { playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import PlaylistScreen from './PlaylistScreen.vue'
 
@@ -12,10 +12,16 @@ let playlist: Playlist
 new class extends UnitTestCase {
   private async renderComponent (songs: Song[]) {
     playlist = playlist || factory<Playlist>('playlist')
+    playlistStore.init([playlist])
+
     const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
 
     const rendered = this.render(PlaylistScreen)
-    eventBus.emit('ACTIVATE_SCREEN', 'Playlist', playlist)
+
+    await this.router.activateRoute({
+      path: `playlists/${playlist.id}`,
+      screen: 'Playlist'
+    }, { id: playlist.id.toString() })
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist))
 

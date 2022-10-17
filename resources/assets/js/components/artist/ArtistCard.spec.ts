@@ -12,26 +12,21 @@ new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
       artist = factory<Artist>('artist', {
-        name: 'Led Zeppelin',
-        album_count: 4,
-        play_count: 124,
-        song_count: 16
+        id: 42,
+        name: 'Led Zeppelin'
       })
     })
   }
 
   protected test () {
     it('renders', () => {
-      const { getByText, getByTestId } = this.render(ArtistCard, {
+      const { html } = this.render(ArtistCard, {
         props: {
           artist
         }
       })
 
-      expect(getByTestId('name').textContent).toBe('Led Zeppelin')
-      getByText(/^4 albums\s+•\s+16 songs.+124 plays$/)
-      getByTestId('shuffle-artist')
-      getByTestId('download-artist')
+      expect(html()).toMatchSnapshot()
     })
 
     it('downloads', async () => {

@@ -8,22 +8,17 @@ use App\Models\Song;
 use App\Models\User;
 use App\Values\SmartPlaylistRule;
 use App\Values\SmartPlaylistRuleGroup;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class SmartPlaylistService
 {
-    public function __construct(private Guard $auth)
-    {
-    }
-
     /** @return Collection|array<array-key, Song> */
     public function getSongs(Playlist $playlist, ?User $user = null): Collection
     {
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
-        $query = Song::query()->withMeta($user ?? $this->auth->user());
+        $query = Song::query()->withMeta($user ?? $playlist->user);
 
         $playlist->rule_groups->each(static function (SmartPlaylistRuleGroup $group, int $index) use ($query): void {
             $clause = $index === 0 ? 'where' : 'orWhere';

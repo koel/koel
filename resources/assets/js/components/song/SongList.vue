@@ -1,7 +1,6 @@
 <template>
   <div
     ref="wrapper"
-    :class="type"
     class="song-list-wrap main-scroll-wrap"
     data-testid="song-list"
     tabindex="0"
@@ -88,11 +87,11 @@
         :item="item"
         draggable="true"
         @click="rowClicked(item, $event)"
-        @dragleave="removeDroppableState"
-        @dragstart="rowDragStart(item, $event)"
-        @dragenter.prevent="allowDrop"
+        @dragleave="onDragLeave"
+        @dragstart="onDragStart(item, $event)"
+        @dragenter.prevent="onDragEnter"
         @dragover.prevent
-        @drop.stop.prevent="handleDrop(item, $event)"
+        @drop.prevent="onDrop(item, $event)"
         @contextmenu.prevent="openContextMenu(item, $event)"
       />
     </VirtualScroller>
@@ -104,15 +103,15 @@ import { findIndex } from 'lodash'
 import isMobile from 'ismobilejs'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, Ref, ref, watch } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
-import { useDraggable } from '@/composables'
+import { useDraggable, useDroppable } from '@/composables'
 import {
+  ScreenNameKey,
   SelectedSongsKey,
   SongListConfigKey,
   SongListSortFieldKey,
   SongListSortOrderKey,
-  SongListTypeKey,
   SongsKey
 } from '@/symbols'
 
@@ -120,21 +119,22 @@ import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import SongListItem from '@/components/song/SongListItem.vue'
 
 const { startDragging } = useDraggable('songs')
+const { getDroppedData, acceptsDrop } = useDroppable(['songs'])
 
 const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scroll-breakpoint', 'scrolled-to-end'])
 
-const [items] = requireInjection(SongsKey)
-const [type] = requireInjection(SongListTypeKey)
-const [selectedSongs, setSelectedSongs] = requireInjection(SelectedSongsKey)
-const [sortField, setSortField] = requireInjection(SongListSortFieldKey)
-const [sortOrder, setSortOrder] = requireInjection(SongListSortOrderKey)
-const [injectedConfig] = requireInjection(SongListConfigKey, {})
+const [items] = requireInjection<[Ref<Song[]>]>(SongsKey)
+const [screen] = requireInjection<[ScreenName]>(ScreenNameKey)
+const [selectedSongs, setSelectedSongs] = requireInjection<[Ref<Song[]>, Closure]>(SelectedSongsKey)
+const [sortField, setSortField] = requireInjection<[Ref<SongListSortField>, Closure]>(SongListSortFieldKey)
+const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(SongListSortOrderKey)
+const [injectedConfig] = requireInjection<[Partial<SongListConfig>]>(SongListConfigKey, [{}])
 
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
 const songRows = ref<SongRow[]>([])
 
-const allowReordering = type === 'queue'
+const allowReordering = screen === 'Queue'
 
 watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected).map(row => row.song)), { deep: true })
 
@@ -251,12 +251,7 @@ const selectRowsBetween = (first: SongRow, second: SongRow) => {
   }
 }
 
-/**
- * Enable dragging songs by capturing the dragstart event on a table row.
- * Even though the event is triggered on one row only, we'll collect other
- * selected rows, if any, as well.
- */
-const rowDragStart = (row: SongRow, event: DragEvent) => {
+const onDragStart = (row: SongRow, event: DragEvent) => {
   // If the user is dragging an unselected row, clear the current selection.
   if (!row.selected) {
     clearSelection()
@@ -266,52 +261,42 @@ const rowDragStart = (row: SongRow, event: DragEvent) => {
   startDragging(event, selectedSongs.value)
 }
 
-/**
- * Add a "droppable" class and set the drop effect when other songs are dragged over a row.
- */
-const allowDrop = (event: DragEvent) => {
-  if (!allowReordering) return;
+const onDragEnter = (event: DragEvent) => {
+  if (!allowReordering) return
 
-  (event.target as Element).parentElement?.classList.add('droppable')
-  event.dataTransfer!.dropEffect = 'move'
+  if (acceptsDrop(event)) {
+    (event.target as Element).parentElement?.classList.add('droppable')
+    event.dataTransfer!.dropEffect = 'move'
+  }
 
   return false
 }
 
-const handleDrop = (item: SongRow, event: DragEvent) => {
-  if (
-    !allowReordering ||
-    !event.dataTransfer!.getData('application/x-koel.text+plain') ||
-    !selectedSongs.value.length
-  ) {
-    return removeDroppableState(event)
+const onDrop = (item: SongRow, event: DragEvent) => {
+  if (!allowReordering || !getDroppedData(event) || !selectedSongs.value.length) {
+    return onDragLeave(event)
   }
 
   emit('reorder', item.song)
-  return removeDroppableState(event)
+  return onDragLeave(event)
 }
 
-const removeDroppableState = (event: DragEvent) => {
+const onDragLeave = (event: DragEvent) => {
   (event.target as Element).parentElement?.classList.remove('droppable')
   return false
 }
 
 const openContextMenu = async (row: SongRow, event: MouseEvent) => {
-  // If the user is right-clicking an unselected row,
-  // clear the current selection and select it instead.
   if (!row.selected) {
     clearSelection()
     toggleRow(row)
   }
 
-  await nextTick()
-
   eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, selectedSongs.value)
 }
 
 defineExpose({
-  getAllSongsWithSort,
-  sort
+  getAllSongsWithSort
 })
 
 onMounted(() => render())
@@ -322,6 +307,10 @@ onMounted(() => render())
   position: relative;
   display: flex;
   flex-direction: column;
+
+  @media screen and (max-width: 768px) {
+    padding: 0 12px;
+  }
 
   .song-list-header {
     background: var(--color-bg-secondary);
@@ -417,8 +406,6 @@ onMounted(() => render())
   }
 
   @media only screen and (max-width: 768px) {
-    padding: 12px;
-
     .song-list-header {
       display: none;
     }

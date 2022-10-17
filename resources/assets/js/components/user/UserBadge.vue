@@ -1,6 +1,6 @@
 <template>
   <span class="profile" id="userBadge" v-if="currentUser">
-    <a class="view-profile" data-testid="view-profile-link" href="/#!/profile" title="View/edit user profile">
+    <a class="view-profile" data-testid="view-profile-link" href="/#/profile" title="View/edit user profile">
       <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar" class="avatar"/>
       <span class="name">{{ currentUser.name }}</span>
     </a>
@@ -33,9 +33,6 @@ const logout = () => eventBus.emit('LOG_OUT')
   @include vertical-center();
 
   justify-content: flex-end;
-  flex: 0 0 var(--extra-panel-width);
-  text-align: right;
-  height: 100%;
   position: relative;
 
   .avatar {

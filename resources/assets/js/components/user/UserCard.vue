@@ -17,10 +17,10 @@
       <p class="email text-secondary">{{ user.email }}</p>
 
       <footer>
-        <Btn class="btn-edit" data-testid="edit-user-btn" small orange @click="edit">
+        <Btn class="btn-edit" data-testid="edit-user-btn" orange small @click="edit">
           {{ isCurrentUser ? 'Your Profile' : 'Edit' }}
         </Btn>
-        <Btn v-if="!isCurrentUser" class="btn-delete" data-testid="delete-user-btn" small red @click="confirmDelete">
+        <Btn v-if="!isCurrentUser" class="btn-delete" data-testid="delete-user-btn" red small @click="confirmDelete">
           Delete
         </Btn>
       </footer>
@@ -34,13 +34,13 @@ import { computed, toRefs } from 'vue'
 import { userStore } from '@/stores'
 import { eventBus, requireInjection } from '@/utils'
 import { useAuthorization } from '@/composables'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
-import router from '@/router'
+import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 
 const toaster = requireInjection(MessageToasterKey)
 const dialog = requireInjection(DialogBoxKey)
+const router = requireInjection(RouterKey)
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)

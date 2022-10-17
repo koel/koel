@@ -1,5 +1,5 @@
 import { reactive, UnwrapNestedRefs } from 'vue'
-import { differenceBy, orderBy, take, unionBy } from 'lodash'
+import { differenceBy, unionBy } from 'lodash'
 import { cache, http } from '@/services'
 import { arrayify, logger } from '@/utils'
 
@@ -74,12 +74,5 @@ export const artistStore = {
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
-  },
-
-  getMostPlayed (count: number) {
-    return take(
-      orderBy(Array.from(this.vault.values()).filter(artist => this.isStandard(artist)), 'play_count', 'desc'),
-      count
-    )
   }
 }

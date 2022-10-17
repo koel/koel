@@ -13,7 +13,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import initVisualizer from '@/utils/visualizer'
-import { eventBus } from '@/utils'
+import { eventBus, logger } from '@/utils'
 
 import CloseModalBtn from '@/components/ui/BtnCloseModal.vue'
 
@@ -31,6 +31,7 @@ onMounted(() => {
   try {
     initVisualizer(el.value!)
   } catch (e) {
+    logger.warn('Failed to initialize visualizer', e)
     // in e.g., DOM testing, the call will fail due to the lack of proper API support
   }
 })

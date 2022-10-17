@@ -1,11 +1,11 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<header class="screen-header expanded" data-v-661f8f0d="">
-  <aside class="thumbnail-wrapper" data-v-661f8f0d=""><img src="https://placekitten.com/200/300"></aside>
-  <main data-v-661f8f0d="">
-    <div class="heading-wrapper" data-v-661f8f0d="">
-      <h1 class="name" data-v-661f8f0d="">This Header</h1><span class="meta text-secondary" data-v-661f8f0d=""><p>Some meta</p></span>
+<header class="screen-header expanded" data-v-5691beb5="">
+  <aside class="thumbnail-wrapper" data-v-5691beb5=""><img src="https://placekitten.com/200/300"></aside>
+  <main data-v-5691beb5="">
+    <div class="heading-wrapper" data-v-5691beb5="">
+      <h1 class="name" data-v-5691beb5="">This Header</h1><span class="meta text-secondary" data-v-5691beb5=""><p>Some meta</p></span>
     </div>
     <nav>Some controls</nav>
   </main>

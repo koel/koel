@@ -1,8 +1,8 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="message success" title="Click to dismiss" data-v-f05fd058="">
-  <aside data-v-f05fd058=""><br data-testid="icon" icon="[object Object]" class="icon" data-v-f05fd058=""><br data-testid="icon" icon="[object Object]" class="icon-dismiss" data-v-f05fd058=""></aside>
-  <main data-v-f05fd058=""></main>
+<div class="message success" title="Click to dismiss" data-v-06be4cfe="">
+  <aside data-v-06be4cfe=""><br data-testid="icon" icon="[object Object]" class="icon" data-v-06be4cfe=""><br data-testid="icon" icon="[object Object]" class="icon-dismiss" data-v-06be4cfe=""></aside>
+  <main data-v-06be4cfe=""></main>
 </div>
 `;

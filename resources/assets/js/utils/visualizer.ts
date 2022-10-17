@@ -170,7 +170,6 @@ export default (container: HTMLElement) => {
         this.particles.push(particle)
       }
 
-      // setup the audio analyser
       const analyser = new AudioAnalyser(NUM_BANDS, SMOOTHING)
 
       // update particles based on fft transformed audio frequencies

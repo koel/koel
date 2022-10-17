@@ -1,26 +1,29 @@
+import { ref } from 'vue'
 import { waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { albumStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { CurrentSongKey } from '@/symbols'
 import AlbumArtOverlay from '@/components/ui/AlbumArtOverlay.vue'
 import MainContent from './MainContent.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('has a translucent overlay per album', async () => {
-      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://localhost/foo.jpg')
+      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/foo.jpg')
 
       const { getByTestId } = this.render(MainContent, {
         global: {
           stubs: {
             AlbumArtOverlay
+          },
+          provide: {
+            [CurrentSongKey]: ref(factory<Song>('song'))
           }
         }
       })
-
-      eventBus.emit('SONG_STARTED', factory<Song>('song'))
 
       await waitFor(() => getByTestId('album-art-overlay'))
     })
@@ -32,11 +35,12 @@ new class extends UnitTestCase {
         global: {
           stubs: {
             AlbumArtOverlay
+          },
+          provide: {
+            [CurrentSongKey]: ref(factory<Song>('song'))
           }
         }
       })
-
-      eventBus.emit('SONG_STARTED', factory<Song>('song'))
 
       await waitFor(() => expect(queryByTestId('album-art-overlay')).toBeNull())
     })
