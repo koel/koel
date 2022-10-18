@@ -1,7 +1,7 @@
 <template>
   <section id="favoritesWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-      Songs You Love
+      Things You Love
       <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:thumbnail>
@@ -51,7 +51,7 @@
       <span class="secondary d-block">
         Click the&nbsp;
         <icon :icon="faHeart"/>&nbsp;
-        icon to mark a song as favorite.
+        icon to mark an audio as favorite.
       </span>
     </ScreenEmptyState>
   </section>

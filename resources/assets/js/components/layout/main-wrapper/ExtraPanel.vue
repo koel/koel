@@ -7,7 +7,7 @@
       </div>
 
       <div class="bottom">
-        <button title="About Koel" type="button" @click.prevent="openAboutKoelModal">
+        <button title="About Bayan FM" type="button" @click.prevent="openAboutKoelModal">
           <icon :icon="faInfoCircle"/>
         </button>
 

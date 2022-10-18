@@ -2,7 +2,7 @@
   <div class="rule-group" data-testid="smart-playlist-rule-group">
     <div class="group-banner">
       <span v-if="isFirstGroup">
-        Include songs that match <strong>all</strong> of these criteria
+        Include audios that match <strong>all</strong> of these criteria
       </span>
       <span v-else>
         or <strong>all</strong> of these criteria

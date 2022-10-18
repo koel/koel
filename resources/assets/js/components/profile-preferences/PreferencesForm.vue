@@ -3,13 +3,13 @@
     <div class="form-row" v-if="!isPhone">
       <label>
         <CheckBox name="notify" v-model="preferences.notify"/>
-        Show “Now Playing” song notification
+        Show “Now Playing” audio notification
       </label>
     </div>
     <div class="form-row" v-if="!isPhone">
       <label>
         <CheckBox name="confirm_closing" v-model="preferences.confirmClosing"/>
-        Confirm before closing Koel
+        Confirm before closing Bayan FM
       </label>
     </div>
     <div class="form-row" v-if="isPhone">

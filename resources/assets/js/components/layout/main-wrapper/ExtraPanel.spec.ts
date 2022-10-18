@@ -56,7 +56,7 @@ new class extends UnitTestCase {
       const emitMock = this.mock(eventBus, 'emit')
       const { getByTitle } = this.renderComponent()
 
-      await fireEvent.click(getByTitle('About Koel'))
+      await fireEvent.click(getByTitle('About Bayan FM'))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ABOUT_KOEL')
     })
