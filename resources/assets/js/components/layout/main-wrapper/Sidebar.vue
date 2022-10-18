@@ -155,6 +155,7 @@ nav {
   overflow: auto;
   overflow-x: hidden;
   -ms-overflow-style: -ms-autohiding-scrollbar;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 
   > * + * {
     margin-top: 2.25rem;

@@ -84,5 +84,13 @@ export const albumStore = {
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
+  },
+
+  async fetchForArtist (artist: Artist | number) {
+    const id = typeof artist === 'number' ? artist : artist.id
+
+    return this.syncWithVault(
+      await cache.remember<Album[]>(['artist-albums', id], async () => await http.get<Album[]>(`artists/${id}/albums`))
+    )
   }
 }

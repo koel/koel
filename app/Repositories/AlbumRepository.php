@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Album;
+use App\Models\Artist;
 use App\Models\User;
 use App\Repositories\Traits\Searchable;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -49,6 +50,16 @@ class AlbumRepository extends Repository
     {
         return Album::query()
             ->whereIn('id', $ids)
+            ->get();
+    }
+
+    /** @return Collection|array<array-key, Album> */
+    public function getByArtist(Artist $artist): Collection
+    {
+        return Album::query()
+            ->where('artist_id', $artist->id)
+            ->orWhereIn('id', $artist->songs()->pluck('album_id'))
+            ->orderBy('name')
             ->get();
     }
 

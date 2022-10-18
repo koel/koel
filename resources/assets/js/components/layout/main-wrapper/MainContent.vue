@@ -82,20 +82,19 @@ onMounted(() => router.resolve())
   overflow: hidden;
 
   > section {
-    position: absolute;
+    max-height: 100%;
+    min-height: 100%;
     width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 
     .main-scroll-wrap {
-      &:not(.song-list-wrap) {
-        padding: 1.5rem;
-      }
-
       overflow: scroll;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
 
       @supports (scrollbar-gutter: stable) {
         overflow: auto;

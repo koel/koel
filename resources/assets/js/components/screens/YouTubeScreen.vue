@@ -61,8 +61,11 @@ eventBus.on('PLAY_YOUTUBE_VIDEO', (payload: { id: string, title: string }) => {
 </script>
 
 <style lang="scss" scoped>
-#player {
+::v-deep(#player) {
   height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 
   .instruction {
     font-size: 1.5rem;

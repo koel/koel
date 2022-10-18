@@ -54,7 +54,7 @@ const initiatePlayback = async () => {
 
 <style lang="scss" scoped>
 button {
-  width: 3rem;
+  width: 3rem !important;
   border-radius: 50%;
   border: 2px solid currentColor;
 
