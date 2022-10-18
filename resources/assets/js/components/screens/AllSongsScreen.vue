@@ -1,7 +1,7 @@
 <template>
   <section id="songsWrapper">
     <ScreenHeader :layout="headerLayout">
-      All Songs
+      All Audios
       <ControlsToggle v-model="showingControls"/>
 
       <template v-slot:thumbnail>

@@ -1,4 +1,4 @@
 @extends('errors.template')
 
 @section('title', 'Service Unavailable')
-@section('details', 'Koel will be right back.')
+@section('details', 'We will be right back.')

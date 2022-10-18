@@ -1,6 +1,6 @@
 <template>
   <section class="text-secondary">
-    <h1>Last.fm Integration</h1>
+    <!-- <h1>Last.fm Integration</h1> -->
 
     <div v-if="useLastfm" data-testid="lastfm-integrated">
       <p>
@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <div v-else data-testid="lastfm-not-integrated">
+    <!-- <div v-else data-testid="lastfm-not-integrated">
       <p>
         This installation of Koel has no Last.fm integration.
         <span v-if="isAdmin" data-testid="lastfm-admin-instruction">
@@ -41,7 +41,7 @@
           Try politely asking an administrator to enable it.
         </span>
       </p>
-    </div>
+    </div> -->
   </section>
 </template>
 

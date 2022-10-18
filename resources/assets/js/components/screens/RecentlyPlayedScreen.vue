@@ -9,7 +9,7 @@
       </template>
 
       <template v-slot:meta v-if="songs.length">
-        <span>{{ pluralize(songs, 'song') }}</span>
+        <span>{{ pluralize(songs, 'audio') }}</span>
         <span>{{ duration }}</span>
       </template>
 
@@ -29,7 +29,7 @@
       <template v-slot:icon>
         <icon :icon="faClock"/>
       </template>
-      No songs recently played.
+      No audios recently played.
       <span class="secondary d-block">Start playing to populate this playlist.</span>
     </ScreenEmptyState>
   </section>

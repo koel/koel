@@ -1,6 +1,6 @@
 @extends('base')
 
-@section('title', 'Koel')
+@section('title', 'Bayan FM')
 
 @push('scripts')
     @vite(['resources/assets/js/app.ts'])

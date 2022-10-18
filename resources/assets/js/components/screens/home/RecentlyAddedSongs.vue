@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h1>New Songs</h1>
+    <h1>New Audios</h1>
     <ol v-if="loading" class="recently-added-song-list">
       <li v-for="i in 3" :key="i">
         <SongCardSkeleton/>
@@ -12,7 +12,7 @@
           <SongCard :song="song"/>
         </li>
       </ol>
-      <p v-else class="text-secondary">No songs added so far.</p>
+      <p v-else class="text-secondary">No Audios added so far.</p>
     </template>
   </section>
 </template>

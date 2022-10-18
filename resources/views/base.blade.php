@@ -26,7 +26,7 @@
 <body>
 <div id="app"></div>
 
-<noscript>It may sound funny, but Koel requires JavaScript to sing. Please enable it.</noscript>
+<noscript>You cannot listen to us without JavaScript. Please Enable to Listen!</noscript>
 
 <script>
     window.BASE_URL = @json(asset(''));

@@ -1,7 +1,7 @@
 <template>
   <div v-koel-focus class="about text-secondary" data-testid="about-modal" tabindex="0" @keydown.esc="close">
     <header>
-      <h1 class="text-primary">About Koel</h1>
+      <h1 class="text-primary">About Bayan FM</h1>
     </header>
 
     <main>
@@ -19,10 +19,8 @@
 
       <p class="author">
         Made with ❤️ by
-        <a href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a>
-        and quite a few
-        <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;
-        <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
+        <a href="https://github.com/naeemtawwos" rel="noopener" target="_blank">Naeem</a>
+
       </p>
 
       <div v-if="isDemo" class="credit-wrapper" data-testid="demo-credits">
@@ -35,10 +33,10 @@
       </div>
 
       <p>
-        Loving Koel? Please consider supporting its development via
-        <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a>
-        and/or
-        <a href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>.
+        Loving Bayan FM? Please consider supporting us by
+        <a href="" rel="noopener" target="_blank">Donating</a>
+        and subscribing our
+        <a href="https://islamqatamil.com" rel="noopener" target="_blank">website</a>.
       </p>
     </main>
 

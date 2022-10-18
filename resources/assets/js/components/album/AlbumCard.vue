@@ -19,7 +19,7 @@
       <span v-else class="text-secondary">{{ album.artist_name }}</span>
       <p class="meta">
         <a
-          :title="`Shuffle all songs in the album ${album.name}`"
+          :title="`Shuffle all audios in the album ${album.name}`"
           class="shuffle-album"
           data-testid="shuffle-album"
           href
@@ -31,7 +31,7 @@
         •
         <a
           v-if="allowDownload"
-          :title="`Download all songs in the album ${album.name}`"
+          :title="`Download all audios in the album ${album.name}`"
           class="download-album"
           data-testid="download-album"
           href

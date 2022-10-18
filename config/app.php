@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'tagline' => 'Personal audio streaming service that works.',
+    'tagline' => 'இஸ்லாமிய ஆடியோ புத்தகங்கள்',
 
     'env' => env('APP_ENV', 'production'),
-    'name' => 'Koel',
+    'name' => 'Bayan FM',
 
     /*
     |--------------------------------------------------------------------------

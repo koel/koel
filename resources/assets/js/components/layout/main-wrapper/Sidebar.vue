@@ -2,7 +2,7 @@
   <nav id="sidebar" :class="{ showing: mobileShowing }" class="side side-nav" v-koel-clickaway="closeIfMobile">
     <SearchForm/>
     <section class="music">
-      <h1>Your Music</h1>
+      <h1>Your Audios</h1>
 
       <ul class="menu">
         <li>
@@ -25,7 +25,7 @@
         <li>
           <a :class="['songs', activeScreen === 'Songs' ? 'active' : '']" href="#/songs">
             <icon :icon="faMusic" fixed-width/>
-            All Songs
+            All Audios
           </a>
         </li>
         <li>

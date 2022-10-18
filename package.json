@@ -99,9 +99,6 @@
     }
   },
   "lint-staged": {
-    "**/*.php": [
-      "composer cs"
-    ],
     "resources/assets/**/*.ts": [
       "eslint"
     ],
