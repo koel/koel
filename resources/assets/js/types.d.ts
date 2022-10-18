@@ -287,7 +287,7 @@ declare type ScreenName =
   | 'Home'
   | 'Default'
   | 'Queue'
-  | 'Audios'
+  | 'Songs'
   | 'Albums'
   | 'Artists'
   | 'Favorites'
