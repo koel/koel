@@ -333,7 +333,7 @@ new class extends UnitTestCase {
       const shuffleMock = this.mock(lodash, 'shuffle')
       this.setReadOnlyProperty(queueStore, 'first', firstSongInQueue)
 
-      await playbackService.queueAndPlay(songs)
+      playbackService.queueAndPlay(songs)
       await nextTick()
 
       expect(shuffleMock).not.toHaveBeenCalled()
@@ -350,7 +350,7 @@ new class extends UnitTestCase {
       this.setReadOnlyProperty(queueStore, 'first', firstSongInQueue)
       const shuffleMock = this.mock(lodash, 'shuffle', shuffledSongs)
 
-      await playbackService.queueAndPlay(songs, true)
+      playbackService.queueAndPlay(songs, true)
       await nextTick()
 
       expect(shuffleMock).toHaveBeenCalledWith(songs)

@@ -8,6 +8,7 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\Traits\Searchable;
+use App\Values\Genre;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -76,6 +77,23 @@ class SongRepository extends Repository
     ): Paginator {
         return self::applySort(
             Song::query()->withMeta($scopedUser ?? $this->auth->user()),
+            $sortColumn,
+            $sortDirection
+        )
+            ->simplePaginate($perPage);
+    }
+
+    public function getByGenre(
+        string $genre,
+        string $sortColumn,
+        string $sortDirection,
+        ?User $scopedUser = null,
+        int $perPage = 50
+    ): Paginator {
+        return self::applySort(
+            Song::query()
+            ->withMeta($scopedUser ?? $this->auth->user())
+            ->where('genre', $genre),
             $sortColumn,
             $sortDirection
         )
@@ -201,5 +219,16 @@ class SongRepository extends Repository
         }
 
         return $query;
+    }
+
+    /** @return Collection|array<array-key, Song> */
+    public function getRandomByGenre(string $genre, int $limit, ?User $scopedUser = null): Collection
+    {
+        return Song::query()
+            ->withMeta($scopedUser ?? $this->auth->user())
+            ->where('genre', $genre === Genre::NO_GENRE ? '' : $genre)
+            ->limit($limit)
+            ->inRandomOrder()
+            ->get();
     }
 }

@@ -72,7 +72,7 @@ const playOrQueue = async (event: KeyboardEvent) => {
     return
   }
 
-  await playbackService.queueAndPlay(songs)
+  playbackService.queueAndPlay(songs)
   router.go('queue')
 }
 

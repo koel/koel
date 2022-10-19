@@ -40,6 +40,12 @@
             Artists
           </a>
         </li>
+        <li>
+          <a :class="['genres', activeScreen === 'Genres' ? 'active' : '']" href="#/genres">
+            <icon :icon="faTags" fixed-width/>
+            Genres
+          </a>
+        </li>
         <li v-if="useYouTube">
           <a :class="['youtube', activeScreen === 'YouTube' ? 'active' : '']" href="#/youtube">
             <icon :icon="faYoutube" fixed-width/>
@@ -85,6 +91,7 @@ import {
   faListOl,
   faMicrophone,
   faMusic,
+  faTags,
   faTools,
   faUpload,
   faUsers

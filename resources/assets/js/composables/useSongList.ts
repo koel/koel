@@ -43,7 +43,12 @@ export const useSongList = (songs: Ref<Song[]>, screen: ScreenName, config: Part
   })
 
   const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
-  const playAll = (shuffle: boolean) => playbackService.queueAndPlay(getSongsToPlay(), shuffle)
+
+  const playAll = (shuffle: boolean) => {
+    playbackService.queueAndPlay(getSongsToPlay(), shuffle)
+    router.go('queue')
+  }
+
   const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedSongs.value, shuffle)
 
   const onPressEnter = async (event: KeyboardEvent) => {

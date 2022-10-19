@@ -60,7 +60,7 @@ const showSummary = computed(() => mode.value !== 'full' && !showingFullBio.valu
 const showFull = computed(() => !showSummary.value)
 
 const play = async () => {
-  await playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value))
+  playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value))
   router.go('queue')
 }
 </script>

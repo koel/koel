@@ -83,6 +83,14 @@ export const routes: Route[] = [
     screen: 'Playlist'
   },
   {
+    path: '/genres',
+    screen: 'Genres'
+  },
+  {
+    path: '/genres/(?<name>\.+)',
+    screen: 'Genre'
+  },
+  {
     path: '/song/(?<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
     screen: 'Queue',
     redirect: () => 'queue',
