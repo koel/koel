@@ -65,7 +65,7 @@
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
-import { ref, toRef } from 'vue'
+import { ref, toRef, watch } from 'vue'
 import { eventBus, pluralize, requireInjection } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
@@ -78,6 +78,8 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const toaster = requireInjection(MessageToasterKey)
 const router = requireInjection(RouterKey)
+
+const playlistId = ref<number>()
 const playlist = ref<Playlist>()
 const loading = ref(false)
 
@@ -124,24 +126,16 @@ const fetchSongs = async () => {
   sort()
 }
 
-router.onRouteChanged(async (route) => {
-  if (route.screen !== 'Playlist') return
-  const id = parseInt(route.params!.id)
+watch(playlistId, async (id) => {
+  if (!id) return
 
-  if (id === playlist.value?.id) return
-
-  const _playlist = playlistStore.byId(id)
-
-  if (!_playlist) {
-    await router.triggerNotFound()
-    return
-  }
-
-  playlist.value = _playlist
-  await fetchSongs()
+  playlist.value = playlistStore.byId(id)
+  playlist.value ? await fetchSongs() : await router.triggerNotFound()
 })
 
+router.onRouteChanged(route => route.screen === 'Playlist' && (playlistId.value = parseInt(route.params!.id)))
+
 eventBus.on({
-  SMART_PLAYLIST_UPDATED: async (updated: Playlist) => updated === playlist.value && await fetchSongs()
+  SMART_PLAYLIST_UPDATED: async (updated: Playlist) => updated.id === playlistId.value && await fetchSongs()
 })
 </script>

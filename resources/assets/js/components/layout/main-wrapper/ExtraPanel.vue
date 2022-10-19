@@ -138,6 +138,7 @@ const logout = () => eventBus.emit('LOG_OUT')
   padding: 2rem 1.7rem;
   background: var(--color-bg-secondary);
   overflow: auto;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 
   @media (hover: none) {
     // Enable scroll with momentum on touch devices
@@ -169,7 +170,7 @@ const logout = () => eventBus.emit('LOG_OUT')
     flex-direction: row;
     padding: .5rem 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, .05);
-    box-shadow: 0 0 30px 0 rgba(0, 0, 0, .75);
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, .5);
   }
 
   .top, .bottom {

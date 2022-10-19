@@ -1,7 +1,7 @@
 <template>
   <div
     ref="wrapper"
-    class="song-list-wrap main-scroll-wrap"
+    class="song-list-wrap"
     data-testid="song-list"
     tabindex="0"
     @keydown.delete.prevent.stop="handleDelete"
@@ -307,6 +307,7 @@ onMounted(() => render())
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: scroll;
 
   @media screen and (max-width: 768px) {
     padding: 0 12px;

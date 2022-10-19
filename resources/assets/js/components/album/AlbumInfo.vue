@@ -1,6 +1,6 @@
 <template>
   <article :class="mode" class="album-info" data-testid="album-info">
-    <h1 class="name">
+    <h1 v-if="mode === 'aside'" class="name">
       <span>{{ album.name }}</span>
       <button :title="`Play all songs in ${album.name}`" class="control" type="button" @click.prevent="play">
         <icon :icon="faCirclePlay" size="xl"/>
@@ -8,7 +8,7 @@
     </h1>
 
     <main>
-      <AlbumThumbnail :entity="album"/>
+      <AlbumThumbnail v-if="mode === 'aside'" :entity="album"/>
 
       <template v-if="info">
         <div v-if="info.wiki?.summary" class="wiki">
@@ -36,7 +36,7 @@ import { faCirclePlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { useThirdPartyServices } from '@/composables'
 import { songStore } from '@/stores'
-import { playbackService, mediaInfoService } from '@/services'
+import { mediaInfoService, playbackService } from '@/services'
 import { RouterKey } from '@/symbols'
 
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
@@ -75,6 +75,10 @@ const play = async () => {
 
   .track-listing {
     margin-top: 2rem;
+
+    ::v-deep(h1) {
+      margin-bottom: 1.2rem;
+    }
   }
 }
 </style>

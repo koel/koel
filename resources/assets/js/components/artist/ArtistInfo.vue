@@ -1,6 +1,6 @@
 <template>
   <article :class="mode" class="artist-info" data-testid="artist-info">
-    <h1 class="name">
+    <h1 v-if="mode === 'aside'" class="name">
       <span>{{ artist.name }}</span>
       <button :title="`Play all songs by ${artist.name}`" class="control" type="button" @click.prevent="play">
         <icon :icon="faCirclePlay" size="xl"/>
@@ -8,7 +8,7 @@
     </h1>
 
     <main>
-      <ArtistThumbnail :entity="artist"/>
+      <ArtistThumbnail v-if="mode === 'aside'" :entity="artist"/>
 
       <template v-if="info">
         <div v-if="info.bio?.summary" class="bio">
@@ -32,7 +32,7 @@
 <script lang="ts" setup>
 import { faCirclePlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs, watch } from 'vue'
-import { playbackService, mediaInfoService } from '@/services'
+import { mediaInfoService, playbackService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 import { songStore } from '@/stores'
 import { RouterKey } from '@/symbols'
