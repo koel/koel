@@ -11,9 +11,9 @@ return new class extends Migration {
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('songs', function (Blueprint $table) {
+        Schema::table('songs', static function (Blueprint $table): void {
             if (DB::getDriverName() === 'pgsql') {
                 $table->index('album_id');
             }
