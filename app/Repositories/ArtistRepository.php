@@ -23,7 +23,7 @@ class ArtistRepository extends Repository
             ->leftJoin('interactions', static function (JoinClause $join) use ($user): void {
                 $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
             })
-            ->groupBy('artists.id')
+            ->groupBy(['artists.id', 'play_count'])
             ->isStandard()
             ->orderByDesc('play_count')
             ->limit($count)
