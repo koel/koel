@@ -35,12 +35,12 @@ const isStandardArtist = computed(() => {
 })
 
 const play = () => trigger(async () => {
-  await playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value!))
+  playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value!))
   router.go('queue')
 })
 
 const shuffle = () => trigger(async () => {
-  await playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value!), true)
+  playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value!), true)
   router.go('queue')
 })
 

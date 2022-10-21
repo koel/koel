@@ -30,12 +30,12 @@ const playlistsInFolder = computed(() => folder.value ? playlistStore.byFolder(f
 const playable = computed(() => playlistsInFolder.value.length > 0)
 
 const play = () => trigger(async () => {
-  await playbackService.queueAndPlay(await songStore.fetchForPlaylistFolder(folder.value!))
+  playbackService.queueAndPlay(await songStore.fetchForPlaylistFolder(folder.value!))
   router.go('queue')
 })
 
 const shuffle = () => trigger(async () => {
-  await playbackService.queueAndPlay(await songStore.fetchForPlaylistFolder(folder.value!), true)
+  playbackService.queueAndPlay(await songStore.fetchForPlaylistFolder(folder.value!), true)
   router.go('queue')
 })
 

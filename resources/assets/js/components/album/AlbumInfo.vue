@@ -64,7 +64,7 @@ const showSummary = computed(() => mode.value !== 'full' && !showingFullWiki.val
 const showFull = computed(() => !showSummary.value)
 
 const play = async () => {
-  await playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value))
+  playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value))
   router.go('queue')
 }
 </script>
