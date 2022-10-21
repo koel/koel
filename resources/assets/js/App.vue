@@ -20,6 +20,10 @@
 
   <div v-else class="login-wrapper">
     <LoginForm @loggedin="onUserLoggedIn"/>
+    <div class="or">
+      or
+    </div>
+    <RegistrationForm @loggedin="onUserLoggedIn"/>
   </div>
 </template>
 
@@ -43,6 +47,7 @@ import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 
 const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
+const RegistrationForm = defineAsyncComponent(() => import('@/components/auth/RegistrationForm.vue'))
 const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
@@ -72,6 +77,7 @@ const onUserLoggedIn = async () => {
   authenticated.value = true
   await init()
 }
+
 
 onMounted(async () => {
   // The app has just been initialized, check if we can get the user data with an already existing token
@@ -182,4 +188,12 @@ provide(CurrentSongKey, currentSong)
   user-select: none;
   padding-bottom: 0;
 }
+
+.or {
+    text-align: center;
+    text-transform: uppercase;
+    margin: 20px 0;
+
+  }
+
 </style>

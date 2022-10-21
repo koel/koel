@@ -31,8 +31,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Pusher\Pusher;
 
+
 Route::prefix('api')->middleware('api')->group(static function (): void {
     Route::post('me', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
     Route::delete('me', [AuthController::class, 'logout']);
 
     Route::get('ping', static fn () => null);

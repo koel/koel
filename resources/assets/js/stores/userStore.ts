@@ -20,6 +20,11 @@ interface UserFormData {
 
 export interface CreateUserData extends UserFormData {
   password: string
+
+}
+
+export interface RegisterUserData extends CreateUserData{
+  password_confirmation: string
 }
 
 export interface UpdateUserData extends UserFormData {
@@ -63,7 +68,15 @@ export const userStore = {
 
   login: async (email: string, password: string) => await http.post<User>('me', { email, password }),
   logout: async () => await http.delete('me'),
+
+  async register (data: RegisterUserData) {
+    const user = await http.post<User>('register', data)
+    this.state.users.push(...this.syncWithVault(user))
+    return this.byId(user.id)
+  },
+
   getProfile: async () => await http.get<User>('me'),
+
 
   async updateProfile (data: UpdateCurrentProfileData) {
     merge(this.current, (await http.put<User>('me', data)))
@@ -74,6 +87,10 @@ export const userStore = {
     this.state.users.push(...this.syncWithVault(user))
     return this.byId(user.id)
   },
+
+
+
+
 
   async update (user: User, data: UpdateUserData) {
     this.syncWithVault(await http.put<User>(`users/${user.id}`, data))
