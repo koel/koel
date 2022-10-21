@@ -11,8 +11,9 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
-import { RegisterUserData, CreateUserData, userStore } from '@/stores'
-import { parseValidationError, requireInjection } from '@/utils'
+import { RegisterUserData,  userStore } from '@/stores'
+import { parseValidationError, requireInjection  } from '@/utils'
+import { DialogBoxKey} from '@/symbols'
 import Btn from '@/components/ui/Btn.vue'
 
 
@@ -24,11 +25,7 @@ const failed = ref(false)
 const username= ''
 const password_confirmation = ''
 const emit = defineEmits(['loggedin'])
-
-
-
-
-
+const dialog = requireInjection(DialogBoxKey)
 
 const emptyUserData: RegisterUserData = {
   name: '',
@@ -40,24 +37,7 @@ const emptyUserData: RegisterUserData = {
 
 const newUser = reactive<RegisterUserData>(Object.assign({}, emptyUserData))
 
-// const register = async () => {
-//   try {
-//     await userStore.store(email.value, password.value)
-//     failed.value = false
-
-//     // Reset the password so that the next login will have this field empty.
-//     password.value = ''
-
-//     emit('loggedin')
-//   } catch (err) {
-//     failed.value = true
-//     window.setTimeout(() => (failed.value = false), 2000)
-//   }
-// }
-
-
 const register = async () => {
-
 
   try {
     await userStore.register(newUser)
@@ -67,9 +47,11 @@ const register = async () => {
   } catch (err: any) {
     failed.value = true
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
+    dialog.value.error(msg, 'Error')
   }
 }
 </script>
+
 
 <style lang="scss" scoped>
 /**
@@ -110,6 +92,10 @@ form {
   &.error {
     border-color: var(--color-red);
     animation: shake .5s;
+  }
+
+  .logo {
+    text-align: center;
   }
 
   @media only screen and (max-width: 414px) {

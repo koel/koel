@@ -77,7 +77,6 @@ export const userStore = {
 
   getProfile: async () => await http.get<User>('me'),
 
-
   async updateProfile (data: UpdateCurrentProfileData) {
     merge(this.current, (await http.put<User>('me', data)))
   },
@@ -87,10 +86,6 @@ export const userStore = {
     this.state.users.push(...this.syncWithVault(user))
     return this.byId(user.id)
   },
-
-
-
-
 
   async update (user: User, data: UpdateUserData) {
     this.syncWithVault(await http.put<User>(`users/${user.id}`, data))
