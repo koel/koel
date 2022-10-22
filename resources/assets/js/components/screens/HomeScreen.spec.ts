@@ -15,7 +15,10 @@ new class extends UnitTestCase {
   protected test () {
     it('renders an empty state if no songs found', async () => {
       commonStore.state.song_length = 0
+      this.mock(overviewStore, 'init')
+
       const { getByTestId } = await this.render(HomeScreen)
+
       getByTestId('screen-empty-state')
     })
 
