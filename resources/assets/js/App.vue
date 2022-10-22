@@ -174,7 +174,6 @@ provide(CurrentSongKey, currentSong)
 #main {
   @media screen and (max-width: 768px) {
     padding-top: var(--header-height);
-    height: calc(100vh - var(--header-height));
   }
 }
 
