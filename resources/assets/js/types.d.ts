@@ -299,6 +299,8 @@ declare type ScreenName =
   | 'Profile'
   | 'Album'
   | 'Artist'
+  | 'Genres'
+  | 'Genre'
   | 'Playlist'
   | 'Upload'
   | 'Search.Excerpt'
@@ -374,6 +376,13 @@ type ToastMessage = {
   type: 'info' | 'success' | 'warning' | 'danger'
   content: string
   timeout: number // seconds
+}
+
+type Genre = {
+  type: 'genres'
+  name: string
+  song_count: number
+  length: number
 }
 
 type ExtraPanelTab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'

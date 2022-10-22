@@ -68,7 +68,7 @@ const isStandardArtist = computed(() => artistStore.isStandard(album.value.artis
 const showing = computed(() => !albumStore.isUnknown(album.value))
 
 const shuffle = async () => {
-  await playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
+  playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
   router.go('queue')
 }
 

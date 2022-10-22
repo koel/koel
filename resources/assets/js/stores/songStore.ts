@@ -170,6 +170,26 @@ export const songStore = {
     return uniqBy(songs, 'id')
   },
 
+  async paginateForGenre (genre: Genre | string, sortField: SongListSortField, sortOrder: SortOrder, page: number) {
+    const name = typeof genre === 'string' ? genre : genre.name
+
+    const resource = await http.get<PaginatorResource>(
+      `genres/${name}/songs?page=${page}&sort=${sortField}&order=${sortOrder}`
+    )
+
+    const songs = this.syncWithVault(resource.data)
+
+    return {
+      songs,
+      nextPage: resource.links.next ? ++resource.meta.current_page : null
+    }
+  },
+
+  async fetchRandomForGenre (genre: Genre | string, limit = 500) {
+    const name = typeof genre === 'string' ? genre : genre.name
+    return this.syncWithVault(await http.get<Song[]>(`genres/${name}/songs/random?limit=${limit}`))
+  },
+
   async paginate (sortField: SongListSortField, sortOrder: SortOrder, page: number) {
     const resource = await http.get<PaginatorResource>(
       `songs?page=${page}&sort=${sortField}&order=${sortOrder}`

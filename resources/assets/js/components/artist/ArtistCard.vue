@@ -66,7 +66,7 @@ const allowDownload = toRef(commonStore.state, 'allow_download')
 const showing = computed(() => artistStore.isStandard(artist.value))
 
 const shuffle = async () => {
-  await playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value), true /* shuffled */)
+  playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value), true /* shuffled */)
   router.go('queue')
 }
 
