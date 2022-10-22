@@ -36,7 +36,7 @@
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { eventBus, noop } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
 import { useAuthorization, useInfiniteScroll, useScreen } from '@/composables'
@@ -74,7 +74,7 @@ let initialized = false
 
 eventBus.on(['SONGS_DELETED', 'SONGS_UPDATED'], () => overviewStore.refresh())
 
-useScreen('Home').onScreenActivated(async () => {
+const initialize = async () => {
   if (libraryEmpty.value) {
     return
   }
@@ -85,7 +85,11 @@ useScreen('Home').onScreenActivated(async () => {
     initialized = true
     loading.value = false
   }
-})
+}
+
+onMounted(async () => await initialize())
+
+useScreen('Home').onScreenActivated(async () => await initialize())
 </script>
 
 <style lang="scss">
