@@ -75,10 +75,6 @@ let initialized = false
 eventBus.on(['SONGS_DELETED', 'SONGS_UPDATED'], () => overviewStore.refresh())
 
 const initialize = async () => {
-  if (libraryEmpty.value) {
-    return
-  }
-
   if (!initialized) {
     loading.value = true
     await overviewStore.init()
