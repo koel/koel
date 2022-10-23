@@ -8,7 +8,13 @@ new class extends UnitTestCase {
   protected test () {
     it('displays the albums', () => {
       overviewStore.state.recentlyAddedAlbums = factory<Album>('album', 6)
-      expect(this.render(RecentlyAddedAlbums).getAllByTestId('album-card')).toHaveLength(6)
+      expect(this.render(RecentlyAddedAlbums, {
+        global: {
+          stubs: {
+            AlbumCard: this.stub('album-card')
+          }
+        }
+      }).getAllByTestId('album-card')).toHaveLength(6)
     })
   }
 }
