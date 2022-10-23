@@ -1,0 +1,79 @@
+name: Backend Unit Tests - PostgreSQL
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - resources/assets/**
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - resources/assets/**
+  workflow_dispatch:
+    branches:
+      - master
+    paths-ignore:
+      - resources/assets/**
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [ 8.0, 8.1 ]
+      fail-fast: false
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: koel
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_CONNECTION: pgsql-ci
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_DATABASE: koel
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: xdebug
+          extensions: pdo_sqlite, zip, gd
+      - name: Install PHP dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: --prefer-dist
+      - name: Generate app key
+        run: php artisan key:generate --quiet
+      - name: Run code style checker
+        run: composer cs
+      - name: Run static analysis
+        run: composer analyze -- --no-progress
+      - name: Run tests
+        run: composer coverage
+      - name: Upload logs if broken
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: logs
+          path: storage/logs
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
