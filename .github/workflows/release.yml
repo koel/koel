@@ -23,7 +23,7 @@ jobs:
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v2
         with:
-          composer-options: --prefer-dist
+          composer-options: "--prefer-dist --no-dev"
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
