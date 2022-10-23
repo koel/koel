@@ -12,7 +12,15 @@ new class extends UnitTestCase {
 
   private async renderComponent () {
     albumStore.state.albums = factory<Album>('album', 9)
-    const rendered = this.render(AlbumListScreen)
+
+    const rendered = this.render(AlbumListScreen, {
+      global: {
+        stubs: {
+          AlbumCard: this.stub('album-card')
+        }
+      }
+    })
+
     await this.router.activateRoute({ path: 'albums', screen: 'Albums' })
     return rendered
   }

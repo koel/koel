@@ -1,10 +1,10 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<article class="full item" title="Led Zeppelin" data-testid="artist-card" draggable="true" tabindex="0" data-v-85d5de45=""><span class="cover" data-testid="album-artist-thumbnail" data-v-e37470a2="" data-v-85d5de45=""><a class="control control-play" href="" role="button" data-v-e37470a2=""><span class="hidden" data-v-e37470a2="">Play all songs by Led Zeppelin</span><span class="icon" data-v-e37470a2=""></span></a></span>
-  <footer data-v-85d5de45="">
-    <div class="info" data-v-85d5de45=""><a href="#/artist/42" class="name" data-testid="name" data-v-85d5de45="">Led Zeppelin</a></div>
-    <p class="meta" data-v-85d5de45=""><a title="Shuffle all songs by Led Zeppelin" class="shuffle-artist" data-testid="shuffle-artist" href="" role="button" data-v-85d5de45=""> Shuffle </a><a title="Download all songs by Led Zeppelin" class="download-artist" data-testid="download-artist" href="" role="button" data-v-85d5de45=""> Download </a></p>
+<article class="item full" draggable="true" tabindex="0" title="Led Zeppelin" data-v-f01bdc56=""><span class="cover" data-testid="album-artist-thumbnail" data-v-e37470a2="" data-v-f01bdc56=""><a class="control control-play" href="" role="button" data-v-e37470a2=""><span class="hidden" data-v-e37470a2="">Play all songs by Led Zeppelin</span><span class="icon" data-v-e37470a2=""></span></a></span>
+  <footer data-v-f01bdc56="">
+    <div class="name" data-v-f01bdc56=""><a href="#/artist/42" class="text-normal" data-testid="name">Led Zeppelin</a></div>
+    <p class="meta" data-v-f01bdc56=""><a title="Shuffle all songs by Led Zeppelin" class="shuffle-artist" data-testid="shuffle-artist" href="" role="button"> Shuffle </a><a title="Download all songs by Led Zeppelin" class="download-artist" data-testid="download-artist" href="" role="button"> Download </a></p>
   </footer>
 </article>
 `;

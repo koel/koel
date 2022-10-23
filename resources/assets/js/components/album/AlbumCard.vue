@@ -1,47 +1,43 @@
 <template>
-  <article
+  <ArtistAlbumCard
     v-if="showing"
-    :class="layout"
+    :entity="album"
     :title="`${album.name} by ${album.artist_name}`"
-    class="item"
-    data-testid="album-card"
-    draggable="true"
-    tabindex="0"
+    :layout="layout"
+    @contextmenu="requestContextMenu"
     @dblclick="shuffle"
     @dragstart="onDragStart"
-    @contextmenu.prevent="requestContextMenu"
   >
-    <AlbumThumbnail :entity="album"/>
-
-    <footer>
-      <a :href="`#/album/${album.id}`" class="name" data-testid="name">{{ album.name }}</a>
-      <a v-if="isStandardArtist" :href="`#/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
+    <template #name>
+      <a :href="`#/album/${album.id}`" class="text-normal" data-testid="name">{{ album.name }}</a>
+      <a v-if="isStandardArtist" :href="`#/artist/${album.artist_id}`">{{ album.artist_name }}</a>
       <span v-else class="text-secondary">{{ album.artist_name }}</span>
-      <p class="meta">
-        <a
-          :title="`Shuffle all songs in the album ${album.name}`"
-          class="shuffle-album"
-          data-testid="shuffle-album"
-          href
-          role="button"
-          @click.prevent="shuffle"
-        >
-          Shuffle
-        </a>
-        <a
-          v-if="allowDownload"
-          :title="`Download all songs in the album ${album.name}`"
-          class="download-album"
-          data-testid="download-album"
-          href
-          role="button"
-          @click.prevent="download"
-        >
-          Download
-        </a>
-      </p>
-    </footer>
-  </article>
+    </template>
+
+    <template #meta>
+      <a
+        :title="`Shuffle all songs in the album ${album.name}`"
+        class="shuffle-album"
+        data-testid="shuffle-album"
+        href
+        role="button"
+        @click.prevent="shuffle"
+      >
+        Shuffle
+      </a>
+      <a
+        v-if="allowDownload"
+        :title="`Download all songs in the album ${album.name}`"
+        class="download-album"
+        data-testid="download-album"
+        href
+        role="button"
+        @click.prevent="download"
+      >
+        Download
+      </a>
+    </template>
+  </ArtistAlbumCard>
 </template>
 
 <script lang="ts" setup>
@@ -52,7 +48,7 @@ import { downloadService, playbackService } from '@/services'
 import { useDraggable } from '@/composables'
 import { RouterKey } from '@/symbols'
 
-import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+import ArtistAlbumCard from '@/components/ui/ArtistAlbumCard.vue'
 
 const router = requireInjection(RouterKey)
 
@@ -76,7 +72,3 @@ const download = () => downloadService.fromAlbum(album.value)
 const onDragStart = (event: DragEvent) => startDragging(event, album.value)
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', event, album.value)
 </script>
-
-<style lang="scss" scoped>
-@include artist-album-card();
-</style>
