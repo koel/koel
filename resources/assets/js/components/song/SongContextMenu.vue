@@ -17,16 +17,24 @@
           <li @click="queueSongsToTop">Top of Queue</li>
         </template>
         <li v-else @click="queueSongsToBottom">Queue</li>
-        <li class="separator"/>
-        <li @click="addSongsToFavorite">Favorites</li>
+        <template v-if="!isFavoritesScreen">
+          <li class="separator"/>
+          <li @click="addSongsToFavorite">Favorites</li>
+        </template>
         <li v-if="normalPlaylists.length" class="separator"/>
         <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
       </ul>
     </li>
 
-    <template v-if="canBeRemovedFromQueue">
+    <template v-if="isQueueScreen">
       <li class="separator"/>
       <li @click="removeFromQueue">Remove from Queue</li>
+      <li class="separator"/>
+    </template>
+
+    <template v-if="isFavoritesScreen">
+      <li class="separator"/>
+      <li @click="removeFromFavorites">Remove from Favorites</li>
       <li class="separator"/>
     </template>
 
@@ -49,7 +57,7 @@
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
 import { arrayify, copyText, eventBus, pluralize, requireInjection } from '@/utils'
-import { commonStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
+import { commonStore, favoriteStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useAuthorization, useContextMenu, usePlaylistManagement, useSongMenuMethods } from '@/composables'
 import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
@@ -88,7 +96,8 @@ const canBeRemovedFromPlaylist = computed(() => {
   return playlist && !playlist.is_smart
 })
 
-const canBeRemovedFromQueue = computed(() => router.$currentRoute.value.screen === 'Queue')
+const isQueueScreen = computed(() => router.$currentRoute.value.screen === 'Queue')
+const isFavoritesScreen = computed(() => router.$currentRoute.value.screen === 'Favorites')
 
 const doPlayback = () => trigger(() => {
   if (!songs.value.length) return
@@ -122,6 +131,7 @@ const removeFromPlaylist = () => trigger(async () => {
 })
 
 const removeFromQueue = () => trigger(() => queueStore.unqueue(songs.value))
+const removeFromFavorites = () => trigger(() => favoriteStore.unlike(songs.value))
 
 const copyUrl = () => trigger(() => {
   copyText(songStore.getShareableUrl(songs.value[0]))
