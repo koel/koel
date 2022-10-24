@@ -31,5 +31,15 @@ new class extends UnitTestCase {
 
       expect(mock).toHaveBeenCalledWith('SEARCH_KEYWORDS_CHANGED', 'hey')
     })
+
+    it('goes to the search screen if the form is submitted', async () => {
+      const goMock = this.mock(this.router, 'go')
+      const { getByRole } = this.render(SearchForm)
+
+      await fireEvent.update(getByRole('searchbox'), 'hey')
+      await fireEvent.submit(getByRole('search'))
+
+      expect(goMock).toHaveBeenCalledWith('search')
+    })
   }
 }
