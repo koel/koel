@@ -5,9 +5,10 @@
 
       <button
         v-if="song?.playback_state === 'Playing'"
+        v-koel-tooltip.top
         class="visualizer-btn"
         data-testid="toggle-visualizer-btn"
-        title="Show/hide the visualizer"
+        title="Toggle the visualizer"
         type="button"
         @click.prevent="toggleVisualizer"
       >
@@ -16,6 +17,7 @@
 
       <button
         v-if="useEqualizer"
+        v-koel-tooltip.top
         :class="{ active: showEqualizer }"
         :title="`${ showEqualizer ? 'Hide' : 'Show'} equalizer`"
         class="equalizer"
