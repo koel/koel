@@ -127,13 +127,68 @@ new class extends UnitTestCase {
       expect(queueMock).toHaveBeenCalledWith(songs)
     })
 
-    it('adds to favorite', async () => {
+    it('removes from queue', async () => {
+      this.fillQueue()
+      const removeMock = this.mock(queueStore, 'unqueue')
+
+      await this.router.activateRoute({
+        path: '/queue',
+        screen: 'Queue'
+      })
+
+      const { getByText } = await this.renderComponent()
+
+      await fireEvent.click(getByText('Remove from Queue'))
+
+      expect(removeMock).toHaveBeenCalledWith(songs)
+    })
+
+    it('does not show "Remove from Queue" when not on Queue screen', async () => {
+      this.fillQueue()
+
+      await this.router.activateRoute({
+        path: '/songs',
+        screen: 'Songs'
+      })
+
+      const { queryByText } = await this.renderComponent()
+
+      expect(queryByText('Remove from Queue')).toBeNull()
+    })
+
+    it('adds to favorites', async () => {
       const likeMock = this.mock(favoriteStore, 'like')
       const { getByText } = await this.renderComponent()
 
       await fireEvent.click(getByText('Favorites'))
 
       expect(likeMock).toHaveBeenCalledWith(songs)
+    })
+
+    it('does not have an option to add to favorites for Favorites screen', async () => {
+      await this.router.activateRoute({
+        path: '/favorites',
+        screen: 'Favorites'
+      })
+
+      const { queryByText } = await this.renderComponent()
+
+      expect(queryByText('Favorites')).toBeNull()
+    })
+
+    it('removes from favorites', async () => {
+      const unlikeMock = this.mock(favoriteStore, 'unlike')
+
+      await this.router.activateRoute({
+        path: '/favorites',
+        screen: 'Favorites'
+      })
+
+      const { getByText } = await this.renderComponent()
+
+      await fireEvent.click(getByText('Remove from Favorites'))
+
+      expect(unlikeMock).toHaveBeenCalledWith(songs)
     })
 
     it('lists and adds to existing playlist', async () => {
@@ -156,6 +211,39 @@ new class extends UnitTestCase {
       const { queryByText } = await this.renderComponent()
 
       expect(queryByText('My Smart Playlist')).toBeNull()
+    })
+
+    it('removes from playlist', async () => {
+      const playlist = factory<Playlist>('playlist')
+      playlistStore.state.playlists.push(playlist)
+
+      await this.router.activateRoute({
+        path: `/playlists/${playlist.id}`,
+        screen: 'Playlist'
+      }, { id: String(playlist.id) })
+
+      const { getByText } = await this.renderComponent()
+
+      const removeSongsMock = this.mock(playlistStore, 'removeSongs')
+      const emitMock = this.mock(eventBus, 'emit')
+
+      await fireEvent.click(getByText('Remove from Playlist'))
+
+      await waitFor(() => {
+        expect(removeSongsMock).toHaveBeenCalledWith(playlist, songs)
+        expect(emitMock).toHaveBeenCalledWith('PLAYLIST_SONGS_REMOVED', playlist, songs)
+      })
+    })
+
+    it('does not have an option to remove from playlist if not on Playlist screen', async () => {
+      await this.router.activateRoute({
+        path: '/songs',
+        screen: 'Songs'
+      })
+
+      const { queryByText } = await this.renderComponent()
+
+      expect(queryByText('Remove from Playlist')).toBeNull()
     })
 
     it('allows edit songs if current user is admin', async () => {

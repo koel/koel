@@ -69,7 +69,7 @@ import { ref, toRef, watch } from 'vue'
 import { eventBus, pluralize, requireInjection } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useSongList } from '@/composables'
+import { usePlaylistManagement, useSongList } from '@/composables'
 import { MessageToasterKey, RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -105,19 +105,15 @@ const {
   sort
 } = useSongList(ref<Song[]>([]), 'Playlist')
 
+const { removeSongsFromPlaylist } = usePlaylistManagement()
+
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value)
 const download = () => downloadService.fromPlaylist(playlist.value!)
 const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value)
 
-const removeSelected = () => {
-  if (!selectedSongs.value.length || playlist.value!.is_smart) return
-
-  playlistStore.removeSongs(playlist.value!, selectedSongs.value)
-  songs.value = differenceBy(songs.value, selectedSongs.value, 'id')
-  toaster.value.success(`Removed ${pluralize(selectedSongs.value, 'song')} from "${playlist.value!.name}."`)
-}
+const removeSelected = async () => await removeSongsFromPlaylist(playlist.value!, selectedSongs.value)
 
 const fetchSongs = async () => {
   loading.value = true
@@ -136,6 +132,10 @@ watch(playlistId, async (id) => {
 router.onRouteChanged(route => route.screen === 'Playlist' && (playlistId.value = parseInt(route.params!.id)))
 
 eventBus.on({
-  SMART_PLAYLIST_UPDATED: async (updated: Playlist) => updated.id === playlistId.value && await fetchSongs()
+  PLAYLIST_UPDATED: async (updated: Playlist) => updated.id === playlistId.value && await fetchSongs(),
+  PLAYLIST_SONGS_REMOVED: async (playlist: Playlist, removed: Song[]) => {
+    if (playlist.id !== playlistId.value) return
+    songs.value = differenceBy(songs.value, removed, 'id')
+  }
 })
 </script>

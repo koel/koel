@@ -96,7 +96,7 @@ const submit = async () => {
     })
 
     toaster.value.success(`Playlist "${playlist.value.name}" updated.`)
-    eventBus.emit('SMART_PLAYLIST_UPDATED', playlist.value)
+    eventBus.emit('PLAYLIST_UPDATED', playlist.value)
     close()
   } catch (error) {
     dialog.value.error('Something went wrong. Please try again.', 'Error')
