@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\V6\API\AlbumController;
 use App\Http\Controllers\V6\API\AlbumSongController;
+use App\Http\Controllers\V6\API\ArtistAlbumController;
 use App\Http\Controllers\V6\API\ArtistController;
 use App\Http\Controllers\V6\API\ArtistSongController;
 use App\Http\Controllers\V6\API\DataController;
@@ -33,6 +34,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('albums.songs', AlbumSongController::class);
         Route::apiResource('artists', ArtistController::class);
         Route::apiResource('artists.songs', ArtistSongController::class);
+        Route::apiResource('artists.albums', ArtistAlbumController::class);
 
         Route::get('albums/{album}/information', FetchAlbumInformationController::class);
         Route::get('artists/{artist}/information', FetchArtistInformationController::class);

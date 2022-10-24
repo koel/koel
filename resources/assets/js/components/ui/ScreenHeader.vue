@@ -33,6 +33,7 @@ header.screen-header {
 
   display: flex;
   align-items: flex-end;
+  flex-shrink: 0;
   border-bottom: 1px solid var(--color-bg-secondary);
   position: relative;
   align-content: stretch;

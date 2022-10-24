@@ -5,7 +5,6 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { eventBus } from '@/utils'
-import CloseModalBtn from '@/components/ui/BtnCloseModal.vue'
 import ArtistScreen from './ArtistScreen.vue'
 
 let artist: Artist
@@ -35,9 +34,9 @@ new class extends UnitTestCase {
     const rendered = this.render(ArtistScreen, {
       global: {
         stubs: {
-          CloseModalBtn,
           ArtistInfo: this.stub('artist-info'),
-          SongList: this.stub('song-list')
+          SongList: this.stub('song-list'),
+          AlbumCard: this.stub('album-card')
         }
       }
     })
@@ -53,17 +52,6 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('shows and hides info', async () => {
-      const { getByTitle, getByTestId, queryByTestId } = await this.renderComponent()
-      expect(queryByTestId('artist-info')).toBeNull()
-
-      await fireEvent.click(getByTitle('View artist information'))
-      expect(queryByTestId('artist-info')).not.toBeNull()
-
-      await fireEvent.click(getByTestId('close-modal-btn'))
-      expect(queryByTestId('artist-info')).toBeNull()
-    })
-
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromArtist')
       const { getByText } = await this.renderComponent()
@@ -84,6 +72,11 @@ new class extends UnitTestCase {
         expect(byIdMock).toHaveBeenCalledWith(artist.id)
         expect(goMock).toHaveBeenCalledWith('artists')
       })
+    })
+
+    it('shows the song list', async () => {
+      const { getByTestId } = await this.renderComponent()
+      getByTestId('song-list')
     })
   }
 }

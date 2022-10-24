@@ -3,7 +3,7 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, songStore } from '@/stores'
 import { fireEvent } from '@testing-library/vue'
-import { playbackService, mediaInfoService } from '@/services'
+import { mediaInfoService, playbackService } from '@/services'
 import AlbumInfoComponent from './AlbumInfo.vue'
 
 let album: Album
@@ -26,7 +26,8 @@ new class extends UnitTestCase {
       },
       global: {
         stubs: {
-          TrackList: this.stub()
+          TrackList: this.stub(),
+          AlbumThumbnail: this.stub('thumbnail')
         }
       }
     })
@@ -39,10 +40,15 @@ new class extends UnitTestCase {
 
   protected test () {
     it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async (mode) => {
-      const { getByTestId } = await this.renderComponent(mode)
+      const { getByTestId, queryByTestId } = await this.renderComponent(mode)
 
-      getByTestId('album-artist-thumbnail')
       getByTestId('album-info-tracks')
+
+      if (mode === 'aside') {
+        getByTestId('thumbnail')
+      } else {
+        expect(queryByTestId('thumbnail')).toBeNull()
+      }
 
       expect(getByTestId('album-info').classList.contains(mode)).toBe(true)
     })

@@ -16,8 +16,7 @@
   display: flex;
   place-content: center;
   place-items: center;
-  height: 100%;
-  width: 100%;
+  flex: 1;
   text-align: center;
   color: rgba(255, 255, 255, .5);
   position: relative;

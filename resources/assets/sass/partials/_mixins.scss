@@ -5,7 +5,7 @@
 }
 
 @mixin artist-album-wrapper() {
-  display: grid;
+  display: grid !important;
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 
@@ -83,6 +83,15 @@
 
       a {
         border-radius: 3px;
+
+        & + a {
+          &::before {
+            content: '•';
+            margin-right: .2rem;
+            color: var(--color-text-secondary);
+            font-weight: unset;
+          }
+        }
       }
 
       &:hover {
@@ -154,11 +163,14 @@
 }
 
 @mixin artist-album-info() {
+  color: var(--color-text-secondary);
+
   h1 {
     @include vertical-center();
 
     font-weight: var(--font-weight-thin);
     line-height: 2.8rem;
+    margin-bottom: 16px;
 
     &.name {
       font-size: 2rem;
@@ -179,7 +191,7 @@
     }
   }
 
-  .bio {
+  .bio, .wiki {
     margin: 16px 0;
   }
 
@@ -200,10 +212,6 @@
     display: block;
     border-radius: 8px;
     overflow: hidden;
-  }
-
-  .wiki {
-    margin: 16px 0;
   }
 
   footer {
@@ -227,6 +235,10 @@
       max-width: 100%;
       float: left;
       margin: 0 16px 16px 0;
+    }
+
+    .bio, .wiki {
+      margin-top: 0;
     }
 
     h1.name {
