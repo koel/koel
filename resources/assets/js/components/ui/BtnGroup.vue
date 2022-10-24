@@ -6,7 +6,7 @@
 
 <style lang="scss" scoped>
 .btn-group {
-  --radius: 9999px;
+  --radius: 5px;
 
   display: flex;
   position: relative;
