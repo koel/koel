@@ -8,7 +8,7 @@
           <icon :icon="faRotateBack"/>
         </Btn>
         <Btn v-if="canRemove" icon-only title="Remove" transparent unrounded @click="remove">
-          <icon :icon="faTimes"/>
+          <icon :icon="faTrashCan"/>
         </Btn>
       </span>
     </span>
@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import slugify from 'slugify'
-import { faRotateBack, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faRotateBack, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { UploadFile, uploadService } from '@/services'
 
