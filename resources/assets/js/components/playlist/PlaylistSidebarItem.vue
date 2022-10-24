@@ -30,17 +30,18 @@
 <script lang="ts" setup>
 import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
-import { eventBus, pluralize, requireInjection } from '@/utils'
-import { favoriteStore, playlistStore } from '@/stores'
-import { MessageToasterKey, RouterKey } from '@/symbols'
-import { useDraggable, useDroppable } from '@/composables'
+import { eventBus, requireInjection } from '@/utils'
+import { favoriteStore } from '@/stores'
+import { RouterKey } from '@/symbols'
+import { useDraggable, useDroppable, usePlaylistManagement } from '@/composables'
 
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
 
-const toaster = requireInjection(MessageToasterKey)
 const router = requireInjection(RouterKey)
 const droppable = ref(false)
+
+const { addSongsToPlaylist } = usePlaylistManagement()
 
 const props = defineProps<{ list: PlaylistLike }>()
 const { list } = toRefs(props)
@@ -101,8 +102,7 @@ const onDrop = async (event: DragEvent) => {
   if (isFavoriteList(list.value)) {
     await favoriteStore.like(songs)
   } else if (isPlaylist(list.value)) {
-    await playlistStore.addSongs(list.value, songs)
-    toaster.value.success(`Added ${pluralize(songs, 'song')} into "${list.value.name}."`)
+    await addSongsToPlaylist(list.value, songs)
   }
 
   return false
