@@ -58,9 +58,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('songs/favorite', [FavoriteSongController::class, 'index']);
         Route::delete('songs', DeleteSongsController::class);
 
-        Route::apiResource('genres', GenreController::class);
-        Route::get('genres/{genre}/songs', GenreSongController::class);
-        Route::get('genres/{genre}/songs/random', FetchRandomSongsInGenreController::class);
+        Route::get('genres/{genre}/songs', GenreSongController::class)->where('genre', '.*');
+        Route::get('genres/{genre}/songs/random', FetchRandomSongsInGenreController::class)->where('genre', '.*');
+        Route::apiResource('genres', GenreController::class)->where(['genre' => '.*']);
 
         Route::apiResource('users', UserController::class);
 
