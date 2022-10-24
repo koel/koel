@@ -4,9 +4,10 @@
       ref="input"
       v-model="q"
       :class="{ dirty: q }"
+      :placeholder="placeholder"
       autocorrect="false"
       name="q"
-      :placeholder="placeholder"
+      required
       spellcheck="false"
       type="search"
       @focus="maybeGoToSearchScreen"
@@ -44,7 +45,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 const onSubmit = () => {
   eventBus.emit('TOGGLE_SIDEBAR')
-  maybeGoToSearchScreen()
+  router.go('search')
 }
 
 const maybeGoToSearchScreen = () => isMobile.any || router.go('search')
