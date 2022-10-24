@@ -23,6 +23,7 @@ const togglePlayback = (e: KeyboardEvent) => {
     return true
   }
 
+  e.preventDefault()
   playbackService.toggle()
 
   return false
