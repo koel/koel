@@ -135,7 +135,7 @@ class SongTest extends TestCase
             ->assertOk();
 
         /** @var array<array-key, Song>|Collection $songs */
-        $songs = Song::query()->latest()->take(3)->get();
+        $songs = Song::query()->whereIn('id', $originalSongs->pluck('id'))->get();
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.

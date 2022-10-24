@@ -72,8 +72,9 @@ class DownloadTest extends TestCase
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 $retrievedIds = $retrievedSongs->pluck('id')->toArray();
                 $requestedIds = $songs->pluck('id')->toArray();
+                self::assertEqualsCanonicalizing($requestedIds, $retrievedIds);
 
-                return $requestedIds[0] === $retrievedIds[0] && $requestedIds[1] === $retrievedIds[1];
+                return true;
             }))
             ->andReturn($this->mediaPath . '/blank.mp3'); // should be a zip file, but we're testing here…
 

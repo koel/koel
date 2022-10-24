@@ -12,6 +12,7 @@ import albumTrackFactory from '@/__tests__/factory/albumTrackFactory'
 import albumInfoFactory from '@/__tests__/factory/albumInfoFactory'
 import artistInfoFactory from '@/__tests__/factory/artistInfoFactory'
 import youTubeVideoFactory from '@/__tests__/factory/youTubeVideoFactory'
+import genreFactory from '@/__tests__/factory/genreFactory'
 
 export default factory
   .define('artist', faker => artistFactory(faker), artistStates)
@@ -21,6 +22,7 @@ export default factory
   .define('album-info', faker => albumInfoFactory(faker))
   .define('song', faker => songFactory(faker), songStates)
   .define('interaction', faker => interactionFactory(faker))
+  .define('genre', faker => genreFactory(faker))
   .define('video', faker => youTubeVideoFactory(faker))
   .define('smart-playlist-rule', faker => smartPlaylistRuleFactory(faker))
   .define('smart-playlist-rule-group', faker => smartPlaylistRuleGroupFactory(faker))

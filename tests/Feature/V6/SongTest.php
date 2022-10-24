@@ -30,7 +30,7 @@ class SongTest extends TestCase
         'created_at',
     ];
 
-    private const JSON_COLLECTION_STRUCTURE = [
+    public const JSON_COLLECTION_STRUCTURE = [
         'data' => [
             '*' => self::JSON_STRUCTURE,
         ],

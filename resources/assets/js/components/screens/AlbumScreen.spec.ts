@@ -10,7 +10,7 @@ import AlbumScreen from './AlbumScreen.vue'
 let album: Album
 
 new class extends UnitTestCase {
-  protected async renderComponent () {
+  private async renderComponent () {
     commonStore.state.use_last_fm = true
 
     album = factory<Album>('album', {

@@ -18,7 +18,9 @@
     <RecentlyPlayedScreen v-show="screen === 'RecentlyPlayed'"/>
     <UploadScreen v-show="screen === 'Upload'"/>
     <SearchExcerptsScreen v-show="screen === 'Search.Excerpt'"/>
+    <GenreScreen v-show="screen === 'Genre'"/>
 
+    <GenreListScreen v-if="screen === 'Genres'"/>
     <SearchSongResultsScreen v-if="screen === 'Search.Songs'"/>
     <AlbumScreen v-if="screen === 'Album'"/>
     <ArtistScreen v-if="screen === 'Artist'"/>
@@ -41,6 +43,7 @@ import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
 import AlbumListScreen from '@/components/screens/AlbumListScreen.vue'
 import ArtistListScreen from '@/components/screens/ArtistListScreen.vue'
+import GenreListScreen from '@/components/screens/GenreListScreen.vue'
 import AllSongsScreen from '@/components/screens/AllSongsScreen.vue'
 import PlaylistScreen from '@/components/screens/PlaylistScreen.vue'
 import FavoritesScreen from '@/components/screens/FavoritesScreen.vue'
@@ -52,6 +55,7 @@ const UserListScreen = defineAsyncComponent(() => import('@/components/screens/U
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
 const AlbumScreen = defineAsyncComponent(() => import('@/components/screens/AlbumScreen.vue'))
 const ArtistScreen = defineAsyncComponent(() => import('@/components/screens/ArtistScreen.vue'))
+const GenreScreen = defineAsyncComponent(() => import('@/components/screens/GenreScreen.vue'))
 const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/SettingsScreen.vue'))
 const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/ProfileScreen.vue'))
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/YouTubeScreen.vue'))

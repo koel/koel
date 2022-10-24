@@ -47,7 +47,7 @@ const initiatePlayback = async () => {
       break
   }
 
-  await playbackService.queueAndPlay(songs)
+  playbackService.queueAndPlay(songs)
   router.go('queue')
 }
 </script>

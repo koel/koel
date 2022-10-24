@@ -87,7 +87,7 @@ const loading = ref(false)
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 
 const playAll = async (shuffle = true) => {
-  await playbackService.queueAndPlay(songs.value, shuffle)
+  playbackService.queueAndPlay(songs.value, shuffle)
   router.go('queue')
 }
 

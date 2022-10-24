@@ -8,7 +8,13 @@ new class extends UnitTestCase {
   protected test () {
     it('displays the artists', () => {
       overviewStore.state.mostPlayedArtists = factory<Artist>('artist', 6)
-      expect(this.render(MostPlayedArtists).getAllByTestId('artist-card')).toHaveLength(6)
+      expect(this.render(MostPlayedArtists, {
+        global: {
+          stubs: {
+            ArtistCard: this.stub('artist-card')
+          }
+        }
+      }).getAllByTestId('artist-card')).toHaveLength(6)
     })
   }
 }

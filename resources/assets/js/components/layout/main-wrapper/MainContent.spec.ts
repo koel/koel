@@ -10,20 +10,26 @@ import AlbumArtOverlay from '@/components/ui/AlbumArtOverlay.vue'
 import MainContent from './MainContent.vue'
 
 new class extends UnitTestCase {
+  private renderComponent (hasCurrentSong = false) {
+    return this.render(MainContent, {
+      global: {
+        provide: {
+          [CurrentSongKey]: ref(factory<Song>('song'))
+        },
+        stubs: {
+          AlbumArtOverlay,
+          HomeScreen: this.stub(), // so that home overview requests are not made
+          Visualizer: this.stub('visualizer'),
+        },
+      }
+    })
+  }
+
   protected test () {
     it('has a translucent overlay per album', async () => {
       this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/foo.jpg')
 
-      const { getByTestId } = this.render(MainContent, {
-        global: {
-          stubs: {
-            AlbumArtOverlay
-          },
-          provide: {
-            [CurrentSongKey]: ref(factory<Song>('song'))
-          }
-        }
-      })
+      const { getByTestId } = this.renderComponent()
 
       await waitFor(() => getByTestId('album-art-overlay'))
     })
@@ -31,28 +37,13 @@ new class extends UnitTestCase {
     it('does not have a translucent over if configured not so', async () => {
       preferenceStore.state.showAlbumArtOverlay = false
 
-      const { queryByTestId } = this.render(MainContent, {
-        global: {
-          stubs: {
-            AlbumArtOverlay
-          },
-          provide: {
-            [CurrentSongKey]: ref(factory<Song>('song'))
-          }
-        }
-      })
+      const { queryByTestId } = this.renderComponent()
 
       await waitFor(() => expect(queryByTestId('album-art-overlay')).toBeNull())
     })
 
     it('toggles visualizer', async () => {
-      const { getByTestId, queryByTestId } = this.render(MainContent, {
-        global: {
-          stubs: {
-            Visualizer: this.stub('visualizer')
-          }
-        }
-      })
+      const { getByTestId, queryByTestId } = this.renderComponent()
 
       eventBus.emit('TOGGLE_VISUALIZER')
       await waitFor(() => getByTestId('visualizer'))

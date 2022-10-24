@@ -12,6 +12,9 @@ use App\Http\Controllers\V6\API\ExcerptSearchController;
 use App\Http\Controllers\V6\API\FavoriteSongController;
 use App\Http\Controllers\V6\API\FetchAlbumInformationController;
 use App\Http\Controllers\V6\API\FetchArtistInformationController;
+use App\Http\Controllers\V6\API\FetchRandomSongsInGenreController;
+use App\Http\Controllers\V6\API\GenreController;
+use App\Http\Controllers\V6\API\GenreSongController;
 use App\Http\Controllers\V6\API\OverviewController;
 use App\Http\Controllers\V6\API\PlayCountController;
 use App\Http\Controllers\V6\API\PlaylistController;
@@ -54,6 +57,10 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('songs/recently-played', [RecentlyPlayedSongController::class, 'index']);
         Route::get('songs/favorite', [FavoriteSongController::class, 'index']);
         Route::delete('songs', DeleteSongsController::class);
+
+        Route::apiResource('genres', GenreController::class);
+        Route::get('genres/{genre}/songs', GenreSongController::class);
+        Route::get('genres/{genre}/songs/random', FetchRandomSongsInGenreController::class);
 
         Route::apiResource('users', UserController::class);
 
