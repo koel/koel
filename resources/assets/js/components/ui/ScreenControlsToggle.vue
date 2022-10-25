@@ -1,13 +1,13 @@
 <template>
   <label v-if="isMobile.phone" class="text-highlight">
     <input type="checkbox" v-model="value"/>
-    <icon :icon="value ? faAngleUp : faAngleDown" class="toggle"/>
+    <icon :icon="value ? faCaretUp : faCaretDown" class="toggle"/>
     <span>Toggle the song list controls</span>
   </label>
 </template>
 
 <script lang="ts" setup>
-import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
 import { computed } from 'vue'
 
