@@ -1,6 +1,7 @@
 <template>
   <button
     id="extraTabLyrics"
+    v-koel-tooltip.left
     :class="{ active: value === 'Lyrics' }"
     title="Lyrics"
     type="button"
@@ -10,6 +11,7 @@
   </button>
   <button
     id="extraTabArtist"
+    v-koel-tooltip.left
     :class="{ active: value === 'Artist' }"
     title="Artist information"
     type="button"
@@ -19,6 +21,7 @@
   </button>
   <button
     id="extraTabAlbum"
+    v-koel-tooltip.left
     :class="{ active: value === 'Album' }"
     title="Album information"
     type="button"
@@ -28,6 +31,7 @@
   </button>
   <button
     v-if="useYouTube"
+    v-koel-tooltip.left
     id="extraTabYouTube"
     :class="{ active: value === 'YouTube' }"
     title="Related YouTube videos"

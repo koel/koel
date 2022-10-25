@@ -1,23 +1,26 @@
 <template>
   <span id="volume" class="volume" :class="level">
-    <icon
-      v-if="level === 'muted'"
-      :icon="faVolumeMute"
-      fixed-width
+    <span
+      v-show="level === 'muted'"
+      v-koel-tooltip.top
       role="button"
       tabindex="0"
       title="Unmute"
       @click="unmute"
-    />
-    <icon
-      v-else
-      :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh"
-      fixed-width
+    >
+      <icon :icon="faVolumeMute" fixed-width/>
+    </span>
+
+    <span
+      v-show="level !== 'muted'"
+      v-koel-tooltip.top
       role="button"
       tabindex="0"
       title="Mute"
       @click="mute"
-    />
+    >
+      <icon :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh" fixed-width/>
+    </span>
 
     <input
       id="volumeInput"
@@ -75,7 +78,6 @@ eventBus.on('KOEL_READY', () => setLevel(preferences.volume))
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
 
   [type=range] {
     margin: 0 0 0 8px;

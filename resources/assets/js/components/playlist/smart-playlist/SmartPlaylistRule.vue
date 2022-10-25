@@ -1,6 +1,6 @@
 <template>
   <div class="row" data-testid="smart-playlist-rule-row">
-    <Btn class="remove-rule" red @click.prevent="removeRule">
+    <Btn class="remove-rule" red title="Remove this rule" @click.prevent="removeRule">
       <icon :icon="faTrashCan"/>
     </Btn>
 

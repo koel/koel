@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { clickaway, focus } from '@/directives'
+import { clickaway, focus, tooltip } from '@/directives'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { RouterKey } from '@/symbols'
 import { routes } from '@/config'
@@ -11,6 +11,7 @@ createApp(App)
   .component('icon', FontAwesomeIcon)
   .directive('koel-focus', focus)
   .directive('koel-clickaway', clickaway)
+  .directive('koel-tooltip', tooltip)
   /**
    * For Ancelot, the ancient cross of war
    * for the holy town of Gods

@@ -68,6 +68,7 @@
 
       <Btn
         v-if="showDeletePlaylistButton"
+        v-koel-tooltip
         class="del btn-delete-playlist"
         red
         title="Delete this playlist"

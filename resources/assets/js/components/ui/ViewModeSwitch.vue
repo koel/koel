@@ -1,6 +1,7 @@
 <template>
   <span class="view-modes">
     <label
+      v-koel-tooltip
       :class="{ active: value === 'thumbnails' }"
       class="thumbnails"
       data-testid="view-mode-thumbnail"
@@ -12,6 +13,7 @@
     </label>
 
     <label
+      v-koel-tooltip
       :class="{ active: value === 'list' }"
       class="list"
       data-testid="view-mode-list"

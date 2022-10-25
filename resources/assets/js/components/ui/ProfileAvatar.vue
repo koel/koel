@@ -1,5 +1,11 @@
 <template>
-  <a class="view-profile" data-testid="view-profile-link" href="/#/profile" title="View/edit user profile">
+  <a
+    v-koel-tooltip.left
+    class="view-profile"
+    data-testid="view-profile-link"
+    href="/#/profile"
+    title="Profile and preferences"
+  >
     <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar"/>
   </a>
 </template>

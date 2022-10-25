@@ -7,11 +7,11 @@
       </div>
 
       <div class="bottom">
-        <button title="About Koel" type="button" @click.prevent="openAboutKoelModal">
+        <button v-koel-tooltip.left title="About Koel" type="button" @click.prevent="openAboutKoelModal">
           <icon :icon="faInfoCircle"/>
         </button>
 
-        <button title="Log out" type="button" @click.prevent="logout">
+        <button v-koel-tooltip.left title="Log out" type="button" @click.prevent="logout">
           <icon :icon="faArrowRightFromBracket"/>
         </button>
 
