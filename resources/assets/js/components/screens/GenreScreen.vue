@@ -150,5 +150,5 @@ onMounted(() => (name.value = getNameFromRoute()))
 watch(name, async () => name.value && await refresh())
 
 // We can't really tell how/if the genres have been updated, so we just refresh the list
-eventBus.on('SONGS_UPDATED', async () => await refresh())
+eventBus.on('SONGS_UPDATED', async () => genre.value && await refresh())
 </script>
