@@ -1,17 +1,23 @@
 <template>
   <form id="searchForm" role="search" @submit.prevent="onSubmit">
+    <span class="icon">
+      <icon :icon="faSearch"/>
+    </span>
+
     <input
       ref="input"
       v-model="q"
       :class="{ dirty: q }"
+      :placeholder="placeholder"
       autocorrect="false"
       name="q"
-      :placeholder="placeholder"
+      required
       spellcheck="false"
       type="search"
       @focus="maybeGoToSearchScreen"
       @input="onInput"
     >
+
     <button type="submit" title="Search">
       <icon :icon="faSearch"/>
     </button>
@@ -44,7 +50,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 const onSubmit = () => {
   eventBus.emit('TOGGLE_SIDEBAR')
-  maybeGoToSearchScreen()
+  router.go('search')
 }
 
 const maybeGoToSearchScreen = () => isMobile.any || router.go('search')
@@ -62,14 +68,27 @@ eventBus.on({
   display: flex;
   align-items: stretch;
   color: var(--color-text-secondary);
+  background: rgba(0, 0, 0, .2);
   border: 1px solid transparent;
   border-radius: 5px;
-  transition: border .2s ease-in-out;
+  transition: border .3s ease-in-out, .3s background-color ease-in-out;
   overflow: hidden;
+  padding: 0 0 0 1rem;
+  gap: .5rem;
+
+  .icon {
+    display: flex;
+    align-items: center;
+    opacity: .7;
+
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+  }
 
   button {
     display: none;
-    padding: 0 1.5rem;
+    padding: 0 1.2rem;
     background: rgba(255, 255, 255, .05);
     border-radius: 0;
 
@@ -80,20 +99,15 @@ eventBus.on({
 
   &:focus-within {
     border: 1px solid rgba(255, 255, 255, .2);
+    background: rgba(0, 0, 0, .5);
   }
 
   input[type="search"] {
     width: 100%;
     border-radius: 0;
     height: 36px;
-    background: rgba(0, 0, 0, .2);
-    transition: .3s background-color;
-    padding: 0 1rem;
     color: var(--color-text-primary);
-
-    &:focus {
-      background: rgba(0, 0, 0, .5);
-    }
+    background-color: transparent;
 
     &::placeholder {
       color: rgba(255, 255, 255, .5);

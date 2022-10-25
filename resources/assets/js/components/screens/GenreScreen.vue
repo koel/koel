@@ -1,7 +1,7 @@
 <template>
   <section id="genreWrapper">
     <ScreenHeader :layout="headerLayout" v-if="genre">
-      Genre: <span class="text-thin">{{ name }}</span>
+      Genre: <span class="text-thin">{{ decodeURIComponent(name) }}</span>
       <ControlsToggle v-if="songs.length" v-model="showingControls"/>
 
       <template v-slot:thumbnail>
@@ -125,10 +125,7 @@ const refresh = async () => {
   await fetch()
 }
 
-const getNameFromRoute = () => {
-  let param = router.$currentRoute.value.params?.name
-  return param ? decodeURI(param) : null
-}
+const getNameFromRoute = () => router.$currentRoute.value.params?.name || null
 
 router.onRouteChanged(route => {
   if (route.screen !== 'Genre') return

@@ -6,7 +6,10 @@
     <div class="main-scroll-wrap">
       <ul class="genres" v-if="genres">
         <li v-for="genre in genres" :key="genre.name" :class="`level-${getLevel(genre)}`">
-          <a :href="`/#/genres/${genre.name}`" :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`">
+          <a
+            :href="`/#/genres/${encodeURIComponent(genre.name)}`"
+            :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
+          >
             <span class="name">{{ genre.name }}</span>
             <span class="count">{{ genre.song_count }}</span>
           </a>

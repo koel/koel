@@ -10,7 +10,7 @@
             Retry All
           </Btn>
           <Btn data-testid="upload-remove-all-btn" orange @click="removeFailedEntries">
-            <icon :icon="faTimes"/>
+            <icon :icon="faTrashCan"/>
             Remove Failed
           </Btn>
         </BtnGroup>
@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faRotateBack, faTimes, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
+import { faRotateBack, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils'
