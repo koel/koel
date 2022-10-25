@@ -103,7 +103,7 @@ import { findIndex } from 'lodash'
 import isMobile from 'ismobilejs'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
-import { computed, onMounted, Ref, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
 import { useDraggable, useDroppable } from '@/composables'
 import {
@@ -290,6 +290,9 @@ const openContextMenu = async (row: SongRow, event: MouseEvent) => {
   if (!row.selected) {
     clearSelection()
     toggleRow(row)
+
+    // awaiting a next tick so that the selected songs are collected properly
+    await nextTick()
   }
 
   eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, selectedSongs.value)
