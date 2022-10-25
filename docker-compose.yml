@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  php:
+    image: registry.myapi.es/php8.1-dev
+    volumes:
+      - ./:/var/www/web
+  web:
+    image: registry.myapi.es/nginx-fpm
+    volumes:
+      - ./:/var/www/web
+      - ./var/log/nginx:/var/log/nginx
+    depends_on:
+      - php
+  rabbitmq:
+    image: rabbitmq:3-management
+  worker:
+    image: registry.myapi.es/php8.1-dev
+    volumes:
+      - ./:/var/www/web
+    entrypoint: [ "/bin/bash", "-c", "sleep 20 && php /var/www/web/bin/console messenger:consume -vvv async async_priority_low" ]
+    depends_on:
+      - rabbitmq
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data  --console-address ":35449"
+    volumes:
+      - minio-data:/data
+
+volumes:
+  minio-data: { }

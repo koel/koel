@@ -37,7 +37,7 @@ jobs:
       - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
-          build: yarn build --no-progress
+          build: yarn build
           start: php artisan serve --port=8080 --quiet
           wait-on: 'http://localhost:8080'
           quiet: true
