@@ -61,6 +61,14 @@ new class extends UnitTestCase {
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ABOUT_KOEL')
     })
 
+    it('notifies new version', async () => {
+      it('shows new version', () => {
+        commonStore.state.current_version = 'v1.0.0'
+        commonStore.state.latest_version = 'v1.0.1'
+        this.actingAsAdmin().renderComponent().getByTitle('New version available!')
+      })
+    })
+
     it('logs out', async () => {
       const emitMock = this.mock(eventBus, 'emit')
       const { getByTitle } = this.renderComponent()
