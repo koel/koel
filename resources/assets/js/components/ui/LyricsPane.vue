@@ -22,9 +22,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, toRefs, watch } from 'vue'
+import { defineAsyncComponent, onMounted, ref, toRefs, watch } from 'vue'
 import { eventBus } from '@/utils'
 import { useAuthorization } from '@/composables'
+import { preferenceStore as preferences } from '@/stores'
 
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
 
@@ -33,11 +34,22 @@ const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
 const lyricsContainer = ref<HTMLElement>()
-const zoomLevel = ref(0)
+const zoomLevel = ref(preferences.lyricsZoomLevel || 1)
 
 const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
 
-watch(zoomLevel, level => lyricsContainer.value && (lyricsContainer.value.style.fontSize = `${1 + level * 0.2}em`))
+const setFontSize = () => {
+  if (lyricsContainer.value) {
+    lyricsContainer.value.style.fontSize = `${1 + (zoomLevel.value - 1) * 0.2}rem`
+  }
+}
+
+watch(zoomLevel, level => {
+  setFontSize()
+  preferences.lyricsZoomLevel = level
+})
+
+onMounted(() => setFontSize())
 </script>
 
 <style lang="scss" scoped>
