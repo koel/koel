@@ -1,15 +1,11 @@
 <template>
   <div v-koel-focus class="about text-secondary" data-testid="about-modal" tabindex="0" @keydown.esc="close">
-    <header>
-      <h1 class="text-primary">About Koel</h1>
-    </header>
-
     <main>
       <div class="logo">
         <img alt="Koel's logo" src="@/../img/logo.svg" width="128">
       </div>
 
-      <p class="current-version">{{ currentVersion }}</p>
+      <p class="current-version">Koel {{ currentVersion }}</p>
 
       <p v-if="shouldNotifyNewVersion" data-testid="new-version-about">
         <a :href="latestVersionReleaseUrl" target="_blank">
@@ -25,7 +21,7 @@
         href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
       </p>
 
-      <div v-if="isDemo()" class="credit-wrapper" data-testid="demo-credits">
+      <div v-if="credits" class="credit-wrapper" data-testid="demo-credits">
         Music by
         <ul class="credits">
           <li v-for="credit in credits" :key="credit.name">
@@ -33,6 +29,8 @@
           </li>
         </ul>
       </div>
+
+      <SponsorList/>
 
       <p>
         Loving Koel? Please consider supporting its development via
@@ -55,6 +53,7 @@ import { isDemo } from '@/utils'
 import { useNewVersionNotification } from '@/composables'
 import { http } from '@/services'
 
+import SponsorList from '@/components/meta/SponsorList.vue'
 import Btn from '@/components/ui/Btn.vue'
 
 type DemoCredits = {
@@ -62,7 +61,7 @@ type DemoCredits = {
   url: string
 }
 
-const credits = ref<DemoCredits[]>([])
+const credits = ref<DemoCredits[] | null>(null)
 
 const {
   shouldNotifyNewVersion,
@@ -75,7 +74,7 @@ const emit = defineEmits(['close'])
 const close = () => emit('close')
 
 onMounted(async () => {
-  credits.value = isDemo() ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : []
+  credits.value = isDemo() ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : null
 })
 </script>
 
@@ -87,6 +86,7 @@ onMounted(async () => {
   width: 90%;
   border-radius: .6rem;
   overflow: hidden;
+  position: relative;
 
   main {
     padding: 2rem;
@@ -96,22 +96,16 @@ onMounted(async () => {
     }
   }
 
-  header, footer {
+  footer {
     padding: 1rem;
-    background: rgba(255, 255, 255, .05);
-  }
-
-  header {
-    font-size: 1.2rem;
-    border-bottom: 1px solid rgba(255, 255, 255, .1);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, .02);
   }
 
   a {
     color: var(--color-text-primary);
 
     &:hover {
-      color: var(--color-highlight);
+      color: var(--color-accent);
     }
   }
 }
@@ -147,5 +141,9 @@ onMounted(async () => {
       content: ', ';
     }
   }
+}
+
+.sponsors {
+  margin-top: 1rem;
 }
 </style>
