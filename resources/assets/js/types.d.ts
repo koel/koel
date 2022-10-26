@@ -346,7 +346,7 @@ type ArtistAlbumViewMode = 'list' | 'thumbnails'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
-type SongListColumn = 'track' | 'title' | 'album' | 'artist' | 'length'
+type SongListColumn = 'track' | 'thumbnail' | 'title' | 'album' | 'artist' | 'length'
 
 interface SongListConfig {
   sortable: boolean

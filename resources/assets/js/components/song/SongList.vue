@@ -70,12 +70,11 @@
         <icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
       </span>
       <span class="favorite"></span>
-      <span class="play"></span>
     </div>
 
     <VirtualScroller
       v-slot="{ item }"
-      :item-height="35"
+      :item-height="64"
       :items="songRows"
       @scroll="onScroll"
       @scrolled-to-end="$emit('scrolled-to-end')"
@@ -139,7 +138,7 @@ watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected
 const config = computed((): SongListConfig => {
   return Object.assign({
     sortable: true,
-    columns: ['track', 'title', 'artist', 'album', 'length']
+    columns: ['track', 'thumbnail', 'title', 'artist', 'album', 'length']
   }, injectedConfig)
 })
 
@@ -334,8 +333,8 @@ onMounted(() => render())
     white-space: nowrap;
 
     &.time {
-      flex-basis: 96px;
-      padding-right: 24px;
+      flex-basis: 64px;
+      overflow: visible;
     }
 
     &.track-number {
@@ -344,7 +343,7 @@ onMounted(() => render())
     }
 
     &.artist {
-      flex-basis: 23%;
+      flex-basis: 20%;
     }
 
     &.album {
@@ -436,6 +435,11 @@ onMounted(() => render())
       padding: 0;
       vertical-align: bottom;
       color: var(--color-text-primary);
+
+      &.thumbnail {
+        display: block;
+        padding-right: 12px;
+      }
 
       &.artist, &.title {
         display: inline;

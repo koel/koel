@@ -23,6 +23,7 @@
         <span class="text pulse"/>
       </span>
       <span class="title">
+        <span class="thumbnail pulse"/>
         <span class="text pulse"/>
       </span>
       <span class="artist">
@@ -52,7 +53,7 @@
   .song-item {
     display: flex;
     border-bottom: 1px solid var(--color-bg-secondary);
-    height: 35px;
+    height: 64px;
   }
 
   .song-list-header span span, .pulse {
@@ -77,8 +78,18 @@
     padding-left: 24px;
   }
 
+  .thumbnail {
+    display: block;
+    width: 48px;
+    height: 48px;
+    border-radius: 5px;
+  }
+
   .title {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
   .artist {
@@ -91,12 +102,28 @@
 
   .time {
     flex-basis: 96px;
-    padding-right: 24px;
-    text-align: right;
   }
 
   .favorite {
     flex-basis: 36px;
+  }
+
+  @media screen and (max-width: 768px) {
+    span {
+      display: none;
+    }
+
+    .title, .artist {
+      display: flex;
+    }
+
+    .artist .text {
+      width: 100%;
+    }
+
+    .song-list-header, .song-item {
+      padding: 0 16px;
+    }
   }
 }
 </style>

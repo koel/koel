@@ -103,7 +103,7 @@ export const tooltip: Directive = {
   mounted: init,
   updated: init,
 
-  unmounted: (el: ElementWithTooltip, binding) => {
+  beforeUnmount: (el: ElementWithTooltip, binding) => {
     el.$cleanup && el.$cleanup()
     el.$tooltip && document.removeChild(el.$tooltip)
   }
