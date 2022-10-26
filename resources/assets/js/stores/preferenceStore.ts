@@ -14,6 +14,7 @@ interface Preferences extends Record<string, any> {
   transcodeOnMobile: boolean
   supportBarNoBugging: boolean
   showAlbumArtOverlay: boolean
+  lyricsZoomLevel: number | null
   theme?: Theme['id'] | null
 }
 
@@ -35,6 +36,7 @@ const preferenceStore = {
     transcodeOnMobile: false,
     supportBarNoBugging: false,
     showAlbumArtOverlay: true,
+    lyricsZoomLevel: 1,
     theme: null
   }),
 
