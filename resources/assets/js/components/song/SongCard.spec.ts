@@ -20,12 +20,24 @@ new class extends UnitTestCase {
       props: {
         song,
         topPlayCount: 42
+      },
+      global: {
+        stubs: {
+          SongThumbnail: this.stub('thumbnail'),
+          LikeButton: this.stub('like-button')
+        }
       }
     })
   }
 
   protected test () {
-    it('queues and plays', async () => {
+    it('has a thumbnail and a like button', () => {
+      const { getByTestId } = this.renderComponent()
+      getByTestId('thumbnail')
+      getByTestId('like-button')
+    })
+
+    it('queues and plays on double-click', async () => {
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
       const { getByTestId } = this.renderComponent()
@@ -34,19 +46,6 @@ new class extends UnitTestCase {
 
       expect(queueMock).toHaveBeenCalledWith(song)
       expect(playMock).toHaveBeenCalledWith(song)
-    })
-
-    it.each<[PlaybackState, MethodOf<typeof playbackService>]>([
-      ['Stopped', 'play'],
-      ['Playing', 'pause'],
-      ['Paused', 'resume']
-    ])('if state is currently "%s", %ss', async (state: PlaybackState, method: MethodOf<typeof playbackService>) => {
-      const mock = this.mock(playbackService, method)
-      const { getByTestId } = this.renderComponent(state)
-
-      await fireEvent.click(getByTestId('play-control'))
-
-      expect(mock).toHaveBeenCalled()
     })
   }
 }
