@@ -21,11 +21,11 @@
         Made with ❤️ by
         <a href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a>
         and quite a few
-        <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>
-        <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
+        <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;<a
+        href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
       </p>
 
-      <div v-if="isDemo" class="credit-wrapper" data-testid="demo-credits">
+      <div v-if="isDemo()" class="credit-wrapper" data-testid="demo-credits">
         Music by
         <ul class="credits">
           <li v-for="credit in credits" :key="credit.name">
@@ -75,7 +75,7 @@ const emit = defineEmits(['close'])
 const close = () => emit('close')
 
 onMounted(async () => {
-  credits.value = isDemo ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : []
+  credits.value = isDemo() ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : []
 })
 </script>
 

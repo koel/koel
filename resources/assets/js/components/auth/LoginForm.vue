@@ -22,8 +22,8 @@ const DEMO_ACCOUNT = {
 }
 
 const url = ref('')
-const email = ref(isDemo ? DEMO_ACCOUNT.email : '')
-const password = ref(isDemo ? DEMO_ACCOUNT.password : '')
+const email = ref(isDemo() ? DEMO_ACCOUNT.email : '')
+const password = ref(isDemo() ? DEMO_ACCOUNT.password : '')
 const failed = ref(false)
 
 const emit = defineEmits(['loggedin'])

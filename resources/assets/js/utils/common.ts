@@ -40,4 +40,4 @@ export const copyText = (text: string): void => {
   document.execCommand('copy')
 }
 
-export const isDemo = import.meta.env.VITE_KOEL_ENV === 'demo'
+export const isDemo = () => import.meta.env.VITE_KOEL_ENV === 'demo'

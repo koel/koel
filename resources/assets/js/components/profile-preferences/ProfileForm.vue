@@ -79,7 +79,7 @@ const update = async () => {
     throw Error()
   }
 
-  if (isDemo) {
+  if (isDemo()) {
     toaster.value.success('Profile updated.')
     return
   }

@@ -1,6 +1,8 @@
 import { expect, it } from 'vitest'
 import { commonStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { http } from '@/services'
+import { waitFor } from '@testing-library/vue'
 import AboutKoelModel from './AboutKoelModal.vue'
 
 new class extends UnitTestCase {
@@ -15,13 +17,20 @@ new class extends UnitTestCase {
     it('shows new version', () => {
       commonStore.state.current_version = 'v1.0.0'
       commonStore.state.latest_version = 'v1.0.1'
-      this.actingAsAdmin().render(AboutKoelModel).findByTestId('new-version-about')
+      this.actingAsAdmin().render(AboutKoelModel).getByTestId('new-version-about')
     })
 
-    it('shows demo notation', () => {
+    it('shows demo notation', async () => {
+      const getMock = this.mock(http, 'get').mockResolvedValue([])
       // @ts-ignore
       import.meta.env.VITE_KOEL_ENV = 'demo'
-      this.render(AboutKoelModel).findByTestId('demo-credits')
+
+      const { getByTestId } = this.render(AboutKoelModel)
+
+      await waitFor(() => {
+        getByTestId('demo-credits')
+        expect(getMock).toHaveBeenCalledWith('demo/credits')
+      })
     })
   }
 }

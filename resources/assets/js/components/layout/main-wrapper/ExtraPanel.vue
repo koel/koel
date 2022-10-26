@@ -7,8 +7,14 @@
       </div>
 
       <div class="bottom">
-        <button v-koel-tooltip.left title="About Koel" type="button" @click.prevent="openAboutKoelModal">
+        <button
+          v-koel-tooltip.left
+          :title="shouldNotifyNewVersion ? 'New version available!' : 'About Koel'"
+          type="button"
+          @click.prevent="openAboutKoelModal"
+        >
           <icon :icon="faInfoCircle"/>
+          <span v-if="shouldNotifyNewVersion" class="new-version-notification"/>
         </button>
 
         <button v-koel-tooltip.left title="Log out" type="button" @click.prevent="logout">
@@ -70,7 +76,7 @@ import isMobile from 'ismobilejs'
 import { faArrowRightFromBracket, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { defineAsyncComponent, ref, watch } from 'vue'
 import { albumStore, artistStore } from '@/stores'
-import { useAuthorization, useThirdPartyServices } from '@/composables'
+import { useAuthorization, useNewVersionNotification, useThirdPartyServices } from '@/composables'
 import { eventBus, logger, requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
 
@@ -106,6 +112,8 @@ const fetchSongInfo = async (_song: Song) => {
     logger.log('Failed to fetch media information', error)
   }
 }
+
+const { shouldNotifyNewVersion } = useNewVersionNotification()
 
 const openAboutKoelModal = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
 const onProfileLinkClick = () => isMobile.any && (selectedTab.value = undefined)
@@ -187,6 +195,7 @@ const logout = () => eventBus.emit('LOG_OUT')
   }
 
   ::v-deep(button) {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -220,6 +229,16 @@ const logout = () => eventBus.emit('LOG_OUT')
         display: block;
       }
     }
+  }
+
+  .new-version-notification {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--color-highlight);
+    right: 1px;
+    top: 1px;
+    border-radius: 50%;
   }
 }
 </style>
