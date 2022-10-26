@@ -40,4 +40,7 @@ export const copyText = (text: string): void => {
   document.execCommand('copy')
 }
 
-export const isDemo = () => import.meta.env.VITE_KOEL_ENV === 'demo'
+export const isDemo = () => {
+  // can't use one-liner as it would break production build with an "Unexpected token" error
+  return import.meta.env.VITE_KOEL_ENV === 'demo'
+}
