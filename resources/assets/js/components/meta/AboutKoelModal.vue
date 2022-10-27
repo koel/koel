@@ -1,5 +1,5 @@
 <template>
-  <div v-koel-focus class="about text-secondary" data-testid="about-modal" tabindex="0" @keydown.esc="close">
+  <div v-koel-focus class="about text-secondary" data-testid="about-koel" tabindex="0" @keydown.esc="close">
     <main>
       <div class="logo">
         <img alt="Koel's logo" src="@/../img/logo.svg" width="128">
@@ -81,15 +81,12 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .about {
   text-align: center;
-  background: var(--color-bg-primary);
   max-width: 480px;
-  width: 90%;
-  border-radius: .6rem;
   overflow: hidden;
   position: relative;
 
   main {
-    padding: 2rem;
+    padding: 1.8rem;
 
     p {
       margin: 1rem 0;

@@ -254,6 +254,16 @@ label {
   }
 }
 
+.bg- {
+  &primary {
+    background-color: var(--color-bg-primary) !important;
+  }
+
+  &secondary {
+    background-color: var(--color-bg-secondary) !important;
+  }
+}
+
 .d- {
   &block {
     display: block;

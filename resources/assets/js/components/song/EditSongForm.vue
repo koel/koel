@@ -331,9 +331,9 @@ onMounted(async () => await open())
 form {
   max-width: 540px;
 
-  .tabs {
+  > main {
     margin-top: 1.125rem;
-    padding: 0;
+    padding: 0 !important;
   }
 
   > header {
