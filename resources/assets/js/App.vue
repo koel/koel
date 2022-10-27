@@ -3,6 +3,7 @@
   <DialogBox ref="dialog"/>
   <MessageToaster ref="toaster"/>
   <GlobalEventListeners/>
+  <OfflineNotification v-if="offline"/>
 
   <div v-if="authenticated" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
     <Hotkeys/>
@@ -29,10 +30,12 @@ import { eventBus, hideOverlay, requireInjection, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
 import { authService, playbackService, socketListener, socketService, uploadService } from '@/services'
 import { CurrentSongKey, DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
+import { useNetworkStatus } from '@/composables'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
 import Overlay from '@/components/ui/Overlay.vue'
+import OfflineNotification from '@/components/ui/OfflineNotification.vue'
 
 // Do not dynamic-import app footer, as it contains the <audio> element
 // that is necessary to properly initialize the playService and equalizer.
@@ -58,6 +61,8 @@ const toaster = ref<InstanceType<typeof MessageToaster>>()
 const currentSong = ref<Song | null>(null)
 const authenticated = ref(false)
 const showDropZone = ref(false)
+
+const { offline } = useNetworkStatus()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
