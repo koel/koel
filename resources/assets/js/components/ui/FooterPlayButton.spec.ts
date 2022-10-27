@@ -13,7 +13,7 @@ new class extends UnitTestCase {
     return this.render(FooterPlayButton, {
       global: {
         provide: {
-          [CurrentSongKey]: ref(currentSong)
+          [<symbol>CurrentSongKey]: ref(currentSong)
         }
       }
     })
@@ -40,7 +40,7 @@ new class extends UnitTestCase {
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(this.router, 'go')
 
-      this.router.activateRoute({
+      await this.router.activateRoute({
         screen,
         path: '_'
       }, { id: '42' })
@@ -65,7 +65,7 @@ new class extends UnitTestCase {
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(this.router, 'go')
 
-      this.router.activateRoute({
+      await this.router.activateRoute({
         screen,
         path: '_'
       })
@@ -87,7 +87,7 @@ new class extends UnitTestCase {
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(this.router, 'go')
 
-      this.router.activateRoute({
+      await this.router.activateRoute({
         screen,
         path: '_'
       })
@@ -108,7 +108,7 @@ new class extends UnitTestCase {
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(this.router, 'go')
 
-      this.router.activateRoute({
+      await this.router.activateRoute({
         screen: 'Songs',
         path: '_'
       })

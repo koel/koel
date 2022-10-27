@@ -21,7 +21,7 @@ new class extends UnitTestCase {
           ExtraPanelTabHeader: this.stub()
         },
         provide: {
-          [CurrentSongKey]: songRef
+          [<symbol>CurrentSongKey]: songRef
         }
       }
     })
