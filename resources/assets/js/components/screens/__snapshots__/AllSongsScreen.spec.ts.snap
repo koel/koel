@@ -4,15 +4,15 @@ exports[`renders 1`] = `
 <section id="songsWrapper">
   <header class="screen-header expanded" data-v-5691beb5="">
     <aside class="thumbnail-wrapper" data-v-5691beb5="">
-      <div class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-v-55bfc268=""><span data-testid="thumbnail" data-v-55bfc268=""></span></div>
+      <div class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-v-55bfc268="" data-v-5691beb5-s=""><span data-testid="thumbnail" data-v-55bfc268=""></span></div>
     </aside>
     <main data-v-5691beb5="">
       <div class="heading-wrapper" data-v-5691beb5="">
         <h1 class="name" data-v-5691beb5=""> All Songs
           <!--v-if-->
-        </h1><span class="meta text-secondary" data-v-5691beb5=""><span>420 songs</span><span>34:17:36</span></span>
+        </h1><span class="meta text-secondary" data-v-5691beb5=""><span data-v-5691beb5-s="">420 songs</span><span data-v-5691beb5-s="">34:17:36</span></span>
       </div>
-      <div class="song-list-controls" data-testid="song-list-controls" data-v-d396e0d2=""><span class="btn-group" uppercased="" data-v-e884c19a="" data-v-d396e0d2=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-e368fe26="" data-v-d396e0d2=""><br data-testid="icon" icon="[object Object]" fixed-width="" data-v-d396e0d2=""> All </button><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span>
+      <div class="song-list-controls" data-testid="song-list-controls" data-v-d396e0d2="" data-v-5691beb5-s=""><span class="btn-group" uppercased="" data-v-e884c19a="" data-v-d396e0d2=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-e368fe26="" data-v-d396e0d2=""><br data-testid="icon" icon="[object Object]" fixed-width="" data-v-d396e0d2=""> All </button><!--v-if--><!--v-if--><!--v-if--><!--v-if--></span>
         <div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-42061e3e="" data-v-d396e0d2="" style="display: none;">
           <section class="existing-playlists" data-v-42061e3e="">
             <p data-v-42061e3e="">Add 0 songs to</p>

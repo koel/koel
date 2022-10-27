@@ -2,12 +2,12 @@
 
 exports[`renders 1`] = `
 <header class="screen-header expanded" data-v-5691beb5="">
-  <aside class="thumbnail-wrapper" data-v-5691beb5=""><img src="https://placekitten.com/200/300"></aside>
+  <aside class="thumbnail-wrapper" data-v-5691beb5=""><img src="https://placekitten.com/200/300" data-v-5691beb5-s=""></aside>
   <main data-v-5691beb5="">
     <div class="heading-wrapper" data-v-5691beb5="">
-      <h1 class="name" data-v-5691beb5="">This Header</h1><span class="meta text-secondary" data-v-5691beb5=""><p>Some meta</p></span>
+      <h1 class="name" data-v-5691beb5="">This Header</h1><span class="meta text-secondary" data-v-5691beb5=""><p data-v-5691beb5-s="">Some meta</p></span>
     </div>
-    <nav>Some controls</nav>
+    <nav data-v-5691beb5-s="">Some controls</nav>
   </main>
 </header>
 `;
