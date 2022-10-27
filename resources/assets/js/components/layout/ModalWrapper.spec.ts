@@ -32,7 +32,7 @@ new class extends UnitTestCase {
             CreateSmartPlaylistForm: this.stub('create-smart-playlist-form'),
             EditPlaylistForm: this.stub('edit-playlist-form'),
             EditSmartPlaylistForm: this.stub('edit-smart-playlist-form'),
-            AboutKoel: this.stub('about-koel')
+            AboutKoelModal: this.stub('about-koel')
           }
         }
       })
