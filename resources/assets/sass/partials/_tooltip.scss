@@ -25,5 +25,13 @@
     height: 8px;
     transform: rotate(45deg);
   }
+
+  @media (hover: none) {
+    display: none !important;
+  }
+
+  @media screen and (max-width: 768px) {
+    display: none !important;
+  }
 }
 
