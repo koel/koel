@@ -115,7 +115,7 @@ header.screen-header {
       }
     }
 
-    > ::v-deep(* + *) {
+    > :slotted(* + *) {
       margin-left: .2rem;
       display: inline-block;
 

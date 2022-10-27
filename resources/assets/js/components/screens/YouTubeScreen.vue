@@ -61,7 +61,7 @@ eventBus.on('PLAY_YOUTUBE_VIDEO', (payload: { id: string, title: string }) => {
 </script>
 
 <style lang="scss" scoped>
-::v-deep(#player) {
+:deep(#player) {
   height: 100%;
   flex: 1;
   display: flex;

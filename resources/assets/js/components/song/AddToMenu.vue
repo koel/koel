@@ -188,7 +188,7 @@ const createNewPlaylistFromSongs = async () => {
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 10px solid var(--color-bg-secondary);
+    border-bottom: 10px solid var(--color-bg-primary);
     position: absolute;
     top: -7px;
     left: calc(50% - 10px);

@@ -139,7 +139,7 @@ router.onRouteChanged(route => {
     cursor: copy;
   }
 
-  ::v-deep(a) {
+  :deep(a) {
     span {
       pointer-events: none;
     }

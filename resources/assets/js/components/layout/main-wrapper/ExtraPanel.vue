@@ -194,7 +194,7 @@ const logout = () => eventBus.emit('LOG_OUT')
     }
   }
 
-  ::v-deep(button) {
+  :deep(button) {
     position: relative;
     display: flex;
     align-items: center;

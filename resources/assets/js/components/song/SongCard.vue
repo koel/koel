@@ -80,7 +80,7 @@ article {
       opacity: 1;
     }
 
-    ::v-deep(.cover) {
+    :deep(.cover) {
       .control {
         display: flex;
       }
@@ -92,7 +92,7 @@ article {
   }
 
   // show the thumbnail's playback control on the whole card focus and hover
-  &:hover ::v-deep(.cover), &:focus ::v-deep(.cover) {
+  &:hover :deep(.cover), &:focus :deep(.cover) {
     .control {
       display: flex;
     }

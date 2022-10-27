@@ -53,10 +53,14 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
     gap: 0.5rem;
     white-space: nowrap;
 
-    ::v-deep(a:link) {
+    &:deep(a) {
       color: var(--color-text-primary);
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    &:deep(a:hover), &:deep(a:active), &:deep(a:focus) {
+      color: var(--color-accent);
     }
   }
 
@@ -92,7 +96,7 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
     gap: .3rem;
     opacity: .7;
 
-    ::v-deep(a) {
+    :deep(a) {
       & + a {
         &::before {
           content: '•';

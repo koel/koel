@@ -12,7 +12,7 @@
   position: relative;
   flex-wrap: nowrap;
 
-  ::v-deep(button) {
+  :deep(button) {
     &:not(:first-child) {
       border-radius: 0;
     }
@@ -30,7 +30,7 @@
     }
   }
 
-  &[uppercased] ::v-deep(button) {
+  &[uppercased] :deep(button) {
     text-transform: uppercase;
   }
 }

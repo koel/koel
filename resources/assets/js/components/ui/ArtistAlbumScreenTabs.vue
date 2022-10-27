@@ -13,7 +13,7 @@
 </script>
 
 <style lang="scss" scoped>
-::v-deep(.tabs) {
+:deep(.tabs) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -21,7 +21,7 @@
   color: var(--color-text-secondary);
 }
 
-::v-deep(header) {
+:deep(header) {
   display: flex;
   background: rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -53,7 +53,7 @@
   }
 }
 
-::v-deep(main) {
+:deep(main) {
   flex: 1;
   overflow: auto;
 }
