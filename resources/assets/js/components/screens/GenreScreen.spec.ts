@@ -30,8 +30,8 @@ new class extends UnitTestCase {
     })
 
     await waitFor(() => {
-      expect(fetchGenreMock).toHaveBeenCalledWith(genre.name)
-      expect(paginateMock).toHaveBeenCalledWith(genre.name, 'title', 'asc', 1)
+      expect(fetchGenreMock).toHaveBeenCalledWith(genre!.name)
+      expect(paginateMock).toHaveBeenCalledWith(genre!.name, 'title', 'asc', 1)
     })
 
     await this.tick(2)

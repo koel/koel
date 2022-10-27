@@ -39,7 +39,7 @@ import Overlay from '@/components/ui/Overlay.vue'
 import AppFooter from '@/components/layout/app-footer/index.vue'
 
 // GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
-import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
+import { GlobalEventListeners } from '@/components/utils/GlobalEventListeners'
 
 const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
