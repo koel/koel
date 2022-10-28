@@ -88,7 +88,8 @@ export default abstract class UnitTestCase {
         directives: {
           'koel-clickaway': {},
           'koel-focus': {},
-          'koel-tooltip': {}
+          'koel-tooltip': {},
+          'koel-hide-broken-icon': {}
         },
         components: {
           icon: this.stub('icon')

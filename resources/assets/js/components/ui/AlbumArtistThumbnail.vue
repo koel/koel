@@ -1,10 +1,11 @@
 <template>
   <span
     :class="{ droppable }"
-    :style="backgroundStyle"
+    :style="{ backgroundImage: `url(${defaultCover})` }"
     class="cover"
     data-testid="album-artist-thumbnail"
   >
+    <img v-koel-hide-broken-icon :alt="entity.name" :src="image" loading="lazy"/>
     <a
       class="control control-play"
       href
@@ -44,14 +45,10 @@ const user = toRef(userStore.state, 'current')
 const forAlbum = computed(() => entity.value.type === 'albums')
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
 
-const backgroundStyle = computed(() => {
-  const image = forAlbum.value
+const image = computed(() => {
+  return forAlbum.value
     ? (entity.value as Album).cover || defaultCover
     : (entity.value as Artist).image || defaultCover
-
-  return {
-    backgroundImage: `url(${image}), url(${defaultCover})`
-  }
 })
 
 const buttonLabel = computed(() => forAlbum.value
@@ -134,6 +131,16 @@ const onDrop = async (event: DragEvent) => {
   background-position: center center;
   border-radius: 5px;
   overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
 
   &::after {
     content: "";

@@ -20,15 +20,17 @@ new class extends UnitTestCase {
     return this.render(AlbumCard, {
       props: {
         album
+      },
+      global: {
+        stubs: {
+          AlbumArtistThumbnail: this.stub('thumbnail')
+        }
       }
     })
   }
 
   protected test () {
-    it('renders', () => {
-      const { html } = this.renderComponent()
-      expect(html()).toMatchSnapshot()
-    })
+    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('downloads', async () => {
       const mock = this.mock(downloadService, 'fromAlbum')

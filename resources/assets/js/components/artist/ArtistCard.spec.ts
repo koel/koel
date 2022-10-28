@@ -18,25 +18,26 @@ new class extends UnitTestCase {
     })
   }
 
-  protected test () {
-    it('renders', () => {
-      const { html } = this.render(ArtistCard, {
-        props: {
-          artist
+  private renderComponent () {
+    return this.render(ArtistCard, {
+      props: {
+        artist
+      },
+      global: {
+        stubs: {
+          AlbumArtistThumbnail: this.stub('thumbnail')
         }
-      })
-
-      expect(html()).toMatchSnapshot()
+      }
     })
+  }
+
+  protected test () {
+    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('downloads', async () => {
       const mock = this.mock(downloadService, 'fromArtist')
 
-      const { getByTestId } = this.render(ArtistCard, {
-        props: {
-          artist
-        }
-      })
+      const { getByTestId } = this.renderComponent()
 
       await fireEvent.click(getByTestId('download-artist'))
       expect(mock).toHaveBeenCalledOnce()
@@ -45,11 +46,7 @@ new class extends UnitTestCase {
     it('does not have an option to download if downloading is disabled', async () => {
       commonStore.state.allow_download = false
 
-      const { queryByTestId } = this.render(ArtistCard, {
-        props: {
-          artist
-        }
-      })
+      const { queryByTestId } = this.renderComponent()
 
       expect(queryByTestId('download-artist')).toBeNull()
     })
@@ -59,11 +56,7 @@ new class extends UnitTestCase {
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      const { getByTestId } = this.render(ArtistCard, {
-        props: {
-          artist
-        }
-      })
+      const { getByTestId } = this.renderComponent()
 
       await fireEvent.click(getByTestId('shuffle-artist'))
       await this.tick()
