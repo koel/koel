@@ -1,4 +1,3 @@
-/* eslint no-undef: 0 */
 import Sketch from 'sketch-js'
 import { audioService } from '@/services'
 import { random, sample } from 'lodash'
@@ -14,6 +13,8 @@ const SPEED = { MIN: 0.2, MAX: 1.0 }
 const ALPHA = { MIN: 0.8, MAX: 0.9 }
 const SPIN = { MIN: 0.001, MAX: 0.005 }
 const SIZE = { MIN: 0.5, MAX: 1.25 }
+const TWO_PI = Math.PI * 2
+
 const COLORS = [
   '#69D2E7',
   '#1B676B',
@@ -26,47 +27,43 @@ const COLORS = [
   '#E7204E',
   '#0CCABA',
   '#FF006F'
-]
-const TWO_PI = Math.PI * 2
+] as const
+
+type Color = typeof COLORS[number]
 
 class AudioAnalyser {
-  numBands: number
+  bandCount: number
   smoothing: number
   audio: HTMLMediaElement
-  context: AudioContext
-  source: any
-  jsNode: any
-  analyser: any
+  source: MediaElementAudioSourceNode
+  analyser: AnalyserNode
   bands: Uint8Array
-  onUpdate: any
+  onUpdate: Closure
 
-  constructor (numBands = 256, smoothing = 0.3) {
-    this.numBands = numBands
+  constructor (bandCount: number, smoothing: number, onUpdate: (bands: Uint8Array) => void) {
+    this.bandCount = bandCount
     this.smoothing = smoothing
+    this.onUpdate = onUpdate
 
     this.audio = audioService.getElement()
-    this.context = audioService.getContext()
     this.source = audioService.getSource()
-    this.jsNode = this.context.createScriptProcessor(2048, 1, 1)
 
-    this.analyser = this.context.createAnalyser()
+    this.analyser = audioService.getContext().createAnalyser()
     this.analyser.smoothingTimeConstant = this.smoothing
-    this.analyser.fftSize = this.numBands * 2
+    this.analyser.fftSize = this.bandCount * 2
 
     this.bands = new Uint8Array(this.analyser.frequencyBinCount)
 
     this.source.connect(this.analyser)
-    this.analyser.connect(this.jsNode)
+    this.update()
+  }
 
-    this.jsNode.connect(this.context.destination)
-    this.source.connect(this.context.destination)
+  update () {
+    requestAnimationFrame(this.update.bind(this))
 
-    this.jsNode.onaudioprocess = () => {
+    if (!this.audio.paused) {
       this.analyser.getByteFrequencyData(this.bands)
-
-      if (!this.audio.paused) {
-        return typeof this.onUpdate === 'function' ? this.onUpdate(this.bands) : undefined
-      }
+      this.onUpdate?.(this.bands)
     }
   }
 }
@@ -74,33 +71,33 @@ class AudioAnalyser {
 class Particle {
   x: number
   y: number
-  level: any
-  scale: any
-  alpha: any
-  speed: any
-  color: any
-  size: any
-  spin: any
-  band: any
-  smoothedScale: number = 0
-  smoothedAlpha: number = 0
-  decayScale: number = 0
-  decayAlpha: number = 0
-  rotation: any = 0
-  energy: number = 0
+  level = 0
+  scale = 0
+  alpha = 0
+  speed = 0
+  color: Color = COLORS[0]
+  size = 0
+  spin = 0
+  band = 0
+  smoothedScale = 0
+  smoothedAlpha = 0
+  decayScale = 0
+  decayAlpha = 0
+  rotation = 0
+  energy = 0
 
-  constructor (x = 0, y = 0) {
+  constructor (x: number, y: number) {
     this.x = x
     this.y = y
     this.reset()
   }
 
-  reset (): number {
+  reset () {
     this.level = 1 + Math.floor(random(4))
     this.scale = random(SCALE.MIN, SCALE.MAX)
     this.alpha = random(ALPHA.MIN, ALPHA.MAX)
     this.speed = random(SPEED.MIN, SPEED.MAX)
-    this.color = sample(COLORS)
+    this.color = sample(COLORS)!
     this.size = random(SIZE.MIN, SIZE.MAX)
     this.spin = random(SPIN.MAX, SPIN.MAX)
     this.band = Math.floor(random(NUM_BANDS))
@@ -114,19 +111,15 @@ class Particle {
     this.decayScale = 0.0
     this.decayAlpha = 0.0
     this.rotation = random(TWO_PI)
-    this.energy = 0.0
-
-    return this.energy
+    this.energy = random(this.band / 256)
   }
 
-  move (): number {
+  move () {
     this.rotation += this.spin
     this.y -= this.speed * this.level
-
-    return this.y
   }
 
-  draw (ctx: any) {
+  draw (ctx: CanvasRenderingContext2D) {
     const power = Math.exp(this.energy)
     const scale = this.scale * power
     const alpha = this.alpha * this.energy * 2
@@ -152,38 +145,31 @@ class Particle {
     ctx.globalAlpha = this.smoothedAlpha / this.level
     ctx.strokeStyle = this.color
     ctx.stroke()
-
-    return ctx.restore()
+    ctx.restore()
   }
 }
 
 export default (container: HTMLElement) => {
+  const particles: Particle[] = []
+
   Sketch.create({
     container,
-    particles: [],
-    setup () {
-      // generate some particles
-      for (let i = 0; i < NUM_PARTICLES; i++) {
-        const particle = new Particle(random(this.width), random(this.height))
-        particle.energy = random(particle.band / 256)
 
-        this.particles.push(particle)
+    setup () {
+      for (let i = 0; i < NUM_PARTICLES; ++i) {
+        particles.push(new Particle(random(this.width), random(this.height)))
       }
 
-      const analyser = new AudioAnalyser(NUM_BANDS, SMOOTHING)
-
-      // update particles based on fft transformed audio frequencies
-      analyser.onUpdate = (bands: Uint8Array) => this.particles.map((particle: Particle): Particle => {
-        particle.energy = bands[particle.band] / 256
-
-        return particle
+      new AudioAnalyser(NUM_BANDS, SMOOTHING, bands => {
+        // update particles based on fft transformed audio frequencies
+        particles.forEach(particle => (particle.energy = bands[particle.band] / 256))
       })
     },
 
     draw () {
       this.globalCompositeOperation = 'lighter'
 
-      return this.particles.map((particle: Particle) => {
+      particles.map(particle => {
         if (particle.y < (-particle.size * particle.level * particle.scale * 2)) {
           particle.reset()
           particle.x = random(this.width)
@@ -191,8 +177,7 @@ export default (container: HTMLElement) => {
         }
 
         particle.move()
-
-        return particle.draw(this)
+        particle.draw(this as CanvasRenderingContext2D)
       })
     }
   })
