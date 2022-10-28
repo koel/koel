@@ -63,7 +63,7 @@ class AudioAnalyser {
 
     if (!this.audio.paused) {
       this.analyser.getByteFrequencyData(this.bands)
-      this.onUpdate?.(this.bands)
+      this.onUpdate(this.bands)
     }
   }
 }
