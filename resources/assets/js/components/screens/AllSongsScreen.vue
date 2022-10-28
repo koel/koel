@@ -36,7 +36,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { logger, pluralize, requireInjection, secondsToHis } from '@/utils'
+import { logger, pluralize, requireInjection, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useScreen, useSongList } from '@/composables'
@@ -46,7 +46,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const totalSongCount = toRef(commonStore.state, 'song_count')
-const totalDuration = computed(() => secondsToHis(commonStore.state.song_length))
+const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.song_length))
 
 const {
   SongList,

@@ -42,7 +42,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { faTags } from '@fortawesome/free-solid-svg-icons'
-import { eventBus, logger, pluralize, requireInjection, secondsToHis } from '@/utils'
+import { eventBus, logger, pluralize, requireInjection, secondsToHumanReadable } from '@/utils'
 import { DialogBoxKey, RouterKey } from '@/symbols'
 import { useSongList } from '@/composables'
 import { genreStore, songStore } from '@/stores'
@@ -83,7 +83,7 @@ const page = ref<number | null>(1)
 
 const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
-const duration = computed(() => secondsToHis(genre.value?.length ?? 0))
+const duration = computed(() => secondsToHumanReadable(genre.value?.length ?? 0))
 
 const sort = async (field: SongListSortField, order: SortOrder) => {
   page.value = 1

@@ -2,7 +2,7 @@ import isMobile from 'ismobilejs'
 import slugify from 'slugify'
 import { merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
 import { reactive, UnwrapNestedRefs, watch } from 'vue'
-import { arrayify, logger, secondsToHis, use } from '@/utils'
+import { arrayify, logger, secondsToHumanReadable, use } from '@/utils'
 import { authService, cache, http } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, playlistStore, preferenceStore } from '@/stores'
 
@@ -35,7 +35,7 @@ export const songStore = {
     songs: [] as Song[]
   }),
 
-  getFormattedLength: (songs: Song | Song[]) => secondsToHis(sumBy(arrayify(songs), 'length')),
+  getFormattedLength: (songs: Song | Song[]) => secondsToHumanReadable(sumBy(arrayify(songs), 'length')),
 
   byId (id: string) {
     const song = this.vault.get(id)

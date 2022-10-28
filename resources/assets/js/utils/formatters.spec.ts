@@ -1,6 +1,14 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import { br2nl, parseValidationError, pluralize, secondsToHis, ServerValidationError, slugToTitle } from './formatters'
+import {
+  br2nl,
+  parseValidationError,
+  pluralize,
+  secondsToHis,
+  secondsToHumanReadable,
+  ServerValidationError,
+  slugToTitle
+} from './formatters'
 
 new class extends UnitTestCase {
   protected test () {
@@ -12,6 +20,17 @@ new class extends UnitTestCase {
       [7547, '02:05:47'],
       [137241, '38:07:21']
     ])('formats %d seconds to H:i:s', (seconds, formatted) => expect(secondsToHis(seconds)).toBe(formatted))
+
+    it.each([
+      [0, '0 sec'],
+      [59, '59 sec'],
+      [60, '1 min'],
+      [125, '2 min 5 sec'],
+      [7547, '2 hr 5 min'],
+      [137241, '38 hr 7 min']
+    ])('formats %d seconds to human readable', (seconds, formatted) => {
+      expect(secondsToHumanReadable(seconds)).toBe(formatted)
+    })
 
     it('parses validation error', () => {
       const error: ServerValidationError = {
@@ -57,7 +76,7 @@ new class extends UnitTestCase {
     it.each([
       [['foo'], 'cat', 'cat'],
       [['foo', 'bar'], 'cat', 'cats'],
-      [[], 'cat', 'cats'],
+      [[], 'cat', 'cats']
     ])(
       'pluralizes with array parameters',
       (arr, noun, plural) => expect(pluralize(arr, noun)).toEqual(`${arr.length} ${plural}`)

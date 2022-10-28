@@ -42,7 +42,7 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus, requireInjection, secondsToHis } from '@/utils'
+import { eventBus, requireInjection, secondsToHumanReadable } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useDraggable } from '@/composables'
@@ -59,7 +59,7 @@ const { album, layout } = toRefs(props)
 
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const duration = computed(() => secondsToHis(album.value.length))
+const duration = computed(() => secondsToHumanReadable(album.value.length))
 const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_id))
 const showing = computed(() => !albumStore.isUnknown(album.value))
 
