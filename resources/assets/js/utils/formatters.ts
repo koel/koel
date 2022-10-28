@@ -1,20 +1,50 @@
 /**
- * Convert a duration in seconds into H:i:s format.
- * If H is 0, it will be omitted.
+ * Convert a duration in seconds into a human-readable format i.e. "x hr y min z sec".
+ * Only show hours if the duration is longer than an hour.
+ * Also, only show seconds if the duration is less than an hour.
  */
-export const secondsToHis = (d: number) => {
-  d = ~~d
+export const secondsToHumanReadable = (total: number) => {
+  total = Math.round(total)
 
-  const s = d % 60
-  const sString = s < 10 ? `0${s}` : String(s)
+  const hours = Math.floor(total / 3600)
+  const minutes = Math.floor((total - hours * 3600) / 60)
+  const seconds = total - hours * 3600 - minutes * 60
 
-  const i = Math.floor((d / 60) % 60)
-  const iString = i < 10 ? `0${i}` : String(i)
+  const parts: string[] = []
 
-  const h = Math.floor(d / 3600)
-  const hString = h < 10 ? `0${h}` : String(h)
+  if (hours > 0) {
+    parts.push(`${hours} hr`)
+  }
 
-  return (hString === '00' ? '' : `${hString}:`) + iString + ':' + sString
+  if (minutes > 0) {
+    parts.push(`${minutes} min`)
+  }
+
+  if (seconds > 0 && hours < 1) {
+    parts.push(`${seconds} sec`)
+  }
+
+  return parts.join(' ') || '0 sec'
+}
+
+/**
+ * Convert a duration in seconds into H:i:s format.
+ * Only show hours if the duration is longer than an hour.
+ */
+export const secondsToHis = (total: number) => {
+  total = Math.round(total)
+  const parts: string[] = []
+
+  const hours = Math.floor(total / 3600)
+
+  if (hours > 0) {
+    parts.push(hours.toString().padStart(2, '0'))
+  }
+
+  parts.push((Math.floor((total / 60) % 60)).toString().padStart(2, '0'))
+  parts.push((total % 60).toString().padStart(2, '0'))
+
+  return parts.join(':')
 }
 
 export type ServerValidationError = {

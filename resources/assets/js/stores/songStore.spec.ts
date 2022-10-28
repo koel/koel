@@ -34,11 +34,11 @@ new class extends UnitTestCase {
     })
 
     it('gets formatted length', () => {
-      expect(songStore.getFormattedLength(factory<Song>('song', { length: 123 }))).toBe('02:03')
+      expect(songStore.getFormattedLength(factory<Song>('song', { length: 123 }))).toBe('2 min 3 sec')
       expect(songStore.getFormattedLength([
         factory<Song>('song', { length: 122 }),
         factory<Song>('song', { length: 123 })
-      ])).toBe('04:05')
+      ])).toBe('4 min 5 sec')
     })
 
     it('gets songs by album', () => {
