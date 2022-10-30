@@ -1,5 +1,4 @@
 export type EventName =
-  'KOEL_READY'
   | 'LOG_OUT'
   | 'TOGGLE_SIDEBAR'
   | 'SHOW_OVERLAY'

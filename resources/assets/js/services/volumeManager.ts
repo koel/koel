@@ -1,7 +1,5 @@
 import { ref } from 'vue'
-import { preferenceStore as preferences } from '@/stores'
-
-const DEFAULT_VOLUME_VALUE = 7
+import { preferenceStore } from '@/stores'
 
 export class VolumeManager {
   private input!: HTMLInputElement
@@ -9,20 +7,20 @@ export class VolumeManager {
 
   public init (input: HTMLInputElement) {
     this.input = input
-    this.set(preferences.volume || DEFAULT_VOLUME_VALUE)
-  }
-
-  public set (volume: number, persist = true) {
-    if (persist) {
-      preferences.volume = volume
-    }
-
-    this.volume.value = volume
-    this.input.value = String(volume)
+    this.set(preferenceStore.state.volume)
   }
 
   public get () {
     return this.volume.value
+  }
+
+  public set (volume: number, persist = true) {
+    if (persist) {
+      preferenceStore.state.volume = volume
+    }
+
+    this.volume.value = volume
+    this.input.value = String(volume)
   }
 
   public mute () {
@@ -30,7 +28,7 @@ export class VolumeManager {
   }
 
   public unmute () {
-    this.set(preferences.volume || DEFAULT_VOLUME_VALUE)
+    this.set(preferenceStore.state.volume)
   }
 }
 
