@@ -16,31 +16,26 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { computed, ref, toRef } from 'vue'
-import { eventBus } from '@/utils'
+import { ref, watch } from 'vue'
 import { preferenceStore } from '@/stores'
 
-const delayUntilShow = 30 * 60 * 1000
-let timeoutHandle = 0
+const delayUntilShow = 30 * 60 * 1000 // 30 minutes
 
 const shown = ref(false)
-const noBugging = toRef(preferenceStore.state, 'supportBarNoBugging')
 
-const canNag = computed(() => !isMobile.any && !noBugging.value)
-
-const setUpShowBarTimeout = () => (timeoutHandle = window.setTimeout(() => (shown.value = true), delayUntilShow))
-
-const close = () => {
-  shown.value = false
-  window.clearTimeout(timeoutHandle)
-}
+const setUpShowBarTimeout = () => setTimeout(() => (shown.value = true), delayUntilShow)
+const close = () => shown.value = false
 
 const stopBugging = () => {
   preferenceStore.set('supportBarNoBugging', true)
   close()
 }
 
-eventBus.on('KOEL_READY', () => canNag.value && setUpShowBarTimeout())
+watch(preferenceStore.initialized, initialized => {
+  if (!initialized) return
+  if (preferenceStore.state.supportBarNoBugging || isMobile.any) return
+  setUpShowBarTimeout()
+}, { immediate: true })
 </script>
 
 <style lang="scss" scoped>

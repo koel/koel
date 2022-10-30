@@ -26,9 +26,9 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, onMounted, provide, ref, watch } from 'vue'
-import { eventBus, hideOverlay, requireInjection, showOverlay } from '@/utils'
+import { hideOverlay, requireInjection, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
-import { authService, playbackService, socketListener, socketService, uploadService } from '@/services'
+import { authService, socketListener, socketService, uploadService } from '@/services'
 import { CurrentSongKey, DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
 import { useNetworkStatus } from '@/composables'
 
@@ -97,7 +97,6 @@ const init = async () => {
     await commonStore.init()
     await nextTick()
 
-    playbackService.init()
     await requestNotificationPermission()
 
     window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
@@ -110,9 +109,6 @@ const init = async () => {
     await socketService.init() && socketListener.listen()
 
     hideOverlay()
-
-    // Let all other components know we're ready.
-    eventBus.emit('KOEL_READY')
   } catch (err) {
     authenticated.value = false
     throw err
@@ -125,7 +121,7 @@ const onDragOver = (e: DragEvent) => {
   showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && router.$currentRoute.value.screen !== 'Upload'
 }
 
-watch(() => queueStore.current, song => (currentSong.value = song))
+watch(() => queueStore.current, song => song && (currentSong.value = song))
 
 const onDragEnd = () => (showDropZone.value = false)
 const onDrop = () => (showDropZone.value = false)

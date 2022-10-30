@@ -38,30 +38,20 @@
 
 <script lang="ts" setup>
 import { faVolumeHigh, faVolumeLow, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
-import { ref } from 'vue'
-import { playbackService, socketService } from '@/services'
-import { preferenceStore as preferences } from '@/stores'
-import { eventBus } from '@/utils'
+import { computed } from 'vue'
+import { socketService, volumeManager } from '@/services'
 
-const level = ref<'muted' | 'discreet' | 'loud'>()
+const volume = volumeManager.volume
 
-const mute = () => {
-  playbackService.mute()
-  level.value = 'muted'
-}
+const level = computed(() => {
+  if (volume.value === 0) return 'muted'
+  if (volume.value < 3) return 'discreet'
+  return 'loud'
+})
 
-const unmute = () => {
-  playbackService.unmute()
-  level.value = preferences.volume < 3 ? 'discreet' : 'loud'
-}
-
-const setVolume = (e: InputEvent) => {
-  const volume = parseFloat((e.target as HTMLInputElement).value)
-  playbackService.setVolume(volume)
-  setLevel(volume)
-}
-
-const setLevel = (volume: number) => (level.value = volume === 0 ? 'muted' : volume < 3 ? 'discreet' : 'loud')
+const mute = () => volumeManager.mute()
+const unmute = () => volumeManager.unmute()
+const setVolume = (e: InputEvent) => volumeManager.set(parseFloat((e.target as HTMLInputElement).value))
 
 /**
  * Broadcast the volume changed event to remote controller.
@@ -69,8 +59,6 @@ const setLevel = (volume: number) => (level.value = volume === 0 ? 'muted' : vol
 const broadcastVolume = (e: InputEvent) => {
   socketService.broadcast('SOCKET_VOLUME_CHANGED', parseFloat((e.target as HTMLInputElement).value))
 }
-
-eventBus.on('KOEL_READY', () => setLevel(preferences.volume))
 </script>
 
 <style lang="scss">

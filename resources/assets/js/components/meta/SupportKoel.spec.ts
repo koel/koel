@@ -1,13 +1,12 @@
 import { expect, it, vi } from 'vitest'
 import { fireEvent } from '@testing-library/vue'
-import { eventBus } from '@/utils'
 import { preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SupportKoel from './SupportKoel.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => vi.useFakeTimers());
+    super.beforeEach(() => vi.useFakeTimers())
   }
 
   protected afterEach () {
@@ -18,13 +17,13 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    const result = this.render(SupportKoel)
-    eventBus.emit('KOEL_READY')
+    preferenceStore.initialized.value = true
+    const rendered = this.render(SupportKoel)
 
     vi.advanceTimersByTime(30 * 60 * 1000)
     await this.tick()
 
-    return result
+    return rendered
   }
 
   protected test () {
@@ -34,6 +33,7 @@ new class extends UnitTestCase {
 
     it('does not show if user so demands', async () => {
       preferenceStore.state.supportBarNoBugging = true
+      preferenceStore.initialized.value = true
       expect((await this.renderComponent()).queryByTestId('support-bar')).toBeNull()
     })
 

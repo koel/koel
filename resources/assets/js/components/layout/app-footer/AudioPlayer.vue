@@ -7,7 +7,9 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+//
+</script>
 
 <style lang="scss">
 // can't be scoped as it would be overridden by the plyr css

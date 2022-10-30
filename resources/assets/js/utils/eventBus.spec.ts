@@ -10,18 +10,18 @@ new class extends UnitTestCase {
   protected test () {
     it('listens on a single event', () => {
       const mock = vi.fn()
-      eventBus.on('KOEL_READY', mock)
+      eventBus.on('SHOW_OVERLAY', mock)
 
-      eventBus.emit('KOEL_READY')
+      eventBus.emit('SHOW_OVERLAY')
 
       expect(mock).toHaveBeenCalledOnce()
     })
 
     it('listens with parameters', () => {
       const mock = vi.fn()
-      eventBus.on('KOEL_READY', mock)
+      eventBus.on('SHOW_OVERLAY', mock)
 
-      eventBus.emit('KOEL_READY', 'foo', 'bar')
+      eventBus.emit('SHOW_OVERLAY', 'foo', 'bar')
 
       expect(mock).toHaveBeenNthCalledWith(1, 'foo', 'bar')
     })
@@ -31,11 +31,11 @@ new class extends UnitTestCase {
       const mock2 = vi.fn()
 
       eventBus.on({
-        KOEL_READY: mock1,
+        SHOW_OVERLAY: mock1,
         MODAL_SHOW_ABOUT_KOEL: mock2
       })
 
-      eventBus.emit('KOEL_READY')
+      eventBus.emit('SHOW_OVERLAY')
       expect(mock1).toHaveBeenCalledOnce()
 
       eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
@@ -45,10 +45,10 @@ new class extends UnitTestCase {
     it('queue up listeners on same event', () => {
       const mock1 = vi.fn()
       const mock2 = vi.fn()
-      eventBus.on('KOEL_READY', mock1)
-      eventBus.on('KOEL_READY', mock2)
+      eventBus.on('SHOW_OVERLAY', mock1)
+      eventBus.on('SHOW_OVERLAY', mock2)
 
-      eventBus.emit('KOEL_READY')
+      eventBus.emit('SHOW_OVERLAY')
 
       expect(mock1).toHaveBeenCalledOnce()
       expect(mock2).toHaveBeenCalledOnce()
