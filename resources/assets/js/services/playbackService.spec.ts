@@ -23,14 +23,6 @@ new class extends UnitTestCase {
   <div class="plyr">
     <audio crossorigin="anonymous" controls/>
   </div>
-  <input
-    class="plyr__volume"
-    id="volumeRange"
-    max="10"
-    step="0.1"
-    title="Volume"
-    type="range"
-  >
   `
 
     window.AudioContext = vi.fn().mockImplementation(() => ({
@@ -55,10 +47,10 @@ new class extends UnitTestCase {
     it('only initializes once', () => {
       const spy = vi.spyOn(plyr, 'setup')
 
-      playbackService.init()
+      playbackService.init(document.querySelector('.plyr')!)
       expect(spy).toHaveBeenCalled()
 
-      playbackService.init()
+      playbackService.init(document.querySelector('.plyr')!)
       expect(spy).toHaveBeenCalledTimes(1)
     })
 
@@ -76,7 +68,7 @@ new class extends UnitTestCase {
         }))
 
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
-        playbackService.init()
+        playbackService.init(document.querySelector('.plyr')!)
 
         const mediaElement = playbackService.player.media
 
@@ -91,7 +83,7 @@ new class extends UnitTestCase {
       })
 
     it('plays next song if current song is errored', () => {
-      playbackService.init()
+      playbackService.init(document.querySelector('.plyr')!)
       const playNextMock = this.mock(playbackService, 'playNext')
       playbackService.player!.media.dispatchEvent(new Event('error'))
       expect(playNextMock).toHaveBeenCalled()
@@ -105,7 +97,7 @@ new class extends UnitTestCase {
         }
       }))
 
-      playbackService.init()
+      playbackService.init(document.querySelector('.plyr')!)
       const scrobbleMock = this.mock(songStore, 'scrobble')
       playbackService.player!.media.dispatchEvent(new Event('ended'))
       expect(scrobbleMock).toHaveBeenCalled()
@@ -116,7 +108,7 @@ new class extends UnitTestCase {
       (repeatMode, restartCalls, playNextCalls) => {
         commonStore.state.use_last_fm = false // so that no scrobbling is made unnecessarily
         preferences.repeatMode = repeatMode
-        playbackService.init()
+        playbackService.init(document.querySelector('.plyr')!)
         const restartMock = this.mock(playbackService, 'restart')
         const playNextMock = this.mock(playbackService, 'playNext')
 
@@ -138,7 +130,7 @@ new class extends UnitTestCase {
 
         this.setReadOnlyProperty(queueStore, 'next', factory<Song>('song', { preloaded }))
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
-        playbackService.init()
+        playbackService.init(document.querySelector('.plyr')!)
 
         const mediaElement = playbackService.player!.media
 
@@ -297,7 +289,7 @@ new class extends UnitTestCase {
       const playMock = this.mock(window.HTMLMediaElement.prototype, 'play')
       const broadcastMock = this.mock(socketService, 'broadcast')
 
-      playbackService.init()
+      playbackService.init(document.querySelector('.plyr')!)
       await playbackService.resume()
 
       expect(queueStore.current?.playback_state).toEqual('Playing')

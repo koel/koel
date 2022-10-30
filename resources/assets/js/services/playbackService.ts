@@ -1,5 +1,6 @@
 import isMobile from 'ismobilejs'
 import plyr from 'plyr'
+import { watch } from 'vue'
 import { shuffle, throttle } from 'lodash'
 
 import {
@@ -11,49 +12,30 @@ import {
   userStore
 } from '@/stores'
 
-import { arrayify, eventBus, isAudioContextSupported, logger } from '@/utils'
-import { audioService, socketService } from '@/services'
+import { arrayify, isAudioContextSupported, logger } from '@/utils'
+import { audioService, socketService, volumeManager } from '@/services'
 
 /**
  * The number of seconds before the current song ends to start preload the next one.
  */
 const PRELOAD_BUFFER = 30
-const DEFAULT_VOLUME_VALUE = 7
-const VOLUME_INPUT_SELECTOR = '#volumeInput'
 
 class PlaybackService {
-  // @ts-ignore
-  public player: Plyr
-  // @ts-ignore
-  private volumeInput: HTMLInputElement
+  public player!: Plyr
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private initialized = false
 
-  public init () {
-    if (this.initialized) {
-      return
-    }
+  public init (plyrWrapper: HTMLElement) {
+    if (this.initialized) return
+
+    this.player = plyr.setup(plyrWrapper, { controls: [] })[0]
+
+    this.listenToMediaEvents(this.player.media)
+    this.setMediaSessionActionHandlers()
+
+    watch(volumeManager.volume, volume => this.player.setVolume(volume), { immediate: true })
 
     this.initialized = true
-
-    this.player = plyr.setup('.plyr', {
-      controls: []
-    })[0]
-
-    this.volumeInput = document.querySelector<HTMLInputElement>(VOLUME_INPUT_SELECTOR)!
-    this.listenToMediaEvents(this.player.media)
-
-    if (isAudioContextSupported) {
-      try {
-        this.setVolume(preferences.volume)
-      } catch (e) {
-      }
-
-      audioService.init(this.player.media)
-      eventBus.emit('INIT_EQUALIZER')
-    }
-
-    this.setMediaSessionActionHandlers()
   }
 
   public registerPlay (song: Song) {
@@ -245,29 +227,6 @@ class PlaybackService {
     }
   }
 
-  public getVolume () {
-    return preferences.volume
-  }
-
-  /**
-   * @param {Number}     volume   0-10
-   * @param {Boolean=true}   persist  Whether the volume should be saved into local storage
-   */
-  public setVolume (volume: number, persist = true) {
-    this.player.setVolume(volume)
-    persist && (preferences.volume = volume)
-    this.volumeInput.value = String(volume)
-  }
-
-  public mute () {
-    this.setVolume(0, false)
-  }
-
-  public unmute () {
-    preferences.volume = preferences.volume || DEFAULT_VOLUME_VALUE
-    this.setVolume(preferences.volume)
-  }
-
   public async stop () {
     document.title = 'Koel'
     this.player.pause()
@@ -344,10 +303,10 @@ class PlaybackService {
     navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
   }
 
-  private listenToMediaEvents (mediaElement: HTMLMediaElement) {
-    mediaElement.addEventListener('error', () => this.playNext(), true)
+  private listenToMediaEvents (media: HTMLMediaElement) {
+    media.addEventListener('error', () => this.playNext(), true)
 
-    mediaElement.addEventListener('ended', () => {
+    media.addEventListener('ended', () => {
       if (commonStore.state.use_last_fm && userStore.current.preferences!.lastfm_session_key) {
         songStore.scrobble(queueStore.current!)
       }
@@ -363,7 +322,7 @@ class PlaybackService {
       if (!currentSong.play_count_registered && !this.isTranscoding) {
         // if we've passed 25% of the song, it's safe to say the song has been "played".
         // Refer to https://github.com/koel/koel/issues/1087
-        if (!mediaElement.duration || mediaElement.currentTime * 4 >= mediaElement.duration) {
+        if (!media.duration || media.currentTime * 4 >= media.duration) {
           this.registerPlay(currentSong)
         }
       }
@@ -374,7 +333,7 @@ class PlaybackService {
         return
       }
 
-      if (mediaElement.duration && mediaElement.currentTime + PRELOAD_BUFFER > mediaElement.duration) {
+      if (media.duration && media.currentTime + PRELOAD_BUFFER > media.duration) {
         this.preload(nextSong)
       }
     }
@@ -383,7 +342,7 @@ class PlaybackService {
       timeUpdateHandler = throttle(timeUpdateHandler, 1000)
     }
 
-    mediaElement.addEventListener('timeupdate', timeUpdateHandler)
+    media.addEventListener('timeupdate', timeUpdateHandler)
   }
 }
 

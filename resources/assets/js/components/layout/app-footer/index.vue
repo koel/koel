@@ -11,9 +11,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { eventBus, requireInjection } from '@/utils'
+import { nextTick, ref, watch } from 'vue'
+import { eventBus, isAudioContextSupported, requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
+import { preferenceStore } from '@/stores'
+import { audioService, playbackService, volumeManager } from '@/services'
 
 import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
 import SongInfo from '@/components/layout/app-footer/FooterSongInfo.vue'
@@ -25,6 +27,28 @@ const song = requireInjection(CurrentSongKey, ref(null))
 const requestContextMenu = (event: MouseEvent) => {
   song.value && eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
 }
+
+const initPlaybackRelatedServices = async () => {
+  const plyrWrapper = document.querySelector<HTMLElement>('.plyr')
+  const volumeInput = document.querySelector<HTMLInputElement>('#volumeInput')
+
+  if (!plyrWrapper || !volumeInput) {
+    await nextTick()
+    await initPlaybackRelatedServices()
+    return
+  }
+
+  playbackService.init(plyrWrapper)
+  volumeManager.init(volumeInput)
+  isAudioContextSupported && audioService.init(playbackService.player.media)
+
+  eventBus.emit('INIT_EQUALIZER')
+}
+
+watch(preferenceStore.initialized, async initialized => {
+  if (!initialized) return
+  await initPlaybackRelatedServices()
+}, { immediate: true })
 </script>
 
 <style lang="scss" scoped>
