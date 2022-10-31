@@ -17,7 +17,7 @@ import { computed, defineAsyncComponent, Ref, toRefs } from 'vue'
 import { queueStore, songStore } from '@/stores'
 import { authService, playbackService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
-import { requireInjection, secondsToHumanReadable } from '@/utils'
+import { requireInjection, secondsToHis } from '@/utils'
 import { SongsKey } from '@/symbols'
 
 const AppleMusicButton = defineAsyncComponent(() => import('@/components/ui/AppleMusicButton.vue'))
@@ -31,7 +31,7 @@ const songsToMatchAgainst = requireInjection<Ref<Song[]>>(SongsKey)
 
 const matchedSong = computed(() => songStore.match(track.value.title, songsToMatchAgainst.value))
 const tooltip = computed(() => matchedSong.value ? 'Click to play' : '')
-const fmtLength = computed(() => secondsToHumanReadable(track.value.length))
+const fmtLength = computed(() => secondsToHis(track.value.length))
 
 const active = computed(() => matchedSong.value && matchedSong.value.playback_state !== 'Stopped')
 
