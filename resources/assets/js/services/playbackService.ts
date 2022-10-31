@@ -95,43 +95,39 @@ class PlaybackService {
   }
 
   public showNotification (song: Song) {
-    if (!window.Notification || !preferences.notify) {
-      return
+    if (preferences.notify) {
+      try {
+        const notification = new window.Notification(`♫ ${song.title}`, {
+          icon: song.album_cover,
+          body: `${song.album_name} – ${song.artist_name}`
+        })
+
+        notification.onclick = () => window.focus()
+
+        window.setTimeout(() => notification.close(), 5000)
+      } catch (e) {
+        // Notification fails.
+        // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+        logger.error(e)
+      }
     }
 
-    try {
-      const notification = new window.Notification(`♫ ${song.title}`, {
-        icon: song.album_cover,
-        body: `${song.album_name} – ${song.artist_name}`
-      })
-
-      notification.onclick = () => window.focus()
-
-      window.setTimeout(() => notification.close(), 5000)
-    } catch (e) {
-      // Notification fails.
-      // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
-      logger.error(e)
-    }
+    if (!navigator.mediaSession) return
 
     navigator.mediaSession.metadata = new MediaMetadata({
       title: song.title,
       artist: song.artist_name,
       album: song.album_name,
-      artwork: [
-        {
-          src: song.album_cover,
-          sizes: '256x256',
-          type: 'image/png'
-        }
-      ]
+      artwork: [48, 64, 96, 128, 192, 256, 384, 512].map(d => ({
+        src: song.album_cover,
+        sizes: `${d}x${d}`,
+        type: 'image/png'
+      }))
     })
   }
 
   public async restart () {
     const song = queueStore.current!
-
-    this.showNotification(song)
 
     // Record the UNIX timestamp the song starts playing, for scrobbling purpose
     song.play_start_time = Math.floor(Date.now() / 1000)
@@ -143,6 +139,8 @@ class PlaybackService {
 
     try {
       await this.player.media.play()
+      navigator.mediaSession && (navigator.mediaSession.playbackState = 'playing')
+      this.showNotification(song)
     } catch (error) {
       // convert this into a warning, as an error will cause Cypress to fail the tests entirely
       logger.warn(error)
@@ -200,7 +198,7 @@ class PlaybackService {
    * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
    */
   public async playPrev () {
-    // If the song's duration is greater than 5 seconds and we've passed 5 seconds into it,
+    // If the song's duration is greater than 5 seconds, and we've passed 5 seconds into it,
     // restart playing instead.
     if (this.player.media.currentTime > 5 && queueStore.current!.length > 5) {
       this.player.restart()
@@ -232,16 +230,18 @@ class PlaybackService {
     this.player.pause()
     this.player.seek(0)
 
-    if (queueStore.current) {
-      queueStore.current.playback_state = 'Stopped'
-    }
+    queueStore.current && (queueStore.current.playback_state = 'Stopped')
+    navigator.mediaSession && (navigator.mediaSession.playbackState = 'none')
 
     socketService.broadcast('SOCKET_PLAYBACK_STOPPED')
   }
 
   public pause () {
     this.player.pause()
+
     queueStore.current!.playback_state = 'Paused'
+    navigator.mediaSession && (navigator.mediaSession.playbackState = 'paused')
+
     socketService.broadcast('SOCKET_SONG', queueStore.current)
   }
 
@@ -253,6 +253,8 @@ class PlaybackService {
     }
 
     queueStore.current!.playback_state = 'Playing'
+    navigator.mediaSession && (navigator.mediaSession.playbackState = 'playing')
+
     socketService.broadcast('SOCKET_SONG', queueStore.current)
   }
 
@@ -293,14 +295,30 @@ class PlaybackService {
   }
 
   private setMediaSessionActionHandlers () {
-    if (!navigator.mediaSession) {
-      return
-    }
+    if (!navigator.mediaSession) return
 
     navigator.mediaSession.setActionHandler('play', () => this.resume())
     navigator.mediaSession.setActionHandler('pause', () => this.pause())
+    navigator.mediaSession.setActionHandler('stop', () => this.stop())
     navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
     navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
+
+    navigator.mediaSession.setActionHandler('seekbackward', details => {
+      this.player.media.currentTime -= (details.seekOffset || 10)
+    })
+
+    navigator.mediaSession.setActionHandler('seekforward', details => {
+      this.player.media.currentTime += (details.seekOffset || 10)
+    })
+
+    navigator.mediaSession.setActionHandler('seekto', details => {
+      if (details.fastSeek && 'fastSeek' in this.player.media) {
+        this.player.media.fastSeek(details.seekTime || 0)
+        return
+      }
+
+      this.player.media.currentTime = details.seekTime || 0
+    })
   }
 
   private listenToMediaEvents (media: HTMLMediaElement) {

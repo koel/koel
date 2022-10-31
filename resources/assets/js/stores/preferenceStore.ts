@@ -69,7 +69,7 @@ const preferenceStore = {
   },
 
   get (key: string) {
-    return key in this.state ? this.state[key] : null
+    return this.state?.[key]
   },
 
   save () {
@@ -77,6 +77,6 @@ const preferenceStore = {
   }
 }
 
-const exportedPreferenceStore = preferenceStore as unknown as Omit<typeof preferenceStore, 'setupProxy'> & Preferences
+const exported = preferenceStore as unknown as Omit<typeof preferenceStore, 'setupProxy'> & Preferences
 
-export { exportedPreferenceStore as preferenceStore }
+export { exported as preferenceStore }
