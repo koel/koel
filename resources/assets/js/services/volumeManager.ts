@@ -7,7 +7,7 @@ export class VolumeManager {
 
   public init (input: HTMLInputElement) {
     this.input = input
-    this.set(preferenceStore.state.volume)
+    this.set(preferenceStore.volume)
   }
 
   public get () {
@@ -16,7 +16,7 @@ export class VolumeManager {
 
   public set (volume: number, persist = true) {
     if (persist) {
-      preferenceStore.state.volume = volume
+      preferenceStore.volume = volume
     }
 
     this.volume.value = volume
@@ -28,7 +28,7 @@ export class VolumeManager {
   }
 
   public unmute () {
-    this.set(preferenceStore.state.volume)
+    this.set(preferenceStore.volume)
   }
 }
 
