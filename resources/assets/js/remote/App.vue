@@ -85,7 +85,7 @@ const DEFAULT_VOLUME = 7
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
 
-const volumeSlider = ref<SliderElement>()
+const volumeSlider = ref<EqualizerBandElement>()
 const authenticated = ref(false)
 const song = ref<Song>()
 const connected = ref(false)

@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="text-primary bg-primary">
+  <dialog ref="dialog" class="text-primary bg-primary" @cancel.prevent>
     <Component :is="modalNameToComponentMap[activeModalName]" v-if="activeModalName" @close="close"/>
   </dialog>
 </template>
@@ -19,7 +19,8 @@ const modalNameToComponentMap: Record<string, ComponentPublicInstance> = {
   'edit-song-form': defineAsyncComponent(() => import('@/components/song/EditSongForm.vue')),
   'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
   'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
-  'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue'))
+  'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue')),
+  'equalizer': defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
 }
 
 type ModalName = keyof typeof modalNameToComponentMap
@@ -71,7 +72,9 @@ eventBus.on({
   MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (folder: PlaylistFolder) => {
     playlistFolderToEdit.value = folder
     activeModalName.value = 'edit-playlist-folder-form'
-  }
+  },
+
+  MODAL_SHOW_EQUALIZER: () => (activeModalName.value = 'equalizer')
 })
 </script>
 

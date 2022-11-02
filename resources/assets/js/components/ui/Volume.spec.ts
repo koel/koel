@@ -8,7 +8,7 @@ import Volume from './Volume.vue'
 new class extends UnitTestCase {
   protected beforeEach (cb?: Closure) {
     super.beforeEach(() => {
-      preferenceStore.state.volume = 5
+      preferenceStore.volume = 5
       volumeManager.init(document.createElement('input'))
     })
   }

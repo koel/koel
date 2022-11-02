@@ -1,72 +1,79 @@
 <template>
-  <div id="equalizer" data-testid="equalizer" ref="root">
-    <div class="presets">
+  <form id="equalizer" ref="root" data-testid="equalizer" tabindex="0" @keydown.esc="close">
+    <header>
       <label class="select-wrapper">
         <select v-model="selectedPresetId" title="Select equalizer">
           <option disabled value="-1">Preset</option>
-          <option v-for="preset in presets" :value="preset.id" :key="preset.id" v-once>{{ preset.name }}</option>
+          <option v-for="preset in presets" :key="preset.id" :value="preset.id">{{ preset.name }}</option>
         </select>
         <icon :icon="faCaretDown" class="arrow text-highlight" size="sm"/>
       </label>
-    </div>
-    <div class="bands">
-      <span class="band preamp">
-        <span class="slider"></span>
-        <label>Preamp</label>
-      </span>
+    </header>
 
-      <span class="indicators">
-        <span>+20</span>
-        <span>0</span>
-        <span>-20</span>
-      </span>
+    <main>
+      <div class="bands">
+        <span class="band">
+          <span class="slider"/>
+          <label>Preamp</label>
+        </span>
 
-      <span class="band amp" v-for="band in bands" :key="band.label">
-        <span class="slider"></span>
-        <label>{{ band.label }}</label>
-      </span>
-    </div>
-  </div>
+        <span class="indicators">
+          <span>+20</span>
+          <span>0</span>
+          <span>-20</span>
+        </span>
+
+        <span v-for="band in bands" :key="band.label" class="band">
+          <span class="slider"/>
+          <label>{{ band.label }}</label>
+        </span>
+      </div>
+    </main>
+
+    <footer>
+      <Btn @click.prevent="close">Close</Btn>
+    </footer>
+  </form>
 </template>
 
 <script lang="ts" setup>
 import noUiSlider from 'nouislider'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
-import { nextTick, onMounted, ref, watch } from 'vue'
-import { eventBus } from '@/utils'
-import { equalizerStore, preferenceStore as preferences } from '@/stores'
-import { audioService as audioService } from '@/services'
+import { onMounted, ref, watch } from 'vue'
+import { equalizerStore } from '@/stores'
+import { audioService } from '@/services'
+import { equalizerPresets as presets } from '@/config'
 
-interface Band {
-  label: string
-  filter: BiquadFilterNode
-}
+import Btn from '@/components/ui/Btn.vue'
 
-let context!: AudioContext
-let preampGainNode!: GainNode
+const emit = defineEmits(['close'])
 
+const bands = audioService.bands
 const root = ref<HTMLElement>()
-const bands = ref<Band[]>([])
-const preampGainValue = ref(0)
+const preampGain = ref(0)
 const selectedPresetId = ref(-1)
 
-const presets: EqualizerPreset[] = Object.assign([], equalizerStore.presets)
+watch(preampGain, value => audioService.changePreampGain(value))
 
-const changePreampGain = (dbValue: number) => {
-  preampGainValue.value = dbValue
-  preampGainNode.gain.setTargetAtTime(Math.pow(10, dbValue / 20), context.currentTime, 0.01)
-}
+watch(selectedPresetId, () => {
+  if (selectedPresetId.value !== -1) {
+    loadPreset(equalizerStore.getPresetById(selectedPresetId.value) || presets[0])
+  }
 
-const changeFilterGain = (filter: BiquadFilterNode, value: number) => {
-  filter.gain.setTargetAtTime(value, context.currentTime, 0.01)
-}
+  save()
+})
 
 const createSliders = () => {
-  const config = equalizerStore.get()!
+  const config = equalizerStore.getConfig()
 
-  root.value?.querySelectorAll<SliderElement>('.slider').forEach((el, i) => {
-    el.noUiSlider?.destroy()
+  selectedPresetId.value = config.id
+  preampGain.value = config.preamp
 
+  if (!root.value) {
+    throw new Error('Equalizer config or root element not found')
+  }
+
+  root.value.querySelectorAll<EqualizerBandElement>('.slider').forEach((el, i) => {
     noUiSlider.create(el, {
       connect: [false, true],
       // the first element is the preamp. The rest are gains.
@@ -76,116 +83,58 @@ const createSliders = () => {
       direction: 'rtl'
     })
 
-    if (!el.noUiSlider) {
-      throw new Error(`Failed to initialize slider on element ${i}`)
-    }
+    el.isPreamp = i === 0
 
     el.noUiSlider.on('slide', (values, handle) => {
-      if (el.parentElement!.matches('.preamp')) {
-        changePreampGain(values[handle])
-      } else {
-        changeFilterGain(bands.value[i - 1].filter, values[handle])
-      }
-    })
+      const value = parseFloat(values[handle])
 
-    el.noUiSlider.on('change', () => {
+      if (el.isPreamp) {
+        preampGain.value = value
+      } else {
+        audioService.changeFilterGain(bands[i - 1].filter, value)
+      }
+
       // User has customized the equalizer. No preset should be selected.
       selectedPresetId.value = -1
+
       save()
     })
   })
-
-  // Now we set this value to trigger the audio processing.
-  selectedPresetId.value = preferences.selectedPreset
 }
-
-const init = async () => {
-  const config = equalizerStore.get()!
-
-  context = audioService.getContext()
-  preampGainNode = context.createGain()
-  changePreampGain(config.preamp)
-
-  const source = audioService.getSource()
-  source.connect(preampGainNode)
-
-  let prevFilter: BiquadFilterNode
-
-  // Create 10 bands with the frequencies similar to those of Winamp and connect them together.
-  const frequencies = [60, 170, 310, 600, 1_000, 3_000, 6_000, 12_000, 14_000, 16_000]
-
-  frequencies.forEach((frequency, i) => {
-    const filter = context.createBiquadFilter()
-
-    if (i === 0) {
-      filter.type = 'lowshelf'
-    } else if (i === 9) {
-      filter.type = 'highshelf'
-    } else {
-      filter.type = 'peaking'
-    }
-
-    filter.gain.setTargetAtTime(0, context.currentTime, 0.01)
-    filter.Q.setTargetAtTime(1, context.currentTime, 0.01)
-    filter.frequency.setTargetAtTime(frequency, context.currentTime, 0.01)
-
-    prevFilter ? prevFilter.connect(filter) : preampGainNode.connect(filter)
-    prevFilter = filter
-
-    bands.value.push({
-      filter,
-      label: String(frequency).replace('000', 'K')
-    })
-  })
-
-  prevFilter!.connect(context.destination)
-
-  await nextTick()
-  createSliders()
-}
-
-const save = () => equalizerStore.set(preampGainValue.value, bands.value.map(band => band.filter.gain.value))
 
 const loadPreset = (preset: EqualizerPreset) => {
-  root.value?.querySelectorAll<SliderElement>('.slider').forEach((el, i) => {
+  preampGain.value = preset.preamp
+
+  root.value?.querySelectorAll<EqualizerBandElement>('.slider').forEach((el, i) => {
     if (!el.noUiSlider) {
       throw new Error('Preset can only be loaded after sliders have been set up')
     }
 
-    // We treat our preamp slider differently.
-    if (el.parentElement!.matches('.preamp')) {
-      changePreampGain(preset.preamp)
-      // Update the slider values into GUI.
+    if (el.isPreamp) {
       el.noUiSlider.set(preset.preamp)
     } else {
-      changeFilterGain(bands.value[i - 1].filter, preset.gains[i - 1])
-      // Update the slider values into GUI.
+      audioService.changeFilterGain(bands[i - 1].filter, preset.gains[i - 1])
       el.noUiSlider.set(preset.gains[i - 1])
     }
   })
-
-  save()
 }
 
-watch(selectedPresetId, () => {
-  preferences.selectedPreset = selectedPresetId.value
-  selectedPresetId.value !== -1 && loadPreset(equalizerStore.getPresetById(selectedPresetId.value)!)
-})
+const save = () => equalizerStore.saveConfig(selectedPresetId.value, preampGain.value, bands.map(band => band.db))
+const close = () => emit('close')
 
-onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
+onMounted(() => createSliders())
 </script>
 
 <style lang="scss">
 #equalizer {
   user-select: none;
-  position: absolute;
-  bottom: var(--footer-height);
   width: 100%;
-  background: var(--color-bg-primary);
   display: flex;
   flex-direction: column;
-  left: 0;
-  box-shadow: 0 0 50x 0 var(--color-bg-primary);
+
+  footer {
+    border-top: 1px solid rgba(255, 255, 255, .05);
+  }
 
   label {
     margin-top: 8px;
@@ -193,22 +142,18 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
     text-align: left;
   }
 
-  .presets {
-    padding: 8px 16px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    flex: 1;
-    align-content: center;
-    z-index: 1;
-    border-bottom: 1px solid rgba(255, 255, 255, .1);
+  header {
+    padding: 12px 16px;
 
     .select-wrapper {
+      margin-top: 0;
       position: relative;
-      margin-bottom: 0;
+      padding: 0 8px;
+      background: rgba(0, 0, 0, .2);
+      border-radius: 5px;
 
       .arrow {
-        margin-left: -14px;
+        margin-left: -6px;
         pointer-events: none;
       }
     }
@@ -227,12 +172,11 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
   }
 
   .bands {
-    padding: 16px;
-    z-index: 1;
-    left: 0;
+    padding: 14px 16px 12px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, .2);
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
 
     label, .indicators {
       font-size: .8rem;
@@ -242,6 +186,7 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-width: 24px;
     }
 
     .slider {
@@ -256,8 +201,7 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
       justify-content: space-between;
       align-items: center;
       margin-left: -16px;
-      opacity: 0;
-      transition: .4s;
+      opacity: .5;
 
       span:first-child {
         line-height: 8px;
@@ -266,10 +210,6 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
       span:last-child {
         line-height: 8px;
       }
-    }
-
-    &:hover .indicators {
-      opacity: 1;
     }
   }
 
@@ -325,24 +265,11 @@ onMounted(() => eventBus.on('INIT_EQUALIZER', () => init()))
     &-vertical {
       .noUi-handle {
         width: 16px;
-        height: 2px;
+        height: 6px;
         left: -16px;
+        border-radius: 9999px;
         top: 0;
       }
-    }
-  }
-
-  @media only screen and (max-width: 768px) {
-    position: fixed;
-    max-width: 414px;
-    left: auto;
-    right: 0;
-    bottom: var(--footer-height);
-    display: block;
-    height: auto;
-
-    label {
-      line-height: 20px;
     }
   }
 }

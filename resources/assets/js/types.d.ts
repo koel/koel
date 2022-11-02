@@ -47,6 +47,7 @@ declare module 'nouislider' {
     }
     orientation: 'horizontal' | 'vertical'
     direction: 'ltr' | 'rtl'
+    step?: number
   }): void
 }
 
@@ -255,12 +256,14 @@ interface Interaction {
   play_count: number
 }
 
-interface SliderElement extends HTMLElement {
-  noUiSlider?: {
+interface EqualizerBandElement extends HTMLElement {
+  noUiSlider: {
     destroy (): void
-    on (eventName: 'change' | 'slide', handler: (value: number[], handle: number) => unknown): void
+    on (eventName: 'change' | 'slide', handler: (value: string[], handle: number) => unknown): void
     set (options: number | any[]): void
   }
+
+  isPreamp: boolean
 }
 
 type OverlayState = {
@@ -276,8 +279,8 @@ interface SongRow {
 }
 
 interface EqualizerPreset {
-  id?: number
-  name?: string
+  id: number
+  name: string
   preamp: number
   gains: number[]
 }
