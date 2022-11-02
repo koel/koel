@@ -1,5 +1,4 @@
 import { reactive, ref } from 'vue'
-import { userStore } from '@/stores'
 import { localStorageService } from '@/services'
 
 interface Preferences extends Record<string, any> {
@@ -10,7 +9,6 @@ interface Preferences extends Record<string, any> {
   equalizer: EqualizerPreset,
   artistsViewMode: ArtistAlbumViewMode | null,
   albumsViewMode: ArtistAlbumViewMode | null,
-  selectedPreset: number
   transcodeOnMobile: boolean
   supportBarNoBugging: boolean
   showAlbumArtOverlay: boolean
@@ -28,12 +26,13 @@ const preferenceStore = {
     repeatMode: 'NO_REPEAT',
     confirmClosing: false,
     equalizer: {
+      id: 0,
+      name: 'Default',
       preamp: 0,
       gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     },
     artistsViewMode: null,
     albumsViewMode: null,
-    selectedPreset: -1,
     transcodeOnMobile: false,
     supportBarNoBugging: false,
     showAlbumArtOverlay: true,
@@ -41,9 +40,8 @@ const preferenceStore = {
     theme: null
   }),
 
-  init (user?: User): void {
-    const initUser = user || userStore.current
-    this.storeKey = `preferences_${initUser.id}`
+  init (user: User): void {
+    this.storeKey = `preferences_${user.id}`
     Object.assign(this.state, localStorageService.get(this.storeKey, this.state))
     this.setupProxy()
 

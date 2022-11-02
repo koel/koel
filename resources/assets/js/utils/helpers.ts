@@ -39,3 +39,5 @@ export const requireInjection = <T> (key: InjectionKey<T>, defaultValue?: T) => 
 
   return value
 }
+
+export const dbToGain = (db: number) => Math.pow(10, db / 20) || 0

@@ -41,8 +41,6 @@ const initPlaybackRelatedServices = async () => {
   playbackService.init(plyrWrapper)
   volumeManager.init(volumeInput)
   isAudioContextSupported && audioService.init(playbackService.player.media)
-
-  eventBus.emit('INIT_EQUALIZER')
 }
 
 watch(preferenceStore.initialized, async initialized => {

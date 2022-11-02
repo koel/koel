@@ -88,7 +88,7 @@ class PlaybackService {
     // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
     // Fixes #898
     if (isAudioContextSupported) {
-      await audioService.getContext().resume()
+      await audioService.context.resume()
     }
 
     await this.restart()

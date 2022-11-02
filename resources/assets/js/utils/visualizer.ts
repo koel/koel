@@ -45,10 +45,10 @@ class AudioAnalyser {
     this.smoothing = smoothing
     this.onUpdate = onUpdate
 
-    this.audio = audioService.getElement()
-    this.source = audioService.getSource()
+    this.audio = audioService.element
+    this.source = audioService.source
 
-    this.analyser = audioService.getContext().createAnalyser()
+    this.analyser = audioService.context.createAnalyser()
     this.analyser.smoothingTimeConstant = this.smoothing
     this.analyser.fftSize = this.bandCount * 2
 
