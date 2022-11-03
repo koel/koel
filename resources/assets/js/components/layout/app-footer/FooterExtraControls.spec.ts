@@ -14,7 +14,7 @@ new class extends UnitTestCase {
             Volume: this.stub('Volume')
           },
           provide: {
-            [CurrentSongKey]: factory<Song>('song', {
+            [<symbol>CurrentSongKey]: factory<Song>('song', {
               playback_state: 'Playing'
             })
           }

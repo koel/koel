@@ -389,3 +389,13 @@ type Genre = {
 }
 
 type ExtraPanelTab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
+
+type Visualizer = {
+  init: (container: HTMLElement) => Promise<Closure>
+  id: string
+  name: string
+  credits?: {
+    author: string
+    url: string
+  }
+}

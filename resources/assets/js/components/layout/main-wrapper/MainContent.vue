@@ -5,7 +5,7 @@
       lists), so we use v-show.
       For those that don't need to maintain their own UI state, we use v-if and enjoy some code-splitting juice.
     -->
-    <Visualizer v-if="showingVisualizer"/>
+    <VisualizerScreen v-if="screen === 'Visualizer'"/>
     <AlbumArtOverlay v-if="showAlbumArtOverlay && currentSong" :album="currentSong?.album_id"/>
 
     <HomeScreen v-show="screen === 'Home'"/>
@@ -34,7 +34,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
-import { eventBus, requireInjection } from '@/utils'
+import { requireInjection } from '@/utils'
 import { preferenceStore } from '@/stores'
 import { useThirdPartyServices } from '@/composables'
 import { CurrentSongKey, RouterKey } from '@/symbols'
@@ -61,7 +61,7 @@ const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/Pr
 const YoutubeScreen = defineAsyncComponent(() => import('@/components/screens/YouTubeScreen.vue'))
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchSongResultsScreen.vue'))
 const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/NotFoundScreen.vue'))
-const Visualizer = defineAsyncComponent(() => import('@/components/ui/Visualizer.vue'))
+const VisualizerScreen = defineAsyncComponent(() => import('@/components/screens/VisualizerScreen.vue'))
 
 const { useYouTube } = useThirdPartyServices()
 
@@ -69,12 +69,9 @@ const router = requireInjection(RouterKey)
 const currentSong = requireInjection(CurrentSongKey, ref(null))
 
 const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
-const showingVisualizer = ref(false)
 const screen = ref<ScreenName>('Home')
 
 router.onRouteChanged(route => (screen.value = route.screen))
-
-eventBus.on('TOGGLE_VISUALIZER', () => (showingVisualizer.value = !showingVisualizer.value))
 
 onMounted(() => router.resolve())
 </script>
