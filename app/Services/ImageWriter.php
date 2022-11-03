@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Intervention\Image\Constraint;
+use Intervention\Image\Exception\NotSupportedException;
 use Intervention\Image\ImageManager;
 
 class ImageWriter
@@ -31,6 +32,10 @@ class ImageWriter
             $img->blur($config['blur']);
         }
 
-        $img->save($destination, $config['quality'] ?? self::DEFAULT_QUALITY);
+        try {
+            $img->save($destination, $config['quality'] ?? self::DEFAULT_QUALITY, 'webp');
+        } catch (NotSupportedException) {
+            $img->save($destination, $config['quality'] ?? self::DEFAULT_QUALITY);
+        }
     }
 }
