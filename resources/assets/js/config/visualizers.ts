@@ -34,5 +34,14 @@ export const visualizers: Visualizer[] = [
       author: 'Radik (@H2xDev)',
       url: 'https://codepen.io/H2xDev/pen/rRRGbv'
     }
+  },
+  {
+    id: 'asteroid',
+    name: 'Asteroid',
+    init: async (container) => (await import('@/visualizers/asteroid/scripts')).init(container),
+    credits: {
+      author: 'JH (@jhugheswebdev)',
+      url: 'https://github.com/jhugheswebdev/sound-equalizer-threejs'
+    }
   }
 ]
