@@ -83,7 +83,7 @@ onBeforeUnmount(() => freeUp())
   .viz {
     height: 100%;
     width: 100%;
-    positioN: absolute;
+    position: absolute;
     z-index: 0;
 
     canvas {
