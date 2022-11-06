@@ -91,6 +91,10 @@ export const routes: Route[] = [
     screen: 'Genre'
   },
   {
+    path: '/visualizer',
+    screen: 'Visualizer'
+  },
+  {
     path: '/song/(?<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
     screen: 'Queue',
     redirect: () => 'queue',

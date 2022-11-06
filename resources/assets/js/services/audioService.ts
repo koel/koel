@@ -15,6 +15,7 @@ export const audioService = {
   source: null as unknown as MediaElementAudioSourceNode,
   element: null as unknown as HTMLMediaElement,
   preampGainNode: null as unknown as GainNode,
+  analyzer: null as unknown as AnalyserNode,
 
   bands: [] as Band[],
 
@@ -24,7 +25,10 @@ export const audioService = {
     this.context = new AudioContext()
     this.preampGainNode = this.context.createGain()
     this.source = this.context.createMediaElementSource(this.element)
-    this.source.connect(this.preampGainNode)
+    this.analyzer = this.context.createAnalyser()
+
+    this.source.connect(this.analyzer)
+    this.analyzer.connect(this.preampGainNode)
 
     const config = equalizerStore.getConfig()
 

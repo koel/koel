@@ -1,17 +1,15 @@
 <template>
   <div class="extra-controls" data-testid="other-controls">
     <div class="wrapper">
-      <button
-        v-if="song?.playback_state === 'Playing'"
+      <a
         v-koel-tooltip.top
         class="visualizer-btn"
         data-testid="toggle-visualizer-btn"
-        title="Toggle the visualizer"
-        type="button"
-        @click.prevent="toggleVisualizer"
+        href="/#/visualizer"
+        title="Show the visualizer"
       >
         <icon :icon="faBolt"/>
-      </button>
+      </a>
 
       <button
         v-if="useEqualizer"
@@ -41,7 +39,6 @@ import Volume from '@/components/ui/Volume.vue'
 const song = requireInjection(CurrentSongKey, ref(null))
 
 const showEqualizer = () => eventBus.emit('MODAL_SHOW_EQUALIZER')
-const toggleVisualizer = () => eventBus.emit('TOGGLE_VISUALIZER')
 </script>
 
 <style lang="scss" scoped>

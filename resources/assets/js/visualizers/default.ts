@@ -1,9 +1,7 @@
 import Sketch from 'sketch-js'
 import { audioService } from '@/services'
 import { random, sample } from 'lodash'
-
-// Audio visualization originally created by Justin Windle (@soulwire)
-// as seen on https://codepen.io/soulwire/pen/Dscga
+import { noop } from '@/utils'
 
 const NUM_PARTICLES = 128
 const NUM_BANDS = 128
@@ -48,13 +46,12 @@ class AudioAnalyser {
     this.audio = audioService.element
     this.source = audioService.source
 
-    this.analyser = audioService.context.createAnalyser()
+    this.analyser = audioService.analyzer
     this.analyser.smoothingTimeConstant = this.smoothing
     this.analyser.fftSize = this.bandCount * 2
 
     this.bands = new Uint8Array(this.analyser.frequencyBinCount)
 
-    this.source.connect(this.analyser)
     this.update()
   }
 
@@ -149,7 +146,7 @@ class Particle {
   }
 }
 
-export default (container: HTMLElement) => {
+export const init = (container: HTMLElement) => {
   const particles: Particle[] = []
 
   Sketch.create({
@@ -181,4 +178,6 @@ export default (container: HTMLElement) => {
       })
     }
   })
+
+  return noop
 }

@@ -14,6 +14,7 @@ interface Preferences extends Record<string, any> {
   showAlbumArtOverlay: boolean
   lyricsZoomLevel: number | null
   theme?: Theme['id'] | null
+  visualizer?: Visualizer['id'] | null
 }
 
 const preferenceStore = {
@@ -37,7 +38,8 @@ const preferenceStore = {
     supportBarNoBugging: false,
     showAlbumArtOverlay: true,
     lyricsZoomLevel: 1,
-    theme: null
+    theme: null,
+    visualizer: 'default'
   }),
 
   init (user: User): void {
