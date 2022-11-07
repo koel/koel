@@ -27,8 +27,7 @@ export const audioService = {
     this.source = this.context.createMediaElementSource(this.element)
     this.analyzer = this.context.createAnalyser()
 
-    this.source.connect(this.analyzer)
-    this.analyzer.connect(this.preampGainNode)
+    this.source.connect(this.preampGainNode)
 
     const config = equalizerStore.getConfig()
 
@@ -62,7 +61,10 @@ export const audioService = {
       })
     })
 
-    prevFilter!.connect(this.context.destination)
+    prevFilter!.connect(this.analyzer)
+
+    // connect the analyzer node last, so that changes to the equalizer affect the visualizer as well
+    this.analyzer.connect(this.context.destination)
 
     this.unlockAudioContext()
   },
