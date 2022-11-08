@@ -31,7 +31,7 @@ class InteractionRepository extends Repository
             ->newQuery()
             ->where('user_id', $user->id)
             ->where('play_count', '>', 0)
-            ->latest('updated_at');
+            ->latest('last_played_at');
 
         if ($count) {
             $query = $query->take($count);

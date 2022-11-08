@@ -6,8 +6,9 @@ use App\Exceptions\NonSmartPlaylistException;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use App\Values\SmartPlaylistRule;
-use App\Values\SmartPlaylistRuleGroup;
+use App\Values\SmartPlaylistRule as Rule;
+use App\Values\SmartPlaylistRuleGroup as RuleGroup;
+use App\Values\SmartPlaylistSqlElements as SqlElements;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -20,13 +21,13 @@ class SmartPlaylistService
 
         $query = Song::query()->withMeta($user ?? $playlist->user);
 
-        $playlist->rule_groups->each(static function (SmartPlaylistRuleGroup $group, int $index) use ($query): void {
+        $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {
             $clause = $index === 0 ? 'where' : 'orWhere';
 
             $query->$clause(static function (Builder $subQuery) use ($group): void {
-                $group->rules->each(static function (SmartPlaylistRule $rule) use ($subQuery): void {
-                    $subWhere = $rule->operator === SmartPlaylistRule::OPERATOR_IS_BETWEEN ? 'whereBetween' : 'where';
-                    $subQuery->$subWhere(...$rule->toCriteriaParameters());
+                $group->rules->each(static function (Rule $rule) use ($subQuery): void {
+                    $tokens = SqlElements::fromRule($rule);
+                    $subQuery->{$tokens->clause}(...$tokens->parameters);
                 });
             });
         });

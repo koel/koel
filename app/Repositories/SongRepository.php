@@ -63,8 +63,7 @@ class SongRepository extends Repository
     {
         return Song::query()
             ->withMeta($scopedUser ?? $this->auth->user())
-            ->where('interactions.play_count', '>', 0)
-            ->orderByDesc('interactions.updated_at')
+            ->orderByDesc('interactions.last_played_at')
             ->limit($count)
             ->get();
     }
