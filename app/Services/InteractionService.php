@@ -27,6 +27,8 @@ class InteractionService
                 $interaction->liked = false;
             }
 
+            $interaction->last_played_at = now();
+
             ++$interaction->play_count;
             $interaction->save();
         });

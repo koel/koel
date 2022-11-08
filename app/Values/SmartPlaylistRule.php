@@ -18,6 +18,7 @@ final class SmartPlaylistRule implements Arrayable
     public const OPERATOR_ENDS_WITH = 'endsWith';
     public const OPERATOR_IN_LAST = 'inLast';
     public const OPERATOR_NOT_IN_LAST = 'notInLast';
+    public const OPERATOR_IS_NOT_BETWEEN = 'isNotBetween';
 
     public const VALID_OPERATORS = [
         self::OPERATOR_BEGINS_WITH,
@@ -26,6 +27,7 @@ final class SmartPlaylistRule implements Arrayable
         self::OPERATOR_IN_LAST,
         self::OPERATOR_IS,
         self::OPERATOR_IS_BETWEEN,
+        self::OPERATOR_IS_NOT_BETWEEN,
         self::OPERATOR_IS_GREATER_THAN,
         self::OPERATOR_IS_LESS_THAN,
         self::OPERATOR_IS_NOT,
@@ -34,14 +36,14 @@ final class SmartPlaylistRule implements Arrayable
     ];
 
     private const MODEL_TITLE = 'title';
-    private const MODEL_ALBUM_NAME = 'album.name';
-    private const MODEL_ARTIST_NAME = 'artist.name';
+    public const MODEL_ALBUM_NAME = 'album.name';
+    public const MODEL_ARTIST_NAME = 'artist.name';
     private const MODEL_PLAY_COUNT = 'interactions.play_count';
-    private const MODEL_LAST_PLAYED = 'interactions.updated_at';
+    public const MODEL_LAST_PLAYED = 'interactions.last_played_at';
     private const MODEL_USER_ID = 'interactions.user_id';
     private const MODEL_LENGTH = 'length';
-    private const MODEL_DATE_ADDED = 'created_at';
-    private const MODEL_DATE_MODIFIED = 'updated_at';
+    public const MODEL_DATE_ADDED = 'created_at';
+    public const MODEL_DATE_MODIFIED = 'updated_at';
     private const MODEL_GENRE = 'genre';
     private const MODEL_YEAR = 'year';
 
@@ -56,13 +58,6 @@ final class SmartPlaylistRule implements Arrayable
         self::MODEL_DATE_MODIFIED,
         self::MODEL_GENRE,
         self::MODEL_YEAR,
-    ];
-
-    private const MODEL_COLUMN_MAP = [
-        self::MODEL_ALBUM_NAME => 'albums.name',
-        self::MODEL_ARTIST_NAME => 'artists.name',
-        self::MODEL_DATE_ADDED => 'songs.created_at',
-        self::MODEL_DATE_MODIFIED => 'songs.updated_at',
     ];
 
     public ?int $id;
@@ -116,31 +111,5 @@ final class SmartPlaylistRule implements Arrayable
         return $this->operator === $rule->operator
             && !array_diff($this->value, $rule->value)
             && $this->model === $rule->model;
-    }
-
-    /** @return array<mixed> */
-    public function toCriteriaParameters(): array
-    {
-        $column = array_key_exists($this->model, self::MODEL_COLUMN_MAP)
-            ? self::MODEL_COLUMN_MAP[$this->model]
-            : $this->model;
-
-        $resolvers = [
-            self::OPERATOR_BEGINS_WITH => [$column, 'LIKE', "{$this->value[0]}%"],
-            self::OPERATOR_ENDS_WITH => [$column, 'LIKE', "%{$this->value[0]}"],
-            self::OPERATOR_IS => [$column, '=', $this->value[0]],
-            self::OPERATOR_IS_NOT => [$column, '<>', $this->value[0]],
-            self::OPERATOR_CONTAINS => [$column, 'LIKE', "%{$this->value[0]}%"],
-            self::OPERATOR_NOT_CONTAIN => [$column, 'NOT LIKE', "%{$this->value[0]}%"],
-            self::OPERATOR_IS_LESS_THAN => [$column, '<', $this->value[0]],
-            self::OPERATOR_IS_GREATER_THAN => [$column, '>', $this->value[0]],
-            self::OPERATOR_IS_BETWEEN => [$column, $this->value],
-            self::OPERATOR_NOT_IN_LAST => fn (): array => [$column, '<', now()->subDays($this->value[0])],
-            self::OPERATOR_IN_LAST => fn (): array => [$column, '>=', now()->subDays($this->value[0])],
-        ];
-
-        Assert::keyExists($resolvers, $this->operator);
-
-        return is_callable($resolvers[$this->operator]) ? $resolvers[$this->operator]() : $resolvers[$this->operator];
     }
 }
