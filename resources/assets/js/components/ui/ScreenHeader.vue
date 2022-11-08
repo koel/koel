@@ -1,5 +1,5 @@
 <template>
-  <header class="screen-header" :class="layout">
+  <header class="screen-header" :class="[ layout, disabled ? 'disabled' : '' ]">
     <aside class="thumbnail-wrapper">
       <slot name="thumbnail"></slot>
     </aside>
@@ -20,7 +20,13 @@
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(defineProps<{ layout?: ScreenHeaderLayout }>(), { layout: 'expanded' })
+const props = withDefaults(defineProps<{
+  layout?: ScreenHeaderLayout,
+  disabled?: boolean,
+}>(), {
+  layout: 'expanded',
+  disabled: false
+})
 </script>
 
 <style lang="scss" scoped>
@@ -39,6 +45,15 @@ header.screen-header {
   align-content: stretch;
   line-height: normal;
   padding: 1.8rem;
+
+  &.disabled {
+    opacity: .5;
+    cursor: not-allowed;
+
+    *, *::before, *::after {
+      pointer-events: none;
+    }
+  }
 
   &.expanded {
     .thumbnail-wrapper {

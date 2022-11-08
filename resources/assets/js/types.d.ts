@@ -324,6 +324,7 @@ interface SongListControlsConfig {
   addTo: AddToMenuConfig
   clearQueue: boolean
   deletePlaylist: boolean
+  refresh: boolean
 }
 
 type ThemeableProperty = '--color-text-primary'

@@ -1,6 +1,6 @@
 <template>
   <section v-if="playlist" id="playlistWrapper">
-    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout" :disabled="loading">
       {{ playlist.name }}
       <ControlsToggle v-if="songs.length" v-model="showingControls"/>
 
@@ -29,11 +29,12 @@
           @deletePlaylist="destroy"
           @playAll="playAll"
           @playSelected="playSelected"
+          @refresh="fetchSongs(true)"
         />
       </template>
     </ScreenHeader>
 
-    <SongListSkeleton v-if="loading"/>
+    <SongListSkeleton v-show="loading"/>
     <SongList
       v-if="!loading && songs.length"
       ref="songList"
@@ -83,7 +84,10 @@ const playlistId = ref<number>()
 const playlist = ref<Playlist>()
 const loading = ref(false)
 
-const controlsConfig: Partial<SongListControlsConfig> = { deletePlaylist: true }
+const controlsConfig: Partial<SongListControlsConfig> = {
+  deletePlaylist: true,
+  refresh: true
+}
 
 const {
   SongList,
@@ -115,9 +119,9 @@ const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playli
 
 const removeSelected = async () => await removeSongsFromPlaylist(playlist.value!, selectedSongs.value)
 
-const fetchSongs = async () => {
+const fetchSongs = async (refresh = false) => {
   loading.value = true
-  songs.value = await songStore.fetchForPlaylist(playlist.value!)
+  songs.value = await songStore.fetchForPlaylist(playlist.value!, refresh)
   loading.value = false
   sort()
 }

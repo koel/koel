@@ -8,7 +8,7 @@
 .btn-group {
   --radius: 5px;
 
-  display: flex;
+  display: inline-flex;
   position: relative;
   flex-wrap: nowrap;
 
