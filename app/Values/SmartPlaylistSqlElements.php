@@ -43,16 +43,13 @@ final class SmartPlaylistSqlElements
         // If the rule is a date rule and the operator is "is" or "is not", we need to
         // convert the date to a range of dates and use the "between" or "not between" operator instead,
         // as we store dates as timestamps in the database.
-        if (in_array($rule->model, self::DATE_MODELS, true)) {
+        if (
+            in_array($rule->model, self::DATE_MODELS, true) &&
+            in_array($operator, [Rule::OPERATOR_IS, Rule::OPERATOR_IS_NOT], true)
+        ) {
+            $operator = $operator === Rule::OPERATOR_IS ? Rule::OPERATOR_IS_BETWEEN : Rule::OPERATOR_IS_NOT_BETWEEN;
             $nextDay = Carbon::createFromFormat('Y-m-d', $value[0])->addDay()->format('Y-m-d');
-
-            if ($operator === Rule::OPERATOR_IS) {
-                $operator = Rule::OPERATOR_IS_BETWEEN;
-                $value = [$value[0], $nextDay];
-            } elseif ($operator === Rule::OPERATOR_IS_NOT) {
-                $operator = Rule::OPERATOR_IS_NOT_BETWEEN;
-                $value = [$value[0], $nextDay];
-            }
+            $value = [$value[0], $nextDay];
         }
 
         $column = array_key_exists($rule->model, self::MODEL_COLUMN_REMAP)
