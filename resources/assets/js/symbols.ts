@@ -3,8 +3,7 @@ import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
 import Router from '@/router'
 
-export interface ReadonlyInjectionKey<T> extends InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]> {
-}
+export type ReadonlyInjectionKey<T> = InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]>
 
 export const RouterKey: InjectionKey<Router> = Symbol('Router')
 export const ScreenNameKey: ReadonlyInjectionKey<ScreenName> = Symbol('ScreenName')

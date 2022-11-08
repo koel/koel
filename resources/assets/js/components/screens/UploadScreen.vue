@@ -6,7 +6,7 @@
       <template v-slot:controls>
         <BtnGroup uppercased v-if="hasUploadFailures">
           <Btn data-testid="upload-retry-all-btn" green @click="retryAll">
-            <icon :icon="faRotateBack"/>
+            <icon :icon="faRotateRight"/>
             Retry All
           </Btn>
           <Btn data-testid="upload-remove-all-btn" orange @click="removeFailedEntries">
@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faRotateBack, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
+import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils'

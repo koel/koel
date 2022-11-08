@@ -140,24 +140,37 @@ export const songStore = {
     watch(() => song.play_count, () => overviewStore.refresh())
   },
 
-  async cacheable (key: any, fetcher: Promise<Song[]>) {
-    const songs = await cache.remember<Song[]>(key, async () => this.syncWithVault(await fetcher))
-    return songs.filter(song => !song.deleted)
-  },
+  ensureNotDeleted: (songs: Song | Song[]) => arrayify(songs).filter(song => !song.deleted),
 
   async fetchForAlbum (album: Album | number) {
     const id = typeof album === 'number' ? album : album.id
-    return await this.cacheable(['album.songs', id], http.get<Song[]>(`albums/${id}/songs`))
+
+    return this.ensureNotDeleted(await cache.remember<Song[]>(
+      [`album.songs`, id],
+      async () => this.syncWithVault(await http.get<Song[]>(`albums/${id}/songs`))
+    ))
   },
 
   async fetchForArtist (artist: Artist | number) {
     const id = typeof artist === 'number' ? artist : artist.id
-    return await this.cacheable(['artist.songs', id], http.get<Song[]>(`artists/${id}/songs`))
+
+    return this.ensureNotDeleted(await cache.remember<Song[]>(
+      [`artist.songs`, id],
+      async () => this.syncWithVault(await http.get<Song[]>(`artists/${id}/songs`))
+    ))
   },
 
-  async fetchForPlaylist (playlist: Playlist | number) {
+  async fetchForPlaylist (playlist: Playlist | number, refresh = false) {
     const id = typeof playlist === 'number' ? playlist : playlist.id
-    return await this.cacheable(['playlist.songs', id], http.get<Song[]>(`playlists/${id}/songs`))
+
+    if (refresh) {
+      cache.remove(['playlist.songs', id])
+    }
+
+    return this.ensureNotDeleted(await cache.remember<Song[]>(
+      [`playlist.songs`, id],
+      async () => this.syncWithVault(await http.get<Song[]>(`playlists/${id}/songs`))
+    ))
   },
 
   async fetchForPlaylistFolder (folder: PlaylistFolder) {

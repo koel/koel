@@ -23,14 +23,14 @@ new class extends UnitTestCase {
       screen: 'Playlist'
     }, { id: playlist.id.toString() })
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist))
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist, false))
 
     return { rendered, fetchMock }
   }
 
   protected test () {
     it('renders the playlist', async () => {
-      const { getByTestId, queryByTestId } = (await this.renderComponent(factory<Song>('song', 10))).rendered
+      const { rendered: { getByTestId, queryByTestId } } = (await this.renderComponent(factory<Song>('song', 10)))
 
       await waitFor(() => {
         getByTestId('song-list')
@@ -39,7 +39,7 @@ new class extends UnitTestCase {
     })
 
     it('displays the empty state if playlist is empty', async () => {
-      const { getByTestId, queryByTestId } = (await this.renderComponent([])).rendered
+      const { rendered: { getByTestId, queryByTestId } } = (await this.renderComponent([]))
 
       await waitFor(() => {
         getByTestId('screen-empty-state')
@@ -49,7 +49,7 @@ new class extends UnitTestCase {
 
     it('downloads the playlist', async () => {
       const downloadMock = this.mock(downloadService, 'fromPlaylist')
-      const { getByText } = (await this.renderComponent(factory<Song>('song', 10))).rendered
+      const { rendered: { getByText } } = (await this.renderComponent(factory<Song>('song', 10)))
 
       await this.tick()
       await fireEvent.click(getByText('Download All'))
@@ -58,14 +58,20 @@ new class extends UnitTestCase {
     })
 
     it('deletes the playlist', async () => {
-      const { getByTitle } = (await this.renderComponent([])).rendered
-
-      // mock *after* rendering to not tamper with "ACTIVATE_SCREEN" emission
       const emitMock = this.mock(eventBus, 'emit')
+      const { rendered: { getByTitle } } = (await this.renderComponent([]))
 
       await fireEvent.click(getByTitle('Delete this playlist'))
 
       await waitFor(() => expect(emitMock).toHaveBeenCalledWith('PLAYLIST_DELETE', playlist))
+    })
+
+    it('refreshes the playlist', async () => {
+      const { rendered: { getByTitle }, fetchMock } = (await this.renderComponent([]))
+
+      await fireEvent.click(getByTitle('Refresh'))
+
+      expect(fetchMock).toHaveBeenCalledWith(playlist, true)
     })
   }
 }
