@@ -3,21 +3,25 @@
     :class="{ playing, selected: item.selected }"
     class="song-item"
     data-testid="song-item"
-    @dblclick.prevent.stop="play"
     tabindex="0"
+    @dblclick.prevent.stop="play"
   >
-    <span v-if="columns.includes('track')" class="track-number">
+    <span class="track-number">
       <SoundBars v-if="song.playback_state === 'Playing'"/>
-      <span class="text-secondary" v-else>{{ song.track || '' }}</span>
+      <span v-else class="text-secondary">{{ song.track || '' }}</span>
     </span>
     <span class="thumbnail">
       <SongThumbnail :song="song"/>
     </span>
-    <span v-if="columns.includes('title')" class="title text-primary">{{ song.title }}</span>
-    <span v-if="columns.includes('artist')" class="artist">{{ song.artist_name }}</span>
-    <span v-if="columns.includes('album')" class="album">{{ song.album_name }}</span>
-    <span v-if="columns.includes('length')" class="time">{{ fmtLength }}</span>
-    <span class="favorite">
+    <span class="title-artist">
+      <span class="title text-primary">{{ song.title }}</span>
+      <span class="artist">
+        {{ song.artist_name }}
+      </span>
+    </span>
+    <span class="album">{{ song.album_name }}</span>
+    <span class="time">{{ fmtLength }}</span>
+    <span class="extra">
       <LikeButton :song="song"/>
     </span>
   </div>
@@ -33,8 +37,8 @@ import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 
-const props = defineProps<{ item: SongRow, columns: SongListColumn[] }>()
-const { item, columns } = toRefs(props)
+const props = defineProps<{ item: SongRow }>()
+const { item } = toRefs(props)
 
 const song = computed(() => item.value.song)
 const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playback_state!))
@@ -81,10 +85,22 @@ const play = () => {
   }
 
   &.playing {
-    color: var(--color-accent);
-
-    .title {
+    .title, .track-number, .favorite {
       color: var(--color-accent) !important;
+    }
+  }
+
+  .title-artist {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow: hidden;
+
+    span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: block;
     }
   }
 

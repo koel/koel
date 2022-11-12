@@ -128,7 +128,7 @@ const {
   playAll,
   playSelected,
   onScrollBreakpoint
-} = useSongList(songs, 'Artist', { columns: ['track', 'thumbnail', 'title', 'album', 'length'] })
+} = useSongList(songs)
 
 const { useLastfm } = useThirdPartyServices()
 const allowDownload = toRef(commonStore.state, 'allow_download')

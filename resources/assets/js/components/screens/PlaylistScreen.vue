@@ -107,7 +107,7 @@ const {
   playSelected,
   onScrollBreakpoint,
   sort
-} = useSongList(ref<Song[]>([]), 'Playlist')
+} = useSongList(ref<Song[]>([]))
 
 const { removeSongsFromPlaylist } = usePlaylistManagement()
 
@@ -126,7 +126,7 @@ const fetchSongs = async (refresh = false) => {
   sort()
 }
 
-watch(playlistId, async (id) => {
+watch(playlistId, async id => {
   if (!id) return
 
   playlist.value = playlistStore.byId(id)

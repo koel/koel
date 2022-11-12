@@ -88,7 +88,7 @@ const {
   playSelected,
   onScrollBreakpoint,
   sort
-} = useSongList(toRef(favoriteStore.state, 'songs'), 'Favorites')
+} = useSongList(toRef(favoriteStore.state, 'songs'))
 
 const allowDownload = toRef(commonStore.state, 'allow_download')
 

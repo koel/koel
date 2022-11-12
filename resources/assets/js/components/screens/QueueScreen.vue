@@ -81,7 +81,7 @@ const {
   isPhone,
   playSelected,
   onScrollBreakpoint
-} = useSongList(toRef(queueStore.state, 'songs'), 'Queue', { sortable: false })
+} = useSongList(toRef(queueStore.state, 'songs'))
 
 const loading = ref(false)
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
