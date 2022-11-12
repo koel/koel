@@ -67,7 +67,7 @@ const {
   onPressEnter,
   playSelected,
   onScrollBreakpoint
-} = useSongList(ref<Song[]>([]), 'Playlist')
+} = useSongList(ref<Song[]>([]))
 
 const router = requireInjection(RouterKey)
 const dialog = requireInjection(DialogBoxKey)

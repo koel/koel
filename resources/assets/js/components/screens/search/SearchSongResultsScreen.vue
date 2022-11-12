@@ -57,7 +57,7 @@ const {
   playSelected,
   sort,
   onScrollBreakpoint
-} = useSongList(toRef(searchStore.state, 'songs'), 'Search.Songs')
+} = useSongList(toRef(searchStore.state, 'songs'))
 
 const decodedQ = computed(() => decodeURIComponent(q.value))
 const loading = ref(false)
@@ -65,7 +65,7 @@ const loading = ref(false)
 searchStore.resetSongResultState()
 
 onMounted(async () => {
-  q.value = router.$currentRoute.value?.params?.q || ''
+  q.value = router.$currentRoute.value.params?.q || ''
   if (!q.value) return
 
   loading.value = true

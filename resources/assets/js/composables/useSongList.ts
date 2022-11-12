@@ -7,7 +7,6 @@ import { eventBus, provideReadonly, requireInjection } from '@/utils'
 
 import {
   RouterKey,
-  ScreenNameKey,
   SelectedSongsKey,
   SongListConfigKey,
   SongListSortFieldKey,
@@ -20,8 +19,9 @@ import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
-export const useSongList = (songs: Ref<Song[]>, screen: ScreenName, config: Partial<SongListConfig> = {}) => {
+export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> = {}) => {
   const router = requireInjection(RouterKey)
+  const screen = router.$currentRoute.value.screen
 
   const songList = ref<InstanceType<typeof SongList>>()
 
@@ -33,6 +33,9 @@ export const useSongList = (songs: Ref<Song[]>, screen: ScreenName, config: Part
   const onScrollBreakpoint = (direction: 'up' | 'down') => {
     headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
   }
+
+  config.reorderable = screen !== 'Queue'
+  config.sortable = !['Queue', 'RecentlyPlayed', 'Search.Songs'].includes(screen)
 
   const duration = computed(() => songStore.getFormattedLength(songs.value))
 
@@ -72,14 +75,16 @@ export const useSongList = (songs: Ref<Song[]>, screen: ScreenName, config: Part
   }
 
   const sortField = ref<SongListSortField | null>(((): SongListSortField | null => {
+    if (!config.sortable) return null
     if (screen === 'Album' || screen === 'Artist') return 'track'
     if (screen === 'Search.Songs') return null
-    return config.sortable ? 'title' : null
+    return 'title'
   })())
 
   const sortOrder = ref<SortOrder>('asc')
 
   const sort = (by: SongListSortField | null = sortField.value, order: SortOrder = sortOrder.value) => {
+    if (!config.sortable) return
     if (!by) return
 
     sortField.value = by
@@ -102,7 +107,6 @@ export const useSongList = (songs: Ref<Song[]>, screen: ScreenName, config: Part
     songs.value = differenceBy(songs.value, deletedSongs, 'id')
   })
 
-  provideReadonly(ScreenNameKey, screen)
   provideReadonly(SongsKey, songs, false)
   provideReadonly(SelectedSongsKey, selectedSongs, false)
   provideReadonly(SongListConfigKey, reactive(config))

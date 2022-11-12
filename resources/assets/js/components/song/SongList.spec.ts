@@ -4,23 +4,18 @@ import { fireEvent } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify } from '@/utils'
-import {
-  ScreenNameKey,
-  SelectedSongsKey,
-  SongListConfigKey,
-  SongListSortFieldKey,
-  SongListSortOrderKey,
-  SongsKey
-} from '@/symbols'
+import { SelectedSongsKey, SongListConfigKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
 import SongList from './SongList.vue'
 
 let songs: Song[]
 
 new class extends UnitTestCase {
-  private renderComponent (
+  private async renderComponent (
     _songs: Song | Song[],
-    screen: ScreenName = 'Songs',
-    config: Partial<SongListConfig> = {},
+    config: Partial<SongListConfig> = {
+      sortable: true,
+      reorderable: true
+    },
     selectedSongs: Song[] = [],
     sortField: SongListSortField = 'title',
     sortOrder: SortOrder = 'asc'
@@ -30,15 +25,20 @@ new class extends UnitTestCase {
     const sortFieldRef = ref(sortField)
     const sortOrderRef = ref(sortOrder)
 
+    await this.router.activateRoute({
+      screen: 'Songs',
+      path: '/songs'
+    })
+
     return this.render(SongList, {
       global: {
         stubs: {
-          VirtualScroller: this.stub('virtual-scroller')
+          VirtualScroller: this.stub('virtual-scroller'),
+          SongListSorter: this.stub('song-list-sorter')
         },
         provide: {
           [<symbol>SongsKey]: [ref(songs)],
           [<symbol>SelectedSongsKey]: [ref(selectedSongs), value => (selectedSongs = value)],
-          [<symbol>ScreenNameKey]: [ref(screen)],
           [<symbol>SongListConfigKey]: [config],
           [<symbol>SongListSortFieldKey]: [sortFieldRef, value => (sortFieldRef.value = value)],
           [<symbol>SongListSortOrderKey]: [sortOrderRef, value => (sortOrderRef.value = value)]
@@ -49,7 +49,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders', async () => {
-      const { html } = this.renderComponent(factory<Song>('song', 5))
+      const { html } = await this.renderComponent(factory<Song>('song', 5))
       expect(html()).toMatchSnapshot()
     })
 
@@ -57,16 +57,25 @@ new class extends UnitTestCase {
       ['track', 'header-track-number'],
       ['title', 'header-title'],
       ['album_name', 'header-album'],
-      ['length', 'header-length'],
-      ['artist_name', 'header-artist']
+      ['length', 'header-length']
     ])('sorts by %s upon %s clicked', async (field, testId) => {
-      const { getByTestId, emitted } = this.renderComponent(factory<Song>('song', 5))
+      const { getByTestId, emitted } = await this.renderComponent(factory<Song>('song', 5))
 
       await fireEvent.click(getByTestId(testId))
       expect(emitted().sort[0]).toEqual([field, 'desc'])
 
       await fireEvent.click(getByTestId(testId))
       expect(emitted().sort[1]).toEqual([field, 'asc'])
+    })
+
+    it('cannot be sorted if configured so', async () => {
+      const { getByTestId, emitted } = await this.renderComponent(factory<Song>('song', 5), {
+        sortable: false,
+        reorderable: true
+      })
+
+      await fireEvent.click(getByTestId('header-track-number'))
+      expect(emitted().sort).toBeUndefined()
     })
   }
 }

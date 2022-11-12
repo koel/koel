@@ -350,11 +350,9 @@ type ArtistAlbumViewMode = 'list' | 'thumbnails'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
-type SongListColumn = 'track' | 'thumbnail' | 'title' | 'album' | 'artist' | 'length'
-
 interface SongListConfig {
   sortable: boolean
-  columns: SongListColumn[]
+  reorderable: boolean
 }
 
 type SongListSortField = keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name'>

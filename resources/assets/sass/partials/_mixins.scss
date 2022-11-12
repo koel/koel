@@ -160,7 +160,7 @@
 @mixin context-menu() {
   padding: .4rem 0;
   min-width: 144px;
-  background-color: var(--color-bg-primary);
+  background-color: var(--color-bg-context-menu);
   position: fixed;
   border-radius: 4px;
   display: flex;
