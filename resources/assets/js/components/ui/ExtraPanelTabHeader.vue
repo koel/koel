@@ -50,7 +50,7 @@ import { useThirdPartyServices } from '@/composables'
 
 const props = defineProps<{ modelValue?: ExtraPanelTab }>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{ (e: 'update:modelValue', value: ExtraPanelTab): void }>()
 
 const { useYouTube } = useThirdPartyServices()
 

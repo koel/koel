@@ -28,7 +28,11 @@ const props = withDefaults(
   { layout: 'full' }
 )
 
-const emit = defineEmits(['dblclick', 'contextmenu', 'dragstart'])
+const emit = defineEmits<{
+  (e: 'dblclick'): void,
+  (e: 'dragstart', event: DragEvent): void,
+  (e: 'contextmenu', event: MouseEvent): void
+}>()
 
 const onDblClick = () => emit('dblclick')
 const onDragStart = (e: DragEvent) => emit('dragstart', e)

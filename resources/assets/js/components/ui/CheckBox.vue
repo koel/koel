@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<{ modelValue?: any }>(), {
 
 const checked = ref(props.modelValue)
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
 const onInput = (event: InputEvent) => {
   checked.value = (event.target as HTMLInputElement).checked

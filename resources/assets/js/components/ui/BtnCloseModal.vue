@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
-defineEmits(['click'])
+defineEmits<{ (e: 'click'): void }>()
 </script>
 
 <style lang="scss" scoped>

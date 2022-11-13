@@ -299,7 +299,7 @@ const open = async () => {
   Object.assign(initialFormData, formData)
 }
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const maybeClose = async () => {

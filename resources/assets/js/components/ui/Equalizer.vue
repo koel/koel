@@ -46,7 +46,7 @@ import { equalizerPresets as presets } from '@/config'
 
 import Btn from '@/components/ui/Btn.vue'
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ (e: 'close'): void }>()
 
 const bands = audioService.bands
 const root = ref<HTMLElement>()

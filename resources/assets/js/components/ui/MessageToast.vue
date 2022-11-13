@@ -41,7 +41,7 @@ const typeIcon = computed(() => {
 
 let timeoutHandler: number
 
-const emit = defineEmits(['dismiss'])
+const emit = defineEmits<{ (e: 'dismiss', message: ToastMessage): void }>()
 
 const dismiss = () => {
   emit('dismiss', message.value)

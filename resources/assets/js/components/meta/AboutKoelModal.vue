@@ -70,7 +70,7 @@ const {
   latestVersionReleaseUrl
 } = useNewVersionNotification()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 onMounted(async () => {

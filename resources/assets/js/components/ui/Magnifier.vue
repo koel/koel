@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import { faSearchMinus, faSearchPlus } from '@fortawesome/free-solid-svg-icons'
 
-const emit = defineEmits(['in', 'out'])
+const emit = defineEmits<{ (e: 'in' | 'out'): void }>()
 </script>
 
 <style lang="scss" scoped>
