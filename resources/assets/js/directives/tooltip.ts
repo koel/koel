@@ -1,5 +1,6 @@
-import { arrow, autoUpdate, computePosition, offset, Placement } from '@floating-ui/dom'
+import { arrow, autoUpdate, offset, Placement } from '@floating-ui/dom'
 import { Directive, DirectiveBinding } from 'vue'
+import { updateFloatingUi } from '@/utils'
 
 type ElementWithTooltip = HTMLElement & {
   $tooltip?: HTMLDivElement,
@@ -50,39 +51,13 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
     }
   })
 
-  const update = async () => {
-    const { x, y, middlewareData } = await computePosition(el, $tooltip, {
-      placement,
-      middleware: [
-        arrow({ element: $arrow }),
-        offset(8)
-      ]
-    })
-
-    Object.assign($tooltip.style, {
-      top: `${y}px`,
-      left: `${x}px`
-    })
-
-    // @ts-ignore
-    const { x: arrowX, y: arrowY } = middlewareData.arrow
-
-    const staticSide = {
-      top: 'bottom',
-      right: 'left',
-      bottom: 'top',
-      left: 'right'
-    }[placement.split('-')[0]]
-
-    Object.assign($arrow.style, {
-      left: arrowX != null ? `${arrowX}px` : '',
-      top: arrowY != null ? `${arrowY}px` : '',
-      right: '',
-      bottom: '',
-      // @ts-ignore
-      [staticSide]: '-4px'
-    })
-  }
+  const update = async () => await updateFloatingUi(el, $tooltip, {
+    placement,
+    middleware: [
+      arrow({ element: $arrow }),
+      offset(8)
+    ]
+  }, $arrow)
 
   el.$cleanup = el.$cleanup || autoUpdate(el, $tooltip, update)
 

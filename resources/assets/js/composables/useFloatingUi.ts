@@ -1,5 +1,6 @@
 import { isRef, Ref } from 'vue'
-import { arrow as arrowMiddleware, autoUpdate, computePosition, flip, offset, Placement } from '@floating-ui/dom'
+import { arrow as arrowMiddleware, autoUpdate, flip, offset, Placement } from '@floating-ui/dom'
+import { updateFloatingUi } from '@/utils'
 
 export type Config = {
   placement: Placement,
@@ -29,54 +30,28 @@ export const useFloatingUi = (
 
     floating.style.display = 'none'
 
-    let arrow: HTMLElement | null = null
-
-    if (mergedConfig.useArrow) {
-      arrow = document.createElement('div')
-      arrow.className = 'arrow'
-      floating.appendChild(arrow)
-    }
-
     const middleware = [
       flip(),
       offset(6)
     ]
 
-    if (arrow) {
+    let arrow: HTMLElement
+
+    if (mergedConfig.useArrow) {
+      arrow = document.createElement('div')
+      arrow.className = 'arrow'
+      floating.appendChild(arrow)
+
       middleware.push(arrowMiddleware({
         element: arrow,
         padding: 6
       }))
     }
 
-    const update = async () => {
-      const { x, y, placement: _, middlewareData } = await computePosition(reference, floating, {
-        placement: mergedConfig.placement,
-        middleware
-      })
-
-      floating.style.left = `${x}px`
-      floating.style.top = `${y}px`
-
-      if (arrow) {
-        const { x: arrowX, y: arrowY } = middlewareData.arrow
-
-        const staticSide = {
-          top: 'bottom',
-          right: 'left',
-          bottom: 'top',
-          left: 'right'
-        }[mergedConfig.placement.split('-')[0]]
-
-        Object.assign(arrow.style, {
-          left: arrowX != null ? `${arrowX}px` : '',
-          top: arrowY != null ? `${arrowY}px` : '',
-          right: '',
-          bottom: '',
-          [staticSide]: '-4px'
-        })
-      }
-    }
+    const update = async () => await updateFloatingUi(reference, floating, {
+      placement: mergedConfig.placement,
+      middleware
+    }, arrow)
 
     _cleanUp = autoUpdate(reference, floating, update)
 
