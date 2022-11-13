@@ -1,8 +1,18 @@
 <template>
-  <button type="button">
+  <button type="button" ref="button">
     <slot>Click me</slot>
   </button>
 </template>
+
+<script lang="ts" setup>
+import { ref } from 'vue'
+
+const button = ref<HTMLButtonElement>()
+
+defineExpose({
+  button
+})
+</script>
 
 <style lang="scss" scoped>
 button {

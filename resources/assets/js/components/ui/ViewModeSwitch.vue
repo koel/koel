@@ -32,7 +32,8 @@ import { faList } from '@fortawesome/free-solid-svg-icons'
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{ modelValue?: ArtistAlbumViewMode }>(), { modelValue: 'thumbnails' })
-const emit = defineEmits(['update:modelValue'])
+
+const emit = defineEmits<{ (e: 'update:modelValue', value: ArtistAlbumViewMode): void }>()
 
 const value = computed({
   get: () => props.modelValue,

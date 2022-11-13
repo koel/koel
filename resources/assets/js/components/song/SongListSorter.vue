@@ -23,7 +23,7 @@ import { useFloatingUi } from '@/composables'
 const props = defineProps<{ field?: SongListSortField, order?: SortOrder }>()
 const { field, order } = toRefs(props)
 
-const emit = defineEmits<{ (e: 'sort', payload: SongListSortField): void }>()
+const emit = defineEmits<{ (e: 'sort', field: SongListSortField): void }>()
 
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
@@ -76,7 +76,6 @@ button {
 }
 
 menu {
-  width: max-content;
   text-transform: none;
   letter-spacing: 0;
 

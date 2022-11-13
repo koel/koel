@@ -104,7 +104,14 @@ import SongListSorter from '@/components/song/SongListSorter.vue'
 const { startDragging } = useDraggable('songs')
 const { getDroppedData, acceptsDrop } = useDroppable(['songs'])
 
-const emit = defineEmits(['press:enter', 'press:delete', 'reorder', 'sort', 'scroll-breakpoint', 'scrolled-to-end'])
+const emit = defineEmits<{
+  (e: 'press:enter', event: KeyboardEvent): void,
+  (e: 'press:delete'): void,
+  (e: 'reorder', song: Song): void,
+  (e: 'sort', field: SongListSortField, order: SortOrder): void,
+  (e: 'scroll-breakpoint', direction: 'up' | 'down'): void,
+  (e: 'scrolled-to-end'): void,
+}>()
 
 const [items] = requireInjection<[Ref<Song[]>]>(SongsKey)
 const [selectedSongs, setSelectedSongs] = requireInjection<[Ref<Song[]>, Closure]>(SelectedSongsKey)

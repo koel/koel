@@ -1,13 +1,5 @@
 <template>
-  <div
-    v-show="showing"
-    v-koel-clickaway="close"
-    v-koel-focus
-    class="add-to"
-    data-testid="add-to-menu"
-    tabindex="0"
-    @keydown.esc="close"
-  >
+  <div class="add-to" data-testid="add-to-menu" tabindex="0">
     <section class="existing-playlists">
       <p>Add {{ pluralize(songs, 'song') }} to</p>
 
@@ -86,8 +78,8 @@ import Btn from '@/components/ui/Btn.vue'
 const toaster = requireInjection(MessageToasterKey)
 const router = requireInjection(RouterKey)
 
-const props = defineProps<{ songs: Song[], showing: Boolean, config: AddToMenuConfig }>()
-const { songs, showing, config } = toRefs(props)
+const props = defineProps<{ songs: Song[], config: AddToMenuConfig }>()
+const { songs, config } = toRefs(props)
 
 const newPlaylistName = ref('')
 const queue = toRef(queueStore.state, 'songs')
@@ -96,7 +88,7 @@ const currentSong = queueStore.current
 const allPlaylists = toRef(playlistStore.state, 'playlists')
 const playlists = computed(() => allPlaylists.value.filter(playlist => !playlist.is_smart))
 
-const emit = defineEmits(['closing'])
+const emit = defineEmits<{ (e: 'closing'): void }>()
 const close = () => emit('closing')
 
 const {
@@ -135,8 +127,6 @@ const createNewPlaylistFromSongs = async () => {
 
 <style lang="scss" scoped>
 .add-to {
-  @include context-menu();
-
   width: 100%;
   max-width: 225px;
   padding: .75rem;
@@ -181,34 +171,23 @@ const createNewPlaylistFromSongs = async () => {
     }
   }
 
-  &::before {
-    display: block;
-    content: " ";
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-bottom: 10px solid var(--color-bg-primary);
-    position: absolute;
-    top: -7px;
-    left: calc(50% - 10px);
-  }
-
   form {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 3px;
+    overflow: hidden;
 
     input[type="text"] {
       width: 100%;
-      border-radius: 5px 0 0 5px;
       height: 28px;
+      border-radius: 0;
     }
 
     button[type="submit"] {
       margin-top: 0;
-      border-radius: 0 5px 5px 0 !important;
+      border-radius: 0;
       height: 28px;
       line-height: 28px;
       padding-top: 0;

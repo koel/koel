@@ -43,8 +43,7 @@ const dialog = requireInjection(DialogBoxKey)
 const loading = ref(false)
 const name = ref('')
 
-const emit = defineEmits(['close'])
-
+const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const submit = async () => {

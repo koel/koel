@@ -16,8 +16,6 @@ import { onMounted } from 'vue'
 
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
-const emit = defineEmits(['itemClicked'])
-
 const actionToEventMap: Record<string, EventName> = {
   'new-playlist': 'MODAL_SHOW_CREATE_PLAYLIST_FORM',
   'new-smart-playlist': 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM',

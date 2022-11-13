@@ -37,7 +37,7 @@ const Rule = defineAsyncComponent(() => import('@/components/playlist/smart-play
 
 const mutatedGroup = reactive<SmartPlaylistRuleGroup>(JSON.parse(JSON.stringify(group.value)))
 
-const emit = defineEmits(['input'])
+const emit = defineEmits<{ (e: 'input', group: SmartPlaylistRuleGroup): void }>()
 
 const notifyParentForUpdate = () => emit('input', mutatedGroup)
 

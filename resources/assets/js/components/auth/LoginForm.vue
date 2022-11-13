@@ -26,7 +26,7 @@ const email = ref(isDemo() ? DEMO_ACCOUNT.email : '')
 const password = ref(isDemo() ? DEMO_ACCOUNT.password : '')
 const failed = ref(false)
 
-const emit = defineEmits(['loggedin'])
+const emit = defineEmits<{ (e: 'loggedin'): void }>()
 
 const login = async () => {
   try {

@@ -59,16 +59,6 @@ new class extends UnitTestCase {
       expect(emitted().playSelected[0]).toEqual([false])
     })
 
-    it('toggles Add To menu', async () => {
-      const { getByTitle, getByTestId } = this.renderComponent()
-
-      await fireEvent.click(getByTitle('Add selected songs to…'))
-      expect(getByTestId('add-to-menu').style.display).toBe('')
-
-      await fireEvent.click(getByTitle('Cancel'))
-      expect(getByTestId('add-to-menu').style.display).toBe('none')
-    })
-
     it('clears queue', async () => {
       const { emitted, getByTitle } = this.renderComponent(0, { clearQueue: true })
 

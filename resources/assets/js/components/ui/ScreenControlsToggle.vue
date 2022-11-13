@@ -13,7 +13,7 @@ import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{ modelValue?: boolean }>(), { modelValue: false })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
 const value = computed({
   get: () => props.modelValue,

@@ -21,7 +21,10 @@ const scrollerHeight = ref(0)
 const renderAhead = 5
 const scrollTop = ref(0)
 
-const emit = defineEmits(['scrolled-to-end', 'scroll'])
+const emit = defineEmits<{
+  (e: 'scrolled-to-end'): void,
+  (e: 'scroll', event: MouseEvent): void
+}>()
 
 const totalHeight = computed(() => items.value.length * itemHeight.value)
 const startPosition = computed(() => Math.max(0, Math.floor(scrollTop.value / itemHeight.value) - renderAhead))

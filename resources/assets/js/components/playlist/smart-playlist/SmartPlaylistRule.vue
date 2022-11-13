@@ -96,7 +96,10 @@ watch(availableOperators, () => {
 
 const valueSuffix = computed(() => selectedOperator.value?.unit || selectedModel.value?.unit)
 
-const emit = defineEmits(['input', 'remove'])
+const emit = defineEmits<{
+  (e: 'input', rule: SmartPlaylistRule): void,
+  (e: 'remove'): void
+}>()
 
 const onInput = () => {
   emit('input', {
@@ -104,7 +107,7 @@ const onInput = () => {
     model: selectedModel.value,
     operator: selectedOperator.value?.operator,
     value: availableInputs.value.map(input => input.value)
-  } as SmartPlaylistRule)
+  })
 }
 
 const removeRule = () => emit('remove')
