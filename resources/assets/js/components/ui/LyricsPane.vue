@@ -3,7 +3,7 @@
     <div class="content">
       <template v-if="song">
         <div v-show="song.lyrics">
-          <pre ref="lyricsContainer">{{ song.lyrics }}</pre>
+          <pre ref="lyricsContainer">{{ lyrics }}</pre>
           <Magnifier @in="zoomLevel++" @out="zoomLevel--" class="magnifier"/>
         </div>
         <p v-if="song.id && !song.lyrics" class="none text-secondary">
@@ -22,21 +22,29 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, ref, toRefs, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, toRefs, watch } from 'vue'
 import { eventBus } from '@/utils'
 import { useAuthorization } from '@/composables'
 import { preferenceStore as preferences } from '@/stores'
 
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
 
-const { isAdmin } = useAuthorization()
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
+
+const { isAdmin } = useAuthorization()
 
 const lyricsContainer = ref<HTMLElement>()
 const zoomLevel = ref(preferences.lyricsZoomLevel || 1)
 
 const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
+
+const lyrics = computed(() => {
+  // This trick converts CRs (\r) to LF (\n) using JavaScript's implicit DOM-writing behavior
+  const div = document.createElement('div')
+  div.innerHTML = song.value.lyrics
+  return div.innerHTML
+})
 
 const setFontSize = () => {
   if (lyricsContainer.value) {
