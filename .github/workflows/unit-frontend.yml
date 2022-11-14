@@ -3,29 +3,40 @@ on:
   pull_request:
     branches:
       - master
-    paths:
-      - resources/assets/**
-      - .github/workflows/unit-frontend.yml
   push:
     branches:
       - master
-      - next
-    paths:
-      - resources/assets/**
-      - .github/workflows/unit-frontend.yml
   workflow_dispatch:
     branches:
       - master
-      - next
-    paths:
-      - resources/assets/**
-      - .github/workflows/unit-frontend.yml
 
 env:
   LARAVEL_BYPASS_ENV_CHECK: 1
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      changed: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - './resources/assets/**'
+              - './vite.config.js'
+              - './package.json'
+              - './yarn.lock'
+              - './.eslintrc'
+              - './cypress.json'
+
   test:
+    needs: changes
+    if: ${{needs.changes.outputs.changed == 'frontend'}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -46,3 +57,11 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  skip:
+    needs: changes
+    if: ${{needs.changes.outputs.changed != 'frontend'}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip
+        run: echo "No frontend-related changes detected, skipping."

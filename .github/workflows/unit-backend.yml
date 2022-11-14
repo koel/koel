@@ -3,20 +3,38 @@ on:
   pull_request:
     branches:
       - master
-    paths-ignore:
-      - resources/assets/**
   push:
     branches:
       - master
-    paths-ignore:
-      - resources/assets/**
   workflow_dispatch:
     branches:
       - master
-    paths-ignore:
-      - resources/assets/**
+
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      changed: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            backend:
+              - '!./resources/assets/**'
+              - '!./.github/workflows/unit-frontend.yml'
+              - '!./vite.config.js'
+              - '!./package.json'
+              - '!./yarn.lock'
+              - '!./.eslintrc'
+              - '!./cypress.json'
+
   test:
+    needs: changes
+    if: ${{needs.changes.outputs.changed == 'backend'}}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -53,3 +71,11 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  skip:
+    name: Skip
+    runs-on: ubuntu-latest
+    if: ${{needs.changes.outputs.changed != 'backend'}}
+    steps:
+      - name: Skip
+        run: echo "No backend-related changes detected, skipping."
