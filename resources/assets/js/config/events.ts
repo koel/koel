@@ -1,49 +1,52 @@
-export type EventName =
-  | 'LOG_OUT'
-  | 'TOGGLE_SIDEBAR'
-  | 'SHOW_OVERLAY'
-  | 'HIDE_OVERLAY'
-  | 'FOCUS_SEARCH_FIELD'
-  | 'PLAY_YOUTUBE_VIDEO'
-  | 'INIT_EQUALIZER'
-  | 'SEARCH_KEYWORDS_CHANGED'
+import { Ref } from 'vue'
 
-  | 'SONG_CONTEXT_MENU_REQUESTED'
-  | 'ALBUM_CONTEXT_MENU_REQUESTED'
-  | 'ARTIST_CONTEXT_MENU_REQUESTED'
-  | 'CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED'
-  | 'PLAYLIST_CONTEXT_MENU_REQUESTED'
-  | 'PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED'
-  | 'CONTEXT_MENU_OPENED'
+export interface Events {
+  LOG_OUT: () => void
+  TOGGLE_SIDEBAR: () => void
+  SHOW_OVERLAY: (options: Partial<OverlayState>) => void
+  HIDE_OVERLAY: () => void
+  FOCUS_SEARCH_FIELD: () => void
+  PLAY_YOUTUBE_VIDEO: (payload: { id: string, title: string }) => void
+  SEARCH_KEYWORDS_CHANGED: (keywords: string) => void
 
-  | 'MODAL_SHOW_ADD_USER_FORM'
-  | 'MODAL_SHOW_EDIT_USER_FORM'
-  | 'MODAL_SHOW_EDIT_SONG_FORM'
-  | 'MODAL_SHOW_CREATE_PLAYLIST_FORM'
-  | 'MODAL_SHOW_EDIT_PLAYLIST_FORM'
-  | 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM'
-  | 'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM'
-  | 'MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM'
-  | 'MODAL_SHOW_ABOUT_KOEL'
-  | 'MODAL_SHOW_EQUALIZER'
+  SONG_CONTEXT_MENU_REQUESTED: (event: MouseEvent, songs: Song | Song[]) => void
+  ALBUM_CONTEXT_MENU_REQUESTED: (event: MouseEvent, album: Album) => void
+  ARTIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, artist: Artist) => void
+  CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent) => void
+  PLAYLIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlist: Playlist) => void
+  PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlistFolder: PlaylistFolder) => void
+  CONTEXT_MENU_OPENED: (el: Ref<HTMLElement> | HTMLElement) => void
 
-  | 'PLAYLIST_DELETE'
-  | 'PLAYLIST_FOLDER_DELETE'
-  | 'PLAYLIST_SONGS_REMOVED'
-  | 'PLAYLIST_UPDATED'
-  | 'SONGS_UPDATED'
-  | 'SONGS_DELETED'
-  | 'SONG_QUEUED_FROM_ROUTE'
+  MODAL_SHOW_ADD_USER_FORM: () => void
+  MODAL_SHOW_EDIT_USER_FORM: (user: User) => void
+  MODAL_SHOW_EDIT_SONG_FORM: (songs: Song | Song[], initialTab: EditSongFormTabName) => void
+  MODAL_SHOW_CREATE_PLAYLIST_FORM: () => void
+  MODAL_SHOW_EDIT_PLAYLIST_FORM: (playlist: Playlist) => void
+  MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM: () => void
+  MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM: () => void
+  MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (playlistFolder: PlaylistFolder) => void
+  MODAL_SHOW_ABOUT_KOEL: () => void
+  MODAL_SHOW_EQUALIZER: () => void
 
-  // socket events
-  | 'SOCKET_TOGGLE_PLAYBACK'
-  | 'SOCKET_TOGGLE_FAVORITE'
-  | 'SOCKET_PLAY_NEXT'
-  | 'SOCKET_PLAY_PREV'
-  | 'SOCKET_PLAYBACK_STOPPED'
-  | 'SOCKET_GET_STATUS'
-  | 'SOCKET_STATUS'
-  | 'SOCKET_GET_CURRENT_SONG'
-  | 'SOCKET_SONG'
-  | 'SOCKET_SET_VOLUME'
-  | 'SOCKET_VOLUME_CHANGED'
+  PLAYLIST_DELETE: (playlist: Playlist) => void
+  PLAYLIST_FOLDER_DELETE: (playlistFolder: PlaylistFolder) => void
+  PLAYLIST_SONGS_REMOVED: (playlist: Playlist, songs: Song[]) => void
+  PLAYLIST_UPDATED: (playlist: Playlist) => void
+
+  SONGS_UPDATED: () => void
+  SONGS_DELETED: (songs: Song[]) => void
+  SONG_QUEUED_FROM_ROUTE: (songId: string) => void
+
+  SOCKET_TOGGLE_PLAYBACK: () => void
+  SOCKET_TOGGLE_FAVORITE: () => void
+  SOCKET_PLAY_NEXT: () => void
+  SOCKET_PLAY_PREV: () => void
+  SOCKET_PLAYBACK_STOPPED: () => void
+  SOCKET_GET_STATUS: () => void
+  SOCKET_STATUS: () => void
+  SOCKET_GET_CURRENT_SONG: () => void
+  SOCKET_SONG: (song: Song) => void
+  SOCKET_SET_VOLUME: (volume: number) => void
+  SOCKET_VOLUME_CHANGED: (volume: number) => void
+}
+

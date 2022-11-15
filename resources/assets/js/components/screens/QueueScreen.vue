@@ -109,7 +109,7 @@ const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(se
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
 const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
 
-eventBus.on('SONG_QUEUED_FROM_ROUTE', async (id: string) => {
+eventBus.on('SONG_QUEUED_FROM_ROUTE', async id => {
   let song: Song | undefined
 
   try {
@@ -127,7 +127,7 @@ eventBus.on('SONG_QUEUED_FROM_ROUTE', async (id: string) => {
     loading.value = false
   }
 
-  queueStore.queueIfNotQueued(song)
-  await playbackService.play(song)
+  queueStore.queueIfNotQueued(song!)
+  await playbackService.play(song!)
 })
 </script>

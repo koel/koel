@@ -103,9 +103,7 @@ export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> 
     songs.value = orderBy(songs.value, sortFields, order)
   }
 
-  eventBus.on('SONGS_DELETED', (deletedSongs: Song[]) => {
-    songs.value = differenceBy(songs.value, deletedSongs, 'id')
-  })
+  eventBus.on('SONGS_DELETED', deletedSongs => (songs.value = differenceBy(songs.value, deletedSongs, 'id')))
 
   provideReadonly(SongsKey, songs, false)
   provideReadonly(SelectedSongsKey, selectedSongs, false)

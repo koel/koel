@@ -55,11 +55,9 @@ const onSubmit = () => {
 
 const maybeGoToSearchScreen = () => isMobile.any || router.go('search')
 
-eventBus.on({
-  FOCUS_SEARCH_FIELD: () => {
-    input.value?.focus()
-    input.value?.select()
-  }
+eventBus.on('FOCUS_SEARCH_FIELD', () => {
+  input.value?.focus()
+  input.value?.select()
 })
 </script>
 

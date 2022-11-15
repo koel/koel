@@ -75,7 +75,8 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const loading = ref(false)
 let initialized = false
 
-eventBus.on(['SONGS_DELETED', 'SONGS_UPDATED'], () => overviewStore.refresh())
+eventBus.on('SONGS_DELETED', () => overviewStore.refresh())
+  .on('SONGS_UPDATED', () => overviewStore.refresh())
 
 useScreen('Home').onScreenActivated(async () => {
   if (!initialized) {

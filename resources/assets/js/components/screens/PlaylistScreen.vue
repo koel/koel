@@ -135,11 +135,9 @@ watch(playlistId, async id => {
 
 router.onRouteChanged(route => route.screen === 'Playlist' && (playlistId.value = parseInt(route.params!.id)))
 
-eventBus.on({
-  PLAYLIST_UPDATED: async (updated: Playlist) => updated.id === playlistId.value && await fetchSongs(),
-  PLAYLIST_SONGS_REMOVED: async (playlist: Playlist, removed: Song[]) => {
+eventBus.on('PLAYLIST_UPDATED', async updated => updated.id === playlistId.value && await fetchSongs())
+  .on('PLAYLIST_SONGS_REMOVED', async (playlist, removed) => {
     if (playlist.id !== playlistId.value) return
     songs.value = differenceBy(songs.value, removed, 'id')
-  }
-})
+  })
 </script>

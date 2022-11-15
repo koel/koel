@@ -145,13 +145,11 @@ router.onRouteChanged(route => {
   activeScreen.value = route.screen
 })
 
-eventBus.on({
-  /**
-   * Listen to toggle sidebar event to show or hide the sidebar.
-   * This should only be triggered on a mobile device.
-   */
-  TOGGLE_SIDEBAR: () => (mobileShowing.value = !mobileShowing.value)
-})
+/**
+ * Listen to toggle sidebar event to show or hide the sidebar.
+ * This should only be triggered on a mobile device.
+ */
+eventBus.on('TOGGLE_SIDEBAR', () => (mobileShowing.value = !mobileShowing.value))
 </script>
 
 <style lang="scss" scoped>

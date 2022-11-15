@@ -113,16 +113,12 @@ const doSearch = async () => {
   searching.value = false
 }
 
-eventBus.on({
-  SEARCH_KEYWORDS_CHANGED: async (_q: string) => {
-    q.value = _q
+eventBus.on('SEARCH_KEYWORDS_CHANGED', async _q => {
+  q.value = _q
+  await doSearch()
+}).on('SONGS_DELETED', async songs => {
+  if (intersectionBy(songs, excerpt.value.songs, 'id').length !== 0) {
     await doSearch()
-  },
-
-  SONGS_DELETED: async (songs: Song[]) => {
-    if (intersectionBy(songs, excerpt.value.songs, 'id').length !== 0) {
-      await doSearch()
-    }
   }
 })
 </script>
