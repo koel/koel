@@ -46,36 +46,29 @@ watch(activeModalName, name => name ? dialog.value?.showModal() : dialog.value?.
 
 const close = () => (activeModalName.value = null)
 
-eventBus.on({
-  MODAL_SHOW_ABOUT_KOEL: () => (activeModalName.value = 'about-koel'),
-  MODAL_SHOW_ADD_USER_FORM: () => (activeModalName.value = 'add-user-form'),
-  MODAL_SHOW_CREATE_PLAYLIST_FORM: () => (activeModalName.value = 'create-playlist-form'),
-  MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM: () => (activeModalName.value = 'create-smart-playlist-form'),
-  MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM: () => (activeModalName.value = 'create-playlist-folder-form'),
-
-  MODAL_SHOW_EDIT_PLAYLIST_FORM: (playlist: Playlist) => {
+eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'))
+  .on('MODAL_SHOW_ADD_USER_FORM', () => (activeModalName.value = 'add-user-form'))
+  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', () => (activeModalName.value = 'create-playlist-form'))
+  .on('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', () => (activeModalName.value = 'create-smart-playlist-form'))
+  .on('MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM', () => (activeModalName.value = 'create-playlist-folder-form'))
+  .on('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist => {
     playlistToEdit.value = playlist
     activeModalName.value = playlist.is_smart ? 'edit-smart-playlist-form' : 'edit-playlist-form'
-  },
-
-  MODAL_SHOW_EDIT_USER_FORM: (user: User) => {
+  })
+  .on('MODAL_SHOW_EDIT_USER_FORM', user => {
     userToEdit.value = user
     activeModalName.value = 'edit-user-form'
-  },
-
-  MODAL_SHOW_EDIT_SONG_FORM: (songs: Song | Song[], initialTab: EditSongFormTabName = 'details') => {
+  })
+  .on('MODAL_SHOW_EDIT_SONG_FORM', (songs, initialTab: EditSongFormTabName = 'details') => {
     songsToEdit.value = arrayify(songs)
     editSongFormInitialTab.value = initialTab
     activeModalName.value = 'edit-song-form'
-  },
-
-  MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (folder: PlaylistFolder) => {
+  })
+  .on('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder => {
     playlistFolderToEdit.value = folder
     activeModalName.value = 'edit-playlist-folder-form'
-  },
-
-  MODAL_SHOW_EQUALIZER: () => (activeModalName.value = 'equalizer')
-})
+  })
+  .on('MODAL_SHOW_EQUALIZER', () => (activeModalName.value = 'equalizer'))
 </script>
 
 <style lang="scss" scoped>

@@ -150,7 +150,7 @@ const deleteFromFilesystem = () => trigger(async () => {
   }
 })
 
-eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _songs: Song | Song[]) => {
+eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e, _songs) => {
   songs.value = arrayify(_songs)
   await open(e.pageY, e.pageX, { songs: songs.value })
 })

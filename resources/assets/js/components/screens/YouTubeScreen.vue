@@ -26,7 +26,7 @@ import { CurrentSongKey } from '@/symbols'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
-let player: YouTubePlayer | null = null
+let player: YouTubePlayer
 const title = ref('YouTube Video')
 
 const getPlayer = () => {
@@ -50,7 +50,7 @@ const currentSong = requireInjection(CurrentSongKey)
  */
 watch(() => currentSong.value?.playback_state, state => state === 'Playing' && player?.pauseVideo())
 
-eventBus.on('PLAY_YOUTUBE_VIDEO', (payload: { id: string, title: string }) => {
+eventBus.on('PLAY_YOUTUBE_VIDEO', payload => {
   title.value = payload.title
 
   use(getPlayer(), player => {

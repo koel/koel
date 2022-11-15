@@ -35,10 +35,8 @@ const show = (options: Partial<OverlayState>) => {
 
 const hide = () => (state.showing = false)
 
-eventBus.on({
-  SHOW_OVERLAY: show,
-  HIDE_OVERLAY: hide
-})
+eventBus.on('SHOW_OVERLAY', options => show(options))
+  .on('HIDE_OVERLAY', () => hide())
 </script>
 
 <style lang="scss">

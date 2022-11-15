@@ -14,31 +14,22 @@ export const GlobalEventListeners = defineComponent({
     const dialog = requireInjection(DialogBoxKey)
     const router = requireInjection(RouterKey)
 
-    eventBus.on({
-      PLAYLIST_DELETE: async (playlist: Playlist) => {
-        if (await dialog.value.confirm(`Delete the playlist "${playlist.name}"?`)) {
-          await playlistStore.delete(playlist)
-          toaster.value.success(`Playlist "${playlist.name}" deleted.`)
-          router.go('home')
-        }
-      },
-
-      PLAYLIST_FOLDER_DELETE: async (folder: PlaylistFolder) => {
-        if (await dialog.value.confirm(`Delete the playlist folder "${folder.name}"?`)) {
-          await playlistFolderStore.delete(folder)
-          toaster.value.success(`Playlist folder "${folder.name}" deleted.`)
-          router.go('home')
-        }
-      },
-
-      /**
-       * Log the current user out and reset the application state.
-       */
-      LOG_OUT: async () => {
-        await userStore.logout()
-        authService.destroy()
-        forceReloadWindow()
+    eventBus.on('PLAYLIST_DELETE', async playlist => {
+      if (await dialog.value.confirm(`Delete the playlist "${playlist.name}"?`)) {
+        await playlistStore.delete(playlist)
+        toaster.value.success(`Playlist "${playlist.name}" deleted.`)
+        router.go('home')
       }
+    }).on('PLAYLIST_FOLDER_DELETE', async folder => {
+      if (await dialog.value.confirm(`Delete the playlist folder "${folder.name}"?`)) {
+        await playlistFolderStore.delete(folder)
+        toaster.value.success(`Playlist folder "${folder.name}" deleted.`)
+        router.go('home')
+      }
+    }).on('LOG_OUT', async () => {
+      await userStore.logout()
+      authService.destroy()
+      forceReloadWindow()
     })
 
     return () => slots.default?.()

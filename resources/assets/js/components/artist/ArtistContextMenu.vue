@@ -47,7 +47,7 @@ const shuffle = () => trigger(async () => {
 const viewArtistDetails = () => trigger(() => router.go(`artist/${artist.value!.id}`))
 const download = () => trigger(() => downloadService.fromArtist(artist.value!))
 
-eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async (e: MouseEvent, _artist: Artist) => {
+eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async (e, _artist) => {
   artist.value = _artist
   await open(e.pageY, e.pageX, { _artist })
 })

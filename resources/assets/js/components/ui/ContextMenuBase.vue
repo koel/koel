@@ -88,9 +88,7 @@ const open = async (_top = 0, _left = 0) => {
   eventBus.emit('CONTEXT_MENU_OPENED', el)
 }
 
-const close = () => {
-  shown.value = false
-}
+const close = () => (shown.value = false)
 
 // ensure there's only one context menu at any time
 eventBus.on('CONTEXT_MENU_OPENED', target => target === el || close())
