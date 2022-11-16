@@ -7,18 +7,18 @@ new class extends UnitTestCase {
   protected test () {
     it('gets the token', () => {
       const mock = this.mock(localStorageService, 'get')
-      authService.getToken()
+      authService.getApiToken()
       expect(mock).toHaveBeenCalledWith('api-token')
     })
 
     it.each([['foo', true], [null, false]])('checks if the token exists', (token, exists) => {
       this.mock(localStorageService, 'get', token)
-      expect(authService.hasToken()).toBe(exists)
+      expect(authService.hasApiToken()).toBe(exists)
     })
 
     it('sets the token', () => {
       const mock = this.mock(localStorageService, 'set')
-      authService.setToken('foo')
+      authService.setApiToken('foo')
       expect(mock).toHaveBeenCalledWith('api-token', 'foo')
     })
 

@@ -113,8 +113,8 @@ export const songStore = {
 
   getSourceUrl: (song: Song) => {
     return isMobile.any && preferenceStore.transcodeOnMobile
-      ? `${commonStore.state.cdn_url}play/${song.id}/1/128?api_token=${authService.getToken()}`
-      : `${commonStore.state.cdn_url}play/${song.id}?api_token=${authService.getToken()}`
+      ? `${commonStore.state.cdn_url}play/${song.id}/1/128?t=${authService.getAudioToken()}`
+      : `${commonStore.state.cdn_url}play/${song.id}?t=${authService.getAudioToken()}`
   },
 
   getShareableUrl: (song: Song) => `${window.BASE_URL}#/song/${song.id}`,

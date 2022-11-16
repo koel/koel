@@ -36,7 +36,7 @@ const fmtLength = computed(() => secondsToHis(track.value.length))
 const active = computed(() => matchedSong.value && matchedSong.value.playback_state !== 'Stopped')
 
 const iTunesUrl = computed(() => {
-  return `${window.BASE_URL}itunes/song/${album.value.id}?q=${encodeURIComponent(track.value.title)}&api_token=${authService.getToken()}`
+  return `${window.BASE_URL}itunes/song/${album.value.id}?q=${encodeURIComponent(track.value.title)}&api_token=${authService.getApiToken()}`
 })
 
 const play = () => {

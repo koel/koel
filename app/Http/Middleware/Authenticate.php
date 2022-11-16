@@ -3,25 +3,21 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class Authenticate
 {
-    public function __construct(protected Guard $auth)
-    {
-    }
-
     public function handle(Request $request, Closure $next) // @phpcs:ignore
     {
-        if ($this->auth->guest()) {
-            if ($request->ajax() || $request->wantsJson() || $request->route()->getName() === 'play') {
-                return response('Unauthorized.', 401);
-            } else {
-                return redirect()->guest('/');
-            }
+        if ($request->user()?->tokenCan('*')) {
+            return $next($request);
         }
 
-        return $next($request);
+        if ($request->ajax() || $request->wantsJson()) {
+            abort(Response::HTTP_UNAUTHORIZED);
+        }
+
+        return redirect()->guest('/');
     }
 }

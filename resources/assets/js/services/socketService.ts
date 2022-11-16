@@ -16,7 +16,7 @@ export const socketService = {
       authEndpoint: `${window.BASE_URL}api/broadcasting/auth`,
       auth: {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${authService.getApiToken()}`
         }
       },
       cluster: window.PUSHER_APP_CLUSTER,
