@@ -50,7 +50,7 @@ class Http {
     // Intercept the request to make sure the token is injected into the header.
     this.client.interceptors.request.use(config => {
       Http.setProgressBar()
-      config.headers.Authorization = `Bearer ${authService.getToken()}`
+      config.headers.Authorization = `Bearer ${authService.getApiToken()}`
       return config
     })
 
@@ -60,7 +60,10 @@ class Http {
 
       // …get the token from the header or response data if exists, and save it.
       const token = response.headers.authorization || response.data.token
-      token && authService.setToken(token)
+      token && authService.setApiToken(token)
+
+      const audioToken = response.data['audio-token']
+      audioToken && authService.setAudioToken(audioToken)
 
       return response
     }, error => {

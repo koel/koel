@@ -80,7 +80,7 @@ const onUserLoggedIn = async () => {
 
 onMounted(async () => {
   // The app has just been initialized, check if we can get the user data with an already existing token
-  if (authService.hasToken()) {
+  if (authService.hasApiToken()) {
     authenticated.value = true
     await init()
   }

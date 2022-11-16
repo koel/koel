@@ -147,13 +147,13 @@ new class extends UnitTestCase {
     it('gets source URL', () => {
       commonStore.state.cdn_url = 'http://test/'
       const song = factory<Song>('song', { id: 'foo' })
-      this.mock(authService, 'getToken', 'hadouken')
+      this.mock(authService, 'getAudioToken', 'hadouken')
 
-      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo?api_token=hadouken')
+      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo?t=hadouken')
 
       isMobile.any = true
       preferenceStore.transcodeOnMobile = true
-      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo/1/128?api_token=hadouken')
+      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo/1/128?t=hadouken')
     })
 
     it('gets shareable URL', () => {

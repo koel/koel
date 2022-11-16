@@ -35,7 +35,7 @@ class DownloadTest extends TestCase
             ->never();
 
         $this->get("download/songs?songs[]=$song->id")
-            ->assertRedirect('/');
+            ->assertUnauthorized();
     }
 
     public function testDownloadOneSong(): void

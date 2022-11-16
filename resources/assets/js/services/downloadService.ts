@@ -34,7 +34,7 @@ export const downloadService = {
    */
   trigger: (uri: string) => {
     const sep = uri.includes('?') ? '&' : '?'
-    const url = `${window.BASE_URL}download/${uri}${sep}api_token=${authService.getToken()}`
+    const url = `${window.BASE_URL}download/${uri}${sep}t=${authService.getAudioToken()}`
 
     const iframe = document.createElement('iframe')
     iframe.style.display = 'none'

@@ -30,7 +30,9 @@ class AuthServiceProvider extends ServiceProvider
             /** @var TokenManager $tokenManager */
             $tokenManager = app(TokenManager::class);
 
-            return $tokenManager->getUserFromPlainTextToken($request->api_token ?: '');
+            $token = $request->get('api_token') ?: $request->get('t');
+
+            return $tokenManager->getUserFromPlainTextToken($token ?: '');
         });
 
         $this->setPasswordDefaultRules();

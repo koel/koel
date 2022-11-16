@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AudioAuthenticate;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\ObjectStorageAuthenticate;
@@ -49,6 +50,7 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => Authenticate::class,
+        'audio.auth' => AudioAuthenticate::class,
         'os.auth' => ObjectStorageAuthenticate::class,
         'bindings' => SubstituteBindings::class,
         'can' => Authorize::class,

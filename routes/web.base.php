@@ -17,8 +17,6 @@ Route::middleware('web')->group(static function (): void {
     Route::get('remote', static fn () => view('remote'));
 
     Route::middleware('auth')->group(static function (): void {
-        Route::get('play/{song}/{transcode?}/{bitrate?}', [PlayController::class, 'show'])->name('song.play');
-
         Route::prefix('lastfm')->group(static function (): void {
             Route::get('connect', [LastfmController::class, 'connect'])->name('lastfm.connect');
             Route::get('callback', [LastfmController::class, 'callback'])->name('lastfm.callback');
@@ -27,6 +25,10 @@ Route::middleware('web')->group(static function (): void {
         if (ITunes::used()) {
             Route::get('itunes/song/{album}', [ITunesController::class, 'viewSong'])->name('iTunes.viewSong');
         }
+    });
+
+    Route::middleware('audio.auth')->group(static function (): void {
+        Route::get('play/{song}/{transcode?}/{bitrate?}', [PlayController::class, 'show'])->name('song.play');
 
         Route::prefix('download')->group(static function (): void {
             Route::get('songs', [SongDownloadController::class, 'show']);

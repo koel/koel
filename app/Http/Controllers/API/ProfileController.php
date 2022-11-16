@@ -48,7 +48,10 @@ class ProfileController extends Controller
         $response = UserResource::make($this->user)->response();
 
         if ($request->new_password) {
-            $response->header('Authorization', $this->tokenManager->refreshToken($this->user)->plainTextToken);
+            $response->header(
+                'Authorization',
+                $this->tokenManager->refreshApiToken($request->bearerToken() ?: '')->plainTextToken
+            );
         }
 
         return $response;
