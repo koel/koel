@@ -17,8 +17,10 @@
         @click="sort('track')"
       >
         #
-        <icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
-        <icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+        <template v-if="config.sortable">
+          <icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
+          <icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+        </template>
       </span>
       <span
         class="title-artist"
@@ -28,8 +30,10 @@
         @click="sort('title')"
       >
         Title
-        <icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
-        <icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+        <template v-if="config.sortable">
+          <icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
+          <icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+        </template>
       </span>
       <span
         class="album"
@@ -39,8 +43,10 @@
         @click="sort('album_name')"
       >
         Album
-        <icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
-        <icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+        <template v-if="config.sortable">
+          <icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
+          <icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+        </template>
       </span>
       <span
         class="time"
@@ -50,11 +56,13 @@
         @click="sort('length')"
       >
         Time
-        <icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
-        <icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+        <template v-if="config.sortable">
+          <icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
+          <icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+        </template>
       </span>
       <span class="extra">
-        <SongListSorter :field="sortField" :order="sortOrder" @sort="sort"/>
+        <SongListSorter v-if="config.sortable" :field="sortField" :order="sortOrder" @sort="sort"/>
       </span>
     </div>
 
@@ -75,6 +83,7 @@
         @dragenter.prevent="onDragEnter"
         @dragover.prevent
         @drop.prevent="onDrop(item, $event)"
+        @dragend.prevent="onDragEnd"
         @contextmenu.prevent="openContextMenu(item, $event)"
       />
     </VirtualScroller>
@@ -88,14 +97,7 @@ import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
 import { useDraggable, useDroppable } from '@/composables'
-import {
-  RouterKey,
-  SelectedSongsKey,
-  SongListConfigKey,
-  SongListSortFieldKey,
-  SongListSortOrderKey,
-  SongsKey
-} from '@/symbols'
+import { SelectedSongsKey, SongListConfigKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
 
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import SongListItem from '@/components/song/SongListItem.vue'
@@ -119,9 +121,7 @@ const [sortField, setSortField] = requireInjection<[Ref<SongListSortField>, Clos
 const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(SongListSortOrderKey)
 const [config] = requireInjection<[Partial<SongListConfig>]>(SongListConfigKey, [{}])
 
-const router = requireInjection(RouterKey)
-
-const screen = router.$currentRoute.value.screen
+const wrapper = ref<HTMLElement>()
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
 const songRows = ref<SongRow[]>([])
@@ -241,6 +241,10 @@ const onDragStart = (row: SongRow, event: DragEvent) => {
     row.selected = true
   }
 
+  // Add "dragging" class to the wrapper so that we can disable pointer events on child elements.
+  // This prevents dragleave events from firing when the user drags the mouse over the child elements.
+  wrapper.value.classList.add('dragging')
+
   startDragging(event, selectedSongs.value)
 }
 
@@ -248,7 +252,7 @@ const onDragEnter = (event: DragEvent) => {
   if (!config.reorderable) return
 
   if (acceptsDrop(event)) {
-    (event.target as Element).parentElement?.classList.add('droppable')
+    (event.target as HTMLElement).closest('.song-item')?.classList.add('droppable')
     event.dataTransfer!.dropEffect = 'move'
   }
 
@@ -257,17 +261,22 @@ const onDragEnter = (event: DragEvent) => {
 
 const onDrop = (item: SongRow, event: DragEvent) => {
   if (!config.reorderable || !getDroppedData(event) || !selectedSongs.value.length) {
+    wrapper.value.classList.remove('dragging')
     return onDragLeave(event)
   }
+
+  wrapper.value.classList.remove('dragging')
 
   emit('reorder', item.song)
   return onDragLeave(event)
 }
 
 const onDragLeave = (event: DragEvent) => {
-  (event.target as Element).parentElement?.classList.remove('droppable')
+  (event.target as HTMLElement).closest('.song-item')?.classList.remove('droppable')
   return false
 }
+
+const onDragEnd = () => wrapper.value.classList.remove('dragging')
 
 const openContextMenu = async (row: SongRow, event: MouseEvent) => {
   if (!row.selected) {
@@ -305,9 +314,13 @@ onMounted(() => render())
     z-index: 2; // fix stack-context related issue when e.g., footer would cover the sort context menu
   }
 
-  div.droppable {
-    border-bottom-width: 3px;
-    border-bottom-color: var(--color-green);
+  &.dragging .song-item * {
+    pointer-events: none;
+  }
+
+  .droppable {
+    position: relative;
+    box-shadow: 0 3px 0 var(--color-green);
   }
 
   .song-list-header > span, .song-item > span {

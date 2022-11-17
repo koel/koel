@@ -20,8 +20,13 @@ import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> = {}) => {
+  config = reactive(config)
   const router = requireInjection(RouterKey)
-  const screen = router.$currentRoute.value.screen
+
+  router.onRouteChanged(route => {
+    config.reorderable = route.screen === 'Queue'
+    config.sortable = !['Queue', 'RecentlyPlayed', 'Search.Songs'].includes(route.screen)
+  })
 
   const songList = ref<InstanceType<typeof SongList>>()
 
@@ -33,9 +38,6 @@ export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> 
   const onScrollBreakpoint = (direction: 'up' | 'down') => {
     headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
   }
-
-  config.reorderable = screen !== 'Queue'
-  config.sortable = !['Queue', 'RecentlyPlayed', 'Search.Songs'].includes(screen)
 
   const duration = computed(() => songStore.getFormattedLength(songs.value))
 
@@ -76,8 +78,8 @@ export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> 
 
   const sortField = ref<SongListSortField | null>(((): SongListSortField | null => {
     if (!config.sortable) return null
-    if (screen === 'Album' || screen === 'Artist') return 'track'
-    if (screen === 'Search.Songs') return null
+    if (router.$currentRoute.value.screen === 'Album' || router.$currentRoute.value.screen === 'Artist') return 'track'
+    if (router.$currentRoute.value.screen === 'Search.Songs') return null
     return 'title'
   })())
 
@@ -107,7 +109,7 @@ export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> 
 
   provideReadonly(SongsKey, songs, false)
   provideReadonly(SelectedSongsKey, selectedSongs, false)
-  provideReadonly(SongListConfigKey, reactive(config))
+  provideReadonly(SongListConfigKey, config)
   provideReadonly(SongListSortFieldKey, sortField)
   provideReadonly(SongListSortOrderKey, sortOrder)
 
