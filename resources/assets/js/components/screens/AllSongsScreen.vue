@@ -39,7 +39,7 @@ import { computed, ref, toRef } from 'vue'
 import { logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useMessageToaster, useRouter, useScreen, useSongList } from '@/composables'
+import { useMessageToaster, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
@@ -65,7 +65,7 @@ const {
 } = useSongList(toRef(songStore.state, 'songs'))
 
 const { toastError } = useMessageToaster()
-const { go } = useRouter()
+const { go, onScreenActivated } = useRouter()
 
 let initialized = false
 const loading = ref(false)
@@ -111,7 +111,7 @@ const playAll = async (shuffle: boolean) => {
   await playbackService.playFirstInQueue()
 }
 
-useScreen('Songs').onScreenActivated(async () => {
+onScreenActivated('Songs', async () => {
   if (!initialized) {
     initialized = true
     await fetchSongs()

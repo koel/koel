@@ -39,7 +39,7 @@ import { sample } from 'lodash'
 import { computed, ref } from 'vue'
 import { eventBus, logger, noop } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
-import { useAuthorization, useDialogBox, useInfiniteScroll, useScreen } from '@/composables'
+import { useAuthorization, useDialogBox, useInfiniteScroll, useRouter } from '@/composables'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
 import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
@@ -75,7 +75,7 @@ let initialized = false
 eventBus.on('SONGS_DELETED', () => overviewStore.refresh())
   .on('SONGS_UPDATED', () => overviewStore.refresh())
 
-useScreen('Home').onScreenActivated(async () => {
+useRouter().onScreenActivated('Home', async () => {
   if (!initialized) {
     loading.value = true
     try {

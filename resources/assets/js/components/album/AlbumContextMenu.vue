@@ -43,8 +43,8 @@ const shuffle = () => trigger(async () => {
   go('queue')
 })
 
-const viewAlbumDetails = () => trigger(() => router.go(`album/${album.value!.id}`))
-const viewArtistDetails = () => trigger(() => router.go(`artist/${album.value!.artist_id}`))
+const viewAlbumDetails = () => trigger(() => go(`album/${album.value!.id}`))
+const viewArtistDetails = () => trigger(() => go(`artist/${album.value!.artist_id}`))
 const download = () => trigger(() => downloadService.fromAlbum(album.value!))
 
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e, _album) => {

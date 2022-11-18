@@ -63,7 +63,7 @@ import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { pluralize } from '@/utils'
 import { commonStore, favoriteStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useScreen, useSongList } from '@/composables'
+import { useRouter, useSongList } from '@/composables'
 import { nextTick, ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -106,7 +106,7 @@ const fetchSongs = async () => {
   sort()
 }
 
-useScreen('Favorites').onScreenActivated(async () => {
+useRouter().onScreenActivated('Favorites', async () => {
   if (!initialized) {
     initialized = true
     await fetchSongs()
