@@ -6,7 +6,6 @@ import Router from '@/router'
 export type ReadonlyInjectionKey<T> = InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]>
 
 export const RouterKey: InjectionKey<Router> = Symbol('Router')
-export const ScreenNameKey: ReadonlyInjectionKey<ScreenName> = Symbol('ScreenName')
 
 export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
 export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')

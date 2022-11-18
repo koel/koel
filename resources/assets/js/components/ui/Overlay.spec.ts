@@ -1,7 +1,6 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import { eventBus } from '@/utils'
-import { waitFor } from '@testing-library/vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import Overlay from './Overlay.vue'
 
@@ -32,14 +31,18 @@ new class extends UnitTestCase {
       ['info'],
       ['warning'],
       ['error']
-    ])('renders %s type', async (type) => expect((await this.renderComponent(type)).html()).toMatchSnapshot())
+    ])('renders %s type', async type => {
+      const { getByTestId, html } = await this.renderComponent(type)
+
+      expect(html()).toMatchSnapshot()
+      expect((getByTestId('overlay') as HTMLDialogElement).open).toBe(true)
+    })
 
     it('closes', async () => {
-      const { queryByTestId } = await this.renderComponent()
-      expect(queryByTestId('overlay')).not.toBeNull()
+      const { getByTestId } = await this.renderComponent()
 
       eventBus.emit('HIDE_OVERLAY')
-      await waitFor(() => expect(queryByTestId('overlay')).toBeNull())
+      expect((getByTestId('overlay') as HTMLDialogElement).open).toBe(false)
     })
   }
 }
