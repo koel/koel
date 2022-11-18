@@ -72,12 +72,11 @@ import {
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen } = useRouter()
-
-const songs = ref<Song[]>([])
-
 const { isAdmin } = useAuthorization()
 const { context, base, ContextMenuBase, open, close, trigger } = useContextMenu()
 const { removeSongsFromPlaylist } = usePlaylistManagement()
+
+const songs = ref<Song[]>([])
 
 const {
   queueSongsAfterCurrent,

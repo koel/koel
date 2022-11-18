@@ -6,8 +6,8 @@ export const useMessageToaster = () => {
 
   return {
     toastSuccess: (content: string, timeout?: number) => toaster.value.success(content, timeout),
-    info: (content: string, timeout?: number) => toaster.value.info(content, timeout),
+    toastInfo: (content: string, timeout?: number) => toaster.value.info(content, timeout),
     toastWarning: (content: string, timeout?: number) => toaster.value.warning(content, timeout),
-    error: (content: string, timeout?: number) => toaster.value.error(content, timeout)
+    toastError: (content: string, timeout?: number) => toaster.value.error(content, timeout)
   }
 }
