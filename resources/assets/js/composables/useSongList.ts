@@ -3,16 +3,10 @@ import isMobile from 'ismobilejs'
 import { computed, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
-import { eventBus, provideReadonly, requireInjection } from '@/utils'
+import { eventBus, provideReadonly } from '@/utils'
+import { useRouter } from '@/composables'
 
-import {
-  RouterKey,
-  SelectedSongsKey,
-  SongListConfigKey,
-  SongListSortFieldKey,
-  SongListSortOrderKey,
-  SongsKey
-} from '@/symbols'
+import { SelectedSongsKey, SongListConfigKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
@@ -21,9 +15,9 @@ import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> = {}) => {
   config = reactive(config)
-  const router = requireInjection(RouterKey)
+  const { isCurrentScreen, go, onRouteChanged } = useRouter()
 
-  router.onRouteChanged(route => {
+  onRouteChanged(route => {
     config.reorderable = route.screen === 'Queue'
     config.sortable = !['Queue', 'RecentlyPlayed', 'Search.Songs'].includes(route.screen)
   })
@@ -51,7 +45,7 @@ export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> 
 
   const playAll = (shuffle: boolean) => {
     playbackService.queueAndPlay(getSongsToPlay(), shuffle)
-    router.go('queue')
+    go('queue')
   }
 
   const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedSongs.value, shuffle)
@@ -73,13 +67,13 @@ export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> 
       await playbackService.play(selectedSongs.value[0])
     }
 
-    router.go('queue')
+    go('queue')
   }
 
   const sortField = ref<SongListSortField | null>(((): SongListSortField | null => {
     if (!config.sortable) return null
-    if (router.$currentRoute.value.screen === 'Album' || router.$currentRoute.value.screen === 'Artist') return 'track'
-    if (router.$currentRoute.value.screen === 'Search.Songs') return null
+    if (isCurrentScreen('Artist', 'Album')) return 'track'
+    if (isCurrentScreen('Search.Songs', 'Queue', 'RecentlyPlayed')) return null
     return 'title'
   })())
 

@@ -14,15 +14,14 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { useContextMenu } from '@/composables'
-import { eventBus, requireInjection } from '@/utils'
+import { eventBus } from '@/utils'
 import { playlistStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { RouterKey } from '@/symbols'
+import { useContextMenu, useRouter } from '@/composables'
 
+const { go } = useRouter()
 const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
 
-const router = requireInjection(RouterKey)
 const folder = ref<PlaylistFolder>()
 
 const playlistsInFolder = computed(() => folder.value ? playlistStore.byFolder(folder.value) : [])
@@ -30,12 +29,12 @@ const playable = computed(() => playlistsInFolder.value.length > 0)
 
 const play = () => trigger(async () => {
   playbackService.queueAndPlay(await songStore.fetchForPlaylistFolder(folder.value!))
-  router.go('queue')
+  go('queue')
 })
 
 const shuffle = () => trigger(async () => {
   playbackService.queueAndPlay(await songStore.fetchForPlaylistFolder(folder.value!), true)
-  router.go('queue')
+  go('queue')
 })
 
 const rename = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder.value))

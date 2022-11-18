@@ -42,16 +42,14 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus, requireInjection, secondsToHumanReadable } from '@/utils'
+import { eventBus } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
-import { useDraggable } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { useDraggable, useRouter } from '@/composables'
 
 import ArtistAlbumCard from '@/components/ui/ArtistAlbumCard.vue'
 
-const router = requireInjection(RouterKey)
-
+const { go } = useRouter()
 const { startDragging } = useDraggable('album')
 
 const props = withDefaults(defineProps<{ album: Album, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
@@ -59,13 +57,12 @@ const { album, layout } = toRefs(props)
 
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const duration = computed(() => secondsToHumanReadable(album.value.length))
 const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_id))
 const showing = computed(() => !albumStore.isUnknown(album.value))
 
 const shuffle = async () => {
   playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
-  router.go('queue')
+  go('queue')
 }
 
 const download = () => downloadService.fromAlbum(album.value)

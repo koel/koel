@@ -88,11 +88,10 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, onMounted, ref, toRef, watch } from 'vue'
-import { eventBus, logger, pluralize, requireInjection } from '@/utils'
+import { eventBus, logger, pluralize } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useDialogBox, useSongList } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { useDialogBox, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
@@ -108,7 +107,7 @@ const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCar
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
 
 const { showErrorDialog } = useDialogBox()
-const router = requireInjection(RouterKey)
+const { getRouteParam, go, onRouteChanged } = useRouter()
 
 const albumId = ref<number>()
 const album = ref<Album>()
@@ -175,12 +174,12 @@ watch(albumId, async id => {
   }
 })
 
-onMounted(async () => (albumId.value = parseInt(router.$currentRoute.value.params!.id)))
+onMounted(async () => (albumId.value = parseInt(getRouteParam('id')!)))
 
-router.onRouteChanged(route => route.screen === 'Album' && (albumId.value = parseInt(route.params!.id)))
+onRouteChanged(route => route.screen === 'Album' && (albumId.value = parseInt(getRouteParam('id')!)))
 
 // if the current album has been deleted, go back to the list
-eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value) || router.go('albums'))
+eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value) || go('albums'))
 </script>
 
 <style lang="scss" scoped>

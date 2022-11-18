@@ -26,11 +26,11 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, onMounted, provide, ref, watch } from 'vue'
-import { hideOverlay, requireInjection, showOverlay } from '@/utils'
+import { hideOverlay, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
 import { authService, socketListener, socketService, uploadService } from '@/services'
-import { CurrentSongKey, DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
-import { useNetworkStatus } from '@/composables'
+import { CurrentSongKey, DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { useNetworkStatus, useRouter } from '@/composables'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
@@ -62,6 +62,7 @@ const currentSong = ref<Song | null>(null)
 const authenticated = ref(false)
 const showDropZone = ref(false)
 
+const { isCurrentScreen } = useRouter()
 const { offline } = useNetworkStatus()
 
 /**
@@ -115,10 +116,8 @@ const init = async () => {
   }
 }
 
-const router = requireInjection(RouterKey)
-
 const onDragOver = (e: DragEvent) => {
-  showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && router.$currentRoute.value.screen !== 'Upload'
+  showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && !isCurrentScreen('Upload')
 }
 
 watch(() => queueStore.current, song => song && (currentSong.value = song))

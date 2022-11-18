@@ -36,8 +36,8 @@
 import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { requireInjection } from '@/utils'
 import { preferenceStore } from '@/stores'
-import { useThirdPartyServices } from '@/composables'
-import { CurrentSongKey, RouterKey } from '@/symbols'
+import { useRouter, useThirdPartyServices } from '@/composables'
+import { CurrentSongKey } from '@/symbols'
 
 import HomeScreen from '@/components/screens/HomeScreen.vue'
 import QueueScreen from '@/components/screens/QueueScreen.vue'
@@ -64,16 +64,16 @@ const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/N
 const VisualizerScreen = defineAsyncComponent(() => import('@/components/screens/VisualizerScreen.vue'))
 
 const { useYouTube } = useThirdPartyServices()
+const { resolveRoute, onRouteChanged } = useRouter()
 
-const router = requireInjection(RouterKey)
 const currentSong = requireInjection(CurrentSongKey, ref(null))
 
 const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
 const screen = ref<ScreenName>('Home')
 
-router.onRouteChanged(route => (screen.value = route.screen))
+onRouteChanged(route => (screen.value = route.screen))
 
-onMounted(() => router.resolve())
+onMounted(() => resolveRoute())
 </script>
 
 <style lang="scss">

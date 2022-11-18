@@ -33,19 +33,18 @@
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores'
-import { RouterKey } from '@/symbols'
-import { requireInjection } from '@/utils'
+import { useRouter } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 import SongCard from '@/components/song/SongCard.vue'
 import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
 
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
 const songs = toRef(overviewStore.state, 'recentlyPlayed')
 
-const goToRecentlyPlayedScreen = () => router.go('recently-played')
+const goToRecentlyPlayedScreen = () => go('recently-played')
 </script>

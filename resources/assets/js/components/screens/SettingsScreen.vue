@@ -31,16 +31,15 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { settingStore } from '@/stores'
-import { forceReloadWindow, hideOverlay, parseValidationError, requireInjection, showOverlay } from '@/utils'
-import { useDialogBox, useMessageToaster } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { forceReloadWindow, hideOverlay, parseValidationError, showOverlay } from '@/utils'
+import { useDialogBox, useMessageToaster, useRouter } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/Btn.vue'
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 
 const mediaPath = ref(settingStore.state.media_path)
 const originalMediaPath = mediaPath.value
@@ -61,7 +60,7 @@ const save = async () => {
     await settingStore.update({ media_path: mediaPath.value })
     toastSuccess('Settings saved.')
     // Make sure we're back to home first.
-    router.go('home')
+    go('home')
     forceReloadWindow()
   } catch (err: any) {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'

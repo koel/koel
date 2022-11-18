@@ -40,9 +40,8 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 import { playlistStore } from '@/stores'
-import { logger, requireInjection } from '@/utils'
-import { useDialogBox, useMessageToaster, useSmartPlaylistForm } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { logger } from '@/utils'
+import { useDialogBox, useMessageToaster, useRouter, useSmartPlaylistForm } from '@/composables'
 
 const {
   Btn,
@@ -57,7 +56,7 @@ const {
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 
 const name = ref('')
 
@@ -80,7 +79,7 @@ const submit = async () => {
     const playlist = await playlistStore.store(name.value, [], collectedRuleGroups.value)
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)
-    router.go(`playlist/${playlist.id}`)
+    go(`playlist/${playlist.id}`)
   } catch (error) {
     showErrorDialog('Something went wrong. Please try again.')
     logger.error(error)

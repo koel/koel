@@ -36,11 +36,10 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { logger, pluralize, requireInjection, secondsToHumanReadable } from '@/utils'
+import { logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useMessageToaster, useScreen, useSongList } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { useMessageToaster, useRouter, useScreen, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
@@ -66,7 +65,7 @@ const {
 } = useSongList(toRef(songStore.state, 'songs'))
 
 const { toastError } = useMessageToaster()
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 
 let initialized = false
 const loading = ref(false)
@@ -108,7 +107,7 @@ const playAll = async (shuffle: boolean) => {
     await queueStore.fetchInOrder(sortField, sortOrder)
   }
 
-  router.go('queue')
+  go('queue')
   await playbackService.playFirstInQueue()
 }
 

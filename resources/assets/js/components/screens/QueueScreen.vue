@@ -51,17 +51,16 @@
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef } from 'vue'
-import { eventBus, logger, pluralize, requireInjection } from '@/utils'
+import { eventBus, logger, pluralize } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useDialogBox, useSongList } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { useDialogBox, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 const { showErrorDialog } = useDialogBox()
 
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
@@ -88,7 +87,7 @@ const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 
 const playAll = async (shuffle = true) => {
   playbackService.queueAndPlay(songs.value, shuffle)
-  router.go('queue')
+  go('queue')
 }
 
 const shuffleSome = async () => {

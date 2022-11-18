@@ -42,11 +42,10 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { faTags } from '@fortawesome/free-solid-svg-icons'
-import { eventBus, logger, pluralize, requireInjection, secondsToHumanReadable } from '@/utils'
+import { eventBus, logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'
-import { useDialogBox, useSongList } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { useDialogBox, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -70,7 +69,7 @@ const {
 } = useSongList(ref<Song[]>([]))
 
 const { showErrorDialog } = useDialogBox()
-const router = requireInjection(RouterKey)
+const { getRouteParam, go, onRouteChanged } = useRouter()
 
 let sortField: SongListSortField = 'title'
 let sortOrder: SortOrder = 'asc'
@@ -125,9 +124,9 @@ const refresh = async () => {
   await fetch()
 }
 
-const getNameFromRoute = () => router.$currentRoute.value.params?.name || null
+const getNameFromRoute = () => getRouteParam('name') ?? null
 
-router.onRouteChanged(route => {
+onRouteChanged(route => {
   if (route.screen !== 'Genre') return
   name.value = getNameFromRoute()
 })
@@ -142,7 +141,7 @@ const playAll = async () => {
     playbackService.queueAndPlay(await songStore.fetchRandomForGenre(genre.value!, randomSongCount))
   }
 
-  router.go('queue')
+  go('queue')
 }
 
 onMounted(() => (name.value = getNameFromRoute()))

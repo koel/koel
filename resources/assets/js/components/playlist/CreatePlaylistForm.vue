@@ -30,16 +30,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { playlistStore } from '@/stores'
-import { logger, requireInjection } from '@/utils'
-import { useDialogBox, useMessageToaster } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { logger } from '@/utils'
+import { useDialogBox, useMessageToaster, useRouter } from '@/composables'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
 import Btn from '@/components/ui/Btn.vue'
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 
 const loading = ref(false)
 const name = ref('')
@@ -54,7 +53,7 @@ const submit = async () => {
     const playlist = await playlistStore.store(name.value)
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)
-    router.go(`playlist/${playlist.id}`)
+    go(`playlist/${playlist.id}`)
   } catch (error) {
     showErrorDialog('Something went wrong. Please try again.', 'Error')
     logger.error(error)

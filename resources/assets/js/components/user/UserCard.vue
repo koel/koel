@@ -32,9 +32,8 @@
 import { faCircleCheck, faShield } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { userStore } from '@/stores'
-import { eventBus, requireInjection } from '@/utils'
-import { useAuthorization, useDialogBox, useMessageToaster } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { eventBus } from '@/utils'
+import { useAuthorization, useDialogBox, useMessageToaster, useRouter } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 
@@ -43,13 +42,13 @@ const { user } = toRefs(props)
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 
 const { currentUser } = useAuthorization()
 
 const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
 
-const edit = () => isCurrentUser.value ? router.go('profile') : eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value)
+const edit = () => isCurrentUser.value ? go('profile') : eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value)
 
 const confirmDelete = async () =>
   await showConfirmDialog(`You’re about to unperson ${user.value.name}. Are you sure?`) && await destroy()

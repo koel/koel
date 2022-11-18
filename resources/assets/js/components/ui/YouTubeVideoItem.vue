@@ -11,10 +11,9 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { youTubeService } from '@/services'
-import { RouterKey } from '@/symbols'
-import { requireInjection } from '@/utils'
+import { useRouter } from '@/composables'
 
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 
 const props = defineProps<{ video: YouTubeVideo }>()
 const { video } = toRefs(props)
@@ -23,7 +22,7 @@ const url = computed(() => `https://youtu.be/${video.value.id.videoId}`)
 
 const play = () => {
   youTubeService.play(video.value)
-  router.go('youtube')
+  go('youtube')
 }
 </script>
 

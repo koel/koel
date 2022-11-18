@@ -11,9 +11,10 @@ import { computed, ref } from 'vue'
 import { playbackService } from '@/services'
 import { commonStore, favoriteStore, queueStore, recentlyPlayedStore, songStore } from '@/stores'
 import { requireInjection } from '@/utils'
-import { CurrentSongKey, RouterKey } from '@/symbols'
+import { useRouter } from '@/composables'
+import { CurrentSongKey } from '@/symbols'
 
-const router = requireInjection(RouterKey)
+const { getCurrentScreen, getRouteParam, go } = useRouter()
 const song = requireInjection(CurrentSongKey, ref(null))
 
 const libraryEmpty = computed(() => commonStore.state.song_count === 0)
@@ -26,15 +27,15 @@ const initiatePlayback = async () => {
 
   let songs: Song[]
 
-  switch (router.$currentRoute.value.screen) {
+  switch (getCurrentScreen()) {
     case 'Album':
-      songs = await songStore.fetchForAlbum(parseInt(router.$currentRoute.value.params!.id))
+      songs = await songStore.fetchForAlbum(parseInt(getRouteParam('id')!))
       break
     case 'Artist':
-      songs = await songStore.fetchForArtist(parseInt(router.$currentRoute.value.params!.id))
+      songs = await songStore.fetchForArtist(parseInt(getRouteParam('id')!))
       break
     case 'Playlist':
-      songs = await songStore.fetchForPlaylist(parseInt(router.$currentRoute.value.params!.id))
+      songs = await songStore.fetchForPlaylist(parseInt(getRouteParam('id')!))
       break
     case 'Favorites':
       songs = await favoriteStore.fetch()
@@ -48,7 +49,7 @@ const initiatePlayback = async () => {
   }
 
   playbackService.queueAndPlay(songs)
-  router.go('queue')
+  go('queue')
 }
 </script>
 

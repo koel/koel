@@ -98,10 +98,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { ref } from 'vue'
-import { eventBus, requireInjection } from '@/utils'
+import { eventBus } from '@/utils'
 import { queueStore } from '@/stores'
-import { useAuthorization, useDroppable, useThirdPartyServices } from '@/composables'
-import { RouterKey } from '@/symbols'
+import { useAuthorization, useDroppable, useRouter, useThirdPartyServices } from '@/composables'
 
 import PlaylistList from '@/components/playlist/PlaylistSidebarList.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
@@ -110,6 +109,7 @@ const mobileShowing = ref(false)
 const activeScreen = ref<ScreenName>()
 const droppableToQueue = ref(false)
 
+const { onRouteChanged } = useRouter()
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist', 'playlist'])
 const { useYouTube } = useThirdPartyServices()
 const { isAdmin } = useAuthorization()
@@ -138,9 +138,7 @@ const onQueueDrop = async (event: DragEvent) => {
 
 const closeIfMobile = () => (mobileShowing.value = false)
 
-const router = requireInjection(RouterKey)
-
-router.onRouteChanged(route => {
+onRouteChanged(route => {
   mobileShowing.value = false
   activeScreen.value = route.screen
 })

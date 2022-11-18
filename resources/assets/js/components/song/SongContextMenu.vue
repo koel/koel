@@ -56,7 +56,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { arrayify, copyText, eventBus, pluralize, requireInjection } from '@/utils'
+import { arrayify, copyText, eventBus, pluralize } from '@/utils'
 import { commonStore, favoriteStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import {
@@ -65,13 +65,13 @@ import {
   useDialogBox,
   useMessageToaster,
   usePlaylistManagement,
+  useRouter,
   useSongMenuMethods
 } from '@/composables'
-import { RouterKey } from '@/symbols'
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const router = requireInjection(RouterKey)
+const { go, getRouteParam, isCurrentScreen } = useRouter()
 
 const songs = ref<Song[]>([])
 
@@ -98,13 +98,13 @@ const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].play
 const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
 
 const canBeRemovedFromPlaylist = computed(() => {
-  if (router.$currentRoute.value.screen !== 'Playlist') return false
-  const playlist = playlistStore.byId(parseInt(router.$currentRoute.value.params!.id))
+  if (!isCurrentScreen('Playlist')) return false
+  const playlist = playlistStore.byId(parseInt(getRouteParam('id')!))
   return playlist && !playlist.is_smart
 })
 
-const isQueueScreen = computed(() => router.$currentRoute.value.screen === 'Queue')
-const isFavoritesScreen = computed(() => router.$currentRoute.value.screen === 'Favorites')
+const isQueueScreen = computed(() => isCurrentScreen('Queue'))
+const isFavoritesScreen = computed(() => isCurrentScreen('Favorites'))
 
 const doPlayback = () => trigger(() => {
   if (!songs.value.length) return
@@ -126,12 +126,12 @@ const doPlayback = () => trigger(() => {
 })
 
 const openEditForm = () => trigger(() => songs.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', songs.value))
-const viewAlbumDetails = (albumId: number) => trigger(() => router.go(`album/${albumId}`))
-const viewArtistDetails = (artistId: number) => trigger(() => router.go(`artist/${artistId}`))
+const viewAlbumDetails = (albumId: number) => trigger(() => go(`album/${albumId}`))
+const viewArtistDetails = (artistId: number) => trigger(() => go(`artist/${artistId}`))
 const download = () => trigger(() => downloadService.fromSongs(songs.value))
 
 const removeFromPlaylist = () => trigger(async () => {
-  const playlist = playlistStore.byId(parseInt(router.$currentRoute.value.params!.id))
+  const playlist = playlistStore.byId(parseInt(getRouteParam('id')!))
   if (!playlist) return
 
   await removeSongsFromPlaylist(playlist, songs.value)
