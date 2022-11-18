@@ -28,12 +28,12 @@ import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
 import { defaultCover, fileReader, logger, requireInjection } from '@/utils'
-import { useAuthorization } from '@/composables'
-import { MessageToasterKey, RouterKey } from '@/symbols'
+import { useAuthorization, useMessageToaster } from '@/composables'
+import { RouterKey } from '@/symbols'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png', 'image/webp']
 
-const toaster = requireInjection(MessageToasterKey)
+const { toastSuccess } = useMessageToaster()
 const router = requireInjection(RouterKey)
 
 const props = defineProps<{ entity: Album | Artist }>()
@@ -65,7 +65,7 @@ const playOrQueue = async (event: KeyboardEvent) => {
 
   if (event.altKey) {
     queueStore.queue(orderBy(songs, sortFields.value))
-    toaster.value.success('Songs added to queue.')
+    toastSuccess('Songs added to queue.')
     return
   }
 

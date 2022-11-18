@@ -59,11 +59,18 @@ import { computed, ref, toRef } from 'vue'
 import { arrayify, copyText, eventBus, pluralize, requireInjection } from '@/utils'
 import { commonStore, favoriteStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
-import { useAuthorization, useContextMenu, usePlaylistManagement, useSongMenuMethods } from '@/composables'
-import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
+import {
+  useAuthorization,
+  useContextMenu,
+  useDialogBox,
+  useMessageToaster,
+  usePlaylistManagement,
+  useSongMenuMethods
+} from '@/composables'
+import { RouterKey } from '@/symbols'
 
-const dialogBox = requireInjection(DialogBoxKey)
-const toaster = requireInjection(MessageToasterKey)
+const { toastSuccess } = useMessageToaster()
+const { showConfirmDialog } = useDialogBox()
 const router = requireInjection(RouterKey)
 
 const songs = ref<Song[]>([])
@@ -135,17 +142,13 @@ const removeFromFavorites = () => trigger(() => favoriteStore.unlike(songs.value
 
 const copyUrl = () => trigger(() => {
   copyText(songStore.getShareableUrl(songs.value[0]))
-  toaster.value.success('URL copied to clipboard.')
+  toastSuccess('URL copied to clipboard.')
 })
 
 const deleteFromFilesystem = () => trigger(async () => {
-  const confirmed = await dialogBox.value.confirm(
-    'Delete selected song(s) from the filesystem? This action is NOT reversible!'
-  )
-
-  if (confirmed) {
+  if (await showConfirmDialog('Delete selected song(s) from the filesystem? This action is NOT reversible!')) {
     await songStore.deleteFromFilesystem(songs.value)
-    toaster.value.success(`Deleted ${pluralize(songs.value, 'song')} from the filesystem.`)
+    toastSuccess(`Deleted ${pluralize(songs.value, 'song')} from the filesystem.`)
     eventBus.emit('SONGS_DELETED', songs.value)
   }
 })

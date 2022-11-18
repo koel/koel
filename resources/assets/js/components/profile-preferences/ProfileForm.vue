@@ -57,13 +57,13 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { UpdateCurrentProfileData, userStore } from '@/stores'
-import { isDemo, parseValidationError, requireInjection } from '@/utils'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { isDemo, logger, parseValidationError } from '@/utils'
+import { useDialogBox, useMessageToaster } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 
-const toaster = requireInjection(MessageToasterKey)
-const dialog = requireInjection(DialogBoxKey)
+const { toastSuccess } = useMessageToaster()
+const { showErrorDialog } = useDialogBox()
 const profile = ref<UpdateCurrentProfileData>({} as unknown as UpdateCurrentProfileData)
 
 onMounted(() => {
@@ -80,7 +80,7 @@ const update = async () => {
   }
 
   if (isDemo()) {
-    toaster.value.success('Profile updated.')
+    toastSuccess('Profile updated.')
     return
   }
 
@@ -88,10 +88,11 @@ const update = async () => {
     await userStore.updateProfile(profile.value)
     profile.value.current_password = null
     delete profile.value.new_password
-    toaster.value.success('Profile updated.')
-  } catch (err: any) {
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    dialog.value.error(msg, 'Error')
+    toastSuccess('Profile updated.')
+  } catch (error: any) {
+    const msg = error.response.status === 422 ? parseValidationError(error.response.data)[0] : 'Unknown error.'
+    showErrorDialog(msg, 'Error')
+    logger.log(error)
   }
 }
 </script>

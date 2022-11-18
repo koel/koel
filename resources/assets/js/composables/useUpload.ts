@@ -1,16 +1,16 @@
 import isMobile from 'ismobilejs'
 import { computed, toRef } from 'vue'
-import { useAuthorization } from '@/composables'
+import { useAuthorization, useMessageToaster } from '@/composables'
 import { settingStore } from '@/stores'
 import { acceptedMediaTypes } from '@/config'
 import { UploadFile, uploadService } from '@/services'
 import { getAllFileEntries, pluralize, requireInjection } from '@/utils'
-import { MessageToasterKey, RouterKey } from '@/symbols'
+import { RouterKey } from '@/symbols'
 
 export const useUpload = () => {
   const { isAdmin } = useAuthorization()
+  const { toastSuccess, toastWarning } = useMessageToaster()
 
-  const toaster = requireInjection(MessageToasterKey)
   const router = requireInjection(RouterKey)
 
   const mediaPath = toRef(settingStore.state, 'media_path')
@@ -46,10 +46,10 @@ export const useUpload = () => {
     const queuedFiles = queueFilesForUpload(files)
 
     if (queuedFiles.length) {
-      toaster.value.success(`Queued ${pluralize(queuedFiles, 'file')} for upload`)
+      toastSuccess(`Queued ${pluralize(queuedFiles, 'file')} for upload`)
       router.$currentRoute.value.screen === 'Upload' || router.go('upload')
     } else {
-      toaster.value.warning('No files applicable for upload')
+      toastWarning('No files applicable for upload')
     }
   }
 

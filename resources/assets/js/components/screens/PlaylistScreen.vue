@@ -71,13 +71,12 @@ import { eventBus, pluralize, requireInjection } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { usePlaylistManagement, useSongList } from '@/composables'
-import { MessageToasterKey, RouterKey } from '@/symbols'
+import { RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const toaster = requireInjection(MessageToasterKey)
 const router = requireInjection(RouterKey)
 
 const playlistId = ref<number>()

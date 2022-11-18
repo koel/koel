@@ -37,10 +37,9 @@
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
 import { computed, ref } from 'vue'
-import { eventBus, logger, noop, requireInjection } from '@/utils'
+import { eventBus, logger, noop } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
-import { useAuthorization, useInfiniteScroll, useScreen } from '@/composables'
-import { DialogBoxKey } from '@/symbols'
+import { useAuthorization, useDialogBox, useInfiniteScroll, useScreen } from '@/composables'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
 import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
@@ -52,10 +51,8 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
 const { ToTopButton, scrolling } = useInfiniteScroll(() => noop())
-
 const { isAdmin } = useAuthorization()
-
-const dialog = requireInjection(DialogBoxKey)
+const { showErrorDialog } = useDialogBox()
 
 const greetings = [
   'Oh hai!',
@@ -85,7 +82,7 @@ useScreen('Home').onScreenActivated(async () => {
       await overviewStore.init()
       initialized = true
     } catch (e) {
-      dialog.value.error('Failed to load home screen data. Please try again.')
+      showErrorDialog('Failed to load home screen data. Please try again.')
       logger.error(e)
     } finally {
       loading.value = false

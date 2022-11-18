@@ -70,12 +70,12 @@
 import { computed, nextTick, ref, toRef, toRefs, watch } from 'vue'
 import { pluralize, requireInjection } from '@/utils'
 import { playlistStore, queueStore } from '@/stores'
-import { useSongMenuMethods } from '@/composables'
-import { MessageToasterKey, RouterKey } from '@/symbols'
+import { useMessageToaster, useSongMenuMethods } from '@/composables'
+import { RouterKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 
-const toaster = requireInjection(MessageToasterKey)
+const { toastSuccess } = useMessageToaster()
 const router = requireInjection(RouterKey)
 
 const props = defineProps<{ songs: Song[], config: AddToMenuConfig }>()
@@ -115,7 +115,7 @@ const createNewPlaylistFromSongs = async () => {
   const playlist = await playlistStore.store(newPlaylistName.value, songs.value)
   newPlaylistName.value = ''
 
-  toaster.value.success(`Playlist "${playlist.name}" created.`)
+  toastSuccess(`Playlist "${playlist.name}" created.`)
 
   // Activate the new playlist right away
   await nextTick()

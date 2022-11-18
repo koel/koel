@@ -54,15 +54,15 @@ import { computed, ref, toRef } from 'vue'
 import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useSongList } from '@/composables'
-import { DialogBoxKey, RouterKey } from '@/symbols'
+import { useDialogBox, useSongList } from '@/composables'
+import { RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const dialog = requireInjection(DialogBoxKey)
 const router = requireInjection(RouterKey)
+const { showErrorDialog } = useDialogBox()
 
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
 
@@ -97,7 +97,7 @@ const shuffleSome = async () => {
     await queueStore.fetchRandom()
     await playbackService.playFirstInQueue()
   } catch (e) {
-    dialog.value.error('Failed to fetch songs to play. Please try again.', 'Error')
+    showErrorDialog('Failed to fetch songs to play. Please try again.', 'Error')
     logger.error(e)
   } finally {
     loading.value = false
@@ -120,7 +120,7 @@ eventBus.on('SONG_QUEUED_FROM_ROUTE', async id => {
       throw new Error('Song not found')
     }
   } catch (e) {
-    dialog.value.error('Song not found. Please double check and try again.', 'Error')
+    showErrorDialog('Song not found. Please double check and try again.', 'Error')
     logger.error(e)
     return
   } finally {

@@ -91,8 +91,8 @@ import { computed, defineAsyncComponent, onMounted, ref, toRef, watch } from 'vu
 import { eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useSongList } from '@/composables'
-import { DialogBoxKey, RouterKey } from '@/symbols'
+import { useDialogBox, useSongList } from '@/composables'
+import { RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
@@ -107,7 +107,7 @@ const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInf
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
 
-const dialog = requireInjection(DialogBoxKey)
+const { showErrorDialog } = useDialogBox()
 const router = requireInjection(RouterKey)
 
 const albumId = ref<number>()
@@ -169,7 +169,7 @@ watch(albumId, async id => {
     sort('track')
   } catch (error) {
     logger.error(error)
-    dialog.value.error('Failed to load album. Please try again.')
+    showErrorDialog('Failed to load album. Please try again.')
   } finally {
     loading.value = false
   }

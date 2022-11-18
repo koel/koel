@@ -43,15 +43,15 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { faTags } from '@fortawesome/free-solid-svg-icons'
 import { eventBus, logger, pluralize, requireInjection, secondsToHumanReadable } from '@/utils'
-import { DialogBoxKey, RouterKey } from '@/symbols'
-import { useSongList } from '@/composables'
+import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'
+import { useDialogBox, useSongList } from '@/composables'
+import { RouterKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
-import { playbackService } from '@/services'
 
 const {
   SongList,
@@ -69,8 +69,8 @@ const {
   onScrollBreakpoint
 } = useSongList(ref<Song[]>([]))
 
+const { showErrorDialog } = useDialogBox()
 const router = requireInjection(RouterKey)
-const dialog = requireInjection(DialogBoxKey)
 
 let sortField: SongListSortField = 'title'
 let sortOrder: SortOrder = 'asc'
@@ -110,7 +110,7 @@ const fetch = async () => {
     page.value = fetched.nextPage
     songs.value.push(...fetched.songs)
   } catch (e) {
-    dialog.value.error('Failed to fetch genre details or genre was not found.')
+    showErrorDialog('Failed to fetch genre details or genre was not found.')
     logger.error(e)
   } finally {
     loading.value = false
