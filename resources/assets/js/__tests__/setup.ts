@@ -17,13 +17,21 @@ global.ResizeObserver = global.ResizeObserver ||
     unobserve: vi.fn()
   }))
 
-window.HTMLMediaElement.prototype.load = vi.fn()
-window.HTMLMediaElement.prototype.play = vi.fn()
-window.HTMLMediaElement.prototype.pause = vi.fn()
+HTMLMediaElement.prototype.load = vi.fn()
+HTMLMediaElement.prototype.play = vi.fn()
+HTMLMediaElement.prototype.pause = vi.fn()
 
-window.HTMLDialogElement.prototype.show = vi.fn()
-window.HTMLDialogElement.prototype.showModal = vi.fn()
-window.HTMLDialogElement.prototype.close = vi.fn()
+HTMLDialogElement.prototype.show = vi.fn(function mock () {
+  this.open = true
+})
+
+HTMLDialogElement.prototype.showModal = vi.fn(function mock () {
+  this.open = true
+})
+
+HTMLDialogElement.prototype.close = vi.fn(function mock () {
+  this.open = false
+})
 
 window.BASE_URL = 'http://test/'
 

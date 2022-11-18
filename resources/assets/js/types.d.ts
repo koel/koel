@@ -267,7 +267,6 @@ interface EqualizerBandElement extends HTMLElement {
 }
 
 type OverlayState = {
-  showing: boolean
   dismissible: boolean
   type: 'loading' | 'success' | 'info' | 'warning' | 'error'
   message: string

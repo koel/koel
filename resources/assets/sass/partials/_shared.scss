@@ -185,19 +185,6 @@ label {
   height: 32px;
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, .7);
-
-  @include vertical-center();
-}
-
 .font-size- {
   &0 {
     font-size: 0;
