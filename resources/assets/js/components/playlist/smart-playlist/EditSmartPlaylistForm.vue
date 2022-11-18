@@ -47,11 +47,11 @@ import { computed, reactive, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'
 import { eventBus, logger, requireInjection } from '@/utils'
-import { useSmartPlaylistForm } from '@/components/playlist/smart-playlist/useSmartPlaylistForm'
-import { DialogBoxKey, MessageToasterKey, PlaylistKey } from '@/symbols'
+import { useDialogBox, useMessageToaster, useSmartPlaylistForm } from '@/composables'
+import { PlaylistKey } from '@/symbols'
 
-const toaster = requireInjection(MessageToasterKey)
-const dialog = requireInjection(DialogBoxKey)
+const { toastSuccess } = useMessageToaster()
+const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const [playlist] = requireInjection(PlaylistKey)
 
 let mutablePlaylist: Playlist
@@ -82,7 +82,7 @@ const maybeClose = async () => {
     return
   }
 
-  await dialog.value.confirm('Discard all changes?') && close()
+  await showConfirmDialog('Discard all changes?') && close()
 }
 
 const submit = async () => {
@@ -95,11 +95,11 @@ const submit = async () => {
       rules: mutablePlaylist.rules
     })
 
-    toaster.value.success(`Playlist "${playlist.value.name}" updated.`)
+    toastSuccess(`Playlist "${playlist.value.name}" updated.`)
     eventBus.emit('PLAYLIST_UPDATED', playlist.value)
     close()
   } catch (error) {
-    dialog.value.error('Something went wrong. Please try again.', 'Error')
+    showErrorDialog('Something went wrong. Please try again.', 'Error')
     logger.error(error)
   } finally {
     loading.value = false

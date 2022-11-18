@@ -56,21 +56,27 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { arrayify, copyText, eventBus, pluralize, requireInjection } from '@/utils'
+import { arrayify, copyText, eventBus, pluralize } from '@/utils'
 import { commonStore, favoriteStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
-import { useAuthorization, useContextMenu, usePlaylistManagement, useSongMenuMethods } from '@/composables'
-import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
+import {
+  useAuthorization,
+  useContextMenu,
+  useDialogBox,
+  useMessageToaster,
+  usePlaylistManagement,
+  useRouter,
+  useSongMenuMethods
+} from '@/composables'
 
-const dialogBox = requireInjection(DialogBoxKey)
-const toaster = requireInjection(MessageToasterKey)
-const router = requireInjection(RouterKey)
-
-const songs = ref<Song[]>([])
-
+const { toastSuccess } = useMessageToaster()
+const { showConfirmDialog } = useDialogBox()
+const { go, getRouteParam, isCurrentScreen } = useRouter()
 const { isAdmin } = useAuthorization()
 const { context, base, ContextMenuBase, open, close, trigger } = useContextMenu()
 const { removeSongsFromPlaylist } = usePlaylistManagement()
+
+const songs = ref<Song[]>([])
 
 const {
   queueSongsAfterCurrent,
@@ -91,13 +97,13 @@ const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].play
 const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
 
 const canBeRemovedFromPlaylist = computed(() => {
-  if (router.$currentRoute.value.screen !== 'Playlist') return false
-  const playlist = playlistStore.byId(parseInt(router.$currentRoute.value.params!.id))
+  if (!isCurrentScreen('Playlist')) return false
+  const playlist = playlistStore.byId(parseInt(getRouteParam('id')!))
   return playlist && !playlist.is_smart
 })
 
-const isQueueScreen = computed(() => router.$currentRoute.value.screen === 'Queue')
-const isFavoritesScreen = computed(() => router.$currentRoute.value.screen === 'Favorites')
+const isQueueScreen = computed(() => isCurrentScreen('Queue'))
+const isFavoritesScreen = computed(() => isCurrentScreen('Favorites'))
 
 const doPlayback = () => trigger(() => {
   if (!songs.value.length) return
@@ -119,12 +125,12 @@ const doPlayback = () => trigger(() => {
 })
 
 const openEditForm = () => trigger(() => songs.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', songs.value))
-const viewAlbumDetails = (albumId: number) => trigger(() => router.go(`album/${albumId}`))
-const viewArtistDetails = (artistId: number) => trigger(() => router.go(`artist/${artistId}`))
+const viewAlbumDetails = (albumId: number) => trigger(() => go(`album/${albumId}`))
+const viewArtistDetails = (artistId: number) => trigger(() => go(`artist/${artistId}`))
 const download = () => trigger(() => downloadService.fromSongs(songs.value))
 
 const removeFromPlaylist = () => trigger(async () => {
-  const playlist = playlistStore.byId(parseInt(router.$currentRoute.value.params!.id))
+  const playlist = playlistStore.byId(parseInt(getRouteParam('id')!))
   if (!playlist) return
 
   await removeSongsFromPlaylist(playlist, songs.value)
@@ -135,17 +141,13 @@ const removeFromFavorites = () => trigger(() => favoriteStore.unlike(songs.value
 
 const copyUrl = () => trigger(() => {
   copyText(songStore.getShareableUrl(songs.value[0]))
-  toaster.value.success('URL copied to clipboard.')
+  toastSuccess('URL copied to clipboard.')
 })
 
 const deleteFromFilesystem = () => trigger(async () => {
-  const confirmed = await dialogBox.value.confirm(
-    'Delete selected song(s) from the filesystem? This action is NOT reversible!'
-  )
-
-  if (confirmed) {
+  if (await showConfirmDialog('Delete selected song(s) from the filesystem? This action is NOT reversible!')) {
     await songStore.deleteFromFilesystem(songs.value)
-    toaster.value.success(`Deleted ${pluralize(songs.value, 'song')} from the filesystem.`)
+    toastSuccess(`Deleted ${pluralize(songs.value, 'song')} from the filesystem.`)
     eventBus.emit('SONGS_DELETED', songs.value)
   }
 })

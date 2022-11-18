@@ -194,20 +194,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, Ref, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { defaultCover, eventBus, pluralize, requireInjection } from '@/utils'
+import { defaultCover, eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { songStore, SongUpdateData } from '@/stores'
-import { DialogBoxKey, EditSongFormInitialTabKey, MessageToasterKey, SongsKey } from '@/symbols'
+import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
+import { useDialogBox, useMessageToaster } from '@/composables'
 import { genres } from '@/config'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 
-const toaster = requireInjection(MessageToasterKey)
-const dialog = requireInjection(DialogBoxKey)
+const { toastSuccess } = useMessageToaster()
+const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const [initialTab] = requireInjection(EditSongFormInitialTabKey)
-const [songs] = requireInjection(SongsKey)
+const [songs] = requireInjection<[Ref<Song[]>]>(SongsKey)
 
 const currentView = ref<EditSongFormTabName>('details')
 const loading = ref(false)
@@ -308,7 +309,7 @@ const maybeClose = async () => {
     return
   }
 
-  await dialog.value.confirm('Discard all changes?') && close()
+  await showConfirmDialog('Discard all changes?') && close()
 }
 
 const submit = async () => {
@@ -316,9 +317,12 @@ const submit = async () => {
 
   try {
     await songStore.update(mutatedSongs.value, formData)
-    toaster.value.success(`Updated ${pluralize(mutatedSongs.value, 'song')}.`)
+    toastSuccess(`Updated ${pluralize(mutatedSongs.value, 'song')}.`)
     eventBus.emit('SONGS_UPDATED')
     close()
+  } catch (error) {
+    showErrorDialog('Something wrong happened, please try again.', 'Error')
+    logger.error(error)
   } finally {
     loading.value = false
   }

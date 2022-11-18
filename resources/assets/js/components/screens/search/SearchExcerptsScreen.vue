@@ -86,9 +86,9 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { intersectionBy } from 'lodash'
 import { ref, toRef } from 'vue'
-import { eventBus, requireInjection } from '@/utils'
+import { eventBus } from '@/utils'
 import { searchStore } from '@/stores'
-import { RouterKey } from '@/symbols'
+import { useRouter } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -99,13 +99,13 @@ import SongCard from '@/components/song/SongCard.vue'
 import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
 import ArtistAlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
 
 const excerpt = toRef(searchStore.state, 'excerpt')
 const q = ref('')
 const searching = ref(false)
 
-const goToSongResults = () => router.go(`search/songs/?q=${q.value}`)
+const goToSongResults = () => go(`search/songs/?q=${q.value}`)
 
 const doSearch = async () => {
   searching.value = true

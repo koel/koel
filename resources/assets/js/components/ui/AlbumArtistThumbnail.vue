@@ -27,14 +27,13 @@ import { orderBy } from 'lodash'
 import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
-import { defaultCover, fileReader, logger, requireInjection } from '@/utils'
-import { useAuthorization } from '@/composables'
-import { MessageToasterKey, RouterKey } from '@/symbols'
+import { defaultCover, fileReader, logger } from '@/utils'
+import { useAuthorization, useMessageToaster, useRouter } from '@/composables'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png', 'image/webp']
 
-const toaster = requireInjection(MessageToasterKey)
-const router = requireInjection(RouterKey)
+const { toastSuccess } = useMessageToaster()
+const { go } = useRouter()
 
 const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)
@@ -65,12 +64,12 @@ const playOrQueue = async (event: KeyboardEvent) => {
 
   if (event.altKey) {
     queueStore.queue(orderBy(songs, sortFields.value))
-    toaster.value.success('Songs added to queue.')
+    toastSuccess('Songs added to queue.')
     return
   }
 
   playbackService.queueAndPlay(songs)
-  router.go('queue')
+  go('queue')
 }
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)

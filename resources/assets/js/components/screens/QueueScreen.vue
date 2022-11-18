@@ -51,18 +51,17 @@
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef } from 'vue'
-import { eventBus, logger, pluralize, requireInjection } from '@/utils'
+import { eventBus, logger, pluralize } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useSongList } from '@/composables'
-import { DialogBoxKey, RouterKey } from '@/symbols'
+import { useDialogBox, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const dialog = requireInjection(DialogBoxKey)
-const router = requireInjection(RouterKey)
+const { go } = useRouter()
+const { showErrorDialog } = useDialogBox()
 
 const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
 
@@ -88,7 +87,7 @@ const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 
 const playAll = async (shuffle = true) => {
   playbackService.queueAndPlay(songs.value, shuffle)
-  router.go('queue')
+  go('queue')
 }
 
 const shuffleSome = async () => {
@@ -97,7 +96,7 @@ const shuffleSome = async () => {
     await queueStore.fetchRandom()
     await playbackService.playFirstInQueue()
   } catch (e) {
-    dialog.value.error('Failed to fetch songs to play. Please try again.', 'Error')
+    showErrorDialog('Failed to fetch songs to play. Please try again.', 'Error')
     logger.error(e)
   } finally {
     loading.value = false
@@ -120,7 +119,7 @@ eventBus.on('SONG_QUEUED_FROM_ROUTE', async id => {
       throw new Error('Song not found')
     }
   } catch (e) {
-    dialog.value.error('Song not found. Please double check and try again.', 'Error')
+    showErrorDialog('Song not found. Please double check and try again.', 'Error')
     logger.error(e)
     return
   } finally {

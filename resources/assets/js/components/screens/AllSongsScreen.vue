@@ -36,11 +36,10 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { logger, pluralize, requireInjection, secondsToHumanReadable } from '@/utils'
+import { logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useScreen, useSongList } from '@/composables'
-import { MessageToasterKey, RouterKey } from '@/symbols'
+import { useMessageToaster, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
@@ -65,8 +64,8 @@ const {
   onScrollBreakpoint
 } = useSongList(toRef(songStore.state, 'songs'))
 
-const toaster = requireInjection(MessageToasterKey)
-const router = requireInjection(RouterKey)
+const { toastError } = useMessageToaster()
+const { go, onScreenActivated } = useRouter()
 
 let initialized = false
 const loading = ref(false)
@@ -94,8 +93,8 @@ const fetchSongs = async () => {
   try {
     page.value = await songStore.paginate(sortField, sortOrder, page.value!)
   } catch (error) {
+    toastError('Failed to load songs.')
     logger.error(error)
-    toaster.value.error('Failed to load songs.')
   } finally {
     loading.value = false
   }
@@ -108,11 +107,11 @@ const playAll = async (shuffle: boolean) => {
     await queueStore.fetchInOrder(sortField, sortOrder)
   }
 
-  router.go('queue')
+  go('queue')
   await playbackService.playFirstInQueue()
 }
 
-useScreen('Songs').onScreenActivated(async () => {
+onScreenActivated('Songs', async () => {
   if (!initialized) {
     initialized = true
     await fetchSongs()

@@ -42,16 +42,15 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { faTags } from '@fortawesome/free-solid-svg-icons'
-import { eventBus, logger, pluralize, requireInjection, secondsToHumanReadable } from '@/utils'
-import { DialogBoxKey, RouterKey } from '@/symbols'
-import { useSongList } from '@/composables'
+import { eventBus, logger, pluralize, secondsToHumanReadable } from '@/utils'
+import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'
+import { useDialogBox, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
-import { playbackService } from '@/services'
 
 const {
   SongList,
@@ -69,8 +68,8 @@ const {
   onScrollBreakpoint
 } = useSongList(ref<Song[]>([]))
 
-const router = requireInjection(RouterKey)
-const dialog = requireInjection(DialogBoxKey)
+const { showErrorDialog } = useDialogBox()
+const { getRouteParam, go, onRouteChanged } = useRouter()
 
 let sortField: SongListSortField = 'title'
 let sortOrder: SortOrder = 'asc'
@@ -110,7 +109,7 @@ const fetch = async () => {
     page.value = fetched.nextPage
     songs.value.push(...fetched.songs)
   } catch (e) {
-    dialog.value.error('Failed to fetch genre details or genre was not found.')
+    showErrorDialog('Failed to fetch genre details or genre was not found.')
     logger.error(e)
   } finally {
     loading.value = false
@@ -125,9 +124,9 @@ const refresh = async () => {
   await fetch()
 }
 
-const getNameFromRoute = () => router.$currentRoute.value.params?.name || null
+const getNameFromRoute = () => getRouteParam('name') ?? null
 
-router.onRouteChanged(route => {
+onRouteChanged(route => {
   if (route.screen !== 'Genre') return
   name.value = getNameFromRoute()
 })
@@ -142,7 +141,7 @@ const playAll = async () => {
     playbackService.queueAndPlay(await songStore.fetchRandomForGenre(genre.value!, randomSongCount))
   }
 
-  router.go('queue')
+  go('queue')
 }
 
 onMounted(() => (name.value = getNameFromRoute()))

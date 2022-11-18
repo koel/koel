@@ -25,13 +25,10 @@
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRef } from 'vue'
 import { favoriteStore, playlistFolderStore, playlistStore } from '@/stores'
-import { eventBus, requireInjection } from '@/utils'
-import { MessageToasterKey } from '@/symbols'
+import { eventBus } from '@/utils'
 
 import PlaylistSidebarItem from '@/components/playlist/PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from '@/components/playlist/PlaylistFolderSidebarItem.vue'
-
-const toaster = requireInjection(MessageToasterKey)
 
 const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')

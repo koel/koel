@@ -30,15 +30,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { playlistStore } from '@/stores'
-import { logger, requireInjection } from '@/utils'
-import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
+import { logger } from '@/utils'
+import { useDialogBox, useMessageToaster, useRouter } from '@/composables'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
 import Btn from '@/components/ui/Btn.vue'
 
-const router = requireInjection(RouterKey)
-const toaster = requireInjection(MessageToasterKey)
-const dialog = requireInjection(DialogBoxKey)
+const { toastSuccess } = useMessageToaster()
+const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { go } = useRouter()
 
 const loading = ref(false)
 const name = ref('')
@@ -52,10 +52,10 @@ const submit = async () => {
   try {
     const playlist = await playlistStore.store(name.value)
     close()
-    toaster.value.success(`Playlist "${playlist.name}" created.`)
-    router.go(`playlist/${playlist.id}`)
+    toastSuccess(`Playlist "${playlist.name}" created.`)
+    go(`playlist/${playlist.id}`)
   } catch (error) {
-    dialog.value.error('Something went wrong. Please try again.')
+    showErrorDialog('Something went wrong. Please try again.', 'Error')
     logger.error(error)
   } finally {
     loading.value = false
@@ -68,6 +68,6 @@ const maybeClose = async () => {
     return
   }
 
-  await dialog.value.confirm('Discard all changes?') && close()
+  await showConfirmDialog('Discard all changes?') && close()
 }
 </script>

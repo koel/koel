@@ -18,12 +18,11 @@
 import { computed, ref, toRef } from 'vue'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
-import { useContextMenu } from '@/composables'
-import { eventBus, requireInjection } from '@/utils'
-import { RouterKey } from '@/symbols'
+import { useContextMenu, useRouter } from '@/composables'
+import { eventBus } from '@/utils'
 
+const { go } = useRouter()
 const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
-const router = requireInjection(RouterKey)
 
 const album = ref<Album>()
 const allowDownload = toRef(commonStore.state, 'allow_download')
@@ -36,16 +35,16 @@ const isStandardArtist = computed(() => {
 
 const play = () => trigger(async () => {
   playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value!))
-  router.go('queue')
+  go('queue')
 })
 
 const shuffle = () => trigger(async () => {
   playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value!), true)
-  router.go('queue')
+  go('queue')
 })
 
-const viewAlbumDetails = () => trigger(() => router.go(`album/${album.value!.id}`))
-const viewArtistDetails = () => trigger(() => router.go(`artist/${album.value!.artist_id}`))
+const viewAlbumDetails = () => trigger(() => go(`album/${album.value!.id}`))
+const viewArtistDetails = () => trigger(() => go(`artist/${album.value!.artist_id}`))
 const download = () => trigger(() => downloadService.fromAlbum(album.value!))
 
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e, _album) => {

@@ -30,14 +30,14 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { playlistFolderStore } from '@/stores'
-import { logger, requireInjection } from '@/utils'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { logger } from '@/utils'
+import { useDialogBox, useMessageToaster } from '@/composables'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
 import Btn from '@/components/ui/Btn.vue'
 
-const toaster = requireInjection(MessageToasterKey)
-const dialog = requireInjection(DialogBoxKey)
+const { toastSuccess } = useMessageToaster()
+const { showErrorDialog, showConfirmDialog } = useDialogBox()
 
 const loading = ref(false)
 const name = ref('')
@@ -51,9 +51,9 @@ const submit = async () => {
   try {
     const folder = await playlistFolderStore.store(name.value)
     close()
-    toaster.value.success(`Playlist folder "${folder.name}" created.`)
+    toastSuccess(`Playlist folder "${folder.name}" created.`)
   } catch (error) {
-    dialog.value.error('Something went wrong. Please try again.')
+    showErrorDialog('Something went wrong. Please try again.')
     logger.error(error)
   } finally {
     loading.value = false
@@ -66,6 +66,6 @@ const maybeClose = async () => {
     return
   }
 
-  await dialog.value.confirm('Discard all changes?') && close()
+  await showConfirmDialog('Discard all changes?') && close()
 }
 </script>

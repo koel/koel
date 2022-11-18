@@ -30,15 +30,14 @@
 <script lang="ts" setup>
 import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
-import { eventBus, requireInjection } from '@/utils'
+import { eventBus } from '@/utils'
 import { favoriteStore } from '@/stores'
-import { RouterKey } from '@/symbols'
-import { useDraggable, useDroppable, usePlaylistManagement } from '@/composables'
+import { useDraggable, useDroppable, usePlaylistManagement, useRouter } from '@/composables'
 
+const { onRouteChanged } = useRouter()
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
 
-const router = requireInjection(RouterKey)
 const droppable = ref(false)
 
 const { addSongsToPlaylist } = usePlaylistManagement()
@@ -108,7 +107,7 @@ const onDrop = async (event: DragEvent) => {
   return false
 }
 
-router.onRouteChanged(route => {
+onRouteChanged(route => {
   switch (route.screen) {
     case 'Favorites':
       active.value = isFavoriteList(list.value)

@@ -54,16 +54,16 @@
 import { isEqual } from 'lodash'
 import { reactive, ref } from 'vue'
 import { CreateUserData, userStore } from '@/stores'
-import { parseValidationError, requireInjection } from '@/utils'
-import { DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { parseValidationError } from '@/utils'
+import { useDialogBox, useMessageToaster } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 import CheckBox from '@/components/ui/CheckBox.vue'
 
-const toaster = requireInjection(MessageToasterKey)
-const dialog = requireInjection(DialogBoxKey)
+const { toastSuccess } = useMessageToaster()
+const { showErrorDialog, showConfirmDialog } = useDialogBox()
 
 const loading = ref(false)
 
@@ -81,11 +81,11 @@ const submit = async () => {
 
   try {
     await userStore.store(newUser)
-    toaster.value.success(`New user "${newUser.name}" created.`)
+    toastSuccess(`New user "${newUser.name}" created.`)
     close()
   } catch (err: any) {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    dialog.value.error(msg, 'Error')
+    showErrorDialog(msg, 'Error')
   } finally {
     loading.value = false
   }
@@ -100,7 +100,7 @@ const maybeClose = async () => {
     return
   }
 
-  await dialog.value.confirm('Discard all changes?') && close()
+  await showConfirmDialog('Discard all changes?') && close()
 }
 </script>
 

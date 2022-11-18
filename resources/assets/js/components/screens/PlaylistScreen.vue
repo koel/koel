@@ -67,18 +67,16 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
 import { ref, toRef, watch } from 'vue'
-import { eventBus, pluralize, requireInjection } from '@/utils'
+import { eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import { usePlaylistManagement, useSongList } from '@/composables'
-import { MessageToasterKey, RouterKey } from '@/symbols'
+import { usePlaylistManagement, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const toaster = requireInjection(MessageToasterKey)
-const router = requireInjection(RouterKey)
+const { onRouteChanged, triggerNotFound } = useRouter()
 
 const playlistId = ref<number>()
 const playlist = ref<Playlist>()
@@ -130,10 +128,10 @@ watch(playlistId, async id => {
   if (!id) return
 
   playlist.value = playlistStore.byId(id)
-  playlist.value ? await fetchSongs() : await router.triggerNotFound()
+  playlist.value ? await fetchSongs() : await triggerNotFound()
 })
 
-router.onRouteChanged(route => route.screen === 'Playlist' && (playlistId.value = parseInt(route.params!.id)))
+onRouteChanged(route => route.screen === 'Playlist' && (playlistId.value = parseInt(route.params!.id)))
 
 eventBus.on('PLAYLIST_UPDATED', async updated => updated.id === playlistId.value && await fetchSongs())
   .on('PLAYLIST_SONGS_REMOVED', async (playlist, removed) => {

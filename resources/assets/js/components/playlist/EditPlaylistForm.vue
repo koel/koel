@@ -32,13 +32,14 @@
 import { ref } from 'vue'
 import { logger, requireInjection } from '@/utils'
 import { playlistStore } from '@/stores'
-import { DialogBoxKey, MessageToasterKey, PlaylistKey } from '@/symbols'
+import { useDialogBox, useMessageToaster } from '@/composables'
+import { PlaylistKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 
-const toaster = requireInjection(MessageToasterKey)
-const dialog = requireInjection(DialogBoxKey)
+const { toastSuccess } = useMessageToaster()
+const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const [playlist, updatePlaylistName] = requireInjection(PlaylistKey)
 
 const name = ref(playlist.value.name)
@@ -50,10 +51,10 @@ const submit = async () => {
   try {
     await playlistStore.update(playlist.value, { name: name.value })
     updatePlaylistName(name.value)
-    toaster.value.success('Playlist renamed.')
+    toastSuccess('Playlist renamed.')
     close()
   } catch (error) {
-    dialog.value.error('Something went wrong. Please try again.')
+    showErrorDialog('Something went wrong. Please try again.')
     logger.error(error)
   } finally {
     loading.value = false
@@ -69,6 +70,6 @@ const maybeClose = async () => {
     return
   }
 
-  await dialog.value.confirm('Discard all changes?') && close()
+  await showConfirmDialog('Discard all changes?') && close()
 }
 </script>

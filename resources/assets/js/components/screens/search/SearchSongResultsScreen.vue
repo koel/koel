@@ -30,14 +30,13 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, toRef } from 'vue'
 import { searchStore } from '@/stores'
-import { useSongList } from '@/composables'
-import { pluralize, requireInjection } from '@/utils'
-import { RouterKey } from '@/symbols'
+import { useRouter, useSongList } from '@/composables'
+import { pluralize } from '@/utils'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const router = requireInjection(RouterKey)
+const { getRouteParam } = useRouter()
 const q = ref('')
 
 const {
@@ -65,7 +64,7 @@ const loading = ref(false)
 searchStore.resetSongResultState()
 
 onMounted(async () => {
-  q.value = router.$currentRoute.value.params?.q || ''
+  q.value = getRouteParam('q') || ''
   if (!q.value) return
 
   loading.value = true

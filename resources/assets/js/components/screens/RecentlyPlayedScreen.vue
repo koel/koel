@@ -40,7 +40,7 @@
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
-import { useScreen, useSongList } from '@/composables'
+import { useRouter, useSongList } from '@/composables'
 import { ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -70,7 +70,7 @@ const {
 let initialized = false
 let loading = ref(false)
 
-useScreen('RecentlyPlayed').onScreenActivated(async () => {
+useRouter().onScreenActivated('RecentlyPlayed', async () => {
   if (!initialized) {
     loading.value = true
     initialized = true
