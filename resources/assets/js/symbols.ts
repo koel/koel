@@ -1,4 +1,5 @@
 import { DeepReadonly, InjectionKey, Ref } from 'vue'
+import Overlay from '@/components/ui/Overlay.vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
 import Router from '@/router'
@@ -6,6 +7,7 @@ import Router from '@/router'
 export type ReadonlyInjectionKey<T> = InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]>
 
 export const RouterKey: InjectionKey<Router> = Symbol('Router')
+export const OverlayKey: InjectionKey<Ref<InstanceType<typeof Overlay>>> = Symbol('Overlay')
 export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
 export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')
 

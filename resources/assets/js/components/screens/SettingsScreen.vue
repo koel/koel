@@ -31,8 +31,8 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { settingStore } from '@/stores'
-import { forceReloadWindow, hideOverlay, parseValidationError, showOverlay } from '@/utils'
-import { useDialogBox, useMessageToaster, useRouter } from '@/composables'
+import { forceReloadWindow, parseValidationError } from '@/utils'
+import { useDialogBox, useMessageToaster, useOverlay, useRouter } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/Btn.vue'
@@ -40,6 +40,7 @@ import Btn from '@/components/ui/Btn.vue'
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const { go } = useRouter()
+const { showOverlay, hideOverlay } = useOverlay()
 
 const mediaPath = ref(settingStore.state.media_path)
 const originalMediaPath = mediaPath.value

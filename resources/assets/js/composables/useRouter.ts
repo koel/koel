@@ -1,8 +1,11 @@
 import { RouterKey } from '@/symbols'
 import { requireInjection } from '@/utils'
+import Router from '@/router'
+
+let router: Router
 
 export const useRouter = () => {
-  const router = requireInjection(RouterKey)
+  router = router || requireInjection(RouterKey)
 
   const getRouteParam = (name: string) => router.$currentRoute.value?.params?.[name]
   const getCurrentScreen = () => router.$currentRoute.value?.screen
@@ -20,6 +23,6 @@ export const useRouter = () => {
     go: router.go.bind(router),
     onRouteChanged: router.onRouteChanged.bind(router),
     resolveRoute: router.resolve.bind(router),
-    triggerNotFound: router.triggerNotFound.bind(router),
+    triggerNotFound: router.triggerNotFound.bind(router)
   }
 }

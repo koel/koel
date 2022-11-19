@@ -2,7 +2,7 @@
  * Global event listeners (basically, those without a Vue instance access) go here.
  */
 
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 import { authService } from '@/services'
 import { playlistFolderStore, playlistStore, userStore } from '@/stores'
 import { eventBus, forceReloadWindow } from '@/utils'
@@ -10,9 +10,15 @@ import { useDialogBox, useMessageToaster, useRouter } from '@/composables'
 
 export const GlobalEventListeners = defineComponent({
   setup (props, { slots }) {
-    const { toastSuccess } = useMessageToaster()
-    const { showConfirmDialog } = useDialogBox()
-    const { go } = useRouter()
+    let toastSuccess: ReturnType<typeof useMessageToaster>['toastSuccess']
+    let showConfirmDialog: ReturnType<typeof useDialogBox>['showConfirmDialog']
+    let go: ReturnType<typeof useRouter>['go']
+
+    onMounted(() => {
+      toastSuccess = useMessageToaster().toastSuccess
+      showConfirmDialog = useDialogBox().showConfirmDialog
+      go = useRouter().go
+    })
 
     eventBus.on('PLAYLIST_DELETE', async playlist => {
       if (await showConfirmDialog(`Delete the playlist "${playlist.name}"?`)) {

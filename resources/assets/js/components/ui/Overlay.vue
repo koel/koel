@@ -24,7 +24,7 @@ const el = ref<HTMLDialogElement>()
 const state = reactive<OverlayState>({
   dismissible: false,
   type: 'loading',
-  message: ''
+  message: 'Just a little patience…'
 })
 
 const show = (options: Partial<OverlayState> = {}) => {
@@ -37,6 +37,8 @@ const onCancel = () => state.dismissible && hide()
 
 eventBus.on('SHOW_OVERLAY', options => show(options))
   .on('HIDE_OVERLAY', () => hide())
+
+defineExpose({ show, hide })
 </script>
 
 <style lang="scss" scoped>
