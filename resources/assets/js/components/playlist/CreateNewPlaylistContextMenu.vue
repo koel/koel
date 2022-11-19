@@ -11,11 +11,11 @@
 <script lang="ts" setup>
 import { useContextMenu } from '@/composables'
 import { eventBus } from '@/utils'
-import { EventName } from '@/config'
+import { Events } from '@/config'
 
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
-const actionToEventMap: Record<string, EventName> = {
+const actionToEventMap: Record<string, keyof Events> = {
   'new-playlist': 'MODAL_SHOW_CREATE_PLAYLIST_FORM',
   'new-smart-playlist': 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM',
   'new-folder': 'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM'

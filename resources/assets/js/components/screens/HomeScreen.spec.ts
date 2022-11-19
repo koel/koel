@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, overviewStore } from '@/stores'
-import { EventName } from '@/config'
+import { Events } from '@/config'
 import { eventBus } from '@/utils'
 import HomeScreen from './HomeScreen.vue'
 
@@ -42,7 +42,7 @@ new class extends UnitTestCase {
       expect(queryByTestId('screen-empty-state')).toBeNull()
     })
 
-    it.each<[EventName]>([['SONGS_UPDATED'], ['SONGS_DELETED']])
+    it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED']])
     ('refreshes the overviews on %s event', async (eventName) => {
       const initMock = this.mock(overviewStore, 'init')
       const refreshMock = this.mock(overviewStore, 'refresh')

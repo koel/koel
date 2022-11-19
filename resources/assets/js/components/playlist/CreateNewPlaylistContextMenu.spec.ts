@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils'
-import { EventName } from '@/config'
+import { Events } from '@/config'
 import CreateNewPlaylistContextMenu from './CreateNewPlaylistContextMenu.vue'
 
 new class extends UnitTestCase {
@@ -14,7 +14,7 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it.each<[string, EventName]>([
+    it.each<[string, keyof Events]>([
       ['playlist-context-menu-create-simple', 'MODAL_SHOW_CREATE_PLAYLIST_FORM'],
       ['playlist-context-menu-create-smart', 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM'],
       ['playlist-context-menu-create-folder', 'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM']
