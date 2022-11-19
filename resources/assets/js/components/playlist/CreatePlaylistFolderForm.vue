@@ -49,7 +49,7 @@ const submit = async () => {
     close()
     toastSuccess(`Playlist folder "${folder.name}" created.`)
   } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.')
+    showErrorDialog('Something went wrong. Please try again.', 'Error')
     logger.error(error)
   } finally {
     hideOverlay()

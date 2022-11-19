@@ -82,7 +82,7 @@ useRouter().onScreenActivated('Home', async () => {
       await overviewStore.init()
       initialized = true
     } catch (e) {
-      showErrorDialog('Failed to load home screen data. Please try again.')
+      showErrorDialog('Failed to load home screen data. Please try again.', 'Error')
       logger.error(e)
     } finally {
       loading.value = false

@@ -318,7 +318,7 @@ const submit = async () => {
     eventBus.emit('SONGS_UPDATED')
     close()
   } catch (error) {
-    showErrorDialog('Something wrong happened, please try again.', 'Error')
+    showErrorDialog('Something went wrong. Please try again.', 'Error')
     logger.error(error)
   } finally {
     hideOverlay()

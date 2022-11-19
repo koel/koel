@@ -109,7 +109,7 @@ const fetch = async () => {
     page.value = fetched.nextPage
     songs.value.push(...fetched.songs)
   } catch (e) {
-    showErrorDialog('Failed to fetch genre details or genre was not found.')
+    showErrorDialog('Failed to fetch genre details or genre was not found.', 'Error')
     logger.error(e)
   } finally {
     loading.value = false

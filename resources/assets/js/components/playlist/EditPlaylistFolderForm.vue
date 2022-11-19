@@ -50,7 +50,7 @@ const submit = async () => {
     toastSuccess('Playlist folder renamed.')
     close()
   } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.')
+    showErrorDialog('Something went wrong. Please try again.', 'Error')
     logger.error(error)
   } finally {
     hideOverlay()

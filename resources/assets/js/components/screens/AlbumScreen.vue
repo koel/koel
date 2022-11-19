@@ -168,7 +168,7 @@ watch(albumId, async id => {
     sort('track')
   } catch (error) {
     logger.error(error)
-    showErrorDialog('Failed to load album. Please try again.')
+    showErrorDialog('Failed to load album. Please try again.', 'Error')
   } finally {
     loading.value = false
   }

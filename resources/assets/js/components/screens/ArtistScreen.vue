@@ -156,7 +156,7 @@ watch(artistId, async id => {
     ])
   } catch (error) {
     logger.error(error)
-    showErrorDialog('Failed to load artist. Please try again.')
+    showErrorDialog('Failed to load artist. Please try again.', 'Error')
   } finally {
     loading.value = false
   }
