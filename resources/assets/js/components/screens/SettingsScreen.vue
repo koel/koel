@@ -55,7 +55,7 @@ const shouldWarn = computed(() => {
 })
 
 const save = async () => {
-  showOverlay()
+  showOverlay({ message: 'Scanning…' })
 
   try {
     await settingStore.update({ media_path: mediaPath.value })

@@ -1,178 +1,176 @@
 <template>
-  <div class="edit-song" data-testid="edit-song-form" tabindex="0" @keydown.esc="maybeClose">
-    <SoundBars v-if="loading"/>
-    <form v-else @submit.prevent="submit">
-      <header>
-        <span class="cover" :style="{ backgroundImage: `url(${coverUrl})` }"/>
-        <div class="meta">
-          <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
-          <h2
-            data-testid="displayed-artist-name"
-            :class="{ mixed: !allSongsAreFromSameArtist && !formData.artist_name }"
-          >
-            {{ displayedArtistName }}
-          </h2>
-          <h2
-            data-testid="displayed-album-name"
-            :class="{ mixed: !allSongsAreInSameAlbum && !formData.album_name }"
-          >
-            {{ displayedAlbumName }}
-          </h2>
-        </div>
-      </header>
+  <form @submit.prevent="submit" @keydown.esc="maybeClose">
+    <header>
+      <span class="cover" :style="{ backgroundImage: `url(${coverUrl})` }"/>
+      <div class="meta">
+        <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
+        <h2
+          data-testid="displayed-artist-name"
+          :class="{ mixed: !allSongsAreFromSameArtist && !formData.artist_name }"
+        >
+          {{ displayedArtistName }}
+        </h2>
+        <h2
+          data-testid="displayed-album-name"
+          :class="{ mixed: !allSongsAreInSameAlbum && !formData.album_name }"
+        >
+          {{ displayedAlbumName }}
+        </h2>
+      </div>
+    </header>
 
-      <main class="tabs">
-        <div class="clear" role="tablist">
-          <button
-            id="editSongTabDetails"
-            :aria-selected="currentView === 'details'"
-            aria-controls="editSongPanelDetails"
-            role="tab"
-            type="button"
-            @click.prevent="currentView = 'details'"
-          >
-            Details
-          </button>
-          <button
-            v-if="editingOnlyOneSong"
-            id="editSongTabLyrics"
-            :aria-selected="currentView === 'lyrics'"
-            aria-controls="editSongPanelLyrics"
-            data-testid="edit-song-lyrics-tab"
-            role="tab"
-            type="button"
-            @click.prevent="currentView = 'lyrics'"
-          >
-            Lyrics
-          </button>
-        </div>
+    <main class="tabs">
+      <div class="clear" role="tablist">
+        <button
+          id="editSongTabDetails"
+          :aria-selected="currentView === 'details'"
+          aria-controls="editSongPanelDetails"
+          role="tab"
+          type="button"
+          @click.prevent="currentView = 'details'"
+        >
+          Details
+        </button>
+        <button
+          v-if="editingOnlyOneSong"
+          id="editSongTabLyrics"
+          :aria-selected="currentView === 'lyrics'"
+          aria-controls="editSongPanelLyrics"
+          data-testid="edit-song-lyrics-tab"
+          role="tab"
+          type="button"
+          @click.prevent="currentView = 'lyrics'"
+        >
+          Lyrics
+        </button>
+      </div>
 
-        <div class="panes">
-          <div
-            v-show="currentView === 'details'"
-            id="editSongPanelDetails"
-            aria-labelledby="editSongTabDetails"
-            role="tabpanel"
-            tabindex="0"
-          >
-            <div v-if="editingOnlyOneSong" class="form-row">
+      <div class="panes">
+        <div
+          v-show="currentView === 'details'"
+          id="editSongPanelDetails"
+          aria-labelledby="editSongTabDetails"
+          role="tabpanel"
+          tabindex="0"
+        >
+          <div v-if="editingOnlyOneSong" class="form-row">
+            <label>
+              Title
+              <input
+                v-model="formData.title"
+                v-koel-focus
+                data-testid="title-input"
+                name="title"
+                title="Title"
+                type="text"
+              >
+            </label>
+          </div>
+
+          <div class="form-row">
+            <div class="cols">
               <label>
-                Title
+                Artist
                 <input
-                  v-model="formData.title"
-                  v-koel-focus
-                  data-testid="title-input"
-                  name="title"
-                  title="Title"
-                  type="text"
-                >
-              </label>
-            </div>
-
-            <div class="form-row">
-              <div class="cols">
-                <label>
-                  Artist
-                  <input
-                    v-model="formData.artist_name"
-                    :placeholder="inputPlaceholder"
-                    data-testid="artist-input"
-                    name="artist"
-                    type="text"
-                  >
-                </label>
-                <label>
-                  Album Artist
-                  <input
-                    v-model="formData.album_artist_name"
-                    :placeholder="inputPlaceholder"
-                    data-testid="albumArtist-input"
-                    name="album_artist"
-                    type="text"
-                  >
-                </label>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <label>
-                Album
-                <input
-                  v-model="formData.album_name"
+                  v-model="formData.artist_name"
                   :placeholder="inputPlaceholder"
-                  data-testid="album-input"
-                  name="album"
+                  data-testid="artist-input"
+                  name="artist"
                   type="text"
                 >
               </label>
-            </div>
-
-            <div class="form-row">
-              <div class="cols">
-                <label>
-                  Track
-                  <input
-                    v-model="formData.track"
-                    :placeholder="inputPlaceholder"
-                    data-testid="track-input"
-                    min="1"
-                    name="track"
-                    type="number"
-                  >
-                </label>
-                <label>
-                  Disc
-                  <input
-                    v-model="formData.disc"
-                    :placeholder="inputPlaceholder"
-                    data-testid="disc-input"
-                    min="1"
-                    name="disc"
-                    type="number"
-                  >
-                </label>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="cols">
-                <label>
-                  Genre
-                  <input
-                    v-model="formData.genre"
-                    :placeholder="inputPlaceholder"
-                    data-testid="genre-input"
-                    name="genre"
-                    type="text"
-                    list="genres"
-                  >
-                  <datalist id="genres">
-                    <option v-for="genre in genres" :key="genre" :value="genre"/>
-                  </datalist>
-                </label>
-                <label>
-                  Year
-                  <input
-                    v-model="formData.year"
-                    :placeholder="inputPlaceholder"
-                    data-testid="year-input"
-                    name="year"
-                    type="number"
-                  >
-                </label>
-              </div>
+              <label>
+                Album Artist
+                <input
+                  v-model="formData.album_artist_name"
+                  :placeholder="inputPlaceholder"
+                  data-testid="albumArtist-input"
+                  name="album_artist"
+                  type="text"
+                >
+              </label>
             </div>
           </div>
 
-          <div
-            v-if="editingOnlyOneSong"
-            v-show="currentView === 'lyrics'"
-            id="editSongPanelLyrics"
-            aria-labelledby="editSongTabLyrics"
-            role="tabpanel"
-            tabindex="0"
-          >
-            <div class="form-row">
+          <div class="form-row">
+            <label>
+              Album
+              <input
+                v-model="formData.album_name"
+                :placeholder="inputPlaceholder"
+                data-testid="album-input"
+                name="album"
+                type="text"
+              >
+            </label>
+          </div>
+
+          <div class="form-row">
+            <div class="cols">
+              <label>
+                Track
+                <input
+                  v-model="formData.track"
+                  :placeholder="inputPlaceholder"
+                  data-testid="track-input"
+                  min="1"
+                  name="track"
+                  type="number"
+                >
+              </label>
+              <label>
+                Disc
+                <input
+                  v-model="formData.disc"
+                  :placeholder="inputPlaceholder"
+                  data-testid="disc-input"
+                  min="1"
+                  name="disc"
+                  type="number"
+                >
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="cols">
+              <label>
+                Genre
+                <input
+                  v-model="formData.genre"
+                  :placeholder="inputPlaceholder"
+                  data-testid="genre-input"
+                  name="genre"
+                  type="text"
+                  list="genres"
+                >
+                <datalist id="genres">
+                  <option v-for="genre in genres" :key="genre" :value="genre"/>
+                </datalist>
+              </label>
+              <label>
+                Year
+                <input
+                  v-model="formData.year"
+                  :placeholder="inputPlaceholder"
+                  data-testid="year-input"
+                  name="year"
+                  type="number"
+                >
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="editingOnlyOneSong"
+          v-show="currentView === 'lyrics'"
+          id="editSongPanelLyrics"
+          aria-labelledby="editSongTabLyrics"
+          role="tabpanel"
+          tabindex="0"
+        >
+          <div class="form-row">
               <textarea
                 v-model="formData.lyrics"
                 v-koel-focus
@@ -180,17 +178,16 @@
                 name="lyrics"
                 title="Lyrics"
               />
-            </div>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
 
-      <footer>
-        <Btn type="submit">Update</Btn>
-        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
-      </footer>
-    </form>
-  </div>
+    <footer>
+      <Btn type="submit">Update</Btn>
+      <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+    </footer>
+  </form>
 </template>
 
 <script lang="ts" setup>
@@ -199,19 +196,19 @@ import { isEqual } from 'lodash'
 import { defaultCover, eventBus, logger, pluralize, requireInjection } from '@/utils'
 import { songStore, SongUpdateData } from '@/stores'
 import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
-import { useDialogBox, useMessageToaster } from '@/composables'
+import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
 import { genres } from '@/config'
 
 import Btn from '@/components/ui/Btn.vue'
-import SoundBars from '@/components/ui/SoundBars.vue'
 
+const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
+
 const [initialTab] = requireInjection(EditSongFormInitialTabKey)
 const [songs] = requireInjection<[Ref<Song[]>]>(SongsKey)
 
 const currentView = ref<EditSongFormTabName>('details')
-const loading = ref(false)
 
 const mutatedSongs = computed(() => songs.value)
 
@@ -313,7 +310,7 @@ const maybeClose = async () => {
 }
 
 const submit = async () => {
-  loading.value = true
+  showOverlay()
 
   try {
     await songStore.update(mutatedSongs.value, formData)
@@ -324,7 +321,7 @@ const submit = async () => {
     showErrorDialog('Something wrong happened, please try again.', 'Error')
     logger.error(error)
   } finally {
-    loading.value = false
+    hideOverlay()
   }
 }
 

@@ -8,7 +8,6 @@ import SoundBars from '@/components/ui/SoundBars.vue'
 
 export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[] = []) => {
   const collectedRuleGroups = ref<SmartPlaylistRuleGroup[]>(initialRuleGroups)
-  const loading = ref(false)
 
   const addGroup = () => collectedRuleGroups.value.push(playlistStore.createEmptySmartPlaylistRuleGroup())
 
@@ -27,7 +26,6 @@ export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[]
     RuleGroup,
     SoundBars,
     collectedRuleGroups,
-    loading,
     addGroup,
     onGroupChanged
   }

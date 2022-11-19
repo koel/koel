@@ -23,7 +23,7 @@ const el = ref<HTMLDialogElement>()
 const state = reactive<OverlayState>({
   dismissible: false,
   type: 'loading',
-  message: 'Just a little patience…'
+  message: ''
 })
 
 const show = (options: Partial<OverlayState> = {}) => {
@@ -44,7 +44,7 @@ dialog {
   background: transparent;
 
   &::backdrop {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
   }
 
   .wrapper {
