@@ -6,6 +6,7 @@ import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
 import { ref } from 'vue'
 import { fireEvent } from '@testing-library/vue'
 import { songStore } from '@/stores'
+import { MessageToasterStub } from '@/__tests__/stubs'
 import EditSongForm from './EditSongForm.vue'
 
 let songs: Song[]
@@ -32,6 +33,7 @@ new class extends UnitTestCase {
     it('edits a single song', async () => {
       const updateMock = this.mock(songStore, 'update')
       const emitMock = this.mock(eventBus, 'emit')
+      const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       const { html, getByTestId, getByRole } = await this.renderComponent(factory<Song>('song', {
         title: 'Rocket to Heaven',
@@ -67,12 +69,14 @@ new class extends UnitTestCase {
         year: 1971
       })
 
+      expect(alertMock).toHaveBeenCalledWith('Updated 1 song.')
       expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED')
     })
 
     it('edits multiple songs', async () => {
       const updateMock = this.mock(songStore, 'update')
       const emitMock = this.mock(eventBus, 'emit')
+      const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       const { html, getByTestId, getByRole, queryByTestId } = await this.renderComponent(factory<Song>('song', 3))
 
@@ -100,6 +104,7 @@ new class extends UnitTestCase {
         year: 1990
       })
 
+      expect(alertMock).toHaveBeenCalledWith('Updated 3 songs.')
       expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED')
     })
 
