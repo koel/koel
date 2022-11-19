@@ -1,67 +1,64 @@
 <template>
-  <div class="edit-user" @keydown.esc="maybeClose">
-    <SoundBars v-if="loading"/>
-    <form v-else class="user-edit" data-testid="edit-user-form" @submit.prevent="submit">
-      <header>
-        <h1>Edit User</h1>
-      </header>
+  <form data-testid="edit-user-form" @submit.prevent="submit" @keydown.esc="maybeClose">
+    <header>
+      <h1>Edit User</h1>
+    </header>
 
-      <main>
-        <div class="form-row">
-          <label>
-            Name
-            <input v-model="updateData.name" v-koel-focus name="name" required title="Name" type="text">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            Email
-            <input v-model="updateData.email" name="email" required title="Email" type="email">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            Password
-            <input
-              v-model="updateData.password"
-              autocomplete="new-password"
-              name="password"
-              placeholder="Leave blank for no changes"
-              type="password"
-            >
-          </label>
-          <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
-        </div>
-        <div class="form-row">
-          <label>
-            <CheckBox v-model="updateData.is_admin" name="is_admin"/>
-            User is an admin
-            <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
-          </label>
-        </div>
-      </main>
+    <main>
+      <div class="form-row">
+        <label>
+          Name
+          <input v-model="updateData.name" v-koel-focus name="name" required title="Name" type="text">
+        </label>
+      </div>
+      <div class="form-row">
+        <label>
+          Email
+          <input v-model="updateData.email" name="email" required title="Email" type="email">
+        </label>
+      </div>
+      <div class="form-row">
+        <label>
+          Password
+          <input
+            v-model="updateData.password"
+            autocomplete="new-password"
+            name="password"
+            placeholder="Leave blank for no changes"
+            type="password"
+          >
+        </label>
+        <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
+      </div>
+      <div class="form-row">
+        <label>
+          <CheckBox v-model="updateData.is_admin" name="is_admin"/>
+          User is an admin
+          <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
+        </label>
+      </div>
+    </main>
 
-      <footer>
-        <Btn class="btn-update" type="submit">Update</Btn>
-        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
-      </footer>
-    </form>
-  </div>
+    <footer>
+      <Btn class="btn-update" type="submit">Update</Btn>
+      <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+    </footer>
+  </form>
 </template>
 
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
-import { reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { logger, parseValidationError, requireInjection } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
-import { useDialogBox, useMessageToaster } from '@/composables'
+import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
 import { UserKey } from '@/symbols'
 
 import Btn from '@/components/ui/Btn.vue'
-import SoundBars from '@/components/ui/SoundBars.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 import CheckBox from '@/components/ui/CheckBox.vue'
 
+const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const [user] = requireInjection(UserKey)
@@ -79,10 +76,8 @@ watch(user, () => {
   updateData = reactive(Object.assign({}, originalData))
 }, { immediate: true })
 
-const loading = ref(false)
-
 const submit = async () => {
-  loading.value = true
+  showOverlay()
 
   try {
     await userStore.update(user.value, updateData)
@@ -93,7 +88,7 @@ const submit = async () => {
     showErrorDialog(msg, 'Error')
     logger.error(error)
   } finally {
-    loading.value = false
+    hideOverlay()
   }
 }
 

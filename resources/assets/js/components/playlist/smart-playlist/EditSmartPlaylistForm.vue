@@ -1,43 +1,40 @@
 <template>
   <FormBase>
-    <div @keydown.esc="maybeClose">
-      <SoundBars v-if="loading"/>
-      <form v-else data-testid="edit-smart-playlist-form" @submit.prevent="submit">
-        <header>
-          <h1>Edit Smart Playlist</h1>
-        </header>
+    <form @submit.prevent="submit" @keydown.esc="maybeClose">
+      <header>
+        <h1>Edit Smart Playlist</h1>
+      </header>
 
-        <main>
-          <div class="form-row">
-            <input
-              v-model="mutablePlaylist.name"
-              v-koel-focus name="name"
-              placeholder="Playlist name"
-              required
-              type="text"
-            >
-          </div>
+      <main>
+        <div class="form-row">
+          <input
+            v-model="mutablePlaylist.name"
+            v-koel-focus name="name"
+            placeholder="Playlist name"
+            required
+            type="text"
+          >
+        </div>
 
-          <div class="form-row rules">
-            <RuleGroup
-              v-for="(group, index) in mutablePlaylist.rules"
-              :key="group.id"
-              :group="group"
-              :isFirstGroup="index === 0"
-              @input="onGroupChanged"
-            />
-            <Btn class="btn-add-group" green small title="Add a new group" uppercase @click.prevent="addGroup">
-              <icon :icon="faPlus"/>
-            </Btn>
-          </div>
-        </main>
+        <div class="form-row rules">
+          <RuleGroup
+            v-for="(group, index) in mutablePlaylist.rules"
+            :key="group.id"
+            :group="group"
+            :isFirstGroup="index === 0"
+            @input="onGroupChanged"
+          />
+          <Btn class="btn-add-group" green small title="Add a new group" uppercase @click.prevent="addGroup">
+            <icon :icon="faPlus"/>
+          </Btn>
+        </div>
+      </main>
 
-        <footer>
-          <Btn type="submit">Save</Btn>
-          <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
-        </footer>
-      </form>
-    </div>
+      <footer>
+        <Btn type="submit">Save</Btn>
+        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+      </footer>
+    </form>
   </FormBase>
 </template>
 
@@ -47,11 +44,13 @@ import { computed, reactive, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistStore } from '@/stores'
 import { eventBus, logger, requireInjection } from '@/utils'
-import { useDialogBox, useMessageToaster, useSmartPlaylistForm } from '@/composables'
+import { useDialogBox, useMessageToaster, useOverlay, useSmartPlaylistForm } from '@/composables'
 import { PlaylistKey } from '@/symbols'
 
+const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
+
 const [playlist] = requireInjection(PlaylistKey)
 
 let mutablePlaylist: Playlist
@@ -66,9 +65,7 @@ const {
   Btn,
   FormBase,
   RuleGroup,
-  SoundBars,
   collectedRuleGroups,
-  loading,
   addGroup,
   onGroupChanged
 } = useSmartPlaylistForm(mutablePlaylist.rules)
@@ -86,7 +83,8 @@ const maybeClose = async () => {
 }
 
 const submit = async () => {
-  loading.value = true
+  showOverlay()
+
   mutablePlaylist.rules = collectedRuleGroups.value
 
   try {
@@ -102,7 +100,7 @@ const submit = async () => {
     showErrorDialog('Something went wrong. Please try again.', 'Error')
     logger.error(error)
   } finally {
-    loading.value = false
+    hideOverlay()
   }
 }
 </script>

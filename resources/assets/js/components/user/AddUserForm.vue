@@ -1,71 +1,66 @@
 <template>
-  <div @keydown.esc="maybeClose">
-    <SoundBars v-if="loading"/>
-    <form v-else data-testid="add-user-form" @submit.prevent="submit">
-      <header>
-        <h1>Add New User</h1>
-      </header>
+  <form @submit.prevent="submit" @keydown.esc="maybeClose">
+    <header>
+      <h1>Add New User</h1>
+    </header>
 
-      <main>
-        <div class="form-row">
-          <label>
-            Name
-            <input v-model="newUser.name" v-koel-focus name="name" required title="Name" type="text">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            Email
-            <input v-model="newUser.email" name="email" required title="Email" type="email">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            Password
-            <input
-              v-model="newUser.password"
-              autocomplete="new-password"
-              name="password"
-              required
-              title="Password"
-              type="password"
-            >
-          </label>
-          <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
-        </div>
-        <div class="form-row">
-          <label>
-            <CheckBox name="is_admin" v-model="newUser.is_admin"/>
-            User is an admin
-            <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
-          </label>
-        </div>
-      </main>
+    <main>
+      <div class="form-row">
+        <label>
+          Name
+          <input v-model="newUser.name" v-koel-focus name="name" required title="Name" type="text">
+        </label>
+      </div>
+      <div class="form-row">
+        <label>
+          Email
+          <input v-model="newUser.email" name="email" required title="Email" type="email">
+        </label>
+      </div>
+      <div class="form-row">
+        <label>
+          Password
+          <input
+            v-model="newUser.password"
+            autocomplete="new-password"
+            name="password"
+            required
+            title="Password"
+            type="password"
+          >
+        </label>
+        <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
+      </div>
+      <div class="form-row">
+        <label>
+          <CheckBox name="is_admin" v-model="newUser.is_admin"/>
+          User is an admin
+          <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
+        </label>
+      </div>
+    </main>
 
-      <footer>
-        <Btn class="btn-add" type="submit">Save</Btn>
-        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
-      </footer>
-    </form>
-  </div>
+    <footer>
+      <Btn class="btn-add" type="submit">Save</Btn>
+      <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+    </footer>
+  </form>
 </template>
 
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { CreateUserData, userStore } from '@/stores'
 import { parseValidationError } from '@/utils'
-import { useDialogBox, useMessageToaster } from '@/composables'
+import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
-import SoundBars from '@/components/ui/SoundBars.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 import CheckBox from '@/components/ui/CheckBox.vue'
 
+const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showErrorDialog, showConfirmDialog } = useDialogBox()
-
-const loading = ref(false)
 
 const emptyUserData: CreateUserData = {
   name: '',
@@ -77,7 +72,7 @@ const emptyUserData: CreateUserData = {
 const newUser = reactive<CreateUserData>(Object.assign({}, emptyUserData))
 
 const submit = async () => {
-  loading.value = true
+  showOverlay()
 
   try {
     await userStore.store(newUser)
@@ -87,7 +82,7 @@ const submit = async () => {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
     showErrorDialog(msg, 'Error')
   } finally {
-    loading.value = false
+    hideOverlay()
   }
 }
 
