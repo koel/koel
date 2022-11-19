@@ -271,7 +271,6 @@ new class extends UnitTestCase {
       const confirmMock = this.mock(DialogBoxStub.value, 'confirm', true)
       const toasterMock = this.mock(MessageToasterStub.value, 'success')
       const deleteMock = this.mock(songStore, 'deleteFromFilesystem')
-      const alertMock = this.mock(MessageToasterStub.value, 'success')
       const { getByText } = await this.actingAsAdmin().renderComponent()
 
       const emitMock = this.mock(eventBus, 'emit')
@@ -283,7 +282,6 @@ new class extends UnitTestCase {
         expect(deleteMock).toHaveBeenCalledWith(songs)
         expect(toasterMock).toHaveBeenCalledWith('Deleted 5 songs from the filesystem.')
         expect(emitMock).toHaveBeenCalledWith('SONGS_DELETED', songs)
-        expect(alertMock).toHaveBeenCalledWith('Deleted 5 songs from the filesystem.')
       })
     })
 
