@@ -3,8 +3,6 @@ import { Ref } from 'vue'
 export interface Events {
   LOG_OUT: () => void
   TOGGLE_SIDEBAR: () => void
-  SHOW_OVERLAY: (options: Partial<OverlayState>) => void
-  HIDE_OVERLAY: () => void
   FOCUS_SEARCH_FIELD: () => void
   PLAY_YOUTUBE_VIDEO: (payload: { id: string, title: string }) => void
   SEARCH_KEYWORDS_CHANGED: (keywords: string) => void

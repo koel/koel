@@ -1,5 +1,5 @@
 <template>
-  <Overlay/>
+  <Overlay ref="overlay"/>
   <DialogBox ref="dialog"/>
   <MessageToaster ref="toaster"/>
   <GlobalEventListeners/>
@@ -26,10 +26,9 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, onMounted, provide, ref, watch } from 'vue'
-import { hideOverlay, showOverlay } from '@/utils'
 import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
 import { authService, socketListener, socketService, uploadService } from '@/services'
-import { CurrentSongKey, DialogBoxKey, MessageToasterKey } from '@/symbols'
+import { CurrentSongKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
 import { useNetworkStatus, useRouter } from '@/composables'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
@@ -56,6 +55,7 @@ const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/compon
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 
+const overlay = ref<InstanceType<typeof Overlay>>()
 const dialog = ref<InstanceType<typeof DialogBox>>()
 const toaster = ref<InstanceType<typeof MessageToaster>>()
 const currentSong = ref<Song | null>(null)
@@ -92,7 +92,7 @@ onMounted(async () => {
 })
 
 const init = async () => {
-  showOverlay()
+  overlay.value.show()
 
   try {
     await commonStore.init()
@@ -108,8 +108,7 @@ const init = async () => {
     })
 
     await socketService.init() && socketListener.listen()
-
-    hideOverlay()
+    overlay.value.hide()
   } catch (err) {
     authenticated.value = false
     throw err
@@ -125,6 +124,7 @@ watch(() => queueStore.current, song => song && (currentSong.value = song))
 const onDragEnd = () => (showDropZone.value = false)
 const onDrop = () => (showDropZone.value = false)
 
+provide(OverlayKey, overlay)
 provide(DialogBoxKey, dialog)
 provide(MessageToasterKey, toaster)
 provide(CurrentSongKey, currentSong)

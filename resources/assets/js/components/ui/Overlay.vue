@@ -15,7 +15,6 @@
 <script lang="ts" setup>
 import { faCircleCheck, faCircleExclamation, faCircleInfo, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { defineAsyncComponent, reactive, ref } from 'vue'
-import { eventBus } from '@/utils'
 
 const SoundBars = defineAsyncComponent(() => import('@/components/ui/SoundBars.vue'))
 
@@ -24,7 +23,7 @@ const el = ref<HTMLDialogElement>()
 const state = reactive<OverlayState>({
   dismissible: false,
   type: 'loading',
-  message: ''
+  message: 'Just a little patience…'
 })
 
 const show = (options: Partial<OverlayState> = {}) => {
@@ -35,8 +34,7 @@ const show = (options: Partial<OverlayState> = {}) => {
 const hide = () => el.value?.close()
 const onCancel = () => state.dismissible && hide()
 
-eventBus.on('SHOW_OVERLAY', options => show(options))
-  .on('HIDE_OVERLAY', () => hide())
+defineExpose({ show, hide })
 </script>
 
 <style lang="scss" scoped>

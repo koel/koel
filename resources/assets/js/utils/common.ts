@@ -1,5 +1,5 @@
 import select from 'select'
-import { eventBus, noop } from '@/utils'
+import { noop } from '@/utils'
 import defaultCover from '@/../img/covers/default.svg'
 
 export { defaultCover }
@@ -16,14 +16,6 @@ export const forceReloadWindow = (): void => {
   window.onbeforeunload = noop
   window.location.reload()
 }
-
-export const showOverlay = (
-  message = 'Just a little patience…',
-  type: OverlayState['type'] = 'loading',
-  dismissible = false
-) => eventBus.emit('SHOW_OVERLAY', { message, type, dismissible })
-
-export const hideOverlay = () => eventBus.emit('HIDE_OVERLAY')
 
 export const copyText = (text: string): void => {
   let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')

@@ -6,8 +6,8 @@ import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
 import { http } from '@/services'
 import factory from '@/__tests__/factory'
-import { DialogBoxKey, MessageToasterKey, RouterKey } from '@/symbols'
-import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
+import { DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbols'
+import { DialogBoxStub, MessageToasterStub, OverlayStub } from '@/__tests__/stubs'
 import { routes } from '@/config'
 import Router from '@/router'
 
@@ -112,6 +112,12 @@ export default abstract class UnitTestCase {
     if (!options.global.provide?.hasOwnProperty(MessageToasterKey)) {
       // @ts-ignore
       options.global.provide[MessageToasterKey] = MessageToasterStub
+    }
+
+    // @ts-ignore
+    if (!options.global.provide.hasOwnProperty(OverlayKey)) {
+      // @ts-ignore
+      options.global.provide[OverlayKey] = OverlayStub
     }
 
     // @ts-ignore
