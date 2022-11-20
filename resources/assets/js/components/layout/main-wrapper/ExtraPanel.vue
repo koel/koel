@@ -1,9 +1,9 @@
 <template>
-  <div id="extraPanel" :class="{ 'showing-pane': selectedTab }">
+  <div id="extraPanel" :class="{ 'showing-pane': activeTab }">
     <div class="controls">
       <div class="top">
         <SidebarMenuToggleButton class="burger"/>
-        <ExtraPanelTabHeader v-if="song" v-model="selectedTab"/>
+        <ExtraPanelTabHeader v-if="song" v-model="activeTab"/>
       </div>
 
       <div class="bottom">
@@ -25,9 +25,9 @@
       </div>
     </div>
 
-    <div class="panes" v-if="song" v-show="selectedTab">
+    <div class="panes" v-if="song" v-show="activeTab">
       <div
-        v-show="selectedTab === 'Lyrics'"
+        v-show="activeTab === 'Lyrics'"
         id="extraPanelLyrics"
         aria-labelledby="extraTabLyrics"
         role="tabpanel"
@@ -37,7 +37,7 @@
       </div>
 
       <div
-        v-show="selectedTab === 'Artist'"
+        v-show="activeTab === 'Artist'"
         id="extraPanelArtist"
         aria-labelledby="extraTabArtist"
         role="tabpanel"
@@ -48,7 +48,7 @@
       </div>
 
       <div
-        v-show="selectedTab === 'Album'"
+        v-show="activeTab === 'Album'"
         id="extraPanelAlbum"
         aria-labelledby="extraTabAlbum"
         role="tabpanel"
@@ -59,7 +59,8 @@
       </div>
 
       <div
-        v-show="selectedTab === 'YouTube'"
+        v-show="activeTab === 'YouTube'"
+        data-testid="extra-panel-youtube"
         id="extraPanelYouTube"
         aria-labelledby="extraTabYouTube"
         role="tabpanel"
@@ -74,8 +75,8 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { faArrowRightFromBracket, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import { defineAsyncComponent, ref, watch } from 'vue'
-import { albumStore, artistStore } from '@/stores'
+import { defineAsyncComponent, onMounted, ref, watch } from 'vue'
+import { albumStore, artistStore, preferenceStore } from '@/stores'
 import { useAuthorization, useNewVersionNotification, useThirdPartyServices } from '@/composables'
 import { eventBus, logger, requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
@@ -91,14 +92,16 @@ const ExtraPanelTabHeader = defineAsyncComponent(() => import('@/components/ui/E
 
 const { currentUser } = useAuthorization()
 const { useYouTube } = useThirdPartyServices()
+const { shouldNotifyNewVersion } = useNewVersionNotification()
 
 const song = requireInjection(CurrentSongKey, ref(null))
-const selectedTab = ref<ExtraPanelTab | undefined>(undefined)
+const activeTab = ref<ExtraPanelTab | null>(null)
 
 const artist = ref<Artist | null>(null)
 const album = ref<Album | null>(null)
 
 watch(song, song => song && fetchSongInfo(song))
+watch(activeTab, tab => (preferenceStore.activeExtraPanelTab = tab))
 
 const fetchSongInfo = async (_song: Song) => {
   song.value = _song
@@ -113,11 +116,11 @@ const fetchSongInfo = async (_song: Song) => {
   }
 }
 
-const { shouldNotifyNewVersion } = useNewVersionNotification()
-
 const openAboutKoelModal = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
-const onProfileLinkClick = () => isMobile.any && (selectedTab.value = undefined)
+const onProfileLinkClick = () => isMobile.any && (activeTab.value = null)
 const logout = () => eventBus.emit('LOG_OUT')
+
+onMounted(() => isMobile.any || (activeTab.value = preferenceStore.activeExtraPanelTab))
 </script>
 
 <style lang="scss" scoped>
