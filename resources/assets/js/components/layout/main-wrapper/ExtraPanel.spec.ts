@@ -2,7 +2,7 @@ import { ref, Ref } from 'vue'
 import { expect, it } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
-import { albumStore, artistStore, commonStore } from '@/stores'
+import { albumStore, artistStore, commonStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { CurrentSongKey } from '@/symbols'
 import ExtraPanel from './ExtraPanel.vue'
@@ -29,6 +29,16 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders without a current song', () => expect(this.renderComponent().html()).toMatchSnapshot())
+
+    it('sets the active tab to the preference', async () => {
+      preferenceStore.activeExtraPanelTab = 'YouTube'
+      const { getByTestId } = this.renderComponent(ref(factory<Song>('song')))
+      const tab = getByTestId<HTMLElement>('extra-panel-youtube')
+
+      expect(tab.style.display).toBe('none')
+      await this.tick()
+      expect(tab.style.display).toBe('')
+    })
 
     it('fetches info for the current song', async () => {
       commonStore.state.use_you_tube = true
