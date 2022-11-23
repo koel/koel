@@ -19,7 +19,10 @@ class AlbumRepository extends Repository
         return Album::query()->find($id);
     }
 
-    /** @return Collection|array<array-key, Album> */
+    /**
+     * @param int $count
+     * @return Collection
+     */
     public function getRecentlyAdded(int $count = 6): Collection
     {
         return Album::query()
@@ -29,7 +32,11 @@ class AlbumRepository extends Repository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Album> */
+    /**
+     * @param int $count
+     * @param User|null $user
+     * @return Collection
+     */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
         $user ??= $this->auth->user();
@@ -45,7 +52,10 @@ class AlbumRepository extends Repository
             ->get('albums.*');
     }
 
-    /** @return Collection|array<array-key, Album> */
+    /**
+     * @param array $ids
+     * @return Collection
+     */
     public function getByIds(array $ids): Collection
     {
         return Album::query()
@@ -53,7 +63,10 @@ class AlbumRepository extends Repository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Album> */
+    /**
+     * @param Artist $artist
+     * @return Collection
+     */
     public function getByArtist(Artist $artist): Collection
     {
         return Album::query()
@@ -69,5 +82,10 @@ class AlbumRepository extends Repository
             ->isStandard()
             ->orderBy('name')
             ->simplePaginate(21);
+    }
+
+    public function guessModelClass(): string
+    {
+        return Album::class;
     }
 }

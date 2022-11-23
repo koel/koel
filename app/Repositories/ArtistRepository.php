@@ -13,7 +13,11 @@ class ArtistRepository extends Repository
 {
     use Searchable;
 
-    /** @return Collection|array<array-key, Artist> */
+    /**
+     * @param int $count
+     * @param User|null $user
+     * @return Collection
+     */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
         $user ??= auth()->user();
@@ -35,7 +39,10 @@ class ArtistRepository extends Repository
         return Artist::query()->find($id);
     }
 
-    /** @return Collection|array<array-key, Artist> */
+    /**
+     * @param array $ids
+     * @return Collection
+     */
     public function getByIds(array $ids): Collection
     {
         return Artist::query()
@@ -50,5 +57,10 @@ class ArtistRepository extends Repository
             ->isStandard()
             ->orderBy('name')
             ->simplePaginate(21);
+    }
+
+    public function guessModelClass(): string
+    {
+        return Artist::class;
     }
 }

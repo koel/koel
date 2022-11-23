@@ -6,7 +6,7 @@ use App\Models\Setting;
 
 class SettingRepository extends Repository
 {
-    /** @return array<mixed> */
+    /** @return array */
     public function getAllAsKeyValueArray(): array
     {
         return $this->model->pluck('value', 'key')->toArray();
@@ -15,5 +15,10 @@ class SettingRepository extends Repository
     public function getByKey(string $key): mixed
     {
         return Setting::get($key);
+    }
+
+    public function guessModelClass(): string
+    {
+        return Setting::class;
     }
 }

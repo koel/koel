@@ -22,23 +22,25 @@ abstract class Repository implements RepositoryInterface
         attempt(fn () => $this->auth = app(Guard::class), false);
     }
 
-    private static function guessModelClass(): string
-    {
-        return preg_replace('/(.+)\\\\Repositories\\\\(.+)Repository$/m', '$1\Models\\\$2', static::class);
-    }
+    public abstract function guessModelClass(): string;
 
     public function getOneById($id): ?Model
     {
         return $this->model->find($id);
     }
 
-    /** @return Collection|array<Model> */
+    /**
+     * @param array $ids
+     * @return Collection
+     */
     public function getByIds(array $ids): Collection
     {
         return $this->model->find($ids);
     }
 
-    /** @return Collection|array<Model> */
+    /**
+     * @return Collection
+     */
     public function getAll(): Collection
     {
         return $this->model->all();

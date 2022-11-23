@@ -10,9 +10,16 @@ class PlaylistRepository extends Repository
 {
     use ByCurrentUser;
 
-    /** @return Collection|array<Playlist> */
+    /**
+     o* @return Collection
+     */
     public function getAllByCurrentUser(): Collection
     {
         return $this->byCurrentUser()->orderBy('name')->get();
+    }
+
+    public function guessModelClass(): string
+    {
+        return Playlist::class;
     }
 }

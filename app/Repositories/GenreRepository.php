@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\DB;
 
 class GenreRepository
 {
-    /** @return Collection|array<array-key, Genre> */
+    /**
+     * @return Collection
+     */
     public function getAll(): Collection
     {
         return Song::query()
@@ -40,5 +42,10 @@ class GenreRepository
                 length: $record->length
             )
             : null;
+    }
+
+    public function guessModelClass(): string
+    {
+        return Genre::class;
     }
 }

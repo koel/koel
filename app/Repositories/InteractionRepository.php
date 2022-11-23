@@ -11,7 +11,10 @@ class InteractionRepository extends Repository
 {
     use ByCurrentUser;
 
-    /** @return Collection|array<Interaction> */
+    /**
+     * @param User $user
+     * @return Collection
+     */
     public function getUserFavorites(User $user): Collection
     {
         return $this->model
@@ -38,5 +41,10 @@ class InteractionRepository extends Repository
         }
 
         return $query->pluck('song_id')->all();
+    }
+
+    public function guessModelClass(): string
+    {
+        return Interaction::class;
     }
 }

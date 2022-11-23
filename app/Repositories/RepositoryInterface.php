@@ -9,9 +9,14 @@ interface RepositoryInterface
 {
     public function getOneById($id): ?Model;
 
-    /** @return Collection|array<Model> */
+    /**
+     * @param array $ids
+     * @return Collection
+     */
     public function getByIds(array $ids): Collection;
 
-    /** @return Collection|array<Model> */
+    /**
+     * @return Collection
+     */
     public function getAll(): Collection;
 }
