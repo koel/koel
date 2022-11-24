@@ -6,8 +6,18 @@
       </header>
 
       <main>
-        <div class="form-row">
-          <input v-model="name" v-koel-focus name="name" placeholder="Playlist name" required type="text">
+        <div class="form-row cols">
+          <label class="name">
+            Name
+            <input v-model="name" v-koel-focus name="name" placeholder="Playlist name" required type="text">
+          </label>
+          <label class="folder">
+            Folder
+            <select v-model="folderId">
+              <option :value="null"></option>
+              <option v-for="folder in folders" :value="folder.id">{{ folder.name }}</option>
+            </select>
+          </label>
         </div>
 
         <div class="form-row rules">
@@ -35,10 +45,10 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { ref } from 'vue'
-import { playlistStore } from '@/stores'
+import { ref, toRef } from 'vue'
+import { playlistFolderStore, playlistStore } from '@/stores'
 import { logger } from '@/utils'
-import { useDialogBox, useMessageToaster, useOverlay, useRouter, useSmartPlaylistForm } from '@/composables'
+import { useDialogBox, useMessageToaster, useModal, useOverlay, useRouter, useSmartPlaylistForm } from '@/composables'
 
 const {
   Btn,
@@ -53,14 +63,21 @@ const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const { go } = useRouter()
+const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
 
 const name = ref('')
+const folderId = ref(targetFolder?.id)
+const folders = toRef(playlistFolderStore.state, 'folders')
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
+const isPristine = () => name.value === ''
+  && folderId.value === targetFolder?.id
+  && collectedRuleGroups.value.length === 0
+
 const maybeClose = async () => {
-  if (!name.value && !collectedRuleGroups.value.length) {
+  if (isPristine()) {
     close()
     return
   }
@@ -72,7 +89,11 @@ const submit = async () => {
   showOverlay()
 
   try {
-    const playlist = await playlistStore.store(name.value, [], collectedRuleGroups.value)
+    const playlist = await playlistStore.store(name.value, {
+      rules: collectedRuleGroups.value,
+      folder_id: folderId.value
+    })
+
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)
     go(`playlist/${playlist.id}`)

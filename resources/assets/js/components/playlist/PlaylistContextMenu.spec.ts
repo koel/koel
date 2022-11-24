@@ -14,12 +14,12 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('renames a standard playlist', async () => {
+    it('edits a standard playlist', async () => {
       const playlist = factory<Playlist>('playlist')
       const { getByText } = await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
-      await fireEvent.click(getByText('Rename'))
+      await fireEvent.click(getByText('Edit'))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist)
     })

@@ -15,10 +15,12 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
             'invalid model' => [
                 [
                     [
+                        'id' => 1,
                         'rules' => [
                             [
+                                'id' => 1,
                                 'model' => 'foo',
-                                'operator' => 'like',
+                                'operator' => 'contains',
                                 'value' => ['bar'],
                             ],
                         ],
@@ -28,8 +30,10 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
             'invalid operator' => [
                 [
                     [
+                        'id' => 1,
                         'rules' => [
                             [
+                                'id' => 1,
                                 'model' => 'artist.name',
                                 'operator' => '<script>',
                                 'value' => ['bar'],
@@ -41,8 +45,10 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
             'values are not an array' => [
                 [
                     [
+                        'id' => 1,
                         'rules' => [
                             [
+                                'id' => 1,
                                 'model' => 'artist.name',
                                 'operator' => 'is',
                                 'value' => 'bar',
@@ -54,8 +60,10 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
             'values are empty' => [
                 [
                     [
+                        'id' => 1,
                         'rules' => [
                             [
+                                'id' => 1,
                                 'model' => 'artist.name',
                                 'operator' => 'is',
                                 'value' => [],
@@ -67,8 +75,10 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
             'values item account exceeds 2' => [
                 [
                     [
+                        'id' => 1,
                         'rules' => [
                             [
+                                'id' => 1,
                                 'model' => 'artist.name',
                                 'operator' => 'is',
                                 'value' => ['bar', 'baz', 'qux'],
@@ -93,8 +103,10 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
             'one rule' => [
                 [
                     [
+                        'id' => 1,
                         'rules' => [
                             [
+                                'id' => 2,
                                 'model' => 'artist.name',
                                 'operator' => 'is',
                                 'value' => ['bar'],
@@ -106,13 +118,16 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
             'multiple rules' => [
                 [
                     [
+                        'id' => 1,
                         'rules' => [
                             [
+                                'id' => 1,
                                 'model' => 'artist.name',
                                 'operator' => 'is',
                                 'value' => ['bar'],
                             ],
                             [
+                                'id' => 2,
                                 'model' => 'interactions.play_count',
                                 'operator' => 'isGreaterThan',
                                 'value' => [50],
@@ -124,13 +139,16 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
             'multiple groups' => [
                 [
                     [
+                        'id' => 1,
                         'rules' => [
                             [
+                                'id' => 1,
                                 'model' => 'artist.name',
                                 'operator' => 'is',
                                 'value' => ['bar'],
                             ],
                             [
+                                'id' => 2,
                                 'model' => 'interactions.play_count',
                                 'operator' => 'isGreaterThan',
                                 'value' => [50],
@@ -138,13 +156,16 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                         ],
                     ],
                     [
+                        'id' => 2,
                         'rules' => [
                             [
+                                'id' => 1,
                                 'model' => 'album.name',
                                 'operator' => 'contains',
                                 'value' => ['bar'],
                             ],
                             [
+                                'id' => 2,
                                 'model' => 'interactions.play_count',
                                 'operator' => 'isBetween',
                                 'value' => [10, 100],

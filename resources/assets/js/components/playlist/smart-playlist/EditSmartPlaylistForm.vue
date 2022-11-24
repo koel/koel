@@ -6,14 +6,24 @@
       </header>
 
       <main>
-        <div class="form-row">
-          <input
-            v-model="mutablePlaylist.name"
-            v-koel-focus name="name"
-            placeholder="Playlist name"
-            required
-            type="text"
-          >
+        <div class="form-row cols">
+          <label class="name">
+            Name
+            <input
+              v-model="mutablePlaylist.name"
+              v-koel-focus name="name"
+              placeholder="Playlist name"
+              required
+              type="text"
+            >
+          </label>
+          <label class="folder">
+            Folder
+            <select v-model="mutablePlaylist.folder_id">
+              <option :value="null"></option>
+              <option v-for="folder in folders" :value="folder.id">{{ folder.name }}</option>
+            </select>
+          </label>
         </div>
 
         <div class="form-row rules">
@@ -40,26 +50,26 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { computed, reactive, watch } from 'vue'
+import { reactive, toRef, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
-import { playlistStore } from '@/stores'
-import { eventBus, logger, requireInjection } from '@/utils'
-import { useDialogBox, useMessageToaster, useOverlay, useSmartPlaylistForm } from '@/composables'
-import { PlaylistKey } from '@/symbols'
+import { playlistFolderStore, playlistStore } from '@/stores'
+import { eventBus, logger } from '@/utils'
+import { useDialogBox, useMessageToaster, useModal, useOverlay, useSmartPlaylistForm } from '@/composables'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const playlist = useModal().getFromContext<Playlist>('playlist')
 
-const [playlist] = requireInjection(PlaylistKey)
+const folders = toRef(playlistFolderStore.state, 'folders')
 
 let mutablePlaylist: Playlist
 
-watch(playlist, () => (mutablePlaylist = reactive(cloneDeep(playlist.value))), { immediate: true })
+watch(playlist, () => (mutablePlaylist = reactive(cloneDeep(playlist))), { immediate: true })
 
-const isPristine = computed(() => {
-  return isEqual(mutablePlaylist.rules, playlist.value.rules) && mutablePlaylist.name.trim() === playlist.value.name
-})
+const isPristine = () => isEqual(mutablePlaylist.rules, playlist.rules)
+  && mutablePlaylist.name.trim() === playlist.name
+  && mutablePlaylist.folder_id === playlist.folder_id
 
 const {
   Btn,
@@ -74,7 +84,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const maybeClose = async () => {
-  if (isPristine.value) {
+  if (isPristine()) {
     close()
     return
   }
@@ -88,13 +98,9 @@ const submit = async () => {
   mutablePlaylist.rules = collectedRuleGroups.value
 
   try {
-    await playlistStore.update(playlist.value, {
-      name: mutablePlaylist.name,
-      rules: mutablePlaylist.rules
-    })
-
-    toastSuccess(`Playlist "${playlist.value.name}" updated.`)
-    eventBus.emit('PLAYLIST_UPDATED', playlist.value)
+    await playlistStore.update(playlist, mutablePlaylist)
+    toastSuccess(`Playlist "${playlist.name}" updated.`)
+    eventBus.emit('PLAYLIST_UPDATED', playlist)
     close()
   } catch (error) {
     showErrorDialog('Something went wrong. Please try again.', 'Error')

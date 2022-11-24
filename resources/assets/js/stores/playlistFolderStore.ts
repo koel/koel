@@ -12,6 +12,10 @@ export const playlistFolderStore = {
     this.state.folders = this.sort(reactive(folders))
   },
 
+  byId (id: string) {
+    return this.state.folders.find(folder => folder.id === id)
+  },
+
   async store (name: string) {
     const folder = reactive(await http.post<PlaylistFolder>('playlist-folders', { name }))
 
@@ -29,6 +33,7 @@ export const playlistFolderStore = {
 
   async rename (folder: PlaylistFolder, name: string) {
     await http.put(`playlist-folders/${folder.id}`, { name })
+    this.byId(folder.id).name = name
   },
 
   async addPlaylistToFolder (folder: PlaylistFolder, playlist: Playlist) {

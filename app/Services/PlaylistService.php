@@ -2,31 +2,62 @@
 
 namespace App\Services;
 
+use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
 use App\Models\Playlist;
+use App\Models\PlaylistFolder as Folder;
 use App\Models\User;
+use App\Values\SmartPlaylistRuleGroupCollection;
+use Illuminate\Support\Facades\DB;
+use Webmozart\Assert\Assert;
 
 class PlaylistService
 {
-    public function createPlaylist(string $name, User $user, array $songs, ?array $ruleGroups = null): Playlist
-    {
-        /** @var Playlist $playlist */
-        $playlist = $user->playlists()->create([
-            'name' => $name,
-            'rules' => $ruleGroups,
-        ]);
-
-        if (!$playlist->is_smart && $songs) {
-            $playlist->songs()->sync($songs);
+    public function createPlaylist(
+        string $name,
+        User $user,
+        ?Folder $folder = null,
+        array $songs = [],
+        ?SmartPlaylistRuleGroupCollection $ruleGroups = null
+    ): Playlist {
+        if ($folder) {
+            Assert::true($user->is($folder->user), 'The playlist folder does not belong to the user');
         }
 
-        return $playlist;
+        if ($songs && $ruleGroups) {
+            throw new PlaylistBothSongsAndRulesProvidedException();
+        }
+
+        return DB::transaction(static function () use ($name, $user, $songs, $folder, $ruleGroups): Playlist {
+            /** @var Playlist $playlist */
+            $playlist = $user->playlists()->create([
+                'name' => $name,
+                'rules' => $ruleGroups,
+            ]);
+
+            $folder?->playlists()->save($playlist);
+
+            if (!$playlist->is_smart && $songs) {
+                $playlist->songs()->sync($songs);
+            }
+
+            return $playlist;
+        });
     }
 
-    public function updatePlaylist(Playlist $playlist, string $name, array $rules): Playlist
-    {
+    public function updatePlaylist(
+        Playlist $playlist,
+        string $name,
+        ?Folder $folder = null,
+        ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
+    ): Playlist {
+        if ($folder) {
+            Assert::true($playlist->user->is($folder->user), 'The playlist folder does not belong to the user');
+        }
+
         $playlist->update([
             'name' => $name,
-            'rules' => $rules,
+            'rules' => $ruleGroups,
+            'folder_id' => $folder?->id,
         ]);
 
         return $playlist;

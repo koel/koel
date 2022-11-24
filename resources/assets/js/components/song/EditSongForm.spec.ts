@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify, eventBus } from '@/utils'
-import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
+import { ModalContextKey } from '@/symbols'
 import { ref } from 'vue'
 import { fireEvent } from '@testing-library/vue'
 import { songStore } from '@/stores'
@@ -18,8 +18,10 @@ new class extends UnitTestCase {
     const rendered = this.render(EditSongForm, {
       global: {
         provide: {
-          [<symbol>SongsKey]: [ref(songs)],
-          [<symbol>EditSongFormInitialTabKey]: [ref(initialTab)]
+          [<symbol>ModalContextKey]: [ref({
+            songs,
+            initialTab
+          })]
         }
       }
     })

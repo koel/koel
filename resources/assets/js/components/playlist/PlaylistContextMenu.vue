@@ -1,8 +1,6 @@
 <template>
   <ContextMenuBase ref="base">
-    <li :data-testid="`playlist-context-menu-edit-${playlist.id}`" @click="editPlaylist">
-      {{ playlist.is_smart ? 'Edit' : 'Rename' }}
-    </li>
+    <li :data-testid="`playlist-context-menu-edit-${playlist.id}`" @click="editPlaylist">Edit</li>
     <li :data-testid="`playlist-context-menu-delete-${playlist.id}`" @click="deletePlaylist">Delete</li>
   </ContextMenuBase>
 </template>

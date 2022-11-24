@@ -7,6 +7,7 @@ use App\Http\Requests\API\BatchInteractionRequest;
 use App\Models\User;
 use App\Services\InteractionService;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Arr;
 
 class BatchLikeController extends Controller
 {
@@ -24,7 +25,7 @@ class BatchLikeController extends Controller
 
     public function destroy(BatchInteractionRequest $request)
     {
-        $this->interactionService->batchUnlike((array) $request->songs, $this->user);
+        $this->interactionService->batchUnlike(Arr::wrap($request->songs), $this->user);
 
         return response()->noContent();
     }

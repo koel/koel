@@ -1,22 +1,30 @@
-import { expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { playlistStore } from '@/stores'
-import { PlaylistKey } from '@/symbols'
+import { playlistFolderStore, playlistStore } from '@/stores'
 import { ref } from 'vue'
 import { fireEvent, waitFor } from '@testing-library/vue'
+import { ModalContextKey } from '@/symbols'
 import EditPlaylistForm from './EditPlaylistForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('submits', async () => {
-      const playlist = factory<Playlist>('playlist', { name: 'My playlist' })
-      const updatePlaylistNameMock = vi.fn()
+      playlistFolderStore.state.folders = factory<PlaylistFolder>('playlist-folder', 3)
+
+      const playlist = factory<Playlist>('playlist', {
+        name: 'My playlist',
+        folder_id: playlistFolderStore.state.folders[0].id
+      })
+
+      playlistStore.state.playlists = [playlist]
+
       const updateMock = this.mock(playlistStore, 'update')
+
       const { getByPlaceholderText, getByRole } = this.render(EditPlaylistForm, {
         global: {
           provide: {
-            [<symbol>PlaylistKey]: [ref(playlist), updatePlaylistNameMock]
+            [<symbol>ModalContextKey]: [ref({ playlist })]
           }
         }
       })
@@ -25,8 +33,10 @@ new class extends UnitTestCase {
       await fireEvent.click(getByRole('button', { name: 'Save' }))
 
       await waitFor(() => {
-        expect(updateMock).toHaveBeenCalledWith(playlist, { name: 'Your playlist' })
-        expect(updatePlaylistNameMock).toHaveBeenCalledWith('Your playlist')
+        expect(updateMock).toHaveBeenCalledWith(playlist, {
+          name: 'Your playlist',
+          folder_id: playlist.folder_id
+        })
       })
     })
   }

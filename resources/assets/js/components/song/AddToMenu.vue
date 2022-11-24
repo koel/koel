@@ -111,7 +111,7 @@ const createNewPlaylistFromSongs = async () => {
     return
   }
 
-  const playlist = await playlistStore.store(newPlaylistName.value, songs.value)
+  const playlist = await playlistStore.store(newPlaylistName.value, {}, songs.value)
   newPlaylistName.value = ''
 
   toastSuccess(`Playlist "${playlist.name}" created.`)

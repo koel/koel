@@ -4,7 +4,7 @@ import { expect, it, vi } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { playlistFolderStore } from '@/stores'
-import { PlaylistFolderKey } from '@/symbols'
+import { ModalContextKey } from '@/symbols'
 import EditPlaylistFolderForm from './EditPlaylistFolderForm.vue'
 
 new class extends UnitTestCase {
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
       const { getByPlaceholderText, getByRole } = this.render(EditPlaylistFolderForm, {
         global: {
           provide: {
-            [<symbol>PlaylistFolderKey]: [ref(folder), updateFolderNameMock]
+            [<symbol>ModalContextKey]: [ref({ folder })]
           }
         }
       })
@@ -26,7 +26,6 @@ new class extends UnitTestCase {
 
       await waitFor(() => {
         expect(renameMock).toHaveBeenCalledWith(folder, 'Your folder')
-        expect(updateFolderNameMock).toHaveBeenCalledWith('Your folder')
       })
     })
   }

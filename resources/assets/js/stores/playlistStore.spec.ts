@@ -82,18 +82,18 @@ new class extends UnitTestCase {
     it('stores a playlist', async () => {
       const songs = factory<Song>('song', 3)
       const playlist = factory<Playlist>('playlist')
+      const folder = factory<PlaylistFolder>('playlist-folder')
       const postMock = this.mock(http, 'post').mockResolvedValue(playlist)
       const serializeMock = this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
 
-      await playlistStore.store('New Playlist', songs, [])
+      await playlistStore.store('New Playlist', { folder_id: folder.id }, songs)
 
       expect(postMock).toHaveBeenCalledWith('playlists', {
         name: 'New Playlist',
         songs: songs.map(song => song.id),
-        rules: null
+        folder_id: folder.id
       })
 
-      expect(serializeMock).toHaveBeenCalledWith([])
       expect(playlistStore.state.playlists).toHaveLength(1)
       expect(playlistStore.state.playlists[0]).toEqual(playlist)
     })
@@ -147,11 +147,14 @@ new class extends UnitTestCase {
 
     it('updates a standard playlist', async () => {
       const playlist = factory<Playlist>('playlist', { id: 12 })
+      playlistStore.state.playlists = [playlist]
+      const folder = factory<PlaylistFolder>('playlist-folder')
+
       const putMock = this.mock(http, 'put').mockResolvedValue(playlist)
 
-      await playlistStore.update(playlist, { name: 'Foo' })
+      await playlistStore.update(playlist, { name: 'Foo', folder_id: folder.id })
 
-      expect(putMock).toHaveBeenCalledWith('playlists/12', { name: 'Foo', rules: null })
+      expect(putMock).toHaveBeenCalledWith('playlists/12', { name: 'Foo', rules: null, folder_id: folder.id })
       expect(playlist.name).toBe('Foo')
     })
 
@@ -165,7 +168,7 @@ new class extends UnitTestCase {
       await playlistStore.update(playlist, { name: 'Foo', rules })
 
       expect(serializeMock).toHaveBeenCalledWith(rules)
-      expect(putMock).toHaveBeenCalledWith('playlists/12', { name: 'Foo', rules: ['Whatever'] })
+      expect(putMock).toHaveBeenCalledWith('playlists/12', { name: 'Foo', rules: ['Whatever'], folder_id: undefined })
       expect(removeMock).toHaveBeenCalledWith(['playlist.songs', 12])
     })
   }

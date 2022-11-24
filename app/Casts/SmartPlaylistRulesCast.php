@@ -2,22 +2,26 @@
 
 namespace App\Casts;
 
-use App\Values\SmartPlaylistRuleGroup;
+use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Support\Collection;
 
 class SmartPlaylistRulesCast implements CastsAttributes
 {
-    /** @return Collection|array<SmartPlaylistRuleGroup> */
-    public function get($model, string $key, $value, array $attributes): Collection
+    public function get($model, string $key, $value, array $attributes): ?SmartPlaylistRuleGroupCollection
     {
-        return collect(json_decode($value, true) ?: [])->map(static function (array $group): ?SmartPlaylistRuleGroup {
-            return SmartPlaylistRuleGroup::tryCreate($group);
-        });
+        if (!$value) {
+            return null;
+        }
+
+        return attempt(static fn () => SmartPlaylistRuleGroupCollection::create(json_decode($value, true)));
     }
 
     public function set($model, string $key, $value, array $attributes): ?string
     {
-        return json_encode($value ?: []);
+        if (is_array($value)) {
+            $value = SmartPlaylistRuleGroupCollection::create($value);
+        }
+
+        return $value?->toJson() ?? null;
     }
 }

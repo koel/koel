@@ -72,7 +72,7 @@ class PlaylistTest extends TestCase
         self::assertTrue($rule->equals($playlist->rule_groups[0]->rules[0]));
     }
 
-    public function testCreatingSmartPlaylistIgnoresSongs(): void
+    public function testCreatingPlaylistCannotHaveBothSongsAndRules(): void
     {
         $this->postAs('api/playlist', [
             'name' => 'Smart Foo Bar',
@@ -89,13 +89,7 @@ class PlaylistTest extends TestCase
                 ],
             ],
             'songs' => Song::query()->orderBy('id')->take(3)->get()->pluck('id')->all(),
-        ]);
-
-        /** @var Playlist $playlist */
-        $playlist = Playlist::query()->orderByDesc('id')->first();
-
-        self::assertSame('Smart Foo Bar', $playlist->name);
-        self::assertEmpty($playlist->songs);
+        ])->assertUnprocessable();
     }
 
     public function testCreatingPlaylistWithNonExistentSongsFails(): void
