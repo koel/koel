@@ -8,22 +8,16 @@ use Illuminate\Support\Collection;
 
 final class SmartPlaylistRuleGroup implements Arrayable
 {
-    private function __construct(public ?int $id, public Collection $rules)
+    private function __construct(public int $id, public Collection $rules)
     {
     }
 
-    public static function tryCreate(array $jsonArray): ?self
+    public static function create(array $array): self
     {
-        return attempt(static fn () => self::create($jsonArray));
-    }
-
-    public static function create(array $jsonArray): self
-    {
-        $rules = collect(array_map(static function (array $rawRuleConfig) {
-            return SmartPlaylistRule::create($rawRuleConfig);
-        }, $jsonArray['rules']));
-
-        return new self(Arr::get($jsonArray, 'id'), $rules);
+        return new self(
+            id: Arr::get($array, 'id'),
+            rules: collect(Arr::get($array, 'rules', []))->transform([SmartPlaylistRule::class, 'create']),
+        );
     }
 
     /** @return array<mixed> */

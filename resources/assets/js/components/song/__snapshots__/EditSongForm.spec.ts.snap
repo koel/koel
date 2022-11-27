@@ -14,208 +14,202 @@ exports[`edits a single song 1`] = `
     <div class="panes" data-v-d70eb300="">
       <div id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" tabindex="0" data-v-d70eb300="">
         <div class="form-row" data-v-d70eb300=""><label data-v-d70eb300=""> Title <input data-testid="title-input" name="title" title="Title" type="text" data-v-d70eb300=""></label></div>
-        <div class="form-row" data-v-d70eb300="">
-          <div class="cols" data-v-d70eb300=""><label data-v-d70eb300=""> Artist <input placeholder="" data-testid="artist-input" name="artist" type="text" data-v-d70eb300=""></label><label data-v-d70eb300=""> Album Artist <input placeholder="" data-testid="albumArtist-input" name="album_artist" type="text" data-v-d70eb300=""></label></div>
-        </div>
+        <div class="form-row cols" data-v-d70eb300=""><label data-v-d70eb300=""> Artist <input placeholder="" data-testid="artist-input" name="artist" type="text" data-v-d70eb300=""></label><label data-v-d70eb300=""> Album Artist <input placeholder="" data-testid="albumArtist-input" name="album_artist" type="text" data-v-d70eb300=""></label></div>
         <div class="form-row" data-v-d70eb300=""><label data-v-d70eb300=""> Album <input placeholder="" data-testid="album-input" name="album" type="text" data-v-d70eb300=""></label></div>
-        <div class="form-row" data-v-d70eb300="">
-          <div class="cols" data-v-d70eb300=""><label data-v-d70eb300=""> Track <input placeholder="" data-testid="track-input" min="1" name="track" type="number" data-v-d70eb300=""></label><label data-v-d70eb300=""> Disc <input placeholder="" data-testid="disc-input" min="1" name="disc" type="number" data-v-d70eb300=""></label></div>
-        </div>
-        <div class="form-row" data-v-d70eb300="">
-          <div class="cols" data-v-d70eb300=""><label data-v-d70eb300=""> Genre <input placeholder="" data-testid="genre-input" name="genre" type="text" list="genres" data-v-d70eb300=""><datalist id="genres" data-v-d70eb300="">
-                <option value="Blues" data-v-d70eb300=""></option>
-                <option value="Classic Rock" data-v-d70eb300=""></option>
-                <option value="Country" data-v-d70eb300=""></option>
-                <option value="Dance" data-v-d70eb300=""></option>
-                <option value="Disco" data-v-d70eb300=""></option>
-                <option value="Funk" data-v-d70eb300=""></option>
-                <option value="Grunge" data-v-d70eb300=""></option>
-                <option value="Hip-Hop" data-v-d70eb300=""></option>
-                <option value="Jazz" data-v-d70eb300=""></option>
-                <option value="Metal" data-v-d70eb300=""></option>
-                <option value="New Age" data-v-d70eb300=""></option>
-                <option value="Oldies" data-v-d70eb300=""></option>
-                <option value="Other" data-v-d70eb300=""></option>
-                <option value="Pop" data-v-d70eb300=""></option>
-                <option value="R&amp;B" data-v-d70eb300=""></option>
-                <option value="Rap" data-v-d70eb300=""></option>
-                <option value="Reggae" data-v-d70eb300=""></option>
-                <option value="Rock" data-v-d70eb300=""></option>
-                <option value="Techno" data-v-d70eb300=""></option>
-                <option value="Industrial" data-v-d70eb300=""></option>
-                <option value="Alternative" data-v-d70eb300=""></option>
-                <option value="Ska" data-v-d70eb300=""></option>
-                <option value="Death Metal" data-v-d70eb300=""></option>
-                <option value="Pranks" data-v-d70eb300=""></option>
-                <option value="Soundtrack" data-v-d70eb300=""></option>
-                <option value="Euro-Techno" data-v-d70eb300=""></option>
-                <option value="Ambient" data-v-d70eb300=""></option>
-                <option value="Trip-Hop" data-v-d70eb300=""></option>
-                <option value="Vocal" data-v-d70eb300=""></option>
-                <option value="Jazz &amp; Funk" data-v-d70eb300=""></option>
-                <option value="Fusion" data-v-d70eb300=""></option>
-                <option value="Trance" data-v-d70eb300=""></option>
-                <option value="Classical" data-v-d70eb300=""></option>
-                <option value="Instrumental" data-v-d70eb300=""></option>
-                <option value="Acid" data-v-d70eb300=""></option>
-                <option value="House" data-v-d70eb300=""></option>
-                <option value="Game" data-v-d70eb300=""></option>
-                <option value="Sound Clip" data-v-d70eb300=""></option>
-                <option value="Gospel" data-v-d70eb300=""></option>
-                <option value="Noise" data-v-d70eb300=""></option>
-                <option value="Alternative Rock" data-v-d70eb300=""></option>
-                <option value="Bass" data-v-d70eb300=""></option>
-                <option value="Punk" data-v-d70eb300=""></option>
-                <option value="Space" data-v-d70eb300=""></option>
-                <option value="Meditative" data-v-d70eb300=""></option>
-                <option value="Instrumental Pop" data-v-d70eb300=""></option>
-                <option value="Instrumental Rock" data-v-d70eb300=""></option>
-                <option value="Ethnic" data-v-d70eb300=""></option>
-                <option value="Gothic" data-v-d70eb300=""></option>
-                <option value="Darkwave" data-v-d70eb300=""></option>
-                <option value="Techno-Industrial" data-v-d70eb300=""></option>
-                <option value="Electronic" data-v-d70eb300=""></option>
-                <option value="Pop-Folk" data-v-d70eb300=""></option>
-                <option value="Eurodance" data-v-d70eb300=""></option>
-                <option value="Dream" data-v-d70eb300=""></option>
-                <option value="Southern Rock" data-v-d70eb300=""></option>
-                <option value="Comedy" data-v-d70eb300=""></option>
-                <option value="Cult" data-v-d70eb300=""></option>
-                <option value="Gangsta" data-v-d70eb300=""></option>
-                <option value="Top 40" data-v-d70eb300=""></option>
-                <option value="Christian Rap" data-v-d70eb300=""></option>
-                <option value="Pop/Funk" data-v-d70eb300=""></option>
-                <option value="Jungle" data-v-d70eb300=""></option>
-                <option value="Native US" data-v-d70eb300=""></option>
-                <option value="Cabaret" data-v-d70eb300=""></option>
-                <option value="New Wave" data-v-d70eb300=""></option>
-                <option value="Psychedelic" data-v-d70eb300=""></option>
-                <option value="Rave" data-v-d70eb300=""></option>
-                <option value="Showtunes" data-v-d70eb300=""></option>
-                <option value="Trailer" data-v-d70eb300=""></option>
-                <option value="Lo-Fi" data-v-d70eb300=""></option>
-                <option value="Tribal" data-v-d70eb300=""></option>
-                <option value="Acid Punk" data-v-d70eb300=""></option>
-                <option value="Acid Jazz" data-v-d70eb300=""></option>
-                <option value="Polka" data-v-d70eb300=""></option>
-                <option value="Retro" data-v-d70eb300=""></option>
-                <option value="Musical" data-v-d70eb300=""></option>
-                <option value="Rock &amp; Roll" data-v-d70eb300=""></option>
-                <option value="Hard Rock" data-v-d70eb300=""></option>
-                <option value="Folk" data-v-d70eb300=""></option>
-                <option value="Folk-Rock" data-v-d70eb300=""></option>
-                <option value="National Folk" data-v-d70eb300=""></option>
-                <option value="Swing" data-v-d70eb300=""></option>
-                <option value="Fast Fusion" data-v-d70eb300=""></option>
-                <option value="Bebob" data-v-d70eb300=""></option>
-                <option value="Latin" data-v-d70eb300=""></option>
-                <option value="Revival" data-v-d70eb300=""></option>
-                <option value="Celtic" data-v-d70eb300=""></option>
-                <option value="Bluegrass" data-v-d70eb300=""></option>
-                <option value="Avantgarde" data-v-d70eb300=""></option>
-                <option value="Gothic Rock" data-v-d70eb300=""></option>
-                <option value="Progressive Rock" data-v-d70eb300=""></option>
-                <option value="Psychedelic Rock" data-v-d70eb300=""></option>
-                <option value="Symphonic Rock" data-v-d70eb300=""></option>
-                <option value="Slow Rock" data-v-d70eb300=""></option>
-                <option value="Big Band" data-v-d70eb300=""></option>
-                <option value="Chorus" data-v-d70eb300=""></option>
-                <option value="Easy Listening" data-v-d70eb300=""></option>
-                <option value="Acoustic" data-v-d70eb300=""></option>
-                <option value="Humour" data-v-d70eb300=""></option>
-                <option value="Speech" data-v-d70eb300=""></option>
-                <option value="Chanson" data-v-d70eb300=""></option>
-                <option value="Opera" data-v-d70eb300=""></option>
-                <option value="Chamber Music" data-v-d70eb300=""></option>
-                <option value="Sonata" data-v-d70eb300=""></option>
-                <option value="Symphony" data-v-d70eb300=""></option>
-                <option value="Booty Bass" data-v-d70eb300=""></option>
-                <option value="Primus" data-v-d70eb300=""></option>
-                <option value="Porn Groove" data-v-d70eb300=""></option>
-                <option value="Satire" data-v-d70eb300=""></option>
-                <option value="Slow Jam" data-v-d70eb300=""></option>
-                <option value="Club" data-v-d70eb300=""></option>
-                <option value="Tango" data-v-d70eb300=""></option>
-                <option value="Samba" data-v-d70eb300=""></option>
-                <option value="Folklore" data-v-d70eb300=""></option>
-                <option value="Ballad" data-v-d70eb300=""></option>
-                <option value="Power Ballad" data-v-d70eb300=""></option>
-                <option value="Rhythmic Soul" data-v-d70eb300=""></option>
-                <option value="Freestyle" data-v-d70eb300=""></option>
-                <option value="Duet" data-v-d70eb300=""></option>
-                <option value="Punk Rock" data-v-d70eb300=""></option>
-                <option value="Drum Solo" data-v-d70eb300=""></option>
-                <option value="A cappella" data-v-d70eb300=""></option>
-                <option value="Euro-House" data-v-d70eb300=""></option>
-                <option value="Dance Hall" data-v-d70eb300=""></option>
-                <option value="Goa" data-v-d70eb300=""></option>
-                <option value="Drum &amp; Bass" data-v-d70eb300=""></option>
-                <option value="Club-House" data-v-d70eb300=""></option>
-                <option value="Hardcore Techno" data-v-d70eb300=""></option>
-                <option value="Terror" data-v-d70eb300=""></option>
-                <option value="Indie" data-v-d70eb300=""></option>
-                <option value="BritPop" data-v-d70eb300=""></option>
-                <option value="Negerpunk" data-v-d70eb300=""></option>
-                <option value="Polsk Punk" data-v-d70eb300=""></option>
-                <option value="Beat" data-v-d70eb300=""></option>
-                <option value="Christian Gangsta Rap" data-v-d70eb300=""></option>
-                <option value="Heavy Metal" data-v-d70eb300=""></option>
-                <option value="Black Metal" data-v-d70eb300=""></option>
-                <option value="Crossover" data-v-d70eb300=""></option>
-                <option value="Contemporary Christian" data-v-d70eb300=""></option>
-                <option value="Christian Rock" data-v-d70eb300=""></option>
-                <option value="Merengue" data-v-d70eb300=""></option>
-                <option value="Salsa" data-v-d70eb300=""></option>
-                <option value="Thrash Metal" data-v-d70eb300=""></option>
-                <option value="Anime" data-v-d70eb300=""></option>
-                <option value="JPop" data-v-d70eb300=""></option>
-                <option value="SynthPop" data-v-d70eb300=""></option>
-                <option value="Abstract" data-v-d70eb300=""></option>
-                <option value="Art Rock" data-v-d70eb300=""></option>
-                <option value="Baroque" data-v-d70eb300=""></option>
-                <option value="Bhangra" data-v-d70eb300=""></option>
-                <option value="Big beat" data-v-d70eb300=""></option>
-                <option value="Breakbeat" data-v-d70eb300=""></option>
-                <option value="Chillout" data-v-d70eb300=""></option>
-                <option value="Downtempo" data-v-d70eb300=""></option>
-                <option value="Dub" data-v-d70eb300=""></option>
-                <option value="EBM" data-v-d70eb300=""></option>
-                <option value="Eclectic" data-v-d70eb300=""></option>
-                <option value="Electro" data-v-d70eb300=""></option>
-                <option value="Electroclash" data-v-d70eb300=""></option>
-                <option value="Emo" data-v-d70eb300=""></option>
-                <option value="Experimental" data-v-d70eb300=""></option>
-                <option value="Garage" data-v-d70eb300=""></option>
-                <option value="Global" data-v-d70eb300=""></option>
-                <option value="IDM" data-v-d70eb300=""></option>
-                <option value="Illbient" data-v-d70eb300=""></option>
-                <option value="Industro-Goth" data-v-d70eb300=""></option>
-                <option value="Jam Band" data-v-d70eb300=""></option>
-                <option value="Krautrock" data-v-d70eb300=""></option>
-                <option value="Leftfield" data-v-d70eb300=""></option>
-                <option value="Lounge" data-v-d70eb300=""></option>
-                <option value="Math Rock" data-v-d70eb300=""></option>
-                <option value="New Romantic" data-v-d70eb300=""></option>
-                <option value="Nu-Breakz" data-v-d70eb300=""></option>
-                <option value="Post-Punk" data-v-d70eb300=""></option>
-                <option value="Post-Rock" data-v-d70eb300=""></option>
-                <option value="Psytrance" data-v-d70eb300=""></option>
-                <option value="Shoegaze" data-v-d70eb300=""></option>
-                <option value="Space Rock" data-v-d70eb300=""></option>
-                <option value="Trop Rock" data-v-d70eb300=""></option>
-                <option value="World Music" data-v-d70eb300=""></option>
-                <option value="Neoclassical" data-v-d70eb300=""></option>
-                <option value="Audiobook" data-v-d70eb300=""></option>
-                <option value="Audio Theatre" data-v-d70eb300=""></option>
-                <option value="Neue Deutsche Welle" data-v-d70eb300=""></option>
-                <option value="Podcast" data-v-d70eb300=""></option>
-                <option value="Indie-Rock" data-v-d70eb300=""></option>
-                <option value="G-Funk" data-v-d70eb300=""></option>
-                <option value="Dubstep" data-v-d70eb300=""></option>
-                <option value="Garage Rock" data-v-d70eb300=""></option>
-                <option value="Psybient" data-v-d70eb300=""></option>
-              </datalist></label><label data-v-d70eb300=""> Year <input placeholder="" data-testid="year-input" name="year" type="number" data-v-d70eb300=""></label></div>
-        </div>
+        <div class="form-row cols" data-v-d70eb300=""><label data-v-d70eb300=""> Track <input placeholder="" data-testid="track-input" min="1" name="track" type="number" data-v-d70eb300=""></label><label data-v-d70eb300=""> Disc <input placeholder="" data-testid="disc-input" min="1" name="disc" type="number" data-v-d70eb300=""></label></div>
+        <div class="form-row cols" data-v-d70eb300=""><label data-v-d70eb300=""> Genre <input placeholder="" data-testid="genre-input" name="genre" type="text" list="genres" data-v-d70eb300=""><datalist id="genres" data-v-d70eb300="">
+              <option value="Blues" data-v-d70eb300=""></option>
+              <option value="Classic Rock" data-v-d70eb300=""></option>
+              <option value="Country" data-v-d70eb300=""></option>
+              <option value="Dance" data-v-d70eb300=""></option>
+              <option value="Disco" data-v-d70eb300=""></option>
+              <option value="Funk" data-v-d70eb300=""></option>
+              <option value="Grunge" data-v-d70eb300=""></option>
+              <option value="Hip-Hop" data-v-d70eb300=""></option>
+              <option value="Jazz" data-v-d70eb300=""></option>
+              <option value="Metal" data-v-d70eb300=""></option>
+              <option value="New Age" data-v-d70eb300=""></option>
+              <option value="Oldies" data-v-d70eb300=""></option>
+              <option value="Other" data-v-d70eb300=""></option>
+              <option value="Pop" data-v-d70eb300=""></option>
+              <option value="R&amp;B" data-v-d70eb300=""></option>
+              <option value="Rap" data-v-d70eb300=""></option>
+              <option value="Reggae" data-v-d70eb300=""></option>
+              <option value="Rock" data-v-d70eb300=""></option>
+              <option value="Techno" data-v-d70eb300=""></option>
+              <option value="Industrial" data-v-d70eb300=""></option>
+              <option value="Alternative" data-v-d70eb300=""></option>
+              <option value="Ska" data-v-d70eb300=""></option>
+              <option value="Death Metal" data-v-d70eb300=""></option>
+              <option value="Pranks" data-v-d70eb300=""></option>
+              <option value="Soundtrack" data-v-d70eb300=""></option>
+              <option value="Euro-Techno" data-v-d70eb300=""></option>
+              <option value="Ambient" data-v-d70eb300=""></option>
+              <option value="Trip-Hop" data-v-d70eb300=""></option>
+              <option value="Vocal" data-v-d70eb300=""></option>
+              <option value="Jazz &amp; Funk" data-v-d70eb300=""></option>
+              <option value="Fusion" data-v-d70eb300=""></option>
+              <option value="Trance" data-v-d70eb300=""></option>
+              <option value="Classical" data-v-d70eb300=""></option>
+              <option value="Instrumental" data-v-d70eb300=""></option>
+              <option value="Acid" data-v-d70eb300=""></option>
+              <option value="House" data-v-d70eb300=""></option>
+              <option value="Game" data-v-d70eb300=""></option>
+              <option value="Sound Clip" data-v-d70eb300=""></option>
+              <option value="Gospel" data-v-d70eb300=""></option>
+              <option value="Noise" data-v-d70eb300=""></option>
+              <option value="Alternative Rock" data-v-d70eb300=""></option>
+              <option value="Bass" data-v-d70eb300=""></option>
+              <option value="Punk" data-v-d70eb300=""></option>
+              <option value="Space" data-v-d70eb300=""></option>
+              <option value="Meditative" data-v-d70eb300=""></option>
+              <option value="Instrumental Pop" data-v-d70eb300=""></option>
+              <option value="Instrumental Rock" data-v-d70eb300=""></option>
+              <option value="Ethnic" data-v-d70eb300=""></option>
+              <option value="Gothic" data-v-d70eb300=""></option>
+              <option value="Darkwave" data-v-d70eb300=""></option>
+              <option value="Techno-Industrial" data-v-d70eb300=""></option>
+              <option value="Electronic" data-v-d70eb300=""></option>
+              <option value="Pop-Folk" data-v-d70eb300=""></option>
+              <option value="Eurodance" data-v-d70eb300=""></option>
+              <option value="Dream" data-v-d70eb300=""></option>
+              <option value="Southern Rock" data-v-d70eb300=""></option>
+              <option value="Comedy" data-v-d70eb300=""></option>
+              <option value="Cult" data-v-d70eb300=""></option>
+              <option value="Gangsta" data-v-d70eb300=""></option>
+              <option value="Top 40" data-v-d70eb300=""></option>
+              <option value="Christian Rap" data-v-d70eb300=""></option>
+              <option value="Pop/Funk" data-v-d70eb300=""></option>
+              <option value="Jungle" data-v-d70eb300=""></option>
+              <option value="Native US" data-v-d70eb300=""></option>
+              <option value="Cabaret" data-v-d70eb300=""></option>
+              <option value="New Wave" data-v-d70eb300=""></option>
+              <option value="Psychedelic" data-v-d70eb300=""></option>
+              <option value="Rave" data-v-d70eb300=""></option>
+              <option value="Showtunes" data-v-d70eb300=""></option>
+              <option value="Trailer" data-v-d70eb300=""></option>
+              <option value="Lo-Fi" data-v-d70eb300=""></option>
+              <option value="Tribal" data-v-d70eb300=""></option>
+              <option value="Acid Punk" data-v-d70eb300=""></option>
+              <option value="Acid Jazz" data-v-d70eb300=""></option>
+              <option value="Polka" data-v-d70eb300=""></option>
+              <option value="Retro" data-v-d70eb300=""></option>
+              <option value="Musical" data-v-d70eb300=""></option>
+              <option value="Rock &amp; Roll" data-v-d70eb300=""></option>
+              <option value="Hard Rock" data-v-d70eb300=""></option>
+              <option value="Folk" data-v-d70eb300=""></option>
+              <option value="Folk-Rock" data-v-d70eb300=""></option>
+              <option value="National Folk" data-v-d70eb300=""></option>
+              <option value="Swing" data-v-d70eb300=""></option>
+              <option value="Fast Fusion" data-v-d70eb300=""></option>
+              <option value="Bebob" data-v-d70eb300=""></option>
+              <option value="Latin" data-v-d70eb300=""></option>
+              <option value="Revival" data-v-d70eb300=""></option>
+              <option value="Celtic" data-v-d70eb300=""></option>
+              <option value="Bluegrass" data-v-d70eb300=""></option>
+              <option value="Avantgarde" data-v-d70eb300=""></option>
+              <option value="Gothic Rock" data-v-d70eb300=""></option>
+              <option value="Progressive Rock" data-v-d70eb300=""></option>
+              <option value="Psychedelic Rock" data-v-d70eb300=""></option>
+              <option value="Symphonic Rock" data-v-d70eb300=""></option>
+              <option value="Slow Rock" data-v-d70eb300=""></option>
+              <option value="Big Band" data-v-d70eb300=""></option>
+              <option value="Chorus" data-v-d70eb300=""></option>
+              <option value="Easy Listening" data-v-d70eb300=""></option>
+              <option value="Acoustic" data-v-d70eb300=""></option>
+              <option value="Humour" data-v-d70eb300=""></option>
+              <option value="Speech" data-v-d70eb300=""></option>
+              <option value="Chanson" data-v-d70eb300=""></option>
+              <option value="Opera" data-v-d70eb300=""></option>
+              <option value="Chamber Music" data-v-d70eb300=""></option>
+              <option value="Sonata" data-v-d70eb300=""></option>
+              <option value="Symphony" data-v-d70eb300=""></option>
+              <option value="Booty Bass" data-v-d70eb300=""></option>
+              <option value="Primus" data-v-d70eb300=""></option>
+              <option value="Porn Groove" data-v-d70eb300=""></option>
+              <option value="Satire" data-v-d70eb300=""></option>
+              <option value="Slow Jam" data-v-d70eb300=""></option>
+              <option value="Club" data-v-d70eb300=""></option>
+              <option value="Tango" data-v-d70eb300=""></option>
+              <option value="Samba" data-v-d70eb300=""></option>
+              <option value="Folklore" data-v-d70eb300=""></option>
+              <option value="Ballad" data-v-d70eb300=""></option>
+              <option value="Power Ballad" data-v-d70eb300=""></option>
+              <option value="Rhythmic Soul" data-v-d70eb300=""></option>
+              <option value="Freestyle" data-v-d70eb300=""></option>
+              <option value="Duet" data-v-d70eb300=""></option>
+              <option value="Punk Rock" data-v-d70eb300=""></option>
+              <option value="Drum Solo" data-v-d70eb300=""></option>
+              <option value="A cappella" data-v-d70eb300=""></option>
+              <option value="Euro-House" data-v-d70eb300=""></option>
+              <option value="Dance Hall" data-v-d70eb300=""></option>
+              <option value="Goa" data-v-d70eb300=""></option>
+              <option value="Drum &amp; Bass" data-v-d70eb300=""></option>
+              <option value="Club-House" data-v-d70eb300=""></option>
+              <option value="Hardcore Techno" data-v-d70eb300=""></option>
+              <option value="Terror" data-v-d70eb300=""></option>
+              <option value="Indie" data-v-d70eb300=""></option>
+              <option value="BritPop" data-v-d70eb300=""></option>
+              <option value="Negerpunk" data-v-d70eb300=""></option>
+              <option value="Polsk Punk" data-v-d70eb300=""></option>
+              <option value="Beat" data-v-d70eb300=""></option>
+              <option value="Christian Gangsta Rap" data-v-d70eb300=""></option>
+              <option value="Heavy Metal" data-v-d70eb300=""></option>
+              <option value="Black Metal" data-v-d70eb300=""></option>
+              <option value="Crossover" data-v-d70eb300=""></option>
+              <option value="Contemporary Christian" data-v-d70eb300=""></option>
+              <option value="Christian Rock" data-v-d70eb300=""></option>
+              <option value="Merengue" data-v-d70eb300=""></option>
+              <option value="Salsa" data-v-d70eb300=""></option>
+              <option value="Thrash Metal" data-v-d70eb300=""></option>
+              <option value="Anime" data-v-d70eb300=""></option>
+              <option value="JPop" data-v-d70eb300=""></option>
+              <option value="SynthPop" data-v-d70eb300=""></option>
+              <option value="Abstract" data-v-d70eb300=""></option>
+              <option value="Art Rock" data-v-d70eb300=""></option>
+              <option value="Baroque" data-v-d70eb300=""></option>
+              <option value="Bhangra" data-v-d70eb300=""></option>
+              <option value="Big beat" data-v-d70eb300=""></option>
+              <option value="Breakbeat" data-v-d70eb300=""></option>
+              <option value="Chillout" data-v-d70eb300=""></option>
+              <option value="Downtempo" data-v-d70eb300=""></option>
+              <option value="Dub" data-v-d70eb300=""></option>
+              <option value="EBM" data-v-d70eb300=""></option>
+              <option value="Eclectic" data-v-d70eb300=""></option>
+              <option value="Electro" data-v-d70eb300=""></option>
+              <option value="Electroclash" data-v-d70eb300=""></option>
+              <option value="Emo" data-v-d70eb300=""></option>
+              <option value="Experimental" data-v-d70eb300=""></option>
+              <option value="Garage" data-v-d70eb300=""></option>
+              <option value="Global" data-v-d70eb300=""></option>
+              <option value="IDM" data-v-d70eb300=""></option>
+              <option value="Illbient" data-v-d70eb300=""></option>
+              <option value="Industro-Goth" data-v-d70eb300=""></option>
+              <option value="Jam Band" data-v-d70eb300=""></option>
+              <option value="Krautrock" data-v-d70eb300=""></option>
+              <option value="Leftfield" data-v-d70eb300=""></option>
+              <option value="Lounge" data-v-d70eb300=""></option>
+              <option value="Math Rock" data-v-d70eb300=""></option>
+              <option value="New Romantic" data-v-d70eb300=""></option>
+              <option value="Nu-Breakz" data-v-d70eb300=""></option>
+              <option value="Post-Punk" data-v-d70eb300=""></option>
+              <option value="Post-Rock" data-v-d70eb300=""></option>
+              <option value="Psytrance" data-v-d70eb300=""></option>
+              <option value="Shoegaze" data-v-d70eb300=""></option>
+              <option value="Space Rock" data-v-d70eb300=""></option>
+              <option value="Trop Rock" data-v-d70eb300=""></option>
+              <option value="World Music" data-v-d70eb300=""></option>
+              <option value="Neoclassical" data-v-d70eb300=""></option>
+              <option value="Audiobook" data-v-d70eb300=""></option>
+              <option value="Audio Theatre" data-v-d70eb300=""></option>
+              <option value="Neue Deutsche Welle" data-v-d70eb300=""></option>
+              <option value="Podcast" data-v-d70eb300=""></option>
+              <option value="Indie-Rock" data-v-d70eb300=""></option>
+              <option value="G-Funk" data-v-d70eb300=""></option>
+              <option value="Dubstep" data-v-d70eb300=""></option>
+              <option value="Garage Rock" data-v-d70eb300=""></option>
+              <option value="Psybient" data-v-d70eb300=""></option>
+            </datalist></label><label data-v-d70eb300=""> Year <input placeholder="" data-testid="year-input" name="year" type="number" data-v-d70eb300=""></label></div>
       </div>
       <div id="editSongPanelLyrics" aria-labelledby="editSongTabLyrics" role="tabpanel" tabindex="0" data-v-d70eb300="" style="display: none;">
         <div class="form-row" data-v-d70eb300=""><textarea data-testid="lyrics-input" name="lyrics" title="Lyrics" data-v-d70eb300=""></textarea></div>
@@ -242,208 +236,202 @@ exports[`edits multiple songs 1`] = `
     <div class="panes" data-v-d70eb300="">
       <div id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" tabindex="0" data-v-d70eb300="">
         <!--v-if-->
-        <div class="form-row" data-v-d70eb300="">
-          <div class="cols" data-v-d70eb300=""><label data-v-d70eb300=""> Artist <input placeholder="Leave unchanged" data-testid="artist-input" name="artist" type="text" data-v-d70eb300=""></label><label data-v-d70eb300=""> Album Artist <input placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist" type="text" data-v-d70eb300=""></label></div>
-        </div>
+        <div class="form-row cols" data-v-d70eb300=""><label data-v-d70eb300=""> Artist <input placeholder="Leave unchanged" data-testid="artist-input" name="artist" type="text" data-v-d70eb300=""></label><label data-v-d70eb300=""> Album Artist <input placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist" type="text" data-v-d70eb300=""></label></div>
         <div class="form-row" data-v-d70eb300=""><label data-v-d70eb300=""> Album <input placeholder="Leave unchanged" data-testid="album-input" name="album" type="text" data-v-d70eb300=""></label></div>
-        <div class="form-row" data-v-d70eb300="">
-          <div class="cols" data-v-d70eb300=""><label data-v-d70eb300=""> Track <input placeholder="Leave unchanged" data-testid="track-input" min="1" name="track" type="number" data-v-d70eb300=""></label><label data-v-d70eb300=""> Disc <input placeholder="Leave unchanged" data-testid="disc-input" min="1" name="disc" type="number" data-v-d70eb300=""></label></div>
-        </div>
-        <div class="form-row" data-v-d70eb300="">
-          <div class="cols" data-v-d70eb300=""><label data-v-d70eb300=""> Genre <input placeholder="Leave unchanged" data-testid="genre-input" name="genre" type="text" list="genres" data-v-d70eb300=""><datalist id="genres" data-v-d70eb300="">
-                <option value="Blues" data-v-d70eb300=""></option>
-                <option value="Classic Rock" data-v-d70eb300=""></option>
-                <option value="Country" data-v-d70eb300=""></option>
-                <option value="Dance" data-v-d70eb300=""></option>
-                <option value="Disco" data-v-d70eb300=""></option>
-                <option value="Funk" data-v-d70eb300=""></option>
-                <option value="Grunge" data-v-d70eb300=""></option>
-                <option value="Hip-Hop" data-v-d70eb300=""></option>
-                <option value="Jazz" data-v-d70eb300=""></option>
-                <option value="Metal" data-v-d70eb300=""></option>
-                <option value="New Age" data-v-d70eb300=""></option>
-                <option value="Oldies" data-v-d70eb300=""></option>
-                <option value="Other" data-v-d70eb300=""></option>
-                <option value="Pop" data-v-d70eb300=""></option>
-                <option value="R&amp;B" data-v-d70eb300=""></option>
-                <option value="Rap" data-v-d70eb300=""></option>
-                <option value="Reggae" data-v-d70eb300=""></option>
-                <option value="Rock" data-v-d70eb300=""></option>
-                <option value="Techno" data-v-d70eb300=""></option>
-                <option value="Industrial" data-v-d70eb300=""></option>
-                <option value="Alternative" data-v-d70eb300=""></option>
-                <option value="Ska" data-v-d70eb300=""></option>
-                <option value="Death Metal" data-v-d70eb300=""></option>
-                <option value="Pranks" data-v-d70eb300=""></option>
-                <option value="Soundtrack" data-v-d70eb300=""></option>
-                <option value="Euro-Techno" data-v-d70eb300=""></option>
-                <option value="Ambient" data-v-d70eb300=""></option>
-                <option value="Trip-Hop" data-v-d70eb300=""></option>
-                <option value="Vocal" data-v-d70eb300=""></option>
-                <option value="Jazz &amp; Funk" data-v-d70eb300=""></option>
-                <option value="Fusion" data-v-d70eb300=""></option>
-                <option value="Trance" data-v-d70eb300=""></option>
-                <option value="Classical" data-v-d70eb300=""></option>
-                <option value="Instrumental" data-v-d70eb300=""></option>
-                <option value="Acid" data-v-d70eb300=""></option>
-                <option value="House" data-v-d70eb300=""></option>
-                <option value="Game" data-v-d70eb300=""></option>
-                <option value="Sound Clip" data-v-d70eb300=""></option>
-                <option value="Gospel" data-v-d70eb300=""></option>
-                <option value="Noise" data-v-d70eb300=""></option>
-                <option value="Alternative Rock" data-v-d70eb300=""></option>
-                <option value="Bass" data-v-d70eb300=""></option>
-                <option value="Punk" data-v-d70eb300=""></option>
-                <option value="Space" data-v-d70eb300=""></option>
-                <option value="Meditative" data-v-d70eb300=""></option>
-                <option value="Instrumental Pop" data-v-d70eb300=""></option>
-                <option value="Instrumental Rock" data-v-d70eb300=""></option>
-                <option value="Ethnic" data-v-d70eb300=""></option>
-                <option value="Gothic" data-v-d70eb300=""></option>
-                <option value="Darkwave" data-v-d70eb300=""></option>
-                <option value="Techno-Industrial" data-v-d70eb300=""></option>
-                <option value="Electronic" data-v-d70eb300=""></option>
-                <option value="Pop-Folk" data-v-d70eb300=""></option>
-                <option value="Eurodance" data-v-d70eb300=""></option>
-                <option value="Dream" data-v-d70eb300=""></option>
-                <option value="Southern Rock" data-v-d70eb300=""></option>
-                <option value="Comedy" data-v-d70eb300=""></option>
-                <option value="Cult" data-v-d70eb300=""></option>
-                <option value="Gangsta" data-v-d70eb300=""></option>
-                <option value="Top 40" data-v-d70eb300=""></option>
-                <option value="Christian Rap" data-v-d70eb300=""></option>
-                <option value="Pop/Funk" data-v-d70eb300=""></option>
-                <option value="Jungle" data-v-d70eb300=""></option>
-                <option value="Native US" data-v-d70eb300=""></option>
-                <option value="Cabaret" data-v-d70eb300=""></option>
-                <option value="New Wave" data-v-d70eb300=""></option>
-                <option value="Psychedelic" data-v-d70eb300=""></option>
-                <option value="Rave" data-v-d70eb300=""></option>
-                <option value="Showtunes" data-v-d70eb300=""></option>
-                <option value="Trailer" data-v-d70eb300=""></option>
-                <option value="Lo-Fi" data-v-d70eb300=""></option>
-                <option value="Tribal" data-v-d70eb300=""></option>
-                <option value="Acid Punk" data-v-d70eb300=""></option>
-                <option value="Acid Jazz" data-v-d70eb300=""></option>
-                <option value="Polka" data-v-d70eb300=""></option>
-                <option value="Retro" data-v-d70eb300=""></option>
-                <option value="Musical" data-v-d70eb300=""></option>
-                <option value="Rock &amp; Roll" data-v-d70eb300=""></option>
-                <option value="Hard Rock" data-v-d70eb300=""></option>
-                <option value="Folk" data-v-d70eb300=""></option>
-                <option value="Folk-Rock" data-v-d70eb300=""></option>
-                <option value="National Folk" data-v-d70eb300=""></option>
-                <option value="Swing" data-v-d70eb300=""></option>
-                <option value="Fast Fusion" data-v-d70eb300=""></option>
-                <option value="Bebob" data-v-d70eb300=""></option>
-                <option value="Latin" data-v-d70eb300=""></option>
-                <option value="Revival" data-v-d70eb300=""></option>
-                <option value="Celtic" data-v-d70eb300=""></option>
-                <option value="Bluegrass" data-v-d70eb300=""></option>
-                <option value="Avantgarde" data-v-d70eb300=""></option>
-                <option value="Gothic Rock" data-v-d70eb300=""></option>
-                <option value="Progressive Rock" data-v-d70eb300=""></option>
-                <option value="Psychedelic Rock" data-v-d70eb300=""></option>
-                <option value="Symphonic Rock" data-v-d70eb300=""></option>
-                <option value="Slow Rock" data-v-d70eb300=""></option>
-                <option value="Big Band" data-v-d70eb300=""></option>
-                <option value="Chorus" data-v-d70eb300=""></option>
-                <option value="Easy Listening" data-v-d70eb300=""></option>
-                <option value="Acoustic" data-v-d70eb300=""></option>
-                <option value="Humour" data-v-d70eb300=""></option>
-                <option value="Speech" data-v-d70eb300=""></option>
-                <option value="Chanson" data-v-d70eb300=""></option>
-                <option value="Opera" data-v-d70eb300=""></option>
-                <option value="Chamber Music" data-v-d70eb300=""></option>
-                <option value="Sonata" data-v-d70eb300=""></option>
-                <option value="Symphony" data-v-d70eb300=""></option>
-                <option value="Booty Bass" data-v-d70eb300=""></option>
-                <option value="Primus" data-v-d70eb300=""></option>
-                <option value="Porn Groove" data-v-d70eb300=""></option>
-                <option value="Satire" data-v-d70eb300=""></option>
-                <option value="Slow Jam" data-v-d70eb300=""></option>
-                <option value="Club" data-v-d70eb300=""></option>
-                <option value="Tango" data-v-d70eb300=""></option>
-                <option value="Samba" data-v-d70eb300=""></option>
-                <option value="Folklore" data-v-d70eb300=""></option>
-                <option value="Ballad" data-v-d70eb300=""></option>
-                <option value="Power Ballad" data-v-d70eb300=""></option>
-                <option value="Rhythmic Soul" data-v-d70eb300=""></option>
-                <option value="Freestyle" data-v-d70eb300=""></option>
-                <option value="Duet" data-v-d70eb300=""></option>
-                <option value="Punk Rock" data-v-d70eb300=""></option>
-                <option value="Drum Solo" data-v-d70eb300=""></option>
-                <option value="A cappella" data-v-d70eb300=""></option>
-                <option value="Euro-House" data-v-d70eb300=""></option>
-                <option value="Dance Hall" data-v-d70eb300=""></option>
-                <option value="Goa" data-v-d70eb300=""></option>
-                <option value="Drum &amp; Bass" data-v-d70eb300=""></option>
-                <option value="Club-House" data-v-d70eb300=""></option>
-                <option value="Hardcore Techno" data-v-d70eb300=""></option>
-                <option value="Terror" data-v-d70eb300=""></option>
-                <option value="Indie" data-v-d70eb300=""></option>
-                <option value="BritPop" data-v-d70eb300=""></option>
-                <option value="Negerpunk" data-v-d70eb300=""></option>
-                <option value="Polsk Punk" data-v-d70eb300=""></option>
-                <option value="Beat" data-v-d70eb300=""></option>
-                <option value="Christian Gangsta Rap" data-v-d70eb300=""></option>
-                <option value="Heavy Metal" data-v-d70eb300=""></option>
-                <option value="Black Metal" data-v-d70eb300=""></option>
-                <option value="Crossover" data-v-d70eb300=""></option>
-                <option value="Contemporary Christian" data-v-d70eb300=""></option>
-                <option value="Christian Rock" data-v-d70eb300=""></option>
-                <option value="Merengue" data-v-d70eb300=""></option>
-                <option value="Salsa" data-v-d70eb300=""></option>
-                <option value="Thrash Metal" data-v-d70eb300=""></option>
-                <option value="Anime" data-v-d70eb300=""></option>
-                <option value="JPop" data-v-d70eb300=""></option>
-                <option value="SynthPop" data-v-d70eb300=""></option>
-                <option value="Abstract" data-v-d70eb300=""></option>
-                <option value="Art Rock" data-v-d70eb300=""></option>
-                <option value="Baroque" data-v-d70eb300=""></option>
-                <option value="Bhangra" data-v-d70eb300=""></option>
-                <option value="Big beat" data-v-d70eb300=""></option>
-                <option value="Breakbeat" data-v-d70eb300=""></option>
-                <option value="Chillout" data-v-d70eb300=""></option>
-                <option value="Downtempo" data-v-d70eb300=""></option>
-                <option value="Dub" data-v-d70eb300=""></option>
-                <option value="EBM" data-v-d70eb300=""></option>
-                <option value="Eclectic" data-v-d70eb300=""></option>
-                <option value="Electro" data-v-d70eb300=""></option>
-                <option value="Electroclash" data-v-d70eb300=""></option>
-                <option value="Emo" data-v-d70eb300=""></option>
-                <option value="Experimental" data-v-d70eb300=""></option>
-                <option value="Garage" data-v-d70eb300=""></option>
-                <option value="Global" data-v-d70eb300=""></option>
-                <option value="IDM" data-v-d70eb300=""></option>
-                <option value="Illbient" data-v-d70eb300=""></option>
-                <option value="Industro-Goth" data-v-d70eb300=""></option>
-                <option value="Jam Band" data-v-d70eb300=""></option>
-                <option value="Krautrock" data-v-d70eb300=""></option>
-                <option value="Leftfield" data-v-d70eb300=""></option>
-                <option value="Lounge" data-v-d70eb300=""></option>
-                <option value="Math Rock" data-v-d70eb300=""></option>
-                <option value="New Romantic" data-v-d70eb300=""></option>
-                <option value="Nu-Breakz" data-v-d70eb300=""></option>
-                <option value="Post-Punk" data-v-d70eb300=""></option>
-                <option value="Post-Rock" data-v-d70eb300=""></option>
-                <option value="Psytrance" data-v-d70eb300=""></option>
-                <option value="Shoegaze" data-v-d70eb300=""></option>
-                <option value="Space Rock" data-v-d70eb300=""></option>
-                <option value="Trop Rock" data-v-d70eb300=""></option>
-                <option value="World Music" data-v-d70eb300=""></option>
-                <option value="Neoclassical" data-v-d70eb300=""></option>
-                <option value="Audiobook" data-v-d70eb300=""></option>
-                <option value="Audio Theatre" data-v-d70eb300=""></option>
-                <option value="Neue Deutsche Welle" data-v-d70eb300=""></option>
-                <option value="Podcast" data-v-d70eb300=""></option>
-                <option value="Indie-Rock" data-v-d70eb300=""></option>
-                <option value="G-Funk" data-v-d70eb300=""></option>
-                <option value="Dubstep" data-v-d70eb300=""></option>
-                <option value="Garage Rock" data-v-d70eb300=""></option>
-                <option value="Psybient" data-v-d70eb300=""></option>
-              </datalist></label><label data-v-d70eb300=""> Year <input placeholder="Leave unchanged" data-testid="year-input" name="year" type="number" data-v-d70eb300=""></label></div>
-        </div>
+        <div class="form-row cols" data-v-d70eb300=""><label data-v-d70eb300=""> Track <input placeholder="Leave unchanged" data-testid="track-input" min="1" name="track" type="number" data-v-d70eb300=""></label><label data-v-d70eb300=""> Disc <input placeholder="Leave unchanged" data-testid="disc-input" min="1" name="disc" type="number" data-v-d70eb300=""></label></div>
+        <div class="form-row cols" data-v-d70eb300=""><label data-v-d70eb300=""> Genre <input placeholder="Leave unchanged" data-testid="genre-input" name="genre" type="text" list="genres" data-v-d70eb300=""><datalist id="genres" data-v-d70eb300="">
+              <option value="Blues" data-v-d70eb300=""></option>
+              <option value="Classic Rock" data-v-d70eb300=""></option>
+              <option value="Country" data-v-d70eb300=""></option>
+              <option value="Dance" data-v-d70eb300=""></option>
+              <option value="Disco" data-v-d70eb300=""></option>
+              <option value="Funk" data-v-d70eb300=""></option>
+              <option value="Grunge" data-v-d70eb300=""></option>
+              <option value="Hip-Hop" data-v-d70eb300=""></option>
+              <option value="Jazz" data-v-d70eb300=""></option>
+              <option value="Metal" data-v-d70eb300=""></option>
+              <option value="New Age" data-v-d70eb300=""></option>
+              <option value="Oldies" data-v-d70eb300=""></option>
+              <option value="Other" data-v-d70eb300=""></option>
+              <option value="Pop" data-v-d70eb300=""></option>
+              <option value="R&amp;B" data-v-d70eb300=""></option>
+              <option value="Rap" data-v-d70eb300=""></option>
+              <option value="Reggae" data-v-d70eb300=""></option>
+              <option value="Rock" data-v-d70eb300=""></option>
+              <option value="Techno" data-v-d70eb300=""></option>
+              <option value="Industrial" data-v-d70eb300=""></option>
+              <option value="Alternative" data-v-d70eb300=""></option>
+              <option value="Ska" data-v-d70eb300=""></option>
+              <option value="Death Metal" data-v-d70eb300=""></option>
+              <option value="Pranks" data-v-d70eb300=""></option>
+              <option value="Soundtrack" data-v-d70eb300=""></option>
+              <option value="Euro-Techno" data-v-d70eb300=""></option>
+              <option value="Ambient" data-v-d70eb300=""></option>
+              <option value="Trip-Hop" data-v-d70eb300=""></option>
+              <option value="Vocal" data-v-d70eb300=""></option>
+              <option value="Jazz &amp; Funk" data-v-d70eb300=""></option>
+              <option value="Fusion" data-v-d70eb300=""></option>
+              <option value="Trance" data-v-d70eb300=""></option>
+              <option value="Classical" data-v-d70eb300=""></option>
+              <option value="Instrumental" data-v-d70eb300=""></option>
+              <option value="Acid" data-v-d70eb300=""></option>
+              <option value="House" data-v-d70eb300=""></option>
+              <option value="Game" data-v-d70eb300=""></option>
+              <option value="Sound Clip" data-v-d70eb300=""></option>
+              <option value="Gospel" data-v-d70eb300=""></option>
+              <option value="Noise" data-v-d70eb300=""></option>
+              <option value="Alternative Rock" data-v-d70eb300=""></option>
+              <option value="Bass" data-v-d70eb300=""></option>
+              <option value="Punk" data-v-d70eb300=""></option>
+              <option value="Space" data-v-d70eb300=""></option>
+              <option value="Meditative" data-v-d70eb300=""></option>
+              <option value="Instrumental Pop" data-v-d70eb300=""></option>
+              <option value="Instrumental Rock" data-v-d70eb300=""></option>
+              <option value="Ethnic" data-v-d70eb300=""></option>
+              <option value="Gothic" data-v-d70eb300=""></option>
+              <option value="Darkwave" data-v-d70eb300=""></option>
+              <option value="Techno-Industrial" data-v-d70eb300=""></option>
+              <option value="Electronic" data-v-d70eb300=""></option>
+              <option value="Pop-Folk" data-v-d70eb300=""></option>
+              <option value="Eurodance" data-v-d70eb300=""></option>
+              <option value="Dream" data-v-d70eb300=""></option>
+              <option value="Southern Rock" data-v-d70eb300=""></option>
+              <option value="Comedy" data-v-d70eb300=""></option>
+              <option value="Cult" data-v-d70eb300=""></option>
+              <option value="Gangsta" data-v-d70eb300=""></option>
+              <option value="Top 40" data-v-d70eb300=""></option>
+              <option value="Christian Rap" data-v-d70eb300=""></option>
+              <option value="Pop/Funk" data-v-d70eb300=""></option>
+              <option value="Jungle" data-v-d70eb300=""></option>
+              <option value="Native US" data-v-d70eb300=""></option>
+              <option value="Cabaret" data-v-d70eb300=""></option>
+              <option value="New Wave" data-v-d70eb300=""></option>
+              <option value="Psychedelic" data-v-d70eb300=""></option>
+              <option value="Rave" data-v-d70eb300=""></option>
+              <option value="Showtunes" data-v-d70eb300=""></option>
+              <option value="Trailer" data-v-d70eb300=""></option>
+              <option value="Lo-Fi" data-v-d70eb300=""></option>
+              <option value="Tribal" data-v-d70eb300=""></option>
+              <option value="Acid Punk" data-v-d70eb300=""></option>
+              <option value="Acid Jazz" data-v-d70eb300=""></option>
+              <option value="Polka" data-v-d70eb300=""></option>
+              <option value="Retro" data-v-d70eb300=""></option>
+              <option value="Musical" data-v-d70eb300=""></option>
+              <option value="Rock &amp; Roll" data-v-d70eb300=""></option>
+              <option value="Hard Rock" data-v-d70eb300=""></option>
+              <option value="Folk" data-v-d70eb300=""></option>
+              <option value="Folk-Rock" data-v-d70eb300=""></option>
+              <option value="National Folk" data-v-d70eb300=""></option>
+              <option value="Swing" data-v-d70eb300=""></option>
+              <option value="Fast Fusion" data-v-d70eb300=""></option>
+              <option value="Bebob" data-v-d70eb300=""></option>
+              <option value="Latin" data-v-d70eb300=""></option>
+              <option value="Revival" data-v-d70eb300=""></option>
+              <option value="Celtic" data-v-d70eb300=""></option>
+              <option value="Bluegrass" data-v-d70eb300=""></option>
+              <option value="Avantgarde" data-v-d70eb300=""></option>
+              <option value="Gothic Rock" data-v-d70eb300=""></option>
+              <option value="Progressive Rock" data-v-d70eb300=""></option>
+              <option value="Psychedelic Rock" data-v-d70eb300=""></option>
+              <option value="Symphonic Rock" data-v-d70eb300=""></option>
+              <option value="Slow Rock" data-v-d70eb300=""></option>
+              <option value="Big Band" data-v-d70eb300=""></option>
+              <option value="Chorus" data-v-d70eb300=""></option>
+              <option value="Easy Listening" data-v-d70eb300=""></option>
+              <option value="Acoustic" data-v-d70eb300=""></option>
+              <option value="Humour" data-v-d70eb300=""></option>
+              <option value="Speech" data-v-d70eb300=""></option>
+              <option value="Chanson" data-v-d70eb300=""></option>
+              <option value="Opera" data-v-d70eb300=""></option>
+              <option value="Chamber Music" data-v-d70eb300=""></option>
+              <option value="Sonata" data-v-d70eb300=""></option>
+              <option value="Symphony" data-v-d70eb300=""></option>
+              <option value="Booty Bass" data-v-d70eb300=""></option>
+              <option value="Primus" data-v-d70eb300=""></option>
+              <option value="Porn Groove" data-v-d70eb300=""></option>
+              <option value="Satire" data-v-d70eb300=""></option>
+              <option value="Slow Jam" data-v-d70eb300=""></option>
+              <option value="Club" data-v-d70eb300=""></option>
+              <option value="Tango" data-v-d70eb300=""></option>
+              <option value="Samba" data-v-d70eb300=""></option>
+              <option value="Folklore" data-v-d70eb300=""></option>
+              <option value="Ballad" data-v-d70eb300=""></option>
+              <option value="Power Ballad" data-v-d70eb300=""></option>
+              <option value="Rhythmic Soul" data-v-d70eb300=""></option>
+              <option value="Freestyle" data-v-d70eb300=""></option>
+              <option value="Duet" data-v-d70eb300=""></option>
+              <option value="Punk Rock" data-v-d70eb300=""></option>
+              <option value="Drum Solo" data-v-d70eb300=""></option>
+              <option value="A cappella" data-v-d70eb300=""></option>
+              <option value="Euro-House" data-v-d70eb300=""></option>
+              <option value="Dance Hall" data-v-d70eb300=""></option>
+              <option value="Goa" data-v-d70eb300=""></option>
+              <option value="Drum &amp; Bass" data-v-d70eb300=""></option>
+              <option value="Club-House" data-v-d70eb300=""></option>
+              <option value="Hardcore Techno" data-v-d70eb300=""></option>
+              <option value="Terror" data-v-d70eb300=""></option>
+              <option value="Indie" data-v-d70eb300=""></option>
+              <option value="BritPop" data-v-d70eb300=""></option>
+              <option value="Negerpunk" data-v-d70eb300=""></option>
+              <option value="Polsk Punk" data-v-d70eb300=""></option>
+              <option value="Beat" data-v-d70eb300=""></option>
+              <option value="Christian Gangsta Rap" data-v-d70eb300=""></option>
+              <option value="Heavy Metal" data-v-d70eb300=""></option>
+              <option value="Black Metal" data-v-d70eb300=""></option>
+              <option value="Crossover" data-v-d70eb300=""></option>
+              <option value="Contemporary Christian" data-v-d70eb300=""></option>
+              <option value="Christian Rock" data-v-d70eb300=""></option>
+              <option value="Merengue" data-v-d70eb300=""></option>
+              <option value="Salsa" data-v-d70eb300=""></option>
+              <option value="Thrash Metal" data-v-d70eb300=""></option>
+              <option value="Anime" data-v-d70eb300=""></option>
+              <option value="JPop" data-v-d70eb300=""></option>
+              <option value="SynthPop" data-v-d70eb300=""></option>
+              <option value="Abstract" data-v-d70eb300=""></option>
+              <option value="Art Rock" data-v-d70eb300=""></option>
+              <option value="Baroque" data-v-d70eb300=""></option>
+              <option value="Bhangra" data-v-d70eb300=""></option>
+              <option value="Big beat" data-v-d70eb300=""></option>
+              <option value="Breakbeat" data-v-d70eb300=""></option>
+              <option value="Chillout" data-v-d70eb300=""></option>
+              <option value="Downtempo" data-v-d70eb300=""></option>
+              <option value="Dub" data-v-d70eb300=""></option>
+              <option value="EBM" data-v-d70eb300=""></option>
+              <option value="Eclectic" data-v-d70eb300=""></option>
+              <option value="Electro" data-v-d70eb300=""></option>
+              <option value="Electroclash" data-v-d70eb300=""></option>
+              <option value="Emo" data-v-d70eb300=""></option>
+              <option value="Experimental" data-v-d70eb300=""></option>
+              <option value="Garage" data-v-d70eb300=""></option>
+              <option value="Global" data-v-d70eb300=""></option>
+              <option value="IDM" data-v-d70eb300=""></option>
+              <option value="Illbient" data-v-d70eb300=""></option>
+              <option value="Industro-Goth" data-v-d70eb300=""></option>
+              <option value="Jam Band" data-v-d70eb300=""></option>
+              <option value="Krautrock" data-v-d70eb300=""></option>
+              <option value="Leftfield" data-v-d70eb300=""></option>
+              <option value="Lounge" data-v-d70eb300=""></option>
+              <option value="Math Rock" data-v-d70eb300=""></option>
+              <option value="New Romantic" data-v-d70eb300=""></option>
+              <option value="Nu-Breakz" data-v-d70eb300=""></option>
+              <option value="Post-Punk" data-v-d70eb300=""></option>
+              <option value="Post-Rock" data-v-d70eb300=""></option>
+              <option value="Psytrance" data-v-d70eb300=""></option>
+              <option value="Shoegaze" data-v-d70eb300=""></option>
+              <option value="Space Rock" data-v-d70eb300=""></option>
+              <option value="Trop Rock" data-v-d70eb300=""></option>
+              <option value="World Music" data-v-d70eb300=""></option>
+              <option value="Neoclassical" data-v-d70eb300=""></option>
+              <option value="Audiobook" data-v-d70eb300=""></option>
+              <option value="Audio Theatre" data-v-d70eb300=""></option>
+              <option value="Neue Deutsche Welle" data-v-d70eb300=""></option>
+              <option value="Podcast" data-v-d70eb300=""></option>
+              <option value="Indie-Rock" data-v-d70eb300=""></option>
+              <option value="G-Funk" data-v-d70eb300=""></option>
+              <option value="Dubstep" data-v-d70eb300=""></option>
+              <option value="Garage Rock" data-v-d70eb300=""></option>
+              <option value="Psybient" data-v-d70eb300=""></option>
+            </datalist></label><label data-v-d70eb300=""> Year <input placeholder="Leave unchanged" data-testid="year-input" name="year" type="number" data-v-d70eb300=""></label></div>
       </div>
       <!--v-if-->
     </div>

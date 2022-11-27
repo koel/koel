@@ -6,6 +6,9 @@
         <li @click="shuffle">Shuffle All</li>
         <li class="separator"/>
       </template>
+      <li @click="createPlaylist">Create Playlist</li>
+      <li @click="createSmartPlaylist">Create Smart Playlist</li>
+      <li class="separator"/>
       <li @click="rename">Rename</li>
       <li @click="destroy">Delete</li>
     </template>
@@ -37,6 +40,8 @@ const shuffle = () => trigger(async () => {
   go('queue')
 })
 
+const createPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_PLAYLIST_FORM', folder.value))
+const createSmartPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', folder.value))
 const rename = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder.value))
 const destroy = () => trigger(() => eventBus.emit('PLAYLIST_FOLDER_DELETE', folder.value))
 

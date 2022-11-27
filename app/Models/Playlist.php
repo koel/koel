@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Casts\SmartPlaylistRulesCast;
-use App\Values\SmartPlaylistRuleGroup;
+use App\Values\SmartPlaylistRuleGroupCollection;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,8 +22,8 @@ use Laravel\Scout\Searchable;
  * @property ?string $folder_id
  * @property ?PlaylistFolder $folder
  * @property Collection|array<array-key, Song> $songs
- * @property Collection|array<array-key, SmartPlaylistRuleGroup> $rule_groups
- * @property Collection|array<array-key, SmartPlaylistRuleGroup> $rules
+ * @property ?SmartPlaylistRuleGroupCollection $rule_groups
+ * @property ?SmartPlaylistRuleGroupCollection $rules
  * @property Carbon $created_at
  */
 class Playlist extends Model
@@ -57,7 +57,7 @@ class Playlist extends Model
 
     protected function isSmart(): Attribute
     {
-        return Attribute::get(fn (): bool => $this->rule_groups->isNotEmpty());
+        return Attribute::get(fn (): bool => (bool) $this->rule_groups?->isNotEmpty());
     }
 
     protected function ruleGroups(): Attribute

@@ -14,9 +14,7 @@ class Authenticate
             return $next($request);
         }
 
-        if ($request->ajax() || $request->wantsJson()) {
-            abort(Response::HTTP_UNAUTHORIZED);
-        }
+        abort_if($request->ajax() || $request->wantsJson(), Response::HTTP_UNAUTHORIZED);
 
         return redirect()->guest('/');
     }

@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Services\PlaylistService;
 use App\Services\SmartPlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 
 class PlaylistSongController extends Controller
 {
@@ -36,9 +38,9 @@ class PlaylistSongController extends Controller
     {
         $this->authorize('own', $playlist);
 
-        abort_if($playlist->is_smart, 403, 'A smart playlist cannot be populated manually.');
+        abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN, 'A smart playlist cannot be populated manually.');
 
-        $this->playlistService->populatePlaylist($playlist, (array) $request->songs);
+        $this->playlistService->populatePlaylist($playlist, Arr::wrap($request->songs));
 
         return response()->noContent();
     }

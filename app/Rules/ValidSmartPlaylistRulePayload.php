@@ -2,22 +2,15 @@
 
 namespace App\Rules;
 
-use App\Values\SmartPlaylistRule;
+use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Arr;
 
 class ValidSmartPlaylistRulePayload implements Rule
 {
     public function passes($attribute, $value): bool
     {
-        return attempt(static function () use ($value) {
-            foreach ((array) $value as $ruleGroupConfig) {
-                foreach ($ruleGroupConfig['rules'] as $rule) {
-                    SmartPlaylistRule::assertConfig($rule, false);
-                }
-            }
-
-            return true;
-        }, false) ?? false;
+        return (bool) attempt(static fn () => SmartPlaylistRuleGroupCollection::create(Arr::wrap($value)));
     }
 
     public function message(): string

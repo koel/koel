@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { UserKey } from '@/symbols'
+import { ModalContextKey } from '@/symbols'
 import { fireEvent, waitFor } from '@testing-library/vue'
 import { userStore } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
@@ -19,7 +19,7 @@ new class extends UnitTestCase {
       const { getByLabelText, getByRole } = this.render(EditUserForm, {
         global: {
           provide: {
-            [<symbol>UserKey]: [user]
+            [<symbol>ModalContextKey]: [ref({ user })]
           }
         }
       })

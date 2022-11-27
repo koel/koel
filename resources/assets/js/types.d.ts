@@ -59,10 +59,6 @@ interface Window {
   BASE_URL: string
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string
-  readonly webkitAudioContext: Constructable<AudioContext>
-  readonly mozAudioContext: Constructable<AudioContext>
-  readonly oAudioContext: Constructable<AudioContext>
-  readonly msAudioContext: Constructable<AudioContext>
   readonly MediaMetadata: Constructable<Record<string, any>>
 }
 
@@ -120,8 +116,8 @@ interface Artist {
 interface Album {
   type: 'albums'
   readonly id: number
-  artist_id: number
-  artist_name: string
+  artist_id: Artist['id']
+  artist_name: Artist['name']
   name: string
   cover: string
   thumbnail?: string | null
@@ -131,13 +127,13 @@ interface Album {
 interface Song {
   type: 'songs'
   readonly id: string
-  album_id: number
-  album_name: string
-  album_cover: string
-  artist_id: number
-  artist_name: string
-  album_artist_id: number
-  album_artist_name: string
+  album_id: Album['id']
+  album_name: Album['name']
+  album_cover: Album['cover']
+  artist_id: Artist['id']
+  artist_name: Artist['name']
+  album_artist_id: Artist['id']
+  album_artist_name: Artist['name']
   title: string
   readonly length: number
   track: number | null
@@ -195,23 +191,23 @@ type RecentlyPlayedList = {
   songs: Song[]
 }
 
-interface Playlist {
-  type: 'playlists'
-  readonly id: number
-  name: string
-  folder_id: string | null
-  is_smart: boolean
-  rules: SmartPlaylistRuleGroup[]
-}
-
-type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList
-
 interface PlaylistFolder {
   type: 'playlist-folders'
   readonly id: string
   name: string
   // we don't need to keep track of the playlists here, as they can be computed using their folder_id value
 }
+
+interface Playlist {
+  type: 'playlists'
+  readonly id: number
+  name: string
+  folder_id: PlaylistFolder['id'] | null
+  is_smart: boolean
+  rules: SmartPlaylistRuleGroup[]
+}
+
+type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList
 
 interface YouTubeVideo {
   readonly id: {
@@ -251,7 +247,7 @@ interface Settings {
 interface Interaction {
   type: 'interactions'
   readonly id: number
-  readonly song_id: string
+  readonly song_id: Song['id']
   liked: boolean
   play_count: number
 }

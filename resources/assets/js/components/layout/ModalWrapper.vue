@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 import { ComponentPublicInstance, defineAsyncComponent, ref, watch } from 'vue'
 import { arrayify, eventBus, provideReadonly } from '@/utils'
-import { EditSongFormInitialTabKey, PlaylistFolderKey, PlaylistKey, SongsKey, UserKey } from '@/symbols'
+import { ModalContextKey } from '@/symbols'
 
 const modalNameToComponentMap: Record<string, ComponentPublicInstance> = {
   'create-playlist-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
@@ -27,45 +27,46 @@ type ModalName = keyof typeof modalNameToComponentMap
 
 const dialog = ref<HTMLDialogElement>()
 const activeModalName = ref<ModalName | null>(null)
-const songsToEdit = ref<Song[]>()
-const editSongFormInitialTab = ref<EditSongFormTabName>('details')
-const userToEdit = ref<User>()
-const playlistToEdit = ref<Playlist>()
-const playlistFolderToEdit = ref<PlaylistFolder>()
+const context = ref<Record<string, any>>({})
 
-provideReadonly(SongsKey, songsToEdit, false)
-provideReadonly(EditSongFormInitialTabKey, editSongFormInitialTab)
-provideReadonly(UserKey, userToEdit)
-provideReadonly(PlaylistKey, playlistToEdit, false)
-
-provideReadonly(PlaylistFolderKey, playlistFolderToEdit, true, (name: string) => {
-  playlistFolderToEdit.value!.name = name
-})
+provideReadonly(ModalContextKey, context)
 
 watch(activeModalName, name => name ? dialog.value?.showModal() : dialog.value?.close())
 
-const close = () => (activeModalName.value = null)
+const close = () => {
+  activeModalName.value = null
+  context.value = {}
+}
 
 eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'))
   .on('MODAL_SHOW_ADD_USER_FORM', () => (activeModalName.value = 'add-user-form'))
-  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', () => (activeModalName.value = 'create-playlist-form'))
-  .on('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', () => (activeModalName.value = 'create-smart-playlist-form'))
+  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', folder => {
+    context.value = { folder }
+    activeModalName.value = 'create-playlist-form'
+  })
+  .on('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', folder => {
+    context.value = { folder }
+    activeModalName.value = 'create-smart-playlist-form'
+  })
   .on('MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM', () => (activeModalName.value = 'create-playlist-folder-form'))
   .on('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist => {
-    playlistToEdit.value = playlist
+    context.value = { playlist }
     activeModalName.value = playlist.is_smart ? 'edit-smart-playlist-form' : 'edit-playlist-form'
   })
   .on('MODAL_SHOW_EDIT_USER_FORM', user => {
-    userToEdit.value = user
+    context.value = { user }
     activeModalName.value = 'edit-user-form'
   })
   .on('MODAL_SHOW_EDIT_SONG_FORM', (songs, initialTab: EditSongFormTabName = 'details') => {
-    songsToEdit.value = arrayify(songs)
-    editSongFormInitialTab.value = initialTab
+    context.value = {
+      initialTab,
+      songs: arrayify(songs)
+    }
+
     activeModalName.value = 'edit-song-form'
   })
   .on('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder => {
-    playlistFolderToEdit.value = folder
+    context.value = { folder }
     activeModalName.value = 'edit-playlist-folder-form'
   })
   .on('MODAL_SHOW_EQUALIZER', () => (activeModalName.value = 'equalizer'))

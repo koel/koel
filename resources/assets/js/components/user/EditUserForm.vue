@@ -49,10 +49,9 @@
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
 import { reactive, watch } from 'vue'
-import { logger, parseValidationError, requireInjection } from '@/utils'
+import { logger, parseValidationError } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
-import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
-import { UserKey } from '@/symbols'
+import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
@@ -61,16 +60,16 @@ import CheckBox from '@/components/ui/CheckBox.vue'
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
-const [user] = requireInjection(UserKey)
+const user = useModal().getFromContext<User>('user')
 
 let originalData: UpdateUserData
 let updateData: UpdateUserData
 
 watch(user, () => {
   originalData = {
-    name: user.value.name,
-    email: user.value.email,
-    is_admin: user.value.is_admin
+    name: user.name,
+    email: user.email,
+    is_admin: user.is_admin
   }
 
   updateData = reactive(Object.assign({}, originalData))
@@ -80,7 +79,7 @@ const submit = async () => {
   showOverlay()
 
   try {
-    await userStore.update(user.value, updateData)
+    await userStore.update(user, updateData)
     toastSuccess('User profile updated.')
     close()
   } catch (error: any) {

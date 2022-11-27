@@ -80,7 +80,6 @@ const onDragOver = (event: DragEvent) => {
   if (!acceptsDrop(event)) return false
 
   event.preventDefault()
-  event.dataTransfer!.dropEffect = 'copy'
   droppable.value = true
 
   return false

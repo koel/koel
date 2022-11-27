@@ -23,23 +23,23 @@
       <div class="clear" role="tablist">
         <button
           id="editSongTabDetails"
-          :aria-selected="currentView === 'details'"
+          :aria-selected="currentTab === 'details'"
           aria-controls="editSongPanelDetails"
           role="tab"
           type="button"
-          @click.prevent="currentView = 'details'"
+          @click.prevent="currentTab = 'details'"
         >
           Details
         </button>
         <button
           v-if="editingOnlyOneSong"
           id="editSongTabLyrics"
-          :aria-selected="currentView === 'lyrics'"
+          :aria-selected="currentTab === 'lyrics'"
           aria-controls="editSongPanelLyrics"
           data-testid="edit-song-lyrics-tab"
           role="tab"
           type="button"
-          @click.prevent="currentView = 'lyrics'"
+          @click.prevent="currentTab = 'lyrics'"
         >
           Lyrics
         </button>
@@ -47,7 +47,7 @@
 
       <div class="panes">
         <div
-          v-show="currentView === 'details'"
+          v-show="currentTab === 'details'"
           id="editSongPanelDetails"
           aria-labelledby="editSongTabDetails"
           role="tabpanel"
@@ -67,29 +67,27 @@
             </label>
           </div>
 
-          <div class="form-row">
-            <div class="cols">
-              <label>
-                Artist
-                <input
-                  v-model="formData.artist_name"
-                  :placeholder="inputPlaceholder"
-                  data-testid="artist-input"
-                  name="artist"
-                  type="text"
-                >
-              </label>
-              <label>
-                Album Artist
-                <input
-                  v-model="formData.album_artist_name"
-                  :placeholder="inputPlaceholder"
-                  data-testid="albumArtist-input"
-                  name="album_artist"
-                  type="text"
-                >
-              </label>
-            </div>
+          <div class="form-row cols">
+            <label>
+              Artist
+              <input
+                v-model="formData.artist_name"
+                :placeholder="inputPlaceholder"
+                data-testid="artist-input"
+                name="artist"
+                type="text"
+              >
+            </label>
+            <label>
+              Album Artist
+              <input
+                v-model="formData.album_artist_name"
+                :placeholder="inputPlaceholder"
+                data-testid="albumArtist-input"
+                name="album_artist"
+                type="text"
+              >
+            </label>
           </div>
 
           <div class="form-row">
@@ -105,66 +103,62 @@
             </label>
           </div>
 
-          <div class="form-row">
-            <div class="cols">
-              <label>
-                Track
-                <input
-                  v-model="formData.track"
-                  :placeholder="inputPlaceholder"
-                  data-testid="track-input"
-                  min="1"
-                  name="track"
-                  type="number"
-                >
-              </label>
-              <label>
-                Disc
-                <input
-                  v-model="formData.disc"
-                  :placeholder="inputPlaceholder"
-                  data-testid="disc-input"
-                  min="1"
-                  name="disc"
-                  type="number"
-                >
-              </label>
-            </div>
+          <div class="form-row cols">
+            <label>
+              Track
+              <input
+                v-model="formData.track"
+                :placeholder="inputPlaceholder"
+                data-testid="track-input"
+                min="1"
+                name="track"
+                type="number"
+              >
+            </label>
+            <label>
+              Disc
+              <input
+                v-model="formData.disc"
+                :placeholder="inputPlaceholder"
+                data-testid="disc-input"
+                min="1"
+                name="disc"
+                type="number"
+              >
+            </label>
           </div>
 
-          <div class="form-row">
-            <div class="cols">
-              <label>
-                Genre
-                <input
-                  v-model="formData.genre"
-                  :placeholder="inputPlaceholder"
-                  data-testid="genre-input"
-                  name="genre"
-                  type="text"
-                  list="genres"
-                >
-                <datalist id="genres">
-                  <option v-for="genre in genres" :key="genre" :value="genre"/>
-                </datalist>
-              </label>
-              <label>
-                Year
-                <input
-                  v-model="formData.year"
-                  :placeholder="inputPlaceholder"
-                  data-testid="year-input"
-                  name="year"
-                  type="number"
-                >
-              </label>
-            </div>
+          <div class="form-row cols">
+            <label>
+              Genre
+              <input
+                v-model="formData.genre"
+                :placeholder="inputPlaceholder"
+                data-testid="genre-input"
+                name="genre"
+                type="text"
+                list="genres"
+              >
+              <datalist id="genres">
+                <option v-for="genre in genres" :key="genre" :value="genre"/>
+              </datalist>
+            </label>
+            <label>
+              Year
+              <input
+                v-model="formData.year"
+                :placeholder="inputPlaceholder"
+                data-testid="year-input"
+                name="year"
+                type="number"
+              >
+            </label>
           </div>
         </div>
 
         <div
           v-if="editingOnlyOneSong"
-          v-show="currentView === 'lyrics'"
+          v-show="currentTab === 'lyrics'"
           id="editSongPanelLyrics"
           aria-labelledby="editSongTabLyrics"
           role="tabpanel"
@@ -191,12 +185,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, Ref, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { defaultCover, eventBus, logger, pluralize, requireInjection } from '@/utils'
+import { defaultCover, eventBus, logger, pluralize } from '@/utils'
 import { songStore, SongUpdateData } from '@/stores'
-import { EditSongFormInitialTabKey, SongsKey } from '@/symbols'
-import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
+import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
 import { genres } from '@/config'
 
 import Btn from '@/components/ui/Btn.vue'
@@ -204,104 +197,67 @@ import Btn from '@/components/ui/Btn.vue'
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { getFromContext } = useModal()
 
-const [initialTab] = requireInjection(EditSongFormInitialTabKey)
-const [songs] = requireInjection<[Ref<Song[]>]>(SongsKey)
+const songs = getFromContext<Song[]>('songs')
+const currentTab = ref(getFromContext<EditSongFormTabName>('initialTab'))
 
-const currentView = ref<EditSongFormTabName>('details')
+const editingOnlyOneSong = songs.length === 1
+const inputPlaceholder = editingOnlyOneSong ? '' : 'Leave unchanged'
 
-const mutatedSongs = computed(() => songs.value)
-
-/**
- * In order not to mess up the original songs, we manually assign and manipulate their attributes.
- */
-const formData = reactive<SongUpdateData>({
-  title: '',
-  album_name: '',
-  artist_name: '',
-  album_artist_name: '',
-  lyrics: '',
-  track: null,
-  disc: null,
-  year: null,
-  genre: ''
-})
-
-const initialFormData = {}
-
-const editingOnlyOneSong = computed(() => mutatedSongs.value.length === 1)
-const inputPlaceholder = computed(() => editingOnlyOneSong.value ? '' : 'Leave unchanged')
-
-const allSongsAreFromSameArtist = computed(() => allSongsShareSameValue('artist_name'))
-const allSongsAreInSameAlbum = computed(() => allSongsShareSameValue('album_name'))
-
-const coverUrl = computed(() => allSongsAreInSameAlbum.value
-  ? mutatedSongs.value[0].album_cover || defaultCover
-  : defaultCover
-)
-
-const allSongsShareSameValue = (key: keyof SongUpdateData) => {
-  if (editingOnlyOneSong.value) return true
-  return new Set(mutatedSongs.value.map(song => song[key])).size === 1
+const allSongsShareSameValue = (key: keyof Song) => {
+  if (editingOnlyOneSong) return true
+  return new Set(songs.map(song => song[key])).size === 1
 }
 
+const allSongsAreFromSameArtist = allSongsShareSameValue('artist_name')
+const allSongsAreInSameAlbum = allSongsShareSameValue('album_id')
+const coverUrl = allSongsAreInSameAlbum ? (songs[0].album_cover || defaultCover) : defaultCover
+
+const formData = reactive<SongUpdateData>({
+  title: allSongsShareSameValue('title') ? songs[0].title : '',
+  album_name: allSongsAreInSameAlbum ? songs[0].album_name : '',
+  artist_name: allSongsAreFromSameArtist ? songs[0].artist_name : '',
+  album_artist_name: '',
+  lyrics: editingOnlyOneSong ? songs[0].lyrics : '',
+  track: allSongsShareSameValue('track') && songs[0].track !== 0 ? songs[0].track : null,
+  disc: allSongsShareSameValue('disc') && songs[0].disc !== 0 ? songs[0].disc : null,
+  year: allSongsShareSameValue('year') ? songs[0].year : null,
+  genre: allSongsShareSameValue('genre') ? songs[0].genre : ''
+})
+
+// If the album artist(s) is the same as the artist(s), we set the form value as empty to not confuse the user
+// and make it less error-prone.
+if (allSongsAreInSameAlbum && allSongsAreFromSameArtist && songs[0].album_artist_id === songs[0].artist_id) {
+  formData.album_artist_name = ''
+} else {
+  formData.album_artist_name = allSongsShareSameValue('album_artist_name') ? songs[0].album_artist_name : ''
+}
+
+if (!editingOnlyOneSong) {
+  delete formData.title
+  delete formData.lyrics
+}
+
+const initialFormData = Object.assign({}, formData)
+
 const displayedTitle = computed(() => {
-  return editingOnlyOneSong.value ? formData.title : `${mutatedSongs.value.length} songs selected`
+  return editingOnlyOneSong ? formData.title : `${songs.length} songs selected`
 })
 
 const displayedArtistName = computed(() => {
-  return allSongsAreFromSameArtist.value || formData.artist_name ? formData.artist_name : 'Mixed Artists'
+  return allSongsAreFromSameArtist || formData.artist_name ? formData.artist_name : 'Mixed Artists'
 })
 
 const displayedAlbumName = computed(() => {
-  return allSongsAreInSameAlbum.value || formData.album_name ? formData.album_name : 'Mixed Albums'
+  return allSongsAreInSameAlbum || formData.album_name ? formData.album_name : 'Mixed Albums'
 })
-
-const isPristine = computed(() => isEqual(formData, initialFormData))
-
-const open = async () => {
-  currentView.value = initialTab.value
-  const firstSong = mutatedSongs.value[0]
-
-  formData.title = allSongsShareSameValue('title') ? firstSong.title : ''
-  formData.album_name = allSongsShareSameValue('album_name') ? firstSong.album_name : ''
-  formData.artist_name = allSongsShareSameValue('artist_name') ? firstSong.artist_name : ''
-
-  // If the album artist(s) is the same as the artist(s), we set the form value as empty to not confuse the user
-  // and make it less error-prone.
-  if (
-    allSongsShareSameValue('artist_name') && allSongsShareSameValue('album_artist_name')
-    && firstSong.album_artist_id === firstSong.artist_id
-  ) {
-    formData.album_artist_name = ''
-  } else {
-    formData.album_artist_name = allSongsShareSameValue('album_artist_name') ? firstSong.album_artist_name : ''
-  }
-
-  formData.lyrics = editingOnlyOneSong.value ? firstSong.lyrics : ''
-
-  formData.track = allSongsShareSameValue('track') ? firstSong.track : null
-  formData.track = formData.track || null // if 0, just don't show it
-
-  formData.disc = allSongsShareSameValue('disc') ? firstSong.disc : null
-  formData.disc = formData.disc || null // if 0, just don't show it
-
-  formData.year = allSongsShareSameValue('year') ? firstSong.year : null
-  formData.genre = allSongsShareSameValue('genre') ? firstSong.genre : ''
-
-  if (!editingOnlyOneSong.value) {
-    delete formData.title
-    delete formData.lyrics
-  }
-
-  Object.assign(initialFormData, formData)
-}
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const maybeClose = async () => {
-  if (isPristine.value) {
+  if (isEqual(formData, initialFormData)) {
     close()
     return
   }
@@ -313,8 +269,8 @@ const submit = async () => {
   showOverlay()
 
   try {
-    await songStore.update(mutatedSongs.value, formData)
-    toastSuccess(`Updated ${pluralize(mutatedSongs.value, 'song')}.`)
+    await songStore.update(songs, formData)
+    toastSuccess(`Updated ${pluralize(songs, 'song')}.`)
     eventBus.emit('SONGS_UPDATED')
     close()
   } catch (error) {
@@ -324,8 +280,6 @@ const submit = async () => {
     hideOverlay()
   }
 }
-
-onMounted(async () => await open())
 </script>
 
 <style lang="scss" scoped>
@@ -353,16 +307,6 @@ form {
       .mixed {
         opacity: .5;
       }
-    }
-  }
-
-  .form-row .cols {
-    display: flex;
-    place-content: space-between;
-    gap: 1rem;
-
-    > * {
-      flex: 1;
     }
   }
 }

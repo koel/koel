@@ -26,7 +26,6 @@ const onDropLeave = () => (droppable.value = false)
 const onDragOver = (event: DragEvent) => {
   if (!event.dataTransfer?.types.includes('Files')) return false
   event.preventDefault()
-  event.dataTransfer!.dropEffect = 'copy'
   droppable.value = true
 }
 

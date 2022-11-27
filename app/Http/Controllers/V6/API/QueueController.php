@@ -20,15 +20,15 @@ class QueueController extends Controller
     {
         if ($request->order === 'rand') {
             return SongResource::collection($this->songRepository->getRandom($request->limit, $this->user));
-        } else {
-            return SongResource::collection(
-                $this->songRepository->getForQueue(
-                    $request->sort,
-                    $request->order,
-                    $request->limit,
-                    $this->user
-                )
-            );
         }
+
+        return SongResource::collection(
+            $this->songRepository->getForQueue(
+                $request->sort,
+                $request->order,
+                $request->limit,
+                $this->user
+            )
+        );
     }
 }

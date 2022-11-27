@@ -12,10 +12,10 @@ new class extends UnitTestCase {
       ['add-user-form', 'MODAL_SHOW_ADD_USER_FORM', undefined],
       ['edit-user-form', 'MODAL_SHOW_EDIT_USER_FORM', factory<User>('user')],
       ['edit-song-form', 'MODAL_SHOW_EDIT_SONG_FORM', [factory<Song>('song')]],
-      ['create-playlist-form', 'MODAL_SHOW_CREATE_PLAYLIST_FORM', undefined],
+      ['create-playlist-form', 'MODAL_SHOW_CREATE_PLAYLIST_FORM', factory<PlaylistFolder>('playlist-folder')],
       ['create-playlist-folder-form', 'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM', undefined],
       ['edit-playlist-folder-form', 'MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', factory<PlaylistFolder>('playlist-folder')],
-      ['create-smart-playlist-form', 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', undefined],
+      ['create-smart-playlist-form', 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', factory<PlaylistFolder>('playlist-folder')],
       ['edit-playlist-form', 'MODAL_SHOW_EDIT_PLAYLIST_FORM', factory<Playlist>('playlist')],
       ['edit-smart-playlist-form', 'MODAL_SHOW_EDIT_PLAYLIST_FORM', factory<Playlist>('playlist', { is_smart: true })],
       ['about-koel', 'MODAL_SHOW_ABOUT_KOEL', undefined]

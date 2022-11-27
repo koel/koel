@@ -1,20 +1,30 @@
 <template>
   <form @submit.prevent="submit" @keydown.esc="maybeClose">
     <header>
-      <h1>Rename Playlist</h1>
+      <h1>Edit Playlist</h1>
     </header>
 
     <main>
-      <div class="form-row">
-        <input
-          v-model="name"
-          v-koel-focus
-          name="name"
-          placeholder="Playlist name"
-          required
-          title="Playlist name"
-          type="text"
-        >
+      <div class="form-row cols">
+        <label class="name">
+          Name
+          <input
+            v-model="name"
+            v-koel-focus
+            name="name"
+            placeholder="Playlist name"
+            required
+            title="Playlist name"
+            type="text"
+          >
+        </label>
+        <label class="folder">
+          Folder
+          <select v-model="folderId">
+            <option :value="null"></option>
+            <option v-for="folder in folders" :value="folder.id">{{ folder.name }}</option>
+          </select>
+        </label>
       </div>
     </main>
 
@@ -26,28 +36,35 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { logger, requireInjection } from '@/utils'
-import { playlistStore } from '@/stores'
-import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
-import { PlaylistKey } from '@/symbols'
+import { ref, toRef } from 'vue'
+import { logger } from '@/utils'
+import { playlistFolderStore, playlistStore } from '@/stores'
+import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
-const [playlist, updatePlaylistName] = requireInjection(PlaylistKey)
+const playlist = useModal().getFromContext<Playlist>('playlist')
 
-const name = ref(playlist.value.name)
+const name = ref(playlist.name)
+const folderId = ref(playlist.folder_id)
+const folders = toRef(playlistFolderStore.state, 'folders')
+
+const emit = defineEmits<{ (e: 'close'): void }>()
+const close = () => emit('close')
 
 const submit = async () => {
   showOverlay()
 
   try {
-    await playlistStore.update(playlist.value, { name: name.value })
-    updatePlaylistName(name.value)
-    toastSuccess('Playlist renamed.')
+    await playlistStore.update(playlist, {
+      name: name.value,
+      folder_id: folderId.value
+    })
+
+    toastSuccess('Playlist updated.')
     close()
   } catch (error) {
     showErrorDialog('Something went wrong. Please try again.', 'Error')
@@ -57,11 +74,10 @@ const submit = async () => {
   }
 }
 
-const emit = defineEmits<{ (e: 'close'): void }>()
-const close = () => emit('close')
+const isPristine = () => playlist.name === name.value && playlist.folder_id === folderId.value
 
 const maybeClose = async () => {
-  if (name.value.trim() === playlist.value.name) {
+  if (isPristine()) {
     close()
     return
   }
@@ -69,3 +85,13 @@ const maybeClose = async () => {
   await showConfirmDialog('Discard all changes?') && close()
 }
 </script>
+
+<style lang="scss" scoped>
+form {
+  width: 540px;
+}
+
+label.folder {
+  flex: .6;
+}
+</style>

@@ -21,10 +21,7 @@ class GenreController extends Controller
     public function show(string $name)
     {
         $genre = $this->repository->getOne($name);
-
-        if (!$genre) {
-            abort(Response::HTTP_NOT_FOUND);
-        }
+        abort_unless((bool) $genre, Response::HTTP_NOT_FOUND);
 
         return GenreResource::make($genre);
     }

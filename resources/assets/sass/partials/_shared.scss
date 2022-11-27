@@ -179,6 +179,16 @@ label {
   position: relative;
 }
 
+.form-row.cols {
+  display: flex;
+  place-content: space-between;
+  gap: 1rem;
+
+  > * {
+    flex: 1;
+  }
+}
+
 .form-row input:not([type="checkbox"]), .form-row select {
   margin-top: .7rem;
   display: block;

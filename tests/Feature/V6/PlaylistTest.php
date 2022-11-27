@@ -77,7 +77,7 @@ class PlaylistTest extends TestCase
         self::assertTrue($rule->equals($playlist->rule_groups[0]->rules[0]));
     }
 
-    public function testCreatingSmartPlaylistIgnoresSongs(): void
+    public function testCreatingSmartPlaylistFailsIfSongsProvided(): void
     {
         $this->postAs('api/playlists', [
             'name' => 'Smart Foo Bar',
@@ -94,13 +94,7 @@ class PlaylistTest extends TestCase
                 ],
             ],
             'songs' => Song::factory(3)->create()->pluck('id')->all(),
-        ])->assertJsonStructure(self::JSON_STRUCTURE);
-
-        /** @var Playlist $playlist */
-        $playlist = Playlist::query()->orderByDesc('id')->first();
-
-        self::assertSame('Smart Foo Bar', $playlist->name);
-        self::assertEmpty($playlist->songs);
+        ])->assertUnprocessable();
     }
 
     public function testCreatingPlaylistWithNonExistentSongsFails(): void

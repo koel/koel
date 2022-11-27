@@ -21,13 +21,9 @@ class GenreSongController extends Controller
         Authenticatable $user,
         GenreFetchSongRequest $request
     ) {
-        if ($genre === Genre::NO_GENRE) {
-            $genre = '';
-        }
-
         return SongResource::collection(
             $repository->getByGenre(
-                $genre,
+                $genre === Genre::NO_GENRE ? '' : $genre,
                 $request->sort ?: 'songs.title',
                 $request->order ?: 'asc',
                 $user
