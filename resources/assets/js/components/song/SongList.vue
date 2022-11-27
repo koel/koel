@@ -302,7 +302,7 @@ onMounted(() => render())
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
+  overflow: auto;
 
   @media screen and (max-width: 768px) {
     padding: 0 12px;

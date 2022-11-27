@@ -129,7 +129,7 @@ onMounted(() => isMobile.any || (activeTab.value = preferenceStore.activeExtraPa
   flex-direction: row-reverse;
   color: var(--color-text-secondary);
   height: var(--header-height);
-  z-index: 1;
+  z-index: 2;
 
   @media screen and (max-width: 768px) {
     @include themed-background();
