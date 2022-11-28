@@ -1,12 +1,12 @@
 import { clone } from 'lodash'
+import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { arrayify } from '@/utils'
 import Btn from '@/components/ui/Btn.vue'
 import AddToMenu from './AddToMenu.vue'
-import { arrayify } from '@/utils'
-import { fireEvent } from '@testing-library/vue'
 
 let songs: Song[]
 
@@ -52,8 +52,8 @@ new class extends UnitTestCase {
       ['playlists', 'add-to-playlist'],
       ['newPlaylist', 'new-playlist']
     ])('renders disabling %s config', (configKey: keyof AddToMenuConfig, testIds: string | string[]) => {
-      const { queryByTestId } = this.renderComponent({ [configKey]: false })
-      arrayify(testIds).forEach(async (id) => expect(await queryByTestId(id)).toBeNull())
+      this.renderComponent({ [configKey]: false })
+      arrayify(testIds).forEach(id => expect(screen.queryByTestId(id)).toBeNull())
     })
 
     it.each<[string, string, MethodOf<typeof queueStore>]>([
@@ -65,18 +65,18 @@ new class extends UnitTestCase {
       queueStore.state.songs[2].playback_state = 'Playing'
 
       const mock = this.mock(queueStore, queueMethod)
-      const { getByTestId } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getByTestId(testId))
+      await this.user.click(screen.getByTestId(testId))
 
       expect(mock).toHaveBeenCalledWith(songs)
     })
 
     it('adds songs to Favorites', async () => {
       const mock = this.mock(favoriteStore, 'like')
-      const { getByTestId } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getByTestId('add-to-favorites'))
+      await this.user.click(screen.getByTestId('add-to-favorites'))
 
       expect(mock).toHaveBeenCalledWith(songs)
     })
@@ -84,9 +84,9 @@ new class extends UnitTestCase {
     it('adds songs to existing playlist', async () => {
       const mock = this.mock(playlistStore, 'addSongs')
       playlistStore.state.playlists = factory<Playlist>('playlist', 3)
-      const { getAllByTestId } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getAllByTestId('add-to-playlist')[1])
+      await this.user.click(screen.getAllByTestId('add-to-playlist')[1])
 
       expect(mock).toHaveBeenCalledWith(playlistStore.state.playlists[1], songs)
     })

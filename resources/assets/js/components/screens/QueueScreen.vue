@@ -42,7 +42,7 @@
       No songs queued.
       <span v-if="libraryNotEmpty" class="d-block secondary">
         How about
-        <a class="start" data-testid="shuffle-library" @click.prevent="shuffleSome">playing some random songs</a>?
+        <a class="start" @click.prevent="shuffleSome">playing some random songs</a>?
       </span>
     </ScreenEmptyState>
   </section>

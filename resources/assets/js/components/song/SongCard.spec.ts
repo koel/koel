@@ -2,7 +2,7 @@ import factory from '@/__tests__/factory'
 import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { expect, it } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongCard from './SongCard.vue'
 
@@ -32,17 +32,17 @@ new class extends UnitTestCase {
 
   protected test () {
     it('has a thumbnail and a like button', () => {
-      const { getByTestId } = this.renderComponent()
-      getByTestId('thumbnail')
-      getByTestId('like-button')
+      this.renderComponent()
+      screen.getByTestId('thumbnail')
+      screen.getByTestId('like-button')
     })
 
     it('queues and plays on double-click', async () => {
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
-      const { getByTestId } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.dblClick(getByTestId('song-card'))
+      await this.user.dblClick(screen.getByRole('article'))
 
       expect(queueMock).toHaveBeenCalledWith(song)
       expect(playMock).toHaveBeenCalledWith(song)

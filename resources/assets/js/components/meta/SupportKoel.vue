@@ -6,9 +6,9 @@
       and/or
       <a href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>.
     </p>
-    <button data-testid="hide-support-koel" type="button" @click.prevent="close">Hide</button>
+    <button type="button" @click.prevent="close">Hide</button>
     <span class="sep"></span>
-    <button data-testid="stop-support-koel-bugging" type="button" @click.prevent="stopBugging">
+    <button type="button" @click.prevent="stopBugging">
       Don't bug me again
     </button>
   </div>

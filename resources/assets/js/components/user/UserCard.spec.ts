@@ -1,8 +1,10 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import { eventBus } from '@/utils'
+import { userStore } from '@/stores'
+import { DialogBoxStub } from '@/__tests__/stubs'
 import UserCard from './UserCard.vue'
 
 new class extends UnitTestCase {
@@ -17,18 +19,18 @@ new class extends UnitTestCase {
   protected test () {
     it('has different behaviors for current user', () => {
       const user = factory<User>('user')
-      const { getByTitle, getByText } = this.actingAs(user).renderComponent(user)
+      this.actingAs(user).renderComponent(user)
 
-      getByTitle('This is you!')
-      getByText('Your Profile')
+      screen.getByTitle('This is you!')
+      screen.getByText('Your Profile')
     })
 
     it('edits user', async () => {
       const user = factory<User>('user')
       const emitMock = this.mock(eventBus, 'emit')
-      const { getByText } = this.renderComponent(user)
+      this.renderComponent(user)
 
-      await fireEvent.click(getByText('Edit'))
+      await this.user.click(screen.getByRole('button', { name: 'Edit' }))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_USER_FORM', user)
     })
@@ -36,11 +38,33 @@ new class extends UnitTestCase {
     it('redirects to Profile screen if edit current user', async () => {
       const mock = this.mock(this.router, 'go')
       const user = factory<User>('user')
-      const { getByText } = this.actingAs(user).renderComponent(user)
+      this.actingAs(user).renderComponent(user)
 
-      await fireEvent.click(getByText('Your Profile'))
+      await this.user.click(screen.getByRole('button', { name: 'Your Profile' }))
 
       expect(mock).toHaveBeenCalledWith('profile')
+    })
+
+    it('deletes user if confirmed', async () => {
+      this.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
+      const user = factory<User>('user')
+      this.actingAsAdmin().renderComponent(user)
+      const destroyMock = this.mock(userStore, 'destroy')
+
+      await this.user.click(screen.getByRole('button', { name: 'Delete' }))
+
+      expect(destroyMock).toHaveBeenCalledWith(user)
+    })
+
+    it('does not delete user if not confirmed', async () => {
+      this.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
+      const user = factory<User>('user')
+      this.actingAsAdmin().renderComponent(user)
+      const destroyMock = this.mock(userStore, 'destroy')
+
+      await this.user.click(screen.getByRole('button', { name: 'Delete' }))
+
+      expect(destroyMock).not.toHaveBeenCalled()
     })
   }
 }

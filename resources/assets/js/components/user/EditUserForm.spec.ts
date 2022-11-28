@@ -3,7 +3,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { ModalContextKey } from '@/symbols'
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { userStore } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import EditUserForm from './EditUserForm.vue'
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
 
       const user = ref(factory<User>('user', { name: 'John Doe' }))
 
-      const { getByLabelText, getByRole } = this.render(EditUserForm, {
+      this.render(EditUserForm, {
         global: {
           provide: {
             [<symbol>ModalContextKey]: [ref({ user })]
@@ -24,9 +24,9 @@ new class extends UnitTestCase {
         }
       })
 
-      await fireEvent.update(getByLabelText('Name'), 'Jane Doe')
-      await fireEvent.update(getByLabelText('Password'), 'new-password-duck')
-      await fireEvent.click(getByRole('button', { name: 'Update' }))
+      await this.type(screen.getByRole('textbox', { name: 'Name' }), 'Jane Doe')
+      await this.type(screen.getByLabelText('Password'), 'new-password-duck')
+      await this.user.click(screen.getByRole('button', { name: 'Update' }))
 
       await waitFor(() => {
         expect(updateMock).toHaveBeenCalledWith(user.value, {

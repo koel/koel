@@ -15,7 +15,7 @@
           <div v-if="showSummary" class="summary" data-testid="summary" v-html="info.wiki.summary"/>
           <div v-if="showFull" class="full" data-testid="full" v-html="info.wiki.full"/>
 
-          <button v-if="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullWiki = true">
+          <button v-if="showSummary" class="more" @click.prevent="showingFullWiki = true">
             Full Wiki
           </button>
         </div>

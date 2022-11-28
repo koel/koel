@@ -1,7 +1,7 @@
 <template>
-  <button :title="title" data-testid="like-btn" type="button" @click.stop="toggleLike">
-    <icon v-if="song.liked" :icon="faHeart" data-testid="btn-like-liked"/>
-    <icon v-else :icon="faEmptyHeart" data-testid="btn-like-unliked"/>
+  <button :title="title" type="button" @click.stop="toggleLike">
+    <icon v-if="song.liked" :icon="faHeart"/>
+    <icon v-else :icon="faEmptyHeart"/>
   </button>
 </template>
 

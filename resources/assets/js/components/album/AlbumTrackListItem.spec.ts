@@ -1,4 +1,4 @@
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { queueStore, songStore } from '@/stores'
@@ -45,9 +45,9 @@ new class extends UnitTestCase {
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
 
-      const { getByTitle } = this.renderComponent(matchedSong)
+      this.renderComponent(matchedSong)
 
-      await fireEvent.click(getByTitle('Click to play'))
+      await this.user.click(screen.getByTitle('Click to play'))
 
       expect(queueMock).toHaveBeenNthCalledWith(1, matchedSong)
       expect(playMock).toHaveBeenNthCalledWith(1, matchedSong)

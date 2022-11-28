@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { genreStore, songStore } from '@/stores'
@@ -41,9 +41,8 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders the song list', async () => {
-      const { getByTestId } = await this.renderComponent()
-
-      expect(getByTestId('song-list')).toBeTruthy()
+      await this.renderComponent()
+      expect(screen.getByTestId('song-list')).toBeTruthy()
     })
 
     it('shuffles all songs without fetching if genre has <= 500 songs', async () => {
@@ -51,9 +50,9 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 10)
       const playbackMock = this.mock(playbackService, 'queueAndPlay')
 
-      const { getByTitle } = await this.renderComponent(genre, songs)
+      await this.renderComponent(genre, songs)
 
-      await fireEvent.click(getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all songs'))
 
       expect(playbackMock).toHaveBeenCalledWith(songs, true)
     })
@@ -64,9 +63,9 @@ new class extends UnitTestCase {
       const playbackMock = this.mock(playbackService, 'queueAndPlay')
       const fetchMock = this.mock(songStore, 'fetchRandomForGenre').mockResolvedValue(songs)
 
-      const { getByTitle } = await this.renderComponent(genre, songs)
+      await this.renderComponent(genre, songs)
 
-      await fireEvent.click(getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all songs'))
 
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalledWith(genre, 500)

@@ -9,7 +9,7 @@
         <p v-if="song.id && !song.lyrics" class="none text-secondary">
           <template v-if="isAdmin">
             No lyrics found.
-            <button class="text-highlight" data-testid="add-lyrics-btn" type="button" @click.prevent="showEditSongForm">
+            <button class="text-highlight" type="button" @click.prevent="showEditSongForm">
               Click here
             </button>
             to add lyrics.

@@ -19,7 +19,8 @@
         <a
           v-if="allowDownload"
           class="download"
-          href role="button"
+          href
+          role="button"
           title="Download all songs in album"
           @click.prevent="download"
         >

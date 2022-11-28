@@ -4,7 +4,7 @@ exports[`renders 1`] = `
 <article class="item full" draggable="true" tabindex="0" title="IV by Led Zeppelin" data-v-f01bdc56=""><br data-testid="thumbnail" entity="[object Object]" data-v-f01bdc56="">
   <footer data-v-f01bdc56="">
     <div class="name" data-v-f01bdc56=""><a href="#/album/42" class="text-normal" data-testid="name">IV</a><a href="#/artist/17">Led Zeppelin</a></div>
-    <p class="meta" data-v-f01bdc56=""><a title="Shuffle all songs in the album IV" class="shuffle-album" data-testid="shuffle-album" href="" role="button"> Shuffle </a><a title="Download all songs in the album IV" class="download-album" data-testid="download-album" href="" role="button"> Download </a></p>
+    <p class="meta" data-v-f01bdc56=""><a title="Shuffle all songs in the album IV" class="shuffle-album" href="" role="button"> Shuffle </a><a title="Download all songs in the album IV" class="download-album" href="" role="button"> Download </a></p>
   </footer>
 </article>
 `;

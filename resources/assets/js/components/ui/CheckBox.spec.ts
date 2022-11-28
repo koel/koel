@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { screen } from '@testing-library/vue'
 import CheckBox from './CheckBox.vue'
-import { fireEvent } from '@testing-library/vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -14,9 +14,9 @@ new class extends UnitTestCase {
     }).html()).toMatchSnapshot())
 
     it('emits the input event', async () => {
-      const { getByRole, emitted } = this.render(CheckBox)
+      const { emitted } = this.render(CheckBox)
 
-      await fireEvent.input(getByRole('checkbox'))
+      await this.user.click(screen.getByRole('checkbox'))
 
       expect(emitted()['update:modelValue']).toBeTruthy()
     })

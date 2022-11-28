@@ -2,6 +2,6 @@
 
 exports[`shows after a delay 1`] = `
 <div class="support-bar" data-testid="support-bar" data-v-c8ee2518="">
-  <p data-v-c8ee2518=""> Loving Koel? Please consider supporting its development via <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank" data-v-c8ee2518="">GitHub Sponsors</a> and/or <a href="https://opencollective.com/koel" rel="noopener" target="_blank" data-v-c8ee2518="">OpenCollective</a>. </p><button data-testid="hide-support-koel" type="button" data-v-c8ee2518="">Hide</button><span class="sep" data-v-c8ee2518=""></span><button data-testid="stop-support-koel-bugging" type="button" data-v-c8ee2518=""> Don't bug me again </button>
+  <p data-v-c8ee2518=""> Loving Koel? Please consider supporting its development via <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank" data-v-c8ee2518="">GitHub Sponsors</a> and/or <a href="https://opencollective.com/koel" rel="noopener" target="_blank" data-v-c8ee2518="">OpenCollective</a>. </p><button type="button" data-v-c8ee2518="">Hide</button><span class="sep" data-v-c8ee2518=""></span><button type="button" data-v-c8ee2518=""> Don't bug me again </button>
 </div>
 `;

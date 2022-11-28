@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, queueStore } from '@/stores'
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { playbackService } from '@/services'
 import QueueScreen from './QueueScreen.vue'
 
@@ -10,7 +10,7 @@ new class extends UnitTestCase {
   private renderComponent (songs: Song[]) {
     queueStore.state.songs = songs
 
-    return this.render(QueueScreen, {
+    this.render(QueueScreen, {
       global: {
         stubs: {
           SongList: this.stub('song-list')
@@ -21,17 +21,17 @@ new class extends UnitTestCase {
 
   protected test () {
     it('renders the queue', () => {
-      const { queryByTestId } = this.renderComponent(factory<Song>('song', 3))
+      this.renderComponent(factory<Song>('song', 3))
 
-      expect(queryByTestId('song-list')).toBeTruthy()
-      expect(queryByTestId('screen-empty-state')).toBeNull()
+      expect(screen.queryByTestId('song-list')).toBeTruthy()
+      expect(screen.queryByTestId('screen-empty-state')).toBeNull()
     })
 
     it('renders an empty state if no songs queued', () => {
-      const { queryByTestId } = this.renderComponent([])
+      this.renderComponent([])
 
-      expect(queryByTestId('song-list')).toBeNull()
-      expect(queryByTestId('screen-empty-state')).toBeTruthy()
+      expect(screen.queryByTestId('song-list')).toBeNull()
+      expect(screen.queryByTestId('screen-empty-state')).toBeTruthy()
     })
 
     it('has an option to plays some random songs if the library is not empty', async () => {
@@ -39,8 +39,8 @@ new class extends UnitTestCase {
       const fetchRandomMock = this.mock(queueStore, 'fetchRandom')
       const playMock = this.mock(playbackService, 'playFirstInQueue')
 
-      const { getByText } = this.renderComponent([])
-      await fireEvent.click(getByText('playing some random songs'))
+      this.renderComponent([])
+      await this.user.click(screen.getByText('playing some random songs'))
 
       await waitFor(() => {
         expect(fetchRandomMock).toHaveBeenCalled()
@@ -50,10 +50,10 @@ new class extends UnitTestCase {
 
     it('Shuffles all', async () => {
       const songs = factory<Song>('song', 3)
-      const { getByTitle } = this.renderComponent(songs)
+      this.renderComponent(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      await fireEvent.click(getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all songs'))
       await waitFor(() => expect(playMock).toHaveBeenCalledWith(songs, true))
     })
   }

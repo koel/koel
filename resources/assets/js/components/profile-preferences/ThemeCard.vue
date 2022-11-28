@@ -1,9 +1,8 @@
 <template>
   <div
     :class="{ selected: theme.selected }"
-    :data-testid="`theme-card-${theme.id}`"
     :style="thumbnailStyles"
-    :title="`Set current them to ${name}`"
+    :title="`Set current theme to ${name}`"
     class="theme"
     role="button"
     @click="$emit('selected', theme)"

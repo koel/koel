@@ -1,4 +1,5 @@
 import { expect, it } from 'vitest'
+import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
@@ -15,25 +16,22 @@ new class extends UnitTestCase {
     })
 
     const rendered = this.render(AlbumContextMenu)
-    eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 }, album)
+    eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, album)
     await this.tick(2)
 
     return rendered
   }
 
   protected test () {
-    it('renders', async () => {
-      const { html } = await this.renderComponent()
-      expect(html()).toMatchSnapshot()
-    })
+    it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
     it('plays all', async () => {
       const songs = factory<Song>('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      const { getByText } = await this.renderComponent()
-      await getByText('Play All').click()
+      await this.renderComponent()
+      await this.user.click(screen.getByText('Play All'))
       await this.tick()
 
       expect(fetchMock).toHaveBeenCalledWith(album)
@@ -45,8 +43,8 @@ new class extends UnitTestCase {
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      const { getByText } = await this.renderComponent()
-      await getByText('Shuffle All').click()
+      await this.renderComponent()
+      await this.user.click(screen.getByText('Shuffle All'))
       await this.tick()
 
       expect(fetchMock).toHaveBeenCalledWith(album)
@@ -55,42 +53,42 @@ new class extends UnitTestCase {
 
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromAlbum')
+      await this.renderComponent()
 
-      const { getByText } = await this.renderComponent()
-      await getByText('Download').click()
+      await this.user.click(screen.getByText('Download'))
 
       expect(downloadMock).toHaveBeenCalledWith(album)
     })
 
     it('does not have an option to download if downloading is disabled', async () => {
       commonStore.state.allow_download = false
-      const { queryByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      expect(queryByText('Download')).toBeNull()
+      expect(screen.queryByText('Download')).toBeNull()
     })
 
     it('goes to album', async () => {
       const mock = this.mock(this.router, 'go')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await getByText('Go to Album').click()
+      await this.user.click(screen.getByText('Go to Album'))
 
       expect(mock).toHaveBeenCalledWith(`album/${album.id}`)
     })
 
     it('does not have an option to download or go to Unknown Album and Artist', async () => {
-      const { queryByTestId } = await this.renderComponent(factory.states('unknown')<Album>('album'))
+      await this.renderComponent(factory.states('unknown')<Album>('album'))
 
-      expect(queryByTestId('view-album')).toBeNull()
-      expect(queryByTestId('view-artist')).toBeNull()
-      expect(queryByTestId('download')).toBeNull()
+      expect(screen.queryByText('Go to Album')).toBeNull()
+      expect(screen.queryByText('Go to Artist')).toBeNull()
+      expect(screen.queryByText('Download')).toBeNull()
     })
 
     it('goes to artist', async () => {
       const mock = this.mock(this.router, 'go')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await getByText('Go to Artist').click()
+      await this.user.click(screen.getByText('Go to Artist'))
 
       expect(mock).toHaveBeenCalledWith(`artist/${album.artist_id}`)
     })

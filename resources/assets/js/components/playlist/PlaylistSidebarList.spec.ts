@@ -1,3 +1,4 @@
+import { screen } from '@testing-library/vue'
 import { it } from 'vitest'
 import { playlistFolderStore, playlistStore } from '@/stores'
 import factory from '@/__tests__/factory'
@@ -8,7 +9,7 @@ import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
 
 new class extends UnitTestCase {
   private renderComponent () {
-    return this.render(PlaylistSidebarList, {
+    this.render(PlaylistSidebarList, {
       global: {
         stubs: {
           PlaylistSidebarItem,
@@ -26,9 +27,11 @@ new class extends UnitTestCase {
         factory.states('smart', 'orphan')<Playlist>('playlist', { name: 'Smart Playlist' })
       ]
 
-      const { getByText } = this.renderComponent()
+      this.renderComponent()
 
-      ;['Favorites', 'Recently Played', 'Foo Playlist', 'Bar Playlist', 'Smart Playlist'].forEach(t => getByText(t))
+      ;['Favorites', 'Recently Played', 'Foo Playlist', 'Bar Playlist', 'Smart Playlist'].forEach(text => {
+        screen.getByText(text)
+      })
     })
 
     it('displays playlist folders', () => {
@@ -37,8 +40,8 @@ new class extends UnitTestCase {
         factory<PlaylistFolder>('playlist-folder', { name: 'Bar Folder' })
       ]
 
-      const { getByText } = this.renderComponent()
-      ;['Foo Folder', 'Bar Folder'].forEach(t => getByText(t))
+      this.renderComponent()
+      ;['Foo Folder', 'Bar Folder'].forEach(text => screen.getByText(text))
     })
   }
 }

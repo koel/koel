@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import { $ } from '@/utils'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import BtnScrollToTop from './BtnScrollToTop.vue'
@@ -12,9 +12,9 @@ new class extends UnitTestCase {
 
     it('scrolls to top', async () => {
       const mock = this.mock($, 'scrollTo')
-      const { getByTitle } = this.render(BtnScrollToTop)
+      this.render(BtnScrollToTop)
 
-      await fireEvent.click(getByTitle('Scroll to top'))
+      await this.user.click(screen.getByTitle('Scroll to top'))
 
       expect(mock).toHaveBeenCalled()
     })

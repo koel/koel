@@ -6,7 +6,7 @@
 
       <template v-slot:controls>
         <BtnGroup uppercased v-if="showingControls || !isPhone">
-          <Btn class="btn-add" data-testid="add-user-btn" green @click="showAddUserForm">
+          <Btn class="btn-add" green @click="showAddUserForm">
             <icon :icon="faPlus"/>
             Add
           </Btn>

@@ -1,8 +1,8 @@
+import { waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import { albumStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import AlbumArtOverlay from './AlbumArtOverlay.vue'
-import { waitFor } from '@testing-library/vue'
 
 let albumId: number
 

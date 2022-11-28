@@ -4,7 +4,6 @@
       Recently Played
       <Btn
         v-if="songs.length"
-        data-testid="home-view-all-recently-played-btn"
         orange
         rounded
         small

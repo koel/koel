@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import { UploadFile, uploadService, UploadStatus } from '@/services'
 import Btn from '@/components/ui/Btn.vue'
 import UploadItem from './UploadItem.vue'
@@ -33,11 +33,11 @@ new class extends UnitTestCase {
   protected test () {
     it('renders', () => expect(this.renderComponent('Canceled').html()).toMatchSnapshot())
 
-    it.each<[UploadStatus]>([['Canceled'], ['Errored']])('allows retrying when %s', async (status) => {
+    it.each<[UploadStatus]>([['Canceled'], ['Errored']])('allows retrying when %s', async status => {
       const mock = this.mock(uploadService, 'retry')
-      const { getByTitle } = this.renderComponent(status)
+      this.renderComponent(status)
 
-      await fireEvent.click(getByTitle('Retry'))
+      await this.user.click(screen.getByRole('button', { name: 'Retry' }))
 
       expect(mock).toHaveBeenCalled()
     })
@@ -46,11 +46,11 @@ new class extends UnitTestCase {
       ['Uploaded'],
       ['Errored'],
       ['Canceled']]
-    )('allows removal if not uploading', async (status) => {
+    )('allows removal if not uploading', async status => {
       const mock = this.mock(uploadService, 'remove')
-      const { getByTitle } = this.renderComponent(status)
+      this.renderComponent(status)
 
-      await fireEvent.click(getByTitle('Remove'))
+      await this.user.click(screen.getByRole('button', { name: 'Remove' }))
 
       expect(mock).toHaveBeenCalled()
     })

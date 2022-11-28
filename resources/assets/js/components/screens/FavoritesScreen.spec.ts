@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -8,32 +8,30 @@ import FavoritesScreen from './FavoritesScreen.vue'
 new class extends UnitTestCase {
   private async renderComponent () {
     const fetchMock = this.mock(favoriteStore, 'fetch')
-    const rendered = this.render(FavoritesScreen)
+    this.render(FavoritesScreen)
 
     await this.router.activateRoute({ path: 'favorites', screen: 'Favorites' })
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
-
-    return rendered
   }
 
   protected test () {
     it('renders a list of favorites', async () => {
       favoriteStore.state.songs = factory<Song>('song', 13)
-      const { queryByTestId } = await this.renderComponent()
+      await this.renderComponent()
 
       await waitFor(() => {
-        expect(queryByTestId('screen-empty-state')).toBeNull()
-        expect(queryByTestId('song-list')).not.toBeNull()
+        expect(screen.queryByTestId('screen-empty-state')).toBeNull()
+        screen.getByTestId('song-list')
       })
     })
 
     it('shows empty state', async () => {
       favoriteStore.state.songs = []
-      const { queryByTestId } = await this.renderComponent()
+      await this.renderComponent()
 
-      expect(queryByTestId('screen-empty-state')).not.toBeNull()
-      expect(queryByTestId('song-list')).toBeNull()
+      screen.getByTestId('screen-empty-state')
+      expect(screen.queryByTestId('song-list')).toBeNull()
     })
   }
 }

@@ -2,8 +2,8 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { playbackService } from '@/services'
-import { fireEvent } from '@testing-library/vue'
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
+import { screen } from '@testing-library/vue'
 
 let song: Song
 
@@ -23,15 +23,15 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it.each<[PlaybackState, MethodOf<typeof playbackService>]>([
-      ['Stopped', 'play'],
-      ['Playing', 'pause'],
-      ['Paused', 'resume']
-    ])('if state is currently "%s", %ss', async (state: PlaybackState, method: MethodOf<typeof playbackService>) => {
+    it.each<[PlaybackState, string, MethodOf<typeof playbackService>]>([
+      ['Stopped', 'Play', 'play'],
+      ['Playing', 'Pause', 'pause'],
+      ['Paused', 'Resume', 'resume']
+    ])('if state is currently "%s", %ss', async (state, name, method) => {
       const mock = this.mock(playbackService, method)
-      const { getByTestId } = this.renderComponent(state)
+      this.renderComponent(state)
 
-      await fireEvent.click(getByTestId('play-control'))
+      await this.user.click(screen.getByRole('button', { name }))
 
       expect(mock).toHaveBeenCalled()
     })

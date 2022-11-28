@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import { youTubeService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import YouTubeVideoItem from './YouTubeVideoItem.vue'
@@ -34,9 +34,9 @@ new class extends UnitTestCase {
 
     it('plays', async () => {
       const mock = this.mock(youTubeService, 'play')
-      const { getByRole } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getByRole('button'))
+      await this.user.click(screen.getByRole('button'))
 
       expect(mock).toHaveBeenCalledWith(video)
     })
