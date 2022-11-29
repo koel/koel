@@ -27,7 +27,7 @@ final class SongScanInformation implements Arrayable
     ) {
     }
 
-    public static function fromGetId3Info(array $info): self
+    public static function fromGetId3Info(array $info, string $path): self
     {
         // We prefer ID3v2 tags over ID3v1 tags.
         $tags = array_merge(
@@ -45,8 +45,6 @@ final class SongScanInformation implements Arrayable
         if (self::getTag($tags, 'part_of_a_compilation') && !$albumArtistName) {
             $albumArtistName = Artist::VARIOUS_NAME;
         }
-
-        $path = Arr::get($info, 'filenamepath');
 
         $cover = [self::getTag($comments, 'cover', null)];
 

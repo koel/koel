@@ -57,7 +57,7 @@ class FileSynchronizer
         }
 
         $this->getID3->CopyTagsToComments($raw);
-        $info = SongScanInformation::fromGetId3Info($raw);
+        $info = SongScanInformation::fromGetId3Info($raw, $this->filePath);
 
         $info->lyrics = $info->lyrics ?: $this->lrcReader->tryReadForMediaFile($this->filePath);
 
