@@ -2,9 +2,9 @@ import { take } from 'lodash'
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { fireEvent } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { SelectedSongsKey, SongsKey } from '@/symbols'
+import { screen } from '@testing-library/vue'
 import SongListControls from './SongListControls.vue'
 
 new class extends UnitTestCase {
@@ -26,51 +26,53 @@ new class extends UnitTestCase {
 
   protected test () {
     it.each([[0], [1]])('shuffles all if %s songs are selected', async (selectedCount: number) => {
-      const { emitted, getByTitle } = this.renderComponent(selectedCount)
+      const { emitted } = this.renderComponent(selectedCount)
 
-      await fireEvent.click(getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all songs'))
 
       expect(emitted().playAll[0]).toEqual([true])
     })
 
     it.each([[0], [1]])('plays all if %s songs are selected with Alt pressed', async (selectedCount: number) => {
-      const { emitted, getByTitle } = this.renderComponent(selectedCount)
+      const { emitted } = this.renderComponent(selectedCount)
 
-      await fireEvent.keyDown(window, { key: 'Alt' })
-      await fireEvent.click(getByTitle('Play all songs'))
+      await this.user.keyboard('{Alt>}')
+      await this.user.click(screen.getByTitle('Play all songs'))
+      await this.user.keyboard('{/Alt}')
 
       expect(emitted().playAll[0]).toEqual([false])
     })
 
     it('shuffles selected if more than one song are selected', async () => {
-      const { emitted, getByTitle } = this.renderComponent(2)
+      const { emitted } = this.renderComponent(2)
 
-      await fireEvent.click(getByTitle('Shuffle selected songs'))
+      await this.user.click(screen.getByTitle('Shuffle selected songs'))
 
       expect(emitted().playSelected[0]).toEqual([true])
     })
 
     it('plays selected if more than one song are selected with Alt pressed', async () => {
-      const { emitted, getByTitle } = this.renderComponent(2)
+      const { emitted } = this.renderComponent(2)
 
-      await fireEvent.keyDown(window, { key: 'Alt' })
-      await fireEvent.click(getByTitle('Play selected songs'))
+      await this.user.keyboard('{Alt>}')
+      await this.user.click(screen.getByTitle('Play selected songs'))
+      await this.user.keyboard('{/Alt}')
 
       expect(emitted().playSelected[0]).toEqual([false])
     })
 
     it('clears queue', async () => {
-      const { emitted, getByTitle } = this.renderComponent(0, { clearQueue: true })
+      const { emitted } = this.renderComponent(0, { clearQueue: true })
 
-      await fireEvent.click(getByTitle('Clear current queue'))
+      await this.user.click(screen.getByTitle('Clear current queue'))
 
       expect(emitted().clearQueue).toBeTruthy()
     })
 
     it('deletes current playlist', async () => {
-      const { emitted, getByTitle } = this.renderComponent(0, { deletePlaylist: true })
+      const { emitted } = this.renderComponent(0, { deletePlaylist: true })
 
-      await fireEvent.click(getByTitle('Delete this playlist'))
+      await this.user.click(screen.getByTitle('Delete this playlist'))
 
       expect(emitted().deletePlaylist).toBeTruthy()
     })

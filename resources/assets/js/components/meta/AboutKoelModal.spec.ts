@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import { commonStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { http } from '@/services'
-import { waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import AboutKoelModel from './AboutKoelModal.vue'
 
 new class extends UnitTestCase {
@@ -35,10 +35,10 @@ new class extends UnitTestCase {
       // @ts-ignore
       import.meta.env.VITE_KOEL_ENV = 'demo'
 
-      const { getByTestId } = this.renderComponent()
+      this.renderComponent()
 
       await waitFor(() => {
-        getByTestId('demo-credits')
+        screen.getByTestId('demo-credits')
         expect(getMock).toHaveBeenCalledWith('demo/credits')
       })
     })

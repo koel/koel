@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { albumStore, preferenceStore } from '@/stores'
@@ -28,17 +28,17 @@ new class extends UnitTestCase {
     it('has a translucent overlay per album', async () => {
       this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/foo.jpg')
 
-      const { getByTestId } = this.renderComponent()
+      this.renderComponent()
 
-      await waitFor(() => getByTestId('album-art-overlay'))
+      await waitFor(() => screen.getByTestId('album-art-overlay'))
     })
 
     it('does not have a translucent over if configured not so', async () => {
       preferenceStore.state.showAlbumArtOverlay = false
 
-      const { queryByTestId } = this.renderComponent()
+      this.renderComponent()
 
-      await waitFor(() => expect(queryByTestId('album-art-overlay')).toBeNull())
+      await waitFor(() => expect(screen.queryByTestId('album-art-overlay')).toBeNull())
     })
   }
 }

@@ -10,6 +10,8 @@ import { DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbol
 import { DialogBoxStub, MessageToasterStub, OverlayStub } from '@/__tests__/stubs'
 import { routes } from '@/config'
 import Router from '@/router'
+import userEvent from '@testing-library/user-event'
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
 // A deep-merge function that
 // - supports symbols as keys (_.merge doesn't)
@@ -27,10 +29,13 @@ const deepMerge = (first: object, second: object) => {
 export default abstract class UnitTestCase {
   private backupMethods = new Map()
   protected router: Router
+  protected user: UserEvent
 
   public constructor () {
     this.router = new Router(routes)
     this.mock(http, 'request') // prevent actual HTTP requests from being made
+    this.user = userEvent.setup({ delay: null }) // @see https://github.com/testing-library/user-event/issues/833
+
     this.beforeEach()
     this.afterEach()
     this.test()
@@ -148,6 +153,11 @@ export default abstract class UnitTestCase {
         configurable: true
       }
     })
+  }
+
+  protected async type (element: HTMLElement, value: string) {
+    await this.user.clear(element)
+    await this.user.type(element, value)
   }
 
   protected abstract test ()

@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { userStore } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import AddUserForm from './AddUserForm.vue'
@@ -11,13 +11,13 @@ new class extends UnitTestCase {
       const storeMock = this.mock(userStore, 'store')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      const { getByLabelText, getByRole } = this.render(AddUserForm)
+      this.render(AddUserForm)
 
-      await fireEvent.update(getByLabelText('Name'), 'John Doe')
-      await fireEvent.update(getByLabelText('Email'), 'john@doe.com')
-      await fireEvent.update(getByLabelText('Password'), 'secret-password')
-      await fireEvent.click(getByRole('checkbox'))
-      await fireEvent.click(getByRole('button', { name: 'Save' }))
+      await this.type(screen.getByRole('textbox', { name: 'Name' }), 'John Doe')
+      await this.type(screen.getByRole('textbox', { name: 'Email' }), 'john@doe.com')
+      await this.type(screen.getByLabelText('Password'), 'secret-password')
+      await this.user.click(screen.getByRole('checkbox'))
+      await this.user.click(screen.getByRole('button', { name: 'Save' }))
 
       await waitFor(() => {
         expect(storeMock).toHaveBeenCalledWith({

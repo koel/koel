@@ -3,13 +3,13 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, overviewStore } from '@/stores'
 import { Events } from '@/config'
 import { eventBus } from '@/utils'
+import { screen } from '@testing-library/vue'
 import HomeScreen from './HomeScreen.vue'
 
 new class extends UnitTestCase {
   private async renderComponent () {
-    const rendered = this.render(HomeScreen)
+    this.render(HomeScreen)
     await this.router.activateRoute({ path: 'home', screen: 'Home' })
-    return rendered
   }
 
   protected test () {
@@ -17,16 +17,16 @@ new class extends UnitTestCase {
       commonStore.state.song_length = 0
       this.mock(overviewStore, 'init')
 
-      const { getByTestId } = await this.render(HomeScreen)
+      await this.render(HomeScreen)
 
-      getByTestId('screen-empty-state')
+      screen.getByTestId('screen-empty-state')
     })
 
     it('renders overview components if applicable', async () => {
       commonStore.state.song_length = 100
       const initMock = this.mock(overviewStore, 'init')
 
-      const { getByTestId, queryByTestId } = await this.renderComponent()
+      await this.renderComponent()
 
       expect(initMock).toHaveBeenCalled()
 
@@ -37,13 +37,13 @@ new class extends UnitTestCase {
         'recently-added-songs',
         'most-played-artists',
         'most-played-albums'
-      ].forEach(id => getByTestId(id))
+      ].forEach(id => screen.getByTestId(id))
 
-      expect(queryByTestId('screen-empty-state')).toBeNull()
+      expect(screen.queryByTestId('screen-empty-state')).toBeNull()
     })
 
     it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED']])
-    ('refreshes the overviews on %s event', async (eventName) => {
+    ('refreshes the overviews on %s event', async eventName => {
       const initMock = this.mock(overviewStore, 'init')
       const refreshMock = this.mock(overviewStore, 'refresh')
       await this.renderComponent()

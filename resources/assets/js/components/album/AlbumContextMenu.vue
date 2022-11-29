@@ -1,14 +1,14 @@
 <template>
   <ContextMenuBase ref="base" data-testid="album-context-menu" extra-class="album-menu">
     <template v-if="album">
-      <li data-testid="play" @click="play">Play All</li>
-      <li data-testid="shuffle" @click="shuffle">Shuffle All</li>
+      <li @click="play">Play All</li>
+      <li @click="shuffle">Shuffle All</li>
       <li class="separator"></li>
-      <li v-if="isStandardAlbum" data-testid="view-album" @click="viewAlbumDetails">Go to Album</li>
-      <li v-if="isStandardArtist" data-testid="view-artist" @click="viewArtistDetails">Go to Artist</li>
+      <li v-if="isStandardAlbum" @click="viewAlbumDetails">Go to Album</li>
+      <li v-if="isStandardArtist" @click="viewArtistDetails">Go to Artist</li>
       <template v-if="isStandardAlbum && allowDownload">
         <li class="separator"></li>
-        <li data-testid="download" @click="download">Download</li>
+        <li @click="download">Download</li>
       </template>
     </template>
   </ContextMenuBase>

@@ -1,5 +1,5 @@
 <template>
-  <article :class="{ me: isCurrentUser }" class="user-card" data-testid="user-card">
+  <article :class="{ me: isCurrentUser }" class="user-card">
     <img :alt="`${user.name}'s avatar`" :src="user.avatar" height="80" width="80">
 
     <main>
@@ -17,10 +17,10 @@
       <p class="email text-secondary">{{ user.email }}</p>
 
       <footer>
-        <Btn class="btn-edit" data-testid="edit-user-btn" orange small @click="edit">
+        <Btn class="btn-edit" orange small @click="edit">
           {{ isCurrentUser ? 'Your Profile' : 'Edit' }}
         </Btn>
-        <Btn v-if="!isCurrentUser" class="btn-delete" data-testid="delete-user-btn" red small @click="confirmDelete">
+        <Btn v-if="!isCurrentUser" class="btn-delete" red small @click="confirmDelete">
           Delete
         </Btn>
       </footer>

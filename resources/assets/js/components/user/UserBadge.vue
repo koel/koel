@@ -1,16 +1,15 @@
 <template>
   <span class="profile" id="userBadge" v-if="currentUser">
-    <a class="view-profile" data-testid="view-profile-link" href="/#/profile" title="View/edit user profile">
+    <a class="view-profile" href="/#/profile" title="View/edit user profile">
       <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar" class="avatar"/>
       <span class="name">{{ currentUser.name }}</span>
     </a>
 
     <a
-      title="Log out"
       class="logout control"
-      data-testid="btn-logout"
       href
       role="button"
+      title="Log out"
       @click.prevent="logout"
     >
       <icon :icon="faSignOutAlt"/>

@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { playlistFolderStore } from '@/stores'
 import factory from '@/__tests__/factory'
@@ -11,10 +11,10 @@ new class extends UnitTestCase {
       const storeMock = this.mock(playlistFolderStore, 'store')
         .mockResolvedValue(factory<PlaylistFolder>('playlist-folder'))
 
-      const { getByPlaceholderText, getByRole } = await this.render(CreatePlaylistFolderForm)
+      await this.render(CreatePlaylistFolderForm)
 
-      await fireEvent.update(getByPlaceholderText('Folder name'), 'My folder')
-      await fireEvent.click(getByRole('button', { name: 'Save' }))
+      await this.type(screen.getByPlaceholderText('Folder name'), 'My folder')
+      await this.user.click(screen.getByRole('button', { name: 'Save' }))
 
       expect(storeMock).toHaveBeenCalledWith('My folder')
     })

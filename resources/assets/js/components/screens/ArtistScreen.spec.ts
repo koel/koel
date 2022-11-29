@@ -1,4 +1,4 @@
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -31,7 +31,7 @@ new class extends UnitTestCase {
       screen: 'Artist'
     }, { id: '42' })
 
-    const rendered = this.render(ArtistScreen, {
+    this.render(ArtistScreen, {
       global: {
         stubs: {
           ArtistInfo: this.stub('artist-info'),
@@ -47,16 +47,14 @@ new class extends UnitTestCase {
     })
 
     await this.tick(2)
-
-    return rendered
   }
 
   protected test () {
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromArtist')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Download All'))
+      await this.user.click(screen.getByRole('button', { name: 'Download All' }))
 
       expect(downloadMock).toHaveBeenCalledWith(artist)
     })
@@ -75,8 +73,8 @@ new class extends UnitTestCase {
     })
 
     it('shows the song list', async () => {
-      const { getByTestId } = await this.renderComponent()
-      getByTestId('song-list')
+      await this.renderComponent()
+      screen.getByTestId('song-list')
     })
   }
 }

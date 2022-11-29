@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, queueStore, songStore } from '@/stores'
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { playbackService } from '@/services'
 import AllSongsScreen from './AllSongsScreen.vue'
 
@@ -40,9 +40,9 @@ new class extends UnitTestCase {
       const queueMock = this.mock(queueStore, 'fetchRandom')
       const playMock = this.mock(playbackService, 'playFirstInQueue')
       const goMock = this.mock(this.router, 'go')
-      const { getByTitle } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all songs'))
 
       await waitFor(() => {
         expect(queueMock).toHaveBeenCalled()

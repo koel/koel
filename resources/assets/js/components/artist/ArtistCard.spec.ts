@@ -1,4 +1,4 @@
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { downloadService, playbackService } from '@/services'
@@ -36,19 +36,17 @@ new class extends UnitTestCase {
 
     it('downloads', async () => {
       const mock = this.mock(downloadService, 'fromArtist')
+      this.renderComponent()
 
-      const { getByTestId } = this.renderComponent()
-
-      await fireEvent.click(getByTestId('download-artist'))
+      await this.user.click(screen.getByTitle('Download all songs by Led Zeppelin'))
       expect(mock).toHaveBeenCalledOnce()
     })
 
     it('does not have an option to download if downloading is disabled', async () => {
       commonStore.state.allow_download = false
+      this.renderComponent()
 
-      const { queryByTestId } = this.renderComponent()
-
-      expect(queryByTestId('download-artist')).toBeNull()
+      expect(screen.queryByText('Download')).toBeNull()
     })
 
     it('shuffles', async () => {
@@ -56,9 +54,9 @@ new class extends UnitTestCase {
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      const { getByTestId } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getByTestId('shuffle-artist'))
+      await this.user.click(screen.getByTitle('Shuffle all songs by Led Zeppelin'))
       await this.tick()
 
       expect(fetchMock).toHaveBeenCalledWith(artist)

@@ -1,4 +1,4 @@
-import { fireEvent, getByTestId, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
       screen: 'Album'
     }, { id: '42' })
 
-    const rendered = this.render(AlbumScreen, {
+    this.render(AlbumScreen, {
       global: {
         stubs: {
           SongList: this.stub('song-list'),
@@ -48,16 +48,14 @@ new class extends UnitTestCase {
     })
 
     await this.tick(2)
-
-    return rendered
   }
 
   protected test () {
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromAlbum')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Download All'))
+      await this.user.click(screen.getByRole('button', { name: 'Download All' }))
 
       expect(downloadMock).toHaveBeenCalledWith(album)
     })
@@ -76,21 +74,21 @@ new class extends UnitTestCase {
     })
 
     it('shows the song list', async () => {
-      const { getByTestId } = await this.renderComponent()
-      getByTestId('song-list')
+      await this.renderComponent()
+      screen.getByTestId('song-list')
     })
 
     it('shows other albums from the same artist', async () => {
       const albums = factory<Album>('album', 3)
       albums.push(album)
       const fetchMock = this.mock(albumStore, 'fetchForArtist').mockResolvedValue(albums)
-      const { getByLabelText, getAllByTestId } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByLabelText('Other Albums'))
+      await this.user.click(screen.getByRole('radio', { name: 'Other Albums' }))
 
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalledWith(album.artist_id)
-        expect(getAllByTestId('album-card')).toHaveLength(3) // current album is excluded
+        expect(screen.getAllByTestId('album-card')).toHaveLength(3) // current album is excluded
       })
     })
   }

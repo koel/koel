@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify, eventBus } from '@/utils'
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { downloadService, playbackService } from '@/services'
 import { favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
@@ -19,7 +19,7 @@ new class extends UnitTestCase {
     songs = arrayify(_songs || factory<Song>('song', 5))
 
     const rendered = this.render(SongContextMenu)
-    eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 }, songs)
+    eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, songs)
     await this.tick(2)
 
     return rendered
@@ -35,9 +35,9 @@ new class extends UnitTestCase {
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
       const song = factory<Song>('song', { playback_state: 'Stopped' })
-      const { getByText } = await this.renderComponent(song)
+      await this.renderComponent(song)
 
-      await fireEvent.click(getByText('Play'))
+      await this.user.click(screen.getByText('Play'))
 
       expect(queueMock).toHaveBeenCalledWith(song)
       expect(playMock).toHaveBeenCalledWith(song)
@@ -45,54 +45,54 @@ new class extends UnitTestCase {
 
     it('pauses playback', async () => {
       const pauseMock = this.mock(playbackService, 'pause')
-      const { getByText } = await this.renderComponent(factory<Song>('song', { playback_state: 'Playing' }))
+      await this.renderComponent(factory<Song>('song', { playback_state: 'Playing' }))
 
-      await fireEvent.click(getByText('Pause'))
+      await this.user.click(screen.getByText('Pause'))
 
       expect(pauseMock).toHaveBeenCalled()
     })
 
     it('resumes playback', async () => {
       const resumeMock = this.mock(playbackService, 'resume')
-      const { getByText } = await this.renderComponent(factory<Song>('song', { playback_state: 'Paused' }))
+      await this.renderComponent(factory<Song>('song', { playback_state: 'Paused' }))
 
-      await fireEvent.click(getByText('Play'))
+      await this.user.click(screen.getByText('Play'))
 
       expect(resumeMock).toHaveBeenCalled()
     })
 
     it('goes to album details screen', async () => {
       const goMock = this.mock(this.router, 'go')
-      const { getByText } = await this.renderComponent(factory<Song>('song'))
+      await this.renderComponent(factory<Song>('song'))
 
-      await fireEvent.click(getByText('Go to Album'))
+      await this.user.click(screen.getByText('Go to Album'))
 
       expect(goMock).toHaveBeenCalledWith(`album/${songs[0].album_id}`)
     })
 
     it('goes to artist details screen', async () => {
       const goMock = this.mock(this.router, 'go')
-      const { getByText } = await this.renderComponent(factory<Song>('song'))
+      await this.renderComponent(factory<Song>('song'))
 
-      await fireEvent.click(getByText('Go to Artist'))
+      await this.user.click(screen.getByText('Go to Artist'))
 
       expect(goMock).toHaveBeenCalledWith(`artist/${songs[0].artist_id}`)
     })
 
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromSongs')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Download'))
+      await this.user.click(screen.getByText('Download'))
 
       expect(downloadMock).toHaveBeenCalledWith(songs)
     })
 
     it('queues', async () => {
       const queueMock = this.mock(queueStore, 'queue')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Queue'))
+      await this.user.click(screen.getByText('Queue'))
 
       expect(queueMock).toHaveBeenCalledWith(songs)
     })
@@ -100,9 +100,9 @@ new class extends UnitTestCase {
     it('queues after current song', async () => {
       this.fillQueue()
       const queueMock = this.mock(queueStore, 'queueAfterCurrent')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('After Current Song'))
+      await this.user.click(screen.getByText('After Current Song'))
 
       expect(queueMock).toHaveBeenCalledWith(songs)
     })
@@ -110,9 +110,9 @@ new class extends UnitTestCase {
     it('queues to bottom', async () => {
       this.fillQueue()
       const queueMock = this.mock(queueStore, 'queue')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Bottom of Queue'))
+      await this.user.click(screen.getByText('Bottom of Queue'))
 
       expect(queueMock).toHaveBeenCalledWith(songs)
     })
@@ -120,9 +120,9 @@ new class extends UnitTestCase {
     it('queues to top', async () => {
       this.fillQueue()
       const queueMock = this.mock(queueStore, 'queueToTop')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Top of Queue'))
+      await this.user.click(screen.getByText('Top of Queue'))
 
       expect(queueMock).toHaveBeenCalledWith(songs)
     })
@@ -136,9 +136,9 @@ new class extends UnitTestCase {
         screen: 'Queue'
       })
 
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Remove from Queue'))
+      await this.user.click(screen.getByText('Remove from Queue'))
 
       expect(removeMock).toHaveBeenCalledWith(songs)
     })
@@ -151,16 +151,16 @@ new class extends UnitTestCase {
         screen: 'Songs'
       })
 
-      const { queryByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      expect(queryByText('Remove from Queue')).toBeNull()
+      expect(screen.queryByText('Remove from Queue')).toBeNull()
     })
 
     it('adds to favorites', async () => {
       const likeMock = this.mock(favoriteStore, 'like')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Favorites'))
+      await this.user.click(screen.getByText('Favorites'))
 
       expect(likeMock).toHaveBeenCalledWith(songs)
     })
@@ -171,9 +171,9 @@ new class extends UnitTestCase {
         screen: 'Favorites'
       })
 
-      const { queryByText } = await this.renderComponent()
+      this.renderComponent()
 
-      expect(queryByText('Favorites')).toBeNull()
+      expect(screen.queryByText('Favorites')).toBeNull()
     })
 
     it('removes from favorites', async () => {
@@ -184,9 +184,9 @@ new class extends UnitTestCase {
         screen: 'Favorites'
       })
 
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByText('Remove from Favorites'))
+      await this.user.click(screen.getByText('Remove from Favorites'))
 
       expect(unlikeMock).toHaveBeenCalledWith(songs)
     })
@@ -195,11 +195,11 @@ new class extends UnitTestCase {
       playlistStore.state.playlists = factory<Playlist>('playlist', 3)
       const addMock = this.mock(playlistStore, 'addSongs')
       this.mock(MessageToasterStub.value, 'success')
-      const { queryByText, getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      playlistStore.state.playlists.forEach(playlist => queryByText(playlist.name))
+      playlistStore.state.playlists.forEach(playlist => screen.queryByText(playlist.name))
 
-      await fireEvent.click(getByText(playlistStore.state.playlists[0].name))
+      await this.user.click(screen.getByText(playlistStore.state.playlists[0].name))
 
       expect(addMock).toHaveBeenCalledWith(playlistStore.state.playlists[0], songs)
     })
@@ -208,9 +208,9 @@ new class extends UnitTestCase {
       playlistStore.state.playlists = factory<Playlist>('playlist', 3)
       playlistStore.state.playlists.push(factory.states('smart')<Playlist>('playlist', { name: 'My Smart Playlist' }))
 
-      const { queryByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      expect(queryByText('My Smart Playlist')).toBeNull()
+      expect(screen.queryByText('My Smart Playlist')).toBeNull()
     })
 
     it('removes from playlist', async () => {
@@ -222,12 +222,12 @@ new class extends UnitTestCase {
         screen: 'Playlist'
       }, { id: String(playlist.id) })
 
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
       const removeSongsMock = this.mock(playlistStore, 'removeSongs')
       const emitMock = this.mock(eventBus, 'emit')
 
-      await fireEvent.click(getByText('Remove from Playlist'))
+      await this.user.click(screen.getByText('Remove from Playlist'))
 
       await waitFor(() => {
         expect(removeSongsMock).toHaveBeenCalledWith(playlist, songs)
@@ -241,41 +241,40 @@ new class extends UnitTestCase {
         screen: 'Songs'
       })
 
-      const { queryByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      expect(queryByText('Remove from Playlist')).toBeNull()
+      expect(screen.queryByText('Remove from Playlist')).toBeNull()
     })
 
     it('allows edit songs if current user is admin', async () => {
-      const { getByText } = await this.actingAsAdmin().renderComponent()
+      await this.actingAsAdmin().renderComponent()
 
       // mock after render to ensure that the component is mounted properly
       const emitMock = this.mock(eventBus, 'emit')
-      await fireEvent.click(getByText('Edit'))
+      await this.user.click(screen.getByText('Edit'))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', songs)
     })
 
     it('does not allow edit songs if current user is not admin', async () => {
-      const { queryByText } = await this.actingAs().renderComponent()
-      expect(queryByText('Edit')).toBeNull()
+      await this.actingAs().renderComponent()
+      expect(screen.queryByText('Edit')).toBeNull()
     })
 
     it('has an option to copy shareable URL', async () => {
-      const { getByText } = await this.renderComponent(factory<Song>('song'))
-
-      getByText('Copy Shareable URL')
+      await this.renderComponent(factory<Song>('song'))
+      screen.getByText('Copy Shareable URL')
     })
 
     it('deletes song', async () => {
       const confirmMock = this.mock(DialogBoxStub.value, 'confirm', true)
       const toasterMock = this.mock(MessageToasterStub.value, 'success')
       const deleteMock = this.mock(songStore, 'deleteFromFilesystem')
-      const { getByText } = await this.actingAsAdmin().renderComponent()
+      await this.actingAsAdmin().renderComponent()
 
       const emitMock = this.mock(eventBus, 'emit')
 
-      await fireEvent.click(getByText('Delete from Filesystem'))
+      await this.user.click(screen.getByText('Delete from Filesystem'))
 
       await waitFor(() => {
         expect(confirmMock).toHaveBeenCalled()
@@ -286,8 +285,8 @@ new class extends UnitTestCase {
     })
 
     it('does not have an option to delete songs if current user is not admin', async () => {
-      const { queryByText } = await this.actingAs().renderComponent()
-      expect(queryByText('Delete from Filesystem')).toBeNull()
+      await this.actingAs().renderComponent()
+      expect(screen.queryByText('Delete from Filesystem')).toBeNull()
     })
   }
 }

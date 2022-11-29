@@ -1,15 +1,15 @@
 <template>
   <ContextMenuBase ref="base" data-testid="artist-context-menu" extra-class="artist-menu">
     <template v-if="artist">
-      <li data-testid="play" @click="play">Play All</li>
-      <li data-testid="shuffle" @click="shuffle">Shuffle All</li>
+      <li @click="play">Play All</li>
+      <li @click="shuffle">Shuffle All</li>
       <template v-if="isStandardArtist">
         <li class="separator"></li>
-        <li data-testid="view-artist" @click="viewArtistDetails">Go to Artist</li>
+        <li @click="viewArtistDetails">Go to Artist</li>
       </template>
       <template v-if="isStandardArtist && allowDownload">
         <li class="separator"></li>
-        <li data-testid="download" @click="download">Download</li>
+        <li @click="download">Download</li>
       </template>
     </template>
   </ContextMenuBase>

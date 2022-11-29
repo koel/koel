@@ -3,13 +3,13 @@
 exports[`renders 1`] = `
 <nav class="album-menu menu context-menu" style="top: 42px; left: 420px;" tabindex="0" data-testid="album-context-menu" data-v-0408531a="">
   <ul data-v-0408531a="">
-    <li data-testid="play">Play All</li>
-    <li data-testid="shuffle">Shuffle All</li>
+    <li>Play All</li>
+    <li>Shuffle All</li>
     <li class="separator"></li>
-    <li data-testid="view-album">Go to Album</li>
-    <li data-testid="view-artist">Go to Artist</li>
+    <li>Go to Album</li>
+    <li>Go to Artist</li>
     <li class="separator"></li>
-    <li data-testid="download">Download</li>
+    <li>Download</li>
   </ul>
 </nav>
 `;

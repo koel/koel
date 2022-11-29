@@ -1,7 +1,7 @@
 import { expect, it, vi } from 'vitest'
+import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import MessageToast from './MessageToast.vue'
-import { fireEvent } from '@testing-library/vue'
 
 new class extends UnitTestCase {
   private renderComponent () {
@@ -21,8 +21,8 @@ new class extends UnitTestCase {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('dismisses upon click', async () => {
-      const { emitted, getByTitle } = this.renderComponent()
-      await fireEvent.click(getByTitle('Click to dismiss'))
+      const { emitted } = this.renderComponent()
+      await this.user.click(screen.getByTitle('Click to dismiss'))
 
       expect(emitted().dismiss).toBeTruthy()
     })

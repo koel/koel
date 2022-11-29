@@ -1,10 +1,10 @@
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify } from '@/utils'
 import { SelectedSongsKey, SongListConfigKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
+import { screen } from '@testing-library/vue'
 import SongList from './SongList.vue'
 
 let songs: Song[]
@@ -59,22 +59,22 @@ new class extends UnitTestCase {
       ['album_name', 'header-album'],
       ['length', 'header-length']
     ])('sorts by %s upon %s clicked', async (field, testId) => {
-      const { getByTestId, emitted } = await this.renderComponent(factory<Song>('song', 5))
+      const { emitted } = await this.renderComponent(factory<Song>('song', 5))
 
-      await fireEvent.click(getByTestId(testId))
+      await this.user.click(screen.getByTestId(testId))
       expect(emitted().sort[0]).toEqual([field, 'desc'])
 
-      await fireEvent.click(getByTestId(testId))
+      await this.user.click(screen.getByTestId(testId))
       expect(emitted().sort[1]).toEqual([field, 'asc'])
     })
 
     it('cannot be sorted if configured so', async () => {
-      const { getByTestId, emitted } = await this.renderComponent(factory<Song>('song', 5), {
+      const { emitted } = await this.renderComponent(factory<Song>('song', 5), {
         sortable: false,
         reorderable: true
       })
 
-      await fireEvent.click(getByTestId('header-track-number'))
+      await this.user.click(screen.getByTestId('header-track-number'))
       expect(emitted().sort).toBeUndefined()
     })
   }

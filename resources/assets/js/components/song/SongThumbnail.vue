@@ -1,14 +1,14 @@
 <template>
   <div :style="{ backgroundImage: `url(${defaultCover})` }" class="cover">
     <img v-koel-hide-broken-icon :alt="song.album_name" :src="song.album_cover" loading="lazy"/>
-    <a class="control" @click.prevent="changeSongState" data-testid="play-control">
+    <a :title="title" class="control" role="button" @click.prevent="changeSongState">
       <icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-highlight"/>
     </a>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { defaultCover } from '@/utils'
 import { playbackService } from '@/services'
@@ -21,6 +21,18 @@ const play = () => {
   queueStore.queueIfNotQueued(song.value)
   playbackService.play(song.value)
 }
+
+const title = computed(() => {
+  if (song.value.playback_state === 'Playing') {
+    return 'Pause'
+  }
+
+  if (song.value.playback_state === 'Paused') {
+    return 'Resume'
+  }
+
+  return 'Play'
+})
 
 const changeSongState = () => {
   if (song.value.playback_state === 'Stopped') {

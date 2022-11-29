@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import SettingsScreen from './SettingsScreen.vue'
 import { settingStore } from '@/stores'
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { DialogBoxStub } from '@/__tests__/stubs'
+import SettingsScreen from './SettingsScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -14,10 +14,10 @@ new class extends UnitTestCase {
       const goMock = this.mock(this.router, 'go')
 
       settingStore.state.media_path = ''
-      const { getByLabelText, getByText } = this.render(SettingsScreen)
+      this.render(SettingsScreen)
 
-      await fireEvent.update(getByLabelText('Media Path'), '/media')
-      await fireEvent.click(getByText('Scan'))
+      await this.type(screen.getByLabelText('Media Path'), '/media')
+      await this.user.click(screen.getByRole('button', { name: 'Scan' }))
 
       await waitFor(() => {
         expect(updateMock).toHaveBeenCalledWith({ media_path: '/media' })
@@ -31,10 +31,10 @@ new class extends UnitTestCase {
       const confirmMock = this.mock(DialogBoxStub.value, 'confirm')
 
       settingStore.state.media_path = '/old'
-      const { getByLabelText, getByText } = this.render(SettingsScreen)
+      this.render(SettingsScreen)
 
-      await fireEvent.update(getByLabelText('Media Path'), '/new')
-      await fireEvent.click(getByText('Scan'))
+      await this.type(screen.getByLabelText('Media Path'), '/new')
+      await this.user.click(screen.getByRole('button', { name: 'Scan' }))
 
       await waitFor(() => {
         expect(updateMock).not.toHaveBeenCalled()

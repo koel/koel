@@ -1,6 +1,6 @@
 import { ref } from 'vue'
-import { fireEvent, waitFor } from '@testing-library/vue'
-import { expect, it, vi } from 'vitest'
+import { screen, waitFor } from '@testing-library/vue'
+import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { playlistFolderStore } from '@/stores'
@@ -11,9 +11,8 @@ new class extends UnitTestCase {
   protected test () {
     it('submits', async () => {
       const folder = factory<PlaylistFolder>('playlist-folder', { name: 'My folder' })
-      const updateFolderNameMock = vi.fn()
       const renameMock = this.mock(playlistFolderStore, 'rename')
-      const { getByPlaceholderText, getByRole } = this.render(EditPlaylistFolderForm, {
+      this.render(EditPlaylistFolderForm, {
         global: {
           provide: {
             [<symbol>ModalContextKey]: [ref({ folder })]
@@ -21,8 +20,8 @@ new class extends UnitTestCase {
         }
       })
 
-      await fireEvent.update(getByPlaceholderText('Folder name'), 'Your folder')
-      await fireEvent.click(getByRole('button', { name: 'Save' }))
+      await this.type(screen.getByPlaceholderText('Folder name'), 'Your folder')
+      await this.user.click(screen.getByRole('button', { name: 'Save' }))
 
       await waitFor(() => {
         expect(renameMock).toHaveBeenCalledWith(folder, 'Your folder')

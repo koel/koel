@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import { preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SupportKoel from './SupportKoel.vue'
@@ -27,9 +27,7 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('shows after a delay', async () => {
-      expect((await this.renderComponent()).html()).toMatchSnapshot()
-    })
+    it('shows after a delay', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
     it('does not show if user so demands', async () => {
       preferenceStore.state.supportBarNoBugging = true
@@ -38,19 +36,17 @@ new class extends UnitTestCase {
     })
 
     it('hides', async () => {
-      const { getByTestId, queryByTestId } = await this.renderComponent()
+      await this.renderComponent()
+      await this.user.click(screen.getByRole('button', { name: 'Hide' }))
 
-      await fireEvent.click(getByTestId('hide-support-koel'))
-
-      expect(await queryByTestId('support-bar')).toBeNull()
+      expect(screen.queryByTestId('support-bar')).toBeNull()
     })
 
     it('hides and does not bug again', async () => {
-      const { getByTestId, queryByTestId } = await this.renderComponent()
+      await this.renderComponent()
+      await this.user.click(screen.getByRole('button', { name: 'Don\'t bug me again' }))
 
-      await fireEvent.click(getByTestId('stop-support-koel-bugging'))
-
-      expect(await queryByTestId('btn-stop-support-koel-bugging')).toBeNull()
+      expect(await screen.queryByTestId('support-bar')).toBeNull()
       expect(preferenceStore.state.supportBarNoBugging).toBe(true)
     })
   }

@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { fireEvent } from '@testing-library/vue'
+import { fireEvent, screen } from '@testing-library/vue'
 import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -7,7 +7,7 @@ import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 
 new class extends UnitTestCase {
   renderComponent (list: PlaylistLike) {
-    return this.render(PlaylistSidebarItem, {
+    this.render(PlaylistSidebarItem, {
       props: {
         list
       }
@@ -18,9 +18,9 @@ new class extends UnitTestCase {
     it('requests context menu if is playlist', async () => {
       const emitMock = this.mock(eventBus, 'emit')
       const playlist = factory<Playlist>('playlist')
-      const { getByTestId } = this.renderComponent(playlist)
+      this.renderComponent(playlist)
 
-      await fireEvent.contextMenu(getByTestId('playlist-sidebar-item'))
+      await fireEvent.contextMenu(screen.getByRole('listitem'))
 
       expect(emitMock).toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', expect.anything(), playlist)
     })
@@ -33,9 +33,9 @@ new class extends UnitTestCase {
       }
 
       const emitMock = this.mock(eventBus, 'emit')
-      const { getByTestId } = this.renderComponent(list)
+      this.renderComponent(list)
 
-      await fireEvent.contextMenu(getByTestId('playlist-sidebar-item'))
+      await fireEvent.contextMenu(screen.getByRole('listitem'))
 
       expect(emitMock).not.toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', list)
     })

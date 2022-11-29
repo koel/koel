@@ -1,12 +1,12 @@
 import { ref, Ref } from 'vue'
 import { expect, it } from 'vitest'
-import { fireEvent, waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { albumStore, artistStore, commonStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { CurrentSongKey } from '@/symbols'
-import ExtraPanel from './ExtraPanel.vue'
 import { eventBus } from '@/utils'
+import ExtraPanel from './ExtraPanel.vue'
 
 new class extends UnitTestCase {
   private renderComponent (songRef: Ref<Song | null> = ref(null)) {
@@ -32,8 +32,8 @@ new class extends UnitTestCase {
 
     it('sets the active tab to the preference', async () => {
       preferenceStore.activeExtraPanelTab = 'YouTube'
-      const { getByTestId } = this.renderComponent(ref(factory<Song>('song')))
-      const tab = getByTestId<HTMLElement>('extra-panel-youtube')
+      this.renderComponent(ref(factory<Song>('song')))
+      const tab = screen.getByTestId<HTMLElement>('extra-panel-youtube')
 
       expect(tab.style.display).toBe('none')
       await this.tick()
@@ -52,21 +52,21 @@ new class extends UnitTestCase {
 
       const songRef = ref<Song | null>(null)
 
-      const { getByTestId } = this.renderComponent(songRef)
+      this.renderComponent(songRef)
       songRef.value = song
 
       await waitFor(() => {
         expect(resolveArtistMock).toHaveBeenCalledWith(song.artist_id)
         expect(resolveAlbumMock).toHaveBeenCalledWith(song.album_id)
-        ;['lyrics', 'album-info', 'artist-info', 'youtube-video-list'].forEach(id => getByTestId(id))
+        ;['lyrics', 'album-info', 'artist-info', 'youtube-video-list'].forEach(id => screen.getByTestId(id))
       })
     })
 
     it('shows About Koel model', async () => {
       const emitMock = this.mock(eventBus, 'emit')
-      const { getByTitle } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getByTitle('About Koel'))
+      await this.user.click(screen.getByRole('button', { name: 'About Koel' }))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ABOUT_KOEL')
     })
@@ -75,15 +75,15 @@ new class extends UnitTestCase {
       it('shows new version', () => {
         commonStore.state.current_version = 'v1.0.0'
         commonStore.state.latest_version = 'v1.0.1'
-        this.actingAsAdmin().renderComponent().getByTitle('New version available!')
+        this.actingAsAdmin().renderComponent().getByRole('button', { name: 'New version available!' })
       })
     })
 
     it('logs out', async () => {
       const emitMock = this.mock(eventBus, 'emit')
-      const { getByTitle } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getByTitle('Log out'))
+      await this.user.click(screen.getByRole('button', { name: 'Log out' }))
 
       expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
     })

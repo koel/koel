@@ -1,7 +1,6 @@
 <template>
   <article
     :class="{ playing: song.playback_state === 'Playing' || song.playback_state === 'Paused' }"
-    data-testid="song-card"
     draggable="true"
     tabindex="0"
     @dragstart="onDragStart"

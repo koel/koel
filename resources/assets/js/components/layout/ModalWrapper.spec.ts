@@ -1,5 +1,5 @@
 import { it } from 'vitest'
-import { waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { Events } from '@/config'
@@ -20,7 +20,7 @@ new class extends UnitTestCase {
       ['edit-smart-playlist-form', 'MODAL_SHOW_EDIT_PLAYLIST_FORM', factory<Playlist>('playlist', { is_smart: true })],
       ['about-koel', 'MODAL_SHOW_ABOUT_KOEL', undefined]
     ])('shows %s modal', async (modalName, eventName, eventParams?: any) => {
-      const { getByTestId } = this.render(ModalWrapper, {
+      this.render(ModalWrapper, {
         global: {
           stubs: {
             AddUserForm: this.stub('add-user-form'),
@@ -39,7 +39,7 @@ new class extends UnitTestCase {
 
       eventBus.emit(eventName, eventParams)
 
-      await waitFor(() => getByTestId(modalName))
+      await waitFor(() => screen.getByTestId(modalName))
     })
   }
 }

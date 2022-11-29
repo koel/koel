@@ -1,8 +1,8 @@
+import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, songStore } from '@/stores'
-import { fireEvent } from '@testing-library/vue'
 import { mediaInfoService, playbackService } from '@/services'
 import AlbumInfoComponent from './AlbumInfo.vue'
 
@@ -40,44 +40,44 @@ new class extends UnitTestCase {
 
   protected test () {
     it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async (mode) => {
-      const { getByTestId, queryByTestId } = await this.renderComponent(mode)
+      await this.renderComponent(mode)
 
-      getByTestId('album-info-tracks')
+      screen.getByTestId('album-info-tracks')
 
       if (mode === 'aside') {
-        getByTestId('thumbnail')
+        screen.getByTestId('thumbnail')
       } else {
-        expect(queryByTestId('thumbnail')).toBeNull()
+        expect(screen.queryByTestId('thumbnail')).toBeNull()
       }
 
-      expect(getByTestId('album-info').classList.contains(mode)).toBe(true)
+      expect(screen.getByTestId('album-info').classList.contains(mode)).toBe(true)
     })
 
     it('triggers showing full wiki for aside mode', async () => {
-      const { getByTestId, queryByTestId } = await this.renderComponent('aside')
-      expect(queryByTestId('full')).toBeNull()
+      await this.renderComponent('aside')
+      expect(screen.queryByTestId('full')).toBeNull()
 
-      await fireEvent.click(getByTestId('more-btn'))
+      await this.user.click(screen.getByRole('button', { name: 'Full Wiki' }))
 
-      expect(queryByTestId('summary')).toBeNull()
-      expect(queryByTestId('full')).not.toBeNull()
+      expect(screen.queryByTestId('summary')).toBeNull()
+      screen.getByTestId('full')
     })
 
     it('shows full wiki for full mode', async () => {
-      const { queryByTestId } = await this.renderComponent('full')
+      await this.renderComponent('full')
 
-      expect(queryByTestId('full')).not.toBeNull()
-      expect(queryByTestId('summary')).toBeNull()
-      expect(queryByTestId('more-btn')).toBeNull()
+      screen.getByTestId('full')
+      expect(screen.queryByTestId('summary')).toBeNull()
+      expect(screen.queryByRole('button', { name: 'Full Wiki' })).toBeNull()
     })
 
     it('plays', async () => {
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      const { getByTitle } = await this.renderComponent()
+      await this.renderComponent()
 
-      await fireEvent.click(getByTitle('Play all songs in IV'))
+      await this.user.click(screen.getByTitle('Play all songs in IV'))
       await this.tick(2)
 
       expect(fetchMock).toHaveBeenCalledWith(album)

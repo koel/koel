@@ -3,9 +3,9 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { CurrentSongKey } from '@/symbols'
-import { fireEvent } from '@testing-library/vue'
 import { playbackService } from '@/services'
 import FooterPlaybackControls from './FooterPlaybackControls.vue'
+import { screen } from '@testing-library/vue'
 
 new class extends UnitTestCase {
   private renderComponent (song?: Song | null) {
@@ -27,7 +27,7 @@ new class extends UnitTestCase {
           PlayButton: this.stub('PlayButton')
         },
         provide: {
-          [CurrentSongKey]: ref(song)
+          [<symbol>CurrentSongKey]: ref(song)
         }
       }
     })
@@ -39,18 +39,18 @@ new class extends UnitTestCase {
 
     it('plays the previous song', async () => {
       const playMock = this.mock(playbackService, 'playPrev')
-      const { getByTitle } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getByTitle('Play previous song'))
+      await this.user.click(screen.getByRole('button', { name: 'Play previous song' }))
 
       expect(playMock).toHaveBeenCalled()
     })
 
     it('plays the next song', async () => {
       const playMock = this.mock(playbackService, 'playNext')
-      const { getByTitle } = this.renderComponent()
+      this.renderComponent()
 
-      await fireEvent.click(getByTitle('Play next song'))
+      await this.user.click(screen.getByRole('button', { name: 'Play next song' }))
 
       expect(playMock).toHaveBeenCalled()
     })

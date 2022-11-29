@@ -15,7 +15,7 @@
           <div v-if="showSummary" class="summary" data-testid="summary" v-html="info.bio.summary"/>
           <div v-if="showFull" class="full" data-testid="full" v-html="info.bio.full"/>
 
-          <button v-if="showSummary" class="more" data-testid="more-btn" @click.prevent="showingFullBio = true">
+          <button v-if="showSummary" class="more" @click.prevent="showingFullBio = true">
             Full Bio
           </button>
         </div>

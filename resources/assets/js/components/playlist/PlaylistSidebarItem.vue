@@ -3,7 +3,6 @@
     ref="el"
     :class="{ droppable }"
     class="playlist"
-    data-testid="playlist-sidebar-item"
     draggable="true"
     @contextmenu="onContextMenu"
     @dragleave="onDragLeave"

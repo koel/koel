@@ -5,6 +5,7 @@ import { eventBus } from '@/utils'
 import { downloadService, playbackService } from '@/services'
 import { commonStore, songStore } from '@/stores'
 import ArtistContextMenu from './ArtistContextMenu.vue'
+import { screen } from '@testing-library/vue'
 
 let artist: Artist
 
@@ -22,18 +23,15 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('renders', async () => {
-      const { html } = await this.renderComponent()
-      expect(html()).toMatchSnapshot()
-    })
+    it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
     it('plays all', async () => {
       const songs = factory<Song>('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      const { getByText } = await this.renderComponent()
-      await getByText('Play All').click()
+      await this.renderComponent()
+      await screen.getByText('Play All').click()
       await this.tick()
 
       expect(fetchMock).toHaveBeenCalledWith(artist)
@@ -45,8 +43,8 @@ new class extends UnitTestCase {
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      const { getByText } = await this.renderComponent()
-      await getByText('Shuffle All').click()
+      await this.renderComponent()
+      await screen.getByText('Shuffle All').click()
       await this.tick()
 
       expect(fetchMock).toHaveBeenCalledWith(artist)
@@ -56,40 +54,40 @@ new class extends UnitTestCase {
     it('downloads', async () => {
       const mock = this.mock(downloadService, 'fromArtist')
 
-      const { getByText } = await this.renderComponent()
-      await getByText('Download').click()
+      await this.renderComponent()
+      await screen.getByText('Download').click()
 
       expect(mock).toHaveBeenCalledWith(artist)
     })
 
     it('does not have an option to download if downloading is disabled', async () => {
       commonStore.state.allow_download = false
-      const { queryByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      expect(queryByText('Download')).toBeNull()
+      expect(screen.queryByText('Download')).toBeNull()
     })
 
     it('goes to artist', async () => {
       const mock = this.mock(this.router, 'go')
-      const { getByText } = await this.renderComponent()
+      await this.renderComponent()
 
-      await getByText('Go to Artist').click()
+      await screen.getByText('Go to Artist').click()
 
       expect(mock).toHaveBeenCalledWith(`artist/${artist.id}`)
     })
 
     it('does not have an option to download or go to Unknown Artist', async () => {
-      const { queryByTestId } = await this.renderComponent(factory.states('unknown')<Artist>('artist'))
+      await this.renderComponent(factory.states('unknown')<Artist>('artist'))
 
-      expect(queryByTestId('view-artist')).toBeNull()
-      expect(queryByTestId('download')).toBeNull()
+      expect(screen.queryByText('Go to Artist')).toBeNull()
+      expect(screen.queryByText('Download')).toBeNull()
     })
 
     it('does not have an option to download or go to Various Artist', async () => {
-      const { queryByTestId } = await this.renderComponent(factory.states('various')<Artist>('artist'))
+      await this.renderComponent(factory.states('various')<Artist>('artist'))
 
-      expect(queryByTestId('view-artist')).toBeNull()
-      expect(queryByTestId('download')).toBeNull()
+      expect(screen.queryByText('Go to Artist')).toBeNull()
+      expect(screen.queryByText('Download')).toBeNull()
     })
   }
 }
