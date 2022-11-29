@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Builders\SongBuilder;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
@@ -229,5 +230,14 @@ class SongRepository extends Repository
             ->limit($limit)
             ->inRandomOrder()
             ->get();
+    }
+
+    /**
+     * @param User $user
+     * @return SongBuilder
+     */
+    public function getSongsByPlaylist(User $user): SongBuilder
+    {
+        return Song::query()->withMeta($user);
     }
 }

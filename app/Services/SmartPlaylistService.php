@@ -6,6 +6,7 @@ use App\Exceptions\NonSmartPlaylistException;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\SongRepository;
 use App\Values\SmartPlaylistRule as Rule;
 use App\Values\SmartPlaylistRuleGroup as RuleGroup;
 use App\Values\SmartPlaylistSqlElements as SqlElements;
@@ -14,12 +15,17 @@ use Illuminate\Support\Collection;
 
 class SmartPlaylistService
 {
+    public function __construct(private SongRepository $songRepository)
+    {
+
+    }
+
     /** @return Collection|array<array-key, Song> */
     public function getSongs(Playlist $playlist, ?User $user = null): Collection
     {
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
-        $query = Song::query()->withMeta($user ?? $playlist->user);
+        $query = $this->songRepository->getSongsByPlaylist($user ?? $playlist->user);
 
         $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {
             $clause = $index === 0 ? 'where' : 'orWhere';
