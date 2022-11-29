@@ -93,15 +93,16 @@ class SongTest extends TestCase
         $this->putAs('/api/songs', [
             'songs' => $songIds,
             'data' => [
-                'title' => 'foo',
+                'title' => null,
                 'artist_name' => 'John Cena',
                 'album_name' => 'One by One',
-                'lyrics' => 'bar',
+                'lyrics' => null,
                 'track' => 9999,
             ],
         ], $user)
             ->assertOk();
 
+        /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::query()->whereIn('id', $songIds)->get();
 
         // All of these songs must now belong to a new album and artist set
@@ -112,6 +113,13 @@ class SongTest extends TestCase
         self::assertSame('John Cena', $songs[0]->artist->name);
         self::assertSame($songs[0]->artist_id, $songs[1]->artist_id);
         self::assertSame($songs[0]->artist_id, $songs[2]->artist_id);
+
+        self::assertNotSame($songs[0]->title, $songs[1]->title);
+        self::assertNotSame($songs[0]->lyrics, $songs[1]->lyrics);
+
+        self::assertSame(9999, $songs[0]->track);
+        self::assertSame(9999, $songs[1]->track);
+        self::assertSame(9999, $songs[2]->track);
     }
 
     public function testMultipleUpdateCreatingNewAlbumsAndArtists(): void
@@ -160,7 +168,6 @@ class SongTest extends TestCase
         /** @var Song $song */
         $song = Song::query()->first();
 
-
         $this->putAs('/api/songs', [
             'songs' => [$song->id],
             'data' => [
@@ -194,6 +201,32 @@ class SongTest extends TestCase
         ]);
 
         self::assertTrue($album->artist->is($albumArtist));
+    }
+
+    public function testUpdateSingleSongWithEmptyTrackAndDisc(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->admin()->create();
+
+        /** @var Song $song */
+        $song = Song::factory()->create([
+            'track' => 12,
+            'disc' => 2,
+        ]);
+
+        $this->putAs('/api/songs', [
+            'songs' => [$song->id],
+            'data' => [
+                'track' => null,
+                'disc' => null,
+            ],
+        ], $user)
+            ->assertOk();
+
+        $song->refresh();
+
+        self::assertSame(0, $song->track);
+        self::assertSame(1, $song->disc);
     }
 
     public function testDeletingByChunk(): void

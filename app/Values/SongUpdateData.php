@@ -31,7 +31,7 @@ final class SongUpdateData implements Arrayable
             track: (int) $request->input('data.track'),
             disc: (int) $request->input('data.disc'),
             genre: $request->input('data.genre'),
-            year: (int) $request->input('data.year') ?: null,
+            year: (int) $request->input('data.year'),
             lyrics: $request->input('data.lyrics'),
         );
     }
