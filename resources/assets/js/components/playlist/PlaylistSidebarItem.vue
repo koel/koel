@@ -11,23 +11,17 @@
     @drop="onDrop"
   >
     <a :class="{ active }" :href="url">
-      <icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-green" fixed-width/>
-      <icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width/>
-      <icon
-        v-else-if="list.is_smart"
-        :icon="faBoltLightning"
-        :mask="faFile"
-        fixed-width
-        transform="shrink-7 down-2"
-      />
-      <icon v-else :icon="faMusic" :mask="faFile" fixed-width transform="shrink-7 down-2"/>
+      <icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-green" fixed-width />
+      <icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width />
+      <icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
+      <icon v-else :icon="faFileLines" fixed-width />
       {{ list.name }}
     </a>
   </li>
 </template>
 
 <script lang="ts" setup>
-import { faBoltLightning, faClockRotateLeft, faFile, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons'
+import { faClockRotateLeft, faFileLines, faHeart, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 import { favoriteStore } from '@/stores'
