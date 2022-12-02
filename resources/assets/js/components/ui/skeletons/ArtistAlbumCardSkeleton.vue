@@ -1,11 +1,11 @@
 <template>
   <article class="skeleton" :class="layout">
-    <aside class="thumbnail pulse"/>
+    <aside class="thumbnail pulse" />
 
     <footer>
-      <p class="name pulse"/>
-      <p class="artist pulse"/>
-      <p class="meta pulse"/>
+      <p class="name pulse" />
+      <p class="artist pulse" />
+      <p class="meta pulse" />
     </footer>
   </article>
 </template>

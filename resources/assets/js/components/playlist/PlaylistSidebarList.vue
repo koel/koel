@@ -13,10 +13,10 @@
     </h1>
 
     <ul>
-      <PlaylistSidebarItem :list="{ name: 'Favorites', songs: favorites }"/>
-      <PlaylistSidebarItem :list="{ name: 'Recently Played', songs: [] }"/>
-      <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder"/>
-      <PlaylistSidebarItem v-for="playlist in orphanPlaylists" :key="playlist.id" :list="playlist"/>
+      <PlaylistSidebarItem :list="{ name: 'Favorites', songs: favorites }" />
+      <PlaylistSidebarItem :list="{ name: 'Recently Played', songs: [] }" />
+      <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
+      <PlaylistSidebarItem v-for="playlist in orphanPlaylists" :key="playlist.id" :list="playlist" />
     </ul>
   </section>
 </template>

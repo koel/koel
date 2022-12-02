@@ -2,20 +2,19 @@
   <section id="favoritesWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Songs You Love
-      <ControlsToggle v-model="showingControls"/>
+      <ControlsToggle v-model="showingControls" />
 
-      <template v-slot:thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails"/>
+      <template #thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails" />
       </template>
 
-      <template v-slot:meta v-if="songs.length">
+      <template v-if="songs.length" #meta>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
 
         <a
           v-if="allowDownload"
           class="download"
-          href
           role="button"
           title="Download all songs in playlist"
           @click.prevent="download"
@@ -24,16 +23,16 @@
         </a>
       </template>
 
-      <template v-slot:controls>
+      <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
-          @playAll="playAll"
-          @playSelected="playSelected"
+          @play-all="playAll"
+          @play-selected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongListSkeleton v-if="loading"/>
+    <SongListSkeleton v-if="loading" />
     <SongList
       v-if="songs.length"
       ref="songList"
@@ -44,13 +43,13 @@
     />
 
     <ScreenEmptyState v-else>
-      <template v-slot:icon>
-        <icon :icon="faHeartBroken"/>
+      <template #icon>
+        <icon :icon="faHeartBroken" />
       </template>
       No favorites yet.
       <span class="secondary d-block">
         Click the&nbsp;
-        <icon :icon="faHeart"/>&nbsp;
+        <icon :icon="faHeart" />&nbsp;
         icon to mark a song as favorite.
       </span>
     </ScreenEmptyState>

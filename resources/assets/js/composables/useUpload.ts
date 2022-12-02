@@ -9,7 +9,7 @@ import { useAuthorization, useMessageToaster, useRouter } from '@/composables'
 export const useUpload = () => {
   const { isAdmin } = useAuthorization()
   const { toastSuccess, toastWarning } = useMessageToaster()
-  const { go, isCurrentRoute } = useRouter()
+  const { go, isCurrentScreen } = useRouter()
 
   const mediaPath = toRef(settingStore.state, 'media_path')
 
@@ -45,7 +45,7 @@ export const useUpload = () => {
 
     if (queuedFiles.length) {
       toastSuccess(`Queued ${pluralize(queuedFiles, 'file')} for upload`)
-      isCurrentRoute('Upload') || go('upload')
+      isCurrentScreen('Upload') || go('upload')
     } else {
       toastWarning('No files applicable for upload')
     }

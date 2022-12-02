@@ -1,16 +1,16 @@
 <template>
   <section id="artistWrapper">
-    <ScreenHeaderSkeleton v-if="loading"/>
+    <ScreenHeaderSkeleton v-if="loading" />
 
     <ScreenHeader v-if="!loading && artist" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ artist.name }}
-      <ControlsToggle v-model="showingControls"/>
+      <ControlsToggle v-model="showingControls" />
 
-      <template v-slot:thumbnail>
-        <ArtistThumbnail :entity="artist"/>
+      <template #thumbnail>
+        <ArtistThumbnail :entity="artist" />
       </template>
 
-      <template v-slot:meta>
+      <template #meta>
         <span>{{ pluralize(albumCount, 'album') }}</span>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
@@ -18,7 +18,6 @@
         <a
           v-if="allowDownload"
           class="download"
-          href
           role="button"
           title="Download all songs by this artist"
           @click.prevent="download"
@@ -27,11 +26,11 @@
         </a>
       </template>
 
-      <template v-slot:controls>
+      <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
-          @playAll="playAll"
-          @playSelected="playSelected"
+          @play-all="playAll"
+          @play-selected="playSelected"
         />
       </template>
     </ScreenHeader>
@@ -40,20 +39,20 @@
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
-          <input type="radio" name="tab" value="Songs" v-model="activeTab"/>
+          <input v-model="activeTab" type="radio" name="tab" value="Songs">
         </label>
         <label :class="{ active: activeTab === 'Albums' }">
           Albums
-          <input type="radio" name="tab" value="Albums" v-model="activeTab"/>
+          <input v-model="activeTab" type="radio" name="tab" value="Albums">
         </label>
-        <label :class="{ active: activeTab === 'Info' }" v-if="useLastfm">
+        <label v-if="useLastfm" :class="{ active: activeTab === 'Info' }">
           Information
-          <input type="radio" name="tab" value="Info" v-model="activeTab"/>
+          <input v-model="activeTab" type="radio" name="tab" value="Info">
         </label>
       </template>
 
       <div v-show="activeTab === 'Songs'" class="songs-pane">
-        <SongListSkeleton v-if="loading"/>
+        <SongListSkeleton v-if="loading" />
         <SongList
           v-else
           ref="songList"
@@ -66,18 +65,18 @@
       <div v-show="activeTab === 'Albums'" class="albums-pane">
         <ul v-if="albums" class="as-list">
           <li v-for="album in albums" :key="album.id">
-            <AlbumCard :album="album" layout="compact"/>
+            <AlbumCard :album="album" layout="compact" />
           </li>
         </ul>
         <ul v-else class="as-list">
           <li v-for="i in 12" :key="i">
-            <AlbumCardSkeleton layout="compact"/>
+            <AlbumCardSkeleton layout="compact" />
           </li>
         </ul>
       </div>
 
-      <div v-show="activeTab === 'Info'" class="info-pane" v-if="useLastfm && artist">
-        <ArtistInfo :artist="artist" mode="full"/>
+      <div v-show="activeTab === 'Info'" v-if="useLastfm && artist" class="info-pane">
+        <ArtistInfo :artist="artist" mode="full" />
       </div>
     </ScreenTabs>
   </section>

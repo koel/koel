@@ -1,11 +1,11 @@
 <template>
   <header class="skeleton screen-header expanded">
-    <aside class="thumbnail-wrapper pulse"/>
+    <aside class="thumbnail-wrapper pulse" />
 
     <main>
-      <h1 class="pulse"/>
-      <p class="meta pulse"/>
-      <p class="controls pulse"/>
+      <h1 class="pulse" />
+      <p class="meta pulse" />
+      <p class="controls pulse" />
     </main>
   </header>
 </template>

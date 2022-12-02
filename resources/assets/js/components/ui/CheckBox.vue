@@ -1,7 +1,7 @@
 <template>
   <span>
     <input :checked="checked" type="checkbox" v-bind="$attrs" @input="onInput">
-    <icon :icon="faCheck" v-if="checked"/>
+    <icon v-if="checked" :icon="faCheck" />
   </span>
 </template>
 
@@ -17,7 +17,7 @@ const checked = ref(props.modelValue)
 
 const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
-const onInput = (event: InputEvent) => {
+const onInput = (event: Event) => {
   checked.value = (event.target as HTMLInputElement).checked
   emit('update:modelValue', checked.value)
 }

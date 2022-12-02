@@ -1,5 +1,5 @@
 <template>
-  <icon :icon="faCircleQuestion" :title="title" class="help-trigger text-blue"/>
+  <icon :icon="faCircleQuestion" :title="title" class="help-trigger text-blue" />
 </template>
 
 <script lang="ts" setup>

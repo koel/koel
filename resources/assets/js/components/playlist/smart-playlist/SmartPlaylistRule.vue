@@ -1,11 +1,11 @@
 <template>
   <div class="row" data-testid="smart-playlist-rule-row">
     <Btn class="remove-rule" red title="Remove this rule" @click.prevent="removeRule">
-      <icon :icon="faTrashCan"/>
+      <icon :icon="faTrashCan" />
     </Btn>
 
     <select v-model="selectedModel" name="model[]">
-      <option v-for="model in models" :key="model.name" :value="model">{{ model.label }}</option>
+      <option v-for="m in models" :key="m.name" :value="m">{{ model.label }}</option>
     </select>
 
     <select v-model="selectedOperator" name="operator[]">
@@ -17,9 +17,9 @@
         v-for="input in availableInputs"
         :key="input.id"
         v-model="input.value"
-        :type="selectedOperator?.type || selectedModel?.type"
+        :type="(selectedOperator?.type || selectedModel?.type)!"
         :value="input.value"
-        @update:modelValue="onInput"
+        @update:model-value="onInput"
       />
 
       <span v-if="valueSuffix" class="suffix">{{ valueSuffix }}</span>
@@ -39,7 +39,7 @@ const RuleInput = defineAsyncComponent(() => import('@/components/playlist/smart
 const props = defineProps<{ rule: SmartPlaylistRule }>()
 const { rule } = toRefs(props)
 
-const mutatedRule = Object.assign({}, rule.value)
+const mutatedRule = Object.assign({}, rule.value) as SmartPlaylistRule
 
 const selectedModel = ref<SmartPlaylistModel>()
 const selectedOperator = ref<SmartPlaylistOperator>()
@@ -104,8 +104,8 @@ const emit = defineEmits<{
 const onInput = () => {
   emit('input', {
     id: mutatedRule.id,
-    model: selectedModel.value,
-    operator: selectedOperator.value?.operator,
+    model: selectedModel.value!,
+    operator: selectedOperator.value?.operator!,
     value: availableInputs.value.map(input => input.value)
   })
 }

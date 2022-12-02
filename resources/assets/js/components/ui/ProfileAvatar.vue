@@ -6,7 +6,7 @@
     href="/#/profile"
     title="Profile and preferences"
   >
-    <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar"/>
+    <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar">
   </a>
 </template>
 

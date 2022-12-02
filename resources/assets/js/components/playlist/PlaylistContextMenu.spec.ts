@@ -7,8 +7,8 @@ import PlaylistContextMenu from './PlaylistContextMenu.vue'
 
 new class extends UnitTestCase {
   private async renderComponent (playlist: Playlist) {
-    await this.render(PlaylistContextMenu)
-    eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 }, playlist)
+    this.render(PlaylistContextMenu)
+    eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playlist)
     await this.tick(2)
   }
 

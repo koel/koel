@@ -1,11 +1,11 @@
 <template>
   <footer id="mainFooter" @contextmenu.prevent="requestContextMenu">
-    <AudioPlayer/>
+    <AudioPlayer />
 
     <div class="wrapper">
-      <SongInfo/>
-      <PlaybackControls/>
-      <ExtraControls/>
+      <SongInfo />
+      <PlaybackControls />
+      <ExtraControls />
     </div>
   </footer>
 </template>

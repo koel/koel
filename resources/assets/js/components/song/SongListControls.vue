@@ -11,7 +11,7 @@
               title="Play all songs"
               @click.prevent="playAll"
             >
-              <icon :icon="faPlay" fixed-width/>
+              <icon :icon="faPlay" fixed-width />
               All
             </Btn>
 
@@ -22,7 +22,7 @@
               title="Play selected songs"
               @click.prevent="playSelected"
             >
-              <icon :icon="faPlay" fixed-width/>
+              <icon :icon="faPlay" fixed-width />
               Selected
             </Btn>
           </template>
@@ -36,7 +36,7 @@
               title="Shuffle all songs"
               @click.prevent="shuffle"
             >
-              <icon :icon="faRandom" fixed-width/>
+              <icon :icon="faRandom" fixed-width />
               All
             </Btn>
 
@@ -48,7 +48,7 @@
               title="Shuffle selected songs"
               @click.prevent="shuffleSelected"
             >
-              <icon :icon="faRandom" fixed-width/>
+              <icon :icon="faRandom" fixed-width />
               Selected
             </Btn>
           </template>
@@ -63,7 +63,7 @@
 
       <BtnGroup>
         <Btn v-if="config.refresh" v-koel-tooltip green title="Refresh" @click.prevent="refresh">
-          <icon :icon="faRotateRight" fixed-width/>
+          <icon :icon="faRotateRight" fixed-width />
         </Btn>
 
         <Btn
@@ -74,13 +74,13 @@
           title="Delete this playlist"
           @click.prevent="deletePlaylist"
         >
-          <icon :icon="faTrashCan"/>
+          <icon :icon="faTrashCan" />
         </Btn>
       </BtnGroup>
     </div>
 
     <div ref="addToMenu" v-koel-clickaway="closeAddToMenu" class="menu-wrapper">
-      <AddToMenu :config="mergedConfig.addTo" :songs="selectedSongs" @closing="closeAddToMenu"/>
+      <AddToMenu :config="mergedConfig.addTo" :songs="selectedSongs" @closing="closeAddToMenu" />
     </div>
   </div>
 </template>
@@ -103,7 +103,7 @@ const [songs] = requireInjection<[Ref<Song[]>]>(SongsKey)
 const [selectedSongs] = requireInjection(SelectedSongsKey)
 
 const el = ref<HTMLElement>()
-const addToButton = ref<InstanceType<Btn>>()
+const addToButton = ref<InstanceType<typeof Btn>>()
 const addToMenu = ref<HTMLDivElement>()
 const showingAddToMenu = ref(false)
 const altPressed = ref(false)
@@ -147,7 +147,7 @@ watch(showAddToButton, async showingButton => {
   await nextTick()
 
   if (showingButton) {
-    usedFloatingUi = useFloatingUi(addToButton.value.button, addToMenu, { autoTrigger: false })
+    usedFloatingUi = useFloatingUi(addToButton.value!.button!, addToMenu, { autoTrigger: false })
     usedFloatingUi.setup()
   } else {
     usedFloatingUi?.teardown()

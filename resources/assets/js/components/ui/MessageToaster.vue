@@ -1,7 +1,7 @@
 <template>
   <TransitionGroup name="toast" tag="ul">
     <li v-for="message in messages" :key="message.id">
-      <MessageToast :message="message" @dismiss="removeMessage(message)"/>
+      <MessageToast :message="message" @dismiss="removeMessage(message)" />
     </li>
   </TransitionGroup>
 </template>

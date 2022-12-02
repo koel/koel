@@ -40,14 +40,14 @@
           type="password"
         >
         <span class="password-rules help">
-            Min. 10 characters. Should be a mix of characters, numbers, and symbols.
-          </span>
+          Min. 10 characters. Should be a mix of characters, numbers, and symbols.
+        </span>
       </label>
     </div>
 
     <div class="form-row">
       <Btn class="btn-submit" type="submit">Save</Btn>
-      <span v-if="isDemo" class="demo-notice">
+      <span v-if="isDemo()" class="demo-notice">
         Changes will not be saved in the demo version.
       </span>
     </div>

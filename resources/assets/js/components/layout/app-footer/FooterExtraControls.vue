@@ -8,7 +8,7 @@
         href="/#/visualizer"
         title="Show the visualizer"
       >
-        <icon :icon="faBolt"/>
+        <icon :icon="faBolt" />
       </a>
 
       <button
@@ -20,10 +20,10 @@
         type="button"
         @click.prevent="showEqualizer"
       >
-        <icon :icon="faSliders"/>
+        <icon :icon="faSliders" />
       </button>
 
-      <Volume/>
+      <Volume />
     </div>
   </div>
 </template>

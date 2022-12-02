@@ -10,15 +10,15 @@
     </div>
 
     <Rule
+      v-for="rule in mutatedGroup.rules"
       :key="rule.id"
       :rule="rule"
       @input="onRuleChanged"
       @remove="removeRule(rule)"
-      v-for="rule in mutatedGroup.rules"
     />
 
-    <Btn @click.prevent="addRule" class="btn-add-rule" green small uppercase>
-      <icon :icon="faPlus"/>
+    <Btn class="btn-add-rule" green small uppercase @click.prevent="addRule">
+      <icon :icon="faPlus" />
       Rule
     </Btn>
   </div>
@@ -44,7 +44,7 @@ const notifyParentForUpdate = () => emit('input', mutatedGroup)
 const addRule = () => mutatedGroup.rules.push(playlistStore.createEmptySmartPlaylistRule())
 
 const onRuleChanged = (data: SmartPlaylistRule) => {
-  Object.assign(mutatedGroup.rules.find(r => r.id === data.id), data)
+  Object.assign(mutatedGroup.rules.find(r => r.id === data.id)!, data)
   notifyParentForUpdate()
 }
 

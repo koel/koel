@@ -1,6 +1,6 @@
 <template>
   <span class="btn-group">
-    <slot></slot>
+    <slot />
   </span>
 </template>
 

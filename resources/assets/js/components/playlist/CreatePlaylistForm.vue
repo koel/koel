@@ -20,8 +20,8 @@
         <label class="folder">
           Folder
           <select v-model="folderId">
-            <option :value="null"></option>
-            <option v-for="folder in folders" :value="folder.id">{{ folder.name }}</option>
+            <option :value="null" />
+            <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
           </select>
         </label>
       </div>

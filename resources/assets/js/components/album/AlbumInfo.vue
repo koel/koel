@@ -3,24 +3,24 @@
     <h1 v-if="mode === 'aside'" class="name">
       <span>{{ album.name }}</span>
       <button :title="`Play all songs in ${album.name}`" class="control" type="button" @click.prevent="play">
-        <icon :icon="faCirclePlay" size="xl"/>
+        <icon :icon="faCirclePlay" size="xl" />
       </button>
     </h1>
 
     <main>
-      <AlbumThumbnail v-if="mode === 'aside'" :entity="album"/>
+      <AlbumThumbnail v-if="mode === 'aside'" :entity="album" />
 
       <template v-if="info">
         <div v-if="info.wiki?.summary" class="wiki">
-          <div v-if="showSummary" class="summary" data-testid="summary" v-html="info.wiki.summary"/>
-          <div v-if="showFull" class="full" data-testid="full" v-html="info.wiki.full"/>
+          <div v-if="showSummary" class="summary" data-testid="summary" v-html="info.wiki.summary" />
+          <div v-if="showFull" class="full" data-testid="full" v-html="info.wiki.full" />
 
           <button v-if="showSummary" class="more" @click.prevent="showingFullWiki = true">
             Full Wiki
           </button>
         </div>
 
-        <TrackList v-if="info.tracks?.length" :album="album" :tracks="info.tracks" data-testid="album-info-tracks"/>
+        <TrackList v-if="info.tracks?.length" :album="album" :tracks="info.tracks" data-testid="album-info-tracks" />
 
         <footer>
           Data &copy;

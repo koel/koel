@@ -4,13 +4,13 @@
 
     <ol v-if="loading" class="two-cols top-album-list">
       <li v-for="i in 4" :key="i">
-        <AlbumCardSkeleton layout="compact"/>
+        <AlbumCardSkeleton layout="compact" />
       </li>
     </ol>
     <template v-else>
       <ol v-if="albums.length" class="two-cols top-album-list">
         <li v-for="album in albums" :key="album.id">
-          <AlbumCard :album="album" layout="compact"/>
+          <AlbumCard :album="album" layout="compact" />
         </li>
       </ol>
       <p v-else class="text-secondary">No albums found.</p>

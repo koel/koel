@@ -4,8 +4,8 @@
 
     <div class="main-scroll-wrap" @scroll="scrolling">
       <ScreenEmptyState v-if="libraryEmpty">
-        <template v-slot:icon>
-          <icon :icon="faVolumeOff"/>
+        <template #icon>
+          <icon :icon="faVolumeOff" />
         </template>
         No songs found.
         <span class="secondary d-block">
@@ -15,19 +15,19 @@
 
       <template v-else>
         <div class="two-cols">
-          <MostPlayedSongs data-testid="most-played-songs" :loading="loading"/>
-          <RecentlyPlayedSongs data-testid="recently-played-songs" :loading="loading"/>
+          <MostPlayedSongs data-testid="most-played-songs" :loading="loading" />
+          <RecentlyPlayedSongs data-testid="recently-played-songs" :loading="loading" />
         </div>
 
         <div class="two-cols">
-          <RecentlyAddedAlbums data-testid="recently-added-albums" :loading="loading"/>
-          <RecentlyAddedSongs data-testid="recently-added-songs" :loading="loading"/>
+          <RecentlyAddedAlbums data-testid="recently-added-albums" :loading="loading" />
+          <RecentlyAddedSongs data-testid="recently-added-songs" :loading="loading" />
         </div>
 
-        <MostPlayedArtists data-testid="most-played-artists" :loading="loading"/>
-        <MostPlayedAlbums data-testid="most-played-albums" :loading="loading"/>
+        <MostPlayedArtists data-testid="most-played-artists" :loading="loading" />
+        <MostPlayedAlbums data-testid="most-played-albums" :loading="loading" />
 
-        <ToTopButton/>
+        <ToTopButton />
       </template>
     </div>
   </section>

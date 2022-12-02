@@ -3,10 +3,10 @@
     <ScreenHeader>Profile &amp; Preferences</ScreenHeader>
 
     <div class="main-scroll-wrap">
-      <ProfileForm/>
-      <ThemeList/>
-      <PreferencesForm/>
-      <LastfmIntegration/>
+      <ProfileForm />
+      <ThemeList />
+      <PreferencesForm />
+      <LastfmIntegration />
     </div>
   </section>
 </template>
@@ -16,7 +16,8 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ProfileForm from '@/components/profile-preferences/ProfileForm.vue'
 import LastfmIntegration from '@/components/profile-preferences/LastfmIntegration.vue'
 import PreferencesForm from '@/components/profile-preferences/PreferencesForm.vue'
-import ThemeList from '@/components/profile-preferences/ThemeList.vue'</script>
+import ThemeList from '@/components/profile-preferences/ThemeList.vue'
+</script>
 
 <style lang="scss">
 #profileWrapper {

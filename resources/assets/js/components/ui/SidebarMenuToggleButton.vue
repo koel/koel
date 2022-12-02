@@ -1,6 +1,6 @@
 <template>
   <button @click.prevent.stop="toggleSidebar">
-    <icon :icon="faBars"/>
+    <icon :icon="faBars" />
   </button>
 </template>
 

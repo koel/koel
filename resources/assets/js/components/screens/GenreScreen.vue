@@ -1,25 +1,25 @@
 <template>
   <section id="genreWrapper">
-    <ScreenHeader :layout="headerLayout" v-if="genre">
-      Genre: <span class="text-thin">{{ decodeURIComponent(name) }}</span>
-      <ControlsToggle v-if="songs.length" v-model="showingControls"/>
+    <ScreenHeader v-if="genre" :layout="headerLayout">
+      Genre: <span class="text-thin">{{ decodeURIComponent(name!) }}</span>
+      <ControlsToggle v-if="songs.length" v-model="showingControls" />
 
-      <template v-slot:thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails"/>
+      <template #thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails" />
       </template>
 
-      <template v-if="genre" v-slot:meta>
+      <template v-if="genre" #meta>
         <span>{{ pluralize(genre.song_count, 'song') }}</span>
         <span>{{ duration }}</span>
       </template>
 
-      <template v-slot:controls>
-        <SongListControls v-if="!isPhone || showingControls" @playAll="playAll" @playSelected="playSelected"/>
+      <template #controls>
+        <SongListControls v-if="!isPhone || showingControls" @play-all="playAll" @play-selected="playSelected" />
       </template>
     </ScreenHeader>
-    <ScreenHeaderSkeleton v-else/>
+    <ScreenHeaderSkeleton v-else />
 
-    <SongListSkeleton v-if="showSkeletons"/>
+    <SongListSkeleton v-if="showSkeletons" />
     <SongList
       v-else
       ref="songList"
@@ -30,8 +30,8 @@
     />
 
     <ScreenEmptyState v-if="!songs.length && !loading">
-      <template v-slot:icon>
-        <icon :icon="faTags"/>
+      <template #icon>
+        <icon :icon="faTags" />
       </template>
 
       No songs in this genre.

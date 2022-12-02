@@ -1,10 +1,10 @@
 <template>
   <article class="skeleton">
-    <aside class="pulse"/>
+    <aside class="pulse" />
     <main>
       <div class="details">
-        <h3 class="pulse"/>
-        <p class="pulse"/>
+        <h3 class="pulse" />
+        <p class="pulse" />
       </div>
     </main>
   </article>

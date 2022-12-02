@@ -2,18 +2,17 @@
   <section v-if="playlist" id="playlistWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout" :disabled="loading">
       {{ playlist.name }}
-      <ControlsToggle v-if="songs.length" v-model="showingControls"/>
+      <ControlsToggle v-if="songs.length" v-model="showingControls" />
 
-      <template v-slot:thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails"/>
+      <template #thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails" />
       </template>
 
-      <template v-if="songs.length" v-slot:meta>
+      <template v-if="songs.length" #meta>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
         <a
           v-if="allowDownload"
-          href
           role="button"
           title="Download all songs in playlist"
           @click.prevent="download"
@@ -22,19 +21,19 @@
         </a>
       </template>
 
-      <template v-slot:controls>
+      <template #controls>
         <SongListControls
           v-if="!isPhone || showingControls"
           :config="controlsConfig"
-          @deletePlaylist="destroy"
-          @playAll="playAll"
-          @playSelected="playSelected"
+          @delete-playlist="destroy"
+          @play-all="playAll"
+          @play-selected="playSelected"
           @refresh="fetchSongs(true)"
         />
       </template>
     </ScreenHeader>
 
-    <SongListSkeleton v-show="loading"/>
+    <SongListSkeleton v-show="loading" />
     <SongList
       v-if="!loading && songs.length"
       ref="songList"
@@ -45,8 +44,8 @@
     />
 
     <ScreenEmptyState v-if="!songs.length && !loading">
-      <template v-slot:icon>
-        <icon :icon="faFile"/>
+      <template #icon>
+        <icon :icon="faFile" />
       </template>
 
       <template v-if="playlist?.is_smart">
@@ -111,9 +110,9 @@ const { removeSongsFromPlaylist } = usePlaylistManagement()
 
 const allowDownload = toRef(commonStore.state, 'allow_download')
 
-const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value)
+const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value!)
 const download = () => downloadService.fromPlaylist(playlist.value!)
-const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value)
+const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!)
 
 const removeSelected = async () => await removeSongsFromPlaylist(playlist.value!, selectedSongs.value)
 

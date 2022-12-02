@@ -1,10 +1,10 @@
 <template>
   <span>
     <button title="Zoom out" type="button" @click.prevent="$emit('out')">
-      <icon :icon="faSearchMinus"/>
+      <icon :icon="faSearchMinus" />
     </button>
     <button title="Zoom in" type="button" @click.prevent="$emit('in')">
-      <icon :icon="faSearchPlus"/>
+      <icon :icon="faSearchPlus" />
     </button>
   </span>
 </template>

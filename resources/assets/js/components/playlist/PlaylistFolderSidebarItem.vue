@@ -2,18 +2,18 @@
   <li
     class="playlist-folder"
     :class="{ droppable }"
+    tabindex="0"
     @dragleave="onDragLeave"
     @dragover="onDragOver"
     @drop="onDrop"
-    tabindex="0"
   >
     <a @click.prevent="toggle" @contextmenu.prevent="onContextMenu">
-      <icon :icon="opened ? faFolderOpen : faFolder" fixed-width/>
+      <icon :icon="opened ? faFolderOpen : faFolder" fixed-width />
       {{ folder.name }}
     </a>
 
     <ul v-if="playlistsInFolder.length" v-show="opened">
-      <PlaylistSidebarItem v-for="playlist in playlistsInFolder" :key="playlist.id" :list="playlist" class="sub-item"/>
+      <PlaylistSidebarItem v-for="playlist in playlistsInFolder" :key="playlist.id" :list="playlist" class="sub-item" />
     </ul>
 
     <div

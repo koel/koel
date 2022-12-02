@@ -4,7 +4,7 @@
 
     <ul class="tracks">
       <li v-for="(track, index) in tracks" :key="index" data-testid="album-track-item">
-        <TrackListItem :album="album" :track="track"/>
+        <TrackListItem :album="album" :track="track" />
       </li>
     </ul>
   </section>
@@ -22,6 +22,7 @@ const { album, tracks } = toRefs(props)
 
 const songs = ref<Song[]>([])
 
+// @ts-ignore
 provide(SongsKey, songs)
 
 onMounted(async () => songs.value = await songStore.fetchForAlbum(album.value))

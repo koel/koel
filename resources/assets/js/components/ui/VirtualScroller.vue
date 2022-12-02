@@ -3,7 +3,7 @@
     <div :style="{ height: `${totalHeight}px` }">
       <div :style="{ transform: `translateY(${offsetY}px)`}">
         <template v-for="item in renderedItems">
-          <slot :item="item"></slot>
+          <slot :item="item" />
         </template>
       </div>
     </div>

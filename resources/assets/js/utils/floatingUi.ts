@@ -6,13 +6,14 @@ export const updateFloatingUi = async (
   options: Partial<ComputePositionConfig>,
   arrow?: HTMLElement
 ) => {
+  options.placement = options.placement || 'bottom'
   const { x, y, middlewareData } = await computePosition(reference, floating, options)
 
   floating.style.left = `${x}px`
   floating.style.top = `${y}px`
 
   if (arrow) {
-    const { x: arrowX, y: arrowY } = middlewareData.arrow
+    const { x: arrowX, y: arrowY } = middlewareData.arrow!
 
     const staticSide = {
       top: 'bottom',
@@ -26,8 +27,7 @@ export const updateFloatingUi = async (
       top: arrowY != null ? `${arrowY}px` : '',
       right: '',
       bottom: '',
-      [staticSide]: '-4px'
+      [staticSide!]: '-4px'
     })
   }
 }
-

@@ -21,13 +21,9 @@ interface Plyr {
   media: HTMLMediaElement
 
   restart (): void
-
   play (): void
-
   pause (): void
-
   seek (position: number): void
-
   setVolume (volume: number): void
 }
 
@@ -174,7 +170,14 @@ interface SmartPlaylistOperator {
 
 interface SmartPlaylistRule {
   id: number
-  model: SmartPlaylistModel | SmartPlaylistModel['name']
+  model: SmartPlaylistModel
+  operator: SmartPlaylistOperator['operator']
+  value: any[]
+}
+
+interface SerializedSmartPlaylistRule {
+  id: number
+  model: SmartPlaylistModel['name']
   operator: SmartPlaylistOperator['operator']
   value: any[]
 }
@@ -255,7 +258,7 @@ interface Interaction {
 interface EqualizerBandElement extends HTMLElement {
   noUiSlider: {
     destroy (): void
-    on (eventName: 'change' | 'slide', handler: (value: string[], handle: number) => unknown): void
+    on (eventName: 'change' | 'slide', handler: (value: string[], handle: number) => void): void
     set (options: number | any[]): void
   }
 

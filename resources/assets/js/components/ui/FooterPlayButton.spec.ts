@@ -55,7 +55,11 @@ new class extends UnitTestCase {
       })
     })
 
-    it.each<[ScreenName, object, string]>([
+    it.each<[
+      ScreenName,
+      typeof favoriteStore | typeof recentlyPlayedStore,
+      MethodOf<typeof favoriteStore | typeof recentlyPlayedStore>
+    ]>([
       ['Favorites', favoriteStore, 'fetch'],
       ['RecentlyPlayed', recentlyPlayedStore, 'fetch']
     ])('initiates playback for %s screen', async (screenName, store, fetchMethod) => {

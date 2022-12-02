@@ -3,17 +3,17 @@
     <h1 v-if="mode === 'aside'" class="name">
       <span>{{ artist.name }}</span>
       <button :title="`Play all songs by ${artist.name}`" class="control" type="button" @click.prevent="play">
-        <icon :icon="faCirclePlay" size="xl"/>
+        <icon :icon="faCirclePlay" size="xl" />
       </button>
     </h1>
 
     <main>
-      <ArtistThumbnail v-if="mode === 'aside'" :entity="artist"/>
+      <ArtistThumbnail v-if="mode === 'aside'" :entity="artist" />
 
       <template v-if="info">
         <div v-if="info.bio?.summary" class="bio">
-          <div v-if="showSummary" class="summary" data-testid="summary" v-html="info.bio.summary"/>
-          <div v-if="showFull" class="full" data-testid="full" v-html="info.bio.full"/>
+          <div v-if="showSummary" class="summary" data-testid="summary" v-html="info.bio.summary" />
+          <div v-if="showFull" class="full" data-testid="full" v-html="info.bio.full" />
 
           <button v-if="showSummary" class="more" @click.prevent="showingFullBio = true">
             Full Bio

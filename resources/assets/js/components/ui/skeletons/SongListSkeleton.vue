@@ -2,41 +2,41 @@
   <div class="skeleton">
     <div class="song-list-header">
       <span class="track-number">
-        <span class="text"/>
+        <span class="text" />
       </span>
       <span class="title">
-        <span class="text"/>
+        <span class="text" />
       </span>
       <span class="artist">
-        <span class="text"/>
+        <span class="text" />
       </span>
       <span class="album">
-        <span class="text"/>
+        <span class="text" />
       </span>
       <span class="time">
-        <span class="text"/>
+        <span class="text" />
       </span>
-      <span class="favorite"/>
+      <span class="favorite" />
     </div>
     <div v-for="i in 40" :key="i" class="song-item">
       <span class="track-number">
-        <span class="text pulse"/>
+        <span class="text pulse" />
       </span>
       <span class="title">
-        <span class="thumbnail pulse"/>
-        <span class="text pulse"/>
+        <span class="thumbnail pulse" />
+        <span class="text pulse" />
       </span>
       <span class="artist">
-        <span class="text pulse"/>
+        <span class="text pulse" />
       </span>
       <span class="album">
-        <span class="text pulse"/>
+        <span class="text pulse" />
       </span>
       <span class="time">
-        <span class="text pulse"/>
+        <span class="text pulse" />
       </span>
       <span class="favorite">
-        <span class="text pulse"/>
+        <span class="text pulse" />
       </span>
     </div>
   </div>

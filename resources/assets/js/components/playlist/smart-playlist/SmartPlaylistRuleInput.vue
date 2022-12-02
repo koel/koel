@@ -6,7 +6,7 @@
 import { computed, toRefs } from 'vue'
 import inputTypes from '@/config/smart-playlist/inputTypes'
 
-const props = withDefaults(defineProps<{ type?: keyof typeof inputTypes, value?: any }>(), { value: undefined })
+const props = withDefaults(defineProps<{ type: keyof typeof inputTypes, value?: any }>(), { value: undefined })
 const { type } = toRefs(props)
 
 const emit = defineEmits<{ (e: 'update:modelValue', value: any): void }>()

@@ -7,11 +7,11 @@
     @dblclick.prevent.stop="play"
   >
     <span class="track-number">
-      <SoundBars v-if="song.playback_state === 'Playing'"/>
+      <SoundBars v-if="song.playback_state === 'Playing'" />
       <span v-else class="text-secondary">{{ song.track || '' }}</span>
     </span>
     <span class="thumbnail">
-      <SongThumbnail :song="song"/>
+      <SongThumbnail :song="song" />
     </span>
     <span class="title-artist">
       <span class="title text-primary">{{ song.title }}</span>
@@ -22,7 +22,7 @@
     <span class="album">{{ song.album_name }}</span>
     <span class="time">{{ fmtLength }}</span>
     <span class="extra">
-      <LikeButton :song="song"/>
+      <LikeButton :song="song" />
     </span>
   </div>
 </template>

@@ -18,6 +18,8 @@ import { slugToTitle } from '@/utils'
 const props = defineProps<{ theme: Theme }>()
 const { theme } = toRefs(props)
 
+const emit = defineEmits<{ (e: 'selected', theme: Theme): void }>()
+
 const name = theme.value.name ? theme.value.name : slugToTitle(theme.value.id)
 
 const thumbnailStyles: Record<string, string> = {

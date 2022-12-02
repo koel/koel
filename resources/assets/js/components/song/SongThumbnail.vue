@@ -1,8 +1,8 @@
 <template>
   <div :style="{ backgroundImage: `url(${defaultCover})` }" class="cover">
-    <img v-koel-hide-broken-icon :alt="song.album_name" :src="song.album_cover" loading="lazy"/>
+    <img v-koel-hide-broken-icon :alt="song.album_name" :src="song.album_cover" loading="lazy">
     <a :title="title" class="control" role="button" @click.prevent="changeSongState">
-      <icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-highlight"/>
+      <icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-highlight" />
     </a>
   </div>
 </template>

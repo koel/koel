@@ -1,13 +1,13 @@
 <template>
-  <nav id="sidebar" :class="{ showing: mobileShowing }" class="side side-nav" v-koel-clickaway="closeIfMobile">
-    <SearchForm/>
+  <nav id="sidebar" v-koel-clickaway="closeIfMobile" :class="{ showing: mobileShowing }" class="side side-nav">
+    <SearchForm />
     <section class="music">
       <h1>Your Music</h1>
 
       <ul class="menu">
         <li>
           <a :class="['home', activeScreen === 'Home' ? 'active' : '']" href="#/home">
-            <icon :icon="faHome" fixed-width/>
+            <icon :icon="faHome" fixed-width />
             Home
           </a>
         </li>
@@ -18,44 +18,44 @@
           @drop="onQueueDrop"
         >
           <a :class="['queue', activeScreen === 'Queue' ? 'active' : '']" href="#/queue">
-            <icon :icon="faListOl" fixed-width/>
+            <icon :icon="faListOl" fixed-width />
             Current Queue
           </a>
         </li>
         <li>
           <a :class="['songs', activeScreen === 'Songs' ? 'active' : '']" href="#/songs">
-            <icon :icon="faMusic" fixed-width/>
+            <icon :icon="faMusic" fixed-width />
             All Songs
           </a>
         </li>
         <li>
           <a :class="['albums', activeScreen === 'Albums' ? 'active' : '']" href="#/albums">
-            <icon :icon="faCompactDisc" fixed-width/>
+            <icon :icon="faCompactDisc" fixed-width />
             Albums
           </a>
         </li>
         <li>
           <a :class="['artists', activeScreen === 'Artists' ? 'active' : '']" href="#/artists">
-            <icon :icon="faMicrophone" fixed-width/>
+            <icon :icon="faMicrophone" fixed-width />
             Artists
           </a>
         </li>
         <li>
           <a :class="['genres', activeScreen === 'Genres' ? 'active' : '']" href="#/genres">
-            <icon :icon="faTags" fixed-width/>
+            <icon :icon="faTags" fixed-width />
             Genres
           </a>
         </li>
         <li v-if="useYouTube">
           <a :class="['youtube', activeScreen === 'YouTube' ? 'active' : '']" href="#/youtube">
-            <icon :icon="faYoutube" fixed-width/>
+            <icon :icon="faYoutube" fixed-width />
             YouTube Video
           </a>
         </li>
       </ul>
     </section>
 
-    <PlaylistList/>
+    <PlaylistList />
 
     <section v-if="isAdmin" class="manage">
       <h1>Manage</h1>
@@ -63,19 +63,19 @@
       <ul class="menu">
         <li>
           <a :class="['settings', activeScreen === 'Settings' ? 'active' : '']" href="#/settings">
-            <icon :icon="faTools" fixed-width/>
+            <icon :icon="faTools" fixed-width />
             Settings
           </a>
         </li>
         <li>
           <a :class="['upload', activeScreen === 'Upload' ? 'active' : '']" href="#/upload">
-            <icon :icon="faUpload" fixed-width/>
+            <icon :icon="faUpload" fixed-width />
             Upload
           </a>
         </li>
         <li>
           <a :class="['users', activeScreen === 'Users' ? 'active' : '']" href="#/users">
-            <icon :icon="faUsers" fixed-width/>
+            <icon :icon="faUsers" fixed-width />
             Users
           </a>
         </li>

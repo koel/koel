@@ -2,27 +2,27 @@
   <section id="songsWrapper">
     <ScreenHeader :layout="headerLayout">
       All Songs
-      <ControlsToggle v-model="showingControls"/>
+      <ControlsToggle v-model="showingControls" />
 
-      <template v-slot:thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails"/>
+      <template #thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails" />
       </template>
 
-      <template v-if="totalSongCount" v-slot:meta>
+      <template v-if="totalSongCount" #meta>
         <span>{{ pluralize(totalSongCount, 'song') }}</span>
         <span>{{ totalDuration }}</span>
       </template>
 
-      <template v-slot:controls>
+      <template #controls>
         <SongListControls
           v-if="totalSongCount && (!isPhone || showingControls)"
-          @playAll="playAll"
-          @playSelected="playSelected"
+          @play-all="playAll"
+          @playselected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongListSkeleton v-if="showSkeletons"/>
+    <SongListSkeleton v-if="showSkeletons" />
     <SongList
       v-else
       ref="songList"

@@ -4,8 +4,8 @@
 
     <div id="player">
       <ScreenEmptyState data-testid="youtube-placeholder">
-        <template v-slot:icon>
-          <icon :icon="faYoutube"/>
+        <template #icon>
+          <icon :icon="faYoutube" />
         </template>
         YouTube videos will be played here.
         <span class="d-block instruction">Start a video playback from the right sidebar.</span>

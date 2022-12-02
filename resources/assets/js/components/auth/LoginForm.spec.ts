@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
+import { expect, it, Mock } from 'vitest'
 import { userStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import LoginFrom from './LoginForm.vue'
 
 new class extends UnitTestCase {
-  private async submitForm (loginMock: SpyInstanceFn) {
+  private async submitForm (loginMock: Mock) {
     const rendered = this.render(LoginFrom)
 
     await this.type(screen.getByPlaceholderText('Email Address'), 'john@doe.com')

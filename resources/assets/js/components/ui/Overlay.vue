@@ -1,13 +1,13 @@
 <template>
-  <dialog ref="el" :class="state.type" @cancel.prevent="onCancel" data-testid="overlay">
+  <dialog ref="el" :class="state.type" data-testid="overlay" @cancel.prevent="onCancel">
     <div class="wrapper">
-      <SoundBars v-if="state.type === 'loading'"/>
-      <icon v-if="state.type === 'error'" :icon="faCircleExclamation"/>
-      <icon v-if="state.type === 'warning'" :icon="faWarning"/>
-      <icon v-if="state.type === 'info'" :icon="faCircleInfo"/>
-      <icon v-if="state.type === 'success'" :icon="faCircleCheck"/>
+      <SoundBars v-if="state.type === 'loading'" />
+      <icon v-if="state.type === 'error'" :icon="faCircleExclamation" />
+      <icon v-if="state.type === 'warning'" :icon="faWarning" />
+      <icon v-if="state.type === 'info'" :icon="faCircleInfo" />
+      <icon v-if="state.type === 'success'" :icon="faCircleCheck" />
 
-      <span class="message" v-html="state.message"/>
+      <span class="message" v-html="state.message" />
     </div>
   </dialog>
 </template>

@@ -2,29 +2,29 @@
   <section id="queueWrapper">
     <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       Current Queue
-      <ControlsToggle v-model="showingControls"/>
+      <ControlsToggle v-model="showingControls" />
 
-      <template v-slot:thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails"/>
+      <template #thumbnail>
+        <ThumbnailStack :thumbnails="thumbnails" />
       </template>
 
-      <template v-if="songs.length" v-slot:meta>
+      <template v-if="songs.length" #meta>
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
       </template>
 
-      <template v-slot:controls>
+      <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
           :config="controlConfig"
-          @clearQueue="clearQueue"
-          @playAll="playAll"
-          @playSelected="playSelected"
+          @clear-queue="clearQueue"
+          @play-all="playAll"
+          @play-selected="playSelected"
         />
       </template>
     </ScreenHeader>
 
-    <SongListSkeleton v-if="loading"/>
+    <SongListSkeleton v-if="loading" />
     <SongList
       v-if="songs.length"
       ref="songList"
@@ -35,8 +35,8 @@
     />
 
     <ScreenEmptyState v-else>
-      <template v-slot:icon>
-        <icon :icon="faCoffee"/>
+      <template #icon>
+        <icon :icon="faCoffee" />
       </template>
 
       No songs queued.

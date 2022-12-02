@@ -1,15 +1,16 @@
 <template>
   <div class="offline">
     <icon-layers fixed-width>
-      <icon :icon="faWifi" fixed-width size="xl"/>
-      <icon :icon="faSlash" fixed-width size="lg" transform="up-2"/>
+      <icon :icon="faWifi" fixed-width size="xl" />
+      <icon :icon="faSlash" fixed-width size="lg" transform="up-2" />
     </icon-layers>
     <span class="text">You’re offline.</span>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { faSlash, faWifi } from '@fortawesome/free-solid-svg-icons'</script>
+import { faSlash, faWifi } from '@fortawesome/free-solid-svg-icons'
+</script>
 
 <style lang="scss" scoped>
 .offline {

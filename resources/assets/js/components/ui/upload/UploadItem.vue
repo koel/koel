@@ -1,14 +1,14 @@
 <template>
   <div :class="cssClass" :title="file.message" class="upload-item">
-    <span :style="{ width: `${file.progress}%` }" class="progress"/>
+    <span :style="{ width: `${file.progress}%` }" class="progress" />
     <span class="details">
       <span class="name">{{ file.name }}</span>
       <span class="controls">
         <Btn v-if="canRetry" icon-only title="Retry" transparent unrounded @click="retry">
-          <icon :icon="faRotateBack"/>
+          <icon :icon="faRotateBack" />
         </Btn>
         <Btn v-if="canRemove" icon-only title="Remove" transparent unrounded @click="remove">
-          <icon :icon="faTrashCan"/>
+          <icon :icon="faTrashCan" />
         </Btn>
       </span>
     </span>

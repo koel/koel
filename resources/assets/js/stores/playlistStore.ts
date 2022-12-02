@@ -18,7 +18,7 @@ export const playlistStore = {
   }),
 
   init (playlists: Playlist[]) {
-    this.sort(reactive(playlists)).forEach((playlist: Playlist) => {
+    this.sort(reactive(playlists)).forEach(playlist => {
       if (!playlist.is_smart) {
         this.state.playlists.push(playlist)
       } else {
@@ -38,7 +38,8 @@ export const playlistStore = {
   setupSmartPlaylist: (playlist: Playlist) => {
     playlist.rules.forEach(group => {
       group.rules.forEach(rule => {
-        const model = models.find(model => model.name === rule.model as unknown as string)
+        const serializedRule = rule as unknown as SerializedSmartPlaylistRule
+        const model = models.find(model => model.name === serializedRule.model)
 
         if (!model) {
           logger.error(`Invalid model ${rule.model} found in smart playlist ${playlist.name} (ID ${playlist.id})`)

@@ -1,16 +1,16 @@
 <template>
   <div id="mainWrapper">
-    <Sidebar/>
-    <MainContent/>
-    <ExtraPanel/>
-    <ModalWrapper/>
+    <SideBar />
+    <MainContent />
+    <ExtraPanel />
+    <ModalWrapper />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue'
 
-import Sidebar from '@/components/layout/main-wrapper/Sidebar.vue'
+import SideBar from '@/components/layout/main-wrapper/SideBar.vue'
 import MainContent from '@/components/layout/main-wrapper/MainContent.vue'
 import ExtraPanel from '@/components/layout/main-wrapper/ExtraPanel.vue'
 

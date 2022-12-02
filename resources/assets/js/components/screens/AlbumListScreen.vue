@@ -2,8 +2,8 @@
   <section id="albumsWrapper">
     <ScreenHeader layout="collapsed">
       Albums
-      <template v-slot:controls>
-        <ViewModeSwitch v-model="viewMode"/>
+      <template #controls>
+        <ViewModeSwitch v-model="viewMode" />
       </template>
     </ScreenHeader>
 
@@ -15,11 +15,11 @@
       @scroll="scrolling"
     >
       <template v-if="showSkeletons">
-        <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout"/>
+        <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
       </template>
       <template v-else>
-        <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout"/>
-        <ToTopButton/>
+        <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout" />
+        <ToTopButton />
       </template>
     </div>
   </section>

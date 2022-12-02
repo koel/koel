@@ -7,7 +7,7 @@
     @dragover="onDragOver"
     @drop="onDrop"
   >
-    <icon :icon="faUpload" size="6x"/>
+    <icon :icon="faUpload" size="6x" />
     <h3>Drop to upload</h3>
   </div>
 </template>

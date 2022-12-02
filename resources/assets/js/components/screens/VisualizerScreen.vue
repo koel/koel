@@ -1,12 +1,12 @@
 <template>
   <section id="vizContainer" :class="{ fullscreen: isFullscreen }" @dblclick="toggleFullscreen">
     <div class="artifacts">
-      <div class="credits" v-if="selectedVisualizer">
+      <div v-if="selectedVisualizer" class="credits">
         <h3>{{ selectedVisualizer.name }}</h3>
-        <p class="text-secondary" v-if="selectedVisualizer.credits">
+        <p v-if="selectedVisualizer.credits" class="text-secondary">
           by {{ selectedVisualizer.credits.author }}
           <a :href="selectedVisualizer.credits.url" target="_blank">
-            <icon :icon="faUpRightFromSquare"/>
+            <icon :icon="faUpRightFromSquare" />
           </a>
         </p>
       </div>
@@ -16,7 +16,7 @@
         <option v-for="v in visualizers" :key="v.id" :value="v.id">{{ v.name }}</option>
       </select>
     </div>
-    <div ref="el" class="viz"/>
+    <div ref="el" class="viz" />
   </section>
 </template>
 

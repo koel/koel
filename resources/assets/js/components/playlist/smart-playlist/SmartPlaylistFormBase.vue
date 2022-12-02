@@ -1,6 +1,6 @@
 <template>
   <div class="smart-playlist-form">
-    <slot/>
+    <slot />
   </div>
 </template>
 

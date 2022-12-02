@@ -33,9 +33,9 @@
       </div>
       <div class="form-row">
         <label>
-          <CheckBox name="is_admin" v-model="newUser.is_admin"/>
+          <CheckBox v-model="newUser.is_admin" name="is_admin" />
           User is an admin
-          <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs."/>
+          <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs." />
         </label>
       </div>
     </main>

@@ -1,5 +1,5 @@
 <template>
-  <div :style="{ backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none' }" data-testid="album-art-overlay"/>
+  <div :style="{ backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none' }" data-testid="album-art-overlay" />
 </template>
 
 <script lang="ts" setup>

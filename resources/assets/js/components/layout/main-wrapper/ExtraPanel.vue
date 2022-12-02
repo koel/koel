@@ -2,8 +2,8 @@
   <div id="extraPanel" :class="{ 'showing-pane': activeTab }">
     <div class="controls">
       <div class="top">
-        <SidebarMenuToggleButton class="burger"/>
-        <ExtraPanelTabHeader v-if="song" v-model="activeTab"/>
+        <SidebarMenuToggleButton class="burger" />
+        <ExtraPanelTabHeader v-if="song" v-model="activeTab" />
       </div>
 
       <div class="bottom">
@@ -13,19 +13,19 @@
           type="button"
           @click.prevent="openAboutKoelModal"
         >
-          <icon :icon="faInfoCircle"/>
-          <span v-if="shouldNotifyNewVersion" class="new-version-notification"/>
+          <icon :icon="faInfoCircle" />
+          <span v-if="shouldNotifyNewVersion" class="new-version-notification" />
         </button>
 
         <button v-koel-tooltip.left title="Log out" type="button" @click.prevent="logout">
-          <icon :icon="faArrowRightFromBracket"/>
+          <icon :icon="faArrowRightFromBracket" />
         </button>
 
-        <ProfileAvatar @click="onProfileLinkClick"/>
+        <ProfileAvatar @click="onProfileLinkClick" />
       </div>
     </div>
 
-    <div class="panes" v-if="song" v-show="activeTab">
+    <div v-if="song" v-show="activeTab" class="panes">
       <div
         v-show="activeTab === 'Lyrics'"
         id="extraPanelLyrics"
@@ -33,7 +33,7 @@
         role="tabpanel"
         tabindex="0"
       >
-        <LyricsPane :song="song"/>
+        <LyricsPane :song="song" />
       </div>
 
       <div
@@ -43,7 +43,7 @@
         role="tabpanel"
         tabindex="0"
       >
-        <ArtistInfo v-if="artist" :artist="artist" mode="aside"/>
+        <ArtistInfo v-if="artist" :artist="artist" mode="aside" />
         <span v-else>Loading…</span>
       </div>
 
@@ -54,19 +54,19 @@
         role="tabpanel"
         tabindex="0"
       >
-        <AlbumInfo v-if="album" :album="album" mode="aside"/>
+        <AlbumInfo v-if="album" :album="album" mode="aside" />
         <span v-else>Loading…</span>
       </div>
 
       <div
         v-show="activeTab === 'YouTube'"
-        data-testid="extra-panel-youtube"
         id="extraPanelYouTube"
+        data-testid="extra-panel-youtube"
         aria-labelledby="extraTabYouTube"
         role="tabpanel"
         tabindex="0"
       >
-        <YouTubeVideoList v-if="useYouTube && song" :song="song"/>
+        <YouTubeVideoList v-if="useYouTube && song" :song="song" />
       </div>
     </div>
   </div>
@@ -97,16 +97,16 @@ const { shouldNotifyNewVersion } = useNewVersionNotification()
 const song = requireInjection(CurrentSongKey, ref(null))
 const activeTab = ref<ExtraPanelTab | null>(null)
 
-const artist = ref<Artist | null>(null)
-const album = ref<Album | null>(null)
+const artist = ref<Artist>()
+const album = ref<Album>()
 
 watch(song, song => song && fetchSongInfo(song))
 watch(activeTab, tab => (preferenceStore.activeExtraPanelTab = tab))
 
 const fetchSongInfo = async (_song: Song) => {
   song.value = _song
-  artist.value = null
-  album.value = null
+  artist.value = undefined
+  album.value = undefined
 
   try {
     artist.value = await artistStore.resolve(_song.artist_id)

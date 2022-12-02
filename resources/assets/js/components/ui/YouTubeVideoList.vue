@@ -3,13 +3,13 @@
     <template v-if="videos.length">
       <ul>
         <li v-for="video in videos" :key="video.id.videoId" data-testid="youtube-video">
-          <YouTubeVideo :video="video"/>
+          <YouTubeVideo :video="video" />
         </li>
       </ul>
       <Btn v-if="!loading" class="more" @click.prevent="loadMore">Load More</Btn>
     </template>
 
-    <p class="nope" v-if="loading">Loading…</p>
+    <p v-if="loading" class="nope">Loading…</p>
   </div>
 </template>
 

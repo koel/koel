@@ -7,7 +7,7 @@
     @click="play"
   >
     <span class="title">{{ track.title }}</span>
-    <AppleMusicButton v-if="useAppleMusic && !matchedSong" :url="iTunesUrl"/>
+    <AppleMusicButton v-if="useAppleMusic && !matchedSong" :url="iTunesUrl" />
     <span class="length">{{ fmtLength }}</span>
   </div>
 </template>

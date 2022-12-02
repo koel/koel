@@ -1,10 +1,10 @@
 <template>
   <div class="tabs">
     <header>
-      <slot name="header"/>
+      <slot name="header" />
     </header>
     <main>
-      <slot/>
+      <slot />
     </main>
   </div>
 </template>

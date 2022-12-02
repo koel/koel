@@ -8,8 +8,8 @@
     @click.prevent="changeMode"
   >
     <FontAwesomeLayers>
-      <icon :icon="faRepeat"/>
-      <FontAwesomeLayersText v-if="mode === 'REPEAT_ONE'" counter value="1"/>
+      <icon :icon="faRepeat" />
+      <FontAwesomeLayersText v-if="mode === 'REPEAT_ONE'" counter value="1" />
     </FontAwesomeLayers>
   </button>
 </template>

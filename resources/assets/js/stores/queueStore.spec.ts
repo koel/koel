@@ -5,7 +5,7 @@ import factory from 'factoria'
 import { http } from '@/services'
 import { queueStore, songStore } from '.'
 
-let songs
+let songs: Song[]
 
 new class extends UnitTestCase {
   protected beforeEach () {

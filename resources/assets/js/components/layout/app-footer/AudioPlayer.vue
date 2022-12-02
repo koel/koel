@@ -3,7 +3,7 @@
     A very thin wrapper around Plyr, extracted as a standalone component for easier styling and to work better with HMR.
   -->
   <div class="plyr">
-    <audio controls crossorigin="anonymous"></audio>
+    <audio controls crossorigin="anonymous" />
   </div>
 </template>
 

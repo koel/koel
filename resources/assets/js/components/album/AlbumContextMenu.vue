@@ -3,11 +3,11 @@
     <template v-if="album">
       <li @click="play">Play All</li>
       <li @click="shuffle">Shuffle All</li>
-      <li class="separator"></li>
+      <li class="separator" />
       <li v-if="isStandardAlbum" @click="viewAlbumDetails">Go to Album</li>
       <li v-if="isStandardArtist" @click="viewArtistDetails">Go to Artist</li>
       <template v-if="isStandardAlbum && allowDownload">
-        <li class="separator"></li>
+        <li class="separator" />
         <li @click="download">Download</li>
       </template>
     </template>
@@ -22,7 +22,7 @@ import { useContextMenu, useRouter } from '@/composables'
 import { eventBus } from '@/utils'
 
 const { go } = useRouter()
-const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
+const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
 const album = ref<Album>()
 const allowDownload = toRef(commonStore.state, 'allow_download')
@@ -49,6 +49,6 @@ const download = () => trigger(() => downloadService.fromAlbum(album.value!))
 
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e, _album) => {
   album.value = _album
-  await open(e.pageY, e.pageX, { album })
+  await open(e.pageY, e.pageX)
 })
 </script>

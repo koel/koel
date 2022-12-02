@@ -78,20 +78,20 @@ const open = async (_top = 0, _left = 0) => {
 
   try {
     await preventOffScreen(el.value!)
-    await initSubmenus()
+    initSubmenus()
   } catch (e) {
     logger.error(e)
     // in a non-browser environment (e.g., unit testing), these two functions are broken due to calls to
     // getBoundingClientRect() and querySelectorAll()
   }
 
-  eventBus.emit('CONTEXT_MENU_OPENED', el)
+  eventBus.emit('CONTEXT_MENU_OPENED', el.value!)
 }
 
 const close = () => (shown.value = false)
 
 // ensure there's only one context menu at any time
-eventBus.on('CONTEXT_MENU_OPENED', target => target === el || close())
+eventBus.on('CONTEXT_MENU_OPENED', target => target === el.value || close())
 
 defineExpose({ open, close, shown })
 </script>

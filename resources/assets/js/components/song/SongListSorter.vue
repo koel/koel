@@ -1,15 +1,20 @@
 <template>
   <div>
     <button ref="button" title="Sort" @click.stop="trigger">
-      <icon :icon="faSort"/>
+      <icon :icon="faSort" />
     </button>
     <menu ref="menu" v-koel-clickaway="hide">
-      <li v-for="item in menuItems" :class="item.field === field && 'active'" @click="sort(item.field)">
+      <li
+        v-for="item in menuItems"
+        :key="item.label"
+        :class="item.field === field && 'active'"
+        @click="sort(item.field)"
+      >
         <span>{{ item.label }}</span>
         <span class="icon">
-            <icon v-if="order === 'asc'" :icon="faArrowDown"/>
-            <icon v-else :icon="faArrowUp"/>
-          </span>
+          <icon v-if="order === 'asc'" :icon="faArrowDown" />
+          <icon v-else :icon="faArrowUp" />
+        </span>
       </li>
     </menu>
   </div>

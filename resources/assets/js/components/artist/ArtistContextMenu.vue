@@ -4,11 +4,11 @@
       <li @click="play">Play All</li>
       <li @click="shuffle">Shuffle All</li>
       <template v-if="isStandardArtist">
-        <li class="separator"></li>
+        <li class="separator" />
         <li @click="viewArtistDetails">Go to Artist</li>
       </template>
       <template v-if="isStandardArtist && allowDownload">
-        <li class="separator"></li>
+        <li class="separator" />
         <li @click="download">Download</li>
       </template>
     </template>
@@ -23,7 +23,7 @@ import { useContextMenu, useRouter } from '@/composables'
 import { eventBus } from '@/utils'
 
 const { go } = useRouter()
-const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
+const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
 const artist = ref<Artist>()
 const allowDownload = toRef(commonStore.state, 'allow_download')
@@ -48,6 +48,6 @@ const download = () => trigger(() => downloadService.fromArtist(artist.value!))
 
 eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async (e, _artist) => {
   artist.value = _artist
-  await open(e.pageY, e.pageX, { _artist })
+  await open(e.pageY, e.pageX)
 })
 </script>

@@ -18,24 +18,24 @@
         </template>
         <li v-else @click="queueSongsToBottom">Queue</li>
         <template v-if="!isFavoritesScreen">
-          <li class="separator"/>
+          <li class="separator" />
           <li @click="addSongsToFavorite">Favorites</li>
         </template>
-        <li v-if="normalPlaylists.length" class="separator"/>
+        <li v-if="normalPlaylists.length" class="separator" />
         <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
       </ul>
     </li>
 
     <template v-if="isQueueScreen">
-      <li class="separator"/>
+      <li class="separator" />
       <li @click="removeFromQueue">Remove from Queue</li>
-      <li class="separator"/>
+      <li class="separator" />
     </template>
 
     <template v-if="isFavoritesScreen">
-      <li class="separator"/>
+      <li class="separator" />
       <li @click="removeFromFavorites">Remove from Favorites</li>
-      <li class="separator"/>
+      <li class="separator" />
     </template>
 
     <li v-if="isAdmin" @click="openEditForm">Edit</li>
@@ -43,12 +43,12 @@
     <li v-if="onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
 
     <template v-if="canBeRemovedFromPlaylist">
-      <li class="separator"/>
+      <li class="separator" />
       <li @click="removeFromPlaylist">Remove from Playlist</li>
     </template>
 
     <template v-if="isAdmin">
-      <li class="separator"/>
+      <li class="separator" />
       <li @click="deleteFromFilesystem">Delete from Filesystem</li>
     </template>
   </ContextMenuBase>
@@ -73,7 +73,7 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen } = useRouter()
 const { isAdmin } = useAuthorization()
-const { context, base, ContextMenuBase, open, close, trigger } = useContextMenu()
+const { base, ContextMenuBase, open, close, trigger } = useContextMenu()
 const { removeSongsFromPlaylist } = usePlaylistManagement()
 
 const songs = ref<Song[]>([])
@@ -154,6 +154,6 @@ const deleteFromFilesystem = () => trigger(async () => {
 
 eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e, _songs) => {
   songs.value = arrayify(_songs)
-  await open(e.pageY, e.pageX, { songs: songs.value })
+  await open(e.pageY, e.pageX)
 })
 </script>

@@ -2,8 +2,8 @@
   <section id="artistsWrapper">
     <ScreenHeader layout="collapsed">
       Artists
-      <template v-slot:controls>
-        <ViewModeSwitch v-model="viewMode"/>
+      <template #controls>
+        <ViewModeSwitch v-model="viewMode" />
       </template>
     </ScreenHeader>
 
@@ -15,11 +15,11 @@
       @scroll="scrolling"
     >
       <template v-if="showSkeletons">
-        <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout"/>
+        <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
       </template>
       <template v-else>
-        <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout"/>
-        <ToTopButton/>
+        <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout" />
+        <ToTopButton />
       </template>
     </div>
   </section>

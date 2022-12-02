@@ -2,12 +2,12 @@
   <div
     class="message"
     :class="message.type"
-    @click="dismiss"
     title="Click to dismiss"
+    @click="dismiss"
   >
     <aside>
-      <icon :icon="typeIcon" class="icon"/>
-      <icon :icon="faTimesCircle" class="icon-dismiss"/>
+      <icon :icon="typeIcon" class="icon" />
+      <icon :icon="faTimesCircle" class="icon-dismiss" />
     </aside>
     <main>{{ message.content }}</main>
   </div>
@@ -34,7 +34,7 @@ const typeIcon = computed(() => {
       return faCircleCheck
     case 'warning':
       return faTriangleExclamation
-    case 'danger':
+    default:
       return faCircleExclamation
   }
 })

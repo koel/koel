@@ -4,11 +4,11 @@
       <template v-if="playable">
         <li @click="play">Play All</li>
         <li @click="shuffle">Shuffle All</li>
-        <li class="separator"/>
+        <li class="separator" />
       </template>
       <li @click="createPlaylist">Create Playlist</li>
       <li @click="createSmartPlaylist">Create Smart Playlist</li>
-      <li class="separator"/>
+      <li class="separator" />
       <li @click="rename">Rename</li>
       <li @click="destroy">Delete</li>
     </template>
@@ -23,7 +23,7 @@ import { playbackService } from '@/services'
 import { useContextMenu, useRouter } from '@/composables'
 
 const { go } = useRouter()
-const { context, base, ContextMenuBase, open, trigger } = useContextMenu()
+const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
 const folder = ref<PlaylistFolder>()
 
@@ -40,13 +40,13 @@ const shuffle = () => trigger(async () => {
   go('queue')
 })
 
-const createPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_PLAYLIST_FORM', folder.value))
-const createSmartPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', folder.value))
-const rename = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder.value))
-const destroy = () => trigger(() => eventBus.emit('PLAYLIST_FOLDER_DELETE', folder.value))
+const createPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_PLAYLIST_FORM', folder.value!))
+const createSmartPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', folder.value!))
+const rename = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder.value!))
+const destroy = () => trigger(() => eventBus.emit('PLAYLIST_FOLDER_DELETE', folder.value!))
 
 eventBus.on('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', async (e, _folder) => {
   folder.value = _folder
-  await open(e.pageY, e.pageX, { folder })
+  await open(e.pageY, e.pageX)
 })
 </script>

@@ -3,13 +3,13 @@
     <h1>New Songs</h1>
     <ol v-if="loading" class="recently-added-song-list">
       <li v-for="i in 3" :key="i">
-        <SongCardSkeleton/>
+        <SongCardSkeleton />
       </li>
     </ol>
     <template v-else>
       <ol v-if="songs.length" class="recently-added-song-list">
         <li v-for="song in songs" :key="song.id">
-          <SongCard :song="song"/>
+          <SongCard :song="song" />
         </li>
       </ol>
       <p v-else class="text-secondary">No songs added so far.</p>

@@ -5,22 +5,22 @@ import MessageToaster from '@/components/ui/MessageToaster.vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 
-export const MessageToasterStub: Ref<InstanceType<typeof MessageToaster>> = ref({
+export const MessageToasterStub = ref({
   info: noop,
   success: noop,
   warning: noop,
   error: noop
-})
+}) as unknown as Ref<InstanceType<typeof MessageToaster>>
 
-export const DialogBoxStub: Ref<InstanceType<typeof DialogBox>> = ref({
+export const DialogBoxStub = ref({
   info: noop,
   success: noop,
   warning: noop,
   error: noop,
   confirm: noop
-})
+}) as unknown as Ref<InstanceType<typeof DialogBox>>
 
-export const OverlayStub: Ref<InstanceType<typeof Overlay>> = ref({
+export const OverlayStub = ref({
   show: noop,
   hide: noop
-})
+}) as unknown as Ref<InstanceType<typeof Overlay>>

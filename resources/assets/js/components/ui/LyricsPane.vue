@@ -4,7 +4,7 @@
       <template v-if="song">
         <div v-show="song.lyrics">
           <pre ref="lyricsContainer">{{ lyrics }}</pre>
-          <Magnifier @in="zoomLevel++" @out="zoomLevel--" class="magnifier"/>
+          <Magnifier class="magnifier" @in="zoomLevel++" @out="zoomLevel--" />
         </div>
         <p v-if="song.id && !song.lyrics" class="none text-secondary">
           <template v-if="isAdmin">

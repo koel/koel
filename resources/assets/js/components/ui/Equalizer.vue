@@ -6,14 +6,14 @@
           <option disabled value="-1">Preset</option>
           <option v-for="preset in presets" :key="preset.id" :value="preset.id">{{ preset.name }}</option>
         </select>
-        <icon :icon="faCaretDown" class="arrow text-highlight" size="sm"/>
+        <icon :icon="faCaretDown" class="arrow text-highlight" size="sm" />
       </label>
     </header>
 
     <main>
       <div class="bands">
         <span class="band">
-          <span class="slider"/>
+          <span class="slider" />
           <label>Preamp</label>
         </span>
 
@@ -24,7 +24,7 @@
         </span>
 
         <span v-for="band in bands" :key="band.label" class="band">
-          <span class="slider"/>
+          <span class="slider" />
           <label>{{ band.label }}</label>
         </span>
       </div>

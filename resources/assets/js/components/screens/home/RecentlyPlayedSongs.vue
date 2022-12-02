@@ -15,13 +15,13 @@
 
     <ol v-if="loading" class="recent-song-list">
       <li v-for="i in 3" :key="i">
-        <SongCardSkeleton/>
+        <SongCardSkeleton />
       </li>
     </ol>
     <template v-else>
       <ol v-if="songs.length" class="recent-song-list">
         <li v-for="song in songs" :key="song.id">
-          <SongCard :song="song"/>
+          <SongCard :song="song" />
         </li>
       </ol>
       <p v-else class="text-secondary">No songs played as of late.</p>

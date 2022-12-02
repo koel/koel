@@ -9,8 +9,8 @@ import PlaylistFolderContextMenu from './PlaylistFolderContextMenu.vue'
 
 new class extends UnitTestCase {
   private async renderComponent (folder: PlaylistFolder) {
-    await this.render(PlaylistFolderContextMenu)
-    eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 }, folder)
+    this.render(PlaylistFolderContextMenu)
+    eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, folder)
     await this.tick(2)
   }
 

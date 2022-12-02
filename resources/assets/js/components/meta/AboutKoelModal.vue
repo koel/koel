@@ -18,7 +18,8 @@
         <a href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a>
         and quite a few
         <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;<a
-        href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
+          href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank"
+        >contributors</a>.
       </p>
 
       <div v-if="credits" class="credit-wrapper" data-testid="demo-credits">
@@ -30,7 +31,7 @@
         </ul>
       </div>
 
-      <SponsorList/>
+      <SponsorList />
 
       <p>
         Loving Koel? Please consider supporting its development via

@@ -3,14 +3,14 @@
     <ScreenHeader layout="collapsed">
       Upload Media
 
-      <template v-slot:controls>
-        <BtnGroup uppercased v-if="hasUploadFailures">
+      <template #controls>
+        <BtnGroup v-if="hasUploadFailures" uppercased>
           <Btn data-testid="upload-retry-all-btn" green @click="retryAll">
-            <icon :icon="faRotateRight"/>
+            <icon :icon="faRotateRight" />
             Retry All
           </Btn>
           <Btn data-testid="upload-remove-all-btn" orange @click="removeFailedEntries">
-            <icon :icon="faTrashCan"/>
+            <icon :icon="faTrashCan" />
             Remove Failed
           </Btn>
         </BtnGroup>
@@ -27,13 +27,13 @@
         @drop.prevent="onDrop"
         @dragover.prevent
       >
-        <div class="upload-files" v-if="files.length">
-          <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item"/>
+        <div v-if="files.length" class="upload-files">
+          <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
         </div>
 
         <ScreenEmptyState v-else>
-          <template v-slot:icon>
-            <icon :icon="faUpload"/>
+          <template #icon>
+            <icon :icon="faUpload" />
           </template>
 
           {{ canDropFolders ? 'Drop files or folders to upload' : 'Drop files to upload' }}
@@ -41,15 +41,15 @@
           <span class="secondary d-block">
             <a class="or-click d-block" role="button">
               or click here to select songs
-              <input :accept="acceptAttribute" multiple name="file[]" type="file" @change="onFileInputChange"/>
+              <input :accept="acceptAttribute" multiple name="file[]" type="file" @change="onFileInputChange">
             </a>
           </span>
         </ScreenEmptyState>
       </div>
 
       <ScreenEmptyState v-else>
-        <template v-slot:icon>
-          <icon :icon="faWarning"/>
+        <template #icon>
+          <icon :icon="faWarning" />
         </template>
         No media path set.
       </ScreenEmptyState>
@@ -85,7 +85,7 @@ const hasUploadFailures = computed(() => files.value.filter((file) => file.statu
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 const onDragLeave = () => (droppable.value = false)
 
-const onFileInputChange = (event: InputEvent) => {
+const onFileInputChange = (event: Event) => {
   const selectedFileList = (event.target as HTMLInputElement).files
 
   if (selectedFileList?.length) {

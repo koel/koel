@@ -15,7 +15,6 @@
       <a
         :title="`Shuffle all songs by ${artist.name}`"
         class="shuffle-artist"
-        href
         role="button"
         @click.prevent="shuffle"
       >
@@ -25,7 +24,6 @@
         v-if="allowDownload"
         :title="`Download all songs by ${artist.name}`"
         class="download-artist"
-        href
         role="button"
         @click.prevent="download"
       >

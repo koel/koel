@@ -1,16 +1,16 @@
 <template>
-  <section id="albumWrapper">
-    <ScreenHeaderSkeleton v-if="loading"/>
+  <section v-if="album" id="albumWrapper">
+    <ScreenHeaderSkeleton v-if="loading" />
 
     <ScreenHeader v-if="!loading && album" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
       {{ album.name }}
-      <ControlsToggle v-model="showingControls"/>
+      <ControlsToggle v-model="showingControls" />
 
-      <template v-slot:thumbnail>
-        <AlbumThumbnail :entity="album"/>
+      <template #thumbnail>
+        <AlbumThumbnail :entity="album" />
       </template>
 
-      <template v-slot:meta>
+      <template #meta>
         <a v-if="isNormalArtist" :href="`#/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
         <span v-else class="nope">{{ album.artist_name }}</span>
         <span>{{ pluralize(songs, 'song') }}</span>
@@ -19,7 +19,6 @@
         <a
           v-if="allowDownload"
           class="download"
-          href
           role="button"
           title="Download all songs in album"
           @click.prevent="download"
@@ -28,11 +27,11 @@
         </a>
       </template>
 
-      <template v-slot:controls>
+      <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
-          @playAll="playAll"
-          @playSelected="playSelected"
+          @play-all="playAll"
+          @play-selected="playSelected"
         />
       </template>
     </ScreenHeader>
@@ -41,20 +40,20 @@
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
-          <input type="radio" name="tab" value="Songs" v-model="activeTab"/>
+          <input v-model="activeTab" type="radio" name="tab" value="Songs">
         </label>
         <label :class="{ active: activeTab === 'OtherAlbums' }">
           Other Albums
-          <input type="radio" name="tab" value="OtherAlbums" v-model="activeTab"/>
+          <input v-model="activeTab" type="radio" name="tab" value="OtherAlbums">
         </label>
-        <label :class="{ active: activeTab === 'Info' }" v-if="useLastfm">
+        <label v-if="useLastfm" :class="{ active: activeTab === 'Info' }">
           Information
-          <input type="radio" name="tab" value="Info" v-model="activeTab"/>
+          <input v-model="activeTab" type="radio" name="tab" value="Info">
         </label>
       </template>
 
       <div v-show="activeTab === 'Songs'">
-        <SongListSkeleton v-if="loading"/>
+        <SongListSkeleton v-if="loading" />
         <SongList
           v-else
           ref="songList"
@@ -67,21 +66,21 @@
       <div v-show="activeTab === 'OtherAlbums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
           <ul v-if="otherAlbums.length" class="as-list">
-            <li v-for="album in otherAlbums" :key="album.id">
-              <AlbumCard :album="album" layout="compact"/>
+            <li v-for="a in otherAlbums" :key="a.id">
+              <AlbumCard :album="a" layout="compact" />
             </li>
           </ul>
           <p v-else class="text-secondary">No other albums by {{ album.artist_name }} found in the library.</p>
         </template>
         <ul v-else class="as-list">
           <li v-for="i in 12" :key="i">
-            <AlbumCardSkeleton layout="compact"/>
+            <AlbumCardSkeleton layout="compact" />
           </li>
         </ul>
       </div>
 
-      <div v-show="activeTab === 'Info'" class="info-pane" v-if="useLastfm && album">
-        <AlbumInfo :album="album" mode="full"/>
+      <div v-show="activeTab === 'Info'" v-if="useLastfm && album" class="info-pane">
+        <AlbumInfo :album="album" mode="full" />
       </div>
     </ScreenTabs>
   </section>
@@ -180,7 +179,7 @@ onMounted(async () => (albumId.value = parseInt(getRouteParam('id')!)))
 onRouteChanged(route => route.screen === 'Album' && (albumId.value = parseInt(getRouteParam('id')!)))
 
 // if the current album has been deleted, go back to the list
-eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value) || go('albums'))
+eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go('albums'))
 </script>
 
 <style lang="scss" scoped>

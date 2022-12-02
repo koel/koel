@@ -1,10 +1,10 @@
 <template>
   <section id="genresWrapper">
-    <ScreenHeader layout="compact">
+    <ScreenHeader layout="collapsed">
       Genres
     </ScreenHeader>
     <div class="main-scroll-wrap">
-      <ul class="genres" v-if="genres">
+      <ul v-if="genres" class="genres">
         <li v-for="genre in genres" :key="genre.name" :class="`level-${getLevel(genre)}`">
           <a
             :href="`/#/genres/${encodeURIComponent(genre.name)}`"
@@ -15,9 +15,9 @@
           </a>
         </li>
       </ul>
-      <ul class="genres" v-else>
+      <ul v-else class="genres">
         <li v-for="i in 20" :key="i">
-          <GenreItemSkeleton/>
+          <GenreItemSkeleton />
         </li>
       </ul>
     </div>

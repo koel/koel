@@ -1,20 +1,20 @@
 <template>
   <header class="screen-header" :class="[ layout, disabled ? 'disabled' : '' ]">
     <aside class="thumbnail-wrapper">
-      <slot name="thumbnail"></slot>
+      <slot name="thumbnail" />
     </aside>
 
     <main>
       <div class="heading-wrapper">
         <h1 class="name">
-          <slot></slot>
+          <slot />
         </h1>
         <span class="meta text-secondary">
-          <slot name="meta"></slot>
+          <slot name="meta" />
         </span>
       </div>
 
-      <slot name="controls"></slot>
+      <slot name="controls" />
     </main>
   </header>
 </template>

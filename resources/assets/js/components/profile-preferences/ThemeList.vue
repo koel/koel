@@ -3,7 +3,7 @@
     <h1>Theme</h1>
     <ul class="themes">
       <li v-for="theme in themes" :key="theme.id" data-testid="theme-card">
-        <ThemeCard :key="theme.id" :theme="theme" @selected="setTheme"/>
+        <ThemeCard :key="theme.id" :theme="theme" @selected="setTheme" />
       </li>
     </ul>
   </section>

@@ -1,8 +1,8 @@
 <template>
   <i>
-    <span/>
-    <span/>
-    <span/>
+    <span />
+    <span />
+    <span />
   </i>
 </template>
 

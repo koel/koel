@@ -5,10 +5,9 @@
     class="cover"
     data-testid="album-artist-thumbnail"
   >
-    <img v-koel-hide-broken-icon :alt="entity.name" :src="image" loading="lazy"/>
+    <img v-koel-hide-broken-icon :alt="entity.name" :src="image" loading="lazy">
     <a
       class="control control-play"
-      href
       role="button"
       @click.prevent="playOrQueue"
       @dragenter.prevent="onDragEnter"
@@ -17,7 +16,7 @@
       @dragover.prevent
     >
       <span class="hidden">{{ buttonLabel }}</span>
-      <span class="icon"/>
+      <span class="icon" />
     </a>
   </span>
 </template>
@@ -57,7 +56,7 @@ const buttonLabel = computed(() => forAlbum.value
 
 const { isAdmin: allowsUpload } = useAuthorization()
 
-const playOrQueue = async (event: KeyboardEvent) => {
+const playOrQueue = async (event: MouseEvent) => {
   const songs = forAlbum.value
     ? await songStore.fetchForAlbum(entity.value as Album)
     : await songStore.fetchForArtist(entity.value as Artist)

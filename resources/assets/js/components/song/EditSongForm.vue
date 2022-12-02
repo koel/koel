@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="submit" @keydown.esc="maybeClose">
     <header>
-      <span class="cover" :style="{ backgroundImage: `url(${coverUrl})` }"/>
+      <span class="cover" :style="{ backgroundImage: `url(${coverUrl})` }" />
       <div class="meta">
         <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
         <h2
@@ -140,7 +140,7 @@
                 list="genres"
               >
               <datalist id="genres">
-                <option v-for="genre in genres" :key="genre" :value="genre"/>
+                <option v-for="genre in genres" :key="genre" :value="genre" />
               </datalist>
             </label>
             <label>
@@ -165,13 +165,13 @@
           tabindex="0"
         >
           <div class="form-row">
-              <textarea
-                v-model="formData.lyrics"
-                v-koel-focus
-                data-testid="lyrics-input"
-                name="lyrics"
-                title="Lyrics"
-              />
+            <textarea
+              v-model="formData.lyrics"
+              v-koel-focus
+              data-testid="lyrics-input"
+              name="lyrics"
+              title="Lyrics"
+            />
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@
       title="Unmute"
       @click="unmute"
     >
-      <icon :icon="faVolumeMute" fixed-width/>
+      <icon :icon="faVolumeMute" fixed-width />
     </span>
 
     <span
@@ -19,7 +19,7 @@
       title="Mute"
       @click="mute"
     >
-      <icon :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh" fixed-width/>
+      <icon :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh" fixed-width />
     </span>
 
     <input
@@ -51,12 +51,12 @@ const level = computed(() => {
 
 const mute = () => volumeManager.mute()
 const unmute = () => volumeManager.unmute()
-const setVolume = (e: InputEvent) => volumeManager.set(parseFloat((e.target as HTMLInputElement).value))
+const setVolume = (e: Event) => volumeManager.set(parseFloat((e.target as HTMLInputElement).value))
 
 /**
  * Broadcast the volume changed event to remote controller.
  */
-const broadcastVolume = (e: InputEvent) => {
+const broadcastVolume = (e: Event) => {
   socketService.broadcast('SOCKET_VOLUME_CHANGED', parseFloat((e.target as HTMLInputElement).value))
 }
 </script>

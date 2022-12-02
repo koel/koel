@@ -1,26 +1,26 @@
 <template>
   <div>
-    <div class="form-row" v-if="!isPhone">
+    <div v-if="!isPhone" class="form-row">
       <label>
-        <CheckBox name="notify" v-model="preferences.notify"/>
+        <CheckBox v-model="preferences.notify" name="notify" />
         Show “Now Playing” song notification
       </label>
     </div>
-    <div class="form-row" v-if="!isPhone">
+    <div v-if="!isPhone" class="form-row">
       <label>
-        <CheckBox name="confirm_closing" v-model="preferences.confirmClosing"/>
+        <CheckBox v-model="preferences.confirmClosing" name="confirm_closing" />
         Confirm before closing Koel
       </label>
     </div>
-    <div class="form-row" v-if="isPhone">
+    <div v-if="isPhone" class="form-row">
       <label>
-        <CheckBox name="transcode_on_mobile" v-model="preferences.transcodeOnMobile"/>
+        <CheckBox v-model="preferences.transcodeOnMobile" name="transcode_on_mobile" />
         Convert and play media at 128kbps on mobile
       </label>
     </div>
     <div class="form-row">
       <label>
-        <CheckBox name="show_album_art_overlay" v-model="preferences.showAlbumArtOverlay"/>
+        <CheckBox v-model="preferences.showAlbumArtOverlay" name="show_album_art_overlay" />
         Show a translucent, blurred overlay of the current album’s art
       </label>
     </div>

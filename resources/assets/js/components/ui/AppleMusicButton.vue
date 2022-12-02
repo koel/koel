@@ -12,7 +12,7 @@
         fill-rule="nonzero"
         stroke="none"
         stroke-width="1"
-      ></path>
+      />
     </svg>
   </a>
 </template>
@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 import { toRefs } from 'vue'
 
-const props = defineProps({ url: String })
+const props = defineProps<{ url: string }>()
 const { url } = toRefs(props)
 </script>
 

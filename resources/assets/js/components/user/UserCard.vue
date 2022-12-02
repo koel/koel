@@ -5,7 +5,7 @@
     <main>
       <h1>
         <span class="name">{{ user.name }}</span>
-        <icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-highlight" title="This is you!"/>
+        <icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-highlight" title="This is you!" />
         <icon
           v-if="user.is_admin"
           :icon="faShield"

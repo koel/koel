@@ -23,13 +23,13 @@
           </h1>
           <ul v-if="searching">
             <li v-for="i in 6" :key="i">
-              <SongCardSkeleton/>
+              <SongCardSkeleton />
             </li>
           </ul>
           <template v-else>
             <ul v-if="excerpt.songs.length">
               <li v-for="song in excerpt.songs" :key="song.id">
-                <SongCard :song="song"/>
+                <SongCard :song="song" />
               </li>
             </ul>
             <p v-else>None found.</p>
@@ -40,13 +40,13 @@
           <h1>Artists</h1>
           <ul v-if="searching">
             <li v-for="i in 6" :key="i">
-              <ArtistAlbumCardSkeleton layout="compact"/>
+              <ArtistAlbumCardSkeleton layout="compact" />
             </li>
           </ul>
           <template v-else>
             <ul v-if="excerpt.artists.length">
               <li v-for="artist in excerpt.artists" :key="artist.id">
-                <ArtistCard :artist="artist" layout="compact"/>
+                <ArtistCard :artist="artist" layout="compact" />
               </li>
             </ul>
             <p v-else>None found.</p>
@@ -57,13 +57,13 @@
           <h1>Albums</h1>
           <ul v-if="searching">
             <li v-for="i in 6" :key="i">
-              <ArtistAlbumCardSkeleton layout="compact"/>
+              <ArtistAlbumCardSkeleton layout="compact" />
             </li>
           </ul>
           <template v-else>
             <ul v-if="excerpt.albums.length">
               <li v-for="album in excerpt.albums" :key="album.id">
-                <AlbumCard :album="album" layout="compact"/>
+                <AlbumCard :album="album" layout="compact" />
               </li>
             </ul>
             <p v-else>None found.</p>
@@ -72,8 +72,8 @@
       </div>
 
       <ScreenEmptyState v-else>
-        <template v-slot:icon>
-          <icon :icon="faSearch"/>
+        <template #icon>
+          <icon :icon="faSearch" />
         </template>
         Find songs, artists, and albums,
         <span class="secondary d-block">all in one place.</span>

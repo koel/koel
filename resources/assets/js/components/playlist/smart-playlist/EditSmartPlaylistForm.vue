@@ -20,8 +20,8 @@
           <label class="folder">
             Folder
             <select v-model="mutablePlaylist.folder_id">
-              <option :value="null"></option>
-              <option v-for="folder in folders" :value="folder.id">{{ folder.name }}</option>
+              <option :value="null" />
+              <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
             </select>
           </label>
         </div>
@@ -31,11 +31,11 @@
             v-for="(group, index) in mutablePlaylist.rules"
             :key="group.id"
             :group="group"
-            :isFirstGroup="index === 0"
+            :is-first-group="index === 0"
             @input="onGroupChanged"
           />
           <Btn class="btn-add-group" green small title="Add a new group" uppercase @click.prevent="addGroup">
-            <icon :icon="faPlus"/>
+            <icon :icon="faPlus" />
           </Btn>
         </div>
       </main>
@@ -63,9 +63,7 @@ const playlist = useModal().getFromContext<Playlist>('playlist')
 
 const folders = toRef(playlistFolderStore.state, 'folders')
 
-let mutablePlaylist: Playlist
-
-watch(playlist, () => (mutablePlaylist = reactive(cloneDeep(playlist))), { immediate: true })
+const mutablePlaylist = reactive(cloneDeep(playlist))
 
 const isPristine = () => isEqual(mutablePlaylist.rules, playlist.rules)
   && mutablePlaylist.name.trim() === playlist.name

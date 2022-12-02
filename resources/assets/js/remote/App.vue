@@ -1,12 +1,12 @@
 <template>
   <div id="wrapper" :class="{ 'standalone' : inStandaloneMode }">
     <template v-if="authenticated">
-      <AlbumArtOverlay v-if="showAlbumArtOverlay && song" :album="song.album_id"/>
+      <AlbumArtOverlay v-if="showAlbumArtOverlay && song" :album="song.album_id" />
 
       <main>
         <template v-if="connected">
           <div v-if="song" class="details">
-            <div :style="{ backgroundImage: `url(${song.album_cover || defaultCover})` }" class="cover"/>
+            <div :style="{ backgroundImage: `url(${song.album_cover || defaultCover})` }" class="cover" />
             <div class="info">
               <div class="wrap">
                 <p class="title text">{{ song.title }}</p>
@@ -15,29 +15,29 @@
               </div>
             </div>
           </div>
-          <p class="none text-secondary" v-else>No song is playing.</p>
+          <p v-else class="none text-secondary">No song is playing.</p>
           <footer>
             <a class="favorite" :class="song?.liked ? 'yep' : ''" @click.prevent="toggleFavorite">
-              <icon :icon="song?.liked ? faHeart : faEmptyHeart"/>
+              <icon :icon="song?.liked ? faHeart : faEmptyHeart" />
             </a>
             <a class="prev" @click="playPrev">
-              <icon :icon="faStepBackward"/>
+              <icon :icon="faStepBackward" />
             </a>
             <a class="play-pause" @click.prevent="togglePlayback">
-              <icon :icon="playing ? faPause : faPlay"/>
+              <icon :icon="playing ? faPause : faPlay" />
             </a>
             <a class="next" @click.prevent="playNext">
-              <icon :icon="faStepForward"/>
+              <icon :icon="faStepForward" />
             </a>
             <span class="volume">
               <span
                 v-show="showingVolumeSlider"
-                ref="volumeSlider"
                 id="volumeSlider"
+                ref="volumeSlider"
                 v-koel-clickaway="closeVolumeSlider"
               />
               <span class="icon" @click.stop="toggleVolumeSlider">
-                <icon :icon="muted ? faVolumeMute : faVolumeHigh" fixed-width/>
+                <icon :icon="muted ? faVolumeMute : faVolumeHigh" fixed-width />
               </span>
             </span>
           </footer>
@@ -45,7 +45,7 @@
         <div v-else class="loader">
           <div v-if="!maxRetriesReached">
             <p>Searching for Koel…</p>
-            <div class="signal"></div>
+            <div class="signal" />
           </div>
           <p v-else>
             No active Koel instance found.
@@ -55,8 +55,8 @@
       </main>
     </template>
 
-    <div class="login-wrapper" v-else>
-      <LoginForm @loggedin="onUserLoggedIn"/>
+    <div v-else class="login-wrapper">
+      <LoginForm @loggedin="onUserLoggedIn" />
     </div>
   </div>
 </template>
@@ -116,7 +116,7 @@ watch(connected, async () => {
     throw new Error('Failed to initialize noUISlider on element #volumeSlider')
   }
 
-  volumeSlider.value.noUiSlider.on('change', (values: number[], handle: number) => {
+  volumeSlider.value.noUiSlider.on('change', (values: string[], handle: number) => {
     const volume = values[handle]
     muted.value = !volume
     socketService.broadcast('SOCKET_SET_VOLUME', volume)

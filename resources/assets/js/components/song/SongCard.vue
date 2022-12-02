@@ -7,7 +7,7 @@
     @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
-    <SongThumbnail :song="song"/>
+    <SongThumbnail :song="song" />
     <main>
       <div class="details">
         <h3>{{ song.title }}</h3>
@@ -16,7 +16,7 @@
           - {{ pluralize(song.play_count, 'play') }}
         </p>
       </div>
-      <LikeButton :song="song"/>
+      <LikeButton :song="song" />
     </main>
   </article>
 </template>

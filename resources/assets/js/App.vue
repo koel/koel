@@ -1,26 +1,26 @@
 <template>
-  <Overlay ref="overlay"/>
-  <DialogBox ref="dialog"/>
-  <MessageToaster ref="toaster"/>
-  <GlobalEventListeners/>
-  <OfflineNotification v-if="offline"/>
+  <Overlay ref="overlay" />
+  <DialogBox ref="dialog" />
+  <MessageToaster ref="toaster" />
+  <GlobalEventListeners />
+  <OfflineNotification v-if="offline" />
 
   <div v-if="authenticated" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
-    <Hotkeys/>
-    <MainWrapper/>
-    <AppFooter/>
-    <SupportKoel/>
-    <SongContextMenu/>
-    <AlbumContextMenu/>
-    <ArtistContextMenu/>
-    <PlaylistContextMenu/>
-    <PlaylistFolderContextMenu/>
-    <CreateNewPlaylistContextMenu/>
-    <DropZone v-show="showDropZone"/>
+    <Hotkeys />
+    <MainWrapper />
+    <AppFooter />
+    <SupportKoel />
+    <SongContextMenu />
+    <AlbumContextMenu />
+    <ArtistContextMenu />
+    <PlaylistContextMenu />
+    <PlaylistFolderContextMenu />
+    <CreateNewPlaylistContextMenu />
+    <DropZone v-show="showDropZone" />
   </div>
 
   <div v-else class="login-wrapper">
-    <LoginForm @loggedin="onUserLoggedIn"/>
+    <LoginForm @loggedin="onUserLoggedIn" />
   </div>
 </template>
 
@@ -92,7 +92,7 @@ onMounted(async () => {
 })
 
 const init = async () => {
-  overlay.value.show({ message: 'Just a little patience…' })
+  overlay.value!.show({ message: 'Just a little patience…' })
 
   try {
     await commonStore.init()
@@ -108,7 +108,7 @@ const init = async () => {
     })
 
     await socketService.init() && socketListener.listen()
-    overlay.value.hide()
+    overlay.value!.hide()
   } catch (err) {
     authenticated.value = false
     throw err

@@ -41,7 +41,7 @@ export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> 
     return take(Array.from(new Set(sampleCovers)), 4)
   })
 
-  const getSongsToPlay = (): Song[] => songList.value.getAllSongsWithSort()
+  const getSongsToPlay = (): Song[] => songList.value!.getAllSongsWithSort()
 
   const playAll = (shuffle: boolean) => {
     playbackService.queueAndPlay(getSongsToPlay(), shuffle)

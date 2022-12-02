@@ -1,15 +1,15 @@
 <template>
   <dialog ref="dialog" class="text-primary bg-primary" @cancel.prevent>
-    <Component :is="modalNameToComponentMap[activeModalName]" v-if="activeModalName" @close="close"/>
+    <Component :is="modalNameToComponentMap[activeModalName]" v-if="activeModalName" @close="close" />
   </dialog>
 </template>
 
 <script lang="ts" setup>
-import { ComponentPublicInstance, defineAsyncComponent, ref, watch } from 'vue'
+import { defineAsyncComponent, ref, watch } from 'vue'
 import { arrayify, eventBus, provideReadonly } from '@/utils'
 import { ModalContextKey } from '@/symbols'
 
-const modalNameToComponentMap: Record<string, ComponentPublicInstance> = {
+const modalNameToComponentMap = {
   'create-playlist-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
   'edit-playlist-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue')),
   'create-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue')),

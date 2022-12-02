@@ -17,7 +17,7 @@ export interface Events {
 
   MODAL_SHOW_ADD_USER_FORM: () => void
   MODAL_SHOW_EDIT_USER_FORM: (user: User) => void
-  MODAL_SHOW_EDIT_SONG_FORM: (songs: Song | Song[], initialTab: EditSongFormTabName) => void
+  MODAL_SHOW_EDIT_SONG_FORM: (songs: Song | Song[], initialTab?: EditSongFormTabName) => void
   MODAL_SHOW_CREATE_PLAYLIST_FORM: (folder: PlaylistFolder | null) => void
   MODAL_SHOW_EDIT_PLAYLIST_FORM: (playlist: Playlist) => void
   MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM: (folder: PlaylistFolder | null) => void
@@ -41,10 +41,9 @@ export interface Events {
   SOCKET_PLAY_PREV: () => void
   SOCKET_PLAYBACK_STOPPED: () => void
   SOCKET_GET_STATUS: () => void
-  SOCKET_STATUS: () => void
+  SOCKET_STATUS: (data: { song?: Song, volume: number }) => void
   SOCKET_GET_CURRENT_SONG: () => void
   SOCKET_SONG: (song: Song) => void
   SOCKET_SET_VOLUME: (volume: number) => void
   SOCKET_VOLUME_CHANGED: (volume: number) => void
 }
-

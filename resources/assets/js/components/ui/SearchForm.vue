@@ -1,7 +1,7 @@
 <template>
   <form id="searchForm" role="search" @submit.prevent="onSubmit">
     <span class="icon">
-      <icon :icon="faSearch"/>
+      <icon :icon="faSearch" />
     </span>
 
     <input
@@ -19,7 +19,7 @@
     >
 
     <button type="submit" title="Search">
-      <icon :icon="faSearch"/>
+      <icon :icon="faSearch" />
     </button>
   </form>
 </template>

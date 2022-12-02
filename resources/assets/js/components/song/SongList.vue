@@ -18,8 +18,8 @@
       >
         #
         <template v-if="config.sortable">
-          <icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
-          <icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+          <icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
+          <icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
       <span
@@ -31,8 +31,8 @@
       >
         Title
         <template v-if="config.sortable">
-          <icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
-          <icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+          <icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
+          <icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
       <span
@@ -44,8 +44,8 @@
       >
         Album
         <template v-if="config.sortable">
-          <icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
-          <icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+          <icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
+          <icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
       <span
@@ -57,12 +57,12 @@
       >
         Time
         <template v-if="config.sortable">
-          <icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight"/>
-          <icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight"/>
+          <icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
+          <icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
       <span class="extra">
-        <SongListSorter v-if="config.sortable" :field="sortField" :order="sortOrder" @sort="sort"/>
+        <SongListSorter v-if="config.sortable" :field="sortField" :order="sortOrder" @sort="sort" />
       </span>
     </div>
 
@@ -243,7 +243,7 @@ const onDragStart = (row: SongRow, event: DragEvent) => {
 
   // Add "dragging" class to the wrapper so that we can disable pointer events on child elements.
   // This prevents dragleave events from firing when the user drags the mouse over the child elements.
-  wrapper.value.classList.add('dragging')
+  wrapper.value?.classList.add('dragging')
 
   startDragging(event, selectedSongs.value)
 }
@@ -261,11 +261,11 @@ const onDragEnter = (event: DragEvent) => {
 
 const onDrop = (item: SongRow, event: DragEvent) => {
   if (!config.reorderable || !getDroppedData(event) || !selectedSongs.value.length) {
-    wrapper.value.classList.remove('dragging')
+    wrapper.value?.classList.remove('dragging')
     return onDragLeave(event)
   }
 
-  wrapper.value.classList.remove('dragging')
+  wrapper.value?.classList.remove('dragging')
 
   emit('reorder', item.song)
   return onDragLeave(event)
@@ -276,7 +276,7 @@ const onDragLeave = (event: DragEvent) => {
   return false
 }
 
-const onDragEnd = () => wrapper.value.classList.remove('dragging')
+const onDragEnd = () => wrapper.value?.classList.remove('dragging')
 
 const openContextMenu = async (row: SongRow, event: MouseEvent) => {
   if (!row.selected) {

@@ -3,13 +3,13 @@
     <h1>Most Played</h1>
     <ol v-if="loading" class="top-song-list">
       <li v-for="i in 3" :key="i">
-        <SongCardSkeleton/>
+        <SongCardSkeleton />
       </li>
     </ol>
     <template v-else>
       <ol v-if="songs.length" class="top-song-list">
         <li v-for="song in songs" :key="song.id">
-          <SongCard :song="song"/>
+          <SongCard :song="song" />
         </li>
       </ol>
       <p v-else class="text-secondary">You don’t seem to have been playing.</p>

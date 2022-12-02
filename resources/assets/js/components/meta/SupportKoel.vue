@@ -7,7 +7,7 @@
       <a href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>.
     </p>
     <button type="button" @click.prevent="close">Hide</button>
-    <span class="sep"></span>
+    <span class="sep" />
     <button type="button" @click.prevent="stopBugging">
       Don't bug me again
     </button>

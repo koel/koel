@@ -1,7 +1,7 @@
 <template>
   <article class="skeleton pulse" :style="{ width: `${width}px` }">
-    <span class="name"></span>
-    <span class="count pulse"/>
+    <span class="name" />
+    <span class="count pulse" />
   </article>
 </template>
 

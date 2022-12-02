@@ -11,7 +11,7 @@ new class extends UnitTestCase {
       const storeMock = this.mock(playlistFolderStore, 'store')
         .mockResolvedValue(factory<PlaylistFolder>('playlist-folder'))
 
-      await this.render(CreatePlaylistFolderForm)
+      this.render(CreatePlaylistFolderForm)
 
       await this.type(screen.getByPlaceholderText('Folder name'), 'My folder')
       await this.user.click(screen.getByRole('button', { name: 'Save' }))

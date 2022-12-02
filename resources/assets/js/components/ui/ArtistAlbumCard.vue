@@ -8,13 +8,13 @@
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"
   >
-    <AlbumArtistThumbnail :entity="entity"/>
+    <AlbumArtistThumbnail :entity="entity" />
     <footer>
       <div class="name">
-        <slot name="name"/>
+        <slot name="name" />
       </div>
       <p class="meta">
-        <slot name="meta"/>
+        <slot name="meta" />
       </p>
     </footer>
   </article>

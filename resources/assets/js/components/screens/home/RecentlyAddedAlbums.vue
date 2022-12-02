@@ -4,13 +4,13 @@
 
     <ol v-if="loading" class="recently-added-album-list">
       <li v-for="i in 2" :key="i">
-        <AlbumCardSkeleton layout="compact"/>
+        <AlbumCardSkeleton layout="compact" />
       </li>
     </ol>
     <template v-else>
       <ol v-if="albums.length" class="recently-added-album-list">
         <li v-for="album in albums" :key="album.id">
-          <AlbumCard :album="album" layout="compact"/>
+          <AlbumCard :album="album" layout="compact" />
         </li>
       </ol>
       <p v-else class="text-secondary">No albums added yet.</p>

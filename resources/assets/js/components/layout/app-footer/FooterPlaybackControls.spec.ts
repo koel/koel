@@ -4,14 +4,14 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { CurrentSongKey } from '@/symbols'
 import { playbackService } from '@/services'
-import FooterPlaybackControls from './FooterPlaybackControls.vue'
 import { screen } from '@testing-library/vue'
+import FooterPlaybackControls from './FooterPlaybackControls.vue'
 
 new class extends UnitTestCase {
   private renderComponent (song?: Song | null) {
     if (song === undefined) {
       song = factory<Song>('song', {
-        id: 42,
+        id: '00000000-0000-0000-0000-000000000000',
         title: 'Fahrstuhl to Heaven',
         artist_name: 'Led Zeppelin',
         artist_id: 3,
