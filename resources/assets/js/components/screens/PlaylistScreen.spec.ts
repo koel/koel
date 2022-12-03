@@ -11,12 +11,12 @@ let playlist: Playlist
 
 new class extends UnitTestCase {
   private async renderComponent (songs: Song[]) {
-    playlist ||= factory<Playlist>('playlist')
+    playlist = playlist || factory<Playlist>('playlist')
     playlistStore.init([playlist])
 
     const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
 
-    const rendered = this.render(PlaylistScreen)
+    this.render(PlaylistScreen)
 
     await this.router.activateRoute({
       path: `playlists/${playlist.id}`,
