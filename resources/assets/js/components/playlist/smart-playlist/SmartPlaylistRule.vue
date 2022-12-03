@@ -5,7 +5,7 @@
     </Btn>
 
     <select v-model="selectedModel" name="model[]">
-      <option v-for="m in models" :key="m.name" :value="m">{{ model.label }}</option>
+      <option v-for="m in models" :key="m.name" :value="m">{{ m.label }}</option>
     </select>
 
     <select v-model="selectedOperator" name="operator[]">
