@@ -6,12 +6,14 @@ use App\Console\Kernel;
 use App\Models\User;
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\DB;
 
 trait CreatesApplication
 {
     protected string $mediaPath = __DIR__ . '/../songs';
     private Kernel $artisan;
     protected string $baseUrl = 'http://localhost';
+    public static bool $migrated = false;
 
     public function createApplication(): Application
     {
@@ -23,15 +25,17 @@ trait CreatesApplication
         $this->artisan = $app->make(Artisan::class);
         $this->artisan->bootstrap();
 
-        return $app;
-    }
+        // Unless the DB is stored in memory, we need to migrate the DB only once for the whole test suite.
+        if (!CreatesApplication::$migrated || DB::connection()->getDatabaseName() === ':memory:') {
+            $this->artisan->call('migrate');
 
-    private function prepareForTests(): void
-    {
-        $this->artisan->call('migrate');
+            if (!User::query()->count()) {
+                $this->artisan->call('db:seed');
+            }
 
-        if (!User::query()->count()) {
-            $this->artisan->call('db:seed');
+            CreatesApplication::$migrated = true;
         }
+
+        return $app;
     }
 }

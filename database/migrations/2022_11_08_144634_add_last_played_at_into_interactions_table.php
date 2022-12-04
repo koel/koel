@@ -13,9 +13,9 @@ return new class extends Migration
             $table->timestamp('last_played_at')->nullable();
         });
 
-        DB::statement('UPDATE interactions SET last_played_at = updated_at');
+        DB::unprepared('UPDATE interactions SET last_played_at = updated_at');
 
-        DB::statement(
+        DB::unprepared(
             "UPDATE playlists SET rules = REPLACE(rules, 'interactions.updated_at', 'interactions.last_played_at')"
         );
     }
