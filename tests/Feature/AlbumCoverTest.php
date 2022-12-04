@@ -28,12 +28,12 @@ class AlbumCoverTest extends TestCase
         $user = User::factory()->admin()->create();
 
         /** @var Album $album */
-        $album = Album::factory()->create(['id' => 9999]);
+        $album = Album::factory()->create();
 
         $this->mediaMetadataService
             ->shouldReceive('writeAlbumCover')
             ->once()
-            ->with(Mockery::on(static fn (Album $album) => $album->id === 9999), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'Foo', 'jpeg');
 
         $this->putAs('api/album/' . $album->id . '/cover', ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertOk();

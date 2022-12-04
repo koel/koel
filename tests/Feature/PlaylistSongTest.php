@@ -49,7 +49,9 @@ class PlaylistSongTest extends TestCase
         $songs = Song::factory(2)->create();
         $playlist->songs()->saveMany($songs);
 
-        $this->getAs("api/playlist/$playlist->id/songs", $playlist->user)
-            ->assertJson($songs->pluck('id')->all());
+        $responseIds = $this->getAs("api/playlist/$playlist->id/songs", $playlist->user)
+            ->json();
+
+        self::assertEqualsCanonicalizing($responseIds, $songs->pluck('id')->all());
     }
 }
