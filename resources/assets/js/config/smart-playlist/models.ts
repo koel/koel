@@ -22,7 +22,7 @@ const models: SmartPlaylistModel[] = [
   }, {
     name: 'interactions.play_count',
     type: 'number',
-    label: 'Plays'
+    label: 'Play Count'
   }, {
     name: 'interactions.last_played_at',
     type: 'date',
