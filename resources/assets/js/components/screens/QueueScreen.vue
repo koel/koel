@@ -16,7 +16,6 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
-          :config="controlConfig"
           @clear-queue="clearQueue"
           @play-all="playAll"
           @play-selected="playSelected"
@@ -62,8 +61,6 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const { go } = useRouter()
 const { showErrorDialog } = useDialogBox()
-
-const controlConfig: Partial<SongListControlsConfig> = { clearQueue: true }
 
 const {
   SongList,

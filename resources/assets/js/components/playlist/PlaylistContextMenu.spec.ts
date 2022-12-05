@@ -18,7 +18,7 @@ new class extends UnitTestCase {
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
-      await this.user.click(screen.getByText('Edit'))
+      await this.user.click(screen.getByText('Edit…'))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist)
     })
@@ -28,7 +28,7 @@ new class extends UnitTestCase {
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
-      await this.user.click(screen.getByText('Edit'))
+      await this.user.click(screen.getByText('Edit…'))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist)
     })

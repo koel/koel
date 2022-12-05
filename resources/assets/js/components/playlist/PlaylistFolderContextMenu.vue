@@ -6,8 +6,8 @@
         <li @click="shuffle">Shuffle All</li>
         <li class="separator" />
       </template>
-      <li @click="createPlaylist">Create Playlist</li>
-      <li @click="createSmartPlaylist">Create Smart Playlist</li>
+      <li @click="createPlaylist">New Playlist…</li>
+      <li @click="createSmartPlaylist">New Smart Playlist…</li>
       <li class="separator" />
       <li @click="rename">Rename</li>
       <li @click="destroy">Delete</li>

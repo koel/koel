@@ -117,7 +117,7 @@ export const playlistStore = {
     })
 
     playlist.is_smart && cache.remove(['playlist.songs', playlist.id])
-    Object.assign(this.byId(playlist.id), data)
+    Object.assign(this.byId(playlist.id)!, data)
   },
 
   createEmptySmartPlaylistRule: (): SmartPlaylistRule => ({

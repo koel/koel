@@ -1,7 +1,16 @@
 <template>
   <form @submit.prevent="submit" @keydown.esc="maybeClose">
     <header>
-      <h1>New Playlist</h1>
+      <h1>
+        New Playlist
+        <span
+          v-if="songs.length"
+          data-testid="from-songs"
+          class="text-secondary"
+        >
+          from {{ pluralize(songs, 'song') }}
+        </span>
+      </h1>
     </header>
 
     <main>
@@ -37,7 +46,7 @@
 <script lang="ts" setup>
 import { ref, toRef } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { logger } from '@/utils'
+import { logger, pluralize } from '@/utils'
 import { useDialogBox, useMessageToaster, useModal, useOverlay, useRouter } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
@@ -46,7 +55,10 @@ const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const { go } = useRouter()
-const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
+const { getFromContext } = useModal()
+
+const targetFolder = getFromContext<PlaylistFolder | null>('folder') ?? null
+const songs = getFromContext<Song[]>('songs') ?? []
 
 const folderId = ref(targetFolder?.id)
 const name = ref('')
@@ -61,7 +73,7 @@ const submit = async () => {
   try {
     const playlist = await playlistStore.store(name.value, {
       folder_id: folderId.value
-    })
+    }, songs)
 
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)

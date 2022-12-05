@@ -313,8 +313,6 @@ declare type ArtistAlbumCardLayout = 'full' | 'compact'
 interface AddToMenuConfig {
   queue: boolean
   favorites: boolean
-  playlists: boolean
-  newPlaylist: boolean
 }
 
 interface SongListControlsConfig {

@@ -2,63 +2,65 @@
   <div ref="el" class="song-list-controls" data-testid="song-list-controls">
     <div class="wrapper">
       <BtnGroup uppercased>
-        <template v-if="mergedConfig.play">
-          <template v-if="altPressed">
-            <Btn
-              v-if="selectedSongs.length < 2 && songs.length"
-              class="btn-play-all"
-              orange
-              title="Play all songs"
-              @click.prevent="playAll"
-            >
-              <icon :icon="faPlay" fixed-width />
-              All
-            </Btn>
+        <template v-if="altPressed">
+          <Btn
+            v-if="selectedSongs.length < 2 && songs.length"
+            class="btn-play-all"
+            orange
+            title="Play all songs"
+            @click.prevent="playAll"
+          >
+            <icon :icon="faPlay" fixed-width />
+            All
+          </Btn>
 
-            <Btn
-              v-if="selectedSongs.length > 1"
-              class="btn-play-selected"
-              orange
-              title="Play selected songs"
-              @click.prevent="playSelected"
-            >
-              <icon :icon="faPlay" fixed-width />
-              Selected
-            </Btn>
-          </template>
-
-          <template v-else>
-            <Btn
-              v-if="selectedSongs.length < 2 && songs.length"
-              class="btn-shuffle-all"
-              data-testid="btn-shuffle-all"
-              orange
-              title="Shuffle all songs"
-              @click.prevent="shuffle"
-            >
-              <icon :icon="faRandom" fixed-width />
-              All
-            </Btn>
-
-            <Btn
-              v-if="selectedSongs.length > 1"
-              class="btn-shuffle-selected"
-              data-testid="btn-shuffle-selected"
-              orange
-              title="Shuffle selected songs"
-              @click.prevent="shuffleSelected"
-            >
-              <icon :icon="faRandom" fixed-width />
-              Selected
-            </Btn>
-          </template>
+          <Btn
+            v-if="selectedSongs.length > 1"
+            class="btn-play-selected"
+            orange
+            title="Play selected songs"
+            @click.prevent="playSelected"
+          >
+            <icon :icon="faPlay" fixed-width />
+            Selected
+          </Btn>
         </template>
 
-        <Btn v-if="showAddToButton" ref="addToButton" green @click.prevent.stop="toggleAddToMenu">
+        <template v-else>
+          <Btn
+            v-if="selectedSongs.length < 2 && songs.length"
+            class="btn-shuffle-all"
+            data-testid="btn-shuffle-all"
+            orange
+            title="Shuffle all songs"
+            @click.prevent="shuffle"
+          >
+            <icon :icon="faRandom" fixed-width />
+            All
+          </Btn>
+
+          <Btn
+            v-if="selectedSongs.length > 1"
+            class="btn-shuffle-selected"
+            data-testid="btn-shuffle-selected"
+            orange
+            title="Shuffle selected songs"
+            @click.prevent="shuffleSelected"
+          >
+            <icon :icon="faRandom" fixed-width />
+            Selected
+          </Btn>
+        </template>
+
+        <Btn
+          v-if="showAddToButton"
+          ref="addToButton"
+          green @click.prevent.stop="toggleAddToMenu"
+        >
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </Btn>
 
-        <Btn v-if="showClearQueueButton" red title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
+        <Btn v-if="config.clearQueue" red title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
       </BtnGroup>
 
       <BtnGroup>
@@ -67,7 +69,7 @@
         </Btn>
 
         <Btn
-          v-if="showDeletePlaylistButton"
+          v-if="config.deletePlaylist"
           v-koel-tooltip
           class="del btn-delete-playlist"
           red
@@ -80,7 +82,7 @@
     </div>
 
     <div ref="addToMenu" v-koel-clickaway="closeAddToMenu" class="menu-wrapper">
-      <AddToMenu :config="mergedConfig.addTo" :songs="selectedSongs" @closing="closeAddToMenu" />
+      <AddToMenu :config="config.addTo" :songs="selectedSongs" @closing="closeAddToMenu" />
     </div>
   </div>
 </template>
@@ -90,14 +92,13 @@ import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-s
 import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, toRefs, watch } from 'vue'
 import { SelectedSongsKey, SongsKey } from '@/symbols'
 import { requireInjection } from '@/utils'
-import { useFloatingUi } from '@/composables'
+import { useFloatingUi, useSongListControls } from '@/composables'
 
 import AddToMenu from '@/components/song/AddToMenu.vue'
 import Btn from '@/components/ui/Btn.vue'
 import BtnGroup from '@/components/ui/BtnGroup.vue'
 
-const props = withDefaults(defineProps<{ config?: Partial<SongListControlsConfig> }>(), { config: () => ({}) })
-const { config } = toRefs(props)
+const config = useSongListControls().getSongListControlsConfig()
 
 const [songs] = requireInjection<[Ref<Song[]>]>(SongsKey)
 const [selectedSongs] = requireInjection(SelectedSongsKey)
@@ -108,23 +109,7 @@ const addToMenu = ref<HTMLDivElement>()
 const showingAddToMenu = ref(false)
 const altPressed = ref(false)
 
-const mergedConfig = computed((): SongListControlsConfig => Object.assign({
-    play: true,
-    addTo: {
-      queue: true,
-      favorites: true,
-      playlists: true,
-      newPlaylist: true
-    },
-    clearQueue: false,
-    deletePlaylist: false,
-    refresh: false
-  }, config.value)
-)
-
 const showAddToButton = computed(() => Boolean(selectedSongs.value.length))
-const showClearQueueButton = computed(() => mergedConfig.value.clearQueue)
-const showDeletePlaylistButton = computed(() => mergedConfig.value.deletePlaylist)
 
 const emit = defineEmits<{
   (e: 'playAll' | 'playSelected', shuffle: boolean): void,

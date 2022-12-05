@@ -251,14 +251,14 @@ new class extends UnitTestCase {
 
       // mock after render to ensure that the component is mounted properly
       const emitMock = this.mock(eventBus, 'emit')
-      await this.user.click(screen.getByText('Edit'))
+      await this.user.click(screen.getByText('Edit…'))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', songs)
     })
 
     it('does not allow edit songs if current user is not admin', async () => {
       await this.actingAs().renderComponent()
-      expect(screen.queryByText('Edit')).toBeNull()
+      expect(screen.queryByText('Edit…')).toBeNull()
     })
 
     it('has an option to copy shareable URL', async () => {
@@ -287,6 +287,17 @@ new class extends UnitTestCase {
     it('does not have an option to delete songs if current user is not admin', async () => {
       await this.actingAs().renderComponent()
       expect(screen.queryByText('Delete from Filesystem')).toBeNull()
+    })
+
+    it('creates playlist from selected songs', async () => {
+      await this.actingAs().renderComponent()
+
+      // mock after render to ensure that the component is mounted properly
+      const emitMock = this.mock(eventBus, 'emit')
+
+      await this.user.click(screen.getByText('New Playlist…'))
+
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, songs)
     })
   }
 }

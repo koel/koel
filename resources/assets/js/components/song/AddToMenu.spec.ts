@@ -4,7 +4,7 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { arrayify } from '@/utils'
+import { arrayify, eventBus } from '@/utils'
 import Btn from '@/components/ui/Btn.vue'
 import AddToMenu from './AddToMenu.vue'
 
@@ -12,9 +12,7 @@ let songs: Song[]
 
 const config: AddToMenuConfig = {
   queue: true,
-  favorites: true,
-  playlists: true,
-  newPlaylist: true
+  favorites: true
 }
 
 new class extends UnitTestCase {
@@ -49,8 +47,6 @@ new class extends UnitTestCase {
     it.each<[keyof AddToMenuConfig, string | string[]]>([
       ['queue', ['queue-after-current', 'queue-bottom', 'queue-top', 'queue']],
       ['favorites', 'add-to-favorites'],
-      ['playlists', 'add-to-playlist'],
-      ['newPlaylist', 'new-playlist']
     ])('renders disabling %s config', (configKey: keyof AddToMenuConfig, testIds: string | string[]) => {
       this.renderComponent({ [configKey]: false })
       arrayify(testIds).forEach(id => expect(screen.queryByTestId(id)).toBeNull())
@@ -89,6 +85,15 @@ new class extends UnitTestCase {
       await this.user.click(screen.getAllByTestId('add-to-playlist')[1])
 
       expect(mock).toHaveBeenCalledWith(playlistStore.state.playlists[1], songs)
+    })
+
+    it('creates playlist from selected songs', async () => {
+      const emitMock = this.mock(eventBus, 'emit')
+      this.renderComponent()
+
+      await this.user.click(screen.getByText('New Playlist…'))
+
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, songs)
     })
   }
 }
