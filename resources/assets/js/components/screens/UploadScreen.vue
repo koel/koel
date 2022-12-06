@@ -17,7 +17,7 @@
       </template>
     </ScreenHeader>
 
-    <div class="main-scroll-wrap">
+    <div v-koel-overflow-fade class="main-scroll-wrap">
       <div
         v-if="mediaPathSetUp"
         :class="{ droppable }"

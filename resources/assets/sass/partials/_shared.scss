@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   outline: none;
 }
@@ -7,7 +9,8 @@
   display: none !important;
 }
 
-body, html {
+body,
+html {
   @include themed-background();
 
   color: var(--color-text-primary);
@@ -18,7 +21,11 @@ body, html {
   overflow: hidden;
 }
 
-input, select, button, textarea, .btn {
+input,
+select,
+button,
+textarea,
+.btn {
   appearance: none;
   border: 0;
   outline: 0;
@@ -29,7 +36,8 @@ input, select, button, textarea, .btn {
   border-radius: .3rem;
   margin: 0;
 
-  &:required, &:invalid {
+  &:required,
+  &:invalid {
     box-shadow: none;
   }
 
@@ -52,7 +60,8 @@ input, select, button, textarea, .btn {
   }
 }
 
-button, [role=button] {
+button,
+[role=button] {
   cursor: pointer;
   background: transparent;
   padding: 0;
@@ -87,11 +96,13 @@ a {
   text-decoration: none;
   cursor: pointer;
 
-  &:link, &:visited {
+  &:link,
+  &:visited {
     color: var(--color-text-secondary);
   }
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     color: var(--color-accent);
   }
 }
@@ -174,7 +185,7 @@ label {
   }
 }
 
-.form-row + .form-row {
+.form-row+.form-row {
   margin-top: 1.125rem;
   position: relative;
 }
@@ -184,12 +195,13 @@ label {
   place-content: space-between;
   gap: 1rem;
 
-  > * {
+  >* {
     flex: 1;
   }
 }
 
-.form-row input:not([type="checkbox"]), .form-row select {
+.form-row input:not([type="checkbox"]),
+.form-row select {
   margin-top: .7rem;
   display: block;
   height: 32px;
@@ -291,7 +303,9 @@ label {
   }
 }
 
-.context-menu, .submenu, menu {
+.context-menu,
+.submenu,
+menu {
   @include context-menu();
   position: fixed;
 
@@ -334,4 +348,30 @@ label {
     left: 100%;
     top: 0;
   }
+}
+
+:root {
+  --fade-size: 3rem;
+}
+
+.fade-top {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
+  mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
+}
+
+.fade-bottom {
+  -webkit-mask-image: linear-gradient(to top, transparent, black var(--fade-size));
+  mask-image: linear-gradient(to top, transparent, black var(--fade-size));
+}
+
+.fade-top.fade-bottom {
+  -webkit-mask: linear-gradient(to bottom, transparent, black var(--fade-size)) top,
+    linear-gradient(to top, transparent, black var(--fade-size)) bottom;
+  -webkit-mask-size: 100% 51%;
+  -webkit-mask-repeat: no-repeat;
+
+  mask: linear-gradient(to bottom, transparent, black var(--fade-size)) top,
+    linear-gradient(to top, transparent, black var(--fade-size)) bottom;
+  mask-size: 100% 51%;
+  mask-repeat: no-repeat;
 }

@@ -9,6 +9,7 @@
 
     <div
       ref="scroller"
+      v-koel-overflow-fade
       :class="`as-${viewMode}`"
       class="albums main-scroll-wrap"
       data-testid="album-list"
