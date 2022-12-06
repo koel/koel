@@ -3,7 +3,7 @@
     <section class="existing-playlists">
       <p>Add {{ pluralize(songs, 'song') }} to</p>
 
-      <ul>
+      <ul v-koel-overflow-fade>
         <template v-if="config.queue">
           <template v-if="queue.length">
             <li
@@ -103,6 +103,7 @@ watch(songs, () => songs.value.length || close())
   }
 
   ul {
+    position: relative;
     max-height: 12rem;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;

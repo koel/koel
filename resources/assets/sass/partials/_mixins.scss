@@ -10,14 +10,14 @@
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 
   &.as-list {
-    gap: 0.7em 1em;;
+    gap: 0.7em 1em;
     align-content: start;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 
     @media only screen and (max-width: 667px) {
       display: block;
 
-      > * + * {
+      >*+* {
         margin-top: .7rem;
       }
     }
@@ -91,7 +91,8 @@
     }
   }
 
-  .bio, .wiki {
+  .bio,
+  .wiki {
     margin: 16px 0;
   }
 
@@ -106,7 +107,8 @@
     font-size: .8rem;
   }
 
-  .cover, .cool-guys-posing {
+  .cover,
+  .cool-guys-posing {
     width: 100%;
     height: auto;
     display: block;
@@ -137,7 +139,8 @@
       margin: 0 16px 16px 0;
     }
 
-    .bio, .wiki {
+    .bio,
+    .wiki {
       margin-top: 0;
     }
 

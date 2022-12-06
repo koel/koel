@@ -1,5 +1,5 @@
 <template>
-  <div ref="scroller" class="virtual-scroller" @scroll.passive="onScroll">
+  <div ref="scroller" v-koel-overflow-fade class="virtual-scroller" @scroll.passive="onScroll">
     <div :style="{ height: `${totalHeight}px` }">
       <div :style="{ transform: `translateY(${offsetY}px)`}">
         <template v-for="item in renderedItems">
@@ -23,7 +23,7 @@ const scrollTop = ref(0)
 
 const emit = defineEmits<{
   (e: 'scrolled-to-end'): void,
-  (e: 'scroll', event: MouseEvent): void
+  (e: 'scroll', event: Event): void
 }>()
 
 const totalHeight = computed(() => items.value.length * itemHeight.value)
@@ -36,7 +36,7 @@ const renderedItems = computed(() => {
   return items.value.slice(startPosition.value, startPosition.value + count)
 })
 
-const onScroll = e => requestAnimationFrame(() => {
+const onScroll = (e: Event) => requestAnimationFrame(() => {
   scrollTop.value = (e.target as HTMLElement).scrollTop
 
   if (!scroller.value) return

@@ -22,7 +22,7 @@
           <li @click="addSongsToFavorite">Favorites</li>
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
-        <ul v-if="normalPlaylists.length" class="normal-playlists">
+        <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="playlists">
           <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
         </ul>
         <li class="separator" />
@@ -163,8 +163,9 @@ eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e, _songs) => {
 </script>
 
 <style lang="scss" scoped>
-ul.normal-playlists {
-  max-height: 256px;
+ul.playlists {
+  position: relative;
+  max-height: 192px;
   overflow-y: auto;
 }
 </style>

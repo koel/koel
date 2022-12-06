@@ -94,7 +94,8 @@ export default abstract class UnitTestCase {
           'koel-clickaway': {},
           'koel-focus': {},
           'koel-tooltip': {},
-          'koel-hide-broken-icon': {}
+          'koel-hide-broken-icon': {},
+          'koel-overflow-fade': {}
         },
         components: {
           icon: this.stub('icon')

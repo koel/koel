@@ -14,7 +14,7 @@
       </template>
     </ScreenHeader>
 
-    <div class="main-scroll-wrap">
+    <div v-koel-overflow-fade class="main-scroll-wrap">
       <ul class="users">
         <li v-for="user in users" :key="user.id">
           <UserCard :user="user" />

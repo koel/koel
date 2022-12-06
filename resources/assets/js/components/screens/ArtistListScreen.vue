@@ -9,6 +9,7 @@
 
     <div
       ref="scroller"
+      v-koel-overflow-fade
       :class="`as-${viewMode}`"
       class="artists main-scroll-wrap"
       data-testid="artist-list"
