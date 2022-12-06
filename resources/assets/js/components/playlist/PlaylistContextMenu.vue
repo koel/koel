@@ -1,6 +1,6 @@
 <template>
   <ContextMenuBase ref="base">
-    <li @click="editPlaylist">Edit</li>
+    <li @click="editPlaylist">Edit…</li>
     <li @click="deletePlaylist">Delete</li>
   </ContextMenuBase>
 </template>

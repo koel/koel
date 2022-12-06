@@ -40,8 +40,12 @@ const close = () => {
 
 eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'))
   .on('MODAL_SHOW_ADD_USER_FORM', () => (activeModalName.value = 'add-user-form'))
-  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', folder => {
-    context.value = { folder }
+  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, songs) => {
+    context.value = {
+      folder,
+      songs: songs ? arrayify(songs) : []
+    }
+
     activeModalName.value = 'create-playlist-form'
   })
   .on('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', folder => {

@@ -33,54 +33,34 @@
           Favorites
         </li>
 
-        <template v-if="config.playlists">
-          <li
-            v-for="playlist in playlists"
-            :key="playlist.id"
-            class="playlist"
-            data-testid="add-to-playlist"
-            tabindex="0"
-            @click="addSongsToExistingPlaylist(playlist)"
-          >
-            {{ playlist.name }}
-          </li>
-        </template>
+        <li
+          v-for="playlist in playlists"
+          :key="playlist.id"
+          class="playlist"
+          data-testid="add-to-playlist"
+          tabindex="0"
+          @click="addSongsToExistingPlaylist(playlist)"
+        >
+          {{ playlist.name }}
+        </li>
       </ul>
     </section>
 
-    <section v-if="config.newPlaylist" class="new-playlist" data-testid="new-playlist">
-      <p>or create a new playlist</p>
-
-      <form class="form-save form-simple form-new-playlist" @submit.prevent="createNewPlaylistFromSongs">
-        <input
-          v-model="newPlaylistName"
-          data-testid="new-playlist-name"
-          placeholder="Playlist name"
-          required
-          type="text"
-          @keyup.esc.prevent="close"
-        >
-        <Btn title="Save" type="submit">⏎</Btn>
-      </form>
-    </section>
+    <Btn transparent @click.prevent="addSongsToNewPlaylist">New Playlist…</Btn>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, ref, toRef, toRefs, watch } from 'vue'
+import { computed, ref, toRef, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { playlistStore, queueStore } from '@/stores'
-import { useMessageToaster, useRouter, useSongMenuMethods } from '@/composables'
+import { useSongMenuMethods } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
-
-const { toastSuccess } = useMessageToaster()
-const { go } = useRouter()
 
 const props = defineProps<{ songs: Song[], config: AddToMenuConfig }>()
 const { songs, config } = toRefs(props)
 
-const newPlaylistName = ref('')
 const queue = toRef(queueStore.state, 'songs')
 const currentSong = queueStore.current
 
@@ -95,39 +75,18 @@ const {
   queueSongsToBottom,
   queueSongsToTop,
   addSongsToFavorite,
-  addSongsToExistingPlaylist
+  addSongsToExistingPlaylist,
+  addSongsToNewPlaylist
 } = useSongMenuMethods(songs, close)
 
 watch(songs, () => songs.value.length || close())
-
-/**
- * Save the selected songs as a playlist.
- * As of current we don't have selective save.
- */
-const createNewPlaylistFromSongs = async () => {
-  newPlaylistName.value = newPlaylistName.value.trim()
-
-  if (!newPlaylistName.value) {
-    return
-  }
-
-  const playlist = await playlistStore.store(newPlaylistName.value, {}, songs.value)
-  newPlaylistName.value = ''
-
-  toastSuccess(`Playlist "${playlist.name}" created.`)
-
-  // Activate the new playlist right away
-  await nextTick()
-  go(`playlist/${playlist.id}`)
-
-  close()
-}
 </script>
 
 <style lang="scss" scoped>
 .add-to {
   width: 100%;
-  max-width: 225px;
+  max-width: 256px;
+  min-width: 196px;
   padding: .75rem;
 
   > * + * {
@@ -170,29 +129,9 @@ const createNewPlaylistFromSongs = async () => {
     }
   }
 
-  form {
+  button {
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 3px;
-    overflow: hidden;
-
-    input[type="text"] {
-      width: 100%;
-      height: 28px;
-      border-radius: 0;
-    }
-
-    button[type="submit"] {
-      margin-top: 0;
-      border-radius: 0;
-      height: 28px;
-      line-height: 28px;
-      padding-top: 0;
-      padding-bottom: 0;
-      margin-left: -2px !important;
-    }
+    border: 1px solid rgba(255, 255, 255, .2);
   }
 }
 </style>

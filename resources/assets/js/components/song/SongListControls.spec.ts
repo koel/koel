@@ -8,13 +8,15 @@ import { screen } from '@testing-library/vue'
 import SongListControls from './SongListControls.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (selectedSongCount = 1, config: Partial<SongListControlsConfig> = {}) {
+  private renderComponent (selectedSongCount = 1, screen: ScreenName = 'Songs') {
     const songs = factory<Song>('song', 5)
 
+    this.router.activateRoute({
+      screen,
+      path: '_',
+    })
+
     return this.render(SongListControls, {
-      props: {
-        config
-      },
       global: {
         provide: {
           [<symbol>SongsKey]: [ref(songs)],
@@ -62,7 +64,7 @@ new class extends UnitTestCase {
     })
 
     it('clears queue', async () => {
-      const { emitted } = this.renderComponent(0, { clearQueue: true })
+      const { emitted } = this.renderComponent(0, 'Queue')
 
       await this.user.click(screen.getByTitle('Clear current queue'))
 
@@ -70,7 +72,7 @@ new class extends UnitTestCase {
     })
 
     it('deletes current playlist', async () => {
-      const { emitted } = this.renderComponent(0, { deletePlaylist: true })
+      const { emitted } = this.renderComponent(0, 'Playlist')
 
       await this.user.click(screen.getByTitle('Delete this playlist'))
 

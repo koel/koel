@@ -22,7 +22,11 @@
           <li @click="addSongsToFavorite">Favorites</li>
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
-        <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
+        <ul v-if="normalPlaylists.length" class="normal-playlists">
+          <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
+        </ul>
+        <li class="separator" />
+        <li @click="addSongsToNewPlaylist">New Playlist…</li>
       </ul>
     </li>
 
@@ -38,7 +42,7 @@
       <li class="separator" />
     </template>
 
-    <li v-if="isAdmin" @click="openEditForm">Edit</li>
+    <li v-if="isAdmin" @click="openEditForm">Edit…</li>
     <li v-if="allowDownload" @click="download">Download</li>
     <li v-if="onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
 
@@ -83,12 +87,12 @@ const {
   queueSongsToBottom,
   queueSongsToTop,
   addSongsToFavorite,
-  addSongsToExistingPlaylist
+  addSongsToExistingPlaylist,
+  addSongsToNewPlaylist
 } = useSongMenuMethods(songs, close)
 
 const playlists = toRef(playlistStore.state, 'playlists')
 const allowDownload = toRef(commonStore.state, 'allow_download')
-const user = toRef(userStore.state, 'current')
 const queue = toRef(queueStore.state, 'songs')
 const currentSong = toRef(queueStore, 'current')
 
@@ -157,3 +161,10 @@ eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e, _songs) => {
   await open(e.pageY, e.pageX)
 })
 </script>
+
+<style lang="scss" scoped>
+ul.normal-playlists {
+  max-height: 256px;
+  overflow-y: auto;
+}
+</style>

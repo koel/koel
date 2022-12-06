@@ -11,10 +11,6 @@ exports[`renders 1`] = `
       <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-42061e3e="">Bar</li>
       <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-42061e3e="">Baz</li>
     </ul>
-  </section>
-  <section class="new-playlist" data-testid="new-playlist" data-v-42061e3e="">
-    <p data-v-42061e3e="">or create a new playlist</p>
-    <form class="form-save form-simple form-new-playlist" data-v-42061e3e=""><input data-testid="new-playlist-name" placeholder="Playlist name" required="" type="text" data-v-42061e3e=""><button type="submit" title="Save" data-v-e368fe26="" data-v-42061e3e="">⏎</button></form>
-  </section>
+  </section><button type="button" transparent="" data-v-e368fe26="" data-v-42061e3e="">New Playlist…</button>
 </div>
 `;
