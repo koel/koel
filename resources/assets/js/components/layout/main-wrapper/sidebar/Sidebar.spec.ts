@@ -19,37 +19,25 @@ const standardItems = [
 const adminItems = [...standardItems, 'Users', 'Upload', 'Settings']
 
 new class extends UnitTestCase {
-  private renderComponent() {
-    this.render(Sidebar, {
-      global: {
-        stubs: {
-          YouTubeSidebarItem: this.stub('youtube-sidebar-item')
-        }
-      }
-    })
-  }
-
   protected test() {
     it('shows the standard items', () => {
-      this.actingAs().renderComponent()
+      this.actingAs().render(Sidebar)
       standardItems.forEach(label => screen.getByText(label))
     })
 
     it('shows administrative items', () => {
-      this.actingAsAdmin().renderComponent()
+      this.actingAsAdmin().render(Sidebar)
       adminItems.forEach(label => screen.getByText(label))
     })
 
     it('shows the YouTube sidebar item on demand', async () => {
       commonStore.state.use_you_tube = true
-      this.renderComponent()
-
-      expect(screen.queryByTestId('youtube-sidebar-item')).toBeNull()
+      this.render(Sidebar)
 
       eventBus.emit('PLAY_YOUTUBE_VIDEO', { id: '123', title: 'A Random Video' })
       await this.tick()
 
-      screen.getByTestId('youtube-sidebar-item')
+      screen.getByText('A Random Video')
     })
   }
 }

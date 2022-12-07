@@ -11,7 +11,7 @@
         <SidebarItem screen="Albums" href="#/albums" :icon="faCompactDisc">Albums</SidebarItem>
         <SidebarItem screen="Artists" href="#/artists" :icon="faMicrophone">Artists</SidebarItem>
         <SidebarItem screen="Genres" href="#/genres" :icon="faTags">Genres</SidebarItem>
-        <YouTubeSidebarItem v-if="showYouTube" />
+        <YouTubeSidebarItem v-show="showYouTube" />
       </ul>
     </section>
 
