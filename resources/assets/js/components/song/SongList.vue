@@ -130,7 +130,7 @@ watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected
 
 let lastScrollTop = 0
 
-const onScroll = e => {
+const onScroll = (e: Event) => {
   const scroller = e.target as HTMLElement
 
   if (scroller.scrollTop > 512 && lastScrollTop < 512) {
