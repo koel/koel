@@ -5,7 +5,6 @@
       <icon
         :icon="faCirclePlus"
         class="control create"
-        data-testid="sidebar-create-playlist-btn"
         role="button"
         title="Create a new playlist or folder"
         @click.stop.prevent="requestContextMenu"
@@ -27,8 +26,8 @@ import { computed, toRef } from 'vue'
 import { favoriteStore, playlistFolderStore, playlistStore } from '@/stores'
 import { eventBus } from '@/utils'
 
-import PlaylistSidebarItem from '@/components/playlist/PlaylistSidebarItem.vue'
-import PlaylistFolderSidebarItem from '@/components/playlist/PlaylistFolderSidebarItem.vue'
+import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
+import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
 
 const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')

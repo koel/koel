@@ -79,7 +79,7 @@ export const useDraggable = (type: DraggableType) => {
 export const useDroppable = (acceptedTypes: DraggableType[]) => {
   const acceptsDrop = (event: DragEvent) => {
     const type = getDragType(event)
-    return type && acceptedTypes.includes(type)
+    return Boolean(type && acceptedTypes.includes(type))
   }
 
   const getDroppedData = (event: DragEvent) => {

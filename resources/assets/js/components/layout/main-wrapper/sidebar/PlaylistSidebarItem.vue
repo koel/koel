@@ -15,7 +15,7 @@
       <icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width />
       <icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
       <icon v-else :icon="faFileLines" fixed-width />
-      {{ list.name }}
+      <span>{{ list.name }}</span>
     </a>
   </li>
 </template>

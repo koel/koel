@@ -9,7 +9,7 @@
   >
     <a @click.prevent="toggle" @contextmenu.prevent="onContextMenu">
       <icon :icon="opened ? faFolderOpen : faFolder" fixed-width />
-      {{ folder.name }}
+      <span>{{ folder.name }}</span>
     </a>
 
     <ul v-if="playlistsInFolder.length" v-show="opened">
@@ -34,7 +34,7 @@ import { playlistFolderStore, playlistStore } from '@/stores'
 import { eventBus } from '@/utils'
 import { useDroppable } from '@/composables'
 
-const PlaylistSidebarItem = defineAsyncComponent(() => import('@/components/playlist/PlaylistSidebarItem.vue'))
+const PlaylistSidebarItem = defineAsyncComponent(() => import('./PlaylistSidebarItem.vue'))
 
 const props = defineProps<{ folder: PlaylistFolder }>()
 const { folder } = toRefs(props)
