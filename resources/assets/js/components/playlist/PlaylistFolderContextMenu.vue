@@ -20,10 +20,11 @@ import { computed, ref } from 'vue'
 import { eventBus } from '@/utils'
 import { playlistStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useContextMenu, useRouter } from '@/composables'
+import { useContextMenu, useMessageToaster, useRouter } from '@/composables'
 
-const { go } = useRouter()
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
+const { go } = useRouter()
+const { toastWarning } = useMessageToaster()
 
 const folder = ref<PlaylistFolder>()
 
@@ -31,13 +32,25 @@ const playlistsInFolder = computed(() => folder.value ? playlistStore.byFolder(f
 const playable = computed(() => playlistsInFolder.value.length > 0)
 
 const play = () => trigger(async () => {
-  playbackService.queueAndPlay(await songStore.fetchForPlaylistFolder(folder.value!))
-  go('queue')
+  const songs = await songStore.fetchForPlaylistFolder(folder.value!)
+
+  if (songs.length) {
+    playbackService.queueAndPlay(songs)
+    go('queue')
+  } else {
+    toastWarning('No songs available.')
+  }
 })
 
 const shuffle = () => trigger(async () => {
-  playbackService.queueAndPlay(await songStore.fetchForPlaylistFolder(folder.value!), true)
-  go('queue')
+  const songs = await songStore.fetchForPlaylistFolder(folder.value!)
+
+  if (songs.length) {
+    playbackService.queueAndPlay(songs, true)
+    go('queue')
+  } else {
+    toastWarning('No songs available.')
+  }
 })
 
 const createPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_PLAYLIST_FORM', folder.value!))

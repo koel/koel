@@ -5,6 +5,7 @@ import factory from '@/__tests__/factory'
 import { screen, waitFor } from '@testing-library/vue'
 import { playlistStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
+import { MessageToasterStub } from '@/__tests__/stubs'
 import PlaylistFolderContextMenu from './PlaylistFolderContextMenu.vue'
 
 new class extends UnitTestCase {
@@ -52,6 +53,26 @@ new class extends UnitTestCase {
       })
     })
 
+    it('warns if attempting to play with no songs in folder', async () => {
+      const folder = this.createPlayableFolder()
+
+      const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue([])
+      const queueMock = this.mock(playbackService, 'queueAndPlay')
+      const goMock = this.mock(this.router, 'go')
+      const warnMock = this.mock(MessageToasterStub.value, 'warning')
+
+      await this.renderComponent(folder)
+
+      await this.user.click(screen.getByText('Play All'))
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenCalledWith(folder)
+        expect(queueMock).not.toHaveBeenCalled()
+        expect(goMock).not.toHaveBeenCalled()
+        expect(warnMock).toHaveBeenCalledWith('No songs available.')
+      })
+    })
+
     it('shuffles', async () => {
       const folder = this.createPlayableFolder()
       const songs = factory<Song>('song', 3)
@@ -75,6 +96,26 @@ new class extends UnitTestCase {
 
       expect(screen.queryByText('Shuffle All')).toBeNull()
       expect(screen.queryByText('Play All')).toBeNull()
+    })
+
+    it('warns if attempting to shuffle with no songs in folder', async () => {
+      const folder = this.createPlayableFolder()
+
+      const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue([])
+      const queueMock = this.mock(playbackService, 'queueAndPlay')
+      const goMock = this.mock(this.router, 'go')
+      const warnMock = this.mock(MessageToasterStub.value, 'warning')
+
+      await this.renderComponent(folder)
+
+      await this.user.click(screen.getByText('Shuffle All'))
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenCalledWith(folder)
+        expect(queueMock).not.toHaveBeenCalled()
+        expect(goMock).not.toHaveBeenCalled()
+        expect(warnMock).toHaveBeenCalledWith('No songs available.')
+      })
     })
   }
 
