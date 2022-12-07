@@ -1,8 +1,8 @@
 import { arrayify, logger, pluralize } from '@/utils'
-import { albumStore, artistStore, playlistStore, songStore } from '@/stores'
+import { albumStore, artistStore, playlistFolderStore, playlistStore, songStore } from '@/stores'
 
-type Draggable = Song | Song[] | Album | Artist | Playlist
-const draggableTypes = <const>['songs', 'album', 'artist', 'playlist']
+type Draggable = Song | Song[] | Album | Artist | Playlist | PlaylistFolder
+const draggableTypes = <const>['songs', 'album', 'artist', 'playlist', 'playlist-folder']
 type DraggableType = typeof draggableTypes[number]
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
@@ -33,7 +33,7 @@ export const useDraggable = (type: DraggableType) => {
       return
     }
 
-    let text
+    let text: string
     let data: any
 
     switch (type) {
@@ -58,6 +58,12 @@ export const useDraggable = (type: DraggableType) => {
 
       case 'playlist':
         dragged = <Playlist>dragged
+        text = dragged.name
+        data = dragged.id
+        break
+
+      case 'playlist-folder':
+        dragged = <PlaylistFolder>dragged
         text = dragged.name
         data = dragged.id
         break
@@ -125,8 +131,13 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
           const artist = await artistStore.resolve(<number>data)
           return artist ? await songStore.fetchForArtist(artist) : <Song[]>[]
         case 'playlist':
-          const playlist = await playlistStore.byId(<number>data)
+          const playlist = playlistStore.byId(<number>data)
           return playlist ? await songStore.fetchForPlaylist(playlist) : <Song[]>[]
+        case 'playlist-folder':
+          const folder = playlistFolderStore.byId(<string>data)
+          return folder ? await songStore.fetchForPlaylistFolder(folder) : <Song[]>[]
+        default:
+          throw new Error(`Unknown drag type: ${type}`)
       }
     } catch (error) {
       logger.error(error, event)

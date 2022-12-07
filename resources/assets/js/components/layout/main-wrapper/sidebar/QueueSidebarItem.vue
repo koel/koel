@@ -16,11 +16,13 @@
 import { faListOl } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 import { queueStore } from '@/stores'
-import { useDroppable } from '@/composables'
+import { useDroppable, useMessageToaster } from '@/composables'
 
 import SidebarItem from './SidebarItem.vue'
+import { pluralize } from '@/utils'
 
-const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist', 'playlist'])
+const { toastWarning, toastSuccess } = useMessageToaster()
+const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist', 'playlist', 'playlist-folder'])
 
 const droppable = ref(false)
 
@@ -32,7 +34,13 @@ const onQueueDrop = async (event: DragEvent) => {
 
   event.preventDefault()
   const songs = await resolveDroppedSongs(event) || []
-  songs.length && queueStore.queue(songs)
+
+  if (songs.length) {
+    queueStore.queue(songs)
+    toastSuccess(`Added ${ pluralize(songs, 'song') } to queue.`)
+  } else {
+    toastWarning('No applicable songs to queue.')
+  }
 
   return false
 }
