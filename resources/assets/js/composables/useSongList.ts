@@ -13,7 +13,10 @@ import SongList from '@/components/song/SongList.vue'
 import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
-export const useSongList = (songs: Ref<Song[]>, config: Partial<SongListConfig> = {}) => {
+export const useSongList = (
+  songs: Ref<Song[]>,
+  config: Partial<SongListConfig> = { sortable: true, reorderable: true }
+) => {
   config = reactive(config)
   const { isCurrentScreen, go, onRouteChanged } = useRouter()
 
