@@ -1,5 +1,4 @@
 import renderLogo from '@/../img/sponsors/render.svg'
-import exoscaleLogo from '@/../img/sponsors/exoscale.svg'
 import keyCdnLogo from '@/../img/sponsors/keycdn.svg'
 import whatTheDiffLogo from '@/../img/sponsors/what-the-diff.svg'
 
@@ -19,13 +18,6 @@ export default [
     logo: {
       src: renderLogo,
       style: 'height: 28px'
-    }
-  },
-  {
-    description: 'Exoscale - European Cloud Hosting',
-    url: 'https://exoscale.ch',
-    logo: {
-      src: exoscaleLogo
     }
   },
   {

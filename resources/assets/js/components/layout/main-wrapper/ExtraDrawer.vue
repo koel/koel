@@ -1,5 +1,5 @@
 <template>
-  <div id="extraPanel" :class="{ 'showing-pane': activeTab }">
+  <aside :class="{ 'showing-pane': activeTab }">
     <div class="controls">
       <div class="top">
         <SidebarMenuToggleButton class="burger" />
@@ -61,7 +61,7 @@
       <div
         v-show="activeTab === 'YouTube'"
         id="extraPanelYouTube"
-        data-testid="extra-panel-youtube"
+        data-testid="extra-drawer-youtube"
         aria-labelledby="extraTabYouTube"
         role="tabpanel"
         tabindex="0"
@@ -69,7 +69,7 @@
         <YouTubeVideoList v-if="useYouTube && song" :song="song" />
       </div>
     </div>
-  </div>
+  </aside>
 </template>
 
 <script lang="ts" setup>
@@ -124,7 +124,7 @@ onMounted(() => isMobile.any || (activeTab.value = preferenceStore.activeExtraPa
 </script>
 
 <style lang="scss" scoped>
-#extraPanel {
+aside {
   display: flex;
   flex-direction: row-reverse;
   color: var(--color-text-secondary);
@@ -145,7 +145,7 @@ onMounted(() => isMobile.any || (activeTab.value = preferenceStore.activeExtraPa
 }
 
 .panes {
-  width: var(--extra-panel-width);
+  width: var(--extra-drawer-width);
   padding: 2rem 1.7rem;
   background: var(--color-bg-secondary);
   overflow: auto;

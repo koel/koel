@@ -2,7 +2,7 @@
   <div id="mainWrapper">
     <SideBar />
     <MainContent />
-    <ExtraPanel />
+    <ExtraDrawer />
     <ModalWrapper />
   </div>
 </template>
@@ -12,7 +12,7 @@ import { defineAsyncComponent } from 'vue'
 
 import SideBar from '@/components/layout/main-wrapper/sidebar/Sidebar.vue'
 import MainContent from '@/components/layout/main-wrapper/MainContent.vue'
-import ExtraPanel from '@/components/layout/main-wrapper/ExtraPanel.vue'
+import ExtraDrawer from '@/components/layout/main-wrapper/ExtraDrawer.vue'
 
 const ModalWrapper = defineAsyncComponent(() => import('@/components/layout/ModalWrapper.vue'))
 </script>
