@@ -29,7 +29,8 @@
 <script lang="ts" setup>
 import { computed, ref, toRef, watch } from 'vue'
 import { artistStore, preferenceStore as preferences } from '@/stores'
-import { useInfiniteScroll, useRouter } from '@/composables'
+import { useInfiniteScroll, useMessageToaster, useRouter } from '@/composables'
+import { logger } from '@/utils'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
@@ -68,7 +69,14 @@ useRouter().onScreenActivated('Artists', async () => {
   if (!initialized) {
     viewMode.value = preferences.artistsViewMode || 'thumbnails'
     initialized = true
-    await makeScrollable()
+
+    try {
+      await makeScrollable()
+    } catch (error) {
+      logger.error(error)
+      useMessageToaster().toastError('Failed to load artists.')
+      initialized = false
+    }
   }
 })
 </script>
