@@ -29,7 +29,8 @@
 <script lang="ts" setup>
 import { computed, ref, toRef, watch } from 'vue'
 import { albumStore, preferenceStore as preferences } from '@/stores'
-import { useInfiniteScroll, useRouter } from '@/composables'
+import { useInfiniteScroll, useMessageToaster, useRouter } from '@/composables'
+import { logger } from '@/utils'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
@@ -68,7 +69,14 @@ useRouter().onScreenActivated('Albums', async () => {
   if (!initialized) {
     viewMode.value = preferences.albumsViewMode || 'thumbnails'
     initialized = true
-    await makeScrollable()
+
+    try {
+      await makeScrollable()
+    } catch (error) {
+      logger.error(error)
+      useMessageToaster().toastError('Failed to load albums.')
+      initialized = false
+    }
   }
 })
 </script>
