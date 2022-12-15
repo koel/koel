@@ -3,7 +3,7 @@
     <div class="controls">
       <div class="top">
         <SidebarMenuToggleButton class="burger" />
-        <ExtraPanelTabHeader v-if="song" v-model="activeTab" />
+        <ExtraDrawerTabHeader v-if="song" v-model="activeTab" />
       </div>
 
       <div class="bottom">
@@ -88,7 +88,7 @@ const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/YouTubeVideoList.vue'))
-const ExtraPanelTabHeader = defineAsyncComponent(() => import('@/components/ui/ExtraPanelTabHeader.vue'))
+const ExtraDrawerTabHeader = defineAsyncComponent(() => import('@/components/ui/ExtraDrawerTabHeader.vue'))
 
 const { currentUser } = useAuthorization()
 const { useYouTube } = useThirdPartyServices()

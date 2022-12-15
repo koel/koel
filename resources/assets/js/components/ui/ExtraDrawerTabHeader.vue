@@ -7,7 +7,7 @@
     type="button"
     @click.prevent="toggleTab('Lyrics')"
   >
-    <icon :icon="faFileLines" fixed-width />
+    <icon :icon="faFeather" fixed-width />
   </button>
   <button
     id="extraTabArtist"
@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faFileLines, faMicrophone } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faFeather, faMicrophone } from '@fortawesome/free-solid-svg-icons'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { computed } from 'vue'
 import { useThirdPartyServices } from '@/composables'
