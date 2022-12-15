@@ -22,12 +22,21 @@ class SongRepository extends Repository
         'title' => 'songs.title',
         'track' => 'songs.track',
         'length' => 'songs.length',
+        'created_at' => 'songs.created_at',
         'disc' => 'songs.disc',
         'artist_name' => 'artists.name',
         'album_name' => 'albums.name',
     ];
 
-    private const VALID_SORT_COLUMNS = ['songs.title', 'songs.track', 'songs.length', 'artists.name', 'albums.name'];
+    private const VALID_SORT_COLUMNS = [
+        'songs.title',
+        'songs.track',
+        'songs.length',
+        'songs.created_at',
+        'artists.name',
+        'albums.name',
+    ];
+
     private const DEFAULT_QUEUE_LIMIT = 500;
 
     public function getOneByPath(string $path): ?Song

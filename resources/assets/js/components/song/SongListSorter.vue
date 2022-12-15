@@ -53,6 +53,10 @@ const menuItems: { label: string, field: SongListSortField }[] = [
   {
     label: 'Time',
     field: 'length'
+  },
+  {
+    label: 'Date Added',
+    field: 'created_at'
   }
 ]
 
