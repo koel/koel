@@ -1,0 +1,15 @@
+// Vitest Snapshot v1
+
+exports[`renders without a current song 1`] = `
+<aside class="" data-v-119c862c="">
+  <div class="controls" data-v-119c862c="">
+    <div class="top" data-v-119c862c=""><button class="burger" data-v-119c862c=""><br data-testid="icon" icon="[object Object]"></button>
+      <!--v-if-->
+    </div>
+    <div class="bottom" data-v-119c862c=""><button title="About Koel" type="button" data-v-119c862c=""><br data-testid="icon" icon="[object Object]" data-v-119c862c="">
+        <!--v-if-->
+      </button><button title="Log out" type="button" data-v-119c862c=""><br data-testid="icon" icon="[object Object]" data-v-119c862c=""></button><br data-testid="stub" data-v-119c862c=""></div>
+  </div>
+  <!--v-if-->
+</aside>
+`;

@@ -6,11 +6,11 @@ import { albumStore, artistStore, commonStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { CurrentSongKey } from '@/symbols'
 import { eventBus } from '@/utils'
-import ExtraPanel from './ExtraPanel.vue'
+import ExtraDrawer from './ExtraDrawer.vue'
 
 new class extends UnitTestCase {
   private renderComponent (songRef: Ref<Song | null> = ref(null)) {
-    return this.render(ExtraPanel, {
+    return this.render(ExtraDrawer, {
       global: {
         stubs: {
           ProfileAvatar: this.stub(),
@@ -33,7 +33,7 @@ new class extends UnitTestCase {
     it('sets the active tab to the preference', async () => {
       preferenceStore.activeExtraPanelTab = 'YouTube'
       this.renderComponent(ref(factory<Song>('song')))
-      const tab = screen.getByTestId<HTMLElement>('extra-panel-youtube')
+      const tab = screen.getByTestId<HTMLElement>('extra-drawer-youtube')
 
       expect(tab.style.display).toBe('none')
       await this.tick()
