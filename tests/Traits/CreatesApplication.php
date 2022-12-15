@@ -22,7 +22,10 @@ trait CreatesApplication
         /** @var Application $app */
         $app = require __DIR__ . '/../../bootstrap/app.php';
 
-        $this->artisan = $app->make(Artisan::class);
+        /** @var Kernel $artisan */
+        $artisan = $app->make(Artisan::class);
+
+        $this->artisan = $artisan;
         $this->artisan->bootstrap();
 
         // Unless the DB is stored in memory, we need to migrate the DB only once for the whole test suite.
