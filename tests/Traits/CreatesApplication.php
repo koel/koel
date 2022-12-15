@@ -22,8 +22,8 @@ trait CreatesApplication
         /** @var Application $app */
         $app = require __DIR__ . '/../../bootstrap/app.php';
 
+        /** @var Kernel $artisan */
         $artisan = $app->make(Artisan::class);
-        assert($artisan instanceof Kernel);
 
         $this->artisan = $artisan;
         $this->artisan->bootstrap();
