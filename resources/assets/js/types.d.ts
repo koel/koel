@@ -21,9 +21,13 @@ interface Plyr {
   media: HTMLMediaElement
 
   restart (): void
+
   play (): void
+
   pause (): void
+
   seek (position: number): void
+
   setVolume (volume: number): void
 }
 
@@ -351,7 +355,7 @@ interface SongListConfig {
   reorderable: boolean
 }
 
-type SongListSortField = keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name'>
+type SongListSortField = keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'created_at'>
 
 type SortOrder = 'asc' | 'desc'
 
