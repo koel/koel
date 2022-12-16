@@ -63,7 +63,7 @@
       </div>
 
       <div v-show="activeTab === 'Albums'" class="albums-pane">
-        <ul v-if="albums" class="as-list">
+        <ul v-if="albums" class="as-list" v-koel-overflow-fade>
           <li v-for="album in albums" :key="album.id">
             <AlbumCard :album="album" layout="compact" />
           </li>
@@ -174,17 +174,5 @@ eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || go('art
 
 #artistWrapper {
   @include artist-album-info-wrapper();
-}
-
-.albums-pane {
-  padding: 1.8rem;
-
-  > ul {
-    @include artist-album-wrapper();
-  }
-}
-
-.info-pane {
-  padding: 1.8rem;
 }
 </style>

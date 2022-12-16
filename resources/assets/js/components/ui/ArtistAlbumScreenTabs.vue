@@ -54,7 +54,28 @@
 }
 
 :deep(main) {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow: auto;
+  flex: 1;
+}
+
+:deep(.songs-pane), :deep(.albums-pane) {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+:deep(.albums-pane) {
+  > ul {
+    @include artist-album-wrapper();
+
+    padding: 1.8rem;
+    overflow: auto;
+  }
+}
+
+:deep(.info-pane) {
+  padding: 1.8rem;
 }
 </style>
