@@ -52,7 +52,7 @@
         </label>
       </template>
 
-      <div v-show="activeTab === 'Songs'">
+      <div v-show="activeTab === 'Songs'" class="songs-pane">
         <SongListSkeleton v-if="loading" />
         <SongList
           v-else
@@ -65,7 +65,7 @@
 
       <div v-show="activeTab === 'OtherAlbums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
-          <ul v-if="otherAlbums.length" class="as-list">
+          <ul v-if="otherAlbums.length" class="as-list" v-koel-overflow-fade>
             <li v-for="a in otherAlbums" :key="a.id">
               <AlbumCard :album="a" layout="compact" />
             </li>
@@ -185,17 +185,5 @@ eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go('albums
 <style lang="scss" scoped>
 #albumWrapper {
   @include artist-album-info-wrapper();
-}
-
-.albums-pane {
-  padding: 1.8rem;
-
-  > ul {
-    @include artist-album-wrapper();
-  }
-}
-
-.info-pane {
-  padding: 1.8rem;
 }
 </style>
