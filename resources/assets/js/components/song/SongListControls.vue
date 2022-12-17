@@ -63,7 +63,7 @@
         <Btn v-if="config.clearQueue" red title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
       </BtnGroup>
 
-      <BtnGroup>
+      <BtnGroup v-if="config.refresh || config.deletePlaylist">
         <Btn v-if="config.refresh" v-koel-tooltip green title="Refresh" @click.prevent="refresh">
           <icon :icon="faRotateRight" fixed-width />
         </Btn>
@@ -79,6 +79,10 @@
           <icon :icon="faTrashCan" />
         </Btn>
       </BtnGroup>
+
+      <BtnGroup v-if="config.filter && songs.length">
+        <SongListFilter @change="filter" />
+      </BtnGroup>
     </div>
 
     <div ref="addToMenu" v-koel-clickaway="closeAddToMenu" class="menu-wrapper">
@@ -89,7 +93,7 @@
 
 <script lang="ts" setup>
 import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, toRefs, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue'
 import { SelectedSongsKey, SongsKey } from '@/symbols'
 import { requireInjection } from '@/utils'
 import { useFloatingUi, useSongListControls } from '@/composables'
@@ -97,6 +101,8 @@ import { useFloatingUi, useSongListControls } from '@/composables'
 import AddToMenu from '@/components/song/AddToMenu.vue'
 import Btn from '@/components/ui/Btn.vue'
 import BtnGroup from '@/components/ui/BtnGroup.vue'
+
+const SongListFilter = defineAsyncComponent(() => import('@/components/song/SongListFilter.vue'))
 
 const config = useSongListControls().getSongListControlsConfig()
 
@@ -113,6 +119,7 @@ const showAddToButton = computed(() => Boolean(selectedSongs.value.length))
 
 const emit = defineEmits<{
   (e: 'playAll' | 'playSelected', shuffle: boolean): void,
+  (e: 'filter', keywords: string): void,
   (e: 'clearQueue' | 'deletePlaylist' | 'refresh'): void,
 }>()
 
@@ -123,6 +130,7 @@ const playSelected = () => emit('playSelected', false)
 const clearQueue = () => emit('clearQueue')
 const deletePlaylist = () => emit('deletePlaylist')
 const refresh = () => emit('refresh')
+const filter = (keywords: string) => emit('filter', keywords)
 const registerKeydown = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = true)
 const registerKeyup = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = false)
 
@@ -169,6 +177,7 @@ onBeforeUnmount(() => {
   .wrapper {
     display: flex;
     gap: .5rem;
+    flex-wrap: wrap;
   }
 
   .menu-wrapper {

@@ -325,6 +325,7 @@ interface SongListControlsConfig {
   clearQueue: boolean
   deletePlaylist: boolean
   refresh: boolean
+  filter: boolean
 }
 
 type ThemeableProperty = '--color-text-primary'

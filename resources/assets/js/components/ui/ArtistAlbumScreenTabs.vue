@@ -64,6 +64,7 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
+  flex: 1;
 }
 
 :deep(.albums-pane) {

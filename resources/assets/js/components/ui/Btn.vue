@@ -19,7 +19,7 @@ button {
   background: var(--color-blue);
   color: var(--color-text-primary);
   font-size: 1rem;
-  padding: .6rem 1rem;
+  padding: .6rem .85rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -67,7 +67,7 @@ button {
   }
 
   &[unrounded] {
-    border-radius: 0;
+    border-radius: 0 !important;
   }
 
   &[uppercase] {

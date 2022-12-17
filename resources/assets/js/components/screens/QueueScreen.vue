@@ -16,6 +16,7 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          @filter="applyFilter"
           @clear-queue="clearQueue"
           @play-all="playAll"
           @play-selected="playSelected"
@@ -76,6 +77,7 @@ const {
   showingControls,
   isPhone,
   playSelected,
+  applyFilter,
   onScrollBreakpoint
 } = useSongList(toRef(queueStore.state, 'songs'))
 

@@ -4,16 +4,16 @@ export const useSongListControls = () => {
   const { isCurrentScreen } = useRouter()
 
   const getSongListControlsConfig = () => {
-
     const config: SongListControlsConfig = {
       play: true,
       addTo: {
         queue: true,
         favorites: true,
       },
-      clearQueue: true,
-      deletePlaylist: true,
-      refresh: true,
+      clearQueue: false,
+      deletePlaylist: false,
+      refresh: false,
+      filter: false
     }
 
     config.clearQueue = isCurrentScreen('Queue')
@@ -21,6 +21,16 @@ export const useSongListControls = () => {
     config.addTo.favorites = !isCurrentScreen('Favorites')
     config.deletePlaylist = isCurrentScreen('Playlist')
     config.refresh = isCurrentScreen('Playlist')
+
+    config.filter = isCurrentScreen(
+      'Queue',
+      'Artist',
+      'Album',
+      'Favorites',
+      'RecentlyPlayed',
+      'Playlist',
+      'Search.Songs'
+    )
 
     return config
   }
