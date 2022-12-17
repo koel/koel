@@ -26,6 +26,7 @@
           v-if="!isPhone || showingControls"
           :config="controlsConfig"
           @delete-playlist="destroy"
+          @filter="applyFilter"
           @play-all="playAll"
           @play-selected="playSelected"
           @refresh="fetchSongs(true)"
@@ -102,6 +103,7 @@ const {
   onPressEnter,
   playAll,
   playSelected,
+  applyFilter,
   onScrollBreakpoint,
   sort
 } = useSongList(ref<Song[]>([]))

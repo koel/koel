@@ -69,7 +69,7 @@
     <VirtualScroller
       v-slot="{ item }"
       :item-height="64"
-      :items="songRows"
+      :items="filteredSongRows"
       @scroll="onScroll"
       @scrolled-to-end="$emit('scrolled-to-end')"
     >
@@ -94,10 +94,10 @@
 import { findIndex } from 'lodash'
 import isMobile from 'ismobilejs'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
-import { nextTick, onMounted, Ref, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
 import { useDraggable, useDroppable } from '@/composables'
-import { SelectedSongsKey, SongListConfigKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
+import { SelectedSongsKey, SongListConfigKey, SongListFilterKeywordsKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
 
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import SongListItem from '@/components/song/SongListItem.vue'
@@ -121,12 +121,33 @@ const [sortField, setSortField] = requireInjection<[Ref<SongListSortField>, Clos
 const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(SongListSortOrderKey)
 const [config] = requireInjection<[Partial<SongListConfig>]>(SongListConfigKey, [{}])
 
+const filterKeywords = requireInjection(SongListFilterKeywordsKey, ref(''))
+
 const wrapper = ref<HTMLElement>()
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
 const songRows = ref<SongRow[]>([])
 
 watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected).map(row => row.song)), { deep: true })
+
+const filteredSongRows = computed(() => {
+  const keywords = filterKeywords.value.trim().toLowerCase()
+
+  if (!keywords) {
+    return songRows.value
+  }
+
+  return songRows.value.filter(row => {
+    const song = row.song
+
+    return (
+      song.title.toLowerCase().includes(keywords) ||
+      song.artist_name.toLowerCase().includes(keywords) ||
+      song.album_artist_name.toLowerCase().includes(keywords) ||
+      song.album_name.toLowerCase().includes(keywords)
+    )
+  })
+})
 
 let lastScrollTop = 0
 
@@ -303,6 +324,7 @@ onMounted(() => render())
   display: flex;
   flex-direction: column;
   overflow: auto;
+  flex: 1;
 
   @media screen and (max-width: 768px) {
     padding: 0 12px;
@@ -438,6 +460,10 @@ onMounted(() => render())
         padding-right: 12px;
       }
     }
+  }
+
+  .virtual-scroller {
+    flex: 1;
   }
 }
 </style>

@@ -13,7 +13,10 @@ exports[`renders 1`] = `
         </h1><span class="meta text-secondary" data-v-5691beb5=""><span data-v-5691beb5-s="">420 songs</span><span data-v-5691beb5-s="">34 hr 17 min</span></span>
       </div>
       <div class="song-list-controls" data-testid="song-list-controls" data-v-d396e0d2="" data-v-5691beb5-s="">
-        <div class="wrapper" data-v-d396e0d2=""><span class="btn-group" uppercased="" data-v-e884c19a="" data-v-d396e0d2=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-e368fe26="" data-v-d396e0d2=""><br data-testid="icon" icon="[object Object]" fixed-width="" data-v-d396e0d2=""> All </button><!--v-if--><!--v-if--><!--v-if--></span><span class="btn-group" data-v-e884c19a="" data-v-d396e0d2=""></span></div>
+        <div class="wrapper" data-v-d396e0d2=""><span class="btn-group" uppercased="" data-v-e884c19a="" data-v-d396e0d2=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-e368fe26="" data-v-d396e0d2=""><br data-testid="icon" icon="[object Object]" fixed-width="" data-v-d396e0d2=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+          <!--v-if-->
+          <!--v-if-->
+        </div>
         <div class="menu-wrapper" data-v-d396e0d2="">
           <div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-42061e3e="" data-v-d396e0d2="">
             <section class="existing-playlists" data-v-42061e3e="">

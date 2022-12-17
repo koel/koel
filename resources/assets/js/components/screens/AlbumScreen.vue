@@ -30,6 +30,7 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          @filter="applyFilter"
           @play-all="playAll"
           @play-selected="playSelected"
         />
@@ -65,7 +66,7 @@
 
       <div v-show="activeTab === 'OtherAlbums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
-          <ul v-if="otherAlbums.length" class="as-list" v-koel-overflow-fade>
+          <ul v-if="otherAlbums.length" v-koel-overflow-fade class="as-list">
             <li v-for="a in otherAlbums" :key="a.id">
               <AlbumCard :album="a" layout="compact" />
             </li>
@@ -129,6 +130,7 @@ const {
   onPressEnter,
   playAll,
   playSelected,
+  applyFilter,
   onScrollBreakpoint
 } = useSongList(songs)
 

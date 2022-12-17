@@ -16,6 +16,7 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          @filter="applyFilter"
           @play-all="playAll"
           @play-selected="playSelected"
         />
@@ -54,6 +55,7 @@ const {
   onPressEnter,
   playAll,
   playSelected,
+  applyFilter,
   sort,
   onScrollBreakpoint
 } = useSongList(toRef(searchStore.state, 'songs'))

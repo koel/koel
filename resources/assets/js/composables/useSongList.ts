@@ -1,12 +1,19 @@
-import { differenceBy, orderBy, sampleSize, take } from 'lodash'
+import { differenceBy, orderBy, sampleSize, take, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
-import { computed, reactive, Ref, ref } from 'vue'
+import { computed, provide, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
 import { eventBus, provideReadonly } from '@/utils'
 import { useRouter } from '@/composables'
 
-import { SelectedSongsKey, SongListConfigKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
+import {
+  SelectedSongsKey,
+  SongListConfigKey,
+  SongListSortFieldKey,
+  SongListSortOrderKey,
+  SongListFilterKeywordsKey,
+  SongsKey
+} from '@/symbols'
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
@@ -17,6 +24,7 @@ export const useSongList = (
   songs: Ref<Song[]>,
   config: Partial<SongListConfig> = { sortable: true, reorderable: true }
 ) => {
+  const filterKeywords = ref('')
   config = reactive(config)
   const { isCurrentScreen, go, onRouteChanged } = useRouter()
 
@@ -52,6 +60,8 @@ export const useSongList = (
   }
 
   const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedSongs.value, shuffle)
+
+  const applyFilter = throttle((keywords: string) => (filterKeywords.value = keywords), 200)
 
   const onPressEnter = async (event: KeyboardEvent) => {
     if (selectedSongs.value.length === 1) {
@@ -110,6 +120,8 @@ export const useSongList = (
   provideReadonly(SongListSortFieldKey, sortField)
   provideReadonly(SongListSortOrderKey, sortOrder)
 
+  provide(SongListFilterKeywordsKey, filterKeywords)
+
   return {
     SongList,
     SongListControls,
@@ -128,6 +140,7 @@ export const useSongList = (
     onPressEnter,
     playAll,
     playSelected,
+    applyFilter,
     onScrollBreakpoint,
     sort
   }
