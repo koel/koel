@@ -91,7 +91,9 @@ export const queueStore = {
   },
 
   unqueue (songs: Song | Song[]) {
-    this.all = differenceBy(this.all, arrayify(songs), 'id')
+    songs = arrayify(songs)
+    songs.forEach(song => (song.playback_state = 'Stopped'))
+    this.all = differenceBy(this.all, songs, 'id')
   },
 
   /**

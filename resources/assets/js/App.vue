@@ -58,7 +58,7 @@ const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZ
 const overlay = ref<InstanceType<typeof Overlay>>()
 const dialog = ref<InstanceType<typeof DialogBox>>()
 const toaster = ref<InstanceType<typeof MessageToaster>>()
-const currentSong = ref<Song | null>(null)
+const currentSong = ref<Song>()
 const authenticated = ref(false)
 const showDropZone = ref(false)
 
@@ -119,7 +119,7 @@ const onDragOver = (e: DragEvent) => {
   showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && !isCurrentScreen('Upload')
 }
 
-watch(() => queueStore.current, song => song && (currentSong.value = song))
+watch(() => queueStore.current, song => (currentSong.value = song))
 
 const onDragEnd = () => (showDropZone.value = false)
 const onDrop = () => (showDropZone.value = false)
