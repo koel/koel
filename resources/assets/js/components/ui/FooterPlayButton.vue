@@ -15,7 +15,7 @@ import { useRouter } from '@/composables'
 import { CurrentSongKey } from '@/symbols'
 
 const { getCurrentScreen, getRouteParam, go } = useRouter()
-const song = requireInjection(CurrentSongKey, ref(null))
+const song = requireInjection(CurrentSongKey, ref())
 
 const libraryEmpty = computed(() => commonStore.state.song_count === 0)
 const playing = computed(() => song.value?.playback_state === 'Playing')

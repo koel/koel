@@ -102,8 +102,23 @@ const shuffleSome = async () => {
   }
 }
 
-const clearQueue = () => queueStore.clear()
-const removeSelected = () => selectedSongs.value.length && queueStore.unqueue(selectedSongs.value)
+const clearQueue = () => {
+  playbackService.stop()
+  queueStore.clear()
+}
+
+const removeSelected = () => {
+  if (!selectedSongs.value.length) return
+
+  const currentSongId = queueStore.current?.id
+
+  queueStore.unqueue(selectedSongs.value)
+
+  if (currentSongId && selectedSongs.value.find(song => song.id === currentSongId)) {
+    playbackService.playNext()
+  }
+}
+
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
 const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
 
