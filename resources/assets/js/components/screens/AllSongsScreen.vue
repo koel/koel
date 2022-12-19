@@ -17,7 +17,7 @@
         <SongListControls
           v-if="totalSongCount && (!isPhone || showingControls)"
           @play-all="playAll"
-          @playselected="playSelected"
+          @play-selected="playSelected"
         />
       </template>
     </ScreenHeader>
