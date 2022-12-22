@@ -5,34 +5,9 @@ import { http } from '@/services'
 import { songStore } from '@/stores'
 
 export const queueStore = {
-  state: reactive({
-    songs: [] as Song[]
+  state: reactive<{ songs: Song[] }>({
+    songs: []
   }),
-
-  init () {
-    // We don't have anything to do here yet.
-    // How about another song then?
-    //
-    // LITTLE WING
-    // -- Jimi Hendrix
-    //
-    // Well she's walking
-    // Through the clouds
-    // With a circus mind
-    // That's running wild
-    // Butterflies and zebras and moonbeams and fairy tales
-    // That's all she ever thinks about
-    // Riding with the wind
-    //
-    // When I'm sad
-    // She comes to me
-    // With a thousand smiles
-    // She gives to me free
-    // It's alright she said
-    // It's alright
-    // Take anything you want from me
-    // Anything...
-  },
 
   get all () {
     return this.state.songs
@@ -122,7 +97,7 @@ export const queueStore = {
       return this.first
     }
 
-    const index = this.all.map(song => song.id).indexOf(this.current.id) + 1
+    const index = this.indexOf(this.current) + 1
 
     return index >= this.all.length ? undefined : this.all[index]
   },
@@ -132,7 +107,7 @@ export const queueStore = {
       return this.last
     }
 
-    const index = this.all.map(song => song.id).indexOf(this.current.id) - 1
+    const index = this.indexOf(this.current) - 1
 
     return index < 0 ? undefined : this.all[index]
   },
