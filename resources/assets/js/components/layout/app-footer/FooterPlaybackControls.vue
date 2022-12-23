@@ -21,18 +21,16 @@
 
 <script lang="ts" setup>
 import { faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { playbackService } from '@/services'
-import { defaultCover, requireInjection } from '@/utils'
+import { requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
 
 import RepeatModeSwitch from '@/components/ui/RepeatModeSwitch.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import PlayButton from '@/components/ui/FooterPlayButton.vue'
 
-const song = requireInjection(CurrentSongKey, ref(null))
-
-const cover = computed(() => song.value?.album_cover || defaultCover)
+const song = requireInjection(CurrentSongKey, ref())
 
 const playPrev = async () => await playbackService.playPrev()
 const playNext = async () => await playbackService.playNext()
@@ -45,6 +43,10 @@ const playNext = async () => await playbackService.playNext()
   flex-direction: column;
   place-content: center;
   place-items: center;
+
+  :fullscreen & {
+    transform: scale(1.2);
+  }
 }
 
 .buttons {

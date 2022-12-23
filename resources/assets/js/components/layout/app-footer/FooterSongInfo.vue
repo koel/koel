@@ -13,7 +13,7 @@ import { computed, ref } from 'vue'
 import { defaultCover, requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
 
-const song = requireInjection(CurrentSongKey, ref(null))
+const song = requireInjection(CurrentSongKey, ref())
 
 const cover = computed(() => song.value?.album_cover || defaultCover)
 </script>
@@ -41,6 +41,10 @@ const cover = computed(() => song.value?.album_cover || defaultCover)
     @media screen and (max-width: 768px) {
       height: 55%;
     }
+
+    :fullscreen & {
+      height: 5rem;
+    }
   }
 
   .meta {
@@ -54,6 +58,27 @@ const cover = computed(() => song.value?.album_cover || defaultCover)
 
     @media screen and (max-width: 768px) {
       display: none;
+    }
+
+    :fullscreen & {
+      margin-top: -18rem;
+      transform-origin: left bottom;
+      position: absolute;
+      overflow: hidden;
+      width: 87vw;
+
+      .title {
+        font-size: 3rem;
+        margin-bottom: .4rem;
+        line-height: 1.2;
+        font-weight: var(--font-weight-bold);
+      }
+
+      .artist {
+        font-size: 1.6rem;
+        width: fit-content;
+        line-height: 1.2;
+      }
     }
   }
 
