@@ -8,3 +8,5 @@ export const isAudioContextSupported = process.env.NODE_ENV !== 'test'
  */
 export const isDirectoryReadingSupported = window.DataTransferItem &&
   typeof window.DataTransferItem.prototype.webkitGetAsEntry === 'function'
+
+export const isFullscreenSupported = () => Boolean(document.fullscreenEnabled)

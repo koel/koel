@@ -4,6 +4,7 @@ exports[`renders 1`] = `
 <div class="extra-controls" data-testid="other-controls" data-v-8bf5fe81="">
   <div class="wrapper" data-v-8bf5fe81=""><a class="visualizer-btn" data-testid="toggle-visualizer-btn" href="/#/visualizer" title="Show the visualizer" data-v-8bf5fe81=""><br data-testid="icon" icon="[object Object]" data-v-8bf5fe81=""></a>
     <!--v-if--><br data-testid="Volume" data-v-8bf5fe81="">
+    <!--v-if-->
   </div>
 </div>
 `;

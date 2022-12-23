@@ -8,7 +8,6 @@
 </template>
 
 <script lang="ts" setup>
-//
 </script>
 
 <style lang="scss">
@@ -33,6 +32,12 @@
   .plyr__progress--played[value] {
     transition: .3s ease-in-out;
     color: rgba(255, 255, 255, .1);
+
+    :fullscreen & {
+      color: rgba(255, 255, 255, .5);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
   }
 
   &:hover {
@@ -44,6 +49,16 @@
   @media(hover: none) {
     .plyr__progress--played[value] {
       color: var(--color-highlight);
+    }
+  }
+
+  :fullscreen & {
+    z-index: 4;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
+
+    .plyr__progress--played[value] {
+      color: #fff !important;
     }
   }
 }

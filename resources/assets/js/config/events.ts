@@ -15,6 +15,8 @@ export interface Events {
   PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlistFolder: PlaylistFolder) => void
   CONTEXT_MENU_OPENED: (el: Ref<HTMLElement> | HTMLElement) => void
 
+  FULLSCREEN_TOGGLE: () => void
+
   MODAL_SHOW_ADD_USER_FORM: () => void
   MODAL_SHOW_EDIT_USER_FORM: (user: User) => void
   MODAL_SHOW_EDIT_SONG_FORM: (songs: Song | Song[], initialTab?: EditSongFormTabName) => void

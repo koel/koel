@@ -24,21 +24,37 @@
       </button>
 
       <Volume />
+
+      <button
+        v-if="isFullscreenSupported()"
+        v-koel-tooltip.top
+        :title="fullscreenButtonTitle"
+        @click.prevent="toggleFullscreen"
+      >
+        <icon :icon="isFullscreen ? faCompress : faExpand" />
+      </button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { faBolt, faSliders } from '@fortawesome/free-solid-svg-icons'
-import { ref } from 'vue'
-import { eventBus, isAudioContextSupported as useEqualizer, requireInjection } from '@/utils'
-import { CurrentSongKey } from '@/symbols'
+import { faBolt, faCompress, faExpand, faSliders } from '@fortawesome/free-solid-svg-icons'
+import { computed, onMounted, ref } from 'vue'
+import { eventBus, isAudioContextSupported as useEqualizer, isFullscreenSupported } from '@/utils'
 
 import Volume from '@/components/ui/Volume.vue'
 
-const song = requireInjection(CurrentSongKey, ref(null))
+const isFullscreen = ref(false)
+const fullscreenButtonTitle = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))
 
 const showEqualizer = () => eventBus.emit('MODAL_SHOW_EQUALIZER')
+const toggleFullscreen = () => eventBus.emit('FULLSCREEN_TOGGLE')
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', () => {
+    isFullscreen.value = Boolean(document.fullscreenElement)
+  })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -69,6 +85,12 @@ const showEqualizer = () => eventBus.emit('MODAL_SHOW_EQUALIZER')
   @media only screen and (max-width: 768px) {
     width: auto;
 
+    .visualizer-btn {
+      display: none;
+    }
+  }
+
+  :fullscreen & {
     .visualizer-btn {
       display: none;
     }
