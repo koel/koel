@@ -27,6 +27,10 @@ const cover = computed(() => song.value?.album_cover || defaultCover)
   width: 320px;
   gap: 1rem;
 
+  :fullscreen & {
+    padding-left: 0;
+  }
+
   @media screen and (max-width: 768px) {
     width: 84px;
   }
@@ -65,7 +69,6 @@ const cover = computed(() => song.value?.album_cover || defaultCover)
       transform-origin: left bottom;
       position: absolute;
       overflow: hidden;
-      width: 87vw;
 
       .title {
         font-size: 3rem;

@@ -66,6 +66,10 @@ onMounted(() => {
   color: var(--color-text-secondary);
   padding: 0 2rem;
 
+  :fullscreen & {
+    padding-right: 0;
+  }
+
   .wrapper {
     display: flex;
     justify-content: flex-end;
