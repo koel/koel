@@ -97,7 +97,14 @@ import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
 import { useDraggable, useDroppable } from '@/composables'
-import { SelectedSongsKey, SongListConfigKey, SongListFilterKeywordsKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
+import {
+  SelectedSongsKey,
+  SongListConfigKey,
+  SongListFilterKeywordsKey,
+  SongListSortFieldKey,
+  SongListSortOrderKey,
+  SongsKey
+} from '@/symbols'
 
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import SongListItem from '@/components/song/SongListItem.vue'
@@ -274,7 +281,6 @@ const onDragEnter = (event: DragEvent) => {
 
   if (acceptsDrop(event)) {
     (event.target as HTMLElement).closest('.song-item')?.classList.add('droppable')
-    event.dataTransfer!.dropEffect = 'move'
   }
 
   return false

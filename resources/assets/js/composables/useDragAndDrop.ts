@@ -33,6 +33,8 @@ export const useDraggable = (type: DraggableType) => {
       return
     }
 
+    event.dataTransfer.effectAllowed = 'copyMove'
+
     let text: string
     let data: any
 

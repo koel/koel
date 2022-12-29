@@ -58,7 +58,6 @@ const onDragOver = (event: DragEvent) => {
   if (!acceptsDrop(event)) return false
 
   event.preventDefault()
-  event.dataTransfer!.dropEffect = 'move'
   droppable.value = true
   opened.value = true
 }
@@ -84,7 +83,6 @@ const onDragOverHatch = (event: DragEvent) => {
   if (!acceptsDrop(event)) return false
 
   event.preventDefault()
-  event.dataTransfer!.dropEffect = 'move'
   droppableOnHatch.value = true
 }
 
