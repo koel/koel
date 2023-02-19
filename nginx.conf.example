@@ -8,6 +8,8 @@ server {
   gzip_types      text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/json;
   gzip_comp_level  9;
 
+  send_timeout    3600;
+
   location / {
     try_files   $uri $uri/ /index.php?$args;
   }
