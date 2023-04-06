@@ -9,6 +9,16 @@
   display: none !important;
 }
 
+@media (prefers-color-scheme: dark) {
+ :root {
+  color-scheme: dark;
+ }
+
+  input {
+    color-scheme: light;
+  }
+}
+
 body,
 html {
   @include themed-background();
