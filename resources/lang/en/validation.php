@@ -80,6 +80,8 @@ return [
         'valid' => 'The :attribute is not a valid or readable path.',
     ],
 
+    'uploaded' => 'The :attribute failed to upload.',
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
