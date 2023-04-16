@@ -40,7 +40,7 @@ export const useUpload = () => {
     }
 
     const fileEntries = await getAllFileEntries(event.dataTransfer.items)
-    const files = await Promise.all(fileEntries.map(async entry => await fileEntryToFile(entry)))
+    const files = await Promise.all(fileEntries.map(entry => fileEntryToFile(entry)))
     const queuedFiles = queueFilesForUpload(files)
 
     if (queuedFiles.length) {
