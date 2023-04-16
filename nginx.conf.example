@@ -9,6 +9,7 @@ server {
   gzip_comp_level  9;
 
   send_timeout    3600;
+  client_max_body_size  50M;
 
   location / {
     try_files   $uri $uri/ /index.php?$args;
