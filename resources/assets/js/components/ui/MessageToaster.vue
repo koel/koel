@@ -8,18 +8,17 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { uuid } from '@/utils'
 import MessageToast from '@/components/ui/MessageToast.vue'
 
 const messages = ref<ToastMessage[]>([])
 
 const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: string, timeout = 5) => {
-  const id = `${Date.now().toString(36)}.${Math.random().toString(36)}`
-
   messages.value.push({
-    id,
     type,
     content,
-    timeout
+    timeout,
+    id: uuid()
   })
 }
 
