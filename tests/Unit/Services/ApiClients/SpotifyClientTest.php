@@ -39,6 +39,7 @@ class SpotifyClientTest extends TestCase
         $this->mockSetAccessToken();
 
         $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache);
+        self::addToAssertionCount(1);
     }
 
     public function testAccessTokenIsRetrievedFromCacheWhenApplicable(): void

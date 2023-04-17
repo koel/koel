@@ -1,6 +1,6 @@
 import { differenceBy, orderBy } from 'lodash'
 import { reactive, UnwrapNestedRefs } from 'vue'
-import { logger } from '@/utils'
+import { logger, uuid } from '@/utils'
 import { cache, http } from '@/services'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
@@ -121,7 +121,7 @@ export const playlistStore = {
   },
 
   createEmptySmartPlaylistRule: (): SmartPlaylistRule => ({
-    id: (new Date()).getTime(),
+    id: uuid(),
     model: models[0],
     operator: operators[0].operator,
     value: ['']
@@ -129,7 +129,7 @@ export const playlistStore = {
 
   createEmptySmartPlaylistRuleGroup (): SmartPlaylistRuleGroup {
     return {
-      id: (new Date()).getTime(),
+      id: uuid(),
       rules: [this.createEmptySmartPlaylistRule()]
     }
   },

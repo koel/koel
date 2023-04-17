@@ -38,6 +38,8 @@ class MediaMetadataServiceTest extends TestCase
             ->with($album)
             ->andReturn('/dev/null/cover.jpg');
 
+        $this->imageWriter->shouldReceive('write')->twice();
+
         $this->mediaMetadataService->tryDownloadAlbumCover($album);
     }
 
@@ -52,6 +54,8 @@ class MediaMetadataServiceTest extends TestCase
             ->once()
             ->with('/koel/public/img/album/foo.jpg', 'dummy-src');
 
+        $this->imageWriter->shouldReceive('write')->once();
+
         $this->mediaMetadataService->writeAlbumCover($album, 'dummy-src', 'jpg', $coverPath);
         self::assertSame(album_cover_url('foo.jpg'), $album->refresh()->cover);
     }
@@ -65,6 +69,8 @@ class MediaMetadataServiceTest extends TestCase
             ->shouldReceive('tryGetArtistImage')
             ->with($artist)
             ->andReturn('/dev/null/img.jpg');
+
+        $this->imageWriter->shouldReceive('write')->once();
 
         $this->mediaMetadataService->tryDownloadArtistImage($artist);
     }

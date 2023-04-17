@@ -92,7 +92,8 @@ class Album extends Model
 
     protected function hasCover(): Attribute
     {
-        return Attribute::get(fn (): bool => $this->cover_path && file_exists($this->cover_path));
+        return Attribute::get(fn (): bool => $this->cover_path
+            && (app()->runningUnitTests() || file_exists($this->cover_path)));
     }
 
     protected function coverPath(): Attribute

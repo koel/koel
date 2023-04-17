@@ -30,10 +30,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'title',
                         'operator' => 'is',
                         'value' => ['Foo Something'],
@@ -50,10 +50,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'title',
                         'operator' => 'isNot',
                         'value' => ['Bar Something'],
@@ -70,10 +70,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'title',
                         'operator' => 'contains',
                         'value' => ['Some'],
@@ -90,10 +90,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'title',
                         'operator' => 'notContain',
                         'value' => ['Nothing'],
@@ -110,10 +110,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'title',
                         'operator' => 'beginsWith',
                         'value' => ['Foo'],
@@ -130,10 +130,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'title',
                         'operator' => 'endsWith',
                         'value' => ['Something'],
@@ -154,10 +154,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'album.name',
                         'operator' => 'is',
                         'value' => ['Foo Album'],
@@ -178,10 +178,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'artist.name',
                         'operator' => 'is',
                         'value' => ['Foo Artist'],
@@ -200,10 +200,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'genre',
                         'operator' => 'is',
                         'value' => ['Foo Genre'],
@@ -211,10 +211,10 @@ class SmartPlaylistServiceTest extends TestCase
                 ],
             ],
             [
-                'id' => 2,
+                'id' => '70fe0cbd-c0e3-4ce2-806b-30153795bdeb',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '50f1e8c1-170b-46a0-b752-d515440b34d9',
                         'model' => 'genre',
                         'operator' => 'contains',
                         'value' => ['Bar'],
@@ -233,10 +233,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'year',
                         'operator' => 'isGreaterThan',
                         'value' => [2021],
@@ -255,10 +255,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'year',
                         'operator' => 'isLessThan',
                         'value' => [1981],
@@ -277,10 +277,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'year',
                         'operator' => 'isBetween',
                         'value' => [1970, 1985],
@@ -315,10 +315,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'interactions.play_count',
                         'operator' => 'isGreaterThan',
                         'value' => [999],
@@ -354,10 +354,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'interactions.last_played_at',
                         'operator' => 'inLast',
                         'value' => [3],
@@ -393,10 +393,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'interactions.last_played_at',
                         'operator' => 'notInLast',
                         'value' => [2],
@@ -432,10 +432,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'interactions.last_played_at',
                         'operator' => 'is',
                         'value' => [now()->format('Y-m-d')],
@@ -454,10 +454,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'length',
                         'operator' => 'isGreaterThan',
                         'value' => [199],
@@ -476,10 +476,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'length',
                         'operator' => 'isBetween',
                         'value' => [199, 301],
@@ -499,10 +499,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'created_at',
                         'operator' => 'inLast',
                         'value' => [3],
@@ -522,10 +522,10 @@ class SmartPlaylistServiceTest extends TestCase
 
         $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => 1,
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => 1,
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'created_at',
                         'operator' => 'notInLast',
                         'value' => [3],

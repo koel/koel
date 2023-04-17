@@ -125,9 +125,7 @@ class LastfmServiceTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->service->scrobble($song, $user, 100);
-
-        $this->client->shouldHaveReceived('post')
+        $this->client->shouldReceive('post')
             ->with('/', [
                 'artist' => $song->artist->name,
                 'track' => $song->title,
@@ -137,6 +135,8 @@ class LastfmServiceTest extends TestCase
                 'album' => $song->album->name,
             ], false)
             ->once();
+
+        $this->service->scrobble($song, $user, 100);
     }
 
     /** @return array<mixed> */
@@ -158,9 +158,7 @@ class LastfmServiceTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->for(Artist::factory()->create(['name' => 'foo']))->create(['title' => 'bar']);
 
-        $this->service->toggleLoveTrack($song, $user, $love);
-
-        $this->client->shouldHaveReceived('post')
+        $this->client->shouldReceive('post')
             ->with('/', [
                 'artist' => 'foo',
                 'track' => 'bar',
@@ -168,6 +166,8 @@ class LastfmServiceTest extends TestCase
                 'method' => $method,
             ], false)
             ->once();
+
+        $this->service->toggleLoveTrack($song, $user, $love);
     }
 
     public function testUpdateNowPlaying(): void
@@ -182,9 +182,7 @@ class LastfmServiceTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->for(Artist::factory()->create(['name' => 'foo']))->create(['title' => 'bar']);
 
-        $this->service->updateNowPlaying($song, $user);
-
-        $this->client->shouldHaveReceived('post')
+        $this->client->shouldReceive('post')
             ->with('/', [
                 'artist' => 'foo',
                 'track' => 'bar',
@@ -194,5 +192,7 @@ class LastfmServiceTest extends TestCase
                 'album' => $song->album->name,
             ], false)
             ->once();
+
+        $this->service->updateNowPlaying($song, $user);
     }
 }

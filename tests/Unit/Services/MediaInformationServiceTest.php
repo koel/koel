@@ -48,6 +48,9 @@ class MediaInformationServiceTest extends TestCase
             ->with($album)
             ->andReturn($info);
 
+        $this->mediaMetadataService
+            ->shouldNotReceive('tryDownloadAlbumCover');
+
         self::assertSame($info, $this->mediaInformationService->getAlbumInformation($album));
         self::assertNotNull(cache()->get('album.info.' . $album->id));
     }
@@ -57,6 +60,8 @@ class MediaInformationServiceTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);
         $info = AlbumInformation::make();
+
+        self::assertFalse($album->has_cover);
 
         $this->encyclopedia
             ->shouldReceive('getAlbumInformation')
@@ -77,11 +82,16 @@ class MediaInformationServiceTest extends TestCase
         $artist = Artist::factory()->create();
         $info = ArtistInformation::make();
 
+        self::assertTrue($artist->has_image);
+
         $this->encyclopedia
             ->shouldReceive('getArtistInformation')
             ->once()
             ->with($artist)
             ->andReturn($info);
+
+        $this->mediaMetadataService
+            ->shouldNotReceive('tryDownloadArtistImage');
 
         self::assertSame($info, $this->mediaInformationService->getArtistInformation($artist));
         self::assertNotNull(cache()->get('artist.info.' . $artist->id));
@@ -92,6 +102,8 @@ class MediaInformationServiceTest extends TestCase
         /** @var Artist $artist */
         $artist = Artist::factory()->create(['image' => '']);
         $info = ArtistInformation::make();
+
+        self::assertFalse($artist->has_image);
 
         $this->encyclopedia
             ->shouldReceive('getArtistInformation')

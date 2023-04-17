@@ -3,6 +3,7 @@
 namespace App\Values;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 use Webmozart\Assert\Assert;
 
 final class SmartPlaylistRule implements Arrayable
@@ -60,7 +61,7 @@ final class SmartPlaylistRule implements Arrayable
         self::MODEL_YEAR,
     ];
 
-    public ?int $id;
+    public string $id;
     public string $operator;
     public array $value;
     public string $model;
@@ -69,7 +70,7 @@ final class SmartPlaylistRule implements Arrayable
     {
         self::assertConfig($config);
 
-        $this->id = $config['id'] ?? null;
+        $this->id = $config['id'] ?? Str::uuid()->toString();
         $this->value = $config['value'];
         $this->model = $config['model'];
         $this->operator = $config['operator'];
@@ -77,6 +78,10 @@ final class SmartPlaylistRule implements Arrayable
 
     public static function assertConfig(array $config, bool $allowUserIdModel = true): void
     {
+        if ($config['id'] ?? null) {
+            Assert::uuid($config['id']);
+        }
+
         Assert::oneOf($config['operator'], self::VALID_OPERATORS);
         Assert::oneOf(
             $config['model'],

@@ -41,11 +41,18 @@ function koel_version(): string
     return trim(file_get_contents(base_path('.version')));
 }
 
+/**
+ * @throws Throwable
+ */
 function attempt(callable $callback, bool $log = true): mixed
 {
     try {
         return $callback();
     } catch (Throwable $e) {
+        if (app()->runningUnitTests()) {
+            throw $e;
+        }
+
         if ($log) {
             Log::error('Failed attempt', ['error' => $e]);
         }

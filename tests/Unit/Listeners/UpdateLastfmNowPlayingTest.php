@@ -8,7 +8,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
 use Mockery;
-use Tests\Feature\TestCase;
+use Tests\TestCase;
 
 class UpdateLastfmNowPlayingTest extends TestCase
 {
@@ -23,7 +23,8 @@ class UpdateLastfmNowPlayingTest extends TestCase
         $lastfm = Mockery::mock(LastfmService::class, ['enabled' => true]);
 
         $lastfm->shouldReceive('updateNowPlaying')
-            ->with($song, $user);
+            ->with($song, $user)
+            ->once();
 
         (new UpdateLastfmNowPlaying($lastfm))->handle(new SongStartedPlaying($song, $user));
     }

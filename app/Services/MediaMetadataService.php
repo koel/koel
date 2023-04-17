@@ -23,7 +23,7 @@ class MediaMetadataService
      * Write an album cover image file and update the Album with the new cover attribute.
      *
      * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
-     * @param string $destination The destination path. Automatically generated if empty.
+     * @param string|null $destination The destination path. Automatically generated if empty.
      */
     public function writeAlbumCover(
         Album $album,
@@ -57,7 +57,7 @@ class MediaMetadataService
      * Write an artist image file update the Artist with the new image attribute.
      *
      * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
-     * @param string $destination The destination path. Automatically generated if empty.
+     * @param string|null $destination The destination path. Automatically generated if empty.
      */
     public function writeArtistImage(
         Artist $artist,

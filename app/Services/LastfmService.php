@@ -41,7 +41,7 @@ class LastfmService implements MusicEncyclopedia
             $name = urlencode($artist->name);
             $response = $this->client->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
 
-            return $response?->artist ? ArtistInformation::fromLastFmData($response->artist) : null;
+            return isset($response?->artist) ? ArtistInformation::fromLastFmData($response->artist) : null;
         });
     }
 
@@ -54,7 +54,7 @@ class LastfmService implements MusicEncyclopedia
             $response = $this->client
                 ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
 
-            return $response?->album ? AlbumInformation::fromLastFmData($response->album) : null;
+            return isset($response?->album) ? AlbumInformation::fromLastFmData($response->album) : null;
         });
     }
 

@@ -56,7 +56,7 @@ class PlaylistTest extends TestCase
             'name' => 'Smart Foo Bar',
             'rules' => [
                 [
-                    'id' => 12345,
+                    'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                     'rules' => [$rule->toArray()],
                 ],
             ],
@@ -78,7 +78,7 @@ class PlaylistTest extends TestCase
             'name' => 'Smart Foo Bar',
             'rules' => [
                 [
-                    'id' => 12345,
+                    'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                     'rules' => [
                         SmartPlaylistRule::create([
                             'model' => 'artist.name',

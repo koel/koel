@@ -6,10 +6,10 @@ import { playlistStore } from '.'
 
 const ruleGroups: SmartPlaylistRuleGroup[] = [
   {
-    id: 1,
+    id: 'c328a77e-3edf-46ed-8c8b-398ec443e6ad',
     rules: [
       {
-        id: 1,
+        id: '72f58da9-7350-488a-a1ee-c7c0edbfcc99',
         model: {
           name: 'artist.name',
           type: 'text',
@@ -21,10 +21,10 @@ const ruleGroups: SmartPlaylistRuleGroup[] = [
     ]
   },
   {
-    id: 2,
+    id: '72f58da9-7350-488a-a1ee-c7c0edbfcc99',
     rules: [
       {
-        id: 1,
+        id: '5d0e38c9-1eb3-40a1-b98e-23492ed01956',
         model: {
           name: 'artist.name',
           type: 'text',
@@ -39,10 +39,10 @@ const ruleGroups: SmartPlaylistRuleGroup[] = [
 
 const serializedRuleGroups = [
   {
-    id: 1,
+    id: 'c328a77e-3edf-46ed-8c8b-398ec443e6ad',
     rules: [
       {
-        id: 1,
+        id: '72f58da9-7350-488a-a1ee-c7c0edbfcc99',
         model: 'artist.name',
         operator: 'is',
         value: ['Elvis Presley']
@@ -50,10 +50,10 @@ const serializedRuleGroups = [
     ]
   },
   {
-    id: 2,
+    id: '72f58da9-7350-488a-a1ee-c7c0edbfcc99',
     rules: [
       {
-        id: 1,
+        id: '5d0e38c9-1eb3-40a1-b98e-23492ed01956',
         model: 'artist.name',
         operator: 'is',
         value: ['Queen']
@@ -71,7 +71,7 @@ new class extends UnitTestCase {
     it('sets up a smart playlist with properly unserialized rules', () => {
       const playlist = factory<Playlist>('playlist', {
         is_smart: true,
-        rules: serializedRuleGroups as SmartPlaylistRuleGroup[]
+        rules: serializedRuleGroups as unknown as SmartPlaylistRuleGroup[]
       })
 
       playlistStore.setupSmartPlaylist(playlist)

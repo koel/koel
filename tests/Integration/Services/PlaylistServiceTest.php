@@ -55,10 +55,10 @@ class PlaylistServiceTest extends TestCase
     {
         $rules = SmartPlaylistRuleGroupCollection::create([
             [
-                'id' => 1634756491129,
+                'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                 'rules' => [
                     [
-                        'id' => 1634756491129,
+                        'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                         'model' => 'title',
                         'operator' => 'is',
                         'value' => ['foo'],
@@ -116,10 +116,10 @@ class PlaylistServiceTest extends TestCase
     {
         $rules = SmartPlaylistRuleGroupCollection::create([
             [
-                'id' => 1634756491129,
+                'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                 'rules' => [
                     [
-                        'id' => 1634756491129,
+                        'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                         'model' => 'title',
                         'operator' => 'is',
                         'value' => ['foo'],
@@ -133,10 +133,10 @@ class PlaylistServiceTest extends TestCase
 
         $this->service->updatePlaylist($playlist, 'bar', null, SmartPlaylistRuleGroupCollection::create([
             [
-                'id' => 1634756491129,
+                'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                 'rules' => [
                     [
-                        'id' => 1634756491129,
+                        'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                         'model' => 'title',
                         'operator' => 'is',
                         'value' => ['bar'],

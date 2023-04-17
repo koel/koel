@@ -61,22 +61,25 @@ class ITunesServiceTest extends TestCase
 
         $client->shouldReceive('get')
             ->with('/', [
-                'term' => $constructedTerm,
-                'media' => 'music',
-                'entity' => 'song',
-                'limit' => 1,
+                'query' => [
+                    'term' => $constructedTerm,
+                    'media' => 'music',
+                    'entity' => 'song',
+                    'limit' => 1,
+                ],
             ])
-        ->andReturn(json_decode(json_encode([
-            'resultCount' => 1,
-            'results' => [['trackViewUrl' => $trackViewUrl]],
-        ])));
+            ->andReturn(json_decode(json_encode([
+                'resultCount' => 1,
+                'results' => [['trackViewUrl' => $trackViewUrl]],
+            ])));
 
         $service = new ITunesService($client, $cache);
 
         $cache
             ->shouldReceive('remember')
-            ->with($cacheKey, 10080, Mockery::on(static function (callable $generator) use ($affiliateUrl): bool {
-                return $generator() === $affiliateUrl;
+            ->with($cacheKey, 10_080, Mockery::on(static function (callable $generator) use ($affiliateUrl): bool {
+                self::assertSame($generator(), $affiliateUrl);
+                return true;
             }));
 
         $service->getTrackUrl($term, $album, $artist);

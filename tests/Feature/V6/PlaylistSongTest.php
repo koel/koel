@@ -27,10 +27,10 @@ class PlaylistSongTest extends TestCase
         $playlist = Playlist::factory()->create([
             'rules' => [
                 [
-                    'id' => 1658843809274,
+                    'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                     'rules' => [
                         [
-                            'id' => 1658843809274,
+                            'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                             'model' => 'title',
                             'operator' => 'contains',
                             'value' => ['foo'],
@@ -119,10 +119,10 @@ class PlaylistSongTest extends TestCase
         $playlist = Playlist::factory()->create([
             'rules' => [
                 [
-                    'id' => 1658843809274,
+                    'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                     'rules' => [
                         [
-                            'id' => 1658843809274,
+                            'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                             'model' => 'title',
                             'operator' => 'contains',
                             'value' => ['foo'],

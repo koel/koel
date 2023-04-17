@@ -153,7 +153,7 @@ interface Song {
 }
 
 interface SmartPlaylistRuleGroup {
-  id: number
+  id: string
   rules: SmartPlaylistRule[]
 }
 
@@ -173,14 +173,14 @@ interface SmartPlaylistOperator {
 }
 
 interface SmartPlaylistRule {
-  id: number
+  id: string
   model: SmartPlaylistModel
   operator: SmartPlaylistOperator['operator']
   value: any[]
 }
 
 interface SerializedSmartPlaylistRule {
-  id: number
+  id: string
   model: SmartPlaylistModel['name']
   operator: SmartPlaylistOperator['operator']
   value: any[]
