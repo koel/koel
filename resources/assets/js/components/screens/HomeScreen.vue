@@ -66,7 +66,7 @@ const greetings = [
   'How have you been, %s?'
 ]
 
-const greeting = computed(() => sample(greetings)!.replace('%s', userStore.current?.name))
+const greeting = computed(() => userStore.current ? sample(greetings)!.replace('%s', userStore.current.name) : '')
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const loading = ref(false)
