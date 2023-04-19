@@ -102,8 +102,7 @@
     "preferred-install": "dist",
     "optimize-autoloader": true,
     "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true,
-      "php-http/discovery": true
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
   },
   "minimum-stability": "stable",
