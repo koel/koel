@@ -9,14 +9,12 @@
   display: none !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-  }
+:root {
+  color-scheme: dark;
+}
 
-  ::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
+::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 body,
