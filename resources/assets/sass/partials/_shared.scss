@@ -9,6 +9,14 @@
   display: none !important;
 }
 
+:root {
+  color-scheme: dark;
+}
+
+::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 body,
 html {
   @include themed-background();
