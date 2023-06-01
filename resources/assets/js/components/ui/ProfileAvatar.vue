@@ -1,5 +1,6 @@
 <template>
   <a
+    v-if="currentUser"
     v-koel-tooltip.left
     class="view-profile"
     data-testid="view-profile-link"
