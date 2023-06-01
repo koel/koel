@@ -1,12 +1,13 @@
 <template>
   <a
+    v-if="currentUser"
     v-koel-tooltip.left
     class="view-profile"
     data-testid="view-profile-link"
     href="/#/profile"
     title="Profile and preferences"
   >
-    <img :alt="`Avatar of ${currentUser?.name}`" :src="currentUser?.avatar">
+    <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar">
   </a>
 </template>
 
