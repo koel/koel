@@ -136,8 +136,8 @@ class SongRepository extends Repository
         return Song::query()
             ->withMeta($scopedUser ?? $this->auth->user())
             ->where('album_id', $album->id)
-            ->orderBy('songs.track')
             ->orderBy('songs.disc')
+            ->orderBy('songs.track')
             ->orderBy('songs.title')
             ->get();
     }
@@ -150,8 +150,8 @@ class SongRepository extends Repository
             ->where('songs.artist_id', $artist->id)
             ->orWhere('albums.artist_id', $artist->id)
             ->orderBy('albums.name')
-            ->orderBy('songs.track')
             ->orderBy('songs.disc')
+            ->orderBy('songs.track')
             ->orderBy('songs.title')
             ->get();
     }
@@ -213,17 +213,17 @@ class SongRepository extends Repository
 
         if ($column === 'artists.name') {
             $query->orderBy('albums.name')
-                ->orderBy('songs.track')
                 ->orderBy('songs.disc')
+                ->orderBy('songs.track')
                 ->orderBy('songs.title');
         } elseif ($column === 'albums.name') {
             $query->orderBy('artists.name')
-                ->orderBy('songs.track')
                 ->orderBy('songs.disc')
+                ->orderBy('songs.track')
                 ->orderBy('songs.title');
         } elseif ($column === 'track') {
-            $query->orderBy('songs.track')
-                ->orderBy('song.disc');
+            $query->orderBy('song.disc')
+                ->orderBy('songs.track');
         }
 
         return $query;
