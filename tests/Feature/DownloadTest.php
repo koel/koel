@@ -70,8 +70,8 @@ class DownloadTest extends TestCase
             ->shouldReceive('from')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
-                $retrievedIds = $retrievedSongs->pluck('id')->toArray();
-                $requestedIds = $songs->pluck('id')->toArray();
+                $retrievedIds = $retrievedSongs->pluck('id')->all();
+                $requestedIds = $songs->pluck('id')->all();
                 self::assertEqualsCanonicalizing($requestedIds, $retrievedIds);
 
                 return true;
@@ -131,9 +131,7 @@ class DownloadTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $playlist = Playlist::factory()->for($user)->create();
 
         $this->downloadService
             ->shouldReceive('from')

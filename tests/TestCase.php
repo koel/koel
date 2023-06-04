@@ -39,20 +39,15 @@ abstract class TestCase extends BaseTestCase
         $artist = Artist::factory()->create();
 
         /** @var array<Album> $albums */
-        $albums = Album::factory(3)->create([
-            'artist_id' => $artist->id,
-        ]);
+        $albums = Album::factory(3)->for($artist)->create();
 
         // 7-15 songs per albums
         foreach ($albums as $album) {
-            Song::factory(random_int(7, 15))->create([
-                'album_id' => $album->id,
-                'artist_id' => $artist->id,
-            ]);
+            Song::factory(random_int(7, 15))->for($artist)->for($album)->create();
         }
     }
 
-    protected static function getNonPublicProperty($object, string $property) // @phpcs:ignore
+    protected static function getNonPublicProperty($object, string $property): mixed
     {
         $reflection = new ReflectionClass($object);
         $property = $reflection->getProperty($property);

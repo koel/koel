@@ -53,11 +53,8 @@ class SpotifyServiceTest extends TestCase
 
     public function testTryGetAlbumImage(): void
     {
-        /** @var Artist $artist */
-        $artist = Artist::factory(['name' => 'Foo'])->create();
-
         /** @var Album $album */
-        $album = Album::factory(['name' => 'Bar', 'artist_id' => $artist->id])->create();
+        $album = Album::factory(['name' => 'Bar'])->for(Artist::factory(['name' => 'Foo']))->create();
 
         $this->client
             ->shouldReceive('search')

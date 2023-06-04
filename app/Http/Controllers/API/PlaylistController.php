@@ -6,9 +6,11 @@ use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Http\Requests\API\PlaylistUpdateRequest;
+use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
+use App\Models\PlaylistFolder;
 use App\Models\User;
-use App\Repositories\PlaylistRepository;
+use App\Repositories\PlaylistFolderRepository;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -19,31 +21,37 @@ class PlaylistController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private PlaylistRepository $playlistRepository,
         private PlaylistService $playlistService,
+        private PlaylistFolderRepository $folderRepository,
         private ?Authenticatable $user
     ) {
     }
 
     public function index()
     {
-        return response()->json($this->playlistRepository->getAllByCurrentUser());
+        return PlaylistResource::collection($this->user->playlists);
     }
 
     public function store(PlaylistStoreRequest $request)
     {
+        $folder = null;
+
+        if ($request->folder_id) {
+            /** @var PlaylistFolder $folder */
+            $folder = $this->folderRepository->getOneById($request->folder_id);
+            $this->authorize('own', $folder);
+        }
+
         try {
             $playlist = $this->playlistService->createPlaylist(
                 $request->name,
                 $this->user,
-                null,
+                $folder,
                 Arr::wrap($request->songs),
                 $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null
             );
 
-            $playlist->songs = $playlist->songs->pluck('id')->toArray();
-
-            return response()->json($playlist);
+            return PlaylistResource::make($playlist);
         } catch (PlaylistBothSongsAndRulesProvidedException $e) {
             throw ValidationException::withMessages(['songs' => [$e->getMessage()]]);
         }
@@ -53,9 +61,22 @@ class PlaylistController extends Controller
     {
         $this->authorize('own', $playlist);
 
-        $playlist->update($request->only('name', 'rules'));
+        $folder = null;
 
-        return response()->json($playlist);
+        if ($request->folder_id) {
+            /** @var PlaylistFolder $folder */
+            $folder = $this->folderRepository->getOneById($request->folder_id);
+            $this->authorize('own', $folder);
+        }
+
+        return PlaylistResource::make(
+            $this->playlistService->updatePlaylist(
+                $playlist,
+                $request->name,
+                $folder,
+                $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null
+            )
+        );
     }
 
     public function destroy(Playlist $playlist)

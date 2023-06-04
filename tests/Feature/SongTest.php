@@ -10,15 +10,92 @@ use Illuminate\Support\Collection;
 
 class SongTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
+    public const JSON_STRUCTURE = [
+        'type',
+        'id',
+        'title',
+        'lyrics',
+        'album_id',
+        'album_name',
+        'artist_id',
+        'artist_name',
+        'album_artist_id',
+        'album_artist_name',
+        'album_cover',
+        'length',
+        'liked',
+        'play_count',
+        'track',
+        'genre',
+        'year',
+        'disc',
+        'created_at',
+    ];
 
-        static::createSampleMediaSet();
+    public const JSON_COLLECTION_STRUCTURE = [
+        'data' => [
+            '*' => self::JSON_STRUCTURE,
+        ],
+        'links' => [
+            'first',
+            'last',
+            'prev',
+            'next',
+        ],
+        'meta' => [
+            'current_page',
+            'from',
+            'path',
+            'per_page',
+            'to',
+        ],
+    ];
+
+    public function testIndex(): void
+    {
+        Song::factory(10)->create();
+
+        $this->getAs('api/songs')->assertJsonStructure(self::JSON_COLLECTION_STRUCTURE);
+        $this->getAs('api/songs?sort=title&order=desc')->assertJsonStructure(self::JSON_COLLECTION_STRUCTURE);
+    }
+
+    public function testShow(): void
+    {
+        /** @var Song $song */
+        $song = Song::factory()->create();
+
+        $this->getAs('api/songs/' . $song->id)->assertJsonStructure(self::JSON_STRUCTURE);
+    }
+
+    public function testDelete(): void
+    {
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory(3)->create();
+
+        /** @var User $admin */
+        $admin = User::factory()->admin()->create();
+
+        $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->all()], $admin)
+            ->assertNoContent();
+
+        $songs->each(fn (Song $song) => $this->assertModelMissing($song));
+    }
+
+    public function testUnauthorizedDelete(): void
+    {
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory(3)->create();
+
+        $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->all()])
+            ->assertForbidden();
+
+        $songs->each(fn (Song $song) => $this->assertModelExists($song));
     }
 
     public function testSingleUpdateAllInfoNoCompilation(): void
     {
+        static::createSampleMediaSet();
+
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
@@ -57,6 +134,8 @@ class SongTest extends TestCase
 
     public function testSingleUpdateSomeInfoNoCompilation(): void
     {
+        static::createSampleMediaSet();
+
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
@@ -86,9 +165,11 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateNoCompilation(): void
     {
+        static::createSampleMediaSet();
+
         /** @var User $user */
         $user = User::factory()->admin()->create();
-        $songIds = Song::query()->latest()->take(3)->pluck('id')->toArray();
+        $songIds = Song::query()->latest()->take(3)->pluck('id')->all();
 
         $this->putAs('/api/songs', [
             'songs' => $songIds,
@@ -124,6 +205,8 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateCreatingNewAlbumsAndArtists(): void
     {
+        static::createSampleMediaSet();
+
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
@@ -131,7 +214,7 @@ class SongTest extends TestCase
         $originalSongs = Song::query()->latest()->take(3)->get();
 
         $this->putAs('/api/songs', [
-            'songs' =>  $originalSongs->pluck('id')->toArray(),
+            'songs' =>  $originalSongs->pluck('id')->all(),
             'data' => [
                 'title' => 'Foo Bar',
                 'artist_name' => 'John Cena',
@@ -162,6 +245,8 @@ class SongTest extends TestCase
 
     public function testSingleUpdateAllInfoWithCompilation(): void
     {
+        static::createSampleMediaSet();
+
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
@@ -205,6 +290,8 @@ class SongTest extends TestCase
 
     public function testUpdateSingleSongWithEmptyTrackAndDisc(): void
     {
+        static::createSampleMediaSet();
+
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
@@ -231,6 +318,8 @@ class SongTest extends TestCase
 
     public function testDeletingByChunk(): void
     {
+        Song::factory(5)->create();
+
         self::assertNotSame(0, Song::query()->count());
         $ids = Song::query()->select('id')->get()->pluck('id')->all();
 
