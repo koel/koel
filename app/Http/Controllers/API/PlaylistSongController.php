@@ -3,21 +3,24 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\PlaylistSongUpdateRequest;
+use App\Http\Requests\API\AddSongsToPlaylistRequest;
+use App\Http\Requests\API\RemoveSongsFromPlaylistRequest;
+use App\Http\Resources\SongResource;
 use App\Models\Playlist;
 use App\Models\User;
+use App\Repositories\SongRepository;
 use App\Services\PlaylistService;
 use App\Services\SmartPlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
-use Illuminate\Support\Arr;
 
 class PlaylistSongController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private SmartPlaylistService $smartPlaylistService,
+        private SongRepository $songRepository,
         private PlaylistService $playlistService,
+        private SmartPlaylistService $smartPlaylistService,
         private ?Authenticatable $user
     ) {
     }
@@ -26,21 +29,31 @@ class PlaylistSongController extends Controller
     {
         $this->authorize('own', $playlist);
 
-        return response()->json(
+        return SongResource::collection(
             $playlist->is_smart
-                ? $this->smartPlaylistService->getSongs($playlist, $this->user)->pluck('id')
-                : $playlist->songs->pluck('id')
+                ? $this->smartPlaylistService->getSongs($playlist, $this->user)
+                : $this->songRepository->getByStandardPlaylist($playlist, $this->user)
         );
     }
 
-    /** @deprecated */
-    public function update(PlaylistSongUpdateRequest $request, Playlist $playlist)
+    public function store(Playlist $playlist, AddSongsToPlaylistRequest $request)
     {
         $this->authorize('own', $playlist);
 
-        abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN, 'A smart playlist cannot be populated manually.');
+        abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
 
-        $this->playlistService->populatePlaylist($playlist, Arr::wrap($request->songs));
+        $this->playlistService->addSongsToPlaylist($playlist, $request->songs);
+
+        return response()->noContent();
+    }
+
+    public function destroy(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)
+    {
+        $this->authorize('own', $playlist);
+
+        abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
+
+        $this->playlistService->removeSongsFromPlaylist($playlist, $request->songs);
 
         return response()->noContent();
     }

@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 /**
- * @property string $pageToken
+ * @property-read string|null $pageToken
  */
 class YouTubeSearchRequest extends Request
 {

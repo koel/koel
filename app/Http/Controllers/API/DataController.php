@@ -3,57 +3,50 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PlaylistFolderResource;
+use App\Http\Resources\PlaylistResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Repositories\InteractionRepository;
-use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\SongRepository;
 use App\Services\ApplicationInformationService;
 use App\Services\ITunesService;
 use App\Services\LastfmService;
-use App\Services\MediaCacheService;
 use App\Services\YouTubeService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class DataController extends Controller
 {
-    private const RECENTLY_PLAYED_EXCERPT_COUNT = 7;
-
-    /** @param User $currentUser */
+    /** @param User $user */
     public function __construct(
-        private MediaCacheService $mediaCacheService,
+        private ITunesService $iTunesService,
         private SettingRepository $settingRepository,
-        private PlaylistRepository $playlistRepository,
-        private InteractionRepository $interactionRepository,
-        private UserRepository $userRepository,
+        private SongRepository $songRepository,
         private ApplicationInformationService $applicationInformationService,
-        private ?Authenticatable $currentUser
+        private ?Authenticatable $user
     ) {
     }
 
     public function index()
     {
-        return response()->json($this->mediaCacheService->get() + [
-            'settings' => $this->currentUser->is_admin ? $this->settingRepository->getAllAsKeyValueArray() : [],
-            'playlists' => $this->playlistRepository->getAllByCurrentUser(),
-            'interactions' => $this->interactionRepository->getAllByCurrentUser(),
-            'recentlyPlayed' => $this->interactionRepository->getRecentlyPlayed(
-                $this->currentUser,
-                self::RECENTLY_PLAYED_EXCERPT_COUNT
-            ),
-            'users' => $this->currentUser->is_admin ? $this->userRepository->getAll() : [],
-            'currentUser' => $this->currentUser,
-            'useLastfm' => LastfmService::used(),
-            'useYouTube' => YouTubeService::enabled(),
-            'useiTunes' => ITunesService::used(),
-            'allowDownload' => config('koel.download.allow'),
-            'supportsTranscoding' => config('koel.streaming.ffmpeg_path')
+        return response()->json([
+            'settings' => $this->user->is_admin ? $this->settingRepository->getAllAsKeyValueArray() : [],
+            'playlists' => PlaylistResource::collection($this->user->playlists),
+            'playlist_folders' => PlaylistFolderResource::collection($this->user->playlist_folders),
+            'current_user' => UserResource::make($this->user, true),
+            'use_last_fm' => LastfmService::used(),
+            'use_you_tube' => YouTubeService::enabled(),
+            'use_i_tunes' => $this->iTunesService->used(),
+            'allow_download' => config('koel.download.allow'),
+            'supports_transcoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),
-            'cdnUrl' => static_url(),
-            'currentVersion' => koel_version(),
-            'latestVersion' => $this->currentUser->is_admin
+            'cdn_url' => static_url(),
+            'current_version' => koel_version(),
+            'latest_version' => $this->user->is_admin
                 ? $this->applicationInformationService->getLatestVersionNumber()
                 : koel_version(),
+            'song_count' => $this->songRepository->count(),
+            'song_length' => $this->songRepository->getTotalLength(),
         ]);
     }
 }
