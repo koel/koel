@@ -80,7 +80,7 @@ class InteractionTest extends TestCase
 
         /** @var Collection|array<Song> $songs */
         $songs = Song::query()->orderBy('id')->take(2)->get();
-        $songIds = array_pluck($songs->toArray(), 'id');
+        $songIds = $songs->pluck('id')->all();
 
         $this->postAs('api/interaction/batch/like', ['songs' => $songIds], $user);
 

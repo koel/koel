@@ -51,7 +51,7 @@ class PlaylistFolderServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        $this->service->addPlaylistsToFolder($folder, $playlists->pluck('id')->toArray());
+        $this->service->addPlaylistsToFolder($folder, $playlists->pluck('id')->all());
 
         self::assertCount(3, $folder->playlists);
     }
@@ -62,9 +62,9 @@ class PlaylistFolderServiceTest extends TestCase
         $folder = PlaylistFolder::factory()->create();
 
         /** @var Collection|array<array-key, Playlist> $playlists */
-        $playlists = Playlist::factory()->count(3)->create(['folder_id' => $folder->id]);
+        $playlists = Playlist::factory()->count(3)->for($folder, 'folder')->create();
 
-        $this->service->movePlaylistsToRootLevel($playlists->pluck('id')->toArray());
+        $this->service->movePlaylistsToRootLevel($playlists->pluck('id')->all());
 
         self::assertCount(0, $folder->playlists);
 

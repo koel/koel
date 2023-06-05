@@ -77,10 +77,7 @@ class InteractionServiceTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Collection $interactions */
-        $interactions = Interaction::factory(3)->create([
-            'user_id' => $user->id,
-            'liked' => true,
-        ]);
+        $interactions = Interaction::factory(3)->for($user)->create(['liked' => true]);
 
         $this->interactionService->batchUnlike($interactions->pluck('song.id')->all(), $user);
 
