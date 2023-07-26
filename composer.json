@@ -92,7 +92,10 @@
     "post-create-project-cmd": [
       "@php artisan key:generate"
     ],
-    "test": "@php artisan test",
+    "test": [
+      "Composer\\Config::disableProcessTimeout",
+      "@php artisan test"
+    ],
     "coverage": "@php artisan test --coverage-clover=coverage.xml",
     "cs": "phpcs --standard=ruleset.xml",
     "cs:fix": "phpcbf --standard=ruleset.xml",
