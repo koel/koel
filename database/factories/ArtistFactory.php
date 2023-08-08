@@ -14,7 +14,7 @@ class ArtistFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'image' => md5(uniqid()) . '.jpeg',
+            'image' => md5(uniqid()) . '.jpg',
         ];
     }
 }

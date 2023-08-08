@@ -16,7 +16,7 @@ class AlbumFactory extends Factory
         return [
             'artist_id' => Artist::factory(),
             'name' => $this->faker->colorName,
-            'cover' => md5(uniqid()) . '.jpeg',
+            'cover' => md5(uniqid()) . '.jpg',
         ];
     }
 }
