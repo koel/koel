@@ -17,6 +17,7 @@ class PlaylistFolderTest extends TestCase
 
     public function testListing(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         PlaylistFolder::factory()->for($user)->count(3)->create();
 
