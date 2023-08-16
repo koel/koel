@@ -15,6 +15,16 @@ class PlaylistFolderTest extends TestCase
         'created_at',
     ];
 
+    public function testListing(): void
+    {
+        $user = User::factory()->create();
+        PlaylistFolder::factory()->for($user)->count(3)->create();
+
+        $this->getAs('api/playlist-folders', $user)
+            ->assertJsonStructure(['*' => self::JSON_STRUCTURE])
+            ->assertJsonCount(3, '*');
+    }
+
     public function testCreate(): void
     {
         /** @var User $user */

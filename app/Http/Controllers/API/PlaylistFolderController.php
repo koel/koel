@@ -18,6 +18,11 @@ class PlaylistFolderController extends Controller
     {
     }
 
+    public function index()
+    {
+        return PlaylistFolderResource::collection($this->user->playlist_folders);
+    }
+
     public function store(PlaylistFolderStoreRequest $request)
     {
         return PlaylistFolderResource::make($this->service->createFolder($this->user, $request->name));
