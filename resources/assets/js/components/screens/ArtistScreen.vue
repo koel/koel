@@ -1,5 +1,5 @@
 <template>
-  <section id="artistWrapper">
+  <section v-if="artist" id="artistWrapper">
     <ScreenHeaderSkeleton v-if="loading" />
 
     <ScreenHeader v-if="!loading && artist" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, ref, toRef, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { eventBus, logger, pluralize } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
@@ -104,7 +104,7 @@ type Tab = 'Songs' | 'Albums' | 'Info'
 const activeTab = ref<Tab>('Songs')
 
 const { showErrorDialog } = useDialogBox()
-const { getRouteParam, go } = useRouter()
+const { getRouteParam, go, onScreenActivated } = useRouter()
 
 const artistId = ref<number>()
 const artist = ref<Artist>()
@@ -146,7 +146,7 @@ watch(activeTab, async tab => {
 })
 
 watch(artistId, async id => {
-  if (!id) return
+  if (!id || loading.value) return
 
   loading.value = true
 
@@ -165,7 +165,7 @@ watch(artistId, async id => {
 
 const download = () => downloadService.fromArtist(artist.value!)
 
-onMounted(() => (artistId.value = parseInt(getRouteParam('id')!)))
+onScreenActivated('Artist', () => (artistId.value = parseInt(getRouteParam('id')!)))
 
 // if the current artist has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || go('artists'))

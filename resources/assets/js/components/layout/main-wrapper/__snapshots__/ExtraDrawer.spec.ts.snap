@@ -1,14 +1,14 @@
 // Vitest Snapshot v1
 
 exports[`renders without a current song 1`] = `
-<aside class="" data-v-119c862c="">
-  <div class="controls" data-v-119c862c="">
-    <div class="top" data-v-119c862c=""><button class="burger" data-v-119c862c=""><br data-testid="icon" icon="[object Object]"></button>
+<aside data-v-119c862c="" class="">
+  <div data-v-119c862c="" class="controls">
+    <div data-v-119c862c="" class="top"><button data-v-119c862c="" class="burger"><br data-testid="icon" icon="[object Object]"></button>
       <!--v-if-->
     </div>
-    <div class="bottom" data-v-119c862c=""><button title="About Koel" type="button" data-v-119c862c=""><br data-testid="icon" icon="[object Object]" data-v-119c862c="">
+    <div data-v-119c862c="" class="bottom"><button data-v-119c862c="" title="About Koel" type="button"><br data-v-119c862c="" data-testid="icon" icon="[object Object]">
         <!--v-if-->
-      </button><button title="Log out" type="button" data-v-119c862c=""><br data-testid="icon" icon="[object Object]" data-v-119c862c=""></button><br data-testid="stub" data-v-119c862c=""></div>
+      </button><button data-v-119c862c="" title="Log out" type="button"><br data-v-119c862c="" data-testid="icon" icon="[object Object]"></button><br data-v-119c862c="" data-testid="stub"></div>
   </div>
   <!--v-if-->
 </aside>

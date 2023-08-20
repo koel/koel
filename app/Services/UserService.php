@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
 
@@ -23,6 +24,8 @@ class UserService
 
     public function updateUser(User $user, string $name, string $email, string|null $password, bool $isAdmin): User
     {
+        throw_if($user->is_prospect, new UserProspectUpdateDeniedException());
+
         $data = [
             'name' => $name,
             'email' => $email,

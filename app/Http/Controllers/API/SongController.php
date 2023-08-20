@@ -50,6 +50,8 @@ class SongController extends Controller
 
     public function update(SongUpdateRequest $request)
     {
+        $this->authorize('admin', $this->user);
+
         $updatedSongs = $this->songService->updateSongs($request->songs, SongUpdateData::fromRequest($request));
         $albums = $this->albumRepository->getByIds($updatedSongs->pluck('album_id')->toArray());
 

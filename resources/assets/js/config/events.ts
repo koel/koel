@@ -18,6 +18,7 @@ export interface Events {
   FULLSCREEN_TOGGLE: () => void
 
   MODAL_SHOW_ADD_USER_FORM: () => void
+  MODAL_SHOW_INVITE_USER_FORM: () => void
   MODAL_SHOW_EDIT_USER_FORM: (user: User) => void
   MODAL_SHOW_EDIT_SONG_FORM: (songs: Song | Song[], initialTab?: EditSongFormTabName) => void
   MODAL_SHOW_CREATE_PLAYLIST_FORM: (folder?: PlaylistFolder | null, songs?: Song | Song[]) => void

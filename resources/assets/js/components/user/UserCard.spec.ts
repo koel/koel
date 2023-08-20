@@ -6,6 +6,7 @@ import { eventBus } from '@/utils'
 import { userStore } from '@/stores'
 import { DialogBoxStub } from '@/__tests__/stubs'
 import UserCard from './UserCard.vue'
+import { invitationService } from '@/services'
 
 new class extends UnitTestCase {
   private renderComponent (user: User) {
@@ -65,6 +66,28 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Delete' }))
 
       expect(destroyMock).not.toHaveBeenCalled()
+    })
+
+    it('revokes invite for prospects', async () => {
+      this.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
+      const prospect = factory.states('prospect')<User>('user')
+      this.actingAsAdmin().renderComponent(prospect)
+      const revokeMock = this.mock(invitationService, 'revoke')
+
+      await this.user.click(screen.getByRole('button', { name: 'Revoke' }))
+
+      expect (revokeMock).toHaveBeenCalledWith(prospect)
+    })
+
+    it('does not revoke invite for prospects if not confirmed', async () => {
+      this.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
+      const prospect = factory.states('prospect')<User>('user')
+      this.actingAsAdmin().renderComponent(prospect)
+      const revokeMock = this.mock(invitationService, 'revoke')
+
+      await this.user.click(screen.getByRole('button', { name: 'Revoke' }))
+
+      expect(revokeMock).not.toHaveBeenCalled()
     })
   }
 }

@@ -8,11 +8,6 @@ namespace App\Http\Requests\API;
  */
 class SongUpdateRequest extends Request
 {
-    public function authorize(): bool
-    {
-        return $this->user()->is_admin;
-    }
-
     /** @return array<mixed> */
     public function rules(): array
     {

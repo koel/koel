@@ -1,5 +1,5 @@
 <template>
-  <button ref="button" type="button">
+  <button ref="button">
     <slot>Click me</slot>
   </button>
 </template>
@@ -26,7 +26,7 @@ button {
   justify-content: center;
   gap: .3rem;
 
-  &:hover {
+  &:not([disabled]):hover {
     box-shadow: inset 0 0 0 10rem rgba(0, 0, 0, .05);
   }
 

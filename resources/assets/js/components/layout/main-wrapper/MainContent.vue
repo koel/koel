@@ -64,16 +64,18 @@ const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/N
 const VisualizerScreen = defineAsyncComponent(() => import('@/components/screens/VisualizerScreen.vue'))
 
 const { useYouTube } = useThirdPartyServices()
-const { resolveRoute, onRouteChanged } = useRouter()
+const { resolveRoute, onRouteChanged, getCurrentScreen } = useRouter()
 
-const currentSong = requireInjection(CurrentSongKey, ref(null))
+const currentSong = requireInjection(CurrentSongKey, ref(undefined))
 
 const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
 const screen = ref<ScreenName>('Home')
 
 onRouteChanged(route => (screen.value = route.screen))
 
-onMounted(() => resolveRoute())
+onMounted(async () => {
+  screen.value = getCurrentScreen()
+})
 </script>
 
 <style lang="scss">

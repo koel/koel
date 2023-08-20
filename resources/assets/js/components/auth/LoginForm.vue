@@ -1,12 +1,14 @@
 <template>
-  <form :class="{ error: failed }" data-testid="login-form" @submit.prevent="login">
-    <div class="logo">
-      <img alt="Koel's logo" src="@/../img/logo.svg" width="156">
-    </div>
-    <input v-model="email" autofocus placeholder="Email Address" required type="email">
-    <input v-model="password" placeholder="Password" required type="password">
-    <Btn type="submit">Log In</Btn>
-  </form>
+  <div class="login-wrapper">
+    <form :class="{ error: failed }" data-testid="login-form" @submit.prevent="login">
+      <div class="logo">
+        <img alt="Koel's logo" src="@/../img/logo.svg" width="156">
+      </div>
+      <input v-model="email" autofocus placeholder="Email Address" required type="email">
+      <PasswordField v-model="password" placeholder="Password" required />
+      <Btn type="submit">Log In</Btn>
+    </form>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -15,6 +17,7 @@ import { userStore } from '@/stores'
 import { isDemo } from '@/utils'
 
 import Btn from '@/components/ui/Btn.vue'
+import PasswordField from '@/components/ui/PasswordField.vue'
 
 const DEMO_ACCOUNT = {
   email: 'demo@koel.dev',
@@ -67,6 +70,15 @@ const login = async () => {
   0%, 100% {
     transform: translateX(0);
   }
+}
+
+.login-wrapper {
+  @include vertical-center();
+
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
 }
 
 form {

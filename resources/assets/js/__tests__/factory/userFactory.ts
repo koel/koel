@@ -6,6 +6,7 @@ export default (faker: Faker): User => ({
   name: faker.name.findName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
+  is_prospect: false,
   is_admin: false,
   avatar: 'https://gravatar.com/foo',
   preferences: {}
@@ -14,5 +15,8 @@ export default (faker: Faker): User => ({
 export const states: Record<string, Omit<Partial<User>, 'type'>> = {
   admin: {
     is_admin: true
+  },
+  prospect: {
+    is_prospect: true
   }
 }

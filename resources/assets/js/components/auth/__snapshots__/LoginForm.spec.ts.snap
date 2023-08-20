@@ -1,7 +1,10 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<form class="" data-testid="login-form" data-v-0b0f87ea="">
-  <div class="logo" data-v-0b0f87ea=""><img alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="156" data-v-0b0f87ea=""></div><input autofocus="" placeholder="Email Address" required="" type="email" data-v-0b0f87ea=""><input placeholder="Password" required="" type="password" data-v-0b0f87ea=""><button type="submit" data-v-e368fe26="" data-v-0b0f87ea="">Log In</button>
-</form>
+<div data-v-0b0f87ea="" class="login-wrapper">
+  <form data-v-0b0f87ea="" class="" data-testid="login-form">
+    <div data-v-0b0f87ea="" class="logo"><img data-v-0b0f87ea="" alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="156"></div><input data-v-0b0f87ea="" autofocus="" placeholder="Email Address" required="" type="email">
+    <div data-v-a2893005="" data-v-0b0f87ea=""><input data-v-a2893005="" type="password" placeholder="Password" required=""><button data-v-a2893005="" type="button"><br data-v-a2893005="" data-testid="icon" icon="[object Object]"></button></div><button data-v-e368fe26="" data-v-0b0f87ea="" type="submit">Log In</button>
+  </form>
+</div>
 `;

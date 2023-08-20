@@ -32,6 +32,6 @@ svg {
   color: var(--color-highlight);
   position: absolute;
   top: 1px;
-  left: 2px;
+  left: 1px;
 }
 </style>

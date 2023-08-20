@@ -76,7 +76,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const { onRouteChanged, triggerNotFound } = useRouter()
+const { onRouteChanged, triggerNotFound, getRouteParam, onScreenActivated } = useRouter()
 
 const playlistId = ref<number>()
 const playlist = ref<Playlist>()
@@ -119,6 +119,8 @@ const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playli
 const removeSelected = async () => await removeSongsFromPlaylist(playlist.value!, selectedSongs.value)
 
 const fetchSongs = async (refresh = false) => {
+  if (loading.value) return
+
   loading.value = true
   songs.value = await songStore.fetchForPlaylist(playlist.value!, refresh)
   loading.value = false
@@ -132,7 +134,7 @@ watch(playlistId, async id => {
   playlist.value ? await fetchSongs() : await triggerNotFound()
 })
 
-onRouteChanged(route => route.screen === 'Playlist' && (playlistId.value = parseInt(route.params!.id)))
+onScreenActivated('Playlist', async () => (playlistId.value = parseInt(getRouteParam('id')!)))
 
 eventBus.on('PLAYLIST_UPDATED', async updated => updated.id === playlistId.value && await fetchSongs())
   .on('PLAYLIST_SONGS_REMOVED', async (playlist, removed) => {

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`shows after a delay 1`] = `
-<div class="support-bar" data-testid="support-bar" data-v-c8ee2518="">
-  <p data-v-c8ee2518=""> Loving Koel? Please consider supporting its development via <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank" data-v-c8ee2518="">GitHub Sponsors</a> and/or <a href="https://opencollective.com/koel" rel="noopener" target="_blank" data-v-c8ee2518="">OpenCollective</a>. </p><button type="button" data-v-c8ee2518="">Hide</button><span class="sep" data-v-c8ee2518=""></span><button type="button" data-v-c8ee2518=""> Don't bug me again </button>
+<div data-v-c8ee2518="" class="support-bar" data-testid="support-bar">
+  <p data-v-c8ee2518=""> Loving Koel? Please consider supporting its development via <a data-v-c8ee2518="" href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a> and/or <a data-v-c8ee2518="" href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>. </p><button data-v-c8ee2518="" type="button">Hide</button><span data-v-c8ee2518="" class="sep"></span><button data-v-c8ee2518="" type="button"> Don't bug me again </button>
 </div>
 `;

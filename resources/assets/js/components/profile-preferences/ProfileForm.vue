@@ -31,14 +31,11 @@
     <div class="form-row">
       <label>
         New Password
-        <input
-          id="inputProfileNewPassword"
+        <PasswordField
+          placeholder="Leave empty to keep current password"
           v-model="profile.new_password"
           autocomplete="new-password"
-          name="new_password"
-          placeholder="Leave empty to keep current password"
-          type="password"
-        >
+        />
         <span class="password-rules help">
           Min. 10 characters. Should be a mix of characters, numbers, and symbols.
         </span>
@@ -61,6 +58,7 @@ import { isDemo, logger, parseValidationError } from '@/utils'
 import { useDialogBox, useMessageToaster } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
+import PasswordField from '@/components/ui/PasswordField.vue'
 
 const { toastSuccess } = useMessageToaster()
 const { showErrorDialog } = useDialogBox()
@@ -75,6 +73,8 @@ onMounted(() => {
 })
 
 const update = async () => {
+  console.log(profile.value)
+  return
   if (!profile.value) {
     throw Error()
   }
@@ -98,9 +98,11 @@ const update = async () => {
 </script>
 
 <style lang="scss" scoped>
-input {
-  &[type="text"], &[type="email"], &[type="password"] {
-    width: 33%;
+form {
+  width: 33%;
+
+  input {
+    width: 100%;
   }
 }
 

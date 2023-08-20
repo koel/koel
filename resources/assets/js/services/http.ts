@@ -58,7 +58,7 @@ class Http {
     this.client.interceptors.response.use(response => {
       Http.hideProgressBar()
 
-      // …get the token from the header or response data if exists, and save it.
+      // …get the tokens from the header or response data if exist, and save them.
       const token = response.headers.authorization || response.data.token
       token && authService.setApiToken(token)
 

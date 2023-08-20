@@ -18,7 +18,7 @@ new class extends UnitTestCase {
     })
   }
 
-  protected test() {
+  protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('activates when the screen matches', async () => {
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
 
       await this.router.activateRoute({
         screen: 'Home',
-        path: '_',
+        path: '_'
       })
 
       expect(screen.getByRole('link').classList.contains('active')).toBe(true)

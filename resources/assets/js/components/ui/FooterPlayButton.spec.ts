@@ -57,7 +57,7 @@ new class extends UnitTestCase {
 
     it.each<[
       ScreenName,
-      typeof favoriteStore | typeof recentlyPlayedStore,
+        typeof favoriteStore | typeof recentlyPlayedStore,
       MethodOf<typeof favoriteStore | typeof recentlyPlayedStore>
     ]>([
       ['Favorites', favoriteStore, 'fetch'],

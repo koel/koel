@@ -10,6 +10,7 @@ new class extends UnitTestCase {
   protected test () {
     it.each<[string, keyof Events, User | Song[] | Playlist | PlaylistFolder | undefined]>([
       ['add-user-form', 'MODAL_SHOW_ADD_USER_FORM', undefined],
+      ['invite-user-form', 'MODAL_SHOW_INVITE_USER_FORM', undefined],
       ['edit-user-form', 'MODAL_SHOW_EDIT_USER_FORM', factory<User>('user')],
       ['edit-song-form', 'MODAL_SHOW_EDIT_SONG_FORM', [factory<Song>('song')]],
       ['create-playlist-form', 'MODAL_SHOW_CREATE_PLAYLIST_FORM', factory<PlaylistFolder>('playlist-folder')],
@@ -25,6 +26,7 @@ new class extends UnitTestCase {
           stubs: {
             AddUserForm: this.stub('add-user-form'),
             EditUserForm: this.stub('edit-user-form'),
+            InviteUserForm: this.stub('invite-user-form'),
             EditSongForm: this.stub('edit-song-form'),
             CreatePlaylistForm: this.stub('create-playlist-form'),
             CreatePlaylistFolderForm: this.stub('create-playlist-folder-form'),

@@ -33,7 +33,7 @@
     "slugify": "^1.0.2",
     "three": "^0.146.0",
     "tiny-typed-emitter": "^2.1.0",
-    "vue": "^3.2.32",
+    "vue": "^3.3.4",
     "vue-global-events": "^2.1.1",
     "youtube-player": "^3.0.4"
   },

@@ -12,6 +12,7 @@ export const useRouter = () => {
   const isCurrentScreen = (...screens: ScreenName[]) => screens.includes(router.$currentRoute.value?.screen!)
 
   const onScreenActivated = (screen: ScreenName, cb: Closure) => {
+    isCurrentScreen(screen) && cb()
     router.onRouteChanged(route => route.screen === screen && cb())
   }
 

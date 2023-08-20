@@ -1,10 +1,10 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<a href="https://youtu.be/cLgJQ8Zj3AA" data-testid="youtube-search-result" role="button" data-v-fd1eda6f=""><img alt="Guess what it is" src="https://i.ytimg.com/an_webp/cLgJQ8Zj3AA/mqdefault_6s.webp" width="90" data-v-fd1eda6f="">
-  <div class="meta" data-v-fd1eda6f="">
-    <h3 class="title" data-v-fd1eda6f="">Guess what it is</h3>
-    <p class="desc" data-v-fd1eda6f="">From the LA Opening Gala 2014: John Williams Celebration</p>
+<a data-v-fd1eda6f="" href="https://youtu.be/cLgJQ8Zj3AA" data-testid="youtube-search-result" role="button"><img data-v-fd1eda6f="" alt="Guess what it is" src="https://i.ytimg.com/an_webp/cLgJQ8Zj3AA/mqdefault_6s.webp" width="90">
+  <div data-v-fd1eda6f="" class="meta">
+    <h3 data-v-fd1eda6f="" class="title">Guess what it is</h3>
+    <p data-v-fd1eda6f="" class="desc">From the LA Opening Gala 2014: John Williams Celebration</p>
   </div>
 </a>
 `;

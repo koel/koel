@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'avatar' => $this->user->avatar,
             'is_admin' => $this->user->is_admin,
             'preferences' => $this->when($this->includePreferences, $this->user->preferences),
+            'is_prospect' => $this->user->is_prospect,
         ];
     }
 }

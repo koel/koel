@@ -9,9 +9,9 @@ import { useRouter } from '@/composables'
 import {
   SelectedSongsKey,
   SongListConfigKey,
+  SongListFilterKeywordsKey,
   SongListSortFieldKey,
   SongListSortOrderKey,
-  SongListFilterKeywordsKey,
   SongsKey
 } from '@/symbols'
 

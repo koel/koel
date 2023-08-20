@@ -88,7 +88,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, ref, toRef, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { eventBus, logger, pluralize } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
@@ -108,7 +108,7 @@ const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCar
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
 
 const { showErrorDialog } = useDialogBox()
-const { getRouteParam, go, onRouteChanged } = useRouter()
+const { getRouteParam, go, onScreenActivated } = useRouter()
 
 const albumId = ref<number>()
 const album = ref<Album>()
@@ -152,7 +152,7 @@ watch(activeTab, async tab => {
 })
 
 watch(albumId, async id => {
-  if (!id) return
+  if (!id || loading.value) return
 
   album.value = undefined
   info.value = undefined
@@ -176,9 +176,7 @@ watch(albumId, async id => {
   }
 })
 
-onMounted(async () => (albumId.value = parseInt(getRouteParam('id')!)))
-
-onRouteChanged(route => route.screen === 'Album' && (albumId.value = parseInt(getRouteParam('id')!)))
+onScreenActivated('Album', () => (albumId.value = parseInt(getRouteParam('id')!)))
 
 // if the current album has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go('albums'))

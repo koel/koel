@@ -1,16 +1,16 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="add-to" data-testid="add-to-menu" tabindex="0" showing="true" data-v-42061e3e="">
-  <section class="existing-playlists" data-v-42061e3e="">
+<div data-v-42061e3e="" class="add-to" data-testid="add-to-menu" tabindex="0" showing="true">
+  <section data-v-42061e3e="" class="existing-playlists">
     <p data-v-42061e3e="">Add 5 songs to</p>
     <ul data-v-42061e3e="">
-      <li data-testid="queue" tabindex="0" data-v-42061e3e="">Queue</li>
-      <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-42061e3e=""> Favorites </li>
-      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-42061e3e="">Foo</li>
-      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-42061e3e="">Bar</li>
-      <li class="playlist" data-testid="add-to-playlist" tabindex="0" data-v-42061e3e="">Baz</li>
+      <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
+      <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
+      <li data-v-42061e3e="" class="playlist" data-testid="add-to-playlist" tabindex="0">Foo</li>
+      <li data-v-42061e3e="" class="playlist" data-testid="add-to-playlist" tabindex="0">Bar</li>
+      <li data-v-42061e3e="" class="playlist" data-testid="add-to-playlist" tabindex="0">Baz</li>
     </ul>
-  </section><button type="button" transparent="" data-v-e368fe26="" data-v-42061e3e="">New Playlist…</button>
+  </section><button data-v-e368fe26="" data-v-42061e3e="" transparent="">New Playlist…</button>
 </div>
 `;

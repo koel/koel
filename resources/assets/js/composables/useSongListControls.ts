@@ -8,7 +8,7 @@ export const useSongListControls = () => {
       play: true,
       addTo: {
         queue: true,
-        favorites: true,
+        favorites: true
       },
       clearQueue: false,
       deletePlaylist: false,

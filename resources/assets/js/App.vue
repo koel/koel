@@ -5,7 +5,7 @@
   <GlobalEventListeners />
   <OfflineNotification v-if="offline" />
 
-  <div v-if="authenticated" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
+  <div v-if="layout === 'main'" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
     <Hotkeys />
     <MainWrapper />
     <AppFooter />
@@ -19,9 +19,9 @@
     <DropZone v-show="showDropZone" />
   </div>
 
-  <div v-else class="login-wrapper">
-    <LoginForm @loggedin="onUserLoggedIn" />
-  </div>
+  <LoginForm v-if="layout === 'auth'" @loggedin="onUserLoggedIn" />
+
+  <AcceptInvitation v-if="layout === 'invitation'" />
 </template>
 
 <script lang="ts" setup>
@@ -54,15 +54,17 @@ const SongContextMenu = defineAsyncComponent(() => import('@/components/song/Son
 const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreateNewPlaylistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
+const AcceptInvitation = defineAsyncComponent(() => import('@/components/invitation/AcceptInvitation.vue'))
 
 const overlay = ref<InstanceType<typeof Overlay>>()
 const dialog = ref<InstanceType<typeof DialogBox>>()
 const toaster = ref<InstanceType<typeof MessageToaster>>()
 const currentSong = ref<Song>()
-const authenticated = ref(false)
 const showDropZone = ref(false)
 
-const { isCurrentScreen } = useRouter()
+const layout = ref<'main' | 'auth' | 'invitation'>()
+
+const { isCurrentScreen, resolveRoute } = useRouter()
 const { offline } = useNetworkStatus()
 
 /**
@@ -75,15 +77,21 @@ const requestNotificationPermission = async () => {
 }
 
 const onUserLoggedIn = async () => {
-  authenticated.value = true
+  layout.value = 'main'
   await init()
 }
 
 onMounted(async () => {
   // The app has just been initialized, check if we can get the user data with an already existing token
   if (authService.hasApiToken()) {
-    authenticated.value = true
     await init()
+
+    // call resolveRoute() after init() so that the onResolve hooks can use the stores
+    await resolveRoute()
+    layout.value = 'main'
+  } else {
+    await resolveRoute()
+    layout.value = isCurrentScreen('Invitation.Accept') ? 'invitation' : 'auth'
   }
 
   // Add an ugly mac/non-mac class for OS-targeting styles.
@@ -110,7 +118,7 @@ const init = async () => {
     await socketService.init() && socketListener.listen()
     overlay.value!.hide()
   } catch (err) {
-    authenticated.value = false
+    layout.value = 'auth'
     throw err
   }
 }
@@ -164,7 +172,7 @@ provide(CurrentSongKey, currentSong)
   }
 }
 
-#main, .login-wrapper {
+#main {
   display: flex;
   height: 100vh;
   flex-direction: column;
@@ -179,11 +187,5 @@ provide(CurrentSongKey, currentSong)
     top: 0;
     padding-top: var(--header-height);
   }
-}
-
-.login-wrapper {
-  @include vertical-center();
-  user-select: none;
-  padding-bottom: 0;
 }
 </style>

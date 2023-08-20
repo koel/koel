@@ -46,17 +46,17 @@ export const routes: Route[] = [
   {
     path: '/upload',
     screen: 'Upload',
-    onBeforeEnter: () => userStore.current.is_admin
+    onResolve: () => userStore.current?.is_admin
   },
   {
     path: '/settings',
     screen: 'Settings',
-    onBeforeEnter: () => userStore.current.is_admin
+    onResolve: () => userStore.current?.is_admin
   },
   {
     path: '/users',
     screen: 'Users',
-    onBeforeEnter: () => userStore.current.is_admin
+    onResolve: () => userStore.current?.is_admin
   },
   {
     path: '/youtube',
@@ -98,6 +98,10 @@ export const routes: Route[] = [
     path: '/song/(?<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
     screen: 'Queue',
     redirect: () => 'queue',
-    onBeforeEnter: params => eventBus.emit('SONG_QUEUED_FROM_ROUTE', params.id)
+    onResolve: params => eventBus.emit('SONG_QUEUED_FROM_ROUTE', params.id)
+  },
+  {
+    path: '/invitation/accept/(?<token>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
+    screen: 'Invitation.Accept'
   }
 ]

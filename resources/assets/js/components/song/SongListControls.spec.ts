@@ -13,7 +13,7 @@ new class extends UnitTestCase {
 
     this.router.activateRoute({
       screen,
-      path: '_',
+      path: '_'
     })
 
     return this.render(SongListControls, {

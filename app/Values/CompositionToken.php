@@ -2,6 +2,7 @@
 
 namespace App\Values;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Laravel\Sanctum\NewAccessToken;
 
 /**
@@ -13,7 +14,7 @@ use Laravel\Sanctum\NewAccessToken;
  *
  * This approach helps prevent the API token from being logged by servers and proxies.
  */
-final class CompositionToken
+final class CompositionToken implements Arrayable
 {
     private function __construct(public string $apiToken, public string $audioToken)
     {
@@ -22,5 +23,13 @@ final class CompositionToken
     public static function fromAccessTokens(NewAccessToken $api, NewAccessToken $audio): self
     {
         return new self($api->plainTextToken, $audio->plainTextToken);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'token' => $this->apiToken,
+            'audio-token' => $this->audioToken,
+        ];
     }
 }

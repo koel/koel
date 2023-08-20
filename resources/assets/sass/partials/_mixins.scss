@@ -155,7 +155,7 @@
 }
 
 @mixin inset-when-pressed() {
-  &:active {
+  &:not([disabled]):active {
     box-shadow: inset 0px 10px 10px -10px rgba(0, 0, 0, .6);
   }
 }

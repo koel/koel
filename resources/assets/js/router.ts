@@ -1,8 +1,7 @@
 import { ref, Ref, watch } from 'vue'
 
 type RouteParams = Record<string, string>
-type BeforeEnterHook = (params: RouteParams) => boolean | void
-type EnterHook = (params: RouteParams) => any
+type ResolveHook = (params: RouteParams) => boolean | void
 type RedirectHook = (params: RouteParams) => Route | string
 
 export type Route = {
@@ -10,8 +9,7 @@ export type Route = {
   screen: ScreenName
   params?: RouteParams
   redirect?: RedirectHook
-  onBeforeEnter?: BeforeEnterHook
-  onEnter?: EnterHook
+  onResolve?: ResolveHook
 }
 
 type RouteChangedHandler = (newRoute: Route, oldRoute: Route | undefined) => any
@@ -46,7 +44,7 @@ export default class Router {
 
   public async resolve () {
     if (!location.hash || location.hash === '#/' || location.hash === '#!/') {
-      return this.activateRoute(this.homeRoute)
+      return this.go(this.homeRoute.path)
     }
 
     const matched = this.tryMatchRoute()
@@ -56,7 +54,7 @@ export default class Router {
       return this.triggerNotFound()
     }
 
-    if (route.onBeforeEnter && route.onBeforeEnter(params) === false) {
+    if (route.onResolve?.(params) === false) {
       return this.triggerNotFound()
     }
 
@@ -101,10 +99,6 @@ export default class Router {
   public async activateRoute (route: Route, params: RouteParams = {}) {
     this.$currentRoute.value = route
     this.$currentRoute.value.params = params
-
-    if (this.$currentRoute.value.onEnter) {
-      await this.$currentRoute.value.onEnter(params)
-    }
   }
 
   public go (path: string) {

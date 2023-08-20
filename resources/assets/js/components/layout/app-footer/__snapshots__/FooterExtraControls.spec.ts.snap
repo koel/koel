@@ -1,9 +1,9 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="extra-controls" data-testid="other-controls" data-v-8bf5fe81="">
-  <div class="wrapper" data-v-8bf5fe81=""><a class="visualizer-btn" data-testid="toggle-visualizer-btn" href="/#/visualizer" title="Show the visualizer" data-v-8bf5fe81=""><br data-testid="icon" icon="[object Object]" data-v-8bf5fe81=""></a>
-    <!--v-if--><br data-testid="Volume" data-v-8bf5fe81="">
+<div data-v-8bf5fe81="" class="extra-controls" data-testid="other-controls">
+  <div data-v-8bf5fe81="" class="wrapper"><a data-v-8bf5fe81="" class="visualizer-btn" data-testid="toggle-visualizer-btn" href="/#/visualizer" title="Show the visualizer"><br data-v-8bf5fe81="" data-testid="icon" icon="[object Object]"></a>
+    <!--v-if--><br data-v-8bf5fe81="" data-testid="Volume">
     <!--v-if-->
   </div>
 </div>

@@ -242,6 +242,7 @@ interface User {
   name: string
   email: string
   is_admin: boolean
+  is_prospect: boolean
   password?: string
   preferences?: UserPreferences
   avatar: string
@@ -310,6 +311,7 @@ declare type ScreenName =
   | 'Upload'
   | 'Search.Excerpt'
   | 'Search.Songs'
+  | 'Invitation.Accept'
   | '404'
 
 declare type ArtistAlbumCardLayout = 'full' | 'compact'

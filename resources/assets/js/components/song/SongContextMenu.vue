@@ -61,7 +61,7 @@
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
 import { arrayify, copyText, eventBus, pluralize } from '@/utils'
-import { commonStore, favoriteStore, playlistStore, queueStore, songStore, userStore } from '@/stores'
+import { commonStore, favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import {
   useAuthorization,

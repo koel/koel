@@ -1,9 +1,9 @@
 // Vitest Snapshot v1
 
 exports[`renders with a current song 1`] = `
-<div class="playback-controls" data-testid="footer-middle-pane" data-v-2e8b419d="">
-  <div class="buttons" data-v-2e8b419d=""><button title="Unlike Fahrstuhl to Heaven by Led Zeppelin" type="button" class="like-btn" data-v-2e8b419d=""><br data-testid="icon" icon="[object Object]"></button><!-- a placeholder to maintain the flex layout --><button type="button" title="Play previous song" data-v-2e8b419d=""><br data-testid="icon" icon="[object Object]" data-v-2e8b419d=""></button><br data-testid="PlayButton" data-v-2e8b419d=""><button type="button" title="Play next song" data-v-2e8b419d=""><br data-testid="icon" icon="[object Object]" data-v-2e8b419d=""></button><button class="repeat-mode-btn" title="Change repeat mode (current: No Repeat)" data-testid="repeat-mode-switch" type="button" data-v-cab48a7c="" data-v-2e8b419d="">
-      <div class="fa-layers" data-v-cab48a7c=""><br data-testid="icon" icon="[object Object]" data-v-cab48a7c="">
+<div data-v-2e8b419d="" class="playback-controls" data-testid="footer-middle-pane">
+  <div data-v-2e8b419d="" class="buttons"><button data-v-2e8b419d="" title="Unlike Fahrstuhl to Heaven by Led Zeppelin" type="button" class="like-btn"><br data-testid="icon" icon="[object Object]"></button><!-- a placeholder to maintain the flex layout --><button data-v-2e8b419d="" type="button" title="Play previous song"><br data-v-2e8b419d="" data-testid="icon" icon="[object Object]"></button><br data-v-2e8b419d="" data-testid="PlayButton"><button data-v-2e8b419d="" type="button" title="Play next song"><br data-v-2e8b419d="" data-testid="icon" icon="[object Object]"></button><button data-v-cab48a7c="" data-v-2e8b419d="" class="repeat-mode-btn" title="Change repeat mode (current: No Repeat)" data-testid="repeat-mode-switch" type="button">
+      <div data-v-cab48a7c="" class="fa-layers"><br data-v-cab48a7c="" data-testid="icon" icon="[object Object]">
         <!--v-if-->
       </div>
     </button></div>
@@ -11,9 +11,9 @@ exports[`renders with a current song 1`] = `
 `;
 
 exports[`renders without a current song 1`] = `
-<div class="playback-controls" data-testid="footer-middle-pane" data-v-2e8b419d="">
-  <div class="buttons" data-v-2e8b419d=""><button type="button" data-v-2e8b419d=""></button><!-- a placeholder to maintain the flex layout --><button type="button" title="Play previous song" data-v-2e8b419d=""><br data-testid="icon" icon="[object Object]" data-v-2e8b419d=""></button><br data-testid="PlayButton" data-v-2e8b419d=""><button type="button" title="Play next song" data-v-2e8b419d=""><br data-testid="icon" icon="[object Object]" data-v-2e8b419d=""></button><button class="repeat-mode-btn" title="Change repeat mode (current: No Repeat)" data-testid="repeat-mode-switch" type="button" data-v-cab48a7c="" data-v-2e8b419d="">
-      <div class="fa-layers" data-v-cab48a7c=""><br data-testid="icon" icon="[object Object]" data-v-cab48a7c="">
+<div data-v-2e8b419d="" class="playback-controls" data-testid="footer-middle-pane">
+  <div data-v-2e8b419d="" class="buttons"><button data-v-2e8b419d="" type="button"></button><!-- a placeholder to maintain the flex layout --><button data-v-2e8b419d="" type="button" title="Play previous song"><br data-v-2e8b419d="" data-testid="icon" icon="[object Object]"></button><br data-v-2e8b419d="" data-testid="PlayButton"><button data-v-2e8b419d="" type="button" title="Play next song"><br data-v-2e8b419d="" data-testid="icon" icon="[object Object]"></button><button data-v-cab48a7c="" data-v-2e8b419d="" class="repeat-mode-btn" title="Change repeat mode (current: No Repeat)" data-testid="repeat-mode-switch" type="button">
+      <div data-v-cab48a7c="" class="fa-layers"><br data-v-cab48a7c="" data-testid="icon" icon="[object Object]">
         <!--v-if-->
       </div>
     </button></div>

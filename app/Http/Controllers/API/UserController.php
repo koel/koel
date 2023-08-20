@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
@@ -9,6 +10,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
@@ -39,13 +41,17 @@ class UserController extends Controller
     {
         $this->authorize('admin', User::class);
 
-        return UserResource::make($this->userService->updateUser(
-            $user,
-            $request->name,
-            $request->email,
-            $request->password,
-            $request->get('is_admin') ?: false
-        ));
+        try {
+            return UserResource::make($this->userService->updateUser(
+                $user,
+                $request->name,
+                $request->email,
+                $request->password,
+                $request->get('is_admin') ?: false
+            ));
+        } catch (UserProspectUpdateDeniedException) {
+            abort(Response::HTTP_FORBIDDEN, 'Cannot update a user prospect.');
+        }
     }
 
     public function destroy(User $user)

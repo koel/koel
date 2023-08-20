@@ -16,6 +16,7 @@ const modalNameToComponentMap = {
   'edit-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue')),
   'add-user-form': defineAsyncComponent(() => import('@/components/user/AddUserForm.vue')),
   'edit-user-form': defineAsyncComponent(() => import('@/components/user/EditUserForm.vue')),
+  'invite-user-form': defineAsyncComponent(() => import('@/components/user/InviteUserForm.vue')),
   'edit-song-form': defineAsyncComponent(() => import('@/components/song/EditSongForm.vue')),
   'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
   'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
@@ -40,6 +41,7 @@ const close = () => {
 
 eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'))
   .on('MODAL_SHOW_ADD_USER_FORM', () => (activeModalName.value = 'add-user-form'))
+  .on('MODAL_SHOW_INVITE_USER_FORM', () => (activeModalName.value = 'invite-user-form'))
   .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, songs) => {
     context.value = {
       folder,

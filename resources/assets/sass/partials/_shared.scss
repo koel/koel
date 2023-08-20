@@ -61,6 +61,11 @@ textarea,
     display: block;
   }
 
+  &[disabled] {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+
   &:focus {
     outline: none !important;
   }

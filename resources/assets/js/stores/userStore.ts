@@ -71,8 +71,12 @@ export const userStore = {
 
   async store (data: CreateUserData) {
     const user = await http.post<User>('users', data)
-    this.state.users.push(...this.syncWithVault(user))
+    this.add(user)
     return this.byId(user.id)
+  },
+
+  add (user: User) {
+    this.state.users.push(...this.syncWithVault(user))
   },
 
   async update (user: User, data: UpdateUserData) {

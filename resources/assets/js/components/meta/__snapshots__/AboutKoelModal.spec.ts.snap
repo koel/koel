@@ -1,15 +1,15 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="about text-secondary" data-testid="about-koel" tabindex="0" data-v-6b5b01a9="">
+<div data-v-6b5b01a9="" class="about text-secondary" data-testid="about-koel" tabindex="0">
   <main data-v-6b5b01a9="">
-    <div class="logo" data-v-6b5b01a9=""><img alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="128" data-v-6b5b01a9=""></div>
-    <p class="current-version" data-v-6b5b01a9="">Koel v0.0.0</p>
+    <div data-v-6b5b01a9="" class="logo"><img data-v-6b5b01a9="" alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="128"></div>
+    <p data-v-6b5b01a9="" class="current-version">Koel v0.0.0</p>
     <!--v-if-->
-    <p class="author" data-v-6b5b01a9=""> Made with ❤️ by <a href="https://github.com/phanan" rel="noopener" target="_blank" data-v-6b5b01a9="">Phan An</a> and quite a few <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank" data-v-6b5b01a9="">awesome</a>&nbsp;<a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank" data-v-6b5b01a9="">contributors</a>. </p>
-    <!--v-if--><br data-testid="sponsor-list" data-v-6b5b01a9="">
-    <p data-v-6b5b01a9=""> Loving Koel? Please consider supporting its development via <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank" data-v-6b5b01a9="">GitHub Sponsors</a> and/or <a href="https://opencollective.com/koel" rel="noopener" target="_blank" data-v-6b5b01a9="">OpenCollective</a>. </p>
+    <p data-v-6b5b01a9="" class="author"> Made with ❤️ by <a data-v-6b5b01a9="" href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a> and quite a few <a data-v-6b5b01a9="" href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;<a data-v-6b5b01a9="" href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>. </p>
+    <!--v-if--><br data-v-6b5b01a9="" data-testid="sponsor-list">
+    <p data-v-6b5b01a9=""> Loving Koel? Please consider supporting its development via <a data-v-6b5b01a9="" href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a> and/or <a data-v-6b5b01a9="" href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>. </p>
   </main>
-  <footer data-v-6b5b01a9=""><button type="button" data-testid="close-modal-btn" red="" rounded="" data-v-e368fe26="" data-v-6b5b01a9="">Close</button></footer>
+  <footer data-v-6b5b01a9=""><button data-v-e368fe26="" data-v-6b5b01a9="" data-testid="close-modal-btn" red="" rounded="">Close</button></footer>
 </div>
 `;
