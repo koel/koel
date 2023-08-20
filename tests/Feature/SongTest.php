@@ -323,7 +323,7 @@ class SongTest extends TestCase
         self::assertNotSame(0, Song::query()->count());
         $ids = Song::query()->select('id')->get()->pluck('id')->all();
 
-        Song::deleteByChunk($ids, 'id', 1);
+        Song::deleteByChunk($ids, 1);
 
         self::assertSame(0, Song::query()->count());
     }

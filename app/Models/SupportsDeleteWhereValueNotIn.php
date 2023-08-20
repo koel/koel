@@ -17,9 +17,11 @@ trait SupportsDeleteWhereValueNotIn
     /**
      * Deletes all records whose certain value is not in an array.
      */
-    public static function deleteWhereValueNotIn(array $values, string $field = 'id'): void
+    public static function deleteWhereValueNotIn(array $values, ?string $field = null): void
     {
-        $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65535;
+        $field ??= (new static())->getKeyName();
+
+        $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65_535;
 
         if (count($values) <= $maxChunkSize) {
             static::query()->whereNotIn($field, $values)->delete();
@@ -36,11 +38,13 @@ trait SupportsDeleteWhereValueNotIn
             return;
         }
 
-        static::deleteByChunk($deletableIds, $field, $maxChunkSize);
+        static::deleteByChunk($deletableIds, $maxChunkSize, $field);
     }
 
-    public static function deleteByChunk(array $values, string $field = 'id', int $chunkSize = 65535): void
+    public static function deleteByChunk(array $values, int $chunkSize = 65_535, ?string $field = null): void
     {
+        $field ??= (new static())->getKeyName();
+
         DB::transaction(static function () use ($values, $field, $chunkSize): void {
             foreach (array_chunk($values, $chunkSize) as $chunk) {
                 static::query()->whereIn($field, $chunk)->delete();
