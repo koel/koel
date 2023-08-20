@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\DTO;
 
 use App\Http\Requests\API\SongUpdateRequest;
 use Illuminate\Contracts\Support\Arrayable;
