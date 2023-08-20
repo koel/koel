@@ -1,8 +1,8 @@
 <?php
 
-namespace App\DTO;
+namespace App\Values;
 
-use App\DTO\SmartPlaylistRule as Rule;
+use App\Values\SmartPlaylistRule as Rule;
 use Carbon\Carbon;
 use Closure;
 use Webmozart\Assert\Assert;

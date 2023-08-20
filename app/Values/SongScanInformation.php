@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO;
+namespace App\Values;
 
 use App\Models\Album;
 use App\Models\Artist;

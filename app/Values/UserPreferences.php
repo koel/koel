@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO;
+namespace App\Values;
 
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
