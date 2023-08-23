@@ -13,5 +13,8 @@ export const invitationService = {
     users.forEach(user => userStore.add(user))
   },
 
-  revoke: async (user: User) => await http.delete(`invitations`, { email: user.email })
+  revoke: async (user: User) => {
+    await http.delete(`invitations`, { email: user.email })
+    userStore.remove(user)
+  }
 }

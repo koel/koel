@@ -85,8 +85,7 @@ export const userStore = {
 
   async destroy (user: User) {
     await http.delete(`users/${user.id}`)
-    this.state.users = differenceBy(this.state.users, [user], 'id')
-    this.vault.delete(user.id)
+    this.remove(user)
 
     // Mama, just killed a man
     // Put a gun against his head
@@ -106,5 +105,10 @@ export const userStore = {
     // Mama, oooh
     // I don't want to die
     // I sometimes wish I'd never been born at all
+  },
+
+  remove (user: User) {
+    this.state.users = differenceBy(this.state.users, [user], 'id')
+    this.vault.delete(user.id)
   }
 }
