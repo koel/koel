@@ -52,12 +52,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
     Route::get('ping', static fn () => null);
 
     Route::get('invitations', [UserInvitationController::class, 'get']);
-    Route::post('invitations', [UserInvitationController::class, 'invite']);
     Route::post('invitations/accept', [UserInvitationController::class, 'accept']);
 
     Route::middleware('auth')->group(static function (): void {
-        Route::delete('invitations', [UserInvitationController::class, 'revoke']);
-
         Route::post('broadcasting/auth', static function (Request $request) {
             $pusher = new Pusher(
                 config('broadcasting.connections.pusher.key'),
@@ -149,6 +146,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
 
         Route::get('search', ExcerptSearchController::class);
         Route::get('search/songs', SongSearchController::class);
+
+        Route::post('invitations', [UserInvitationController::class, 'invite']);
+        Route::delete('invitations', [UserInvitationController::class, 'revoke']);
     });
 
     // Object-storage (S3) routes
