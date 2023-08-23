@@ -2,7 +2,7 @@ import { http } from '@/services'
 import { userStore } from '@/stores'
 
 export const invitationService = {
-  getUserProspect: async (token: string) => await http.get<User>(`invitations/?token=${token}`),
+  getUserProspect: async (token: string) => await http.get<User>(`invitations?token=${token}`),
 
   async accept (token: string, name: string, password: string) {
     await http.post<User>('invitations/accept', { token, name, password })
