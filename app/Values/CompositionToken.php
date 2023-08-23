@@ -25,6 +25,9 @@ final class CompositionToken implements Arrayable
         return new self($api->plainTextToken, $audio->plainTextToken);
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function toArray(): array
     {
         return [
