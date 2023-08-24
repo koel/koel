@@ -72,7 +72,7 @@ class Http {
       // Also, if we receive a Bad Request / Unauthorized error
       if (error.response?.status === 400 || error.response?.status === 401) {
         // and we're not trying to log in
-        if (!(error.config.method === 'post' && /\/api\/me\/?$/.test(error.config.url))) {
+        if (!(error.config.method === 'post' && error.config.url === 'me')) {
           // the token must have expired. Log out.
           eventBus.emit('LOG_OUT')
         }
