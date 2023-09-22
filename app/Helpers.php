@@ -70,3 +70,9 @@ function attempt_unless($condition, callable $callback, bool $log = true): mixed
 {
     return !value($condition) ? attempt($callback, $log) : null;
 }
+
+/** Get the correct base URL for the app. */
+function base_url(): string
+{
+    return rtrim(config('app.url'), '/') . '/';
+}
