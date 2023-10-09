@@ -36,7 +36,8 @@
     "nunomaduro/collision": "^6.2",
     "jwilsson/spotify-web-api-php": "^5.2",
     "meilisearch/meilisearch-php": "^0.24.0",
-    "http-interop/http-factory-guzzle": "^1.2"
+    "http-interop/http-factory-guzzle": "^1.2",
+    "sentry/sentry-laravel": "^3.4"
   },
   "require-dev": {
     "mockery/mockery": "~1.0",

@@ -21,6 +21,15 @@ class Handler extends ExceptionHandler
         ValidationException::class,
     ];
 
+    public function register(): void
+    {
+        $this->reportable(static function (Throwable $e): void {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
+        });
+    }
+
     public function report(Throwable $e): void
     {
         parent::report($e);
