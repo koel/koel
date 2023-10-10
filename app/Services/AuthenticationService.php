@@ -26,6 +26,11 @@ class AuthenticationService
             throw new InvalidCredentialsException();
         }
 
+        if ($this->hash->needsRehash($user->password)) {
+            $user->password = $this->hash->make($password);
+            $user->save();
+        }
+
         return $this->tokenManager->createCompositionToken($user);
     }
 
