@@ -11,8 +11,7 @@ class RemoveSongsFromPlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => 'required|array',
-            'songs.*' => 'exists:songs,id',
+            'songs' => 'required|array|exists:songs,id',
         ];
     }
 }

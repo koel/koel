@@ -9,7 +9,7 @@ class DeleteSongsRequest extends Request
     public function rules(): array
     {
         return [
-            'songs.*' => 'required|exists:songs,id',
+            'songs' => 'required|array|exists:songs,id',
         ];
     }
 }
