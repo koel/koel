@@ -73,7 +73,7 @@
 
       <ScreenEmptyState v-else>
         <template #icon>
-          <icon :icon="faSearch" />
+          <Icon :icon="faSearch" />
         </template>
         Find songs, artists, and albums,
         <span class="secondary d-block">all in one place.</span>

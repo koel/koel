@@ -13,12 +13,12 @@
           type="button"
           @click.prevent="openAboutKoelModal"
         >
-          <icon :icon="faInfoCircle" />
+          <Icon :icon="faInfoCircle" />
           <span v-if="shouldNotifyNewVersion" class="new-version-notification" />
         </button>
 
         <button v-koel-tooltip.left title="Log out" type="button" @click.prevent="logout">
-          <icon :icon="faArrowRightFromBracket" />
+          <Icon :icon="faArrowRightFromBracket" />
         </button>
 
         <ProfileAvatar @click="onProfileLinkClick" />

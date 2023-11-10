@@ -2,10 +2,10 @@
   <dialog ref="el" :class="state.type" data-testid="overlay" @cancel.prevent="onCancel">
     <div class="wrapper">
       <SoundBars v-if="state.type === 'loading'" />
-      <icon v-if="state.type === 'error'" :icon="faCircleExclamation" />
-      <icon v-if="state.type === 'warning'" :icon="faWarning" />
-      <icon v-if="state.type === 'info'" :icon="faCircleInfo" />
-      <icon v-if="state.type === 'success'" :icon="faCircleCheck" />
+      <Icon v-if="state.type === 'error'" :icon="faCircleExclamation" />
+      <Icon v-if="state.type === 'warning'" :icon="faWarning" />
+      <Icon v-if="state.type === 'info'" :icon="faCircleInfo" />
+      <Icon v-if="state.type === 'success'" :icon="faCircleCheck" />
 
       <span class="message" v-html="state.message" />
     </div>

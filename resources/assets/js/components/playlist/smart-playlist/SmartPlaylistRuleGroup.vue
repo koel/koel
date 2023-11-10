@@ -18,7 +18,7 @@
     />
 
     <Btn class="btn-add-rule" green small uppercase @click.prevent="addRule">
-      <icon :icon="faPlus" />
+      <Icon :icon="faPlus" />
       Rule
     </Btn>
   </div>

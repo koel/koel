@@ -1,7 +1,7 @@
 <template>
   <li>
     <a :class="active && 'active'" :href="props.href">
-      <icon :icon="props.icon" fixed-width />
+      <Icon :icon="props.icon" fixed-width />
       <span>
         <slot />
       </span>

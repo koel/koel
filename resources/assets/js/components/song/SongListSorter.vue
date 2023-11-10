@@ -1,7 +1,7 @@
 <template>
   <div>
     <button ref="button" title="Sort" @click.stop="trigger">
-      <icon :icon="faSort" />
+      <Icon :icon="faSort" />
     </button>
     <menu ref="menu" v-koel-clickaway="hide">
       <li
@@ -12,8 +12,8 @@
       >
         <span>{{ item.label }}</span>
         <span class="icon">
-          <icon v-if="order === 'asc'" :icon="faArrowDown" />
-          <icon v-else :icon="faArrowUp" />
+          <Icon v-if="order === 'asc'" :icon="faArrowDown" />
+          <Icon v-else :icon="faArrowUp" />
         </span>
       </li>
     </menu>

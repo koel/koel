@@ -11,10 +11,10 @@
     @drop="onDrop"
   >
     <a :class="{ active }" :href="url">
-      <icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-green" fixed-width />
-      <icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width />
-      <icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
-      <icon v-else :icon="faFileLines" fixed-width />
+      <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-green" fixed-width />
+      <Icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width />
+      <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
+      <Icon v-else :icon="faFileLines" fixed-width />
       <span>{{ list.name }}</span>
     </a>
   </li>

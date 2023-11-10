@@ -7,7 +7,7 @@
       <template #controls>
         <BtnGroup v-if="showingControls || !isPhone" uppercased>
           <Btn class="btn-add" green @click="showAddUserForm">
-            <icon :icon="faPlus" />
+            <Icon :icon="faPlus" />
             Add
           </Btn>
           <Btn class="btn-invite" orange @click="showInviteUserForm">Invite</Btn>

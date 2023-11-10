@@ -45,12 +45,12 @@
 
     <ScreenEmptyState v-else>
       <template #icon>
-        <icon :icon="faHeartBroken" />
+        <Icon :icon="faHeartBroken" />
       </template>
       No favorites yet.
       <span class="secondary d-block">
         Click the&nbsp;
-        <icon :icon="faHeart" />&nbsp;
+        <Icon :icon="faHeart" />&nbsp;
         icon to mark a song as favorite.
       </span>
     </ScreenEmptyState>

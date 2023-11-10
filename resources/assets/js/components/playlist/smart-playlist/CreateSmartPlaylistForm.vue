@@ -29,7 +29,7 @@
             @input="onGroupChanged"
           />
           <Btn class="btn-add-group" green small title="Add a new group" uppercase @click.prevent="addGroup">
-            <icon :icon="faPlus" />
+            <Icon :icon="faPlus" />
             Group
           </Btn>
         </div>

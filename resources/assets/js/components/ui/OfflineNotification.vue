@@ -1,9 +1,9 @@
 <template>
   <div class="offline">
-    <icon-layers fixed-width>
-      <icon :icon="faWifi" fixed-width size="xl" />
-      <icon :icon="faSlash" fixed-width size="lg" transform="up-2" />
-    </icon-layers>
+    <IconLayers fixed-width>
+      <Icon :icon="faWifi" fixed-width size="xl" />
+      <Icon :icon="faSlash" fixed-width size="lg" transform="up-2" />
+    </IconLayers>
     <span class="text">You’re offline.</span>
   </div>
 </template>

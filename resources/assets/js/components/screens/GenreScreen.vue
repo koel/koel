@@ -31,7 +31,7 @@
 
     <ScreenEmptyState v-if="!songs.length && !loading">
       <template #icon>
-        <icon :icon="faTags" />
+        <Icon :icon="faTags" />
       </template>
 
       No songs in this genre.

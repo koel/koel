@@ -1,7 +1,7 @@
 <template>
   <div class="row" data-testid="smart-playlist-rule-row">
     <Btn class="remove-rule" red title="Remove this rule" @click.prevent="removeRule">
-      <icon :icon="faTrashCan" />
+      <Icon :icon="faTrashCan" />
     </Btn>
 
     <select v-model="selectedModel" name="model[]">

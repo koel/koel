@@ -6,7 +6,7 @@
       <h1>
         <span v-if="user.name" class="name">{{ user.name }}</span>
         <span v-else class="name anonymous">Anonymous</span>
-        <icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-highlight" title="This is you!" />
+        <Icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-highlight" title="This is you!" />
         <icon
           v-if="user.is_admin"
           :icon="faShield"

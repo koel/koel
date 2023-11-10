@@ -5,10 +5,10 @@
       <span class="name">{{ file.name }}</span>
       <span class="controls">
         <Btn v-if="canRetry" icon-only title="Retry" transparent unrounded @click="retry">
-          <icon :icon="faRotateBack" />
+          <Icon :icon="faRotateBack" />
         </Btn>
         <Btn v-if="canRemove" icon-only title="Remove" transparent unrounded @click="remove">
-          <icon :icon="faTrashCan" />
+          <Icon :icon="faTrashCan" />
         </Btn>
       </span>
     </span>

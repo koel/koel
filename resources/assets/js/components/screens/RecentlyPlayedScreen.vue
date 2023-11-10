@@ -29,7 +29,7 @@
 
     <ScreenEmptyState v-else>
       <template #icon>
-        <icon :icon="faClock" />
+        <Icon :icon="faClock" />
       </template>
       No songs recently played.
       <span class="secondary d-block">Start playing to populate this playlist.</span>

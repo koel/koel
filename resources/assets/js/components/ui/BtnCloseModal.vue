@@ -1,6 +1,6 @@
 <template>
   <button data-testid="close-modal-btn" title="Dismiss" type="button" @click.prevent="$emit('click')">
-    <icon :icon="faTimes" />
+    <Icon :icon="faTimes" />
   </button>
 </template>
 

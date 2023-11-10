@@ -1,7 +1,7 @@
 <template>
   <button type="button" :class="playing ? 'playing' : 'stopped'" title="Play or resume" @click.prevent="toggle">
-    <icon v-if="playing" :icon="faPause" />
-    <icon v-else :icon="faPlay" />
+    <Icon v-if="playing" :icon="faPause" />
+    <Icon v-else :icon="faPlay" />
   </button>
 </template>
 

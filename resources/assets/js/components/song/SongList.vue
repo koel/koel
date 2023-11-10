@@ -18,8 +18,8 @@
       >
         #
         <template v-if="config.sortable">
-          <icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
-          <icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
+          <Icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
+          <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
       <span
@@ -31,8 +31,8 @@
       >
         Title
         <template v-if="config.sortable">
-          <icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
-          <icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
+          <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
+          <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
       <span
@@ -44,8 +44,8 @@
       >
         Album
         <template v-if="config.sortable">
-          <icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
-          <icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
+          <Icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
+          <Icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
       <span
@@ -57,8 +57,8 @@
       >
         Time
         <template v-if="config.sortable">
-          <icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
-          <icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
+          <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
+          <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
       <span class="extra">

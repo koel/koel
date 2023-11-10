@@ -6,11 +6,11 @@
       <template #controls>
         <BtnGroup v-if="hasUploadFailures" uppercased>
           <Btn data-testid="upload-retry-all-btn" green @click="retryAll">
-            <icon :icon="faRotateRight" />
+            <Icon :icon="faRotateRight" />
             Retry All
           </Btn>
           <Btn data-testid="upload-remove-all-btn" orange @click="removeFailedEntries">
-            <icon :icon="faTrashCan" />
+            <Icon :icon="faTrashCan" />
             Remove Failed
           </Btn>
         </BtnGroup>
@@ -33,7 +33,7 @@
 
         <ScreenEmptyState v-else>
           <template #icon>
-            <icon :icon="faUpload" />
+            <Icon :icon="faUpload" />
           </template>
 
           {{ canDropFolders ? 'Drop files or folders to upload' : 'Drop files to upload' }}
@@ -49,7 +49,7 @@
 
       <ScreenEmptyState v-else>
         <template #icon>
-          <icon :icon="faWarning" />
+          <Icon :icon="faWarning" />
         </template>
         No media path set.
       </ScreenEmptyState>

@@ -1,7 +1,7 @@
 <template>
   <Transition name="fade">
     <button v-show="showing" ref="el" title="Scroll to top" type="button" @click="scrollToTop">
-      <icon :icon="faCircleUp" />&nbsp;
+      <Icon :icon="faCircleUp" />&nbsp;
       Top
     </button>
   </Transition>

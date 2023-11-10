@@ -8,7 +8,7 @@
       title="View as thumbnails"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="thumbnails">
-      <icon :icon="faThumbnailsHehe" />
+      <Icon :icon="faThumbnailsHehe" />
       <span class="hidden">View as thumbnails</span>
     </label>
 
@@ -20,7 +20,7 @@
       title="View as list"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="list">
-      <icon :icon="faList" />
+      <Icon :icon="faList" />
       <span class="hidden">View as list</span>
     </label>
   </span>

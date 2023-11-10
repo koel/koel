@@ -8,7 +8,7 @@
         href="/#/visualizer"
         title="Show the visualizer"
       >
-        <icon :icon="faBolt" />
+        <Icon :icon="faBolt" />
       </a>
 
       <button
@@ -20,7 +20,7 @@
         type="button"
         @click.prevent="showEqualizer"
       >
-        <icon :icon="faSliders" />
+        <Icon :icon="faSliders" />
       </button>
 
       <Volume />
@@ -31,7 +31,7 @@
         :title="fullscreenButtonTitle"
         @click.prevent="toggleFullscreen"
       >
-        <icon :icon="isFullscreen ? faCompress : faExpand" />
+        <Icon :icon="isFullscreen ? faCompress : faExpand" />
       </button>
     </div>
   </div>

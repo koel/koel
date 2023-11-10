@@ -1,13 +1,8 @@
 <template>
-  <div
-    class="message"
-    :class="message.type"
-    title="Click to dismiss"
-    @click="dismiss"
-  >
+  <div :class="message.type" class="message" title="Click to dismiss" @click="dismiss">
     <aside>
-      <icon :icon="typeIcon" class="icon" />
-      <icon :icon="faTimesCircle" class="icon-dismiss" />
+      <Icon :icon="typeIcon" class="icon" />
+      <Icon :icon="faTimesCircle" class="icon-dismiss" />
     </aside>
     <main>{{ message.content }}</main>
   </div>

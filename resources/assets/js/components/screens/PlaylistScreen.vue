@@ -46,7 +46,7 @@
 
     <ScreenEmptyState v-if="!songs.length && !loading">
       <template #icon>
-        <icon :icon="faFile" />
+        <Icon :icon="faFile" />
       </template>
 
       <template v-if="playlist?.is_smart">

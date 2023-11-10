@@ -1,7 +1,7 @@
 <template>
   <label v-if="isMobile.phone" class="text-highlight">
     <input v-model="value" type="checkbox">
-    <icon :icon="value ? faCaretUp : faCaretDown" class="toggle" />
+    <Icon :icon="value ? faCaretUp : faCaretDown" class="toggle" />
     <span>Toggle the song list controls</span>
   </label>
 </template>

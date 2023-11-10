@@ -8,8 +8,8 @@ import App from './App.vue'
 
 createApp(App)
   .provide(RouterKey, new Router(routes))
-  .component('icon', FontAwesomeIcon)
-  .component('icon-layers', FontAwesomeLayers)
+  .component('Icon', FontAwesomeIcon)
+  .component('IconLayers', FontAwesomeLayers)
   .directive('koel-focus', focus)
   .directive('koel-clickaway', clickaway)
   .directive('koel-tooltip', tooltip)

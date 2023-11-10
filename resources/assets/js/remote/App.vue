@@ -18,16 +18,16 @@
           <p v-else class="none text-secondary">No song is playing.</p>
           <footer>
             <a class="favorite" :class="song?.liked ? 'yep' : ''" @click.prevent="toggleFavorite">
-              <icon :icon="song?.liked ? faHeart : faEmptyHeart" />
+              <Icon :icon="song?.liked ? faHeart : faEmptyHeart" />
             </a>
             <a class="prev" @click="playPrev">
-              <icon :icon="faStepBackward" />
+              <Icon :icon="faStepBackward" />
             </a>
             <a class="play-pause" @click.prevent="togglePlayback">
-              <icon :icon="playing ? faPause : faPlay" />
+              <Icon :icon="playing ? faPause : faPlay" />
             </a>
             <a class="next" @click.prevent="playNext">
-              <icon :icon="faStepForward" />
+              <Icon :icon="faStepForward" />
             </a>
             <span class="volume">
               <span
@@ -37,7 +37,7 @@
                 v-koel-clickaway="closeVolumeSlider"
               />
               <span class="icon" @click.stop="toggleVolumeSlider">
-                <icon :icon="muted ? faVolumeMute : faVolumeHigh" fixed-width />
+                <Icon :icon="muted ? faVolumeMute : faVolumeHigh" fixed-width />
               </span>
             </span>
           </footer>

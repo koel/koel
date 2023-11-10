@@ -5,7 +5,7 @@
     <div class="main-scroll-wrap">
       <ScreenEmptyState>
         <template #icon>
-          <icon :icon="faKiwiBird" :mask="faMap" transform="shrink-12" />
+          <Icon :icon="faKiwiBird" :mask="faMap" transform="shrink-12" />
         </template>
 
         The requested content cannot be found.

@@ -10,7 +10,7 @@
             title="Play all songs"
             @click.prevent="playAll"
           >
-            <icon :icon="faPlay" fixed-width />
+            <Icon :icon="faPlay" fixed-width />
             All
           </Btn>
 
@@ -21,7 +21,7 @@
             title="Play selected songs"
             @click.prevent="playSelected"
           >
-            <icon :icon="faPlay" fixed-width />
+            <Icon :icon="faPlay" fixed-width />
             Selected
           </Btn>
         </template>
@@ -35,7 +35,7 @@
             title="Shuffle all songs"
             @click.prevent="shuffle"
           >
-            <icon :icon="faRandom" fixed-width />
+            <Icon :icon="faRandom" fixed-width />
             All
           </Btn>
 
@@ -47,7 +47,7 @@
             title="Shuffle selected songs"
             @click.prevent="shuffleSelected"
           >
-            <icon :icon="faRandom" fixed-width />
+            <Icon :icon="faRandom" fixed-width />
             Selected
           </Btn>
         </template>
@@ -65,7 +65,7 @@
 
       <BtnGroup v-if="config.refresh || config.deletePlaylist">
         <Btn v-if="config.refresh" v-koel-tooltip green title="Refresh" @click.prevent="refresh">
-          <icon :icon="faRotateRight" fixed-width />
+          <Icon :icon="faRotateRight" fixed-width />
         </Btn>
 
         <Btn
@@ -76,7 +76,7 @@
           title="Delete this playlist"
           @click.prevent="deletePlaylist"
         >
-          <icon :icon="faTrashCan" />
+          <Icon :icon="faTrashCan" />
         </Btn>
       </BtnGroup>
 

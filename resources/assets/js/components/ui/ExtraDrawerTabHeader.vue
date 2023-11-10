@@ -7,7 +7,7 @@
     type="button"
     @click.prevent="toggleTab('Lyrics')"
   >
-    <icon :icon="faFeather" fixed-width />
+    <Icon :icon="faFeather" fixed-width />
   </button>
   <button
     id="extraTabArtist"
@@ -17,7 +17,7 @@
     type="button"
     @click.prevent="toggleTab('Artist')"
   >
-    <icon :icon="faMicrophone" fixed-width />
+    <Icon :icon="faMicrophone" fixed-width />
   </button>
   <button
     id="extraTabAlbum"
@@ -27,7 +27,7 @@
     type="button"
     @click.prevent="toggleTab('Album')"
   >
-    <icon :icon="faCompactDisc" fixed-width />
+    <Icon :icon="faCompactDisc" fixed-width />
   </button>
   <button
     v-if="useYouTube"
@@ -38,7 +38,7 @@
     type="button"
     @click.prevent="toggleTab('YouTube')"
   >
-    <icon :icon="faYoutube" fixed-width />
+    <Icon :icon="faYoutube" fixed-width />
   </button>
 </template>
 

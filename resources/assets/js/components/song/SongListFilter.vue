@@ -1,7 +1,7 @@
 <template>
   <form v-koel-clickaway="maybeClose" @submit.prevent>
     <Btn v-koel-tooltip title="Filter" unrounded transparent @click.prevent="toggleInput">
-      <icon :icon="faFilter" fixed-width />
+      <Icon :icon="faFilter" fixed-width />
     </Btn>
     <input
       v-show="showingInput"

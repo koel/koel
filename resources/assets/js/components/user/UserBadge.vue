@@ -11,7 +11,7 @@
       title="Log out"
       @click.prevent="logout"
     >
-      <icon :icon="faSignOutAlt" />
+      <Icon :icon="faSignOutAlt" />
     </a>
   </span>
 </template>

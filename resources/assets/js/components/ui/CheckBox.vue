@@ -1,7 +1,7 @@
 <template>
   <span>
     <input :checked="checked" type="checkbox" v-bind="$attrs" @input="onInput">
-    <icon v-if="checked" :icon="faCheck" />
+    <Icon v-if="checked" :icon="faCheck" />
   </span>
 </template>
 

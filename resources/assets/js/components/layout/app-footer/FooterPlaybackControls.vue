@@ -5,13 +5,13 @@
       <button v-else type="button" /> <!-- a placeholder to maintain the flex layout -->
 
       <button type="button" title="Play previous song" @click.prevent="playPrev">
-        <icon :icon="faStepBackward" />
+        <Icon :icon="faStepBackward" />
       </button>
 
       <PlayButton />
 
       <button type="button" title="Play next song" @click.prevent="playNext">
-        <icon :icon="faStepForward" />
+        <Icon :icon="faStepForward" />
       </button>
 
       <RepeatModeSwitch class="repeat-mode-btn" />

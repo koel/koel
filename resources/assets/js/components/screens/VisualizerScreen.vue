@@ -6,7 +6,7 @@
         <p v-if="selectedVisualizer.credits" class="text-secondary">
           by {{ selectedVisualizer.credits.author }}
           <a :href="selectedVisualizer.credits.url" target="_blank">
-            <icon :icon="faUpRightFromSquare" />
+            <Icon :icon="faUpRightFromSquare" />
           </a>
         </p>
       </div>

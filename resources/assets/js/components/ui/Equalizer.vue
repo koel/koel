@@ -6,7 +6,7 @@
           <option disabled value="-1">Preset</option>
           <option v-for="preset in presets" :key="preset.id" :value="preset.id">{{ preset.name }}</option>
         </select>
-        <icon :icon="faCaretDown" class="arrow text-highlight" size="sm" />
+        <Icon :icon="faCaretDown" class="arrow text-highlight" size="sm" />
       </label>
     </header>
 

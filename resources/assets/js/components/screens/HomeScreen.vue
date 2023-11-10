@@ -5,7 +5,7 @@
     <div v-koel-overflow-fade class="main-scroll-wrap" @scroll="scrolling">
       <ScreenEmptyState v-if="libraryEmpty">
         <template #icon>
-          <icon :icon="faVolumeOff" />
+          <Icon :icon="faVolumeOff" />
         </template>
         No songs found.
         <span class="secondary d-block">

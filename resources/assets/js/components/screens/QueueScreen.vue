@@ -36,7 +36,7 @@
 
     <ScreenEmptyState v-else>
       <template #icon>
-        <icon :icon="faCoffee" />
+        <Icon :icon="faCoffee" />
       </template>
 
       No songs queued.

@@ -4,6 +4,6 @@ import { clickaway } from '@/directives'
 import App from './App.vue'
 
 createApp(App)
-  .component('icon', FontAwesomeIcon)
+  .component('Icon', FontAwesomeIcon)
   .directive('koel-clickaway', clickaway)
   .mount('#app')

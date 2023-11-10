@@ -10,7 +10,7 @@
     @drop="onDrop"
   >
     <a @click.prevent="toggle" @contextmenu.prevent="onContextMenu">
-      <icon :icon="opened ? faFolderOpen : faFolder" fixed-width />
+      <Icon :icon="opened ? faFolderOpen : faFolder" fixed-width />
       <span>{{ folder.name }}</span>
     </a>
 

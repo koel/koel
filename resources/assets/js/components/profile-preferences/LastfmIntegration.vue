@@ -21,7 +21,7 @@
       </p>
       <div class="buttons">
         <Btn class="connect" @click.prevent="connect">
-          <icon :icon="faLastfm" />
+          <Icon :icon="faLastfm" />
           {{ connected ? 'Reconnect' : 'Connect' }}
         </Btn>
 

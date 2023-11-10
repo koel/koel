@@ -8,7 +8,7 @@
       title="Unmute"
       @click="unmute"
     >
-      <icon :icon="faVolumeMute" fixed-width />
+      <Icon :icon="faVolumeMute" fixed-width />
     </span>
 
     <span
@@ -19,7 +19,7 @@
       title="Mute"
       @click="mute"
     >
-      <icon :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh" fixed-width />
+      <Icon :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh" fixed-width />
     </span>
 
     <input

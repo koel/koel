@@ -2,11 +2,11 @@
   <dialog ref="dialog" class="dialog" :class="`dialog-${type}`">
     <main>
       <aside>
-        <icon :icon="faInfo" v-if="type === 'info'"/>
-        <icon :icon="faCheck" v-if="type === 'success'"/>
-        <icon :icon="faTriangleExclamation" v-if="type === 'warning'"/>
-        <icon :icon="faExclamation" v-if="type === 'danger'"/>
-        <icon :icon="faQuestion" v-if="type === 'confirm'"/>
+        <Icon v-if="type === 'info'" :icon="faInfo" />
+        <Icon v-if="type === 'success'" :icon="faCheck" />
+        <Icon v-if="type === 'warning'" :icon="faTriangleExclamation" />
+        <Icon v-if="type === 'danger'" :icon="faExclamation" />
+        <Icon v-if="type === 'confirm'" :icon="faQuestion" />
       </aside>
 
       <div class="content">
