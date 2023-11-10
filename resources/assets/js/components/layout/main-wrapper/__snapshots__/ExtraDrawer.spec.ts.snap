@@ -3,12 +3,12 @@
 exports[`renders without a current song 1`] = `
 <aside data-v-119c862c="" class="">
   <div data-v-119c862c="" class="controls">
-    <div data-v-119c862c="" class="top"><button data-v-119c862c="" class="burger"><br data-testid="icon" icon="[object Object]"></button>
+    <div data-v-119c862c="" class="top"><button data-v-119c862c="" class="burger"><br data-testid="Icon" icon="[object Object]"></button>
       <!--v-if-->
     </div>
-    <div data-v-119c862c="" class="bottom"><button data-v-119c862c="" title="About Koel" type="button"><br data-v-119c862c="" data-testid="icon" icon="[object Object]">
+    <div data-v-119c862c="" class="bottom"><button data-v-119c862c="" title="About Koel" type="button"><br data-v-119c862c="" data-testid="Icon" icon="[object Object]">
         <!--v-if-->
-      </button><button data-v-119c862c="" title="Log out" type="button"><br data-v-119c862c="" data-testid="icon" icon="[object Object]"></button><br data-v-119c862c="" data-testid="stub"></div>
+      </button><button data-v-119c862c="" title="Log out" type="button"><br data-v-119c862c="" data-testid="Icon" icon="[object Object]"></button><br data-v-119c862c="" data-testid="stub"></div>
   </div>
   <!--v-if-->
 </aside>

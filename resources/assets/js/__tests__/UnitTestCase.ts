@@ -98,7 +98,7 @@ export default abstract class UnitTestCase {
           'koel-overflow-fade': {}
         },
         components: {
-          icon: this.stub('icon')
+          Icon: this.stub('Icon')
         }
       }
     }, this.supplyRequiredProvides(options)))
