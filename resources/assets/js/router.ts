@@ -101,7 +101,12 @@ export default class Router {
     this.$currentRoute.value.params = params
   }
 
-  public go (path: string) {
+  public go (path: string | number) {
+    if (typeof path === 'number') {
+      history.go(path)
+      return
+    }
+
     if (!path.startsWith('/')) {
       path = `/${path}`
     }

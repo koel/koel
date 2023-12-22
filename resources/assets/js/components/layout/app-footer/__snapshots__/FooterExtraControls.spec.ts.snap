@@ -2,7 +2,7 @@
 
 exports[`renders 1`] = `
 <div data-v-8bf5fe81="" class="extra-controls" data-testid="other-controls">
-  <div data-v-8bf5fe81="" class="wrapper"><a data-v-8bf5fe81="" class="visualizer-btn" data-testid="toggle-visualizer-btn" href="/#/visualizer" title="Show the visualizer"><br data-v-8bf5fe81="" data-testid="Icon" icon="[object Object]"></a>
+  <div data-v-8bf5fe81="" class="wrapper"><button data-v-8bf5fe81="" class="visualizer-btn" data-testid="toggle-visualizer-btn" title="Toggle visualizer"><br data-v-8bf5fe81="" data-testid="Icon" icon="[object Object]"></button>
     <!--v-if--><br data-v-8bf5fe81="" data-testid="Volume">
     <!--v-if-->
   </div>

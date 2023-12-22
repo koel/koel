@@ -64,7 +64,7 @@ const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/N
 const VisualizerScreen = defineAsyncComponent(() => import('@/components/screens/VisualizerScreen.vue'))
 
 const { useYouTube } = useThirdPartyServices()
-const { resolveRoute, onRouteChanged, getCurrentScreen } = useRouter()
+const { onRouteChanged, getCurrentScreen } = useRouter()
 
 const currentSong = requireInjection(CurrentSongKey, ref(undefined))
 
