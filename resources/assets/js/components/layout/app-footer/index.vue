@@ -1,5 +1,10 @@
 <template>
-  <footer id="mainFooter" ref="root" @contextmenu.prevent="requestContextMenu">
+  <footer
+    id="mainFooter"
+    ref="root"
+    @contextmenu.prevent="requestContextMenu"
+    @mousemove="showControls"
+  >
     <AudioPlayer v-show="song" />
 
     <div class="fullscreen-backdrop" :style="styles" />
@@ -13,6 +18,7 @@
 </template>
 
 <script lang="ts" setup>
+import { throttle } from 'lodash'
 import { computed, nextTick, ref, watch } from 'vue'
 import { eventBus, isAudioContextSupported, requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
@@ -25,11 +31,13 @@ import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vu
 import PlaybackControls from '@/components/layout/app-footer/FooterPlaybackControls.vue'
 
 const song = requireInjection(CurrentSongKey, ref())
+let hideControlsTimeout: number
 
 const root = ref<HTMLElement>()
 const artist = ref<Artist>()
 
 const requestContextMenu = (event: MouseEvent) => {
+  if (document.fullscreenElement) return
   song.value && eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
 }
 
@@ -66,11 +74,25 @@ watch(preferenceStore.initialized, async initialized => {
   await initPlaybackRelatedServices()
 }, { immediate: true })
 
+const setupControlHidingTimer = () => {
+  hideControlsTimeout = window.setTimeout(() => root.value?.classList.add('hide-controls'), 5000)
+}
+
+const showControls = throttle(() => {
+  if (!document.fullscreenElement) return
+
+  root.value?.classList.remove('hide-controls')
+  window.clearTimeout(hideControlsTimeout)
+  setupControlHidingTimer()
+}, 100)
+
 eventBus.on('FULLSCREEN_TOGGLE', () => {
   if (document.fullscreenElement) {
     document.exitFullscreen()
+    root.value?.classList.remove('hide-controls')
   } else {
     root.value?.requestFullscreen()
+    setupControlHidingTimer()
   }
 })
 </script>
@@ -99,6 +121,11 @@ footer {
   &:fullscreen {
     padding: calc(100vh - 9rem) 5vw 0;
     background: none;
+
+    &.hide-controls :not(.fullscreen-backdrop) {
+      transition: opacity 2s ease-in-out;
+      opacity: 0;
+    }
 
     .wrapper {
       z-index: 3;
