@@ -116,10 +116,11 @@ const init = async () => {
     })
 
     await socketService.init() && socketListener.listen()
-    overlay.value!.hide()
   } catch (err) {
     layout.value = 'auth'
     throw err
+  } finally {
+    overlay.value!.hide()
   }
 }
 
