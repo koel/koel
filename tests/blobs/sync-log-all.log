@@ -1,0 +1,4 @@
+Success: /media/foo.mp3
+Error: /media/baz.mp3 - Something went wrong
+Error: /media/qux.mp3 - Something went horribly wrong
+Skipped: /media/bar.mp3

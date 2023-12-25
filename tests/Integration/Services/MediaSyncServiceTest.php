@@ -85,6 +85,8 @@ class MediaSyncServiceTest extends TestCase
 
     public function testModifiedFileIsResynced(): void
     {
+        $this->expectsEvents(MediaSyncCompleted::class);
+
         $this->mediaService->sync();
 
         /** @var Song $song */
@@ -163,6 +165,7 @@ class MediaSyncServiceTest extends TestCase
 
     public function testSyncAllTagsForNewFilesRegardlessOfIgnoredOption(): void
     {
+        $this->expectsEvents(MediaSyncCompleted::class);
         $this->mediaService->sync();
 
         /** @var Song $song */
@@ -211,9 +214,9 @@ class MediaSyncServiceTest extends TestCase
 
         $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR $this->mediaPath/subdir"));
 
-        self::assertDatabaseMissing('songs', ['path' => $this->path('/subdir/sic.mp3')]);
-        self::assertDatabaseMissing('songs', ['path' => $this->path('/subdir/no-name.mp3')]);
-        self::assertDatabaseMissing('songs', ['path' => $this->path('/subdir/back-in-black.mp3')]);
+        self::assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/sic.mp3')]);
+        self::assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/no-name.mp3')]);
+        self::assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/back-in-black.mp3')]);
     }
 
     public function testHtmlEntities(): void

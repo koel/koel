@@ -131,6 +131,8 @@ return [
     'force_https' => env('FORCE_HTTPS', false),
     'backup_on_delete' => env('BACKUP_ON_DELETE', true),
 
+    'sync_log_level' => env('SYNC_LOG_LEVEL', 'error'),
+
     'misc' => [
         'home_url' => 'https://koel.dev',
         'docs_url' => 'https://docs.koel.dev',

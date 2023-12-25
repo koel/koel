@@ -8,10 +8,12 @@ use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Song;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
+use App\Values\SyncResult;
 use App\Values\SyncResultCollection;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
+use Throwable;
 
 class MediaSyncService
 {
@@ -48,7 +50,12 @@ class MediaSyncService
         }
 
         foreach ($songPaths as $path) {
-            $result = $this->fileSynchronizer->setFile($path)->sync($ignores, $force);
+            try {
+                $result = $this->fileSynchronizer->setFile($path)->sync($ignores, $force);
+            } catch (Throwable) {
+                $result = SyncResult::error($path, 'Possible invalid file');
+            }
+
             $results->add($result);
 
             if (isset($this->events['progress'])) {
@@ -71,7 +78,7 @@ class MediaSyncService
      *
      * @return array<SplFileInfo>
      */
-    public function gatherFiles(string $path): array
+    private function gatherFiles(string $path): array
     {
         return iterator_to_array(
             $this->finder->create()
@@ -166,12 +173,19 @@ class MediaSyncService
 
     private function handleNewOrModifiedDirectoryRecord(string $path): void
     {
+        $syncResults = SyncResultCollection::create();
+
         foreach ($this->gatherFiles($path) as $file) {
-            $this->fileSynchronizer->setFile($file)->sync();
+            try {
+                $syncResults->add($this->fileSynchronizer->setFile($file)->sync());
+            } catch (Throwable) {
+                $syncResults->add(SyncResult::error($file->getRealPath(), 'Possible invalid file'));
+            }
         }
 
         $this->logger->info("Synced all song(s) under $path");
 
+        event(new MediaSyncCompleted($syncResults));
         event(new LibraryChanged());
     }
 

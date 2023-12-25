@@ -2,6 +2,7 @@
 
 namespace App\Values;
 
+use Exception;
 use Webmozart\Assert\Assert;
 
 final class SyncResult
@@ -10,7 +11,7 @@ final class SyncResult
     public const TYPE_ERROR = 2;
     public const TYPE_SKIPPED = 3;
 
-    private function __construct(public string $path, public int $type, public ?string $error)
+    private function __construct(public string $path, public int $type, public ?string $error = null)
     {
         Assert::oneOf($type, [
             SyncResult::TYPE_SUCCESS,
@@ -29,7 +30,7 @@ final class SyncResult
         return new self($path, self::TYPE_SKIPPED, null);
     }
 
-    public static function error(string $path, ?string $error): self
+    public static function error(string $path, ?string $error = null): self
     {
         return new self($path, self::TYPE_ERROR, $error);
     }
@@ -52,5 +53,19 @@ final class SyncResult
     public function isValid(): bool
     {
         return $this->isSuccess() || $this->isSkipped();
+    }
+
+    public function __toString(): string
+    {
+        $type = match ($this->type) {
+            self::TYPE_SUCCESS => 'Success',
+            self::TYPE_ERROR => 'Error',
+            self::TYPE_SKIPPED => 'Skipped',
+            default => throw new Exception('Invalid type'),
+        };
+
+        $str = $type . ': ' . $this->path;
+
+        return $this->isError() ? $str . ' - ' . $this->error : $str;
     }
 }
