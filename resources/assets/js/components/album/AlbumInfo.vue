@@ -39,6 +39,7 @@ import { mediaInfoService, playbackService } from '@/services'
 import { useRouter, useThirdPartyServices } from '@/composables'
 
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+import { defaultCover } from '@/utils'
 
 const TrackList = defineAsyncComponent(() => import('@/components/album/AlbumTrackList.vue'))
 
@@ -46,7 +47,7 @@ const props = withDefaults(defineProps<{ album: Album, mode?: MediaInfoDisplayMo
 const { album, mode } = toRefs(props)
 
 const { go } = useRouter()
-const { useLastfm } = useThirdPartyServices()
+const { useLastfm, useSpotify } = useThirdPartyServices()
 
 const info = ref<AlbumInfo | null>(null)
 const showingFullWiki = ref(false)
@@ -54,7 +55,10 @@ const showingFullWiki = ref(false)
 watch(album, async () => {
   showingFullWiki.value = false
   info.value = null
-  useLastfm.value && (info.value = await mediaInfoService.fetchForAlbum(album.value))
+
+  if (useLastfm.value || useSpotify.value) {
+    info.value = await mediaInfoService.fetchForAlbum(album.value)
+  }
 }, { immediate: true })
 
 const showSummary = computed(() => mode.value !== 'full' && !showingFullWiki.value)

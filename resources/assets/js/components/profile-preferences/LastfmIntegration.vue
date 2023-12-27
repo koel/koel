@@ -1,15 +1,18 @@
 <template>
   <section class="text-secondary">
-    <h1>Last.fm Integration</h1>
+    <h1>
+      <span class="lastfm-icon">
+        <Icon :icon="faLastfm" />
+      </span>
+      Last.fm Integration
+    </h1>
 
     <div v-if="useLastfm" data-testid="lastfm-integrated">
-      <p>
-        This installation of Koel integrates with Last.fm.
-        <span v-if="connected">
-          It appears that you have connected your Last.fm account as well – Perfect!
-        </span>
-        <span v-else>It appears that you haven’t connected to your Last.fm account though.</span>
+      <p>Last.fm integration is enabled. Koel will attempt to retrieve album and artist information from Last.fm.</p>
+      <p v-if="connected">
+        It appears that you have connected your Last.fm account as well – Perfect!
       </p>
+      <p v-else>You can also connect your Last.fm account here.</p>
       <p>
         Connecting Koel and your Last.fm account enables such exciting features as
         <a
@@ -21,7 +24,6 @@
       </p>
       <div class="buttons">
         <Btn class="connect" @click.prevent="connect">
-          <Icon :icon="faLastfm" />
           {{ connected ? 'Reconnect' : 'Connect' }}
         </Btn>
 
@@ -31,7 +33,7 @@
 
     <div v-else data-testid="lastfm-not-integrated">
       <p>
-        This installation of Koel has no Last.fm integration.
+        Last.fm integration is not enabled on this installation of Koel.
         <span v-if="isAdmin" data-testid="lastfm-admin-instruction">
           Visit
           <a href="https://docs.koel.dev/3rd-party.html#last-fm" class="text-highlight" target="_blank">Koel’s Wiki</a>
@@ -77,6 +79,11 @@ const disconnect = async () => {
 </script>
 
 <style lang="scss" scoped>
+.lastfm-icon {
+  color: #d31f27; // Last.fm red
+  margin-right: .4rem;
+}
+
 .buttons {
   margin-top: 1.25rem;
 
@@ -85,7 +92,7 @@ const disconnect = async () => {
   }
 
   .connect {
-    background: #d31f27; // Last.fm color yo!
+    background: #d31f27;
   }
 }
 </style>

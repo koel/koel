@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<{ artist: Artist, mode?: MediaInfoDisplay
 const { artist, mode } = toRefs(props)
 
 const { go } = useRouter()
-const { useLastfm } = useThirdPartyServices()
+const { useLastfm, useSpotify } = useThirdPartyServices()
 
 const info = ref<ArtistInfo | null>(null)
 const showingFullBio = ref(false)
@@ -50,7 +50,10 @@ const showingFullBio = ref(false)
 watch(artist, async () => {
   showingFullBio.value = false
   info.value = null
-  useLastfm.value && (info.value = await mediaInfoService.fetchForArtist(artist.value))
+
+  if (useLastfm.value || useSpotify.value) {
+    info.value = await mediaInfoService.fetchForArtist(artist.value)
+  }
 }, { immediate: true })
 
 const showSummary = computed(() => mode.value !== 'full' && !showingFullBio.value)
