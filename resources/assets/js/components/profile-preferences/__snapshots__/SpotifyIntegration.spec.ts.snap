@@ -1,0 +1,37 @@
+// Vitest Snapshot v1
+
+exports[`renders proper content with Spotify integration status false, current user admin status false 1`] = `
+<section data-v-49dda1f9="" class="text-secondary">
+  <h1 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h1>
+  <div data-v-49dda1f9="">
+    <p data-v-49dda1f9=""> Spotify integration is not enabled. <span data-v-49dda1f9="" data-testid="spotify-user-instruction"> Try politely asking an administrator to enable it. </span></p>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with Spotify integration status false, current user admin status true 1`] = `
+<section data-v-49dda1f9="" class="text-secondary">
+  <h1 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h1>
+  <div data-v-49dda1f9="">
+    <p data-v-49dda1f9=""> Spotify integration is not enabled. <span data-v-49dda1f9="" data-testid="spotify-admin-instruction"> Visit <a data-v-49dda1f9="" href="https://docs.koel.dev/3rd-party.html#spotify" class="text-highlight" target="_blank">Koel’s Wiki</a> for a quick how-to. </span></p>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with Spotify integration status true, current user admin status false 1`] = `
+<section data-v-49dda1f9="" class="text-secondary">
+  <h1 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h1>
+  <div data-v-49dda1f9="">
+    <p data-v-49dda1f9=""> Spotify integration is enabled. Koel will attempt to retrieve album arts and artist images from Spotify when a song is played, if needed. </p>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with Spotify integration status true, current user admin status true 1`] = `
+<section data-v-49dda1f9="" class="text-secondary">
+  <h1 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h1>
+  <div data-v-49dda1f9="">
+    <p data-v-49dda1f9=""> Spotify integration is enabled. Koel will attempt to retrieve album arts and artist images from Spotify when a song is played, if needed. </p>
+  </div>
+</section>
+`;

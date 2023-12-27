@@ -6,6 +6,7 @@
       <ProfileForm />
       <ThemeList />
       <PreferencesForm />
+      <SpotifyIntegration />
       <LastfmIntegration />
     </div>
   </section>
@@ -14,6 +15,7 @@
 <script lang="ts" setup>
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ProfileForm from '@/components/profile-preferences/ProfileForm.vue'
+import SpotifyIntegration from '@/components/profile-preferences/SpotifyIntegration.vue'
 import LastfmIntegration from '@/components/profile-preferences/LastfmIntegration.vue'
 import PreferencesForm from '@/components/profile-preferences/PreferencesForm.vue'
 import ThemeList from '@/components/profile-preferences/ThemeList.vue'
