@@ -42,6 +42,8 @@
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="LASTFM_API_KEY" value="foo"/>
         <env name="LASTFM_API_SECRET" value="bar"/>
+        <env name="SPOTIFY_CLIENT_ID" value=""/>
+        <env name="SPOTIFY_CLIENT_SECRET" value=""/> <!-- Spotify integration during tests must be opt-in -->
         <env name="YOUTUBE_API_KEY" value="foo"/>
         <env name="BROADCAST_DRIVER" value="log"/>
         <env name="CACHE_MEDIA" value="true"/>
