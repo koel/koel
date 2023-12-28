@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { artistStore, preferenceStore } from '@/stores'
+import { artistStore, commonStore, preferenceStore } from '@/stores'
 import { screen, waitFor } from '@testing-library/vue'
 import ArtistListScreen from './ArtistListScreen.vue'
 
@@ -29,6 +29,13 @@ new class extends UnitTestCase {
     it('renders', async () => {
       await this.renderComponent()
       expect(screen.getAllByTestId('artist-card')).toHaveLength(9)
+    })
+
+    it('shows a message when the library is empty', async () => {
+      commonStore.state.song_length = 0
+      await this.renderComponent()
+
+      await waitFor(() => screen.getByTestId('screen-empty-state'))
     })
 
     it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async (mode) => {

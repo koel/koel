@@ -1,7 +1,7 @@
 import { without } from 'lodash'
 import { reactive } from 'vue'
 import { http } from '@/services'
-import { albumStore, overviewStore, songStore } from '@/stores'
+import { albumStore, commonStore, overviewStore, songStore } from '@/stores'
 import { logger } from '@/utils'
 
 interface UploadResult {
@@ -86,6 +86,7 @@ export const uploadService = {
 
       songStore.syncWithVault(result.song)
       albumStore.syncWithVault(result.album)
+      commonStore.state.song_length += 1
       overviewStore.refresh()
 
       this.proceed() // upload the next file

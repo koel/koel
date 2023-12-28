@@ -1,9 +1,18 @@
 <template>
   <section id="genresWrapper">
-    <ScreenHeader layout="collapsed">
-      Genres
-    </ScreenHeader>
-    <div class="main-scroll-wrap">
+    <ScreenHeader layout="collapsed">Genres</ScreenHeader>
+
+    <ScreenEmptyState v-if="libraryEmpty">
+      <template #icon>
+        <Icon :icon="faTags" />
+      </template>
+      No genres found.
+      <span class="secondary d-block">
+        {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
+      </span>
+    </ScreenEmptyState>
+
+    <div class="main-scroll-wrap" v-else>
       <ul v-if="genres" class="genres">
         <li v-for="genre in genres" :key="genre.name" :class="`level-${getLevel(genre)}`">
           <a
@@ -25,15 +34,22 @@
 </template>
 
 <script lang="ts" setup>
+import { faTags } from '@fortawesome/free-solid-svg-icons'
 import { maxBy, minBy } from 'lodash'
 import { computed, onMounted, ref } from 'vue'
-import { genreStore } from '@/stores'
+import { commonStore, genreStore } from '@/stores'
 import { pluralize } from '@/utils'
+import { useAuthorization } from '@/composables'
+
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import GenreItemSkeleton from '@/components/ui/skeletons/GenreItemSkeleton.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+
+const { isAdmin } = useAuthorization()
 
 const genres = ref<Genre[]>()
 
+const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const mostPopular = computed(() => maxBy(genres.value, 'song_count'))
 const leastPopular = computed(() => minBy(genres.value, 'song_count'))
 
@@ -51,7 +67,10 @@ const getLevel = (genre: Genre) => {
   return index === -1 ? 5 : index
 }
 
-onMounted(async () => genres.value = await genreStore.fetchAll())
+onMounted(async () => {
+  if (libraryEmpty.value) return
+  genres.value = await genreStore.fetchAll()
+})
 </script>
 
 <style lang="scss" scoped>

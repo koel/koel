@@ -16,9 +16,6 @@ new class extends UnitTestCase {
     artist = factory<Artist>('artist', {
       id: 42,
       name: 'Led Zeppelin',
-      album_count: 12,
-      song_count: 53,
-      length: 40_603
     })
 
     const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
