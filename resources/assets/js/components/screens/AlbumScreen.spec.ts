@@ -17,9 +17,7 @@ new class extends UnitTestCase {
       id: 42,
       name: 'Led Zeppelin IV',
       artist_id: 123,
-      artist_name: 'Led Zeppelin',
-      song_count: 10,
-      length: 1_603
+      artist_name: 'Led Zeppelin'
     })
 
     const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)

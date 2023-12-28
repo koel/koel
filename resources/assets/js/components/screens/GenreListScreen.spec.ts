@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { genreStore } from '@/stores'
+import { commonStore, genreStore } from '@/stores'
 import { screen, waitFor } from '@testing-library/vue'
 import GenreListScreen from './GenreListScreen.vue'
 
@@ -22,6 +22,18 @@ new class extends UnitTestCase {
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalled()
         genres.forEach(genre => screen.getByTitle(`${genre.name}: ${genre.song_count} songs`))
+      })
+    })
+
+    it('shows a message when the library is empty', async () => {
+      commonStore.state.song_length = 0
+      const fetchMock = this.mock(genreStore, 'fetchAll')
+
+      this.render(GenreListScreen)
+
+      await waitFor(() => {
+        expect(fetchMock).not.toHaveBeenCalled()
+        screen.getByTestId('screen-empty-state')
       })
     })
   }
