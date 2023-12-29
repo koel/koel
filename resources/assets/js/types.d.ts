@@ -152,6 +152,13 @@ interface Song {
   deleted?: boolean
 }
 
+interface QueueState {
+  type: 'queue-states'
+  songs: Song[]
+  current_song: Song | null
+  playback_position: number
+}
+
 interface SmartPlaylistRuleGroup {
   id: string
   rules: SmartPlaylistRule[]

@@ -46,11 +46,13 @@ class AlbumRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Album> */
-    public function getByIds(array $ids): Collection
+    public function getByIds(array $ids, bool $withInputOrder = false): Collection
     {
-        return Album::query()
+        $albums = Album::query()
             ->whereIn('id', $ids)
             ->get();
+
+        return $withInputOrder ? sort_by_ids($albums, $ids) : $albums;
     }
 
     /** @return Collection|array<array-key, Album> */

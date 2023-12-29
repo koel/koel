@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
+use App\Http\Resources\QueueStateResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\SettingRepository;
@@ -12,6 +13,7 @@ use App\Repositories\SongRepository;
 use App\Services\ApplicationInformationService;
 use App\Services\ITunesService;
 use App\Services\LastfmService;
+use App\Services\QueueService;
 use App\Services\SpotifyService;
 use App\Services\YouTubeService;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -24,6 +26,7 @@ class DataController extends Controller
         private SettingRepository $settingRepository,
         private SongRepository $songRepository,
         private ApplicationInformationService $applicationInformationService,
+        private QueueService $queueService,
         private ?Authenticatable $user
     ) {
     }
@@ -49,6 +52,7 @@ class DataController extends Controller
                 : koel_version(),
             'song_count' => $this->songRepository->count(),
             'song_length' => $this->songRepository->getTotalLength(),
+            'queue_state' => QueueStateResource::make($this->queueService->getQueueState($this->user)),
         ]);
     }
 }
