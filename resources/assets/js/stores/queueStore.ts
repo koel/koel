@@ -148,7 +148,11 @@ export const queueStore = {
     return this.all
   },
 
-  async saveState () {
-    http.silently.put('queue/state', { songs: this.state.songs.map(song => song.id) })
+  saveState () {
+    try {
+      http.silently.put('queue/state', { songs: this.state.songs.map(song => song.id) })
+    } catch (e) {
+      console.error(e)
+    }
   }
 }

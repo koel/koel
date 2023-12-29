@@ -158,10 +158,14 @@ class PlaybackService {
     this.recordStartTime(song)
     this.broadcastSong(song)
 
-    http.silently.put('queue/playback-status', {
-      song: song.id,
-      position: 0
-    })
+    try {
+      http.silently.put('queue/playback-status', {
+        song: song.id,
+        position: 0
+      })
+    } catch (error) {
+      console.log(error)
+    }
 
     this.player.restart()
 
@@ -387,10 +391,14 @@ class PlaybackService {
 
       // every 5 seconds, we save the current playback position to the server
       if (Math.ceil(media.currentTime) % 5 === 0) {
-         http.silently.put('queue/playback-status', {
-           song: currentSong.id,
-           position: Math.ceil(media.currentTime)
-         })
+        try {
+          http.silently.put('queue/playback-status', {
+            song: currentSong.id,
+            position: Math.ceil(media.currentTime)
+          })
+        } catch (error) {
+          console.log(error)
+        }
       }
 
       const nextSong = queueStore.next

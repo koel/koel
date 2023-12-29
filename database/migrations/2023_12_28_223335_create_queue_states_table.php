@@ -14,6 +14,7 @@ return new class extends Migration
             $table->json('song_ids');
             $table->string('current_song_id', 36)->nullable();
             $table->unsignedInteger('playback_position')->default(0);
+            $table->timestamps();
         });
 
         Schema::table('queue_states', static function (Blueprint $table): void {
