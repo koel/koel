@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('queue_states', static function (Blueprint $table): void {
-            $table->increments('id');
+            $table->increments('id')->primary();
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->json('song_ids');
