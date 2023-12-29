@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('queue_states', static function (Blueprint $table): void {
-            $table->increments('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->json('song_ids');
             $table->string('current_song_id', 36)->nullable();
