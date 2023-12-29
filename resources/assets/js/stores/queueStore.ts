@@ -10,7 +10,7 @@ export const queueStore = {
   }),
 
   init (savedState: QueueState) {
-    // don't set this.all here, as it will trigger saving state
+    // don't set this.all here, as it would trigger saving state
     this.state.songs = songStore.syncWithVault(savedState.songs)
 
     if (!this.state.songs.length) {

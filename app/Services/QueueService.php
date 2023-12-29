@@ -3,16 +3,12 @@
 namespace App\Services;
 
 use App\Models\QueueState;
-use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Values\QueueState as QueueStateDTO;
-use Illuminate\Support\Collection;
 
 class QueueService
 {
-    private const DEFAULT_QUEUE_LIMIT = 500;
-
     public function __construct(private SongRepository $songRepository)
     {
     }
@@ -33,33 +29,6 @@ class QueueService
             $currentSong,
             $state->playback_position ?? 0
         );
-    }
-
-    /** @return Collection|array<array-key, Song> */
-    public function generateRandomQueueSongs(User $user, int $limit = self::DEFAULT_QUEUE_LIMIT): Collection
-    {
-        $songs = $this->songRepository->getRandom($limit, $user);
-        $this->replaceQueueContent($user, $songs);
-
-        return $songs;
-    }
-
-    /** @return Collection|array<array-key, Song> */
-    public function generateOrderedQueueSongs(
-        User $user,
-        string $sortColumn,
-        string $sortDirection,
-        int $limit = self::DEFAULT_QUEUE_LIMIT
-    ): Collection {
-        $songs = $this->songRepository->getForQueue($sortColumn, $sortDirection, $limit, $user);
-        $this->replaceQueueContent($user, $songs);
-
-        return $songs;
-    }
-
-    public function replaceQueueContent(User $user, Collection $songs): void
-    {
-        $this->updateQueueState($user, $songs->pluck('id')->toArray());
     }
 
     public function updateQueueState(User $user, array $songIds): void

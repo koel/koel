@@ -9,45 +9,51 @@ use App\Http\Requests\API\UpdateQueueStateRequest;
 use App\Http\Resources\QueueStateResource;
 use App\Http\Resources\SongResource;
 use App\Models\User;
+use App\Repositories\SongRepository;
 use App\Services\QueueService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class QueueController extends Controller
 {
     /** @param User $user */
-    public function __construct(private QueueService $service, private ?Authenticatable $user)
-    {
+    public function __construct(
+        private SongRepository $songRepository,
+        private QueueService $queueService,
+        private ?Authenticatable $user
+    ) {
     }
 
     public function getState()
     {
-        return QueueStateResource::make($this->service->getQueueState($this->user));
+        return QueueStateResource::make($this->queueService->getQueueState($this->user));
     }
 
     public function updateState(UpdateQueueStateRequest $request)
     {
-        $this->service->updateQueueState($this->user, $request->songs);
+        $this->queueService->updateQueueState($this->user, $request->songs);
 
         return response()->noContent();
     }
 
     public function updatePlaybackStatus(UpdatePlaybackStatusRequest $request)
     {
-        $this->service->updatePlaybackStatus($this->user, $request->song, $request->position);
+        $this->queueService->updatePlaybackStatus($this->user, $request->song, $request->position);
+
+        return response()->noContent();
     }
 
     public function fetchSongs(QueueFetchSongRequest $request)
     {
         if ($request->order === 'rand') {
-            return SongResource::collection($this->service->generateRandomQueueSongs($this->user, $request->limit));
+            return SongResource::collection($this->songRepository->getRandom($request->limit, $this->user));
         }
 
         return SongResource::collection(
-            $this->service->generateOrderedQueueSongs(
-                $this->user,
+            $this->songRepository->getForQueue(
                 $request->sort,
                 $request->order,
-                $request->limit
+                $request->limit,
+                $this->user
             )
         );
     }
