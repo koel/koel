@@ -17,7 +17,7 @@ export const queueStore = {
       return
     }
 
-    if (savedState.current_song && this.contains(savedState.current_song)) {
+    if (savedState.current_song) {
       songStore.syncWithVault(savedState.current_song)[0].playback_state = 'Paused'
     } else {
       this.all[0].playback_state = 'Paused'

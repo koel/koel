@@ -158,6 +158,11 @@ class PlaybackService {
     this.recordStartTime(song)
     this.broadcastSong(song)
 
+    http.silently.put('queue/playback-status', {
+      song: song.id,
+      position: 0
+    })
+
     this.player.restart()
 
     try {
