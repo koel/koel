@@ -2,8 +2,9 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { playbackService } from '@/services'
-import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import { screen } from '@testing-library/vue'
+import { queueStore } from '@/stores'
+import SongThumbnail from '@/components/song/SongThumbnail.vue'
 
 let song: Song
 
@@ -28,12 +29,13 @@ new class extends UnitTestCase {
       ['Playing', 'Pause', 'pause'],
       ['Paused', 'Resume', 'resume']
     ])('if state is currently "%s", %ss', async (state, name, method) => {
-      const mock = this.mock(playbackService, method)
+      this.mock(queueStore, 'queueIfNotQueued')
+      const playbackMock = this.mock(playbackService, method)
       this.renderComponent(state)
 
       await this.user.click(screen.getByRole('button', { name }))
 
-      expect(mock).toHaveBeenCalled()
+      expect(playbackMock).toHaveBeenCalled()
     })
   }
 }

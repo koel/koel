@@ -134,10 +134,6 @@ export const queueStore = {
     return this.all.find(song => song.playback_state !== 'Stopped')
   },
 
-  shuffle () {
-    this.all = shuffle(this.all)
-  },
-
   async fetchRandom (limit = 500) {
     this.all = await http.get<Song[]>(`queue/fetch?order=rand&limit=${limit}`)
     return this.all

@@ -12,7 +12,7 @@ let songs: Song[]
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => queueStore.clear())
+    super.beforeEach(() => queueStore.state.songs = [])
   }
 
   private async renderComponent (_songs?: Song | Song[]) {
