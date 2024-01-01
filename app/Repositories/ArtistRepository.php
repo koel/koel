@@ -43,14 +43,14 @@ class ArtistRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Artist> */
-    public function getByIds(array $ids, bool $withInputOrder = false): Collection
+    public function getByIds(array $ids, bool $inThatOrder = false): Collection
     {
-        $artist = Artist::query()
+        $artists = Artist::query()
             ->isStandard()
             ->whereIn('id', $ids)
             ->get();
 
-        return $withInputOrder ? sort_by_array($artist, $ids) : $artist;
+        return $inThatOrder ? $artists->orderByArray($ids) : $artists;
     }
 
     public function paginate(): Paginator

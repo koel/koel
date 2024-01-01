@@ -22,8 +22,8 @@ class DataTest extends TestCase
             'song_count',
             'song_length',
             'queue_state' => [
-                'song_ids',
-                'current_song_id',
+                'songs',
+                'current_song',
                 'playback_position',
             ],
         ]);

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -70,11 +69,4 @@ function attempt_if($condition, callable $callback, bool $log = true): mixed
 function attempt_unless($condition, callable $callback, bool $log = true): mixed
 {
     return !value($condition) ? attempt($callback, $log) : null;
-}
-
-
-/** @return Collection|array<array-key, mixed> */
-function sort_by_array(Collection $items, array $order, string $field = 'id'): Collection
-{
-    return $items->sortBy(static fn ($item) => array_search($item->$field, $order, true));
 }

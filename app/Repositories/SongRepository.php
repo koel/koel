@@ -175,14 +175,14 @@ class SongRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByIds(array $ids, ?User $scopedUser = null, bool $withInputOrder = false): Collection
+    public function getByIds(array $ids, bool $inThatOrder = false, ?User $scopedUser = null): Collection
     {
         $songs = Song::query()
             ->withMeta($scopedUser ?? $this->auth->user())
             ->whereIn('songs.id', $ids)
             ->get();
 
-        return $withInputOrder ? sort_by_array($songs, $ids) : $songs;
+        return $inThatOrder ? $songs->orderByArray($ids) : $songs;
     }
 
     public function getOne(string $id, ?User $scopedUser = null): Song

@@ -20,6 +20,7 @@ class QueueState extends Model
 
     protected $casts = [
         'song_ids' => 'array',
+        'playback_position' => 'int',
     ];
 
     public function user(): BelongsTo
