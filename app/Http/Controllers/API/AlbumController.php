@@ -20,6 +20,6 @@ class AlbumController extends Controller
 
     public function show(Album $album)
     {
-        return AlbumResource::make($this->repository->getOne($album->id));
+        return AlbumResource::make($album);
     }
 }

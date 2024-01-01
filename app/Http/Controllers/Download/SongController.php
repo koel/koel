@@ -15,7 +15,7 @@ class SongController extends Controller
 
     public function show(SongRequest $request)
     {
-        $songs = $this->songRepository->getByIds($request->songs);
+        $songs = $this->songRepository->getMany($request->songs);
 
         return response()->download($this->downloadService->from($songs));
     }

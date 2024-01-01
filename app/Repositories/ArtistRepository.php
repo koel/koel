@@ -37,13 +37,8 @@ class ArtistRepository extends Repository
             ->get('artists.*');
     }
 
-    public function getOne(int $id): Artist
-    {
-        return Artist::query()->find($id);
-    }
-
     /** @return Collection|array<array-key, Artist> */
-    public function getByIds(array $ids, bool $inThatOrder = false): Collection
+    public function getMany(array $ids, bool $inThatOrder = false): Collection
     {
         $artists = Artist::query()
             ->isStandard()

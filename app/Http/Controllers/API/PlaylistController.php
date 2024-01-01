@@ -38,7 +38,7 @@ class PlaylistController extends Controller
 
         if ($request->folder_id) {
             /** @var PlaylistFolder $folder */
-            $folder = $this->folderRepository->getOneById($request->folder_id);
+            $folder = $this->folderRepository->getOne($request->folder_id);
             $this->authorize('own', $folder);
         }
 
@@ -65,7 +65,7 @@ class PlaylistController extends Controller
 
         if ($request->folder_id) {
             /** @var PlaylistFolder $folder */
-            $folder = $this->folderRepository->getOneById($request->folder_id);
+            $folder = $this->folderRepository->getOne($request->folder_id);
             $this->authorize('own', $folder);
         }
 

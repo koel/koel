@@ -53,9 +53,9 @@ class SongController extends Controller
         $this->authorize('admin', $this->user);
 
         $updatedSongs = $this->songService->updateSongs($request->songs, SongUpdateData::fromRequest($request));
-        $albums = $this->albumRepository->getByIds($updatedSongs->pluck('album_id')->toArray());
+        $albums = $this->albumRepository->getMany($updatedSongs->pluck('album_id')->toArray());
 
-        $artists = $this->artistRepository->getByIds(
+        $artists = $this->artistRepository->getMany(
             array_merge(
                 $updatedSongs->pluck('artist_id')->all(),
                 $updatedSongs->pluck('album_artist_id')->all()

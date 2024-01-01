@@ -27,20 +27,25 @@ abstract class Repository implements RepositoryInterface
         return preg_replace('/(.+)\\\\Repositories\\\\(.+)Repository$/m', '$1\Models\\\$2', static::class);
     }
 
-    public function getOneById($id): ?Model
+    public function getOne($id): Model
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    public function findOne($id): ?Model
     {
         return $this->model->find($id);
     }
 
-    /** @return Collection|array<Model> */
-    public function getByIds(array $ids, bool $inThatOrder = false): Collection
+    /** @return Collection|array<array-key, Model> */
+    public function getMany(array $ids, bool $inThatOrder = false): Collection
     {
         $models = $this->model::query()->find($ids);
 
         return $inThatOrder ? $models->orderByArray($ids) : $models;
     }
 
-    /** @return Collection|array<Model> */
+    /** @return Collection|array<array-key, Model> */
     public function getAll(): Collection
     {
         return $this->model->all();

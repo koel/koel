@@ -7,10 +7,12 @@ use Illuminate\Support\Collection;
 
 interface RepositoryInterface
 {
-    public function getOneById($id): ?Model;
+    public function getOne($id): Model;
+
+    public function findOne($id): ?Model;
 
     /** @return Collection|array<Model> */
-    public function getByIds(array $ids, bool $inThatOrder = false): Collection;
+    public function getMany(array $ids, bool $inThatOrder = false): Collection;
 
     /** @return Collection|array<Model> */
     public function getAll(): Collection;

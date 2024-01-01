@@ -20,6 +20,6 @@ class ArtistController extends Controller
 
     public function show(Artist $artist)
     {
-        return ArtistResource::make($this->repository->getOne($artist->id));
+        return ArtistResource::make($artist);
     }
 }
