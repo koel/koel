@@ -182,7 +182,7 @@ class SongRepository extends Repository
             ->whereIn('songs.id', $ids)
             ->get();
 
-        return $withInputOrder ? sort_by_ids($songs, $ids) : $songs;
+        return $withInputOrder ? sort_by_array($songs, $ids) : $songs;
     }
 
     public function getOne(string $id, ?User $scopedUser = null): Song

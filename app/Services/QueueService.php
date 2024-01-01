@@ -22,7 +22,7 @@ class QueueService
             'song_ids' => [],
         ]);
 
-        $currentSong = $state->current_song_id ? $this->songRepository->findOne($state->current_song_id) : null;
+        $currentSong = $state->current_song_id ? $this->songRepository->findOne($state->current_song_id, $user) : null;
 
         return QueueStateDTO::create(
             $this->songRepository->getByIds($state->song_ids, $user, true),

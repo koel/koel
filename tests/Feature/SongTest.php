@@ -227,7 +227,7 @@ class SongTest extends TestCase
             ->assertOk();
 
         /** @var array<array-key, Song>|Collection $songs */
-        $songs = sort_by_ids(Song::query()->whereIn('id', $originalSongIds)->get(), $originalSongIds);
+        $songs = sort_by_array(Song::query()->whereIn('id', $originalSongIds)->get(), $originalSongIds);
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.

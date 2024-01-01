@@ -50,7 +50,7 @@ class ArtistRepository extends Repository
             ->whereIn('id', $ids)
             ->get();
 
-        return $withInputOrder ? sort_by_ids($artist, $ids) : $artist;
+        return $withInputOrder ? sort_by_array($artist, $ids) : $artist;
     }
 
     public function paginate(): Paginator

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<string> $song_ids
  * @property ?string $current_song_id
  * @property int $playback_position
+ * @property User $user
  */
 class QueueState extends Model
 {

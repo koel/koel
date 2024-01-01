@@ -74,7 +74,7 @@ function attempt_unless($condition, callable $callback, bool $log = true): mixed
 
 
 /** @return Collection|array<array-key, mixed> */
-function sort_by_ids(Collection $items, array $ids): Collection
+function sort_by_array(Collection $items, array $order, string $field = 'id'): Collection
 {
-    return $items->sortBy(static fn ($item) => array_search($item->id, $ids, true));
+    return $items->sortBy(static fn ($item) => array_search($item->$field, $order, true));
 }

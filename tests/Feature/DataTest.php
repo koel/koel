@@ -21,6 +21,11 @@ class DataTest extends TestCase
             'latest_version',
             'song_count',
             'song_length',
+            'queue_state' => [
+                'song_ids',
+                'current_song_id',
+                'playback_position',
+            ],
         ]);
     }
 }

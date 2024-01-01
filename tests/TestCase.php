@@ -8,6 +8,7 @@ use App\Models\Song;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Testing\TestResponse;
 use ReflectionClass;
 use Tests\Traits\CreatesApplication;
 use Tests\Traits\SandboxesTests;
@@ -22,6 +23,13 @@ abstract class TestCase extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        TestResponse::macro('log', function (string $file = 'test-response.json'): TestResponse {
+            /** @var TestResponse $this */
+            file_put_contents(storage_path('logs/' . $file), $this->getContent());
+
+            return $this;
+        });
 
         self::createSandbox();
     }

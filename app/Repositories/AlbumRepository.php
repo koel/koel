@@ -52,7 +52,7 @@ class AlbumRepository extends Repository
             ->whereIn('id', $ids)
             ->get();
 
-        return $withInputOrder ? sort_by_ids($albums, $ids) : $albums;
+        return $withInputOrder ? sort_by_array($albums, $ids) : $albums;
     }
 
     /** @return Collection|array<array-key, Album> */
