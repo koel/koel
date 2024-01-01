@@ -49,12 +49,11 @@ class QueueServiceTest extends TestCase
         $songIds = Song::factory()->count(3)->create()->pluck('id')->toArray();
         $this->service->updateQueueState($user, $songIds);
 
-        $this->assertDatabaseHas(QueueState::class, [
-            'user_id' => $user->id,
-            'song_ids' => json_encode($songIds),
-            'current_song_id' => null,
-            'playback_position' => 0,
-        ]);
+        /** @var QueueState $queueState */
+        $queueState = QueueState::query()->where('user_id', $user->id)->firstOrFail();
+        self::assertEqualsCanonicalizing($songIds, $queueState->song_ids);
+        self::assertNull($queueState->current_song_id);
+        self::assertSame(0, $queueState->playback_position);
     }
 
     public function testUpdateQueueState(): void
