@@ -1,6 +1,6 @@
 import { ref, Ref } from 'vue'
-import { expect, it } from 'vitest'
-import { screen, waitFor } from '@testing-library/vue'
+import { expect, it, Mock } from 'vitest'
+import { RenderResult, screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { albumStore, artistStore, commonStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -9,8 +9,14 @@ import { eventBus } from '@/utils'
 import ExtraDrawer from './ExtraDrawer.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (songRef: Ref<Song | null> = ref(null)) {
-    return this.render(ExtraDrawer, {
+  private renderComponent (songRef: Ref<Song | null> = ref(null)): [RenderResult, Mock, Mock] {
+    const artist = factory<Artist>('artist')
+    const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
+
+    const album = factory<Album>('album')
+    const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
+
+    const rendered = this.render(ExtraDrawer, {
       global: {
         stubs: {
           ProfileAvatar: this.stub(),
@@ -25,10 +31,12 @@ new class extends UnitTestCase {
         }
       }
     })
+
+    return [rendered, resolveArtistMock, resolveAlbumMock]
   }
 
   protected test () {
-    it('renders without a current song', () => expect(this.renderComponent().html()).toMatchSnapshot())
+    it('renders without a current song', () => expect(this.renderComponent()[0].html()).toMatchSnapshot())
 
     it('sets the active tab to the preference', async () => {
       preferenceStore.activeExtraPanelTab = 'YouTube'
@@ -42,17 +50,11 @@ new class extends UnitTestCase {
 
     it('fetches info for the current song', async () => {
       commonStore.state.use_you_tube = true
-      const artist = factory<Artist>('artist')
-      const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
-
-      const album = factory<Album>('album')
-      const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
 
       const song = factory<Song>('song')
-
       const songRef = ref<Song | null>(null)
 
-      this.renderComponent(songRef)
+      const [, resolveArtistMock, resolveAlbumMock] = this.renderComponent(songRef)
       songRef.value = song
 
       await waitFor(() => {
@@ -75,7 +77,7 @@ new class extends UnitTestCase {
       it('shows new version', () => {
         commonStore.state.current_version = 'v1.0.0'
         commonStore.state.latest_version = 'v1.0.1'
-        this.actingAsAdmin().renderComponent().getByRole('button', { name: 'New version available!' })
+        this.actingAsAdmin().renderComponent()[0].getByRole('button', { name: 'New version available!' })
       })
     })
 

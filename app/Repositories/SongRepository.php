@@ -175,14 +175,24 @@ class SongRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByIds(array $ids, ?User $scopedUser = null): Collection
+    public function getByIds(array $ids, bool $inThatOrder = false, ?User $scopedUser = null): Collection
     {
-        return Song::query()->withMeta($scopedUser ?? $this->auth->user())->whereIn('songs.id', $ids)->get();
+        $songs = Song::query()
+            ->withMeta($scopedUser ?? $this->auth->user())
+            ->whereIn('songs.id', $ids)
+            ->get();
+
+        return $inThatOrder ? $songs->orderByArray($ids) : $songs;
     }
 
-    public function getOne($id, ?User $scopedUser = null): Song
+    public function getOne(string $id, ?User $scopedUser = null): Song
     {
         return Song::query()->withMeta($scopedUser ?? $this->auth->user())->findOrFail($id);
+    }
+
+    public function findOne(string $id, ?User $scopedUser = null): ?Song
+    {
+        return Song::query()->withMeta($scopedUser ?? $this->auth->user())->find($id);
     }
 
     public function count(): int

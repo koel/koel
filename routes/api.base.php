@@ -73,6 +73,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('data', [DataController::class, 'index']);
 
         Route::get('queue/fetch', [QueueController::class, 'fetchSongs']);
+        Route::get('queue/state', [QueueController::class, 'getState']);
+        Route::put('queue/state', [QueueController::class, 'updateState']);
+        Route::put('queue/playback-status', [QueueController::class, 'updatePlaybackStatus']);
 
         Route::put('settings', [SettingController::class, 'update']);
 

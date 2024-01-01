@@ -5,7 +5,7 @@ import { expect, it, vi } from 'vitest'
 import { noop } from '@/utils'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { socketService } from '@/services'
+import { http, socketService } from '@/services'
 import { playbackService } from './playbackService'
 
 import {
@@ -62,10 +62,12 @@ new class extends UnitTestCase {
     ])(
       'when playCountRegistered is %s, isTranscoding is %s, current media time is %d, media duration is %d, then registerPlay() should be call %d times',
       (playCountRegistered, isTranscoding, currentTime, duration, numberOfCalls) => {
-        this.setCurrentSong(factory<Song>('song', {
+        const song = factory<Song>('song', {
           play_count_registered: playCountRegistered,
           playback_state: 'Playing'
-        }))
+        })
+
+        this.setCurrentSong(song)
 
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
         playbackService.init(document.querySelector('.plyr')!)
@@ -77,9 +79,15 @@ new class extends UnitTestCase {
         this.setReadOnlyProperty(mediaElement, 'duration', duration)
 
         const registerPlayMock = this.mock(playbackService, 'registerPlay')
+        const putMock = this.mock(http, 'put')
+
         mediaElement.dispatchEvent(new Event('timeupdate'))
 
         expect(registerPlayMock).toHaveBeenCalledTimes(numberOfCalls)
+        expect(putMock).toHaveBeenCalledWith('queue/playback-status', {
+          song: song.id,
+          position: currentTime
+        })
       })
 
     it('plays next song if current song is errored', () => {
@@ -138,11 +146,14 @@ new class extends UnitTestCase {
         this.setReadOnlyProperty(mediaElement, 'duration', duration)
 
         const preloadMock = this.mock(playbackService, 'preload')
+        this.mock(http, 'put')
+
         mediaElement.dispatchEvent(new Event('timeupdate'))
 
         expect(preloadMock).toHaveBeenCalledTimes(numberOfCalls)
       }
     )
+
     it('registers play', () => {
       const recentlyPlayedStoreAddMock = this.mock(recentlyPlayedStore, 'add')
       const registerPlayMock = this.mock(songStore, 'registerPlay')
@@ -156,6 +167,8 @@ new class extends UnitTestCase {
     })
 
     it('preloads a song', () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const audioElement = {
         setAttribute: vi.fn(),
         load: vi.fn()
@@ -175,11 +188,14 @@ new class extends UnitTestCase {
     })
 
     it('restarts a song', async () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const song = this.setCurrentSong()
       this.mock(Math, 'floor', 1000)
       const broadcastMock = this.mock(socketService, 'broadcast')
       const showNotificationMock = this.mock(playbackService, 'showNotification')
       const restartMock = this.mock(playbackService.player!, 'restart')
+      const putMock = this.mock(http, 'put')
       const playMock = this.mock(window.HTMLMediaElement.prototype, 'play')
 
       await playbackService.restart()
@@ -190,6 +206,11 @@ new class extends UnitTestCase {
       expect(showNotificationMock).toHaveBeenCalled()
       expect(restartMock).toHaveBeenCalled()
       expect(playMock).toHaveBeenCalled()
+
+      expect(putMock).toHaveBeenCalledWith('queue/playback-status', {
+        song: song.id,
+        position: 0,
+      })
     })
 
     it.each<[RepeatMode, RepeatMode]>([
@@ -197,6 +218,7 @@ new class extends UnitTestCase {
       ['REPEAT_ALL', 'REPEAT_ONE'],
       ['REPEAT_ONE', 'NO_REPEAT']
     ])('it switches from repeat mode %s to repeat mode %s', (fromMode, toMode) => {
+      playbackService.init(document.querySelector('.plyr')!)
       preferences.repeatMode = fromMode
       playbackService.changeRepeatMode()
 
@@ -204,6 +226,9 @@ new class extends UnitTestCase {
     })
 
     it('restarts song if playPrev is triggered after 5 seconds', async () => {
+      this.setCurrentSong()
+      playbackService.init(document.querySelector('.plyr')!)
+
       const mock = this.mock(playbackService.player!, 'restart')
       this.setReadOnlyProperty(playbackService.player!.media, 'currentTime', 6)
 
@@ -213,6 +238,8 @@ new class extends UnitTestCase {
     })
 
     it('stops if playPrev is triggered when there is no prev song and repeat mode is NO_REPEAT', async () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const stopMock = this.mock(playbackService, 'stop')
       this.setReadOnlyProperty(playbackService.player!.media, 'currentTime', 4)
       this.setReadOnlyProperty(playbackService, 'previous', undefined)
@@ -224,6 +251,8 @@ new class extends UnitTestCase {
     })
 
     it('plays the previous song', async () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const previousSong = factory('song')
       this.setReadOnlyProperty(playbackService.player!.media, 'currentTime', 4)
       this.setReadOnlyProperty(playbackService, 'previous', previousSong)
@@ -235,6 +264,8 @@ new class extends UnitTestCase {
     })
 
     it('stops if playNext is triggered when there is no next song and repeat mode is NO_REPEAT', async () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       this.setReadOnlyProperty(playbackService, 'next', undefined)
       preferences.repeatMode = 'NO_REPEAT'
       const stopMock = this.mock(playbackService, 'stop')
@@ -245,6 +276,8 @@ new class extends UnitTestCase {
     })
 
     it('plays the next song', async () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const nextSong = factory('song')
       this.setReadOnlyProperty(playbackService, 'next', nextSong)
       const playMock = this.mock(playbackService, 'play')
@@ -255,7 +288,9 @@ new class extends UnitTestCase {
     })
 
     it('stops playback', () => {
-      const currentSong = factory<Song>('song')
+      playbackService.init(document.querySelector('.plyr')!)
+
+      const currentSong = this.setCurrentSong()
       const pauseMock = this.mock(playbackService.player!, 'pause')
       const seekMock = this.mock(playbackService.player!, 'seek')
       const broadcastMock = this.mock(socketService, 'broadcast')
@@ -270,6 +305,8 @@ new class extends UnitTestCase {
     })
 
     it('pauses playback', () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const song = this.setCurrentSong()
       const pauseMock = this.mock(playbackService.player!, 'pause')
       const broadcastMock = this.mock(socketService, 'broadcast')
@@ -298,7 +335,8 @@ new class extends UnitTestCase {
     })
 
     it('plays first in queue if toggled when there is no current song', async () => {
-      queueStore.clear()
+      playbackService.init(document.querySelector('.plyr')!)
+      queueStore.state.songs = []
       const playFirstInQueueMock = this.mock(playbackService, 'playFirstInQueue')
 
       await playbackService.toggle()
@@ -310,6 +348,8 @@ new class extends UnitTestCase {
       ['resume', 'Paused'],
       ['pause', 'Playing']
     ])('%ss playback if toggled when current song playback state is %s', async (action, playbackState) => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       this.setCurrentSong(factory<Song>('song', { playback_state: playbackState }))
       const actionMock = this.mock(playbackService, action)
       await playbackService.toggle()
@@ -318,6 +358,8 @@ new class extends UnitTestCase {
     })
 
     it('queues and plays songs without shuffling', async () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const songs = factory<Song>('song', 5)
       const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
       const playMock = this.mock(playbackService, 'play')
@@ -334,6 +376,8 @@ new class extends UnitTestCase {
     })
 
     it('queues and plays songs with shuffling', async () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const songs = factory<Song>('song', 5)
       const shuffledSongs = factory<Song>('song', 5)
       const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
@@ -351,8 +395,10 @@ new class extends UnitTestCase {
     })
 
     it('plays first song in queue', async () => {
+      playbackService.init(document.querySelector('.plyr')!)
+
       const songs = factory<Song>('song', 5)
-      queueStore.all = songs
+      queueStore.state.songs = songs
       this.setReadOnlyProperty(queueStore, 'first', songs[0])
       const playMock = this.mock(playbackService, 'play')
 

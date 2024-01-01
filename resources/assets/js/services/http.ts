@@ -6,11 +6,13 @@ import { authService } from '@/services'
 class Http {
   client: AxiosInstance
 
-  private static setProgressBar () {
+  private silent = false
+
+  private showLoadingIndicator () {
     NProgress.start()
   }
 
-  private static hideProgressBar () {
+  private hideLoadingIndicator () {
     NProgress.done(true)
   }
 
@@ -49,14 +51,15 @@ class Http {
 
     // Intercept the request to make sure the token is injected into the header.
     this.client.interceptors.request.use(config => {
-      Http.setProgressBar()
+      this.silent || this.showLoadingIndicator()
       config.headers.Authorization = `Bearer ${authService.getApiToken()}`
       return config
     })
 
     // Intercept the response and…
     this.client.interceptors.response.use(response => {
-      Http.hideProgressBar()
+      this.silent || this.hideLoadingIndicator()
+      this.silent = false
 
       // …get the tokens from the header or response data if exist, and save them.
       const token = response.headers.authorization || response.data.token
@@ -67,7 +70,8 @@ class Http {
 
       return response
     }, error => {
-      Http.hideProgressBar()
+      this.silent || this.hideLoadingIndicator()
+      this.silent = false
 
       // Also, if we receive a Bad Request / Unauthorized error
       if (error.response?.status === 400 || error.response?.status === 401) {
@@ -80,6 +84,11 @@ class Http {
 
       return Promise.reject(error)
     })
+  }
+
+  public get silently () {
+    this.silent = true
+    return this
   }
 }
 

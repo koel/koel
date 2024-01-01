@@ -9,12 +9,28 @@ export const queueStore = {
     songs: []
   }),
 
+  init (savedState: QueueState) {
+    // don't set this.all here, as it would trigger saving state
+    this.state.songs = songStore.syncWithVault(savedState.songs)
+
+    if (!this.state.songs.length) {
+      return
+    }
+
+    if (savedState.current_song) {
+      songStore.syncWithVault(savedState.current_song)[0].playback_state = 'Paused'
+    } else {
+      this.all[0].playback_state = 'Paused'
+    }
+  },
+
   get all () {
     return this.state.songs
   },
 
   set all (songs: Song[]) {
-    this.state.songs = reactive(songs)
+    this.state.songs = songStore.syncWithVault(songs)
+    this.saveState()
   },
 
   get first () {
@@ -48,7 +64,7 @@ export const queueStore = {
   },
 
   replaceQueueWith (songs: Song | Song[]) {
-    this.state.songs = reactive(arrayify(songs))
+    this.all = arrayify(songs)
   },
 
   queueAfterCurrent (songs: Song | Song[]) {
@@ -82,6 +98,8 @@ export const queueStore = {
       this.all.splice(this.indexOf(song), 1)
       this.all.splice(targetIndex, 0, reactive(song))
     })
+
+    this.saveState()
   },
 
   clear () {
@@ -116,19 +134,21 @@ export const queueStore = {
     return this.all.find(song => song.playback_state !== 'Stopped')
   },
 
-  shuffle () {
-    this.all = shuffle(this.all)
-  },
-
   async fetchRandom (limit = 500) {
-    const songs = await http.get<Song[]>(`queue/fetch?order=rand&limit=${limit}`)
-    this.state.songs = songStore.syncWithVault(songs)
-    return this.state.songs
+    this.all = await http.get<Song[]>(`queue/fetch?order=rand&limit=${limit}`)
+    return this.all
   },
 
   async fetchInOrder (sortField: SongListSortField, order: SortOrder, limit = 500) {
-    const songs = await http.get<Song[]>(`queue/fetch?order=${order}&sort=${sortField}&limit=${limit}`)
-    this.state.songs = songStore.syncWithVault(songs)
-    return this.state.songs
+    this.all = await http.get<Song[]>(`queue/fetch?order=${order}&sort=${sortField}&limit=${limit}`)
+    return this.all
+  },
+
+  saveState () {
+    try {
+      http.silently.put('queue/state', { songs: this.state.songs.map(song => song.id) })
+    } catch (e) {
+      console.error(e)
+    }
   }
 }

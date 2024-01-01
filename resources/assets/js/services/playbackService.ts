@@ -13,7 +13,7 @@ import {
 } from '@/stores'
 
 import { arrayify, isAudioContextSupported, logger } from '@/utils'
-import { audioService, socketService, volumeManager } from '@/services'
+import { audioService, http, socketService, volumeManager } from '@/services'
 
 /**
  * The number of seconds before the current song ends to start preload the next one.
@@ -72,14 +72,13 @@ class PlaybackService {
       return
     }
 
-    document.title = `${song.title} ♫ Koel`
-    this.player.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
-
     if (queueStore.current) {
       queueStore.current.playback_state = 'Stopped'
     }
 
     song.playback_state = 'Playing'
+
+    await this.setNowPlayingMeta(song)
 
     // Manually set the `src` attribute of the audio to prevent plyr from resetting
     // the audio media object and cause our equalizer to malfunction.
@@ -87,11 +86,16 @@ class PlaybackService {
 
     // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
     // Fixes #898
+    await this.restart()
+  }
+
+  private async setNowPlayingMeta(song) {
+    document.title = `${song.title} ♫ Koel`
+    this.player.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
+
     if (isAudioContextSupported) {
       await audioService.context.resume()
     }
-
-    await this.restart()
   }
 
   public showNotification (song: Song) {
@@ -126,14 +130,42 @@ class PlaybackService {
     })
   }
 
+  public setCurrentSongAndPlaybackPosition (song: Song, playbackPosition: number) {
+    if (queueStore.current) {
+      queueStore.current.playback_state = 'Stopped'
+    }
+
+    song.playback_state = 'Paused'
+
+    this.player.media.src = songStore.getSourceUrl(song)
+    this.player.seek(playbackPosition)
+    this.player.pause()
+  }
+
+  // Record the UNIX timestamp the song starts playing, for scrobbling purpose
+  private recordStartTime (song: Song) {
+    song.play_start_time = Math.floor(Date.now() / 1000)
+    song.play_count_registered = false
+  }
+
+  private broadcastSong (song: Song) {
+    socketService.broadcast('SOCKET_SONG', song)
+  }
+
   public async restart () {
     const song = queueStore.current!
 
-    // Record the UNIX timestamp the song starts playing, for scrobbling purpose
-    song.play_start_time = Math.floor(Date.now() / 1000)
-    song.play_count_registered = false
+    this.recordStartTime(song)
+    this.broadcastSong(song)
 
-    socketService.broadcast('SOCKET_SONG', song)
+    try {
+      http.silently.put('queue/playback-status', {
+        song: song.id,
+        position: 0
+      })
+    } catch (error) {
+      console.log(error)
+    }
 
     this.player.restart()
 
@@ -246,6 +278,18 @@ class PlaybackService {
   }
 
   public async resume () {
+    const song = queueStore.current!
+
+    if (!this.player.media.src) {
+      // on first load when the queue is loaded from saved state, the player's src is empty
+      // we need to properly set it as well as any kind of playback metadata
+      this.player.media.src = songStore.getSourceUrl(song)
+      this.player.seek(commonStore.state.queue_state.playback_position);
+
+      await this.setNowPlayingMeta(queueStore.current!)
+      this.recordStartTime(song)
+    }
+
     try {
       await this.player.media.play()
     } catch (error) {
@@ -255,7 +299,7 @@ class PlaybackService {
     queueStore.current!.playback_state = 'Playing'
     navigator.mediaSession && (navigator.mediaSession.playbackState = 'playing')
 
-    socketService.broadcast('SOCKET_SONG', queueStore.current)
+    this.broadcastSong(song)
   }
 
   public async toggle () {
@@ -342,6 +386,18 @@ class PlaybackService {
         // Refer to https://github.com/koel/koel/issues/1087
         if (!media.duration || media.currentTime * 4 >= media.duration) {
           this.registerPlay(currentSong)
+        }
+      }
+
+      // every 5 seconds, we save the current playback position to the server
+      if (Math.ceil(media.currentTime) % 5 === 0) {
+        try {
+          http.silently.put('queue/playback-status', {
+            song: currentSong.id,
+            position: Math.ceil(media.currentTime)
+          })
+        } catch (error) {
+          console.log(error)
         }
       }
 

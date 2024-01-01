@@ -46,14 +46,6 @@ class AlbumRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Album> */
-    public function getByIds(array $ids): Collection
-    {
-        return Album::query()
-            ->whereIn('id', $ids)
-            ->get();
-    }
-
-    /** @return Collection|array<array-key, Album> */
     public function getByArtist(Artist $artist): Collection
     {
         return Album::query()

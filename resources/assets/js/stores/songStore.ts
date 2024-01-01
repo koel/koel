@@ -86,13 +86,13 @@ export const songStore = {
    * Increase a play count for a song.
    */
   registerPlay: async (song: Song) => {
-    const interaction = await http.post<Interaction>('interaction/play', { song: song.id })
+    const interaction = await http.silently.post<Interaction>('interaction/play', { song: song.id })
 
     // Use the data from the server to make sure we don't miss a play from another device.
     song.play_count = interaction.play_count
   },
 
-  scrobble: async (song: Song) => await http.post(`songs/${song.id}/scrobble`, {
+  scrobble: async (song: Song) => await http.silently.post(`songs/${song.id}/scrobble`, {
     timestamp: song.play_start_time
   }),
 

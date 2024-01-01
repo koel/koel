@@ -34,11 +34,12 @@ class SearchService
 
         return ExcerptSearchResult::make(
             $this->songRepository->getByIds(
-                Song::search($keywords)->get()->take($count)->pluck('id')->all(),
-                $scopedUser
+                ids: Song::search($keywords)->get()->take($count)->pluck('id')->all(),
+                inThatOrder: true,
+                scopedUser: $scopedUser
             ),
-            $this->artistRepository->getByIds(Artist::search($keywords)->get()->take($count)->pluck('id')->all()),
-            $this->albumRepository->getByIds(Album::search($keywords)->get()->take($count)->pluck('id')->all()),
+            $this->artistRepository->getByIds(Artist::search($keywords)->get()->take($count)->pluck('id')->all(), true),
+            $this->albumRepository->getByIds(Album::search($keywords)->get()->take($count)->pluck('id')->all(), true),
         );
     }
 

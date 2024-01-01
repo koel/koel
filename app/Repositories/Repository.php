@@ -33,9 +33,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /** @return Collection|array<Model> */
-    public function getByIds(array $ids): Collection
+    public function getByIds(array $ids, bool $inThatOrder = false): Collection
     {
-        return $this->model->find($ids);
+        $models = $this->model::query()->find($ids);
+
+        return $inThatOrder ? $models->orderByArray($ids) : $models;
     }
 
     /** @return Collection|array<Model> */

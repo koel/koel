@@ -1,7 +1,7 @@
 import isMobile from 'ismobilejs'
 import { reactive } from 'vue'
 import { http } from '@/services'
-import { playlistFolderStore, playlistStore, preferenceStore, settingStore, themeStore, userStore } from '.'
+import { playlistFolderStore, playlistStore, preferenceStore, queueStore, settingStore, themeStore, userStore } from '.'
 
 interface CommonStoreState {
   allow_download: boolean
@@ -18,7 +18,8 @@ interface CommonStoreState {
   users: User[]
   use_you_tube: boolean,
   song_count: number,
-  song_length: number
+  song_length: number,
+  queue_state: QueueState
 }
 
 export const commonStore = {
@@ -37,7 +38,13 @@ export const commonStore = {
     users: [],
     use_you_tube: false,
     song_count: 0,
-    song_length: 0
+    song_length: 0,
+    queue_state: {
+      type: 'queue-states',
+      songs: [],
+      current_song: null,
+      playback_position: 0
+    }
   }),
 
   async init () {
@@ -54,6 +61,7 @@ export const commonStore = {
     playlistStore.init(this.state.playlists)
     playlistFolderStore.init(this.state.playlist_folders)
     settingStore.init(this.state.settings)
+    queueStore.init(this.state.queue_state)
     themeStore.init()
 
     return this.state

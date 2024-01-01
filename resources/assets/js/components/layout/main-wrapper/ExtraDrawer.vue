@@ -94,14 +94,11 @@ const { currentUser } = useAuthorization()
 const { useYouTube } = useThirdPartyServices()
 const { shouldNotifyNewVersion } = useNewVersionNotification()
 
-const song = requireInjection(CurrentSongKey, ref(null))
+const song = requireInjection(CurrentSongKey, ref(undefined))
 const activeTab = ref<ExtraPanelTab | null>(null)
 
 const artist = ref<Artist>()
 const album = ref<Album>()
-
-watch(song, song => song && fetchSongInfo(song))
-watch(activeTab, tab => (preferenceStore.activeExtraPanelTab = tab))
 
 const fetchSongInfo = async (_song: Song) => {
   song.value = _song
@@ -115,6 +112,9 @@ const fetchSongInfo = async (_song: Song) => {
     logger.log('Failed to fetch media information', error)
   }
 }
+
+watch(song, song => song && fetchSongInfo(song), { immediate: true })
+watch(activeTab, tab => (preferenceStore.activeExtraPanelTab = tab))
 
 const openAboutKoelModal = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
 const onProfileLinkClick = () => isMobile.any && (activeTab.value = null)
