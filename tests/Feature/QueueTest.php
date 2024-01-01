@@ -44,10 +44,9 @@ class QueueTest extends TestCase
         $this->putAs('api/queue/state', ['songs' => $songIds], $user)
             ->assertNoContent();
 
-        self::assertDatabaseHas(QueueState::class, [
-            'user_id' => $user->id,
-            'song_ids' => json_encode($songIds),
-        ]);
+        /** @var QueueState $queue */
+        $queue = QueueState::query()->where('user_id', $user->id)->firstOrFail();
+        self::assertEqualsCanonicalizing($songIds, $queue->song_ids);
     }
 
     public function testUpdatePlaybackStatus(): void
