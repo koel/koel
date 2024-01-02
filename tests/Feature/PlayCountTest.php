@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Events\SongStartedPlaying;
+use App\Events\PlaybackStarted;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
@@ -12,7 +12,7 @@ class PlayCountTest extends TestCase
 {
     public function testStoreExistingEntry(): void
     {
-        Event::fake(SongStartedPlaying::class);
+        Event::fake(PlaybackStarted::class);
 
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create([
@@ -29,12 +29,12 @@ class PlayCountTest extends TestCase
             ]);
 
         self::assertSame(11, $interaction->refresh()->play_count);
-        Event::assertDispatched(SongStartedPlaying::class);
+        Event::assertDispatched(PlaybackStarted::class);
     }
 
     public function testStoreNewEntry(): void
     {
-        Event::fake(SongStartedPlaying::class);
+        Event::fake(PlaybackStarted::class);
 
         /** @var Song $song */
         $song = Song::factory()->create();
@@ -58,6 +58,6 @@ class PlayCountTest extends TestCase
             ->first();
 
         self::assertSame(1, $interaction->play_count);
-        Event::assertDispatched(SongStartedPlaying::class);
+        Event::assertDispatched(PlaybackStarted::class);
     }
 }

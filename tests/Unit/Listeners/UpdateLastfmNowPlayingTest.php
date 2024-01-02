@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Listeners;
 
-use App\Events\SongStartedPlaying;
+use App\Events\PlaybackStarted;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Song;
 use App\Models\User;
@@ -26,6 +26,6 @@ class UpdateLastfmNowPlayingTest extends TestCase
             ->with($song, $user)
             ->once();
 
-        (new UpdateLastfmNowPlaying($lastfm))->handle(new SongStartedPlaying($song, $user));
+        (new UpdateLastfmNowPlaying($lastfm))->handle(new PlaybackStarted($song, $user));
     }
 }

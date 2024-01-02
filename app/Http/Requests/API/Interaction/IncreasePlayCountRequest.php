@@ -7,7 +7,7 @@ use App\Http\Requests\API\Request;
 /**
  * @property string $song The song's ID
  */
-class StorePlayCountRequest extends Request
+class IncreasePlayCountRequest extends Request
 {
     /** @return array<mixed> */
     public function rules(): array

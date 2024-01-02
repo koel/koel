@@ -22,8 +22,8 @@ use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
 use App\Http\Controllers\API\Interaction\BatchLikeController;
-use App\Http\Controllers\API\Interaction\LikeController;
-use App\Http\Controllers\API\Interaction\PlayCountController;
+use App\Http\Controllers\API\Interaction\HandlePlaybackStartedController;
+use App\Http\Controllers\API\Interaction\ToggleLikeSongController;
 use App\Http\Controllers\API\ObjectStorage\S3\SongController as S3SongController;
 use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\PlaylistFolderController;
@@ -101,8 +101,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('upload', UploadController::class);
 
         // Interaction routes
-        Route::post('interaction/play', [PlayCountController::class, 'store']);
-        Route::post('interaction/like', [LikeController::class, 'store']);
+        Route::post('interaction/play', HandlePlaybackStartedController::class);
+        Route::post('interaction/like', ToggleLikeSongController::class);
         Route::post('interaction/batch/like', [BatchLikeController::class, 'store']);
         Route::post('interaction/batch/unlike', [BatchLikeController::class, 'destroy']);
 

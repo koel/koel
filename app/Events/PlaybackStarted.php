@@ -6,7 +6,7 @@ use App\Models\Song;
 use App\Models\User;
 use Illuminate\Queue\SerializesModels;
 
-class SongStartedPlaying extends Event
+class PlaybackStarted extends Event
 {
     use SerializesModels;
 
