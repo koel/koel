@@ -2,44 +2,47 @@
 
 use App\Facades\YouTube;
 use App\Http\Controllers\API\AlbumController;
-use App\Http\Controllers\API\AlbumCoverController;
 use App\Http\Controllers\API\AlbumSongController;
-use App\Http\Controllers\API\AlbumThumbnailController;
 use App\Http\Controllers\API\ArtistAlbumController;
 use App\Http\Controllers\API\ArtistController;
-use App\Http\Controllers\API\ArtistImageController;
 use App\Http\Controllers\API\ArtistSongController;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\DataController;
-use App\Http\Controllers\API\DemoCreditController;
+use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\ExcerptSearchController;
-use App\Http\Controllers\API\FavoriteSongController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
+use App\Http\Controllers\API\FetchAlbumThumbnailController;
 use App\Http\Controllers\API\FetchArtistInformationController;
+use App\Http\Controllers\API\FetchDemoCreditController;
+use App\Http\Controllers\API\FetchFavoriteSongsController;
+use App\Http\Controllers\API\FetchInitialDataController;
+use App\Http\Controllers\API\FetchOverviewController;
 use App\Http\Controllers\API\FetchRandomSongsInGenreController;
+use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
+use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
 use App\Http\Controllers\API\Interaction\BatchLikeController;
 use App\Http\Controllers\API\Interaction\LikeController;
 use App\Http\Controllers\API\Interaction\PlayCountController;
-use App\Http\Controllers\API\LastfmController;
 use App\Http\Controllers\API\ObjectStorage\S3\SongController as S3SongController;
-use App\Http\Controllers\API\OverviewController;
 use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\PlaylistFolderController;
 use App\Http\Controllers\API\PlaylistFolderPlaylistController;
 use App\Http\Controllers\API\PlaylistSongController;
 use App\Http\Controllers\API\ProfileController;
-use App\Http\Controllers\API\QueueController;
-use App\Http\Controllers\API\RecentlyPlayedSongController;
+use App\Http\Controllers\API\QueueStateController;
 use App\Http\Controllers\API\ScrobbleController;
+use App\Http\Controllers\API\SearchYouTubeController;
+use App\Http\Controllers\API\SetLastfmSessionKeyController;
 use App\Http\Controllers\API\SettingController;
 use App\Http\Controllers\API\SongController;
 use App\Http\Controllers\API\SongSearchController;
+use App\Http\Controllers\API\UpdatePlaybackStatusController;
+use App\Http\Controllers\API\UploadAlbumCoverController;
+use App\Http\Controllers\API\UploadArtistImageController;
 use App\Http\Controllers\API\UploadController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
-use App\Http\Controllers\API\YouTubeController;
 use App\Models\Song;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -69,13 +72,13 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
             return $pusher->socket_auth($request->channel_name, $request->socket_id);
         })->name('broadcasting.auth');
 
-        Route::get('overview', [OverviewController::class, 'index']);
-        Route::get('data', [DataController::class, 'index']);
+        Route::get('overview', FetchOverviewController::class);
+        Route::get('data', FetchInitialDataController::class);
 
-        Route::get('queue/fetch', [QueueController::class, 'fetchSongs']);
-        Route::get('queue/state', [QueueController::class, 'getState']);
-        Route::put('queue/state', [QueueController::class, 'updateState']);
-        Route::put('queue/playback-status', [QueueController::class, 'updatePlaybackStatus']);
+        Route::get('queue/fetch', FetchSongsForQueueController::class);
+        Route::put('queue/playback-status', UpdatePlaybackStatusController::class);
+        Route::get('queue/state', [QueueStateController::class, 'show']);
+        Route::put('queue/state', [QueueStateController::class, 'update']);
 
         Route::put('settings', [SettingController::class, 'update']);
 
@@ -86,7 +89,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('artists.albums', ArtistAlbumController::class);
         Route::apiResource('artists.songs', ArtistSongController::class);
 
-        Route::post('songs/{song}/scrobble', [ScrobbleController::class, 'store'])->where(['song' => Song::ID_REGEX]);
+        Route::post('songs/{song}/scrobble', ScrobbleController::class)->where(['song' => Song::ID_REGEX]);
 
         Route::apiResource('songs', SongController::class)
             ->except('update', 'destroy')
@@ -103,8 +106,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('interaction/batch/like', [BatchLikeController::class, 'store']);
         Route::post('interaction/batch/unlike', [BatchLikeController::class, 'destroy']);
 
-        Route::get('songs/recently-played', [RecentlyPlayedSongController::class, 'index']);
-        Route::get('songs/favorite', [FavoriteSongController::class, 'index']);
+        Route::get('songs/recently-played', FetchRecentlyPlayedSongController::class);
+        Route::get('songs/favorite', FetchFavoriteSongsController::class);
 
         Route::apiResource('playlist-folders', PlaylistFolderController::class);
         Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except('destroy');
@@ -130,12 +133,12 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::put('me', [ProfileController::class, 'update']);
 
         // Last.fm-related routes
-        Route::post('lastfm/session-key', [LastfmController::class, 'setSessionKey']);
-        Route::delete('lastfm/disconnect', [LastfmController::class, 'disconnect'])->name('lastfm.disconnect');
+        Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);
+        Route::delete('lastfm/disconnect', DisconnectFromLastfmController::class)->name('lastfm.disconnect');
 
         // YouTube-related routes
         if (YouTube::enabled()) {
-            Route::get('youtube/search/song/{song}', [YouTubeController::class, 'searchVideosRelatedToSong']);
+            Route::get('youtube/search/song/{song}', SearchYouTubeController::class);
         }
 
         // Media information routes
@@ -143,9 +146,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('artists/{artist}/information', FetchArtistInformationController::class);
 
         // Cover/image upload routes
-        Route::put('album/{album}/cover', [AlbumCoverController::class, 'update']);
-        Route::put('artist/{artist}/image', [ArtistImageController::class, 'update']);
-        Route::get('album/{album}/thumbnail', [AlbumThumbnailController::class, 'show']);
+        Route::put('album/{album}/cover', UploadAlbumCoverController::class);
+        Route::put('artist/{artist}/image', UploadArtistImageController::class);
+        Route::get('album/{album}/thumbnail', FetchAlbumThumbnailController::class);
 
         Route::get('search', ExcerptSearchController::class);
         Route::get('search/songs', SongSearchController::class);
@@ -160,5 +163,5 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::delete('song', [S3SongController::class, 'remove'])->name('s3.song.remove'); // and here.
     });
 
-    Route::get('demo/credits', [DemoCreditController::class, 'index']);
+    Route::get('demo/credits', FetchDemoCreditController::class);
 });

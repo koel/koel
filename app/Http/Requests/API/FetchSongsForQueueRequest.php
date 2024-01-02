@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
  * @property-read string $order
  * @property-read int $limit
  */
-class QueueFetchSongRequest extends Request
+class FetchSongsForQueueRequest extends Request
 {
     /** @return array<mixed> */
     public function rules(): array

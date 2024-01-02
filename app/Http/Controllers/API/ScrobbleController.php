@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\ScrobbleStoreRequest;
+use App\Http\Requests\API\ScrobbleRequest;
 use App\Jobs\ScrobbleJob;
 use App\Models\Song;
 use App\Models\User;
@@ -11,15 +11,11 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class ScrobbleController extends Controller
 {
-    /** @param User $currentUser */
-    public function __construct(private ?Authenticatable $currentUser)
+    /** @param User $user */
+    public function __invoke(ScrobbleRequest $request, Song $song, Authenticatable $user)
     {
-    }
-
-    public function store(ScrobbleStoreRequest $request, Song $song)
-    {
-        if (!$song->artist->is_unknown && $this->currentUser->connectedToLastfm()) {
-            ScrobbleJob::dispatch($this->currentUser, $song, $request->timestamp);
+        if (!$song->artist->is_unknown && $user->connectedToLastfm()) {
+            ScrobbleJob::dispatch($user, $song, $request->timestamp);
         }
 
         return response()->noContent();
