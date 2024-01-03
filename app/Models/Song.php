@@ -17,6 +17,7 @@ use Laravel\Scout\Searchable;
  * @property string $path
  * @property string $title
  * @property Album $album
+ * @property User $uploader
  * @property Artist $artist
  * @property Artist $album_artist
  * @property float $length
@@ -33,6 +34,8 @@ use Laravel\Scout\Searchable;
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
  * @property Carbon $created_at
  * @property array<mixed> $s3_params
+ * @property int $owner_id
+ * @property bool $is_public
  */
 class Song extends Model
 {
@@ -52,6 +55,7 @@ class Song extends Model
         'mtime' => 'int',
         'track' => 'int',
         'disc' => 'int',
+        'is_public' => 'bool',
     ];
 
     protected $keyType = 'string';
@@ -64,6 +68,11 @@ class Song extends Model
     public static function query(): SongBuilder
     {
         return parent::query();
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function newEloquentBuilder($query): SongBuilder
@@ -102,6 +111,11 @@ class Song extends Model
             get: fn (?string $value) => $value ?: pathinfo($this->path, PATHINFO_FILENAME),
             set: static fn (string $value) => html_entity_decode($value)
         );
+    }
+
+    public function accessibleBy(User $user): bool
+    {
+        return $this->is_public || $this->owner_id === $user->id;
     }
 
     protected function lyrics(): Attribute

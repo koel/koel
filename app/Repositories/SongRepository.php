@@ -7,36 +7,12 @@ use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use App\Repositories\Traits\Searchable;
 use App\Values\Genre;
-use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Webmozart\Assert\Assert;
 
 class SongRepository extends Repository
 {
-    use Searchable;
-
-    public const SORT_COLUMNS_NORMALIZE_MAP = [
-        'title' => 'songs.title',
-        'track' => 'songs.track',
-        'length' => 'songs.length',
-        'created_at' => 'songs.created_at',
-        'disc' => 'songs.disc',
-        'artist_name' => 'artists.name',
-        'album_name' => 'albums.name',
-    ];
-
-    private const VALID_SORT_COLUMNS = [
-        'songs.title',
-        'songs.track',
-        'songs.length',
-        'songs.created_at',
-        'artists.name',
-        'albums.name',
-    ];
-
     private const DEFAULT_QUEUE_LIMIT = 500;
 
     public function getOneByPath(string $path): ?Song
@@ -53,14 +29,26 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRecentlyAdded(int $count = 10, ?User $scopedUser = null): Collection
     {
-        return Song::query()->withMeta($scopedUser ?? $this->auth->user())->latest()->limit($count)->get();
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
+            ->latest()
+            ->limit($count)
+            ->get();
     }
 
     /** @return Collection|array<array-key, Song> */
     public function getMostPlayed(int $count = 7, ?User $scopedUser = null): Collection
     {
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
         return Song::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser, requiresInteractions: true)
             ->where('interactions.play_count', '>', 0)
             ->orderByDesc('interactions.play_count')
             ->limit($count)
@@ -70,8 +58,12 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRecentlyPlayed(int $count = 7, ?User $scopedUser = null): Collection
     {
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
         return Song::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser, requiresInteractions: true)
             ->orderByDesc('interactions.last_played_at')
             ->limit($count)
             ->get();
@@ -83,11 +75,13 @@ class SongRepository extends Repository
         ?User $scopedUser = null,
         int $perPage = 50
     ): Paginator {
-        return self::applySort(
-            Song::query()->withMeta($scopedUser ?? $this->auth->user()),
-            $sortColumn,
-            $sortDirection
-        )
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
+            ->sort($sortColumn, $sortDirection)
             ->simplePaginate($perPage);
     }
 
@@ -98,13 +92,14 @@ class SongRepository extends Repository
         ?User $scopedUser = null,
         int $perPage = 50
     ): Paginator {
-        return self::applySort(
-            Song::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
-            ->where('genre', $genre),
-            $sortColumn,
-            $sortDirection
-        )
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
+            ->where('genre', $genre)
+            ->sort($sortColumn, $sortDirection)
             ->simplePaginate($perPage);
     }
 
@@ -115,26 +110,39 @@ class SongRepository extends Repository
         int $limit = self::DEFAULT_QUEUE_LIMIT,
         ?User $scopedUser = null,
     ): Collection {
-        return self::applySort(
-            Song::query()->withMeta($scopedUser ?? $this->auth->user()),
-            $sortColumn,
-            $sortDirection
-        )
-            ->limit($limit)
-            ->get();
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+                ->accessibleBy($scopedUser)
+                ->withMetaFor($scopedUser)
+                ->sort($sortColumn, $sortDirection)
+                ->limit($limit)
+                ->get();
     }
 
     /** @return Collection|array<array-key, Song> */
     public function getFavorites(?User $scopedUser = null): Collection
     {
-        return Song::query()->withMeta($scopedUser ?? $this->auth->user())->where('interactions.liked', true)->get();
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
+            ->where('interactions.liked', true)
+            ->get();
     }
 
     /** @return Collection|array<array-key, Song> */
     public function getByAlbum(Album $album, ?User $scopedUser = null): Collection
     {
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
         return Song::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
             ->where('album_id', $album->id)
             ->orderBy('songs.disc')
             ->orderBy('songs.track')
@@ -145,8 +153,12 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getByArtist(Artist $artist, ?User $scopedUser = null): Collection
     {
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
         return Song::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
             ->where('songs.artist_id', $artist->id)
             ->orWhere('albums.artist_id', $artist->id)
             ->orderBy('albums.name')
@@ -159,8 +171,12 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getByStandardPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
     {
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
         return Song::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
             ->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
             ->leftJoin('playlists', 'playlists.id', '=', 'playlist_song.playlist_id')
             ->where('playlists.id', $playlist->id)
@@ -171,14 +187,26 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
-        return Song::query()->withMeta($scopedUser ?? $this->auth->user())->inRandomOrder()->limit($limit)->get();
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
     }
 
     /** @return Collection|array<array-key, Song> */
     public function getMany(array $ids, bool $inThatOrder = false, ?User $scopedUser = null): Collection
     {
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
         $songs = Song::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
             ->whereIn('songs.id', $ids)
             ->get();
 
@@ -187,63 +215,45 @@ class SongRepository extends Repository
 
     public function getOne($id, ?User $scopedUser = null): Song
     {
-        return Song::query()->withMeta($scopedUser ?? $this->auth->user())->findOrFail($id);
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
+            ->findOrFail($id);
     }
 
     public function findOne($id, ?User $scopedUser = null): ?Song
     {
-        return Song::query()->withMeta($scopedUser ?? $this->auth->user())->find($id);
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser ?? $this->auth->user())
+            ->find($id);
     }
 
-    public function count(): int
+    public function count(?User $scopedUser = null): int
     {
-        return Song::query()->count();
+        return Song::query()->accessibleBy($scopedUser ?? auth()->user())->count();
     }
 
-    public function getTotalLength(): float
+    public function getTotalLength(?User $scopedUser = null): float
     {
-        return Song::query()->sum('length');
-    }
-
-    private static function normalizeSortColumn(string $column): string
-    {
-        return key_exists($column, self::SORT_COLUMNS_NORMALIZE_MAP)
-            ? self::SORT_COLUMNS_NORMALIZE_MAP[$column]
-            : $column;
-    }
-
-    private static function applySort(Builder $query, string $column, string $direction): Builder
-    {
-        $column = self::normalizeSortColumn($column);
-
-        Assert::oneOf($column, self::VALID_SORT_COLUMNS);
-        Assert::oneOf(strtolower($direction), ['asc', 'desc']);
-
-        $query->orderBy($column, $direction);
-
-        if ($column === 'artists.name') {
-            $query->orderBy('albums.name')
-                ->orderBy('songs.disc')
-                ->orderBy('songs.track')
-                ->orderBy('songs.title');
-        } elseif ($column === 'albums.name') {
-            $query->orderBy('artists.name')
-                ->orderBy('songs.disc')
-                ->orderBy('songs.track')
-                ->orderBy('songs.title');
-        } elseif ($column === 'track') {
-            $query->orderBy('song.disc')
-                ->orderBy('songs.track');
-        }
-
-        return $query;
+        return Song::query()->accessibleBy($scopedUser ?? auth()->user())->sum('length');
     }
 
     /** @return Collection|array<array-key, Song> */
     public function getRandomByGenre(string $genre, int $limit, ?User $scopedUser = null): Collection
     {
+        /** @var User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
         return Song::query()
-            ->withMeta($scopedUser ?? $this->auth->user())
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
             ->where('genre', $genre === Genre::NO_GENRE ? '' : $genre)
             ->limit($limit)
             ->inRandomOrder()

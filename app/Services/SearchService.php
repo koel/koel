@@ -51,7 +51,7 @@ class SearchService
     ): Collection {
         return Song::search($keywords)
             ->query(static function (SongBuilder $builder) use ($scopedUser, $limit): void {
-                $builder->withMeta($scopedUser ?? auth()->user())->limit($limit);
+                $builder->withMetaFor($scopedUser ?? auth()->user())->limit($limit);
             })
             ->get();
     }

@@ -8,13 +8,16 @@ use App\Models\Song;
 
 class PlayController extends Controller
 {
-    public function __construct(private StreamerFactory $streamerFactory)
-    {
-    }
+    public function __invoke(
+        StreamerFactory $streamerFactory,
+        SongPlayRequest $request,
+        Song $song,
+        ?bool $transcode = null,
+        ?int $bitRate = null
+    ) {
+        $this->authorize('play', $song);
 
-    public function show(SongPlayRequest $request, Song $song, ?bool $transcode = null, ?int $bitRate = null)
-    {
-        return $this->streamerFactory
+        return $streamerFactory
             ->createStreamer($song, $transcode, $bitRate, (float) $request->time)
             ->stream();
     }

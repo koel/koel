@@ -146,6 +146,7 @@ return [
         App\Providers\StreamerServiceProvider::class,
         App\Providers\ObjectStorageServiceProvider::class,
         App\Providers\MacroProvider::class,
+        App\Providers\LicenseServiceProvider::class,
     ],
 
     /*
@@ -199,5 +200,6 @@ return [
         'YouTube' => App\Facades\YouTube::class,
         'Download' => App\Facades\Download::class,
         'ITunes' => App\Facades\ITunes::class,
+        'License' => App\Facades\License::class,
     ],
 ];
