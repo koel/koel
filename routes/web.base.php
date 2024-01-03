@@ -1,14 +1,14 @@
 <?php
 
 use App\Facades\ITunes;
-use App\Http\Controllers\Download\AlbumController as AlbumDownloadController;
-use App\Http\Controllers\Download\ArtistController as ArtistDownloadController;
-use App\Http\Controllers\Download\FavoritesController as FavoritesDownloadController;
-use App\Http\Controllers\Download\PlaylistController as PlaylistDownloadController;
-use App\Http\Controllers\Download\SongController as SongDownloadController;
-use App\Http\Controllers\ITunesController;
+use App\Http\Controllers\Download\DownloadAlbumController;
+use App\Http\Controllers\Download\DownloadArtistController;
+use App\Http\Controllers\Download\DownloadFavoritesController;
+use App\Http\Controllers\Download\DownloadPlaylistController;
+use App\Http\Controllers\Download\DownloadSongsController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
+use App\Http\Controllers\ViewSongOnITunesController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(static function (): void {
@@ -23,19 +23,19 @@ Route::middleware('web')->group(static function (): void {
         });
 
         if (ITunes::used()) {
-            Route::get('itunes/song/{album}', [ITunesController::class, 'viewSong'])->name('iTunes.viewSong');
+            Route::get('itunes/song/{album}', ViewSongOnITunesController::class)->name('iTunes.viewSong');
         }
     });
 
     Route::middleware('audio.auth')->group(static function (): void {
-        Route::get('play/{song}/{transcode?}/{bitrate?}', [PlayController::class, 'show'])->name('song.play');
+        Route::get('play/{song}/{transcode?}/{bitrate?}', PlayController::class)->name('song.play');
 
         Route::prefix('download')->group(static function (): void {
-            Route::get('songs', [SongDownloadController::class, 'show']);
-            Route::get('album/{album}', [AlbumDownloadController::class, 'show']);
-            Route::get('artist/{artist}', [ArtistDownloadController::class, 'show']);
-            Route::get('playlist/{playlist}', [PlaylistDownloadController::class, 'show']);
-            Route::get('favorites', [FavoritesDownloadController::class, 'show']);
+            Route::get('songs', DownloadSongsController::class);
+            Route::get('album/{album}', DownloadAlbumController::class);
+            Route::get('artist/{artist}', DownloadArtistController::class);
+            Route::get('playlist/{playlist}', DownloadPlaylistController::class);
+            Route::get('favorites', DownloadFavoritesController::class);
         });
     });
 });

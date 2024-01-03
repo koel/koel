@@ -2,27 +2,34 @@
 
 namespace App\Repositories;
 
+use App\Facades\License;
 use App\Models\Artist;
 use App\Models\User;
-use App\Repositories\Traits\Searchable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 
 class ArtistRepository extends Repository
 {
-    use Searchable;
-
     /** @return Collection|array<array-key, Artist> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
+        /** @var User $user */
         $user ??= auth()->user();
 
-        return Artist::query()
-            ->leftJoin('songs', 'artists.id', '=', 'songs.artist_id')
-            ->leftJoin('interactions', static function (JoinClause $join) use ($user): void {
-                $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
-            })
+        $query = Artist::query()
+            ->isStandard()
+            ->accessibleBy($user);
+
+        if (License::isCommunity()) {
+            // if the license is Plus, accessibleBy() would have already joined the songs table
+            // and we don't want to join it twice
+            $query->leftJoin('songs', 'artists.id', 'songs.artist_id');
+        }
+
+        return $query->join('interactions', static function (JoinClause $join) use ($user): void {
+            $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
+        })
             ->groupBy([
                 'artists.id',
                 'play_count',
@@ -31,28 +38,35 @@ class ArtistRepository extends Repository
                 'artists.created_at',
                 'artists.updated_at',
             ])
-            ->isStandard()
+            ->distinct()
             ->orderByDesc('play_count')
             ->limit($count)
             ->get('artists.*');
     }
 
     /** @return Collection|array<array-key, Artist> */
-    public function getMany(array $ids, bool $inThatOrder = false): Collection
+    public function getMany(array $ids, bool $inThatOrder = false, ?User $user = null): Collection
     {
         $artists = Artist::query()
             ->isStandard()
-            ->whereIn('id', $ids)
-            ->get();
+            ->accessibleBy($user ?? auth()->user())
+            ->whereIn('artists.id', $ids)
+            ->groupBy('artists.id')
+            ->distinct()
+            ->get('artists.*');
 
         return $inThatOrder ? $artists->orderByArray($ids) : $artists;
     }
 
-    public function paginate(): Paginator
+    public function paginate(?User $user = null): Paginator
     {
         return Artist::query()
             ->isStandard()
-            ->orderBy('name')
+            ->accessibleBy($user ?? auth()->user())
+            ->groupBy('artists.id')
+            ->distinct()
+            ->orderBy('artists.name')
+            ->select('artists.*')
             ->simplePaginate(21);
     }
 }

@@ -26,7 +26,7 @@ class UploadController extends Controller
         UploadRequest $request,
         Authenticatable $user
     ) {
-        $this->authorize('admin', User::class);
+        $this->authorize('upload', User::class);
 
         try {
             $song = $songRepository->getOne($uploadService->handleUploadedFile($request->file)->id);

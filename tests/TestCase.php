@@ -2,9 +2,11 @@
 
 namespace Tests;
 
+use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Services\CommunityLicenseService;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -23,6 +25,8 @@ abstract class TestCase extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        License::swap($this->app->make(CommunityLicenseService::class));
 
         TestResponse::macro('log', function (string $file = 'test-response.json'): TestResponse {
             /** @var TestResponse $this */

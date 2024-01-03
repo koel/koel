@@ -19,7 +19,7 @@ class SmartPlaylistService
     {
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
-        $query = Song::query()->withMeta($user ?? $playlist->user);
+        $query = Song::query()->withMetaFor($user ?? $playlist->user);
 
         $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {
             $clause = $index === 0 ? 'where' : 'orWhere';
