@@ -7,7 +7,7 @@ import ExtraDrawerTabHeader from './ExtraDrawerTabHeader.vue'
 new class extends UnitTestCase {
   protected test () {
     it('renders tab headers', () => {
-      commonStore.state.use_you_tube = false
+      commonStore.state.uses_you_tube = false
       this.render(ExtraDrawerTabHeader)
 
       ;['Lyrics', 'Artist information', 'Album information'].forEach(name => screen.getByRole('button', { name }))
@@ -15,7 +15,7 @@ new class extends UnitTestCase {
     })
 
     it('has a YouTube tab header if using YouTube', () => {
-      commonStore.state.use_you_tube = true
+      commonStore.state.uses_you_tube = true
       this.render(ExtraDrawerTabHeader)
 
       screen.getByRole('button', { name: 'Related YouTube videos' })

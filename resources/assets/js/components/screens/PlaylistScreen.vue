@@ -110,7 +110,7 @@ const {
 
 const { removeSongsFromPlaylist } = usePlaylistManagement()
 
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value!)
 const download = () => downloadService.fromPlaylist(playlist.value!)

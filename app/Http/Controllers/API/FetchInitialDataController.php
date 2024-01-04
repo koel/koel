@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Facades\License;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
@@ -34,11 +35,13 @@ class FetchInitialDataController extends Controller
             'playlists' => PlaylistResource::collection($user->playlists),
             'playlist_folders' => PlaylistFolderResource::collection($user->playlist_folders),
             'current_user' => UserResource::make($user, true),
-            'use_last_fm' => LastfmService::used(),
-            'use_spotify' => SpotifyService::enabled(),
-            'use_you_tube' => YouTubeService::enabled(),
-            'use_i_tunes' => $iTunesService->used(),
-            'allow_download' => config('koel.download.allow'),
+            'uses_last_fm' => LastfmService::used(),
+            'uses_spotify' => SpotifyService::enabled(),
+            'uses_you_tube' => YouTubeService::enabled(),
+            'uses_i_tunes' => $iTunesService->used(),
+            'allows_download' => config('koel.download.allow'),
+            'media_path_set' => (bool) $settingRepository->getByKey('media_path'),
+            'allows_upload' => License::isPlus() || $user->is_admin,
             'supports_transcoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdn_url' => static_url(),

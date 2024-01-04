@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Exceptions\OwnerNotSetPriorToScanException;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Values\SongScanInformation;
 use App\Values\SyncResult;
@@ -24,6 +26,8 @@ class FileSynchronizer
      */
     private ?Song $song;
 
+    private ?User $owner = null;
+
     private ?string $syncError = null;
 
     public function __construct(
@@ -36,13 +40,20 @@ class FileSynchronizer
     ) {
     }
 
-    public function setFile(string|SplFileInfo $path): self
+    public function setFile(string|SplFileInfo $path): static
     {
         $file = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
 
         $this->filePath = $file->getRealPath();
         $this->song = $this->songRepository->getOneByPath($this->filePath);
         $this->fileModifiedTime = Helper::getModifiedTime($file);
+
+        return $this;
+    }
+
+    public function setOwner(User $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }
@@ -72,6 +83,10 @@ class FileSynchronizer
      */
     public function sync(array $ignores = [], bool $force = false): SyncResult
     {
+        if (!$this->owner) {
+            throw OwnerNotSetPriorToScanException::create();
+        }
+
         if (!$this->isFileNewOrChanged() && !$force) {
             return SyncResult::skipped($this->filePath);
         }
@@ -97,6 +112,7 @@ class FileSynchronizer
         $data = Arr::except($info, ['album', 'artist', 'albumartist', 'cover']);
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
+        $data['owner_id'] = $this->owner->id;
 
         $this->song = Song::query()->updateOrCreate(['path' => $this->filePath], $data); // @phpstan-ignore-line
 

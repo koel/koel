@@ -131,7 +131,7 @@ const {
 } = useSongList(songs)
 
 const { useLastfm } = useThirdPartyServices()
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const albumCount = computed(() => {
   const albums = new Set()

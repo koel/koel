@@ -13,6 +13,7 @@ trait SandboxesTests
 
         @mkdir(public_path(config('koel.album_cover_dir')), 0755, true);
         @mkdir(public_path(config('koel.artist_image_dir')), 0755, true);
+        @mkdir(public_path('sandbox/media/'), 0755, true);
     }
 
     private static function destroySandbox(): void

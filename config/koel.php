@@ -107,7 +107,7 @@ return [
     */
 
     'download' => [
-        'allow' => env('ALLOW_DOWNLOAD', true),
+        'allow' => env('allows_download', true),
     ],
 
     /*

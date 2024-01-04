@@ -134,8 +134,8 @@ const {
   onScrollBreakpoint
 } = useSongList(songs)
 
-const useLastfm = toRef(commonStore.state, 'use_last_fm')
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const useLastfm = toRef(commonStore.state, 'uses_last_fm')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isNormalArtist = computed(() => {
   if (!album.value) return true

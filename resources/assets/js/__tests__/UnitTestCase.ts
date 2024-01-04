@@ -44,8 +44,8 @@ export default abstract class UnitTestCase {
   protected beforeEach (cb?: Closure) {
     beforeEach(() => {
       commonStore.state.song_length = 10
-      commonStore.state.allow_download = true
-      commonStore.state.use_i_tunes = true
+      commonStore.state.allows_download = true
+      commonStore.state.uses_i_tunes = true
       cb && cb()
     })
   }

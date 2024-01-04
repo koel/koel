@@ -31,7 +31,7 @@ new class extends UnitTestCase {
     })
 
     it('shows the YouTube sidebar item on demand', async () => {
-      commonStore.state.use_you_tube = true
+      commonStore.state.uses_you_tube = true
       this.render(Sidebar)
 
       eventBus.emit('PLAY_YOUTUBE_VIDEO', { id: '123', title: 'A Random Video' })

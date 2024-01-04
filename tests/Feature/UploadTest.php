@@ -24,8 +24,7 @@ class UploadTest extends TestCase
         parent::setUp();
 
         $this->uploadService = self::mock(UploadService::class);
-        $this->file = UploadedFile::fake()
-            ->createWithContent('song.mp3', file_get_contents(__DIR__ . '/../songs/full.mp3'));
+        $this->file = UploadedFile::fromFile(__DIR__ . '/../songs/full.mp3', 'song.mp3');
     }
 
     public function testUnauthorizedPost(): void

@@ -2,6 +2,7 @@ import { eventBus } from '@/utils'
 import { Route } from '@/router'
 import { userStore } from '@/stores'
 import { localStorageService } from '@/services'
+import { useUpload } from '@/composables'
 
 export const routes: Route[] = [
   {
@@ -47,7 +48,7 @@ export const routes: Route[] = [
   {
     path: '/upload',
     screen: 'Upload',
-    onResolve: () => userStore.current?.is_admin
+    onResolve: () => useUpload().allowsUpload.value
   },
   {
     path: '/settings',

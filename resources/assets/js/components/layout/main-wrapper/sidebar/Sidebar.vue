@@ -17,13 +17,13 @@
 
     <PlaylistList />
 
-    <section v-if="isAdmin" class="manage">
+    <section v-if="showManageSection" class="manage">
       <h1>Manage</h1>
 
       <ul class="menu">
-        <SidebarItem screen="Settings" href="#/settings" :icon="faTools">Settings</SidebarItem>
+        <SidebarItem screen="Settings" href="#/settings" :icon="faTools" v-if="isAdmin">Settings</SidebarItem>
         <SidebarItem screen="Upload" href="#/upload" :icon="faUpload">Upload</SidebarItem>
-        <SidebarItem screen="Users" href="#/users" :icon="faUsers">Users</SidebarItem>
+        <SidebarItem screen="Users" href="#/users" :icon="faUsers" v-if="isAdmin">Users</SidebarItem>
       </ul>
     </section>
   </nav>
@@ -43,7 +43,7 @@ import {
 
 import { computed, ref } from 'vue'
 import { eventBus } from '@/utils'
-import { useAuthorization, useRouter, useThirdPartyServices } from '@/composables'
+import { useAuthorization, useRouter, useThirdPartyServices, useUpload } from '@/composables'
 
 import SidebarItem from './SidebarItem.vue'
 import QueueSidebarItem from './QueueSidebarItem.vue'
@@ -54,11 +54,13 @@ import SearchForm from '@/components/ui/SearchForm.vue'
 const { onRouteChanged } = useRouter()
 const { useYouTube } = useThirdPartyServices()
 const { isAdmin } = useAuthorization()
+const { allowsUpload } = useUpload()
 
 const mobileShowing = ref(false)
 const youTubePlaying = ref(false)
 
 const showYouTube = computed(() => useYouTube.value && youTubePlaying.value)
+const showManageSection = computed(() => isAdmin.value || allowsUpload.value)
 
 const closeIfMobile = () => (mobileShowing.value = false)
 
