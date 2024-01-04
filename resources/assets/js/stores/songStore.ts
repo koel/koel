@@ -214,7 +214,14 @@ export const songStore = {
   },
 
   getMostPlayed (count: number) {
-    return take(orderBy(Array.from(this.vault.values()).filter(song => !song.deleted), 'play_count', 'desc'), count)
+    return take(
+      orderBy(
+        Array.from(this.vault.values()).filter(song => !song.deleted && song.play_count > 0),
+        'play_count',
+        'desc'
+      ),
+      count
+    )
   },
 
   async deleteFromFilesystem (songs: Song[]) {
