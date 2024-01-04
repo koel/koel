@@ -127,6 +127,7 @@ interface Album {
 interface Song {
   type: 'songs'
   readonly id: string
+  readonly owner_id: User['id'],
   album_id: Album['id']
   album_name: Album['name']
   album_cover: Album['cover']
