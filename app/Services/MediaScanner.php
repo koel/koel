@@ -3,19 +3,20 @@
 namespace App\Services;
 
 use App\Events\LibraryChanged;
-use App\Events\MediaSyncCompleted;
+use App\Events\MediaScanCompleted;
 use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Song;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
-use App\Values\SyncResult;
-use App\Values\SyncResultCollection;
+use App\Values\ScanConfiguration;
+use App\Values\ScanResult;
+use App\Values\ScanResultCollection;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Throwable;
 
-class MediaSyncService
+class MediaScanner
 {
     /** @var array<array-key, callable> */
     private array $events = [];
@@ -23,26 +24,20 @@ class MediaSyncService
     public function __construct(
         private SettingRepository $settingRepository,
         private SongRepository $songRepository,
-        private FileSynchronizer $fileSynchronizer,
+        private FileScanner $fileScanner,
         private Finder $finder,
         private LoggerInterface $logger
     ) {
     }
 
-    /**
-     * @param array<string> $ignores The tags to ignore.
-     * Only taken into account for existing records.
-     * New records will have all tags synced in regardless.
-     * @param bool $force Whether to force syncing even unchanged files
-     */
-    public function sync(array $ignores = [], bool $force = false): SyncResultCollection
+    public function scan(ScanConfiguration $config): ScanResultCollection
     {
         /** @var string $mediaPath */
         $mediaPath = $this->settingRepository->getByKey('media_path');
 
         $this->setSystemRequirements();
 
-        $results = SyncResultCollection::create();
+        $results = ScanResultCollection::create();
         $songPaths = $this->gatherFiles($mediaPath);
 
         if (isset($this->events['paths-gathered'])) {
@@ -51,9 +46,9 @@ class MediaSyncService
 
         foreach ($songPaths as $path) {
             try {
-                $result = $this->fileSynchronizer->setFile($path)->sync($ignores, $force);
+                $result = $this->fileScanner->setFile($path)->scan($config);
             } catch (Throwable) {
-                $result = SyncResult::error($path, 'Possible invalid file');
+                $result = ScanResult::error($path, 'Possible invalid file');
             }
 
             $results->add($result);
@@ -63,7 +58,7 @@ class MediaSyncService
             }
         }
 
-        event(new MediaSyncCompleted($results));
+        event(new MediaScanCompleted($results));
 
         // Trigger LibraryChanged, so that PruneLibrary handler is fired to prune the lib.
         event(new LibraryChanged());
@@ -83,7 +78,7 @@ class MediaSyncService
         return iterator_to_array(
             $this->finder->create()
                 ->ignoreUnreadableDirs()
-                ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/koel/koel/issues/450
+                ->ignoreDotFiles((bool)config('koel.ignore_dot_files')) // https://github.com/koel/koel/issues/450
                 ->files()
                 ->followLinks()
                 ->name('/\.(mp3|wav|ogg|m4a|flac|opus)$/i')
@@ -91,13 +86,18 @@ class MediaSyncService
         );
     }
 
-    public function syncByWatchRecord(WatchRecordInterface $record): void
+    public function scanWatchRecord(WatchRecordInterface $record, ScanConfiguration $config): void
     {
         $this->logger->info("New watch record received: '{$record->getPath()}'");
-        $record->isFile() ? $this->syncFileRecord($record) : $this->syncDirectoryRecord($record);
+
+        if ($record->isFile()) {
+            $this->scanFileRecord($record, $config);
+        } else {
+            $this->scanDirectoryRecord($record, $config);
+        }
     }
 
-    private function syncFileRecord(WatchRecordInterface $record): void
+    private function scanFileRecord(WatchRecordInterface $record, ScanConfiguration $config): void
     {
         $path = $record->getPath();
         $this->logger->info("'$path' is a file.");
@@ -105,11 +105,11 @@ class MediaSyncService
         if ($record->isDeleted()) {
             $this->handleDeletedFileRecord($path);
         } elseif ($record->isNewOrModified()) {
-            $this->handleNewOrModifiedFileRecord($path);
+            $this->handleNewOrModifiedFileRecord($path, $config);
         }
     }
 
-    private function syncDirectoryRecord(WatchRecordInterface $record): void
+    private function scanDirectoryRecord(WatchRecordInterface $record, ScanConfiguration $config): void
     {
         $path = $record->getPath();
         $this->logger->info("'$path' is a directory.");
@@ -117,7 +117,7 @@ class MediaSyncService
         if ($record->isDeleted()) {
             $this->handleDeletedDirectoryRecord($path);
         } elseif ($record->isNewOrModified()) {
-            $this->handleNewOrModifiedDirectoryRecord($path);
+            $this->handleNewOrModifiedDirectoryRecord($path, $config);
         }
     }
 
@@ -145,14 +145,14 @@ class MediaSyncService
         }
     }
 
-    private function handleNewOrModifiedFileRecord(string $path): void
+    private function handleNewOrModifiedFileRecord(string $path, ScanConfiguration $config): void
     {
-        $result = $this->fileSynchronizer->setFile($path)->sync();
+        $result = $this->fileScanner->setFile($path)->scan($config);
 
         if ($result->isSuccess()) {
-            $this->logger->info("Synchronized $path");
+            $this->logger->info("Scanned $path");
         } else {
-            $this->logger->info("Failed to synchronized $path. Maybe an invalid file?");
+            $this->logger->info("Failed to scan $path. Maybe an invalid file?");
         }
 
         event(new LibraryChanged());
@@ -171,21 +171,21 @@ class MediaSyncService
         }
     }
 
-    private function handleNewOrModifiedDirectoryRecord(string $path): void
+    private function handleNewOrModifiedDirectoryRecord(string $path, ScanConfiguration $config): void
     {
-        $syncResults = SyncResultCollection::create();
+        $scanResults = ScanResultCollection::create();
 
         foreach ($this->gatherFiles($path) as $file) {
             try {
-                $syncResults->add($this->fileSynchronizer->setFile($file)->sync());
+                $scanResults->add($this->fileScanner->setFile($file)->scan($config));
             } catch (Throwable) {
-                $syncResults->add(SyncResult::error($file->getRealPath(), 'Possible invalid file'));
+                $scanResults->add(ScanResult::error($file->getRealPath(), 'Possible invalid file'));
             }
         }
 
-        $this->logger->info("Synced all song(s) under $path");
+        $this->logger->info("Scanned all song(s) under $path");
 
-        event(new MediaSyncCompleted($syncResults));
+        event(new MediaScanCompleted($scanResults));
         event(new LibraryChanged());
     }
 

@@ -11,6 +11,7 @@ use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Testing\TestResponse;
 use ReflectionClass;
 use Tests\Traits\CreatesApplication;
@@ -31,13 +32,13 @@ abstract class TestCase extends BaseTestCase
 
         TestResponse::macro('log', function (string $file = 'test-response.json'): TestResponse {
             /** @var TestResponse $this */
-            file_put_contents(storage_path('logs/' . $file), $this->getContent());
+            File::put(storage_path('logs/' . $file), $this->getContent());
 
             return $this;
         });
 
         UploadedFile::macro('fromFile', static function (string $path, ?string $name = null): UploadedFile {
-            return UploadedFile::fake()->createWithContent($name ?? basename($path), file_get_contents($path));
+            return UploadedFile::fake()->createWithContent($name ?? basename($path), File::get($path));
         });
 
         self::createSandbox();

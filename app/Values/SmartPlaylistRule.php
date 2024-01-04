@@ -91,7 +91,7 @@ final class SmartPlaylistRule implements Arrayable
         Assert::countBetween($config['value'], 1, 2);
     }
 
-    public static function create(array $config): self
+    public static function make(array $config): self
     {
         return new self($config);
     }
@@ -110,7 +110,7 @@ final class SmartPlaylistRule implements Arrayable
     public function equals(array|self $rule): bool
     {
         if (is_array($rule)) {
-            $rule = self::create($rule);
+            $rule = self::make($rule);
         }
 
         return $this->operator === $rule->operator

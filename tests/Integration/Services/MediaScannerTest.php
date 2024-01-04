@@ -3,29 +3,31 @@
 namespace Tests\Integration\Services;
 
 use App\Events\LibraryChanged;
-use App\Events\MediaSyncCompleted;
+use App\Events\MediaScanCompleted;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
-use App\Services\FileSynchronizer;
-use App\Services\MediaSyncService;
+use App\Models\User;
+use App\Services\FileScanner;
+use App\Services\MediaScanner;
+use App\Values\ScanConfiguration;
 use getID3;
 use Illuminate\Support\Arr;
 use Mockery;
 use Tests\Feature\TestCase;
 
-class MediaSyncServiceTest extends TestCase
+class MediaScannerTest extends TestCase
 {
-    private MediaSyncService $mediaService;
+    private MediaScanner $scanner;
 
     public function setUp(): void
     {
         parent::setUp();
 
         Setting::set('media_path', realpath($this->mediaPath));
-        $this->mediaService = app(MediaSyncService::class);
+        $this->scanner = app(MediaScanner::class);
     }
 
     private function path($subPath): string
@@ -33,20 +35,27 @@ class MediaSyncServiceTest extends TestCase
         return realpath($this->mediaPath . $subPath);
     }
 
-    public function testSync(): void
+    public function testScan(): void
     {
-        $this->expectsEvents(MediaSyncCompleted::class);
+        /** @var User $owner */
+        $owner = User::factory()->admin()->create();
 
-        $this->mediaService->sync();
+        $this->expectsEvents(MediaScanCompleted::class);
+
+        $this->scanner->scan(ScanConfiguration::make(owner: $owner));
 
         // Standard mp3 files under root path should be recognized
         self::assertDatabaseHas(Song::class, [
             'path' => $this->path('/full.mp3'),
             'track' => 5,
+            'owner_id' => $owner->id,
         ]);
 
         // Ogg files and audio files in subdirectories should be recognized
-        self::assertDatabaseHas(Song::class, ['path' => $this->path('/subdir/back-in-black.ogg')]);
+        self::assertDatabaseHas(Song::class, [
+            'path' => $this->path('/subdir/back-in-black.ogg'),
+            'owner_id' => $owner->id,
+        ]);
 
         // GitHub issue #380. folder.png should be copied and used as the cover for files
         // under subdir/
@@ -83,26 +92,30 @@ class MediaSyncServiceTest extends TestCase
         self::assertSame('Cuckoo', $song->artist->name);
     }
 
-    public function testModifiedFileIsResynced(): void
+    public function testModifiedFileIsRescanned(): void
     {
-        $this->expectsEvents(MediaSyncCompleted::class);
+        $config = ScanConfiguration::make(owner: User::factory()->admin()->create());
 
-        $this->mediaService->sync();
+        $this->expectsEvents(MediaScanCompleted::class);
+
+        $this->scanner->scan($config);
 
         /** @var Song $song */
         $song = Song::query()->first();
 
         touch($song->path, $time = time() + 1000);
-        $this->mediaService->sync();
+        $this->scanner->scan($config);
 
         self::assertSame($time, $song->refresh()->mtime);
     }
 
-    public function testResyncWithoutForceDoesNotResetData(): void
+    public function testRescanWithoutForceDoesNotResetData(): void
     {
-        $this->expectsEvents(MediaSyncCompleted::class);
+        $config = ScanConfiguration::make(owner: User::factory()->admin()->create());
 
-        $this->mediaService->sync();
+        $this->expectsEvents(MediaScanCompleted::class);
+
+        $this->scanner->scan($config);
 
         /** @var Song $song */
         $song = Song::query()->first();
@@ -112,18 +125,21 @@ class MediaSyncServiceTest extends TestCase
             'lyrics' => 'Booom Wroooom',
         ]);
 
-        $this->mediaService->sync();
+        $this->scanner->scan($config);
 
         $song->refresh();
         self::assertSame("It's John Cena!", $song->title);
         self::assertSame('Booom Wroooom', $song->lyrics);
     }
 
-    public function testForceSyncResetsData(): void
+    public function testForceScanResetsData(): void
     {
-        $this->expectsEvents(MediaSyncCompleted::class);
+        /** @var User $owner */
+        $owner = User::factory()->admin()->create();
 
-        $this->mediaService->sync();
+        $this->expectsEvents(MediaScanCompleted::class);
+
+        $this->scanner->scan(ScanConfiguration::make(owner: $owner));
 
         /** @var Song $song */
         $song = Song::query()->first();
@@ -133,19 +149,24 @@ class MediaSyncServiceTest extends TestCase
             'lyrics' => 'Booom Wroooom',
         ]);
 
-        $this->mediaService->sync(force: true);
+        $this->scanner->scan(ScanConfiguration::make(owner: User::factory()->admin()->create(), force: true));
 
         $song->refresh();
 
         self::assertNotSame("It's John Cena!", $song->title);
         self::assertNotSame('Booom Wroooom', $song->lyrics);
+        // make sure the user is not changed
+        self::assertSame($owner->id, $song->owner_id);
     }
 
-    public function testSyncWithIgnoredTags(): void
+    public function testScanWithIgnoredTags(): void
     {
-        $this->expectsEvents(MediaSyncCompleted::class);
+        /** @var User $owner */
+        $owner = User::factory()->admin()->create();
 
-        $this->mediaService->sync();
+        $this->expectsEvents(MediaScanCompleted::class);
+
+        $this->scanner->scan(ScanConfiguration::make(owner: $owner));
 
         /** @var Song $song */
         $song = Song::query()->first();
@@ -155,7 +176,7 @@ class MediaSyncServiceTest extends TestCase
             'lyrics' => 'Booom Wroooom',
         ]);
 
-        $this->mediaService->sync(ignores: ['title'], force: true);
+        $this->scanner->scan(ScanConfiguration::make(owner: $owner, ignores: ['title'], force: true));
 
         $song->refresh();
 
@@ -163,17 +184,24 @@ class MediaSyncServiceTest extends TestCase
         self::assertNotSame('Booom Wroooom', $song->lyrics);
     }
 
-    public function testSyncAllTagsForNewFilesRegardlessOfIgnoredOption(): void
+    public function testScanAllTagsForNewFilesRegardlessOfIgnoredOption(): void
     {
-        $this->expectsEvents(MediaSyncCompleted::class);
-        $this->mediaService->sync();
+        /** @var User $owner */
+        $owner = User::factory()->admin()->create();
+
+        $this->expectsEvents(MediaScanCompleted::class);
+        $this->scanner->scan(ScanConfiguration::make(owner: $owner));
 
         /** @var Song $song */
         $song = Song::query()->first();
 
         $song->delete();
 
-        $this->mediaService->sync(ignores: ['title', 'disc', 'track'], force: true);
+        $this->scanner->scan(ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['title', 'disc', 'track'],
+            force: true
+        ));
 
         // Song should be added back with all info
         self::assertEquals(
@@ -182,17 +210,21 @@ class MediaSyncServiceTest extends TestCase
         );
     }
 
-    public function testSyncAddedSongViaWatch(): void
+    public function testScanAddedSongViaWatch(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
         $path = $this->path('/blank.mp3');
-        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"));
+
+        $this->scanner->scanWatchRecord(
+            new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"),
+            ScanConfiguration::make(owner: User::factory()->admin()->create())
+        );
 
         self::assertDatabaseHas(Song::class, ['path' => $path]);
     }
 
-    public function testSyncDeletedSongViaWatch(): void
+    public function testScanDeletedSongViaWatch(): void
     {
         $this->expectsEvents(LibraryChanged::class);
 
@@ -201,18 +233,22 @@ class MediaSyncServiceTest extends TestCase
         /** @var Song $song */
         $song = Song::query()->first();
 
-        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("DELETE $song->path"));
+        $this->scanner->scanWatchRecord(
+            new InotifyWatchRecord("DELETE $song->path"),
+            ScanConfiguration::make(owner: User::factory()->admin()->create())
+        );
 
         self::assertModelMissing($song);
     }
 
-    public function testSyncDeletedDirectoryViaWatch(): void
+    public function testScanDeletedDirectoryViaWatch(): void
     {
-        $this->expectsEvents(LibraryChanged::class, MediaSyncCompleted::class);
+        $config = ScanConfiguration::make(owner: User::factory()->admin()->create());
 
-        $this->mediaService->sync();
+        $this->expectsEvents(LibraryChanged::class, MediaScanCompleted::class);
 
-        $this->mediaService->syncByWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR $this->mediaPath/subdir"));
+        $this->scanner->scan($config);
+        $this->scanner->scanWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR $this->mediaPath/subdir"), $config);
 
         self::assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/sic.mp3')]);
         self::assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/no-name.mp3')]);
@@ -243,9 +279,9 @@ class MediaSyncServiceTest extends TestCase
             ])
         );
 
-        /** @var FileSynchronizer $fileSynchronizer */
-        $fileSynchronizer = app(FileSynchronizer::class);
-        $info = $fileSynchronizer->setFile($path)->getFileScanInformation();
+        /** @var FileScanner $fileScanner */
+        $fileScanner = app(FileScanner::class);
+        $info = $fileScanner->setFile($path)->getFileScanInformation();
 
         self::assertSame('佐倉綾音 Unknown', $info->artistName);
         self::assertSame('小岩井こ Random', $info->albumName);
@@ -254,12 +290,14 @@ class MediaSyncServiceTest extends TestCase
 
     public function testOptionallyIgnoreHiddenFiles(): void
     {
+        $config = ScanConfiguration::make(owner: User::factory()->admin()->create());
+
         config(['koel.ignore_dot_files' => false]);
-        $this->mediaService->sync();
+        $this->scanner->scan($config);
         self::assertDatabaseHas(Album::class, ['name' => 'Hidden Album']);
 
         config(['koel.ignore_dot_files' => true]);
-        $this->mediaService->sync();
+        $this->scanner->scan($config);
         self::assertDatabaseMissing(Album::class, ['name' => 'Hidden Album']);
     }
 }

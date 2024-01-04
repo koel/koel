@@ -7,14 +7,16 @@ use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\User;
+use App\Values\ScanConfiguration;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Throwable;
 
 use function Functional\memoize;
 
 class UploadService
 {
-    public function __construct(private FileSynchronizer $fileSynchronizer)
+    public function __construct(private FileScanner $scanner)
     {
     }
 
@@ -27,21 +29,18 @@ class UploadService
         $targetPathName = $uploadDirectory . $targetFileName;
 
         try {
-            $result = $this->fileSynchronizer
-                ->setOwner($uploader)
-                ->setFile($targetPathName)
-                ->sync();
+            $result = $this->scanner->setFile($targetPathName)->scan(ScanConfiguration::make(owner: $uploader));
         } catch (Throwable) {
-            @unlink($targetPathName);
+            File::delete($targetPathName);
             throw new SongUploadFailedException('Unknown error');
         }
 
         if ($result->isError()) {
-            @unlink($targetPathName);
+            File::delete($targetPathName);
             throw new SongUploadFailedException($result->error);
         }
 
-        return $this->fileSynchronizer->getSong();
+        return $this->scanner->getSong();
     }
 
     private function getUploadDirectory(User $uploader): string
@@ -59,9 +58,7 @@ class UploadService
                 DIRECTORY_SEPARATOR
             );
 
-            if (!file_exists($dir)) {
-                mkdir($dir, 0755, true);
-            }
+            File::ensureDirectoryExists($dir);
 
             return $dir;
         });

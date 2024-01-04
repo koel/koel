@@ -2,21 +2,20 @@
 
 namespace App\Services;
 
-use App\Exceptions\OwnerNotSetPriorToScanException;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use App\Models\User;
 use App\Repositories\SongRepository;
+use App\Values\ScanConfiguration;
+use App\Values\ScanResult;
 use App\Values\SongScanInformation;
-use App\Values\SyncResult;
 use getID3;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Support\Arr;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
-class FileSynchronizer
+class FileScanner
 {
     private ?int $fileModifiedTime = null;
     private ?string $filePath = null;
@@ -25,8 +24,6 @@ class FileSynchronizer
      * The song model that's associated with the current file.
      */
     private ?Song $song;
-
-    private ?User $owner = null;
 
     private ?string $syncError = null;
 
@@ -51,13 +48,6 @@ class FileSynchronizer
         return $this;
     }
 
-    public function setOwner(User $owner): static
-    {
-        $this->owner = $owner;
-
-        return $this;
-    }
-
     public function getFileScanInformation(): ?SongScanInformation
     {
         $raw = $this->getID3->analyze($this->filePath);
@@ -75,54 +65,49 @@ class FileSynchronizer
         return $info;
     }
 
-    /**
-     * Sync the song with all available media info into the database.
-     *
-     * @param array<string> $ignores The tags to ignore/exclude (only taken into account if the song already exists)
-     * @param bool $force Whether to force syncing, even if the file is unchanged
-     */
-    public function sync(array $ignores = [], bool $force = false): SyncResult
+    public function scan(ScanConfiguration $config): ScanResult
     {
-        if (!$this->owner) {
-            throw OwnerNotSetPriorToScanException::create();
-        }
-
-        if (!$this->isFileNewOrChanged() && !$force) {
-            return SyncResult::skipped($this->filePath);
+        if (!$this->isFileNewOrChanged() && !$config->force) {
+            return ScanResult::skipped($this->filePath);
         }
 
         $info = $this->getFileScanInformation()?->toArray();
 
         if (!$info) {
-            return SyncResult::error($this->filePath, $this->syncError);
+            return ScanResult::error($this->filePath, $this->syncError);
         }
 
         if (!$this->isFileNew()) {
-            Arr::forget($info, $ignores);
+            Arr::forget($info, $config->ignores);
         }
 
         $artist = Arr::get($info, 'artist') ? Artist::getOrCreate($info['artist']) : $this->song->artist;
         $albumArtist = Arr::get($info, 'albumartist') ? Artist::getOrCreate($info['albumartist']) : $artist;
         $album = Arr::get($info, 'album') ? Album::getOrCreate($albumArtist, $info['album']) : $this->song->album;
 
-        if (!in_array('cover', $ignores, true) && !$album->has_cover) {
+        if (!in_array('cover', $config->ignores, true) && !$album->has_cover) {
             $this->tryGenerateAlbumCover($album, Arr::get($info, 'cover', []));
         }
 
         $data = Arr::except($info, ['album', 'artist', 'albumartist', 'cover']);
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
-        $data['owner_id'] = $this->owner->id;
+        $data['is_public'] = $config->makePublic;
+
+        if ($this->isFileNew()) {
+            // Only set the owner if the song is new i.e. don't override the owner if the song is being updated.
+            $data['owner_id'] = $config->owner->id;
+        }
 
         $this->song = Song::query()->updateOrCreate(['path' => $this->filePath], $data); // @phpstan-ignore-line
 
-        return SyncResult::success($this->filePath);
+        return ScanResult::success($this->filePath);
     }
 
     /**
      * Try to generate a cover for an album based on extracted data, or use the cover file under the directory.
      *
-     * @param array<mixed>|null $coverData
+     * @param ?array<mixed> $coverData
      */
     private function tryGenerateAlbumCover(Album $album, ?array $coverData): void
     {

@@ -11,9 +11,9 @@ trait SandboxesTests
         config(['koel.album_cover_dir' => 'sandbox/img/covers/']);
         config(['koel.artist_image_dir' => 'sandbox/img/artists/']);
 
-        @mkdir(public_path(config('koel.album_cover_dir')), 0755, true);
-        @mkdir(public_path(config('koel.artist_image_dir')), 0755, true);
-        @mkdir(public_path('sandbox/media/'), 0755, true);
+        File::ensureDirectoryExists(public_path(config('koel.album_cover_dir')));
+        File::ensureDirectoryExists(public_path(config('koel.artist_image_dir')));
+        File::ensureDirectoryExists(public_path('sandbox/media/'));
     }
 
     private static function destroySandbox(): void

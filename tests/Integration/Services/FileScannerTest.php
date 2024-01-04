@@ -2,24 +2,25 @@
 
 namespace Tests\Integration\Services;
 
-use App\Services\FileSynchronizer;
+use App\Services\FileScanner;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-class FileSynchronizerTest extends TestCase
+class FileScannerTest extends TestCase
 {
-    private FileSynchronizer $fileSynchronizer;
+    private FileScanner $scanner;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->fileSynchronizer = app(FileSynchronizer::class);
+        $this->scanner = app(FileScanner::class);
     }
 
     public function testGetFileInfo(): void
     {
-        $info = $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/full.mp3')->getFileScanInformation();
+        $info = $this->scanner->setFile(__DIR__ . '/../../songs/full.mp3')->getFileScanInformation();
 
         $expectedData = [
             'artist' => 'Koel',
@@ -29,7 +30,7 @@ class FileSynchronizerTest extends TestCase
             'disc' => 3,
             'lyrics' => "Foo\rbar",
             'cover' => [
-                'data' => file_get_contents(__DIR__ . '/../../blobs/cover.png'),
+                'data' => File::get(__DIR__ . '/../../blobs/cover.png'),
                 'image_mime' => 'image/png',
                 'image_width' => 512,
                 'image_height' => 512,
@@ -50,7 +51,7 @@ class FileSynchronizerTest extends TestCase
     public function testGetFileInfoVorbisCommentsFlac(): void
     {
         $flacPath = __DIR__ . '/../../songs/full-vorbis-comments.flac';
-        $info = $this->fileSynchronizer->setFile($flacPath)->getFileScanInformation();
+        $info = $this->scanner->setFile($flacPath)->getFileScanInformation();
 
         $expectedData = [
             'artist' => 'Koel',
@@ -61,7 +62,7 @@ class FileSynchronizerTest extends TestCase
             'disc' => 3,
             'lyrics' => "Foo\r\nbar",
             'cover' => [
-                'data' => file_get_contents(__DIR__ . '/../../blobs/cover.png'),
+                'data' => File::get(__DIR__ . '/../../blobs/cover.png'),
                 'image_mime' => 'image/png',
                 'image_width' => 512,
                 'image_height' => 512,
@@ -78,9 +79,9 @@ class FileSynchronizerTest extends TestCase
 
     public function testSongWithoutTitleHasFileNameAsTitle(): void
     {
-        $this->fileSynchronizer->setFile(__DIR__ . '/../../songs/blank.mp3');
+        $this->scanner->setFile(__DIR__ . '/../../songs/blank.mp3');
 
-        self::assertSame('blank', $this->fileSynchronizer->getFileScanInformation()->title);
+        self::assertSame('blank', $this->scanner->getFileScanInformation()->title);
     }
 
     public function testIgnoreLrcFileIfEmbeddedLyricsAvailable(): void
@@ -91,7 +92,7 @@ class FileSynchronizerTest extends TestCase
         copy(__DIR__ . '/../../songs/full.mp3', $mediaFile);
         copy(__DIR__ . '/../../blobs/simple.lrc', $lrcFile);
 
-        self::assertSame("Foo\rbar", $this->fileSynchronizer->setFile($mediaFile)->getFileScanInformation()->lyrics);
+        self::assertSame("Foo\rbar", $this->scanner->setFile($mediaFile)->getFileScanInformation()->lyrics);
     }
 
     public function testReadLrcFileIfEmbeddedLyricsNotAvailable(): void
@@ -102,7 +103,7 @@ class FileSynchronizerTest extends TestCase
         copy(__DIR__ . '/../../songs/blank.mp3', $mediaFile);
         copy(__DIR__ . '/../../blobs/simple.lrc', $lrcFile);
 
-        $info = $this->fileSynchronizer->setFile($mediaFile)->getFileScanInformation();
+        $info = $this->scanner->setFile($mediaFile)->getFileScanInformation();
 
         self::assertSame("Line 1\nLine 2\nLine 3", $info->lyrics);
     }

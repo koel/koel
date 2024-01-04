@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Artist;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class ArtistTest extends TestCase
@@ -40,7 +41,7 @@ class ArtistTest extends TestCase
 
     public function testArtistsWithNameInUtf16EncodingAreRetrievedCorrectly(): void
     {
-        $name = file_get_contents(__DIR__ . '../../../blobs/utf16');
+        $name = File::get(__DIR__ . '../../../blobs/utf16');
         $artist = Artist::getOrCreate($name);
 
         self::assertTrue(Artist::getOrCreate($name)->is($artist));
