@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -38,7 +39,7 @@ function artist_image_url(?string $fileName): ?string
 
 function koel_version(): string
 {
-    return trim(file_get_contents(base_path('.version')));
+    return trim(FileFacade::get(base_path('.version')));
 }
 
 /**

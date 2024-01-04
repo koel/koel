@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Events\LibraryChanged;
-use App\Events\MediaSyncCompleted;
+use App\Events\MediaScanCompleted;
 use App\Events\PlaybackStarted;
 use App\Events\SongLikeToggled;
 use App\Events\SongsBatchLiked;
@@ -42,7 +42,7 @@ class EventServiceProvider extends BaseServiceProvider
             PruneLibrary::class,
         ],
 
-        MediaSyncCompleted::class => [
+        MediaScanCompleted::class => [
             DeleteNonExistingRecordsPostSync::class,
             WriteSyncLog::class,
         ],

@@ -4,6 +4,7 @@ namespace Tests\Integration\Services;
 
 use App\Models\Album;
 use App\Services\MediaMetadataService;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class MediaMetadataServiceTest extends TestCase
@@ -17,7 +18,7 @@ class MediaMetadataServiceTest extends TestCase
 
     public function testGetAlbumThumbnailUrl(): void
     {
-        copy(__DIR__ . '/../../blobs/cover.png', album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        File::copy(__DIR__ . '/../../blobs/cover.png', album_cover_path('album-cover-for-thumbnail-test.jpg'));
 
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
@@ -39,8 +40,8 @@ class MediaMetadataServiceTest extends TestCase
 
     private function cleanUp(): void
     {
-        @unlink(album_cover_path('album-cover-for-thumbnail-test.jpg'));
-        @unlink(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
+        File::delete(album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        File::delete(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
 
         self::assertFileDoesNotExist(album_cover_path('album-cover-for-thumbnail-test.jpg'));
         self::assertFileDoesNotExist(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));

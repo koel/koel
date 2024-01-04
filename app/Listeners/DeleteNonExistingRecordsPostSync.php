@@ -2,10 +2,10 @@
 
 namespace App\Listeners;
 
-use App\Events\MediaSyncCompleted;
+use App\Events\MediaScanCompleted;
 use App\Models\Song;
 use App\Repositories\SongRepository;
-use App\Values\SyncResult;
+use App\Values\ScanResult;
 
 class DeleteNonExistingRecordsPostSync
 {
@@ -13,11 +13,11 @@ class DeleteNonExistingRecordsPostSync
     {
     }
 
-    public function handle(MediaSyncCompleted $event): void
+    public function handle(MediaScanCompleted $event): void
     {
         $paths = $event->results
             ->valid()
-            ->map(static fn (SyncResult $result) => $result->path)
+            ->map(static fn (ScanResult $result) => $result->path)
             ->merge($this->songRepository->getAllHostedOnS3()->pluck('path'))
             ->toArray();
 

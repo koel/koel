@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class MediaMetadataService
@@ -72,7 +73,7 @@ class MediaMetadataService
             $this->imageWriter->write($destination, $source);
 
             if ($cleanUp && $artist->has_image) {
-                @unlink($artist->image_path);
+                File::delete($artist->image_path);
             }
 
             $artist->update(['image' => basename($destination)]);
@@ -99,7 +100,7 @@ class MediaMetadataService
             return null;
         }
 
-        if (!file_exists($album->thumbnail_path)) {
+        if (!File::exists($album->thumbnail_path)) {
             $this->createThumbnailForAlbum($album);
         }
 
@@ -117,7 +118,7 @@ class MediaMetadataService
             return;
         }
 
-        @unlink($album->cover_path);
-        @unlink($album->thumbnail_path);
+        File::delete($album->cover_path);
+        File::delete($album->thumbnail_path);
     }
 }

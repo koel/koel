@@ -2,16 +2,16 @@
 
 namespace App\Listeners;
 
-use App\Events\MediaSyncCompleted;
-use App\Values\SyncResult;
+use App\Events\MediaScanCompleted;
+use App\Values\ScanResult;
 use Illuminate\Support\Collection;
 use Throwable;
 
 class WriteSyncLog
 {
-    public function handle(MediaSyncCompleted $event): void
+    public function handle(MediaScanCompleted $event): void
     {
-        $transformer = static fn (SyncResult $entry) => (string) $entry;
+        $transformer = static fn (ScanResult $entry) => (string) $entry;
 
         /** @var Collection $messages */
         $messages = config('koel.sync_log_level') === 'all'

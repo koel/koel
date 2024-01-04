@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\File;
 use Throwable;
 
 class SimpleLrcReader
@@ -11,7 +12,7 @@ class SimpleLrcReader
         $lrcFilePath = self::getLrcFilePath($mediaFilePath);
 
         try {
-            return $lrcFilePath ? trim(file_get_contents($lrcFilePath)) : '';
+            return $lrcFilePath ? trim(File::get($lrcFilePath)) : '';
         } catch (Throwable) {
             return '';
         }
@@ -22,7 +23,7 @@ class SimpleLrcReader
         foreach (['.lrc', '.LRC'] as $extension) {
             $lrcFilePath = preg_replace('/\.[^.]+$/', $extension, $mediaFilePath);
 
-            if (is_file($lrcFilePath) && is_readable($lrcFilePath)) {
+            if (File::isFile($lrcFilePath) && File::isReadable($lrcFilePath)) {
                 return $lrcFilePath;
             }
         }

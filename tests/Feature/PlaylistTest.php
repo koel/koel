@@ -61,7 +61,7 @@ class PlaylistTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
-        $rule = SmartPlaylistRule::create([
+        $rule = SmartPlaylistRule::make([
             'model' => 'artist.name',
             'operator' => SmartPlaylistRule::OPERATOR_IS,
             'value' => ['Bob Dylan'],
@@ -96,7 +96,7 @@ class PlaylistTest extends TestCase
                 [
                     'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                     'rules' => [
-                        SmartPlaylistRule::create([
+                        SmartPlaylistRule::make([
                             'model' => 'artist.name',
                             'operator' => SmartPlaylistRule::OPERATOR_IS,
                             'value' => ['Bob Dylan'],

@@ -11,6 +11,7 @@ use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Database\DatabaseManager as DB;
 use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Psr\Log\LoggerInterface;
@@ -344,7 +345,7 @@ class InitCommand extends Command
 
     private static function isValidMediaPath(string $path): bool
     {
-        return is_dir($path) && is_readable($path);
+        return File::isDirectory($path) && File::isReadable($path);
     }
 
     /**

@@ -5,7 +5,7 @@ namespace App\Values;
 use Exception;
 use Webmozart\Assert\Assert;
 
-final class SyncResult
+final class ScanResult
 {
     public const TYPE_SUCCESS = 1;
     public const TYPE_ERROR = 2;
@@ -14,9 +14,9 @@ final class SyncResult
     private function __construct(public string $path, public int $type, public ?string $error = null)
     {
         Assert::oneOf($type, [
-            SyncResult::TYPE_SUCCESS,
-            SyncResult::TYPE_ERROR,
-            SyncResult::TYPE_SKIPPED,
+            ScanResult::TYPE_SUCCESS,
+            ScanResult::TYPE_ERROR,
+            ScanResult::TYPE_SKIPPED,
         ]);
     }
 

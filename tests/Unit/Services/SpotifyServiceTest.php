@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Services\ApiClients\SpotifyClient;
 use App\Services\SpotifyService;
+use Illuminate\Support\Facades\File;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
@@ -76,7 +77,7 @@ class SpotifyServiceTest extends TestCase
     /** @return array<mixed> */
     private static function parseFixture(string $name): array
     {
-        return json_decode(file_get_contents(__DIR__ . '/../../blobs/spotify/' . $name), true);
+        return json_decode(File::get(__DIR__ . '/../../blobs/spotify/' . $name), true);
     }
 
     protected function tearDown(): void
