@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="{ playing, selected: item.selected }"
+    :class="{ playing, external, selected: item.selected }"
     class="song-item"
     data-testid="song-item"
     tabindex="0"
@@ -14,7 +14,12 @@
       <SongThumbnail :song="song" />
     </span>
     <span class="title-artist">
-      <span class="title text-primary">{{ song.title }}</span>
+      <span class="title text-primary">
+        <span class="external-mark" v-if="external">
+          <Icon :icon="faSquareUpRight" />
+        </span>
+        {{ song.title }}
+      </span>
       <span class="artist">
         {{ song.artist_name }}
       </span>
@@ -28,20 +33,25 @@
 </template>
 
 <script lang="ts" setup>
+import { faSquareUpRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore } from '@/stores'
 import { secondsToHis } from '@/utils'
+import { useAuthorization } from '@/composables'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
+
+const { currentUser } = useAuthorization()
 
 const props = defineProps<{ item: SongRow }>()
 const { item } = toRefs(props)
 
 const song = computed(() => item.value.song)
 const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playback_state!))
+const external = computed(() => song.value.owner_id !== currentUser.value?.id)
 const fmtLength = secondsToHis(song.value.length)
 
 const play = () => {
@@ -62,6 +72,13 @@ const play = () => {
   &:focus, &:focus-within {
     box-shadow: 0 0 1px 1px var(--color-accent) inset;
     border-radius: 4px;
+  }
+
+  .external-mark {
+    display: inline-block !important;
+    vertical-align: bottom;
+    margin-right: .2rem;
+    opacity: .5;
   }
 
   @media (hover: none) {

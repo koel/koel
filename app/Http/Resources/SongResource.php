@@ -18,6 +18,7 @@ class SongResource extends JsonResource
         return [
             'type' => 'songs',
             'id' => $this->song->id,
+            'owner_id' => $this->song->owner_id,
             'title' => $this->song->title,
             'lyrics' => $this->song->lyrics,
             'album_id' => $this->song->album->id,
@@ -35,7 +36,6 @@ class SongResource extends JsonResource
             'genre' => $this->song->genre,
             'year' => $this->song->year,
             'created_at' => $this->song->created_at,
-            'owner_id' => $this->song->owner_id,
         ];
     }
 }

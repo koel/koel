@@ -10,7 +10,12 @@
     <SongThumbnail :song="song" />
     <main>
       <div class="details">
-        <h3>{{ song.title }}</h3>
+        <h3>
+          <span class="external-mark" v-if="external">
+            <Icon :icon="faSquareUpRight" />
+          </span>
+          {{ song.title }}
+        </h3>
         <p class="by text-secondary">
           <a :href="`#/artist/${song.artist_id}`">{{ song.artist_name }}</a>
           - {{ pluralize(song.play_count, 'play') }}
@@ -22,11 +27,12 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from 'vue'
+import {faSquareUpRight} from '@fortawesome/free-solid-svg-icons'
+import { computed, toRefs } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useDraggable } from '@/composables'
+import { useAuthorization, useDraggable } from '@/composables'
 
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'
@@ -34,7 +40,10 @@ import LikeButton from '@/components/song/SongLikeButton.vue'
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
+const { currentUser } = useAuthorization()
 const { startDragging } = useDraggable('songs')
+
+const external = computed(() => song.value.owner_id !== currentUser.value?.id)
 
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
 const onDragStart = (event: DragEvent) => startDragging(event, [song.value])
@@ -136,6 +145,11 @@ article {
       flex-direction: column;
       gap: 4px;
       overflow: hidden;
+
+      .external-mark {
+        margin-right: .2rem;
+        opacity: .5;
+      }
     }
   }
 

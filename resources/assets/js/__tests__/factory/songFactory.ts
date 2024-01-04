@@ -7,6 +7,7 @@ const generate = (partOfCompilation = false): Song => {
 
   return {
     type: 'songs',
+    owner_id: faker.datatype.number({ min: 1, max: 999 }),
     artist_id: artistId,
     album_id: faker.datatype.number({ min: 2 }), // avoid Unknown Album by default
     artist_name: artistName,
