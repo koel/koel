@@ -91,7 +91,7 @@ const {
   sort
 } = useSongList(toRef(favoriteStore.state, 'songs'))
 
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const download = () => downloadService.fromFavorites()
 const removeSelected = () => selectedSongs.value.length && favoriteStore.unlike(selectedSongs.value)

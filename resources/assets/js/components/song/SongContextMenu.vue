@@ -43,7 +43,7 @@
     </template>
 
     <li v-if="isAdmin" @click="openEditForm">Edit…</li>
-    <li v-if="allowDownload" @click="download">Download</li>
+    <li v-if="allowsDownload" @click="download">Download</li>
     <li v-if="onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
 
     <template v-if="canBeRemovedFromPlaylist">
@@ -92,7 +92,7 @@ const {
 } = useSongMenuMethods(songs, close)
 
 const playlists = toRef(playlistStore.state, 'playlists')
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowsDownload = toRef(commonStore.state, 'allows_download')
 const queue = toRef(queueStore.state, 'songs')
 const currentSong = toRef(queueStore, 'current')
 

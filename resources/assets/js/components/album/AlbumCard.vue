@@ -51,7 +51,7 @@ const { startDragging } = useDraggable('album')
 const props = withDefaults(defineProps<{ album: Album, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { album, layout } = toRefs(props)
 
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_id))
 const showing = computed(() => !albumStore.isUnknown(album.value))

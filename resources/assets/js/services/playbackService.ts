@@ -369,7 +369,7 @@ class PlaybackService {
     media.addEventListener('error', () => this.playNext(), true)
 
     media.addEventListener('ended', () => {
-      if (commonStore.state.use_last_fm && userStore.current.preferences!.lastfm_session_key) {
+      if (commonStore.state.uses_last_fm && userStore.current.preferences!.lastfm_session_key) {
         songStore.scrobble(queueStore.current!)
       }
 

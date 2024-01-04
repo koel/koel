@@ -98,7 +98,7 @@ new class extends UnitTestCase {
     })
 
     it('scrobbles if current song ends', () => {
-      commonStore.state.use_last_fm = true
+      commonStore.state.uses_last_fm = true
       userStore.state.current = reactive(factory<User>('user', {
         preferences: {
           lastfm_session_key: 'foo'
@@ -114,7 +114,7 @@ new class extends UnitTestCase {
     it.each<[RepeatMode, number, number]>([['REPEAT_ONE', 1, 0], ['NO_REPEAT', 0, 1], ['REPEAT_ALL', 0, 1]])(
       'when song ends, if repeat mode is %s then restart() is called %d times and playNext() is called %d times',
       (repeatMode, restartCalls, playNextCalls) => {
-        commonStore.state.use_last_fm = false // so that no scrobbling is made unnecessarily
+        commonStore.state.uses_last_fm = false // so that no scrobbling is made unnecessarily
         preferences.repeatMode = repeatMode
         playbackService.init(document.querySelector('.plyr')!)
         const restartMock = this.mock(playbackService, 'restart')

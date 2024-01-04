@@ -10,7 +10,7 @@ let artist: Artist
 
 new class extends UnitTestCase {
   private async renderComponent (mode: MediaInfoDisplayMode = 'aside', info?: ArtistInfo) {
-    commonStore.state.use_last_fm = true
+    commonStore.state.uses_last_fm = true
     info = info ?? factory<ArtistInfo>('artist-info')
     artist = factory<Artist>('artist', { name: 'Led Zeppelin' })
 

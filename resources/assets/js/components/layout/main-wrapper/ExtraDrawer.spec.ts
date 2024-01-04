@@ -49,7 +49,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches info for the current song', async () => {
-      commonStore.state.use_you_tube = true
+      commonStore.state.uses_you_tube = true
 
       const song = factory<Song>('song')
       const songRef = ref<Song | null>(null)

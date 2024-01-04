@@ -6,7 +6,6 @@ use App\Console\Commands\Traits\AskForPassword;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
-use App\Services\MediaCacheService;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
@@ -32,7 +31,6 @@ class InitCommand extends Command
     private bool $adminSeeded = false;
 
     public function __construct(
-        private MediaCacheService $mediaCacheService,
         private Artisan $artisan,
         private Hash $hash,
         private DotenvEditor $dotenvEditor,
@@ -277,9 +275,6 @@ class InitCommand extends Command
         $this->components->task('Migrating database', function (): void {
             $this->artisan->call('migrate', ['--force' => true]);
         });
-
-        // Clear the media cache, just in case we did any media-related migration
-        $this->mediaCacheService->clear();
     }
 
     private function maybeSetMediaPath(): void

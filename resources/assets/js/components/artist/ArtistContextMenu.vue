@@ -26,7 +26,7 @@ const { go } = useRouter()
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
 const artist = ref<Artist>()
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isStandardArtist = computed(() =>
   !artistStore.isUnknown(artist.value!)

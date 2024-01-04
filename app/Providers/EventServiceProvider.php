@@ -8,7 +8,6 @@ use App\Events\PlaybackStarted;
 use App\Events\SongLikeToggled;
 use App\Events\SongsBatchLiked;
 use App\Events\SongsBatchUnliked;
-use App\Listeners\ClearMediaCache;
 use App\Listeners\DeleteNonExistingRecordsPostSync;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
@@ -41,7 +40,6 @@ class EventServiceProvider extends BaseServiceProvider
 
         LibraryChanged::class => [
             PruneLibrary::class,
-            ClearMediaCache::class,
         ],
 
         MediaSyncCompleted::class => [

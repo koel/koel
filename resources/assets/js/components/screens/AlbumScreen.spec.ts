@@ -11,7 +11,7 @@ let album: Album
 
 new class extends UnitTestCase {
   private async renderComponent () {
-    commonStore.state.use_last_fm = true
+    commonStore.state.uses_last_fm = true
 
     album = factory<Album>('album', {
       id: 42,

@@ -137,7 +137,6 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\MediaCacheServiceProvider::class,
         App\Providers\UtilServiceProvider::class,
         App\Providers\YouTubeServiceProvider::class,
         App\Providers\DownloadServiceProvider::class,

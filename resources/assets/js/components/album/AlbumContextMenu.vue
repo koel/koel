@@ -25,7 +25,7 @@ const { go } = useRouter()
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
 
 const album = ref<Album>()
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value!))
 

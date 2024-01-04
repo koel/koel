@@ -10,7 +10,7 @@ let album: Album
 
 new class extends UnitTestCase {
   private async renderComponent (mode: MediaInfoDisplayMode = 'aside', info?: AlbumInfo) {
-    commonStore.state.use_last_fm = true
+    commonStore.state.uses_last_fm = true
 
     if (info === undefined) {
       info = factory<AlbumInfo>('album-info')

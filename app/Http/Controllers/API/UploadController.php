@@ -29,7 +29,7 @@ class UploadController extends Controller
         $this->authorize('upload', User::class);
 
         try {
-            $song = $songRepository->getOne($uploadService->handleUploadedFile($request->file)->id);
+            $song = $songRepository->getOne($uploadService->handleUploadedFile($request->file, $user)->id, $user);
 
             event(new LibraryChanged());
 

@@ -61,7 +61,7 @@ new class extends UnitTestCase {
     })
 
     it('does not have an option to download if downloading is disabled', async () => {
-      commonStore.state.allow_download = false
+      commonStore.state.allows_download = false
       await this.renderComponent()
 
       expect(screen.queryByText('Download')).toBeNull()

@@ -6,25 +6,35 @@ use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use App\Models\Song;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Throwable;
 
 use function Functional\memoize;
 
 class UploadService
 {
-    private const UPLOAD_DIRECTORY = '__KOEL_UPLOADS__';
-
     public function __construct(private FileSynchronizer $fileSynchronizer)
     {
     }
 
-    public function handleUploadedFile(UploadedFile $file): Song
+    public function handleUploadedFile(UploadedFile $file, User $uploader): Song
     {
-        $targetFileName = $this->getTargetFileName($file);
-        $file->move($this->getUploadDirectory(), $targetFileName);
+        $uploadDirectory = $this->getUploadDirectory($uploader);
+        $targetFileName = $this->getTargetFileName($file, $uploader);
 
-        $targetPathName = $this->getUploadDirectory() . $targetFileName;
-        $result = $this->fileSynchronizer->setFile($targetPathName)->sync();
+        $file->move($uploadDirectory, $targetFileName);
+        $targetPathName = $uploadDirectory . $targetFileName;
+
+        try {
+            $result = $this->fileSynchronizer
+                ->setOwner($uploader)
+                ->setFile($targetPathName)
+                ->sync();
+        } catch (Throwable) {
+            @unlink($targetPathName);
+            throw new SongUploadFailedException('Unknown error');
+        }
 
         if ($result->isError()) {
             @unlink($targetPathName);
@@ -34,25 +44,35 @@ class UploadService
         return $this->fileSynchronizer->getSong();
     }
 
-    private function getUploadDirectory(): string
+    private function getUploadDirectory(User $uploader): string
     {
-        return memoize(static function (): string {
+        return memoize(static function () use ($uploader): string {
             $mediaPath = Setting::get('media_path');
 
-            if (!$mediaPath) {
-                throw new MediaPathNotSetException();
+            throw_unless((bool) $mediaPath, MediaPathNotSetException::class);
+
+            $dir = sprintf(
+                '%s%s__KOEL_UPLOADS_$%s__%s',
+                $mediaPath,
+                DIRECTORY_SEPARATOR,
+                $uploader->id,
+                DIRECTORY_SEPARATOR
+            );
+
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
             }
 
-            return $mediaPath . DIRECTORY_SEPARATOR . self::UPLOAD_DIRECTORY . DIRECTORY_SEPARATOR;
+            return $dir;
         });
     }
 
-    private function getTargetFileName(UploadedFile $file): string
+    private function getTargetFileName(UploadedFile $file, User $uploader): string
     {
         // If there's no existing file with the same name in the upload directory, use the original name.
         // Otherwise, prefix the original name with a hash.
         // The whole point is to keep a readable file name when we can.
-        if (!file_exists($this->getUploadDirectory() . $file->getClientOriginalName())) {
+        if (!file_exists($this->getUploadDirectory($uploader) . $file->getClientOriginalName())) {
             return $file->getClientOriginalName();
         }
 
