@@ -10,12 +10,12 @@ use SimpleXMLElement;
 use Webmozart\Assert\Assert;
 
 /**
- * @method mixed get(string $uri, array $data = [], bool $appendKey = true)
- * @method mixed post($uri, array $data = [], bool $appendKey = true)
- * @method mixed put($uri, array $data = [], bool $appendKey = true)
- * @method mixed patch($uri, array $data = [], bool $appendKey = true)
- * @method mixed head($uri, array $data = [], bool $appendKey = true)
- * @method mixed delete($uri, array $data = [], bool $appendKey = true)
+ * @method mixed get(string $uri, array $data = [], bool $appendKey = true, array $headers = [])
+ * @method mixed post($uri, array $data = [], bool $appendKey = true, array $headers = [])
+ * @method mixed put($uri, array $data = [], bool $appendKey = true, array $headers = [])
+ * @method mixed patch($uri, array $data = [], bool $appendKey = true, array $headers = [])
+ * @method mixed head($uri, array $data = [], bool $appendKey = true, array $headers = [])
+ * @method mixed delete($uri, array $data = [], bool $appendKey = true, array $headers = [])
  * @method Promise getAsync(string $uri, array $data = [], bool $appendKey = true)
  * @method Promise postAsync($uri, array $data = [], bool $appendKey = true)
  * @method Promise putAsync($uri, array $data = [], bool $appendKey = true)
@@ -40,6 +40,7 @@ abstract class ApiClient
         'deleteAsync',
     ];
 
+    protected array $headers = [];
     protected string $responseFormat = 'json';
 
     /**
@@ -62,25 +63,31 @@ abstract class ApiClient
      *                           While it's usually the case, some services (like Last.fm) requires
      *                           an "API signature" of the request. Appending an API key will break the request.
      * @param array $params An array of parameters
-     *
      */
-    public function request(string $method, string $uri, bool $appendKey = true, array $params = []): mixed
-    {
-        return attempt(function () use ($method, $uri, $appendKey, $params) {
-            $body = (string) $this->wrapped
-                ->$method($this->buildUrl($uri, $appendKey), ['form_params' => $params])
-                ->getBody();
+    public function request(
+        string $method,
+        string $uri,
+        bool $appendKey = true,
+        array $params = [],
+        array $headers = []
+    ): mixed {
+        $options = [
+            'headers' => array_merge($this->headers, $headers),
+        ];
 
-            if ($this->responseFormat === 'json') {
-                return json_decode($body);
-            }
+        $body = (string) $this->wrapped
+            ->$method($this->buildUrl($uri, $appendKey), ['form_params' => $params], $options)
+            ->getBody();
 
-            if ($this->responseFormat === 'xml') {
-                return simplexml_load_string($body);
-            }
+        if ($this->responseFormat === 'json') {
+            return json_decode($body);
+        }
 
-            return $body;
-        });
+        if ($this->responseFormat === 'xml') {
+            return simplexml_load_string($body);
+        }
+
+        return $body;
     }
 
     public function requestAsync(string $method, string $uri, bool $appendKey = true, array $params = []): Promise
@@ -109,11 +116,12 @@ abstract class ApiClient
         $uri = $args[0];
         $params = $args[1] ?? [];
         $appendKey = $args[2] ?? true;
+        $headers = $args[3] ?? [];
 
         if (Str::endsWith($method, 'Async')) {
             return $this->requestAsync($method, $uri, $appendKey, $params);
         } else {
-            return $this->request($method, $uri, $appendKey, $params);
+            return $this->request($method, $uri, $appendKey, $params, $headers);
         }
     }
 
@@ -129,10 +137,10 @@ abstract class ApiClient
                 $uri = "/$uri";
             }
 
-            $uri = $this->getEndpoint() . $uri;
+            $uri = rtrim($this->getEndpoint(), '/') . $uri;
         }
 
-        if ($appendKey) {
+        if ($appendKey && $this->getKey()) {
             if (parse_url($uri, PHP_URL_QUERY)) {
                 $uri .= "&$this->keyParam=" . $this->getKey();
             } else {

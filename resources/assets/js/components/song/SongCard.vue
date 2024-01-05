@@ -32,7 +32,7 @@ import { computed, toRefs } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
-import { useAuthorization, useDraggable } from '@/composables'
+import { useAuthorization, useDraggable, useLicense } from '@/composables'
 
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'
@@ -40,10 +40,11 @@ import LikeButton from '@/components/song/SongLikeButton.vue'
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
+const { isKoelPlus } = useLicense()
 const { currentUser } = useAuthorization()
 const { startDragging } = useDraggable('songs')
 
-const external = computed(() => song.value.owner_id !== currentUser.value?.id)
+const external = computed(() => isKoelPlus.value && song.value.owner_id !== currentUser.value?.id)
 
 const requestContextMenu = (event: MouseEvent) => eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
 const onDragStart = (event: DragEvent) => startDragging(event, [song.value])

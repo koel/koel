@@ -39,19 +39,21 @@ import { playbackService } from '@/services'
 import { queueStore } from '@/stores'
 import { secondsToHis } from '@/utils'
 import { useAuthorization } from '@/composables'
+import { useLicense } from '@/composables'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 
 const { currentUser } = useAuthorization()
+const { isKoelPlus } = useLicense()
 
 const props = defineProps<{ item: SongRow }>()
 const { item } = toRefs(props)
 
 const song = computed(() => item.value.song)
 const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playback_state!))
-const external = computed(() => song.value.owner_id !== currentUser.value?.id)
+const external = computed(() => isKoelPlus.value && song.value.owner_id !== currentUser.value?.id)
 const fmtLength = secondsToHis(song.value.length)
 
 const play = () => {
