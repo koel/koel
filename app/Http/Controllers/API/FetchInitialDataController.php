@@ -41,7 +41,6 @@ class FetchInitialDataController extends Controller
             'uses_i_tunes' => $iTunesService->used(),
             'allows_download' => config('koel.download.allow'),
             'media_path_set' => (bool) $settingRepository->getByKey('media_path'),
-            'allows_upload' => License::isPlus() || $user->is_admin,
             'supports_transcoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdn_url' => static_url(),
@@ -52,6 +51,7 @@ class FetchInitialDataController extends Controller
             'song_count' => $songRepository->count(),
             'song_length' => $songRepository->getTotalLength(),
             'queue_state' => QueueStateResource::make($queueService->getQueueState($user)),
+            'koel_plus' => License::isPlus(),
         ]);
     }
 }

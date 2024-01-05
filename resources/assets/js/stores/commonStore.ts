@@ -5,11 +5,11 @@ import { playlistFolderStore, playlistStore, preferenceStore, queueStore, settin
 
 interface CommonStoreState {
   allows_download: boolean
-  allows_upload: false,
   cdn_url: string
   current_user: User
   current_version: string
   latest_version: string
+  koel_plus: boolean
   media_path_set: boolean
   playlists: Playlist[]
   playlist_folders: PlaylistFolder[]
@@ -20,17 +20,17 @@ interface CommonStoreState {
   uses_i_tunes: boolean
   uses_last_fm: boolean
   uses_spotify: boolean
-  uses_you_tube: boolean,
+  uses_you_tube: boolean
   users: User[]
 }
 
 export const commonStore = {
   state: reactive<CommonStoreState>({
     allows_download: false,
-    allows_upload: false,
     cdn_url: '',
     current_user: undefined as unknown as User,
     current_version: '',
+    koel_plus: false,
     latest_version: '',
     media_path_set: false,
     playlists: [],
@@ -56,9 +56,6 @@ export const commonStore = {
 
     // Always disable YouTube integration on mobile.
     this.state.uses_you_tube = this.state.uses_you_tube && !isMobile.phone
-
-    // Always disable uploading on mobile
-    this.state.allows_upload = this.state.allows_upload && !isMobile.phone
 
     // If this is a new user, initialize his preferences to be an empty object.
     this.state.current_user.preferences = this.state.current_user.preferences || {}

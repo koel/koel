@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Services\ApiClients\ApiClient;
+use App\Services\ApiClients\LemonSqueezyApiClient;
 use App\Services\LastfmService;
+use App\Services\LicenseService;
 use App\Services\MusicEncyclopedia;
 use App\Services\NullMusicEncyclopedia;
 use App\Services\SpotifyService;
@@ -44,6 +47,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MusicEncyclopedia::class, function () {
             return $this->app->get(LastfmService::enabled() ? LastfmService::class : NullMusicEncyclopedia::class);
         });
+
+        $this->app->when(LicenseService::class)
+            ->needs(ApiClient::class)
+            ->give(fn () => $this->app->get(LemonSqueezyApiClient::class));
+
+        $this->app->when(LicenseService::class)
+            ->needs('$hashSalt')
+            ->give(config('app.key'));
     }
 
     /**

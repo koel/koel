@@ -45,12 +45,12 @@ function koel_version(): string
 /**
  * @throws Throwable
  */
-function attempt(callable $callback, bool $log = true): mixed
+function attempt(callable $callback, bool $log = true, bool $throw = false): mixed
 {
     try {
         return $callback();
     } catch (Throwable $e) {
-        if (app()->runningUnitTests()) {
+        if (app()->runningUnitTests() || $throw) {
             throw $e;
         }
 
