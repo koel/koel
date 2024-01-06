@@ -71,3 +71,10 @@ function attempt_unless($condition, callable $callback, bool $log = true): mixed
 {
     return !value($condition) ? attempt($callback, $log) : null;
 }
+
+if (!function_exists('test_path')) {
+    function test_path(string $path = ''): string
+    {
+        return base_path('tests' . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR));
+    }
+}

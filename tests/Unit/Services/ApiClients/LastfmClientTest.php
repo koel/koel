@@ -14,9 +14,7 @@ class LastfmClientTest extends TestCase
 {
     public function testGetSessionKey(): void
     {
-        $mock = new MockHandler([
-            new Response(200, [], File::get(__DIR__ . '/../../../blobs/lastfm/session-key.json')),
-        ]);
+        $mock = new MockHandler([new Response(200, [], File::get(test_path('blobs/lastfm/session-key.json')))]);
 
         $client = new LastfmClient(new GuzzleHttpClient(['handler' => HandlerStack::create($mock)]));
 

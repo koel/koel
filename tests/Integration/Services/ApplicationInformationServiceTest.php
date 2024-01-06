@@ -18,7 +18,7 @@ class ApplicationInformationServiceTest extends TestCase
         $latestVersion = 'v1.1.2';
 
         $mock = new MockHandler([
-            new Response(200, [], File::get(__DIR__ . '../../../blobs/github-tags.json')),
+            new Response(200, [], File::get(test_path('blobs/github-tags.json'))),
         ]);
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);

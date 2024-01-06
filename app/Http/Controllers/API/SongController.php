@@ -50,8 +50,6 @@ class SongController extends Controller
 
     public function update(SongUpdateRequest $request)
     {
-        $this->authorize('admin', $this->user);
-
         $updatedSongs = $this->songService->updateSongs($request->songs, SongUpdateData::fromRequest($request));
         $albums = $this->albumRepository->getMany($updatedSongs->pluck('album_id')->toArray());
 
@@ -72,8 +70,6 @@ class SongController extends Controller
 
     public function destroy(DeleteSongsRequest $request)
     {
-        $this->authorize('admin', $this->user);
-
         $this->songService->deleteSongs($request->songs);
 
         return response()->noContent();

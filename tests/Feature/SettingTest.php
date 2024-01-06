@@ -24,7 +24,7 @@ class SettingTest extends TestCase
         /** @var User $admin */
         $admin = User::factory()->admin()->create();
 
-        $this->mediaSyncService->shouldReceive('sync')->once()
+        $this->mediaSyncService->shouldReceive('scan')->once()
             ->andReturn(ScanResultCollection::create());
 
         $this->putAs('/api/settings', ['media_path' => __DIR__], $admin)

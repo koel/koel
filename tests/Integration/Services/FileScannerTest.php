@@ -20,7 +20,7 @@ class FileScannerTest extends TestCase
 
     public function testGetFileInfo(): void
     {
-        $info = $this->scanner->setFile(__DIR__ . '/../../songs/full.mp3')->getFileScanInformation();
+        $info = $this->scanner->setFile(test_path('songs/full.mp3'))->getScanInformation();
 
         $expectedData = [
             'artist' => 'Koel',
@@ -30,7 +30,7 @@ class FileScannerTest extends TestCase
             'disc' => 3,
             'lyrics' => "Foo\rbar",
             'cover' => [
-                'data' => File::get(__DIR__ . '/../../blobs/cover.png'),
+                'data' => File::get(test_path('blobs/cover.png')),
                 'image_mime' => 'image/png',
                 'image_width' => 512,
                 'image_height' => 512,
@@ -39,8 +39,8 @@ class FileScannerTest extends TestCase
                 'description' => '',
                 'datalength' => 7627,
             ],
-            'path' => realpath(__DIR__ . '/../../songs/full.mp3'),
-            'mtime' => filemtime(__DIR__ . '/../../songs/full.mp3'),
+            'path' => test_path('songs/full.mp3'),
+            'mtime' => filemtime(test_path('songs/full.mp3')),
             'albumartist' => '',
         ];
 
@@ -50,8 +50,8 @@ class FileScannerTest extends TestCase
 
     public function testGetFileInfoVorbisCommentsFlac(): void
     {
-        $flacPath = __DIR__ . '/../../songs/full-vorbis-comments.flac';
-        $info = $this->scanner->setFile($flacPath)->getFileScanInformation();
+        $flacPath = test_path('songs/full-vorbis-comments.flac');
+        $info = $this->scanner->setFile($flacPath)->getScanInformation();
 
         $expectedData = [
             'artist' => 'Koel',
@@ -62,7 +62,7 @@ class FileScannerTest extends TestCase
             'disc' => 3,
             'lyrics' => "Foo\r\nbar",
             'cover' => [
-                'data' => File::get(__DIR__ . '/../../blobs/cover.png'),
+                'data' => File::get(test_path('blobs/cover.png')),
                 'image_mime' => 'image/png',
                 'image_width' => 512,
                 'image_height' => 512,
@@ -79,9 +79,9 @@ class FileScannerTest extends TestCase
 
     public function testSongWithoutTitleHasFileNameAsTitle(): void
     {
-        $this->scanner->setFile(__DIR__ . '/../../songs/blank.mp3');
+        $this->scanner->setFile(test_path('songs/blank.mp3'));
 
-        self::assertSame('blank', $this->scanner->getFileScanInformation()->title);
+        self::assertSame('blank', $this->scanner->getScanInformation()->title);
     }
 
     public function testIgnoreLrcFileIfEmbeddedLyricsAvailable(): void
@@ -89,10 +89,10 @@ class FileScannerTest extends TestCase
         $base = sys_get_temp_dir() . '/' . Str::uuid();
         $mediaFile = $base . '.mp3';
         $lrcFile = $base . '.lrc';
-        copy(__DIR__ . '/../../songs/full.mp3', $mediaFile);
-        copy(__DIR__ . '/../../blobs/simple.lrc', $lrcFile);
+        File::copy(test_path('songs/full.mp3'), $mediaFile);
+        File::copy(test_path('blobs/simple.lrc'), $lrcFile);
 
-        self::assertSame("Foo\rbar", $this->scanner->setFile($mediaFile)->getFileScanInformation()->lyrics);
+        self::assertSame("Foo\rbar", $this->scanner->setFile($mediaFile)->getScanInformation()->lyrics);
     }
 
     public function testReadLrcFileIfEmbeddedLyricsNotAvailable(): void
@@ -100,10 +100,10 @@ class FileScannerTest extends TestCase
         $base = sys_get_temp_dir() . '/' . Str::uuid();
         $mediaFile = $base . '.mp3';
         $lrcFile = $base . '.lrc';
-        copy(__DIR__ . '/../../songs/blank.mp3', $mediaFile);
-        copy(__DIR__ . '/../../blobs/simple.lrc', $lrcFile);
+        File::copy(test_path('songs/blank.mp3'), $mediaFile);
+        File::copy(test_path('blobs/simple.lrc'), $lrcFile);
 
-        $info = $this->scanner->setFile($mediaFile)->getFileScanInformation();
+        $info = $this->scanner->setFile($mediaFile)->getScanInformation();
 
         self::assertSame("Line 1\nLine 2\nLine 3", $info->lyrics);
     }

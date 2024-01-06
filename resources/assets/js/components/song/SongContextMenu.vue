@@ -42,7 +42,7 @@
       <li class="separator" />
     </template>
 
-    <li v-if="isAdmin" @click="openEditForm">Edit…</li>
+    <li v-if="canModify" @click="openEditForm">Edit…</li>
     <li v-if="allowsDownload" @click="download">Download</li>
     <li v-if="onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
 
@@ -51,7 +51,7 @@
       <li @click="removeFromPlaylist">Remove from Playlist</li>
     </template>
 
-    <template v-if="isAdmin">
+    <template v-if="canModify">
       <li class="separator" />
       <li @click="deleteFromFilesystem">Delete from Filesystem</li>
     </template>
@@ -67,6 +67,7 @@ import {
   useAuthorization,
   useContextMenu,
   useDialogBox,
+  useLicense,
   useMessageToaster,
   usePlaylistManagement,
   useRouter,
@@ -76,9 +77,10 @@ import {
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen } = useRouter()
-const { isAdmin } = useAuthorization()
+const { isAdmin, currentUser } = useAuthorization()
 const { base, ContextMenuBase, open, close, trigger } = useContextMenu()
 const { removeSongsFromPlaylist } = usePlaylistManagement()
+const { isKoelPlus } = useLicense()
 
 const songs = ref<Song[]>([])
 
@@ -95,6 +97,11 @@ const playlists = toRef(playlistStore.state, 'playlists')
 const allowsDownload = toRef(commonStore.state, 'allows_download')
 const queue = toRef(queueStore.state, 'songs')
 const currentSong = toRef(queueStore, 'current')
+
+const canModify = computed(() => {
+  if (isKoelPlus.value) return songs.value.every(song => song.owner_id === currentUser.value?.id)
+  return isAdmin.value
+})
 
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)

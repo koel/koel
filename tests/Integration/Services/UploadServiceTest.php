@@ -51,7 +51,7 @@ class UploadServiceTest extends TestCase
         /** @var User $user */
         $user = User::factory()->create();
 
-        $song = $this->service->handleUploadedFile(UploadedFile::fromFile(__DIR__ . '/../../songs/full.mp3'), $user);
+        $song = $this->service->handleUploadedFile(UploadedFile::fromFile(test_path('songs/full.mp3')), $user);
 
         self::assertSame($song->owner_id, $user->id);
         self::assertSame(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__/full.mp3"), $song->path);

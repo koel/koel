@@ -281,7 +281,7 @@ class MediaScannerTest extends TestCase
 
         /** @var FileScanner $fileScanner */
         $fileScanner = app(FileScanner::class);
-        $info = $fileScanner->setFile($path)->getFileScanInformation();
+        $info = $fileScanner->setFile($path)->getScanInformation();
 
         self::assertSame('佐倉綾音 Unknown', $info->artistName);
         self::assertSame('小岩井こ Random', $info->albumName);

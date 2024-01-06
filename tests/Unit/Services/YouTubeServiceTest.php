@@ -21,7 +21,7 @@ class YouTubeServiceTest extends TestCase
 
         $client->shouldReceive('get')
             ->with('search?part=snippet&type=video&maxResults=10&pageToken=my-token&q=Foo+Bar')
-            ->andReturn(json_decode(File::get(__DIR__ . '/../../blobs/youtube/search.json')));
+            ->andReturn(json_decode(File::get(test_path('blobs/youtube/search.json'))));
 
         $service = new YouTubeService($client, app(Repository::class));
         $response = $service->searchVideosRelatedToSong($song, 'my-token');

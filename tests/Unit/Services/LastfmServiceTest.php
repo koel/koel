@@ -40,7 +40,7 @@ class LastfmServiceTest extends TestCase
         $this->client->shouldReceive('get')
             ->with('?method=artist.getInfo&autocorrect=1&artist=foo&format=json')
             ->once()
-            ->andReturn(json_decode(File::get(__DIR__ . '/../../blobs/lastfm/artist.json')));
+            ->andReturn(json_decode(File::get(test_path('blobs/lastfm/artist.json'))));
 
         $info = $this->service->getArtistInformation($artist);
 
@@ -62,7 +62,7 @@ class LastfmServiceTest extends TestCase
         $this->client->shouldReceive('get')
             ->with('?method=artist.getInfo&autocorrect=1&artist=bar&format=json')
             ->once()
-            ->andReturn(json_decode(File::get(__DIR__ . '/../../blobs/lastfm/artist-notfound.json')));
+            ->andReturn(json_decode(test_path('blobs/lastfm/artist-notfound.json')));
 
         self::assertNull($this->service->getArtistInformation($artist));
     }
@@ -75,7 +75,7 @@ class LastfmServiceTest extends TestCase
         $this->client->shouldReceive('get')
             ->with('?method=album.getInfo&autocorrect=1&album=foo&artist=bar&format=json')
             ->once()
-            ->andReturn(json_decode(File::get(__DIR__ . '/../../blobs/lastfm/album.json')));
+            ->andReturn(json_decode(File::get(test_path('blobs/lastfm/album.json'))));
 
         $info = $this->service->getAlbumInformation($album);
 
@@ -109,7 +109,7 @@ class LastfmServiceTest extends TestCase
         $this->client->shouldReceive('get')
             ->with('?method=album.getInfo&autocorrect=1&album=foo&artist=bar&format=json')
             ->once()
-            ->andReturn(json_decode(File::get(__DIR__ . '/../../blobs/lastfm/album-notfound.json')));
+            ->andReturn(json_decode(File::get(test_path('blobs/lastfm/album-notfound.json'))));
 
         self::assertNull($this->service->getAlbumInformation($album));
     }

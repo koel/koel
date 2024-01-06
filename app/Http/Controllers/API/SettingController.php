@@ -7,6 +7,7 @@ use App\Http\Requests\API\SettingRequest;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\MediaScanner;
+use App\Values\ScanConfiguration;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class SettingController extends Controller
@@ -22,7 +23,7 @@ class SettingController extends Controller
 
         Setting::set('media_path', rtrim(trim($request->media_path), '/'));
 
-        $this->mediaSyncService->scan($this->user, makePublic: true);
+        $this->mediaSyncService->scan(ScanConfiguration::make(owner: $this->user, makePublic: true));
 
         return response()->noContent();
     }
