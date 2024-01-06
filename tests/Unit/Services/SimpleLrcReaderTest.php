@@ -23,7 +23,7 @@ class SimpleLrcReaderTest extends TestCase
         $base = sys_get_temp_dir() . '/' . Str::uuid();
         $lrcFile = $base . '.lrc';
 
-        File::copy(__DIR__ . '/../../blobs/simple.lrc', $lrcFile);
+        File::copy(test_path('blobs/simple.lrc'), $lrcFile);
 
         self::assertSame("Line 1\nLine 2\nLine 3", $this->reader->tryReadForMediaFile($base . '.mp3'));
         File::delete($lrcFile);

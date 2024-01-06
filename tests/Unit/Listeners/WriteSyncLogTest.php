@@ -40,7 +40,7 @@ class WriteSyncLogTest extends TestCase
 
         self::assertStringEqualsFile(
             storage_path('logs/sync-20210102-123456.log'),
-            file_get_contents(__DIR__ . '/../../blobs/sync-log-all.log')
+            File::get(test_path('blobs/sync-log-all.log'))
         );
     }
 
@@ -52,7 +52,7 @@ class WriteSyncLogTest extends TestCase
 
         self::assertStringEqualsFile(
             storage_path('logs/sync-20210102-123456.log'),
-            file_get_contents(__DIR__ . '/../../blobs/sync-log-error.log')
+            File::get(test_path('blobs/sync-log-error.log'))
         );
     }
 

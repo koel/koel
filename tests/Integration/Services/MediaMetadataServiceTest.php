@@ -18,7 +18,7 @@ class MediaMetadataServiceTest extends TestCase
 
     public function testGetAlbumThumbnailUrl(): void
     {
-        File::copy(__DIR__ . '/../../blobs/cover.png', album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        File::copy(test_path('blobs/cover.png'), album_cover_path('album-cover-for-thumbnail-test.jpg'));
 
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);

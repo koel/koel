@@ -10,17 +10,17 @@ use Illuminate\Support\Facades\DB;
 
 trait CreatesApplication
 {
-    protected string $mediaPath = __DIR__ . '/../songs';
+    protected string $mediaPath;
     private Kernel $artisan;
     protected string $baseUrl = 'http://localhost';
     public static bool $migrated = false;
 
     public function createApplication(): Application
     {
-        $this->mediaPath = realpath($this->mediaPath);
-
         /** @var Application $app */
         $app = require __DIR__ . '/../../bootstrap/app.php';
+
+        $this->mediaPath = test_path('songs');
 
         /** @var Kernel $artisan */
         $artisan = $app->make(Artisan::class);

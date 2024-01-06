@@ -48,7 +48,7 @@ class FileScanner
         return $this;
     }
 
-    public function getFileScanInformation(): ?SongScanInformation
+    public function getScanInformation(): ?SongScanInformation
     {
         $raw = $this->getID3->analyze($this->filePath);
         $this->syncError = Arr::get($raw, 'error.0') ?: (Arr::get($raw, 'playtime_seconds') ? null : 'Empty file');
@@ -71,7 +71,7 @@ class FileScanner
             return ScanResult::skipped($this->filePath);
         }
 
-        $info = $this->getFileScanInformation()?->toArray();
+        $info = $this->getScanInformation()?->toArray();
 
         if (!$info) {
             return ScanResult::error($this->filePath, $this->syncError);
