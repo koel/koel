@@ -12,4 +12,19 @@ class SongPolicy
     {
         return License::isCommunity() || $song->is_public || $song->owner_id === $user->id;
     }
+
+    public function interact(User $user, Song $song): bool
+    {
+        return License::isCommunity() || $song->is_public || $song->owner_id === $user->id;
+    }
+
+    public function delete(User $user, Song $song): bool
+    {
+        return (License::isCommunity() && $user->is_admin) || $song->owner_id === $user->id;
+    }
+
+    public function edit(User $user, Song $song): bool
+    {
+        return (License::isCommunity() && $user->is_admin) || $song->owner_id === $user->id;
+    }
 }
