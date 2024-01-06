@@ -11,7 +11,7 @@ class BatchInteractionRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => 'required|array',
+            'songs' => 'required|array|exists:songs,id',
         ];
     }
 }
