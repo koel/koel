@@ -28,6 +28,10 @@ class LicenseService
                 'instance_name' => 'Koel Plus',
             ]);
 
+            if ($response->meta->store_id !== config('lemonsqueezy.store_id')) {
+                throw new FailedToActivateLicenseException('This license key is not from Koel’s official store.');
+            }
+
             return $this->updateOrCreateLicenseFromApiResponse($response);
         } catch (ClientException $e) {
             throw new FailedToActivateLicenseException(json_decode($e->getResponse()->getBody())->error, $e->getCode());
