@@ -42,7 +42,7 @@ class LicenseService
             return Cache::get('license_status');
         }
 
-        /** @var License $license */
+        /** @var ?License $license */
         $license = License::query()->latest()->first();
 
         if (!$license) {

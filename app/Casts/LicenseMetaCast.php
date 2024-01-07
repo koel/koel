@@ -25,7 +25,7 @@ class LicenseMetaCast implements CastsAttributes
         }
     }
 
-    /** @param LicenseMeta $value */
+    /** @param ?LicenseMeta $value */
     public function set($model, string $key, $value, array $attributes): ?string
     {
         try {

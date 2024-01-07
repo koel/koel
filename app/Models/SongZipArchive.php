@@ -18,7 +18,7 @@ class SongZipArchive
      */
     private array $fileNames = [];
 
-    public function __construct(string $path = '')
+    public function __construct(?string $path = null)
     {
         $this->path = $path ?: self::generateRandomArchivePath();
 

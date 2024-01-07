@@ -11,6 +11,9 @@ class DownloadSongsController extends Controller
 {
     public function __invoke(DownloadSongsRequest $request, DownloadService $download, SongRepository $repository)
     {
+        $songs = $repository->getMany($request->songs);
+        $songs->each(fn ($song) => $this->authorize('download', $song));
+
         return response()->download($download->from($repository->getMany($request->songs)));
     }
 }

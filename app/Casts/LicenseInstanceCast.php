@@ -25,7 +25,7 @@ class LicenseInstanceCast implements CastsAttributes
         }
     }
 
-    /** @param LicenseInstance $value */
+    /** @param ?LicenseInstance $value */
     public function set($model, string $key, $value, array $attributes): ?string
     {
         try {

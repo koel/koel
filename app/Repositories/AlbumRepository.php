@@ -28,7 +28,6 @@ class AlbumRepository extends Repository
     /** @return Collection|array<array-key, Album> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
-        /** @var User $user */
         $user ??= $this->auth->user();
 
         $query = Album::query()

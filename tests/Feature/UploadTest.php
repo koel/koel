@@ -19,7 +19,7 @@ class UploadTest extends TestCase
     {
         parent::setUp();
 
-        $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3');
+        $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
     public function testUnauthorizedPost(): void
