@@ -35,7 +35,7 @@ class CheckLicenseStatusCommand extends Command
                     );
 
                     $this->components->twoColumnDetail('Expires On', 'Never ever');
-                    $this->line('');
+                    $this->newLine();
                     break;
 
                 case LicenseStatus::STATUS_NO_LICENSE:

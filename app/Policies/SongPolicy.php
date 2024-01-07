@@ -27,4 +27,13 @@ class SongPolicy
     {
         return (License::isCommunity() && $user->is_admin) || $song->owner_id === $user->id;
     }
+
+    public function download(User $user, Song $song): bool
+    {
+        if (!config('koel.download.allow')) {
+            return false;
+        }
+
+        return License::isCommunity() || $song->is_public || $song->owner_id === $user->id;
+    }
 }

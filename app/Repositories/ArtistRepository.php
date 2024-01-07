@@ -14,7 +14,7 @@ class ArtistRepository extends Repository
     /** @return Collection|array<array-key, Artist> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
-        /** @var User $user */
+        /** @var ?User $user */
         $user ??= auth()->user();
 
         $query = Artist::query()

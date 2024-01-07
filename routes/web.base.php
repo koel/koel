@@ -30,12 +30,14 @@ Route::middleware('web')->group(static function (): void {
     Route::middleware('audio.auth')->group(static function (): void {
         Route::get('play/{song}/{transcode?}/{bitrate?}', PlayController::class)->name('song.play');
 
-        Route::prefix('download')->group(static function (): void {
-            Route::get('songs', DownloadSongsController::class);
-            Route::get('album/{album}', DownloadAlbumController::class);
-            Route::get('artist/{artist}', DownloadArtistController::class);
-            Route::get('playlist/{playlist}', DownloadPlaylistController::class);
-            Route::get('favorites', DownloadFavoritesController::class);
-        });
+        if (config('koel.download.allow')) {
+            Route::prefix('download')->group(static function (): void {
+                Route::get('songs', DownloadSongsController::class);
+                Route::get('album/{album}', DownloadAlbumController::class);
+                Route::get('artist/{artist}', DownloadArtistController::class);
+                Route::get('playlist/{playlist}', DownloadPlaylistController::class);
+                Route::get('favorites', DownloadFavoritesController::class);
+            });
+        }
     });
 });

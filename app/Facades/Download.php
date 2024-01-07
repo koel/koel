@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static string fromSong(Song $song)
+ * @see \App\Services\DownloadService
  */
 class Download extends Facade
 {

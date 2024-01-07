@@ -39,7 +39,7 @@ class ActivateLicenseCommand extends Command
 
         $this->components->twoColumnDetail('Expires On', 'Never ever');
 
-        $this->line('');
+        $this->newLine();
 
         return self::SUCCESS;
     }

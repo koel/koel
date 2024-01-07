@@ -27,7 +27,6 @@ class ScanCommand extends Command
     protected $description = 'Scan for songs in the configured directory.';
 
     private ?string $mediaPath;
-    private ?User $owner;
     private ProgressBar $progressBar;
 
     public function __construct(private MediaScanner $mediaScanner)
@@ -50,15 +49,22 @@ class ScanCommand extends Command
 
     public function handle(): int
     {
-        $this->owner = $this->getOwner();
         $this->mediaPath = $this->getMediaPath();
+
+        $config = ScanConfiguration::make(
+            owner:  $this->getOwner(),
+            // When scanning via CLI, the songs should be public by default, unless explicitly specified otherwise.
+            makePublic: !$this->option('private'),
+            ignores: collect($this->option('ignore'))->sort()->values()->all(),
+            force: $this->option('force')
+        );
 
         $record = $this->argument('record');
 
         if ($record) {
-            $this->scanSingleRecord($record);
+            $this->scanSingleRecord($record, $config);
         } else {
-            $this->scanMediaPath();
+            $this->scanMediaPath($config);
         }
 
         return self::SUCCESS;
@@ -67,26 +73,13 @@ class ScanCommand extends Command
     /**
      * Scan all files in the configured media path.
      */
-    private function scanMediaPath(): void
+    private function scanMediaPath(ScanConfiguration $config): void
     {
         $this->components->info('Scanning ' . $this->mediaPath);
 
-        // The tags to ignore from scanning.
-        // Notice that this is only meaningful for existing records.
-        // New records will have every applicable field scanned.
-        $ignores = collect($this->option('ignore'))->sort()->values()->all();
-
-        if ($ignores) {
-            $this->components->info('Ignoring tag(s): ' . implode(', ', $ignores));
+        if ($config->ignores) {
+            $this->components->info('Ignoring tag(s): ' . implode(', ', $config->ignores));
         }
-
-        $config = ScanConfiguration::make(
-            owner: $this->owner,
-            // When scanning via CLI, the songs should be public by default, unless explicitly specified otherwise.
-            makePublic: !$this->option('private'),
-            ignores: $ignores,
-            force: $this->option('force')
-        );
 
         $results = $this->mediaScanner->scan($config);
 
@@ -110,9 +103,9 @@ class ScanCommand extends Command
      *
      * @see http://man7.org/linux/man-pages/man1/inotifywait.1.html
      */
-    private function scanSingleRecord(string $record): void
+    private function scanSingleRecord(string $record, ScanConfiguration $config): void
     {
-        $this->mediaScanner->scanWatchRecord(new InotifyWatchRecord($record));
+        $this->mediaScanner->scanWatchRecord(new InotifyWatchRecord($record), $config);
     }
 
     public function onScanProgress(ScanResult $result): void

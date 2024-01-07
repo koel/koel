@@ -11,4 +11,9 @@ class PlaylistPolicy
     {
         return $playlist->user->is($user);
     }
+
+    public function download(User $user, Playlist $playlist): bool
+    {
+        return $this->own($user, $playlist);
+    }
 }
