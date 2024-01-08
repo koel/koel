@@ -20,7 +20,7 @@ class LicenseService
     {
     }
 
-    public function activateLicense(string $key): License
+    public function activate(string $key): License
     {
         try {
             $response = $this->client->post('licenses/activate', [
@@ -36,11 +36,30 @@ class LicenseService
         } catch (ClientException $e) {
             throw new FailedToActivateLicenseException(json_decode($e->getResponse()->getBody())->error, $e->getCode());
         } catch (Throwable $e) {
+            Log::error($e);
             throw FailedToActivateLicenseException::fromException($e);
         }
     }
 
-    public function getLicenseStatus(bool $checkCache = true): LicenseStatus
+    public function deactivateLicense(License $license): void
+    {
+        try {
+            $response = $this->client->post('licenses/deactivate', [
+                'license_key' => $license->key,
+                'instance_id' => $license->instance->id,
+            ]);
+
+            if ($response->deactivated) {
+                $license->delete();
+                Cache::delete('license_status');
+            }
+        } catch (Throwable $e) {
+            Log::error($e);
+            throw $e;
+        }
+    }
+
+    public function getStatus(bool $checkCache = true): LicenseStatus
     {
         if ($checkCache && Cache::has('license_status')) {
             return Cache::get('license_status');
@@ -103,7 +122,7 @@ class LicenseService
 
     public function isPlus(): bool
     {
-        return $this->getLicenseStatus()->isValid();
+        return $this->getStatus()->isValid();
     }
 
     public function isCommunity(): bool
