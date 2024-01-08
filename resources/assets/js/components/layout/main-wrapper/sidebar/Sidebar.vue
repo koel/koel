@@ -1,36 +1,39 @@
 <template>
   <nav id="sidebar" v-koel-clickaway="closeIfMobile" :class="{ showing: mobileShowing }" class="side side-nav">
-    <SearchForm />
-    <section class="music">
-      <h1>Your Music</h1>
-
-      <ul class="menu">
-        <SidebarItem screen="Home" href="#/home" :icon="faHome">Home</SidebarItem>
-        <QueueSidebarItem />
-        <SidebarItem screen="Songs" href="#/songs" :icon="faMusic">All Songs</SidebarItem>
-        <SidebarItem screen="Albums" href="#/albums" :icon="faCompactDisc">Albums</SidebarItem>
-        <SidebarItem screen="Artists" href="#/artists" :icon="faMicrophone">Artists</SidebarItem>
-        <SidebarItem screen="Genres" href="#/genres" :icon="faTags">Genres</SidebarItem>
-        <YouTubeSidebarItem v-show="showYouTube" />
-      </ul>
+    <section class="search-wrapper">
+      <SearchForm/>
     </section>
 
-    <PlaylistList />
+    <section class="menu-wrapper">
+      <section class="music">
+        <h1>Your Music</h1>
 
-    <section v-if="showManageSection" class="manage">
-      <h1>Manage</h1>
+        <ul class="menu">
+          <SidebarItem screen="Home" href="#/home" :icon="faHome">Home</SidebarItem>
+          <QueueSidebarItem/>
+          <SidebarItem screen="Songs" href="#/songs" :icon="faMusic">All Songs</SidebarItem>
+          <SidebarItem screen="Albums" href="#/albums" :icon="faCompactDisc">Albums</SidebarItem>
+          <SidebarItem screen="Artists" href="#/artists" :icon="faMicrophone">Artists</SidebarItem>
+          <SidebarItem screen="Genres" href="#/genres" :icon="faTags">Genres</SidebarItem>
+          <YouTubeSidebarItem v-show="showYouTube"/>
+        </ul>
+      </section>
 
-      <ul class="menu">
-        <SidebarItem screen="Settings" href="#/settings" :icon="faTools" v-if="isAdmin">Settings</SidebarItem>
-        <SidebarItem screen="Upload" href="#/upload" :icon="faUpload">Upload</SidebarItem>
-        <SidebarItem screen="Users" href="#/users" :icon="faUsers" v-if="isAdmin">Users</SidebarItem>
-        <li v-if="!isPlus && isAdmin">
-          <a :href="storeUrl" target="_blank">
-            <Icon :icon="faPlus" fixed-width />
-            <span>Upgrade to Plus</span>
-          </a>
-        </li>
-      </ul>
+      <PlaylistList/>
+
+      <section v-if="showManageSection" class="manage">
+        <h1>Manage</h1>
+
+        <ul class="menu">
+          <SidebarItem screen="Settings" href="#/settings" :icon="faTools" v-if="isAdmin">Settings</SidebarItem>
+          <SidebarItem screen="Upload" href="#/upload" :icon="faUpload">Upload</SidebarItem>
+          <SidebarItem screen="Users" href="#/users" :icon="faUsers" v-if="isAdmin">Users</SidebarItem>
+        </ul>
+      </section>
+    </section>
+
+    <section v-if="!isPlus && isAdmin" class="plus-wrapper">
+      <BtnUpgradeToPlus/>
     </section>
   </nav>
 </template>
@@ -63,7 +66,7 @@ const { onRouteChanged } = useRouter()
 const { useYouTube } = useThirdPartyServices()
 const { isAdmin } = useAuthorization()
 const { allowsUpload } = useUpload()
-const { storeUrl, isPlus } = useKoelPlus()
+const { isPlus } = useKoelPlus()
 
 const mobileShowing = ref(false)
 const youTubePlaying = ref(false)
@@ -85,22 +88,42 @@ eventBus.on('TOGGLE_SIDEBAR', () => (mobileShowing.value = !mobileShowing.value)
 
 <style lang="scss" scoped>
 nav {
+  position: relative;
   width: var(--sidebar-width);
   background-color: var(--color-bg-secondary);
-  padding: 2.05rem 1.5rem;
   overflow: auto;
   overflow-x: hidden;
   -ms-overflow-style: -ms-autohiding-scrollbar;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 
-  > * + * {
-    margin-top: 2.25rem;
+  form[role=search] {
+    min-height: 38px;
   }
 
-  @media (hover: none) {
-    // Enable scroll with momentum on touch devices
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
+  .search-wrapper {
+    padding: 2.05rem 1.5rem 0;
+  }
+
+  .menu-wrapper {
+    flex: 1;
+    padding: 2.05rem 1.5rem;
+    overflow-y: auto;
+
+    @media (hover: none) {
+      // Enable scroll with momentum on touch devices
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  .plus-wrapper {
+    padding:  1rem 1.5rem;
+  }
+
+  .menu-wrapper > * + * {
+    margin-top: 2.25rem;
   }
 
   .droppable {

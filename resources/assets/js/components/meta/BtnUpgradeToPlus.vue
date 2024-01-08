@@ -1,33 +1,32 @@
 <template>
-  <a :href="storeUrl" target="_blank">Upgrade to Plus</a>
+  <a :href="storeUrl" target="_blank" class="upgrade-to-plus-btn">
+    <Icon :icon="faPlus" fixed-width/>
+    Upgrade to Plus
+  </a>
 </template>
 
 <script setup lang="ts">
 import { useKoelPlus } from '@/composables'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 const { storeUrl } = useKoelPlus()
 </script>
 
 <style scoped lang="scss">
-a {
+a.upgrade-to-plus-btn {
   @include inset-when-pressed();
 
-  background: transparent;
-  border-width: 1px;
-  border-style: solid;
-  padding: .5rem 1rem;
+  background: linear-gradient(97.78deg, #671ce4 17.5%, #c62be8 113.39%);
   border-radius: 5px;
-  border-color: var(--color-text-primary);
+  border-style: solid;
+  padding: .65rem 1rem;
 
   &:hover {
-    transition: .3s ease-in-out;
-    background: var(--color-highlight);
-    border-color: var(--color-highlight);
     color: var(--color-text-primary) !important;
   }
 
   &:active {
-    transition: none;
+    padding: .65rem 1rem; // prevent layout jump in sidebar
   }
 }
 </style>
