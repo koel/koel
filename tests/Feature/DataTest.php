@@ -26,6 +26,13 @@ class DataTest extends TestCase
                 'current_song',
                 'playback_position',
             ],
+            'koel_plus' => [
+                'active',
+                'short_key',
+                'customer_name',
+                'customer_email',
+                'store_url',
+            ],
         ]);
     }
 }

@@ -9,7 +9,13 @@ interface CommonStoreState {
   current_user: User
   current_version: string
   latest_version: string
-  koel_plus: boolean
+  koel_plus: {
+    active: boolean
+    short_key: string | null
+    customer_name: string | null
+    customer_email: string | null
+    store_url: string
+  }
   media_path_set: boolean
   playlists: Playlist[]
   playlist_folders: PlaylistFolder[]
@@ -30,7 +36,13 @@ export const commonStore = {
     cdn_url: '',
     current_user: undefined as unknown as User,
     current_version: '',
-    koel_plus: false,
+    koel_plus: {
+      active: false,
+      short_key: null,
+      customer_name: null,
+      customer_email: null,
+      store_url: ''
+    },
     latest_version: '',
     media_path_set: false,
     playlists: [],

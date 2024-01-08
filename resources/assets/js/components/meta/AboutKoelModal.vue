@@ -5,7 +5,21 @@
         <img alt="Koel's logo" src="@/../img/logo.svg" width="128">
       </div>
 
-      <p class="current-version">Koel {{ currentVersion }}</p>
+      <div class="current-version">
+        Koel {{ currentVersion }}
+        <span v-if="isPlus" class="badge">Plus</span>
+        <span v-else>Community</span>
+        Edition
+        <p v-if="isPlus" class="plus-badge">
+          Licensed to {{ license.customerName }} &lt;{{ license.customerEmail }}&gt;
+          <br>
+          License key <span class="key text-green">{{ license.shortKey }}</span>
+        </p>
+
+        <p v-else class="upgrade">
+          <BtnUpgradeToPlus/>
+        </p>
+      </div>
 
       <p v-if="shouldNotifyNewVersion" data-testid="new-version-about">
         <a :href="latestVersionReleaseUrl" target="_blank">
@@ -33,7 +47,7 @@
 
       <SponsorList />
 
-      <p>
+      <p v-if="!isPlus">
         Loving Koel? Please consider supporting its development via
         <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a>
         and/or
@@ -51,11 +65,12 @@
 import { orderBy } from 'lodash'
 import { onMounted, ref } from 'vue'
 import { isDemo } from '@/utils'
-import { useNewVersionNotification } from '@/composables'
+import { useKoelPlus, useNewVersionNotification } from '@/composables'
 import { http } from '@/services'
 
 import SponsorList from '@/components/meta/SponsorList.vue'
 import Btn from '@/components/ui/Btn.vue'
+import BtnUpgradeToPlus from '@/components/meta/BtnUpgradeToPlus.vue'
 
 type DemoCredits = {
   name: string
@@ -70,6 +85,8 @@ const {
   latestVersion,
   latestVersionReleaseUrl
 } = useNewVersionNotification()
+
+const { isPlus, license, storeUrl } = useKoelPlus()
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
@@ -143,5 +160,15 @@ onMounted(async () => {
 
 .sponsors {
   margin-top: 1rem;
+}
+
+.plus-badge {
+  .key {
+    font-family: monospace;
+  }
+}
+
+.upgrade {
+  padding: .5rem 0;
 }
 </style>
