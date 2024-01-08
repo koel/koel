@@ -24,6 +24,12 @@
         <SidebarItem screen="Settings" href="#/settings" :icon="faTools" v-if="isAdmin">Settings</SidebarItem>
         <SidebarItem screen="Upload" href="#/upload" :icon="faUpload">Upload</SidebarItem>
         <SidebarItem screen="Users" href="#/users" :icon="faUsers" v-if="isAdmin">Users</SidebarItem>
+        <li v-if="!isPlus && isAdmin">
+          <a :href="storeUrl" target="_blank">
+            <Icon :icon="faPlus" fixed-width />
+            <span>Upgrade to Plus</span>
+          </a>
+        </li>
       </ul>
     </section>
   </nav>
@@ -38,23 +44,26 @@ import {
   faTags,
   faTools,
   faUpload,
+  faPlus,
   faUsers
 } from '@fortawesome/free-solid-svg-icons'
 
 import { computed, ref } from 'vue'
 import { eventBus } from '@/utils'
-import { useAuthorization, useRouter, useThirdPartyServices, useUpload } from '@/composables'
+import { useAuthorization, useKoelPlus, useRouter, useThirdPartyServices, useUpload } from '@/composables'
 
 import SidebarItem from './SidebarItem.vue'
 import QueueSidebarItem from './QueueSidebarItem.vue'
 import YouTubeSidebarItem from './YouTubeSidebarItem.vue'
 import PlaylistList from './PlaylistSidebarList.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
+import BtnUpgradeToPlus from '@/components/meta/BtnUpgradeToPlus.vue'
 
 const { onRouteChanged } = useRouter()
 const { useYouTube } = useThirdPartyServices()
 const { isAdmin } = useAuthorization()
 const { allowsUpload } = useUpload()
+const { storeUrl, isPlus } = useKoelPlus()
 
 const mobileShowing = ref(false)
 const youTubePlaying = ref(false)

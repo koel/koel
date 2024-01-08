@@ -4,17 +4,17 @@ import { commonStore } from '@/stores'
 import { acceptedMediaTypes } from '@/config'
 import { UploadFile, uploadService } from '@/services'
 import { getAllFileEntries, pluralize } from '@/utils'
-import { useMessageToaster, useRouter, useLicense, useAuthorization } from '@/composables'
+import { useMessageToaster, useRouter, useKoelPlus, useAuthorization } from '@/composables'
 
 export const useUpload = () => {
   const { toastSuccess, toastWarning } = useMessageToaster()
   const { go, isCurrentScreen } = useRouter()
 
-  const { isKoelPlus } = useLicense()
+  const { isPlus } = useKoelPlus()
   const { isAdmin } = useAuthorization()
 
   const mediaPathSetUp = computed(() => commonStore.state.media_path_set)
-  const allowsUpload = computed(() => (isKoelPlus.value || isAdmin.value) && !isMobile.phone)
+  const allowsUpload = computed(() => (isPlus.value || isAdmin.value) && !isMobile.phone)
 
   const fileEntryToFile = async (entry: FileSystemEntry) => new Promise<File>(resolve => entry.file(resolve))
 

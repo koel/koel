@@ -67,7 +67,7 @@ import {
   useAuthorization,
   useContextMenu,
   useDialogBox,
-  useLicense,
+  useKoelPlus,
   useMessageToaster,
   usePlaylistManagement,
   useRouter,
@@ -80,7 +80,7 @@ const { go, getRouteParam, isCurrentScreen } = useRouter()
 const { isAdmin, currentUser } = useAuthorization()
 const { base, ContextMenuBase, open, close, trigger } = useContextMenu()
 const { removeSongsFromPlaylist } = usePlaylistManagement()
-const { isKoelPlus } = useLicense()
+const { isPlus } = useKoelPlus()
 
 const songs = ref<Song[]>([])
 
@@ -99,7 +99,7 @@ const queue = toRef(queueStore.state, 'songs')
 const currentSong = toRef(queueStore, 'current')
 
 const canModify = computed(() => {
-  if (isKoelPlus.value) return songs.value.every(song => song.owner_id === currentUser.value?.id)
+  if (isPlus.value) return songs.value.every(song => song.owner_id === currentUser.value?.id)
   return isAdmin.value
 })
 

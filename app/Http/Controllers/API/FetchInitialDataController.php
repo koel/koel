@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Facades\License;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
@@ -14,6 +13,7 @@ use App\Repositories\SongRepository;
 use App\Services\ApplicationInformationService;
 use App\Services\ITunesService;
 use App\Services\LastfmService;
+use App\Services\LicenseService;
 use App\Services\QueueService;
 use App\Services\SpotifyService;
 use App\Services\YouTubeService;
@@ -28,8 +28,11 @@ class FetchInitialDataController extends Controller
         SongRepository $songRepository,
         ApplicationInformationService $applicationInformationService,
         QueueService $queueService,
+        LicenseService $licenseService,
         ?Authenticatable $user
     ) {
+        $licenseStatus = $licenseService->getStatus();
+
         return response()->json([
             'settings' => $user->is_admin ? $settingRepository->getAllAsKeyValueArray() : [],
             'playlists' => PlaylistResource::collection($user->playlists),
@@ -51,7 +54,13 @@ class FetchInitialDataController extends Controller
             'song_count' => $songRepository->count(),
             'song_length' => $songRepository->getTotalLength(),
             'queue_state' => QueueStateResource::make($queueService->getQueueState($user)),
-            'koel_plus' => License::isPlus(),
+            'koel_plus' => [
+                'active' => $licenseStatus->isValid(),
+                'short_key' => $licenseStatus->license?->short_key,
+                'customer_name' => $licenseStatus->license?->meta->customerName,
+                'customer_email' => $licenseStatus->license?->meta->customerEmail,
+                'store_url' => config('lemonsqueezy.store_url'),
+            ],
         ]);
     }
 }
