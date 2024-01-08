@@ -25,6 +25,7 @@ const generate = (partOfCompilation = false): Song => {
     lyrics: faker.lorem.paragraph(),
     play_count: faker.datatype.number(),
     liked: faker.datatype.boolean(),
+    is_public: faker.datatype.boolean(),
     created_at: faker.date.past().toISOString(),
     playback_state: 'Stopped'
   }

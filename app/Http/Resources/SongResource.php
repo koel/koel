@@ -35,6 +35,7 @@ class SongResource extends JsonResource
             'disc' => $this->song->disc,
             'genre' => $this->song->genre,
             'year' => $this->song->year,
+            'is_public' => $this->song->is_public,
             'created_at' => $this->song->created_at,
         ];
     }

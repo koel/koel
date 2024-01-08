@@ -29,6 +29,7 @@ class SongTest extends TestCase
         'genre',
         'year',
         'disc',
+        'is_public',
         'created_at',
     ];
 

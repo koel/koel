@@ -82,6 +82,16 @@ class SongService
         return $this->songRepository->getOne($song->id);
     }
 
+    public function makeSongsPublic(Collection $songs): void
+    {
+        Song::query()->whereIn('id', $songs->pluck('id'))->update(['is_public' => true]);
+    }
+
+    public function makeSongsPrivate(Collection $songs): void
+    {
+        Song::query()->whereIn('id', $songs->pluck('id'))->update(['is_public' => false]);
+    }
+
     /**
      * @param array<string>|string $ids
      */
