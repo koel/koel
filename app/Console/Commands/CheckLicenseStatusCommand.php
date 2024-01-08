@@ -22,11 +22,11 @@ class CheckLicenseStatusCommand extends Command
         $this->components->info('Checking your Koel Plus license status…');
 
         try {
-            $status = $this->licenseService->getLicenseStatus(checkCache: false);
+            $status = $this->licenseService->getStatus(checkCache: false);
 
             switch ($status->status) {
                 case LicenseStatus::STATUS_VALID:
-                    $this->output->success('You have a valid Koel Plus license. Thanks for supporting Koel!');
+                    $this->output->success('You have a valid Koel Plus license. All Plus features are enabled.');
                     $this->components->twoColumnDetail('License Key', $status->license->short_key);
 
                     $this->components->twoColumnDetail(
@@ -40,12 +40,12 @@ class CheckLicenseStatusCommand extends Command
 
                 case LicenseStatus::STATUS_NO_LICENSE:
                     $this->components->info(
-                        'No license found. Please consider purchasing one at https://plus.koel.dev.'
+                        'No license found. You can purchase one at ' . config('lemonsqueezy.store_url')
                     );
                     break;
 
                 case LicenseStatus::STATUS_INVALID:
-                    $this->components->error('Your license is invalid. Koel Plus features will not be available.');
+                    $this->components->error('Your license is invalid. Plus features will not be available.');
                     break;
 
                 default:

@@ -27,6 +27,11 @@ final class LicenseStatus
         return $this->status === self::STATUS_VALID;
     }
 
+    public function hasNoLicense(): bool
+    {
+        return $this->status === self::STATUS_NO_LICENSE;
+    }
+
     public static function noLicense(): self
     {
         return new self(self::STATUS_NO_LICENSE, null);

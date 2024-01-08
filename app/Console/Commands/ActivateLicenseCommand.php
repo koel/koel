@@ -21,15 +21,14 @@ class ActivateLicenseCommand extends Command
         $this->components->info('Activating license…');
 
         try {
-            $license = $this->licenseService->activateLicense($this->argument('key'));
+            $license = $this->licenseService->activate($this->argument('key'));
         } catch (Throwable $e) {
             $this->components->error($e->getMessage());
 
             return self::FAILURE;
         }
 
-        $this->output->success('License activated successfully. Thanks for supporting Koel!');
-
+        $this->output->success('Koel Plus activated! All Plus features are now available.');
         $this->components->twoColumnDetail('License Key', $license->short_key);
 
         $this->components->twoColumnDetail(
@@ -38,7 +37,6 @@ class ActivateLicenseCommand extends Command
         );
 
         $this->components->twoColumnDetail('Expires On', 'Never ever');
-
         $this->newLine();
 
         return self::SUCCESS;
