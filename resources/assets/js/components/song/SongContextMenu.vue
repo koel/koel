@@ -22,9 +22,11 @@
           <li @click="addSongsToFavorite">Favorites</li>
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
-        <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="playlists">
-          <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
-        </ul>
+        <li v-if="normalPlaylists.length">
+          <ul class="playlists" v-koel-overflow-fade>
+            <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
+          </ul>
+        </li>
         <li class="separator" />
         <li @click="addSongsToNewPlaylist">New Playlist…</li>
       </ul>
@@ -39,6 +41,12 @@
     <template v-if="isFavoritesScreen">
       <li class="separator" />
       <li @click="removeFromFavorites">Remove from Favorites</li>
+      <li class="separator" />
+    </template>
+
+    <template v-if="visibilityActions.length">
+      <li class="separator" />
+      <li v-for="action in visibilityActions" :key="action.label" @click="action.handler">{{ action.label }}</li>
       <li class="separator" />
     </template>
 
@@ -107,6 +115,42 @@ const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)
 const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
 
+const makePublic = () => trigger(async () => {
+  await songStore.makePublic(songs.value)
+  toastSuccess(`Made ${pluralize(songs.value, 'song')} public to everyone.`)
+})
+
+const makePrivate = () => trigger(async () => {
+  await songStore.makePrivate(songs.value)
+  toastSuccess(`Removed public access to ${pluralize(songs.value, 'song')}.`)
+})
+
+const visibilityActions = computed(() => {
+  if (!isPlus) return []
+
+  // If some songs don't belong to the current user, no actions are available.
+  if (songs.value.some(song => song.owner_id !== currentUser.value?.id)) return []
+
+  const visibilities = Array.from(new Set(songs.value.map(song => song.is_public)))
+
+  if (visibilities.length === 2) {
+    return [
+      {
+        label: 'Make Public',
+        handler: makePublic
+      },
+      {
+        label: 'Make Private',
+        handler: makePrivate
+      }
+    ]
+  }
+
+  return visibilities[0]
+    ? [{ label: 'Make Private', handler: makePrivate }]
+    : [{ label: 'Make Public', handler: makePublic }]
+})
+
 const canBeRemovedFromPlaylist = computed(() => {
   if (!isCurrentScreen('Playlist')) return false
   const playlist = playlistStore.byId(parseInt(getRouteParam('id')!))
@@ -174,5 +218,9 @@ ul.playlists {
   position: relative;
   max-height: 192px;
   overflow-y: auto;
+
+  li {
+    padding: 0;
+  }
 }
 </style>

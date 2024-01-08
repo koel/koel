@@ -16,6 +16,7 @@ export type SongUpdateData = {
   lyrics?: string
   year?: number | null
   genre?: string
+  visibility?: 'public' | 'private' | 'unchanged'
 }
 
 export interface SongUpdateResult {
@@ -233,5 +234,21 @@ export const songStore = {
     })
 
     await http.delete('songs', { songs: ids })
+  },
+
+  async makePublic (songs: Song[]) {
+    await http.put('songs/make-public', {
+      songs: songs.map(song => song.id)
+    })
+
+    songs.forEach(song => song.is_public = true)
+  },
+
+  async makePrivate (songs: Song[]) {
+    await http.put('songs/make-private', {
+      songs: songs.map(song => song.id)
+    })
+
+    songs.forEach(song => song.is_public = false)
   }
 }

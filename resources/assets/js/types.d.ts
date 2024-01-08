@@ -150,6 +150,7 @@ interface Song {
   play_start_time?: number
   fmt_length?: string
   created_at: string
+  is_public: boolean
   deleted?: boolean
 }
 
@@ -384,7 +385,7 @@ interface PaginatorResource {
   }
 }
 
-type EditSongFormTabName = 'details' | 'lyrics'
+type EditSongFormTabName = 'details' | 'lyrics' | 'visibility'
 
 type ToastMessage = {
   id: string

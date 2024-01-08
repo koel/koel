@@ -8,6 +8,11 @@ use App\Models\User;
 
 class SongPolicy
 {
+    public function own(User $user, Song $song): bool
+    {
+        return $song->owner_id === $user->id;
+    }
+
     public function play(User $user, Song $song): bool
     {
         return License::isCommunity() || $song->is_public || $song->owner_id === $user->id;

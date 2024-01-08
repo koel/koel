@@ -1,5 +1,6 @@
 <?php
 
+use App\Facades\License;
 use App\Facades\YouTube;
 use App\Http\Controllers\API\AlbumController;
 use App\Http\Controllers\API\AlbumSongController;
@@ -24,6 +25,8 @@ use App\Http\Controllers\API\GenreSongController;
 use App\Http\Controllers\API\Interaction\BatchLikeController;
 use App\Http\Controllers\API\Interaction\HandlePlaybackStartedController;
 use App\Http\Controllers\API\Interaction\ToggleLikeSongController;
+use App\Http\Controllers\API\MakeSongsPrivateController;
+use App\Http\Controllers\API\MakeSongsPublicController;
 use App\Http\Controllers\API\ObjectStorage\S3\SongController as S3SongController;
 use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\PlaylistFolderController;
@@ -155,6 +158,11 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
 
         Route::post('invitations', [UserInvitationController::class, 'invite']);
         Route::delete('invitations', [UserInvitationController::class, 'revoke']);
+
+        if (License::isPlus()) {
+            Route::put('songs/make-public', MakeSongsPublicController::class);
+            Route::put('songs/make-private', MakeSongsPrivateController::class);
+        }
     });
 
     // Object-storage (S3) routes
