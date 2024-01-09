@@ -4,8 +4,9 @@ namespace Tests\Feature;
 
 use App\Mail\UserInvite;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Mail;
+use Tests\TestCase;
 
 class UserInvitationTest extends TestCase
 {

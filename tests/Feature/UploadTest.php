@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Tests\TestCase;
 
 class UploadTest extends TestCase
 {

@@ -6,6 +6,7 @@ use App\Models\Artist;
 use App\Services\MediaInformationService;
 use App\Values\ArtistInformation;
 use Mockery;
+use Tests\TestCase;
 
 class ArtistInformationTest extends TestCase
 {

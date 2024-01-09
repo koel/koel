@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\QueueState;
 use App\Models\Song;
 use App\Models\User;
+use Tests\TestCase;
 
 class QueueTest extends TestCase
 {

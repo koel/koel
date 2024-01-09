@@ -6,6 +6,7 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Tests\TestCase;
 
 class PlaylistSongTest extends TestCase
 {

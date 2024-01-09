@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\LicenseService;
+use App\Services\License\LicenseServiceInterface;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -11,7 +11,7 @@ class DeactivateLicenseCommand extends Command
     protected $signature = 'koel:license:deactivate';
     protected $description = 'Deactivate the currently active Koel Plus license';
 
-    public function __construct(private LicenseService $plusService)
+    public function __construct(private LicenseServiceInterface $plusService)
     {
         parent::__construct();
     }
@@ -35,7 +35,7 @@ class DeactivateLicenseCommand extends Command
         $this->components->info('Deactivating your license…');
 
         try {
-            $this->plusService->deactivateLicense($status->license);
+            $this->plusService->deactivate($status->license);
             $this->components->info('Koel Plus has been deactivated. Plus features are now disabled.');
 
             return self::SUCCESS;

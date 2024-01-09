@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Services\MediaInformationService;
 use App\Values\AlbumInformation;
 use Mockery;
+use Tests\TestCase;
 
 class AlbumInformationTest extends TestCase
 {

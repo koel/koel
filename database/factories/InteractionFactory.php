@@ -17,7 +17,7 @@ class InteractionFactory extends Factory
         return [
             'song_id' => Song::factory(),
             'user_id' => User::factory(),
-            'liked' => $this->faker->boolean,
+            'liked' => $this->faker->boolean(),
             'play_count' => $this->faker->randomNumber(),
         ];
     }

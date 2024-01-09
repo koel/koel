@@ -7,6 +7,7 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Tests\TestCase;
 
 class SongTest extends TestCase
 {

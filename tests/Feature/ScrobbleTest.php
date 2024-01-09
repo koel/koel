@@ -6,6 +6,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
 use Mockery;
+use Tests\TestCase;
 
 class ScrobbleTest extends TestCase
 {

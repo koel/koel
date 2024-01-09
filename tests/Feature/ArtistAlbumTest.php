@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Album;
 use App\Models\Artist;
+use Tests\TestCase;
 
 class ArtistAlbumTest extends TestCase
 {

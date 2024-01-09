@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use Tests\TestCase;
 
 class ExcerptSearchTest extends TestCase
 {

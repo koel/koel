@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Song;
 use App\Values\Genre;
+use Tests\TestCase;
 
 class GenreTest extends TestCase
 {

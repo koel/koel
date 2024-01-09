@@ -7,6 +7,7 @@ use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
+use Tests\TestCase;
 
 class PlayCountTest extends TestCase
 {

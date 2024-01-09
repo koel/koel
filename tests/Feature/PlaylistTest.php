@@ -7,6 +7,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Values\SmartPlaylistRule;
 use Illuminate\Support\Collection;
+use Tests\TestCase;
 
 class PlaylistTest extends TestCase
 {

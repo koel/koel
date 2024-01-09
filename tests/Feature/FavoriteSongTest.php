@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Interaction;
 use App\Models\User;
+use Tests\TestCase;
 
 class FavoriteSongTest extends TestCase
 {

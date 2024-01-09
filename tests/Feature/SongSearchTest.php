@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Song;
+use Tests\TestCase;
 
 class SongSearchTest extends TestCase
 {
