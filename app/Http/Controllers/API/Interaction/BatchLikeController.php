@@ -23,7 +23,7 @@ class BatchLikeController extends Controller
     public function store(BatchInteractionRequest $request)
     {
         $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user)
-            ->each(fn ($song) => $this->authorize('interact', $song));
+            ->each(fn ($song) => $this->authorize('access', $song));
 
         $interactions = $this->interactionService->batchLike(Arr::wrap($request->songs), $this->user);
 
@@ -33,7 +33,7 @@ class BatchLikeController extends Controller
     public function destroy(BatchInteractionRequest $request)
     {
         $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user)
-            ->each(fn ($song) => $this->authorize('interact', $song));
+            ->each(fn ($song) => $this->authorize('access', $song));
 
         $this->interactionService->batchUnlike(Arr::wrap($request->songs), $this->user);
 

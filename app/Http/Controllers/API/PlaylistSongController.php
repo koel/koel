@@ -40,6 +40,9 @@ class PlaylistSongController extends Controller
     {
         $this->authorize('own', $playlist);
 
+        $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user)
+            ->each(fn ($song) => $this->authorize('access', $song));
+
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
 
         $this->playlistService->addSongsToPlaylist($playlist, $request->songs);

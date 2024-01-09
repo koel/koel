@@ -13,24 +13,19 @@ class SongPolicy
         return $song->owner_id === $user->id;
     }
 
-    public function play(User $user, Song $song): bool
+    public function access(User $user, Song $song): bool
     {
-        return License::isCommunity() || $song->is_public || $song->owner_id === $user->id;
-    }
-
-    public function interact(User $user, Song $song): bool
-    {
-        return License::isCommunity() || $song->is_public || $song->owner_id === $user->id;
+        return License::isCommunity() || $song->accessibleBy($user);
     }
 
     public function delete(User $user, Song $song): bool
     {
-        return (License::isCommunity() && $user->is_admin) || $song->owner_id === $user->id;
+        return (License::isPlus() && $song->accessibleBy($user)) || $user->is_admin;
     }
 
     public function edit(User $user, Song $song): bool
     {
-        return (License::isCommunity() && $user->is_admin) || $song->owner_id === $user->id;
+        return (License::isPlus() && $song->accessibleBy($user)) || $user->is_admin;
     }
 
     public function download(User $user, Song $song): bool
@@ -39,6 +34,6 @@ class SongPolicy
             return false;
         }
 
-        return License::isCommunity() || $song->is_public || $song->owner_id === $user->id;
+        return $this->access($user, $song);
     }
 }

@@ -15,7 +15,7 @@ class PlayController extends Controller
         ?bool $transcode = null,
         ?int $bitRate = null
     ) {
-        $this->authorize('play', $song);
+        $this->authorize('access', $song);
 
         return $streamerFactory
             ->createStreamer($song, $transcode, $bitRate, (float) $request->time)
