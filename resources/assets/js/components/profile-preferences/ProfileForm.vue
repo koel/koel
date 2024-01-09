@@ -10,6 +10,7 @@
           placeholder="Required to update your profile"
           required
           type="password"
+          data-testid="currentPassword"
         >
       </label>
     </div>
@@ -17,14 +18,14 @@
     <div class="form-row">
       <label>
         Name
-        <input id="inputProfileName" v-model="profile.name" name="name" required type="text">
+        <input id="inputProfileName" v-model="profile.name" name="name" required type="text" data-testid="name">
       </label>
     </div>
 
     <div class="form-row">
       <label>
         Email Address
-        <input id="inputProfileEmail" v-model="profile.email" name="email" required type="email">
+        <input id="inputProfileEmail" v-model="profile.email" name="email" required type="email" data-testid="email">
       </label>
     </div>
 
@@ -34,6 +35,7 @@
         <PasswordField
           placeholder="Leave empty to keep current password"
           v-model="profile.new_password"
+          data-testid="newPassword"
           autocomplete="new-password"
         />
         <span class="password-rules help">
@@ -73,8 +75,6 @@ onMounted(() => {
 })
 
 const update = async () => {
-  console.log(profile.value)
-  return
   if (!profile.value) {
     throw Error()
   }
@@ -85,7 +85,7 @@ const update = async () => {
   }
 
   try {
-    await userStore.updateProfile(profile.value)
+    await userStore.updateProfile(Object.assign({}, profile.value))
     profile.value.current_password = null
     delete profile.value.new_password
     toastSuccess('Profile updated.')
