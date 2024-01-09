@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Values\CompositionToken;
+use App\Values\CompositeToken;
 use Illuminate\Cache\Repository as Cache;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -19,14 +19,14 @@ class TokenManager
         return $user->createToken(config('app.name'), $abilities);
     }
 
-    public function createCompositionToken(User $user): CompositionToken
+    public function createCompositeToken(User $user): CompositeToken
     {
-        $token = CompositionToken::fromAccessTokens(
+        $token = CompositeToken::fromAccessTokens(
             api: $this->createToken($user),
             audio: $this->createToken($user, ['audio'])
         );
 
-        $this->cache->rememberForever("app.composition-tokens.$token->apiToken", static fn () => $token->audioToken);
+        $this->cache->rememberForever("app.composite-tokens.$token->apiToken", static fn () => $token->audioToken);
 
         return $token;
     }
@@ -34,11 +34,11 @@ class TokenManager
     public function deleteCompositionToken(string $plainTextApiToken): void
     {
         /** @var string $audioToken */
-        $audioToken = $this->cache->get("app.composition-tokens.$plainTextApiToken");
+        $audioToken = $this->cache->get("app.composite-tokens.$plainTextApiToken");
 
         if ($audioToken) {
             self::deleteTokenByPlainTextToken($audioToken);
-            $this->cache->forget("app.composition-tokens.$plainTextApiToken");
+            $this->cache->forget("app.composite-tokens.$plainTextApiToken");
         }
 
         self::deleteTokenByPlainTextToken($plainTextApiToken);

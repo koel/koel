@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Exceptions\InvalidCredentialsException;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use App\Values\CompositionToken;
+use App\Values\CompositeToken;
 use Illuminate\Hashing\HashManager;
 
 class AuthenticationService
@@ -17,7 +17,7 @@ class AuthenticationService
     ) {
     }
 
-    public function login(string $email, string $password): CompositionToken
+    public function login(string $email, string $password): CompositeToken
     {
         /** @var User|null $user */
         $user = $this->userRepository->getFirstWhere('email', $email);
@@ -31,7 +31,7 @@ class AuthenticationService
             $user->save();
         }
 
-        return $this->tokenManager->createCompositionToken($user);
+        return $this->tokenManager->createCompositeToken($user);
     }
 
     public function logoutViaBearerToken(string $token): void
