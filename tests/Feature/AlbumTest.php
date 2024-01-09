@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Album;
+use Tests\TestCase;
 
 class AlbumTest extends TestCase
 {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ChangeSongsVisibilityRequest;
+use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Services\SongService;
@@ -18,7 +19,7 @@ class MakeSongsPublicController extends Controller
         SongService $songService,
         Authenticatable $user
     ) {
-        $songs = $repository->getMany(ids: $request->songs, scopedUser: $user);
+        $songs = Song::find($request->songs);
         $songs->each(fn ($song) => $this->authorize('own', $song));
 
         $songService->makeSongsPublic($songs);

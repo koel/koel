@@ -16,7 +16,7 @@ use App\Values\ScanConfiguration;
 use getID3;
 use Illuminate\Support\Arr;
 use Mockery;
-use Tests\Feature\TestCase;
+use Tests\TestCase;
 
 class MediaScannerTest extends TestCase
 {

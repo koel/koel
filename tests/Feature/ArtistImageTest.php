@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
+use Tests\TestCase;
 
 class ArtistImageTest extends TestCase
 {

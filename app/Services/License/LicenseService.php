@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\License;
 
 use App\Exceptions\FailedToActivateLicenseException;
 use App\Models\License;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class LicenseService
+class LicenseService implements LicenseServiceInterface
 {
     public function __construct(private ApiClient $client, private string $hashSalt)
     {
@@ -41,7 +41,7 @@ class LicenseService
         }
     }
 
-    public function deactivateLicense(License $license): void
+    public function deactivate(License $license): void
     {
         try {
             $response = $this->client->post('licenses/deactivate', [

@@ -5,7 +5,7 @@ namespace Tests\Feature\ObjectStorage;
 use App\Events\LibraryChanged;
 use App\Models\Song;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\Feature\TestCase;
+use Tests\TestCase;
 
 class S3Test extends TestCase
 {

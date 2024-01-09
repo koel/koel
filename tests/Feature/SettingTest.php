@@ -7,16 +7,17 @@ use App\Models\User;
 use App\Services\MediaScanner;
 use App\Values\ScanResultCollection;
 use Mockery\MockInterface;
+use Tests\TestCase;
 
 class SettingTest extends TestCase
 {
-    private MediaScanner|MockInterface $mediaSyncService;
+    private MediaScanner|MockInterface $mediaScanner;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->mediaSyncService = self::mock(MediaScanner::class);
+        $this->mediaScanner = self::mock(MediaScanner::class);
     }
 
     public function testSaveSettings(): void
@@ -24,7 +25,7 @@ class SettingTest extends TestCase
         /** @var User $admin */
         $admin = User::factory()->admin()->create();
 
-        $this->mediaSyncService->shouldReceive('scan')->once()
+        $this->mediaScanner->shouldReceive('scan')->once()
             ->andReturn(ScanResultCollection::create());
 
         $this->putAs('/api/settings', ['media_path' => __DIR__], $admin)

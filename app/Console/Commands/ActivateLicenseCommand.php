@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\LicenseService;
+use App\Services\License\LicenseServiceInterface;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -11,7 +11,7 @@ class ActivateLicenseCommand extends Command
     protected $signature = 'koel:license:activate {key : The license key to activate.}';
     protected $description = 'Activate a Koel Plus license';
 
-    public function __construct(private LicenseService $licenseService)
+    public function __construct(private LicenseServiceInterface $licenseService)
     {
         parent::__construct();
     }

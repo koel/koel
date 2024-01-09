@@ -13,7 +13,7 @@ use App\Repositories\SongRepository;
 use App\Services\ApplicationInformationService;
 use App\Services\ITunesService;
 use App\Services\LastfmService;
-use App\Services\LicenseService;
+use App\Services\License\LicenseServiceInterface;
 use App\Services\QueueService;
 use App\Services\SpotifyService;
 use App\Services\YouTubeService;
@@ -28,7 +28,7 @@ class FetchInitialDataController extends Controller
         SongRepository $songRepository,
         ApplicationInformationService $applicationInformationService,
         QueueService $queueService,
-        LicenseService $licenseService,
+        LicenseServiceInterface $licenseService,
         ?Authenticatable $user
     ) {
         $licenseStatus = $licenseService->getStatus();

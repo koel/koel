@@ -9,6 +9,7 @@ use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery;
 use Mockery\MockInterface;
+use Tests\TestCase;
 
 class LastfmTest extends TestCase
 {

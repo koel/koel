@@ -6,20 +6,21 @@ use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use App\Services\CommunityLicenseService;
+use App\Services\License\CommunityLicenseService;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\File;
 use ReflectionClass;
 use Tests\Traits\CreatesApplication;
-use Tests\Traits\SandboxesTests;
+use Tests\Traits\MakesHttpRequests;
 
 abstract class TestCase extends BaseTestCase
 {
     use ArraySubsetAsserts;
     use CreatesApplication;
     use DatabaseTransactions;
-    use SandboxesTests;
+    use MakesHttpRequests;
 
     public function setUp(): void
     {
@@ -57,5 +58,20 @@ abstract class TestCase extends BaseTestCase
         $property->setAccessible(true);
 
         return $property->getValue($object);
+    }
+
+    private static function createSandbox(): void
+    {
+        config(['koel.album_cover_dir' => 'sandbox/img/covers/']);
+        config(['koel.artist_image_dir' => 'sandbox/img/artists/']);
+
+        File::ensureDirectoryExists(public_path(config('koel.album_cover_dir')));
+        File::ensureDirectoryExists(public_path(config('koel.artist_image_dir')));
+        File::ensureDirectoryExists(public_path('sandbox/media/'));
+    }
+
+    private static function destroySandbox(): void
+    {
+        File::deleteDirectory(public_path('sandbox'));
     }
 }

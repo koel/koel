@@ -6,6 +6,7 @@ use App\Models\Song;
 use App\Services\YouTubeService;
 use Mockery;
 use Mockery\MockInterface;
+use Tests\TestCase;
 
 class YouTubeTest extends TestCase
 {

@@ -1,20 +1,30 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Traits;
 
 use App\Models\User;
 use Illuminate\Testing\TestResponse;
-use Tests\TestCase as BaseTestCase;
 
-abstract class TestCase extends BaseTestCase
+/**
+ * @extends TestCase
+ */
+
+trait MakesHttpRequests
 {
+    /**
+     * @param string $method
+     * @param string $uri
+     * @return TestResponse
+     */
+    abstract public function json($method, $uri, array $data = [], array $headers = []); // @phpcs:ignore
+
     private function jsonAs(?User $user, string $method, $uri, array $data = [], array $headers = []): TestResponse
     {
         /** @var User $user */
         $user = $user ?: User::factory()->create();
         $this->withToken($user->createToken('koel')->plainTextToken);
 
-        return parent::json($method, $uri, $data, $headers);
+        return $this->json($method, $uri, $data, $headers);
     }
 
     protected function getAs(string $url, ?User $user = null): TestResponse

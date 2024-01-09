@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Artist;
+use Tests\TestCase;
 
 class ArtistTest extends TestCase
 {

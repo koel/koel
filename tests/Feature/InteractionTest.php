@@ -7,6 +7,7 @@ use App\Events\SongsBatchLiked;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Tests\TestCase;
 
 class InteractionTest extends TestCase
 {

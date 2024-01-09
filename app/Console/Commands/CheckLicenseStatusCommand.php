@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\LicenseService;
+use App\Services\License\LicenseServiceInterface;
 use App\Values\LicenseStatus;
 use Illuminate\Console\Command;
 use Throwable;
@@ -12,7 +12,7 @@ class CheckLicenseStatusCommand extends Command
     protected $signature = 'koel:license:status';
     protected $description = 'Check the current Koel Plus license status.';
 
-    public function __construct(private LicenseService $licenseService)
+    public function __construct(private LicenseServiceInterface $licenseService)
     {
         parent::__construct();
     }

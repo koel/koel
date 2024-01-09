@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\PlaylistFolder;
 use App\Models\User;
+use Tests\TestCase;
 
 class PlaylistFolderTest extends TestCase
 {
