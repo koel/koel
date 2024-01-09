@@ -36,6 +36,7 @@ use Laravel\Scout\Searchable;
  * @property array<mixed> $s3_params
  * @property int $owner_id
  * @property bool $is_public
+ * @property User $owner
  */
 class Song extends Model
 {

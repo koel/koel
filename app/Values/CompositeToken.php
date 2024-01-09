@@ -6,7 +6,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Laravel\Sanctum\NewAccessToken;
 
 /**
- * A "composition token" consists of two tokens:
+ * A "composite token" consists of two tokens:
  *
  * - an API token, which has all abilities
  * - an audio token, which has only the "audio" ability i.e. to play and download audio files. This token is used for
@@ -14,7 +14,7 @@ use Laravel\Sanctum\NewAccessToken;
  *
  * This approach helps prevent the API token from being logged by servers and proxies.
  */
-final class CompositionToken implements Arrayable
+final class CompositeToken implements Arrayable
 {
     private function __construct(public string $apiToken, public string $audioToken)
     {

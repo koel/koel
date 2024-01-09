@@ -43,7 +43,7 @@ class TokenManagerTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
-        $token = $this->tokenManager->createCompositionToken($user);
+        $token = $this->tokenManager->createCompositeToken($user);
 
         self::assertModelExists(PersonalAccessToken::findToken($token->apiToken));
 
@@ -51,7 +51,7 @@ class TokenManagerTest extends TestCase
         self::assertModelExists($audioTokenInstance);
 
         /** @var string $cachedAudioToken */
-        $cachedAudioToken = Cache::get("app.composition-tokens.$token->apiToken");
+        $cachedAudioToken = Cache::get("app.composite-tokens.$token->apiToken");
         self::assertTrue($audioTokenInstance->is(PersonalAccessToken::findToken($cachedAudioToken)));
     }
 
@@ -59,13 +59,13 @@ class TokenManagerTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
-        $token = $this->tokenManager->createCompositionToken($user);
+        $token = $this->tokenManager->createCompositeToken($user);
 
         $this->tokenManager->deleteCompositionToken($token->apiToken);
 
         self::assertNull(PersonalAccessToken::findToken($token->apiToken));
         self::assertNull(PersonalAccessToken::findToken($token->audioToken));
-        self::assertNull(Cache::get("app.composition-tokens.$token->apiToken"));
+        self::assertNull(Cache::get("app.composite-tokens.$token->apiToken"));
     }
 
     public function testDestroyTokens(): void
