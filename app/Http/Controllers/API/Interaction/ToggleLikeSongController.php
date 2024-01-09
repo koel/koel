@@ -20,7 +20,7 @@ class ToggleLikeSongController extends Controller
         ?Authenticatable $user
     ) {
         $song = $songRepository->getOne($request->song, $user);
-        $this->authorize('interact', $song);
+        $this->authorize('access', $song);
 
         return InteractionResource::make($interactionService->toggleLike($request->song, $user));
     }
