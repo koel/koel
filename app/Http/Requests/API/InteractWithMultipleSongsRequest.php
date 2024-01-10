@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 /**
  * @property array<string> $songs
  */
-class BatchInteractionRequest extends Request
+class InteractWithMultipleSongsRequest extends Request
 {
     /** @return array<mixed> */
     public function rules(): array

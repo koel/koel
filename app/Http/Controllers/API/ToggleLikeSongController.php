@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API\Interaction;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ToggleLikeSongRequest;
 use App\Http\Resources\InteractionResource;
+use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Services\InteractionService;
@@ -19,9 +20,10 @@ class ToggleLikeSongController extends Controller
         InteractionService $interactionService,
         ?Authenticatable $user
     ) {
-        $song = $songRepository->getOne($request->song, $user);
+        /** @var Song $song */
+        $song = Song::query()->findOrFail($request->song);
         $this->authorize('access', $song);
 
-        return InteractionResource::make($interactionService->toggleLike($request->song, $user));
+        return InteractionResource::make($interactionService->toggleLike($song, $user));
     }
 }

@@ -21,9 +21,7 @@ use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
-use App\Http\Controllers\API\Interaction\BatchLikeController;
-use App\Http\Controllers\API\Interaction\HandlePlaybackStartedController;
-use App\Http\Controllers\API\Interaction\ToggleLikeSongController;
+use App\Http\Controllers\API\LikeMultipleSongsController;
 use App\Http\Controllers\API\MakeSongsPrivateController;
 use App\Http\Controllers\API\MakeSongsPublicController;
 use App\Http\Controllers\API\ObjectStorage\S3\SongController as S3SongController;
@@ -33,12 +31,15 @@ use App\Http\Controllers\API\PlaylistFolderPlaylistController;
 use App\Http\Controllers\API\PlaylistSongController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\QueueStateController;
+use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
 use App\Http\Controllers\API\SettingController;
 use App\Http\Controllers\API\SongController;
 use App\Http\Controllers\API\SongSearchController;
+use App\Http\Controllers\API\ToggleLikeSongController;
+use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
 use App\Http\Controllers\API\UploadAlbumCoverController;
 use App\Http\Controllers\API\UploadArtistImageController;
@@ -103,10 +104,10 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('upload', UploadController::class);
 
         // Interaction routes
-        Route::post('interaction/play', HandlePlaybackStartedController::class);
+        Route::post('interaction/play', RegisterPlayController::class);
         Route::post('interaction/like', ToggleLikeSongController::class);
-        Route::post('interaction/batch/like', [BatchLikeController::class, 'store']);
-        Route::post('interaction/batch/unlike', [BatchLikeController::class, 'destroy']);
+        Route::post('interaction/batch/like', LikeMultipleSongsController::class);
+        Route::post('interaction/batch/unlike', UnlikeMultipleSongsController::class);
 
         Route::get('songs/recently-played', FetchRecentlyPlayedSongController::class);
         Route::get('songs/favorite', FetchFavoriteSongsController::class);
