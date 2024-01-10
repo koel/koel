@@ -22,17 +22,16 @@ class DownloadTest extends TestCase
     {
         parent::setUp();
 
-        static::createSampleMediaSet();
         $this->downloadService = self::mock(DownloadService::class);
     }
 
     public function testNonLoggedInUserCannotDownload(): void
     {
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::factory()->create();
 
         $this->downloadService
-            ->shouldReceive('from')
+            ->shouldReceive('getDownloadablePath')
             ->never();
 
         $this->get("download/songs?songs[]=$song->id")
@@ -42,18 +41,18 @@ class DownloadTest extends TestCase
     public function testDownloadOneSong(): void
     {
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::factory()->create();
 
         /** @var User $user */
         $user = User::factory()->create();
 
         $this->downloadService
-            ->shouldReceive('from')
+            ->shouldReceive('getDownloadablePath')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($song) {
                 return $retrievedSongs->count() === 1 && $retrievedSongs->first()->id === $song->id;
             }))
-            ->andReturn($this->mediaPath . '/blank.mp3');
+            ->andReturn(test_path('songs/blank.mp3'));
 
         $this->get("download/songs?songs[]={$song->id}&api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
@@ -65,19 +64,17 @@ class DownloadTest extends TestCase
         $user = User::factory()->create();
 
         /** @var array<Song>|Collection $songs */
-        $songs = Song::query()->take(2)->orderBy('id')->get();
+        $songs = Song::factory(2)->create();
 
         $this->downloadService
-            ->shouldReceive('from')
+            ->shouldReceive('getDownloadablePath')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
-                $retrievedIds = $retrievedSongs->pluck('id')->all();
-                $requestedIds = $songs->pluck('id')->all();
-                self::assertEqualsCanonicalizing($requestedIds, $retrievedIds);
+                self::assertEqualsCanonicalizing($retrievedSongs->pluck('id')->all(), $songs->pluck('id')->all());
 
                 return true;
             }))
-            ->andReturn($this->mediaPath . '/blank.mp3'); // should be a zip file, but we're testing here…
+            ->andReturn(test_path('songs/blank.mp3')); // should be a zip file, but we're testing here…
 
         $this->get(
             "download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}&api_token="
@@ -89,22 +86,22 @@ class DownloadTest extends TestCase
     public function testDownloadAlbum(): void
     {
         /** @var Album $album */
-        $album = Album::query()->first();
+        $album = Album::factory()->create();
 
-        $songs = Song::factory(3)->create(['album_id' => $album->id]);
+        $songs = Song::factory(3)->for($album)->create();
 
         /** @var User $user */
         $user = User::factory()->create();
 
         $this->downloadService
-            ->shouldReceive('from')
+            ->shouldReceive('getDownloadablePath')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 self::assertEqualsCanonicalizing($retrievedSongs->pluck('id')->all(), $songs->pluck('id')->all());
 
                 return true;
             }))
-            ->andReturn($this->mediaPath . '/blank.mp3');
+            ->andReturn(test_path('songs/blank.mp3'));
 
         $this->get("download/album/{$album->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
@@ -113,22 +110,22 @@ class DownloadTest extends TestCase
     public function testDownloadArtist(): void
     {
         /** @var Artist $artist */
-        $artist = Artist::query()->first();
+        $artist = Artist::factory()->create();
 
-        $songs = Song::factory(3)->create(['artist_id' => $artist->id]);
+        $songs = Song::factory(3)->for($artist)->create();
 
         /** @var User $user */
         $user = User::factory()->create();
 
         $this->downloadService
-            ->shouldReceive('from')
+            ->shouldReceive('getDownloadablePath')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 self::assertEqualsCanonicalizing($retrievedSongs->pluck('id')->all(), $songs->pluck('id')->all());
 
                 return true;
             }))
-            ->andReturn($this->mediaPath . '/blank.mp3');
+            ->andReturn(test_path('songs/blank.mp3'));
 
         $this->get("download/artist/{$artist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
@@ -147,14 +144,14 @@ class DownloadTest extends TestCase
         $playlist->songs()->attach($songs);
 
         $this->downloadService
-            ->shouldReceive('from')
+            ->shouldReceive('getDownloadablePath')
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 self::assertEqualsCanonicalizing($retrievedSongs->pluck('id')->all(), $songs->pluck('id')->all());
 
                 return true;
             }))
             ->once()
-            ->andReturn($this->mediaPath . '/blank.mp3');
+            ->andReturn(test_path('songs/blank.mp3'));
 
         $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
@@ -180,14 +177,14 @@ class DownloadTest extends TestCase
         $favorites = Interaction::factory(3)->for($user)->create(['liked' => true]);
 
         $this->downloadService
-            ->shouldReceive('from')
+            ->shouldReceive('getDownloadablePath')
             ->with(Mockery::on(static function (Collection $songs) use ($favorites): bool {
                 self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $favorites->pluck('song_id')->all());
 
                 return true;
             }))
             ->once()
-            ->andReturn($this->mediaPath . '/blank.mp3');
+            ->andReturn(test_path('songs/blank.mp3'));
 
         $this->get('download/favorites?api_token=' . $user->createToken('Koel')->plainTextToken)
             ->assertOk();

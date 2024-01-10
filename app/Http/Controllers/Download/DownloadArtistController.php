@@ -15,9 +15,9 @@ class DownloadArtistController extends Controller
     public function __invoke(
         Artist $artist,
         SongRepository $repository,
-        DownloadService $download,
+        DownloadService $service,
         Authenticatable $user
     ) {
-        return response()->download($download->from($repository->getByArtist($artist, $user)));
+        return response()->download($service->getDownloadablePath($repository->getByArtist($artist, $user)));
     }
 }

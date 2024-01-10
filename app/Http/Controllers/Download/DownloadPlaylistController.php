@@ -23,7 +23,7 @@ class DownloadPlaylistController extends Controller
         $this->authorize('download', $playlist);
 
         return response()->download(
-            $download->from(
+            $download->getDownloadablePath(
                 $playlist->is_smart
                     ? $smartPlaylistService->getSongs($playlist, $user)
                     : $repository->getByStandardPlaylist($playlist, $user)

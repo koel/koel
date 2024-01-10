@@ -14,10 +14,10 @@ class DownloadService
     {
     }
 
-    public function from(Collection $songs): string
+    public function getDownloadablePath(Collection $songs): string
     {
         if ($songs->count() === 1) {
-            return $this->fromSong($songs->first());
+            return $this->getLocalPath($songs->first());
         }
 
         return (new SongZipArchive())
@@ -26,7 +26,7 @@ class DownloadService
             ->getPath();
     }
 
-    public function fromSong(Song $song): string
+    public function getLocalPath(Song $song): string
     {
         if ($song->s3_params) {
             // The song is hosted on Amazon S3.

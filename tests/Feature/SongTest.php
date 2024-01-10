@@ -96,13 +96,11 @@ class SongTest extends TestCase
 
     public function testSingleUpdateAllInfoNoCompilation(): void
     {
-        static::createSampleMediaSet();
-
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::factory()->create();
 
         $this->putAs('/api/songs', [
             'songs' => [$song->id],
@@ -136,13 +134,11 @@ class SongTest extends TestCase
 
     public function testSingleUpdateSomeInfoNoCompilation(): void
     {
-        static::createSampleMediaSet();
-
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::factory()->create();
 
         $originalArtistId = $song->artist->id;
 
@@ -167,11 +163,9 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateNoCompilation(): void
     {
-        static::createSampleMediaSet();
-
         /** @var User $user */
         $user = User::factory()->admin()->create();
-        $songIds = Song::query()->latest()->take(3)->pluck('id')->all();
+        $songIds = Song::factory(3)->create()->pluck('id')->all();
 
         $this->putAs('/api/songs', [
             'songs' => $songIds,
@@ -207,14 +201,14 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateCreatingNewAlbumsAndArtists(): void
     {
-        static::createSampleMediaSet();
-
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
         /** @var array<array-key, Song>|Collection $originalSongs */
-        $originalSongs = Song::query()->latest()->take(3)->get();
+        $originalSongs = Song::factory(3)->create();
         $originalSongIds = $originalSongs->pluck('id')->all();
+        $originalAlbumNames = $originalSongs->pluck('album.name')->all();
+        $originalAlbumIds = $originalSongs->pluck('album_id')->all();
 
         $this->putAs('/api/songs', [
             'songs' =>  $originalSongIds,
@@ -233,12 +227,10 @@ class SongTest extends TestCase
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.
-        self::assertSame($songs[0]->album->name, $originalSongs[0]->album->name);
-        self::assertNotSame($songs[0]->album->id, $originalSongs[0]->album->id);
-        self::assertSame($songs[1]->album->name, $originalSongs[1]->album->name);
-        self::assertNotSame($songs[1]->album->id, $originalSongs[1]->album->id);
-        self::assertSame($songs[2]->album->name, $originalSongs[2]->album->name);
-        self::assertNotSame($songs[2]->album->id, $originalSongs[2]->album->id);
+        collect([0, 1, 2])->each(static function (int $i) use ($songs, $originalAlbumNames, $originalAlbumIds): void {
+            self::assertSame($songs[$i]->album->name, $originalAlbumNames[$i]);
+            self::assertNotSame($songs[$i]->album_id, $originalAlbumIds[$i]);
+        });
 
         // And of course, the new artist is...
         self::assertSame('John Cena', $songs[0]->artist->name); // JOHN CENA!!!
@@ -248,13 +240,11 @@ class SongTest extends TestCase
 
     public function testSingleUpdateAllInfoWithCompilation(): void
     {
-        static::createSampleMediaSet();
-
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::factory()->create();
 
         $this->putAs('/api/songs', [
             'songs' => [$song->id],
@@ -293,8 +283,6 @@ class SongTest extends TestCase
 
     public function testUpdateSingleSongWithEmptyTrackAndDisc(): void
     {
-        static::createSampleMediaSet();
-
         /** @var User $user */
         $user = User::factory()->admin()->create();
 
