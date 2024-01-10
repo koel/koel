@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Arr;
 
-class AllPlaylistsBelongToUser implements Rule
+final class AllPlaylistsBelongTo implements Rule
 {
     public function __construct(private User $user)
     {
