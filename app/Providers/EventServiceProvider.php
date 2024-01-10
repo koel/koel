@@ -4,10 +4,10 @@ namespace App\Providers;
 
 use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
+use App\Events\MultipleSongsLiked;
+use App\Events\MultipleSongsUnliked;
 use App\Events\PlaybackStarted;
 use App\Events\SongLikeToggled;
-use App\Events\SongsBatchLiked;
-use App\Events\SongsBatchUnliked;
 use App\Listeners\DeleteNonExistingRecordsPostSync;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
@@ -26,11 +26,11 @@ class EventServiceProvider extends BaseServiceProvider
             LoveTrackOnLastfm::class,
         ],
 
-        SongsBatchLiked::class => [
+        MultipleSongsLiked::class => [
             LoveMultipleTracksOnLastfm::class,
         ],
 
-        SongsBatchUnliked::class => [
+        MultipleSongsUnliked::class => [
             UnloveMultipleTracksOnLastfm::class,
         ],
 

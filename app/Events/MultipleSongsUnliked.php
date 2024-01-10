@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
-class SongsBatchUnliked extends Event
+class MultipleSongsUnliked extends Event
 {
     use SerializesModels;
 

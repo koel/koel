@@ -2,8 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Events\MultipleSongsLiked;
 use App\Events\SongLikeToggled;
-use App\Events\SongsBatchLiked;
+use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -11,13 +12,6 @@ use Tests\TestCase;
 
 class InteractionTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        static::createSampleMediaSet();
-    }
-
     public function testIncreasePlayCount(): void
     {
         $this->withoutEvents();
@@ -26,10 +20,10 @@ class InteractionTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Song $song */
-        $song = Song::query()->orderBy('id')->first();
+        $song = Song::factory()->create();
         $this->postAs('api/interaction/play', ['song' => $song->id], $user);
 
-        self::assertDatabaseHas('interactions', [
+        self::assertDatabaseHas(Interaction::class, [
             'user_id' => $user->id,
             'song_id' => $song->id,
             'play_count' => 1,
@@ -38,7 +32,7 @@ class InteractionTest extends TestCase
         // Try again
         $this->postAs('api/interaction/play', ['song' => $song->id], $user);
 
-        self::assertDatabaseHas('interactions', [
+        self::assertDatabaseHas(Interaction::class, [
             'user_id' => $user->id,
             'song_id' => $song->id,
             'play_count' => 2,
@@ -53,10 +47,10 @@ class InteractionTest extends TestCase
         $user = User::factory()->create();
 
         /** @var Song $song */
-        $song = Song::query()->orderBy('id')->first();
+        $song = Song::factory()->create();
         $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
-        self::assertDatabaseHas('interactions', [
+        self::assertDatabaseHas(Interaction::class, [
             'user_id' => $user->id,
             'song_id' => $song->id,
             'liked' => 1,
@@ -65,7 +59,7 @@ class InteractionTest extends TestCase
         // Try again
         $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
-        self::assertDatabaseHas('interactions', [
+        self::assertDatabaseHas(Interaction::class, [
             'user_id' => $user->id,
             'song_id' => $song->id,
             'liked' => 0,
@@ -74,19 +68,19 @@ class InteractionTest extends TestCase
 
     public function testToggleLikeBatch(): void
     {
-        $this->expectsEvents(SongsBatchLiked::class);
+        $this->expectsEvents(MultipleSongsLiked::class);
 
         /** @var User $user */
         $user = User::factory()->create();
 
         /** @var Collection|array<Song> $songs */
-        $songs = Song::query()->orderBy('id')->take(2)->get();
+        $songs = Song::factory(2)->create();
         $songIds = $songs->pluck('id')->all();
 
         $this->postAs('api/interaction/batch/like', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
-            self::assertDatabaseHas('interactions', [
+            self::assertDatabaseHas(Interaction::class, [
                 'user_id' => $user->id,
                 'song_id' => $song->id,
                 'liked' => 1,
@@ -96,7 +90,7 @@ class InteractionTest extends TestCase
         $this->postAs('api/interaction/batch/unlike', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
-            self::assertDatabaseHas('interactions', [
+            self::assertDatabaseHas(Interaction::class, [
                 'user_id' => $user->id,
                 'song_id' => $song->id,
                 'liked' => 0,

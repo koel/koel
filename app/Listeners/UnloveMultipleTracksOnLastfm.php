@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\SongsBatchUnliked;
+use App\Events\MultipleSongsUnliked;
 use App\Services\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -12,7 +12,7 @@ class UnloveMultipleTracksOnLastfm implements ShouldQueue
     {
     }
 
-    public function handle(SongsBatchUnliked $event): void
+    public function handle(MultipleSongsUnliked $event): void
     {
         $this->lastfm->batchToggleLoveTracks($event->songs, $event->user, false);
     }
