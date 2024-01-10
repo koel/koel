@@ -10,7 +10,7 @@ class SongVisibilityTest extends TestCase
 {
     public function testChangingVisibilityIsForbiddenInCommunityEdition(): void
     {
-        /** @var User $user */
+        /** @var User $owner */
         $owner = User::factory()->admin()->create();
 
         Song::factory(3)->create();

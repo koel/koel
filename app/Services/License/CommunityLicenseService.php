@@ -18,7 +18,7 @@ class CommunityLicenseService implements LicenseServiceInterface
         throw MethodNotImplementedException::method(__METHOD__);
     }
 
-    public function getStatus(): LicenseStatus
+    public function getStatus(bool $checkCache = true): LicenseStatus
     {
         throw MethodNotImplementedException::method(__METHOD__);
     }

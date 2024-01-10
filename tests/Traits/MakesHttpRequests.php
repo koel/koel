@@ -5,10 +5,6 @@ namespace Tests\Traits;
 use App\Models\User;
 use Illuminate\Testing\TestResponse;
 
-/**
- * @extends TestCase
- */
-
 trait MakesHttpRequests
 {
     /**
