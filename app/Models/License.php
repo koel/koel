@@ -10,6 +10,7 @@ use App\Values\LicenseMeta;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * @property-read string $short_key
@@ -32,12 +33,7 @@ class License extends Model
 
     protected function shortKey(): Attribute
     {
-        return Attribute::get(function (): string {
-            $parts = explode('-', $this->key);
-            $last = array_pop($parts);
-
-            return '****-' . $last;
-        });
+        return Attribute::get(fn (): string => '****-' . Str::afterLast($this->key, '-'));
     }
 
     protected function activatedAt(): Attribute

@@ -5,7 +5,7 @@ namespace App\Listeners;
 use App\Events\MediaScanCompleted;
 use App\Values\ScanResult;
 use Illuminate\Support\Collection;
-use Throwable;
+use Illuminate\Support\Facades\File;
 
 class WriteSyncLog
 {
@@ -18,10 +18,9 @@ class WriteSyncLog
             ? $event->results->map($transformer)
             : $event->results->error()->map($transformer);
 
-        try {
+        attempt(static function () use ($messages): void {
             $file = storage_path('logs/sync-' . now()->format('Ymd-His') . '.log');
-            file_put_contents($file, implode(PHP_EOL, $messages->toArray()));
-        } catch (Throwable) {
-        }
+            File::put($file, implode(PHP_EOL, $messages->toArray()));
+        });
     }
 }

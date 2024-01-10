@@ -3,14 +3,10 @@
 namespace App\Http\Requests\API;
 
 use App\Rules\ImageData;
+use Illuminate\Support\Str;
 
 abstract class MediaImageUpdateRequest extends Request
 {
-    public function authorize(): bool
-    {
-        return auth()->user()->is_admin;
-    }
-
     /** @return array<mixed> */
     public function rules(): array
     {
@@ -19,19 +15,19 @@ abstract class MediaImageUpdateRequest extends Request
         ];
     }
 
+    public function authorize(): bool
+    {
+        return auth()->user()->is_admin;
+    }
+
     public function getFileContentAsBinaryString(): string
     {
-        [, $data] = explode(',', $this->{$this->getImageFieldName()});
-
-        return base64_decode($data, true);
+        return base64_decode(Str::after($this->{$this->getImageFieldName()}, ','), true);
     }
 
     public function getFileExtension(): string
     {
-        [$type,] = explode(';', $this->{$this->getImageFieldName()});
-        [, $extension] = explode('/', $type);
-
-        return $extension;
+        return Str::after(Str::before($this->{$this->getImageFieldName()}, ';'), '/');
     }
 
     abstract protected function getImageFieldName(): string;
