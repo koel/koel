@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
 
 /**
@@ -116,7 +117,7 @@ class Artist extends Model
         return Attribute::get(function (): bool {
             $image = Arr::get($this->attributes, 'image');
 
-            return $image && (app()->runningUnitTests() || file_exists(artist_image_path($image)));
+            return $image && (app()->runningUnitTests() || File::exists(artist_image_path($image)));
         });
     }
 

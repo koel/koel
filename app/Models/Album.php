@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
 
 /**
@@ -93,7 +94,7 @@ class Album extends Model
     protected function hasCover(): Attribute
     {
         return Attribute::get(fn (): bool => $this->cover_path
-            && (app()->runningUnitTests() || file_exists($this->cover_path)));
+            && (app()->runningUnitTests() || File::exists($this->cover_path)));
     }
 
     protected function coverPath(): Attribute

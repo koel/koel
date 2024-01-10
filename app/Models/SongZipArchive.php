@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Facades\Download;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use RuntimeException;
 use ZipArchive;
 
@@ -31,9 +32,7 @@ class SongZipArchive
 
     public function addSongs(Collection $songs): static
     {
-        $songs->each(function (Song $song): void {
-            $this->addSong($song);
-        });
+        $songs->each(fn (Song $song) => $this->addSong($song));
 
         return $this;
     }
@@ -71,10 +70,8 @@ class SongZipArchive
 
         if (array_key_exists($name, $this->fileNames)) {
             ++$this->fileNames[$name];
-            $parts = explode('.', $name);
-            $ext = $parts[count($parts) - 1];
-            $parts[count($parts) - 1] = $this->fileNames[$name] . ".$ext";
-            $name = implode('.', $parts);
+            $extension = Str::afterLast($name, '.');
+            $name = Str::beforeLast($name, '.') . $this->fileNames[$name] . ".$extension";
         } else {
             $this->fileNames[$name] = 1;
         }

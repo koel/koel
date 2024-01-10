@@ -69,7 +69,7 @@ class UploadService
         // If there's no existing file with the same name in the upload directory, use the original name.
         // Otherwise, prefix the original name with a hash.
         // The whole point is to keep a readable file name when we can.
-        if (!file_exists($this->getUploadDirectory($uploader) . $file->getClientOriginalName())) {
+        if (!File::exists($this->getUploadDirectory($uploader) . $file->getClientOriginalName())) {
             return $file->getClientOriginalName();
         }
 

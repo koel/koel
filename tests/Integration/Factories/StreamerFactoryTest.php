@@ -44,7 +44,7 @@ class StreamerFactoryTest extends TestCase
         $streamerFactory = app(StreamerFactory::class);
 
         /** @var Song $song */
-        $song = Song::factory()->make();
+        $song = Song::factory()->make(['path' => test_path('songs/blank.mp3')]);
         self::assertInstanceOf(TranscodingStreamer::class, $streamerFactory->createStreamer($song));
     }
 
@@ -58,7 +58,7 @@ class StreamerFactoryTest extends TestCase
         $streamerFactory = app(StreamerFactory::class);
 
         /** @var Song $song */
-        $song = Song::factory()->make();
+        $song = Song::factory()->make(['path' => test_path('songs/blank.mp3')]);
         self::assertInstanceOf(TranscodingStreamer::class, $streamerFactory->createStreamer($song, true));
     }
 
@@ -90,7 +90,7 @@ class StreamerFactoryTest extends TestCase
         $streamerFactory = app(StreamerFactory::class);
 
         /** @var Song $song */
-        $song = Song::factory()->make();
+        $song = Song::factory()->make(['path' => test_path('songs/blank.mp3')]);
         self::assertInstanceOf($expectedClass, $streamerFactory->createStreamer($song));
     }
 }

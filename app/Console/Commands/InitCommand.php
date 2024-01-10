@@ -112,9 +112,9 @@ class InitCommand extends Command
 
     private function loadEnvFile(): void
     {
-        if (!file_exists(base_path('.env'))) {
+        if (!File::exists(base_path('.env'))) {
             $this->components->task('Copying .env file', static function (): void {
-                copy(base_path('.env.example'), base_path('.env'));
+                File::copy(base_path('.env.example'), base_path('.env'));
             });
         } else {
             $this->components->info('.env file exists -- skipping');
