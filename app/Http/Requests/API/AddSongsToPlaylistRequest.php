@@ -14,8 +14,7 @@ class AddSongsToPlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => 'required|array',
-            'songs.*' => [Rule::exists(Song::class, 'id')],
+            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')],
         ];
     }
 }

@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests\API;
 
+use App\Models\Song;
+use Illuminate\Validation\Rule;
+
 /**
- * @property array<string> $songs
- * @property array<mixed> $data
+ * @property-read array<string> $songs
+ * @property-read array<mixed> $data
  */
 class SongUpdateRequest extends Request
 {
@@ -13,7 +16,7 @@ class SongUpdateRequest extends Request
     {
         return [
             'data' => 'required|array',
-            'songs' => 'required|array|exists:songs,id',
+            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')],
         ];
     }
 }

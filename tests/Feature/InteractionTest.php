@@ -45,7 +45,7 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    public function testToggle(): void
+    public function testToggleLike(): void
     {
         $this->expectsEvents(SongLikeToggled::class);
 
@@ -72,7 +72,7 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    public function testToggleBatch(): void
+    public function testToggleLikeBatch(): void
     {
         $this->expectsEvents(SongsBatchLiked::class);
 

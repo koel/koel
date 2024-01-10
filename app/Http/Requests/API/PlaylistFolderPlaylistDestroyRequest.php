@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Models\Playlist;
-use App\Rules\AllPlaylistsBelongToUser;
+use App\Rules\AllPlaylistsBelongTo;
 use Illuminate\Validation\Rule;
 
 /**
@@ -15,8 +15,12 @@ class PlaylistFolderPlaylistDestroyRequest extends Request
     public function rules(): array
     {
         return [
-            'playlists' => ['required', 'array', new AllPlaylistsBelongToUser($this->user())],
-            'playlists.*' => [Rule::exists(Playlist::class, 'id')],
+            'playlists' => [
+                'required',
+                'array',
+                new AllPlaylistsBelongTo($this->user()),
+                Rule::exists(Playlist::class, 'id'),
+            ],
         ];
     }
 }

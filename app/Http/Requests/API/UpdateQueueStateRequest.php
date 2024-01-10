@@ -14,8 +14,7 @@ class UpdateQueueStateRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => 'array',
-            'songs.*' => [Rule::exists(Song::class, 'id')],
+            'songs' => ['array', Rule::exists(Song::class, 'id')],
         ];
     }
 }
