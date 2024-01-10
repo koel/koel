@@ -15,5 +15,5 @@ interface LicenseServiceInterface
 
     public function deactivate(License $license): void;
 
-    public function getStatus(): LicenseStatus;
+    public function getStatus(bool $checkCache = true): LicenseStatus;
 }

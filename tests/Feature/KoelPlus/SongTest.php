@@ -34,6 +34,7 @@ class SongTest extends TestCase
         // We can access our own private songs.
         $this->getAs('api/songs/' . $ownPrivateSong->id, $user)->assertSuccessful();
 
+        /** @var Song $externalUnownedSong */
         $externalUnownedSong = Song::factory()->private()->create();
 
         // But we can't access private songs that are not ours.

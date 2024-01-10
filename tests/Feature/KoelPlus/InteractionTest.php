@@ -47,7 +47,7 @@ class InteractionTest extends TestCase
     {
         $this->withoutEvents();
 
-        /** @var User $user */
+        /** @var User $owner */
         $owner = User::factory()->create();
 
         // Can't like a private song that doesn't belong to the user
@@ -73,7 +73,7 @@ class InteractionTest extends TestCase
     {
         $this->withoutEvents();
 
-        /** @var User $user */
+        /** @var User $owner */
         $owner = User::factory()->create();
 
         // Can't batch like private songs that don't belong to the user
@@ -104,7 +104,7 @@ class InteractionTest extends TestCase
     {
         $this->withoutEvents();
 
-        /** @var User $user */
+        /** @var User $owner */
         $owner = User::factory()->create();
 
         // Can't batch unlike private songs that don't belong to the user

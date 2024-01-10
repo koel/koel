@@ -76,10 +76,10 @@ class SongPlayTest extends TestCase
         ]);
 
         /** @var User $owner */
-        $user = User::factory()->create();
+        $owner = User::factory()->create();
 
         /** @var CompositeToken $token */
-        $token = app(TokenManager::class)->createCompositeToken($user);
+        $token = app(TokenManager::class)->createCompositeToken($owner);
 
         $this->get("play/$song->id?t=$token->audioToken")
             ->assertForbidden();
