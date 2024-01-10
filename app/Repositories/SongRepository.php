@@ -213,6 +213,7 @@ class SongRepository extends Repository
         return $inThatOrder ? $songs->orderByArray($ids) : $songs;
     }
 
+    /** @param string $id */
     public function getOne($id, ?User $scopedUser = null): Song
     {
         /** @var ?User $scopedUser */

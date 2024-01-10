@@ -40,7 +40,7 @@ class SongZipArchive
     public function addSong(Song $song): static
     {
         attempt(function () use ($song): void {
-            $path = Download::fromSong($song);
+            $path = Download::getLocalPath($song);
             $this->archive->addFile($path, $this->generateZipContentFileNameFromPath($path));
         });
 

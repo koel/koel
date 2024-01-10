@@ -236,10 +236,8 @@ class MediaScannerTest extends TestCase
         /** @var User $owner */
         $owner = User::factory()->admin()->create();
 
-        static::createSampleMediaSet();
-
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::factory()->create();
 
         $this->scanner->scanWatchRecord(
             new InotifyWatchRecord("DELETE $song->path"),

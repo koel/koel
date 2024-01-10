@@ -47,13 +47,13 @@ class SongController extends Controller
     {
         $this->authorize('access', $song);
 
-        return SongResource::make($this->songRepository->getOne($song->id));
+        return SongResource::make($this->songRepository->getOne($song->id, $this->user));
     }
 
     public function update(SongUpdateRequest $request)
     {
         // Don't use SongRepository::findMany() because it'd be already catered to the current user.
-        Song::query()->find($request->songs)->each(fn (Song $song) => $this->authorize('edit', $song));
+        Song::query()->findMany($request->songs)->each(fn (Song $song) => $this->authorize('edit', $song));
 
         $updatedSongs = $this->songService->updateSongs($request->songs, SongUpdateData::fromRequest($request));
         $albums = $this->albumRepository->getMany($updatedSongs->pluck('album_id')->toArray());

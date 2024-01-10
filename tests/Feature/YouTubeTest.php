@@ -21,10 +21,8 @@ class YouTubeTest extends TestCase
 
     public function testSearchYouTubeVideos(): void
     {
-        static::createSampleMediaSet();
-
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::factory()->create();
 
         $this->youTubeService
             ->shouldReceive('searchVideosRelatedToSong')

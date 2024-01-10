@@ -13,6 +13,6 @@ class DownloadFavoritesController extends Controller
     /** @param User $user */
     public function __invoke(DownloadService $download, SongRepository $repository, Authenticatable $user)
     {
-        return response()->download($download->from($repository->getFavorites($user)));
+        return response()->download($download->getDownloadablePath($repository->getFavorites($user)));
     }
 }

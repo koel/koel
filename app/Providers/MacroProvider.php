@@ -16,7 +16,7 @@ class MacroProvider extends ServiceProvider
     {
         Collection::macro('orderByArray', function (array $orderBy, string $key = 'id'): Collection {
             /** @var Collection $this */
-            return $this->sortBy(static fn ($item) => array_search($item->$key, $orderBy, true));
+            return $this->sortBy(static fn ($item) => array_search($item->$key, $orderBy, true))->values();
         });
 
         Builder::macro('logSql', function (): Builder {

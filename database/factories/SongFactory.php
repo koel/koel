@@ -14,12 +14,9 @@ class SongFactory extends Factory
     /** @return array<mixed> */
     public function definition(): array
     {
-        /** @var Album $album */
-        $album = Album::factory()->create();
-
         return [
-            'album_id' => $album->id,
-            'artist_id' => $album->artist->id,
+            'album_id' => Album::factory(),
+            'artist_id' => static fn (array $attributes) => Album::find($attributes['album_id'])->artist_id,
             'title' => $this->faker->sentence,
             'length' => $this->faker->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),

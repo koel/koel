@@ -19,7 +19,7 @@ class MakeSongsPublicController extends Controller
         SongService $songService,
         Authenticatable $user
     ) {
-        $songs = Song::query()->find($request->songs);
+        $songs = Song::query()->findMany($request->songs);
         $songs->each(fn ($song) => $this->authorize('own', $song));
 
         $songService->makeSongsPublic($songs);
