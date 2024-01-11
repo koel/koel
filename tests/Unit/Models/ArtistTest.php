@@ -6,6 +6,8 @@ use App\Models\Artist;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class ArtistTest extends TestCase
 {
     public function testExistingArtistCanBeRetrievedUsingName(): void

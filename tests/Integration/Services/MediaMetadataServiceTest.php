@@ -7,6 +7,8 @@ use App\Services\MediaMetadataService;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class MediaMetadataServiceTest extends TestCase
 {
     public function setUp(): void

@@ -7,12 +7,14 @@ use App\Models\Artist;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\DownloadService;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
+
+use function Tests\create_user;
+use function Tests\test_path;
 
 class DownloadTest extends TestCase
 {
@@ -42,9 +44,7 @@ class DownloadTest extends TestCase
     {
         /** @var Song $song */
         $song = Song::factory()->create();
-
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $this->downloadService
             ->shouldReceive('getDownloadablePath')
@@ -60,11 +60,9 @@ class DownloadTest extends TestCase
 
     public function testDownloadMultipleSongs(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
         /** @var array<Song>|Collection $songs */
         $songs = Song::factory(2)->create();
+        $user = create_user();
 
         $this->downloadService
             ->shouldReceive('getDownloadablePath')
@@ -87,11 +85,8 @@ class DownloadTest extends TestCase
     {
         /** @var Album $album */
         $album = Album::factory()->create();
-
         $songs = Song::factory(3)->for($album)->create();
-
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $this->downloadService
             ->shouldReceive('getDownloadablePath')
@@ -111,11 +106,8 @@ class DownloadTest extends TestCase
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->create();
-
         $songs = Song::factory(3)->for($artist)->create();
-
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $this->downloadService
             ->shouldReceive('getDownloadablePath')
@@ -133,9 +125,7 @@ class DownloadTest extends TestCase
 
     public function testDownloadPlaylist(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
+        $user = create_user();
         $songs = Song::factory(3)->create();
 
         /** @var Playlist $playlist */
@@ -161,9 +151,7 @@ class DownloadTest extends TestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
-
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertForbidden();
@@ -171,9 +159,7 @@ class DownloadTest extends TestCase
 
     public function testDownloadFavorites(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
+        $user = create_user();
         $favorites = Interaction::factory(3)->for($user)->create(['liked' => true]);
 
         $this->downloadService

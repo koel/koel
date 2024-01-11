@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class FileScannerTest extends TestCase
 {
     private FileScanner $scanner;

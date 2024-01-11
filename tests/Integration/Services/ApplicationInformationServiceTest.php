@@ -11,6 +11,8 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class ApplicationInformationServiceTest extends TestCase
 {
     public function testGetLatestVersionNumber(): void

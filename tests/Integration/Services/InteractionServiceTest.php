@@ -7,10 +7,11 @@ use App\Events\MultipleSongsUnliked;
 use App\Events\SongLikeToggled;
 use App\Models\Interaction;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\InteractionService;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class InteractionServiceTest extends TestCase
 {
@@ -52,9 +53,7 @@ class InteractionServiceTest extends TestCase
 
         /** @var Collection $songs */
         $songs = Song::factory(2)->create();
-
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $this->interactionService->likeMany($songs, $user);
 
@@ -72,9 +71,7 @@ class InteractionServiceTest extends TestCase
     public function testUnlikeMultipleSongs(): void
     {
         $this->expectsEvents(MultipleSongsUnliked::class);
-
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         /** @var Collection $interactions */
         $interactions = Interaction::factory(3)->for($user)->create(['liked' => true]);

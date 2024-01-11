@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Services\LastfmService;
 use App\Services\TokenManager;
 use Laravel\Sanctum\NewAccessToken;
@@ -11,12 +10,13 @@ use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
+use function Tests\create_user;
+
 class LastfmTest extends TestCase
 {
     public function testSetSessionKey(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         $this->postAs('api/lastfm/session-key', ['key' => 'foo'], $user)
             ->assertNoContent();
 
@@ -25,8 +25,7 @@ class LastfmTest extends TestCase
 
     public function testConnectToLastfm(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         $token = $user->createToken('Koel')->plainTextToken;
 
         /** @var NewAccessToken|MockInterface $temporaryToken */
@@ -52,8 +51,7 @@ class LastfmTest extends TestCase
 
     public function testCallback(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         $token = $user->createToken('Koel')->plainTextToken;
 
         self::assertNotNull(PersonalAccessToken::findToken($token));
@@ -77,8 +75,7 @@ class LastfmTest extends TestCase
 
     public function testRetrieveAndStoreSessionKey(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $lastfm = Mockery::mock(LastfmService::class)->makePartial();
 
@@ -103,12 +100,12 @@ class LastfmTest extends TestCase
 
     public function testDisconnectUser(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         self::assertNotNull($user->lastfm_session_key);
-        $this->deleteAs('api/lastfm/disconnect', [], $user);
-        $user->refresh();
 
+        $this->deleteAs('api/lastfm/disconnect', [], $user);
+
+        $user->refresh();
         self::assertNull($user->lastfm_session_key);
     }
 }

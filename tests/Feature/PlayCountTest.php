@@ -5,9 +5,10 @@ namespace Tests\Feature;
 use App\Events\PlaybackStarted;
 use App\Models\Interaction;
 use App\Models\Song;
-use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class PlayCountTest extends TestCase
 {
@@ -40,8 +41,7 @@ class PlayCountTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $this->postAs('/api/interaction/play', ['song' => $song->id], $user)
             ->assertJsonStructure([

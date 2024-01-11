@@ -6,6 +6,8 @@ use App\Models\Song;
 use App\Models\SongZipArchive;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class SongZipArchiveTest extends TestCase
 {
     public function testAddSongIntoArchive(): void

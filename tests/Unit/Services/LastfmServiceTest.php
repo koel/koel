@@ -5,7 +5,6 @@ namespace Tests\Unit\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\ApiClients\LastfmClient;
 use App\Services\LastfmService;
 use Illuminate\Support\Facades\File;
@@ -13,6 +12,9 @@ use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use Tests\TestCase;
+
+use function Tests\create_user;
+use function Tests\test_path;
 
 class LastfmServiceTest extends TestCase
 {
@@ -116,8 +118,7 @@ class LastfmServiceTest extends TestCase
 
     public function testScrobble(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create([
+        $user = create_user([
             'preferences' => [
                 'lastfm_session_key' => 'my_key',
             ],
@@ -149,8 +150,7 @@ class LastfmServiceTest extends TestCase
     /** @dataProvider provideToggleLoveTrackData */
     public function testToggleLoveTrack(bool $love, string $method): void
     {
-        /** @var User $user */
-        $user = User::factory()->create([
+        $user = create_user([
             'preferences' => [
                 'lastfm_session_key' => 'my_key',
             ],
@@ -173,8 +173,7 @@ class LastfmServiceTest extends TestCase
 
     public function testUpdateNowPlaying(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create([
+        $user = create_user([
             'preferences' => [
                 'lastfm_session_key' => 'my_key',
             ],

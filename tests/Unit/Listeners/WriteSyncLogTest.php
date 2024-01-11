@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class WriteSyncLogTest extends TestCase
 {
     private WriteSyncLog $listener;

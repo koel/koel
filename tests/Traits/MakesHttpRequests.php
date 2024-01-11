@@ -5,6 +5,8 @@ namespace Tests\Traits;
 use App\Models\User;
 use Illuminate\Testing\TestResponse;
 
+use function Tests\create_user;
+
 trait MakesHttpRequests
 {
     /**
@@ -16,8 +18,7 @@ trait MakesHttpRequests
 
     private function jsonAs(?User $user, string $method, $uri, array $data = [], array $headers = []): TestResponse
     {
-        /** @var User $user */
-        $user = $user ?: User::factory()->create();
+        $user ??= create_user();
         $this->withToken($user->createToken('koel')->plainTextToken);
 
         return $this->json($method, $uri, $data, $headers);

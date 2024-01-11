@@ -5,11 +5,13 @@ namespace Tests\Integration\Services;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
-use App\Models\User;
 use App\Services\UploadService;
 use Illuminate\Http\UploadedFile;
 use Mockery;
 use Tests\TestCase;
+
+use function Tests\create_user;
+use function Tests\test_path;
 
 class UploadServiceTest extends TestCase
 {
@@ -26,30 +28,22 @@ class UploadServiceTest extends TestCase
     {
         Setting::set('media_path');
 
-        /** @var User $user */
-        $user = User::factory()->create();
-
         self::expectException(MediaPathNotSetException::class);
-        $this->service->handleUploadedFile(Mockery::mock(UploadedFile::class), $user);
+        $this->service->handleUploadedFile(Mockery::mock(UploadedFile::class), create_user());
     }
 
     public function testHandleUploadedFileFails(): void
     {
         Setting::set('media_path', public_path('sandbox/media'));
 
-        /** @var User $user */
-        $user = User::factory()->create();
-
         self::expectException(SongUploadFailedException::class);
-        $this->service->handleUploadedFile(UploadedFile::fake()->create('fake.mp3'), $user);
+        $this->service->handleUploadedFile(UploadedFile::fake()->create('fake.mp3'), create_user());
     }
 
     public function testHandleUploadedFile(): void
     {
         Setting::set('media_path', public_path('sandbox/media'));
-
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $song = $this->service->handleUploadedFile(UploadedFile::fromFile(test_path('songs/full.mp3')), $user); //@phpstan-ignore-line
 

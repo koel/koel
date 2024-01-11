@@ -3,15 +3,15 @@
 namespace Tests\Feature;
 
 use App\Models\Interaction;
-use App\Models\User;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class OverviewTest extends TestCase
 {
     public function testIndex(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         Interaction::factory(20)->for($user)->create();
 

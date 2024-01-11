@@ -4,10 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Playlist;
 use App\Models\Song;
-use App\Models\User;
 use App\Values\SmartPlaylistRule;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class PlaylistTest extends TestCase
 {
@@ -24,8 +25,7 @@ class PlaylistTest extends TestCase
 
     public function testListing(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         Playlist::factory()->for($user)->count(3)->create();
 
         $this->getAs('api/playlists', $user)
@@ -35,8 +35,7 @@ class PlaylistTest extends TestCase
 
     public function testCreatingPlaylist(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         /** @var array<Song>|Collection $songs */
         $songs = Song::factory(4)->create();
@@ -59,8 +58,7 @@ class PlaylistTest extends TestCase
 
     public function testCreatingSmartPlaylist(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $rule = SmartPlaylistRule::make([
             'model' => 'artist.name',

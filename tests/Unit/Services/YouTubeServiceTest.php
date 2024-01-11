@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\File;
 use Mockery;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class YouTubeServiceTest extends TestCase
 {
     public function testSearchVideosRelatedToSong(): void

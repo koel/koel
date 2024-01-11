@@ -10,6 +10,8 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class LastfmClientTest extends TestCase
 {
     public function testGetSessionKey(): void

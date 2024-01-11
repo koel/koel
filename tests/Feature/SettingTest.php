@@ -3,11 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Setting;
-use App\Models\User;
 use App\Services\MediaScanner;
 use App\Values\ScanResultCollection;
 use Mockery\MockInterface;
 use Tests\TestCase;
+
+use function Tests\create_admin;
 
 class SettingTest extends TestCase
 {
@@ -22,13 +23,10 @@ class SettingTest extends TestCase
 
     public function testSaveSettings(): void
     {
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
         $this->mediaScanner->shouldReceive('scan')->once()
             ->andReturn(ScanResultCollection::create());
 
-        $this->putAs('/api/settings', ['media_path' => __DIR__], $admin)
+        $this->putAs('/api/settings', ['media_path' => __DIR__], create_admin())
             ->assertSuccessful();
 
         self::assertSame(__DIR__, Setting::get('media_path'));

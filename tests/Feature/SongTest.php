@@ -5,9 +5,10 @@ namespace Tests\Feature;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_admin;
 
 class SongTest extends TestCase
 {
@@ -74,10 +75,7 @@ class SongTest extends TestCase
         /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::factory(3)->create();
 
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
-        $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->all()], $admin)
+        $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->all()], create_admin())
             ->assertNoContent();
 
         $songs->each(fn (Song $song) => $this->assertModelMissing($song));
@@ -96,9 +94,6 @@ class SongTest extends TestCase
 
     public function testSingleUpdateAllInfoNoCompilation(): void
     {
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
-
         /** @var Song $song */
         $song = Song::factory()->create();
 
@@ -112,7 +107,7 @@ class SongTest extends TestCase
                 'track' => 1,
                 'disc' => 2,
             ],
-        ], $user)
+        ], create_admin())
             ->assertOk();
 
         /** @var Artist $artist */
@@ -134,9 +129,6 @@ class SongTest extends TestCase
 
     public function testSingleUpdateSomeInfoNoCompilation(): void
     {
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
-
         /** @var Song $song */
         $song = Song::factory()->create();
 
@@ -151,7 +143,7 @@ class SongTest extends TestCase
                 'lyrics' => 'Lorem ipsum dolor sic amet.',
                 'track' => 1,
             ],
-        ], $user)
+        ], create_admin())
             ->assertOk();
 
         // We don't expect the song's artist to change
@@ -163,8 +155,6 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateNoCompilation(): void
     {
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
         $songIds = Song::factory(3)->create()->pluck('id')->all();
 
         $this->putAs('/api/songs', [
@@ -176,7 +166,7 @@ class SongTest extends TestCase
                 'lyrics' => null,
                 'track' => 9999,
             ],
-        ], $user)
+        ], create_admin())
             ->assertOk();
 
         /** @var Collection|array<array-key, Song> $songs */
@@ -201,9 +191,6 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateCreatingNewAlbumsAndArtists(): void
     {
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
-
         /** @var array<array-key, Song>|Collection $originalSongs */
         $originalSongs = Song::factory(3)->create();
         $originalSongIds = $originalSongs->pluck('id')->all();
@@ -219,7 +206,7 @@ class SongTest extends TestCase
                 'lyrics' => 'Lorem ipsum dolor sic amet.',
                 'track' => 1,
             ],
-        ], $user)
+        ], create_admin())
             ->assertOk();
 
         /** @var array<array-key, Song>|Collection $songs */
@@ -240,9 +227,6 @@ class SongTest extends TestCase
 
     public function testSingleUpdateAllInfoWithCompilation(): void
     {
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
-
         /** @var Song $song */
         $song = Song::factory()->create();
 
@@ -257,7 +241,7 @@ class SongTest extends TestCase
                 'track' => 1,
                 'disc' => 2,
             ],
-        ], $user)
+        ], create_admin())
             ->assertOk();
 
         /** @var Album $album */
@@ -283,9 +267,6 @@ class SongTest extends TestCase
 
     public function testUpdateSingleSongWithEmptyTrackAndDisc(): void
     {
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
-
         /** @var Song $song */
         $song = Song::factory()->create([
             'track' => 12,
@@ -298,7 +279,7 @@ class SongTest extends TestCase
                 'track' => null,
                 'disc' => null,
             ],
-        ], $user)
+        ], create_admin())
             ->assertOk();
 
         $song->refresh();

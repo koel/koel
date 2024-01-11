@@ -4,10 +4,11 @@ namespace Tests\Unit\Services;
 
 use App\Models\Playlist;
 use App\Models\PlaylistFolder;
-use App\Models\User;
 use App\Services\PlaylistFolderService;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class PlaylistFolderServiceTest extends TestCase
 {
@@ -22,8 +23,7 @@ class PlaylistFolderServiceTest extends TestCase
 
     public function testCreate(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         self::assertCount(0, $user->playlist_folders);
 

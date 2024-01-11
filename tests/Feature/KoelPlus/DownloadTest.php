@@ -4,9 +4,11 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Facades\License;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\DownloadService;
 use Tests\TestCase;
+
+use function Tests\create_user;
+use function Tests\test_path;
 
 class DownloadTest extends TestCase
 {
@@ -19,8 +21,7 @@ class DownloadTest extends TestCase
 
     public function testDownloadPolicy(): void
     {
-        /** @var User $owner */
-        $owner = User::factory()->create();
+        $owner = create_user();
         $apiToken = $owner->createToken('Koel')->plainTextToken;
 
         // Can't download a private song that doesn't belong to the user

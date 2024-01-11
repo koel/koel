@@ -9,7 +9,6 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\FileScanner;
 use App\Services\MediaScanner;
 use App\Values\ScanConfiguration;
@@ -17,6 +16,8 @@ use getID3;
 use Illuminate\Support\Arr;
 use Mockery;
 use Tests\TestCase;
+
+use function Tests\create_admin;
 
 class MediaScannerTest extends TestCase
 {
@@ -39,8 +40,7 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(MediaScanCompleted::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
+        $owner = create_admin();
         $this->scanner->scan(ScanConfiguration::make(owner: $owner));
 
         // Standard mp3 files under root path should be recognized
@@ -95,9 +95,7 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(MediaScanCompleted::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
-        $config = ScanConfiguration::make(owner: $owner);
+        $config = ScanConfiguration::make(owner: create_admin());
         $this->scanner->scan($config);
 
         /** @var Song $song */
@@ -113,9 +111,7 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(MediaScanCompleted::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
-        $config = ScanConfiguration::make(owner: $owner);
+        $config = ScanConfiguration::make(owner: create_admin());
 
         $this->scanner->scan($config);
 
@@ -138,8 +134,7 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(MediaScanCompleted::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
+        $owner = create_admin();
         $this->scanner->scan(ScanConfiguration::make(owner: $owner));
 
         /** @var Song $song */
@@ -150,9 +145,7 @@ class MediaScannerTest extends TestCase
             'lyrics' => 'Booom Wroooom',
         ]);
 
-        /** @var User $anotherOwner */
-        $anotherOwner = User::factory()->admin()->create();
-        $this->scanner->scan(ScanConfiguration::make(owner: $anotherOwner, force: true));
+        $this->scanner->scan(ScanConfiguration::make(owner: create_admin(), force: true));
 
         $song->refresh();
 
@@ -166,8 +159,7 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(MediaScanCompleted::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
+        $owner = create_admin();
         $this->scanner->scan(ScanConfiguration::make(owner: $owner));
 
         /** @var Song $song */
@@ -190,8 +182,7 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(MediaScanCompleted::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
+        $owner = create_admin();
         $this->scanner->scan(ScanConfiguration::make(owner: $owner));
 
         /** @var Song $song */
@@ -216,14 +207,11 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
-
         $path = $this->path('/blank.mp3');
 
         $this->scanner->scanWatchRecord(
             new InotifyWatchRecord("CLOSE_WRITE,CLOSE $path"),
-            ScanConfiguration::make(owner: $owner)
+            ScanConfiguration::make(owner: create_admin())
         );
 
         self::assertDatabaseHas(Song::class, ['path' => $path]);
@@ -233,15 +221,12 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
-
         /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->scanner->scanWatchRecord(
             new InotifyWatchRecord("DELETE $song->path"),
-            ScanConfiguration::make(owner: $owner)
+            ScanConfiguration::make(owner: create_admin())
         );
 
         self::assertModelMissing($song);
@@ -251,9 +236,7 @@ class MediaScannerTest extends TestCase
     {
         $this->expectsEvents(LibraryChanged::class, MediaScanCompleted::class);
 
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
-        $config = ScanConfiguration::make(owner: $owner);
+        $config = ScanConfiguration::make(owner: create_admin());
 
         $this->scanner->scan($config);
         $this->scanner->scanWatchRecord(new InotifyWatchRecord("MOVED_FROM,ISDIR $this->mediaPath/subdir"), $config);
@@ -298,9 +281,7 @@ class MediaScannerTest extends TestCase
 
     public function testOptionallyIgnoreHiddenFiles(): void
     {
-        /** @var User $owner */
-        $owner = User::factory()->admin()->create();
-        $config = ScanConfiguration::make(owner: $owner);
+        $config = ScanConfiguration::make(owner: create_admin());
 
         config(['koel.ignore_dot_files' => false]);
         $this->scanner->scan($config);
