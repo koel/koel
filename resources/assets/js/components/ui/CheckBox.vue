@@ -1,24 +1,20 @@
 <template>
-  <span :class="checked && 'checked'">
-    <input :checked="checked" type="checkbox" v-bind="$attrs" @input="onInput">
+  <span :class="value && 'checked'">
+    <input :checked="value" type="checkbox" v-bind="$attrs" v-model="value">
   </span>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{ modelValue?: any }>(), {
-  modelValue: false
-})
-
-const checked = ref(props.modelValue)
+const props = withDefaults(defineProps<{ modelValue?: any }>(), { modelValue: false })
 
 const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
-const onInput = (event: Event) => {
-  checked.value = (event.target as HTMLInputElement).checked
-  emit('update:modelValue', checked.value)
-}
+const value = computed({
+  get: () => props.modelValue,
+  set: value => emit('update:modelValue', value)
+})
 </script>
 
 <style lang="scss" scoped>
