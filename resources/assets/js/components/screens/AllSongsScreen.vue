@@ -28,18 +28,27 @@
     </ScreenHeader>
 
     <SongListSkeleton v-if="showSkeletons" />
-    <SongList
-      v-else
-      ref="songList"
-      @sort="sort"
-      @scroll-breakpoint="onScrollBreakpoint"
-      @press:enter="onPressEnter"
-      @scrolled-to-end="fetchSongs"
-    />
+    <template v-else>
+      <SongList
+        v-if="songs.length > 0"
+        ref="songList"
+        @sort="sort"
+        @scroll-breakpoint="onScrollBreakpoint"
+        @press:enter="onPressEnter"
+        @scrolled-to-end="fetchSongs"
+      />
+      <ScreenEmptyState v-else>
+        <template #icon>
+          <Icon :icon="faVolumeOff" />
+        </template>
+        Your library is empty.
+      </ScreenEmptyState>
+    </template>
   </section>
 </template>
 
 <script lang="ts" setup>
+import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
 import { logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
@@ -49,6 +58,7 @@ import { useMessageToaster, useKoelPlus, useRouter, useSongList } from '@/compos
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import CheckBox from '@/components/ui/CheckBox.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
 const totalSongCount = toRef(commonStore.state, 'song_count')
 const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.song_length))
