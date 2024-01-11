@@ -44,9 +44,7 @@ class AlbumCoverTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create();
 
-        $this->mediaMetadataService
-            ->shouldReceive('writeAlbumCover')
-            ->never();
+        $this->mediaMetadataService->shouldNotReceive('writeAlbumCover');
 
         $this->putAs('api/album/' . $album->id . '/cover', ['cover' => 'data:image/jpeg;base64,Rm9v'], create_user())
             ->assertForbidden();

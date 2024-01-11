@@ -18,7 +18,7 @@ class DeactivateLicenseCommand extends Command
 
     public function handle(): int
     {
-        $status = $this->plusService->getStatus(checkCache: false);
+        $status = $this->plusService->getStatus();
 
         if ($status->hasNoLicense()) {
             $this->components->warn('No active Plus license found.');

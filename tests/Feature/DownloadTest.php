@@ -32,9 +32,7 @@ class DownloadTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->downloadService
-            ->shouldReceive('getDownloadablePath')
-            ->never();
+        $this->downloadService->shouldNotReceive('getDownloadablePath');
 
         $this->get("download/songs?songs[]=$song->id")
             ->assertUnauthorized();

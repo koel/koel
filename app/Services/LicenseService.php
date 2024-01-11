@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Services\License;
+namespace App\Services;
 
 use App\Exceptions\FailedToActivateLicenseException;
 use App\Models\License;
 use App\Services\ApiClients\ApiClient;
+use App\Services\License\LicenseServiceInterface;
 use App\Values\LicenseInstance;
 use App\Values\LicenseMeta;
 use App\Values\LicenseStatus;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -32,12 +34,15 @@ class LicenseService implements LicenseServiceInterface
                 throw new FailedToActivateLicenseException('This license key is not from Koel’s official store.');
             }
 
-            return $this->updateOrCreateLicenseFromApiResponse($response);
+            $license = $this->updateOrCreateLicenseFromApiResponse($response);
+            $this->cacheStatus(LicenseStatus::valid($license));
+
+            return $license;
         } catch (ClientException $e) {
-            throw new FailedToActivateLicenseException(json_decode($e->getResponse()->getBody())->error, $e->getCode());
+            throw FailedToActivateLicenseException::fromClientException($e);
         } catch (Throwable $e) {
             Log::error($e);
-            throw FailedToActivateLicenseException::fromException($e);
+            throw FailedToActivateLicenseException::fromThrowable($e);
         }
     }
 
@@ -50,9 +55,17 @@ class LicenseService implements LicenseServiceInterface
             ]);
 
             if ($response->deactivated) {
-                $license->delete();
-                Cache::delete('license_status');
+                self::deleteLicense($license);
             }
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() === Response::HTTP_NOT_FOUND) {
+                // The instance ID was not found. The license record must be a leftover from an erroneous attempt.
+                self::deleteLicense($license);
+
+                return;
+            }
+
+            throw FailedToActivateLicenseException::fromClientException($e);
         } catch (Throwable $e) {
             Log::error($e);
             throw $e;
@@ -83,8 +96,9 @@ class LicenseService implements LicenseServiceInterface
             return self::cacheStatus(LicenseStatus::valid($updatedLicense));
         } catch (ClientException $e) {
             Log::error($e);
+            $statusCode = $e->getResponse()->getStatusCode();
 
-            if ($e->getCode() === 400 || $e->getCode() === 404) {
+            if ($statusCode === Response::HTTP_BAD_REQUEST || $statusCode === Response::HTTP_NOT_FOUND) {
                 return self::cacheStatus(LicenseStatus::invalid($license));
             }
 
@@ -109,8 +123,14 @@ class LicenseService implements LicenseServiceInterface
             'instance' => LicenseInstance::fromJsonObject($response->instance),
             'meta' => LicenseMeta::fromJsonObject($response->meta),
             'created_at' => $response->license_key->created_at,
-            'expires_at' => $response->instance->created_at,
+            'expires_at' => $response->license_key->expires_at,
         ]);
+    }
+
+    private static function deleteLicense(License $license): void
+    {
+        $license->delete();
+        Cache::delete('license_status');
     }
 
     private static function cacheStatus(LicenseStatus $status): LicenseStatus
