@@ -16,9 +16,11 @@
           License key <span class="key text-green">{{ license.shortKey }}</span>
         </p>
 
-        <p v-else class="upgrade">
-          <BtnUpgradeToPlus/>
-        </p>
+        <template v-else>
+          <p class="upgrade" v-if="isAdmin">
+            <BtnUpgradeToPlus/>
+          </p>
+        </template>
       </div>
 
       <p v-if="shouldNotifyNewVersion" data-testid="new-version-about">
@@ -65,7 +67,7 @@
 import { orderBy } from 'lodash'
 import { onMounted, ref } from 'vue'
 import { isDemo } from '@/utils'
-import { useKoelPlus, useNewVersionNotification } from '@/composables'
+import { useAuthorization, useKoelPlus, useNewVersionNotification } from '@/composables'
 import { http } from '@/services'
 
 import SponsorList from '@/components/meta/SponsorList.vue'
@@ -86,7 +88,8 @@ const {
   latestVersionReleaseUrl
 } = useNewVersionNotification()
 
-const { isPlus, license, storeUrl } = useKoelPlus()
+const { isPlus, license } = useKoelPlus()
+const { isAdmin } = useAuthorization()
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
