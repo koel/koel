@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Builders\SongBuilder;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
@@ -72,6 +73,7 @@ class SongRepository extends Repository
     public function getForListing(
         string $sortColumn,
         string $sortDirection,
+        bool $ownSongOnly = false,
         ?User $scopedUser = null,
         int $perPage = 50
     ): Paginator {
@@ -81,6 +83,7 @@ class SongRepository extends Repository
         return Song::query()
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
+            ->when($ownSongOnly, static fn (SongBuilder $query) => $query->where('songs.owner_id', $scopedUser->id))
             ->sort($sortColumn, $sortDirection)
             ->simplePaginate($perPage);
     }

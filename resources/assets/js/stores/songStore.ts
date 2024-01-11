@@ -204,9 +204,9 @@ export const songStore = {
     return this.syncWithVault(await http.get<Song[]>(`genres/${name}/songs/random?limit=${limit}`))
   },
 
-  async paginate (sortField: SongListSortField, sortOrder: SortOrder, page: number) {
+  async paginate (sortField: SongListSortField, sortOrder: SortOrder, page: number, ownSongOnly: boolean) {
     const resource = await http.get<PaginatorResource>(
-      `songs?page=${page}&sort=${sortField}&order=${sortOrder}`
+      `songs?page=${page}&sort=${sortField}&order=${sortOrder}&ownSongsOnly=${ownSongOnly ? 1 : 0}`
     )
 
     this.state.songs = unionBy(this.state.songs, this.syncWithVault(resource.data), 'id')

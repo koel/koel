@@ -14,11 +14,16 @@
       </template>
 
       <template #controls>
-        <SongListControls
-          v-if="totalSongCount && (!isPhone || showingControls)"
-          @play-all="playAll"
-          @play-selected="playSelected"
-        />
+        <div class="controls">
+          <SongListControls
+            v-if="totalSongCount && (!isPhone || showingControls)"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+          <label class="text-secondary" v-if="isPlus">
+            <CheckBox v-model="ownSongsOnly" /> Own songs only
+          </label>
+        </div>
       </template>
     </ScreenHeader>
 
@@ -35,14 +40,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRef } from 'vue'
+import { computed, ref, toRef, watch } from 'vue'
 import { logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
-import { playbackService } from '@/services'
-import { useMessageToaster, useRouter, useSongList } from '@/composables'
+import { localStorageService, playbackService } from '@/services'
+import { useMessageToaster, useKoelPlus, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import CheckBox from '@/components/ui/CheckBox.vue'
 
 const totalSongCount = toRef(commonStore.state, 'song_count')
 const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.song_length))
@@ -66,6 +72,7 @@ const {
 
 const { toastError } = useMessageToaster()
 const { go, onScreenActivated } = useRouter()
+const { isPlus } = useKoelPlus()
 
 let initialized = false
 const loading = ref(false)
@@ -75,6 +82,16 @@ let sortOrder: SortOrder = 'asc'
 const page = ref<number | null>(1)
 const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
+
+const ownSongsOnly = ref(isPlus.value ? Boolean(localStorageService.get('own-songs-only')) : false)
+
+watch(ownSongsOnly, async value => {
+  localStorageService.set('own-songs-only', value)
+  page.value = 1
+  songStore.state.songs = []
+
+  await fetchSongs()
+})
 
 const sort = async (field: SongListSortField, order: SortOrder) => {
   page.value = 1
@@ -91,7 +108,7 @@ const fetchSongs = async () => {
   loading.value = true
 
   try {
-    page.value = await songStore.paginate(sortField, sortOrder, page.value!)
+    page.value = await songStore.paginate(sortField, sortOrder, page.value!, ownSongsOnly.value)
   } catch (error) {
     toastError('Failed to load songs.')
     logger.error(error)
@@ -118,3 +135,12 @@ onScreenActivated('Songs', async () => {
   }
 })
 </script>
+
+<style lang="scss" scoped>
+.controls {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
