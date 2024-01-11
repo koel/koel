@@ -106,6 +106,13 @@ export const queueStore = {
     this.all = []
   },
 
+  /**
+   * Clear the queue without saving the state.
+   */
+  clearSilently () {
+    this.state.songs = []
+  },
+
   indexOf (song: Song) {
     return this.all.indexOf(reactive(song))
   },

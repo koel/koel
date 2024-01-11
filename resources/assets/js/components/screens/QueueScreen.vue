@@ -53,14 +53,14 @@ import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef } from 'vue'
 import { eventBus, logger, pluralize } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
-import { playbackService } from '@/services'
+import { localStorageService as storage, playbackService } from '@/services'
 import { useDialogBox, useRouter, useSongList } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
-const { go } = useRouter()
+const { go, onScreenActivated } = useRouter()
 const { showErrorDialog } = useDialogBox()
 
 const {
@@ -122,12 +122,16 @@ const removeSelected = () => {
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
 const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
 
-eventBus.on('SONG_QUEUED_FROM_ROUTE', async id => {
+onScreenActivated('Queue', async () => {
+  if (!storage.get('song-to-queue')) {
+    return
+  }
+
   let song: Song | undefined
 
   try {
     loading.value = true
-    song = await songStore.resolve(id)
+    song = await songStore.resolve(storage.get('song-to-queue')!)
 
     if (!song) {
       throw new Error('Song not found')
@@ -137,10 +141,11 @@ eventBus.on('SONG_QUEUED_FROM_ROUTE', async id => {
     logger.error(e)
     return
   } finally {
+    storage.remove('songQueuedFromRoute')
     loading.value = false
   }
 
-  queueStore.queueIfNotQueued(song!)
-  await playbackService.play(song!)
+  queueStore.clearSilently()
+  queueStore.queue(song!)
 })
 </script>

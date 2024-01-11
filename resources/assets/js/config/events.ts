@@ -36,7 +36,6 @@ export interface Events {
 
   SONGS_UPDATED: () => void
   SONGS_DELETED: (songs: Song[]) => void
-  SONG_QUEUED_FROM_ROUTE: (songId: string) => void
 
   SOCKET_TOGGLE_PLAYBACK: () => void
   SOCKET_TOGGLE_FAVORITE: () => void

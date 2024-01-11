@@ -1,6 +1,7 @@
 import { eventBus } from '@/utils'
 import { Route } from '@/router'
 import { userStore } from '@/stores'
+import { localStorageService } from '@/services'
 
 export const routes: Route[] = [
   {
@@ -98,7 +99,10 @@ export const routes: Route[] = [
     path: '/song/(?<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
     screen: 'Queue',
     redirect: () => 'queue',
-    onResolve: params => eventBus.emit('SONG_QUEUED_FROM_ROUTE', params.id)
+    onResolve: params => {
+      localStorageService.set('song-to-queue', params.id)
+      return true
+    }
   },
   {
     path: '/invitation/accept/(?<token>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
