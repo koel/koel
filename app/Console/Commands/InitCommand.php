@@ -325,6 +325,7 @@ class InitCommand extends Command
         $this->newLine();
         $this->components->info('Now to front-end stuff');
         $this->components->info('Installing npm dependencies');
+        $this->newLine();
         self::runOkOrThrow('yarn install --colors');
         $this->components->info('Compiling assets');
         self::runOkOrThrow('yarn run --colors build');
