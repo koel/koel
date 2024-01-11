@@ -22,11 +22,11 @@
           <li @click="addSongsToFavorite">Favorites</li>
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
-        <li v-if="normalPlaylists.length">
-          <ul class="playlists" v-koel-overflow-fade>
+        <template class="d-block">
+          <ul class="playlists" v-koel-overflow-fade v-if="normalPlaylists.length">
             <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
           </ul>
-        </li>
+        </template>
         <li class="separator" />
         <li @click="addSongsToNewPlaylist">New Playlist…</li>
       </ul>
@@ -41,13 +41,11 @@
     <template v-if="isFavoritesScreen">
       <li class="separator" />
       <li @click="removeFromFavorites">Remove from Favorites</li>
-      <li class="separator" />
     </template>
 
     <template v-if="visibilityActions.length">
       <li class="separator" />
       <li v-for="action in visibilityActions" :key="action.label" @click="action.handler">{{ action.label }}</li>
-      <li class="separator" />
     </template>
 
     <li v-if="canModify" @click="openEditForm">Edit…</li>
@@ -218,9 +216,5 @@ ul.playlists {
   position: relative;
   max-height: 192px;
   overflow-y: auto;
-
-  li {
-    padding: 0;
-  }
 }
 </style>
