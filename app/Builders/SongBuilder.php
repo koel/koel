@@ -42,14 +42,14 @@ class SongBuilder extends Builder
 
     public function withMetaFor(User $user, bool $requiresInteractions = false): static
     {
-        $joinType = $requiresInteractions ? 'join' : 'leftJoin';
+        $joinClosure = static function (JoinClause $join) use ($user): void {
+            $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
+        };
 
         return $this
             ->with('artist', 'album', 'album.artist')
-            ->$joinType('interactions', static function (JoinClause $join) use ($user): void {
-                $join->on('interactions.song_id', '=', 'songs.id')
-                    ->where('interactions.user_id', $user->id);
-            })
+            ->when($requiresInteractions, static fn (self $query) => $query->join('interactions', $joinClosure))
+            ->unless($requiresInteractions, static fn (self $query) => $query->leftJoin('interactions', $joinClosure))
             ->join('albums', 'songs.album_id', '=', 'albums.id')
             ->join('artists', 'songs.artist_id', '=', 'artists.id')
             ->select(
@@ -81,24 +81,17 @@ class SongBuilder extends Builder
         Assert::oneOf($column, self::VALID_SORT_COLUMNS);
         Assert::oneOf(strtolower($direction), ['asc', 'desc']);
 
-        $this->orderBy($column, $direction);
-
-        if ($column === 'artists.name') {
-            $this->orderBy('albums.name')
+        return $this->orderBy($column, $direction)
+            ->when($column === 'artists.name', static fn (self $query) => $query->orderBy('albums.name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
-                ->orderBy('songs.title');
-        } elseif ($column === 'albums.name') {
-            $this->orderBy('artists.name')
+                ->orderBy('songs.title'))
+            ->when($column === 'albums.name', static fn (self $query) => $query->orderBy('artists.name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
-                ->orderBy('songs.title');
-        } elseif ($column === 'track') {
-            $this->orderBy('songs.disc')
-                ->orderBy('songs.track');
-        }
-
-        return $this;
+                ->orderBy('songs.title'))
+            ->when($column === 'track', static fn (self $query) => $query->orderBy('songs.disc')
+                ->orderBy('songs.track'));
     }
 
     private static function normalizeSortColumn(string $column): string

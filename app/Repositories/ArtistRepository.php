@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Builders\ArtistBuilder;
 use App\Facades\License;
 use App\Models\Artist;
 use App\Models\User;
@@ -17,19 +18,16 @@ class ArtistRepository extends Repository
         /** @var ?User $user */
         $user ??= auth()->user();
 
-        $query = Artist::query()
+        return Artist::query()
             ->isStandard()
-            ->accessibleBy($user);
-
-        if (License::isCommunity()) {
-            // if the license is Plus, accessibleBy() would have already joined the songs table
-            // and we don't want to join it twice
-            $query->leftJoin('songs', 'artists.id', 'songs.artist_id');
-        }
-
-        return $query->join('interactions', static function (JoinClause $join) use ($user): void {
-            $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
-        })
+            ->accessibleBy($user)
+            ->unless(
+                License::isPlus(), // if the license is Plus, accessibleBy() would have already joined with `songs`
+                static fn (ArtistBuilder $query) => $query->leftJoin('songs', 'artists.id', 'songs.artist_id')
+            )
+            ->join('interactions', static function (JoinClause $join) use ($user): void {
+                $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
+            })
             ->groupBy([
                 'artists.id',
                 'play_count',
