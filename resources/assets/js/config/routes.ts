@@ -1,4 +1,3 @@
-import { eventBus } from '@/utils'
 import { Route } from '@/router'
 import { userStore } from '@/stores'
 import { localStorageService } from '@/services'

@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef } from 'vue'
-import { eventBus, logger, pluralize } from '@/utils'
+import { logger, pluralize } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { localStorageService as storage, playbackService } from '@/services'
 import { useDialogBox, useRouter, useSongList } from '@/composables'
