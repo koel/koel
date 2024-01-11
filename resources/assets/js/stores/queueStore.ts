@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { differenceBy, shuffle, unionBy } from 'lodash'
+import { differenceBy, unionBy } from 'lodash'
 import { arrayify } from '@/utils'
 import { http } from '@/services'
 import { songStore } from '@/stores'
