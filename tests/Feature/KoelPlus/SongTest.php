@@ -4,9 +4,10 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Facades\License;
 use App\Models\Song;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class SongTest extends TestCase
 {
@@ -19,8 +20,7 @@ class SongTest extends TestCase
 
     public function testShowSongPolicy(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         /** @var Song $publicSong */
         $publicSong = Song::factory()->public()->create();
@@ -43,11 +43,8 @@ class SongTest extends TestCase
 
     public function testEditSongsPolicy(): void
     {
-        /** @var User $currentUser */
-        $currentUser = User::factory()->create();
-
-        /** @var User $anotherUser */
-        $anotherUser = User::factory()->create();
+        $currentUser = create_user();
+        $anotherUser = create_user();
 
         /** @var Collection<Song> $externalUnownedSongs */
         $externalUnownedSongs = Song::factory(3)->for($anotherUser, 'owner')->private()->create();
@@ -83,11 +80,8 @@ class SongTest extends TestCase
 
     public function testDeleteSongsPolicy(): void
     {
-        /** @var User $currentUser */
-        $currentUser = User::factory()->create();
-
-        /** @var User $anotherUser */
-        $anotherUser = User::factory()->create();
+        $currentUser = create_user();
+        $anotherUser = create_user();
 
         /** @var Collection<Song> $externalUnownedSongs */
         $externalUnownedSongs = Song::factory(3)->for($anotherUser, 'owner')->private()->create();

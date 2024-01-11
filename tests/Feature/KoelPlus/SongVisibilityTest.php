@@ -4,9 +4,10 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Facades\License;
 use App\Models\Song;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class SongVisibilityTest extends TestCase
 {
@@ -19,11 +20,8 @@ class SongVisibilityTest extends TestCase
 
     public function testMakingSongPublic(): void
     {
-        /** @var User $currentUser */
-        $currentUser = User::factory()->create();
-
-        /** @var User $anotherUser */
-        $anotherUser = User::factory()->create();
+        $currentUser = create_user();
+        $anotherUser = create_user();
 
         /** @var Collection<Song> $externalSongs */
         $externalSongs = Song::factory(3)->for($anotherUser, 'owner')->private()->create();
@@ -43,11 +41,8 @@ class SongVisibilityTest extends TestCase
 
     public function testMakingSongPrivate(): void
     {
-        /** @var User $currentUser */
-        $currentUser = User::factory()->create();
-
-        /** @var User $anotherUser */
-        $anotherUser = User::factory()->create();
+        $currentUser = create_user();
+        $anotherUser = create_user();
 
         /** @var Collection<Song> $externalSongs */
         $externalSongs = Song::factory(3)->for($anotherUser, 'owner')->public()->create();

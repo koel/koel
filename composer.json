@@ -57,17 +57,22 @@
     ],
     "psr-4": {
       "App\\": "app/",
-      "Tests\\": "tests/",
-      "Database\\Factories\\": "database/factories/",
       "Database\\Seeders\\": "database/seeders/"
     },
     "files": [
-      "app/Helpers.php"
+      "app/helpers.php"
     ]
   },
   "autoload-dev": {
     "classmap": [
       "tests/TestCase.php"
+    ],
+    "psr-4": {
+      "Tests\\": "tests/",
+      "Database\\Factories\\": "database/factories/"
+    },
+    "files": [
+      "tests/helpers.php"
     ]
   },
   "scripts": {

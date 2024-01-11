@@ -2,16 +2,16 @@
 
 namespace Tests\Integration\Casts;
 
-use App\Models\User;
 use App\Values\UserPreferences;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class UserPreferencesCastTest extends TestCase
 {
     public function testCast(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create([
+        $user = create_user([
             'preferences' => [
                 'lastfm_session_key' => 'foo',
             ],

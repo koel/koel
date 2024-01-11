@@ -6,9 +6,10 @@ use App\Events\MultipleSongsLiked;
 use App\Events\SongLikeToggled;
 use App\Models\Interaction;
 use App\Models\Song;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class InteractionTest extends TestCase
 {
@@ -16,8 +17,7 @@ class InteractionTest extends TestCase
     {
         $this->withoutEvents();
 
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         /** @var Song $song */
         $song = Song::factory()->create();
@@ -43,8 +43,7 @@ class InteractionTest extends TestCase
     {
         $this->expectsEvents(SongLikeToggled::class);
 
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         /** @var Song $song */
         $song = Song::factory()->create();
@@ -70,8 +69,7 @@ class InteractionTest extends TestCase
     {
         $this->expectsEvents(MultipleSongsLiked::class);
 
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         /** @var Collection|array<Song> $songs */
         $songs = Song::factory(2)->create();

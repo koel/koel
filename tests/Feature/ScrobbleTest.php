@@ -8,14 +8,15 @@ use App\Services\LastfmService;
 use Mockery;
 use Tests\TestCase;
 
+use function Tests\create_user;
+
 class ScrobbleTest extends TestCase
 {
     public function testLastfmScrobble(): void
     {
         $this->withoutEvents();
 
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         /** @var Song $song */
         $song = Song::factory()->create();

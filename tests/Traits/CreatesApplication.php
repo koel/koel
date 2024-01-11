@@ -8,6 +8,8 @@ use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
 
+use function Tests\test_path;
+
 trait CreatesApplication
 {
     protected string $mediaPath;

@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 
-class DataTest extends TestCase
+class InitialDataTest extends TestCase
 {
     public function testIndex(): void
     {

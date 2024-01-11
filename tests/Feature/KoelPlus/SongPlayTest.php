@@ -4,12 +4,14 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Facades\License;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\Streamers\DirectStreamerInterface;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
 use Mockery;
 use Tests\TestCase;
+
+use function Tests\create_user;
+use function Tests\test_path;
 
 class SongPlayTest extends TestCase
 {
@@ -22,11 +24,8 @@ class SongPlayTest extends TestCase
 
     public function testPlayPublicUnownedSong(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
-
         /** @var CompositeToken $token */
-        $token = app(TokenManager::class)->createCompositeToken($user);
+        $token = app(TokenManager::class)->createCompositeToken(create_user());
 
         /** @var Song $song */
         $song = Song::factory()->public()->create([
@@ -55,7 +54,6 @@ class SongPlayTest extends TestCase
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken($song->owner);
 
-
         $mockStreamer = $this->mock(DirectStreamerInterface::class);
 
         $mockStreamer->shouldReceive('setSong')->with(
@@ -75,11 +73,8 @@ class SongPlayTest extends TestCase
             'path' => test_path('songs/blank.mp3'),
         ]);
 
-        /** @var User $owner */
-        $owner = User::factory()->create();
-
         /** @var CompositeToken $token */
-        $token = app(TokenManager::class)->createCompositeToken($owner);
+        $token = app(TokenManager::class)->createCompositeToken(create_user());
 
         $this->get("play/$song->id?t=$token->audioToken")
             ->assertForbidden();

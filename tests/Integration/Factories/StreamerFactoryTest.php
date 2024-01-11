@@ -14,6 +14,8 @@ use Mockery;
 use phpmock\mockery\PHPMockery;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class StreamerFactoryTest extends TestCase
 {
     private StreamerFactory $streamerFactory;

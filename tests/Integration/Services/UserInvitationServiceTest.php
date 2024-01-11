@@ -6,10 +6,12 @@ use App\Exceptions\InvitationNotFoundException;
 use App\Mail\UserInvite;
 use App\Models\User;
 use App\Services\UserInvitationService;
-use Hash;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\TestCase;
+
+use function Tests\create_admin;
 
 class UserInvitationServiceTest extends TestCase
 {
@@ -27,9 +29,7 @@ class UserInvitationServiceTest extends TestCase
         Mail::fake();
 
         $emails = ['foo@bar.com', 'bar@baz.io'];
-
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
+        $user = create_admin();
 
         $this->service
             ->invite($emails, true, $user)
@@ -48,9 +48,7 @@ class UserInvitationServiceTest extends TestCase
     public function testGetUserProspectByToken(): void
     {
         $token = Str::uuid()->toString();
-
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
+        $user = create_admin();
 
         $prospect = User::factory()->for($user, 'invitedBy')->create([
             'invitation_token' => $token,
@@ -68,8 +66,7 @@ class UserInvitationServiceTest extends TestCase
 
     public function testRevokeByEmail(): void
     {
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
+        $user = create_admin();
 
         /** @var User $prospect */
         $prospect = User::factory()->for($user, 'invitedBy')->create([
@@ -85,9 +82,7 @@ class UserInvitationServiceTest extends TestCase
     public function testAccept(): void
     {
         $token = Str::uuid()->toString();
-
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
+        $user = create_admin();
 
         User::factory()->for($user, 'invitedBy')->create([
             'invitation_token' => $token,

@@ -3,8 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\PlaylistFolder;
-use App\Models\User;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class PlaylistFolderTest extends TestCase
 {
@@ -18,8 +19,7 @@ class PlaylistFolderTest extends TestCase
 
     public function testListing(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         PlaylistFolder::factory()->for($user)->count(3)->create();
 
         $this->getAs('api/playlist-folders', $user)
@@ -29,8 +29,7 @@ class PlaylistFolderTest extends TestCase
 
     public function testCreate(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $this->postAs('api/playlist-folders', ['name' => 'Classical'], $user)
             ->assertJsonStructure(self::JSON_STRUCTURE);

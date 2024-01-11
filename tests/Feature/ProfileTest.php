@@ -2,9 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class ProfileTest extends TestCase
 {
@@ -19,8 +20,7 @@ class ProfileTest extends TestCase
 
     public function testUpdateProfileWithoutNewPassword(): void
     {
-        /** @var User $user */
-        $user =  User::factory()->create(['password' => Hash::make('secret')]);
+        $user =  create_user(['password' => Hash::make('secret')]);
 
         $this->putAs('api/me', [
             'name' => 'Foo',
@@ -37,8 +37,7 @@ class ProfileTest extends TestCase
 
     public function testUpdateProfileWithNewPassword(): void
     {
-        /** @var User $user */
-        $user =  User::factory()->create(['password' => Hash::make('secret')]);
+        $user =  create_user(['password' => Hash::make('secret')]);
 
         $token = $this->putAs('api/me', [
             'name' => 'Foo',

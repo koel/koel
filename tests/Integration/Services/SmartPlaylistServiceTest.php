@@ -12,6 +12,9 @@ use App\Services\SmartPlaylistService;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
+use function Tests\create_admin;
+use function Tests\create_user;
+
 class SmartPlaylistServiceTest extends TestCase
 {
     private SmartPlaylistService $service;
@@ -292,8 +295,7 @@ class SmartPlaylistServiceTest extends TestCase
 
     public function testPlayCountIsGreaterThan(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         $matches = Song::factory()->count(2)->create();
 
         $notMatch = Song::factory()->create();
@@ -330,8 +332,7 @@ class SmartPlaylistServiceTest extends TestCase
 
     public function testLastPlayedAtIsInLast(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         $matches = Song::factory()->count(2)->create();
 
         $notMatch = Song::factory()->create();
@@ -369,8 +370,7 @@ class SmartPlaylistServiceTest extends TestCase
 
     public function testLastPlayedNotInLast(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         $matches = Song::factory()->count(2)->create();
 
         $notMatch = Song::factory()->create();
@@ -408,8 +408,7 @@ class SmartPlaylistServiceTest extends TestCase
 
     public function testLastPlayedIs(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
         $matches = Song::factory()->count(2)->create();
 
         $notMatch = Song::factory()->create();
@@ -539,7 +538,7 @@ class SmartPlaylistServiceTest extends TestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()
-            ->for($playlistOwner ?? User::factory()->create())
+            ->for($playlistOwner ?? create_admin())
             ->create(['rules' => $rules]);
 
         self::assertEqualsCanonicalizing(

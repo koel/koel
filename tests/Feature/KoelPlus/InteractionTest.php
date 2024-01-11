@@ -4,9 +4,10 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Facades\License;
 use App\Models\Song;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class InteractionTest extends TestCase
 {
@@ -21,8 +22,7 @@ class InteractionTest extends TestCase
     {
         $this->withoutEvents();
 
-        /** @var User $owner */
-        $owner = User::factory()->create();
+        $owner = create_user();
 
         // Can't increase play count of a private song that doesn't belong to the user
         /** @var Song $externalPrivateSong */
@@ -47,8 +47,7 @@ class InteractionTest extends TestCase
     {
         $this->withoutEvents();
 
-        /** @var User $owner */
-        $owner = User::factory()->create();
+        $owner = create_user();
 
         // Can't like a private song that doesn't belong to the user
         /** @var Song $externalPrivateSong */
@@ -73,8 +72,7 @@ class InteractionTest extends TestCase
     {
         $this->withoutEvents();
 
-        /** @var User $owner */
-        $owner = User::factory()->create();
+        $owner = create_user();
 
         // Can't batch like private songs that don't belong to the user
         /** @var Collection $externalPrivateSongs */
@@ -104,8 +102,7 @@ class InteractionTest extends TestCase
     {
         $this->withoutEvents();
 
-        /** @var User $owner */
-        $owner = User::factory()->create();
+        $owner = create_user();
 
         // Can't batch unlike private songs that don't belong to the user
         /** @var Collection $externalPrivateSongs */

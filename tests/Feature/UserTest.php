@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
+use function Tests\create_admin;
+use function Tests\create_user;
+
 class UserTest extends TestCase
 {
     public function testNonAdminCannotCreateUser(): void
@@ -20,8 +23,7 @@ class UserTest extends TestCase
 
     public function testAdminCreatesUser(): void
     {
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
+        $admin = create_admin();
 
         $this->postAs('api/user', [
             'name' => 'Foo',
@@ -42,11 +44,8 @@ class UserTest extends TestCase
 
     public function testAdminUpdatesUser(): void
     {
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
-        /** @var User $user */
-        $user = User::factory()->admin()->create(['password' => 'secret']);
+        $admin = create_admin();
+        $user = create_admin(['password' => 'secret']);
 
         $this->putAs("api/user/$user->id", [
             'name' => 'Foo',
@@ -66,22 +65,16 @@ class UserTest extends TestCase
 
     public function testAdminDeletesUser(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
-        $this->deleteAs("api/user/$user->id", [], $admin);
+        $this->deleteAs("api/user/$user->id", [], create_admin());
         self::assertModelMissing($user);
     }
 
-    public function testSeppukuNotAllowed(): void
+    public function testSelfDeletionNotAllowed(): void
     {
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
+        $admin = create_admin();
 
-        // A user can't delete himself
         $this->deleteAs("api/user/$admin->id", [], $admin)->assertForbidden();
         self::assertModelExists($admin);
     }

@@ -12,6 +12,8 @@ use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
+use function Tests\test_path;
+
 class SpotifyServiceTest extends TestCase
 {
     private SpotifyService $service;

@@ -4,9 +4,10 @@ namespace Tests\Integration\Services;
 
 use App\Models\QueueState;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\QueueService;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class QueueServiceTest extends TestCase
 {
@@ -39,8 +40,7 @@ class QueueServiceTest extends TestCase
 
     public function testCreateQueueState(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $this->assertDatabaseMissing(QueueState::class, [
             'user_id' => $user->id,

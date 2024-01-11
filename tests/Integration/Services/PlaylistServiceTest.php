@@ -5,12 +5,13 @@ namespace Tests\Integration\Services;
 use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 use Webmozart\Assert\InvalidArgumentException;
+
+use function Tests\create_user;
 
 class PlaylistServiceTest extends TestCase
 {
@@ -25,8 +26,7 @@ class PlaylistServiceTest extends TestCase
 
     public function testCreatePlaylist(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $playlist = $this->service->createPlaylist('foo', $user);
 
@@ -40,8 +40,7 @@ class PlaylistServiceTest extends TestCase
         /** @var array<array-key, Song>|Collection $songs */
         $songs = Song::factory(3)->create();
 
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $playlist = $this->service->createPlaylist('foo', $user, null, $songs->pluck('id')->all());
 
@@ -67,8 +66,7 @@ class PlaylistServiceTest extends TestCase
             ],
         ]);
 
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         $playlist = $this->service->createPlaylist('foo', $user, null, [], $rules);
 
@@ -94,12 +92,9 @@ class PlaylistServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        /** @var User $user */
-        $user = User::factory()->create();
-
         self::expectException(InvalidArgumentException::class);
 
-        $this->service->createPlaylist('foo', $user, $folder);
+        $this->service->createPlaylist('foo', create_user(), $folder);
     }
 
     public function testUpdateSimplePlaylist(): void

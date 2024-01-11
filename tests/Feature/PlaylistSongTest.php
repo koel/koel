@@ -4,9 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Playlist;
 use App\Models\Song;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class PlaylistSongTest extends TestCase
 {
@@ -47,10 +48,8 @@ class PlaylistSongTest extends TestCase
 
     public function testNonOwnerCannotAccessPlaylist(): void
     {
-        $user = User::factory()->create();
-
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($user)->create();
+        $playlist = Playlist::factory()->for(create_user())->create();
         $playlist->songs()->attach(Song::factory(5)->create());
 
         $this->getAs('api/playlists/' . $playlist->id . '/songs')
@@ -99,10 +98,8 @@ class PlaylistSongTest extends TestCase
 
     public function testNonOwnerCannotModifyPlaylist(): void
     {
-        $user = User::factory()->create();
-
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($user)->create();
+        $playlist = Playlist::factory()->for(create_user())->create();
 
         /** @var Song $song */
         $song = Song::factory()->create();

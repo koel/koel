@@ -4,8 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\QueueState;
 use App\Models\Song;
-use App\Models\User;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class QueueTest extends TestCase
 {
@@ -35,8 +36,7 @@ class QueueTest extends TestCase
 
     public function testUpdateStateWithoutExistingState(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         self::assertDatabaseMissing(QueueState::class, ['user_id' => $user->id]);
 

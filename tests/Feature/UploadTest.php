@@ -6,11 +6,13 @@ use App\Events\LibraryChanged;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
-use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
+
+use function Tests\create_admin;
+use function Tests\test_path;
 
 class UploadTest extends TestCase
 {
@@ -43,10 +45,7 @@ class UploadTest extends TestCase
     {
         Setting::set('media_path');
 
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
-        $this->postAs('/api/upload', ['file' => $this->file], $admin)->assertForbidden();
+        $this->postAs('/api/upload', ['file' => $this->file], create_admin())->assertForbidden();
     }
 
     public function testUploadSuccessful(): void
@@ -54,10 +53,7 @@ class UploadTest extends TestCase
         Event::fake(LibraryChanged::class);
         Setting::set('media_path', public_path('sandbox/media'));
 
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
-        $this->postAs('/api/upload', ['file' => $this->file], $admin)->assertJsonStructure(['song', 'album']);
+        $this->postAs('/api/upload', ['file' => $this->file], create_admin())->assertJsonStructure(['song', 'album']);
         Event::assertDispatched(LibraryChanged::class);
     }
 }

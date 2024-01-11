@@ -3,19 +3,20 @@
 namespace Tests\Feature;
 
 use App\Models\Song;
-use App\Models\User;
 use App\Services\Streamers\DirectStreamerInterface;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
 use Mockery;
 use Tests\TestCase;
 
+use function Tests\create_user;
+use function Tests\test_path;
+
 class SongPlayTest extends TestCase
 {
     public function testPlay(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken($user);

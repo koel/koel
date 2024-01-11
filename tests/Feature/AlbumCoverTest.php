@@ -4,11 +4,13 @@ namespace Tests\Feature;
 
 use App\Events\LibraryChanged;
 use App\Models\Album;
-use App\Models\User;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
+
+use function Tests\create_admin;
+use function Tests\create_user;
 
 class AlbumCoverTest extends TestCase
 {
@@ -25,9 +27,6 @@ class AlbumCoverTest extends TestCase
     {
         $this->expectsEvents(LibraryChanged::class);
 
-        /** @var User $user */
-        $user = User::factory()->admin()->create();
-
         /** @var Album $album */
         $album = Album::factory()->create();
 
@@ -36,7 +35,7 @@ class AlbumCoverTest extends TestCase
             ->once()
             ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'Foo', 'jpeg');
 
-        $this->putAs('api/album/' . $album->id . '/cover', ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs('api/album/' . $album->id . '/cover', ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
             ->assertOk();
     }
 
@@ -49,10 +48,7 @@ class AlbumCoverTest extends TestCase
             ->shouldReceive('writeAlbumCover')
             ->never();
 
-        /** @var User $user */
-        $user = User::factory()->create();
-
-        $this->putAs('api/album/' . $album->id . '/cover', ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs('api/album/' . $album->id . '/cover', ['cover' => 'data:image/jpeg;base64,Rm9v'], create_user())
             ->assertForbidden();
     }
 }

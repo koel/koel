@@ -2,15 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class AuthTest extends TestCase
 {
     public function testLogIn(): void
     {
-        User::factory()->create([
+        create_user([
             'email' => 'koel@koel.dev',
             'password' => Hash::make('secret'),
         ]);
@@ -34,8 +35,7 @@ class AuthTest extends TestCase
 
     public function testLogOut(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create([
+        $user = create_user([
             'email' => 'koel@koel.dev',
             'password' => Hash::make('secret'),
         ]);
