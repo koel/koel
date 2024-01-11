@@ -42,6 +42,14 @@
           <Icon :icon="faVolumeOff" />
         </template>
         Your library is empty.
+        <a
+          role="button"
+          class="d-block secondary"
+          v-if="isPlus && ownSongsOnly"
+          @click.prevent="showSongsFromOthers"
+        >
+          Show public songs from other users?
+        </a>
       </ScreenEmptyState>
     </template>
   </section>
@@ -109,6 +117,11 @@ const sort = async (field: SongListSortField, order: SortOrder) => {
   sortField = field
   sortOrder = order
 
+  await fetchSongs()
+}
+
+const showSongsFromOthers = async () => {
+  ownSongsOnly.value = false
   await fetchSongs()
 }
 
