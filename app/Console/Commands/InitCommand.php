@@ -56,6 +56,7 @@ class InitCommand extends Command
 
         try {
             $this->clearCaches();
+            $this->dumpAutoloads();
             $this->loadEnvFile();
             $this->maybeGenerateAppKey();
             $this->maybeSetUpDatabase();
@@ -110,6 +111,13 @@ class InitCommand extends Command
         });
     }
 
+    private function dumpAutoloads(): void
+    {
+        $this->components->task('Dumping autoloads (be patient!)', static function (): void {
+            self::runOkOrThrow('composer dump-autoload --no-interaction --optimize --quiet');
+        });
+    }
+
     private function loadEnvFile(): void
     {
         if (!File::exists(base_path('.env'))) {
@@ -117,7 +125,7 @@ class InitCommand extends Command
                 File::copy(base_path('.env.example'), base_path('.env'));
             });
         } else {
-            $this->components->info('.env file exists -- skipping');
+            $this->components->task('.env file exists -- skipping');
         }
 
         $this->dotenvEditor->load(base_path('.env'));
@@ -136,8 +144,7 @@ class InitCommand extends Command
             }
         });
 
-        $this->newLine();
-        $this->components->info('Using app key: ' . Str::limit($key, 16));
+        $this->components->task('Using app key: ' . Str::limit($key, 16));
     }
 
     /**
@@ -223,8 +230,7 @@ class InitCommand extends Command
                 $this->artisan->call('db:seed', ['--force' => true]);
             });
         } else {
-            $this->newLine();
-            $this->components->info('Data already seeded -- skipping');
+            $this->components->task('Data already seeded -- skipping');
         }
     }
 
@@ -316,16 +322,18 @@ class InitCommand extends Command
             return;
         }
 
+        $this->newLine();
         $this->components->info('Now to front-end stuff');
-
-        $runOkOrThrow = static function (string $command): void {
-            passthru($command, $status);
-            throw_if((bool) $status, InstallationFailedException::class);
-        };
-
-        $runOkOrThrow('yarn install --colors');
+        $this->components->info('Installing npm dependencies');
+        self::runOkOrThrow('yarn install --colors');
         $this->components->info('Compiling assets');
-        $runOkOrThrow('yarn build');
+        self::runOkOrThrow('yarn run --colors build');
+    }
+
+    private static function runOkOrThrow(string $command): void
+    {
+        passthru($command, $status);
+        throw_if((bool) $status, InstallationFailedException::class);
     }
 
     private function setMediaPathFromEnvFile(): void
