@@ -54,7 +54,7 @@ class ForceHttpsTest extends TestCase
         $this->url->shouldReceive('forceScheme')->with('https')->never();
 
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('setTrustedProxies')->never();
+        $request->shouldNotReceive('setTrustedProxies');
 
         $response = Mockery::mock(Response::class);
         $next = static fn () => $response;

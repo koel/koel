@@ -41,9 +41,7 @@ class ArtistImageTest extends TestCase
     {
         Artist::factory()->create(['id' => 9999]);
 
-        $this->mediaMetadataService
-            ->shouldReceive('writeArtistImage')
-            ->never();
+        $this->mediaMetadataService->shouldNotReceive('writeArtistImage');
 
         $this->putAs('api/artist/9999/image', ['image' => 'data:image/jpeg;base64,Rm9v'])
             ->assertForbidden();
