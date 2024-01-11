@@ -152,5 +152,10 @@ onScreenActivated('Songs', async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+
+  .collapsed & {
+    width: auto;
+  }
 }
 </style>
