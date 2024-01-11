@@ -21,7 +21,7 @@ const onInput = (event: Event) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 span {
   position: relative;
   vertical-align: bottom;
