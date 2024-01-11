@@ -60,7 +60,7 @@
       "Database\\Seeders\\": "database/seeders/"
     },
     "files": [
-      "app/helpers.php"
+      "app/Helpers.php"
     ]
   },
   "autoload-dev": {
@@ -72,7 +72,7 @@
       "Database\\Factories\\": "database/factories/"
     },
     "files": [
-      "tests/helpers.php"
+      "tests/Helpers.php"
     ]
   },
   "scripts": {
