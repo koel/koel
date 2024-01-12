@@ -534,12 +534,19 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    private function assertMatchesAgainstRules(Collection $matches, array $rules, ?User $playlistOwner = null): void
-    {
+    protected function assertMatchesAgainstRules(
+        Collection $matches,
+        array $rules,
+        ?User $owner = null,
+        bool $ownSongsOnly = false
+    ): void {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()
-            ->for($playlistOwner ?? create_admin())
-            ->create(['rules' => $rules]);
+            ->for($owner ?? create_admin())
+            ->create([
+                'rules' => $rules,
+                'own_songs_only' => $ownSongsOnly,
+            ]);
 
         self::assertEqualsCanonicalizing(
             $matches->pluck('id')->all(),

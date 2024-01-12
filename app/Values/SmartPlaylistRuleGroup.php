@@ -18,7 +18,11 @@ final class SmartPlaylistRuleGroup implements Arrayable
     {
         return new self(
             id: Arr::get($array, 'id'),
-            rules: collect(Arr::get($array, 'rules', []))->transform([SmartPlaylistRule::class, 'make']),
+            rules: collect(Arr::get($array, 'rules', []))->transform(
+                static function (array|SmartPlaylistRule $rule): SmartPlaylistRule {
+                    return $rule instanceof SmartPlaylistRule ? $rule : SmartPlaylistRule::make($rule);
+                }
+            ),
         );
     }
 

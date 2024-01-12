@@ -38,6 +38,12 @@
             <Icon :icon="faPlus" />
           </Btn>
         </div>
+
+        <div class="form-row" v-if="isPlus">
+          <label class="own-songs-only text-secondary small">
+            <CheckBox v-model="mutablePlaylist.own_songs_only" /> Only show songs from my own library
+          </label>
+        </div>
       </main>
 
       <footer>
@@ -50,15 +56,18 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { reactive, toRef, watch } from 'vue'
+import { reactive, toRef } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistFolderStore, playlistStore } from '@/stores'
 import { eventBus, logger } from '@/utils'
-import { useDialogBox, useMessageToaster, useModal, useOverlay, useSmartPlaylistForm } from '@/composables'
+import { useDialogBox, useKoelPlus, useMessageToaster, useModal, useOverlay, useSmartPlaylistForm } from '@/composables'
+import CheckBox from '@/components/ui/CheckBox.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const {isPlus} = useKoelPlus()
+
 const playlist = useModal().getFromContext<Playlist>('playlist')
 
 const folders = toRef(playlistFolderStore.state, 'folders')

@@ -23,6 +23,7 @@ class PlaylistResource extends JsonResource
             'user_id' => $this->playlist->user_id,
             'is_smart' => $this->playlist->is_smart,
             'rules' => $this->playlist->rules,
+            'own_songs_only' => $this->playlist->own_songs_only,
             'created_at' => $this->playlist->created_at,
         ];
     }

@@ -73,7 +73,7 @@ class SongRepository extends Repository
     public function getForListing(
         string $sortColumn,
         string $sortDirection,
-        bool $ownSongOnly = false,
+        bool $ownSongsOnly = false,
         ?User $scopedUser = null,
         int $perPage = 50
     ): Paginator {
@@ -83,7 +83,7 @@ class SongRepository extends Repository
         return Song::query()
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
-            ->when($ownSongOnly, static fn (SongBuilder $query) => $query->where('songs.owner_id', $scopedUser->id))
+            ->when($ownSongsOnly, static fn (SongBuilder $query) => $query->where('songs.owner_id', $scopedUser->id))
             ->sort($sortColumn, $sortDirection)
             ->simplePaginate($perPage);
     }
@@ -228,6 +228,7 @@ class SongRepository extends Repository
             ->findOrFail($id);
     }
 
+    /** @param string $id */
     public function findOne($id, ?User $scopedUser = null): ?Song
     {
         /** @var ?User $scopedUser */

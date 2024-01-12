@@ -33,6 +33,13 @@
             Group
           </Btn>
         </div>
+
+        <div class="form-row" v-if="isPlus">
+          <label class="own-songs-only text-secondary small">
+            <CheckBox v-model="ownSongsOnly" />
+            Only show songs from my own library
+          </label>
+        </div>
       </main>
 
       <footer>
@@ -48,7 +55,17 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { ref, toRef } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
 import { logger } from '@/utils'
-import { useDialogBox, useMessageToaster, useModal, useOverlay, useRouter, useSmartPlaylistForm } from '@/composables'
+import {
+  useDialogBox,
+  useKoelPlus,
+  useMessageToaster,
+  useModal,
+  useOverlay,
+  useRouter,
+  useSmartPlaylistForm
+} from '@/composables'
+
+import CheckBox from '@/components/ui/CheckBox.vue'
 
 const {
   Btn,
@@ -63,11 +80,14 @@ const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const { go } = useRouter()
+const { isPlus } = useKoelPlus()
+
 const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
 
 const name = ref('')
 const folderId = ref(targetFolder?.id)
 const folders = toRef(playlistFolderStore.state, 'folders')
+const ownSongsOnly = ref(false)
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
@@ -91,7 +111,8 @@ const submit = async () => {
   try {
     const playlist = await playlistStore.store(name.value, {
       rules: collectedRuleGroups.value,
-      folder_id: folderId.value
+      folder_id: folderId.value,
+      own_songs_only: ownSongsOnly.value
     })
 
     close()

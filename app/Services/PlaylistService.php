@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
+use App\Facades\License;
 use App\Models\Playlist;
 use App\Models\PlaylistFolder as Folder;
 use App\Models\User;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use Webmozart\Assert\Assert;
 
 class PlaylistService
@@ -17,31 +18,34 @@ class PlaylistService
         User $user,
         ?Folder $folder = null,
         array $songs = [],
-        ?SmartPlaylistRuleGroupCollection $ruleGroups = null
+        ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
+        bool $ownSongsOnly = false
     ): Playlist {
         if ($folder) {
             Assert::true($user->is($folder->user), 'The playlist folder does not belong to the user');
         }
 
-        if ($songs && $ruleGroups) {
-            throw new PlaylistBothSongsAndRulesProvidedException();
-        }
+        throw_if($ownSongsOnly && (!$ruleGroups || !License::isPlus()), new InvalidArgumentException(
+            '"Own songs only" option only works with smart playlists and Plus license.'
+        ));
 
-        return DB::transaction(static function () use ($name, $user, $songs, $folder, $ruleGroups): Playlist {
-            /** @var Playlist $playlist */
-            $playlist = $user->playlists()->create([
-                'name' => $name,
-                'rules' => $ruleGroups,
-            ]);
+        return DB::transaction(
+            static function () use ($name, $user, $songs, $folder, $ruleGroups, $ownSongsOnly): Playlist {
+                /** @var Playlist $playlist */
+                $playlist = $user->playlists()->create([
+                    'name' => $name,
+                    'rules' => $ruleGroups,
+                    'own_songs_only' => $ownSongsOnly,
+                    'folder_id' => $folder?->id,
+                ]);
 
-            $folder?->playlists()->save($playlist);
+                if (!$playlist->is_smart && $songs) {
+                    $playlist->songs()->sync($songs);
+                }
 
-            if (!$playlist->is_smart && $songs) {
-                $playlist->songs()->sync($songs);
+                return $playlist;
             }
-
-            return $playlist;
-        });
+        );
     }
 
     public function updatePlaylist(
@@ -49,15 +53,21 @@ class PlaylistService
         string $name,
         ?Folder $folder = null,
         ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
+        bool $ownSongsOnly = false
     ): Playlist {
         if ($folder) {
             Assert::true($playlist->user->is($folder->user), 'The playlist folder does not belong to the user');
         }
 
+        throw_if($ownSongsOnly && (!$playlist->is_smart || !License::isPlus()), new InvalidArgumentException(
+            '"Own songs only" option only works with smart playlists and Plus license.'
+        ));
+
         $playlist->update([
             'name' => $name,
             'rules' => $ruleGroups,
             'folder_id' => $folder?->id,
+            'own_songs_only' => $ownSongsOnly,
         ]);
 
         return $playlist;
@@ -71,11 +81,5 @@ class PlaylistService
     public function removeSongsFromPlaylist(Playlist $playlist, array $songIds): void
     {
         $playlist->songs()->detach($songIds);
-    }
-
-    /** @deprecated since v6.0.0, use add/removeSongs methods instead */
-    public function populatePlaylist(Playlist $playlist, array $songIds): void
-    {
-        $playlist->songs()->sync($songIds);
     }
 }

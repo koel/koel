@@ -12,7 +12,7 @@ use function Tests\create_user;
 
 class PlaylistTest extends TestCase
 {
-    private const JSON_STRUCTURE = [
+    public const JSON_STRUCTURE = [
         'type',
         'id',
         'name',
@@ -20,6 +20,7 @@ class PlaylistTest extends TestCase
         'user_id',
         'is_smart',
         'rules',
+        'own_songs_only',
         'created_at',
     ];
 
