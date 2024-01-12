@@ -20,8 +20,9 @@
             @play-all="playAll"
             @play-selected="playSelected"
           />
-          <label class="text-secondary" v-if="isPlus">
-            <CheckBox v-model="ownSongsOnly" /> Own songs only
+          <label class="own-songs-toggle text-secondary" v-if="isPlus">
+            <CheckBox v-model="ownSongsOnly" />
+            <span>Own songs only</span>
           </label>
         </div>
       </template>
@@ -162,6 +163,7 @@ onScreenActivated('Songs', async () => {
 <style lang="scss" scoped>
 .controls {
   width: 100%;
+  min-height: 32px; // prevent shrinking causing the jumping effect
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -169,6 +171,12 @@ onScreenActivated('Songs', async () => {
 
   .collapsed & {
     width: auto;
+  }
+
+  .own-songs-toggle {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1rem;
   }
 }
 </style>
