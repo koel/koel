@@ -7,7 +7,8 @@
             v-if="selectedSongs.length < 2 && songs.length"
             class="btn-play-all"
             orange
-            title="Play all songs"
+            title="Play all. Press Alt/⌥ to change mode."
+            v-koel-tooltip.bottom
             @click.prevent="playAll"
           >
             <Icon :icon="faPlay" fixed-width />
@@ -18,7 +19,8 @@
             v-if="selectedSongs.length > 1"
             class="btn-play-selected"
             orange
-            title="Play selected songs"
+            title="Play selected. Press Alt/⌥ to change mode."
+            v-koel-tooltip.bottom
             @click.prevent="playSelected"
           >
             <Icon :icon="faPlay" fixed-width />
@@ -32,7 +34,8 @@
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
             orange
-            title="Shuffle all songs"
+            title="Shuffle all. Press Alt/⌥ to change mode."
+            v-koel-tooltip.bottom
             @click.prevent="shuffle"
           >
             <Icon :icon="faRandom" fixed-width />
@@ -44,7 +47,8 @@
             class="btn-shuffle-selected"
             data-testid="btn-shuffle-selected"
             orange
-            title="Shuffle selected songs"
+            title="Shuffle selected. Press Alt/⌥ to change mode."
+            v-koel-tooltip.bottom
             @click.prevent="shuffleSelected"
           >
             <Icon :icon="faRandom" fixed-width />

@@ -30,7 +30,7 @@ new class extends UnitTestCase {
     it.each([[0], [1]])('shuffles all if %s songs are selected', async (selectedCount: number) => {
       const { emitted } = this.renderComponent(selectedCount)
 
-      await this.user.click(screen.getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
 
       expect(emitted().playAll[0]).toEqual([true])
     })
@@ -39,7 +39,7 @@ new class extends UnitTestCase {
       const { emitted } = this.renderComponent(selectedCount)
 
       await this.user.keyboard('{Alt>}')
-      await this.user.click(screen.getByTitle('Play all songs'))
+      await this.user.click(screen.getByTitle('Play all. Press Alt/⌥ to change mode.'))
       await this.user.keyboard('{/Alt}')
 
       expect(emitted().playAll[0]).toEqual([false])
@@ -48,7 +48,7 @@ new class extends UnitTestCase {
     it('shuffles selected if more than one song are selected', async () => {
       const { emitted } = this.renderComponent(2)
 
-      await this.user.click(screen.getByTitle('Shuffle selected songs'))
+      await this.user.click(screen.getByTitle('Shuffle selected. Press Alt/⌥ to change mode.'))
 
       expect(emitted().playSelected[0]).toEqual([true])
     })
@@ -57,7 +57,7 @@ new class extends UnitTestCase {
       const { emitted } = this.renderComponent(2)
 
       await this.user.keyboard('{Alt>}')
-      await this.user.click(screen.getByTitle('Play selected songs'))
+      await this.user.click(screen.getByTitle('Play selected. Press Alt/⌥ to change mode.'))
       await this.user.keyboard('{/Alt}')
 
       expect(emitted().playSelected[0]).toEqual([false])
