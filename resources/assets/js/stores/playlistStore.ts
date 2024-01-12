@@ -1,5 +1,5 @@
 import { differenceBy, orderBy } from 'lodash'
-import { reactive, UnwrapNestedRefs } from 'vue'
+import { reactive } from 'vue'
 import { logger, uuid } from '@/utils'
 import { cache, http } from '@/services'
 import models from '@/config/smart-playlist/models'
@@ -10,6 +10,7 @@ type CreatePlaylistRequestData = {
   songs: Song['id'][]
   rules?: SmartPlaylistRuleGroup[]
   folder_id?: PlaylistFolder['name']
+  own_songs_only?: boolean
 }
 
 export const playlistStore = {
@@ -61,7 +62,7 @@ export const playlistStore = {
 
   async store (
     name: string,
-    data: Partial<Pick<Playlist, 'rules' | 'folder_id'>> = {},
+    data: Partial<Pick<Playlist, 'rules' | 'folder_id' | 'own_songs_only'>> = {},
     songs: Song[] = []
   ) {
     const requestData: CreatePlaylistRequestData = {
@@ -71,6 +72,7 @@ export const playlistStore = {
 
     data.rules && (requestData.rules = this.serializeSmartPlaylistRulesForStorage(data.rules))
     data.folder_id && (requestData.folder_id = data.folder_id)
+    data.own_songs_only && (requestData.own_songs_only = data.own_songs_only)
 
     const playlist = reactive(await http.post<Playlist>('playlists', requestData))
 
@@ -109,11 +111,12 @@ export const playlistStore = {
     return playlist
   },
 
-  async update (playlist: Playlist, data: Partial<Pick<Playlist, 'name' | 'rules' | 'folder_id'>>) {
+  async update (playlist: Playlist, data: Partial<Pick<Playlist, 'name' | 'rules' | 'folder_id' | 'own_songs_only'>>) {
     await http.put(`playlists/${playlist.id}`, {
       name: data.name,
       rules: data.rules ? this.serializeSmartPlaylistRulesForStorage(data.rules) : null,
-      folder_id: data.folder_id
+      folder_id: data.folder_id,
+      own_songs_only: data.own_songs_only
     })
 
     playlist.is_smart && cache.remove(['playlist.songs', playlist.id])
@@ -153,7 +156,7 @@ export const playlistStore = {
     return serializedGroups
   },
 
-  sort: (playlists: Playlist[] | UnwrapNestedRefs<Playlist>[]) => {
+  sort: (playlists: Playlist[]) => {
     return orderBy(playlists, ['is_smart', 'name'], ['desc', 'asc'])
   }
 }

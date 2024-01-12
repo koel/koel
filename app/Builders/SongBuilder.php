@@ -48,8 +48,11 @@ class SongBuilder extends Builder
 
         return $this
             ->with('artist', 'album', 'album.artist')
-            ->when($requiresInteractions, static fn (self $query) => $query->join('interactions', $joinClosure))
-            ->unless($requiresInteractions, static fn (self $query) => $query->leftJoin('interactions', $joinClosure))
+            ->when(
+                $requiresInteractions,
+                static fn (self $query) => $query->join('interactions', $joinClosure),
+                static fn (self $query) => $query->leftJoin('interactions', $joinClosure)
+            )
             ->join('albums', 'songs.album_id', '=', 'albums.id')
             ->join('artists', 'songs.artist_id', '=', 'artists.id')
             ->select(

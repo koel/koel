@@ -25,6 +25,7 @@ use Laravel\Scout\Searchable;
  * @property ?SmartPlaylistRuleGroupCollection $rule_groups
  * @property ?SmartPlaylistRuleGroupCollection $rules
  * @property Carbon $created_at
+ * @property bool $own_songs_only
  */
 class Playlist extends Model
 {
@@ -36,6 +37,7 @@ class Playlist extends Model
 
     protected $casts = [
         'rules' => SmartPlaylistRulesCast::class,
+        'own_songs_only' => 'bool',
     ];
 
     protected $appends = ['is_smart'];

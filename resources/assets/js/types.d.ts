@@ -221,6 +221,7 @@ interface Playlist {
   folder_id: PlaylistFolder['id'] | null
   is_smart: boolean
   rules: SmartPlaylistRuleGroup[]
+  own_songs_only: boolean
 }
 
 type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList

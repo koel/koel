@@ -8,6 +8,7 @@ use App\Models\Song;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Support\Collection;
+use InvalidArgumentException as BaseInvalidArgumentException;
 use Tests\TestCase;
 use Webmozart\Assert\InvalidArgumentException;
 
@@ -145,5 +146,45 @@ class PlaylistServiceTest extends TestCase
         self::assertSame('bar', $playlist->name);
         self::assertTrue($playlist->is_smart);
         self::assertSame($playlist->rule_groups->first()->rules->first()->value, ['bar']);
+    }
+
+    public function testSettingOwnsSongOnlyFailsForCommunityLicenseWhenCreate(): void
+    {
+        self::expectException(BaseInvalidArgumentException::class);
+        self::expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
+
+        $this->service->createPlaylist(
+            name: 'foo',
+            user: create_user(),
+            ruleGroups: SmartPlaylistRuleGroupCollection::create([
+                [
+                    'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
+                    'rules' => [
+                        [
+                            'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
+                            'model' => 'title',
+                            'operator' => 'is',
+                            'value' => ['foo'],
+                        ],
+                    ],
+                ],
+            ]),
+            ownSongsOnly: true
+        );
+    }
+
+    public function testSettingOwnsSongOnlyFailsForCommunityLicenseWhenUpdate(): void
+    {
+        self::expectException(BaseInvalidArgumentException::class);
+        self::expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->smart()->create();
+
+        $this->service->updatePlaylist(
+            playlist: $playlist,
+            name: 'foo',
+            ownSongsOnly: true
+        );
     }
 }

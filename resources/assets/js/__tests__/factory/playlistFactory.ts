@@ -7,7 +7,8 @@ export default (faker: Faker): Playlist => ({
   folder_id: faker.datatype.uuid(),
   name: faker.random.word(),
   is_smart: false,
-  rules: []
+  rules: [],
+  ownSongsOnly: false
 })
 
 export const states: Record<string, (faker: Faker) => Omit<Partial<Playlist>, 'type'>> = {
