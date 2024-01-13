@@ -13,12 +13,13 @@
         <p v-if="isPlus" class="plus-badge">
           Licensed to {{ license.customerName }} &lt;{{ license.customerEmail }}&gt;
           <br>
-          License key <span class="key text-green">{{ license.shortKey }}</span>
+          License key: <span class="key">{{ license.shortKey }}</span>
         </p>
 
         <template v-else>
           <p class="upgrade" v-if="isAdmin">
-            <BtnUpgradeToPlus/>
+            <!-- close the modal first to prevent it from overlapping Lemonsqueezy's overlay -->
+            <BtnUpgradeToPlus @click="close"/>
           </p>
         </template>
       </div>
@@ -72,7 +73,7 @@ import { http } from '@/services'
 
 import SponsorList from '@/components/meta/SponsorList.vue'
 import Btn from '@/components/ui/Btn.vue'
-import BtnUpgradeToPlus from '@/components/meta/BtnUpgradeToPlus.vue'
+import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 
 type DemoCredits = {
   name: string
@@ -168,6 +169,9 @@ onMounted(async () => {
 .plus-badge {
   .key {
     font-family: monospace;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(97.78deg, #c62be8 17.5%, #671ce4 113.39%);
   }
 }
 

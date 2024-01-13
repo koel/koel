@@ -40,7 +40,7 @@ class CheckLicenseStatusCommand extends Command
 
                 case LicenseStatus::STATUS_NO_LICENSE:
                     $this->components->info(
-                        'No license found. You can purchase one at ' . config('lemonsqueezy.store_url')
+                        'No license found. You can purchase one at https://store.plus.koel.dev/checkout/buy/' . config('lemonsqueezy.plus_product_id') // @phpcs-ignore
                     );
                     break;
 

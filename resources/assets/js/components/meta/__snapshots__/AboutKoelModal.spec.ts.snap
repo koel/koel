@@ -4,7 +4,9 @@ exports[`renders 1`] = `
 <div data-v-6b5b01a9="" class="about text-secondary" data-testid="about-koel" tabindex="0">
   <main data-v-6b5b01a9="">
     <div data-v-6b5b01a9="" class="logo"><img data-v-6b5b01a9="" alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="128"></div>
-    <p data-v-6b5b01a9="" class="current-version">Koel v0.0.0</p>
+    <div data-v-6b5b01a9="" class="current-version"> Koel v0.0.0 <span data-v-6b5b01a9="">Community</span> Edition
+      <!--v-if-->
+    </div>
     <!--v-if-->
     <p data-v-6b5b01a9="" class="author"> Made with ❤️ by <a data-v-6b5b01a9="" href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a> and quite a few <a data-v-6b5b01a9="" href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;<a data-v-6b5b01a9="" href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>. </p>
     <!--v-if--><br data-v-6b5b01a9="" data-testid="sponsor-list">
